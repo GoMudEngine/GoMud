@@ -1,0 +1,52 @@
+mobid: 9174
+zone: North Road North
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+statpool: 30
+hostile: false
+maxwander: 4
+groups:
+  - humanoid
+  - traveller
+idlecommands:
+  - 'emote rolls his shoulders and adjusts the straps of his enormous
+    pack, face briefly pained'
+  - ''
+  - 'emote cups his hands and calls out -- "Rope! Tinder! Good
+    pilgrim charms! -- reasonable prices!"'
+  - ''
+  - 'emote pulls a leather strap from his pack and works a loose
+    buckle back into shape with steady, practiced thumbs'
+  - 'emote waves cheerfully at a passing cart and shouts something
+    that sounds like an inquiry about road conditions'
+  - ''
+activitylevel: 14
+character:
+  name: Old Mabbot
+  description: |
+    A wiry man of indeterminate age bent slightly forward by a
+    truly impressive pack, Mabbot has been walking this stretch of
+    road since before the toll-post was built. He has news from
+    everywhere and an opinion on all of it, delivered at an unhurried
+    pace that suggests he has nowhere particular to be and no
+    intention of arriving quickly. His pack contains rope, tinder,
+    dried meat, small charms of debatable efficacy, and apparently
+    everything else ever lost on a road. His eyes are unusually
+    keen for a man who squints so often -- the irises are a pale,
+    washed-out gray that catches light in odd angles, a Chrysalis
+    shift that has given him something closer to night-adapted
+    vision than is strictly normal for a peddler who mostly travels
+    in daylight. He finds this useful and does not advertise it.
+  speciesid: 1
+  level: 1
+  gold: 60
+  stats:
+    charisma:
+      training: 9
+    perception:
+      training: 8
+    vitality:
+      training: 5
+    willpower:
+      training: 3

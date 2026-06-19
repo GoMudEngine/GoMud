@@ -1,0 +1,60 @@
+mobid: 9173
+zone: North Road North
+behavior_archetype: ambusher
+archetype: fighting
+hostile: true
+maxwander: 1
+statpool: 48
+itemdropchance: 50
+groups:
+  - humanoid
+  - bandit
+idlecommands:
+  - 'emote watches the road through a gap in the hedgerow, motionless'
+  - ''
+  - ''
+  - 'emote fingers the notched edge of a blade with his thumb,
+    not quite looking at it'
+  - ''
+  - 'emote spits into the mud and settles back into the shadow of
+    the hedge'
+  - ''
+combatcommands:
+  - 'emote surges out of cover with sudden, practiced violence'
+  - ''
+  - 'emote drives a shoulder forward and tries to get inside the
+    reach of a weapon'
+  - ''
+  - 'emote snarls and swings low, going for the legs'
+  - ''
+activitylevel: 12
+character:
+  name: a hedgerow bandit
+  description: |
+    A rough, broad figure crouched in the ditch beside the Mire
+    Cutoff, wearing a coat so mud-caked it reads as camouflage.
+    The bandit has a fighter's build -- heavy through the shoulders,
+    with scarred forearms and hands that look like they have broken
+    things many times. A short blade rides at the hip, well-used
+    and maintained better than anything else about him. His face
+    is weathered past easy age-reading, jaw set in the patient
+    expression of someone who has done this before. The veins at
+    his temples and forearms stand out in dark cords against pale
+    skin -- a Chrysalis effect that has thickened his blood vessels
+    and given him an unnerving look of pressure contained just
+    below the surface.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    strength:
+      training: 14
+    dexterity:
+      training: 10
+    vitality:
+      training: 12
+    perception:
+      training: 6
+  skills:
+    weapon-combat: 8
+    skullduggery: 5

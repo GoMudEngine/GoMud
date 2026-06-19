@@ -1,0 +1,52 @@
+mobid: 9175
+zone: North Road North
+behavior_archetype: noncombat_passive
+non_combatant: true
+statpool: 30
+hostile: false
+maxwander: 1
+groups:
+  - humanoid
+  - traveller
+idlecommands:
+  - 'emote leans heavily on his long staff and stares at nothing in
+    particular'
+  - ''
+  - 'emote glances back over his shoulder at the beasts resting on
+    the verge, counting them under his breath'
+  - ''
+  - 'emote tucks a dry straw between his teeth and chews it with slow
+    deliberation'
+  - 'emote tilts his head back and eyes the sky with the practiced
+    look of a man reading weather'
+  - ''
+  - 'emote shifts his weight from foot to foot and spits neatly past
+    the edge of the road'
+activitylevel: 8
+character:
+  name: a weary drover
+  description: |
+    A lean, road-burned man resting at the pull-off with his cattle
+    browsing the verge around him. He has the particular stillness
+    of someone who is tired in a way that goes all the way down --
+    not sick, just worn. His staff is taller than he is, worn smooth
+    at the grip end, and he leans on it the way most people lean on
+    walls. He is happy enough to share road news if you give him a
+    moment to organize his thoughts. The backs of his hands and the
+    bridge of his nose show a faint, pearlescent sheen in full
+    light -- a Chrysalis effect that has laid a thin, tough layer
+    over his most sun-exposed skin. It looks like old scar tissue
+    until the light hits it right. He does not seem to notice it
+    anymore.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    vitality:
+      training: 8
+    perception:
+      training: 7
+    strength:
+      training: 5
+    charisma:
+      training: 3

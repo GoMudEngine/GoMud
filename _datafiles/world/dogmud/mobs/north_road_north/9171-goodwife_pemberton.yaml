@@ -1,0 +1,55 @@
+mobid: 9171
+zone: North Road North
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+statpool: 34
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+  - innkeeper
+idlecommands:
+  - 'emote drags a damp cloth across the bar in brisk, practiced arcs'
+  - ''
+  - 'emote ladles stew from the iron pot into a bowl, taps the ladle
+    on the rim twice, and sets it on the pass-shelf'
+  - 'emote calls toward the back room -- "Nold! More bread, now, not
+    later!"'
+  - ''
+  - 'emote draws a measure of ale, checks the head with a critical eye,
+    and slides the cup down the bar'
+  - ''
+  - 'emote straightens a row of cups with the air of someone who has
+    straightened them ten thousand times and will straighten them ten
+    thousand more'
+activitylevel: 15
+character:
+  name: Goodwife Pemberton
+  description: |
+    A compact, quick-moving woman in her middle years, Pemberton
+    runs the Lake and Ladle with the calm authority of someone who
+    has never once been caught off-balance by a difficult customer.
+    Her hair is black going silver at the temples, pinned back and
+    covered with a clean linen cap. Her apron is always spotless
+    for the first hour of morning and comprehensively stained by
+    the second. She notices everything -- who has been drinking
+    since noon, who is quarreling quietly with their travel
+    companion, who is watching other people's purses. Her eyes are
+    an amber so deep they shade toward copper, with a faint ring
+    of gold at the pupil that catches the firelight: a Chrysalis
+    touch that she neither hides nor discusses. She gives good
+    portions and charges fair prices and expects you to behave
+    yourself.
+  speciesid: 1
+  level: 1
+  gold: 150
+  stats:
+    charisma:
+      training: 10
+    perception:
+      training: 8
+    willpower:
+      training: 5
+    vitality:
+      training: 4

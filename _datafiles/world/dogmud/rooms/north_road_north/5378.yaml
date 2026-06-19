@@ -81,3 +81,8 @@ idlemessages:
 - A traveler sets down an empty bowl, tips it for the last
   of the stew, and slides it to the counter's edge without
   looking up from the letter in her other hand.
+spawninfo:
+  - mobid: 9171
+    respawnrate: "15 real minutes"
+  - mobid: 9172
+    respawnrate: "12 real minutes"

@@ -66,3 +66,6 @@ idlemessages:
   muffled by the hedgerow between.
 - The cutoff track stretches ahead, straight and uninviting,
   through the reed beds and back toward the highway.
+spawninfo:
+  - mobid: 9173
+    respawnrate: "8 real minutes"

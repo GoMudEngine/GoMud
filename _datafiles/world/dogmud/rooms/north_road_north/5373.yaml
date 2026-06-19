@@ -54,3 +54,6 @@ idlemessages:
   flies from its ears.
 - Somewhere past the rise to the north, a dog barks twice
   and goes quiet.
+spawninfo:
+  - mobid: 9174
+    respawnrate: "20 real minutes"

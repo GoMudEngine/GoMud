@@ -78,3 +78,6 @@ idlemessages:
   with a drover, voices carrying flat across the open ground.
 - A hank of wool caught on the hurdle rail lifts in the
   wind and flutters once, like a small ragged flag.
+spawninfo:
+  - mobid: 9175
+    respawnrate: "15 real minutes"

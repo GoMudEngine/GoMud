@@ -1,0 +1,51 @@
+mobid: 9170
+zone: North Road North
+behavior_archetype: noncombat_passive
+non_combatant: true
+statpool: 32
+hostile: false
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote heaves on the counterweight rope and raises the barrier-pole
+    with a creak'
+  - ''
+  - 'emote drags the pole back down and secures the rope around the
+    bollard cleat'
+  - ''
+  - 'emote squints at his toll-board and taps a chalk mark with one
+    stubby finger'
+  - 'emote digs in his apron pocket and sorts a handful of coppers,
+    lips moving'
+  - ''
+  - 'emote leans on the pole and stares down the road, looking as if
+    he is waiting for something to annoy him'
+activitylevel: 10
+character:
+  name: Toller Garrick
+  description: |
+    A heavyset man somewhere past sixty, Garrick has worked the
+    Thornwall tollgate so long that the post seems to have grown
+    into him. His leather apron is stained with chalk and road
+    grime, and his face carries the permanent squint of someone
+    who has spent decades judging whether carts are overloaded.
+    He is unhurried, incurious, and not quite honest -- the toll
+    on his board has always been a few coppers higher than the
+    posted rate, and he collects the difference with the serenity
+    of a man who knows the next nearest crossing is a full day's
+    walk. The skin on his forearms has taken on a faint grayish
+    cast over the years, dry and ridged like old bark -- a subtle
+    Chrysalis drift he has never bothered to name or complain
+    about. It makes his arms look permanently dusty, which suits
+    him fine.
+  speciesid: 1
+  level: 1
+  gold: 45
+  stats:
+    charisma:
+      training: 7
+    perception:
+      training: 6
+    vitality:
+      training: 4

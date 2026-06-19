@@ -66,3 +66,6 @@ idlemessages:
   barrier, circling the gate post.
 - A road-worn traveler ahead of you shifts weight from foot to
   foot, one hand already working open a coin pouch.
+spawninfo:
+  - mobid: 9170
+    respawnrate: "15 real minutes"

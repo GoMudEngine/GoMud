@@ -1,0 +1,51 @@
+mobid: 9172
+zone: North Road North
+behavior_archetype: thief
+hostile: false
+maxwander: 1
+statpool: 36
+itemdropchance: 40
+groups:
+  - humanoid
+  - thief
+idlecommands:
+  - 'emote leans against the wall with his arms folded, eyes tracing
+    the room at belt height'
+  - ''
+  - 'emote edges half a step closer to a nearby traveler, expression
+    perfectly bland'
+  - ''
+  - 'emote fakes a wide yawn and stretches, hand passing briefly over
+    a neighboring stool'
+  - 'emote turns to examine the ceiling with apparent fascination, one
+    hand hanging loose at his side'
+  - ''
+activitylevel: 20
+character:
+  name: Sly Tam
+  description: |
+    A slight man in a shabby brown coat with too many pockets, Tam
+    works the Lake and Ladle's common room with the patience of
+    someone who is very good at waiting. He has a warm, easy smile
+    he deploys at frequent intervals, and he always seems to be
+    heading somewhere just past you. His hands are his tell, if
+    you know to watch them -- the pinky and ring finger of each
+    hand carry a faint extra crease below the first joint, a
+    Chrysalis quirk that gives his grip an eerie exactness.
+    Pickpockets trained for years to get what Tam's fingers do
+    naturally. He is not dangerous in a fight but he is quick, and
+    he is gone before most people realize something is missing.
+  speciesid: 1
+  level: 1
+  gold: 18
+  stats:
+    dexterity:
+      training: 10
+    perception:
+      training: 8
+    charisma:
+      training: 6
+    strength:
+      training: 2
+  skills:
+    skullduggery: 10
