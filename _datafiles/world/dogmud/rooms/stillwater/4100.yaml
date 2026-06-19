@@ -22,6 +22,7 @@ coord:
 exits:
   south:
     roomid: 4062
+    zone: North Road
   north:
     roomid: 4101
 nouns:

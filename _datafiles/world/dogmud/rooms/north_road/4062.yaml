@@ -22,6 +22,7 @@ exits:
     roomid: 4061
   north:
     roomid: 4100
+    zone: Stillwater
 nouns:
   smoke: Thin columns rise from the direction of Stillwater,
     bending north in the wind before dispersing. There are

@@ -5,6 +5,54 @@
 
 ---
 
+## Current World State — Reconciled 2026-06-19
+
+The novel-canon geography, zone designs, and build order below are still the
+guiding target. This banner reconciles them with what is actually on disk
+after the newbie-area rework (Pothole Coulee) and the wilderness build-out —
+work that happened outside this document's original numbering.
+
+**Built and live (on-plan main-road progression):**
+- Marches Spur Road (4000–4037), Ashwick (4015–4034), North Road — Southern
+  (4038–4062), The Fernway interlude (4147–4156), **Stillwater (4100–4146) —
+  now fully populated** (25 rooms with mob spawns, 6 shop files; the old
+  "NPCs not placed" note is stale → status promoted to ✅ Built).
+
+**Built and live (off-plan — not in the numbered table, but real content):**
+- **Pothole Coulee (5200–5371, 169 rooms)** — the current newbie start zone
+  (StartRoom 5200). **Replaces the retired Sanctum Basin** as the tutorial
+  region. Connects to Ironwind Steppe.
+- Ironwind Steppe (3000–3122, 123 rooms), A Dark Forest (1002–1082),
+  Stillwater Marsh (4177–4198), The Fernway South (4157–4197) — wilderness.
+- Thornwall City (460+) ↔ Thornwall Outskirts (440–447) ↔ Watchers Crossing
+  (420–427) — the original backwater hub.
+- Dustwalk Road (400–409), Labyrinth of Low Tunnels (300–319), World Road
+  (single room 2001, now a Dustwalk↔Labyrinth connector), Endless Trashheap.
+
+**Connectivity backbone (verified from cross-zone exits):**
+Thornwall City ↔ Thornwall Outskirts ↔ Watchers Crossing ↔ {Dustwalk Road,
+Marches Spur Road}; Marches Spur Road ↔ {Ashwick, The Fernway}; The Fernway ↔
+{North Road, The Fernway South}; North Road → **Stillwater** (north_road 4062
+"North Road End" → stillwater 4100); Stillwater ↔ Stillwater Marsh; Pothole
+Coulee ↔ Ironwind Steppe.
+
+**Next-build attach points (frontiers for unbuilt zones):**
+- **#5 North Road — Northern** attaches at **Stillwater's north gate (~room
+  4111 / Travelers' Camp 4142)**, which already references New Plymouth, and
+  runs north toward NP Outskirts.
+- **#14 South Road** attaches at **Ashwick Crossroads (4014)**, whose south
+  signpost already reads "Amber Valley, the Confluence."
+
+**Known data nits to fix in passing (not blockers):**
+- `north_road/4062.yaml` north exit → roomid 4100 is **missing its
+  `zone: Stillwater`** annotation (movement works since roomids are global,
+  but the mapper/weather-crawler want the hint). Add it.
+- 3 rooms still name the retired **Sanctum Basin** as flavor:
+  `dustwalk_road/405`, `thornwall_outskirts/445`, `watchers_crossing/427`.
+  Re-point or genericize when convenient.
+
+---
+
 ## Quality Standards
 
 Every zone, room, NPC, and quest in this expansion must meet the following
@@ -188,9 +236,9 @@ Novel directions corrected: Aldric travels WEST from Greenford to NP.
                    │      /     \              │
                    │  [spur]  [South Road]     │
                    │   /           \           │
-                   │ SANCTUM       AMBER       │
-                   │ BASIN         VALLEY      │
-                   │ (existing)    (Yakima)    │
+                   │ POTHOLE       AMBER       │
+                   │ COULEE        VALLEY      │
+                   │ (newbie)      (Yakima)    │
                    │ + THORNWALL   ~40 rooms   │
                    │                \          │
                    │            THE CONFLUENCE │
@@ -208,7 +256,9 @@ Novel directions corrected: Aldric travels WEST from Greenford to NP.
 - Davan: Amber Valley → north → the Confluence → river barge north → NP
 - Aldric: The Confluence (temple) → east → Greenford → west/NW → NP
 - All four: New Plymouth → east through Cascade Pass → Eastern Highlands
-- Sanctum Basin / Thornwall: backwater spur off the main road near Ashwick
+- Pothole Coulee (newbie start) / Thornwall: backwater spur off the main road
+  near Ashwick. Pothole Coulee replaced the retired Sanctum Basin as the
+  tutorial region; it connects to Ironwind Steppe.
 
 ---
 
@@ -223,9 +273,9 @@ quest content that functions independently.
 
 ### PHASE 1 — The Connection (Existing Content → Main Road)
 
-**Purpose:** Bridge the existing backwater (Sanctum Basin / Thornwall) to the
-novel's main geography. Players who have outgrown the tutorial region need a
-path into the wider world.
+**Purpose:** Bridge the existing backwater (Pothole Coulee newbie region /
+Thornwall) to the novel's main geography. Players who have outgrown the
+tutorial region need a path into the wider world.
 
 #### Zone 1.1: Marches Spur Road
 *The road from Thornwall to the main north-south highway.*
@@ -967,7 +1017,7 @@ column so the next zone-builder knows what's free.
 | 1 | Marches Spur Road | 15 | 2 | ✅ Built | rooms 4000–4014 |
 | 2 | Ashwick | 20 | 2 | ✅ Built | rooms 4015–4034 |
 | 3 | North Road — Southern | 20 | 2 | ✅ Built | rooms 4038–4062 (25 used incl. inn interior) |
-| 4 | Stillwater | 47 | 3 | 🔧 Smoke-pending | roomid range 4100–4146 (all rooms built; full zone walk validated — 0 exit errors); 7-station crafting hub (forge, alchemy_bench ×2, loom, cooking_fire ×2, jeweler_bench, enchanting_circle); designed as showcase for NPC AI features (daily routines, forager-driven shop restock, Stillwater↔Thornwall caravan, Stillwater↔Ironwind material trade); **2026-04-25: ALL stillwater rooms shifted west by 7 to resolve 4 coord collisions with Dustwalk Road and Labyrinth (mapper now renders correctly)**; Temple of Stillwater (4123) needs sethome already wired (sethome stillwater); NPCs and mob spawns not yet placed |
+| 4 | Stillwater | 47 | 3 | ✅ Built | **Live & populated as of 2026-06-19** (25 spawn rooms, 6 shop files, connected via north_road 4062→4100). roomid range 4100–4146; 7-station crafting hub (forge, alchemy_bench ×2, loom, cooking_fire ×2, jeweler_bench, enchanting_circle); designed as showcase for NPC AI features (daily routines, forager-driven shop restock, Stillwater↔Thornwall caravan, Stillwater↔Ironwind material trade); **2026-04-25: ALL stillwater rooms shifted west by 7 to resolve 4 coord collisions with Dustwalk Road and Labyrinth (mapper now renders correctly)**; Temple of Stillwater (4123) needs sethome already wired (sethome stillwater); NPCs and mob spawns not yet placed |
 | 3.5 | The Fernway (interlude zone) | 10 | 1 | ✅ Built | roomid range 4147–4156; inserted east-west between Ashwick Crossroads (4014) and North Road Road Fork (4038) to push Stillwater + north_road westward away from Dustwalk Road / Labyrinth coord overlap. Outdoorsy bracken-and-fern wilderness with foragable plants (wild thyme, watercress, wood sorrel, foxglove, wild garlic, marsh chamomile, alder cones, elderberry, marsh willow). 7-room east-west spine + 3 side rooms (Old Weddell Farmstead, Heron Pond, Fox Den). No mobs/quests yet — pure flavor + foraging connector. |
 | 5 | North Road — Northern | 15 | 2 | ⬜ Not started | |
 | 6 | NP Outskirts | 20 | 2 | ⬜ Not started | |
@@ -987,7 +1037,7 @@ column so the next zone-builder knows what's free.
 | 20 | Cascade Pass Road | 20 | 2 | ⬜ Not started | |
 | 21 | Eastern Highlands | 30 | 3 | ⬜ Not started | |
 | 22 | Crash Site Interior | 20 | 2 | ⬜ Not started | |
-| **TOTAL** | **23 zones** | **~627 rooms** | **62 mini-stages** | **4 / 23 built** | Phase 1 done; Stillwater 47 rooms built + shifted west; Fernway 10-room interlude zone added to fix coord collisions. Smoke test pending. |
+| **TOTAL** | **23 zones** | **~627 rooms** | **62 mini-stages** | **5 / 23 built** | On-plan main road: Marches Spur, Ashwick, North Road South, Fernway, **Stillwater all built & live**. PLUS large off-plan built footprint not counted here (Pothole Coulee newbie 169rm, Ironwind 123rm, A Dark Forest 81rm, Thornwall city/outskirts, Watchers Crossing, Dustwalk, Labyrinth, Stillwater Marsh, Fernway South). **Next on-plan: #5 North Road — Northern** (attaches at Stillwater's north gate ~4111). See the reconciliation banner at the top. |
 
 *New Plymouth's 170 initial rooms include 21 expansion stubs (3 per
 district) that are visible but inaccessible. When all stubs are built
@@ -1046,9 +1096,12 @@ everything).
 - **Aldric direction fix:** Chapters 13 and 17 of the novel need "east"
   changed to "west/northwest" for Aldric's travel from Confluence/Greenford
   to New Plymouth. Flag for manuscript revision.
-- **Existing zone connections:** The Marches Spur Road connects from
-  Thornwall City's western exit to the Ashwick crossroads. The existing
-  World Road zone may need reworking or deprecation.
+- **Existing zone connections (verified 2026-06-19):** see the reconciliation
+  banner at the top of this file for the full cross-zone backbone. In short:
+  Thornwall City ↔ Outskirts ↔ Watchers Crossing ↔ Marches Spur Road ↔
+  {Ashwick, The Fernway} ↔ North Road → Stillwater. World Road is no longer a
+  deprecation candidate — it survives as a single-room (2001) connector
+  between Dustwalk Road and the Labyrinth of Low Tunnels.
 - **Mob scaling:** Road zones should scale from the existing Ironwind
   Steppe difficulty (mid-level) through to endgame at the Eastern
   Highlands and Crash Site. New Plymouth city zones should have minimal
