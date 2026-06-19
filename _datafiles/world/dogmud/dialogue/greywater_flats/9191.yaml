@@ -1,0 +1,67 @@
+mobid: 9191
+zone: Greywater Flats
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Crossing? A copper a head, more for a beast or a load. Mind the reeds while you wait."
+      - "Reed, ferryman. The water's down so it's the ford or nothing today."
+  - keywords: ["quest", "task", "work", "job", "trouble"]
+    responses:
+      - "There's a thing in the reeds that's been costing me passengers. Ask me about the adder."
+  - keywords: ["buy", "sell", "trade", "shop", "wares", "goods", "list"]
+    responses:
+      - "I keep a little for travellers waiting on the crossing -- rations and a lantern. Have a look."
+  - keywords: ["ferry", "boat", "crossing", "skiff", "water"]
+    responses:
+      - "I pole folk across when the river's high and walk them over the ford when it's not. Like now."
+  - keywords: ["gossip", "news", "rumor", "rumors"]
+    responses:
+      - "I hear the whole road's complaints from the landing. Lately mine's the reeds."
+  - keywords: [""]
+    responses:
+      - "Well? Crossing or not?"
+
+tree:
+  root:
+    text: "I am Tamsin Reed -- I keep the ford crossing here, pole the high water and walk folk over the low. I'd keep it better if my passengers stopped getting struck in the reeds waiting their turn."
+    hints: "You could ask Tamsin about a quest or task, the adder in the reeds, or the crossing."
+
+  nodes:
+    - id: quest_start
+      triggers: ["quest", "task", "adder", "snake", "reeds", "trouble", "help", "work", "problem", "bite", "bitten"]
+      questExcluded: ["62-start", "62-end"]
+      grantsQuest: "62-start"
+      text: "There is a marsh adder lairing in the reeds on the south approach -- a big one, grey as the mud, and it has struck two of my passengers this season already. I cannot pole a skiff and watch the reeds both, and I will not send folk over the ford to be bitten. Go south and put it down for me. Do that and you will not pay to cross here again, and I will see you right besides."
+      hints: "Head south into the reeds before the ford and kill the marsh adder. Come back and tell Tamsin at the ford landing when it is dead."
+      moodChange: friendly
+
+    - id: quest_turnin
+      triggers: ["report", "done", "cleared", "clear", "finished", "quest", "task", "adder", "dead", "killed"]
+      questRequired: ["62-start", "62-adder"]
+      questExcluded: ["62-end"]
+      grantsQuest: "62-end"
+      text: "Dead, is it. I have watched those reeds all morning and nothing moved in them -- first time in a season I have not had to. You have made my crossing a kinder one, traveller, and I do not forget that."
+      hints: "Quest complete. Tamsin now waves you across the ford for free."
+      moodChange: friendly
+
+    - id: quest_active
+      triggers: ["quest", "task", "adder", "snake", "report", "done"]
+      questRequired: ["62-start"]
+      questExcluded: ["62-end"]
+      text: "Still in the reeds, is it? I would know -- I would have heard the quiet. It lairs on the south approach, before the ford. Go south and put it down, then come and tell me."
+      hints: "Kill the marsh adder in the reeds south of the ford, then return and tell Tamsin."
+
+    - id: quest_done
+      triggers: ["quest", "task", "adder", "crossing"]
+      questRequired: ["62-end"]
+      text: "The reeds have stayed quiet since you cleared them, and my passengers cross whole. Your crossing here is free, as I said. Safe roads, traveller."
+
+    - id: ford_talk
+      triggers: ["ford", "crossing", "river", "south", "north"]
+      text: "The ford's a paved causeway under a hand of water, marked by the withy stakes. Keep to the line and it is an easy crossing. Stray off and the bottom drops away -- and the reeds on the south bank hold worse than deep water."
+      hints: "You could ask about a quest or task."
+
+memory:
+  expiryPeriod: ""

@@ -1,0 +1,58 @@
+questid: 62
+name: Adders in the Ford
+description: >-
+  Tamsin Reed's ferry passengers keep getting struck in the reeds on the
+  south approach to the ford. She has asked you to put down the marsh
+  adder that lairs there.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: >-
+      Tamsin Reed asked you to kill the marsh adder that lairs in the
+      reeds on the south approach to the ford -- it keeps striking her
+      ferry passengers.
+    hint: >-
+      Head south into the reeds before the ford and kill the marsh adder.
+      Come back and tell Tamsin at the ford landing when it is dead.
+  - id: adder
+    description: >-
+      The marsh adder that lairs in the reeds is dead. Report back to
+      Tamsin at the ford landing.
+    hint: >-
+      Return north to the ford landing and tell Tamsin the adder is dead.
+      Try ask tamsin report.
+  - id: end
+    description: >-
+      Tamsin can pole her passengers across without watching the reeds
+      for a strike. The ford is the ferryman's again.
+
+rewards:
+  gold: 30
+  itemid: 30028
+  playermessage: >-
+    Tamsin works the pole-callus on her palm with a thumb and looks south
+    toward the reeds, where nothing is moving for once. "That thing put
+    two of my passengers in the mud this season and near cost me a third.
+    It is a kinder crossing without it." She counts out coin and tucks a
+    small stoppered vial in on top. "Antivenom. Keep it -- the reeds breed
+    more than one of those, and the next might find you before you find
+    it."
+  roommessage: >-
+    Tamsin Reed presses coin and a small vial into the traveller's hand,
+    glancing south toward the quiet reeds.
+
+triggers:
+  # ── MARSH ADDER defeated (mob 9195, Greywater Flats) ────────────────
+  - event: mob_death
+    mob: 9195
+    conditions:
+      has: ["62-start"]
+      missing: ["62-adder"]
+    actions:
+      - grant: "62-adder"
+      - send_text: >-
+          The marsh adder coils, strikes once at nothing, and goes limp
+          in the reeds. The south approach is quiet. Carry the word back
+          to Tamsin at the ford landing.
