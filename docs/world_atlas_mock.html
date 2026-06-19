@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DOGMud — World Atlas Mock (zone graph)</title>
+<style>
+  :root{
+    --ink:#2b2117; --parch:#f3e7cf;
+    --built:#3f7d4f; --builtfill:#cfe6cf;
+    --planned:#b07a2a; --plannedfill:#f1e2c4;
+    --proposed:#1f7a7a; --proposedfill:#cfeaea;
+    --newbie:#2f6fb0; --newbiefill:#cfe0f3;
+    --special:#6a4a8c; --specialfill:#e3d7ef;
+    --road:#9a7b4a; --proad:#c2a06a;
+  }
+  html,body{margin:0;background:var(--parch);color:var(--ink);
+    font-family:"Georgia","Times New Roman",serif;}
+  header{padding:14px 22px 4px;}
+  h1{margin:0;font-size:20px;letter-spacing:.5px;}
+  .sub{font-size:13px;opacity:.82;margin:4px 0 0;max-width:1100px;}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;padding:8px 22px 10px;font-size:13px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .sw{width:15px;height:15px;border-radius:50%;display:inline-block;border:2px solid;}
+  .swb{background:var(--builtfill);border-color:var(--built);}
+  .swp{background:var(--plannedfill);border-color:var(--planned);border-style:dashed;}
+  .swc{background:var(--proposedfill);border-color:var(--proposed);border-style:dashed;}
+  .swn{background:var(--newbiefill);border-color:var(--newbie);}
+  .sws{background:var(--specialfill);border-color:var(--special);}
+  .wrap{padding:0 12px 24px;}
+  svg{width:100%;height:auto;background:
+    radial-gradient(circle at 30% 12%, #f7eed7, var(--parch) 70%);
+    border:2px solid #b9a37a;border-radius:6px;}
+  .edge{stroke:var(--road);stroke-width:2;fill:none;}
+  .edge.planned{stroke:var(--proad);stroke-dasharray:5 5;}
+  .edge.proposed{stroke:var(--proposed);stroke-dasharray:5 5;opacity:.85;}
+  .edge.river{stroke:#4a7fa0;stroke-dasharray:7 4;}
+  .ferry{stroke:#2f6fb0;stroke-width:2.5;fill:none;stroke-dasharray:9 5;opacity:.9;}
+  .flabel{font-size:11px;fill:#2f6fb0;font-weight:bold;font-style:italic;}
+  .elabel{font-size:10px;fill:#6a553a;font-style:italic;}
+  .node text{font-size:12px;fill:var(--ink);}
+  .node .rn{font-size:9px;fill:#7a6a52;}
+  .node .tag{font-size:9px;font-style:italic;}
+  .grp{fill:none;stroke:#b9904f;stroke-dasharray:3 4;stroke-width:1.5;opacity:.7;}
+  .grplab{font-size:12px;fill:#8a5a1a;font-weight:bold;letter-spacing:.5px;}
+  .bracket{stroke:#1f7a7a;stroke-width:1.5;fill:none;opacity:.8;}
+  .brlab{font-size:12px;fill:#1f7a7a;font-weight:bold;}
+  .compass{font-size:11px;fill:#6a553a;}
+</style>
+</head>
+<body>
+<header>
+  <h1>The Windward Marches — World Atlas (schematic)</h1>
+  <p class="sub">North is up. Node size ∝ rooms. The <b>Stillwater→New Plymouth corridor is expanded</b>
+  to ~4–5 travel-days with open reaches, a coaching waypoint, and the capital's farm/industry hinterland —
+  reserving room for outdoor expansion. Distances are in-world canon. Schematic positions, not coordinate-accurate.</p>
+</header>
+<div class="legend">
+  <span><i class="sw swb"></i> Built &amp; live</span>
+  <span><i class="sw swn"></i> Newbie start</span>
+  <span><i class="sw swp"></i> Planned (original plan)</span>
+  <span><i class="sw swc"></i> Proposed (new corridor / hinterland)</span>
+  <span><i class="sw sws"></i> Portal / instanced</span>
+  <span style="color:#2f6fb0">⛴ ferry / barge (planned fast travel)</span>
+</div>
+<div class="wrap">
+<svg id="map" viewBox="0 0 1240 1360" preserveAspectRatio="xMidYMid meet" aria-label="zone graph"></svg>
+</div>
+
+<script>
+// status: built | newbie | planned | proposed | special ; t = role tag
+const Z = {
+  // ===== NEW PLYMOUTH cluster (planned; scoped to grow considerably bigger) =====
+  npDocks:   {n:"Docks",          x:255, y:92,  s:"planned", r:30, p:7,  np:1},
+  npCraft:   {n:"Crafting Q.",    x:345, y:70,  s:"planned", r:25, p:8,  np:1},
+  npMerch:   {n:"Merchant Q.",    x:435, y:84,  s:"planned", r:25, p:9,  np:1},
+  npTemple:  {n:"Temple Dist.",   x:300, y:135, s:"planned", r:25, p:10, np:1},
+  npNoble:   {n:"Noble Q.",       x:420, y:148, s:"planned", r:20, p:11, np:1},
+  npCommon:  {n:"Common Q.",      x:350, y:188, s:"planned", r:25, p:12, np:1},
+  npSewers:  {n:"Sewers",         x:258, y:150, s:"planned", r:20, p:13, np:1},
+  // ===== Stillwater -> NP corridor (top = north) =====
+  npout:     {n:"NP Outskirts",   x:350, y:290, s:"planned",  r:20, p:6, t:"urban fringe · east gate · ford"},
+  kilnreach: {n:"Kilnreach Works",x:350, y:380, s:"proposed", r:25,      t:"⚒ industry · expandable"},
+  kingsbarrow:{n:"Kingsbarrow Vale",x:350,y:470, s:"proposed", r:25,      t:"🌾 granary belt · expandable"},
+  greywater: {n:"Greywater Flats",x:350, y:560, s:"proposed", r:12,      t:"open river country · expandable"},
+  hartcharn: {n:"Hartcharn",      x:350, y:650, s:"proposed", r:20,      t:"coaching waypoint · overnight"},
+  emptyreach:{n:"The Empty Reach",x:350, y:740, s:"proposed", r:12,      t:"open scrub/basalt · expandable"},
+  nrnorth:   {n:"North Road North",x:350,y:830, s:"planned",  r:18, p:5, t:"day 1 out of Stillwater"},
+  // ===== built spine =====
+  stillwater:{n:"Stillwater",     x:350, y:920, s:"built",   r:49},
+  marsh:     {n:"Stillwater Marsh",x:458,y:955, s:"built",   r:21},
+  northroad: {n:"North Road (South)",x:350,y:1010,s:"built", r:24},
+  fernway:   {n:"The Fernway",    x:350, y:1085,s:"built",   r:10},
+  fernwayS:  {n:"The Fernway South",x:262,y:1120,s:"built",  r:21},
+  ashwick:   {n:"Ashwick",        x:458, y:1118,s:"built",   r:20},
+  marches:   {n:"Marches Spur Road",x:355,y:1165,s:"built",  r:18, lab:"Ashwick Crossroads"},
+  watchers:  {n:"Watchers Crossing",x:280,y:1208,s:"built",  r:8},
+  thornwallO:{n:"Thornwall Outskirts",x:205,y:1245,s:"built",r:8},
+  thornwallC:{n:"Thornwall City", x:128, y:1280,s:"built",   r:57},
+  dustwalk:  {n:"Dustwalk Road",  x:350, y:1245,s:"built",   r:10},
+  worldroad: {n:"World Road",     x:312, y:1295,s:"built",   r:1},
+  labyrinth: {n:"Labyrinth",      x:392, y:1300,s:"built",   r:20},
+  ironwind:  {n:"Ironwind Steppe",x:215, y:1318,s:"built",   r:123},
+  pothole:   {n:"Pothole Coulee", x:128, y:1330,s:"newbie",  r:169},
+  // ===== southern branch (planned) =====
+  southroad: {n:"South Road",     x:540, y:1175,s:"planned", r:15, p:14},
+  amber:     {n:"Amber Valley",   x:640, y:1220,s:"planned", r:35, p:15},
+  riverroad: {n:"River Road",     x:740, y:1265,s:"planned", r:15, p:16},
+  confluence:{n:"The Confluence", x:850, y:1300,s:"planned", r:70, p:17},
+  eastroad:  {n:"East Road",      x:965, y:1288,s:"planned", r:15, p:18},
+  greenford: {n:"Greenford",      x:1070,y:1268,s:"planned", r:45, p:19},
+  // ===== eastern endgame (planned) =====
+  cascade:   {n:"Cascade Pass Rd",x:575, y:120, s:"planned", r:20, p:20},
+  highlands: {n:"Eastern Highlands",x:720,y:142, s:"planned", r:30, p:21},
+  crash:     {n:"Crash Site",     x:865, y:168, s:"planned", r:20, p:22},
+  // ===== portal / instanced =====
+  darkforest:{n:"A Dark Forest",  x:1035,y:430, s:"special", r:81},
+  trashheap: {n:"Endless Trashheap",x:1140,y:470,s:"special",r:21},
+  shadow:    {n:"Shadow Realm",   x:1035,y:520, s:"special", r:1},
+  arena:     {n:"Inst: Arena",    x:1140,y:540, s:"special", r:5},
+  oasis:     {n:"Inst: Oasis",    x:1035,y:580, s:"special", r:3},
+  jail:      {n:"Inst: Jail",     x:1140,y:600, s:"special", r:1},
+  testarena: {n:"Test Arena",     x:1035,y:640, s:"special", r:5},
+};
+const E = [
+  // ---- corridor: Stillwater -> NP (proposed/planned) ----
+  ["stillwater","nrnorth","planned"],
+  ["nrnorth","emptyreach","proposed"],
+  ["emptyreach","hartcharn","proposed"],
+  ["hartcharn","greywater","proposed"],
+  ["greywater","kingsbarrow","proposed"],
+  ["kingsbarrow","kilnreach","proposed"],
+  ["kilnreach","npout","proposed"],
+  ["npout","npCommon","planned"],
+  // NP internal
+  ["npCommon","npDocks","planned"],["npCommon","npCraft","planned"],
+  ["npCommon","npMerch","planned"],["npCommon","npTemple","planned"],
+  ["npCommon","npNoble","planned"],["npCommon","npSewers","planned"],
+  // built spine
+  ["stillwater","marsh","road"],
+  ["stillwater","northroad","road","Stillwater: 4 days from crossroads"],
+  ["northroad","fernway","road"],
+  ["fernway","fernwayS","road"],
+  ["fernway","marches","road"],
+  ["marches","ashwick","road"],
+  ["marches","watchers","road","1 day"],
+  ["watchers","thornwallO","road"],
+  ["thornwallO","thornwallC","road"],
+  ["watchers","dustwalk","road"],
+  ["dustwalk","worldroad","road"],
+  ["worldroad","labyrinth","road"],
+  ["thornwallC","ironwind","road","hike-out"],
+  ["ironwind","pothole","road"],
+  // southern branch
+  ["marches","southroad","planned","Amber V.: 5 days"],
+  ["southroad","amber","planned"],
+  ["amber","riverroad","planned"],
+  ["riverroad","confluence","planned"],
+  ["confluence","eastroad","planned"],
+  ["eastroad","greenford","planned"],
+  // eastern endgame
+  ["npMerch","cascade","planned"],
+  ["cascade","highlands","planned"],
+  ["highlands","crash","planned"],
+];
+// ferry/barge water routes: [a, b, ctrlX, ctrlY, label] — curved to skirt edges
+const FERRY = [
+  ["stillwater","npDocks", 95, 480, "⛴ Stillwater → New Plymouth (lake packet)"],
+  ["stillwater","confluence", 560,1230, "⛴ Stillwater → the Confluence (downriver)"],
+  ["confluence","npDocks", 1205,640, "⛴ Confluence → NP (river barge · canon)"],
+];
+const COL = {
+  built:{s:"var(--built)",f:"var(--builtfill)"},
+  newbie:{s:"var(--newbie)",f:"var(--newbiefill)"},
+  planned:{s:"var(--planned)",f:"var(--plannedfill)"},
+  proposed:{s:"var(--proposed)",f:"var(--proposedfill)"},
+  special:{s:"var(--special)",f:"var(--specialfill)"},
+};
+const rad = r => Math.max(9, Math.min(34, 8 + Math.sqrt(r)*1.7));
+const svg=document.getElementById("map"), NS="http://www.w3.org/2000/svg";
+const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
+
+// NP group box + label
+svg.appendChild(el("rect",{x:215,y:40,width:270,height:178,rx:10,class:"grp"}));
+let t=el("text",{x:350,y:34,"text-anchor":"middle",class:"grplab"});t.textContent="NEW PLYMOUTH (#7–13 · grows to 300+ )";svg.appendChild(t);
+// special box
+svg.appendChild(el("rect",{x:1000,y:400,width:215,height:265,rx:10,class:"grp"}));
+t=el("text",{x:1107,y:394,"text-anchor":"middle",class:"grplab"});t.textContent="PORTAL / INSTANCED";svg.appendChild(t);
+
+// distance bracket for the expanded corridor (Stillwater -> NP Outskirts)
+svg.appendChild(el("path",{d:"M470,915 q22,0 22,-22 L492,312 q0,-22 -22,-22",class:"bracket"}));
+t=el("text",{x:500,y:600,class:"brlab","transform":"rotate(0)"});t.textContent="~4–5 days";svg.appendChild(t);
+t=el("text",{x:500,y:618,class:"brlab"});t.textContent="(8 legs,";svg.appendChild(t);
+t=el("text",{x:500,y:636,class:"brlab"});t.textContent="~160+ rm)";svg.appendChild(t);
+
+// compass
+const cg=el("g",{});svg.appendChild(cg);
+cg.appendChild(el("line",{x1:55,y1:90,x2:55,y2:40,stroke:"#6a553a","stroke-width":2}));
+cg.appendChild(el("polygon",{points:"55,32 50,46 60,46",fill:"#6a553a"}));
+t=el("text",{x:55,y:106,"text-anchor":"middle",class:"compass"});t.textContent="N";cg.appendChild(t);
+
+// edges
+for(const [a,b,type,label] of E){
+  const A=Z[a],B=Z[b]; if(!A||!B) continue;
+  const cls=type==="road"?"edge":type==="river"?"edge river":type==="proposed"?"edge proposed":"edge planned";
+  svg.appendChild(el("line",{x1:A.x,y1:A.y,x2:B.x,y2:B.y,class:cls}));
+  if(label){const mx=(A.x+B.x)/2,my=(A.y+B.y)/2;
+    const e=el("text",{x:mx+7,y:my-3,class:"elabel"});e.textContent=label;svg.appendChild(e);}
+}
+// ferry/barge curved water routes (drawn under nodes, over edges)
+for(const [a,b,cx,cy,label] of FERRY){
+  const A=Z[a],B=Z[b]; if(!A||!B) continue;
+  svg.appendChild(el("path",{d:`M${A.x},${A.y} Q${cx},${cy} ${B.x},${B.y}`,class:"ferry"}));
+  // label near the control-side midpoint of the curve
+  const mx=0.25*A.x+0.5*cx+0.25*B.x, my=0.25*A.y+0.5*cy+0.25*B.y;
+  const e=el("text",{x:mx,y:my,"text-anchor":"middle",class:"flabel"});e.textContent=label;svg.appendChild(e);
+}
+// nodes
+for(const id in Z){
+  const z=Z[id], c=COL[z.s], R=rad(z.r);
+  const g=el("g",{class:"node"});
+  const circ=el("circle",{cx:z.x,cy:z.y,r:R,fill:c.f,stroke:c.s,"stroke-width":2.4});
+  if(z.s==="planned"||z.s==="proposed") circ.setAttribute("stroke-dasharray","4 3");
+  const ti=el("title",{});
+  ti.textContent=z.n+" — "+z.r+" rooms ("+(z.s==="proposed"?"proposed new":z.s==="planned"?"planned #"+(z.p||""):z.s)+")"+(z.t?" · "+z.t:"");
+  g.appendChild(circ);g.appendChild(ti);
+  if((z.s==="planned"||z.s==="proposed")&&z.p){
+    const bd=el("text",{x:z.x,y:z.y+4,"text-anchor":"middle","font-size":"11","font-weight":"bold",fill:c.s});bd.textContent="#"+z.p;g.appendChild(bd);}
+  const below=z.y>250 || z.np;
+  const lab=el("text",{x:z.x,y:below?z.y+R+13:z.y-R-6,"text-anchor":"middle"});lab.textContent=z.n;g.appendChild(lab);
+  if(!z.np){
+    const rn=el("text",{x:z.x,y:below?z.y+R+25:z.y-R-18,"text-anchor":"middle",class:"rn"});
+    rn.textContent=z.r+" rm"+(z.lab?" · "+z.lab:"");g.appendChild(rn);
+    if(z.t){const tg=el("text",{x:z.x,y:below?z.y+R+36:z.y-R-30,"text-anchor":"middle",class:"tag",fill:c.s});tg.textContent=z.t;g.appendChild(tg);}
+  }
+  svg.appendChild(g);
+}
+</script>
+</body>
+</html>

@@ -403,25 +403,65 @@ different lore.
 
 ---
 
-### PHASE 3 — Approaching New Plymouth
+### PHASE 3 — The Long Road to New Plymouth (Expanded Corridor)
 
-#### Zone 3.1: North Road — Northern Stretch
-*The road thickens with traffic. You can smell the city before you see it.*
+> **2026-06-19 redesign.** The original plan hopped Stillwater → New Plymouth
+> in two zones (~35 rooms). Canon makes that far too short: the Ashwick
+> signpost reads *"Stillwater 4 days, New Plymouth 7 days"* and the novel puts
+> Stillwater↔NP at *"four or five days"* (ln 1462), with long empty stretches
+> (*"no farms, no smoke, no one on the road"* ln 460) before the capital's
+> support belt. So the corridor is now **8 legs / ~145 rooms** of road, open
+> reach, a waypoint town, and the capital's farm/industry hinterland — with
+> open zones deliberately left sparse and **expandable** for future outdoor
+> content. Stillwater is also a **ferry hub** (see "Water Routes & Ferries"):
+> players can pay for a boat to skip the overland slog. Visual reference:
+> `docs/world_atlas_mock.html`. Priority-table ids: 5, 5.1–5.5, 6.
 
-- **Biome:** Settled farmland, suburban sprawl, increasing density
-- **Size:** 15 rooms (2 mini-stages)
-- **Connects:** Stillwater (south) ↔ New Plymouth Outskirts (north)
-- **Theme:** Transition from country to city. The road becomes a highway.
-  More people, more noise, more commerce, more danger.
+#### Zone 5 — North Road North
+*Day 1 out of the lake country. The road widens; the wilds thin behind you.*
+- **Biome:** farmland → scrub. **Size:** 18 rooms (2 mini-stages).
+- **Connects:** Stillwater north gate (~4111) ↔ The Empty Reach.
+- Heavy wagon traffic, a toll station (pay/argue/bypass), seedy roadside inns,
+  a bloodline checkpoint (bluff/credentials/ford-bypass). Mileposts begin the
+  count toward the capital.
 
-| Stage | Rooms | Content |
-|-------|-------|---------|
-| 3.1a | 10 | The highway north. Heavy wagon traffic. A toll station (NPC toll collector — can be paid, argued with, or bypassed via a side path). Roadside inns getting larger and seedier. A bloodline checkpoint (guards asking questions — can be bluffed past, credentials shown, or avoided via the ford crossing Vane mentions). |
-| 3.1b | 5 | The outskirts begin. Farms give way to workshops and warehouses. The first glimpse of New Plymouth's walls/roofline. A traveler's waystation with a notice board (quest hooks for the city). The ford crossing path diverges here (Vane's alternate entry route). |
+#### Zone 5.1 — The Empty Reach  *(NEW · open · expandable)*
+*Dry open scrub and bare basalt; sage, bunchgrass, and a wind that smells of
+dust and cold stone. No farms. No smoke.*
+- **Biome:** dry scrub/steppe. **Size:** 12 rooms (sparse by design; reserved
+  outdoor-expansion slot). A lone waypoint shrine (novel ln 125). Ambient
+  predators/scavengers; the loneliness is the content.
+
+#### Zone 5.2 — Hartcharn  *(NEW · waypoint town)*
+*A coaching town: the overnight stop on the long road north.*
+- **Biome:** roadside settlement. **Size:** 20 rooms (2 mini-stages).
+- Hostels (novel — travelers bound for Bloomings, merchants, drovers), stables,
+  a smithy, a market, a ferry-agent's office (Stillwater↔NP packet sells here).
+
+#### Zone 5.3 — Greywater Flats  *(NEW · open · expandable)*
+*Open river country — wide water-meadows, a ford or bridge, big sky.*
+- **Biome:** river flats/wetland edge. **Size:** 12 rooms (expandable). A river
+  crossing; fishing; the first hint of the capital's reach (toll markers, a
+  bloodline survey post).
+
+#### Zone 5.4 — Kingsbarrow Vale  *(NEW · the granary belt · expandable)*
+*The capital's breadbasket. Farms to the horizon — this is what feeds 100,000
+mouths.*
+- **Biome:** intensive farmland. **Size:** 25 rooms (3 mini-stages, expandable).
+- Farm estates, granaries, watermills, drovers' roads, a tithe-barn, hired
+  field hands. Where the abstract "capital" becomes a visible economy.
+
+#### Zone 5.5 — Kilnreach Works  *(NEW · the industry belt · expandable)*
+*Smoke and noise: the works that build and supply the city.*
+- **Biome:** industrial/extractive. **Size:** 25 rooms (3 mini-stages, expandable).
+- Quarries, timber yards, tanneries, foundries, brick-kilns, lime-burners,
+  charcoal camps. Resource nodes + crafting-material sources; rougher NPCs,
+  guild crews, the bloodline's licensing reach. The city is close now —
+  you can smell it (novel ln 1236).
 
 ---
 
-#### Zone 3.2: New Plymouth Outskirts
+#### Zone 6 — New Plymouth Outskirts
 *Where the city bleeds into the countryside. Not yet the city, no longer
 the road.*
 
@@ -1019,8 +1059,13 @@ column so the next zone-builder knows what's free.
 | 3 | North Road — Southern | 20 | 2 | ✅ Built | rooms 4038–4062 (25 used incl. inn interior) |
 | 4 | Stillwater | 47 | 3 | ✅ Built | **Live & populated as of 2026-06-19** (25 spawn rooms, 6 shop files, connected via north_road 4062→4100). roomid range 4100–4146; 7-station crafting hub (forge, alchemy_bench ×2, loom, cooking_fire ×2, jeweler_bench, enchanting_circle); designed as showcase for NPC AI features (daily routines, forager-driven shop restock, Stillwater↔Thornwall caravan, Stillwater↔Ironwind material trade); **2026-04-25: ALL stillwater rooms shifted west by 7 to resolve 4 coord collisions with Dustwalk Road and Labyrinth (mapper now renders correctly)**; Temple of Stillwater (4123) needs sethome already wired (sethome stillwater); NPCs and mob spawns not yet placed |
 | 3.5 | The Fernway (interlude zone) | 10 | 1 | ✅ Built | roomid range 4147–4156; inserted east-west between Ashwick Crossroads (4014) and North Road Road Fork (4038) to push Stillwater + north_road westward away from Dustwalk Road / Labyrinth coord overlap. Outdoorsy bracken-and-fern wilderness with foragable plants (wild thyme, watercress, wood sorrel, foxglove, wild garlic, marsh chamomile, alder cones, elderberry, marsh willow). 7-room east-west spine + 3 side rooms (Old Weddell Farmstead, Heron Pond, Fox Den). No mobs/quests yet — pure flavor + foraging connector. |
-| 5 | North Road — Northern | 15 | 2 | ⬜ Not started | |
-| 6 | NP Outskirts | 20 | 2 | ⬜ Not started | |
+| 5 | North Road — Northern | 18 | 2 | ⬜ Not started | Day 1 out of Stillwater; attaches at Stillwater north gate ~4111. |
+| 5.1 | The Empty Reach | 12 | 1+ | ⬜ Not started | NEW. Open dry scrub/basalt (novel ln 460 "no farms, no smoke"); deliberately sparse, **expandable** outdoor slot. Waypoint shrine. |
+| 5.2 | Hartcharn | 20 | 2 | ⬜ Not started | NEW. Coaching waypoint town — the overnight; hostels (novel), stables, services. |
+| 5.3 | Greywater Flats | 12 | 1+ | ⬜ Not started | NEW. Open river country; **expandable** outdoor slot. River crossing. |
+| 5.4 | Kingsbarrow Vale | 25 | 3 | ⬜ Not started | NEW. The capital's granary belt — farm estates, mills, granaries, drovers' roads; **expandable** ("feeds the city"). |
+| 5.5 | Kilnreach Works | 25 | 3 | ⬜ Not started | NEW. The capital's industry belt — quarries, timber yards, tanneries, foundries, kilns/brickworks; **expandable** ("supplies the city"). |
+| 6 | NP Outskirts | 25 | 2 | ⬜ Not started | Urban fringe, east gate, the ford/river-road bypass (novel ln 1940/2166). |
 | 7 | NP Docks District | 30 | 3 | ⬜ Not started | |
 | 8 | NP Crafting Quarter | 25 | 3 | ⬜ Not started | |
 | 9 | NP Merchant Quarter | 25 | 3 | ⬜ Not started | |
@@ -1037,13 +1082,40 @@ column so the next zone-builder knows what's free.
 | 20 | Cascade Pass Road | 20 | 2 | ⬜ Not started | |
 | 21 | Eastern Highlands | 30 | 3 | ⬜ Not started | |
 | 22 | Crash Site Interior | 20 | 2 | ⬜ Not started | |
-| **TOTAL** | **23 zones** | **~627 rooms** | **62 mini-stages** | **5 / 23 built** | On-plan main road: Marches Spur, Ashwick, North Road South, Fernway, **Stillwater all built & live**. PLUS large off-plan built footprint not counted here (Pothole Coulee newbie 169rm, Ironwind 123rm, A Dark Forest 81rm, Thornwall city/outskirts, Watchers Crossing, Dustwalk, Labyrinth, Stillwater Marsh, Fernway South). **Next on-plan: #5 North Road — Northern** (attaches at Stillwater's north gate ~4111). See the reconciliation banner at the top. |
+| **TOTAL** | **28 zones** | **~720 rooms** | **~70 mini-stages** | **5 / 28 built** | 2026-06-19: Stillwater→NP corridor **expanded** (the 5.1–5.5 zones, +~94 rooms) so the capital is ~4–5 travel-days north with open reaches reserved for outdoor expansion and a farm/industry hinterland — see the World Atlas (`docs/world_atlas_mock.html`) and the "Water Routes & Ferries" section. New Plymouth itself is scoped to grow well beyond its initial 170 (→300+ via stubs, and likely larger). PLUS large off-plan built footprint not counted here (Pothole Coulee newbie 169rm, Ironwind 123rm, A Dark Forest 81rm, Thornwall, Watchers Crossing, Dustwalk, Labyrinth, Stillwater Marsh, Fernway South). **Next on-plan: #5 North Road — Northern** (attaches at Stillwater's north gate ~4111). |
 
 *New Plymouth's 170 initial rooms include 21 expansion stubs (3 per
 district) that are visible but inaccessible. When all stubs are built
 out in future phases, NP grows to 300+ rooms. The stub count is not
 included in the room totals above — they are described elements of
 existing rooms, not separate rooms.*
+
+---
+
+## Water Routes & Ferries
+
+*Planned fast-travel network (added 2026-06-19). Routes are reserved here so
+the geography supports them; the actual ferry vessels + travel mechanic are a
+later build. Ferries are intended to be **paid and faster than walking** — the
+long overland corridors stay relevant for low-coin players, exploration, and
+leveling; boats are the premium shortcut.*
+
+| Route | Type | Connects | Notes |
+|-------|------|----------|-------|
+| Stillwater → New Plymouth | lake-and-river packet | Stillwater ↔ NP Docks | The headline shortcut — skips the ~4–5 day overland corridor (zones 5–5.5). Stillwater is a lake town with working docks; the packet runs the water route to the coastal capital. |
+| Stillwater → The Confluence | downriver barge | Stillwater ↔ The Confluence | Ties the northern hub into the southern river-city network. |
+| The Confluence → New Plymouth | river barge | Confluence ↔ NP Docks | **Novel canon** — Davan rides this barge north (ln 1116, 1236). |
+
+This makes **Stillwater a ferry hub** and forms a water triangle
+(Stillwater ⇄ Confluence ⇄ New Plymouth, plus Stillwater ⇄ NP direct). New
+Plymouth is coastal, so its docks are also the seed for **future coastal
+ferries** (e.g., to Tidemark and other seaboard cities) when those zones exist
+— leave a described dock/harbormaster stub in the NP Docks build.
+
+Design seams for the future ferry mechanic: fares (gold sink), schedules or
+on-demand departure, a short in-transit scene, and gating (a route may require
+discovering the dock or an NPC contact first). Boats should never be *strictly*
+better than walking for a first-timer who hasn't earned the fare.
 
 ---
 
