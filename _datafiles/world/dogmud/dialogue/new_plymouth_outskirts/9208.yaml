@@ -1,0 +1,42 @@
+mobid: 9208
+zone: New Plymouth Outskirts
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "State your business at the gate. The capital does not admit idlers."
+      - "East Gate watch. Keep moving unless you have cause to stop."
+  - keywords: ["quest", "task", "work", "job"]
+    responses:
+      - "If you carry a sealed packet for the gate, ask me about it."
+  - keywords: ["gate", "city", "enter", "plymouth", "capital", "wall", "walls"]
+    responses:
+      - "Beyond this gate is New Plymouth proper. You'll need better cause than curiosity to pass, but the outskirts are open to you."
+  - keywords: ["gossip", "news", "rumor", "rumors"]
+    responses:
+      - "The watch does not gossip with the road. Move along."
+  - keywords: [""]
+    responses:
+      - "Well?"
+
+tree:
+  root:
+    text: "I am the watch on the East Gate. The capital's road ends at my post, and so does the post relay -- if you carry a sealed packet for the gate, I am the hand it was meant for."
+    hints: "You could ask the guard about a quest or task, the gate, or the city."
+
+  nodes:
+    - id: quest_active
+      triggers: ["quest", "task", "packet", "deliver", "dispatch", "gate", "relay", "post"]
+      questRequired: ["60-manifest"]
+      questExcluded: ["60-end"]
+      text: "A sealed packet from the post relay? Hand it here. I check its seal against the gate ledger and log it in -- that is the end of its road, and yours. Give it over."
+      hints: "Give the sealed capital packet to the East Gate guard."
+
+    - id: quest_done
+      triggers: ["quest", "task", "packet", "post", "token"]
+      questRequired: ["60-end"]
+      text: "You are the one who ran the dispatch the whole road, toll to gate. The capital remembers that. Show your token at any post-house and they will know you."
+
+memory:
+  expiryPeriod: ""

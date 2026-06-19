@@ -1,0 +1,57 @@
+mobid: 9198
+zone: Kingsbarrow Vale
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Tithe-clerk's post. State your business and let me keep my count."
+      - "Verrold. If it is grain you are weighing in, the scales are there."
+  - keywords: ["quest", "task", "work", "job"]
+    responses:
+      - "If you carry a manifest for the relay, ask me about it."
+  - keywords: ["tithe", "ledger", "grain", "granary", "tax"]
+    responses:
+      - "Every sack that leaves this vale for the capital passes my count first. The capital is fed on what I write down."
+  - keywords: ["gossip", "news", "rumor", "rumors"]
+    responses:
+      - "I keep the tithe ledger for the capital. Numbers, not news."
+  - keywords: [""]
+    responses:
+      - "Yes? Be brief."
+
+tree:
+  root:
+    text: "I am Verrold -- tithe-clerk for the vale, and a stage on the capital's post relay when the dispatch comes through. If you carry a manifest, its second leg ends with me."
+    hints: "You could ask Verrold about a quest or task, the tithe, or the granary."
+
+  nodes:
+    - id: quest_active
+      triggers: ["quest", "task", "manifest", "ledger", "tithe", "deliver", "stamp", "relay", "post"]
+      questRequired: ["60-waybill"]
+      questExcluded: ["60-manifest", "60-end"]
+      text: "Pell's manifest, from Hartcharn -- give it here. I enter it in the tithe ledger and seal it into a capital packet, and then there is but one leg left. Hand it over and I will set my stamp to it."
+      hints: "Give the counter-signed manifest to Tithe-Clerk Verrold."
+
+    - id: quest_sent
+      triggers: ["quest", "task", "packet", "manifest", "gate", "next"]
+      questRequired: ["60-manifest"]
+      questExcluded: ["60-end"]
+      text: "Sealed, stamped, and entered. The packet is yours to carry the last leg -- to the East Gate guard at New Plymouth. North to the works at Kilnreach, then the outskirts, then the walls. You are nearly there."
+      hints: "Give the sealed capital packet to the East Gate guard at New Plymouth."
+
+    - id: lost_report
+      triggers: ["lost", "dropped", "missing", "replace", "packet", "again"]
+      questRequired: ["60-manifest"]
+      questExcluded: ["60-end"]
+      givesItem: 40073
+      text: "Lost the packet? The ledger entry stands -- I can seal another against it. A moment. There. The East Gate guard, New Plymouth. Lose this one and I cannot help you further."
+      hints: "You have a fresh sealed packet. Give it to the East Gate guard at New Plymouth."
+
+    - id: quest_done
+      triggers: ["quest", "task", "packet", "post"]
+      questRequired: ["60-end"]
+      text: "The packet cleared the gate, then. The ledger is square. The capital is well served by a steady courier."
+
+memory:
+  expiryPeriod: ""

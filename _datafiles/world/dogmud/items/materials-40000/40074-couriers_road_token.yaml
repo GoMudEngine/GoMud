@@ -1,0 +1,14 @@
+itemid: 40074
+name: Courier's Road-Token
+namesimple: token
+not_salable: true
+description: A small brass disc, worn smooth at the edges, stamped on one
+  face with the tower-above-three-waves of New Plymouth and on the other
+  with a running figure. It is the mark the capital gives those who have
+  carried its word the length of the road -- shown at a post-house it is
+  good for a bed and a meal, and a measure of trust that travels ahead of
+  you.
+type: object
+subtype: mundane
+weight: 0.1
+value: 0

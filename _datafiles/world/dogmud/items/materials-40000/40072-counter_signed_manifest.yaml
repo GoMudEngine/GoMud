@@ -1,0 +1,14 @@
+itemid: 40072
+name: Counter-Signed Manifest
+namesimple: manifest
+not_salable: true
+description: A single broad sheet, the toll-house dispatch now folded inside
+  it and the whole bound with waxed thread. Severin Pell's ferry mark is
+  pressed beside the old grey seal, and a fresh line of writing names the
+  next stage of its road -- TO TITHE-CLERK VERROLD, KINGSBARROW VALE, FOR
+  THE LEDGER. The capital's business, moving north one honest hand at a
+  time.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.2

@@ -1,6 +1,6 @@
 mobid: 9170
 zone: North Road North
-behavior_archetype: noncombat_passive
+behavior_archetype: noncombat_questgiver
 non_combatant: true
 statpool: 32
 hostile: false

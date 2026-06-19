@@ -1,0 +1,15 @@
+itemid: 40071
+name: Sealed Road-Dispatch
+namesimple: dispatch
+not_salable: true
+description: A flat packet of stiff paper, folded thrice and closed with a
+  smear of grey wax stamped by a toll-house seal. The outer fold is
+  addressed in a clerk's blocky hand -- FOR THE CAPITAL, BY THE POST RELAY
+  -- and beneath it, smaller, the first stage of its road -- DELIVER TO
+  SEVERIN PELL, FERRY AGENT, HARTCHARN. It is light, but it carries the
+  weight of something official, and you find yourself unwilling to bend it
+  any further.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.2

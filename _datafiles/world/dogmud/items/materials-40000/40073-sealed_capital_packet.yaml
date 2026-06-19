@@ -1,0 +1,13 @@
+itemid: 40073
+name: Sealed Capital Packet
+namesimple: packet
+not_salable: true
+description: The dispatch and manifest together now, sewn into an oilcloth
+  sleeve and closed with three drops of red wax, each stamped with the
+  tower-above-three-waves seal of New Plymouth. A tithe-clerk's ledger
+  number is inked along the spine. The last fold is addressed plainly --
+  TO THE EAST GATE GUARD, NEW PLYMOUTH. One leg of road remains.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.3

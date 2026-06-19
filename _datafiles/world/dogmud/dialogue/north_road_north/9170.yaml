@@ -1,0 +1,64 @@
+mobid: 9170
+zone: North Road North
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "morning"]
+    responses:
+      - "Mind the toll-line, traveller. State your road and pass on."
+      - "North to the capital, is it? Long way yet."
+  - keywords: ["quest", "task", "work", "job"]
+    responses:
+      - "Short a courier this week, as it happens. Ask me about the dispatch."
+  - keywords: ["toll", "fee", "pay"]
+    responses:
+      - "The toll's paid to the road, not to me. I only count who passes."
+  - keywords: ["gossip", "news", "rumor", "rumors"]
+    responses:
+      - "I keep a ledger, not an ear. Though the post is always behind."
+  - keywords: [""]
+    responses:
+      - "Something you need, traveller?"
+
+tree:
+  root:
+    text: "I am Garrick -- toller on the north line, and short a courier this week, which is my trouble and may be your fortune. I have a dispatch that should be in the capital and no honest hand to carry it."
+    hints: "You could ask Garrick about a quest or task, the toll, or the road north."
+
+  nodes:
+    - id: quest_start
+      triggers: ["quest", "task", "dispatch", "delivery", "deliver", "courier", "work", "help", "trouble"]
+      questExcluded: ["60-start", "60-end"]
+      grantsQuest: "60-start"
+      givesItem: 40071
+      text: "Here -- a sealed dispatch for New Plymouth, and the post relay too short-handed to move it. Carry it north for me. First stage is Severin Pell, the ferry agent at Hartcharn -- he counter-signs it and makes out the manifest for the next leg. Hand it to him and the road will carry it the rest of the way, you with it. The capital pays its couriers well."
+      hints: "Take the sealed dispatch north up the road to Hartcharn and give it to Severin Pell, the ferry agent."
+      moodChange: friendly
+
+    - id: quest_active
+      triggers: ["quest", "task", "dispatch", "delivery", "courier"]
+      questRequired: ["60-start"]
+      questExcluded: ["60-end"]
+      text: "Still carrying my dispatch? Good. Severin Pell at Hartcharn is your first stop -- the ferry agent. He will counter-sign it and send you on. North up the road; you cannot miss the town."
+      hints: "Give the sealed dispatch to Severin Pell, the ferry agent at Hartcharn, north up the road."
+
+    - id: lost_report
+      triggers: ["lost", "dropped", "missing", "replace", "again", "another"]
+      questRequired: ["60-start"]
+      questExcluded: ["60-waybill", "60-end"]
+      givesItem: 40071
+      text: "Lost the dispatch already? The road's no place for a careless courier. Here -- I keep a sealed copy against exactly this. Do not lose this one. Severin Pell, ferry agent, Hartcharn."
+      hints: "You have a fresh sealed dispatch. Give it to Severin Pell at Hartcharn."
+
+    - id: quest_done
+      triggers: ["quest", "task", "dispatch", "courier"]
+      questRequired: ["60-end"]
+      text: "So it reached the capital. Word came back down the line -- the gate guard logged it in. You carry well, traveller. The post relay could use you again."
+
+    - id: road_talk
+      triggers: ["road", "north", "travel", "capital", "plymouth"]
+      text: "Five days' hard walking north, maybe more if the ford at Greywater runs high. Hartcharn first, then the granary country at Kingsbarrow, then the works at Kilnreach, and at the end of it all the walls of New Plymouth. A long road. The longest in the Marches."
+      hints: "You could ask about a quest or task."
+
+memory:
+  expiryPeriod: ""

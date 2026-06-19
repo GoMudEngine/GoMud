@@ -1,6 +1,6 @@
 mobid: 9198
 zone: Kingsbarrow Vale
-behavior_archetype: noncombat_passive
+behavior_archetype: noncombat_questgiver
 non_combatant: true
 charm_immune: true
 hostile: false

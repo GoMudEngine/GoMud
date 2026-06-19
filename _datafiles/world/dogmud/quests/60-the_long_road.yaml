@@ -1,0 +1,92 @@
+questid: 60
+name: The Long Road
+description: A sealed dispatch must travel the length of the road from the
+  northern toll to the gates of New Plymouth, passed hand to hand up the
+  official post relay -- ferry agent to tithe-clerk to gate.
+secret: false
+
+steps:
+  - id: start
+    description: "Toller Garrick has entrusted you with a sealed dispatch
+      bound for New Plymouth. Carry it north to Severin Pell, the ferry
+      agent at Hartcharn, who handles the first stage of the post relay."
+    hint: "Take the sealed dispatch north up the road to Hartcharn and give
+      it to Severin Pell, the ferry agent."
+  - id: waybill
+    description: "Severin Pell counter-signed the dispatch and made out a
+      manifest. Carry it onward to Tithe-Clerk Verrold at Kingsbarrow Vale,
+      who must enter it in the capital's ledger."
+    hint: "Continue north to Kingsbarrow Vale and give the manifest to
+      Tithe-Clerk Verrold."
+  - id: manifest
+    description: "Verrold entered the manifest in the tithe ledger and sealed
+      it into a capital packet. Deliver it to the East Gate guard at New
+      Plymouth -- the last leg of the road."
+    hint: "Carry the sealed packet north to the East Gate of New Plymouth and
+      give it to the gate guard."
+  - id: end
+    description: "You delivered the dispatch the length of the road, from the
+      northern toll to the gates of the capital."
+
+rewards:
+  playermessage: "The guard breaks the seal, scans the packet, and gives a
+    short nod. 'Came the whole road, did it. And you with it.' He presses a
+    stamped brass token into your hand. 'Couriers' token. The post-houses
+    from here to the toll will know it -- a bed and a meal on the road, and
+    a name that travels ahead of you. The capital remembers who carries its
+    word.'"
+  roommessage: "The East Gate guard takes the sealed packet, checks its seal
+    against the gate ledger, and waves the courier through."
+  gold: 150
+
+triggers:
+  # Leg 1: player gives the sealed dispatch (40071) to Severin Pell (9182)
+  - event: item_give
+    mob: 9182
+    item: 40071
+    conditions:
+      has: [60-start]
+      missing: [60-waybill]
+    actions:
+      - grant: 60-waybill
+      - consume_item: 40071
+      - give_item: 40072
+      - npc_say:
+          mob: 9182
+          lines:
+            - {delay: 1, text: "A capital dispatch from the north toll -- right. Let me counter-sign it."}
+            - {delay: 3, text: "There. Carry this manifest to Tithe-Clerk Verrold at Kingsbarrow Vale -- he enters it in the ledger."}
+
+  # Leg 2: player gives the manifest (40072) to Tithe-Clerk Verrold (9198)
+  - event: item_give
+    mob: 9198
+    item: 40072
+    conditions:
+      has: [60-waybill]
+      missing: [60-manifest]
+    actions:
+      - grant: 60-manifest
+      - consume_item: 40072
+      - give_item: 40073
+      - npc_say:
+          mob: 9198
+          lines:
+            - {delay: 1, text: "Pell's counter-sign, good. Into the tithe ledger it goes."}
+            - {delay: 3, text: "Sealed and stamped. The East Gate guard at New Plymouth takes it from here -- that is the last of the road."}
+
+  # Leg 3 (completion): player gives the sealed packet (40073) to the East Gate guard (9208)
+  - event: item_give
+    mob: 9208
+    item: 40073
+    conditions:
+      has: [60-manifest]
+      missing: [60-end]
+    actions:
+      - grant: 60-end
+      - consume_item: 40073
+      - give_item: 40074
+      - npc_say:
+          mob: 9208
+          lines:
+            - {delay: 1, text: "Came the whole road, did it. And you with it."}
+            - {delay: 3, text: "Couriers' token. The post-houses will know it. The capital remembers who carries its word."}
