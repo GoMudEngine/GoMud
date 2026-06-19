@@ -23,6 +23,7 @@ idlecommands:
   - 'emote leans toward you and raises his voice over the wheel-noise,
     apparently unaware he does not need to'
 activitylevel: 11
+craft_support: cooking
 character:
   name: Dawkin the Miller
   description: |
@@ -48,3 +49,7 @@ character:
       training: 9
     vitality:
       training: 5
+  shop:
+    - itemid: 30026
+    - itemid: 30021
+    - itemid: 30013

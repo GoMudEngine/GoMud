@@ -19,6 +19,7 @@ idlecommands:
   - ''
   - 'emote leans on the tiller, watching the ford with the stillness of
     someone who knows what she is looking at'
+craft_support: general
 character:
   name: Tamsin Reed
   description: |
@@ -43,3 +44,6 @@ character:
       training: 4
     perception:
       training: 8
+  shop:
+    - itemid: 30021
+    - itemid: 40038

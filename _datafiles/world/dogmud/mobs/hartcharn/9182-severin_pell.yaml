@@ -24,6 +24,7 @@ idlecommands:
   - 'emote folds a completed fare-slip into thirds with geometrically
     exact creases and files it in the leftmost stack'
 activitylevel: 11
+craft_support: general
 character:
   name: Severin Pell
   description: |
@@ -49,3 +50,8 @@ character:
       training: 6
     charisma:
       training: 5
+  shop:
+    - itemid: 30021
+    - itemid: 40038
+    - itemid: 30020
+    - itemid: 30024
