@@ -24,6 +24,9 @@ exits:
     roomid: 4109
   northwest:
     roomid: 4142
+  north:
+    roomid: 5372
+    zone: North Road North
 nouns:
   arch: A simple timber arch — two upright squared posts
     of dark cedar with a single crossbeam, its bark long

@@ -1,0 +1,77 @@
+roomid: 5377
+zone: North Road North
+title: The Lake & Ladle
+description: >
+  The smell of frying onions and woodsmoke comes first, drifting
+  from the inn's chimney on the morning air, and under it the
+  warm animal breath of the <ansi fg="itemname">stables</ansi>
+  from the south end of the yard. You stand in the cobbled
+  forecourt of the Lake & Ladle — the last properly respectable
+  inn before the road gets lonely — a long two-storey building
+  of whitewashed stone with candle lanterns still burning in
+  the lower windows. A painted <ansi fg="itemname">sign</ansi>
+  swings from a wrought-iron bracket above the entrance arch,
+  its chain ticking softly against the iron. A
+  <ansi fg="itemname">notice board</ansi> is nailed to the post
+  beside the door, thick with pinned pages in various states of
+  weather. The yard is busy: stable hands cross with buckets
+  and barrows, two horses stand tied to the east rail, and a
+  burst of laughter rolls out through the common-room door to
+  the east every time it opens.
+biome: farmland
+coord:
+  x: -18
+  y: 11
+  z: 0
+exits:
+  south:
+    roomid: 5375
+  southwest:
+    roomid: 5376
+  east:
+    roomid: 5378
+  north:
+    roomid: 5379
+nouns:
+  sign: A rectangular board the size of a wardrobe door, hung
+    on a wrought-iron bracket above the entrance arch. The
+    painting is competent and well-maintained — a silver-blue
+    lake at dusk with a wooden ladle resting across the near
+    shore, its bowl full of the same water, as if someone has
+    just set it down after a long drink. The inn's name arcs
+    over the scene in black letters with yellow shadow-fill.
+    The board is oiled against the weather; the ladle handle
+    has been touched up this season, the new varnish slightly
+    brighter than the old. On the reverse, visible only from
+    inside the arch, someone has chalked a daily menu.
+  stables: The stable wing runs the full south end of the yard
+    — six stalls behind a half-door, the upper halves open to
+    the air and the warm, hay-sweet smell of the place. Two
+    horses are out on the tie rail; three more are stalled,
+    their heads turned toward the yard traffic. Fresh straw
+    was laid this morning; the wheelbarrow still stands against
+    the wall with a manure fork balanced on its handles. The
+    rate board chalked above the half-door reads — one copper
+    per night, feed and water included, grooming extra.
+  notice board: A plank board nailed to the post beside the
+    inn door, weatherproofed by a small timber overhang that
+    keeps the worst of the rain off. It holds a dozen pinned
+    notices in various states of fading — one from a farmer
+    seeking a lost roan mare, one on road-repair works five
+    leagues north, two announcements of goods for sale, and
+    a hand-drawn map of an alternate ford for travelers
+    wanting to skip the bridge toll. The freshest notice —
+    pinned on top with a new nail — is a hand-lettered card
+    offering guide-work north toward the Thornwall pass.
+    Several older notices below are too rain-blurred to read.
+idlemessages:
+- The inn sign swings and settles on its chain as the morning
+  breeze comes and goes.
+- A stable hand crosses the yard with an empty bucket, nodding
+  without pausing.
+- Smoke climbs from the chimney in a thin straight column,
+  carrying the smell of frying onion and salt pork.
+- One of the tied horses stamps a foot and flicks its tail at
+  the flies working the rail.
+- A burst of laughter carries from the common room, muffled
+  but loud enough to fill the yard.

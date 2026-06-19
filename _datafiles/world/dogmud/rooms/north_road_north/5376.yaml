@@ -1,0 +1,68 @@
+roomid: 5376
+zone: North Road North
+title: The Mire Cutoff
+description: >
+  The smell reaches you before the footing changes — cold water,
+  black peat, and the sweet-rot edge of bog vegetation, pushed
+  low by the draft from the reed beds along the west verge.
+  Underfoot it gets worse: two parallel <ansi fg="itemname">ruts</ansi>
+  pressed deep into clay that never fully drains, the ground
+  between them poached to a soft grey paste by foot traffic and
+  webbed with standing water. A dense stand of
+  <ansi fg="itemname">reeds</ansi> crowds the western shoulder,
+  their dry stems buzzing faintly with midges in the morning
+  cold. A broken <ansi fg="itemname">wheel</ansi> lies half sunk
+  in the ditch beside them — iron tire rusted, spokes rotting
+  into the peat — a quiet argument for paying the two coppers
+  instead. The tollgate is invisible behind the hedge from here
+  but its barrier clacks faintly across the field each time it
+  swings.
+biome: farmland
+coord:
+  x: -19
+  y: 10
+  z: 0
+exits:
+  southeast:
+    roomid: 5374
+  northeast:
+    roomid: 5377
+nouns:
+  ruts: Two deep channels carved by wagon wheels into grey-brown
+    clay — each rut holds a finger of standing water this
+    morning, the surface filmed with a pale skin from
+    decomposing reed. The ground between them is churned to
+    soft paste; your boot sinks an inch at each step before
+    finding purchase on the harder clay below. The ruts run
+    straight southeast toward the milepost fork and equally
+    straight northeast toward where the cutoff rejoins the
+    highway. Locals know a dry line on the eastern shoulder —
+    a narrow firm strip — but strangers find it the hard way.
+  reeds: A dense stand of common reed, taller than a person at
+    the center of the bed, running twenty paces along the west
+    shoulder before the hedge closes it off. The stems are last
+    year's growth — pale straw-gold and brittle, rattling when
+    the wind crosses them. The base of the stand is always wet;
+    mud deepens sharply two steps in. Midges work the warm
+    air between the stems in a loose, drifting cloud that moves
+    toward anything warm and slow-moving that enters range.
+  wheel: A cart wheel of heavy spoked hardwood lies half sunk
+    in the ditch beside the reeds, its iron tire rusted orange
+    and the outer spokes rotting into the peat. The hub is
+    cracked clean through — the kind of failure that happens
+    when a wheel drops hard into a rut at speed. It has been
+    here at least one season — moss is working the upper spokes
+    and nobody has come back for it. Someone salvaged the sound
+    wood; five of twelve spokes remain, and the iron tire has
+    been left behind as too much trouble.
+idlemessages:
+- A midge finds the back of your neck and is quickly joined
+  by three more.
+- The mud makes a soft, reluctant sucking sound with every
+  step off the firmer shoulder strip.
+- A dry reed stem snaps somewhere deep in the stand — something
+  small moving through the base of it.
+- Voices carry faintly from the direction of the tollgate,
+  muffled by the hedgerow between.
+- The cutoff track stretches ahead, straight and uninviting,
+  through the reed beds and back toward the highway.

@@ -1,0 +1,56 @@
+roomid: 5374
+zone: North Road North
+title: Lakeward Milepost
+description: >
+  Sun-warmed stone — the <ansi fg="itemname">milepost</ansi>
+  at the road's west shoulder has been baking since midmorning,
+  and when you lay a hand on its carved face the heat comes as
+  a small, unexpected comfort. The post stands at a fork: the
+  main highway continues north toward a tollgate named in the
+  carving, while a rougher <ansi fg="itemname">track</ansi>
+  branches northwest, muddier and narrower but packed hard by
+  regular use — a locals' cutoff that bypasses the gate. The
+  carved face gives the league-count to New Plymouth, a number
+  large enough that a lake-town traveler must read it twice.
+  Road dust hangs in the air here, dry and faintly earthy,
+  stirred by every wagon that passes the fork.
+biome: farmland
+coord:
+  x: -18
+  y: 9
+  z: 0
+exits:
+  south:
+    roomid: 5373
+  north:
+    roomid: 5375
+  northwest:
+    roomid: 5376
+nouns:
+  milepost: A waist-high pillar of dressed grey limestone, its
+    faces carved with the destinations and distances of the
+    North Road. North face — LAKEWARD TOLLGATE — 1 LEAGUE.
+    NEW PLYMOUTH — 23 LEAGUES, 4 DAYS' WALK. South face —
+    STILLWATER — 1 LEAGUE. THORNWALL — 2 DAYS. The stone is old enough
+    that the carving has softened at the edges but every
+    number is still legible. Someone has scratched a small
+    compass rose into the base in rougher, private hand — a
+    traveler's waypoint mark, or a promise to return.
+  track: The northwest track angles off the road sharply, half
+    the width of the highway and muddier in every season.
+    The ruts are shallower than the road's but well-worn and
+    packed firm. Local farmers and foot travelers use it to
+    bypass the Lakeward Tollgate ahead; it adds a quarter-
+    league to the journey but saves the toll coin. The first
+    fifty paces are visible before the track bends behind a
+    hedge and disappears from the road.
+idlemessages:
+- The milepost's shadow falls long across the road, pointing
+  back toward Stillwater.
+- A solitary traveler appears from the north, head down and
+  moving fast without greeting.
+- Road dust rises briefly as the wind picks up from the west.
+- A woodpecker hammers steadily at dead wood somewhere in the
+  tree line to the north.
+- A wagon passes the fork on the main road, the driver eyeing
+  the northwest track before staying on the highway.

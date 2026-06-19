@@ -1,0 +1,83 @@
+roomid: 5378
+zone: North Road North
+title: The Lake & Ladle, Common Room
+description: >
+  The noise finds you first — voices layered on voices, a hand
+  of cards slapping down on the back table, the steady crack
+  and sigh of the hearth fire. Then the warmth rolls in behind
+  it, dense and low, carrying woodsmoke and rendered drippings
+  and the heavy, meaty scent of a pot of stew that has been
+  going since noon. The Lake and Ladle's common room is wide
+  and low-beamed, its oak rafters dark with old smoke; trestle
+  tables fill most of the floor, holding tonight's usual crowd
+  — drovers eating without looking up, a pair of merchants bent
+  over an unrolled map at the middle table, a lean traveler who
+  has not moved from her seat by the wall since before dark.
+  The <ansi fg="itemname">hearth</ansi> commands the far end of
+  the room, wide enough to roast an ox, a cauldron swinging low
+  over banked coals on an iron arm; the innkeeper works her
+  <ansi fg="itemname">counter</ansi> just beside it, moving
+  through the evening's orders with the efficiency of long
+  habit. A broad <ansi fg="itemname">notice board</ansi> hangs
+  beside the outer door, dense with traveler notices and a
+  week-old market sheet from Thornwall.
+biome: farmland
+coord:
+  x: -17
+  y: 11
+  z: 0
+exits:
+  west:
+    roomid: 5377
+nouns:
+  notice board: A wide cedar plank nailed to two uprights
+    beside the outer door, its surface buried under a season's
+    worth of pinned papers. There is a wanted notice with a
+    rough charcoal likeness, a hand-lettered offer to buy sound
+    oxen at a farm two leagues north, a route-sketch someone
+    drew in charcoal and donated to the board rather than carry
+    further, and at least three sheets pinned over older ones
+    that have not been read since they were posted. The board
+    is open — any traveler may pin or take a notice, and the
+    innkeeper clears it only when the papers begin to fall of
+    their own weight.
+  hearth: A farmhouse-scale fireplace built from rounded river
+    stones mortared with care — wide enough that two people
+    could stand inside it comfortably side by side. A cauldron
+    hangs on a pivoting iron arm over the banked coals, its
+    lid trembling as something thick and meaty simmers inside.
+    The hearthstone before it is worn smooth by decades of
+    foot-traffic, and a line of wet boots has been set along
+    the mantel's edge to dry. The heat coming off the stones
+    is the best argument for staying the night.
+  counter: The serving-counter runs the width of the room's far
+    end, plank-top and ale-dark, its surface worn to a silky
+    smoothness by decades of elbows and cup-bottoms. Clay cups
+    hang above it on iron hooks. A stoneware crock of house ale
+    sits at one end, a ladle hooked over its lip. A small
+    chalkboard behind the counter lists tonight's prices — ale,
+    bowl, pallet above. The innkeeper keeps a rag tucked at her
+    hip and uses it constantly; little passes through this room
+    without her noticing.
+  tables: Long trestle tables with bench seating on both sides,
+    each surface scored with knife-cuts and ground down by cup-
+    rings worked into the grain over the years. The near table
+    is occupied by drovers eating fast and quietly. The back
+    table hosts a card game — four players, three different
+    opinions on the rules, two spectators unwilling to leave.
+    The middle table belongs to the merchants and their map;
+    the map is annotated in two different hands and the
+    disagreement shows no sign of resolution.
+idlemessages:
+- A hand of cards hits the back table hard; the player who
+  laid it grins without looking up.
+- The innkeeper moves along the counter, topping up cups with
+  the ease of someone who does not need to be asked.
+- The hearth fire pops and settles, sending a brief curl of
+  sweet woodsmoke drifting across the nearest tables.
+- Two drovers near the window are debating whether the ford
+  past the north ridge is passable this time of year, each
+  certain the other is wrong.
+- A traveler sets down an empty bowl, tips it for the last
+  of the stew, and slides it to the counter's edge without
+  looking up from the letter in her other hand.

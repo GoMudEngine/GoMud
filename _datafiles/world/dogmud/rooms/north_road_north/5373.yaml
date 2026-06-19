@@ -1,0 +1,56 @@
+roomid: 5373
+zone: North Road North
+title: The Rolling Pasture Road
+description: >
+  The hedgerows fall back and the country opens out all at once —
+  broad pasture rolling north and west, stitched together by low
+  <ansi fg="itemname">drystone walls</ansi> and clipped hedge
+  lines that stretch to the horizon. On the east shoulder a
+  heavy wooden <ansi fg="itemname">farm gate</ansi> marks where
+  a mud track cuts off into a grazed field. Brown-and-white
+  cattle stand in the near distance, motionless as fence posts
+  except for the slow turn of a head. The road curves gently
+  north around a low rise, wagon ruts pressed deep into the
+  verge — confirming this is real highway, freight road, not
+  just a lane between farmsteads.
+biome: farmland
+coord:
+  x: -18
+  y: 8
+  z: 0
+exits:
+  south:
+    roomid: 5372
+  north:
+    roomid: 5374
+nouns:
+  gate: A heavy farm gate of squared ash planks hung on a thick
+    gatepost, its iron pin-hinges dark with rust and long use.
+    The gatepost is hollow at the top where the wood has
+    checked and split — a gap deep enough to hide a fold of
+    paper. Locals leave notes there for the farm family when
+    the gate is down and the track is empty. The latch is a
+    simple iron pin; the gate swings freely both ways.
+  drystone walls: Low walls of unmortared fieldstone, knee-to-
+    hip height, running straight across the grazing land in
+    lines that must have taken months to lay. Each stone was
+    picked from these same fields. The lichen on the north
+    faces is thick and yellow-grey, unbothered by seasons.
+    A few have tumbled gaps where livestock have pushed
+    through, and not yet been reset.
+  cattle: A scatter of brown-and-white cattle in the nearer
+    field, grazing slowly or simply standing. They watch the
+    road with the mild, incurious patience of animals that
+    have seen wagons every day of their lives. One turns its
+    head to follow your passage, then looks away.
+idlemessages:
+- The wind comes in low from the northwest, bending the
+  roadside grass in long slow waves.
+- A fully loaded wagon passes southbound, the driver nodding
+  without slowing.
+- Rooks wheel above the nearest drystone wall in a loose,
+  noisy cloud before settling again.
+- One of the cattle in the field stamps a foot and shakes
+  flies from its ears.
+- Somewhere past the rise to the north, a dog barks twice
+  and goes quiet.

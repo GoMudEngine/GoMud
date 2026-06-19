@@ -1,0 +1,81 @@
+roomid: 5379
+zone: North Road North
+title: Hedgerow Bend
+description: >
+  The road swings around a dense wall of hawthorn and elder —
+  the hedgerow here has grown twice a person's height and
+  doubled in width over the years, its outer face interwoven
+  with old briar and dog rose, impenetrable as a wall of small
+  thorns. Past the bend the view opens sharply: the tight belt
+  of farmsteads that hugs the lakeshore road gives way to
+  longer fields and wider sky, the furrows running further
+  before they reach the next fence, the gaps between holdings
+  growing perceptible. The road itself begins to feel less
+  managed here — the gravel still good, but thinner, the
+  verges more ragged. A waist-high
+  <ansi fg="itemname">waymarker</ansi> of rough granite stands
+  in the grass at the bend's outer edge, its top hollow scooped
+  out by time or intention, a few travelers' offerings visible
+  inside it. The <ansi fg="itemname">hedgerow</ansi> behind it
+  is so thick that even leafless in winter it would screen
+  what lies to either side. A rutted
+  <ansi fg="itemname">track</ansi> angles off eastward toward a
+  widening in the verge where drovers rest their animals.
+biome: farmland
+coord:
+  x: -18
+  y: 12
+  z: 0
+exits:
+  south:
+    roomid: 5377
+  east:
+    roomid: 5380
+nouns:
+  waymarker: A waist-high block of unworked granite, older than
+    the road itself — the stone's face is weathered past any
+    carving that might once have been there, and the top holds
+    a broad, shallow hollow, whether scooped by water or by
+    deliberate hands is difficult to say. The hollow is dry and
+    holds a small collection of travelers' leavings — a handful
+    of dried flower heads, a copper coin with a thumb-worn face,
+    a folded scrap of waxed cloth with something written inside
+    in cramped private lettering. The custom of leaving
+    something at the stone is old enough that no one remembers
+    where it started.
+  hedgerow: A massive joint growth of hawthorn and elder that
+    has spread over decades into a nearly solid wall, its outer
+    face chest-high in thorns interwoven with runners of dog
+    rose and old man's beard. In late spring it would be white
+    with hawthorn flower; now it is dense grey-green, the inner
+    limbs still bare and the outer ones leafed out in thin new
+    growth. The hedgerow's eastern tail has gone half-wild —
+    no longer managed, the farms it once bordered having thinned
+    enough that no one tends it. The briar has taken over at
+    that end, thick and unruly.
+  track: A rutted earth track that angles east off the road's
+    shoulder, wide enough for a drover's cart but too narrow
+    for a loaded wagon with any room to spare. The ruts are
+    deep and recent. The track bends behind the hedgerow's
+    ragged eastern end almost immediately and disappears from
+    the road, but the sound of livestock carries back when the
+    wind is right — the pull-off is not far.
+  fields: Past the bend the farmland changes in character —
+    longer rows, fewer buildings visible per stretch of road,
+    the occasional hayrick standing alone in a field without
+    a farmhouse in sight. The sky is wider here than it was
+    in the tight-hedged country closer to Stillwater. A mile
+    or two further north the last farm visible from the road
+    ends, and the land beyond begins to look less deliberate,
+    less tended, more open and unaccountable.
+idlemessages:
+- A blackbird scolds from deep inside the hedgerow, loud and
+  indignant, then goes abruptly quiet.
+- The wind off the open fields hits the face of the hedgerow
+  and bends over it, carrying the smell of turned earth.
+- A cart comes up from the south and takes the bend without
+  slowing, the driver leaning into the turn by reflex.
+- A copper coin catches the light inside the waymarker's
+  hollow — left there by someone who passed this way earlier.
+- The farms ahead are visibly thinner than they were an hour
+  south. The road is losing its company.
