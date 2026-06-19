@@ -53,3 +53,6 @@ idlemessages:
   stepping over outstretched boots without being asked to.
 - A new line appears on the board beside the door — charcoal, quick,
   someone keeping count of something.
+spawninfo:
+  - mobid: 9185
+    respawnrate: "15 real minutes"

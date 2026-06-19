@@ -1,0 +1,37 @@
+mobid: 9177
+zone: The Empty Reach
+behavior_archetype: prey
+hostile: false
+statpool: 22
+maxwander: 5
+activitylevel: 10
+itemdropchance: 15
+groups:
+  - animal
+  - bird
+idlecommands:
+  - 'emote wheels overhead on a long, slow thermal, barely moving its wings'
+  - ''
+  - ''
+  - 'emote drops from a rock and settles hunched on a low basalt shelf'
+  - ''
+  - 'emote jabs its hooked beak at something on the ground'
+  - ''
+  - 'emote flaps heavily aloft, gaining altitude with labored beats'
+character:
+  name: Circling Vulture
+  description: |
+    A heavy-bodied bird with a span of dark, ragged wings wide enough
+    to blot a patch of sky. Its bare, red-wrinkled head sits low on a
+    hunched neck, and its downward-hooked beak is built for one
+    purpose. The circling vulture rides the thermals above the basalt
+    flats with a patience that borders on contemptuous, dropping in
+    slow spirals whenever it scents something dead or dying below.
+    Up close, the smell of carrion clings to it like a second skin.
+  speciesid: 9
+  level: 1
+  stats:
+    dexterity:
+      training: 3
+    perception:
+      training: 5

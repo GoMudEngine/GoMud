@@ -59,3 +59,6 @@ idlemessages:
   bristles carrying further in the still air than it should.
 - Two neighbours talk across the lane between their front doors,
   voices low, the conversation clearly about someone not present.
+spawninfo:
+  - mobid: 9187
+    respawnrate: "15 real minutes"

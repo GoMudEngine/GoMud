@@ -1,0 +1,52 @@
+mobid: 9181
+zone: Hartcharn
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+  - hartcharn_folk
+idlecommands:
+  - 'emote moves briskly behind the counter, signing off on a page of
+    the guest ledger without breaking stride'
+  - ''
+  - 'emote calls toward the kitchen door -- "Coach from the south
+    before midday -- six plates, ready!"'
+  - ''
+  - 'emote draws a measure of ale from the tap, checks the head with
+    a critical eye, and sets it waiting on the pass-shelf'
+  - ''
+  - 'emote straightens the key-board behind her, confirming each hook
+    is properly labelled, then moves on to the next task'
+activitylevel: 15
+character:
+  name: Maret Cull
+  description: |
+    The Coachman's Rest is the biggest building in Hartcharn besides
+    the coach yard, and Maret Cull is the reason it runs at all. She
+    is a lean woman in her early forties, brisk in motion and
+    economical in speech, with short dark hair and the permanent
+    slight frown of someone running calculations. She keeps two
+    ledgers -- one for guests and one for the kitchen -- and has
+    never confused an entry in either. Her hands are her most
+    remarkable feature: the fingers are slightly longer than they
+    should be, with a faint extra joint visible at each knuckle,
+    giving them an almost arachnid dexterity that is useful for
+    quartering invoices and subtly unsettling to those who shake
+    hands without warning. A Chrysalis touch she neither hides nor
+    discusses.
+  speciesid: 1
+  level: 1
+  gold: 150
+  stats:
+    charisma:
+      training: 10
+    perception:
+      training: 8
+    willpower:
+      training: 5
+    vitality:
+      training: 4

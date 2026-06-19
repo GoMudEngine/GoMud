@@ -39,3 +39,6 @@ idlemessages:
 - Straw rustles as a horse shifts weight in the stabling, snorting softly.
 - A driver climbs to the box seat and gathers the reins, sizing up the team.
 - The creak of wheels and hoofbeats — a coach rolls in from the road, muddy.
+spawninfo:
+  - mobid: 9186
+    respawnrate: "15 real minutes"

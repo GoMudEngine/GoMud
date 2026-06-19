@@ -1,0 +1,50 @@
+mobid: 9183
+zone: Hartcharn
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 40
+maxwander: 0
+groups:
+  - humanoid
+  - hartcharn_folk
+idlecommands:
+  - 'emote works the bellows in slow, rhythmic pulls, watching the
+    forge-bed brighten from dull red toward orange'
+  - ''
+  - 'emote lifts a length of iron bar with his tongs and turns it in
+    the coals, judging the color with a half-squint'
+  - 'emote strikes the iron on the anvil -- once, twice, three ringing
+    blows -- then turns it and strikes again'
+  - ''
+  - 'emote plunges the worked iron into the quench trough; steam
+    billows up and he watches it dissipate without blinking'
+  - ''
+  - 'emote wipes the back of his wrist across his forehead and turns
+    back to the forge without ceremony'
+activitylevel: 10
+character:
+  name: Drostan
+  description: |
+    Drostan is exactly the kind of man you want shoeing your horse or
+    mending your wagon iron three days from anywhere. He is built like
+    a door, dark from decades at the forge, with hands large enough
+    that the hammer looks proportionate. He does not say much. He says
+    even less to strangers. The patches of fine dark scale running up
+    his forearms and across the back of his neck give his skin the
+    look of something half-armored -- a Chrysalis drift that has, by
+    all accounts, served him well at the forge, where scale sheds
+    sparks better than any leather sleeve. He keeps them oiled and
+    does not cover them. The work gets done and the iron is good; that
+    is the extent of what he considers worth communicating.
+  speciesid: 1
+  level: 1
+  gold: 60
+  stats:
+    strength:
+      training: 12
+    vitality:
+      training: 8
+    perception:
+      training: 4

@@ -1,0 +1,51 @@
+mobid: 9185
+zone: Hartcharn
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+  - hartcharn_folk
+idlecommands:
+  - 'emote draws a cup of ale and slides it down the bar without
+    looking'
+  - ''
+  - 'emote wipes the bar with a cloth that is doing none of the work
+    it was designed to do'
+  - ''
+  - 'emote glances toward the far table with an expression that says
+    the occupants have exactly one warning left'
+  - ''
+  - 'emote leans both hands on the bar and listens to the room with
+    the focused stillness of someone who hears more than he lets on'
+activitylevel: 10
+character:
+  name: Wick Orrel
+  description: |
+    The Tap and Trough is the older, rougher of Hartcharn's two
+    drinking establishments, which is another way of saying it is
+    where the locals go. Wick Orrel has kept it for fifteen years and
+    knows everything that has happened in this town for most of that
+    time, because very little happens in Hartcharn without someone
+    eventually telling someone else about it at his bar. He is a lean,
+    watchful man of about fifty with a face like a fist and the
+    unhurried manner of someone who has seen every variety of trouble
+    arrive through that door and is no longer impressed by any of it.
+    The skin at his temples and across his scalp carries a deep
+    violet-black discoloration that never fades, and his ears come to
+    a faint upward point -- a paired Chrysalis drift that has left him
+    with hearing sharp enough to follow two conversations at opposite
+    ends of the bar simultaneously. He uses this more than he admits.
+  speciesid: 1
+  level: 1
+  gold: 45
+  stats:
+    perception:
+      training: 11
+    charisma:
+      training: 8
+    willpower:
+      training: 5

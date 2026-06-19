@@ -66,3 +66,6 @@ idlemessages:
   pausing between each one, and vanishes under a stone.
 - The gully is quiet except for the wind. The wind is the
   only thing here with somewhere to be.
+spawninfo:
+  - mobid: 9179
+    respawnrate: "10 real minutes"

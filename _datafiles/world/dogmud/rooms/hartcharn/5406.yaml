@@ -61,3 +61,6 @@ idlemessages:
   steps back to read it, blocking the view of the next person behind.
 - A wiry man with a fiddle tucked under his arm works his way between
   the tables, playing something quick that nobody is quite listening to.
+spawninfo:
+  - mobid: 9181
+    respawnrate: "15 real minutes"

@@ -1,0 +1,44 @@
+mobid: 9189
+zone: Hartcharn
+behavior_archetype: noncombat_passive
+statpool: 30
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 1
+groups:
+  - humanoid
+  - hartcharn_folk
+idlecommands:
+  - 'emote works a straw from one corner of his mouth to the other and
+    leaves it there'
+  - ''
+  - 'emote tilts his head back and reads the sky with narrowed eyes'
+  - ''
+  - 'emote counts something off on blunt fingers, lips moving faintly'
+  - ''
+  - 'emote spits into the dust, considers the result, and resettles
+    against the wagon wheel'
+  - ''
+activitylevel: 10
+character:
+  name: Old Drover Brem
+  description: |
+    A weathered man past sixty who has spent more of his life on the
+    road than off it, drover-tanned and entirely comfortable with
+    silence. Brem rests at the Wagon Camp with the settled ease of
+    someone who has earned the right to stop walking. When he opens
+    his mouth to spit or comment on the sky, a second row of small,
+    neat teeth is briefly visible behind his lower front ones --
+    Chrysalis work, orderly and entirely unasked for.
+  speciesid: 1
+  level: 1
+  gold: 15
+  stats:
+    vitality:
+      training: 10
+    perception:
+      training: 8
+    strength:
+      training: 5

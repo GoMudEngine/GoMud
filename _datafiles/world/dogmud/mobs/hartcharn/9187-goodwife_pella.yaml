@@ -1,0 +1,46 @@
+mobid: 9187
+zone: Hartcharn
+behavior_archetype: noncombat_passive
+statpool: 28
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 3
+groups:
+  - humanoid
+  - hartcharn_folk
+idlecommands:
+  - 'emote shifts a laden basket from one hip to the other and picks up
+    her pace'
+  - ''
+  - 'emote pegs a length of linen to the line with brisk, habitual
+    efficiency'
+  - ''
+  - 'emote leans in a doorway exchanging a low word with whoever lives
+    there'
+  - ''
+  - 'emote flaps an apron at a goose that has wandered into the lane and
+    shoos it off'
+  - ''
+activitylevel: 12
+character:
+  name: Goodwife Pella
+  description: |
+    A broad-shouldered woman in her middle years who moves through the
+    residential lanes with the unhurried ownership of someone who has
+    lived here all her life. She knows every family on the lane and
+    has opinions about all of them. Her irises are a flat, milky grey
+    -- Chrysalis-changed -- with almost no visible color at distance,
+    and catch lamplight like tarnished coin when she turns to look
+    at you directly.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    charisma:
+      training: 10
+    perception:
+      training: 8
+    willpower:
+      training: 5

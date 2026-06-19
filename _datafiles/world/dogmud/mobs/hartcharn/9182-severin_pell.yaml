@@ -1,0 +1,51 @@
+mobid: 9182
+zone: Hartcharn
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 34
+maxwander: 0
+groups:
+  - humanoid
+  - hartcharn_folk
+idlecommands:
+  - 'emote rules a careful line across the page of his ledger with a
+    wooden straightedge'
+  - ''
+  - 'emote lifts a ticket stamp, taps it on the inkpad, and brings it
+    down on a fare-slip with a crisp thud'
+  - ''
+  - 'emote squints at the route board, checking posted departure times
+    against a notation in his ledger'
+  - 'emote says, to no one in particular, "Next packet Stillwater to
+    New Plymouth departs the fifth bell."'
+  - ''
+  - 'emote folds a completed fare-slip into thirds with geometrically
+    exact creases and files it in the leftmost stack'
+activitylevel: 11
+character:
+  name: Severin Pell
+  description: |
+    Severin Pell occupies a small booth at the edge of the coach yard,
+    hemmed in by route boards, fare tables, and a stack of ledgers that
+    would reach his shoulder if he ever let it. He is slight, precise,
+    and unhurried in the way that people who process large volumes of
+    transactions learn to be: every stamp, every ruling, every spoken
+    fare is deliberate. He wears ink stains on three fingers of his
+    right hand as a permanent mark of office. Look closely at his eyes
+    and the strangeness becomes apparent -- his pupils are not round
+    but faintly hexagonal, six-sided and neat, as though geometry
+    itself has taken up residence in his irises. It is a Chrysalis
+    drift he never mentions. It does make him very good at reading
+    small print.
+  speciesid: 1
+  level: 1
+  gold: 80
+  stats:
+    perception:
+      training: 12
+    willpower:
+      training: 6
+    charisma:
+      training: 5

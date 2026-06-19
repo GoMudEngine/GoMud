@@ -1,0 +1,44 @@
+mobid: 9190
+zone: Hartcharn
+behavior_archetype: thief
+statpool: 34
+itemdropchance: 40
+hostile: false
+maxwander: 2
+groups:
+  - humanoid
+  - thief
+idlecommands:
+  - 'emote drifts through the market crowd with the ease of someone who
+    has nowhere particular to be'
+  - ''
+  - 'emote lets his gaze rest on a well-stuffed belt pouch for a moment
+    too long'
+  - ''
+  - 'emote leans over a stall of dried goods, feigning interest while his
+    eyes track the crowd'
+  - ''
+  - 'emote makes a small, unhurried motion near someone passing close
+    and keeps walking'
+  - ''
+activitylevel: 14
+character:
+  name: Market Cutpurse
+  description: |
+    A lean young man who moves through the market crowd with the
+    unhurried ease of someone who has nowhere to be and all day to get
+    there. His eyes move faster than his feet. The fingers of both
+    hands are visibly too long, each bearing an extra articulation at
+    mid-finger -- a Chrysalis detail he makes no effort to conceal,
+    since most people notice it a moment after they notice something
+    else is wrong.
+  speciesid: 1
+  level: 1
+  gold: 22
+  stats:
+    dexterity:
+      training: 14
+    perception:
+      training: 10
+    strength:
+      training: 5

@@ -1,0 +1,43 @@
+mobid: 9188
+zone: Hartcharn
+behavior_archetype: noncombat_passive
+statpool: 20
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 3
+groups:
+  - humanoid
+  - hartcharn_folk
+idlecommands:
+  - 'emote sends a wooden hoop rattling along the lane and sprints after
+    it'
+  - ''
+  - 'emote scuffs through a drift of dust with one bare foot, watching
+    what surfaces'
+  - ''
+  - 'emote stops dead and stares at a traveller with open, unabashed
+    curiosity'
+  - ''
+  - 'emote spots something across the square and darts off without
+    explanation'
+  - ''
+activitylevel: 16
+character:
+  name: Ragged Child
+  description: |
+    A child of nine or ten with no shoes and the watchful, calculating
+    look of someone who has learned to read adults quickly. Quick
+    hands, quick feet, quick to vanish when a situation stops being
+    useful. The pale freckles scattered across both forearms glow a
+    faint cold blue-white in dim light -- a Chrysalis mark the child
+    treats as neither remarkable nor worth explaining.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 8
+    perception:
+      training: 7

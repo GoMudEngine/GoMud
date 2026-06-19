@@ -42,3 +42,6 @@ idlemessages:
 - Pages turn as a ledger is flipped back to find an earlier booking.
 - Yard sounds carry through the wall — horses, harness, a coach wheel.
 - The strongbox sits on the floorboards and says nothing at all.
+spawninfo:
+  - mobid: 9182
+    respawnrate: "15 real minutes"

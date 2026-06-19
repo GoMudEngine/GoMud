@@ -1,0 +1,41 @@
+mobid: 9178
+zone: The Empty Reach
+behavior_archetype: ambusher
+hostile: true
+archetype: fighting
+statpool: 46
+maxwander: 2
+activitylevel: 20
+itemdropchance: 45
+groups:
+  - humanoid
+aiprofile: ambush_predator
+idlecommands:
+  - 'emote mutters rapidly to the empty air, head tilted as if listening'
+  - ''
+  - 'emote crouches and scratches a pattern of lines into the dry dirt'
+  - ''
+  - 'emote stares through you at something far beyond'
+  - ''
+  - 'emote fingers the edge of a crude, notched blade with practiced ease'
+character:
+  name: The Reach-Touched
+  description: |
+    Once a traveler, perhaps -- or a homesteader who did not leave in
+    time. Now the Empty Reach has claimed him entirely. Sun-cracked
+    skin, eyes too bright, fingers working at the air as though coaxing
+    shapes only he can see. A strange iridescence plays across his
+    forearms and throat where a Chrysalis mutation went untended and
+    wild in the solitude -- fractal patterns that shift when he moves,
+    beautiful and wrong. He is speaking to someone you cannot see, and
+    he does not look at you. That is the last warning you will get.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    strength:
+      training: 4
+    dexterity:
+      training: 6
+    perception:
+      training: 3

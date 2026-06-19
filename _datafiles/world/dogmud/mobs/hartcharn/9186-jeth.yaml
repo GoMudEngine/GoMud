@@ -1,0 +1,45 @@
+mobid: 9186
+zone: Hartcharn
+behavior_archetype: noncombat_passive
+statpool: 28
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 1
+groups:
+  - humanoid
+  - hartcharn_folk
+idlecommands:
+  - 'emote forks hay into the nearest stall with slow, practiced strokes'
+  - ''
+  - 'emote leads a fresh team out to the yard, murmuring steadily to
+    settle them'
+  - ''
+  - 'emote crouches, lifts a near foreleg, and presses at the hoof with
+    his thumb'
+  - ''
+  - 'emote lays a hand along a grey mare''s neck until she stops shifting
+    in the traces'
+  - ''
+activitylevel: 10
+character:
+  name: Jeth
+  description: |
+    A stocky man in his forties with the particular economy of movement
+    that comes from a lifetime working around large animals. Jeth runs
+    the Posting Yard coach-teams and carries the smell of horse and
+    good leather. The skin across the backs of his hands has thickened
+    into overlapping ridges -- pale and hard as weathered horn --
+    a Chrysalis change he treats with the same matter-of-fact calm
+    he gives every other inconvenience.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    strength:
+      training: 12
+    vitality:
+      training: 8
+    perception:
+      training: 5

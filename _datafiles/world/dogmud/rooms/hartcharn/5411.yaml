@@ -41,3 +41,6 @@ idlemessages:
 - Dust motes drift through the light from the front window, undisturbed.
 - The weighted lid on the fish barrel lifts briefly, then settles back.
 - The brass scales swing faintly on their pivot, finding their level.
+spawninfo:
+  - mobid: 9184
+    respawnrate: "15 real minutes"

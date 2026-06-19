@@ -1,0 +1,46 @@
+mobid: 9180
+zone: Hartcharn
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 32
+maxwander: 0
+groups:
+  - humanoid
+  - hartcharn_folk
+idlecommands:
+  - 'emote leans his spear against the gatehouse wall and rolls his
+    shoulders with a slow crack'
+  - ''
+  - 'emote shades his eyes against the road and watches a cart raise
+    dust in the distance'
+  - ''
+  - 'emote exchanges a nod and a few words with a carter passing out
+    through the gate'
+  - ''
+  - 'emote shifts his weight from foot to foot, resettles the
+    magistrate''s badge on its cord, and goes back to watching the road'
+activitylevel: 9
+character:
+  name: Bors Edel
+  description: |
+    A broad, patient man in his forties who has worked the south gate
+    long enough that he has stopped counting seasons. He is not unkind,
+    merely practiced at the art of looking at arrivals until they
+    explain themselves. He wears a magistrate's badge on a leather cord
+    and carries a spear that is more staff than weapon at this point.
+    His brow and jaw carry a faint but unmistakable ridging under the
+    skin -- a creep of Chrysalis that has given him the permanent look
+    of a man wearing a helmet he cannot remove. He has never mentioned
+    it, and the townsfolk stopped noticing years ago.
+  speciesid: 1
+  level: 1
+  gold: 25
+  stats:
+    perception:
+      training: 10
+    vitality:
+      training: 6
+    charisma:
+      training: 4

@@ -61,3 +61,6 @@ idlemessages:
 - Heat rises from the white crust below and falls from the sky above — both at once.
 - A gust crosses the flats, carrying salt crystals that sting where they land.
 - Nothing here casts a shadow worth having.
+spawninfo:
+  - mobid: 9177
+    respawnrate: "12 real minutes"

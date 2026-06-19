@@ -72,3 +72,8 @@ idlemessages:
   a finger while the other makes a note on a scrap of paper.
 - A drover fills a leather cask at the well trough, talking to his
   horse in a low and steady murmur.
+spawninfo:
+  - mobid: 9188
+    respawnrate: "15 real minutes"
+  - mobid: 9190
+    respawnrate: "12 real minutes"

@@ -1,0 +1,36 @@
+mobid: 9179
+zone: The Empty Reach
+behavior_archetype: prey
+hostile: false
+statpool: 18
+maxwander: 4
+activitylevel: 12
+itemdropchance: 20
+groups:
+  - animal
+idlecommands:
+  - 'emote freezes utterly still, ears laid flat, watching'
+  - ''
+  - 'emote nibbles at a low sprig of sage, nose twitching'
+  - ''
+  - 'emote washes its face with quick, nervous strokes'
+  - ''
+  - 'emote bolts three yards in a single bound and freezes again'
+character:
+  name: Desert Hare
+  description: |
+    A jackrabbit of exceptional size, long-eared and long-legged,
+    shaped by the Empty Reach to be difficult to catch. Its fur is
+    pale ash-grey above and white beneath -- bleached camouflage for
+    sun-whitened basalt. At rest it is nearly invisible against pale
+    lichen and dry stone. When startled it does not simply run; it
+    erupts, covering ground in huge, unpredictable bounds that leave
+    most predators behind, before vanishing flat against the earth
+    once more.
+  speciesid: 10
+  level: 1
+  stats:
+    dexterity:
+      training: 8
+    perception:
+      training: 6

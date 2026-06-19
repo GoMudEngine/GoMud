@@ -40,3 +40,6 @@ idlemessages:
 - The bellows exhales and the forge coals surge briefly brighter.
 - The slack tub hisses as hot iron is plunged in, a curl of steam rising.
 - A finished horseshoe is held to the light and turned slowly, checked.
+spawninfo:
+  - mobid: 9183
+    respawnrate: "15 real minutes"

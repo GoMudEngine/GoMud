@@ -46,3 +46,6 @@ idlemessages:
 - A teamster thumps a wheel-hub with a mallet, listening to the note it makes.
 - Two drivers argue over road conditions north, neither conceding a point.
 - Canvas snaps against a wagon frame as the wind catches a loose corner.
+spawninfo:
+  - mobid: 9189
+    respawnrate: "15 real minutes"

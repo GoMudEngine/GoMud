@@ -60,3 +60,6 @@ idlemessages:
   a name, someone answering — then settle.
 - A traveler passes through heading south, pack high and hat pulled
   low against the wind.
+spawninfo:
+  - mobid: 9180
+    respawnrate: "15 real minutes"

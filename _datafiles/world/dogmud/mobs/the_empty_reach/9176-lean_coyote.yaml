@@ -1,0 +1,41 @@
+mobid: 9176
+zone: The Empty Reach
+behavior_archetype: predator
+hostile: true
+archetype: fighting
+statpool: 40
+maxwander: 3
+activitylevel: 25
+itemdropchance: 30
+groups:
+  - animal
+  - coyote
+  - pack
+aiprofile: predator
+idlecommands:
+  - 'emote lifts its narrow muzzle and tests the dry air'
+  - ''
+  - 'emote slinks low through the scrub, watching'
+  - ''
+  - 'emote fixes you with pale, calculating eyes from a safe distance'
+  - ''
+  - 'emote rumbles a low growl, barely audible'
+character:
+  name: Lean Coyote
+  description: |
+    A gaunt, tawny canine with oversized ears and a narrow muzzle, the
+    lean coyote carries itself low to the basalt scrub, wary and
+    calculating. Its coat is the color of dry sage and dust -- grey-
+    brown, patchy, with darker hackles that rise when it catches a
+    scent. Half-domesticated in appearance but wholly wild in intent,
+    it watches from beyond easy reach, waiting for the pack to close.
+    The Empty Reach has made it lean; hunger has made it bold.
+  speciesid: 2
+  level: 1
+  stats:
+    strength:
+      training: 3
+    dexterity:
+      training: 5
+    perception:
+      training: 4
