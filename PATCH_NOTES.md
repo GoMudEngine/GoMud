@@ -1,5 +1,53 @@
 # DOGMud Patch Notes
 
+## 2026-06-19 — The road to New Plymouth: the Stillwater→capital corridor
+
+The long stretch of road between Stillwater and the capital is now walkable end
+to end. Seven new zones carry you north from Stillwater's gate toward the gates
+of New Plymouth, roughly 110 rooms of new country, each with its own character:
+
+- **North Road North** — the highway leaves the marches behind; a tollgate, a
+  roadside inn, and bandits working the hedgerows.
+- **The Empty Reach** — a long, lonely stretch of dry wilds where the road is
+  the only sign of people, and something Reach-touched hunts it.
+- **Hartcharn** — a coaching town: posting yard, ferry agent, smithy, general
+  store, inn, and tavern.
+- **Greywater Flats** — grey river country and a toll-ford where the capital's
+  authority first makes itself felt; marsh adders lair in the reeds.
+- **Kingsbarrow Vale** — the granary belt that feeds the capital: tithe barn,
+  watermill, and a country church.
+- **Kilnreach Works** — the capital's industry belt of lime kilns, foundry,
+  tannery, and brickfields.
+- **New Plymouth Outskirts** — the seedy approach pressing up against the
+  capital's east gate, where the road finally ends.
+
+The road is alive. Townsfolk, drovers, ferry agents, tollkeepers, millers, and
+gate guards keep it, while thieves and beasts prey on travellers. Inns,
+smithies, general stores, and taverns along the way now actually sell goods,
+including zone-flavoured stock (a coaching town's harness oil, a mill's flour,
+a works-tavern's rough spirits).
+
+Three quests give the road purpose:
+
+- **The Long Road** — carry a sealed capital dispatch the length of the road,
+  hand to hand up the official post relay, from the northern toll to the gates
+  of New Plymouth. The reward is a name that travels ahead of you.
+- **Hedgerow Toll** — an innkeeper's trade is bleeding to the bandits working
+  the early road. Clear them out and the road north is walkable again.
+- **Adders in the Ford** — the ferryman's passengers keep getting struck in the
+  reeds. Put the marsh adder down and the crossing is a kinder one.
+
+New Plymouth proper — the capital itself — is still ahead. This is the road
+that leads to it.
+
+## 2026-06-19 — Seasonal weather
+
+Weather now turns with the seasons. Each season shifts the prevailing
+conditions and the ambient flavour you feel as you travel the world's outdoor
+zones, so the same road reads differently in spring meltwater than in the dry
+heat of summer or the cold of deep winter. (Seasonal balance is still being
+tuned.)
+
 ## 2026-06-17 — Smart action queue: queued actions wait their turn automatically [shipped to prod 2026-06-17]
 
 Web-client triggers can queue an action ("queue at back/front") to fire when
