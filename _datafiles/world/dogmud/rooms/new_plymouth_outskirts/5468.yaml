@@ -69,3 +69,6 @@ idlemessages:
   rising fast, then cutting off just as suddenly.
 - The smell of burning fat from an unseen fire drifts through
   the lane, thick enough to taste.
+spawninfo:
+  - mobid: 9210
+    respawnrate: "12 real minutes"

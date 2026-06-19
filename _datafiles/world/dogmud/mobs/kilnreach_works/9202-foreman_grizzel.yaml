@@ -1,0 +1,44 @@
+mobid: 9202
+zone: Kilnreach Works
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 32
+maxwander: 1
+groups:
+  - humanoid
+  - works_folk
+idlecommands:
+  - 'emote bellows across the yard at a flagging worker, voice cracking
+    like a thrown stone'
+  - ''
+  - 'emote runs a scarred thumb down a column of figures in a battered
+    ledger, lips pressed flat'
+  - ''
+  - 'emote turns a slow gaze on a man he does not like the look of and
+    lets the silence do the work'
+  - 'emote spits in the dust at his feet and wipes his mouth with the back
+    of his wrist'
+activitylevel: 10
+character:
+  name: Foreman Grizzel
+  description: |
+    A broad, iron-shouldered man somewhere past fifty, with burn scars on
+    both forearms and the slow, economical movements of someone who has
+    been giving orders long enough that he no longer needs to raise his
+    voice to be obeyed. His eyes are pale, steady, and evaluative. The
+    skin along his brow and the backs of his hands has thickened into
+    overlapping scutes -- grey-brown and slightly raised, like bark or
+    hardened hide -- a Chrysalis drift he has carried long enough that the
+    workers no longer remark on it. He carries a ledger in the crook of
+    one arm at all times. The ledger is never wrong.
+  speciesid: 1
+  level: 1
+  gold: 35
+  stats:
+    perception:
+      training: 14
+    charisma:
+      training: 10
+    willpower:
+      training: 8

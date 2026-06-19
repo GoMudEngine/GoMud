@@ -1,0 +1,45 @@
+mobid: 9195
+zone: Greywater Flats
+behavior_archetype: ambusher
+aiprofile: serpent
+archetype: fighting
+hostile: true
+statpool: 34
+itemdropchance: 25
+maxwander: 2
+groups:
+  - animal
+  - snake
+activitylevel: 12
+idlecommands:
+  - 'emote lies coiled in the reed stems, indistinguishable from knotted
+    roots'
+  - ''
+  - 'emote flickers its tongue in a slow, deliberate test of the air'
+  - ''
+  - 'emote slides between sedge clumps with a dry papery rustle'
+  - ''
+  - 'emote finds a warm flat stone and arranges its coils across it in
+    unhurried loops'
+character:
+  name: A Marsh Adder
+  description: |
+    A thick-bodied adder marked in dark chestnut diamonds on pale brown,
+    coiled in the reed roots where the marsh shallows meet the bank. Its
+    pupils are vertical slits in any light, its jaw set with the slight
+    underbite of a viper bred for striking upward. It hunts by ambush --
+    lying motionless until warm-blooded movement comes within range, then
+    committing in a single lunge. The venom is not fatal to a healthy adult
+    but causes intense pain and dramatic swelling. It will not pursue prey
+    that flees; it will not back down from anything already in striking
+    distance.
+  speciesid: 8
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 5
+    dexterity:
+      training: 8
+    perception:
+      training: 5

@@ -1,0 +1,44 @@
+mobid: 9205
+zone: Kilnreach Works
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 26
+maxwander: 2
+groups:
+  - humanoid
+  - works_folk
+idlecommands:
+  - 'emote drags a long iron rod through the lip of the furnace, stirring
+    with the patience of someone who has learned fire does not hurry'
+  - ''
+  - 'emote skims a flat paddle across the surface of a melt, scooping off
+    a curling sheet of slag'
+  - ''
+  - 'emote raises one arm to shield his face from a surge of heat and
+    rocks back a half step'
+  - 'emote mops the back of his neck with a rag that comes away black and
+    turns back to the furnace'
+activitylevel: 11
+character:
+  name: A Foundry Hand
+  description: |
+    A black-handed, burn-scarred man whose skin maps in pale ridges the
+    history of every splash and near-miss the foundry has offered him. He
+    moves through the roar and the heat with the half-deaf steadiness of
+    someone for whom normal has always meant loud and bright and dangerous.
+    His irises have drifted to a deep amber-gold -- not brown, but
+    genuinely metallic, as though the furnace has taken up residence behind
+    his eyes -- and they catch the light in a way that is not quite human.
+    He does not find this remarkable. He has worked the iron long enough
+    that the remarkable has worn smooth.
+  speciesid: 1
+  level: 1
+  gold: 9
+  stats:
+    strength:
+      training: 12
+    vitality:
+      training: 10
+    perception:
+      training: 4

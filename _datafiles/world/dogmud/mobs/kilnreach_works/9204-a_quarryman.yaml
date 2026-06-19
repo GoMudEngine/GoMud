@@ -1,0 +1,44 @@
+mobid: 9204
+zone: Kilnreach Works
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 28
+maxwander: 2
+groups:
+  - humanoid
+  - works_folk
+idlecommands:
+  - 'emote swings a short-handled hammer in a ringing arc, driving a wedge
+    deep into a seam of pale stone'
+  - ''
+  - 'emote hauls on a chain with both hands, boots sliding in the grey
+    dust, jaw set hard'
+  - ''
+  - 'emote drags the back of his wrist across his eyes to clear a smear of
+    rock-dust and squints at the seam again'
+  - 'emote crouches over a split block, runs a grey-caked finger along the
+    break, and grunts once'
+activitylevel: 10
+character:
+  name: A Quarryman
+  description: |
+    A thickset man furred white from crown to collar with rock-dust, his
+    skin so ingrained with powdered stone that scrubbing no longer makes
+    much difference. His hands are wide, calloused, and built more like
+    tools than limbs -- the hands of a man who has spent his working life
+    breaking rock. His fingertips have calcified past ordinary tough skin
+    into something closer to horn: thick, grey-ridged slabs where the
+    nails should be, ringing faintly when they knock against stone. He
+    does not appear to notice. He moves slowly between tasks and quickly
+    when speed is needed, and never wastes the difference.
+  speciesid: 1
+  level: 1
+  gold: 10
+  stats:
+    strength:
+      training: 14
+    vitality:
+      training: 10
+    dexterity:
+      training: 3

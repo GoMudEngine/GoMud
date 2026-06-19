@@ -79,3 +79,6 @@ idlemessages:
 - A swallow darts through the open hatch, threads the
   space below the rafters in a quick arc, and exits the
   same way before the flour dust settles behind it.
+spawninfo:
+  - mobid: 9197
+    respawnrate: "15 real minutes"

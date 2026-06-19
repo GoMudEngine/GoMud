@@ -1,0 +1,52 @@
+mobid: 9209
+zone: New Plymouth Outskirts
+behavior_archetype: noncombat_shopkeeper
+statpool: 45
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 1
+groups:
+  - humanoid
+  - merchant
+idlecommands:
+  - 'emote throws both arms wide and cries something about genuine
+    Fernway amber at a price that defies reason'
+  - ''
+  - 'emote leans over the counter toward a passing woman and drops
+    his voice to an urgent half-whisper, tapping the tray twice'
+  - ''
+  - 'emote rearranges the items on his tray into a more appealing
+    display, frowning critically at the result'
+  - ''
+  - 'emote stabs a finger at someone in the crowd -- "You, friend.
+    Yes, you. I have exactly what you need."'
+  - ''
+activitylevel: 16
+character:
+  name: A Market Hawker
+  description: |
+    A broad-shouldered man with a voice like a market-bell and a
+    tray hung round his neck on a leather harness, loaded with
+    goods of questionable provenance. He works the Outer Market
+    without a licence plate on his board -- technically a code
+    violation, but enforcement at the East Gate approach has been
+    patchy since the new gate-captain took post. His most
+    noticeable feature, after the voice, is his skin: when the
+    sun catches him from the side, the surface of his face and
+    hands takes on a faint iridescent shimmer, a Chrysalis drift
+    that gives him the momentary look of someone lit from within.
+    It is arresting in a crowd. He is aware of this and positions
+    himself in the light accordingly. Most people who stop to
+    stare end up buying something.
+  speciesid: 1
+  level: 1
+  gold: 35
+  stats:
+    charisma:
+      training: 12
+    perception:
+      training: 8
+    willpower:
+      training: 4

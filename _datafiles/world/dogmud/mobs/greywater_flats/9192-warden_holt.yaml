@@ -1,0 +1,48 @@
+mobid: 9192
+zone: Greywater Flats
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 32
+itemdropchance: 0
+maxwander: 0
+groups:
+  - humanoid
+  - capital_authority
+activitylevel: 10
+idlecommands:
+  - 'emote makes a precise notation in the open ledger, blotting it before
+    moving to the next line'
+  - ''
+  - 'emote turns a traveller''s papers over and examines the reverse as if
+    expecting a forgery on the back'
+  - ''
+  - 'emote adjusts the survey marker post by a careful half-inch and steps
+    back to check the alignment'
+  - ''
+  - 'emote stamps a chit with a heavy seal and sets it in the outgoing
+    stack without looking up'
+character:
+  name: Warden Holt
+  description: |
+    A heavyset man in a dusty coat bearing the capital survey-office
+    insignia stitched to the breast pocket, stationed at Tollford Crossing
+    to log the movement of goods and persons across the ford. He does his
+    job thoroughly, without enthusiasm or apology: names recorded, freight
+    assessed, documentation examined for irregularities. His manner carries
+    the flat authority of a man who represents something considerably larger
+    than himself and knows it. When he blinks, a second transparent eyelid
+    slides briefly across his eye before retracting -- a Chrysalis detail
+    that makes him excellent at reading in harsh glare and slightly
+    unnerving to hold eye contact with across a ledger.
+  speciesid: 1
+  level: 1
+  gold: 30
+  stats:
+    perception:
+      training: 10
+    willpower:
+      training: 6
+    charisma:
+      training: 3

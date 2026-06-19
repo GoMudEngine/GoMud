@@ -81,3 +81,6 @@ idlemessages:
 - A floorboard near the bar gives a long, deliberate creak
   under nobody's weight in particular — the kind of sound
   old buildings make in the ordinary course of standing.
+spawninfo:
+  - mobid: 9196
+    respawnrate: "15 real minutes"

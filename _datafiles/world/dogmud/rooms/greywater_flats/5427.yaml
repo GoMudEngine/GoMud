@@ -40,3 +40,6 @@ idlemessages:
 - A gull drops in to test the covered creel, finds the stone, and flaps off.
 - The cut margin of reeds rustles, tidy and trimmed, along the road's edge.
 - Somewhere out in the mist the unseen fisher's pole knocks against his boat.
+spawninfo:
+  - mobid: 9193
+    respawnrate: "15 real minutes"

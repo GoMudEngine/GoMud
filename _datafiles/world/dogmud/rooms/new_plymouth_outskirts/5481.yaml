@@ -44,3 +44,6 @@ idlemessages:
 - The keeper turns a ledger page, writes something short, and closes it.
 - A smell of tallow from the single candle near the desk shifts when the door opens.
 - Two men near the far wall speak in low voices — an exchange of information, finished quickly.
+spawninfo:
+  - mobid: 9214
+    respawnrate: "15 real minutes"

@@ -1,0 +1,49 @@
+mobid: 9214
+zone: New Plymouth Outskirts
+behavior_archetype: noncombat_passive
+statpool: 45
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+  - new_plymouth_outskirts_folk
+idlecommands:
+  - 'emote holds out a hand for the night-coin without looking at whoever
+    is offering it'
+  - ''
+  - 'emote drives the toe of his boot into the side of a sleeping figure
+    and waits to see if it moves'
+  - ''
+  - 'emote stands at the door with both arms folded, watching the lane'
+  - ''
+  - 'emote works a splinter of wood between his back teeth and stares at
+    nothing in particular'
+activitylevel: 9
+character:
+  name: Hatch the Doss-Keeper
+  description: |
+    A slab-built man with a shaved head gone grey at the temples and
+    the hard-set expression of someone who has heard every story and
+    stopped believing most of them. Hatch keeps the gate-apron
+    doss-house, where a copper buys a length of rope to lean against
+    for the night and no names are given or asked. He collects coins,
+    assigns rope-lengths, and maintains order with the minimum force
+    of someone who understands leverage. The fine white hairs on his
+    forearms and the backs of his hands stand permanently upright --
+    a Chrysalis drift that has given him an animal awareness of air
+    movement and the small shifts that mean someone is moving in the
+    dark. He knows when a sleeper turns over four beds away and says
+    nothing about how he knows.
+  speciesid: 1
+  level: 1
+  gold: 60
+  stats:
+    perception:
+      training: 8
+    strength:
+      training: 6
+    willpower:
+      training: 5

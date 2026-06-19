@@ -39,3 +39,6 @@ idlemessages:
 - From beyond the tunnel the city exhales — noise, smoke, a thousand voices.
 - A pigeon sails out of the tunnel mouth, indifferent to the queue behind it.
 - The portcullis chains groan in a draught that finds the tunnel mouth.
+spawninfo:
+  - mobid: 9208
+    respawnrate: "15 real minutes"

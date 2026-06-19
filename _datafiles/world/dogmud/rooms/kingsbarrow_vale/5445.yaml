@@ -74,3 +74,6 @@ idlemessages:
   voice calling ahead to the yard.
 - A rat crosses the far end of the central aisle at a
   brisk trot and vanishes between two grain columns.
+spawninfo:
+  - mobid: 9198
+    respawnrate: "15 real minutes"

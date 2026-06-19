@@ -1,0 +1,54 @@
+mobid: 9213
+zone: New Plymouth Outskirts
+behavior_archetype: noncombat_shopkeeper
+statpool: 90
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+  - innkeeper
+  - new_plymouth_outskirts_folk
+  - shopkeepers
+idlecommands:
+  - 'emote counts a stack of coppers into columns with the tip of one finger,
+    lips moving in a private arithmetic'
+  - ''
+  - 'emote tracks a newcomer from the door to the corner with a slow unhurried
+    look that takes in everything before settling'
+  - ''
+  - 'emote ladles thin broth from the pot behind her into a clay bowl and sets
+    it on the counter without ceremony'
+  - ''
+  - 'emote holds a level stare on a troublemaker until he reconsiders his
+    evening'
+activitylevel: 12
+character:
+  name: Mother Coyle
+  description: |
+    A stout, deliberate woman of somewhere between fifty and seventy,
+    Coyle has kept the Broken Gate since the previous landlord drank
+    himself out of it and she took the deed in lieu of a debt. She
+    asks no questions about names, origins, or travel plans and
+    enforces one rule -- no blood on the floor -- with the calm of
+    someone who has had to back it before. She does not smile at
+    customers unless they are regulars. The skin of her forearms and
+    the backs of her hands has hardened over the years to a faint
+    pearl-grey, smooth and slightly cooler than flesh should be; she
+    wraps them in winter without offering any explanation. It is a
+    Chrysalis mark old enough that she has stopped counting the
+    seasons since it settled.
+  speciesid: 1
+  level: 1
+  gold: 250
+  stats:
+    charisma:
+      training: 10
+    perception:
+      training: 8
+    willpower:
+      training: 8
+    strength:
+      training: 4

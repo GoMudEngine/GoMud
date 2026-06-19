@@ -1,0 +1,50 @@
+mobid: 9197
+zone: Kingsbarrow Vale
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 38
+maxwander: 0
+groups:
+  - humanoid
+  - kingsbarrow_folk
+idlecommands:
+  - 'emote heaves a grain-sack onto his shoulder with a grunt and carries
+    it to the hopper without breaking stride'
+  - ''
+  - 'emote crouches beside the millstone housing and adjusts a wooden
+    shim with the careful focus of a man who has done this a hundred
+    times and still does not rush it'
+  - ''
+  - 'emote brushes flour from his forearms in two brisk swipes, adding
+    the cloud to the general haze already hanging in the mill'
+  - ''
+  - 'emote leans toward you and raises his voice over the wheel-noise,
+    apparently unaware he does not need to'
+activitylevel: 11
+character:
+  name: Dawkin the Miller
+  description: |
+    Dawkin the Miller is white with flour from his collar to his boots,
+    a permanent condition he has long since stopped contesting. He is a
+    big man made bigger by years of sack-work, with forearms like roof
+    beams and the slightly remote expression of someone who spends most
+    of his day inside a noise. The millwheel has taken the edge off his
+    hearing, so he speaks in the measured shout of a man who has learned
+    to pitch his voice for the far end of a room. His ears are the tell:
+    they have slowly grown cupped and mobile over the years, swiveling
+    in small arcs toward whoever is speaking, catching words the wheel
+    would otherwise take -- a Chrysalis adjustment so quietly useful
+    that his family stopped remarking on it before any of the children
+    were old enough to remember them any other way.
+  speciesid: 1
+  level: 1
+  gold: 70
+  stats:
+    strength:
+      training: 10
+    perception:
+      training: 9
+    vitality:
+      training: 5

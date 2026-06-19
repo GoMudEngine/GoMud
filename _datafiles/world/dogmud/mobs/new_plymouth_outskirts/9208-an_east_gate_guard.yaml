@@ -1,0 +1,50 @@
+mobid: 9208
+zone: New Plymouth Outskirts
+behavior_archetype: guard_captain
+statpool: 60
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+  - guard
+idlecommands:
+  - 'emote holds out a hand to a merchant in the queue, waiting in
+    silence until the man produces his travel-papers and unfolds them'
+  - ''
+  - 'emote waves a loaded cart through the gate with a slow, deliberate
+    sweep of one arm, already looking past it at the next in line'
+  - ''
+  - 'emote leans the halberd against the gatehouse wall and rolls one
+    shoulder with a grinding crack'
+  - ''
+  - 'emote scans the waiting queue from end to end, expression unchanged'
+  - ''
+activitylevel: 12
+character:
+  name: An East Gate Guard
+  description: |
+    A guard in the bloodline livery of New Plymouth -- dark tabard
+    with a woven-thread sigil at the chest -- standing at the East
+    Gate with the practiced immobility of someone who has done this
+    shift enough times to stop pretending it is interesting. The
+    halberd looks well-maintained. So does the expression of absolute
+    boredom. He checks papers with the thoroughness of someone who
+    has been fined for not doing so, not because he thinks you look
+    suspicious. The Chrysalis has touched him mildly: the skin along
+    his jaw and brow carries a faint subdermal ridging, a shallow
+    armoring under the surface that gives his face a permanently
+    stern cast he has long since stopped noticing. Bloodline-livery
+    guards run thick with that particular drift.
+  speciesid: 1
+  level: 1
+  gold: 40
+  stats:
+    strength:
+      training: 8
+    vitality:
+      training: 10
+    perception:
+      training: 12

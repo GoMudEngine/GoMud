@@ -75,3 +75,6 @@ idlemessages:
   wide across the far cobbles.
 - From inside the field barn something heavy shifts with a
   slow wooden thump — someone stacking, or checking a count.
+spawninfo:
+  - mobid: 9201
+    respawnrate: "15 real minutes"

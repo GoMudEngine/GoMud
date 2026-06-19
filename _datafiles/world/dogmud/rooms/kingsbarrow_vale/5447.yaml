@@ -81,3 +81,6 @@ idlemessages:
 - Dust moves in a slow shaft of light from the nearest
   lancet, disturbed by no cause you can place, turning
   and settling in the grey air above the altar.
+spawninfo:
+  - mobid: 9200
+    respawnrate: "15 real minutes"

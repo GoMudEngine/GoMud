@@ -1,0 +1,49 @@
+mobid: 9200
+zone: Kingsbarrow Vale
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 1
+groups:
+  - humanoid
+  - kingsbarrow_folk
+idlecommands:
+  - 'emote trims a tallow candle with small, careful snips, letting the
+    wick-ends fall into his cupped palm'
+  - ''
+  - 'emote straightens the sheaves on the harvest altar with both hands,
+    humming something tuneless and half-heard'
+  - ''
+  - 'emote stands with head bowed at the back of the nave, lips moving
+    in what might be a blessing or might be a list'
+  - ''
+  - 'emote sweeps the porch step with a worn-bristle broom, moving the
+    same dust back and forth with comfortable futility'
+activitylevel: 8
+character:
+  name: Parson Ellet
+  description: |
+    Old Ellet has tended the harvest-church at Kingsbarrow for so long
+    that the corn-dolly faith has bent itself slightly to fit him, or
+    he has bent to fit it -- it is difficult now to tell which. He is
+    slight, white-haired, and pleasantly vague in conversation, the
+    kind of man who forgets what he was saying mid-sentence and is
+    entirely undisturbed by this. He blesses everything: the planting,
+    the cutting, passing carts, children he only half-recognizes. His
+    voice carries an odd quality inside the stone church -- a low
+    second tone beneath his words, as though two voices are speaking
+    in near-perfect unison, a Chrysalis harmonic that settled into him
+    some years ago. Parishioners say it sounds like an organ tone. The
+    parson calls it a gift and seems to mean it without irony.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    willpower:
+      training: 10
+    charisma:
+      training: 8
+    perception:
+      training: 4

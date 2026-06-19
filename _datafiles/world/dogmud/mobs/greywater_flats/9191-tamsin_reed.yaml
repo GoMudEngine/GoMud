@@ -1,0 +1,45 @@
+mobid: 9191
+zone: Greywater Flats
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+itemdropchance: 0
+maxwander: 0
+groups:
+  - humanoid
+activitylevel: 10
+idlecommands:
+  - 'emote uncoils a length of rope and works it into a neat figure-eight'
+  - ''
+  - 'emote eyes the current from the bank, lips pressed in quiet calculation'
+  - ''
+  - 'emote sets the pole across the gunwale and spits in the water'
+  - ''
+  - 'emote leans on the tiller, watching the ford with the stillness of
+    someone who knows what she is looking at'
+character:
+  name: Tamsin Reed
+  description: |
+    A lean woman of middle years, sun-dark and wind-roughened, who has
+    ferried travellers across the grey river for longer than the toll-post
+    has stood at Greywater Ford. She poles her skiff with unhurried
+    precision, reads the current in a single glance, and charges a flat
+    fare she has not changed in a decade. She is not unfriendly but is
+    not given to conversation -- questions about conditions upriver she
+    answers in two words or fewer. The skin of her palms and the backs
+    of her hands carries a fine grey-green scale texture, the pattern
+    and faint sheen of river-worn slate taken up permanently into the
+    skin; the grip it gives her on a wet pole is the only thing she has
+    ever found worth mentioning about it.
+  speciesid: 1
+  level: 1
+  gold: 20
+  stats:
+    strength:
+      training: 6
+    dexterity:
+      training: 4
+    perception:
+      training: 8

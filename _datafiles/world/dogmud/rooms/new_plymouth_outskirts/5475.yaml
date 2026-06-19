@@ -45,3 +45,6 @@ idlemessages:
 - A figure studies the <ansi fg="itemname">board</ansi>, copies something onto a scrap, and leaves.
 - Two drinkers at a table converse in voices that don't carry past them.
 - The ale-smell thickens when the tap is opened and lingers long after.
+spawninfo:
+  - mobid: 9213
+    respawnrate: "15 real minutes"

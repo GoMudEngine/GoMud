@@ -1,0 +1,50 @@
+mobid: 9211
+zone: New Plymouth Outskirts
+behavior_archetype: thief
+statpool: 34
+itemdropchance: 40
+hostile: false
+maxwander: 2
+groups:
+  - humanoid
+idlecommands:
+  - 'emote falls into step beside a traveller in the gate queue,
+    close enough to be heard without raising his voice'
+  - ''
+  - 'emote draws something from inside his coat and tilts it so
+    the light catches a pressed-wax seal just so'
+  - ''
+  - 'emote glances once toward the guard post, then back, and
+    lowers his voice another notch'
+  - ''
+  - 'emote shrugs with the practiced sorrow of a man selling what
+    he himself has no room to keep'
+  - ''
+activitylevel: 14
+character:
+  name: Quill the Tout
+  description: |
+    A well-kept man in a coat slightly too good for the Outer Market,
+    working the gate-queue with the ease of someone who has made
+    every useful introduction in this district and several he
+    should not have. He sells papers -- travel documents, guild
+    certifications, letters of transit rendered in someone else's
+    careful hand -- and occasionally information at a premium. The
+    smile arrives half a second before he speaks and stays a beat
+    after. His pupils are the tell, if you are paying attention:
+    slightly ovoid rather than round, the irises ringed faintly in
+    amber -- a Chrysalis drift that gives his gaze the quality of
+    a lamp seen through smoked glass. People hold his eye a moment
+    longer than they intend to. He finds this useful.
+  speciesid: 1
+  level: 1
+  gold: 25
+  stats:
+    dexterity:
+      training: 10
+    charisma:
+      training: 14
+    perception:
+      training: 8
+  skills:
+    skullduggery: 10

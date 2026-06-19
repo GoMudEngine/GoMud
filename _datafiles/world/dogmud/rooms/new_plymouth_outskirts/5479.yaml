@@ -45,3 +45,6 @@ idlemessages:
 - The boatman turns a coin over in his fingers without looking at it.
 - Someone crosses the ford ahead — steady, unhurried, not looking back.
 - A heron stands knee-deep in the shallows upstream, perfectly still.
+spawninfo:
+  - mobid: 9215
+    respawnrate: "18 real minutes"

@@ -1,0 +1,46 @@
+mobid: 9207
+zone: Kilnreach Works
+behavior_archetype: generic_fighter
+archetype: fighting
+hostile: false
+statpool: 46
+itemdropchance: 40
+maxwander: 1
+groups:
+  - humanoid
+idlecommands:
+  - 'emote cracks his knuckles in a slow sequence, one joint at a time,
+    and rolls his neck until something pops'
+  - ''
+  - 'emote tracks a newcomer with a flat, unhurried look from across the
+    room'
+  - 'emote lifts a battered cup and drinks deep, eyes still working the
+    room over the rim'
+  - ''
+  - 'emote flexes his right fist once, slowly, and watches it with the air
+    of a man who is satisfied with a tool'
+activitylevel: 12
+character:
+  name: A Works Tough
+  description: |
+    A heavy-limbed man who takes up more space than he needs to at the
+    bar, scarred in the unarchived way of men who have been in many fights
+    and recorded none of them. He does not carry a weapon because he does
+    not feel the lack. His hands are the giveaway: the knuckles have
+    thickened with sub-dermal bone-spurs that ridge each fist into
+    something knobbed and dense, a Chrysalis drift that has quietly
+    armoured the instruments he relies on most. He is not hostile unless
+    given cause, but the threshold for cause is lower than you might
+    assume, and he does not warn twice.
+  speciesid: 1
+  level: 1
+  gold: 18
+  stats:
+    strength:
+      training: 18
+    vitality:
+      training: 14
+    dexterity:
+      training: 8
+    perception:
+      training: 4

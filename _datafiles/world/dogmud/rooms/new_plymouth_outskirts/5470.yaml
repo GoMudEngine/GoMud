@@ -45,3 +45,8 @@ idlemessages:
 - A child runs the length of the queue selling water from a clay jug.
 - A family counts coins quietly at the back of the line, heads together.
 - The gate bell rings once — the line shuffles forward three steps.
+spawninfo:
+  - mobid: 9211
+    respawnrate: "12 real minutes"
+  - mobid: 9212
+    respawnrate: "15 real minutes"

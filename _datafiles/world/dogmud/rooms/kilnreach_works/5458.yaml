@@ -90,3 +90,6 @@ idlemessages:
   above the rim — drawn up from the terraces by the working
   heat of the day, settling so slowly it is almost invisible
   unless you watch it drift against the sky.
+spawninfo:
+  - mobid: 9204
+    respawnrate: "15 real minutes"

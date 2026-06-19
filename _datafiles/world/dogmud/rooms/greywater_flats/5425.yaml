@@ -39,3 +39,6 @@ idlemessages:
 - The river slides past without a sound, smooth and grey and endless.
 - A coot paddles out from the reeds, thinks better of it, and turns back.
 - River-mist drifts low over the far bank, softening it to nothing.
+spawninfo:
+  - mobid: 9191
+    respawnrate: "15 real minutes"

@@ -1,0 +1,46 @@
+mobid: 9203
+zone: Kilnreach Works
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+  - works_folk
+idlecommands:
+  - 'emote slams a tankard down on the bar so hard the dregs jump, then
+    slides it to the far end without looking up'
+  - ''
+  - 'emote drags a grey rag across the bar top in three hard strokes and
+    flings it back over her shoulder'
+  - ''
+  - 'emote says three flat words to two men who are just starting to shove
+    each other, and they stop'
+  - 'emote draws ale in a long, practised pull without spilling a drop and
+    sets it down before anyone has asked'
+activitylevel: 12
+character:
+  name: Sela Tapp
+  description: |
+    A short, square-built woman of indeterminate age, fast with her hands
+    and faster with a verdict. She runs the Furnace and Flagon the way a
+    good gaoler runs a prison -- with economy, authority, and the quiet
+    confidence that she could remove anyone she wanted to. Her forearms are
+    ropy with old work and she holds eye contact the way a vice holds a
+    bolt. Beneath her upper lids sits a thin translucent membrane, a
+    second eyelid that slides across when smoke or kiln-dust gets thick --
+    she never blinks quite the way other people do. She has heard every
+    grievance the works has to offer, and she has no intention of hearing
+    yours twice.
+  speciesid: 1
+  level: 1
+  gold: 90
+  stats:
+    charisma:
+      training: 12
+    perception:
+      training: 10
+    dexterity:
+      training: 6

@@ -46,3 +46,6 @@ idlemessages:
 - A cart lurches through the ford ahead of you, water sheeting off its wheels.
 - A withy stake leans further as the current works at its footing.
 - The seal on the survey marker catches the grey light, sharp and new and watchful.
+spawninfo:
+  - mobid: 9192
+    respawnrate: "15 real minutes"

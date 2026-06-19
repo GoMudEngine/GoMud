@@ -87,3 +87,6 @@ idlemessages:
   one as they walk away.
 - The tannery-stench rolls across the crossroads as the wind turns,
   heavy and close, then passes as the air shifts back.
+spawninfo:
+  - mobid: 9202
+    respawnrate: "15 real minutes"

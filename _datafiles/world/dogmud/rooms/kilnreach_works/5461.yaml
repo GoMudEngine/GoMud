@@ -72,3 +72,6 @@ idlemessages:
 - The reek shifts and thickens as the wind turns, pressing
   it back into the yard rather than carrying it clear, and
   every person in the space leans slightly into their work.
+spawninfo:
+  - mobid: 9206
+    respawnrate: "15 real minutes"

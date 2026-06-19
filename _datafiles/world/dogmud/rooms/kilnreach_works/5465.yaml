@@ -72,3 +72,8 @@ idlemessages:
   not arguing, just too exhausted for much volume.
 - Someone laughs — loud, short, cut off as quickly as
   it started, and the room settles back to its baseline.
+spawninfo:
+  - mobid: 9203
+    respawnrate: "15 real minutes"
+  - mobid: 9207
+    respawnrate: "15 real minutes"

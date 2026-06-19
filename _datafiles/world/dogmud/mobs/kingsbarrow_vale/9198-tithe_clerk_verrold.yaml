@@ -1,0 +1,51 @@
+mobid: 9198
+zone: Kingsbarrow Vale
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 32
+maxwander: 0
+groups:
+  - humanoid
+  - kingsbarrow_folk
+idlecommands:
+  - 'emote lifts a grain-sack by the knotted top, hefts it once, and
+    tallies a mark in the ledger without expression'
+  - ''
+  - 'emote draws a long, perfectly straight line across the page with a
+    steel-edged ruler and examines the result'
+  - ''
+  - 'emote holds a cartage seal up to the light, turns it twice, and
+    sets it back on the pile with the deliberateness of someone who has
+    found a discrepancy'
+  - 'emote frowns at a column of figures, taps the page twice with one
+    finger, and makes a small correction in red ink'
+  - ''
+activitylevel: 9
+character:
+  name: Tithe-Clerk Verrold
+  description: |
+    Verrold has occupied the same table in the Great Tithe Barn for
+    eleven years, and the barn has come to feel built around him. He
+    is thin, dressed in the rust-brown broadcloth of a capital office
+    clerk, and carries the precise, joyless manner of a man whose
+    entire professional identity rests on the accuracy of his columns.
+    He tallies the tenth owed to New Plymouth with an unhurried
+    thoroughness that the village farmers have learned not to argue
+    with. What unsettles people, if they watch long enough, is his
+    hands: they are utterly, inhumanly still. Set a quill against
+    paper and the line is a machine's line, without tremor or
+    deviation, a Chrysalis-given steadiness he has never mentioned
+    and perhaps never thought to question. It makes his ledger-work
+    immaculate. It also makes him difficult to look at for long.
+  speciesid: 1
+  level: 1
+  gold: 40
+  stats:
+    perception:
+      training: 11
+    willpower:
+      training: 9
+    charisma:
+      training: 3

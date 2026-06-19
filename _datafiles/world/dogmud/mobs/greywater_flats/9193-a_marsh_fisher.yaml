@@ -1,0 +1,43 @@
+mobid: 9193
+zone: Greywater Flats
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+itemdropchance: 0
+maxwander: 2
+groups:
+  - humanoid
+activitylevel: 12
+idlecommands:
+  - 'emote draws a net across one knee and works through it for tears,
+    fingers moving without hurry'
+  - ''
+  - 'emote leans over the bank to check an eel-trap looped around a
+    submerged stake'
+  - ''
+  - 'emote watches a float with a patience that seems geological'
+  - ''
+  - 'emote draws a reed-knife and shears a bundle of reeds at the
+    waterline with a single stroke'
+character:
+  name: A Marsh Fisher
+  description: |
+    A figure of indeterminate middle age crouched at the north bank,
+    reed-knife at the belt and a net bundled over one knee, entirely at
+    home in the grey half-world between water and sky. He speaks when
+    spoken to and not otherwise, his attention given over to whatever the
+    river is doing -- the set of the current, the movement of the float,
+    the slow weight of an eel-trap. The first joints of his fingers carry
+    a translucent webbing, gossamer-thin, the shade of creek water held
+    up to light; he was born with it, finds it useful for swimming the
+    ford channels, and has never thought much more about it than that.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    dexterity:
+      training: 6
+    perception:
+      training: 8

@@ -44,3 +44,6 @@ idlemessages:
 - A man near the wall coughs at length and then is silent.
 - Low voices carry from inside a lean-to — too quiet to make out, too steady for argument.
 - A crow drops from overhead, takes something small from the ground, and lifts away before anyone stirs.
+spawninfo:
+  - mobid: 9216
+    respawnrate: "15 real minutes"

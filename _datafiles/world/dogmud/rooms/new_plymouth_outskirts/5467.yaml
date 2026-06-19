@@ -59,3 +59,6 @@ idlemessages:
   side holding an apple, already sprinting for the crowd.
 - The showman's drum stops mid-beat, then restarts at a faster
   tempo — the pitch is building to something.
+spawninfo:
+  - mobid: 9209
+    respawnrate: "15 real minutes"

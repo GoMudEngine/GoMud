@@ -71,3 +71,6 @@ idlemessages:
 - A finished casting hits the timber rack with a ringing
   clang, still too hot to grip bare-handed, steam rising
   from the rough pores of the cooling metal.
+spawninfo:
+  - mobid: 9205
+    respawnrate: "15 real minutes"

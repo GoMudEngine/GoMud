@@ -1,0 +1,48 @@
+mobid: 9216
+zone: New Plymouth Outskirts
+behavior_archetype: noncombat_passive
+statpool: 22
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 1
+groups:
+  - humanoid
+  - new_plymouth_outskirts_folk
+idlecommands:
+  - 'emote stirs a clay pot of thin broth and watches the surface with
+    a careful patience'
+  - ''
+  - 'emote pulls a knotted bundle a little closer, tightening both arms
+    around it'
+  - ''
+  - 'emote stares at the city gate with an expression that has stopped
+    expecting anything'
+  - ''
+  - 'emote bends over something low and murmurs in a voice too quiet
+    to carry'
+activitylevel: 9
+character:
+  name: A Wall-Camp Refugee
+  description: |
+    One of dozens pressed against the wall-camp at the gate approach,
+    waiting on a way into the city that may never come. She tends a
+    clay pot that is mostly water, keeps herself and a small bundle
+    close, and watches the gate with the patience of someone who has
+    been doing this longer than she planned. The backs of her hands
+    and the skin at her throat have gone faintly translucent in
+    patches -- a Chrysalis touch still spreading, the fine-branching
+    blue of her veins visible beneath the surface like ink pressed
+    behind paper. It has not helped her case at the gate-watch
+    inspections. She does not speak of it unless she has to.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: 4
+    willpower:
+      training: 4
+    perception:
+      training: 3

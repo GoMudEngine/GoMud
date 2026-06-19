@@ -1,0 +1,50 @@
+mobid: 9212
+zone: New Plymouth Outskirts
+behavior_archetype: noncombat_passive
+statpool: 22
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 1
+groups:
+  - humanoid
+idlecommands:
+  - 'emote holds out a cracked ceramic bowl toward the passing crowd,
+    arm steady, expression patient'
+  - ''
+  - 'emote murmurs something low -- a blessing, or a phrase worn
+    smooth by too much repetition to mean anything specific'
+  - ''
+  - 'emote shuffles back against the gate-apron wall as a cart
+    rumbles past with no intention of going around'
+  - ''
+  - 'emote picks at the edge of a sore on the back of one hand
+    without looking down at it'
+  - ''
+activitylevel: 10
+character:
+  name: A Ragged Beggar
+  description: |
+    A small figure sitting against the stone of the gate apron with
+    a cracked ceramic bowl in both hands. The crowd flows past
+    without looking. Sometimes the bowl comes back with a coin in
+    it. Often it does not. She wears what she owns, which is not
+    much, and has the compressed stillness of someone who has been
+    conserving everything for a long time. The Chrysalis has been
+    unkind in the minor way it sometimes is: her hair has gone
+    entirely silver -- not gradually, not with age, but all at
+    once, replaced by a fine colourless fuzz that catches the light
+    like frost on wire. It is the kind of mutation that costs
+    nothing in function and everything in how strangers look at you.
+    Most do not look at her at all.
+  speciesid: 1
+  level: 1
+  gold: 2
+  stats:
+    perception:
+      training: 6
+    charisma:
+      training: 2
+    vitality:
+      training: 4

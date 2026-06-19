@@ -1,0 +1,45 @@
+mobid: 9206
+zone: Kilnreach Works
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 24
+maxwander: 2
+groups:
+  - humanoid
+  - works_folk
+idlecommands:
+  - 'emote turns a hide half-submerged in a black pit with a long pole,
+    arms out for balance over the edge'
+  - ''
+  - 'emote hauls a dripping skin from the pit and flings it over a wooden
+    rack with practised ease'
+  - 'emote draws a blunt scraper the full length of a stretched hide,
+    leaning his weight into each stroke'
+  - ''
+  - 'emote takes a slow, deliberate breath through his mouth instead of
+    his nose, and keeps working'
+activitylevel: 9
+character:
+  name: A Tanner
+  description: |
+    A lean man stained to the elbows with tanbark and something darker
+    still, carrying the tannery's reek in his clothes, his hair, and
+    probably the marrow of his bones by now. He works with the blank,
+    efficient focus of someone who made peace with the smell long ago and
+    stopped expecting anyone else to. The skin of his forearms and throat
+    has developed a faint iridescence -- not colour, exactly, but a
+    quality of the surface itself, a mother-of-pearl shift that moves when
+    the light does, as though something beneath the skin has learned to
+    reflect differently. Most people are too occupied noticing the smell to
+    notice that.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    vitality:
+      training: 10
+    dexterity:
+      training: 8
+    strength:
+      training: 6

@@ -42,3 +42,6 @@ idlemessages:
 - A dragonfly hangs glittering before your face, then flicks away.
 - A lily pad tips and rights itself as something passes beneath it.
 - The deep green stillness settles back, patient and unhurried, after the heron's strike.
+spawninfo:
+  - mobid: 9194
+    respawnrate: "12 real minutes"

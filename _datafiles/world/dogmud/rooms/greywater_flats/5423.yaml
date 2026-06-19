@@ -42,3 +42,6 @@ idlemessages:
 - The wind lays the whole reed-bed flat for a moment, baring sheets of grey water.
 - A fish rolls in a pool with a soft slap, and the ripples spread and die.
 - The bird-noise swells, peaks, and falls back to a steady wet murmur.
+spawninfo:
+  - mobid: 9195
+    respawnrate: "10 real minutes"

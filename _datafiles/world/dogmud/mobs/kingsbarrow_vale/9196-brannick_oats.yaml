@@ -1,0 +1,49 @@
+mobid: 9196
+zone: Kingsbarrow Vale
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+  - kingsbarrow_folk
+idlecommands:
+  - 'emote draws a pull of ale from the tap and sets the mug on the bar
+    with the easy assurance of someone who has done it ten thousand times'
+  - ''
+  - 'emote slides a round loaf from the oven with a folded cloth, taps
+    the crust, and nods with quiet satisfaction'
+  - ''
+  - 'emote wipes down the nearest table in broad, unhurried circles, eyes
+    moving around the room as he works'
+  - ''
+  - 'emote lifts his chin and calls a greeting to someone near the door,
+    face creasing into a grin that takes years off him'
+activitylevel: 10
+character:
+  name: Brannick Oats
+  description: |
+    Brannick Oats has kept the Sheaf and Sickle so long that the inn
+    smells of him, or he of it -- woodsmoke, yeast, and pulled ale
+    woven into his skin like a second apron. He is generously round,
+    floury to the elbows most mornings, and possessed of the particular
+    warmth of a man who genuinely likes people and has never seen a
+    reason to pretend otherwise. Sit within arm's reach of him in cold
+    weather and the warmth becomes literal: a gentle, steady heat
+    radiates off him as though he contains a permanently banked hearth,
+    a Chrysalis drift that arrived so gradually no one in the vale can
+    name the year it started. He has never mentioned it. The Sheaf and
+    Sickle is simply known as the warmest house in Kingsbarrow, and
+    Brannick accepts the compliment without elaboration.
+  speciesid: 1
+  level: 1
+  gold: 95
+  stats:
+    charisma:
+      training: 12
+    perception:
+      training: 8
+    willpower:
+      training: 4

@@ -1,0 +1,50 @@
+mobid: 9215
+zone: New Plymouth Outskirts
+behavior_archetype: noncombat_passive
+statpool: 50
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 1
+groups:
+  - humanoid
+  - new_plymouth_outskirts_folk
+idlecommands:
+  - 'emote watches the ford crossing from the shadow of the reed-bank,
+    arms loose at his sides'
+  - ''
+  - 'emote lets out a low two-note whistle and waits for an answer that
+    may or may not come'
+  - ''
+  - 'emote crouches and shifts aside a mat of river-grass, checks something
+    beneath it, and covers it again'
+  - ''
+  - 'emote steps backward into the reed-shadow and becomes very difficult
+    to see'
+activitylevel: 8
+character:
+  name: A River-Road Smuggler
+  description: |
+    A lean, weathered man who favors the ford shallows where the
+    river-road thins to a muddy track and the gate-watch does not
+    bother to patrol. He arranges papers, routes, and passage past
+    the walls for those who can pay, and he operates on the principle
+    that the less said, the cleaner the arrangement. He is very still
+    when he wants to be, which is most of the time. His ears carry a
+    secondary ridge of cartilage along the outer rim -- almost
+    invisible unless the light falls sideways -- that angles sound
+    toward him differently than it should, a Chrysalis drift that has
+    sharpened his hearing well past what anyone standing in reeds a
+    hundred yards away is supposed to have. He knew you were
+    approaching before you thought you were close.
+  speciesid: 1
+  level: 1
+  gold: 80
+  stats:
+    perception:
+      training: 10
+    dexterity:
+      training: 8
+    willpower:
+      training: 5

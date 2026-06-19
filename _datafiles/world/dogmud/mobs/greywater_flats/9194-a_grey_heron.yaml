@@ -1,0 +1,41 @@
+mobid: 9194
+zone: Greywater Flats
+behavior_archetype: prey
+hostile: false
+statpool: 22
+itemdropchance: 0
+maxwander: 4
+groups:
+  - animal
+  - bird
+activitylevel: 9
+idlecommands:
+  - 'emote stands motionless at the water''s edge, one leg raised, watching
+    the shallows below'
+  - ''
+  - 'emote stabs the water with a sudden dart of its bill and straightens,
+    gulping'
+  - ''
+  - 'emote spreads its great wings and lifts on slow, measured strokes
+    across the marsh'
+  - ''
+  - 'emote settles on one leg at the edge of the reeds, pulls its neck
+    into its shoulders, and becomes a post'
+character:
+  name: A Grey Heron
+  description: |
+    A tall, slate-grey bird standing still as carved driftwood at the
+    water''s edge, its sinuous neck folded in an S against its chest and
+    one blade-yellow eye fixed on the shallows below. It hunts by patience
+    -- standing motionless for minutes at a stretch before striking with a
+    bill like a thrown knife. In flight it is all slow wing-beats and
+    trailing legs, more pterosaur than bird, crossing the marsh in long
+    unhurried arcs before folding back into stillness somewhere along the
+    bank. It will not stay where it is not left alone.
+  speciesid: 9
+  level: 1
+  stats:
+    dexterity:
+      training: 5
+    perception:
+      training: 8

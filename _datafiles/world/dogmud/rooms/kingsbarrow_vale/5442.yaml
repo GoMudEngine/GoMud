@@ -64,3 +64,6 @@ idlemessages:
   checking the grain heads, pausing at intervals.
 - The wind from the north carries something faint — not
   quite a smell, more the suggestion of heated stone.
+spawninfo:
+  - mobid: 9199
+    respawnrate: "15 real minutes"

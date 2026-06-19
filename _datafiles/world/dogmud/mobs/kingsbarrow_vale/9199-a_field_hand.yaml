@@ -1,0 +1,47 @@
+mobid: 9199
+zone: Kingsbarrow Vale
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 4
+groups:
+  - humanoid
+  - kingsbarrow_folk
+idlecommands:
+  - 'emote bends at the waist along the crop-row, pulling with both
+    hands at something near the base of the stalks'
+  - ''
+  - 'emote leans on a long-handled hoe and stares at nothing across the
+    field for a moment, then straightens and gets back to work'
+  - ''
+  - 'emote drags the back of a wrist across his forehead and squints at
+    the angle of the sun'
+  - ''
+  - 'emote lifts a clay jug from a fence-post, drinks in three long
+    pulls, and stoppers it again'
+activitylevel: 8
+character:
+  name: A Field Hand
+  description: |
+    Sun-darkened to the color of old leather, with the flat, tired eyes
+    of someone who has done the same hard work since before he had the
+    words to name it. He moves along the crop-rows with a slow economy
+    that has shed every unnecessary motion over years of repetition.
+    His feet are bare, always -- he has not worn boots since he was a
+    boy. The soles have thickened over the years into something layered
+    and hard, like softwood worn smooth, a Chrysalis change so gradual
+    that no one who has known him long remembers the transition. He
+    walks on cut stubble and churned clay without flinching, and the
+    estate has not spent a penny on his footwear in a decade.
+  speciesid: 1
+  level: 1
+  gold: 4
+  stats:
+    strength:
+      training: 10
+    vitality:
+      training: 8
+    dexterity:
+      training: 4

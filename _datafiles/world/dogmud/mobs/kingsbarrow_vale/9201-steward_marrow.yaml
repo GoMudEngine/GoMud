@@ -1,0 +1,52 @@
+mobid: 9201
+zone: Kingsbarrow Vale
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 34
+maxwander: 1
+groups:
+  - humanoid
+  - kingsbarrow_folk
+idlecommands:
+  - 'emote runs a finger down the tally-board and makes a correction
+    with the flat of his thumbnail, jaw set'
+  - ''
+  - 'emote steps to the yard entrance and flags down a carter with a
+    short, precise gesture that expects to be obeyed'
+  - ''
+  - 'emote walks the rick-line with his hands clasped behind him,
+    pressing the nearest rick with a thumb to check the set of the hay'
+  - ''
+  - 'emote draws a key from his breast pocket, considers it a moment,
+    and pockets it again with the air of someone who has just decided
+    something'
+activitylevel: 10
+character:
+  name: Steward Marrow
+  description: |
+    Steward Marrow runs the Barleywick estate with the clipped efficiency
+    of a man who answers to people in the capital and intends to keep
+    it that way. He is of middling height, close-cropped, immaculately
+    dressed for the countryside, and carries an air of absolute
+    administrative authority that the tenant farmers find either
+    reassuring or oppressive depending on their situation. He has looked
+    exactly this way for twenty years. His hair does not grow -- not
+    slower than most men's, but not at all -- and neither does his
+    beard, leaving him perpetually the same close-trimmed figure in
+    every season, a Chrysalis stillness that has begun to attract
+    quiet comment among the longer-tenured farmhands. The factor in
+    New Plymouth noted in a letter last year that Marrow appears
+    unchanged since his appointment. No one has followed this
+    observation to its conclusion aloud.
+  speciesid: 1
+  level: 1
+  gold: 55
+  stats:
+    perception:
+      training: 11
+    charisma:
+      training: 8
+    willpower:
+      training: 5

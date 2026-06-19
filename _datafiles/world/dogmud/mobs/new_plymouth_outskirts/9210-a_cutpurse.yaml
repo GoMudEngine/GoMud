@@ -1,0 +1,49 @@
+mobid: 9210
+zone: New Plymouth Outskirts
+behavior_archetype: thief
+statpool: 36
+itemdropchance: 45
+hostile: false
+maxwander: 2
+groups:
+  - humanoid
+  - thief
+idlecommands:
+  - 'emote drifts into the press of the crowd moving toward the gate,
+    unhurried, close to no one in particular'
+  - ''
+  - 'emote lets the gaze drop to a merchant''s belt for half a beat,
+    then slides it away as if reading a sign overhead'
+  - ''
+  - 'emote catches a boot-edge on the cobble and stumbles gracefully
+    into a stranger, a hand steadying on the man''s coat'
+  - ''
+  - 'emote slips sideways between two carts and is briefly not
+    where you thought they were'
+  - ''
+activitylevel: 14
+character:
+  name: A Cutpurse
+  description: |
+    A slight figure moving through the gate-queue with the unhurried
+    ease of someone waiting for a friend. The clothes are nondescript
+    -- worn but clean, the colours of dust and shadow. The eyes are
+    sharp; they move in a rhythm that has nothing to do with looking
+    for a friend. The Chrysalis has given this one unusually pale
+    fingertips -- the skin at the pads thin enough that the tendons
+    beneath are faintly visible, like cord seen through cheap cloth.
+    The touch is nearly unfelt through leather or broadweave. Whether
+    that particular drift preceded the profession or followed it is a
+    question only they could answer, and they are not inclined to.
+  speciesid: 1
+  level: 1
+  gold: 18
+  stats:
+    dexterity:
+      training: 16
+    perception:
+      training: 10
+    strength:
+      training: 5
+  skills:
+    skullduggery: 12
