@@ -1,0 +1,44 @@
+roomid: 5433
+zone: Greywater Flats
+title: Kingsbarrow March
+description: >
+  Here the flats are wholly behind you and the capital's granary country
+  begins in earnest — rich hedged fields to the very horizon, the road
+  running straight and well-metalled and purposeful toward a far smudge of
+  roofs and the unmistakable bulk of distant <ansi fg="itemname">granaries</ansi>
+  and mill-towers standing up above the green. You have left the wild
+  country entirely. This is the breadbasket that feeds a city, and the city
+  itself is no longer a rumour but a destination you are walking toward. A
+  carved <ansi fg="itemname">march stone</ansi> at the roadside names the
+  ground ahead and marks the bound of the Vale of Kingsbarrow.
+biome: farmland
+coord:
+  x: -18
+  y: 53
+  z: 0
+exits:
+  south:
+    roomid: 5432
+nouns:
+  march stone: A tall boundary stone of good pale ashlar, far finer than a
+    common milestone, carved on its north face with a sheaf-and-tower
+    device and the words KINGSBARROW VALE. It marks the march — the bound —
+    where the river flats end and the capital's granary lands begin. A
+    smaller line gives the leagues yet to New Plymouth, and the number is
+    small enough now to believe.
+  granaries: Far ahead above the green fields stand the long pale bulks of
+    great granaries and the round towers of windmills and watermills,
+    hazed with distance but vast even so — the storehouses that hold a
+    city's bread against the winter. You have seen nothing built on that
+    scale on the whole long road. Behind them, fainter still, a smudge that
+    might be roofs, or might be cloud.
+  road: Straight, well-metalled, kept in good repair, running north toward
+    the granaries without a wasted yard — a road that matters, maintained
+    by a power that needs the grain moved and the carts rolling. It is a
+    different road from the one that crossed the wilds; this one has
+    somewhere important to be.
+idlemessages:
+- A string of laden grain-wagons rolls north on the road ahead, dwindling toward the granaries.
+- The wind carries the faint deep groan of a distant windmill's sails.
+- Skylarks pour their songs down over the rich kept fields on every side.
+- Far off, sun catches the pale flank of a granary wall, then the cloud closes again.

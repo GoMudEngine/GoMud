@@ -1,0 +1,42 @@
+roomid: 5427
+zone: Greywater Flats
+title: The North Bank
+description: >
+  You come up dripping onto the firmer north bank, the ford and its
+  ledger-keeping post behind you, and the flats resume ahead — but
+  changed. The reeds are cut back from the road in a clean margin, the
+  verges trimmed, a <ansi fg="itemname">milestone</ansi> set square and
+  upright where the south bank had only a drowned and forgotten one.
+  Everything here is a degree more ordered, more kept, more watched. A
+  <ansi fg="itemname">drying rack</ansi> hung with nets stands by a
+  fisher's hut, and the road runs on north, straight and purposeful,
+  toward the country the capital counts as its own.
+biome: land
+coord:
+  x: -18
+  y: 47
+  z: 0
+exits:
+  south:
+    roomid: 5426
+  north:
+    roomid: 5428
+nouns:
+  milestone: A clean upright stone, recently set and sharply cut, naming
+    the road and its distances in the same flat official hand as the ford
+    notice. NEW PLYMOUTH — 16 LEAGUES, it reads, and the number no longer
+    seems impossible the way it did days ago. Below it a smaller line names
+    the granary villages between here and the walls.
+  drying rack: A frame of poles by a low fisher's hut, hung with nets and
+    lines and a few split fish curing in the river-wind. A covered creel
+    sits beneath it, lid weighted with a stone against the gulls. The
+    fisher is out on the water somewhere, a dark shape in the mist.
+  river: Behind you now, broad and grey and silent, the ford's withy
+    stakes leaning in a crooked line across it. On this side the bank is
+    trodden and worked and tidied; on the far side the wild reeds press
+    right to the water. The river is a border in more ways than one.
+idlemessages:
+- River-wind carries the sharp smell of curing fish off the drying rack.
+- A gull drops in to test the covered creel, finds the stone, and flaps off.
+- The cut margin of reeds rustles, tidy and trimmed, along the road's edge.
+- Somewhere out in the mist the unseen fisher's pole knocks against his boat.

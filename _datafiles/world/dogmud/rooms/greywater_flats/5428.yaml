@@ -1,0 +1,44 @@
+roomid: 5428
+zone: Greywater Flats
+title: Heron Marsh
+description: >
+  Here the noise of the open meadows falls away into a deep green
+  stillness. A backwater marsh lies beside the road, screened by alder and
+  reed-mace, its still water skinned with weed and floating lily — and in
+  the shallows the grey <ansi fg="itemname">herons</ansi> stand, one and
+  another and another, motionless as carved posts, each waiting on its own
+  patience. Frogs creak. A dragonfly stitches the air. Nothing hurries
+  here; the wild has simply set itself to wait. A rotting <ansi fg="itemname">duckblind</ansi>
+  leans half-collapsed at the water's edge, slowly going back to the marsh
+  that made it.
+biome: swamp
+coord:
+  x: -18
+  y: 48
+  z: 0
+exits:
+  south:
+    roomid: 5427
+  north:
+    roomid: 5429
+nouns:
+  herons: Grey herons, a half-dozen of them spaced across the shallows,
+    each standing on one folded leg as still as a thing made of stone and
+    old smoke. They do not acknowledge you, or each other. Then one, with
+    no warning, uncoils and stabs and lifts a struggling silver thing, and
+    is still again, as if it had never moved.
+  duckblind: A fowler's hide of woven withies and reed-thatch, set at the
+    water's edge a long time ago and long since abandoned, the roof fallen
+    in, the whole thing settling back into the marsh. A few rusted hooks
+    and a rotted coil of net still hang inside, and something small has
+    made a nest in the dry corner.
+  backwater: Still, dark green, its surface a quilt of duckweed and lily
+    pad broken only where a fish or frog disturbs it. Dragonflies hang and
+    dart above it. It looks shallow and is not; an alder branch thrust in
+    finds no bottom.
+idlemessages:
+- A heron stabs the shallows and comes up with something silver and writhing.
+- Frogs creak in slow chorus from the weed, fall silent, then begin again.
+- A dragonfly hangs glittering before your face, then flicks away.
+- A lily pad tips and rights itself as something passes beneath it.
+- The deep green stillness settles back, patient and unhurried, after the heron's strike.

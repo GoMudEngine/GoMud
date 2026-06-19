@@ -1,0 +1,43 @@
+roomid: 5430
+zone: Greywater Flats
+title: The Drying Flats
+description: >
+  The land firms underfoot, the reeds thinning to rough wet pasture
+  stitched across with more of the ruler-straight <ansi fg="itemname">ditches</ansi>,
+  each one bleeding a little more of the wild out of the ground. A few
+  lean beasts graze the tussocky grass, and here and there a first proper
+  hedge has been laid to mark a field that does not quite exist yet. The
+  marsh is losing and knows it. Ahead the ground rises into the clean
+  geometry of worked land — the capital's farmland, beginning. A
+  <ansi fg="itemname">drainage marker</ansi> stuck in the turf numbers
+  this acre against some distant ledger.
+biome: land
+coord:
+  x: -18
+  y: 50
+  z: 0
+exits:
+  south:
+    roomid: 5429
+  north:
+    roomid: 5431
+nouns:
+  ditches: A grid of dug channels ruled across the drying ground, the
+    newest of them still raw, the older ones already greening at the lip
+    and carrying a thin steady trickle away toward the great cut. Between
+    them the ground is no longer marsh and not yet field — a wet
+    in-between, grazed by whoever can drive a beast onto it.
+  drainage marker: A short stake of tarred wood driven into the turf,
+    numbered and lettered on a tin plate nailed to its top. It means
+    nothing to the eye and everything to a clerk — this acre, drained and
+    measured and entered in a book in some far office, waiting to become
+    somebody's field and somebody's rent.
+  beasts: A handful of lean cattle and a few rough sheep, grazing the
+    tussocky in-between ground, splashed to the hock with grey mud. They
+    lift their heads to watch you pass with the slow suspicion of animals
+    that see few strangers, then go back to the grass.
+idlemessages:
+- A thin trickle of marsh-water runs steadily down one of the new ditches.
+- A muddy beast lifts its head, regards you without interest, and grazes on.
+- The wind has lost its reed-hiss here and carries instead the smell of turned earth.
+- A lapwing tumbles overhead with a thin wailing cry, guarding some hidden nest.

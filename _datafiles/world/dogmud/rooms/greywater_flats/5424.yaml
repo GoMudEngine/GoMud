@@ -1,0 +1,44 @@
+roomid: 5424
+zone: Greywater Flats
+title: The Causeway
+description: >
+  The road climbs onto a raised <ansi fg="itemname">causeway</ansi> of laid
+  stone, lifting it dry across the boggy heart of the flats — and at once
+  you are out in the middle of the wet with nowhere to step off. Grey
+  water lies flat and still on both sides, close enough to touch, broken
+  only by reed-clumps and the slow rings of rising fish. The causeway is
+  old and well-built, its stones cambered to shed the rain, the work of
+  some long-dead authority that wanted this road kept open. A
+  <ansi fg="itemname">drowned milestone</ansi> stands canted in the water
+  to one side, its base long since swallowed by the bog.
+biome: swamp
+coord:
+  x: -18
+  y: 44
+  z: 0
+exits:
+  south:
+    roomid: 5423
+  north:
+    roomid: 5425
+nouns:
+  causeway: A ribbon of dressed stone barely wider than a wagon, raised a
+    man's height above the surrounding water on a bank of rubble and
+    faggots. The stones are massive, close-fitted, worn smooth in two
+    ruts by generations of wheels. Whoever laid this spent a fortune in
+    labour to cross a bog — the road north has mattered to someone for a
+    very long time.
+  drowned milestone: A milestone that once stood at the causeway's edge
+    and now leans drunkenly in the open water, half its height swallowed
+    by the slow bog. Only the top line of its carving still shows above
+    the surface, and that worn past reading. Small fish hang in its
+    shadow.
+  water: Flat, still, the colour of pewter under the grey sky, stretching
+    away on both sides until reed and pool and sky blur into one. Its
+    surface breaks now and then in the slow widening ring of a rising
+    fish. There is no telling how deep it runs.
+idlemessages:
+- A fish rises beside the causeway with a soft plop, ringing the still water.
+- The wind crosses the open water unbroken and tugs at your clothes.
+- A heron stands motionless in the shallows, then stabs, and lifts something silver.
+- Your footfalls echo oddly flat out here, with no walls to give them back.

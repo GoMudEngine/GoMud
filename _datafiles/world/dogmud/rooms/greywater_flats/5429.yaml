@@ -1,0 +1,46 @@
+roomid: 5429
+zone: Greywater Flats
+title: The Survey Post
+description: >
+  Where the road crosses a dead-straight drainage cut, a tall
+  <ansi fg="itemname">survey post</ansi> stands planted in the soft ground
+  — a squared pillar carved with the capital's seal and crowned with a
+  weathered proclamation, the unmistakable mark of land the bloodline
+  counts as its own. The wild flats are being made to heel here: the
+  <ansi fg="itemname">drainage cut</ansi> runs ruler-straight to the
+  horizon, a stone sluice set in its bank to bleed the marsh dry an acre
+  at a time. The water is grudging and the work is slow, but the intent is
+  plain — the capital is reaching out to drain the wet and count what it
+  drains.
+biome: land
+coord:
+  x: -18
+  y: 49
+  z: 0
+exits:
+  south:
+    roomid: 5428
+  north:
+    roomid: 5430
+nouns:
+  survey post: A pillar of pale dressed stone, taller than a man, cut deep
+    with the tower-and-three-waves seal of New Plymouth and a string of
+    surveyor's numbers fixing this as a measured point. Nailed below, a
+    weatherproofed proclamation declares the draining and enclosure of
+    these flats by warrant of the bloodline, and warns against interfering
+    with the works. The flat language of a power that is sure of itself.
+  drainage cut: A channel dug arrow-straight across the marsh, far too
+    straight to be any work of water — the hand of a surveyor with a chain
+    and a grudge against the wet. It runs to the edge of sight in both
+    directions, the spoil banked along it, slowly leading the marsh-water
+    away to wherever the capital wants it.
+  sluice: A squared frame of mortared stone set in the bank of the cut,
+    fitted with a heavy oak gate that can be raised or dropped to hold or
+    release the water. It is new work, the timber barely greyed, the iron
+    of its winch not yet rusted. A padlock the size of a fist secures the
+    winch against meddling.
+idlemessages:
+- Water trickles steadily through the sluice gate, draining the marsh away.
+- The wind carries the seal's proclamation a faint rattling tug against its nails.
+- A snipe bursts from the cut's edge with a tearing call and zigzags off.
+- The straight black line of the drainage cut runs away to the grey horizon.

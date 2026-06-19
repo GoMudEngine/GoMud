@@ -1,0 +1,46 @@
+roomid: 5432
+zone: Greywater Flats
+title: The First Furlongs
+description: >
+  Proper farmland now, and a great deal of it — big hedged fields of grain
+  rolling away north in ordered green squares, a well-worn cart track
+  joining the road, a <ansi fg="itemname">farmstead</ansi> standing among
+  its barns and ricks a half-mile off. This is settled, productive,
+  watched-over country, every furlong of it ploughed and drilled and
+  counted. The abundance of it is its own kind of statement after the wild
+  flats. A weathered <ansi fg="itemname">field shrine</ansi> stands where
+  the cart track meets the road, hung with a few ears of last year's grain
+  in thanks or in hope.
+biome: farmland
+coord:
+  x: -18
+  y: 52
+  z: 0
+exits:
+  south:
+    roomid: 5431
+  north:
+    roomid: 5433
+nouns:
+  farmstead: A solid stone farmhouse a half-mile off across the fields,
+    ringed by barns and byres and a tall thatched rick or two, a thread of
+    smoke standing up from its chimney. Beasts move in a yard; a dog's
+    bark carries faintly across the still air. It is the first settled home
+    you have seen since Hartcharn, and it has the prosperous, incurious
+    look of a place that has fed itself well for generations.
+  field shrine: A small weathered shrine of mossed stone where the cart
+    track meets the road — a niche cut into a standing block, holding a
+    worn little figure too rubbed to name and a clutch of grain-ears,
+    coins, and dried flowers left by the field-hands. A folk thing, older
+    than the seals and proclamations behind you, and warmer.
+  fields: Hedged squares of grain and fallow rolling north to the edge of
+    sight, drilled in straight rows, ditched and fenced and kept. Here and
+    there a field-hand bends to the work, small and far off. Every hedge
+    and gate and furrow says the same thing — this land is owned, and
+    worked, and counted to the sheaf.
+idlemessages:
+- A dog barks once, far off at the farmstead, and is answered by another.
+- A loaded hay-wain creaks slowly along a distant field-track.
+- The field shrine's hanging grain-ears turn and rustle in the breeze.
+- A skylark spills its song down over the ordered fields.
+- Somewhere a field-hand straightens, shades their eyes at you, and bends again to work.

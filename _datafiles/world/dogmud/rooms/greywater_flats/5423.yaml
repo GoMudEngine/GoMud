@@ -1,0 +1,44 @@
+roomid: 5423
+zone: Greywater Flats
+title: Greywater Meadows
+description: >
+  The noise reaches you before anything else — a vast wet racket of
+  waterfowl, thousands of them, calling and squabbling and beating up off
+  the pools in sudden grey clouds. Wide water-meadows stretch to every
+  horizon, tall reeds and sedge and standing pools bright as hammered
+  pewter, the enormous sky doubled in the water so that you seem to walk
+  along a seam between two skies. Beautiful and lonely and deafening with
+  birds. A <ansi fg="itemname">half-sunk punt</ansi> lies abandoned at the
+  road's edge where a wildfowler left it; the <ansi fg="itemname">reeds</ansi>
+  shift and part with the movement of things you cannot see.
+biome: swamp
+coord:
+  x: -18
+  y: 43
+  z: 0
+exits:
+  south:
+    roomid: 5422
+  north:
+    roomid: 5424
+nouns:
+  reeds: A wall of green and brown that runs unbroken to the sky's edge,
+    taller than a standing man, rattling and hissing without pause. Runs
+    and tunnels thread away into them at water level — the roads of
+    moorhen and coot and otter and worse. Anything could be ten paces off
+    in there and you would never see it.
+  punt: A flat-bottomed fowling boat, half-sunk and rotting at the road's
+    edge, its painter still knotted to a leaning stake. Black water stands
+    in the bottom of it. A coil of tarred line and a broken paddle lie
+    under the thwart, left by a fowler who either drowned or simply gave
+    the thing up to the wet.
+  waterfowl: Geese and ducks and coot beyond any counting, in rafts and
+    skeins and squabbling crowds — rising, settling, calling. Now and then
+    the whole flat seems to lift at once for no reason you can see, then
+    settle again, the racket never quite stopping.
+idlemessages:
+- A skein of geese beats up off the water in a sudden roar of wings.
+- Something heavy moves through the reeds nearby and is gone before you see it.
+- The wind lays the whole reed-bed flat for a moment, baring sheets of grey water.
+- A fish rolls in a pool with a soft slap, and the ripples spread and die.
+- The bird-noise swells, peaks, and falls back to a steady wet murmur.

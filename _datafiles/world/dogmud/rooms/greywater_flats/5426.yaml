@@ -1,0 +1,48 @@
+roomid: 5426
+zone: Greywater Flats
+title: Tollford Crossing
+description: >
+  Cold grey water closes around your boots as the road runs down into the
+  river — the ford is a paved causeway laid just below the surface, marked
+  by withy stakes, shallow enough to wade or cart across if you keep to the
+  line. The current pushes steady and cold against your shins, smelling of
+  silt and cold stone. On the far landing stands a small toll-and-survey
+  post, and on it the first hard sign of who governs this country — a
+  <ansi fg="itemname">survey marker</ansi> cut with a seal you do not yet
+  know, and beside it a posted <ansi fg="itemname">notice</ansi> in the
+  flat language of authority. A bored official keeps a ledger of who
+  crosses, and where they are bound.
+biome: water
+coord:
+  x: -18
+  y: 46
+  z: 0
+exits:
+  south:
+    roomid: 5425
+  north:
+    roomid: 5427
+nouns:
+  survey marker: A squared pillar of pale dressed stone, newer and sharper
+    than anything else in this old wet country, cut deep with a seal — a
+    tower above three waves, the mark of New Plymouth. Below it a line of
+    smaller letters fixes this as a measured point on some surveyor's map.
+    Out here in the bog it has the look of a thing planted to claim, not
+    to guide.
+  notice: A weatherproofed board nailed below the marker, lettered in the
+    flat careful hand of a clerk. It declares the river and its crossings
+    to lie within the jurisdiction of New Plymouth, sets the toll for
+    passage, and warns that all who cross may be asked their name and
+    business. The capital, it seems, begins here — a long way yet from its
+    walls.
+  ford: A paved underwater causeway across the river, its line marked by
+    leaning withy stakes thrust into the bed. The water runs shin-deep and
+    cold and braided over the stones, fast enough to lean against. Keep to
+    the stakes and it is an easy crossing. Stray off them and the bottom
+    drops away.
+idlemessages:
+- The cold current pushes steadily against your legs, smelling of silt.
+- The official glances up from the ledger, takes your measure, and looks down again.
+- A cart lurches through the ford ahead of you, water sheeting off its wheels.
+- A withy stake leans further as the current works at its footing.
+- The seal on the survey marker catches the grey light, sharp and new and watchful.

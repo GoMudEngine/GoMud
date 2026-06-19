@@ -23,6 +23,9 @@ coord:
 exits:
   south:
     roomid: 5418
+  north:
+    roomid: 5422
+    zone: Greywater Flats
 nouns:
   gate: The town gate is built to last — dressed stone piers carrying
     timber gates banded in iron, the wood darkened with decades of

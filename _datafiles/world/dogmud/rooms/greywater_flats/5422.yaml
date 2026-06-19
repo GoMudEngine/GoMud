@@ -1,0 +1,44 @@
+roomid: 5422
+zone: Greywater Flats
+title: The Fen Road
+description: >
+  The smell changes first — Hartcharn's woodsmoke and bread fall away
+  behind you and the air turns cool and green and faintly rotten, the
+  smell of standing water and crushed sedge. The road runs out of the
+  town's firm fields onto low ground, the verges softening to black peat
+  where the first <ansi fg="itemname">reeds</ansi> lean in the wind. Ahead
+  the country opens flat and wet and enormous, all grey water and greyer
+  sky, with no high ground anywhere in it. A leaning <ansi fg="itemname">boundary
+  marker</ansi> at the roadside names the edge of the town's land.
+biome: land
+coord:
+  x: -18
+  y: 42
+  z: 0
+exits:
+  south:
+    roomid: 5419
+    zone: Hartcharn
+  north:
+    roomid: 5423
+nouns:
+  reeds: The first of them — tall green spears rooted in black water at
+    the road's edge, hissing softly against each other when the wind moves
+    through. A moorhen picks its way along a flattened run at their base
+    and vanishes. Past this thin fringe the reeds thicken into a wall that
+    runs unbroken to the horizon.
+  boundary marker: A squat post of grey stone, its top weathered round,
+    leaning where the soft ground has let it settle. One worn face still
+    carries the chiselled mark of Hartcharn's bound — a crossed staff and
+    sheaf. Someone has wedged a few coins and a twist of dried flowers
+    into a hollow at its base, a traveller's small toll against the wet
+    road ahead.
+  country: Flat to every edge of sight — water-meadow and reed-bed and
+    pewter pool, the huge sky pressing down on it and doubled in every
+    standing pool. A line of birds crosses it, very far off. Nothing in
+    it stands taller than a reed.
+idlemessages:
+- A moorhen calls once from the reeds, a sharp wet note, and goes quiet.
+- The wind shifts and the whole reed-bed leans and hisses together.
+- A cool damp breath comes off the water, smelling of peat and green rot.
+- Far out on the flats a heron lifts and beats slowly away north.
