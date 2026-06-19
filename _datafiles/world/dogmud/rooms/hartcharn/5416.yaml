@@ -1,0 +1,56 @@
+roomid: 5416
+zone: Hartcharn
+title: Back Lane
+description: >
+  The smell tells the story — midden, wet ash, and the green tang
+  of moss on damp stone. This is the narrow cut behind the cottage
+  row — the route for slop buckets, ash pits, and everything that
+  belongs away from the front street. Into the angle of the nearest
+  wall is stacked a <ansi fg="itemname">woodpile</ansi>, timber
+  split and roughly sorted, the cut ends still pale. Farther along,
+  a <ansi fg="itemname">crock</ansi> with a weighted stone lid sits
+  under the overhang of a back door, the brine smell making its
+  contents fairly plain. A dog chained to the far wall has been
+  watching since you arrived.
+biome: city
+coord:
+  x: -17
+  y: 39
+  z: 0
+exits:
+  west:
+    roomid: 5417
+nouns:
+  woodpile: A shoulder-height stack of split timber packed into the
+    angle between two walls, covered loosely with a piece of oilcloth
+    weighted at the corners. The wood is alder and birch — split clean
+    and left to season, the pale inner faces beginning to grey at the
+    edges. A short-handled axe leans against the base of the stack,
+    its blade nicked and dark from use.
+  crock: A wide-bellied clay crock under the overhang of a back door,
+    its lid a flat stone held down by a second stone on top. Brine
+    seeps along the crack between lid and rim. Whatever is inside —
+    pickled turnip, stored eggs, or something more doubtful — has been
+    there since well before the cold. The owner has not troubled to
+    label it.
+  midden: A long midden running along the base of the far wall — ash,
+    bone, kitchen scraps, and the general output of a row of households
+    that have been here long enough to fill it deep and start on
+    another. The smell is assertive but not surprising. Someone has
+    been burning household waste at the near end, the char still black.
+  dog: A short-eared dog, thickset and watchful, chained by a length
+    of heavy links to an iron ring in the wall. The chain allows it
+    the run of the lane's last few yards. It is not barking. It is
+    watching. Its food bowl, to one side, is empty and has been for
+    some time.
+idlemessages:
+- The dog at the end of the lane shifts on its haunches, the chain
+  going taut for a moment and then slack.
+- A back door opens somewhere along the lane and slops are emptied
+  into the midden without anyone looking to see who is about.
+- The woodpile settles with a faint wooden knock as a stack finds
+  a new balance, then goes still.
+- A child cuts through the lane at speed, ignoring the dog, and
+  vanishes through a gap between the walls without slowing.
+- The brine smell from the covered crock thickens when the breeze
+  drops and the lane goes still.

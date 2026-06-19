@@ -1,0 +1,59 @@
+roomid: 5412
+zone: Hartcharn
+title: North Market Street
+description: >
+  The noise of the square softens as the street runs north — fewer
+  stalls and fewer voices, the cobbles a little less worn underfoot.
+  A mixed run of buildings lines either side — part shopfront, part
+  dwelling, some hard to tell at a glance. A narrow cooper's shed
+  sits behind patched gates; a chandler's has its shutters propped;
+  two plain row-houses look out from upper windows over the street.
+  A stone <ansi fg="itemname">trough</ansi> is set flush into the kerb
+  on the east side, fed by a pipe in the wall that drips a slow thread
+  of water — worn pale around the rim by daily use. A short
+  <ansi fg="itemname">lane</ansi> cuts east between the end-gables, and
+  a matching gap to the west opens between a close row of townhouses.
+  The street pushes on northward into quieter residential blocks.
+biome: city
+coord:
+  x: -18
+  y: 38
+  z: 0
+exits:
+  south:
+    roomid: 5405
+  north:
+    roomid: 5417
+  east:
+    roomid: 5413
+  west:
+    roomid: 5414
+nouns:
+  trough: A long stone trough set into the kerb and fed by a pipe
+    drilled through the wall of the house behind it — a slow drip
+    keeps the basin from going dry. The rim is worn pale and smooth
+    from years of hands guiding buckets and animals to drink. The
+    water is clear enough at the centre; a film of dust and debris
+    gathers at the near end, rinsed out when the flow is good.
+  lane: The short lane east is barely a cart-width — cobbled for the
+    first few yards and then earthen, bounded by the end-gable of the
+    chandler's on one side and a garden wall on the other. It opens
+    out toward a quieter spur off the main street. A good deal quieter
+    here than the road itself.
+  shopfronts: The buildings along this stretch of street mix commerce
+    and home without much separation — a workshop running straight
+    into living quarters above, a stall-front bolted shut against a
+    house-wall that clearly still has people in it. The line between
+    trade and residence dissolved here long before anyone thought to
+    draw it.
+idlemessages:
+- A woman crosses the street with a yoke across her shoulders, two
+  pails swinging, heading for the <ansi fg="itemname">trough</ansi>.
+- A child darts out of a doorway, pelts north a few paces, then
+  turns back as a voice calls from inside.
+- A cat picks its way along the top of the garden wall to the west,
+  pausing to watch the street below.
+- The chandler's shutters bang once in a passing gust, then settle
+  back against the wall.
+- A cart comes south down the street, wheels loud on the cobbles,
+  until the driver pulls over to let someone pass.

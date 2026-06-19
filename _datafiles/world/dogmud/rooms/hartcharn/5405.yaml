@@ -27,6 +27,8 @@ exits:
     roomid: 5406
   west:
     roomid: 5408
+  north:
+    roomid: 5412
 nouns:
   sign: A large painted board hung from a wrought-iron arm bolted
     into the timber fascia — a coach-wheel in gold leaf on dark

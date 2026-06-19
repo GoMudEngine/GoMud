@@ -1,0 +1,55 @@
+roomid: 5414
+zone: Hartcharn
+title: Weavers' Row
+description: >
+  The clack and thud of a loom reaches you before you are properly
+  into the row — a working rhythm from the open door of the weaving
+  cottage on your left, broken by the creak of the heddle and a
+  brief pause before it picks up again. Weavers' Row is a plain run
+  of townhouses built side by side on the west fringe of the street
+  grid — whitewashed lower walls, tiled roofs pitched low against
+  the wind, a shared alley between them that gets no sun. Lines of
+  <ansi fg="itemname">washing</ansi> hang between the upper gables on
+  both sides — shirts, linen, and heavier cloth all pegged out and
+  moving slowly in the air. A <ansi fg="itemname">loom</ansi> sits
+  visible through the open cottage door, its heddle raised mid-pass
+  and a length of half-finished cloth across the breast beam. A
+  tabby cat is stretched across a stone <ansi fg="itemname">step</ansi>
+  in a patch of warmth, one ear tracking the street.
+biome: city
+coord:
+  x: -19
+  y: 38
+  z: 0
+exits:
+  east:
+    roomid: 5412
+nouns:
+  loom: A broad floor loom fills most of the cottage's front room,
+    visible through the open door. The warp threads run taut from
+    the breast beam to the back beam, a cloth already well advanced
+    across them. Shuttles and bobbins rest in a shallow wooden tray
+    to one side; a bundle of prepared weft is wedged under the bench.
+    The heddle is raised mid-row as though the weaver stepped away
+    between passes. The cloth in progress is a serviceable
+    mid-weight plain weave in undyed natural wool.
+  washing: Lines run between the upper gable windows — rough cord
+    strung across the gap and loaded with the household's laundry.
+    Shirts, folded sheets pegged corner-to-corner, and a length of
+    heavier undyed cloth that may be fresh-woven. Everything moves
+    in slow agreement with the air and smells faintly of lye soap.
+  step: A low step of flat-dressed stone outside the cottage door,
+    worn smooth. A tabby cat has arranged itself across the full
+    width of it and shows no intention of moving for the street or
+    anyone on it.
+idlemessages:
+- The loom in the cottage sets up its rhythm again — clack, thud,
+  pause — then runs through three quick passes before falling quiet.
+- A shirt on the washing line twists once in the breeze and settles
+  back, still damp at the cuffs.
+- A child leans from an upper window to check the washing, pokes at
+  a sleeve, and withdraws again.
+- The tabby on the <ansi fg="itemname">step</ansi> opens one eye,
+  decides nothing has changed, and shuts it again.
+- From one of the upper windows a voice calls a name — the sound
+  carries down the row without an answer coming back.

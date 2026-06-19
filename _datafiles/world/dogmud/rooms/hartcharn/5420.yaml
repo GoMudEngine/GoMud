@@ -1,0 +1,46 @@
+roomid: 5420
+zone: Hartcharn
+title: The Well Yard
+description: >
+  The sound of the <ansi fg="itemname">well</ansi> reaches you before
+  the yard does — the iron chain paying out, the bucket striking water
+  far below, then the long groan of the windlass hauling it back heavy.
+  The yard is a paved square off the common, its stones worn smooth and
+  damp in the shadow of the surrounding buildings. A stone
+  <ansi fg="itemname">trough</ansi> runs along the east wall for washing
+  and watering animals, fed by a clay pipe that weeps at the join. Women
+  of the north end have claimed the yard's benches and coping stones as
+  their particular forum — gossip moves here the way freight moves on
+  the road north, in both directions at once. A battered
+  <ansi fg="itemname">basket</ansi> sits unattended on a bench near the
+  trough, its owner presumably drawn off into the conversation.
+biome: city
+coord:
+  x: -19
+  y: 40
+  z: 0
+exits:
+  east:
+    roomid: 5418
+nouns:
+  well: The well is deep — the chain pays out a long count before the
+    bucket strikes. The windlass is iron-bound timber, the handle worn
+    smooth from long use. The stone coping around the shaft is marked
+    with the grooves left by rope before the chain replaced it. Cold
+    air rises from below, carrying the smell of clean water and wet
+    stone from a considerable depth.
+  trough: A long stone trough along the east wall, fed by a clay pipe
+    that weeps a thin thread of water at the wall-join. The trough
+    serves washing and animals both — a wool blanket is soaking at one
+    end, and the far lip shows the worn marks of many hooves where
+    animals have drunk. The water is cold and clear.
+  basket: A wide-mouthed basket left on the bench near the trough —
+    woven willow, well-used, with a cloth laid over whatever is inside.
+    It has the look of something set down for just a moment. No one is
+    near it, and it has been sitting there a little while.
+idlemessages:
+- The windlass groans as someone draws water, chain ringing in the shaft.
+- A burst of laughter from the benches carries across the yard and fades.
+- Water patters into the trough from the clay pipe, steady and unhurried.
+- Someone sets a full bucket down on the coping stones with a hollow clang.
+- A passerby lifts the cloth from the basket, peers inside, replaces it.

@@ -1,0 +1,55 @@
+roomid: 5415
+zone: Hartcharn
+title: The Tap and Trough
+description: >
+  The smell hits before your eyes adjust — stale ale worked into every
+  board, cheap tallow smoke, and the warm fug of bodies under a ceiling
+  that was never high. The Tap and Trough is the town's own place, not
+  the coaching inn's annex, and it makes no effort to look otherwise.
+  A <ansi fg="itemname">bar</ansi> of rough planks spans the far wall,
+  the taps worn dull and the counter edge dark from a generation of
+  elbows. Three men hold the far corner — a dice game on an upturned
+  barrel, a running argument in voices too low to catch, the kind of
+  disagreement that has been in progress for years. A scrawled
+  <ansi fg="itemname">board</ansi> beside the entrance holds notices
+  in a dozen hands — debts, scores, and grievances not yet settled.
+biome: city
+coord:
+  x: -19
+  y: 39
+  z: 0
+exits:
+  east:
+    roomid: 5417
+nouns:
+  bar: A long plank counter spanning the far wall, its surface worn
+    smooth from elbows and dark from years of spilled drink. Three
+    clay taps stand behind it — one for beer, one for cider, and one
+    for something darker that the regulars order without asking what
+    it is. The keeper works the bar without ceremony, refilling cups
+    and receiving coins in roughly equal measure. A row of clay cups
+    sits upturned on a shelf above the taps, waiting.
+  board: A rough plank fixed to the wall beside the entrance, its face
+    covered in overlapping layers of chalk, charcoal, and ink. Debts
+    are logged in a careful hand on one half; wagers, dice scores, and
+    contest outcomes fill the other in several less careful ones. A
+    few lines have been scratched through and rewritten. The board has
+    been here as long as anyone can remember, and has absorbed
+    everything the tap room has produced in that time.
+  corner: The far corner of the room belongs to three men who appear
+    to have been here for most of the afternoon. An upturned barrel
+    serves as a table, a pair of worn dice moving between hands in
+    no particular hurry. The argument circling the game is an old
+    one — it pauses when the dice roll, resumes when they stop, and
+    has probably been going in some form for years.
+idlemessages:
+- The dice cup comes down hard on the barrel top, and one of the men
+  in the corner exhales through his nose and says nothing.
+- The tap handle lifts and falls — ale runs into a cup, coin slides
+  across the counter, and the keeper moves on without a word.
+- Low talk fills the room in a steady undertone — half-heard names,
+  a short laugh, a grunt of disagreement from the corner.
+- Sawdust shifts underfoot as someone moves from the bar to a bench,
+  stepping over outstretched boots without being asked to.
+- A new line appears on the board beside the door — charcoal, quick,
+  someone keeping count of something.

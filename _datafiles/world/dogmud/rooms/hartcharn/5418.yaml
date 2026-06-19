@@ -1,0 +1,49 @@
+roomid: 5418
+zone: Hartcharn
+title: The Town Common
+description: >
+  The green opens wide at the town's north end — a broad patch of grass
+  kept short by <ansi fg="itemname">geese</ansi> that work it in loose
+  formations, honking at intervals with the easy authority of long custom.
+  Children chase the flock through the middle and scatter as a drover
+  shoulders past with a trailing rope and mild suffering in his face. At
+  the center of the green stands an <ansi fg="itemname">elm</ansi> old
+  enough that its lower bark has swallowed two branch-stubs whole, its
+  trunk papered in notices and handbills nailed up in overlapping layers.
+  Along the margins resting drovers sit beside staked animals — goats
+  cropping what the geese left, mules ignoring everything. The arch of
+  the north gate shows across the far end of the green; the well yard
+  opens west, and the wagon camp's dust rises to the east.
+biome: city
+coord:
+  x: -18
+  y: 40
+  z: 0
+exits:
+  north:
+    roomid: 5419
+  south:
+    roomid: 5417
+  east:
+    roomid: 5421
+  west:
+    roomid: 5420
+nouns:
+  geese: A raucous mob of grey geese own the common by long precedent,
+    moving wherever they choose and challenging anyone who crosses their
+    path with outstretched necks and credible intent. The children of
+    the north end treat them as both obstacle and sport. The geese do
+    not acknowledge this arrangement.
+  elm: The elm predates the wall by a generation — its lower branches
+    were swallowed by the growing bark years ago, leaving smooth-edged
+    scars in the trunk. Notices have been nailed up in overlapping layers,
+    the oldest so weathered the writing has gone. A root arches away from
+    the base, and the hollow beneath it holds a scatter of small stones
+    placed by children, a weathered ribbon, and a folded scrap of oilcloth
+    tucked into the dry earth inside.
+idlemessages:
+- A goose cuts straight across the common, scattering children from its path.
+- Wind stirs the notices on the elm, one corner curling loose from its nail.
+- A drover calls a name across the green — the mules do not look up.
+- The geese drift to the far end of the common in a slow, complaining tide.
+- A child works a stone free from the elm's hollow and is chased off at once.

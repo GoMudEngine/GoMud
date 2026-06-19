@@ -1,0 +1,44 @@
+roomid: 5419
+zone: Hartcharn
+title: Hartcharn, North Gate
+description: >
+  The road passes through the gate arch and out of Hartcharn into open
+  country that stretches north as far as the light allows. The town wall
+  rises on either side of the <ansi fg="itemname">gate</ansi> — dressed
+  stone and heavy timber, the gates banded in iron and built to close
+  this end of town against anything short of a siege. A gatekeeper's
+  booth stands to one side, its shutters open for the day's traffic.
+  To the right of the arch, a <ansi fg="itemname">milestone</ansi> of
+  dressed stone lists the distances ahead — TOLLFORD CROSSING at four
+  leagues, NEW PLYMOUTH at eighteen — cut in capitals and filled with
+  white lead so they hold in any weather. Beyond the gate the road runs
+  straight, raised on a low berm above the flanking fields, and heads
+  north toward the river country of Greywater Flats, which begins where
+  the road drops below the horizon.
+biome: city
+coord:
+  x: -18
+  y: 41
+  z: 0
+exits:
+  south:
+    roomid: 5418
+nouns:
+  gate: The town gate is built to last — dressed stone piers carrying
+    timber gates banded in iron, the wood darkened with decades of
+    linseed oil and road grime. The strap-hinges are as thick as a
+    man's forearm. The gates stand open during daylight; a heavy oak
+    drawbar and iron staples would hold them fast at night. The
+    gatekeeper keeps the booth to one side, watching who passes through.
+  milestone: A squared column of pale dressed stone set into the verge
+    just inside the arch. Three distances are cut into its face and
+    filled with white lead so they hold in all weather — HARTCHARN at 0,
+    TOLLFORD CROSSING at 4 leagues, NEW PLYMOUTH at 18 leagues. The
+    base of the stone is pocked with old graffiti, initials cut by
+    travellers who stopped here years before you came through.
+idlemessages:
+- A cart passes through the gate with a brief exchange at the booth, then on.
+- The gatekeeper leans in the booth doorway, watching the road north.
+- Wind funnels through the arch from the open country beyond, cold and steady.
+- A traveller at the milestone traces a carved distance with one finger.
+- The road north shimmers where it crosses marshy ground beyond the berm.

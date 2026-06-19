@@ -1,0 +1,56 @@
+roomid: 5413
+zone: Hartcharn
+title: Temple Lane
+description: >
+  The smell of candle-wax and something faintly resinous reaches you
+  before the shrine itself comes into view — carried on still air in
+  a lane barely wide enough for two people walking abreast. Hartcharn's
+  small <ansi fg="itemname">shrine</ansi> occupies a widened end at the
+  lane's terminus — no grand temple, just a deep alcove cut into the
+  stone and fitted with a vaulted canopy of weathered ashlar. Votive
+  candles burn on a ledge inside — a handful at different heights,
+  their light pooled together in the dim recess. The lane's worn
+  <ansi fg="itemname">step</ansi> at the threshold is hollowed in the
+  centre by generations of feet pausing here before entering. No
+  sound carries in from the street beyond; the lane holds its quiet
+  as though it always has.
+biome: city
+coord:
+  x: -17
+  y: 38
+  z: 0
+exits:
+  west:
+    roomid: 5412
+nouns:
+  shrine: The shrine is a simple thing by city standards — a vaulted
+    alcove no deeper than a man's reach, cut into the stone and lined
+    with flat ashlar. The deity honored is not inscribed anywhere
+    obvious; the offerings tell their own story. A worn iron bowl at
+    the base holds coins of small denomination, a folded scrap of
+    cloth, and a bundle of dried herbs bound with thread. The candles
+    burning on the ledge above are in various stages — some fresh,
+    some guttered down to pools of wax. The place has been tended for
+    a long time, and looks tended still.
+  step: The single broad step at the entrance to the shrine alcove is
+    hollowed in the middle — a smooth depression worn by generations
+    of feet pausing here, perhaps to remove a hat, to press a palm
+    to the stone, or simply to stand still a moment before the
+    business of the day resumes. The stone is clean and swept.
+  lane: The lane runs only this far — a short, quiet spur off North
+    Market Street, the buildings pressing close enough on both sides
+    that there is no through-route. Its cobbles are well-laid and
+    swept clean near the shrine end, dust and grit building back up
+    toward the open street.
+idlemessages:
+- A resident passes from the street without stopping — just a glance
+  toward the <ansi fg="itemname">shrine</ansi> and a dip of the head
+  before they carry on.
+- One of the votive candles gutters and steadies itself, its flame
+  pulling in the still air.
+- A few petals have fallen from the herb bundle in the offering bowl
+  — they lie on the worn step without disturbing anything else.
+- The lane is quiet enough that you can hear your own footfall on
+  the stones.
+- A sparrow lands on the edge of the shrine canopy and leaves again
+  without ceremony.
