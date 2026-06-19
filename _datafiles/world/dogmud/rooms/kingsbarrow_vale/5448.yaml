@@ -1,0 +1,81 @@
+roomid: 5448
+zone: Kingsbarrow Vale
+title: The Watermill
+description: >
+  The mill announces itself through the soles of your feet
+  before you see it fully — the whole timber building trembles
+  with the turning of the great wheel, a steady deep shudder
+  that works up through the floorboards into your legs and
+  chest, not unpleasant, like standing beside something with
+  a heartbeat. The roar of the wheel-race fills every corner;
+  conversation inside would mean leaning close and speaking
+  plainly. Flour-dust coats every surface — the rafters, the
+  window ledges, your own sleeve if you brush against anything
+  — fine and white and rising in slow clouds when the timbers
+  flex. The <ansi fg="itemname">millstones</ansi> occupy the
+  central platform, two great discs of dressed stone turning
+  against each other with a sound that runs beneath the
+  wheel-noise the way a bass note holds beneath a melody. Along
+  wall a row of <ansi fg="itemname">flour sacks</ansi> fills
+  the shelving in various stages of fullness, tied with cord
+  and stencilled in black with the miller's mark. Through the
+  open side-hatch the <ansi fg="itemname">mill wheel</ansi>
+  is visible beyond — vast and methodical, the paddles lifting
+  and diving in the race, sheets of water dropping from each
+  board as it crests, the motion hypnotic and relentless.
+biome: farmland
+coord:
+  x: -17
+  y: 59
+  z: 0
+exits:
+  west:
+    roomid: 5439
+nouns:
+  millstones: Two great circles of dressed grey stone, the
+    upper one rotating against the fixed lower at a slow,
+    grinding pace. The gap between them is the thickness of
+    a finger, and grain fed through the central eye emerges
+    at the edge as a pale, slightly warm powder. The faces
+    are cut in a radial pattern — channels dressed into the
+    stone to carry flour outward — and the platform around
+    them is soft with the pale drift of it settling. At
+    close range the millstones are the loudest thing in
+    the room, a continuous dense grinding felt in the jaw
+    rather than heard with any precision.
+  flour sacks: A row of cloth sacks in varying states of
+    fullness — some fat and tied off, heavy enough to
+    demand two hands to move; some only a third full, their
+    tops folded back and a wooden scoop propped against the
+    nearest. The stencilling on each reads the miller's
+    mark and a batch number in black paint. Running a
+    hand across the nearest sends a small puff of flour
+    into the air. The smell at close range is of raw flour
+    and warm stone — the same smell that will end up as
+    bread across a dozen villages before the week is out.
+  mill wheel: The great wheel fills the channel outside the
+    side-hatch, its paddles wide as a man is tall and moving
+    with a patient, unstoppable force. Water catches in each
+    board at the race and lifts it, the weight of the water
+    cresting the top driving the descent on the far side.
+    Sheets of spray come off the boards at the crown —
+    a constant fine mist reaching through the hatch — and
+    the axle carries the motion inward through the wall to
+    the millstones inside, the whole mechanism one long
+    unbroken thought from moving water to ground flour.
+idlemessages:
+- The vibration in the floor shifts character for a moment —
+  deeper, slightly arrhythmic — then settles back into its
+  usual steady pulse.
+- A cloud of flour dust lifts from the nearest rafter as
+  a timber flexes, drifts in the disturbed air, and descends
+  again over everything below.
+- Through the side-hatch the sound of the wheel-race
+  sharpens briefly as the water rises — then the paddles
+  bite and the rhythm reasserts.
+- The scoop propped against the flour sacks tilts and falls
+  with a muffled thump, sending up a small pale drift that
+  hangs in the flour-thick air.
+- A swallow darts through the open hatch, threads the
+  space below the rafters in a quick arc, and exits the
+  same way before the flour dust settles behind it.

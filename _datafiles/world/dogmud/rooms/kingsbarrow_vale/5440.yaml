@@ -1,0 +1,74 @@
+roomid: 5440
+zone: Kingsbarrow Vale
+title: The Market Cross
+description: >
+  The sound of the market reaches you before the square
+  opens — voices at the stalls, the knock of a measure on
+  a wooden counter, a running argument about weights done
+  with enough laughter to show it is old between these
+  two. The square is small and granite-sett paved, the
+  stone worn to a polish at the centre that no one planned,
+  just walked there over many years. From its broad plinth
+  at the square's heart, the
+  <ansi fg="itemname">market cross</ansi> rises four-sided
+  in grey limestone, its weathered cap carved with a robed
+  saint and at the plinth-base a ring of family names.
+  A row of <ansi fg="itemname">market stalls</ansi> faces
+  north along the square's edge, canvas awnings rigged on
+  a fixed timber frame, their boards crowded with produce
+  from the surrounding farms — sacks of flour, bundles of
+  root vegetables, rounds of hard cheese. To the west the
+  painted board of the Sheaf and Sickle hangs above a low
+  lintel, the inn door propped open, bread-smell and voices
+  finding their way across the square.
+biome: farmland
+coord:
+  x: -18
+  y: 60
+  z: 0
+exits:
+  south:
+    roomid: 5439
+  north:
+    roomid: 5441
+  west:
+    roomid: 5449
+nouns:
+  market cross: Four-sided limestone on a broad plinth,
+    stepped up from the square paving and smoothed where
+    people lean against it to wait. The cross-cap is
+    weathered to a roundness that blurs the carved saint on
+    the south face to a stooped silhouette, though the
+    carved wheatsheaf on the north face has fared better
+    out of the weather's path. At the plinth base a wide
+    ledge runs all four sides — used on market days for
+    small offerings, the stone of the ledge worn hollow at
+    each corner by long habit. A ring of family names
+    encircles the plinth below the ledge, most still
+    legible, two worn to near nothing, one carefully
+    re-cut by a later hand.
+  market stalls: A permanent run of three stalls built on
+    stone footings along the square's north face, the
+    timber boards and awning frame old enough to have
+    settled without shifting. The canvas awnings are worn
+    to a pale grey but sound, and the boards beneath hold
+    the morning's trade — dried pulse in tied linen bags,
+    firm rounds of cheese wrapped in cloth, root vegetables
+    in muddy bundles, a flat basket of wax-capped jars with
+    handwritten labels. On the nearest stall's end-board a
+    chalk tally records the day's transactions, and a
+    locked tin cash-box sits weighted on the counting shelf
+    behind the goods.
+idlemessages:
+- A stallholder calls an offer across the square — the
+  voice easy and practised, not expecting much argument.
+- Two men work through an exchange at the plinth base, a
+  ledger open between them, one marking figures while
+  the other watches the chalk carefully.
+- The inn door swings open and a brief warm sound and
+  bread-smell crosses the square, then muffles as it
+  shuts again.
+- A child darts out from under one of the stall boards
+  in pursuit of a chicken, both heading south at speed.
+- A laden cart edges around the square's perimeter looking
+  for a gap wide enough to pull up beside the stalls.

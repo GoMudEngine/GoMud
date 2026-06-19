@@ -1,0 +1,80 @@
+roomid: 5439
+zone: Kingsbarrow Vale
+title: Mill Street
+description: >
+  You hear the mill before you see the millstream — a low
+  continuous rumble underfoot and in the air at once, the groan
+  of the great wheel turning and the heavier percussion of the
+  millstones behind it, a sound so settled into this street that
+  the people working along it have stopped noticing it entirely.
+  The lane runs north from the green between close-set workshops,
+  a cooper's yard to the left with fresh staves stacked in
+  fragrant fans against the wall, and a wheelwright's open shed
+  to the right where a rim is being fitted over a smoking fire.
+  Between the workshops and the eastern turning, handcarts line
+  the roadway, each loaded with bulging <ansi fg="itemname">grain
+  sacks</ansi> — some inbound for the mill, some outbound and
+  sealed with twine, waiting for the morning's first cart north.
+  The <ansi fg="itemname">millstream</ansi> runs past the east
+  end of the lane, fast and brown and purposeful, the wheel's
+  backwash churning the water downstream into a white froth
+  before it steadies into the drainage cut.
+biome: farmland
+coord:
+  x: -18
+  y: 59
+  z: 0
+exits:
+  south:
+    roomid: 5438
+  north:
+    roomid: 5440
+  east:
+    roomid: 5448
+nouns:
+  grain sacks: Heavy linen sacks, each tied shut at the neck
+    with a doubled loop of hemp twine and chalked on the belly
+    with a parish mark and a weight. The ones waiting to go in
+    are swollen tight, seams pulled taut, and the cloth is dark
+    with the oils of the grain inside. The outbound sacks are
+    the same cloth but flatter, the meal settled and packed
+    hard, the mark on each changed to a different hand — the
+    miller's tally rather than the farmer's. A few sacks at
+    the stack's base are split at a seam, grain leaking into
+    the road-dirt in a pale trickle that has drawn a line of
+    sparrows to the gutter.
+  millstream: The stream enters the lane's view from the north
+    already moving fast, channelled between cut-stone banks that
+    keep it narrow and deep enough to turn the wheel with
+    authority. The water is brown with field-silt and runs with
+    a glass surface at its centre that breaks into chaotic foam
+    at the wheel's far edge, churning and white, then flattening
+    again into the drainage cut that takes it south toward the
+    flats. The stone channel is old — worn smooth at the lip,
+    green-black with moss below the waterline, the mortar between
+    the courses so compressed by time it looks like more stone.
+  cooper's yard: The yard opens at the lane's west side, a
+    working space of fragrant wood-dust and splitting mauls,
+    stave-billets propped in loose fans against the wall and a
+    half-finished barrel on a tilting-horse waiting for its
+    hoops. Fresh-split oak gives the yard its particular smell
+    — clean and tannic, nothing like the grain smell that
+    saturates the rest of the street. A rack of finished barrels
+    stands ready beside the gate, their staves still pale and
+    tight-grained before the first use seasons them dark.
+idlemessages:
+- The mill wheel turns over with a long groan and a rush of
+  water, the rhythm of it a steady bass note under every other
+  sound on the street.
+- A carter backs his horse into position beside the grain
+  sacks, calling quiet instructions to the animal in a
+  practised, unhurried voice.
+- The wheelwright straightens up from his fire and drives a
+  hoop down over the rim with three heavy blows of a wooden
+  mallet, counting under his breath.
+- A pair of flour-dusted workers carry a sack between them
+  from the mill door to a waiting handcart, set it down with
+  a grunt, and go back for another without stopping.
+- A boy darts between the handcarts with a stick, pretending
+  something — the game is private and involves the grain sacks
+  as obstacles to be cleared without touching.

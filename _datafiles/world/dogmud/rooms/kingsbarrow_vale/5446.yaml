@@ -1,0 +1,72 @@
+roomid: 5446
+zone: Kingsbarrow Vale
+title: The Granary
+description: >
+  The interior opens in orderly dim — low timber partitions
+  divide the floor into numbered bays, each one labelled
+  above its opening with a household's name and what it holds.
+  Then the smell of the place arrives — a warm, dry exhalation
+  of stored grain rising from the bins in a close breath,
+  trapped by stone walls thick enough to hold the damp out.
+  The building stands on <ansi fg="itemname">staddle-stones</ansi>,
+  their mushroom caps visible below the sill on every side,
+  lifting the floor clear of the ground and presenting a
+  smooth rim that nothing with legs can climb. The <ansi fg="itemname">grain
+  bins</ansi> of each numbered bay are labelled above the partition
+  in careful script — household, quantity, type — the village's
+  entire winter made legible in chalk and timber. The <ansi fg="itemname">granary
+  doors</ansi> stand wide in the dry air, iron lock-bars resting
+  in their brackets, each hasp stamped with the warden's mark.
+biome: farmland
+coord:
+  x: -17
+  y: 58
+  z: 0
+exits:
+  west:
+    roomid: 5438
+nouns:
+  grain bins: The low timber bays of the granary are numbered
+    and labelled at the partition-head — each one a named
+    household's or a named reserve's allocation, entered in
+    chalk on a hanging board in a clear and careful hand.
+    The bins themselves are straight-sided boxes of smoothed
+    hardwood, the joins sealed with rendered tallow against
+    moisture. Most are filled to two-thirds or better, the
+    surface raked level and smooth. In the seed-corn bay a
+    length of undyed cloth is laid over the grain and weighted
+    at the corners with river-stones — one layer of additional
+    caution. A tally-stick hangs on a hook at each bay entrance,
+    its notches recording every deposit and withdrawal since
+    the last harvest festival.
+  staddle-stones: The granary stands on a grid of stone pillars
+    with mushroom-shaped caps — each one a short drum topped by
+    a broad disc that overhangs the stem, the underside smooth
+    and sloped outward. The shape has one function — presenting
+    a surface no rat, mouse, or other climber can grip from below,
+    leaving no purchase between the ground and the sill-beam. The
+    caps are dressed tight and set flush, with no gap at the joint.
+    Beneath the building the ground is visible as a low clear
+    passage on all sides, dry even after long rain, the air
+    moving through it in a thin draught.
+  granary doors: Thick double doors of close-grained oak, each
+    leaf banded with three horizontal bars of hammered iron and
+    hung on stout pintles. When drawn shut, a long bar drops
+    across both leaves into iron wall-brackets, and a lock-plate
+    at the centre takes a lock issued in three copies — to the
+    village warden and two elected holders, so that no single
+    person commands the grain. A log hangs inside the right door
+    on a small iron hook, each entry dated in the same hand that
+    labels the bins, recording the opening, its purpose, and the
+    weight of any movement.
+idlemessages:
+- A sparrow slips in through the gap below a staddle-stone
+  cap and hops across the floor, then back out again.
+- The smell of the grain deepens as the door-draught turns —
+  richer and warmer here inside than in the open yard.
+- A mouse tests the base of the nearest bin partition and,
+  finding no gap, retreats along the baseboard.
+- Outside, feet cross the village green with an unhurried
+  step, the gravel quiet under them.
+- A thin bar of light moves slowly along the labelled bins
+  as the sun shifts past the clerestory gap in the eaves.

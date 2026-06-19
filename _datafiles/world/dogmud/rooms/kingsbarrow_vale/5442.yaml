@@ -1,0 +1,66 @@
+roomid: 5442
+zone: Kingsbarrow Vale
+title: Upper Fields
+description: >
+  The road reaches the high ground at the vale's top end
+  and the crop grows richer for the elevation — these are
+  the best fields of all, the grain heavy-headed and gold,
+  the stalks thick and standing straight where the lower
+  country needed staking. The drainage favours this ridge
+  and the planting shows it. Northward the golden fields
+  roll on to a long flat skyline, and above that skyline
+  a smudge has appeared — low and grey, with pale threads
+  of dust beneath it, too steady and too fixed to be
+  weather. Something burns and builds ahead, still out of
+  sight beyond the ridge, making itself known by smoke
+  and dust and a low irregular sound the wind carries
+  down when it comes from the north. At the field-edge
+  a squared <ansi fg="itemname">boundary stone</ansi>
+  leans into its setting, old enough to have weathered
+  to the land's colour. Across the nearest field a tall
+  <ansi fg="itemname">hay rick</ansi> stands thatched
+  and square, a dark shape anchored in the gold.
+biome: farmland
+coord:
+  x: -18
+  y: 62
+  z: 0
+exits:
+  south:
+    roomid: 5441
+  north:
+    roomid: 5443
+nouns:
+  boundary stone: A dressed stone post a little taller
+    than a person, squared at its top and set deep in the
+    earth at the field-edge. Its four faces are carved —
+    a parish name on the south face, the neighbouring
+    territory's name on the north, and a date in the old
+    calendar on the east face that puts the stone at least
+    three hundred years in place. The west face carries a
+    survey mark, a broad arrow in a circle. Beneath it a
+    shallow hollow has been worn into the stone's base by
+    long habit, filled now with a scatter of small coins
+    and a sprig of cut grain, left by whoever works these
+    fields when something merits marking.
+  hay rick: A rick of baled field-grass standing well
+    above head-height in the middle of the nearest field,
+    its thatched cap tied down against the weather and the
+    sides still clean-cut from the stack. The rick is
+    built on a raised timber frame to keep the base dry,
+    and the space beneath the frame is put to quiet use —
+    a linen bag of tools, a folded coat, and a small clay
+    jug are tucked under the rick's south edge, someone's
+    working day stowed there until needed.
+idlemessages:
+- A long wave of movement crosses the nearest field as
+  the wind shifts, the whole crop shivering at once from
+  east to west.
+- The smudge above the northern horizon deepens briefly,
+  then thins as it disperses in the upper air.
+- A lark rises from the crop to the east and climbs
+  singing until it vanishes against the pale sky.
+- In the middle distance a figure moves between the rows,
+  checking the grain heads, pausing at intervals.
+- The wind from the north carries something faint — not
+  quite a smell, more the suggestion of heated stone.

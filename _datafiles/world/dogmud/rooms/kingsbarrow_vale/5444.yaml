@@ -1,0 +1,77 @@
+roomid: 5444
+zone: Kingsbarrow Vale
+title: Barleywick Yard
+description: >
+  Grain dust is the first thing — it hangs in the light
+  between the buildings and settles on every surface in a
+  pale bloom, the sweet powdery smell of threshed barley
+  announcing scale before the eye has time to measure it.
+  The farmyard of Barleywick is a wide cobbled court running
+  from the gateposts to a north range of barns and byres,
+  alive with beasts and hands and the purposeful noise of a
+  holding that feeds a long reach of countryside. At the
+  centre the broad flagged <ansi fg="itemname">threshing
+  floor</ansi> takes the full daylight — swept to its edges,
+  heaped at the middle with the morning's cut stalks, two
+  hands working flails in a steady alternating rhythm while
+  a third rakes the freed chaff sideways into drifts. Against
+  the north range a long <ansi fg="itemname">field barn</ansi>
+  stands open at both gable ends, its interior dim and stacked
+  with grain in sacking to the tie-beams, a cart backed up
+  to the near opening and half-loaded. At the yard's far
+  corner a round <ansi fg="itemname">dovecote</ansi> rises
+  above the roofline, its whitewashed holes busy with birds
+  arriving low and fast from the fields beyond the wall.
+biome: farmland
+coord:
+  x: -17
+  y: 55
+  z: 0
+exits:
+  west:
+    roomid: 5435
+nouns:
+  threshing floor: The broad central paving of Barleywick Yard
+    is kept for one purpose — the flags are dressed flat and
+    worn smooth by generations of this work, sloped fractionally
+    toward drain-channels at the perimeter so the fine dust does
+    not pool after rain. The morning's mound of unthreshed stalks
+    waits at the centre, grain heads heavy and gold, and freed
+    grain builds in a shallow drift around it as the flails work.
+    At the floor's near corner a chalk tally-board on a post tracks
+    the day's take — the count rising in marks wiped and rewritten
+    each morning, the number significant.
+  field barn: The long stone building along the north range
+    stands open at both gable ends to let the carts come through.
+    Inside the air is cool and dim, and the smell is close and
+    sweet — the compressed warmth of a great deal of stored grain.
+    Sacked barley and wheat are stacked floor to tie-beam on the
+    wall-side, hundreds of sacks each marked with the estate's
+    chalk stamp and a running count. Along the east wall a rack
+    holds the yard's tools in order — flails and rakes and grain
+    shovels and a brace of wooden buckets — and a half-mended
+    harrow sits on its back in the middle of the floor, waiting.
+    The rafters above vanish into the roof-dark long before the
+    ridgeline.
+  dovecote: A round tower of whitewashed stone rising from the
+    yard's corner range, its walls honeycombed with nesting holes
+    from sill-height to the eaves. The birds are a working flock —
+    grey and rust and white, arriving in a constant low traffic
+    from the grain fields, each one landing on its ledge with a
+    soft wing-beat before folding in. Dung builds at the tower's
+    base and is raked into a barrow that stands half-full nearby.
+    The birds are grain-fed; the grain-fed birds are, in their
+    season, eaten. Nothing goes to waste at Barleywick.
+idlemessages:
+- A threshing hand pauses mid-swing, shakes chaff from a
+  leather apron, and lifts the flail again without a word.
+- Two sparrows drop from a barn beam to pick at split grain
+  on the cobbles — quick and quarrelsome, unmoved by the
+  yard's traffic.
+- The cart horse by the barn opening stamps one foreleg and
+  blows a long slow breath into the warm yard air.
+- A thin drift of chaff lifts from the threshing floor on
+  the turning breeze, catches the light briefly, and settles
+  wide across the far cobbles.
+- From inside the field barn something heavy shifts with a
+  slow wooden thump — someone stacking, or checking a count.

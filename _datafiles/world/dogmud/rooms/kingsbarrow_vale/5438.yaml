@@ -1,0 +1,84 @@
+roomid: 5438
+zone: Kingsbarrow Vale
+title: Kingsbarrow Green
+description: >
+  The lane opens onto a broad worn common — the heart of
+  Kingsbarrow, unimproved and ancient, its grass cropped short
+  by generations of geese and passing livestock. At the green's
+  centre the <ansi fg="itemname">market cross</ansi> stands
+  on three shallow steps of mossy stone, its carved shaft older
+  than any other stonework in the village, one arm chipped at
+  the finial and never repaired. A <ansi fg="itemname">duckpond</ansi>
+  pools at the green's north corner, ringed with trampled mud
+  and willow-herb, a raft of ducks riding it in a loose cluster.
+  Geese move across the common in pairs and loose gangs, pulling
+  at the grass with the unhurried authority of creatures that
+  know they own the ground. On the east side of the green the
+  great stone granary fills its entire frontage — wide, solid,
+  its doors iron-banded and shut — and on the west the squat
+  church crouches behind a lych-gate, its tower barely higher
+  than the granary's eaves. Between the two the village has
+  arranged its whole existence for a thousand years, grain and
+  prayer balanced against each other across thirty yards of
+  common ground.
+biome: farmland
+coord:
+  x: -18
+  y: 58
+  z: 0
+exits:
+  south:
+    roomid: 5437
+  north:
+    roomid: 5439
+  east:
+    roomid: 5446
+  west:
+    roomid: 5447
+nouns:
+  market cross: A shaft of honey-grey stone rising from three
+    broad steps, worn to a satin smoothness at the angles from
+    centuries of hands and shoulders resting against it. The
+    carving — rope-knot panels at the base, a foliate band above,
+    then a plain taper to the chipped finial — is old enough
+    that the sharpest detail has softened into suggestion.
+    The cross-arm is socketed rather than carved in one piece,
+    and a recent wooden board has been fixed below it, chalked
+    with notices in two hands — a tithe remission date, a
+    missing cow, a date for a hiring-fair next month. The base
+    of the steps holds a scattering of small offerings left
+    in the stone's shadow — dried flowers, a braided straw
+    ring, a clay-stoppered jar of grain brought to market and
+    never sold.
+  duckpond: A shallow pond fed by a field drain, its far bank
+    pressed to a soft grey mud by the hooves of cattle and the
+    flat feet of the ducks working the edge. The water is the
+    colour of weak tea and perfectly still in the lee of the
+    willow-herb. The ducks ride it in a companionable raft near
+    the centre, unbothered by the geese circling the bank —
+    each species respectful of the other's territory in the
+    manner of long acquaintance. A child has pushed a bark boat
+    into the shallows and lost interest; it rotates slowly near
+    the drain.
+  geese: A gang of eight or ten grey-white geese moves across
+    the common in a loose formation, pulling at the grass with
+    quick decisive bites and reassembling after each raid. They
+    acknowledge passing foot traffic with a sideways eye and
+    a readiness to honk that is not quite a threat — not yet.
+    A larger gander keeps a little apart from the rest, head
+    held higher, tracking movement near the cross.
+idlemessages:
+- The gander on the green stretches his neck and sends a long
+  honk across the common — the others look up, find no cause,
+  and go back to the grass.
+- A woman empties a bucket of kitchen scraps at the pond's
+  edge; the ducks reorganise at speed, the raft dissolving
+  into a competitive rush for the bank.
+- Two men lean against the market cross talking, one with a
+  barley stalk between his teeth, the other turning his cap
+  in his hands. Neither seems to be in any hurry.
+- A girl chases a goose off the front step of the granary
+  with a broom, and the goose takes it personally.
+- A bell sounds from the church tower — two notes, dull and
+  close together — and someone near the lych-gate counts
+  them quietly on their fingers.

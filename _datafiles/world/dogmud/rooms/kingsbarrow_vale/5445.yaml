@@ -1,0 +1,76 @@
+roomid: 5445
+zone: Kingsbarrow Vale
+title: The Great Tithe Barn
+description: >
+  The cold arrives first — a drop into the tithe-barn's
+  interior well below the heat of the harvest fields, thick
+  walls and ancient thatch holding a chill the sun cannot
+  reach. Then the eyes adjust and the scale arrives. The
+  building is cathedral-huge, its arched timber roof soaring
+  above a floor that runs from end wall to end wall with the
+  gathered wealth of the vale. The <ansi fg="itemname">grain
+  store</ansi> fills that floor — sacks stacked four high in
+  ordered columns, loose grain mounded in the central aisle,
+  the whole mass banked to the first tie-beams, the tithe of
+  everything the vale grows, gathered here to be carted north
+  before the frost. The <ansi fg="itemname">great frame</ansi>
+  above is the building's real statement, curved oak principals
+  rising from sill-beams to a ridgeline lost in the gloom,
+  the old timber smoke-darkened and massive, the joinery
+  precise and confident. Here and there the capital's
+  wheatsheaf seal is painted on the principals in red —
+  marking whose grain this is and where it ends up. A quiet
+  lives in this space that the bright fields outside do not.
+biome: farmland
+coord:
+  x: -19
+  y: 56
+  z: 0
+exits:
+  east:
+    roomid: 5436
+nouns:
+  grain store: The floor of the tithe-barn is given over from
+    wall to wall to the capital's grain — heavy linen sacks
+    stacked column by column along the walls, and between them
+    a central aisle of loose grain mounded over low boarding.
+    Each sack carries a stamp in black ink, the New Plymouth
+    wheatsheaf within a circle, below it a parish number and
+    a weight in uncials — not the weight of the village's own
+    stores but the counted tenth, the tithe, belonging now to
+    the city. The quantities are striking. A rough count of
+    the columns against the barn's width suggests several
+    seasons' worth of a modest settlement's bread — not
+    Kingsbarrow's bread. This is New Plymouth's bread, held
+    here in transit, waiting for the carts to come back empty
+    from the north road. The smell at close quarters is
+    overwhelming — warm grain and dust and a cold stone
+    undertone from the thick walls.
+  great frame: The tithe-barn's timber skeleton was built to
+    outlast whoever ordered it. Great curved principals of
+    seasoned oak rise from dressed sill-beams, paired and
+    braced with collar-ties and raking windbraces between
+    them, the whole assembly browning with age and coating
+    slowly under generations of grain dust and wood smoke.
+    The joinery is draw-bored and wedged — each joint cut
+    with care that assumes permanence, not maintenance. At
+    the crown of several upper principals the capital's
+    wheatsheaf seal has been painted in red, a formal mark
+    applied after construction to lay claim to the building's
+    purpose. The ridgeline above is invisible in the gloom;
+    the height is enough to make the stacked grain below look
+    orderly and manageable.
+idlemessages:
+- A sparrow drops from the high gloom, pecks at the split
+  seam of a grain sack on the nearest column, then beats
+  back up into the rafters.
+- The great frame settles around you — a slow deep creak
+  from somewhere in the collar-ties above, then the barn
+  goes quiet.
+- Dust motes drift through the shaft of light from the
+  south gable, taking the long way down to the grain.
+- From behind the thick walls, muffled, the sound of a
+  cart arriving on the track outside — wheels slowing, a
+  voice calling ahead to the yard.
+- A rat crosses the far end of the central aisle at a
+  brisk trot and vanishes between two grain columns.

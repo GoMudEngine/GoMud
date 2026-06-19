@@ -19,6 +19,9 @@ coord:
 exits:
   south:
     roomid: 5432
+  north:
+    roomid: 5434
+    zone: Kingsbarrow Vale
 nouns:
   march stone: A tall boundary stone of good pale ashlar, far finer than a
     common milestone, carved on its north face with a sheaf-and-tower

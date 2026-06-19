@@ -1,0 +1,83 @@
+roomid: 5447
+zone: Kingsbarrow Vale
+title: Kingsbarrow Church
+description: >
+  Cold stone and candle-wax reach you before anything else —
+  the lych-gate closes behind you, shutting the noise of the
+  green away, and the church holds its quiet like a kept thing,
+  deliberate and old. The nave is low and plain, the original
+  plaster mostly stripped to bare fieldstone, the wall darkened
+  by centuries of damp and tallow-smoke. Four narrow lancets
+  admit a grey, even light. At the far end the <ansi fg="itemname">harvest
+  altar</ansi> carries the village's older faith alongside its
+  newer one — a corn-dolly woven from the last sheaf of the
+  previous season stands between two candle stubs, ringed by
+  tied barley sheaves and a clay dish heaped with dried rosehips,
+  coins, and a folded note no one has claimed. The altar stone
+  is worn glass-smooth at the centre where hands have rested in
+  supplication for as long as anyone has kept count. Outside,
+  through the south doorway, the great <ansi fg="itemname">yew</ansi>
+  fills the frame — its trunk split into three massive limbs
+  above a root-mass the oldest graves have grown entirely around,
+  its canopy too dense for much light to reach the ground. The
+  <ansi fg="itemname">tower</ansi> opens through a narrow arch
+  to your right, plain and cool, its rope hanging slack in the
+  dark below the belfry.
+biome: farmland
+coord:
+  x: -19
+  y: 58
+  z: 0
+exits:
+  east:
+    roomid: 5438
+nouns:
+  harvest altar: A broad block of cut stone, its centre worn
+    to a satin smoothness by the pressure of many hands across
+    many seasons. A corn-dolly stands at the middle — woven
+    from the last sheaf of the previous harvest, bound at the
+    arms and waist with red thread, its shape traditional and
+    exact, not decorative. Two tallow candle stubs flank it,
+    burned to within a finger's width of the plate. Barley
+    sheaves fan outward in a neat arrangement refreshed each
+    autumn, and at the altar's foot a clay dish holds the
+    village's accumulated offerings — dried rosehips, small
+    coins, a folded note left by a petitioner who did not sign
+    it. Some of what has gathered in the dish is very old.
+  yew: The yew beyond the south door is the oldest living
+    thing in Kingsbarrow — older than the church records and
+    older than the church itself. Its trunk has split at the
+    base into three pillars of red-dark bark, each one too
+    wide for a person to reach around alone, the wood densely
+    grained and absolutely still even when a breeze moves the
+    outermost leaves. The canopy above is lightless at its
+    heart, and the graves beneath the outer limbs are the
+    oldest in the yard — their stones tilted and their
+    lettering softened past reading, the names given back
+    entirely to time.
+  tower: The bell tower opens through a narrow stone arch in
+    the north wall — a cool shaft of air and old rope. The
+    bell above is not large, but its tone carries across the
+    green more through the surrounding quiet than through
+    volume — two dull notes the village has counted by for
+    as long as anyone can remember. The rope hangs slack in
+    the dark, its lower end knotted and worn pale where the
+    ringer grips, and the stone floor directly below has a
+    shallow groove worn by the feet of whoever pulls — always
+    in the same spot, for a very long time.
+idlemessages:
+- One of the candles on the harvest altar dims without any
+  breath of air you can feel, then rights itself, the flame
+  settling back to a clean steady point.
+- Through the south doorway, a wood pigeon calls from deep
+  in the yew — three low notes, a pause, then three again,
+  unhurried.
+- The cold rises from the flagged floor in the nave's
+  shadow, a different cold than outside — older and drier,
+  the kind that belongs to thick walls.
+- A bee finds its way through one of the lancet windows,
+  circles the altar in a slow uncertain drift, and exits
+  the way it came without settling on anything.
+- Dust moves in a slow shaft of light from the nearest
+  lancet, disturbed by no cause you can place, turning
+  and settling in the grey air above the altar.

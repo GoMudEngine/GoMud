@@ -1,0 +1,66 @@
+roomid: 5441
+zone: Kingsbarrow Vale
+title: North Vale Road
+description: >
+  The last garden-walls drop behind and the fields resume
+  at once — wide and immediate on both sides of the road,
+  the crop pressing close to the thorn-hedge line that
+  keeps it from the verge. The road lifts here on a long
+  gentle slope, and from the slight height the northern
+  vale opens ahead, a sweep of ripening grain rolling
+  away to the horizon, gold and dense, shivering where
+  the breeze catches it in long running waves. Ahead on
+  the road a string of laden
+  <ansi fg="itemname">grain wagons</ansi> works north,
+  the horses pulling steadily at the grade, the high-piled
+  sacks roped down tight over the boards — all of it bound
+  for the capital's granaries before the first frost. The
+  <ansi fg="itemname">roadside hedge</ansi> runs unbroken
+  on both flanks, old thorn and hazel grown head-high,
+  the hedge-base loud with sparrows and the creak of small
+  birds moving through dense cover.
+biome: farmland
+coord:
+  x: -18
+  y: 61
+  z: 0
+exits:
+  south:
+    roomid: 5440
+  north:
+    roomid: 5442
+nouns:
+  grain wagons: Three wagons in a loose train, each a
+    heavy timber-sided farm-cart with iron-banded wheels
+    scored by long road-use. The boards are loaded to
+    their limit with hessian grain-sacks, piled two and
+    three deep and roped down in a tight cross-pattern over
+    the load. Each sack is stamped with a parish mark — a
+    circle enclosing a grain-stalk — and the estate number
+    it came from. The nearest wagon's tailboard is wedged
+    open to let the load breathe, and the sacks behind it
+    are braced with folded sacking. The lead driver keeps
+    one eye on the road and one on the ropes, checking
+    them without stopping.
+  roadside hedge: Old thorn-and-hazel run tightly along
+    both verges, grown to a wall of green above head-height,
+    the hedge-top ragged where recent growth has not been
+    laid. The bases are thick with tall grass, nettles, and
+    trailing bramble stems, and the whole length is busy
+    with small bird life — sparrows working the base, a
+    wren moving fast through the interior. At one point the
+    hedge has been opened with a clean cut and a
+    post-and-rail gate installed for farm traffic, the gate
+    currently standing open on its latch.
+idlemessages:
+- The nearest grain wagon jolts over a rut in the road,
+  the sacks shifting with a dry rustle before settling.
+- A sparrow explodes from the hedge-base beside the road,
+  crosses the verge at speed, and vanishes into the crop.
+- From the village behind, a bell rings twice, carrying
+  easily through the open farm country.
+- One of the wagon-drivers exchanges words with a figure
+  at the hedge-gap — a farm hand leaning on a long-handled
+  tool — then the wagon moves on without pausing.
+- A merlin cuts north above the field line, low and
+  direct, then tilts and drops into the crop out of sight.

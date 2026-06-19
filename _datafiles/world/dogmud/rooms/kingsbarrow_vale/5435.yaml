@@ -1,0 +1,61 @@
+roomid: 5435
+zone: Kingsbarrow Vale
+title: Barleywick Gate
+description: >
+  The road bends and the estate resolves — tips of a great
+  tithe-barn's roof above the poplar windbreak first, then the
+  gateposts of Barleywick themselves, paired columns of squared
+  local stone capped with carved wheat-sheaves, set to declare
+  the estate's standing to anyone walking this road. The fields
+  press in on both sides here, the crop heavier and more even
+  than along the approach, managed with the long care of a
+  holding that has been productive for generations. A carved
+  board on the eastern <ansi fg="itemname">gatepost</ansi>
+  names the estate and states its obligations plainly, and a
+  well-raked <ansi fg="itemname">drive</ansi> runs east from
+  the gate into the farmyard, its poplar-lined verge trimmed
+  to a straight line.
+biome: farmland
+coord:
+  x: -18
+  y: 55
+  z: 0
+exits:
+  south:
+    roomid: 5434
+  north:
+    roomid: 5436
+  east:
+    roomid: 5444
+nouns:
+  gatepost: One of a pair of squared local-stone posts flanking
+    the estate drive, each capped with a carved wheat-sheaf worn
+    to softness by decades of weather. The eastern post carries
+    a carved board fixed into a recess — the wood darkened with
+    linseed oil, the lettering clean despite its age. The board
+    reads BARLEYWICK, and below that the estate's tithe-obligation
+    is stated plainly — grain due north before the first frost,
+    sealed with the bloodline's mark. Beneath the board a small
+    iron lockbox is set into the post, its hasp open, holding
+    a folded tally-sheet and a stamped receipt from the last
+    collection.
+  drive: A gravel drive runs east from the gateposts into the
+    farmyard proper, its verges trimmed to a clean line and its
+    surface recently raked. A row of tall poplars lines the north
+    side, masking the farmyard from the road after the first
+    bend. The quality of the approach — no ruts, no loose stones,
+    the drainage channels cut clear — reflects a holding that
+    treats its entrance as a statement.
+idlemessages:
+- A heavy wagon rolls out through the gateposts from the estate
+  drive, its flatbed loaded with baled grain, the driver calling
+  back to someone in the yard as he turns north onto the road.
+- A farm dog trots out from the drive, investigates the road's
+  edge at length, then turns back toward the farmyard without
+  any urgency.
+- From behind the poplar windbreak the ring of a hammer on iron
+  comes in measured bursts — steady, purposeful work.
+- A field hand passes through the gate heading for the northern
+  fields, a scythe over one shoulder, not looking up.
+- Two rooks pick at something at the base of the eastern gatepost,
+  unhurried, giving way for no one passing on the road.

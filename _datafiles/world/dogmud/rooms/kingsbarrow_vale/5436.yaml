@@ -1,0 +1,61 @@
+roomid: 5436
+zone: Kingsbarrow Vale
+title: The Tithe Road
+description: >
+  The road runs between the fields and the capital's authority
+  marks it at every furlong — squat stone posts cut with the
+  New Plymouth seal and a parish number, each one squared and
+  true and set to outlast the hedgerows that frame them on
+  either side. These are the <ansi fg="itemname">tithe-stones</ansi>,
+  and what they count is plain — the grain standing deep and
+  gold in the fields around them, a real abundance being
+  measured and claimed at once. A rutted <ansi fg="itemname">track</ansi>
+  breaks west from the road toward the great tithe-barn whose
+  ridge stands above the field line in the middle distance,
+  the ruts scored deep by wagon wheels heading in both
+  directions.
+biome: farmland
+coord:
+  x: -18
+  y: 56
+  z: 0
+exits:
+  south:
+    roomid: 5435
+  north:
+    roomid: 5437
+  west:
+    roomid: 5445
+nouns:
+  tithe-stones: Squat posts of dressed grey stone, set at each
+    furlong-mark along the road — squared and levelled flush with
+    the verge, the work of an administration confident enough to
+    make permanence into a message. Each one carries the New
+    Plymouth seal on its face — a wheatsheaf above a river-gate
+    within a circle — and below it a parish number in plain block
+    letters. The numbers run consecutively north, counting out
+    the vale's parishes whose grain is owed to the city. Some
+    numbers on older posts have worn faint, but none are
+    illegible; the lettering has been maintained. Around the base
+    of the nearest post the grass is worn to bare earth, as if
+    carts rest here while a tally is taken.
+  track: A double-rutted track breaks west from the road and
+    runs toward the great tithe-barn in the middle distance, the
+    ruts deep and wide from long seasons of loaded wagon passage.
+    The barn's ridge is visible above the field line — built for
+    capacity, not elegance, its thatch dark and heavy. The soft
+    ground between the ruts is pressed with wheel marks and hoof
+    prints, the recent evidence of harvest wagons in both
+    directions.
+idlemessages:
+- A wagon loaded with grain sacks rolls past heading north, the
+  driver glancing at the nearest tithe-stone as he passes.
+- A pair of pigeons works the verge between two of the stone
+  posts, picking at spilled grain from a recent cart-load.
+- In the middle distance the great tithe-barn stands against the
+  open sky, its ridge high enough to catch the light above the
+  field line.
+- A land agent walks the road slowly with a ledger under one arm,
+  noting something against each tithe-stone as he goes.
+- The wind moves through the grain on both sides of the road at
+  once, a long shivering ripple running east to west.

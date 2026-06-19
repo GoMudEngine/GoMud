@@ -1,0 +1,83 @@
+roomid: 5449
+zone: Kingsbarrow Vale
+title: The Sheaf and Sickle
+description: >
+  Warmth and the smell of brewing reach you as the door swings
+  — woodsmoke first, then the round dark smell of ale that has
+  been pouring in this room long enough to be part of the
+  plaster, then something sweeter beneath both of them, the
+  smell of bread from the inn's own oven through the back wall,
+  close enough to warm the stone. The room is small and low,
+  its ceiling crossed by <ansi fg="itemname">beams</ansi> so
+  close to head height that anyone tall bends without thinking,
+  their undersides hung with dried hops and bundles of sage
+  and marjoram, brown and papery, their scent mingling with
+  the smoke. A long settle runs the near wall, its wood black
+  with decades of use, and to the right the bar occupies a
+  deep alcove — three barrels on its low shelf, a row of
+  thick-walled cups turned upside down beside them, waiting.
+  At the far end the <ansi fg="itemname">hearth</ansi> holds
+  a slow, steady fire, its flue drawing well, the hearthstone
+  warm enough to dry a pair of boots set close to the grate.
+  A <ansi fg="itemname">notice board</ansi> is nailed beside
+  the bar, crowded with papers and tallies and a hand-drawn
+  map of the vale road that someone added and no one has
+  taken down. Far humbler than a coaching inn, and warmer
+  for it.
+biome: farmland
+coord:
+  x: -19
+  y: 60
+  z: 0
+exits:
+  east:
+    roomid: 5440
+nouns:
+  hearth: A wide stone fireplace, its lintel carved with a
+    sickle and a sheaf in shallow relief — the inn's namesake,
+    cut when the building was new and not replaced when the
+    stone darkened. The fire is kept at a low, steady burn
+    rather than a roar, sized to heat the room through a long
+    sitting without consuming everything at once. A pair of
+    iron dogs sits at either side of the grate. The hearthstone
+    before it is warm enough to kneel on comfortably, and a
+    pair of worn boots has been set to dry near the left side,
+    the leather cracked at the toe but recently cleaned.
+  notice board: A board of old dark oak, hung close enough
+    to the bar that a person can read it while waiting to
+    be served. It carries papers in several layers — a tithe
+    reminder from the mill at the top, a hiring notice for
+    harvest labour pinned below it, a list of amounts owed
+    to the innkeeper in a neat hand at the centre, and at
+    the bottom a hand-drawn map of the vale road network
+    corrected twice in different inks. A curl of paper near
+    the left edge reads, in careful letters, that a grey
+    mule answering to Pepper has been missing since the
+    last market day. No one has taken that one down either.
+  beams: The ceiling beams are the original timbers of the
+    building, dark with age and smoke, and low enough that
+    a person of any height moves through the room with an
+    unconscious deference to them. Dried hops hang from
+    the largest in heavy bunches, papery and light, their
+    smell faint but persistent — a little bitter, a little
+    dusty. Sage, marjoram, and a long braid of lavender
+    are tied among them, and several hooks hold other
+    things besides — a spare lantern, a ring of large keys,
+    a dried fish on a cord that no one seems in any hurry
+    to eat.
+idlemessages:
+- The fire in the hearth settles with a soft collapse of
+  ash, sending a brief pulse of heat across the room before
+  the flame draws back to its quiet working burn.
+- The smell of bread from the back strengthens as a door
+  opens and closes somewhere in the building, then fades
+  again to its usual warm undercurrent.
+- Someone has left a cup on the settle near the bar; a
+  fly investigates the rim with careful persistence, then
+  moves on to the bar's surface.
+- The hops above shift in a small draught, their papery
+  rustle brief and almost inaudible beneath the low sounds
+  of the room.
+- A floorboard near the bar gives a long, deliberate creak
+  under nobody's weight in particular — the kind of sound
+  old buildings make in the ordinary course of standing.

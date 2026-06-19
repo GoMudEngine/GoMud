@@ -1,0 +1,61 @@
+roomid: 5434
+zone: Kingsbarrow Vale
+title: The Vale Road
+description: >
+  The smell changes before the sight does — the cold rot of
+  the river flats drains away down the slope behind you, and
+  in its place the warm breath of the breadbasket arrives,
+  grain and turned earth heavy in the air, a richness that
+  belongs to country feeding cities rather than merely keeping
+  itself. The road crests a low swell and the vale opens wide
+  to the north — hedged fields of ripening barley and wheat
+  rolling away to the horizon, golden and immense, ordered
+  behind tight thorn-hedges, the scale of the farming only
+  apparent from this slight height. At the road's verge a low
+  stone <ansi fg="itemname">harvest shrine</ansi> stands draped
+  with cut grain and braided field-flowers, and the great
+  <ansi fg="itemname">grain fields</ansi> spread away on both
+  flanks, the crop heavy and gold, a long way from the marsh
+  below.
+biome: farmland
+coord:
+  x: -18
+  y: 54
+  z: 0
+exits:
+  south:
+    roomid: 5433
+    zone: Greywater Flats
+  north:
+    roomid: 5435
+nouns:
+  grain fields: The fields stretch north and east from the road's
+    slight crest, row after row of barley and wheat standing
+    chest-high on the stalk, heads heavy and gold, trembling
+    where the breeze catches them in long running shivers.
+    Thorn-hedges divide the belt into great blocks — a half-mile
+    or more across each — and the depth of the planting suggests
+    a harvest sufficient to fill district granaries twice over.
+    The wealth flows north from here; the scale of the fields
+    makes that plain without any sign being needed.
+  harvest shrine: A low drum of worked stone at the road's verge,
+    broad enough to hold offerings, worn smooth at the centre by
+    long use. Someone has laid cut grain across it in a neat fan
+    — pale barley, a sprig of red campion between the stalks —
+    and wedged below the grain a flat river-stone with a crude
+    sun pressed into its face. The rim carries lettering, old
+    and partly worn, petitioning for an abundant harvest and
+    safe storage. The shrine's base is hollow, and the gap at
+    its foot holds a small scattering of coins left by travellers
+    — copper mostly, one worn silver piece among them.
+idlemessages:
+- A farm cart passes heading south, its flatbed piled with empty
+  grain sacks, the driver nodding from the bench without slowing.
+- Skylarks rise from the field edge in a sudden spiral, their
+  calling bright and rapid above the hedgerow line.
+- The warm smell of the grain deepens as the breeze shifts from
+  the north — thick with the particular sweetness of ripe barley.
+- Somewhere in the fields ahead a voice calls out, a field hand
+  directing a team, the words too faint to make out from here.
+- A bee crosses the road low and with purpose, heading into the
+  flowering weeds at the base of the nearest thorn-hedge.
