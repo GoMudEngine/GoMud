@@ -1,5 +1,33 @@
 # DOGMud Patch Notes
 
+## 2026-06-20 — New Plymouth: the first districts come alive [building toward the capital — not yet on prod]
+
+The capital's gates are no longer just the end of the northern road. The first
+two districts of New Plymouth are built and walkable: the **Docks**, where
+everything the city eats and wears comes ashore, and the **Common Quarter**,
+where most of the city actually lives.
+
+These districts are built people-first — the residents and their days came
+first, and the streets exist because those people need them. A dock foreman, a
+pawnbroker, a back-alley healer, a tenement matron, two tavern-keepers, a
+street-sweeper who hears everything through stone — each keeps a real daily
+routine. They wake, work their trade, break for a midday meal at the cookshop,
+and turn in at night. Step into a quarter at different hours and you find a
+different city: markets busy at midday, the healer's clinic open at any hour
+because people don't get hurt on a schedule, and — while the rest of the
+quarter sleeps — the taverns still lit and working, their keepers behind the
+bar deep into the small hours.
+
+Every door leads somewhere you can walk. Step into a tavern, a clinic, or a
+cellar with the same plain movement you use everywhere else in the world, and
+the people who work those rooms keep their hours there just as the folk on the
+street do.
+
+Two questlines give the districts their first hooks: the **Dock Rat** down on
+the waterfront, and the **Street Sweeper's Secret** in the Common. More of the
+capital — its crafting quarter, markets, temple, the noble heights, and the old
+quarter beneath — is still being built. This is where it begins.
+
 ## 2026-06-19 — The road to New Plymouth: the Stillwater→capital corridor
 
 The long stretch of road between Stillwater and the capital is now walkable end
