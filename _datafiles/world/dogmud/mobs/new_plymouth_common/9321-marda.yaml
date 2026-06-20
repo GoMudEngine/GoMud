@@ -1,5 +1,6 @@
 mobid: 9321
 zone: New Plymouth Common
+schedule_id: np_common_marda
 craft_support: cooking
 behavior_archetype: noncombat_shopkeeper
 non_combatant: true

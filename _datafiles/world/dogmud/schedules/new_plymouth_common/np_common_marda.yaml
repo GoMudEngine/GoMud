@@ -1,0 +1,25 @@
+id: np_common_marda
+description: "Marda: runs the cookshop from before dawn through the evening
+  without pause, working the braziers and trestle all day, then sleeps
+  above the cookshop with tomorrow's broth already set to soak."
+segments:
+  - start: 5
+    end: 21
+    target_room: 5605
+    activity: ""
+    idlecommands:
+      - emote lifts the lid on the morning pot with a bare palm, sniffs the
+        steam without wincing, adds pepper, and sets the lid back.
+      - say Halvard would eat boiled grain and call it done. I tell him every
+        time. He disagrees every time. Someone has to know better.
+      - emote wraps a flatbread straight off the clay oven — hand-to-hand,
+        no pads — and has it on the counter before the buyer finishes asking.
+      - say Fresh broth, good pepper, real bread. That's three for three.
+        Most places can't say that.
+  - start: 21
+    end: 5
+    target_room: 5605
+    activity: sleeping
+    idlecommands:
+      - emote sleeps above the cookshop, the fire banked low and tomorrow's
+        broth already set to soak.

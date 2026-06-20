@@ -1,0 +1,45 @@
+id: np_common_tova
+description: "Tova: runs her rooming house through the morning and afternoon,
+  takes a midday meal at the cookshop, and sleeps at the foot of the stair
+  in the landlady's room with the front-right key on its hook beside the door."
+segments:
+  - start: 7
+    end: 13
+    target_room: 5613
+    activity: ""
+    idlecommands:
+      - emote turns a key over in her fingers — one hand to the other, not
+        looking at it — then tucks it into her apron pocket without comment.
+      - say The front-right room has been empty long enough. I'm particular
+        about who I let it to, and I don't apologize for that.
+      - emote stands in the doorway and reads the Row with the calm attention
+        of someone who notices when anything on it changes by the width of a
+        finger.
+  - start: 13
+    end: 14
+    target_room: 5605
+    activity: ""
+    idlecommands:
+      - emote takes a quick meal at Marda's trestle, eating without
+        conversation — the break is practical, not social.
+      - say Marda keeps a decent pot. I come for the pepper.
+  - start: 14
+    end: 21
+    target_room: 5613
+    activity: ""
+    idlecommands:
+      - emote marks something in her small ledger and tucks it away with the
+        air of an account that has come out correctly.
+      - say Last bell's the rule. Whatever someone's business is, it ends
+        before it gets to my stairs.
+      - emote smooths the front of her apron — flat, considered — and surveys
+        the Row through the window glass without opening it.
+      - say The front-left room is occupied by someone who needs quiet. I've
+        given them that and I'll keep giving it.
+  - start: 21
+    end: 7
+    target_room: 5613
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the landlady's room at the foot of the stair, the
+        front-right key hanging on its hook beside the door.

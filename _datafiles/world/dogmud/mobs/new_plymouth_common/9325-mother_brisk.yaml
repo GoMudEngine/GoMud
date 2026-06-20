@@ -1,5 +1,6 @@
 mobid: 9325
 zone: New Plymouth Common
+schedule_id: np_common_brisk
 behavior_archetype: noncombat_questgiver
 non_combatant: true
 charm_immune: true
