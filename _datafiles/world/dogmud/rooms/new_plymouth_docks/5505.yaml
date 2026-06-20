@@ -1,0 +1,62 @@
+roomid: 5505
+zone: New Plymouth Docks
+title: Warehouse Row
+description: >
+  The air is different here — stiller, drier, cut through with the
+  smell of sawdust packing and pine-resin and something sweetly
+  chemical from a crate near the eastern end that nobody has
+  thought to label in a language available to you. A row of import
+  storehouses runs the length of the block, their walls close-
+  boarded and their doors iron-hinged and padlocked during off-
+  hours; right now two of them stand open and men move in and out
+  with barrow-loads in the steady rhythm of work that does not
+  stop for conversation. Against the near wall a stack of
+  <ansi fg="stacked crates">stacked crates</ansi> rises to chest
+  height, each one stenciled with a port-mark and a count. On the
+  end wall a <ansi fg="manifest chalkboard">manifest chalkboard</ansi>
+  spans the full width of the board, its chalk columns dense with
+  arrivals and tallies — the docks' memory of what came in and
+  what has yet to move on.
+biome: city
+coord:
+  x: -19
+  y: 81
+  z: 0
+exits:
+  south:
+    roomid: 5504
+  east:
+    roomid: 5506
+  west:
+    roomid: 5508
+nouns:
+  stacked crates: Timber crates in several sizes, stacked two and
+    three high and banded with iron strips that have begun to rust
+    at the cut ends. Each one carries a stenciled mark in black
+    tar-paint — a port symbol, a batch number, a weight-class glyph
+    in a shorthand that is not quite any language. The marks are
+    from at least four different ports — you recognize one of them
+    and are surprised by how far it is. Whatever is inside rattles
+    faintly when a cart passes. The crate nearest the door has been
+    opened and re-nailed, the fresh nail-heads bright against the
+    grey wood.
+  manifest chalkboard: A full board of arrival tallies, written in
+    several hands over several days, the older entries faint beneath
+    the newer ones. Columns for hull name, cargo type, declared
+    weight, tariff status, warehouse bay. The tariff-status column
+    has three notations in use — a checkmark, a circle, and a small
+    cross whose meaning the board does not explain. Several entries
+    carry the circle. One hull name — MAREN'S TIDE — has been
+    struck through and written over — SETTLED. The name underneath
+    is still legible if you look for it.
+idlemessages:
+- A barrow wheel squeals as it rounds the corner from the open
+  warehouse door. Nobody oils it.
+- The smell of the unlabeled crate near the east end waxes and
+  wanes with the breeze — something sweet and slightly wrong.
+- Two talliers compare their counts by lamplight in the warehouse
+  doorway, each insisting on their own number.
+- A rat moves along the base of the crate-stack with the brisk
+  confidence of something that has never been caught here.
+- A warehouse door groans shut and a padlock clicks home — one
+  fewer source of light in the row.

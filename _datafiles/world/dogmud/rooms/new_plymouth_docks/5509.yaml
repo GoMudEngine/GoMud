@@ -1,0 +1,62 @@
+roomid: 5509
+zone: New Plymouth Docks
+title: The Underdock Stair
+description: >
+  The light drops the moment you step onto the landing — the
+  chandlery's lamp-glow at your back is the only source of it,
+  and it reaches perhaps four steps down before the dark beyond
+  refuses it. The stair itself is stone, old stone, cut from the
+  same material as the pilings' foundations before the dock-
+  planking was laid over them. Every step is wet. The wood above
+  sweats brine through its joints and the <ansi fg="slick
+  steps">slick steps</ansi> catch the moisture and keep it; you
+  can hear your own boot-sole not quite gripping. At the stair's
+  foot — as much as you can see of it — the dock-pilings rise
+  from <ansi fg="black water">black water</ansi> in a colonnade
+  of dark timber, the waterline slapping at the stone in a rhythm
+  that sounds different down here, lower and more patient, as if
+  the river has a different voice when there is a ceiling over it.
+  The passage continues into the dark beyond what the stair
+  reveals. You do not go that way. Not yet.
+biome: city
+coord:
+  x: -20
+  y: 80
+  z: 0
+exits:
+  north:
+    roomid: 5508
+  east:
+    roomid: 5504
+nouns:
+  slick steps: Stone steps carved from the same grey-brown bedrock
+    as the old piling foundations — you can see the chisel-marks
+    under the brine film if you crouch and bring a light. Every
+    surface that could drain has drained; every surface that could
+    not has not. The first three steps are the worst — the gap
+    between the dock planking above and the stair is narrow enough
+    that water runs directly down the wall and across the step
+    face before it can disperse. Lower down, past the reach of the
+    light, the steps presumably continue. The sound of them dripping
+    is very clear.
+  black water: The river, from underneath. At this angle and in
+    this light — which is to say, almost no light — it has no color
+    at all, only a surface that moves and catches nothing. The gap
+    between the lowest visible step and the waterline is perhaps
+    two feet; at high tide it would be less. The pilings descend
+    into it without visible end. Something moves below the surface
+    near the nearest piling — probably a fish, working the shadow.
+    The space beyond the pilings, where the low ceiling meets the
+    dark water and the passage narrows, is not a place that invites
+    further investigation.
+idlemessages:
+- Water drips from a gap in the planking above and hits the stair
+  in a slow, metronomic count.
+- The waterline slaps a piling and the sound travels through the
+  stone of the step under your feet.
+- A smell rises from the dark below — river mud and old timber
+  and something older than both.
+- From up through the stair-head the chandlery's tar-and-linseed
+  comes in a warm wave, then is replaced by cold damp again.
+- Something moves in the black water at the stair's foot.
+  The surface closes over it and tells you nothing.

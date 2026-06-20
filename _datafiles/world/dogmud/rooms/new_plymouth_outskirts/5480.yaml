@@ -12,7 +12,7 @@ description: >
   <ansi fg="itemname">river road</ansi> runs on toward the docks,
   unpaved and rarely inspected, the route for goods that travel
   without declaring themselves. The dock quarter and the Temple
-  District lie beyond the wall — reachable this way, but not yet open.
+  District lie beyond the wall — the docks open now to the north up the road, the Temple still sealed beyond.
 biome: city
 coord:
   x: -17
@@ -21,6 +21,9 @@ coord:
 exits:
   south:
     roomid: 5479
+  north:
+    roomid: 5500
+    zone: New Plymouth Docks
 nouns:
   river road: A working track worn into the riverbank mud — unpaved,
     undrained, showing wheel-ruts and boot-scour. It connects the

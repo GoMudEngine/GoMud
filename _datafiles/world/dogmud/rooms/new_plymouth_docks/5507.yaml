@@ -1,0 +1,60 @@
+roomid: 5507
+zone: New Plymouth Docks
+title: The Harbormaster's Office
+description: >
+  A low stone building wedged between the depot road and the
+  harbor wall — functional to the point of hostility, built to
+  house a ledger and the authority to enforce it. Inside it smells
+  of tallow and old ink and the particular damp that comes from
+  years of wet documents brought in by wet people off wet vessels.
+  The counter runs the room's width and admits no one past it who
+  has not been invited. Behind the counter the harbormaster's
+  clerk occupies a high stool with the settled permanence of
+  furniture, and to the clerk's left the <ansi fg="harbor
+  ledger">harbor ledger</ansi> sits open on its stand — a bound
+  volume the size of a flagstone, half-filled with entries in a
+  fine careful hand that grows less careful toward the bottom of
+  each page as the shift wears on. Above the counter-arch the
+  <ansi fg="bloodline seal">bloodline seal</ansi> is mounted in
+  a frame of dark iron, its pressed wax face turned outward where
+  every arriving captain cannot miss it. The message is simple:
+  this office works for someone above the docks.
+biome: city
+coord:
+  x: -17
+  y: 81
+  z: 0
+exits:
+  west:
+    roomid: 5506
+nouns:
+  harbor ledger: A bound volume with a leather spine embossed with
+    the port year and re-embossed with three subsequent years over
+    the first — the office cannot afford new ledgers as fast as it
+    fills them. The open page lists hull names, flag designations,
+    declared cargoes, and tariff settlements, each entry signed
+    by both captain and clerk. A few entries carry a margin glyph
+    in red ink — a short horizontal stroke with a tick upward — the
+    meaning is not written here and the clerk does not volunteer it.
+    The ledger is, in the end, the harbor's legal memory. Every
+    hull that came through this port is in here somewhere.
+  bloodline seal: An oval of pressed wax in a deep iron frame, the
+    wax blood-red and the impression clean — a nested series of
+    concentric arcs with a vertical stroke through the center.
+    The same device appears on the tariff receipts the clerk hands
+    across the counter. Its presence in this office is administrative,
+    not ceremonial — it means that harbor fees owed are owed to the
+    bloodline, and that the harbormaster's authority to collect them
+    comes from the same source. The wax is renewed each quarter.
+    The impression never varies.
+idlemessages:
+- The clerk turns a ledger page with two fingers, makes a small
+  notation, and turns another.
+- A captain stands at the counter arguing a tariff entry in the
+  careful tone of someone who knows they will lose.
+- The seal catches the lamplight for a moment and the wax glows
+  deep red before the angle shifts.
+- Rain taps on the stone sill outside — the first few drops of
+  something that will be heavier by afternoon.
+- The door opens; a courier drops a folded manifest on the counter
+  and leaves without stopping.

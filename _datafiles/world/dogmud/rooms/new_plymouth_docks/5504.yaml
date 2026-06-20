@@ -1,0 +1,60 @@
+roomid: 5504
+zone: New Plymouth Docks
+title: The Fish Market
+description: >
+  The smell here is categorical — fish cut and gutted and salted
+  and smoked and newly-caught all braided together at volume, and
+  underneath it the cold mineral sharpness of the river itself.
+  It does not lessen when you stop noticing it; it simply becomes
+  the new fact of the air. Low timber racks stand in rows, each
+  one hung with split fish in various stages of curing, from pale
+  and recent to dark amber and nearly jerked-dry, swaying slightly
+  in the river breeze. At the market's center a broad stone
+  <ansi fg="gutting slab">gutting slab</ansi> runs the length of
+  the central aisle — salt-crusted, scaled-over, stained in the
+  particular irreversible way of surfaces that have been their
+  function for a generation. The <ansi fg="drying racks">drying
+  racks</ansi> are worth a look if you want to know what the river
+  gives up this time of year; the variety is the season's testimony.
+biome: city
+coord:
+  x: -19
+  y: 80
+  z: 0
+exits:
+  east:
+    roomid: 5503
+  south:
+    roomid: 5502
+  west:
+    roomid: 5509
+  north:
+    roomid: 5505
+nouns:
+  drying racks: Low timber frames, each rack-bar strung with split
+    fish hung through their tails on iron hooks. The skins of the
+    older fish have stiffened and darkened to a deep amber; you
+    could crack one like bark. Newer catches hang pale and wet,
+    dripping into the packed earth below. A rack near the end holds
+    something unfamiliar — long, flat, iridescent — that the gulls
+    are eyeing from what they apparently judge to be a safe distance.
+    It is not a safe distance.
+  gutting slab: Stone, not wood — someone made the right choice
+    when this market was built, because no wood would have survived
+    what this slab has absorbed. It is nearly white with salt and
+    the dried scale-film of ten thousand catches, and the surface
+    is concave at the center from years of blades being drawn
+    across it. A curved gutting knife rests in a notch at the
+    near end, its edge kept up, its handle worn smooth. The drain
+    groove along the slab's far side runs to a gap in the planking
+    and the river takes what it's given.
+idlemessages:
+- A gull drops from the market eave and snatches something from
+  below the lowest rack before anyone can object.
+- The salt in the air sits on your lips inside of a minute.
+- A vendor adjusts the hang of a rack, testing the weight and
+  spacing of each fish with quick professional fingers.
+- From the gutting slab comes the flat sound of a knife drawn
+  across scale — practiced, two strokes, done.
+- The market smell shifts when the tide turns — more brine, less
+  smoke, as if the river is reasserting itself.

@@ -1,0 +1,61 @@
+roomid: 5503
+zone: New Plymouth Docks
+title: The Long Quay
+description: >
+  Sound is the first fact here — the wooden groan of the
+  <ansi fg="cargo crane">cargo crane</ansi> under load, the slap
+  of cargo nets against a hull, voices cutting across each other
+  in a dozen registers of urgency. The Long Quay is the main
+  working platform of the docks: wide enough for two carts to pass,
+  long enough that the far end blurs in the spray and the morning
+  haze, and every pace of it occupied with something being moved
+  from somewhere to somewhere else. Men and women pass you without
+  looking — the kind of passing that means you are either working
+  or in the way. Chalked notices cover the face of the
+  <ansi fg="hiring board">hiring board</ansi> nailed to the crane-
+  post near the quay's center, and beneath it a compact, weathered
+  man with a dock-foreman's deliberate manner keeps one eye on the
+  board and both hands free — the type who has hired and fired from
+  this spot so many times the ground beneath his feet knows the
+  shape of his boots.
+biome: city
+coord:
+  x: -18
+  y: 80
+  z: 0
+exits:
+  south:
+    roomid: 5501
+  west:
+    roomid: 5504
+  north:
+    roomid: 5506
+nouns:
+  hiring board: A sheet of dock-planking mounted on the crane-post
+    and covered edge-to-edge in chalk entries, each one a day's
+    work — UNLOADING — GRAIN — DAWN TO SECOND BELL — ASK JESSET.
+    CARGO NET MENDING — STEADY HANDS — THREE NIGHTS RUNNING. DAY
+    LABOR — HEAVY — BRING YOUR BACK. Some entries have been erased
+    and written over so many times the board is grey with chalk-
+    dust residue. The freshest entries are at eye-level where a
+    man with long fingers has pressed the chalk in deep.
+  cargo crane: A timber-and-iron rig mounted on a swivel base
+    bolted through the quay planking, its arm swinging out over
+    the water with a cargo net hanging from a block-and-tackle the
+    size of a man's head. The rope running through the blocks is
+    fresh — hemp, not yet salt-grey — and the tackle squeals
+    rhythmically under the load it is currently lifting. A gang of
+    four operates it — two on the rope, one on the arm-line, one
+    down in the hold calling instructions upward in a voice that
+    the system was evidently designed to hear.
+idlemessages:
+- The crane arm swings out over the water and back again with its
+  load, rope singing through the block.
+- A cart horse waits near the quay's edge with the total patience
+  of an animal that has stood in louder places.
+- Two dock-hands argue briefly about a count, consult the manifest,
+  and go back to work without resolving it.
+- The smell shifts when the wind backs — brine, then tar, then the
+  warm grain-and-mildew of an open hold.
+- A gull lands on the crane arm and is immediately persuaded to
+  leave by the next swing.
