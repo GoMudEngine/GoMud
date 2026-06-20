@@ -55,3 +55,6 @@ idlemessages:
   stray breeze.
 - From the main landing comes a distant shout — someone's problem,
   not yours, not here.
+spawninfo:
+  - mobid: 9310
+    respawnrate: "15 real minutes"

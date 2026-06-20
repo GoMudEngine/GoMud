@@ -1,0 +1,66 @@
+mobid: 9303
+zone: New Plymouth Docks
+defaultMood: neutral
+
+greetings:
+  - text: "State what you need. I have four things on my mind and you
+      are now the fifth."
+    moods: ["neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Yes. What's the request?"
+
+  - keywords: [""]
+    responses:
+      - "Quickly. I'm mid-count."
+
+tree:
+  root:
+    text: "If you need something from the warehouse, tell me what. If
+      you want to talk about the warehouse, I have time for two questions."
+    hints: "You could ask Dunmar about what the warehouse currently carries,
+      the caravan runner who moves stock into the city, or how the whole
+      import supply chain works."
+
+  nodes:
+    - id: stock
+      triggers: ["stock", "goods", "inventory", "have", "carry", "sell",
+                 "imports", "supply", "buy", "what", "sell"]
+      text: "What I carry depends on what came in and what Dobb has not
+        moved out yet. Staples run reliably — salt, rations, flour, water
+        flasks, candles, knives. The specialty cargo varies by season and
+        by what the captains decide is worth the freight weight. If the
+        chalkboard says it's here, it is. If it doesn't, it isn't. I
+        don't speculate on what may arrive."
+      hints: "You could ask Dunmar about the caravan circuit or how goods
+        flow from the warehouse to the rest of the city."
+      unlocks: ["caravan", "system"]
+
+    - id: caravan
+      triggers: ["caravan", "dobb", "runner", "route", "deliver",
+                 "delivery", "circuit", "quarter", "district"]
+      text: "Dobb runs the Long Market circuit — loads here at the depot
+        and walks it east through the Crafting district, through the
+        central market, then to the Temple. On the return he branches
+        south into the Common quarter; that leg has the most stops.
+        Every vendor in this city who buys from this warehouse does it
+        through Dobb. He knows what each of them is short of before
+        they tell me. I find that useful."
+      hints: "You could ask Dunmar how the overall supply system fits
+        together."
+      unlocks: ["system"]
+
+    - id: system
+      triggers: ["everything", "all", "system", "flow", "works", "city",
+                 "comes", "through", "here", "how", "supply", "chain",
+                 "origin", "network"]
+      text: "Every piece of dry goods in this city that came off a ship
+        passed through that door first. The iron on Halvard's forge, the
+        cloth on the tailor's bench, the salt on every cookshop table
+        from the docks to the Noble quarter — it arrives here, I count
+        it, Dobb moves it, the city uses it. That is the supply chain.
+        I have no opinion about it beyond whether the numbers agree."
+      hints: "Dunmar has given you the full picture of how the supply
+        network runs."

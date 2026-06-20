@@ -1,0 +1,38 @@
+mobid: 9308
+zone: New Plymouth Docks
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 40
+maxwander: 1
+groups:
+  - humanoid
+  - np_dockfolk
+idlecommands:
+  - 'emote sets a crate down with a solid thud, rolls the shoulder that
+    carried it, and picks up the next before the roll is finished.'
+  - ''
+  - 'emote whistles three short notes — some signal between dock-hands —
+    and somewhere in the stack-row someone whistles back.'
+  - ''
+  - 'emote lifts a loaded barrow off the dock edge with apparent ease
+    and starts toward the warehouse at a steady, unhurried trot.'
+  - ''
+  - 'emote wipes the back of a hand across the forehead and keeps moving.'
+activitylevel: 14
+character:
+  name: Dock Stevedore
+  description: |
+    A dock-hand in worn canvas and sweat, built for what this work
+    requires. The crates they carry, the barrows they push, the loads
+    they shoulder and set down and lift again — these are the measure
+    of the day. They do not look up unless something goes wrong with
+    the count or the load. Not always then either.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    strength:
+      training: 14
+    vitality:
+      training: 8

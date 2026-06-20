@@ -58,3 +58,6 @@ idlemessages:
   something that will be heavier by afternoon.
 - The door opens; a courier drops a folded manifest on the counter
   and leaves without stopping.
+spawninfo:
+  - mobid: 9302
+    respawnrate: "15 real minutes"

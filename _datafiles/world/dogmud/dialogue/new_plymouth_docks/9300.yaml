@@ -1,0 +1,63 @@
+mobid: 9300
+zone: New Plymouth Docks
+defaultMood: neutral
+
+greetings:
+  - text: "Looking for work, or just in the way?"
+    moods: ["neutral"]
+  - text: "Back again. Good."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "morning", "evening"]
+    responses:
+      - "Right. Something you need?"
+      - "You've got my attention."
+
+  - keywords: [""]
+    responses:
+      - "Say what you need."
+
+tree:
+  root:
+    text: "You looking for the board or you looking for me?"
+    hints: "You could ask Jesset about work on the docks, the bloodline's
+      harbor licensing, or the people who passed through here not long
+      ago."
+
+  nodes:
+    - id: work
+      triggers: ["work", "hire", "board", "job", "labor", "dock", "hiring",
+                 "employ", "pay"]
+      text: "Board's right there behind me. Fresh entries go up at dawn —
+        grain unload, net work, day labor. You read, you apply, I decide.
+        The work is honest, the pay is what it says on the board, and if
+        you don't show when you said you would, I draw a line through your
+        name. I don't need to know why."
+      hints: "You could ask Jesset about the bloodline's harbor licensing
+        or the people who used to work these docks."
+
+    - id: licensing
+      triggers: ["bloodline", "license", "licensing", "fees", "tribute",
+                 "tariff", "tax", "cut", "office", "domestic"]
+      text: "Every ship that berths here pays a fee. Part goes to the
+        harbormaster. The larger part goes to the bloodline's domestic
+        office. In return, the harbor keeps its license and my crew
+        keeps its work. I didn't negotiate that arrangement and I'm not
+        going to lose sleep over it publicly. That's all I'll say."
+      hints: "You could ask Jesset about the people who were here before
+        you arrived."
+      moodChange: cautious
+
+    - id: group
+      triggers: ["group", "left", "gone", "people", "before", "pip",
+                 "vane", "cooperage", "season", "ago", "came", "they",
+                 "davan", "who"]
+      text: "You mean the ones who came through here and then didn't. Pip
+        worked the docks — knew where everything was, knew everyone. The
+        others I knew less. They had a particular kind of quiet that means
+        a person is working on something they're not going to name. They
+        left. The work goes on. I don't know more than that, and if I did
+        this wouldn't be where I told it."
+      hints: "Jesset has said what he will about the ones who left."
+      moodChange: cautious

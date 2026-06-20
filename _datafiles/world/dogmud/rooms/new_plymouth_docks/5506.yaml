@@ -58,3 +58,6 @@ idlemessages:
   clock for the depot workers.
 - Two wagon marshals compare slates by the depot post, their voices
   low and their faces giving nothing away.
+spawninfo:
+  - mobid: 9304
+    respawnrate: "15 real minutes"

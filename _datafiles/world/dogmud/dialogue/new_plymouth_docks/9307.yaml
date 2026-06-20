@@ -1,0 +1,45 @@
+mobid: 9307
+zone: New Plymouth Docks
+defaultMood: neutral
+
+greetings:
+  - text: "Tell me what you need and I'll tell you if I have it."
+    moods: ["neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "What do you need?"
+
+  - keywords: [""]
+    responses:
+      - "Name it."
+
+tree:
+  root:
+    text: "Rope, oil, canvas, pitch, and wax — that's this shop. Anything
+      else is a different conversation."
+    hints: "You could ask Chandler Voss about what he stocks, or about
+      his trade and the mutation that keeps him dry."
+
+  nodes:
+    - id: stock
+      triggers: ["stock", "sell", "have", "rope", "oil", "canvas",
+                 "pitch", "wax", "tar", "goods", "supply", "buy",
+                 "what", "carry"]
+      text: "Rope in three weights. Lamp oil and harness oil. Canvas for
+        patching or covering. Pine pitch for sealing hulls or ironwork.
+        Beeswax for rope-work and weatherproofing cloth. Everything a
+        ship needs to put back to sea, or a traveler needs to stay dry
+        on the road. Price is on the item. I don't haggle before third
+        bell."
+      hints: "See the shop list or ask about Chandler Voss's trade."
+
+    - id: trade
+      triggers: ["chandler", "trade", "work", "craft", "skin", "water",
+                 "wet", "changed", "mutation", "chrysalis", "dry"]
+      text: "The skin started some years back. Tar gets into everything
+        eventually — I just started shedding water instead of absorbing
+        it. My wife says the sheets stay drier. I find it useful in
+        weather. Doesn't affect the goods."
+      hints: "Chandler Voss has said what there is to say about it."

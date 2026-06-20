@@ -59,3 +59,8 @@ idlemessages:
   warm grain-and-mildew of an open hold.
 - A gull lands on the crane arm and is immediately persuaded to
   leave by the next swing.
+spawninfo:
+  - mobid: 9300
+    respawnrate: "15 real minutes"
+  - mobid: 9308
+    respawnrate: "10 real minutes"

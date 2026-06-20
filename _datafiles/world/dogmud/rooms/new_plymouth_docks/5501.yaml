@@ -53,3 +53,6 @@ idlemessages:
   the dock planks.
 - Someone drops a crate from shoulder height. The sound is total.
   Nothing stops; someone bends to assess the damage and stands again.
+spawninfo:
+  - mobid: 9308
+    respawnrate: "10 real minutes"

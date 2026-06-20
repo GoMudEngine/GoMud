@@ -59,3 +59,6 @@ idlemessages:
   waits. The transaction takes forty seconds.
 - Lamp-oil ticks in a can somewhere in the back, dripping from a
   loose bung into a catch-pan.
+spawninfo:
+  - mobid: 9307
+    respawnrate: "15 real minutes"

@@ -1,0 +1,64 @@
+mobid: 9302
+zone: New Plymouth Docks
+defaultMood: neutral
+
+greetings:
+  - text: "If you have a manifest, put it on the counter."
+    moods: ["neutral"]
+  - text: "Back again. I assume there's a reason."
+    moods: ["cautious"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome to the Harbormaster's Office. What's your business?"
+      - "This office is open. What do you need?"
+
+  - keywords: [""]
+    responses:
+      - "State your business clearly."
+
+tree:
+  root:
+    text: "The counter is open. What does this office need to do for you?"
+    hints: "You could ask Harbormaster Greer about the ship manifests and
+      cargo records, the harbor fee schedule, or the bloodline's share
+      of the port revenue."
+
+  nodes:
+    - id: manifests
+      triggers: ["manifest", "manifests", "ship", "ships", "cargo", "arrived",
+                 "brought", "record", "ledger", "log", "what", "imports",
+                 "freight", "hull"]
+      text: "Every hull that comes into this port files a manifest at that
+        counter before it unloads. Declared cargo, flag, weight-class,
+        tariff status. I review them all. The ones that agree with what
+        came off the barge go in the ledger. The ones that don't — we
+        discuss. Most of the time it is honest error. Some of the time
+        it isn't. That is what this office is for."
+      hints: "You could ask Greer about the harbor fee schedule or the
+        bloodline's share of the port revenue."
+
+    - id: fees
+      triggers: ["fee", "fees", "tariff", "tariffs", "cost", "charge",
+                 "payment", "pay", "schedule", "price", "how much"]
+      text: "The fee schedule is posted on the column to your right. It
+        has been the same schedule for eleven years. Hull class, cargo
+        type, declared weight — the calculation is mechanical. If you
+        have a vessel and a manifest I can give you an estimate. If you
+        are asking because you plan to dispute a fee, that conversation
+        happens after the ship berths, not before."
+      hints: "You could ask Greer about where the fees actually go."
+      unlocks: ["bloodline"]
+
+    - id: bloodline
+      triggers: ["bloodline", "cut", "share", "portion", "tribute",
+                 "domestic", "where", "goes", "office", "revenue"]
+      text: "The fees are split per the licensing agreement. The harbor
+        authority receives its operating share — that funds this office,
+        the quay maintenance, the clerks. The remainder goes to the
+        bloodline's domestic-office account. I file the quarterly split.
+        It has been reviewed once in eleven years and the review found
+        no errors. I intend to keep it that way."
+      hints: "Greer has said what he will about the licensing arrangement."
+      moodChange: cautious

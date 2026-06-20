@@ -1,0 +1,53 @@
+mobid: 9300
+zone: New Plymouth Docks
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 38
+maxwander: 0
+groups:
+  - humanoid
+  - np_dockfolk
+idlecommands:
+  - 'emote scans the hiring board and drags a chalk stub along one
+    line, crossing an entry out with the blunt end.'
+  - ''
+  - 'emote cups both hands and shouts a direction down the quay; the
+    sound carries; someone far off raises a hand to acknowledge it.'
+  - ''
+  - 'emote flexes the fingers of one hand against his palm, the extra
+    knuckle-joints popping in a slow, deliberate ripple from little
+    finger to index.'
+  - ''
+  - 'emote draws a manifest from his belt and checks a count against
+    the board, comparing both with the patience of a man who expects
+    to be right.'
+  - ''
+  - 'emote turns at the sound of a fumbled load and watches until the
+    worker rights it, then looks back at the board without comment.'
+activitylevel: 12
+character:
+  name: Jesset
+  description: |
+    Jesset is built the way a dock gets built — wide, incremental,
+    with no wasted material. He has kept this post long enough that
+    the ground beneath the hiring board is slightly worn in the shape
+    of his stance. His face is weathered past its years, arranged by
+    habit into an expression that is not unfriendly but has never been
+    idle. When he extends a hand to seal a hire the grip is remarkable:
+    each finger carries an extra knuckle-joint, a Chrysalis drift that
+    came on so gradually he cannot say when it started. The handshake
+    closes like a cargo net drawn tight. The chalk on the hiring board
+    is partly his work. He has read every entry on it. He knows which
+    jobs are honest and which will get someone hurt.
+  speciesid: 1
+  level: 1
+  gold: 25
+  stats:
+    strength:
+      training: 10
+    perception:
+      training: 6
+    charisma:
+      training: 8

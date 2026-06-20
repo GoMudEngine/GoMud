@@ -1,0 +1,55 @@
+mobid: 9307
+zone: New Plymouth Docks
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 32
+maxwander: 0
+craft_support: general
+groups:
+  - humanoid
+  - np_dockfolk
+idlecommands:
+  - 'emote measures a rope with outstretched arms — three spans — and
+    makes a cut without checking the length twice.'
+  - ''
+  - 'emote brushes his hands together and the gesture sheds a fine spray
+    of water, though he has not been near anything wet.'
+  - ''
+  - 'emote draws a rag along a bolt of canvas; the moisture rolls off
+    in clear beads without soaking in.'
+  - ''
+  - 'emote marks a number in the ledger on the counter without looking
+    up from the rope he is measuring.'
+activitylevel: 8
+character:
+  name: Chandler Voss
+  description: |
+    Chandler Voss has the look of a man who has spent decades in rooms
+    that smell of pitch and oil and rope-tar and who has made his peace
+    with it. He is broad-shouldered, economical in his movements, and
+    shorter than he appears — the tidiness of his shop makes him seem
+    larger than the space. His skin is the most noticeable thing about
+    him: a dark, even staining has worked its way below the surface,
+    permanent as a dye, and in wet weather water runs off it in clear
+    beads without soaking in. He noticed this some years ago, mentioned
+    it to his wife, and has not mentioned it since. He knows where every
+    item in this chandlery is without looking. He will tell you where
+    yours is too, if you tell him what you need.
+  speciesid: 1
+  level: 1
+  gold: 90
+  stats:
+    perception:
+      training: 8
+    strength:
+      training: 6
+    charisma:
+      training: 4
+  shop:
+    - itemid: 40067
+    - itemid: 40038
+    - itemid: 40075
+    - itemid: 40065
+    - itemid: 40007

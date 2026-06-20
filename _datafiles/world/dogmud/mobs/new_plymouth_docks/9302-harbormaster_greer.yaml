@@ -1,0 +1,49 @@
+mobid: 9302
+zone: New Plymouth Docks
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 35
+maxwander: 0
+groups:
+  - humanoid
+  - np_dockfolk
+idlecommands:
+  - 'emote draws a careful line through an entry in the harbor ledger,
+    then initials the margin in the same movement without lifting the pen.'
+  - ''
+  - 'emote moves to the narrow window and watches the quay below for a
+    moment, his knuckles resting on the sill with the sound of rough
+    crystal against stone.'
+  - ''
+  - 'emote pulls a fresh manifest from the counter stack and writes the
+    date at the top before reading a word of it.'
+  - ''
+  - 'emote looks up when the office door opens, waits to see who it is,
+    and returns to the ledger when it is only a courier.'
+activitylevel: 8
+character:
+  name: Harbormaster Greer
+  description: |
+    Harbormaster Greer wears his office the way the building wears the
+    harbor — worn into the stone, slightly damp, functional past any
+    consideration of comfort. He is lean, in his mid-fifties, careful
+    in his movements, with the studied neutrality of someone who has
+    learned that every expression costs something at this counter. His
+    hands are his strangest feature: the knuckles have crusted over in
+    salt-crystal growth, each joint a rough white formation that catches
+    the lamplight like hoarfrost. He says it stopped hurting years ago.
+    Whether he believes that is difficult to read. He handles the harbor
+    ledger with those hands the way a man handles something sharp —
+    carefully, consistently, without making it look like care.
+  speciesid: 1
+  level: 1
+  gold: 40
+  stats:
+    perception:
+      training: 10
+    charisma:
+      training: 6
+    willpower:
+      training: 6

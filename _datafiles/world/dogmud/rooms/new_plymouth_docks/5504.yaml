@@ -58,3 +58,6 @@ idlemessages:
   across scale — practiced, two strokes, done.
 - The market smell shifts when the tide turns — more brine, less
   smoke, as if the river is reasserting itself.
+spawninfo:
+  - mobid: 9309
+    respawnrate: "10 real minutes"

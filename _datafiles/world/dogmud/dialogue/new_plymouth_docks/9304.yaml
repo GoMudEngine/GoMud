@@ -1,0 +1,69 @@
+mobid: 9304
+zone: New Plymouth Docks
+defaultMood: friendly
+
+greetings:
+  - text: "Hey! Haven't seen you on the circuit before. New to the city?"
+    moods: ["friendly", "neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Right here! What do you need to know?"
+      - "You picked a good depot to stop at."
+
+  - keywords: [""]
+    responses:
+      - "Ask away — I've got time before the next load."
+
+tree:
+  root:
+    text: "I'm Dobb. I run the Long Market route for Dunmar — everything
+      from this warehouse out to every quarter in the city. What's on
+      your mind?"
+    hints: "You could ask Dobb about his delivery route, what parts of
+      the city are short on supplies right now, or what he hears from
+      the docks and the quarters he passes through."
+
+  nodes:
+    - id: route
+      triggers: ["route", "circuit", "walk", "deliver", "long market",
+                 "market", "district", "quarter", "where", "go", "which",
+                 "run"]
+      text: "I start here after Dunmar finishes loading, head east along
+        the Long Market — Crafting district first, then the central
+        market in Merchant, then Temple on the far end for what the
+        healers and scholars need. On the return I branch south into the
+        Common quarter; that one's the longest leg, most stops. Full
+        circuit takes until late afternoon if nothing unusual happens.
+        Something unusual usually happens."
+      hints: "You could ask Dobb what each district is currently short on,
+        or what he hears moving through the city."
+      unlocks: ["shortage", "gossip"]
+
+    - id: shortage
+      triggers: ["short", "need", "want", "missing", "lacking", "stock",
+                 "supply", "low", "running out", "what", "quarter",
+                 "district"]
+      text: "Crafting is always low on iron — Halvard uses it faster than
+        it comes in, which is Dunmar's problem not mine. The Common
+        quarter this week is out of salt; the cookshop and Tova's
+        rooming house both flagged it when I passed. Temple wants lamp
+        oil and wouldn't say why, which usually means something
+        ceremonial is approaching. The central market is well stocked
+        right now — good week for them. The docks need nothing; we have
+        the source."
+      hints: "You could ask Dobb about what he hears around the city."
+      unlocks: ["gossip"]
+
+    - id: gossip
+      triggers: ["gossip", "rumor", "rumours", "hear", "news", "talk",
+                 "word", "know", "docks", "city", "what's"]
+      text: "The ships arrive here first and the crews talk before they're
+        properly off the gangplank, so the docks know things before the
+        rest of the city does. What I'm hearing lately: another bloodline
+        assessment is coming — not a rumor, one of Greer's clerks
+        confirmed it. And there is a crate in bay seven of Dunmar's
+        warehouse that nobody will tell me the provenance of. He says
+        it's handled. I notice he said handled and not explained."
+      hints: "Dobb has shared what he knows from the circuit."

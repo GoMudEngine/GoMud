@@ -60,3 +60,6 @@ idlemessages:
   confidence of something that has never been caught here.
 - A warehouse door groans shut and a padlock clicks home — one
   fewer source of light in the row.
+spawninfo:
+  - mobid: 9303
+    respawnrate: "15 real minutes"

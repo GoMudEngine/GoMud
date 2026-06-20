@@ -1,0 +1,49 @@
+mobid: 9304
+zone: New Plymouth Docks
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+  - np_dockfolk
+idlecommands:
+  - 'emote adjusts the pack on his back with a practiced shrug, checks
+    the depot tally-slate, and marks two items as ready to go.'
+  - ''
+  - 'emote bounces lightly on his heels — it looks involuntary, like the
+    legs are keeping time with a walk they know is coming soon.'
+  - ''
+  - 'emote leans on the depot post and calls a greeting to someone
+    passing, adding a quick word about what the Merchant quarter needs
+    this week.'
+  - ''
+  - 'emote recites a list under his breath, counting on his fingers,
+    working through today''s delivery route stop by stop.'
+activitylevel: 14
+character:
+  name: Dobb
+  description: |
+    Dobb gives the impression of movement even when standing still. He
+    is young, lean, and possessed of an unaffected friendliness that is
+    not the performed kind — he simply seems glad to be here, wherever
+    here happens to be this hour. His legs are the tell: where anyone
+    else would be showing the toll of a day's walking, Dobb's legs are
+    not. The calves are unusually corded, the step spring-loaded at
+    rest, and he has been observed completing the full city circuit
+    without once sitting down to rest. The Chrysalis gave his legs a
+    gift they spend every day on the Long Market route. He does not
+    seem to find this remarkable. He does not seem to find much of
+    anything worth complaining about.
+  speciesid: 1
+  level: 1
+  gold: 15
+  stats:
+    dexterity:
+      training: 12
+    vitality:
+      training: 8
+    charisma:
+      training: 4
