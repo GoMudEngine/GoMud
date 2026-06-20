@@ -1,0 +1,59 @@
+roomid: 5513
+zone: New Plymouth Docks
+title: The Salt Cellar Rooms
+description: >
+  The upper floor is low and narrow, the ceiling close enough
+  to require a duck where the roofline meets the stair-head.
+  Eight doors on one side of a corridor, each fitted with a
+  latch that works and a lock that has been broken long enough
+  that nobody fixes it. The kind of lodging that asks only
+  that you are gone by morning-bell and have left the linen
+  approximately where you found it. A row of
+  <ansi fg="itemname">cots</ansi> occupies the open space at the
+  corridor's end — the overflow provision when the rooms are
+  full, which they often are. At the far wall a
+  <ansi fg="itemname">washbasin</ansi> sits on an iron
+  bracket, cracked along one side and sealed with a line of
+  grey wax that holds well enough. The water in it is from
+  this morning or possibly yesterday; it is hard to say.
+  The stairs go back down to the taproom.
+biome: city
+coord:
+  x: -21
+  y: 84
+  z: 0
+exits:
+  down:
+    roomid: 5512
+nouns:
+  cots: Three rope-frame cots at the corridor's end, each
+    with a folded blanket and a thin ticking mattress that
+    has been restuffed at least once and not recently. The
+    blankets are different patterns — one striped, one plain,
+    one that was once a garment of some kind and has been
+    cut down and hemmed. All of them smell of the people
+    who have slept here before, but not unpleasantly; just
+    human, and used, and ordinary in the way that shared
+    sleep eventually becomes.
+  washbasin: A ceramic basin, pale with a blue-painted band
+    at the rim, cracked in a diagonal line from the lip to
+    within an inch of the drain. The crack is sealed with
+    wax, grey and smooth, applied by someone who knew what
+    they were doing. A bar of soap sits on the bracket
+    beside it, worn to a thin wedge. The water is clean
+    enough if you do not examine it too closely.
+idlemessages:
+- From below the sound of the taproom rises and falls like
+  something breathing.
+- A door at the corridor's end opens a crack, considers
+  the hallway, and closes again.
+- The floorboards settle in a slow sequence from the stair-
+  head toward the far wall — the building adjusting its
+  weight as it always does at this hour.
+- The smell of the driftwood fire comes up through the gaps
+  between boards, faintly salt and faintly strange.
+- Someone in one of the rooms coughs once and does not
+  cough again.
+spawninfo:
+  - mobid: 9313
+    respawnrate: "10 real minutes"

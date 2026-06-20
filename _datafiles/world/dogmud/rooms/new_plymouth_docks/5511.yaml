@@ -1,0 +1,62 @@
+roomid: 5511
+zone: New Plymouth Docks
+title: The Salt Cellar
+description: >
+  A building that leans slightly into the street as if
+  listening — the Salt Cellar has been here long enough that
+  the cobblestones around its foundation have been reset
+  twice and the building remains, unmoved and unsurprised.
+  By day its face is ordinary — stained timber, a broad door,
+  the faint persistent smell of beer soaked into old wood.
+  But after the dock-shift ends, the place becomes the
+  <ansi fg="itemname">tavern sign</ansi>'s promise made
+  good — voices and light and the kind of warmth that means
+  people who work hard in cold wet places have found each
+  other for the evening. A
+  <ansi fg="itemname">door lantern</ansi> hangs from an
+  iron bracket to the right of the entrance, guttering
+  inside its glass in a way that somehow never goes out.
+  Enter to go inside; north leads deeper into the quarter,
+  west to the cookshop, south back to Dock Street.
+biome: city
+coord:
+  x: -18
+  y: 83
+  z: 0
+exits:
+  south:
+    roomid: 5510
+  north:
+    roomid: 5519
+  west:
+    roomid: 5516
+  enter:
+    roomid: 5512
+nouns:
+  tavern sign: A salt-cellar — the small covered vessel for
+    table salt — painted in faded ochre on a panel of grey
+    board above the door. The painting is not especially
+    skilled but it is clear, and someone has touched up the
+    outline in charcoal recently. Below it, in a different
+    hand, someone painted "EST. OLD" and beneath that a date
+    that is no longer readable, the lower half of the sign
+    having been used as a boot-scraper too many times.
+  door lantern: An iron bracket and a glass-sided lantern,
+    both older than anything else on the building's face.
+    The glass has a faint green tint from age or from the
+    manufacture, and the flame inside burns lower than it
+    should for the oil remaining — which is never quite out.
+    The lampman who services it, if there is one, leaves
+    no evidence of having been here.
+idlemessages:
+- The sounds from inside swell briefly as the door swings
+  open, then cut off as it falls shut.
+- A pair of dock-hands emerge from inside, squinting into
+  the evening air, and go their separate ways.
+- The door lantern gutters once in a crosswind and then
+  steadies, as it has reportedly been doing for forty years.
+- From inside comes a single note of laughter, too loud,
+  cut short; then the ordinary sound of a room at ease.
+- Someone has chalked an arrow on the cobblestones pointing
+  at the door. It could be recent or it could be old — it
+  has been walked over enough that it is hard to say.

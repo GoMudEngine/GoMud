@@ -1,0 +1,60 @@
+roomid: 5502
+zone: New Plymouth Docks
+title: The North Quay
+description: >
+  The noise falls away as the quay curves outward from the main
+  landing and the crowd thins to almost nothing. Here the dock
+  planking is older, bleached silver-grey, the gaps between boards
+  wide enough to show the green-black water moving beneath. A lone
+  figure sits at the far end with a line in the water, apparently
+  unconcerned with the commerce going on two hundred paces behind
+  him. Gulls have claimed the piling-tops in ones and twos and
+  watch the water with the focused patience of professionals. The
+  relative quiet out here has a quality to it — you notice the
+  river sound more when the shouting isn't covering it. A heavy
+  coil of <ansi fg="itemname">tarred rope</ansi> sits coiled
+  against a cleat near the quay's midpoint, and at the far western
+  end the dock terminates at a <ansi fg="itemname">chained
+  shipyard</ansi> gate, padlocked shut and clear about its
+  intentions.
+biome: city
+coord:
+  x: -19
+  y: 79
+  z: 0
+exits:
+  east:
+    roomid: 5501
+  north:
+    roomid: 5504
+nouns:
+  tarred rope: A coil as tall as a man's knee and thick as his
+    wrist, the rope stiff with tar that has soaked through to the
+    core fibers and hardened them. The surface is almost glossy,
+    tacky in warm weather, and smells of the same pine-pitch that
+    preserves the dock pilings. Whoever coiled it knew what they
+    were doing — the loops are even, the tuck tight. It is probably
+    worth something if you knew who to ask.
+  chained shipyard: A timber gate set into a dock-wall of the same
+    age as the city's bones, the wood grey and checked with salt.
+    A chain as thick as your thumb runs through two iron rings and
+    closes with a padlock that has recently been oiled — maintained,
+    not abandoned. A notice-board has been nailed to the gatepost
+    in clean paint — AUTHORIZED PERSONNEL ONLY — NAVAL COMMISSION
+    BUSINESS. Beyond the gate, through the planking gaps, you can
+    make out a dry-dock frame and the shadow of a hull in scaffold.
+    The chain is not for you.
+idlemessages:
+- A gull drops from a piling-top into the water and rises again
+  with nothing.
+- The figure with the line does not move. The line does not move
+  either. Both seem content.
+- A slow swell passes under the quay boards and the whole structure
+  shifts half an inch and settles.
+- The chain on the shipyard gate clinks against its rings in a
+  stray breeze.
+- From the main landing comes a distant shout — someone's problem,
+  not yours, not here.
+spawninfo:
+  - mobid: 9310
+    respawnrate: "15 real minutes"

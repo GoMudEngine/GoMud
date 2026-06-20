@@ -1,0 +1,63 @@
+mobid: 9306
+zone: New Plymouth Docks
+schedule_id: np_docks_sable
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 34
+maxwander: 0
+groups:
+  - humanoid
+  - np_dockfolk
+idlecommands:
+  - 'emote turns an item over once in her hands, sets it on the
+    counter, and chalks a number on a small card without appearing
+    to think about it.'
+  - ''
+  - 'emote holds both palms flat on the counter for a moment — the
+    fine coin-like scales across them scatter the light in a brief
+    silver flash — then draws her hands back and returns to the
+    ledger.'
+  - ''
+  - 'emote withdraws behind the curtain at the shop rear and returns
+    with something that had no apparent place on the shelves and
+    now does.'
+  - ''
+  - 'emote adjusts the brass scales on the counter to level with a
+    single touch and then checks something in the ledger without
+    acknowledging the adjustment.'
+activitylevel: 8
+character:
+  name: Old Sable
+  description: |
+    Old Sable has been in this shop long enough that the shop has
+    stopped being meaningfully separable from her, in the way
+    that certain rooms carry the shape of their occupants. She is
+    a small woman of indeterminate age — past middle, short of
+    old, though she has been called "Old Sable" for at least as
+    long as anyone in the docks district can remember, and no one
+    has confirmed when the name began. Her most notable feature is
+    her palms, which bear a scatter of fine Chrysalis scales the
+    color and size of small silver coins — a drift she has had long
+    enough not to discuss. She knows everything that passes through
+    this part of the docks, because everything that passes through
+    this part of the docks eventually passes across her counter,
+    and she forgets nothing she handles.
+  speciesid: 1
+  level: 1
+  gold: 110
+  stats:
+    perception:
+      training: 12
+    charisma:
+      training: 8
+    dexterity:
+      training: 4
+  shop:
+    - itemid: 40024
+    - itemid: 40025
+    - itemid: 40022
+    - itemid: 40016
+    - itemid: 40077

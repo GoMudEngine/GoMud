@@ -1,0 +1,59 @@
+roomid: 5515
+zone: New Plymouth Docks
+title: Cutter's Lane
+description: >
+  The lane is a dead end — twenty paces of narrowing alley
+  between two building-backs that lean toward each other as
+  it goes, until the far end is a matter of shoulders turned
+  sideways. Something has died here at some point and been
+  left where it fell; the smell has absorbed into the stone
+  and will not leave quickly. What the lane is used for,
+  given it goes nowhere, is apparent from the
+  <ansi fg="itemname">refuse heap</ansi> that has claimed
+  the left wall — a long season's worth of things that
+  needed to be somewhere out of sight and this was available.
+  At the far corner, half-hidden under a wedge of cobbles
+  and a scrim of old litter, a
+  <ansi fg="itemname">loose grate</ansi> sits over a
+  black gap in the earth. The underdocks, by the smell of
+  it — a way down that nobody here discusses openly. The
+  grate is loose enough to lift with one hand. That is all
+  that can be said for certain. The only way back is south.
+biome: city
+coord:
+  x: -17
+  y: 83
+  z: 0
+exits:
+  south:
+    roomid: 5514
+nouns:
+  refuse heap: Everything a working street discards that is
+    too large or too wrong for the gutter — broken barrel
+    staves, a boot missing its sole, two chairs with the
+    seats gone, a tangle of rope not worth re-splicing, a
+    quantity of cloth too far gone to name. The heap has
+    been added to from both sides of the lane; you can see
+    where different hands have pitched things from different
+    heights. Somewhere inside, something catches the light
+    oddly, as if reflecting from within.
+  loose grate: An iron grate, perhaps two feet square,
+    sitting over a shaft cut through the dock-level stone.
+    The fixing bolts have rusted through and the grate lifts
+    with one hand — which is how you know this without
+    trying. The shaft goes down into darkness and the smell
+    of old water and something metallic. A rope, old but not
+    rotten, has been tied to the grate's frame and drops
+    into the black. The way down is there for those who want
+    it. Nobody in the lane will confirm it exists.
+idlemessages:
+- The alley smells more at certain times of day than others.
+  This is one of the other times, and it still smells.
+- From the grate comes a sound — water, or something moving
+  in water — and then nothing.
+- A cat materializes at the alley's mouth, takes one step
+  in, reconsiders, and leaves.
+- The refuse heap shifts slightly in the wind, or for some
+  other reason that does not require close examination.
+- Somewhere above, on one of the building-backs, a shutter
+  opens and closes without anyone appearing at it.

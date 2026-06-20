@@ -1,0 +1,19 @@
+id: np_docks_marn
+description: "Marn the Draper: minds the fabric shop from morning through
+  evening, sleeps above the shop."
+segments:
+  - start: 8
+    end: 21
+    target_room: 5523
+    activity: ""
+    idlecommands:
+      - emote straightens a stack of cloth ends with two fingers, pressing each fold flush, not looking at the work.
+      - say The bins are open. If you need a weight you don't see listed, ask.
+      - emote glances toward the back of the shop and then does not glance toward it again, which takes a deliberate kind of not-looking.
+      - emote wipes both hands on a white cloth, folds it with perfect corners, and sets it aside; his hands were already clean.
+  - start: 21
+    end: 8
+    target_room: 5523
+    activity: sleeping
+    idlecommands:
+      - emote sleeps above the shop, still and orderly in the dark.

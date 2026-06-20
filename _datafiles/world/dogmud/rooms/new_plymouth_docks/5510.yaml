@@ -1,0 +1,68 @@
+roomid: 5510
+zone: New Plymouth Docks
+title: Dock Street
+description: >
+  The street behind the wharves carries a different register
+  of noise from the quay — not the organized shouting of
+  cargo work but the unmanaged ordinary of a quarter going
+  about its business. The smell is still brine, still tar,
+  but beneath it someone is frying something in lard and a
+  carter is settling a dispute with a woman over his wheel
+  ruts in her doorstep. At the north corner a stick driven
+  into a gap between cobblestones has become the
+  <ansi fg="itemname">sellers post</ansi> — plastered
+  thick with broadsheets and chalk notices that overlap and
+  peel and are replaced so fast the post itself is a kind
+  of wall, always fresh on top, always older underneath.
+  Along the building-faces the <ansi fg="itemname">open
+  gutter</ansi> carries the street's accounting — dishwater,
+  fish-wash, the particular slow brown of a neighborhood
+  that has been cleaning itself into the same channel for
+  as long as anyone can say. North leads to the Salt Cellar;
+  west and east to the hiring office and the lodging house.
+biome: city
+coord:
+  x: -18
+  y: 82
+  z: 0
+exits:
+  south:
+    roomid: 5506
+  north:
+    roomid: 5511
+  west:
+    roomid: 5517
+  east:
+    roomid: 5514
+nouns:
+  sellers post: A stick of fresh-cut timber driven hard into a
+    gap between cobblestones and layered so thick with pinned
+    broadsheets it no longer resembles a stick. The topmost
+    sheets are still pale — SHIP COOK NEEDED, EXPERIENCE
+    WITH SALT PORK PREFERRED — and below that the layers go
+    grey and soft from weathering, the oldest ones pressed
+    together into a single grey mass. Someone has chalked a
+    small drawing of a fish in the margin of the lowest
+    visible sheet. It has been there long enough to blur at
+    the edges.
+  open gutter: A channel cut into the base of the building
+    line, no wider than a man's boot, carrying a slow brown
+    trickle of everything a working street discards.
+    Dishwater predominantly, and fish-wash, and here and
+    there something less identifiable. The gutter has been
+    here longer than the buildings flanking it — you can see
+    where the stones around it have been relaid twice and the
+    channel has not moved.
+idlemessages:
+- A woman leans from an upper window and shakes a cloth out
+  over the street, apparently without noticing you below.
+- From one of the doorways comes the sound of an argument
+  winding down — voices dropping to the flat tone of people
+  who have said this before.
+- The smell of frying lard drifts from somewhere and fades
+  before you can find the source.
+- Two dock-hands pass you heading south, talking across each
+  other without listening — both of them tired in the same
+  particular way.
+- A cat regards you from the gutter's edge and then looks
+  away, having made its assessment.

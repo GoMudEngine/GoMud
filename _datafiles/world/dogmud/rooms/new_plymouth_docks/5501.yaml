@@ -1,0 +1,58 @@
+roomid: 5501
+zone: New Plymouth Docks
+title: The Lower Wharf
+description: >
+  Noise and motion hit you at once — the slap of water against
+  pilings, the rattle of rope through iron rings, a foreman's
+  shout that expects to be obeyed and is. This is the barge
+  landing, where river craft come in low and heavy and are relieved
+  of what they carry before they are allowed to leave. A broad
+  <ansi fg="itemname">gangplank</ansi> slopes from the dock edge
+  down to a barge now lashed and half-empty, its crew moving in the
+  efficient silence of men who have done this loading a hundred
+  times. The great <ansi fg="itemname">mooring-bollards</ansi>
+  march along the dock edge in pairs, their iron hides worn bright
+  at the crown and rust-streaked below — each one festooned with
+  loops of rope that someone has made fast with more confidence
+  than artistry. This is where you arrive if you came by water.
+  The city begins here, not gently.
+biome: city
+coord:
+  x: -18
+  y: 79
+  z: 0
+exits:
+  east:
+    roomid: 5500
+  west:
+    roomid: 5502
+  north:
+    roomid: 5503
+nouns:
+  gangplank: A plank of salt-grey timber, maybe twelve feet of it,
+    with rope rails strung through iron staples. The wood is worn
+    to a shallow groove down the center from thousands of crossings.
+    At low water the angle is steep enough to make a laden man grip
+    the rope; at high water it barely descends at all. Right now
+    someone's crated goods are being shouldered up it in a chain
+    of three dock-hands who have stopped talking to save the breath.
+  mooring-bollards: Iron mushroom-heads rising from the dock
+    planking, each one knee-high and heavy enough that the wood
+    around the base has cracked slightly under the years of load.
+    The rope-scars are grooved deep in the crown where hawsers have
+    dragged under tension. One bollard has a name chiseled into
+    the flange — MARRICK — too deep to be recent, too exact to be
+    idle. The name means nothing obvious.
+idlemessages:
+- A barge-hand calls out a count; the rest of the chain responds
+  without looking up.
+- Water slaps the base of the pilings in an irregular rhythm,
+  patient and unhurried.
+- A rope runs taut for a moment as a barge shifts, then goes slack.
+- The smell of river mud and pine-pitch rises from the gap between
+  the dock planks.
+- Someone drops a crate from shoulder height. The sound is total.
+  Nothing stops; someone bends to assess the damage and stands again.
+spawninfo:
+  - mobid: 9308
+    respawnrate: "10 real minutes"

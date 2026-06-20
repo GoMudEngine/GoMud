@@ -1,0 +1,51 @@
+mobid: 9315
+zone: New Plymouth Docks
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 34
+maxwander: 0
+groups:
+  - humanoid
+  - np_dockfolk
+idlecommands:
+  - 'emote reviews a page of the open ledger on the desk, makes a
+    small notation in the margin, and closes it without expression.'
+  - ''
+  - 'emote adjusts the position of a lamp on the desk by a small
+    degree, considers the result, and leaves it.'
+  - ''
+  - 'emote clasps both hands flat on the desk surface and holds
+    very still — eyes open at an interval slightly longer than
+    the room expects.'
+  - ''
+  - 'emote shifts a sheaf of papers from one side of the desk to
+    the other, then back, filing nothing in either direction.'
+activitylevel: 10
+character:
+  name: Foreman Hewd
+  description: |
+    He keeps the desk the way a man keeps a desk when he needs
+    visitors to see the desk and not the man behind it — neat,
+    organized, nothing left out that was not put there deliberately.
+    He is middle-aged and carries it well; the kind of face that
+    reads as pleasant at a distance and as something else up close.
+    What the close read returns is this — his eyes do not blink at
+    the rate the room expects. Not rarely, not startlingly, just
+    less. He watches without appearing to watch; the intervals
+    between blinks are slightly too long, and the blinks, when they
+    come, are the kind that close and reopen without settling —
+    as though whatever they are resting is not quite rested. Nothing
+    about this is comfortable to stand near for very long. He is
+    aware of this. He has decided it works in his favor.
+  speciesid: 1
+  level: 1
+  gold: 25
+  stats:
+    charisma:
+      training: 10
+    willpower:
+      training: 6
+    perception:
+      training: 4

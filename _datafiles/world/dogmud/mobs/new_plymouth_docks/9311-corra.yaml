@@ -1,0 +1,61 @@
+mobid: 9311
+zone: New Plymouth Docks
+schedule_id: np_docks_corra
+craft_support: cooking
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - np_dockfolk
+idlecommands:
+  - 'emote presses a bare palm flat to the bottom of the cauldron
+    for a moment — testing it without flinching, with the ease of
+    someone who has never needed to flinch — then adds a measure
+    of salt and steps back.'
+  - ''
+  - 'emote stacks dock-loaves on the bread tray in a fast, practiced
+    fan, each one set without looking, steam rising from the crust
+    between her hands.'
+  - ''
+  - 'emote ladles a bowl, has it on the counter before the arriving
+    dock-hand finishes saying the word, and takes the coin before
+    they take the bowl.'
+  - ''
+  - 'emote wipes the counter with a rag, considers the cauldron,
+    and adds something from a jar on the low shelf without tasting
+    what she has added.'
+activitylevel: 14
+character:
+  name: Corra
+  description: |
+    Corra is a broad woman in a stained apron who has fed the
+    dock-shift for longer than most of the current stevedores
+    have been arriving. She is not unfriendly — she is busy, in
+    the absolute and permanent sense of someone who serves a hot
+    meal every working day from before dawn to past midday without
+    a break. Her hands are what people notice first, if they
+    notice anything — she works the cauldron bare-handed, lifts
+    iron lids from a full boil without pulling back, stacks
+    dock-bread still warm from the oven with her palms flat
+    against the crust. A Chrysalis change she has had long enough
+    that it is simply how cooking works for her. Her bowls are
+    generous, her prices are fair, and she has never once been
+    heard to express an opinion about food.
+  speciesid: 1
+  level: 1
+  gold: 50
+  stats:
+    vitality:
+      training: 10
+    strength:
+      training: 6
+    willpower:
+      training: 4
+  shop:
+    - itemid: 30023
+    - itemid: 30026
+    - itemid: 30022

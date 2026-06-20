@@ -1,0 +1,53 @@
+roomid: 5526
+zone: New Plymouth Docks
+title: The Foreman's Office
+description: >
+  A single room above the constable's post, a world apart in
+  presentation. The office is tidy in the way of a man who needs
+  things to look a particular way — desk clear of clutter, shelving
+  organized, papers squared. It is tidy enough that the one note
+  of disorder stands out — a <ansi fg="itemname">stock ledger</ansi>
+  open on the desk at a page that has been worked and reworked, the
+  columns of figures carrying small corrections that do not resolve
+  the larger problem within them. Near the far wall, one
+  <ansi fg="itemname">floor-board</ansi> sits proud of its
+  neighbors by perhaps the width of a thumbnail — not enough to
+  trip on, but enough to notice if you are paying the right kind
+  of attention. The stair leads back down to the constable's post.
+biome: city
+coord:
+  x: -17
+  y: 86
+  z: 0
+exits:
+  south:
+    roomid: 5525
+nouns:
+  stock ledger: A bound account book, current year, open to a
+    page of cargo manifests and their tallied values. The columns
+    add up — until you check the sub-totals against the totals,
+    at which point they do not. The corrections in the margin are
+    in a different hand than the primary entries, and they reroute
+    the discrepancy rather than fixing it. The book is used every
+    day; someone has been managing this problem for some time.
+  floor-board: A plank that sits a thumbnail's width higher than
+    its neighbors — the gap on one side is deliberate, the edge
+    chamfered smooth by many careful lifts. There is no ring or
+    pull-handle; this is meant to look like a settling board to
+    anyone who is not already looking for it. Beneath it, a cutout
+    in the sub-floor holds something. Whether that something is
+    still there depends on who has been in this room recently.
+idlemessages:
+- The ledger sits open on the desk with the look of something
+  that has been closed and re-opened several times today.
+- A floorboard elsewhere in the room settles with a soft tick —
+  not the proud one; a different one, which is less interesting.
+- From below, through the floor, the constable's post is quiet —
+  either empty or conducting itself quietly at the desk.
+- A ship's bell from the harbor carries up through the window,
+  one long note, and then the working day resumes.
+- The tidiness of the room has a managed quality — maintained
+  to a standard rather than arrived at naturally.
+spawninfo:
+  - mobid: 9315
+    respawnrate: "30 real minutes"

@@ -1,0 +1,55 @@
+roomid: 5528
+zone: New Plymouth Docks
+title: The Customs Shed
+description: >
+  A long low shed that smells of the assembled contents of many
+  different shipments — spice and rope and old canvas and something
+  sharp underneath that none of the official categories cover. The
+  shed holds cargo that the constabulary is not yet done with —
+  questioned consignments, flagged weights, disputed goods waiting
+  for a ruling that may take longer than the goods will keep.
+  Along the walls, a run of <ansi fg="itemname">impounded
+  cargo</ansi> sits with the sullen patience of things that expected
+  to be somewhere else by now. Pinned to the shed's central post,
+  a <ansi fg="itemname">customs manifest</ansi> lists the
+  current inventory in the assessor's hand and notes the reason
+  each item has been held. The reasons given do not always match
+  what is in the crates. The only exit is south to the tar yard.
+biome: city
+coord:
+  x: -19
+  y: 86
+  z: 0
+exits:
+  south:
+    roomid: 5527
+nouns:
+  impounded cargo: Crates and bales in various sizes along both
+    walls, each tagged with a wax-paper slip in the assessor's
+    hand. Most tags note a discrepancy — weight variance, seal
+    mismatch, manifest description that does not match the
+    contents on inspection. A few crates have a second tag
+    added in a different hand, more recent. The crates whose
+    weights do not match their manifests are heavier than
+    declared; none of them are lighter.
+  customs manifest: A document pinned to the central post and
+    updated in a careful, regular hand — item, origin, date
+    held, stated reason for hold. Reading across the column
+    of stated reasons a pattern emerges that the individual
+    entries do not announce — most of the flagged cargo came
+    in on the same three vessels, on rotating schedules,
+    across the last four months. The assessor has not noted
+    this in the manifest. It is possible the assessor has
+    not noticed. It is also possible the assessor has been
+    instructed not to note it.
+idlemessages:
+- The shed is quiet in the way of places where things are
+  waiting — a specific, held quality of stillness.
+- A tag on the nearest crate lifts in a draft through the
+  roof-gap, turns over, and settles face-down.
+- From outside, south, the tar yard's smell arrives in a
+  wave — hot and sharp — and then recedes.
+- Something in one of the back crates shifts with a dry
+  sound that suggests settling, or something alive settling.
+- The manifest flutters at its edge where the pin has
+  worked loose; it stays on the post but only just.

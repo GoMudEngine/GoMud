@@ -1,0 +1,58 @@
+roomid: 5521
+zone: New Plymouth Docks
+title: The Pilings Haunt
+description: >
+  The smell shifts before anything else changes — the bilge-stink
+  thins and beneath it something else surfaces, faint but distinct —
+  a sweetness like copper held in a warm hand, and under that a
+  trace of flowers, and under both of those something that does not
+  have a name but that the body recognizes and the mind does not
+  quite want to follow. The corner is a dead end — a pinch between
+  two piling bents where the planking overhead sags low and the
+  floor is dark with accumulated damp. On the nearest piling face,
+  at about shoulder height, <ansi fg="itemname">scratched
+  tally-marks</ansi> have been worked into the timber — someone has
+  been counting something here, one cut at a time, for a long time.
+  Below them, half-buried in the silt, a <ansi fg="itemname">spent wax wrapper</ansi> still carries a ghost of that
+  copper-flower smell. The only way out is west.
+biome: city
+coord:
+  x: -19
+  y: 80
+  z: -1
+exits:
+  west:
+    roomid: 5520
+nouns:
+  scratched tally-marks: Cut into the piling face with something
+    narrow and pointed — the marks run in groups of five, most
+    crossed through at the fifth. Whatever was being counted went
+    on for a long time; there are more groups than a casual eye
+    bothers to finish. The wood around each mark is slightly lighter
+    in color, the exposed timber not yet blackened by the damp,
+    which means this is not as old as it looks, or someone has been
+    adding to it recently. The last group has four marks and no
+    fifth.
+  spent wax wrapper: A fold of pale wax cloth, small enough to
+    close in one hand, carrying the copper-flower smell even now.
+    It is the packaging, not the contents — whatever it held is
+    long gone. The wax is thin and slightly iridescent where the
+    fold has cracked, and the smell at close range is stronger than
+    it has any right to be given how little remains. The dockworkers
+    who come to this corner call the substance the Bloom, if they
+    call it anything at all. They do not use the name in front of
+    anyone who might write it down.
+idlemessages:
+- The copper-flower smell intensifies for a moment on a shift of
+  the underground air, then recedes to its background level.
+- Somewhere behind the bilge-stink the sweetness is always
+  present, once you have learned to notice it.
+- A sound from west — footstep on the stair, or water — surfaces
+  briefly and then the quiet of the underdock resumes.
+- The tally-marks catch the edge of whatever light reaches this
+  corner and hold it, one cut at a time.
+- The wax wrapper shifts slightly in a current that has no
+  obvious source.
+spawninfo:
+  - mobid: 9317
+    respawnrate: "10 real minutes"

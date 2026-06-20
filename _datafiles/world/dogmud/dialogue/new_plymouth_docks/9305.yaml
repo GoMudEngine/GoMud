@@ -1,0 +1,67 @@
+mobid: 9305
+zone: New Plymouth Docks
+defaultMood: neutral
+
+greetings:
+  - text: "Something you need from the stock? I have most weights
+      represented."
+    moods: ["neutral"]
+  - text: "Back again. The bins haven't changed much."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "morning", "evening"]
+    responses:
+      - "Good. What are you after?"
+      - "I'm here."
+
+  - keywords: [""]
+    responses:
+      - "The bins are open for looking."
+
+tree:
+  root:
+    text: "Remnant bins are at the front — ends and offcuts, priced
+      down from the original bolt. If you want full-weight cloth I
+      don't carry it; what you see is what this shop does."
+    hints: "You could ask Marn about his fabric stock, the kinds of
+      cloth he carries, or whether there is more to the shop."
+
+  nodes:
+    - id: fabric
+      triggers: ["cloth", "fabric", "remnant", "textile", "thread",
+                 "needle", "stock", "sell", "buy", "wares", "goods",
+                 "linen", "wool", "cotton", "material", "bolt", "bins",
+                 "offcut", "scrap", "carry"]
+      text: "What I carry is what's left after the bolt has been used
+        for its purpose — short lengths, odd weights, colors that were
+        fashionable one season and weren't renewed the next. Thread and
+        bone needles I stock in quantity; they move steadily. Everything
+        is priced at what it actually is, not what it might have been."
+      hints: "You could ask Marn about the back of the shop, or about
+        his competition in the cloth trade."
+      unlocks: ["backroom", "competition"]
+
+    - id: backroom
+      triggers: ["back", "room", "door", "storage", "cupboard",
+                 "behind", "wall", "shelves", "locked", "access",
+                 "there", "inside", "further"]
+      text: "Storage. Overflow stock from the bins, empty display
+        frames I haven't disposed of. It isn't set up for customers
+        — the way in is obstructed, nothing of interest back there
+        unless you count old display hardware."
+      hints: "Marn has said what he will about the back of the shop.
+        You could ask about the cloth trade or about new competition."
+      moodChange: cautious
+
+    - id: competition
+      triggers: ["competition", "rival", "other", "shop", "seller",
+                 "market", "business", "cade", "elsewhere", "who",
+                 "price", "where", "better", "before", "was"]
+      text: "I run this shop. What others carry or charge is their
+        matter. If you've heard of someone else in the cloth trade on
+        this part of the docks, I wouldn't know their business. I
+        have enough of my own to manage."
+      hints: "Marn is brisk on the subject of competition. His stock
+        is at the front bins if you have a practical interest."
+      moodChange: cautious

@@ -1,0 +1,65 @@
+roomid: 5506
+zone: New Plymouth Docks
+title: The Caravan Depot
+description: >
+  A broad covered platform where the docks hand off their cargo
+  to the city's interior — the hinge between water and road. A
+  <ansi fg="itemname">parked wagon</ansi> stands half-loaded
+  near the depot's center, its team not yet harnessed, its bed
+  holding a mix of lashed barrels and loose-packed grain sacks that
+  someone has arranged with more speed than care. Handcarts move
+  in from the east laden with warehouse stock and return empty, a
+  circuit that has been running since before dawn and will run
+  until the light goes. At the south end of the platform the depot
+  opens back toward the Long Quay, and to the north the supply
+  road leads toward the city's commercial quarters — everything
+  the docks receive, the depot sends forward. The <ansi
+  fg="itemname">loading dock</ansi> proper runs the depot's
+  west side, its tally-slate nailed to the post where the wagon
+  marshal can read it from the seat.
+biome: city
+coord:
+  x: -18
+  y: 81
+  z: 0
+exits:
+  south:
+    roomid: 5503
+  west:
+    roomid: 5505
+  east:
+    roomid: 5507
+  north:
+    roomid: 5510
+nouns:
+  parked wagon: A heavy-framed freight wagon with iron-rimmed wheels
+    worn flat on the inner face from hard use on stone roads. The
+    bed is half-filled — a cluster of salt barrels at the forward
+    end, grain sacks behind them, a bundle of something wrapped in
+    oilskin at the tailgate that no one has documented on the
+    tally-slate. The wagon's sideboard bears a burned-in mark —
+    a wheel with a single spoke doubled — that is the depot's own
+    device, not a merchant's. The team will come when the load
+    is settled.
+  loading dock: The west-side platform runs a foot lower than the
+    main depot, built to match the bed-height of a laden wagon so
+    that barrow-loads roll across level. The tally-slate nailed to
+    the post records today's outbound dispatches in a small precise
+    hand — destination, cargo, weight, departure bell. Three entries
+    have been marked DEPARTED. Two more are PENDING. One at the
+    bottom reads HELD — NO CLEARANCE and has been underlined twice
+    in a different chalk than the rest.
+idlemessages:
+- A handcart comes in from the east at a jog and the runner calls
+  out a load number before it's fully stopped.
+- The wagon's empty bed gives a low moan as a loaded barrel is set
+  down in it — settling to its new weight.
+- A sparrow walks the full length of the tally-slate post without
+  finding anything worth stopping for.
+- From the south comes the crane's rhythmic squeal, a reliable
+  clock for the depot workers.
+- Two wagon marshals compare slates by the depot post, their voices
+  low and their faces giving nothing away.
+spawninfo:
+  - mobid: 9304
+    respawnrate: "15 real minutes"

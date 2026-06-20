@@ -1,0 +1,39 @@
+mobid: 9310
+zone: New Plymouth Docks
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - np_dockfolk
+idlecommands:
+  - 'emote does not move. The line does not move either. Both seem content.'
+  - ''
+  - 'emote draws the line in slowly, checks the hook, rebaits with a
+    piece of something from a coat pocket, and drops it back without
+    ceremony.'
+  - ''
+  - 'emote looks out at the water from under the brim of a salt-stiffened
+    hat and says nothing to no one.'
+  - ''
+  - 'emote exhales — not a sigh, exactly, more a deliberate release —
+    and resettles on the quay edge without changing anything.'
+activitylevel: 6
+character:
+  name: Lone Fisherman
+  description: |
+    A person at the end of the quay with a line in the water and no
+    particular interest in anything else. They have been here a long
+    time, or look like they have. The hat is salt-stiffened, the line
+    is baited, and the patience is total. The gulls around them have
+    stopped expecting results and now simply wait alongside.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    perception:
+      training: 8
+    willpower:
+      training: 8

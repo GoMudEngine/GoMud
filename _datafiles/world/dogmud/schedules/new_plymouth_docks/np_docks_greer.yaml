@@ -1,0 +1,44 @@
+id: np_docks_greer
+description: "Harbormaster Greer: reviews manifests and licensing at the
+  harbor office through the morning, takes a brief meal at the cookshop
+  midday, returns to the office through the afternoon, takes a measured
+  drink at the Salt Cellar door at dusk, sleeps in the office back room."
+segments:
+  - start: 6
+    end: 13
+    target_room: 5507
+    activity: ""
+    idlecommands:
+      - emote draws a careful line through an entry in the harbor ledger and initials the margin without lifting the pen.
+      - say If you have a manifest, put it on the counter.
+      - emote moves to the narrow window and watches the quay below for a moment, knuckles resting on the sill.
+      - emote pulls a fresh manifest from the counter stack and writes the date at the top before reading a word of it.
+  - start: 13
+    end: 14
+    target_room: 5516
+    activity: ""
+    idlecommands:
+      - emote takes the bowl standing, eating with the efficiency of someone who stopped sitting for meals a long time ago.
+      - say One hour. Every day. That is what the office allows.
+  - start: 14
+    end: 20
+    target_room: 5507
+    activity: ""
+    idlecommands:
+      - emote reviews a tallied column in the ledger, turns back a page, and checks the earlier entry without comment.
+      - say Afternoon manifests always come in late. That does not change the deadline.
+      - emote looks up when the office door opens, waits to see who it is, and returns to the ledger when it is only a courier.
+  - start: 20
+    end: 22
+    target_room: 5511
+    activity: ""
+    idlecommands:
+      - emote stands near the Salt Cellar doorway, cup held level, watching the quay end go dark.
+      - say Two measures. One to end the day correctly. One to close the ledger in my head.
+      - emote turns the cup in his salt-crusted hands and watches the harbor lights come on without hurrying back.
+  - start: 22
+    end: 6
+    target_room: 5507
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the office back room, the ledger closed on the counter within arm's reach.

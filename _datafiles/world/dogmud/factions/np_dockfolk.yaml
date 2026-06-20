@@ -1,0 +1,14 @@
+faction_id: np_dockfolk
+display_name: "New Plymouth Dockfolk"
+description: |
+  The working community of New Plymouth's waterfront — dock foremen,
+  harbor keepers, warehouse masters, caravan runners, and the permanent
+  residents who keep the port moving. They hold no official authority
+  but know each other's names and history, and carry a long memory for
+  who treated them fairly and who didn't. The bloodline's harbor
+  licensing sits uneasily with them; they comply because the work
+  depends on it, and they resent it the way water resents a dam —
+  not loudly, but constantly.
+default_rep: 10
+allies: []
+enemies: []

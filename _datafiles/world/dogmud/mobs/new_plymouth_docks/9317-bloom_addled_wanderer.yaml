@@ -1,0 +1,53 @@
+mobid: 9317
+zone: New Plymouth Docks
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+hostile: false
+statpool: 20
+maxwander: 1
+groups:
+  - humanoid
+  - bloom_trade
+idlecommands:
+  - 'emote murmurs something quiet and unaddressed at the corner
+    of the piling, then stops, listening to nothing in particular.'
+  - ''
+  - 'emote tilts their head as though following a sound through
+    the timber overhead, then lets the attention drop and does
+    not pick it up again.'
+  - ''
+  - 'emote turns the left forearm toward the low light — the
+    bark-skin has crept past the elbow now, dark grain and tight
+    whorls, the texture where healthy skin should be.'
+  - ''
+  - 'emote murmurs something about a room with a low ceiling,
+    down past where the canal bends — the way you say a thing
+    you keep returning to without meaning to.'
+  - ''
+  - 'emote presses one hand flat against the piling face, holds
+    it there for a moment with their eyes closed, then releases
+    it and does not look at the hand.'
+activitylevel: 8
+character:
+  name: Bloom-Addled Wanderer
+  description: |
+    A slight figure in the corner where the planking sags low and
+    the light does not reach — standing rather than sitting, though
+    standing with the quality of someone who has forgotten why
+    they stood. From the elbow down the left arm has changed —
+    dark and grained like old timber, tight whorls pressed into
+    the surface where healthy skin should be. The arm does not
+    move the way the right arm moves. The rest of the figure is
+    intact, but the eyes carry the far-focus of someone watching
+    something at a distance that is not in the room. There is a
+    smell here — the copper-flower smell, faint and sweet at the
+    back of the throat — that is not coming from the spent wax
+    wrapper in the silt. It is coming from the person.
+  speciesid: 1
+  level: 1
+  gold: 1
+  stats:
+    perception:
+      training: 4
+    willpower:
+      training: -4

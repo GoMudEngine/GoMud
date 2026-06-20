@@ -1,0 +1,54 @@
+mobid: 9318
+zone: New Plymouth Docks
+archetype: fighting
+behavior_archetype: thief
+statpool: 30
+itemdropchance: 30
+hostile: false
+maxwander: 1
+groups:
+  - humanoid
+  - thief
+idlecommands:
+  - 'emote stands half in the shadow of a piling, watching the
+    stair from below without moving toward it.'
+  - ''
+  - 'emote rolls a river stone between two fingers and lets it
+    drop without looking where it lands.'
+  - ''
+  - 'emote shifts weight from one boot to the other and does
+    not otherwise change position.'
+combatcommands:
+  - 'emote presses forward fast, closing the distance before
+    you have finished deciding.'
+  - ''
+  - 'emote drives a knee toward the midsection — economical,
+    no announcement.'
+activitylevel: 12
+character:
+  name: Dock Thug
+  description: |
+    He is in the shadows because he is always in the shadows —
+    this is not coincidence but method. The underdocks suit him
+    the way water suits the bilge channel running below the dock
+    boards. He is broad across the shoulders, not young but not
+    old, and he carries no visible weapon because the visible
+    ones are harder to explain afterward. The Chrysalis has given
+    him nothing obvious — or he has learned to dress around it.
+    What he has instead is patience and the specific attentive
+    stillness of someone very good at judging whether a target
+    is worth the effort and the risk. You are being evaluated
+    right now. The evaluation is taking place behind eyes that
+    do not look like they are doing anything at all.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    strength:
+      training: 12
+    vitality:
+      training: 8
+    dexterity:
+      training: 6
+    perception:
+      training: 4

@@ -1,0 +1,75 @@
+mobid: 9301
+zone: New Plymouth Docks
+defaultMood: neutral
+
+greetings:
+  - text: "What'll it be?"
+    moods: ["neutral"]
+  - text: "Back again. Same as before, or something different tonight?"
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "evening", "morning",
+               "afternoon"]
+    responses:
+      - "Welcome in."
+      - "Evening."
+      - "Come in. Sit or stand, I don't much care which."
+
+  - keywords: [""]
+    responses:
+      - "I'm listening."
+      - "Go ahead."
+
+tree:
+  root:
+    text: "I can pour you something, or I can talk if the hour's
+      slow. Most things worth knowing about this end of the docks
+      I've heard from behind this counter one time or another."
+    hints: "You could ask Bressa about the dock gossip she
+      has gathered, what the waterfront is like after dark, or
+      who around here has been letting their tab run."
+
+  nodes:
+    - id: gossip
+      triggers: ["gossip", "rumor", "news", "hear", "word",
+                 "talk", "happen", "know", "latest", "around",
+                 "here", "who", "what", "city"]
+      text: "People talk in here and forget I'm four feet away.
+        That's been true every night for twelve years and I see no
+        sign of it changing. The last shipment from the south came
+        in light — that worries the warehouse men more than they
+        are letting on. Someone's been asking about the old harbor
+        routes, the ones that don't go through the formal berths.
+        I don't know who. I know what they ordered and how they
+        tipped, and that's usually enough to get started."
+      hints: "You could ask Bressa about the docks after dark,
+        or who owes her for a drink."
+
+    - id: night
+      triggers: ["night", "dark", "after", "late", "evening",
+                 "waterfront", "quiet", "what happens", "second bell",
+                 "cutter", "lane", "lower", "underdock"]
+      text: "The docks at night are a different place from the
+        docks at noon. The working crowd comes in here or goes home,
+        and what's left on the quay is a particular kind of busy
+        that does not show up in the manifests. I don't see it from
+        here — this is a room with walls — but I hear about it
+        the next morning. The long quay stays lively. Cutter's Lane
+        gets quieter than it has any reason to. I've learned not
+        to ask what passes through there after the second bell."
+      hints: "Bressa keeps herself to the lit side of the
+        waterfront's night business."
+
+    - id: tab
+      triggers: ["tab", "owe", "owes", "debt", "credit", "slate",
+                 "behind", "pay", "paid", "owing", "count", "chalk",
+                 "who owes"]
+      text: "I keep a slate. Not because I'll refuse anyone who's
+        short — I keep it because I like to know. Dock work runs
+        irregular, and I'm not going to let a man go dry in a cold
+        week because the unloading ran slow. But there's a difference
+        between irregular and not trying, and I know which is which
+        without asking. The slate evens out. It always has."
+      hints: "Bressa runs the Salt Cellar on trust she has
+        spent years deciding to extend."

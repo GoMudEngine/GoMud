@@ -1,0 +1,78 @@
+mobid: 9316
+zone: New Plymouth Docks
+defaultMood: neutral
+
+greetings:
+  - text: "Constable's post. If you have something to report,
+      I'm listening. If you're here about the Teo matter, I've
+      heard the initial account."
+    moods: ["neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Go ahead."
+
+  - keywords: [""]
+    responses:
+      - "What do you have?"
+
+tree:
+  root:
+    text: "I've got an accusation I'm working with incomplete
+      information on, and a foreman who gave me a very clean
+      statement. If you know something relevant, I'll hear it."
+    hints: "You could ask the Constable about the accusation
+      against Teo, about the state of the docks in general,
+      or about what evidence would change the case."
+
+  nodes:
+    - id: teo
+      triggers: ["teo", "accusation", "charge", "theft",
+                 "dockhand", "him", "case", "arrest", "guilty",
+                 "innocent", "steal", "what", "happened",
+                 "tell", "matter"]
+      text: "The charge is on the board — shortage on a manifest
+        shift, Teo's name at the bottom of the entry. He's told
+        me the count was already short before his shift started
+        and that he flagged it to his foreman. The foreman's
+        statement doesn't corroborate that. I've got two accounts
+        and one set of numbers, and the numbers sit somewhere
+        between them."
+      hints: "You could ask the Constable about the docks'
+        broader troubles, or what kind of evidence would
+        change the outcome."
+      unlocks: ["docks", "evidence"]
+
+    - id: docks
+      triggers: ["docks", "trouble", "problems", "state",
+                 "lately", "mood", "generally", "how", "things",
+                 "cargo", "losses", "trade", "station",
+                 "season", "general", "overall"]
+      text: "It's been a rough season — cargo light on arrival,
+        accounts that don't reconcile at the quarter-mark, enough
+        small complaints that I've been writing reports upstream
+        and getting polite acknowledgement in return. This Teo
+        case is the first formal accusation, but it didn't come
+        from nowhere. Something has been wrong with the count for
+        longer than Teo's been on the manifest."
+      hints: "You could ask the Constable what kind of evidence
+        would allow him to look further into the case."
+      unlocks: ["evidence"]
+
+    - id: evidence
+      triggers: ["evidence", "proof", "ledger", "manifest",
+                 "numbers", "information", "witness", "handwriting",
+                 "corroborate", "show", "different", "help",
+                 "what", "need", "find", "look", "original",
+                 "correction"]
+      text: "If the manifest entry was corrected after the fact,
+        I want the original notation compared against the
+        correction — handwriting, ink, anything that puts a
+        different hand on that page. A witness who heard Teo
+        flag the short count in the moment — I can work with
+        that. What I cannot work with is assertion without
+        something to point at. Bring me something concrete
+        and I will look at it."
+      hints: "The Constable is clear about what he needs. He is
+        willing to act if solid evidence reaches him."

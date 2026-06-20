@@ -1,0 +1,41 @@
+mobid: 9309
+zone: New Plymouth Docks
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 32
+maxwander: 0
+groups:
+  - humanoid
+  - np_dockfolk
+idlecommands:
+  - 'emote draws a knife through a fish in two practiced strokes and
+    drops the pieces into separate bins without looking down.'
+  - ''
+  - 'emote calls out the morning''s prices in a voice built to carry
+    over market noise and the gulls both.'
+  - ''
+  - 'emote slaps a gutted fish on the stone slab and begins scraping
+    scales with the steady sound of a small, reliable rainfall.'
+  - ''
+  - 'emote wipes both hands on the apron and appraises the rack of
+    curing fish with the eye of someone keeping score.'
+activitylevel: 10
+character:
+  name: Fishmonger
+  description: |
+    A fishmonger who has been in the trade long enough to become part
+    of it. The apron is beyond recovery, the voice is built to carry
+    over market noise and the gulls both, and the knife never stops
+    moving — split, salt, hang, done. They know the catch today, the
+    catch last week, and which fish the drying racks are lying about.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    strength:
+      training: 8
+    perception:
+      training: 6
+    charisma:
+      training: 6

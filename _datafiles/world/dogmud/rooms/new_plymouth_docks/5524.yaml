@@ -1,0 +1,53 @@
+roomid: 5524
+zone: New Plymouth Docks
+title: Marn's Back Room
+description: >
+  The cupboard door swings inward on a space that is smaller than
+  expected — a narrow room running the depth of the building, low
+  ceiling, no windows, and a smell that is different from the shop
+  outside — sawdust and old cloth in the background, and under
+  that something dried and faintly waxy that you cannot quite
+  place. Along the right wall, <ansi fg="itemname">wax-sealed
+  crates</ansi> are stacked two and three high, none of them marked
+  with a maker's name or a point of origin — the kind of crates
+  that travel without paperwork and store without questions.
+  Against the far side, the <ansi fg="itemname">thick wall</ansi>
+  of the adjoining building sits very close; sounds come through
+  it in fragments — half-conversations, the scrape of furniture,
+  things not meant to cross but that old stonework does not know
+  how to stop. The only way out is back through the door.
+biome: city
+coord:
+  x: -21
+  y: 85
+  z: 0
+exits:
+  out:
+    roomid: 5523
+nouns:
+  wax-sealed crates: Wooden crates of two or three sizes, each
+    sealed at the joint with a thick bead of dark wax that carries
+    no maker's stamp and no label. The wood is dry, the crates
+    well-made — not the rough joinery of common cargo. The stacking
+    is efficient and deliberate, the work of someone who has done
+    this particular arrangement many times. A faint smell rises
+    from them, dried and sweet and not quite identifiable. None
+    of them rattle when you move them. None of them feel empty.
+  thick wall: The shared wall between this building and its
+    neighbor — old construction, the mortar set hard over many
+    years. You put a hand against it and feel a faint vibration,
+    as if the wall conducts sound rather than muffling it. Fragments
+    come through — a word, a pause, a chair moved, a door closing.
+    None of it resolves into anything you can act on; all of it
+    suggests people with reasons to keep their voices down.
+idlemessages:
+- From the wall at the far side, a voice — low, brief, inconclusive —
+  surfaces and drops back into the building noise.
+- The crates sit in their arrangement with the patience of things
+  that have waited here in exactly this way before.
+- A creak from the shop floor beyond the door — the proprietor
+  moving, or a new customer entering from the lane.
+- The smell of old wax intensifies for a moment on a shift
+  of air, then returns to its background level.
+- Somewhere in the stack, a crate settles with a faint tick
+  that could be temperature change or something inside shifting.

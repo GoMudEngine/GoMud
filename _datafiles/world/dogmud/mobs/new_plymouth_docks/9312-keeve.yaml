@@ -1,0 +1,53 @@
+mobid: 9312
+zone: New Plymouth Docks
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 32
+maxwander: 0
+groups:
+  - humanoid
+  - np_dockfolk
+idlecommands:
+  - 'emote moves through the common room once, straightens a chair
+    that did not need straightening, and returns to the bar-side
+    without comment.'
+  - ''
+  - 'emote meets the eyes of someone entering the yard, holds the
+    look for exactly the moment it takes to confirm they have been
+    noted, then looks back at what he was doing.'
+  - ''
+  - 'emote wipes the common table with a cloth from his belt —
+    unhurried, thorough — as though the table has his full
+    attention, which it does not.'
+  - ''
+  - 'emote turns his head at something happening in the yard,
+    determines it does not need him, and faces forward again.'
+activitylevel: 6
+character:
+  name: Keeve
+  description: |
+    Keeve runs Aldric's the way a good harbor pilot works a strait
+    — with exact knowledge of where the hazards are, minimal
+    conversation about it, and a practiced ease that is not the
+    same as inattention. He is a lean man of fifty or so, with a
+    scar across his upper lip old enough to be simply part of his
+    face. In lamplight the scar's edges hold a faint amber glow,
+    just perceptible in low light — a Chrysalis trace subtle
+    enough that most guests never remark on it, which is how he
+    prefers things to go generally. His house takes horses, takes
+    people, charges fair rates, and takes no notice of anyone's
+    history. He will remember you the next time you arrive
+    regardless. He has not once in living memory asked a guest
+    their business.
+  speciesid: 1
+  level: 1
+  gold: 60
+  stats:
+    perception:
+      training: 8
+    charisma:
+      training: 6
+    willpower:
+      training: 4

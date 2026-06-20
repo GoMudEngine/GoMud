@@ -1,0 +1,57 @@
+mobid: 9303
+zone: New Plymouth Docks
+schedule_id: np_docks_dunmar
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 38
+maxwander: 0
+craft_support: general
+groups:
+  - humanoid
+  - np_dockfolk
+idlecommands:
+  - 'emote walks the row of crates at the back wall, touching each in
+    sequence, lips moving, not looking at anything he touches.'
+  - ''
+  - 'emote turns toward an arriving barrow without shifting from his spot
+    at the chalkboard, as if he already knew it was coming.'
+  - ''
+  - 'emote makes a correction on the manifest chalkboard in swift strokes,
+    does not step back to evaluate it, and walks on.'
+  - ''
+  - 'emote taps a crate lid twice and speaks without raising his voice;
+    someone on the far side of the warehouse straightens and starts moving.'
+activitylevel: 10
+character:
+  name: Dunmar Wells
+  description: |
+    Dunmar Wells does not pace — he circulates, and the difference is
+    audible in the purposeful economy of each stop. He is a compact man
+    of indeterminate middle age with ink-stained hands and the focused
+    stillness of someone who has never found the work dull. High on his
+    brow, set where a second pair of eyes might be if the body had
+    decided to hedge its bets, a third eye rests — amber-irised,
+    slightly larger than his others, and it never closes. Not when he
+    works. Not in lamplight. Visitors to the warehouse learn quickly not
+    to think they can slip something past him when his back is turned.
+    His back is never fully turned. Nothing in this warehouse has gone
+    missing on his watch. He considers this baseline performance.
+  speciesid: 1
+  level: 1
+  gold: 130
+  stats:
+    perception:
+      training: 14
+    charisma:
+      training: 8
+    willpower:
+      training: 4
+  shop:
+    - itemid: 30021
+    - itemid: 40017
+    - itemid: 40016
+    - itemid: 40076
+    - itemid: 40077
+    - itemid: 10009

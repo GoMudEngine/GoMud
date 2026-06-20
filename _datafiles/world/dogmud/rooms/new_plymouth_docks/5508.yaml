@@ -1,0 +1,64 @@
+roomid: 5508
+zone: New Plymouth Docks
+title: The Chandlery
+description: >
+  The chandlery announces itself before you reach the door —
+  tar-pitch and linseed and lamp-oil mixing into a smell that
+  coats the back of the throat and stays. Inside it is dark by
+  design: the goods here are not displayed, they are stacked.
+  <ansi fg="itemname">Tar barrels</ansi> line the near wall
+  in a row of six, their lids sealed with clay, the floor beneath
+  them stained black in permanent rings. Bolts of <ansi
+  fg="itemname">spare canvas</ansi> stand in a rack along the
+  far wall, each one bound with twine and tagged with a weight
+  and weave designation in chalk — and beside them, coiled rope
+  in three weights hangs from wooden pegs, the heaviest stuff as
+  thick as a man's forearm and smelling of the tar that has been
+  worked into its fibers. The chandler moves among these things
+  with the efficiency of someone who has not needed to think about
+  where anything is for many years. A ship's master who needs to
+  refit can find nearly everything here; a traveler can find lamp-
+  oil, rope, and canvas that serves on land as well as water.
+biome: city
+coord:
+  x: -20
+  y: 81
+  z: 0
+exits:
+  east:
+    roomid: 5505
+  south:
+    roomid: 5509
+nouns:
+  tar barrels: Six barrels in a line, each one sealed at the lid
+    with a ring of reddish clay that has been smoothed down with
+    a thumb. The wood of the nearest barrel is so thoroughly
+    impregnated with tar that the grain has disappeared — it looks
+    carved from a single dark substance, not cooperage work at all.
+    The contents are pine-pitch, reduced and strained for marine
+    use. A pry-bar leans against the end barrel for customers who
+    know how to open one without losing the clay seal. The smell,
+    up close, is total.
+  spare canvas: Heavy bolts of sail-grade linen, each one wrapped
+    in a paper sleeve and tagged. The weights run from twelve-ounce
+    to twenty — light for repair patches, heavy for new panels or
+    rough-weather overclothing. The binding twine on the nearest
+    bolt has been cut and re-tied at least twice; someone has been
+    sampling the weights. Beside the canvas, rope in three diameters
+    hangs from pegs — light running-line, medium general-purpose,
+    and the heavy stuff near the wall that is sold by the fathom and
+    takes two hands to lift a coil of.
+idlemessages:
+- The tar smell intensifies for a moment when someone opens the
+  back storage door, then closes again.
+- A bolt of canvas shifts in its rack — settling, or something
+  moving behind it. Probably settling.
+- The chandler marks a number in a ledger on the counter without
+  looking up from the rope he is measuring.
+- A ship's mate comes in, names a rope diameter and a fathom count,
+  waits. The transaction takes forty seconds.
+- Lamp-oil ticks in a can somewhere in the back, dripping from a
+  loose bung into a catch-pan.
+spawninfo:
+  - mobid: 9307
+    respawnrate: "15 real minutes"

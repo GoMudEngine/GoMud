@@ -1,0 +1,19 @@
+id: np_docks_corra
+description: "Corra: works the cookshop pot from before dawn through the
+  evening without pause, sleeps above the cookshop."
+segments:
+  - start: 5
+    end: 22
+    target_room: 5516
+    activity: ""
+    idlecommands:
+      - emote presses a bare palm flat to the bottom of the cauldron -- testing it without flinching -- then adds a measure of salt and steps back.
+      - say Bowl's ready. Next.
+      - emote stacks dock-loaves on the bread tray in a fast, practiced fan, each one set without looking, steam rising from the crust between her hands.
+      - emote ladles a bowl, has it on the counter before the arriving dock-hand finishes speaking, and takes the coin before they take the bowl.
+  - start: 22
+    end: 5
+    target_room: 5516
+    activity: sleeping
+    idlecommands:
+      - emote sleeps above the cookshop, the fire banked but the smell of the day's cooking still heavy in the room.

@@ -1,0 +1,58 @@
+roomid: 5520
+zone: New Plymouth Docks
+title: The Underdocks
+description: >
+  The smell arrives before you finish the last step — not the brine
+  of the open waterfront above but something closed and concentrated,
+  the river turned inward and going nowhere — bilge water and black
+  mud and rotting timber that has been wet long enough to mean
+  something else. The ceiling is the underside of the dock planking,
+  close enough to brush with a raised hand, dripping at every joint
+  where the boards have spread. Between the <ansi fg="itemname">rotten pilings</ansi> the river surface runs in dark
+  strips, the waterline working the stone in a slow patient knock
+  you do not hear from above. A <ansi fg="itemname">bilge
+  channel</ansi> runs along the base of the far wall, ankle-deep
+  and brown, draining nothing in particular. The passage east
+  continues into the dark between the piles. The stair is behind
+  you.
+biome: city
+coord:
+  x: -20
+  y: 80
+  z: -1
+exits:
+  up:
+    roomid: 5509
+  east:
+    roomid: 5521
+nouns:
+  rotten pilings: The dock's foundations — heavy timber driven into
+    the riverbed long enough ago that the wood has gone dark to the
+    core. At the waterline a pale brine-mark rings each piling where
+    the tide has been and retreated. Below it the wood is soft in
+    places, swollen and fibrous; you could press a thumb in if you
+    wanted to, and you do not want to. Tied off in the deepest
+    shadow between two pilings, a small flat-bottomed skiff sits
+    motionless — no oars visible, no name, and nobody aboard that
+    you can see in this light.
+  bilge channel: A cut in the stone floor along the far wall, two
+    hand-spans wide and kept full by the slow seep of river water
+    through the dock foundations. The color of the water is not
+    worth thinking about closely. Small things move in it that are
+    better left unidentified. The channel disappears under the far
+    wall without apparent destination; whatever it drains into,
+    the draining takes its time.
+idlemessages:
+- Something drips from a board-joint above and hits the water
+  with a sound that carries too far in the close dark.
+- The skiff shifts a half-inch against the piling and settles —
+  river movement, or something that prefers not to be seen.
+- The waterline knock against the stone comes in a slow long
+  rhythm, lower and more patient than the sound of open water.
+- From somewhere to the east the dark carries a faint sound —
+  footstep, or water moving around something — and then nothing.
+- The bilge channel seeps past with the particular indifference
+  of water that has been underground a long time.
+spawninfo:
+  - mobid: 9318
+    respawnrate: "8 real minutes"

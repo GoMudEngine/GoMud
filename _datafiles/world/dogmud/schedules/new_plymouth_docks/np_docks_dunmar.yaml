@@ -1,0 +1,35 @@
+id: np_docks_dunmar
+description: "Dunmar Wells: works the warehouse floor counting and tallying
+  through the morning, takes one hour at the cookshop midday, returns to
+  the warehouse floor through the evening, sleeps above the warehouse."
+segments:
+  - start: 6
+    end: 13
+    target_room: 5505
+    activity: ""
+    idlecommands:
+      - emote walks the row of crates at the back wall, touching each in sequence, lips moving.
+      - say What I carry depends on what came in and what Dobb has not moved out. Check the chalkboard first.
+      - emote makes a correction on the manifest chalkboard in swift strokes and walks on without stepping back to evaluate it.
+      - emote taps a crate lid twice; someone on the far side of the warehouse straightens and starts moving.
+  - start: 13
+    end: 14
+    target_room: 5516
+    activity: ""
+    idlecommands:
+      - emote takes the meal standing, bowl balanced on one forearm, a list checked with his free hand.
+      - say One hour. It is sufficient.
+  - start: 14
+    end: 21
+    target_room: 5505
+    activity: ""
+    idlecommands:
+      - emote turns toward an arriving barrow without shifting from his spot at the chalkboard, as if he already knew it was coming.
+      - say Numbers that disagree are not a surprise. They are the reason for the count.
+      - emote draws a line through a chalkboard entry, writes a corrected figure, and moves on before the chalk dust settles.
+  - start: 21
+    end: 6
+    target_room: 5505
+    activity: sleeping
+    idlecommands:
+      - emote sleeps above the warehouse; the amber eye at his brow remains faintly open in the dark.
