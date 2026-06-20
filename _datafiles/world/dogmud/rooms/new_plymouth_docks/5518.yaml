@@ -61,3 +61,6 @@ idlemessages:
 - The scales remain balanced. The door-bell clapper remains
   wrapped. The prices on the cards do not change, though
   the cards themselves sometimes do.
+spawninfo:
+  - mobid: 9306
+    respawnrate: "20 real minutes"

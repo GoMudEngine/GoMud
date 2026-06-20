@@ -59,3 +59,10 @@ idlemessages:
   possible to read any of them individually.
 - From upstairs comes the sound of someone settling onto a
   cot — a creak, a sigh, and then quiet.
+spawninfo:
+  - mobid: 9301
+    respawnrate: "20 real minutes"
+  - mobid: 9313
+    respawnrate: "10 real minutes"
+  - mobid: 9308
+    respawnrate: "10 real minutes"

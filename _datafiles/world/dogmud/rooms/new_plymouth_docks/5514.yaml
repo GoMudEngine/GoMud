@@ -57,3 +57,6 @@ idlemessages:
 - The smell of the yard drifts in through the open door —
   horses and hay and the faint undertone of the docks
   two streets over.
+spawninfo:
+  - mobid: 9312
+    respawnrate: "25 real minutes"

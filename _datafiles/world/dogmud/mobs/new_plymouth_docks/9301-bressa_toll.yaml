@@ -1,0 +1,67 @@
+mobid: 9301
+zone: New Plymouth Docks
+craft_support: cooking
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+  - np_dockfolk
+relationships:
+  - to: 9300
+    type: friend
+    subtype: dockfolk
+idlecommands:
+  - 'emote draws a damp cloth along the bar-top in one clean stroke,
+    lifts a mug by its handle without breaking stride, and sets it
+    back in the exact spot it came from.'
+  - ''
+  - 'emote tips her head at something said from the far end of the
+    room and laughs — a brief, genuine sound — and for a moment her
+    skin warms to amber from collar to cheekbone before the color
+    fades back as the laugh does.'
+  - ''
+  - 'emote refills a mug before the patron notices it is empty, sets
+    it down without comment, and is already reading the room again.'
+  - ''
+  - 'emote makes a mark on the slate behind the bar with a chalk
+    stub, reads it once, and tucks the stub back into her apron
+    without a second glance.'
+activitylevel: 10
+character:
+  name: Bressa Toll
+  description: |
+    Bressa Toll has run the Salt Cellar long enough that the room
+    has taken on her patterns — the angle of the mugs on their
+    shelf, the particular economy of movement behind the bar, the
+    way the counter is clean in the exact spots where she habitually
+    stands. She is a compact woman in her middle years with quick
+    dark eyes that read a room the way a captain reads weather —
+    what is wrong, what is about to go wrong, and what is fine and
+    will stay fine without her involvement. A Chrysalis drift came
+    on gradually enough that she cannot say exactly when it started
+    — when she laughs, genuinely and without performance, her skin
+    flushes a faint warm amber from collar to cheekbone in a wave
+    that fades as the laugh does. Her regulars have long since
+    stopped remarking on it, which is exactly how she prefers it.
+    She is warm with those she has decided to be warm with, and
+    the accounting of who that is belongs entirely to her.
+  speciesid: 1
+  level: 1
+  gold: 90
+  stats:
+    charisma:
+      training: 10
+    perception:
+      training: 8
+    willpower:
+      training: 4
+  shop:
+    - itemid: 30025
+    - itemid: 40078
+    - itemid: 30022
+    - itemid: 30023
+    - itemid: 30026

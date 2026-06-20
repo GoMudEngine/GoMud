@@ -1,0 +1,43 @@
+mobid: 9313
+zone: New Plymouth Docks
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 30
+maxwander: 1
+groups:
+  - humanoid
+  - np_dockfolk
+idlecommands:
+  - 'emote stares into the mug on the table as though it contains
+    something they are still deciding how to feel about.'
+  - ''
+  - 'emote turns toward the sound of a voice from outside, holds
+    the expression of someone half-expecting a name they know,
+    and lets it go when the voice does not resolve into one.'
+  - ''
+  - 'emote shifts in the chair, resettles, and goes back to saying
+    nothing with the particular stillness of a long ocean watch.'
+  - ''
+  - 'emote traces a slow line on the tabletop with one finger — a
+    route, or a coastline, or nothing in particular — and stops
+    when the finger reaches the edge of the wood.'
+activitylevel: 4
+character:
+  name: Weathered Sailor
+  description: |
+    The kind of traveler who arrives between places and sits with
+    it awhile before deciding where the next one is. Salt-dried
+    at the edges, road-slow in the movements, with the particular
+    stillness of someone who has spent more time at sea than
+    ashore and is not entirely sure which direction home lies
+    from here. They take their drink quietly and require nothing
+    from the room except to be in it for a while.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    strength:
+      training: 8
+    vitality:
+      training: 6

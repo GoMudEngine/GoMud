@@ -54,3 +54,6 @@ idlemessages:
   between boards, faintly salt and faintly strange.
 - Someone in one of the rooms coughs once and does not
   cough again.
+spawninfo:
+  - mobid: 9313
+    respawnrate: "10 real minutes"

@@ -61,3 +61,6 @@ idlemessages:
 - The guard by the barred warehouse door does not look at
   you but is aware of you in a way that is professionally
   managed.
+spawninfo:
+  - mobid: 9308
+    respawnrate: "10 real minutes"

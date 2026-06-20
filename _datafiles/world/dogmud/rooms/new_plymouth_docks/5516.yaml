@@ -63,3 +63,6 @@ idlemessages:
   cooking.
 - Two people eat standing at the counter, close enough
   to be talking if they were talking, which they are not.
+spawninfo:
+  - mobid: 9311
+    respawnrate: "20 real minutes"

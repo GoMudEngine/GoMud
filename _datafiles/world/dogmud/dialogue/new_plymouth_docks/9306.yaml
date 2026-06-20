@@ -1,0 +1,77 @@
+mobid: 9306
+zone: New Plymouth Docks
+defaultMood: neutral
+
+greetings:
+  - text: "What is it."
+    moods: ["neutral"]
+  - text: "Back. All right then."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "I'm here."
+      - "Yes."
+      - "Go on."
+
+  - keywords: [""]
+    responses:
+      - "I'm listening."
+
+tree:
+  root:
+    text: "Browse if you like. Ask if you have a question. I
+      usually know the answer — though the answer sometimes
+      costs more than whatever is on the shelf."
+    hints: "You could ask Old Sable about the rumors she
+      trades in, how the pawn trade works, or what has been
+      coming in from the docks lately."
+
+  nodes:
+    - id: rumors
+      triggers: ["rumor", "gossip", "hear", "know", "news",
+                 "word", "information", "tell", "heard",
+                 "what", "who", "talk"]
+      text: "Information is a perishable good. It has a shelf
+        life, same as fish, and a price that moves with the
+        market. I trade in it the same way I trade in anything
+        else — you bring me something I don't already know, I
+        tell you something you don't. Running it in one
+        direction doesn't usually last long. So. What have
+        you got?"
+      hints: "Old Sable treats information as a commodity
+        with a going rate on both sides."
+
+    - id: trade
+      triggers: ["pawn", "trade", "sell", "buy", "shop",
+                 "goods", "business", "work", "how",
+                 "items", "stock", "price", "browse"]
+      text: "People bring me what they need to not have
+        anymore. I price it, they decide, they leave without
+        it. Someone else comes in who needs the thing, I
+        charge them more than I paid, and the difference is
+        the cost of the shelf space. It's the oldest business
+        in any port. The art is reading what a thing is
+        worth to the person selling versus the person who
+        will eventually buy — and those are never the same
+        number."
+      hints: "Old Sable has the philosophy of the pawn
+        trade thoroughly worked out."
+
+    - id: found
+      triggers: ["found", "recent", "lately", "docks",
+                 "came", "come", "from", "underdock",
+                 "lower", "where", "interesting", "new",
+                 "unusual", "what's", "come in"]
+      text: "Things come up from the lower docks on a regular
+        basis. I don't ask where they were before they reached
+        my counter — the condition they arrive in suggests
+        various histories, and none of those histories are my
+        business. What I can say is that the last few weeks
+        have been productive, if you mean that in the sense
+        that interesting objects have appeared. I sent two of
+        them back down. They carried a kind of attention
+        I don't need pointed at this shop."
+      hints: "Old Sable is careful about what she keeps and
+        what she chooses not to."
