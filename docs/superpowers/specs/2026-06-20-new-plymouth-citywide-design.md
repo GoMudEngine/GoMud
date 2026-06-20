@@ -269,8 +269,16 @@ Noble → Old Quarter) gets its own spec → plan → build that:
 
 ## 9. Open items / next step
 
-- **Name-collision check:** verify the invented anchor names in §6 against the
-  existing world mob roster before any are authored (no name recycling rule).
-- **Bloom-as-mechanic vs. narrative** decision deferred to the Docks build.
-- writing-plans → the **Docks district** plan is the first build artifact (it
-  carries the supply engine wiring + the Bloom Trail opening).
+- **Name-collision check — DONE 2026-06-20.** All §6 invented names verified
+  against the world mob roster; renamed the runner (→ Dobb) and the scavenger
+  (→ Gritta) to avoid Hartcharn's *Severin Pell*/*Goodwife Pella* and North Road
+  North's *Old Mabbot*.
+- **Bloom IS becoming a real mechanic** (user decision 2026-06-20) — an
+  addiction / withdrawal / toxicity system (likely buffs 90–95 + a bark-skin
+  progression à la canon). **Deferred until after NP content is in:** author the
+  Bloom Trail *narratively* first (Deren, Marn, the captive, breadcrumbs across
+  Docks/Old Quarter/Noble), then layer the mechanic over the placed content as
+  its own spec→plan→build. Tracked: [[project-bloom-mechanic]].
+- writing-plans → the **Docks district** is the first build sub-project (its own
+  spec→plan→build per §8; it carries the supply-engine wiring + the Bloom Trail
+  opening). It is a large build — best started with full focus.
