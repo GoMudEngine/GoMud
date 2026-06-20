@@ -1,0 +1,70 @@
+roomid: 5605
+zone: New Plymouth Common
+title: Cookshop Row
+description: >
+  The smell reaches two streets away at midday and pulls
+  the quarter to it like a rope — fat on hot iron, cumin
+  and pepper in the smoke, the sweetness of rendered bone
+  broth that has been simmering since before dawn. Cookshop
+  Row is not a fancy place but it is an honest one, and at
+  the midday bell it is impossible to move through quickly.
+  The
+  <ansi fg="itemname">braziers</ansi> line both sides of
+  the street — clay fire-pots, iron grills, a clay-capped
+  oven at the far end that the woman who owns it is
+  protective of — and between them the vendors work fast
+  and loud. The long shared
+  <ansi fg="itemname">trestle table</ansi> running down
+  the center belongs to no one and everyone — people eat
+  standing, set down their bowls to argue with their
+  neighbors, and are gone again inside the quarter-hour.
+biome: city
+coord:
+  x: -14
+  y: 83
+  z: 0
+exits:
+  west:
+    roomid: 5604
+  south:
+    roomid: 5602
+  east:
+    roomid: 5611
+  north:
+    roomid: 5610
+nouns:
+  braziers: A row of fire-points in different styles —
+    clay pots with iron grill plates, a proper brazier
+    on a forged stand, two fire-blackened bricks with
+    a flat stone across them. Each one has a vendor and
+    a smell — skewered meat on the left, root-vegetable
+    broth in the center, flatbread blistering on the stone
+    at the far end. The heat coming off the row is
+    noticeable even from the center of the street. The
+    vendors do not look up; they are working.
+  trestle table: Four planks on sawhorses running the
+    length of the food row — long enough that people at
+    one end cannot hear what people at the other end are
+    saying, which has led to several misunderstandings and
+    at least one friendship. There are no chairs. People
+    prop a foot on the crossbar below, eat, talk over the
+    food, set their bowls back on the planks when done,
+    and the vendor at the near end collects them with the
+    steady rhythm of someone who has made this calculation
+    a thousand times.
+idlemessages:
+- A vendor calls a price and then calls it again because
+  the first time the noise ate it.
+- Fat from a skewer falls into the brazier and flares;
+  the vendor does not look up.
+- Someone reaches across the trestle table to pass a
+  companion a chunk of bread without interrupting the
+  story they are telling.
+- The smell of fresh flatbread briefly overwhelms
+  everything else, then reintegrates.
+- A dog sitting very still at the edge of the row is
+  rewarded, eventually, with a piece of something it
+  is impolite to examine too closely.
+spawninfo:
+  - mobid: 9321
+    respawnrate: "20 real minutes"

@@ -1,0 +1,80 @@
+roomid: 5613
+zone: New Plymouth Common
+title: Tenement Row
+description: >
+  Tenement Row announces itself by sound — voices
+  through thin walls, boot-steps on bare floors,
+  something dragged across boards one story up. The
+  buildings press close, upper stories leaning until
+  the sky between them narrows to a stripe, and across
+  that stripe the
+  <ansi fg="itemname">washing lines</ansi> run level
+  upon level, every household's week strung out
+  overhead in grey and faded color. At street level a
+  communal
+  <ansi fg="itemname">stoop</ansi> fronts the nearest
+  block, its steps worn hollow in the center by the
+  same boot-weight landing for forty years. Behind
+  the ground-floor entrance a
+  <ansi fg="itemname">barricaded stairwell</ansi>
+  blocks the way up — planks crossed, notice nailed —
+  but the boards are working loose at one corner, and
+  something above shifts its weight as if it has heard
+  you arrive.
+biome: city
+coord:
+  x: -16
+  y: 85
+  z: 0
+exits:
+  south:
+    roomid: 5608
+  east:
+    roomid: 5614
+  north:
+    roomid: 5615
+nouns:
+  washing lines: Rope strung tight between iron hooks
+    driven into the face-stone on both sides of the Row,
+    first-floor and second, sometimes a third if someone
+    has been ambitious. The lines sag under shirts,
+    children's things, a curtain that wanted to be white
+    again. Everything carries the same faint Quarter grey
+    — coal-smoke and identical rinse water and the fact
+    of being hung out over a street like this one. In
+    a fortnight whatever you washed will be grey again
+    regardless.
+  stoop: Three steps of dressed stone, the center worn
+    concave where the same foot-width has landed for
+    decades. A clay pot of something green and struggling
+    sits at the left edge — parsley, or what used to be.
+    Someone has chalked a small mark on the top riser,
+    a symbol or a name abbreviated; it means nothing to
+    you but the residents of this block will know it
+    without needing to explain.
+  barricaded stairwell: The ground-floor entry leads to
+    a stairwell door sealed with three planks and a
+    crossed beam, the wood recent against the old frame.
+    A notice is fixed to it in official hand — UNSAFE
+    STRUCTURE — the nails already rusting. The upper
+    floors are condemned. Whatever is up there shifts
+    its weight across a floor that should be empty,
+    pauses as if it has heard you listening, and then
+    continues.
+idlemessages:
+- A window opens two floors up; an arm reaches out,
+  shakes something that billows briefly, and withdraws.
+- The washing lines sway — someone above has added
+  something heavy to the lower rope.
+- Through the condemned stairwell door a sound arrives,
+  muffled but continuous — voices, or the building
+  settling, or both.
+- A child appears at the top of the stoop and surveys
+  you with the frank authority of the very young, then
+  goes back inside without verdict.
+- Somewhere in the block a baby makes its opinion
+  known; a tired voice rises to meet it, and neither
+  party ends the negotiation fully satisfied.
+spawninfo:
+  - mobid: 9319
+    respawnrate: "20 real minutes"

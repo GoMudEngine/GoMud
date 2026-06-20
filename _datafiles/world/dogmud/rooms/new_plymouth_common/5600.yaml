@@ -1,0 +1,61 @@
+roomid: 5600
+zone: New Plymouth Common
+title: Dockgate Street
+description: >
+  The change is in the sound first — the crash and
+  shout of the working docks falling back as you cross
+  west to east, replaced by something lower and more
+  domestic — children, a woman calling through an upper
+  window, the particular murmur of a street that has
+  nowhere important to go and has settled into that fact.
+  Dockgate Street is the seam between the two quarters,
+  and it feels like one — the buildings on the dock side
+  lean practical and weather-blasted; on the Common side
+  they lean just as hard, but over doorsteps someone has
+  swept and a pot of something is always cooking somewhere
+  above. A worn
+  <ansi fg="itemname">boundary stone</ansi> in the gutter
+  marks the ward line, its lettering mostly gone, and a
+  <ansi fg="itemname">ballad sheet</ansi> has been pasted
+  to the corner post at eye level, still legible, already
+  peeling at one corner.
+biome: city
+coord:
+  x: -16
+  y: 82
+  z: 0
+exits:
+  west:
+    roomid: 5514
+  east:
+    roomid: 5601
+  north:
+    roomid: 5606
+nouns:
+  boundary stone: A low wedge of granite sunk into the gutter
+    at the ward boundary — dock ward to the west, Common ward
+    to the east. The inscription has been walked over and
+    rained on for longer than most buildings in either district
+    have stood, and what remains says something like WARD OF
+    and then a word that might be COMMON or might be COMMER or
+    might just be old damage. The stone is polished on its
+    upper face by decades of feet stepping over it without
+    thinking.
+  ballad sheet: A printed broadside pasted to the corner post
+    — a ballad in seven verses about a sailor who married a
+    seamstress and they were both terrible at their trades but
+    very good at arguing. The type is small and crowded.
+    Someone has added a pencil annotation in the margin next to
+    verse four that reads "true" and underlined it three times.
+    One bottom corner has peeled free and curls in the wind.
+idlemessages:
+- A child darts across the street below the ward stone and
+  vanishes into an alley on the Common side.
+- The dock noise surges briefly with a distant shouted count,
+  then subsides into the background again.
+- A woman leans from a second-floor window across the street,
+  shakes something out, and pulls it back inside.
+- Someone stops to read the ballad sheet, mouths two lines,
+  and moves on with a small nod of recognition.
+- The smell shifts as a gust comes off the river — brine
+  and tar from the west, woodsmoke and cooking from the east.

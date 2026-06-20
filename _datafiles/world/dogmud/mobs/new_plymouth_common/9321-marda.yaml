@@ -1,0 +1,63 @@
+mobid: 9321
+zone: New Plymouth Common
+schedule_id: np_common_marda
+craft_support: cooking
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote lifts the lid on the big pot with a bare hand, sniffs the
+    steam without wincing, and adjusts the fire beneath it with a boot
+    before setting the lid back.'
+  - ''
+  - 'emote wipes her palms down the front of her apron — flat against
+    the cloth, no flinching, even though she has just taken a hot skewer
+    off the grill — and calls the day''s prices to no one in particular.'
+  - ''
+  - 'emote slaps a portion of meat onto torn flatbread, wraps it in a
+    motion that is half-fold and half-press, and holds it out before the
+    customer has finished saying what they want.'
+  - ''
+  - 'emote says something to herself about her brother''s taste in food —
+    quietly, with the fondness of an old complaint — and adds another
+    pinch of pepper to the pot.'
+activitylevel: 12
+character:
+  name: Marda
+  description: |
+    Marda runs the cook-stall at the near end of Cookshop Row with
+    the brisk assurance of someone who has made the same three meals
+    extremely well for a very long time and sees no reason to change
+    any of them. She is a solid woman in her middle years, flour on
+    her forearms and a permanent redness at the collar from cooking
+    over an open fire in all weathers. Her Chrysalis-change is the
+    practical kind — her hands do not burn. Full stop. She can lift
+    an iron lid from a full boil, press a palm to a searing grill to
+    check the heat, wrap a flatbread straight from the clay oven
+    without flinching, all of it without gloves or pads or any
+    intermediary. She is warm with paying customers and not unkind
+    to those who are not, though she does not extend credit. Her
+    brother Halvard works a forge across in the Crafting Quarter,
+    which she considers a fine thing for him and a reason she had
+    better keep the cookshop going, since someone has to eat sensibly.
+  speciesid: 1
+  level: 1
+  gold: 40
+  stats:
+    vitality:
+      training: 10
+    strength:
+      training: 8
+    charisma:
+      training: 6
+  shop:
+    - itemid: 30022
+    - itemid: 30023
+    - itemid: 30026
+    - itemid: 30024

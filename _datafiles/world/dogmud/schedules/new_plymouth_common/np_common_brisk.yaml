@@ -1,0 +1,27 @@
+id: np_common_brisk
+description: "Mother Brisk: runs her tenement block from early morning through
+  last bell — rents, tenants, the watchful window — then sleeps in the
+  ground-floor room beside the accounts ledger, the door locked from inside."
+segments:
+  - start: 7
+    end: 22
+    target_room: 5614
+    activity: ""
+    idlecommands:
+      - emote checks the rent-board through the glass of its case, makes a
+        pencil-figure correction on a slip of paper, and tucks it into her
+        apron pocket without opening the case.
+      - say Fourteen tenants, twelve licensed rooms, every one current within
+        my three-day grace. That record doesn't maintain itself.
+      - emote appears at the first-landing window, notes something in the
+        street below, and is gone before whoever it was could be certain
+        they were watched.
+      - say Cevran comes twice a year. I have the figures ready before he
+        arrives. He hasn't given me a wrong number yet. He knows better.
+  - start: 22
+    end: 7
+    target_room: 5614
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the ground-floor room beside the accounts ledger,
+        the door locked from inside, the key on a cord at her wrist.

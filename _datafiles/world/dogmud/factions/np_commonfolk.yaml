@@ -1,0 +1,19 @@
+faction_id: np_commonfolk
+display_name: "New Plymouth Commonfolk"
+description: |
+  The working populace of the Common Quarter — the people who fill
+  Carter's Rise at dawn, work Cookshop Row at midday, and crowd the
+  Brimming Bowl by evening. They are tenants, tradespeople, street
+  vendors, laundresses, and children who have never known any other
+  quarter. They hold no authority and little political weight, but
+  they hold a great deal of information — who moved in, who moved
+  out, what the rent collector said, and what the woman two blocks
+  over knows that she is not saying yet. They are wary of the
+  bloodline's domestic office the way anyone is wary of a thing
+  that has power over where they sleep and whether the levy goes up.
+  The dockfolk are kin in everything except occupation; Common people
+  and dock people drink together at the Brimming Bowl and do not
+  think of it as crossing a line.
+default_rep: 10
+allies: []
+enemies: []

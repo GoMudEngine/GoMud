@@ -1,0 +1,75 @@
+roomid: 5616
+zone: New Plymouth Common
+title: The Tannery Street
+description: >
+  The smell reaches you before the street does — a
+  compound assault with layers: the sharp cut of lime
+  at the top, below that the deep animal weight of
+  raw hide and fat, below that something sulfurous and
+  organic you do not want to identify by name. You have
+  entered the tannery trades. The street runs between
+  the working fronts of three or four tanning operations,
+  their
+  <ansi fg="itemname">soaking pits</ansi> ranged along
+  the building edges behind low stone walls — open vats
+  of dark liquor with hides submerged and weighted down.
+  On frames above them, past the pit stage, the
+  <ansi fg="itemname">stretched hides</ansi> are pegged
+  out flat and drying, their pale inner faces turned to
+  the sky. Workers pass between pits and frames in oiled
+  aprons, unhurried, accustomed to the smell in the way
+  of people who stopped noticing it years before you
+  arrived.
+biome: city
+coord:
+  x: -15
+  y: 86
+  z: 0
+exits:
+  west:
+    roomid: 5615
+  south:
+    roomid: 5614
+  east:
+    roomid: 5617
+  north:
+    roomid: 5618
+nouns:
+  soaking pits: Stone-lined vats sunk below street level
+    behind low walls along the building fronts, three
+    or four to a tannery. The liquor in them is dark
+    brown-black, carrying the accumulated result of
+    the tanning process — oak bark, lye, materials you
+    have decided not to look at too closely. Hides float
+    below the surface, weighted with flat stones. The
+    pit nearest the street has a crust on its surface
+    where the liquor has thickened at the edge. A worker
+    is checking the soak time on something with a long
+    wooden rod and apparently finds it good.
+  stretched hides: Wooden frames of roughly-hewn timber,
+    the hides stretched across them and pegged at the
+    edges through small slits in the skin — tight as a
+    drum, and pale as paper on the inner face where the
+    flesh has been scraped away. Some are cattle, broad
+    and flat. One smaller frame holds something that
+    might be dog. They dry unevenly in the quarter's
+    irregular light, and the smell at this stage is
+    less acute than the pits — more leather, less
+    animal — which is relative comfort.
+idlemessages:
+- A tannery worker crosses the street between vat and
+  frame with the deliberate stride of someone carrying
+  weight in unpleasant conditions and preferring speed.
+- The smell shifts as a door opens somewhere in the
+  east-facing building — worse for a moment, then back
+  to its previous terrible baseline.
+- A handcart comes through from the west loaded with
+  raw hides still in the salt-pack; the driver keeps
+  his face forward and says nothing.
+- One of the stretched hides on the east frame has
+  worked a peg loose from the corner; it will need
+  re-staking before the afternoon or it will curl as
+  it dries.
+- Flies attend the soaking pits with the commitment
+  of the professionally interested; a worker waves
+  them off without looking at them.

@@ -1,0 +1,72 @@
+roomid: 5623
+zone: New Plymouth Common
+title: The Undercroft Stair
+description: >
+  The stair is set back behind a low arch, easy to miss
+  unless you know to look — the sweeper knows, and
+  perhaps a handful of others. The
+  <ansi fg="itemname">worn steps</ansi> descend below
+  the level of the quarter's current cellars into a cold
+  that has nothing to do with the season and an air that
+  stopped moving some time before the city above was
+  built. The materials change at the third step — the
+  upper courses are the quarter's own construction,
+  serviceable and grey; below the third step something
+  older begins, the stone cut tighter and in a color
+  different from anything quarried near New Plymouth.
+  Above the arch a
+  <ansi fg="itemname">carved lintel</ansi> frames the
+  descent — a symbol deeply cut in the stone, worn to
+  near-illegibility by age but still holding its shape.
+  It is not the Chrysalis spiral. Whatever it is, it
+  was here before the Chrysalis spiral existed to be
+  compared to.
+biome: city
+coord:
+  x: -12
+  y: 87
+  z: 0
+exits:
+  west:
+    roomid: 5621
+  down:
+    roomid: 5624
+nouns:
+  worn steps: The upper three are the quarter's own
+    stonework — broad, serviceable, worn but familiar.
+    Below the third the material changes and so does
+    the wear-pattern. The lower steps are narrower,
+    cut from stone with a faintly grey-blue quality
+    in the available light, and their wear is old
+    enough that the center-hollow has been polished to
+    a surface that catches light differently from the
+    surrounding stone. Many thousands of feet descended
+    these steps over a long time. None of them were
+    yours, and none of them were recent.
+  carved lintel: A horizontal stone above the arch,
+    integrated into the wall-courses in a way that
+    suggests it was placed at the same time as the
+    stair itself. Cut into its lower face — the face
+    you look up at — is a symbol, deeply enough to
+    catch shadow. Round at the center, with radiating
+    lines that terminate in forms you cannot resolve
+    clearly in the available light — hooks, or hands,
+    or something between. Not decorative. The kind of
+    mark you place above a threshold when you want the
+    threshold to mean something. The Chrysalis has its
+    spiral; this has this.
+idlemessages:
+- The air at the stair's head is cooler than it should
+  be for this distance from the street, and does not
+  move.
+- A sound drifts up from below — not identifiable as
+  anything specific, which does not help.
+- The carved lintel catches the light at a different
+  angle than before and the symbol's forms seem to
+  resolve briefly into something you almost recognize.
+- The worn steps hold no draft despite the depth below —
+  the air is still, old-still, the kind that has been
+  underground since before the quarter above had a name.
+- From the street behind you, the ordinary noise of
+  the quarter; from the stair ahead, nothing at all,
+  which is its own kind of noise.

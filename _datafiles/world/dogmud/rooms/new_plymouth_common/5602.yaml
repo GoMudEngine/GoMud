@@ -1,0 +1,72 @@
+roomid: 5602
+zone: New Plymouth Common
+title: Carter's Rise
+description: >
+  The cobbles widen here at the top of the gentle rise
+  and the street opens, briefly, into something almost
+  like a square — enough room for people to stop moving
+  and still leave space for others to pass, which is rare
+  in the Common and has made this spot the quarter's
+  unofficial exchange. The
+  <ansi fg="itemname">well</ansi> stands at the center,
+  a stone drum with a worn wooden crossbeam and a bucket
+  on a good rope, and around it the day's talk happens
+  — who is sick, who is hiring, what a deacon was heard
+  to say at the south gate, whether the price of lamp oil
+  is a scandal or a crime. The
+  <ansi fg="itemname">flower stalls</ansi> ring the outer
+  edge of the rise — three or four vendors with cut blooms
+  in wooden buckets — the one bright, extravagant thing the
+  quarter permits itself, and they sell out every morning.
+biome: city
+coord:
+  x: -14
+  y: 82
+  z: 0
+exits:
+  west:
+    roomid: 5601
+  east:
+    roomid: 5603
+  north:
+    roomid: 5605
+nouns:
+  well: A stone well-drum, old enough that the mortar
+    between the courses has been repointed twice in living
+    memory and the rope-groove worn into the crossbeam is
+    deep enough to lay a finger in. The bucket hangs on a
+    good hempen rope that someone changes every season. At
+    this hour there is a small queue — people with pots and
+    ewers, exchanging pleasantries in the way of people who
+    have been queuing at the same spot together for years
+    and have thoroughly run out of new things to say, but
+    keep saying them anyway.
+  flower stalls: Three wooden trestles along the rim of the
+    rise, each carrying a row of heavy clay buckets full of
+    cut flowers — bundles of field-marigold, stems of
+    something blue and spiky, fat white heads that may be
+    feverfew or may be something rarer; it is not always
+    clear and the vendor of the middle stall is not
+    forthcoming. They sell out well before midday. The
+    vendor at the east end keeps a few dried bundles for
+    the afternoon trade — people who need something to
+    carry to a shrine.
+idlemessages:
+- The bucket descends into the well and returns, dripping,
+  and a small argument begins about who was next.
+- A vendor at the flower stalls calls something across the
+  rise that makes the two women at the well laugh at once.
+- A child is sent to fetch water and immediately becomes
+  distracted by the flowers, which was probably predictable.
+- Someone sets a pot down on the well's rim to fill it
+  and the conversation around them folds in naturally,
+  as though the pot were a regular attendant.
+- The cluster of people at the well thins briefly, then
+  refills; the well never seems to be empty of visitors.
+spawninfo:
+  - mobid: 9320
+    respawnrate: "20 real minutes"
+  - mobid: 9326
+    respawnrate: "15 real minutes"
+  - mobid: 9328
+    respawnrate: "10 real minutes"

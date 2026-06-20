@@ -29,6 +29,9 @@ exits:
     roomid: 5510
   north:
     roomid: 5515
+  east:
+    roomid: 5600
+    zone: New Plymouth Common
 nouns:
   horse trough: A trough of painted iron, the paint gone
     grey and peeling in long strips at the waterline but

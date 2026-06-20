@@ -1,0 +1,72 @@
+roomid: 5619
+zone: New Plymouth Common
+title: The Back-Alley
+description: >
+  The alley narrows here to little more than a
+  shoulder-width between buildings, the stone above
+  close enough that it cuts the sky to a pale slot.
+  It is the kind of place people arrive at when they
+  have run out of other options — and someone has
+  anticipated this. A
+  <ansi fg="itemname">curtained door</ansi> breaks
+  the left-hand wall, a healer's mark chalked in a
+  small careful circle beside the frame — the sign
+  that whoever is inside does not ask where you have
+  been or what put you in this condition. Above the
+  lintel a bunch of dried herbs hangs by a loop of
+  twine, the
+  <ansi fg="itemname">herb-bunch</ansi> brittle now
+  but still holding enough scent to be purposeful —
+  a declaration of trade and a mild guarantee of
+  competence. The alley continues east toward an
+  iron gate and the muffled sound of a crowd below.
+biome: city
+coord:
+  x: -14
+  y: 87
+  z: 0
+exits:
+  west:
+    roomid: 5618
+  enter:
+    roomid: 5620
+  east:
+    roomid: 5621
+nouns:
+  curtained door: A plank door painted a dark,
+    indeterminate color, with a heavy curtain hung
+    inside that keeps the light from showing beneath
+    the gap. The healer's mark beside it — a small
+    circle quartered, chalked fresh — is the sign
+    recognized in any quarter of the city where
+    people go around the official healers. It means
+    you will be treated. It means you will not be
+    questioned. It means the price will be whatever
+    you have, within reason, and the discretion will
+    be absolute. The curtain shifts slightly in a
+    draft, then settles.
+  herb-bunch: A bundle of dried stalks bound with
+    twine and looped over a nail above the door —
+    not decorative, or not merely decorative. The
+    smell from them is faint but identifiable if you
+    know what you are looking for — wound-wort,
+    something astringent, a resinous under-note.
+    Someone has composed this bundle carefully. It
+    is old enough to have dried to brittleness but
+    not old enough to have lost its meaning, which
+    suggests the clinic behind the door is active.
+idlemessages:
+- The curtain in the door shifts in a draft from
+  inside, and the herb-scent strengthens briefly.
+- From east, past the alley wall, a low collective
+  sound arrives — voices, or something beneath
+  voices — and recedes on its own rhythm.
+- The healer's chalk mark beside the door is fresh
+  enough that it has not yet blurred at the edges;
+  someone renewed it recently.
+- Footsteps pass the alley entrance from the west
+  and slow, and then move on — a consideration
+  made and deferred.
+- A strip of sky is visible overhead between the
+  buildings; it is the same sky as everywhere, but
+  from here it looks like a different kind.

@@ -1,0 +1,70 @@
+roomid: 5609
+zone: New Plymouth Common
+title: The Bathhouse
+description: >
+  Warm air pushes out around the edges of the entrance
+  even before you go inside — a damp heat with the mineral
+  smell of water heated in a stone basin, different from
+  rain and different from the river. The bathhouse is a
+  modest building of plain mortar, older than the street
+  it sits on, and inside it the Common's usual sorting by
+  means does not quite apply — dock-poor and shop-
+  comfortable share the same bench and the same hot water,
+  which produces an occasional awkwardness and a more
+  occasional conversation. The
+  <ansi fg="itemname">steam-room door</ansi> is a thick
+  plank banded in iron to hold the heat in, its face dark
+  with condensation. Beside the entrance, a
+  <ansi fg="itemname">tally-slate</ansi> tracks bath
+  tokens on a peg system — each token a copper disk,
+  and the count determining the order of entry. The
+  attendant manages this with the patience of someone
+  who has mediated bath-token disputes more times than
+  they care to number.
+biome: city
+coord:
+  x: -15
+  y: 84
+  z: 0
+exits:
+  west:
+    roomid: 5608
+  south:
+    roomid: 5604
+  east:
+    roomid: 5610
+nouns:
+  steam-room door: A thick plank door banded in iron at
+    the top, middle, and bottom — the banding to hold the
+    swelling wood flat and the heat in. Its face is dark
+    with condensation that runs and dries and runs again,
+    tracing paths down the grain. When it opens, briefly,
+    the steam comes out in a long exhale and the people
+    waiting in the anteroom close their eyes automatically,
+    the way people do when something warm and good is
+    going to pass. Then it shuts again and the warmth
+    retreats to the edges of the frame.
+  tally-slate: A rectangular slate mounted beside the
+    entrance on an iron bracket, with a row of wooden
+    pegs below it holding copper disks — the bath tokens,
+    each one stamped with a rough sunburst on one face.
+    The numbering system is explained on a card pinned
+    next to it. The card is not sufficient. The attendant
+    explains it verbally to new arrivals with the air of
+    someone who has simplified the explanation many times
+    and has not yet achieved clarity.
+idlemessages:
+- Steam escapes in a long breath as the bath door opens,
+  hangs in the cooler air of the anteroom, and slowly
+  fades.
+- Someone emerges from the interior looking a good deal
+  more relaxed than when they went in.
+- A brief disagreement about the bath token order is
+  resolved by the attendant with a practiced finality
+  that allows no appeal.
+- Two men who clearly do not know each other emerge from
+  the steam room in easy conversation, in the way that
+  happens when people are hot and have nothing to prove.
+- The warm air from the building's edge drifts across
+  the street and is noticed by a passing child, who
+  slows.

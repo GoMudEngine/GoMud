@@ -1,0 +1,73 @@
+roomid: 5610
+zone: New Plymouth Common
+title: Tinker's Lane
+description: >
+  The grinding is the first sound — a high sustained
+  note that rises and falls as the pedal-driven
+  <ansi fg="itemname">whetstone</ansi> catches iron at
+  different angles. The knife-grinder's cart sits at the
+  mouth of the lane and has been there long enough that
+  the cobbles under the cart's wheels have worn slightly
+  concave. Tinker's Lane is a side channel of the
+  Common's working life — a narrow run of menders and
+  fixers and people who attend to the things the quarter
+  needs attended to but does not much think about. A
+  cobbler works from an open doorway. A woman resews
+  a coat's lining on a stool in the open air. At the
+  lane's center, the barber has set up his
+  <ansi fg="itemname">stool</ansi> and strop in the
+  widest part of the way, a strip of worn leather
+  hanging from the corner-post, and is conducting a
+  haircut and a conversation with the simultaneous ease
+  of someone who has never once confused them.
+biome: city
+coord:
+  x: -14
+  y: 84
+  z: 0
+exits:
+  west:
+    roomid: 5609
+  south:
+    roomid: 5605
+  north:
+    roomid: 5612
+nouns:
+  whetstone: A circular stone mounted on a low wooden
+    frame with a treadle below — the grinder pumps it
+    with one foot while both hands guide the blade. The
+    stone is the grey-blue of good grit and runs slightly
+    wet from a drip-cup mounted above it. At speed it
+    throws a fine cool spray. The grinder works with the
+    unhurried efficiency of someone paid by the blade and
+    not the minute — each edge is done right or done again.
+    A short queue of people with things that need
+    sharpening waits at a respectful distance from the
+    spray.
+  stool: A three-legged stool set in the widest part of
+    the lane where the light is good. The barber's
+    customer sits with a cloth around the shoulders and
+    an expression of relaxed patience while the barber
+    works at close range with shears and small scissors.
+    The strop hangs from an iron peg in the corner-post
+    — a length of worn leather, soft at the center and
+    stiff at the hanging end, used between customers
+    with a sound like a slow clock, patient and rhythmic.
+idlemessages:
+- The whetstone hums up as the grinder puts his foot to
+  it; sparks trace a brief arc in the shadow under the
+  cart.
+- The barber says something to his customer that makes
+  the customer want to turn and look, and is gently
+  prevented from doing so.
+- A woman hands a cobbler a shoe and explains what
+  happened to it. He looks at the shoe, not her, and
+  names a price.
+- The grinder finishes an edge, tests it on his thumb,
+  and slides the blade back across the whetstone once
+  more before handing it over.
+- The strop sounds — one slow stroke, then another — as
+  the barber prepares between customers.
+spawninfo:
+  - mobid: 9329
+    respawnrate: "15 real minutes"

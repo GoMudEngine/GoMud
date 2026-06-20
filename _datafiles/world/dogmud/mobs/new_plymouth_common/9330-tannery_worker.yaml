@@ -1,0 +1,47 @@
+mobid: 9330
+zone: New Plymouth Common
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote draws a long pull with the scraper across the wet hide on
+    the beam — one fluid motion, the hide repositioned, another stroke
+    — with the unhurried efficiency of someone who has been at this
+    since before you woke up.'
+  - ''
+  - 'emote reaches bare-handed into the lime barrel to check the
+    suspension — no flinching, no gloves — and withdraws both arms
+    pale to the elbow without any sign that the caustic troubles
+    him in the least.'
+  - ''
+  - 'emote shoulders a folded hide from the beam and carries it
+    toward the draining rack with the easy competence of a man who
+    has moved wet animal hide enough times that the smell and the
+    cold slap of it are simply the texture of the morning.'
+activitylevel: 10
+character:
+  name: Tannery Worker
+  description: |
+    One of several hands working the yard, this one at the scraping-
+    beam for the morning shift. He is broad and deliberate, with the
+    particular stoop of someone who has bent over working height for
+    a long time and carries the posture home. His hands and forearms
+    are pale to near-white — years of lime exposure that has never
+    damaged the skin, a Chrysalis-change that hardened the surface
+    into something the caustic finds no purchase on. He does not
+    discuss it. Neither does anyone else in the yard. It is
+    considered a practical thing to have in a tannery, and that is
+    as far as the conversation has ever gone.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    strength:
+      training: 10
+    vitality:
+      training: 8

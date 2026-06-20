@@ -1,0 +1,72 @@
+roomid: 5617
+zone: New Plymouth Common
+title: The Tanner's Yard
+description: >
+  The yard is a working space and looks it — packed
+  earth, drains running grey, the flat percussion of
+  scrapers on wet hide audible from the gate. The smell
+  is the street's smell made more concentrated; you are
+  in the process now rather than adjacent to it. A
+  <ansi fg="itemname">scraping-beam</ansi> stands at
+  the near edge of the yard, a curved timber canted at
+  working height, its upper surface worn knife-bright
+  where the hide goes and the blade comes across. Against
+  the east-facing wall a row of
+  <ansi fg="itemname">lime barrels</ansi> stand with
+  their lids set askew — the caustic slaked-lime used
+  to loosen hair from hides before the pit — their rims
+  furred white with old residue. Workers move between
+  them and the beam with the unhurried efficiency of
+  people who have this sequence in their hands.
+biome: city
+coord:
+  x: -14
+  y: 86
+  z: 0
+exits:
+  west:
+    roomid: 5616
+  east:
+    roomid: 5622
+nouns:
+  scraping-beam: A heavy timber, one end fixed to a
+    post sunk in the yard floor, the upper surface
+    curved and worn smooth on the working line where
+    the hide is laid and the flesh-side presented to
+    the blade. The top edge has that knife-bright polish
+    that comes from years of wet hide sliding across it —
+    the wood itself has become faintly greasy, almost
+    laminated. A half-scraped hide is currently draped
+    over it, pale and heavy, one side done and one still
+    to go. The worker who was at it has stepped away;
+    the blade-tool lies on the ground beside the post.
+  lime barrels: Wide-mouthed barrels of coopered oak
+    gone grey and chalky on the outside from the
+    contents — slaked lime in suspension, the liquid
+    caustic and milk-white. Hides go in for several
+    days to loosen the hair before the scraping. The
+    lid is off the nearest barrel; the liquid inside
+    looks peaceful and is not. A long-handled paddle
+    leans against it. The warning to keep your hands
+    back from the rim is not written anywhere because
+    everyone who works here already knows, and no one
+    else should be close enough to need it.
+idlemessages:
+- The scrape of blade on wet hide carries across the
+  yard — a long pull, then the hide is repositioned
+  with a wet slap, and it begins again.
+- A worker tilts a hide off the scraping-beam and
+  carries it folded over one arm toward the pit-end
+  of the yard, boots squelching in the drain-run.
+- The lime barrels have attracted a pair of stray
+  cats who sit at a respectful distance and do not
+  approach. Cats are wiser than they look.
+- Someone calls across the yard in a tongue you don't
+  know — the answer comes from behind the east wall,
+  short and apparently sufficient.
+- A drain at the yard's center carries off a thin
+  trickle of grey water that has nowhere in particular
+  to go but finds its way there eventually.
+spawninfo:
+  - mobid: 9330
+    respawnrate: "10 real minutes"

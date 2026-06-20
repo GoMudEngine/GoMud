@@ -1,0 +1,83 @@
+mobid: 9323
+zone: New Plymouth Common
+defaultMood: neutral
+
+greetings:
+  - text: "You look like something needs seeing to. Sit down and I'll
+      have a look before you tell me how it happened."
+    moods: ["neutral"]
+  - text: "You again. Has it held, or are we looking at it again?"
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "morning", "good", "evening"]
+    responses:
+      - "In. Close the door."
+      - "Whatever it is, I've seen worse. Probably."
+
+  - keywords: [""]
+    responses:
+      - "I'm not going to ask what you did or how — if that's what you
+          were working up to saying."
+
+tree:
+  root:
+    text: "I fix what needs fixing. I don't write down who I've seen or
+      why, and I don't discuss my patients with anyone. That's the whole
+      of the policy and it doesn't change. What is it?"
+    hints: "You could ask Ysolde about her healing work and how she runs
+      things, about the temple healers elsewhere in the city, or about
+      what kind of illness she sees most in the quarter."
+
+  nodes:
+    - id: healing
+      triggers: ["heal", "healing", "fix", "treat", "treatment", "wound",
+                 "wounds", "injury", "medicine", "help", "rule", "no questions",
+                 "policy", "how", "work", "what do you", "what you do",
+                 "fee", "cost", "price", "charge", "pay", "paid"]
+      text: "The rule is simple. I look at what's wrong and I try to put it
+        right. I don't ask where you got it, who gave it to you, or whether
+        you'd prefer the story to come out differently. People come in faster
+        and leave in better shape when that's clear at the start. The fee is
+        what you have — I'm not keeping a ledger for it. If you come back, or
+        send someone who needs to, that's payment enough. The alley is the only
+        entrance. Come alone if you can, or no more than two."
+      hints: "Ysolde's rules are simple and she holds to them. You could ask
+        how she compares to the temple healers, or what kinds of illness she
+        sees most."
+      moodChange: friendly
+
+    - id: temple
+      triggers: ["temple", "healers", "church", "keeper", "keeper's", "official",
+                 "priest", "brother", "sister", "compared", "versus", "difference",
+                 "why not", "why not them", "proper", "real", "legitimate",
+                 "trained", "sanctioned"]
+      text: "The temple healers are genuine and I won't say otherwise. They're
+        trained, they're honest, and they have supplies and facilities I cannot
+        match. If you have something that can be explained cleanly to an
+        institution — go there. They're better at the clean ones. The people
+        who come to me come because they can't be at the Keeper's House in the
+        morning without an explanation that follows them out, or because they
+        need something done now rather than when the forms are through. I don't
+        have forms. That is the only material difference between us."
+      hints: "Ysolde has a careful and honest view of the temple healers. You
+        could ask about her own way of running things, or about the sickness
+        she sees most."
+      moodChange: cautious
+
+    - id: bloom
+      triggers: ["bloom", "sick", "withdrawal", "copper", "flower", "wafer",
+                 "sickness", "craving", "dependent", "shaking", "sweating",
+                 "addiction", "bark", "skin", "user", "users", "what do you see",
+                 "what kind", "common", "most", "often", "coming in", "comes in"]
+      text: "I see a great deal of withdrawal. A particular kind — there's a
+        copper-flower note underneath the skin-smell that I can pick out now
+        without looking for it. The symptoms run a predictable course and I
+        know how to manage most of them, which means I have seen enough of
+        them to know the course very well. That is what I'll tell you. I won't
+        tell you where they come from or who sends them, because that is not
+        information I have or would share if I did. I treat who walks through
+        the door. The rest is not my work."
+      hints: "Ysolde knows the Bloom withdrawal by its smell and course. She
+        keeps the rest to herself — by practice and by principle."
+      moodChange: cautious

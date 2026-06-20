@@ -1,0 +1,47 @@
+mobid: 9331
+zone: New Plymouth Common
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 22
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote rolls the dice on the scratched step, examines the result
+    with neither pleasure nor disappointment, and reaches for them
+    again.'
+  - ''
+  - 'emote makes a tally-mark alongside the existing ledger of
+    scratches beside the cup-channel, adding to a running count
+    now so deep-scratched it has become part of the stone itself.'
+  - ''
+  - 'emote watches someone cross the lane below without turning his
+    head, tracking the movement with his eyes alone, then goes back
+    to the dice with the unhurried air of a man who has all day and
+    has been spending it exactly this way for longer than anyone
+    has been keeping count.'
+activitylevel: 6
+character:
+  name: Flophouse Dweller
+  description: |
+    The old man on the third step is always the old man on the third
+    step. Residents who have lived on this lane for ten years say
+    the same man was here when they arrived, looking the same age
+    he looks now — which is indeterminate and apparently fixed. His
+    Chrysalis-change, if that is what it is, has given him the
+    quality of something set — not stone, not still, just done
+    changing. He does not visibly age. He runs the dice game on
+    the step with the gravity of a man conducting serious business,
+    which to him it may be. He accepts newcomers to the game at his
+    own pace and has never, in the memory of anyone on the lane,
+    made a wrong count.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    perception:
+      training: 8
+    charisma:
+      training: 6

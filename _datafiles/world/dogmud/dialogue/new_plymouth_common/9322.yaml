@@ -1,0 +1,81 @@
+mobid: 9322
+zone: New Plymouth Common
+defaultMood: neutral
+
+greetings:
+  - text: "Seat yourself anywhere there's room — and there's always room if
+      you look for it."
+    moods: ["neutral"]
+  - text: "Back again. Your usual corner?"
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "evening", "night"]
+    responses:
+      - "In you come. What'll it be?"
+      - "I heard you before you opened the door. Come in."
+
+  - keywords: [""]
+    responses:
+      - "Say what you need — I'm listening to twelve conversations at once,
+          so you'd better be louder than you think."
+
+tree:
+  root:
+    text: "The Bowl's been here forty years and I've kept it twenty of them.
+      You want a drink, food, or gossip — and I'll tell you now that the
+      gossip comes free with the drink. What's the question?"
+    hints: "You could ask Renn about the Brimming Bowl and what's on, the
+      ale she supplies down to the docks, or what she's heard around the
+      quarter lately."
+
+  nodes:
+    - id: bowl
+      triggers: ["bowl", "tavern", "drink", "ale", "wine", "spirits", "last",
+                 "orders", "bar", "brimming", "what", "have", "open", "close",
+                 "food", "menu"]
+      text: "The Bowl is open from late morning to last orders, which I call
+        whenever the noise gets above a pitch I've decided is the ceiling.
+        You'll know last orders when you hear it — I've been told I could
+        call it from outside the building and everyone inside would hear
+        it fine. I don't know if that's true but I've never needed to
+        test it. We've got ale of mine, spiced wine, and what I charitably
+        call rough spirits if you need something to start a fire inside
+        you. Food runs to meat, stew, and bread — same as it ever did."
+      hints: "Renn seems to know the Bowl's rhythms as well as she knows
+        her own. You could also ask about her ale trade with the docks,
+        or the quarter's latest news."
+
+    - id: docks
+      triggers: ["dock", "docks", "bressa", "salt", "cellar", "trade",
+                 "barrels", "supply", "delivery", "waterfront", "sell",
+                 "brew", "brewery", "where"]
+      text: "Part of every batch I brew goes down in barrels to Bressa
+        Toll's place on the waterfront — the Salt Cellar. That's been the
+        arrangement for a long time, long enough that her dockfolk have
+        gotten particular about it and complain when I'm a barrel short.
+        Which I never am. Bressa and I have an understanding about quality
+        that saves us both the conversation of what happens if it slips.
+        She's good people. The docks are hard work and she runs the one
+        warm room down there."
+      hints: "The trade between the Bowl and the Salt Cellar runs deep.
+        You could ask about the Bowl itself, or what Renn hears from the
+        quarter."
+      moodChange: friendly
+
+    - id: gossip
+      triggers: ["gossip", "news", "quarter", "word", "hear", "heard",
+                 "know", "who", "neighborhood", "talk", "people", "common",
+                 "lately", "rumor", "trouble", "troubles"]
+      text: "I run the room where people come to stop being quiet for an
+        hour. I don't repeat what I hear at the bar to people who weren't
+        at the bar — that's the rule, and it's the reason people say things
+        at the bar they wouldn't say elsewhere. What I will tell you is
+        that the Common's not in a good temper at the moment. The levy
+        went up and the collector's timing was insulting. And there's been
+        a man at the corner of the market three evenings running who isn't
+        buying anything. I notice people who aren't buying anything."
+      hints: "Renn notices more than she says. The man at the market corner
+        might be worth watching. You could ask about the Bowl or the ale
+        trade with the docks."
+      moodChange: cautious

@@ -1,0 +1,66 @@
+roomid: 5614
+zone: New Plymouth Common
+title: Mother Brisk's Block
+description: >
+  There is a perceptible difference in front of this
+  block — the stoop swept, the lower windows intact,
+  the face-stone cleaner than its neighbors by a margin
+  that speaks of regular attention. Mother Brisk runs
+  the best-kept building in a hard part of the quarter,
+  and it shows in small corrections: a bent downpipe
+  straightened, a crack filled before it became a gap.
+  The
+  <ansi fg="itemname">rent-board</ansi> is mounted
+  beside the entrance in a small glass-fronted case,
+  chalk names and figures legible through the pane.
+  Above the first landing, a
+  <ansi fg="itemname">watchful window</ansi> looks down
+  onto the street — someone is always there, at all
+  hours, watching who comes and goes. Tenants feel
+  looked-after. Visitors feel assessed.
+biome: city
+coord:
+  x: -15
+  y: 85
+  z: 0
+exits:
+  west:
+    roomid: 5613
+  north:
+    roomid: 5616
+nouns:
+  rent-board: A slate board in a glass-fronted case
+    beside the front door, the entries kept in careful
+    chalk — tenant name, room number, sum owed, sum
+    paid, balance. Several names have been struck
+    through with a single neat line. One entry near
+    the bottom has been partially erased and rewritten
+    twice, the argument it represents still visible
+    in the ghost-marks of old chalk. The handwriting
+    throughout is the same — practiced, unadorned,
+    the hand of someone who has been keeping accounts
+    for a long time and does not need to make them
+    ornamental.
+  watchful window: The first-landing window directly
+    above the entrance, its curtain pulled aside by
+    a hand that lets it fall back when you look up
+    directly. Someone is always at that window —
+    Mother Brisk herself in the mornings, a grey-haired
+    woman in the afternoons, one or the other through
+    the evening. The building's tenants seem to find
+    this reassuring. It is less clear whether you do.
+idlemessages:
+- The rent-board's glass catches a reflection of the
+  street and throws it back crooked.
+- The watchful window's curtain shifts a fraction —
+  someone adjusting their angle, or simply still there.
+- The stoop has been swept recently; a neat pile of
+  grit sits at the bottom step, awaiting disposal.
+- A tenant emerges from the front door, exchanges a
+  word with someone above, and heads north toward the
+  tannery without looking back.
+- From inside the building the sound of a door closing
+  carries clean and sharp — good hinges, good fit.
+spawninfo:
+  - mobid: 9325
+    respawnrate: "20 real minutes"

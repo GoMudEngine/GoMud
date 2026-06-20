@@ -1,0 +1,29 @@
+id: np_common_garrick
+description: "Garrick One-Hand: holds court on the flophouse steps from
+  mid-morning through last bell, watching the lane and the pit gate,
+  then sleeps in the flophouse with the stone arm resting on the bunk frame."
+segments:
+  - start: 8
+    end: 22
+    target_room: 5622
+    activity: ""
+    idlecommands:
+      - emote sets the stone forearm along the top step and watches the lane
+        with the patience of a man who has done surveillance in worse
+        conditions than this.
+      - say The dice game on the third step has been running six years. I've
+        watched it take everything off three men who thought they were good
+        at dice.
+      - emote marks the arrival of an unfamiliar face with one slow look
+        — feet upward, no speed to it, no comment — and returns to whatever
+        he was thinking before they came.
+      - say Pit's a quarter-mile south. You'd know it by the crowd, not
+        a sign.
+  - start: 22
+    end: 8
+    target_room: 5622
+    activity: sleeping
+    idlecommands:
+      - emote sleeps on his bunk in the flophouse, the stone arm resting
+        alongside him on the frame — denser than the mattress, unmoved
+        by the night.

@@ -1,0 +1,71 @@
+roomid: 5606
+zone: New Plymouth Common
+title: The Brimming Bowl
+description: >
+  Even from outside you can tell it is doing well —
+  the sound leaking around the door is the sound of
+  people who have found each other at the end of the
+  working day and intend to make something of that. The
+  building occupies a corner plot and has been here long
+  enough to look as though the street was built around it,
+  which may be the case. Above the door, a painted sign
+  shows a wooden bowl tilted just slightly past full —
+  the
+  <ansi fg="itemname">bowl sign</ansi>, faded but legible,
+  repainted whenever someone gets around to it, which is
+  every few years. The
+  <ansi fg="itemname">doorway</ansi> is broad and worn,
+  the lintel dark with the oils of ten thousand hands
+  that have braced against it, and the doorstep is lower
+  than the street by an inch — either the street rose or
+  the building settled, and the distinction has been
+  forgiven by both parties. Enter to go inside.
+biome: city
+coord:
+  x: -16
+  y: 83
+  z: 0
+exits:
+  south:
+    roomid: 5600
+  east:
+    roomid: 5604
+  north:
+    roomid: 5608
+  enter:
+    roomid: 5607
+nouns:
+  bowl sign: A painted board — a bowl of turned wood in
+    ochre and brown, the liquid inside tilting past the
+    rim in a way that should mean spilling but never quite
+    reaches it. The painter understood the bowl should be
+    full without being over; the current version is the
+    fourth or fifth iteration of the original. Beneath the
+    bowl, in a hand different from the painter's, someone
+    has added "EST. BEFORE YOUR GRANDMOTHER" in letters
+    that have been touched up but not replaced. This is
+    considered accurate.
+  doorway: An arched opening with a heavy door on iron
+    hinges that have been oiled recently — you can tell
+    because they are silent. The lintel above is dark
+    with years of hands, and the step below is worn to
+    a smooth depression in its center. The door stands
+    open this time of evening, and the sounds and warmth
+    of the interior come out to meet you with the
+    frankness of an establishment that has nothing to
+    hide and a great deal to offer.
+idlemessages:
+- The door swings open and a wave of warmth and noise
+  comes out briefly; two people enter and it falls shut
+  behind them.
+- Someone leans against the building's corner with a
+  cup, watching the street with the satisfied air of
+  someone who has already eaten.
+- A burst of laughter from inside the tavern rises above
+  the general noise level, identifiable even through
+  the walls.
+- A man pauses outside the door, looks in, decides,
+  and goes in. This happens with some regularity.
+- Two people part on the step — one going in, one going
+  home — with the brief warmth of a genuinely good
+  evening almost over.

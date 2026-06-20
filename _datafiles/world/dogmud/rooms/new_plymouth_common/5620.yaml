@@ -1,0 +1,66 @@
+roomid: 5620
+zone: New Plymouth Common
+title: Ysolde's Room
+description: >
+  The room is small and precise — the kind of tidiness
+  that comes from working in confined space for years
+  and learning to put things back. The smell of the
+  alley does not follow you in; what replaces it is
+  herb-warm and faintly medicinal, with a wood-smoke
+  undertone from a small brazier in the corner that
+  keeps the room above damp. A low
+  <ansi fg="itemname">cot</ansi> stands against the
+  near wall, the blanket folded flat and tight in the
+  way of someone who expects to need it quickly and
+  cannot afford to have it tangled. Across the room
+  a shelf holds a row of
+  <ansi fg="itemname">unlabeled jars</ansi> — stoppered
+  clay and green glass and one of clear — all without
+  markings, all evidently known by smell and position.
+  No questions are asked here. The door is behind you.
+biome: city
+coord:
+  x: -10
+  y: 86
+  z: 0
+exits:
+  out:
+    roomid: 5619
+nouns:
+  cot: A narrow rope-frame cot with a straw-filled
+    tick and a single wool blanket folded to precise
+    thirds. It has been used recently — there is a
+    slight depression in the tick that has not fully
+    returned. The rope weave is tight and even, the
+    frame sturdy, the blanket clean. It is a clinical
+    cot, not a personal one — it will be whoever needs
+    it next, which is the point.
+  unlabeled jars: A row of stoppered containers ranged
+    in an order that seems arbitrary and is not — clay
+    for the things that need darkness, green glass for
+    the light-tolerant, clear glass for the two or three
+    things that need to be checked by color. None are
+    labeled. The contents range from pungent to faintly
+    sweet to nothing you can identify by smell at this
+    distance. A mortar and pestle sits at the end of
+    the shelf with a residue in it that is still faintly
+    damp. She was working not long ago.
+idlemessages:
+- The brazier in the corner puts out a thin, even
+  warmth and a smell of something resinous added to
+  the coals — not unpleasant.
+- A dried bundle on the far wall stirs in the slow
+  convection from the brazier, its stalks tapping
+  gently against the wall.
+- The quiet of the room is deliberate — the walls are
+  thick here, because the alley outside is not as far
+  as it sounds.
+- One of the unlabeled jars has condensation on its
+  inside — whatever is in it, it is cold, or the room
+  is warmer than it seemed.
+- The cot's blanket has been straightened so precisely
+  that it is impossible to tell whether someone used
+  it hours ago or years ago.
+spawninfo:
+  - mobid: 9323
+    respawnrate: "20 real minutes"

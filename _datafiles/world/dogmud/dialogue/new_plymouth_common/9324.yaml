@@ -1,0 +1,85 @@
+mobid: 9324
+zone: New Plymouth Common
+defaultMood: neutral
+
+greetings:
+  - text: "New face. You've either got a reason to be on these steps or
+      you walked past the rooming house by mistake. Which is it?"
+    moods: ["neutral"]
+  - text: "Back again. Sit down if you want. No one's using that step."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "morning", "good", "evening"]
+    responses:
+      - "Mm."
+      - "Still here. Still sitting. As you see."
+
+  - keywords: [""]
+    responses:
+      - "I'm not much for the long way round. Say what you came to say."
+
+tree:
+  root:
+    text: "I've got nowhere to be and a decent view of the lane from here.
+      Ask what you came to ask."
+    hints: "You could ask Garrick about the fighting pit and whether he can
+      get you in, about his soldiering days and how he came by that arm,
+      or about the hard cases he watches come and go on the flophouse steps."
+
+  nodes:
+    - id: pit
+      triggers: ["pit", "fighting", "fight", "fights", "fighter", "fighters",
+                 "entry", "get in", "watch", "bet", "ring", "gate", "vouch",
+                 "how do", "who do", "arena", "combat", "bout", "bouts"]
+      text: "The pit runs a quarter-mile south, below the tannery end. They
+        don't put up a sign. The man on the gate knows my name and knows I'll
+        send someone worth watching rather than a tourist. If you want in for
+        an evening, I can give you a word to use at the door — it won't
+        guarantee you a good fight, but it gets you past the gate. Whether
+        you want to watch or step in yourself is your decision and not one
+        I'll advise on. I've seen both go badly."
+      hints: "Garrick can put in a word at the fighting pit. You could also
+        ask about his soldiering and the arm, or the people he watches from
+        the steps."
+      moodChange: friendly
+
+    - id: arm
+      triggers: ["arm", "hand", "one-hand", "stone", "grey", "gray",
+                 "soldier", "soldiering", "war", "wound", "how", "what happened",
+                 "lost", "mutation", "change", "got it", "served", "where",
+                 "which", "regiment", "army", "campaign", "forearm"]
+      text: "Lost the hand at the Lethwick ford, eighteen years back. Campaign
+        in the southern reach — nothing remarkable in that country about losing
+        a hand, except I kept the rest and came home. The arm started going hard
+        at the wrist the first winter after, worked its way up over three years
+        and stopped at the elbow. Cold doesn't bother it. Heat doesn't bother
+        it. I set it in a fire once to see. The stump-end is smooth and won't
+        take an edge, which has been useful at least twice. I served under a
+        man named Doryn — he's a captain in the Noble Quarter now, running a
+        bloodline gate post. We don't speak much. That quarter is a long walk
+        from these steps and the conversation you'd have there is a different
+        kind of conversation."
+      hints: "Garrick's arm has a history as practical as it is strange. His
+        old commander is a guard-captain in the Noble Quarter — a different
+        world from the flophouse steps."
+      moodChange: curious
+
+    - id: quarter
+      triggers: ["quarter", "common", "people", "hard", "cases", "trouble",
+                 "flophouse", "who", "residents", "life", "lives", "difficult",
+                 "rough", "know", "watch", "see", "what you see", "around here",
+                 "street", "lane"]
+      text: "The flophouse draws a range. Men who worked a trade and lost it —
+        a fire, a bad creditor, a levy they couldn't meet. Younger ones who
+        came in from the road thinking the city would be easier than it turned
+        out to be. The dice game on that step has been running six years and
+        I've watched it take everything off three different people who thought
+        they were good at dice. I don't intervene — not my game. But I know
+        who on this street can be counted on when something needs counting on,
+        and who can't, and that's a kind of knowledge that keeps itself current
+        without much effort on my part."
+      hints: "Garrick has watched the flophouse long enough to know it. You
+        could ask about the fighting pit, or the soldiering that brought him
+        here."
+      moodChange: neutral

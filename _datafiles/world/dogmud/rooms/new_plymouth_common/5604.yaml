@@ -1,0 +1,74 @@
+roomid: 5604
+zone: New Plymouth Common
+title: The Common Market
+description: >
+  Prices here are shouted rather than posted, and argued
+  rather than accepted. The Common Market is what the
+  Merchant Quarter's covered hall would be if you stripped
+  out the roof, the fixed stalls, and the assumption that
+  a price once named was a price once accepted — what you
+  get instead is a compact press of
+  <ansi fg="itemname">barrow-stalls</ansi> pushed into
+  whatever space the morning's jostling has settled on,
+  selling dried fish and cheap cloth and last-season root
+  vegetables and a quantity of items that may have changed
+  hands more than once before arriving here. The
+  <ansi fg="itemname">weighing-beam</ansi> hung from a
+  post near the center is the market's one official
+  fixture, and there is almost always a dispute in progress
+  somewhere in its vicinity — the beam, the weights, and
+  the testimony of whoever was standing nearest all being
+  interpreted differently by different parties.
+biome: city
+coord:
+  x: -15
+  y: 83
+  z: 0
+exits:
+  south:
+    roomid: 5601
+  east:
+    roomid: 5605
+  north:
+    roomid: 5609
+  west:
+    roomid: 5606
+nouns:
+  barrow-stalls: Handcarts converted to selling-platforms
+    — boards laid across the cart-bed, goods arranged on
+    them, the vendor standing behind or beside. They cluster
+    and separate through the day as new vendors arrive and
+    others pack up, so the market's layout at noon looks
+    nothing like it did at dawn. Most vendors know their
+    neighbors' prices and shout corrections freely. The
+    lane behind the densest cluster smells strongly of
+    smoked fish.
+  weighing-beam: A simple steelyard on a forged hook, hung
+    from an iron post set into the cobbles with enough
+    permanence that the post is the oldest thing in the
+    market. The beam itself has been replaced twice; the
+    counterweight is a cylinder of worn iron whose markings
+    have been questioned in public at regular intervals for
+    as long as anyone can remember. There is currently a
+    disagreement in progress about whether a measure of
+    dried beans weighed correctly this morning or did not,
+    and both parties have witnesses.
+idlemessages:
+- A vendor shouts a price. A customer shouts back. The
+  vendor comes down a little. The customer comes up a
+  little. A deal is made with theatrical reluctance on
+  both sides.
+- Someone works a barrow into a new position, nudging
+  their neighbor's cart by six inches, which prompts a
+  separate negotiation about the six inches.
+- A child weaves between the stalls carrying a message
+  or possibly just weaving between the stalls for the
+  pleasure of it.
+- The smell of smoked fish surges whenever someone
+  opens a wrapped bundle in its vicinity.
+- At the weighing-beam, a dispute concludes with a
+  handshake that seems to satisfy neither party but
+  satisfies both of them enough.
+spawninfo:
+  - mobid: 9328
+    respawnrate: "10 real minutes"

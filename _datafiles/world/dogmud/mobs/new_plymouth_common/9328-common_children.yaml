@@ -1,0 +1,47 @@
+mobid: 9328
+zone: New Plymouth Common
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 22
+maxwander: 2
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote darts between two adults at the well, narrowly avoiding a full
+    bucket, and is gone around the corner before anyone can say anything
+    about it.'
+  - ''
+  - 'emote stops abruptly and argues loudly with another child about the
+    rules for a game that may or may not exist, then resumes at full speed.'
+  - ''
+  - 'emote crouches at the base of the well-drum and examines something
+    in the gutter with intense, brief scientific interest before losing
+    interest entirely and running after the others.'
+  - ''
+  - 'emote passes through at speed, the one at the back of the pack —
+    the small one with pale sky-blue eyes, brighter when running, dimmer
+    when standing still — catching up as usual from three steps behind.'
+activitylevel: 16
+character:
+  name: Common Children
+  description: |
+    A loose pack of children from the streets around Carter's Rise —
+    the number is indeterminate because they shed members and acquire
+    others throughout the day. They run as a unit, dispute as a unit,
+    and investigate anything stationary with a unity of attention that
+    immediately fragments. One of them — the small one at the back who
+    is always slightly behind and always catches up — has eyes the
+    particular pale blue of early sky, and they are brighter when the
+    child is excited and dimmer when standing still, and in the shadow
+    of the well they give off a faint light. The other children find
+    this unremarkable. It has always been how that child's eyes work.
+  speciesid: 1
+  level: 1
+  gold: 2
+  stats:
+    dexterity:
+      training: 14
+    perception:
+      training: 6

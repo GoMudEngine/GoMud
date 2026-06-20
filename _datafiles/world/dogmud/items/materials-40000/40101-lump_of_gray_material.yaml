@@ -1,0 +1,14 @@
+itemid: 40101
+name: Lump of Gray Material
+not_salable: true
+namesimple: lump
+description: A fist-sized lump of the gray material -- not stone, not metal,
+  smooth and unnaturally cold, far heavier than its size has any right to
+  be. It was part of a seam running through pre-Founding stonework buried
+  beneath the Common Quarter -- the same stuff Coll the sweeper keeps
+  turning up in fragments in the gutters. The old bookseller on the
+  Inkwalk, they say, went very quiet when he was shown a piece of it.
+type: object
+subtype: mundane
+weight: 1.0
+value: 0

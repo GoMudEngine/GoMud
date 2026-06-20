@@ -1,0 +1,49 @@
+id: np_common_coll
+description: "Coll the Sweeper: sweeps Carter's Rise and listens at the well
+  through the day, takes a bowl at the cookshop at midday, then sleeps in
+  his corner near the drain-passage with his hoard of grey fragments."
+segments:
+  - start: 6
+    end: 12
+    target_room: 5602
+    activity: ""
+    idlecommands:
+      - emote draws the broom in a slow circle around the well base, then presses
+        one ear briefly to the coping-stone and listens.
+      - emote crouches at the drain-cover, picks a grey fragment from the gutter
+        with two fingers — examines it — and pockets it without a word.
+      - say The well's busiest hour, and I've been here for all of them. More
+        than you'd think runs through these stones.
+      - emote works the broom in long methodical strokes, head slightly canted
+        — the listening posture, if you know what to look for.
+  - start: 12
+    end: 13
+    target_room: 5605
+    activity: ""
+    idlecommands:
+      - emote takes a bowl at the near end of the trestle and eats standing,
+        watching the lane rather than the food.
+      - say Marda's stew. Same pepper, same broth. I know what day it is by
+        what she's added.
+      - emote listens to the cookshop noise — scrape of the pot, the door,
+        voices over voices — and files it all without appearing to.
+  - start: 13
+    end: 20
+    target_room: 5602
+    activity: ""
+    idlecommands:
+      - say Afternoon crowd's different from the morning. Different business,
+        different weight to their feet.
+      - emote leans on the broom handle and tilts his head — a long angle,
+        as if attending to something running below the paving-stones.
+      - emote finds another grey fragment in the afternoon run-off, holds it
+        between two fingers, pockets it without change of expression.
+      - say I've heard that particular crack in the well wall getting wider
+        for six months. City hasn't patched it. Someone should mark it down.
+  - start: 20
+    end: 6
+    target_room: 5618
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in his corner above the drain-passage, the tin of grey
+        fragments on the shelf beside his head.
