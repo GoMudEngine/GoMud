@@ -1,0 +1,44 @@
+id: np_docks_jesset
+description: "Foreman Jesset: works the Long Quay through the day, takes a
+  bowl at the cookshop midday, stops by the Salt Cellar at dusk, sleeps
+  in the room above his hiring office."
+segments:
+  - start: 5
+    end: 13
+    target_room: 5503
+    activity: ""
+    idlecommands:
+      - emote runs a thumb down the hiring board and crosses off a filled line.
+      - say You read, you apply, I decide. Same as always.
+      - emote watches a crew swing a cargo net clear and grunts approval.
+      - say Mind the wet planking on the north run. I won't say it twice.
+  - start: 13
+    end: 14
+    target_room: 5516
+    activity: ""
+    idlecommands:
+      - emote takes a bowl standing, eating fast out of long habit.
+      - say Quickest meal on the docks. That's the only review it needs.
+      - emote tips the bowl back, sets it down, and is already half-turned to go.
+  - start: 14
+    end: 19
+    target_room: 5503
+    activity: ""
+    idlecommands:
+      - emote squares a leaning stack of crates with one boot and moves on.
+      - say Afternoon shift. Same rules as the morning shift.
+      - emote scans the quay end to end, counting heads against the board.
+  - start: 19
+    end: 22
+    target_room: 5511
+    activity: ""
+    idlecommands:
+      - emote leans in the Salt Cellar doorway, out of the wind, watching the street.
+      - say A foreman drinks where his crew drinks. Keeps things honest.
+      - emote nods to a passing dockhand and lets the day go off his shoulders.
+  - start: 22
+    end: 5
+    target_room: 5517
+    activity: sleeping
+    idlecommands:
+      - emote sleeps with the strongbox key still on its cord around his neck.

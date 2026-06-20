@@ -1,0 +1,35 @@
+id: np_docks_sable
+description: "Old Sable: minds the pawnshop counter from early morning,
+  takes a meal at the cookshop midday for the gossip as much as the food,
+  returns to the counter through the evening, sleeps above the shop."
+segments:
+  - start: 7
+    end: 13
+    target_room: 5518
+    activity: ""
+    idlecommands:
+      - emote turns an item over once in her hands, sets it on the counter, and chalks a number on a small card without appearing to think about it.
+      - say What it is and what it's worth are two different questions. I answer the second one.
+      - emote holds both palms flat on the counter -- the fine scales across them scatter the light in a brief silver flash -- then draws her hands back to the ledger.
+      - emote withdraws behind the curtain at the shop rear and returns with something that had no place on the shelves and now does.
+  - start: 13
+    end: 14
+    target_room: 5516
+    activity: ""
+    idlecommands:
+      - emote takes a corner table, eats without hurry, and watches whoever comes through the cookshop door before they see her watching.
+      - say People talk at table. I am here for the meal. The rest is incidental.
+  - start: 14
+    end: 21
+    target_room: 5518
+    activity: ""
+    idlecommands:
+      - emote adjusts the brass scales on the counter to level with a single touch and then checks the ledger without acknowledging the adjustment.
+      - say A thing that arrives twice gets a pattern. Patterns are worth more than the thing.
+      - emote prices a small bundle without opening it, sets it on the shelf at the back, and notes it in the ledger in one motion.
+  - start: 21
+    end: 7
+    target_room: 5518
+    activity: sleeping
+    idlecommands:
+      - emote sleeps above the shop, the ledger and the scales at rest on their shelf below.

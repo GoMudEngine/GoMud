@@ -1,5 +1,6 @@
 mobid: 9311
 zone: New Plymouth Docks
+schedule_id: np_docks_corra
 craft_support: cooking
 behavior_archetype: noncombat_shopkeeper
 non_combatant: true

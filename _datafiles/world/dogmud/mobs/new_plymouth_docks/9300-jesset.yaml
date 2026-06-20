@@ -1,5 +1,6 @@
 mobid: 9300
 zone: New Plymouth Docks
+schedule_id: np_docks_jesset
 behavior_archetype: noncombat_questgiver
 non_combatant: true
 charm_immune: true
