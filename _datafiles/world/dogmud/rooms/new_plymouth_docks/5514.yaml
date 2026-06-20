@@ -1,0 +1,59 @@
+roomid: 5514
+zone: New Plymouth Docks
+title: Aldric's Public House
+description: >
+  A lodging house that takes horses and charges less than it
+  could for the privilege — which means a yard, a trough,
+  and a man at the gate who neither asks your name nor forgets
+  your face. Aldric's is the kind of establishment that has
+  existed in every port since ports existed — the place that
+  offers a bed and a meal and a studied incuriosity about the
+  people who pass through. The yard opens to the right, where
+  a <ansi fg="horse trough">horse trough</ansi> of painted
+  iron takes up the near wall and the packed earth is soft
+  from years of hooves. Inside, through the low door, the
+  common room centers on a
+  <ansi fg="common table">common table</ansi> scarred with
+  the history of every knife that has ever been set down on
+  it — which is evidently all of them. The keeper's eyes
+  meet yours briefly, find nothing requiring comment, and
+  return to what they were doing. North runs up to the lane;
+  west back to Dock Street.
+biome: city
+coord:
+  x: -17
+  y: 82
+  z: 0
+exits:
+  west:
+    roomid: 5510
+  north:
+    roomid: 5515
+nouns:
+  horse trough: A trough of painted iron, the paint gone
+    grey and peeling in long strips at the waterline but
+    still holding below. Deep enough to satisfy a large
+    horse and wide enough for two at once — a practical
+    thing built for use and maintained to that standard and
+    no further. The water is changed regularly; you can tell
+    by the smell, or rather the absence of one.
+  common table: A table of unknown original wood — resurfaced,
+    cut down, reinforced, and scarred so many times that its
+    origins are immaterial. The current surface holds the
+    marks of meals, arguments, games, and transactions in no
+    particular order. Three chairs sit in the arrangement of
+    people who just left, or will arrive, or have been using
+    this table long enough to have a preferred seat.
+idlemessages:
+- A horse in the yard shifts its weight with the slow
+  patience of an animal that has stood in noisier places.
+- The keeper moves through the room once, straightens
+  something, and returns without comment.
+- From upstairs comes the creak of a floorboard, then
+  quiet — someone up there settling in for the night.
+- A pair of travelers comes in from the yard, their boots
+  loud on the threshold, and find the corner without
+  being told it is available.
+- The smell of the yard drifts in through the open door —
+  horses and hay and the faint undertone of the docks
+  two streets over.

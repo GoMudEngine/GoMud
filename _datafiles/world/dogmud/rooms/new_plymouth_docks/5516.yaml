@@ -1,0 +1,65 @@
+roomid: 5516
+zone: New Plymouth Docks
+title: The Cookshop
+description: >
+  Hot and loud and smelling of the
+  <ansi fg="cookpot">cookpot</ansi> that has been going since
+  before dawn — that dense warm smell of something thick with
+  grain and salt and whatever was available. The cookshop
+  serves the dock-shift meal — fast, cheap, and filling, with
+  no ceremony about it. A wooden counter takes up most of the
+  space, and behind it a broad woman in a stained apron moves
+  with the economy of someone serving their three-hundredth
+  bowl of the day. The
+  <ansi fg="bread tray">bread tray</ansi> on the counter
+  holds a diminishing stack of dock-loaves — the dense, dark
+  kind that takes a morning dip without falling apart — and
+  a ladle rests on the pot-rim with the patient readiness of
+  something that has not been set down in several hours. A
+  transaction happens here every few minutes if you count
+  them, each one quick and unremarkable by design. North
+  leads to the pawnshop; south to the hiring office; east
+  to the Salt Cellar.
+biome: city
+coord:
+  x: -19
+  y: 83
+  z: 0
+exits:
+  north:
+    roomid: 5518
+  south:
+    roomid: 5517
+  east:
+    roomid: 5511
+nouns:
+  cookpot: A cauldron of iron, old enough that the metal
+    has gone dark through to the core — not rust, not soot,
+    just the color of iron that has been hot most of its
+    life. The contents are thick and brown and smell of
+    salted grain, root vegetables, and something that was
+    once a bone and has given everything it had. The ladle
+    resting on the rim has a long handle, worn smooth where
+    it is gripped, and the bowl of it is stained the same
+    particular brown as everything else in this room.
+  bread tray: A wooden tray with a raised edge holding
+    dock-loaves in a diminishing stack — the dense, dark
+    kind baked from coarse flour that does not pretend to
+    be anything else. They are still warm at the center.
+    The tray bears the impressions of a thousand previous
+    loaves along its base, compressed into a permanent
+    record of all the meals served here and not recorded
+    anywhere else.
+idlemessages:
+- The pot bubbles once, slowly, and settles.
+- A dock-hand comes in, receives a bowl without asking
+  for it, pays without counting, and leaves at the same
+  pace they arrived.
+- The woman behind the counter refills the bread tray
+  from a basket below the counter without slowing her
+  other work.
+- The smell from the pot shifts slightly near midday —
+  something has been added, or something has finished
+  cooking.
+- Two people eat standing at the counter, close enough
+  to be talking if they were talking, which they are not.

@@ -1,0 +1,63 @@
+roomid: 5519
+zone: New Plymouth Docks
+title: The Dockworker Tenements
+description: >
+  Four storeys of brick and timber above a narrow street,
+  windows so close together the rooms behind them must be
+  barely wider than the beds they hold. The tenements house
+  the dock-shift workers — the people who make the docks
+  function at the level where no record is kept of their
+  names, only their hours. Evidence of their living is strung
+  between the buildings above you:
+  <ansi fg="washing lines">washing lines</ansi> carry the
+  quarter's laundry overhead in a dense canopy of linen and
+  wool and practical things washed flat. Below, on the
+  building's front step, a worn
+  <ansi fg="stoop">stoop</ansi> holds the usual arrangement
+  of people with nowhere particular to be — off-shift,
+  resting, watching the street with the ease of those who
+  know exactly what is ordinary here. Hard against the
+  tenement's east wall, a blank-faced warehouse presents a
+  barred door and a guard who does not invite conversation.
+  From within comes the sound of heavy machinery, low and
+  rhythmic — not a sound the quarter discusses. South leads
+  back to the Salt Cellar; west to the pawnshop.
+biome: city
+coord:
+  x: -18
+  y: 84
+  z: 0
+exits:
+  south:
+    roomid: 5511
+  west:
+    roomid: 5518
+nouns:
+  washing lines: Hemp lines strung between iron brackets
+    bolted into both buildings at each floor — a permanent
+    infrastructure for the daily laundry of several dozen
+    people. The current load spans everything from work
+    smocks to children's things to one heavy blanket that
+    is taking longer to dry than its owner expected. Water
+    drips from the lowest-hung items in a sporadic pattern
+    that has worn small channels in the cobblestones beneath.
+  stoop: Three broad steps worn hollow at the center from
+    years of use, the stone gone smooth and pale where boots
+    have walked it. Three people currently occupy the stoop
+    in the arrangement of those who are not together but
+    have agreed to share the space — each with their own
+    angle to the street, their own pace of blinking, their
+    own way of not quite watching you arrive.
+idlemessages:
+- Laundry drips from the washing lines overhead in a slow
+  percussion on the cobblestones.
+- Someone on the stoop says something that the others
+  receive without comment — which is also a kind of answer.
+- From the direction of the sealed warehouse comes a deep
+  rhythmic thud — machinery, or something moved by
+  machinery — and then silence.
+- A window opens on the second floor; a face looks out,
+  confirms the hour by some private measure, and withdraws.
+- The guard by the barred warehouse door does not look at
+  you but is aware of you in a way that is professionally
+  managed.

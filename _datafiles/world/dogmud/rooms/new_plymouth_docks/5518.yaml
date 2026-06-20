@@ -1,0 +1,63 @@
+roomid: 5518
+zone: New Plymouth Docks
+title: Old Sable's Pawnshop
+description: >
+  The bell above the door has been silenced — the clapper
+  wrapped in cloth, an old modification — but Old Sable
+  knows when the door opens anyway. The shop is the
+  accumulated record of the docks' bad luck and sudden needs:
+  every surface holds something that was worth keeping until
+  it wasn't, and every item has a price chalked on a small
+  card in a hand that does not vary between high and low
+  value, which is how you know the prices are negotiable.
+  Crowded <ansi fg="shelves">shelves</ansi> line three walls
+  from floor to ceiling — tools, instruments, garments,
+  rope-work, and objects whose original purpose has been
+  obscured by time or separation from their context. On the
+  counter a set of brass
+  <ansi fg="scales">scales</ansi> sits balanced and ready,
+  beside a ledger that is not the same ledger as yesterday's
+  and will not be the same as tomorrow's. Old Sable is
+  present in the way that certain shopkeepers are present —
+  not always visible, but the transaction happens anyway.
+  East to the tenements; south back to the cookshop.
+biome: city
+coord:
+  x: -19
+  y: 84
+  z: 0
+exits:
+  east:
+    roomid: 5519
+  south:
+    roomid: 5516
+nouns:
+  shelves: Three walls of shelving, the boards bowed in the
+    middle from the weight they have held so long. The
+    inventory follows no system a stranger could immediately
+    identify — a coiled rope next to a hand mirror next to a
+    set of wax-sealed pots with no label, then mismatched
+    chisels, then kidskin gloves in a hatbox. Everything has
+    a small chalked card with a price. Everything looks as
+    though someone needed to sell it quickly and has not
+    come back to buy it back.
+  scales: Brass, triple-beam, cleaned recently and kept level
+    on a wedge of cork that compensates for the counter's
+    slight tilt. The weights sit in a compartmented box
+    beside it — a full set, from grain-weights to the heavy
+    pound. They are used for everything here that can be
+    weighed, and some things that strictly cannot.
+idlemessages:
+- The shelves creak once as the building settles.
+  Nothing falls.
+- Old Sable appears briefly at the curtain dividing the shop
+  from the back, confirms something by looking, and retreats.
+- A dock-hand comes in with something wrapped in cloth, sets
+  it on the counter, and begins a conversation already in
+  progress.
+- From the back of the shop comes the sound of something
+  being moved carefully onto a shelf — suggesting it is
+  either very heavy or very fragile.
+- The scales remain balanced. The door-bell clapper remains
+  wrapped. The prices on the cards do not change, though
+  the cards themselves sometimes do.

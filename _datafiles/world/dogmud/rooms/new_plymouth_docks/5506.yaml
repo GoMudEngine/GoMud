@@ -29,6 +29,8 @@ exits:
     roomid: 5505
   east:
     roomid: 5507
+  north:
+    roomid: 5510
 nouns:
   parked wagon: A heavy-framed freight wagon with iron-rimmed wheels
     worn flat on the inner face from hard use on stone roads. The

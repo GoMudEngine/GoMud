@@ -1,0 +1,62 @@
+roomid: 5517
+zone: New Plymouth Docks
+title: Jesset's Hiring Office
+description: >
+  A ground-floor office with the door kept open and the light
+  kept on — the dock foreman's operation runs before dawn and
+  the door is never locked during working hours, which are
+  most of them. The room is small and purposeful — a desk, a
+  stool, and the
+  <ansi fg="job ledger">job ledger</ansi> laid open to the
+  current page, the day's hires tallied in a dense, legible
+  hand. In the corner an iron
+  <ansi fg="strongbox">strongbox</ansi> sits bolt-anchored to
+  the floorboards — the heaviest thing in the room by the
+  way the boards sit around it. The foreman, Jesset, is large
+  and weathered, with a handshake people do not forget — an
+  extra joint in each finger, which gives his grip an uncanny
+  range. He takes on day labor here each morning and settles
+  accounts each evening. Everything in between is recorded
+  in the ledger with a precision that does not require a tidy
+  hand to be legible. North leads to the cookshop; east to
+  Dock Street.
+biome: city
+coord:
+  x: -19
+  y: 82
+  z: 0
+exits:
+  north:
+    roomid: 5516
+  east:
+    roomid: 5510
+nouns:
+  job ledger: A thick-spined book, the current volume in a
+    series that lines a shelf above the desk. The open page
+    shows today's entries in a dense, consistent hand —
+    names or initials, tasks, hours, marks paid. Some entries
+    have a small check beside them; others have a dash. Two
+    names are crossed through. The margins hold running
+    tallies, summed twice, the second sum beside the first
+    where they agree and written over it where they did not.
+  strongbox: An iron box, bolt-anchored to the floor through
+    a plate itself anchored through the boards — a commitment
+    to permanence that the rest of the room does not make.
+    The hinges are heavy and external, the lock a double-turn
+    mechanism of the kind made in the Crafting Quarter a
+    generation ago. The box is large enough to hold a week's
+    payroll, which is generally what it does.
+idlemessages:
+- From above the office comes the sound of boots on bare
+  floorboards — someone moving through the rooms above.
+- The ledger's pages are held open by a river stone that
+  has been used as a paperweight long enough to leave a
+  permanent impression in the binding.
+- A dock-hand appears in the doorway, states a name and a
+  number, and is answered with a nod and a mark in the
+  ledger before leaving.
+- The strongbox does not move or make any sound.
+  It does not need to.
+- From the street outside comes the ordinary sound of the
+  dock morning — carts, voices, the distant creak of rope
+  under load.

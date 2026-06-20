@@ -1,0 +1,61 @@
+roomid: 5512
+zone: New Plymouth Docks
+title: The Salt Cellar Taproom
+description: >
+  Low beams and the particular dim of a room that has been
+  lit by tallow and driftwood long enough that the walls
+  have a permanent warm-grey cast, like parchment held near
+  a candle. The taproom is loud in the way of rooms that are
+  often full — even half-empty it holds its noise, as if the
+  sound has soaked into the wood and gives it back. A long
+  <ansi fg="bar">bar</ansi> runs most of the south wall, its
+  surface ringed so thoroughly with mug-marks that the rings
+  have become the finish. Behind it the barkeep moves with
+  the economy of someone who has done this exact sequence of
+  motions for many years. In the north corner the
+  <ansi fg="hearth">hearth</ansi> holds a driftwood fire
+  that burns with an odd green-blue flicker where the salt
+  in the wood catches — it is warm, and strange, and nobody
+  in the room seems to notice the colors anymore. The way
+  out is behind you; stairs lead up to the rooms.
+biome: city
+coord:
+  x: -21
+  y: 83
+  z: 0
+exits:
+  out:
+    roomid: 5511
+  up:
+    roomid: 5513
+nouns:
+  bar: A plank of timber four inches thick, set on barrels,
+    sanded and oiled so many times it would take a chisel
+    to confirm what wood it started as. The rings of
+    mug-bottoms overlap so completely they form their own
+    pattern, like growth rings in a felled tree. Three mugs
+    currently sit on it, two empty and one not. The wood
+    around the serving gap is worn lower than the rest —
+    the place where hands have rested most, over the most
+    years.
+  hearth: A stone fireplace wide enough to stand in, burning
+    a mix of driftwood and coal that has apparently been
+    fed for a very long time — the hearthstones are black
+    with the particular layered black that is not soot and
+    not dirt. The driftwood gives off a green-blue flicker
+    where the salt in it burns. Nobody in the taproom looks
+    toward it when it does this. Whether they do not notice
+    or have simply stopped remarking on it is unclear.
+idlemessages:
+- Someone near the bar makes a point at length; the person
+  next to them nods without looking up from their mug.
+- The driftwood in the hearth pops once, green-blue, and
+  nobody turns their head.
+- A round of something is called for from a corner table;
+  the barkeep acknowledges with a raised hand and does not
+  rush.
+- The low beam nearest the stairs has been signed or
+  scratched or marked in so many hands it is no longer
+  possible to read any of them individually.
+- From upstairs comes the sound of someone settling onto a
+  cot — a creak, a sigh, and then quiet.
