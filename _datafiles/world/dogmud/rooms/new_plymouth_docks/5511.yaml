@@ -16,8 +16,9 @@ description: >
   <ansi fg="itemname">door lantern</ansi> hangs from an
   iron bracket to the right of the entrance, guttering
   inside its glass in a way that somehow never goes out.
-  Enter to go inside; north leads deeper into the quarter,
-  west to the cookshop, south back to Dock Street.
+  Stairs lead down to the taproom and up to the lodging;
+  north leads deeper into the quarter, west to the cookshop,
+  south back to Dock Street.
 biome: city
 coord:
   x: -18
@@ -30,8 +31,10 @@ exits:
     roomid: 5519
   west:
     roomid: 5516
-  enter:
+  down:
     roomid: 5512
+  up:
+    roomid: 5513
 nouns:
   tavern sign: A salt-cellar — the small covered vessel for
     table salt — painted in faded ochre on a panel of grey

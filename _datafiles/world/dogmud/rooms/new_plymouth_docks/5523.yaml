@@ -18,7 +18,7 @@ description: >
   visible over a canal cut — a span connecting this quarter's edge
   to the Crafting Quarter beyond. The far approach is closed off;
   what lies that way is not yet reachable. South returns to the
-  outer lane; enter to go further inside.
+  outer lane; a stair leads down behind the cupboard door.
 biome: city
 coord:
   x: -18
@@ -27,7 +27,7 @@ coord:
 exits:
   south:
     roomid: 5522
-  enter:
+  down:
     roomid: 5524
 nouns:
   remnant bolts: Bins of cut-end cloth in a range of weights and

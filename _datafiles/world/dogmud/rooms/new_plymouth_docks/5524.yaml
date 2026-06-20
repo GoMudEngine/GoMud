@@ -15,14 +15,14 @@ description: >
   of the adjoining building sits very close; sounds come through
   it in fragments — half-conversations, the scrape of furniture,
   things not meant to cross but that old stonework does not know
-  how to stop. The only way out is back through the door.
+  how to stop. The only way out is back up the stair to the shop.
 biome: city
 coord:
-  x: -21
-  y: 85
-  z: 0
+  x: -18
+  y: 86
+  z: -1
 exits:
-  out:
+  up:
     roomid: 5523
 nouns:
   wax-sealed crates: Wooden crates of two or three sizes, each

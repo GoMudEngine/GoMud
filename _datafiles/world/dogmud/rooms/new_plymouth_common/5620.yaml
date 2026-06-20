@@ -17,14 +17,15 @@ description: >
   <ansi fg="itemname">unlabeled jars</ansi> — stoppered
   clay and green glass and one of clear — all without
   markings, all evidently known by smell and position.
-  No questions are asked here. The door is behind you.
+  No questions are asked here. The curtained door leads
+  back out to the alley, south.
 biome: city
 coord:
-  x: -10
-  y: 86
+  x: -14
+  y: 88
   z: 0
 exits:
-  out:
+  south:
     roomid: 5619
 nouns:
   cot: A narrow rope-frame cot with a straw-filled

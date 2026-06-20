@@ -19,7 +19,8 @@ description: >
   that have braced against it, and the doorstep is lower
   than the street by an inch — either the street rose or
   the building settled, and the distinction has been
-  forgiven by both parties. Enter to go inside.
+  forgiven by both parties. The taproom lies down a few
+  steps through the doorway.
 biome: city
 coord:
   x: -16
@@ -32,7 +33,7 @@ exits:
     roomid: 5604
   north:
     roomid: 5608
-  enter:
+  down:
     roomid: 5607
 nouns:
   bowl sign: A painted board — a bowl of turned wood in

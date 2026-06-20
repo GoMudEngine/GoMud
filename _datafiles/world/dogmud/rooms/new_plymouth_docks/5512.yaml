@@ -16,18 +16,16 @@ description: >
   <ansi fg="itemname">hearth</ansi> holds a driftwood fire
   that burns with an odd green-blue flicker where the salt
   in the wood catches — it is warm, and strange, and nobody
-  in the room seems to notice the colors anymore. The way
-  out is behind you; stairs lead up to the rooms.
+  in the room seems to notice the colors anymore. Stairs
+  lead back up to the street door.
 biome: city
 coord:
-  x: -21
+  x: -18
   y: 83
-  z: 0
+  z: -1
 exits:
-  out:
-    roomid: 5511
   up:
-    roomid: 5513
+    roomid: 5511
 nouns:
   bar: A plank of timber four inches thick, set on barrels,
     sanded and oiled so many times it would take a chisel

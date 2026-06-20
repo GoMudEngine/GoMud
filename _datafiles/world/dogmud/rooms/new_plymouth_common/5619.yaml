@@ -9,7 +9,7 @@ description: >
   have run out of other options — and someone has
   anticipated this. A
   <ansi fg="itemname">curtained door</ansi> breaks
-  the left-hand wall, a healer's mark chalked in a
+  the north wall, a healer's mark chalked in a
   small careful circle beside the frame — the sign
   that whoever is inside does not ask where you have
   been or what put you in this condition. Above the
@@ -28,7 +28,7 @@ coord:
 exits:
   west:
     roomid: 5618
-  enter:
+  north:
     roomid: 5620
   east:
     roomid: 5621

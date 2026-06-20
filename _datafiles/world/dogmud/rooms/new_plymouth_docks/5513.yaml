@@ -16,15 +16,15 @@ description: >
   bracket, cracked along one side and sealed with a line of
   grey wax that holds well enough. The water in it is from
   this morning or possibly yesterday; it is hard to say.
-  The stairs go back down to the taproom.
+  The stairs go back down to the street door.
 biome: city
 coord:
-  x: -21
-  y: 84
-  z: 0
+  x: -18
+  y: 83
+  z: 1
 exits:
   down:
-    roomid: 5512
+    roomid: 5511
 nouns:
   cots: Three rope-frame cots at the corridor's end, each
     with a folded blanket and a thin ticking mattress that

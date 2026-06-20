@@ -17,15 +17,15 @@ description: >
   pale wood on two barrels, its surface ringed from edge
   to edge with the ghost-marks of cups going back years.
   The barkeep works it at a pace that suggests she has
-  never once been surprised by demand. Exit leads back
-  outside.
+  never once been surprised by demand. Steps lead back up to
+  the street door.
 biome: city
 coord:
-  x: -11
-  y: 82
-  z: 0
+  x: -16
+  y: 83
+  z: -1
 exits:
-  out:
+  up:
     roomid: 5606
 nouns:
   benches: Long planks on trestle-legs, worn smooth at
