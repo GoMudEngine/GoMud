@@ -1,0 +1,56 @@
+roomid: 5527
+zone: New Plymouth Docks
+title: The Tar Yard
+description: >
+  The smell announces the yard before the entrance does — hot tar
+  and hemp and the resinous warmth of cordage that has been baking
+  in the sun, a compound that sits on the skin and takes its time
+  leaving. Two cast-iron <ansi fg="tar kettles">tar kettles</ansi>
+  squat on fire-clay stands at the yard's center, their surfaces
+  moving with the slow thick bubbles of material kept just below
+  working temperature. Beyond them a frame of lashed poles carries
+  the current batch of <ansi fg="drying nets">drying nets</ansi>
+  spread wide for treatment — the mesh black with fresh tar, stiff
+  and crackling at the edges where it has set. Workers pass through
+  without particular urgency; this is repetitive work and has long
+  since found its own pace. East leads back to the outer lane;
+  north to the customs shed; west to the wharf steps.
+biome: city
+coord:
+  x: -19
+  y: 85
+  z: 0
+exits:
+  east:
+    roomid: 5522
+  north:
+    roomid: 5528
+  west:
+    roomid: 5529
+nouns:
+  tar kettles: Two wide-bellied iron kettles, each on a raised
+    stand of fire-clay brick with a slow coal fire beneath. The
+    tar inside moves in long lazy bubbles that surface and close
+    without haste — the material is kept at temperature, not
+    brought to a boil. The kettles are old enough to have acquired
+    a permanent black haze on their outer surfaces that no cleaning
+    touches. The heat coming off them is significant; you stand
+    close only as long as you need to.
+  drying nets: Fishing nets strung on a frame of lashed poles
+    and spread wide, each mesh coated in fresh tar that is still
+    tacky at the center and set hard at the edges where it dried
+    first. The tar smell is strongest here, up close — not
+    unpleasant exactly, but emphatic. The nets are treated in
+    rotation; these are fresh from the kettle and will be down
+    by morning, replaced by the next batch.
+idlemessages:
+- A slow bubble surfaces in the nearer tar kettle and closes
+  without sound, leaving a brief flat circle on the surface.
+- The tar smell intensifies on a shift of wind from the yard's
+  center and then settles back to its background level.
+- A yard-worker moves from the frame to the kettle with a
+  long-handled brush and the focused calm of habitual work.
+- The drying nets crackle faintly as the tar continues to set
+  at the edges — a dry sound, like pages turning quickly.
+- From the wharf steps to the west, harbor sound carries into
+  the yard on an updraft and then drops away.

@@ -16,8 +16,9 @@ description: >
   of dark timber, the waterline slapping at the stone in a rhythm
   that sounds different down here, lower and more patient, as if
   the river has a different voice when there is a ceiling over it.
-  The passage continues into the dark beyond what the stair
-  reveals. You do not go that way. Not yet.
+  The passage continues down into the dark beyond what the stair
+  reveals — into the underdocks, where the pilings meet the water
+  and the dock keeps what it would rather not show the daylight.
 biome: city
 coord:
   x: -20
@@ -28,6 +29,8 @@ exits:
     roomid: 5508
   east:
     roomid: 5504
+  down:
+    roomid: 5520
 nouns:
   slick steps: Stone steps carved from the same grey-brown bedrock
     as the old piling foundations — you can see the chisel-marks

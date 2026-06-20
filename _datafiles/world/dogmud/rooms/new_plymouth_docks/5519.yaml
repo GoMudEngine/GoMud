@@ -21,7 +21,8 @@ description: >
   barred door and a guard who does not invite conversation.
   From within comes the sound of heavy machinery, low and
   rhythmic — not a sound the quarter discusses. South leads
-  back to the Salt Cellar; west to the pawnshop.
+  back to the Salt Cellar; west to the pawnshop; north the
+  street gives out at the ward's frayed outer edge.
 biome: city
 coord:
   x: -18
@@ -32,6 +33,8 @@ exits:
     roomid: 5511
   west:
     roomid: 5518
+  north:
+    roomid: 5522
 nouns:
   washing lines: Hemp lines strung between iron brackets
     bolted into both buildings at each floor — a permanent

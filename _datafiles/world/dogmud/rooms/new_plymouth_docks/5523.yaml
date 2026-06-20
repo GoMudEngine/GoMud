@@ -1,0 +1,61 @@
+roomid: 5523
+zone: New Plymouth Docks
+title: Marn's Fabric-Remnants Shop
+description: >
+  A narrow shop, the kind that has occupied this slot in the
+  building-line long enough you would not think to notice it —
+  cut-rate cloth ends, a smell of unfinished textile and old
+  wood, a proprietor who does not press you to stay. The front
+  tables hold bins of <ansi fg="remnant bolts">remnant bolts</ansi>
+  — ends and offcuts in practical weights, cheap because they are
+  what is left when the useful part has been used, and still worth
+  buying if you know what you need. At the back wall, past the
+  shelving, a <ansi fg="cupboard door">cupboard door</ansi> stands
+  half in shadow. The shelves around it carry the ordinary stock
+  of a fabric shop; the door itself carries the evidence of hands
+  that have worked the latch many more times than restocking
+  shelves would require. To the north a low stone footbridge is
+  visible over a canal cut — a span connecting this quarter's edge
+  to the Crafting Quarter beyond. The far approach is closed off;
+  what lies that way is not yet reachable. South returns to the
+  outer lane; enter to go further inside.
+biome: city
+coord:
+  x: -18
+  y: 86
+  z: 0
+exits:
+  south:
+    roomid: 5522
+  enter:
+    roomid: 5524
+nouns:
+  remnant bolts: Bins of cut-end cloth in a range of weights and
+    colors, none of them particularly fashionable and all priced
+    accordingly. Wool homespun in grey and brown. A length of
+    canvas too short for sail-use. Several pieces of linen once
+    dyed indigo and faded to something quieter. The cloth is
+    honestly described by its price — not quite useful enough to
+    have been kept, not quite useless enough to throw away.
+    Someone has been through the front bin recently; the edges
+    of the pile are disturbed in a way that suggests hurry.
+  cupboard door: A door set flush into the back wall, plain-
+    fronted and continuous with the shelving on either side —
+    at a glance, a storage cupboard for stock. The latch-plate
+    is worn bright at its working edge in a way that does not
+    match the rest of the room. The hinge side is marked where
+    the door has been opened very many times, a shadow worn into
+    the paint. Whatever is behind it has been accessed more
+    often than shelf-storage requires, by more people than a
+    bolt-count would warrant.
+idlemessages:
+- The shop is quiet — fabric shops usually are — but the quiet
+  here has a quality of attention in it.
+- A customer browses the remnant bins with the focus of someone
+  who knows exactly what they need and has not found it yet.
+- The proprietor straightens a stack of cloth at the front
+  table without looking up or offering assistance.
+- From somewhere behind the back wall, a sound — movement, or
+  a voice kept deliberately low — surfaces briefly and stops.
+- The footbridge to the north catches afternoon light at a
+  particular angle; the far end remains in shadow.

@@ -1,0 +1,56 @@
+roomid: 5529
+zone: New Plymouth Docks
+title: The Wharf Steps
+description: >
+  The steps drop away from the tar yard's noise and deliver you to
+  a narrow ledge above the water — stone, old, with the hollow of
+  generations of sitting worked into the <ansi fg="worn steps">worn
+  steps</ansi> at their midpoint. The dock noise stays above;
+  something about the angle and the building-backs channels it away,
+  and what arrives down here instead is the sound of the harbor —
+  water on stone, a distant call across the anchorage, the creak
+  of a rope under load somewhere to the west. From this ledge the
+  city falls away upward and the harbor opens, and at the right
+  hour the three moons stand over the anchorage in a line, each one
+  doubled in the <ansi fg="harbor water">harbor water</ansi> below —
+  three lights, and three reflections, and the water moving between
+  them without particular interest in the arithmetic. The only way
+  back is east.
+biome: city
+coord:
+  x: -20
+  y: 85
+  z: 0
+exits:
+  east:
+    roomid: 5527
+nouns:
+  worn steps: Stone steps of old construction, the tread at the
+    midpoint hollowed smooth by years of people sitting where you
+    are sitting now — not passing through but stopping, the way
+    you do when a place offers rest and the city does not often
+    offer it. The edges of each step are still angular; only the
+    center has been worn, which says something about how people
+    have chosen to occupy this particular bit of stone over a
+    long time.
+  harbor water: The harbor below the ledge — black at night,
+    grey-green in daylight, but always with that particular
+    quality of harbor water, which is to say water that has been
+    worked and is taking a moment. The three moons double in it
+    at night, their reflections stretched and trembling, each
+    one slightly different from the others because the water
+    does not hold anything still. Something about watching them
+    from here, this low and this close to the water, makes the
+    count of moons feel like a question worth sitting with.
+idlemessages:
+- The harbor water laps the stone below with the small and
+  regular sound of the city's margin at rest.
+- Someone else has been here recently — a scuff in the hollow
+  of the middle step, fresh against the old stone.
+- The three moons, at this hour, are visible over the harbor
+  mouth — each one at a different height in its arc.
+- A vessel somewhere in the anchorage lets out a rope that
+  runs through an iron ring, and the sound arrives here clean
+  and clear across the water.
+- The city noise from above is present but distant — you can
+  hear it without it requiring anything of you.
