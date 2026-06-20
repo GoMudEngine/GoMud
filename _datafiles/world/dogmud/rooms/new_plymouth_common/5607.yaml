@@ -1,0 +1,61 @@
+roomid: 5607
+zone: New Plymouth Common
+title: The Brimming Bowl Taproom
+description: >
+  The noise is the first thing and the constant thing —
+  conversation in layers, the thump of cups on the table,
+  someone near the back conducting an argument at volume
+  that everyone else is ignoring, the squeal of a bench
+  dragged to fit one more. The taproom is full in the way
+  that feels intentional — as though the room was built
+  for exactly this many people and someone fills it to
+  specification each evening. The
+  <ansi fg="itemname">benches</ansi> run the length of
+  three long tables and every spot on them is either
+  occupied or contested. At the far end the
+  <ansi fg="itemname">bar</ansi> is a warped plank of
+  pale wood on two barrels, its surface ringed from edge
+  to edge with the ghost-marks of cups going back years.
+  The barkeep works it at a pace that suggests she has
+  never once been surprised by demand. Exit leads back
+  outside.
+biome: city
+coord:
+  x: -11
+  y: 82
+  z: 0
+exits:
+  out:
+    roomid: 5606
+nouns:
+  benches: Long planks on trestle-legs, worn smooth at
+    the sitting-surface from consistent use. The bench
+    nearest the door has a crack running its length that
+    has been there long enough to become familiar — people
+    who have sat here before remember it, choose their spot
+    around it, or don't bother. Every available length of
+    bench currently holds someone, and the table above
+    them holds cups and plates and the occasional elbow
+    used as a conversational prop. It smells of old wood
+    and beer and the tallow candles guttering in their
+    iron dishes overhead.
+  bar: The bar is a single plank of pale wood, warped
+    slightly in the center from years of wet cups set down
+    on it. The surface is covered in ring-marks — pale
+    circles overlapping from edge to edge, a map of every
+    drink ever set down here and lifted again. The barkeep
+    keeps two pitchers and a row of cups on the near end
+    and moves between them with the efficiency of someone
+    who has optimized this exact motion over many years.
+    She does not ask what you want. She reads the room.
+idlemessages:
+- Someone at the far table makes a point, brings their
+  cup down for emphasis, and the table laughs.
+- A new group arrives; the bench negotiation is brief
+  and successful.
+- The noise briefly plateaus when the barkeep calls
+  something out, then rises again above where it was.
+- Two men near the bar conduct an argument so familiar
+  they finish each other's objections and continue anyway.
+- Tallow-candle smoke drifts in a slow layer at head
+  height, adding its note to the dense, warm air.

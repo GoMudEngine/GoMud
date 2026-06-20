@@ -1,0 +1,67 @@
+roomid: 5612
+zone: New Plymouth Common
+title: Upper Common Way
+description: >
+  The street rises here and the buildings straighten with
+  it — the same tenement lean of the lower Common, but more
+  deliberate, the stonework pointed more recently, the
+  window-glass actual glass rather than oiled cloth. The
+  quarter thins out as it climbs. The crowds belong to the
+  Rise and the market below; up here foot-traffic moves with
+  more purpose and less company. A
+  <ansi fg="itemname">ward-post</ansi> set into the corner
+  marks the upper boundary of the Common's jurisdiction
+  — painted in the ward's faded colors, its placard listing
+  the ward officer's name and a declaration of weights and
+  measures that seems aspirational. Worn into the center
+  of the rise, a
+  <ansi fg="itemname">handcart track</ansi> cuts two pale
+  parallel lines in the cobblestones — years of carts
+  bringing goods down from the Merchant Quarter above. The
+  road continues north, the buildings growing more careful
+  as they climb, the Merchant Quarter visible and climbing
+  beyond — but that passage is not yet open.
+biome: city
+coord:
+  x: -14
+  y: 85
+  z: 0
+exits:
+  south:
+    roomid: 5610
+nouns:
+  ward-post: A squared timber post sunk into the corner
+    paving, its top carved with the ward seal in low relief
+    — a wheel and a key, which is either deeply symbolic
+    or was chosen by a committee that ran out of ideas.
+    The post's painted colors — dark red and cream — have
+    faded to something more nuanced. The placard below
+    the seal lists the ward officer and a brief declaration
+    of standards that the ward officer may or may not be
+    aware of. Someone has hung a dried bunch of herbs from
+    the post's upper bracket for no apparent reason, and
+    it has been there long enough to be considered part
+    of the fixture.
+  handcart track: Two pale lines worn into the cobbles by
+    generations of cart-wheels descending from the market
+    above — the weight pressing down on the same path
+    until stone itself gave way a little. The tracks are
+    visible from twenty feet away if you know to look,
+    and invisible if you don't, which is how most things
+    in the Common work. They run from the north and curve
+    slightly at the crest of the rise where the grade
+    changes and drivers lean back on the handles.
+idlemessages:
+- A handcart comes down from above, wheels squealing
+  slightly, driver leaning back against the grade.
+- The noise of the lower Common carries up here on the
+  right wind — someone at the market, a hammer from the
+  lane below.
+- A merchant's agent passes through heading downhill
+  with a quick step, not looking at anything but the
+  street ahead.
+- The ward-post catches a crosswind briefly, the dried
+  herbs on its bracket rattling once, then still.
+- Up the road the buildings become more regular — more
+  dressed stone, less character — and the quarter you
+  are in becomes, gradually, another one.

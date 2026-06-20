@@ -1,0 +1,68 @@
+roomid: 5603
+zone: New Plymouth Common
+title: The Flower Market
+description: >
+  The smell reaches you before the stalls do — green
+  water and crushed stems and the sweetness of flowers
+  that were cut this morning, cut in someone's garden or
+  a plot outside the walls, and are now arranged in
+  dripping wooden buckets along both sides of the lane.
+  The
+  <ansi fg="itemname">cut flowers</ansi> run the full
+  range of what the season allows — daisy-bundles tied
+  with rush, waxy-petalled things in deep red, stems of
+  something small and yellow whose name the vendor will
+  tell you if you ask and has told you before and you
+  have forgotten. At the lane's foot, where the foot
+  traffic is heaviest off the Rise, a fortune-teller
+  has claimed a corner with a folded cloth and a box
+  for a seat, and the
+  <ansi fg="itemname">reading-mat</ansi> spread on the
+  cobbles before them is worn to threads at the center
+  from the boots of people considering their futures.
+biome: city
+coord:
+  x: -13
+  y: 82
+  z: 0
+exits:
+  west:
+    roomid: 5602
+  north:
+    roomid: 5611
+nouns:
+  cut flowers: Bucket after bucket of stems cut this
+    morning — field flowers mostly, the kind grown in
+    strips along wall-edges and market-garden borders,
+    but arranged with a care that makes them look
+    deliberate. Some have been bundled for carrying;
+    others stand loose in the water. The vendor works
+    the stall with the economy of someone who has done
+    this exact thing every day for a long time and has
+    made their peace with how fast it goes. There is
+    mud still on several stems from the morning's cutting.
+  reading-mat: A rectangle of dyed cloth spread on the
+    cobblestones, its center faded to nothing by feet
+    and years. The fortune-teller sits behind it on an
+    upended crate with a box of small flat stones arranged
+    to one side. The mat bears an embroidered border
+    that was once elaborate and is now simply old. Several
+    people have left small coins on the edge of the cloth.
+    The fortune-teller does not acknowledge you until you
+    step onto the mat, and then looks up with an expression
+    of unsurprised interest.
+idlemessages:
+- A woman picks up a bundle of yellow stems, considers
+  them a moment, and sets them back. Then picks them
+  up again.
+- The fortune-teller turns a flat stone over in their
+  palm and says something to a waiting customer that
+  makes the customer go quiet and think.
+- A vendor refills a bucket from a hand-barrel, the
+  flower-water running in a pale stream across the
+  cobbles.
+- Two girls pass through quickly — not buying, just
+  passing — and both slow briefly at the scent.
+- From the direction of the Rise, the sound of the well
+  queue arguing floats down the lane, briefly, then
+  fades.

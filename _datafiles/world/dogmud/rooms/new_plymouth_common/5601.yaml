@@ -1,0 +1,63 @@
+roomid: 5601
+zone: New Plymouth Common
+title: Lower Common Way
+description: >
+  Something is always cooking on Lower Common Way —
+  the smell layers itself, pot-herbs above woodsmoke
+  above the sour damp of old stone, and somewhere above
+  that the sharp clean note of lye-soap drying on a sill.
+  The street climbs gradually east toward the Rise, wide
+  enough for a handcart, never quite wide enough for two
+  carts at once, and the buildings on either side have
+  long since made peace with each other by leaning slightly
+  inward at the upper stories. A
+  <ansi fg="itemname">gutter-channel</ansi> runs down
+  the center of the cobbles carrying whatever the morning
+  brought, and the
+  <ansi fg="itemname">doorstoops</ansi> on both sides are
+  worn hollow and occupied — people sitting, watching,
+  mending things, exchanging words with whoever passes.
+  Life is lived here as much as inside.
+biome: city
+coord:
+  x: -15
+  y: 82
+  z: 0
+exits:
+  west:
+    roomid: 5600
+  east:
+    roomid: 5602
+  north:
+    roomid: 5604
+nouns:
+  gutter-channel: A shallow stone channel running down the
+    center of the street, old enough that the cobbles on
+    either side have settled into a permanent slight lean
+    toward it. It carries what the morning discards — gray
+    rinse-water, cabbage leaves, the occasional thing that
+    has fallen off a cart and been found not worth retrieving.
+    At the lowest point a child has left a paper boat wedged
+    against a raised stone; it has been there long enough
+    to be entirely illegible.
+  doorstoops: The stoops vary — some are two steps of good
+    stone, some a single cracked slab, some a painted board
+    nailed over bare earth — but they are all in use. An old
+    man sorts dried beans on one. A woman nurses a child on
+    another, speaking through the open door to someone
+    inside. A boy sits on a third with his feet in the
+    gutter, doing nothing, in the expert way of children
+    who are actually doing a great many things internally.
+idlemessages:
+- The gutter-channel runs faster for a moment as someone
+  above empties a basin into it, then settles back to its
+  usual pace.
+- Two women on neighboring stoops carry on a conversation
+  that seems to require no pauses and no agreement.
+- A cat moves along the upper window ledges with the focused
+  air of one who has appointments.
+- The smell of frying onions wins out briefly over everything
+  else, then retreats.
+- Someone upstairs sets a pot down hard enough to rattle
+  the window above; a voice follows, irritated, muffled
+  by the stone.

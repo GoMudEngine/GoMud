@@ -1,0 +1,65 @@
+roomid: 5611
+zone: New Plymouth Common
+title: The Common Shrine
+description: >
+  The quarter does not get quiet. But here, tucked into
+  the angle where the cook-lane meets the flower market,
+  there is something that passes for it — a slowing of
+  foot-traffic, a drop in the general volume, as though
+  the street agrees this particular corner does not want
+  shouting. The Chrysalis street-shrine is built into the
+  wall of the corner building — a niche cut in old stone,
+  a carved shell-and-spiral worn to a smoothness that
+  softens rather than erases it, and a brass
+  <ansi fg="itemname">offering bowl</ansi> at the niche's
+  base, its rim dark from hands and its interior holding a
+  few petals from the flower stalls and a scattered handful
+  of small coins. The
+  <ansi fg="itemname">worn step</ansi> before the niche
+  is lower than the surrounding cobbles — sunk, over years,
+  by people stopping here for a moment that probably
+  needed it.
+biome: city
+coord:
+  x: -13
+  y: 83
+  z: 0
+exits:
+  west:
+    roomid: 5605
+  south:
+    roomid: 5603
+nouns:
+  offering bowl: A shallow brass bowl on a stone shelf in
+    the niche, its surface patinated dark from years of
+    handling and weather. Inside it today — three copper
+    coins, a wilted marigold from the flower stalls, and
+    a folded slip of paper that someone has left and that
+    it would not be right to unfold. The bowl's rim is
+    noticeably smooth at two points where hands have
+    rested, or gripped, or simply touched the same spot
+    long enough to polish it.
+  worn step: A single raised stone before the shrine niche,
+    sunk into the lane's surface by a good inch — not
+    through neglect but through use. The people of the
+    Common do not make a ceremony of stopping here. They
+    stop, briefly, for various reasons that are their own,
+    and move on. The stone records all of it in the
+    slight hollow of its center, too gradual to see year
+    by year, visible now to anyone who looks.
+idlemessages:
+- A woman stops at the shrine, touches the rim of the
+  offering bowl with two fingers, and continues on
+  without breaking pace.
+- Someone leaves a flower from the market in the bowl
+  — a stem of something small and yellow — and is already
+  gone around the corner.
+- The noise of the cook-lane is audible from here but
+  muffled, as though the corner itself absorbs a little
+  of it.
+- A child stops to look at the spiral carved in the stone,
+  traces it with one finger, and is retrieved by a parent
+  from around the corner.
+- Two people pass through together, one touching the
+  bowl's rim, one not, and neither remarking on the
+  difference.

@@ -1,0 +1,71 @@
+roomid: 5608
+zone: New Plymouth Common
+title: The Public Cistern
+description: >
+  The damp reaches you before the door does — a cold
+  mineral smell mixed with lye-soap and the particular
+  scent of fabric that has been wet and is becoming dry,
+  which is never quite like either state. The cistern
+  building is low and wide, open at the front, a
+  corrugated clay-tile roof over the collection basin
+  the city runs off the upper rooftops when it rains.
+  The
+  <ansi fg="itemname">cistern lid</ansi> is a hinged
+  plank of seasoned timber fitted with an iron ring, and
+  beside it hangs a long-handled iron dipper worn bright
+  at the bowl. A rank of
+  <ansi fg="itemname">washboards</ansi> occupies the
+  outer wall — a dozen of them, different sizes, rigged
+  over a trough of standing water — and at this hour most
+  of them are occupied, the sound of wet cloth slapping
+  stone underlining everything else anyone says here.
+  The cistern is the quarter's other gathering point —
+  the one where the conversation is horizontal and the
+  work never stops.
+biome: city
+coord:
+  x: -16
+  y: 84
+  z: 0
+exits:
+  south:
+    roomid: 5606
+  east:
+    roomid: 5609
+nouns:
+  cistern lid: A heavy timber lid, iron-hinged on one
+    side and iron-ringed on the other. Its surface has
+    been worn smooth by hands and rough by rain until it
+    is its own texture — neither raw wood nor polished,
+    just used. Beneath it, water collected from the
+    rooftops sits in a stone basin in the cold dark,
+    flat and clear and cold enough to make the dipper
+    handle sting. The iron dipper hanging beside it
+    is bright from use and has someone's name scratched
+    into the handle in shallow letters — too shallow
+    to read without leaning in.
+  washboards: A row of ridged stone-and-wood boards
+    canted over a shared trough, most of them wet and
+    in use. The women working them have the easy rhythmic
+    conversation of people doing repetitive work together
+    — voices rising and falling over the slap and scrub,
+    one thread of talk moving from board to board along
+    the row without losing itself. Two boards in the
+    middle sit unoccupied. The trough water is grey and
+    warm at the near end and grey and cooler at the far
+    end, and the women have opinions about which end
+    is better.
+idlemessages:
+- Wet cloth slaps the washboard in a hard rhythm, pauses,
+  slaps again.
+- Someone draws the dipper from the cistern and hands it
+  down the line; it comes back empty.
+- A conversation at the washboards erupts briefly in
+  laughter and then subsides into the ongoing rhythm
+  of the scrub.
+- A child sits on the cistern lid, which is not permitted,
+  and is redirected by three separate people in quick
+  succession.
+- The smell of lye-soap sharpens when someone lifts a
+  newly-washed length of cloth to check it against
+  the light.
