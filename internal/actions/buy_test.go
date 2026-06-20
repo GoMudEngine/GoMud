@@ -30,6 +30,9 @@ func TestEffectiveRestock_ClampsBaselineToOne(t *testing.T) {
 	if got := EffectiveRestock(e, 0); got != 1 {
 		t.Errorf("EffectiveRestock with baseline=0 = %d, want 1", got)
 	}
+	if got := EffectiveRestock(e, -5); got != 1 {
+		t.Errorf("EffectiveRestock with baseline=-5 = %d, want 1", got)
+	}
 }
 
 func TestBuy_EmptyRequest(t *testing.T) {

@@ -16,8 +16,10 @@ type CraftDecision struct {
 
 // MaterialCost computes the opportunity cost of consuming all ingredients
 // for recipe. Each ingredient is valued at its current sell price in
-// shopInv (using MaxStock/2 as the normalizer for crafted-only items).
-// Returns 0 if shopInv is nil.
+// shopInv (using MaxStock/2 as the normalizer for crafted-only items —
+// the NPC-decision estimate, which diverges from the player-facing
+// EffectiveRestock/DefaultBaselineQty path; unifying them is a tracked
+// follow-up). Returns 0 if shopInv is nil.
 func MaterialCost(recipe *crafting.RecipeSpec, shopInv *ShopInventory, cfg PricingConfig) float64 {
 	if shopInv == nil || recipe == nil {
 		return 0

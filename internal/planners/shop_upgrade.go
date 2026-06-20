@@ -16,9 +16,11 @@ type upgradeCandidate struct {
 	Delta    float64 // itemvalue swap delta (gain)
 }
 
-// stockRestockNorm mirrors the normalizer used across the shops package
-// (buyrules.go / craftdecision.go): RestockQty when > 0, else MaxStock/2
-// (min 1), else 1. Normalizes the scarcity-pricing curve.
+// stockRestockNorm is the normalizer for the NPC gear-upgrade evaluator:
+// RestockQty when > 0, else MaxStock/2 (min 1), else 1.
+// NOTE: this deliberately DIVERGES from the player-facing path, which uses
+// EffectiveRestock(entry, cfg.DefaultBaselineQty). The NPC evaluator keeps the
+// older MaxStock/2 estimate; unifying the two is a tracked follow-up.
 func stockRestockNorm(e shops.StockEntry) int {
 	if e.RestockQty > 0 {
 		return e.RestockQty

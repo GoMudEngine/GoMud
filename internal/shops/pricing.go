@@ -52,8 +52,9 @@ func DefaultPricingConfig() PricingConfig {
 // ScarcityMultiplier computes the price multiplier based on current stock
 // and the item's restock quantity (which normalizes the curve).
 // Range: PriceFloor (overstocked) to PriceCeiling (out of stock).
-// For NPC-crafted items with no restock, caller should pass an appropriate
-// normalizer (e.g., MaxStock/2).
+// For items with no ticker restock (RestockQty==0), the player-facing paths
+// obtain the normalizer via EffectiveRestock(entry, cfg.DefaultBaselineQty);
+// do NOT pass MaxStock/2 (that priced low-volume goods near the ceiling).
 func ScarcityMultiplier(current int, restockQty int, cfg PricingConfig) float64 {
 	if restockQty <= 0 {
 		restockQty = 1 // Avoid division by zero
