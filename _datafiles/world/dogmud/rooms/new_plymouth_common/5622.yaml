@@ -1,0 +1,70 @@
+roomid: 5622
+zone: New Plymouth Common
+title: The Flophouse Steps
+description: >
+  The steps of the flophouse have become a kind of
+  commons for the quarter's harder-luck cases — the
+  ones who have nowhere pressing to be and have been
+  at this long enough to make a skill of it. They sit
+  from morning and move only for meals they may or may
+  not manage. In the middle of the third step a
+  <ansi fg="itemname">dice-scratched step</ansi>
+  shows where a game has been running indefinitely —
+  the corner worn to a smooth channel where the cup
+  is set down, the marks of rules and debts scratched
+  into the stone beside it in a rising palimpsest of
+  sessions. An old man presides here with the gravity
+  of an authority that has nowhere higher to be
+  referred to. The flophouse
+  <ansi fg="itemname">door</ansi> stands behind him —
+  a cracked transom above it, a hand-lettered list of
+  house rules nailed to the frame, two of the rules
+  scratched out and replaced.
+biome: city
+coord:
+  x: -13
+  y: 86
+  z: 0
+exits:
+  north:
+    roomid: 5621
+  west:
+    roomid: 5617
+nouns:
+  dice-scratched step: The third step of the flophouse
+    stair, its upper surface marked by years of the same
+    game — a smooth circular channel where the cup is
+    set, radiating scratches where the dice have skipped,
+    and at the margins a running ledger of debt and
+    payment in a personal shorthand of tallies and
+    symbols. The stone is paler where the players' feet
+    have rubbed it, darker where the building's shadow
+    keeps it damp. Whoever cut the debt-tallies started
+    with a knife and later moved to a harder tool; the
+    recent marks go deep.
+  door: A plain plank door, its upper panel replaced
+    at some point with a strip of glass that has a crack
+    traveling diagonally from corner to corner, held
+    together by nothing but luck and the pressure of
+    the frame. Above the door a list of house rules is
+    written on a board in several hands over time — the
+    original five rules, two additions in a different
+    hand, one of those struck out and replaced in a
+    third hand. The operative rules appear to be three —
+    pay before you sleep, no fire in the rooms, and no
+    fighting on the premises that cannot be quickly
+    resolved.
+idlemessages:
+- The old man on the steps makes a pronouncement; the
+  men around him receive it with the attention it is due.
+- A pair of dice appear from a pocket and are rolled
+  on the scratched step; the result is examined and the
+  cup retrieved without comment.
+- Someone inside the flophouse drops something heavy —
+  the cracked transom-glass vibrates but holds.
+- A newcomer to the steps is assessed by the men already
+  there in a silence that says everything, then gradually
+  admitted to the orbit of the dice game.
+- The old man stretches his legs out one at a time with
+  the care of a man who knows better than to move
+  quickly in cold air.

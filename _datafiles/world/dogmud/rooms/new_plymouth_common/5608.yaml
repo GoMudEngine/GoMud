@@ -32,6 +32,8 @@ exits:
     roomid: 5606
   east:
     roomid: 5609
+  north:
+    roomid: 5613
 nouns:
   cistern lid: A heavy timber lid, iron-hinged on one
     side and iron-ringed on the other. Its surface has

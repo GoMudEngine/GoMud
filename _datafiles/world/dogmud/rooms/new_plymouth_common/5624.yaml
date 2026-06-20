@@ -1,0 +1,74 @@
+roomid: 5624
+zone: New Plymouth Common
+title: The Old Foundation
+description: >
+  Cold before light — the temperature drops on the last
+  three steps and does not recover. The foundation
+  chamber is low-ceilinged and long, its walls cut from
+  the same grey-blue stone as the lower stair, the joins
+  between courses precise in a way that no current mason
+  in New Plymouth can match and no one has asked them
+  to replicate. Along the north-facing wall a
+  <ansi fg="itemname">gray-material seam</ansi>
+  runs at eye height, three hand-spans wide — not stone,
+  not mortar, the surface too even, the edges too
+  deliberate, as if poured or grown rather than cut. It
+  does not reflect light the way the surrounding stone
+  does. In the east-facing wall a
+  <ansi fg="itemname">sealed niche</ansi> has been
+  mortared shut with a careful hand — the mortar old
+  and grey as the stone, the fill flush and squared.
+  Whatever was placed in it was placed before the city
+  above existed. The chamber is silent in a way that
+  silence in occupied buildings is not.
+biome: city
+coord:
+  x: -12
+  y: 87
+  z: -1
+exits:
+  up:
+    roomid: 5623
+nouns:
+  gray-material seam: A band of material running
+    through the worked stone of the north wall at
+    roughly eye height, three hand-spans across and
+    flush with the surrounding surface — which is
+    itself unusual, since it should project or recess
+    if it were a repair. Its color is a uniform
+    grey-white, without the natural variation of stone,
+    without mortar-lines. The surface is slightly cool
+    to the touch even relative to the chamber, which
+    is already cold. It does not feel like anything you
+    have touched before. The sweeper has a fragment of
+    something like this on his salvage shelf above —
+    you understand now why he set it apart from the
+    rest of his finds.
+  sealed niche: A rectangular recess in the east wall,
+    precisely fitted to something that is no longer
+    there — the fill-mortar is careful and even, colored
+    to match the surrounding stone as closely as someone
+    could manage. The edges are square. Whatever was
+    placed here was placed with intention and then sealed
+    with equal intention. The mortar has no cracks, no
+    settling. It was done once and done well and done
+    a very long time ago. The shape of the niche —
+    visible in the slight difference of the mortar —
+    is wider at the back than the front, tapering inward
+    in a way that suggests what it held was not simply
+    stored but positioned.
+idlemessages:
+- The silence here is not empty — it is the silence of
+  a space sealed off from living sound long enough that
+  the absence has its own texture.
+- The cold does not fluctuate. It simply is, uniform
+  and settled, the temperature of deep old stone.
+- The gray-material seam in the north wall catches no
+  light at all — the chamber's dimness pools against it
+  and goes no further.
+- A slow sound arrives from somewhere beyond the east
+  wall — not the city above, too far below for that.
+  Water moving through something deep and old.
+- The sealed niche sits in the east wall without comment
+  and without drama, as things that have been waiting
+  long enough tend to do.

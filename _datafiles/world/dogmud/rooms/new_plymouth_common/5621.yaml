@@ -1,0 +1,68 @@
+roomid: 5621
+zone: New Plymouth Common
+title: The Fighting-Pit Gate
+description: >
+  The sound of a crowd rises here in a muffled continuous
+  swell from somewhere below and behind the gate — the
+  particular sound of people watching something with
+  concentrated attention, the kind that goes briefly
+  louder and then settles back to its steady level. The
+  <ansi fg="itemname">iron gate</ansi> is set into a
+  heavy frame of dressed stone, its bars thick and
+  close-spaced, a lock the size of your fist bolted
+  through the hasp. In front of it the
+  <ansi fg="itemname">bouncer</ansi> stands with his
+  arms folded and the settled look of a man who has had
+  this same conversation with strangers many times today
+  and has made his peace with repeating it. The fighting
+  pit, wherever it is, does not take walk-ins. Fights
+  are by invitation.
+biome: city
+coord:
+  x: -13
+  y: 87
+  z: 0
+exits:
+  west:
+    roomid: 5619
+  south:
+    roomid: 5622
+  east:
+    roomid: 5623
+nouns:
+  iron gate: A gate of heavy flat-bar iron, the bars
+    set at two-hand spacing — close enough that nothing
+    wider than an arm will fit between them, leaving a
+    view of a stairwell descending beyond into low
+    yellow light. Steps are visible going down, well-
+    worn and swept. The lock is a serious piece of
+    ironwork, the kind made in a shop that also makes
+    vault fittings. Whatever is below, the people who
+    run it take their security seriously. The sound of
+    the crowd below pulses through the bars with a
+    faint warmth from the bodies generating it.
+  bouncer: A broad-shouldered man of middle age, arms
+    crossed in the way of someone who has been standing
+    like this long enough that it has become a resting
+    posture rather than a threat-display. His face has
+    been rearranged by his profession over the years —
+    a nose that has learned a new direction, a ridge
+    above one eye where bone has filled in wrong — but
+    his expression is more bored than hostile. He looks
+    at you the way a door looks at someone who has not
+    yet noticed it is locked.
+idlemessages:
+- The crowd-sound from below rises a half-tone and
+  then subsides — something happened, or almost
+  happened, and is now over.
+- The bouncer uncrosses his arms, shifts his weight
+  to the other foot, and crosses them again. He does
+  not look at you.
+- A sound from behind the gate — footsteps on the far
+  side of the stair — and then nothing; whoever it was
+  did not come up.
+- The lock on the gate catches the light from above;
+  it is well-oiled and recently used.
+- Somewhere below a voice rises briefly above the
+  crowd-level — sharp, authoritative — and the crowd-
+  sound adjusts and settles.

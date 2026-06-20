@@ -1,0 +1,70 @@
+roomid: 5618
+zone: New Plymouth Common
+title: Sweeper's Corner
+description: >
+  The quarter's gutters all run in the same direction
+  and end somewhere — this corner is where they end,
+  and the man who sweeps the street has made it his own.
+  A dead pocket behind the tannery's north wall, it
+  catches everything the morning current brings. The
+  <ansi fg="itemname">gutter-grate</ansi> at the
+  corner's low point is thick with the quarter's
+  leavings, packed dense enough that it has ceased to
+  drain properly and the water stands in a shallow pool
+  above it. The sweeper keeps his findings arranged along
+  the base of the wall — a
+  <ansi fg="itemname">hoard</ansi> of salvaged things,
+  sorted in a logic only he understands: lengths of good
+  string, a bent copper spoon, a fragment of something
+  grey and dense that sits differently from stone, as if
+  it was made rather than quarried. He is not here now,
+  but the arrangement has the clear air of a marked
+  territory.
+biome: city
+coord:
+  x: -15
+  y: 87
+  z: 0
+exits:
+  south:
+    roomid: 5616
+  east:
+    roomid: 5619
+nouns:
+  gutter-grate: An iron grate set into the corner
+    flag, meant to admit the street drainage and
+    prevent clogging. It is clogging. Compacted below
+    the standing water — leaf-mash, grit, rags too
+    small to have value, a pebble that should never
+    have been interesting to anyone and yet is here.
+    Beneath the compaction the grate bars are visible,
+    dark with the residue of years, and below them
+    the drain descends into its undisclosed purpose.
+    Something about the corner's standing water troubles
+    the light in a way you cannot account for simply
+    by its depth.
+  hoard: Arranged along the base of the wall with the
+    care of someone who takes their finds seriously —
+    a coil of string of varying thickness, a copper
+    spoon bent at the neck but otherwise usable, three
+    buttons of different materials, a leather strap,
+    and the fragment. The fragment is grey-white and
+    sits on top of the arrangement as if honored or
+    suspect. It is clearly not stone — too even in
+    texture, too deliberate in its edges, as if formed
+    rather than quarried. The sweeper has placed it
+    separately from the other finds, which may mean
+    nothing or may mean he agrees with that assessment.
+idlemessages:
+- The standing water above the gutter-grate shifts
+  as the drain below makes a brief attempt and gives up.
+- A current of air from the tannery's direction adds
+  its contribution to the corner's accumulated smell.
+- Something drops into the hoard from above — fallen
+  from the wall, or thrown — and the careful
+  arrangement absorbs it without apparent protest.
+- The quiet here is different from the street's quiet —
+  the corner's walls fold the noise of the quarter back
+  on itself and leave a gap.
+- A water-beetle crosses the surface of the standing
+  pool, indifferent to the quality of the water.
