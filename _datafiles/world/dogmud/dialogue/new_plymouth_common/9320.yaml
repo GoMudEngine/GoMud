@@ -30,6 +30,18 @@ tree:
       the Common folk."
 
   nodes:
+    - id: sweeperreport
+      triggers: ["found", "undercroft", "seam", "below", "stone", "source",
+                 "lump", "grey", "gray", "material", "report", "buried",
+                 "city", "down", "it"]
+      questRequired: ["65-discover"]
+      questExcluded: ["65-report"]
+      text: "You went down — I can see it on you, and you've got a piece of
+        it in your hand. Don't tell me about it. Give it here, let me feel
+        the weight of the thing for myself."
+      hints: "Give the lump of gray material to Coll."
+      moodChange: curious
+
     - id: gossip
       triggers: ["gossip", "news", "who", "word", "quarter", "neighbors",
                  "street", "people", "know", "tell", "what"]
@@ -76,3 +88,22 @@ tree:
       hints: "The bloodline's reach into the Common Quarter weighs heavily
         here. Coll knows more about the gutters and the walls than he lets on."
       moodChange: cautious
+
+    - id: tracefragments
+      triggers: ["quest", "task", "help", "source", "trace", "where", "below",
+                 "down", "undercroft", "find out", "comes from", "origin",
+                 "investigate"]
+      text: "You want to do an old sweeper a turn? Find out where they come
+        from. The gutters run downhill, and downhill in this quarter ends in
+        stone older than anything above it. There's a stair past the
+        fighting-pit gate that goes down into the old foundations — further
+        down than the cellars, into stonework nobody living laid. If my grey
+        bits come from anywhere, they come from down there. Go and look at
+        what runs through those walls. Then come back and tell me I'm not
+        mad."
+      hints: "Past the fighting-pit gate, an undercroft stair descends into
+        pre-Founding stone. Examine the seams in the walls down there, then
+        return to Coll."
+      grantsQuest: "65-start"
+      questExcluded: ["65-start", "65-end"]
+      moodChange: curious
