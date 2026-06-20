@@ -109,7 +109,7 @@ func buildShopStockFromInventory(shopInv *shops.ShopInventory, user *users.UserR
 			continue
 		}
 		spec := itm.GetSpec()
-		restock := actions.EffectiveRestock(&entry)
+		restock := actions.EffectiveRestock(&entry, cfg.DefaultBaselineQty)
 		price := shops.CalcSellPrice(spec.Value, entry.Current, restock, cfg)
 
 		stock = append(stock, characters.ShopItem{

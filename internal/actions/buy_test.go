@@ -7,7 +7,30 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/shops"
 )
+
+func TestEffectiveRestock_UsesRestockQtyWhenPositive(t *testing.T) {
+	e := &shops.StockEntry{RestockQty: 7, MaxStock: 20}
+	if got := EffectiveRestock(e, 3); got != 7 {
+		t.Errorf("EffectiveRestock with RestockQty=7 = %d, want 7", got)
+	}
+}
+
+func TestEffectiveRestock_UsesDefaultBaselineWhenZero(t *testing.T) {
+	// The bug: previously returned MaxStock/2 (=10). Now returns the baseline.
+	e := &shops.StockEntry{RestockQty: 0, MaxStock: 20}
+	if got := EffectiveRestock(e, 3); got != 3 {
+		t.Errorf("EffectiveRestock with RestockQty=0 = %d, want 3 (not MaxStock/2)", got)
+	}
+}
+
+func TestEffectiveRestock_ClampsBaselineToOne(t *testing.T) {
+	e := &shops.StockEntry{RestockQty: 0, MaxStock: 20}
+	if got := EffectiveRestock(e, 0); got != 1 {
+		t.Errorf("EffectiveRestock with baseline=0 = %d, want 1", got)
+	}
+}
 
 func TestBuy_EmptyRequest(t *testing.T) {
 	result := Buy(nil, BuyOptions{Request: ""})
@@ -119,4 +142,3 @@ func TestBuy_QuantityParse(t *testing.T) {
 		t.Errorf("expected Success=false with no merchant in room")
 	}
 }
-
