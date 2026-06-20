@@ -1,0 +1,57 @@
+mobid: 9319
+zone: New Plymouth Common
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 34
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote turns a key over in her fingers — not looking at it,
+    just working it from one hand to the other — then tucks it
+    back into her apron pocket without comment.'
+  - ''
+  - 'emote stands in the doorway and surveys the Row with the calm
+    attention of someone who has been watching the same thirty paces
+    of street long enough to notice when anything on it is wrong by
+    the width of a finger.'
+  - ''
+  - 'emote smooths the front of her apron — flat, practiced — and
+    says nothing, though something in the set of her jaw suggests
+    she had considered saying something and thought better of it.'
+  - ''
+  - 'emote marks something on a small ledger she carries in her
+    pocket, checking the figure against one she holds in her head,
+    then tucks it away with the air of an account that has come
+    out correctly.'
+activitylevel: 10
+character:
+  name: Tova
+  description: |
+    Tova has run the rooming house near the old seminary long enough
+    that she does not need a sign. Those who need a quiet room in a
+    part of the city that asks few questions find their way to her
+    door regardless. She is a woman somewhere in her middle years
+    who appears younger than she is and has never corrected the
+    impression. Her mutation is a scatter of faintly luminous
+    freckles across her cheekbones — nearly invisible in daylight,
+    but in a dim room or after dark they hold a soft, persistent
+    glow, the color of a coal that is not quite out. They do not
+    light a space. They only mark her face, if you know to look.
+    She has opinions about every person who has ever rented from
+    her, and keeps all of them to herself. The room nearest the
+    seminary wall has been empty for some months. She has not
+    re-advertised it.
+  speciesid: 1
+  level: 1
+  gold: 28
+  stats:
+    charisma:
+      training: 12
+    perception:
+      training: 10
+    willpower:
+      training: 6

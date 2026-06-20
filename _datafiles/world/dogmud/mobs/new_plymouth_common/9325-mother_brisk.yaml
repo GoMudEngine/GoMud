@@ -1,0 +1,58 @@
+mobid: 9325
+zone: New Plymouth Common
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote checks the rent-board through the glass of its case and
+    makes a correction — a slip of paper with a pencil figure,
+    tucked into her apron pocket — without opening the case.'
+  - ''
+  - 'emote appears at the first-landing window, notes something in
+    the street below, and is gone before whoever it was could be
+    certain they were watched.'
+  - ''
+  - 'emote pauses at the stoop to read the chalk marks on the top
+    riser — not touching them, just reading — then moves on with
+    the satisfied air of someone confirming something they already
+    knew.'
+  - ''
+  - 'emote counts a short stack of coins with her thumb, not looking
+    at them — the count arrives whole, without effort — and slides
+    them into a pocket that must hold several such stacks, each one
+    its own small argument.'
+activitylevel: 11
+character:
+  name: Mother Brisk
+  description: |
+    Mother Brisk runs the best-kept building in a hard part of the
+    quarter, and she keeps it that way by a discipline that admits
+    no exceptions and does not ask for credit. She is a stout woman
+    of uncertain age, iron-haired, with forearms like a baker and
+    the kind of face that has set itself into a permanent expression
+    of fair but final. Her mutation is perfect reckoning — she does
+    not miscount, misremember, or misfigure, ever. She knows to the
+    day how long every tenant has lived on her block, to the coin
+    what each owes and has paid, to the face every person who has
+    ever come through her front gate. She does not need a ledger
+    because she does not need one. She keeps one anyway, against
+    the day when she must show her work to someone who cannot be
+    asked to take her word for it — which is most of the people she
+    deals with professionally. The upper floors of her block are
+    condemned and she does not discuss what she hears there.
+  speciesid: 1
+  level: 1
+  gold: 32
+  stats:
+    perception:
+      training: 14
+    charisma:
+      training: 8
+    willpower:
+      training: 8

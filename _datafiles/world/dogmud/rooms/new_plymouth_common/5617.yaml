@@ -67,3 +67,6 @@ idlemessages:
 - A drain at the yard's center carries off a thin
   trickle of grey water that has nowhere in particular
   to go but finds its way there eventually.
+spawninfo:
+  - mobid: 9330
+    respawnrate: "10 real minutes"

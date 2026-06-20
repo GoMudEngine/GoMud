@@ -1,0 +1,60 @@
+mobid: 9324
+zone: New Plymouth Common
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 32
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote rests the grey-stone arm along the top step and lets the
+    weight of it settle into the stone — the color of both nearly
+    the same in this light, the temperature of the arm not far off
+    either — and watches the lane without any particular purpose.'
+  - ''
+  - 'emote rotates the stone arm slowly, examining the forearm and
+    the wrist-knob with the detached interest of an old soldier
+    assessing a scar — noting it, measuring it, arriving at no
+    conclusion he has not already had.'
+  - ''
+  - 'emote says something to the dice-game without looking at it,
+    in the flat tone of a man who has watched dice longer than the
+    players have been alive, and goes back to watching the lane.'
+  - ''
+  - 'emote marks the arrival of a newcomer with one slow look —
+    feet upward, no particular speed, no comment — and returns to
+    what he was thinking before they got here.'
+activitylevel: 8
+character:
+  name: Garrick One-Hand
+  description: |
+    Garrick One-Hand is a fixture at the flophouse steps, which is
+    where retired men of his particular type end up when the soldiering
+    pays out and the city closes around them. He is a large man gone
+    spare with age, with the careful economy of movement that comes
+    from spending years in situations where moving too fast was the
+    way you stopped moving entirely. The name is accurate — his right
+    hand is gone from the wrist. What replaced it is more unusual.
+    The forearm from elbow to stump is stone-hard and a flat grey-
+    brown, dense in the way granite is dense, noticeably heavier
+    than the rest of him when he sets it down on something. His
+    Chrysalis-change came on in the years after the wound, working
+    up the arm while the arm was trying to close itself off. He
+    says this without particular feeling. The arm is useful for
+    certain things — a wrist-end that will not burn, that holds up
+    in weather, that makes a satisfying sound when it meets a
+    surface. He is not given to long explanations and does not start
+    conversations he did not already intend to finish.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    strength:
+      training: 10
+    perception:
+      training: 10
+    vitality:
+      training: 8

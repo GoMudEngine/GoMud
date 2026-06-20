@@ -61,3 +61,6 @@ idlemessages:
   tannery without looking back.
 - From inside the building the sound of a door closing
   carries clean and sharp — good hinges, good fit.
+spawninfo:
+  - mobid: 9325
+    respawnrate: "20 real minutes"

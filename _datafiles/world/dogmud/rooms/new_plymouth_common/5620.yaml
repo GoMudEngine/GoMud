@@ -61,3 +61,6 @@ idlemessages:
 - The cot's blanket has been straightened so precisely
   that it is impossible to tell whether someone used
   it hours ago or years ago.
+spawninfo:
+  - mobid: 9323
+    respawnrate: "20 real minutes"

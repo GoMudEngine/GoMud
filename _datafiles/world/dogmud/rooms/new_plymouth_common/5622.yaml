@@ -68,3 +68,8 @@ idlemessages:
 - The old man stretches his legs out one at a time with
   the care of a man who knows better than to move
   quickly in cold air.
+spawninfo:
+  - mobid: 9324
+    respawnrate: "20 real minutes"
+  - mobid: 9331
+    respawnrate: "10 real minutes"

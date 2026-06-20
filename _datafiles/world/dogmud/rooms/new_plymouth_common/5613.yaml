@@ -75,3 +75,6 @@ idlemessages:
 - Somewhere in the block a baby makes its opinion
   known; a tired voice rises to meet it, and neither
   party ends the negotiation fully satisfied.
+spawninfo:
+  - mobid: 9319
+    respawnrate: "20 real minutes"

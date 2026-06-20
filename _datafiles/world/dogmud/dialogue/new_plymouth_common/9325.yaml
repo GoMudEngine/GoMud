@@ -1,0 +1,88 @@
+mobid: 9325
+zone: New Plymouth Common
+defaultMood: neutral
+
+greetings:
+  - text: "I'll need a name and a reason before we have a conversation
+      worth having. What is it?"
+    moods: ["neutral"]
+  - text: "You again. Come through — I was about to do the accounts."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "morning", "good", "evening"]
+    responses:
+      - "I know your face from yesterday. State your business."
+      - "Come in off the step."
+
+  - keywords: [""]
+    responses:
+      - "I don't do vague. Say the specific thing."
+
+tree:
+  root:
+    text: "I run this block, I keep my tenants housed, and I am not
+      interested in anyone's opinion about how I do either. What do you want?"
+    hints: "You could ask Mother Brisk about her tenants and how she runs
+      the building, about the condemned upper floors and what she won't
+      discuss up there, or about the bloodline's tax collector and what
+      she thinks of him."
+
+  nodes:
+    - id: tenants
+      triggers: ["tenant", "tenants", "rent", "renting", "lodger", "lodgers",
+                 "building", "block", "how many", "who", "live", "lives",
+                 "residents", "run", "manage", "keep", "maintain", "standards",
+                 "clean", "good", "best"]
+      text: "Fourteen tenants, currently — twelve in licensed rooms, two others
+        I'm not naming to a stranger and will not be asked about. Every one of
+        them is current on rent within a three-day grace that I set and enforce
+        myself. I haven't had an eviction in four years, which tells you
+        something either about my tenants or about the understanding we reach
+        before anyone signs on. I don't allow sub-letting, I don't allow
+        unauthorized visitors past the first landing after last bell, and I have
+        never had a fire, a constable call, or a hole in a wall that went
+        unrepaired. That record costs me something in effort. I think it is
+        worth it."
+      hints: "Mother Brisk keeps her building to a standard she won't
+        apologize for. You could ask about the condemned upper floors, or
+        the bloodline's tax man."
+      moodChange: friendly
+
+    - id: floors
+      triggers: ["upper", "floors", "floor", "condemned", "upstairs", "above",
+                 "sounds", "noise", "bangs", "banging", "steps", "what is",
+                 "up there", "something", "heard", "hearing", "moves", "moving",
+                 "inside", "locked", "barricaded", "writ", "unsafe", "blocked"]
+      text: "The upper floors are condemned under a writ that has been
+        outstanding for eleven years. The writ says the floor joists are
+        unsound. I have had three different assessors look at those joists
+        over those eleven years and all three told me they were fine. That
+        is a different kind of problem from unsound joists and I will leave it
+        there. What I hear up there at night is the building settling, which is
+        what old buildings do, and I'm not going to discuss it further."
+      hints: "Mother Brisk closes the subject of the upper floors firmly. The
+        condemnation writ is eleven years old and apparently still contested.
+        You could ask about her tenants, or about the tax collector."
+      moodChange: cautious
+
+    - id: collector
+      triggers: ["collector", "tax", "levy", "bloodline", "domestic", "office",
+                 "seal", "clerk", "agent", "money", "owe", "payment", "quarterly",
+                 "increase", "went up", "raise", "raised", "opinion", "think",
+                 "what do you", "unfair", "twice", "increase", "cevran"]
+      text: "The collector is a man with a seal on a disc who comes twice a
+        year. His name is Cevran — I have not forgotten it and do not intend
+        to. The levy went up in spring, the second increase in eighteen months,
+        and the timing was chosen for maximum effect on families that had just
+        paid the winter heating cost. That is not a calculation I admire. I pay
+        what is owed and I document it to the last coin, because the day he
+        comes to me with an incorrect figure I will have the correct one ready
+        before he finishes the sentence. He has not made that mistake with me
+        yet. He has made it with others on this street and it did not go well
+        for them."
+      hints: "Mother Brisk's resentment of the bloodline's tax agent is
+        detailed and specific. She keeps records as precisely as she keeps
+        everything else. You could ask about her tenants, or the upper floors
+        she won't discuss."
+      moodChange: cautious

@@ -1,0 +1,87 @@
+mobid: 9319
+zone: New Plymouth Common
+defaultMood: neutral
+
+greetings:
+  - text: "I can usually tell someone is looking for a room before they
+      say it. Whether I have one for you depends on what sort of quiet
+      you need."
+    moods: ["neutral"]
+  - text: "Back again. The kettle is just off the heat — come in if you
+      want."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "morning", "good", "evening"]
+    responses:
+      - "Come to the door then. I don't conduct business from a distance."
+      - "Morning. Nothing has gone badly yet — give it time."
+
+  - keywords: [""]
+    responses:
+      - "Say what you mean plainly. I've been at this long enough to have
+          stopped guessing."
+
+tree:
+  root:
+    text: "I have rooms, I run a quiet house, and I tell no one what they
+      are not owed to know about who comes and goes. Is it lodging you're
+      after, or something else?"
+    hints: "You could ask Tova about her rooms and how the house runs, about
+      the old seminary beside the Row, or about the lodgers who left the
+      city some months back."
+
+  nodes:
+    - id: rooms
+      triggers: ["room", "rooms", "lodging", "rent", "stay", "bed", "night",
+                 "house", "let", "space", "vacant", "available", "price",
+                 "cost", "rate", "weekly", "how much", "board"]
+      text: "Two rooms at the front, one at the back. The back room carries
+        the river smell at all hours — I say it now so there's no complaint
+        about it later. Front-left is taken. Front-right has been empty long
+        enough that I'd call it available, for the right tenant. I don't ask
+        what brings you here. I do ask that whatever it is stays off my stairs
+        and settled before it arrives at my door. Payment by the week, in
+        advance. Don't borrow the lamp oil. That is the whole of the arrangement."
+      hints: "Tova runs her house with care and has clear terms. You could also
+        ask about the old seminary beside the Row, or about the lodgers who
+        passed through some months back."
+      moodChange: friendly
+
+    - id: seminary
+      triggers: ["seminary", "old seminary", "church", "building", "wall",
+                 "ruin", "nearby", "next door", "neighbor", "history", "old",
+                 "stone", "what is", "that place", "east side", "beside"]
+      text: "It hasn't been in use — not by anything the church will put its
+        name to — for thirty years that I can account for. The building stands
+        because no one can agree what to do with it. There's a wall along the
+        east side of the Row that is technically its ground, and in summer
+        something grows up through the stones that I have never been able to
+        name properly — persistent, dark-leafed, comes back the same way every
+        year. A root system beneath the lane, working through the old foundation
+        at night. The lodger who last stayed in the back room used to say the
+        wall was the reason he chose that room. He said he liked having something
+        outside his window that was old enough and deep enough to have stopped
+        caring about people."
+      hints: "The old seminary carries more weight in the Row than it looks.
+        You could ask Tova about her rooms, or about the lodgers who came
+        through and left the city."
+      moodChange: curious
+
+    - id: left
+      triggers: ["left", "gone", "leave", "group", "vane", "pip", "cooperage",
+                 "departed", "went east", "east", "before", "others", "previous",
+                 "tenants", "remember", "knew", "lodgers", "who stayed",
+                 "months ago", "who", "they", "them", "mark", "window"]
+      text: "There were several of them, over the same year, at different times.
+        I don't say their names to people who haven't earned the asking. What I
+        will tell you is they were careful people who needed a careful house, and
+        I gave them that, and when they left they went without a goodbye — which
+        is how the careful ones always go. No forward address, no word back. I
+        didn't expect one. The front-right room still has a small mark on the
+        window-sill that the last one left — I don't know what it means, and I
+        have not removed it. I've been waiting, I think, to see if someone comes
+        who would recognize it. So far no one has."
+      hints: "Tova remembers her lodgers more than she lets show. The mark on
+        the window-sill might mean something to someone who knew them."
+      moodChange: cautious
