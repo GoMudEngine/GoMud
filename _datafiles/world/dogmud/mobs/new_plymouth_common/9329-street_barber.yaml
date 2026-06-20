@@ -1,0 +1,49 @@
+mobid: 9329
+zone: New Plymouth Common
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote makes a pass with the shears along the customer''s neckline —
+    not looking directly, working by touch — and takes the corner close
+    enough to make the customer hold very still, then moves on without
+    incident.'
+  - ''
+  - 'emote draws the razor down the strop twice — each stroke slow and
+    even — then tests the edge on the pad of a thumb with the disinterest
+    of someone who already knows the answer.'
+  - ''
+  - 'emote holds the customer''s head at a precise angle with one hand,
+    finishes the line he is working with the other, and resumes the
+    conversation he was having before the cut demanded attention — without
+    losing either thread.'
+activitylevel: 10
+character:
+  name: Street Barber
+  description: |
+    The barber of Tinker's Lane has set his stool in the widest part
+    of the way where the light holds longest and works through customers
+    from midmorning to dusk without visible hurry. He is a lean man
+    with quiet hands — the specific quiet of hands that have learned
+    to be still against their inclination, and are now still absolutely.
+    His Chrysalis-change shows only in the work — his hands do not
+    tremble under any circumstances. Not the rattle of a passing cart,
+    not the lurch of a customer flinching at a shout, not cold nor
+    noise nor the near-miss of someone brushing his arm mid-cut. A
+    customer in the chair is safer than they would be anywhere else,
+    by a margin too fine to name and too real to doubt.
+  speciesid: 1
+  level: 1
+  gold: 15
+  stats:
+    dexterity:
+      training: 12
+    perception:
+      training: 8
+    charisma:
+      training: 6

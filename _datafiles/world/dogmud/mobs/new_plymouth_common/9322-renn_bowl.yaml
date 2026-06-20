@@ -1,0 +1,65 @@
+mobid: 9322
+zone: New Plymouth Common
+craft_support: cooking
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 34
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+relationships:
+  - to: 9301
+    type: friend
+    subtype: trade
+idlecommands:
+  - 'emote stands at the end of the bar and reads the room — who needs
+    a refill, who has had enough, who is about to start an argument —
+    and acts on all three before any of them become necessary to address.'
+  - ''
+  - 'emote draws a slow breath, then calls last orders across the full
+    room in a voice that cuts through the noise like a bell through fog —
+    everyone hears it, no one mistakes it for anything else.'
+  - ''
+  - 'emote slides a cup along the bar without looking at the recipient,
+    reads a face, and says something under the roar that only that person
+    hears.'
+  - ''
+  - 'emote flips a barrel-tap open, listens to the draw for a moment with
+    her eyes closed, then closes it again and makes a small mark on the
+    slate behind the bar.'
+activitylevel: 10
+character:
+  name: Renn Bowl
+  description: |
+    Renn Bowl keeps the Brimming Bowl the way a ship's captain keeps
+    a tight vessel — by knowing exactly what every part of it is doing
+    at every moment. She is a broad, unhurried woman with a voice that
+    carries in a way her size alone does not explain — she can call
+    last orders across a room in full roar and have every cup lowered
+    without raising her tone. The mutation, she has said exactly once,
+    came on gradually enough that she cannot pin the year. She brews
+    her own ale in the cellars beneath the Bowl, and a portion of every
+    batch goes east in barrels to Bressa Toll's Salt Cellar down at the
+    docks — an arrangement old enough that Bressa's regulars have grown
+    particular about it. Renn knows everything that moves through the
+    quarter by ear, by cup, and by the specific silences that fall when
+    certain names are said in company.
+  speciesid: 1
+  level: 1
+  gold: 70
+  stats:
+    charisma:
+      training: 12
+    perception:
+      training: 8
+    willpower:
+      training: 4
+  shop:
+    - itemid: 30025
+    - itemid: 40078
+    - itemid: 30022
+    - itemid: 30023
+    - itemid: 30026

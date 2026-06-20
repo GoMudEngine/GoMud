@@ -68,3 +68,6 @@ idlemessages:
   more before handing it over.
 - The strop sounds — one slow stroke, then another — as
   the barber prepares between customers.
+spawninfo:
+  - mobid: 9329
+    respawnrate: "15 real minutes"

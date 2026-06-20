@@ -63,3 +63,10 @@ idlemessages:
   as though the pot were a regular attendant.
 - The cluster of people at the well thins briefly, then
   refills; the well never seems to be empty of visitors.
+spawninfo:
+  - mobid: 9320
+    respawnrate: "20 real minutes"
+  - mobid: 9326
+    respawnrate: "15 real minutes"
+  - mobid: 9328
+    respawnrate: "10 real minutes"

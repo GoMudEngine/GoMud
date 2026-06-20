@@ -65,3 +65,6 @@ idlemessages:
 - A dog sitting very still at the edge of the row is
   rewarded, eventually, with a piece of something it
   is impolite to examine too closely.
+spawninfo:
+  - mobid: 9321
+    respawnrate: "20 real minutes"

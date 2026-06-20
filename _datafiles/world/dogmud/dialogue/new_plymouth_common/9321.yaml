@@ -1,0 +1,71 @@
+mobid: 9321
+zone: New Plymouth Common
+defaultMood: neutral
+
+greetings:
+  - text: "Stew or meat — what'll you have?"
+    moods: ["neutral"]
+  - text: "Back again? The stew's better today than yesterday. Sit."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "morning", "noon", "midday"]
+    responses:
+      - "Right. What do you want?"
+      - "You're just in time — the morning batch is still hot."
+
+  - keywords: [""]
+    responses:
+      - "I'm cooking. Talk fast or point."
+
+tree:
+  root:
+    text: "I've got stew, grilled meat, bread, and tea. The stew's the
+      best value and the bread's fresh. What is it — you're eating, you're
+      asking about the quarter, or you want to hear me complain about my
+      brother's taste in seasoning?"
+    hints: "You could ask Marda about the food she's cooking, her brother
+      Halvard the smith, or life in the Common Quarter."
+
+  nodes:
+    - id: food
+      triggers: ["food", "stew", "meat", "bread", "tea", "eat", "hungry",
+                 "menu", "price", "cost", "buy", "have", "today", "cooking",
+                 "sell", "what"]
+      text: "Stew's been going since before dawn — bone broth base, whatever
+        root vegetables were cheapest at the market this morning, a proper
+        amount of pepper. Grilled meat is exactly what it sounds like and
+        costs a bit more. The bread I make myself in the clay oven at the
+        back — there's a reason the smell carries two streets north. Tea is
+        for people who need warming up without eating. All of it's a fair
+        price for the Common and not a copper more."
+      hints: "The food sounds honest and honestly priced. You could also ask
+        about her brother Halvard, or about the quarter."
+
+    - id: brother
+      triggers: ["brother", "halvard", "smith", "crafting", "forge", "family",
+                 "kin", "sibling", "sister"]
+      text: "Halvard's at the forge in the Crafting Quarter — good work,
+        honest steel, and he eats like a man who spends his days swinging
+        a hammer, which is to say he eats badly unless I bring him a pot
+        at midday and stand over him while he finishes it. He thinks
+        boiled grain is a meal. I have told him this is not a meal. He
+        disagrees. We've been having this argument since we were small.
+        The forge does well, at least. He makes good blades."
+      hints: "Marda seems fond of her brother despite the ongoing seasoning
+        dispute. You could ask about the food or about life in the quarter."
+      moodChange: friendly
+
+    - id: quarter
+      triggers: ["quarter", "neighborhood", "common", "life", "live", "here",
+                 "neighbors", "street", "rise", "carter", "bowl", "people",
+                 "city", "new plymouth"]
+      text: "It's a working quarter — not a pretty one. The rooftops need
+        repointing, the lane behind the market gets muddy every winter, and
+        the bloodline's clerk does his collecting rounds in a way that makes
+        everyone go quiet. But the people are decent and they come back —
+        Cookshop Row wouldn't work otherwise. You get used to the rise, the
+        well noise in the mornings, the Brimming Bowl when you've had a long
+        day. It's what a neighborhood is."
+      hints: "Marda seems settled in the Common Quarter, for all its
+        difficulties. You could ask about the food or her brother Halvard."

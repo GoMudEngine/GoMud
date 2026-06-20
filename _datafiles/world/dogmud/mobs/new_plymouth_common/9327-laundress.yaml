@@ -1,0 +1,43 @@
+mobid: 9327
+zone: New Plymouth Common
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote works a sheet through the washboard with both hands, the
+    rhythm steady and unhurried, water sheeting from the cloth as she
+    goes.'
+  - ''
+  - 'emote wrings a length of linen between her hands — squeezing end
+    to end in a single pass — and hangs it on the overhead line, where
+    it is noticeably drier than the one the next woman just hung.'
+  - ''
+  - 'emote says something to her neighbor at the next washboard without
+    slowing, without looking up, and the neighbor answers the same way —
+    two people maintaining a conversation like a fire, just enough fuel
+    at regular intervals to keep it going.'
+activitylevel: 12
+character:
+  name: Laundress
+  description: |
+    One of several women who work the washboards at the Public Cistern,
+    and not the newest — the place she occupies at the board has the
+    particular worn quality of a repeatedly chosen spot. Her Chrysalis-
+    change is a domestic thing — cloth dries faster in her hands than
+    physics would recommend, and when she wrings a garment the moisture
+    leaves it more completely than her grip alone would suggest. She has
+    no theory about why. It makes the work go faster, and the work is
+    already what it is.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    vitality:
+      training: 12
+    strength:
+      training: 8

@@ -66,3 +66,6 @@ idlemessages:
 - From the direction of the Rise, the sound of the well
   queue arguing floats down the lane, briefly, then
   fades.
+spawninfo:
+  - mobid: 9326
+    respawnrate: "15 real minutes"

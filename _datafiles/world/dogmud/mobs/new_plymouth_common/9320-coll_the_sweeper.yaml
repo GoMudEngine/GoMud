@@ -1,0 +1,59 @@
+mobid: 9320
+zone: New Plymouth Common
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 32
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote draws the broom in a long practiced stroke, pauses in
+    mid-sweep, and presses one ear to the nearest wall for a moment
+    before nodding slightly to himself and moving on.'
+  - ''
+  - 'emote stops at the gutter''s edge and crouches, pinching
+    something small and grey between two fingers — examines it
+    closely, then tucks it into the pocket of his coat without
+    comment.'
+  - ''
+  - 'emote leans on the broom handle and listens at nothing visible
+    for a moment — eyes half-closed, head slightly canted — then
+    straightens and sweeps again as if nothing happened.'
+  - ''
+  - 'emote works the broom around the feet of a passerby without
+    breaking stride and tells them, without looking up, where they
+    left their hat.'
+activitylevel: 10
+character:
+  name: Coll the Sweeper
+  description: |
+    Coll has been working a broom over the same stones for longer
+    than most of Carter's Rise's current residents have been here.
+    He is a spare, dry man in a patched working coat, neither old
+    nor young, with eyes that move constantly — reading the square
+    the way a reader reads a page, left to right, nothing skipped.
+    His mutation is not much to look at from the outside — he can
+    hear sound through stone, through wall-brick and kerb and drain-
+    cover, which gives him access to conversations happening around
+    corners, inside buildings, and beneath the street. In a city
+    this large and this loud, that is not an inconsiderable thing.
+    He has opinions about every family on three streets, can tell
+    you which merchant walks which route at what hour, and
+    periodically finds small fragments of some grey material in the
+    gutters of the rise that do not match anything quarried or worked
+    locally. He collects these without explanation and does not seem
+    to consider them remarkable, which suggests he has been collecting
+    them for a long time.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    perception:
+      training: 14
+    charisma:
+      training: 8
+    dexterity:
+      training: 6

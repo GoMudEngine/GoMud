@@ -1,0 +1,44 @@
+mobid: 9326
+zone: New Plymouth Common
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote lifts a bundle of cut stems from the bucket, fans them with
+    one practiced motion, and sets them in the display trestle with the
+    blooms forward.'
+  - ''
+  - 'emote calls the day''s price across the rise in a voice built by
+    years of competing with the well queue and the cart-noise both.'
+  - ''
+  - 'emote trims the lower inch from a stem with a small knife, splits
+    the cut end with a thumbnail, and drops it back into the water bucket
+    where it opens slightly within a few minutes — as it always does for
+    her, more reliably than for anyone else.'
+activitylevel: 8
+character:
+  name: Flower Seller
+  description: |
+    The flower seller has occupied the same spot at the outer rim of
+    Carter's Rise long enough that other vendors give her the corner
+    without discussion. She is unremarkable in appearance — a working
+    woman with a stained apron and ink-callused fingertips from tying
+    stem-bundles all day — except that the cut flowers she sells hold
+    their color longer than cut flowers have any right to. A stem
+    bought from her stall will be crisp and bright the next morning
+    and often the morning after that. She does not advertise this.
+    Customers notice and come back. She sells out before midday
+    regardless.
+  speciesid: 1
+  level: 1
+  gold: 10
+  stats:
+    charisma:
+      training: 8
+    perception:
+      training: 6

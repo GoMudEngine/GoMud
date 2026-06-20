@@ -69,3 +69,6 @@ idlemessages:
 - At the weighing-beam, a dispute concludes with a
   handshake that seems to satisfy neither party but
   satisfies both of them enough.
+spawninfo:
+  - mobid: 9328
+    respawnrate: "10 real minutes"

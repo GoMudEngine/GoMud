@@ -59,3 +59,6 @@ idlemessages:
   they finish each other's objections and continue anyway.
 - Tallow-candle smoke drifts in a slow layer at head
   height, adding its note to the dense, warm air.
+spawninfo:
+  - mobid: 9322
+    respawnrate: "20 real minutes"

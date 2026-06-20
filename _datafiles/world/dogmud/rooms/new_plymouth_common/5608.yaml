@@ -69,3 +69,6 @@ idlemessages:
 - The smell of lye-soap sharpens when someone lifts a
   newly-washed length of cloth to check it against
   the light.
+spawninfo:
+  - mobid: 9327
+    respawnrate: "15 real minutes"
