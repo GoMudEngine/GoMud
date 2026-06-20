@@ -1,5 +1,6 @@
 mobid: 9301
 zone: New Plymouth Docks
+schedule_id: np_docks_bressa
 craft_support: cooking
 behavior_archetype: noncombat_shopkeeper
 non_combatant: true

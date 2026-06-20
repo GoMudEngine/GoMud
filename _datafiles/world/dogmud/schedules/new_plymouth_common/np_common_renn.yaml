@@ -1,0 +1,46 @@
+id: np_common_renn
+description: "Renn Bowl: sleeps in the cellar-room beneath the Bowl through the
+  early morning, works the ferment in the late morning, reads the quarter's news
+  at the well, then keeps the taproom from afternoon until the last argument
+  settles."
+segments:
+  - start: 3
+    end: 9
+    target_room: 5607
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the cellar-room beneath the Bowl, the taps closed and the
+        night's last argument finally settled.
+  - start: 9
+    end: 13
+    target_room: 5607
+    activity: ""
+    idlecommands:
+      - emote checks the ferment in the cellar tubs -- dips a finger, tastes,
+        makes a small mark on the slate -- with the unhurried attention of
+        someone who has never once rushed a batch and never will.
+      - say A barrel that goes east to Bressa carries my name whether I paint it
+        on the stave or not. So it gets made right, or it does not go at all.
+      - emote flips a barrel-tap open, listens to the draw for a moment with her
+        eyes closed, then closes it again and marks the slate.
+  - start: 13
+    end: 14
+    target_room: 5602
+    activity: ""
+    idlecommands:
+      - emote stands at the edge of the well-crowd at the Rise, says little, and
+        leaves knowing three things she did not arrive knowing.
+      - say I hear most of what moves through this quarter from behind my own bar.
+        The well is only where I check it against what people will say aloud.
+  - start: 14
+    end: 3
+    target_room: 5607
+    activity: ""
+    idlecommands:
+      - emote reads the room from the end of the bar -- who needs a refill, who
+        has had enough, who is about to start something -- and acts on all three
+        before any of them comes due.
+      - emote draws a slow breath and calls last orders across the full room in a
+        voice that cuts the noise like a bell through fog; every cup lowers.
+      - emote slides a cup along the bar without looking at the recipient, reads a
+        face, and says something under the roar that only that person hears.

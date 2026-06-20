@@ -1,0 +1,48 @@
+id: np_docks_bressa
+description: "Bressa Toll: sleeps off the late shift through the morning, preps
+  the empty Salt Cellar in the slack midday hours, takes a meal at the cookshop,
+  then tends the bar from the end of the dock-shift deep into the night."
+segments:
+  - start: 3
+    end: 10
+    target_room: 5512
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the small room behind the bar, the taproom dark and the
+        driftwood hearth banked to its salt-blue embers.
+  - start: 10
+    end: 13
+    target_room: 5512
+    activity: ""
+    idlecommands:
+      - emote works the empty taproom in the slack hours -- wipes the bar in long
+        strokes, rights the stools, and checks the kegs by the sound they make
+        when she taps them.
+      - say The room tells you what it needs before the first customer is through
+        the door. You only have to be listening while it is quiet enough to hear.
+      - emote chalks the day's count on the slate, reads it once, and tucks the
+        chalk stub back into her apron without a second glance.
+  - start: 13
+    end: 14
+    target_room: 5516
+    activity: ""
+    idlecommands:
+      - emote takes a bowl at the cookshop counter and eats standing, trading a
+        few low words with whoever is working the brazier.
+      - say Corra feeds the docks and I water them. Between us nobody on this
+        waterfront goes to bed wanting for much.
+  - start: 14
+    end: 3
+    target_room: 5512
+    activity: ""
+    idlecommands:
+      - emote draws a damp cloth along the bar-top in one clean stroke, lifts a
+        mug by its handle without breaking stride, and sets it back in the exact
+        spot it came from.
+      - say After the dock-shift ends this room fills and stays full. That is the
+        whole of the job -- be ready before they arrive, and never look surprised.
+      - emote tips her head at something said from the far end of the room and
+        laughs, genuine and brief, her skin warming to amber from collar to
+        cheekbone before the color fades back as the laugh does.
+      - emote refills a mug before the patron notices it is empty, sets it down
+        without comment, and is already reading the room again.

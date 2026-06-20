@@ -1,5 +1,6 @@
 mobid: 9322
 zone: New Plymouth Common
+schedule_id: np_common_renn
 craft_support: cooking
 behavior_archetype: noncombat_shopkeeper
 non_combatant: true

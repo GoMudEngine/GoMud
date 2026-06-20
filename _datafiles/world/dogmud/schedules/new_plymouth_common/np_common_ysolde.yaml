@@ -1,0 +1,47 @@
+id: np_common_ysolde
+description: "Ysolde: keeps the back-alley clinic through most of the day and
+  deep into the night, steps out under the herb-bunch for the one pause she
+  allows herself, and takes only a short, shallow sleep before dawn."
+segments:
+  - start: 1
+    end: 6
+    target_room: 5620
+    activity: sleeping
+    idlecommands:
+      - emote sleeps shallowly on the clinic cot, surfacing at every sound from
+        the alley and not always going back down.
+  - start: 6
+    end: 14
+    target_room: 5620
+    activity: ""
+    idlecommands:
+      - emote grinds something in the pestle and waits for it to settle, reading
+        the color and texture with the patience of someone who has done this
+        enough times to trust the result.
+      - say I do not ask how you came by it. I ask how bad it is and what can be
+        done. The rest is none of my business, and I would rather not carry it.
+      - emote sets a hand near a patient's bruise and winces -- a quick
+        compression at the brow, a held breath -- a beat before the patient does,
+        then steadies and goes on.
+  - start: 14
+    end: 15
+    target_room: 5619
+    activity: ""
+    idlecommands:
+      - emote stands in the alley a while under the brittle herb-bunch, eyes
+        half-closed, taking the one part of the day she lets herself stop.
+      - say Some of them will not come through the door. So I stand where they can
+        find me, and I wait, and I try not to look like I am waiting.
+  - start: 15
+    end: 1
+    target_room: 5620
+    activity: ""
+    idlecommands:
+      - emote tilts a jar toward the light from the door, examines the contents
+        against it, then stoppers it and returns it to its exact place on the
+        shelf.
+      - emote checks a borrowed ache in her own forearm -- bluer than anything she
+        did to herself -- presses it once, and rolls her sleeve back down without
+        complaint.
+      - say Come at any hour. People do not get hurt on a schedule, and I stopped
+        sleeping properly a long time ago. It works out.
