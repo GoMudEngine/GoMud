@@ -54,3 +54,6 @@ idlemessages:
   corner and hold it, one cut at a time.
 - The wax wrapper shifts slightly in a current that has no
   obvious source.
+spawninfo:
+  - mobid: 9317
+    respawnrate: "10 real minutes"

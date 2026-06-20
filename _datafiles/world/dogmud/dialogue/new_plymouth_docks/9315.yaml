@@ -1,0 +1,68 @@
+mobid: 9315
+zone: New Plymouth Docks
+defaultMood: neutral
+
+greetings:
+  - text: "Foreman's office. If you have a manifest matter, I'm
+      available. Other things — probably not my department."
+    moods: ["neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Yes. Is this a cargo matter?"
+
+  - keywords: [""]
+    responses:
+      - "I have a full afternoon. What do you need?"
+
+tree:
+  root:
+    text: "The office handles cargo allocations and shift
+      assignments. If you've come about the Teo matter, I've
+      already given the constable my full statement."
+    hints: "You could ask Hewd about Teo and the accusation,
+      about the cargo ledger, or about the discrepancy in
+      the manifest entries."
+
+  nodes:
+    - id: teo
+      triggers: ["teo", "dockhand", "accusation", "theft",
+                 "steal", "charge", "him", "worker", "employee",
+                 "arrest", "case", "young", "boy", "accused"]
+      text: "A shame, but there it is. The count came up short on
+        his manifest shift and the entry is in his hand. I gave
+        the constable the same account I'll give you — the numbers
+        don't lie, and Teo's name is on the page where the shortage
+        starts. I have nothing to add to that."
+      hints: "Hewd is dismissive and unhurried on the subject of
+        Teo. You could ask about the ledger or the specific
+        discrepancy in the manifest."
+      unlocks: ["ledger", "discrepancy"]
+
+    - id: ledger
+      triggers: ["ledger", "manifests", "accounts", "books",
+                 "numbers", "entries", "records", "paperwork",
+                 "documentation", "audit", "show", "look"]
+      text: "In order. Everything reconciles to the quarter-ledger.
+        I run a tight accounting — it's what this office does. If
+        there were broader irregularities, the numbers would surface
+        them. They haven't."
+      hints: "Hewd is smooth on the subject of the accounts. You
+        could press him on the specific discrepancy in the entries."
+      unlocks: ["discrepancy"]
+
+    - id: discrepancy
+      triggers: ["discrepancy", "correction", "changed", "adjusted",
+                 "altered", "wrong", "error", "handwriting", "two",
+                 "different", "hand", "modified", "before", "who",
+                 "original", "notation", "corrected"]
+      text: "Corrections are routine — clerical work, same as
+        anywhere. The manifest is accurate in its final form. If
+        you've been listening to Teo's version of events, I'd
+        consider your source. He is trying to keep his position.
+        I understand that. It doesn't change what the document
+        says in the end."
+      hints: "Hewd deflects. Something tightens briefly when the
+        correction comes up, though he controls it quickly."
+      moodChange: cautious

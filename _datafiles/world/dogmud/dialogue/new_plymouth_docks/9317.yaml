@@ -1,0 +1,51 @@
+mobid: 9317
+zone: New Plymouth Docks
+defaultMood: confused
+
+greetings:
+  - text: "...right. There's a — yes. You're here."
+    moods: ["confused"]
+  - text: "Mm."
+    moods: ["neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "hey", "greet"]
+    responses:
+      - "Mm."
+      - "..."
+
+  - keywords: [""]
+    responses:
+      - "There's a room. Low ceiling. You go down past where the
+          canal bends and there's a smell first, and then the room."
+
+tree:
+  root:
+    text: "It's — the ceiling's low. You can't stand up straight.
+      Past the canal. Past it."
+    hints: "The wanderer's attention drifts. You might ask about
+      the room they keep returning to, or about the Bloom."
+
+  nodes:
+    - id: room
+      triggers: ["room", "ceiling", "low", "canal", "down",
+                 "where", "place", "smell", "past", "what",
+                 "find", "place", "go"]
+      text: "Down past where the water bends. There is a smell
+        first — you follow the smell. Stone floor. A drain in
+        it. The ceiling comes down and you have to fold yourself
+        to get inside. I haven't gone back. I keep meaning not
+        to go back."
+      hints: "The wanderer gives a fragmented direction toward
+        somewhere in the canal district beneath the city."
+
+    - id: bloom
+      triggers: ["bloom", "smell", "copper", "flower", "drug",
+                 "wafer", "arm", "skin", "bark", "this",
+                 "what", "you"]
+      text: "I'm — managing it differently now. Found something
+        that helps with the withdrawal, and the thing that helps
+        is the problem now. Don't ask me about the arm."
+      hints: "The wanderer deflects. They are not eager to
+        discuss the Bloom or what it has done to them."
+      moodChange: cautious

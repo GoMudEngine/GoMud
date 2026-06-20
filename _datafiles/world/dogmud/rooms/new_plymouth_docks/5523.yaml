@@ -59,3 +59,6 @@ idlemessages:
   a voice kept deliberately low — surfaces briefly and stops.
 - The footbridge to the north catches afternoon light at a
   particular angle; the far end remains in shadow.
+spawninfo:
+  - mobid: 9305
+    respawnrate: "30 real minutes"

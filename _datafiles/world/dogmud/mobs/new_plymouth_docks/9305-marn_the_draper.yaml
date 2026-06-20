@@ -1,0 +1,65 @@
+mobid: 9305
+zone: New Plymouth Docks
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 38
+maxwander: 0
+craft_support: tailoring
+groups:
+  - humanoid
+  - np_dockfolk
+  - bloom_trade
+idlecommands:
+  - 'emote straightens a stack of cloth ends with two fingers,
+    pressing each fold flush, not looking at the work.'
+  - ''
+  - 'emote moves from bin to bin without pausing, touching each
+    top fold in turn, as if counting something not visible in
+    the cloth itself.'
+  - ''
+  - 'emote glances toward the back of the shop and then does not
+    glance toward it again, which takes a deliberate kind of
+    not-looking.'
+  - ''
+  - 'emote wipes both hands on a white cloth, folds it with
+    perfect corners, and sets it aside; his hands were already
+    clean.'
+activitylevel: 10
+character:
+  name: Marn the Draper
+  description: |
+    He is a neat man in a neat shop — everything about him pressed
+    and orderly, the cloth on the tables squared, his hands
+    unstained, his voice when he speaks measured and precise. On
+    the docks, where every worker carries the smell of their trade
+    — brine, tar, fish-guts, pine pitch — Marn carries nothing. His
+    linen is clean in a way that is not the result of washing; no
+    smell adheres to him. The gulls that land on the dock-posts
+    sometimes watch him as he passes. He appears not to notice
+    this, or has decided not to. He serves customers without
+    pressure; he knows his stock; he answers questions directly
+    and does not invite additional ones. Behind him, past the
+    shelving, a door is set into the back wall at an angle that
+    catches the eye less than it should. He does not acknowledge
+    the door.
+  speciesid: 1
+  level: 1
+  gold: 90
+  stats:
+    charisma:
+      training: 10
+    perception:
+      training: 8
+    willpower:
+      training: 4
+  shop:
+    - itemid: 40007
+    - itemid: 40012
+    - itemid: 40013
+    - itemid: 20008
+    - itemid: 20020
+    - itemid: 20021
+    - itemid: 20009
+    - itemid: 20024

@@ -54,3 +54,8 @@ idlemessages:
   rustle against the older ones beneath them.
 - The holding cell is empty but the silence inside it is a
   slightly different quality from the room's own silence.
+spawninfo:
+  - mobid: 9316
+    respawnrate: "30 real minutes"
+  - mobid: 9314
+    respawnrate: "20 real minutes"

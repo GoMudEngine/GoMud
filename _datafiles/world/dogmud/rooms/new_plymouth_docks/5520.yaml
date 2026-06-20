@@ -54,3 +54,6 @@ idlemessages:
   footstep, or water moving around something — and then nothing.
 - The bilge channel seeps past with the particular indifference
   of water that has been underground a long time.
+spawninfo:
+  - mobid: 9318
+    respawnrate: "8 real minutes"

@@ -48,3 +48,6 @@ idlemessages:
   one long note, and then the working day resumes.
 - The tidiness of the room has a managed quality — maintained
   to a standard rather than arrived at naturally.
+spawninfo:
+  - mobid: 9315
+    respawnrate: "30 real minutes"

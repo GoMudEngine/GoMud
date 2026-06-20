@@ -1,0 +1,77 @@
+mobid: 9314
+zone: New Plymouth Docks
+defaultMood: agitated
+
+greetings:
+  - text: "You read that board? Because I need someone who can
+      actually listen."
+    moods: ["agitated"]
+  - text: "Still here. Still waiting for someone to look at the
+      numbers properly."
+    moods: ["neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Please — ask me anything. I have nothing to hide."
+
+  - keywords: [""]
+    responses:
+      - "I didn't take anything. If that's what you're wondering,
+          the answer is no."
+
+tree:
+  root:
+    text: "I didn't take anything. I want to be clear about that.
+      The discrepancy they're pinning on me — the numbers were wrong
+      before I touched the manifest. I flagged it. I have a witness
+      who heard me flag it. Nobody has gone to find that person."
+    hints: "You could ask Teo about the theft accusation, the cargo
+      discrepancy in the manifest, or who he thinks is actually
+      responsible."
+
+  nodes:
+    - id: theft
+      triggers: ["theft", "steal", "stolen", "accusation", "charge",
+                 "guilty", "innocent", "arrest", "constable", "accused",
+                 "crime", "take", "did", "what", "happened"]
+      text: "I didn't steal anything. I have worked Jesset's manifest
+        for two seasons without a shortfall. What's on that board —
+        it's the first time my name has been on any complaint. The
+        cargo was already light before I signed for my shift. Someone
+        pinned this on me because I was next in the chain after them
+        and my name was the one at the bottom of the entry."
+      hints: "You could ask Teo about the specific discrepancy in
+        the cargo manifest, or about who he thinks is responsible."
+      unlocks: ["discrepancy", "suspect"]
+
+    - id: discrepancy
+      triggers: ["discrepancy", "manifest", "ledger", "cargo", "count",
+                 "numbers", "short", "missing", "weight", "shift",
+                 "signed", "before", "load", "amount", "entry",
+                 "correction", "handwriting"]
+      text: "The count on the manifest I signed was already two crates
+        short. I noticed it. I flagged it to the man above me and
+        expected it to get corrected upward. Instead it got corrected
+        downward on paper, and my name stayed at the bottom of the
+        entry. If you look at the original notation and the correction,
+        the handwriting is different. Two different hands touched that
+        page. The constable has the book — the evidence is in the book."
+      hints: "You could ask Teo who he thinks is responsible — the
+        person above him in the chain."
+      unlocks: ["suspect"]
+
+    - id: suspect
+      triggers: ["who", "higher", "above", "foreman", "boss",
+                 "someone", "responsible", "blame", "up", "hewd",
+                 "chain", "person", "name", "them"]
+      text: "I'm not going to say a name. I work these docks and I
+        would like to keep working them after this is resolved. What
+        I'll say is — whoever signed the manifest before me, and
+        whoever made the correction after — the constable has both
+        entries if they look. I flagged the short count in front of
+        a witness on the quay side. Find the witness. That's where
+        the thread starts."
+      hints: "Teo has said what he will. He points toward the
+        manifest entries and a witness who can confirm his account."
+      moodChange: cautious

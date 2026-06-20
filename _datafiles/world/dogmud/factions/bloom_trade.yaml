@@ -1,0 +1,16 @@
+faction_id: bloom_trade
+display_name: "The Bloom Trade"
+description: |
+  A hidden criminal network sustaining the supply and distribution of
+  the Bloom — thin iridescent wafers refined from the secretions of
+  hollow people kept in induced sleep. The trade operates through
+  legitimate-looking fronts: a fabric shop, a canal-district supplier,
+  quiet intermediaries who never meet each other by design. Its
+  members do not consider themselves criminals, or they have stopped
+  considering it. The bloodline domestic office runs the
+  captive-production side and prefers not to be visible in the ledger.
+  For outsiders who come to know of the trade, it carries the
+  copper-flower smell of a thing that should not exist.
+default_rep: -20
+allies: []
+enemies: []
