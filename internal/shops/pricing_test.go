@@ -6,6 +6,30 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestDefaultPricingConfig_BaselineQty(t *testing.T) {
+	assert.Equal(t, 3, DefaultPricingConfig().DefaultBaselineQty)
+}
+
+func TestScarcityMultiplier_Baseline3_ModestStockIsAffordable(t *testing.T) {
+	cfg := DefaultPricingConfig()
+	// 5 units at baseline 3 → ratio 1.67 → comfortably below base price.
+	assert.Less(t, ScarcityMultiplier(5, 3, cfg), 1.5)
+}
+
+func TestScarcityMultiplier_Baseline3_NineUnitsHitsFloor(t *testing.T) {
+	cfg := DefaultPricingConfig()
+	// 9 units at baseline 3 → ratio 3.0 == AbundanceThreshold → floor.
+	assert.Equal(t, cfg.PriceFloor, ScarcityMultiplier(9, 3, cfg))
+}
+
+func TestScarcityMultiplier_Baseline3_LastUnitBounded(t *testing.T) {
+	cfg := DefaultPricingConfig()
+	// A single unit still carries a premium, but never exceeds the ceiling.
+	m := ScarcityMultiplier(1, 3, cfg)
+	assert.Greater(t, m, 1.0)
+	assert.LessOrEqual(t, m, cfg.PriceCeiling)
+}
+
 func TestScarcityMultiplier_OutOfStock(t *testing.T) {
 	cfg := DefaultPricingConfig()
 	mult := ScarcityMultiplier(0, 5, cfg)

@@ -2,6 +2,14 @@ package configs
 
 import "testing"
 
+func TestBalanceConfig_DefaultPricingBaselineQty(t *testing.T) {
+	cfg := &Balance{}
+	cfg.Validate()
+	if int(cfg.DefaultPricingBaselineQty) != 3 {
+		t.Errorf("DefaultPricingBaselineQty default = %d, want 3", int(cfg.DefaultPricingBaselineQty))
+	}
+}
+
 func TestBalanceConfig_CaravanDefaults(t *testing.T) {
 	cfg := &Balance{}
 	cfg.Validate()

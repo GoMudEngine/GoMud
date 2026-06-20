@@ -8,10 +8,11 @@ import (
 
 // PricingConfig holds the tunable knobs for dynamic pricing.
 type PricingConfig struct {
-	BuyRatio            float64 // Base buy/sell spread (default 0.50)
-	PriceFloor          float64 // Min scarcity multiplier (default 0.25)
-	PriceCeiling        float64 // Max scarcity multiplier (default 5.0)
-	AbundanceThreshold  float64 // Stock/restock ratio for full abundance (default 3.0)
+	BuyRatio           float64 // Base buy/sell spread (default 0.50)
+	PriceFloor         float64 // Min scarcity multiplier (default 0.25)
+	PriceCeiling       float64 // Max scarcity multiplier (default 5.0)
+	AbundanceThreshold float64 // Stock/restock ratio for full abundance (default 3.0)
+	DefaultBaselineQty int     // Pricing baseline for RestockQty==0 entries (default 3)
 }
 
 // PricingConfigFromBalance creates a PricingConfig from the game's balance settings.
@@ -31,6 +32,9 @@ func PricingConfigFromBalance() PricingConfig {
 	if float64(b.ShopAbundanceThreshold) > 0 {
 		cfg.AbundanceThreshold = float64(b.ShopAbundanceThreshold)
 	}
+	if int(b.DefaultPricingBaselineQty) > 0 {
+		cfg.DefaultBaselineQty = int(b.DefaultPricingBaselineQty)
+	}
 	return cfg
 }
 
@@ -41,14 +45,16 @@ func DefaultPricingConfig() PricingConfig {
 		PriceFloor:         0.25,
 		PriceCeiling:       5.0,
 		AbundanceThreshold: 3.0,
+		DefaultBaselineQty: 3,
 	}
 }
 
 // ScarcityMultiplier computes the price multiplier based on current stock
 // and the item's restock quantity (which normalizes the curve).
 // Range: PriceFloor (overstocked) to PriceCeiling (out of stock).
-// For NPC-crafted items with no restock, caller should pass an appropriate
-// normalizer (e.g., MaxStock/2).
+// For items with no ticker restock (RestockQty==0), the player-facing paths
+// obtain the normalizer via EffectiveRestock(entry, cfg.DefaultBaselineQty);
+// do NOT pass MaxStock/2 (that priced low-volume goods near the ceiling).
 func ScarcityMultiplier(current int, restockQty int, cfg PricingConfig) float64 {
 	if restockQty <= 0 {
 		restockQty = 1 // Avoid division by zero
