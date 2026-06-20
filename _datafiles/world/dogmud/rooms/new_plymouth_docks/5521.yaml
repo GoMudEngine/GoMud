@@ -10,11 +10,10 @@ description: >
   quite want to follow. The corner is a dead end — a pinch between
   two piling bents where the planking overhead sags low and the
   floor is dark with accumulated damp. On the nearest piling face,
-  at about shoulder height, <ansi fg="scratched tally-marks">scratched
+  at about shoulder height, <ansi fg="itemname">scratched
   tally-marks</ansi> have been worked into the timber — someone has
   been counting something here, one cut at a time, for a long time.
-  Below them, half-buried in the silt, a <ansi fg="spent wax
-  wrapper">spent wax wrapper</ansi> still carries a ghost of that
+  Below them, half-buried in the silt, a <ansi fg="itemname">spent wax wrapper</ansi> still carries a ghost of that
   copper-flower smell. The only way out is west.
 biome: city
 coord:

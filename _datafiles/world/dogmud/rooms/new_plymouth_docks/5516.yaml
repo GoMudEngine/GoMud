@@ -3,7 +3,7 @@ zone: New Plymouth Docks
 title: The Cookshop
 description: >
   Hot and loud and smelling of the
-  <ansi fg="cookpot">cookpot</ansi> that has been going since
+  <ansi fg="itemname">cookpot</ansi> that has been going since
   before dawn — that dense warm smell of something thick with
   grain and salt and whatever was available. The cookshop
   serves the dock-shift meal — fast, cheap, and filling, with
@@ -11,7 +11,7 @@ description: >
   space, and behind it a broad woman in a stained apron moves
   with the economy of someone serving their three-hundredth
   bowl of the day. The
-  <ansi fg="bread tray">bread tray</ansi> on the counter
+  <ansi fg="itemname">bread tray</ansi> on the counter
   holds a diminishing stack of dock-loaves — the dense, dark
   kind that takes a morning dip without falling apart — and
   a ladle rests on the pot-rim with the patient readiness of

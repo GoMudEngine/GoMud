@@ -4,7 +4,7 @@ title: The Wharf Steps
 description: >
   The steps drop away from the tar yard's noise and deliver you to
   a narrow ledge above the water — stone, old, with the hollow of
-  generations of sitting worked into the <ansi fg="worn steps">worn
+  generations of sitting worked into the <ansi fg="itemname">worn
   steps</ansi> at their midpoint. The dock noise stays above;
   something about the angle and the building-backs channels it away,
   and what arrives down here instead is the sound of the harbor —
@@ -12,7 +12,7 @@ description: >
   of a rope under load somewhere to the west. From this ledge the
   city falls away upward and the harbor opens, and at the right
   hour the three moons stand over the anchorage in a line, each one
-  doubled in the <ansi fg="harbor water">harbor water</ansi> below —
+  doubled in the <ansi fg="itemname">harbor water</ansi> below —
   three lights, and three reflections, and the water moving between
   them without particular interest in the arithmetic. The only way
   back is east.

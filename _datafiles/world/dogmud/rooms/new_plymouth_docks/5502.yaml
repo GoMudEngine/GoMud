@@ -12,9 +12,9 @@ description: >
   watch the water with the focused patience of professionals. The
   relative quiet out here has a quality to it — you notice the
   river sound more when the shouting isn't covering it. A heavy
-  coil of <ansi fg="tarred rope">tarred rope</ansi> sits coiled
+  coil of <ansi fg="itemname">tarred rope</ansi> sits coiled
   against a cleat near the quay's midpoint, and at the far western
-  end the dock terminates at a <ansi fg="chained shipyard">chained
+  end the dock terminates at a <ansi fg="itemname">chained
   shipyard</ansi> gate, padlocked shut and clear about its
   intentions.
 biome: city

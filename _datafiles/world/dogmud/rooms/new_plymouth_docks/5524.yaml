@@ -7,11 +7,11 @@ description: >
   ceiling, no windows, and a smell that is different from the shop
   outside — sawdust and old cloth in the background, and under
   that something dried and faintly waxy that you cannot quite
-  place. Along the right wall, <ansi fg="wax-sealed crates">wax-sealed
+  place. Along the right wall, <ansi fg="itemname">wax-sealed
   crates</ansi> are stacked two and three high, none of them marked
   with a maker's name or a point of origin — the kind of crates
   that travel without paperwork and store without questions.
-  Against the far side, the <ansi fg="thick wall">thick wall</ansi>
+  Against the far side, the <ansi fg="itemname">thick wall</ansi>
   of the adjoining building sits very close; sounds come through
   it in fragments — half-conversations, the scrape of furniture,
   things not meant to cross but that old stonework does not know

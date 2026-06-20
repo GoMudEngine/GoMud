@@ -9,11 +9,11 @@ description: >
   function at the level where no record is kept of their
   names, only their hours. Evidence of their living is strung
   between the buildings above you:
-  <ansi fg="washing lines">washing lines</ansi> carry the
+  <ansi fg="itemname">washing lines</ansi> carry the
   quarter's laundry overhead in a dense canopy of linen and
   wool and practical things washed flat. Below, on the
   building's front step, a worn
-  <ansi fg="stoop">stoop</ansi> holds the usual arrangement
+  <ansi fg="itemname">stoop</ansi> holds the usual arrangement
   of people with nowhere particular to be — off-shift,
   resting, watching the street with the ease of those who
   know exactly what is ordinary here. Hard against the

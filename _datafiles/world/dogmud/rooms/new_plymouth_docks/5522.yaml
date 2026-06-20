@@ -7,11 +7,10 @@ description: >
   last warehouse-back and the city proper begins to assert its own
   mixed smell. The quarter's edge announces itself in small ways —
   cobblestones better-set, buildings less salt-grey, and a
-  <ansi fg="boundary stone">boundary stone</ansi> hard against
+  <ansi fg="itemname">boundary stone</ansi> hard against
   the left wall marking the dock ward's limit in lettering that
   time has made approximate. Where loaded carts have crossed this
-  junction for decades, a pair of deep <ansi fg="handcart
-  ruts">handcart ruts</ansi> have been worn into the stone —
+  junction for decades, a pair of deep <ansi fg="itemname">handcart ruts</ansi> have been worn into the stone —
   two grooves deep enough to catch a boot-toe at the wrong angle,
   a feature the city has repaired twice and that keeps returning.
   South leads back toward the tenements; north continues toward

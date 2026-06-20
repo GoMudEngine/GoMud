@@ -10,10 +10,10 @@ description: >
   To the west the Lower Wharf opens up in a sprawl of pilings and
   rope and shouted orders; to the south the road runs back the way
   you came. Gulls wheel overhead in tight circles, indifferent.
-  At the road's turning stands a <ansi fg="milepost">milepost</ansi>
+  At the road's turning stands a <ansi fg="itemname">milepost</ansi>
   — the last one on this road, or the first, depending on your
   direction — and below it, where the bank drops to the water,
-  a line of <ansi fg="tide-wrack">tide-wrack</ansi> marks the
+  a line of <ansi fg="itemname">tide-wrack</ansi> marks the
   morning's high water in a dark stripe of weed and river-rubbish.
 biome: city
 coord:

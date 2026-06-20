@@ -4,7 +4,7 @@ title: The Caravan Depot
 description: >
   A broad covered platform where the docks hand off their cargo
   to the city's interior — the hinge between water and road. A
-  <ansi fg="parked wagon">parked wagon</ansi> stands half-loaded
+  <ansi fg="itemname">parked wagon</ansi> stands half-loaded
   near the depot's center, its team not yet harnessed, its bed
   holding a mix of lashed barrels and loose-packed grain sacks that
   someone has arranged with more speed than care. Handcarts move
@@ -14,7 +14,7 @@ description: >
   opens back toward the Long Quay, and to the north the supply
   road leads toward the city's commercial quarters — everything
   the docks receive, the depot sends forward. The <ansi
-  fg="loading dock">loading dock</ansi> proper runs the depot's
+  fg="itemname">loading dock</ansi> proper runs the depot's
   west side, its tally-slate nailed to the post where the wagon
   marshal can read it from the seat.
 biome: city

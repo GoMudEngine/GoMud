@@ -7,10 +7,10 @@ description: >
   the door is never locked during working hours, which are
   most of them. The room is small and purposeful — a desk, a
   stool, and the
-  <ansi fg="job ledger">job ledger</ansi> laid open to the
+  <ansi fg="itemname">job ledger</ansi> laid open to the
   current page, the day's hires tallied in a dense, legible
   hand. In the corner an iron
-  <ansi fg="strongbox">strongbox</ansi> sits bolt-anchored to
+  <ansi fg="itemname">strongbox</ansi> sits bolt-anchored to
   the floorboards — the heaviest thing in the room by the
   way the boards sit around it. The foreman, Jesset, is large
   and weathered, with a handshake people do not forget — an

@@ -6,11 +6,11 @@ description: >
   presentation. The office is tidy in the way of a man who needs
   things to look a particular way — desk clear of clutter, shelving
   organized, papers squared. It is tidy enough that the one note
-  of disorder stands out — a <ansi fg="stock ledger">stock ledger</ansi>
+  of disorder stands out — a <ansi fg="itemname">stock ledger</ansi>
   open on the desk at a page that has been worked and reworked, the
   columns of figures carrying small corrections that do not resolve
   the larger problem within them. Near the far wall, one
-  <ansi fg="floor-board">floor-board</ansi> sits proud of its
+  <ansi fg="itemname">floor-board</ansi> sits proud of its
   neighbors by perhaps the width of a thumbnail — not enough to
   trip on, but enough to notice if you are paying the right kind
   of attention. The stair leads back down to the constable's post.

@@ -6,10 +6,10 @@ description: >
   tar-pitch and linseed and lamp-oil mixing into a smell that
   coats the back of the throat and stays. Inside it is dark by
   design: the goods here are not displayed, they are stacked.
-  <ansi fg="tar barrels">Tar barrels</ansi> line the near wall
+  <ansi fg="itemname">Tar barrels</ansi> line the near wall
   in a row of six, their lids sealed with clay, the floor beneath
   them stained black in permanent rings. Bolts of <ansi
-  fg="spare canvas">spare canvas</ansi> stand in a rack along the
+  fg="itemname">spare canvas</ansi> stand in a rack along the
   far wall, each one bound with twine and tagged with a weight
   and weave designation in chalk — and beside them, coiled rope
   in three weights hangs from wooden pegs, the heaviest stuff as

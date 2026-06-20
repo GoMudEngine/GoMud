@@ -7,10 +7,10 @@ description: >
   shout that expects to be obeyed and is. This is the barge
   landing, where river craft come in low and heavy and are relieved
   of what they carry before they are allowed to leave. A broad
-  <ansi fg="gangplank">gangplank</ansi> slopes from the dock edge
+  <ansi fg="itemname">gangplank</ansi> slopes from the dock edge
   down to a barge now lashed and half-empty, its crew moving in the
   efficient silence of men who have done this loading a hundred
-  times. The great <ansi fg="mooring-bollards">mooring-bollards</ansi>
+  times. The great <ansi fg="itemname">mooring-bollards</ansi>
   march along the dock edge in pairs, their iron hides worn bright
   at the crown and rust-streaked below — each one festooned with
   loops of rope that someone has made fast with more confidence

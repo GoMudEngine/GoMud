@@ -10,12 +10,12 @@ description: >
   it wasn't, and every item has a price chalked on a small
   card in a hand that does not vary between high and low
   value, which is how you know the prices are negotiable.
-  Crowded <ansi fg="shelves">shelves</ansi> line three walls
+  Crowded <ansi fg="itemname">shelves</ansi> line three walls
   from floor to ceiling — tools, instruments, garments,
   rope-work, and objects whose original purpose has been
   obscured by time or separation from their context. On the
   counter a set of brass
-  <ansi fg="scales">scales</ansi> sits balanced and ready,
+  <ansi fg="itemname">scales</ansi> sits balanced and ready,
   beside a ledger that is not the same ledger as yesterday's
   and will not be the same as tomorrow's. Old Sable is
   present in the way that certain shopkeepers are present —

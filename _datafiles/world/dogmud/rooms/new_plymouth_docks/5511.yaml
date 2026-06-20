@@ -9,11 +9,11 @@ description: >
   By day its face is ordinary — stained timber, a broad door,
   the faint persistent smell of beer soaked into old wood.
   But after the dock-shift ends, the place becomes the
-  <ansi fg="tavern sign">tavern sign</ansi>'s promise made
+  <ansi fg="itemname">tavern sign</ansi>'s promise made
   good — voices and light and the kind of warmth that means
   people who work hard in cold wet places have found each
   other for the evening. A
-  <ansi fg="door lantern">door lantern</ansi> hangs from an
+  <ansi fg="itemname">door lantern</ansi> hangs from an
   iron bracket to the right of the entrance, guttering
   inside its glass in a way that somehow never goes out.
   Enter to go inside; north leads deeper into the quarter,

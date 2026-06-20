@@ -11,9 +11,9 @@ description: >
   hours; right now two of them stand open and men move in and out
   with barrow-loads in the steady rhythm of work that does not
   stop for conversation. Against the near wall a stack of
-  <ansi fg="stacked crates">stacked crates</ansi> rises to chest
+  <ansi fg="itemname">stacked crates</ansi> rises to chest
   height, each one stenciled with a port-mark and a count. On the
-  end wall a <ansi fg="manifest chalkboard">manifest chalkboard</ansi>
+  end wall a <ansi fg="itemname">manifest chalkboard</ansi>
   spans the full width of the board, its chalk columns dense with
   arrivals and tallies — the docks' memory of what came in and
   what has yet to move on.

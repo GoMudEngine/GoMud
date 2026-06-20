@@ -10,10 +10,10 @@ description: >
   one hung with split fish in various stages of curing, from pale
   and recent to dark amber and nearly jerked-dry, swaying slightly
   in the river breeze. At the market's center a broad stone
-  <ansi fg="gutting slab">gutting slab</ansi> runs the length of
+  <ansi fg="itemname">gutting slab</ansi> runs the length of
   the central aisle — salt-crusted, scaled-over, stained in the
   particular irreversible way of surfaces that have been their
-  function for a generation. The <ansi fg="drying racks">drying
+  function for a generation. The <ansi fg="itemname">drying
   racks</ansi> are worth a look if you want to know what the river
   gives up this time of year; the variety is the season's testimony.
 biome: city

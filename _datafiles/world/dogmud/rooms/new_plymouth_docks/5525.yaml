@@ -8,10 +8,10 @@ description: >
   compressed patience of a room where people sit and wait for
   things to be reported or resolved. Two desks, a lamp that burns
   through the day shift and is left burning through the night,
-  and a <ansi fg="notice board">notice board</ansi> fixed to the
+  and a <ansi fg="itemname">notice board</ansi> fixed to the
   east wall where current matters are posted in the constable's
   hand. At the back of the room, behind a short run of iron bar,
-  a <ansi fg="holding cell">holding cell</ansi> occupies what was
+  a <ansi fg="itemname">holding cell</ansi> occupies what was
   once a grain closet — just large enough to stand in, or to sit
   on the single bench if you fold your knees right. It is empty
   at present, which is something. West returns to the outer lane;

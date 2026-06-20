@@ -3,7 +3,7 @@ zone: New Plymouth Docks
 title: The Long Quay
 description: >
   Sound is the first fact here — the wooden groan of the
-  <ansi fg="cargo crane">cargo crane</ansi> under load, the slap
+  <ansi fg="itemname">cargo crane</ansi> under load, the slap
   of cargo nets against a hull, voices cutting across each other
   in a dozen registers of urgency. The Long Quay is the main
   working platform of the docks: wide enough for two carts to pass,
@@ -12,7 +12,7 @@ description: >
   from somewhere to somewhere else. Men and women pass you without
   looking — the kind of passing that means you are either working
   or in the way. Chalked notices cover the face of the
-  <ansi fg="hiring board">hiring board</ansi> nailed to the crane-
+  <ansi fg="itemname">hiring board</ansi> nailed to the crane-
   post near the quay's center, and beneath it a compact, weathered
   man with a dock-foreman's deliberate manner keeps one eye on the
   board and both hands free — the type who has hired and fired from

@@ -10,12 +10,11 @@ description: >
   The counter runs the room's width and admits no one past it who
   has not been invited. Behind the counter the harbormaster's
   clerk occupies a high stool with the settled permanence of
-  furniture, and to the clerk's left the <ansi fg="harbor
-  ledger">harbor ledger</ansi> sits open on its stand — a bound
+  furniture, and to the clerk's left the <ansi fg="itemname">harbor ledger</ansi> sits open on its stand — a bound
   volume the size of a flagstone, half-filled with entries in a
   fine careful hand that grows less careful toward the bottom of
   each page as the shift wears on. Above the counter-arch the
-  <ansi fg="bloodline seal">bloodline seal</ansi> is mounted in
+  <ansi fg="itemname">bloodline seal</ansi> is mounted in
   a frame of dark iron, its pressed wax face turned outward where
   every arriving captain cannot miss it. The message is simple:
   this office works for someone above the docks.

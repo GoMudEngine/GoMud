@@ -10,11 +10,11 @@ description: >
   carter is settling a dispute with a woman over his wheel
   ruts in her doorstep. At the north corner a stick driven
   into a gap between cobblestones has become the
-  <ansi fg="sellers post">sellers post</ansi> — plastered
+  <ansi fg="itemname">sellers post</ansi> — plastered
   thick with broadsheets and chalk notices that overlap and
   peel and are replaced so fast the post itself is a kind
   of wall, always fresh on top, always older underneath.
-  Along the building-faces the <ansi fg="open gutter">open
+  Along the building-faces the <ansi fg="itemname">open
   gutter</ansi> carries the street's accounting — dishwater,
   fish-wash, the particular slow brown of a neighborhood
   that has been cleaning itself into the same channel for

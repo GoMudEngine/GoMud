@@ -9,10 +9,10 @@ description: >
   that nobody fixes it. The kind of lodging that asks only
   that you are gone by morning-bell and have left the linen
   approximately where you found it. A row of
-  <ansi fg="cots">cots</ansi> occupies the open space at the
+  <ansi fg="itemname">cots</ansi> occupies the open space at the
   corridor's end — the overflow provision when the rooms are
   full, which they often are. At the far wall a
-  <ansi fg="washbasin">washbasin</ansi> sits on an iron
+  <ansi fg="itemname">washbasin</ansi> sits on an iron
   bracket, cracked along one side and sealed with a line of
   grey wax that holds well enough. The water in it is from
   this morning or possibly yesterday; it is hard to say.

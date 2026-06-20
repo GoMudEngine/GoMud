@@ -8,10 +8,10 @@ description: >
   shed holds cargo that the constabulary is not yet done with —
   questioned consignments, flagged weights, disputed goods waiting
   for a ruling that may take longer than the goods will keep.
-  Along the walls, a run of <ansi fg="impounded cargo">impounded
+  Along the walls, a run of <ansi fg="itemname">impounded
   cargo</ansi> sits with the sullen patience of things that expected
   to be somewhere else by now. Pinned to the shed's central post,
-  a <ansi fg="customs manifest">customs manifest</ansi> lists the
+  a <ansi fg="itemname">customs manifest</ansi> lists the
   current inventory in the assessor's hand and notes the reason
   each item has been held. The reasons given do not always match
   what is in the crates. The only exit is south to the tar yard.

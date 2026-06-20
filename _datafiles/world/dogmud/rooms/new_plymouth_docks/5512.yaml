@@ -8,12 +8,12 @@ description: >
   a candle. The taproom is loud in the way of rooms that are
   often full — even half-empty it holds its noise, as if the
   sound has soaked into the wood and gives it back. A long
-  <ansi fg="bar">bar</ansi> runs most of the south wall, its
+  <ansi fg="itemname">bar</ansi> runs most of the south wall, its
   surface ringed so thoroughly with mug-marks that the rings
   have become the finish. Behind it the barkeep moves with
   the economy of someone who has done this exact sequence of
   motions for many years. In the north corner the
-  <ansi fg="hearth">hearth</ansi> holds a driftwood fire
+  <ansi fg="itemname">hearth</ansi> holds a driftwood fire
   that burns with an odd green-blue flicker where the salt
   in the wood catches — it is warm, and strange, and nobody
   in the room seems to notice the colors anymore. The way
