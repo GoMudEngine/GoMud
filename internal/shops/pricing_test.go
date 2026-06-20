@@ -6,6 +6,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestDefaultPricingConfig_BaselineQty(t *testing.T) {
+	assert.Equal(t, 3, DefaultPricingConfig().DefaultBaselineQty)
+}
+
 func TestScarcityMultiplier_OutOfStock(t *testing.T) {
 	cfg := DefaultPricingConfig()
 	mult := ScarcityMultiplier(0, 5, cfg)
