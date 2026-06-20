@@ -1,0 +1,14 @@
+itemid: 40100
+name: Foreman's Tally-Book
+not_salable: true
+namesimple: tally-book
+description: A palm-sized tally-book in a cramped, careful hand -- two sets
+  of numbers for every shipment. The left column matches the customs
+  manifests. The right column, smaller and pressed harder into the page,
+  records what was actually landed. The difference between the two,
+  shipment after shipment, is what Foreman Hewd has been quietly walking
+  off the docks -- and the shortage he hung on the dockhand Teo.
+type: object
+subtype: mundane
+weight: 0.1
+value: 0

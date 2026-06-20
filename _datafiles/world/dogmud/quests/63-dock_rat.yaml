@@ -1,0 +1,119 @@
+questid: 63
+name: Dock Rat
+description: >-
+  A cargo theft has been pinned on Teo, one of Jesset's dockhands. Jesset
+  doesn't believe it. Find out who is really skimming the docks.
+secret: false
+
+steps:
+  - id: start
+    description: >-
+      Jesset doesn't buy the theft charge against his hand Teo. He's asked
+      you to find who's really been skimming cargo -- starting with the
+      customs shed and the foreman's books.
+    hint: >-
+      Look into the discrepancy. Read the notice board at the constable's
+      post, check the impounded cargo in the customs shed, and search the
+      foreman's office -- mind the floor.
+  - id: evidence
+    description: >-
+      Beneath a loose floor-board in the foreman's office you found Hewd's
+      hidden tally-book -- two sets of numbers, proof that he is the one
+      skimming and that he hung the shortage on Teo.
+    hint: >-
+      Take the tally-book to the Dock Constable, or back to Jesset, as proof.
+  - id: report
+    description: >-
+      The tally-book is in trusted hands and Hewd's skimming is exposed.
+      Teo is in the clear.
+    hint: >-
+      The matter is closed.
+  - id: end
+    description: >-
+      Hewd's skimming is exposed, his tally-book handed over, and Teo's
+      name is cleared. The docks know who really took the cargo.
+
+rewards:
+  gold: 35
+  rep_faction: np_dockfolk
+  rep_amount: 15
+  playermessage: >-
+    The matter settles the way the docks settle things -- quietly, and for
+    good. Hewd will answer for the difference between his two columns, and
+    Teo goes back on the board in the morning. The dockfolk will hear who
+    sorted it, and down here that is worth more than coin -- though there is
+    coin in it too.
+  roommessage: >-
+    Word moves along the wharves in the way it does, and more than one
+    dockhand gives the traveller a short, respectful nod.
+
+triggers:
+  # ── EVIDENCE: pry up the loose floor-board in the foreman's office (5526) ──
+  - event: room_interact
+    room: 5526
+    noun: floor-board
+    conditions:
+      has: ["63-start"]
+      missing: ["63-evidence"]
+    actions:
+      - grant: "63-evidence"
+      - give_item: 40100
+      - send_text: >-
+          The proud board lifts with a little persuasion. In the gap
+          beneath, wrapped in oilcloth, lies a small tally-book -- and a
+          glance inside is enough. Two columns of numbers for every
+          shipment: the manifest count on the left, the real one on the
+          right. Foreman Hewd has been skimming the difference for a long
+          time, and the shortage he reported was Teo's only by his choosing.
+      - room_text: "works a loose floor-board free and pockets something wrapped in oilcloth."
+
+  # ── floor-board, no quest yet ──
+  - event: room_interact
+    room: 5526
+    noun: floor-board
+    conditions:
+      missing: ["63-start"]
+    actions:
+      - send_text: >-
+          One floor-board sits a little proud of its neighbors. You could
+          work it loose -- but prying up another man's floor without a
+          reason is a fast way to find trouble you came here to avoid.
+
+  # ── REPORT: tally-book to the Dock Constable (9316) ──
+  - event: item_give
+    mob: 9316
+    item: 40100
+    conditions:
+      has: ["63-evidence"]
+      missing: ["63-report"]
+    actions:
+      - grant: "63-report"
+      - npc_say:
+          mob: 9316
+          lines:
+            - {delay: 1, text: "Let me see that."}
+            - {delay: 3, text: "Two columns. Manifest on the left, the true count on the right. That is the foreman's hand."}
+            - {delay: 5, text: "The shortage was never Teo's. I'll have Hewd in by the next bell, and the boy's name off the board."}
+
+  # ── REPORT (alternate): tally-book to Jesset (9300) ──
+  - event: item_give
+    mob: 9300
+    item: 40100
+    conditions:
+      has: ["63-evidence"]
+      missing: ["63-report"]
+    actions:
+      - grant: "63-report"
+      - npc_say:
+          mob: 9300
+          lines:
+            - {delay: 1, text: "Hewd's book. I had a feeling it ran through that office."}
+            - {delay: 3, text: "I'll walk this to the constable myself -- it lands harder from me. Teo's back on the board in the morning. You did right by him."}
+
+  # ── AUTO-COMPLETE: report → end ──
+  - event: quest_granted
+    quest_token: "63-report"
+    conditions:
+      missing: ["63-end"]
+    actions:
+      - grant: "63-end"

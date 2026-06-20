@@ -22,8 +22,8 @@ tree:
   root:
     text: "You looking for the board or you looking for me?"
     hints: "You could ask Jesset about work on the docks, the bloodline's
-      harbor licensing, or the people who passed through here not long
-      ago."
+      harbor licensing, the people who passed through here not long ago, or
+      the theft that's been pinned on his dockhand Teo."
 
   nodes:
     - id: work
@@ -61,3 +61,32 @@ tree:
         this wouldn't be where I told it."
       hints: "Jesset has said what he will about the ones who left."
       moodChange: cautious
+
+    - id: dockrat
+      triggers: ["quest", "task", "teo", "theft", "rat", "skim", "skimming",
+                 "stolen", "cargo", "short", "shortage", "accuse", "accused",
+                 "thief", "trouble", "help"]
+      text: "There's a theft hung on one of my hands — Teo. Cargo came short
+        on a manifest shift and his name's on the entry. I don't buy it.
+        The boy's green, not crooked, and he flagged the shortage himself
+        before anyone else thought to look. Someone's skimming my docks and
+        letting him carry it. Find out who. Start with the customs shed and
+        the foreman's books — and mind the floor in that office. Bring proof
+        to the constable, or back to me."
+      hints: "You could read the notice board at the constable's post, look
+        over the impounded cargo in the customs shed, and search the
+        foreman's office."
+      grantsQuest: "63-start"
+      questExcluded: ["63-start", "63-end"]
+
+    - id: dockrat_active
+      triggers: ["teo", "theft", "rat", "skim", "skimming", "cargo",
+                 "shortage", "proof", "evidence", "foreman", "hewd",
+                 "found", "progress"]
+      questRequired: ["63-start"]
+      questExcluded: ["63-end"]
+      text: "Still on it? Good. The customs shed cargo doesn't match the
+        manifest, and the man who'd know why keeps a tidy office and an
+        untidy conscience. Proof, when you have it, goes to the constable
+        or to me — not to the wharf gossip."
+      hints: "Search the foreman's office — and mind the floor."
