@@ -107,18 +107,18 @@ type Balance struct {
 	PositionConsistencyCheckRounds  ConfigInt   `yaml:"PositionConsistencyCheckRounds"`  // How often the periodic invariant checker runs (default 10)
 
 	// ── COMBAT: SPECIAL MOVES ────────────────────────────────────────────────
-	SpecialMoveCooldown ConfigInt   `yaml:"SpecialMoveCooldown"` // Shared cooldown rounds for bash/trip/kick (default 5)
-	TauntHoldRounds     ConfigInt   `yaml:"TauntHoldRounds"`     // Rounds a successful taunt pins the target's aggro onto the taunter (default 4)
-	BashDamagePercent   ConfigFloat `yaml:"BashDamagePercent"`   // Fraction of normal melee damage (default 0.50)
-	BashKnockdownChance ConfigInt   `yaml:"BashKnockdownChance"` // Base % knockdown chance (default 40)
-	TripDamagePercent   ConfigFloat `yaml:"TripDamagePercent"`   // Fraction of normal melee damage (default 0.25)
-	TripKnockdownChance ConfigInt   `yaml:"TripKnockdownChance"` // Base % knockdown chance (default 60)
-	KickDamagePercent   ConfigFloat `yaml:"KickDamagePercent"`   // Fraction of normal melee damage (default 0.80)
-	KickKnockdownChance ConfigInt   `yaml:"KickKnockdownChance"` // Base % knockdown chance (default 35)
-	StompDamagePercent  ConfigFloat `yaml:"StompDamagePercent"`  // Stomp damage when target is prone (default 1.20)
-	KneeDamagePercent   ConfigFloat `yaml:"KneeDamagePercent"`   // Knee damage in grapple (default 1.00)
-	CoupDeGraceRounds   ConfigInt   `yaml:"CoupDeGraceRounds"`   // Rounds before mob finishes downed player (default 1; 0=disabled)
-	DrainHealRatio           ConfigFloat `yaml:"DrainHealRatio"`           // Fraction of drain damage the attacker heals (lifesteal), default 0.75
+	SpecialMoveCooldown     ConfigInt   `yaml:"SpecialMoveCooldown"`     // Shared cooldown rounds for bash/trip/kick (default 5)
+	TauntHoldRounds         ConfigInt   `yaml:"TauntHoldRounds"`         // Rounds a successful taunt pins the target's aggro onto the taunter (default 4)
+	BashDamagePercent       ConfigFloat `yaml:"BashDamagePercent"`       // Fraction of normal melee damage (default 0.50)
+	BashKnockdownChance     ConfigInt   `yaml:"BashKnockdownChance"`     // Base % knockdown chance (default 40)
+	TripDamagePercent       ConfigFloat `yaml:"TripDamagePercent"`       // Fraction of normal melee damage (default 0.25)
+	TripKnockdownChance     ConfigInt   `yaml:"TripKnockdownChance"`     // Base % knockdown chance (default 60)
+	KickDamagePercent       ConfigFloat `yaml:"KickDamagePercent"`       // Fraction of normal melee damage (default 0.80)
+	KickKnockdownChance     ConfigInt   `yaml:"KickKnockdownChance"`     // Base % knockdown chance (default 35)
+	StompDamagePercent      ConfigFloat `yaml:"StompDamagePercent"`      // Stomp damage when target is prone (default 1.20)
+	KneeDamagePercent       ConfigFloat `yaml:"KneeDamagePercent"`       // Knee damage in grapple (default 1.00)
+	CoupDeGraceRounds       ConfigInt   `yaml:"CoupDeGraceRounds"`       // Rounds before mob finishes downed player (default 1; 0=disabled)
+	DrainHealRatio          ConfigFloat `yaml:"DrainHealRatio"`          // Fraction of drain damage the attacker heals (lifesteal), default 0.75
 	ThrottleInterruptChance ConfigFloat `yaml:"ThrottleInterruptChance"` // Chance throttle interrupts a casting victim, default 0.75
 
 	// ── COMBAT: RANGED ───────────────────────────────────────────────────────
@@ -470,11 +470,12 @@ type Balance struct {
 	ManifestStatScaleSkillFactor ConfigFloat `yaml:"ManifestStatScaleSkillFactor"` // Manifestation skill additive factor (default 0.02)
 
 	// ── SHOP ECONOMY ─────────────────────────────────────────────────────────
-	ShopBuyRatio           ConfigFloat `yaml:"ShopBuyRatio,omitempty"`           // Base buy/sell spread: NPC buy offer = baseValue * BuyRatio * scarcityMult (default 0.50)
-	ShopPriceFloor         ConfigFloat `yaml:"ShopPriceFloor,omitempty"`         // Minimum scarcity multiplier when stock is very high (default 0.25)
-	ShopPriceCeiling       ConfigFloat `yaml:"ShopPriceCeiling,omitempty"`       // Maximum scarcity multiplier when stock is zero (default 5.0)
-	ShopAbundanceThreshold ConfigFloat `yaml:"ShopAbundanceThreshold,omitempty"` // Stock/restock ratio at which price hits the floor (default 3.0)
-	ShopMaterialReserve    ConfigInt   `yaml:"ShopMaterialReserve,omitempty"`    // Units of each material a crafter mob reserves before selling (default 1)
+	ShopBuyRatio              ConfigFloat `yaml:"ShopBuyRatio,omitempty"`              // Base buy/sell spread: NPC buy offer = baseValue * BuyRatio * scarcityMult (default 0.50)
+	ShopPriceFloor            ConfigFloat `yaml:"ShopPriceFloor,omitempty"`            // Minimum scarcity multiplier when stock is very high (default 0.25)
+	ShopPriceCeiling          ConfigFloat `yaml:"ShopPriceCeiling,omitempty"`          // Maximum scarcity multiplier when stock is zero (default 5.0)
+	ShopAbundanceThreshold    ConfigFloat `yaml:"ShopAbundanceThreshold,omitempty"`    // Stock/restock ratio at which price hits the floor (default 3.0)
+	ShopMaterialReserve       ConfigInt   `yaml:"ShopMaterialReserve,omitempty"`       // Units of each material a crafter mob reserves before selling (default 1)
+	DefaultPricingBaselineQty ConfigInt   `yaml:"DefaultPricingBaselineQty,omitempty"` // Pricing baseline (scarcity-curve denominator) for stock entries with RestockQty==0, e.g. crafted/caravan-delivered goods (default 3)
 	// CrafterIngredientReservePct is the fraction of an ingredient's
 	// MaxStock the crafter mob keeps in reserve when deciding whether to
 	// craft. Prevents the crafter from consuming its own stock to a level

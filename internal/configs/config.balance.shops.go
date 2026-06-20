@@ -22,6 +22,9 @@ func (b *Balance) validateShops() {
 	if b.CrafterIngredientReservePct <= 0 {
 		b.CrafterIngredientReservePct = 0.25
 	}
+	if b.DefaultPricingBaselineQty < 1 {
+		b.DefaultPricingBaselineQty = 3
+	}
 	if b.ShopGoldReserveRatio <= 0 {
 		b.ShopGoldReserveRatio = 0.50
 	}
