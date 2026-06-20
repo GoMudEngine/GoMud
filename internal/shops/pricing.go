@@ -49,12 +49,29 @@ func DefaultPricingConfig() PricingConfig {
 	}
 }
 
+// PricingBaseline is the single normalizer (scarcity-curve denominator) for a
+// stock entry, used by EVERY pricing path — player buy/sell AND the NPC
+// craft / salvage / gear-upgrade decision paths. It returns the ticker
+// RestockQty when set, otherwise cfg.DefaultBaselineQty (the baseline for
+// crafted / caravan-delivered RestockQty==0 goods). A nil entry uses the
+// default. This replaces the old per-call-site MaxStock/2 estimate, which
+// priced low-volume goods near the ceiling and diverged from player pricing.
+func PricingBaseline(entry *StockEntry, cfg PricingConfig) int {
+	if entry != nil && entry.RestockQty > 0 {
+		return entry.RestockQty
+	}
+	if cfg.DefaultBaselineQty < 1 {
+		return 1
+	}
+	return cfg.DefaultBaselineQty
+}
+
 // ScarcityMultiplier computes the price multiplier based on current stock
 // and the item's restock quantity (which normalizes the curve).
 // Range: PriceFloor (overstocked) to PriceCeiling (out of stock).
-// For items with no ticker restock (RestockQty==0), the player-facing paths
-// obtain the normalizer via EffectiveRestock(entry, cfg.DefaultBaselineQty);
-// do NOT pass MaxStock/2 (that priced low-volume goods near the ceiling).
+// Always obtain the restockQty argument via PricingBaseline(entry, cfg) so
+// every pricing path agrees; do NOT inline MaxStock/2 (that priced low-volume
+// RestockQty==0 goods near the ceiling).
 func ScarcityMultiplier(current int, restockQty int, cfg PricingConfig) float64 {
 	if restockQty <= 0 {
 		restockQty = 1 // Avoid division by zero

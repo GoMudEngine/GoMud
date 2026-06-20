@@ -5,7 +5,6 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
@@ -109,7 +108,7 @@ func buildShopStockFromInventory(shopInv *shops.ShopInventory, user *users.UserR
 			continue
 		}
 		spec := itm.GetSpec()
-		restock := actions.EffectiveRestock(&entry, cfg.DefaultBaselineQty)
+		restock := shops.PricingBaseline(&entry, cfg)
 		price := shops.CalcSellPrice(spec.Value, entry.Current, restock, cfg)
 
 		stock = append(stock, characters.ShopItem{

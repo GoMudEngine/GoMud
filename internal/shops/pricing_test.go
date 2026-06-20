@@ -10,6 +10,25 @@ func TestDefaultPricingConfig_BaselineQty(t *testing.T) {
 	assert.Equal(t, 3, DefaultPricingConfig().DefaultBaselineQty)
 }
 
+func TestPricingBaseline_UsesRestockQtyWhenPositive(t *testing.T) {
+	assert.Equal(t, 7, PricingBaseline(&StockEntry{RestockQty: 7, MaxStock: 20}, DefaultPricingConfig()))
+}
+
+func TestPricingBaseline_UsesDefaultWhenZero(t *testing.T) {
+	// not MaxStock/2 (=10) — the unified baseline.
+	assert.Equal(t, 3, PricingBaseline(&StockEntry{RestockQty: 0, MaxStock: 20}, DefaultPricingConfig()))
+}
+
+func TestPricingBaseline_NilEntryUsesDefault(t *testing.T) {
+	assert.Equal(t, 3, PricingBaseline(nil, DefaultPricingConfig()))
+}
+
+func TestPricingBaseline_ClampsDefaultToOne(t *testing.T) {
+	cfg := DefaultPricingConfig()
+	cfg.DefaultBaselineQty = 0
+	assert.Equal(t, 1, PricingBaseline(&StockEntry{RestockQty: 0, MaxStock: 20}, cfg))
+}
+
 func TestScarcityMultiplier_Baseline3_ModestStockIsAffordable(t *testing.T) {
 	cfg := DefaultPricingConfig()
 	// 5 units at baseline 3 → ratio 1.67 → comfortably below base price.

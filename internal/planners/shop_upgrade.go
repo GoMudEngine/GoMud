@@ -16,25 +16,6 @@ type upgradeCandidate struct {
 	Delta    float64 // itemvalue swap delta (gain)
 }
 
-// stockRestockNorm is the normalizer for the NPC gear-upgrade evaluator:
-// RestockQty when > 0, else MaxStock/2 (min 1), else 1.
-// NOTE: this deliberately DIVERGES from the player-facing path, which uses
-// EffectiveRestock(entry, cfg.DefaultBaselineQty). The NPC evaluator keeps the
-// older MaxStock/2 estimate; unifying the two is a tracked follow-up.
-func stockRestockNorm(e shops.StockEntry) int {
-	if e.RestockQty > 0 {
-		return e.RestockQty
-	}
-	if e.MaxStock > 0 {
-		n := e.MaxStock / 2
-		if n < 1 {
-			n = 1
-		}
-		return n
-	}
-	return 1
-}
-
 // scanZoneUpgrades walks every in-stock entry across all shops in the mob's
 // zone, scores each as a swap for this mob via itemvalue, and prices it under
 // dynamic pricing. It returns the best positive-delta upgrade (highest delta,
@@ -78,7 +59,7 @@ func scanZoneUpgrades(mob *mobs.Mob, profile itemvalue.WeightProfile, budget int
 			if delta.Slot == "" || delta.Score <= minDelta {
 				continue
 			}
-			price := shops.CalcSellPrice(spec.Value, e.Current, stockRestockNorm(e), cfg)
+			price := shops.CalcSellPrice(spec.Value, e.Current, shops.PricingBaseline(&e, cfg), cfg)
 			if onlyAffordable && price > budget {
 				continue
 			}

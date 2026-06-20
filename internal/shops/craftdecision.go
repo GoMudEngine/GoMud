@@ -15,11 +15,9 @@ type CraftDecision struct {
 }
 
 // MaterialCost computes the opportunity cost of consuming all ingredients
-// for recipe. Each ingredient is valued at its current sell price in
-// shopInv (using MaxStock/2 as the normalizer for crafted-only items —
-// the NPC-decision estimate, which diverges from the player-facing
-// EffectiveRestock/DefaultBaselineQty path; unifying them is a tracked
-// follow-up). Returns 0 if shopInv is nil.
+// for recipe. Each ingredient is valued at its current sell price in shopInv,
+// normalized via PricingBaseline — the same baseline the player pays.
+// Returns 0 if shopInv is nil.
 func MaterialCost(recipe *crafting.RecipeSpec, shopInv *ShopInventory, cfg PricingConfig) float64 {
 	if shopInv == nil || recipe == nil {
 		return 0
@@ -31,27 +29,19 @@ func MaterialCost(recipe *crafting.RecipeSpec, shopInv *ShopInventory, cfg Prici
 			continue
 		}
 		entry := shopInv.GetStock(spec.ItemId)
-		current, restockQty := 0, 1
+		current := 0
 		if entry != nil {
 			current = entry.Current
-			if entry.RestockQty > 0 {
-				restockQty = entry.RestockQty
-			} else if entry.MaxStock > 0 {
-				restockQty = entry.MaxStock / 2
-				if restockQty < 1 {
-					restockQty = 1
-				}
-			}
 		}
-		price := CalcSellPrice(spec.Value, current, restockQty, cfg)
+		price := CalcSellPrice(spec.Value, current, PricingBaseline(entry, cfg), cfg)
 		total += float64(price) * float64(ing.Quantity)
 	}
 	return total
 }
 
 // ProductValue computes what the output item of recipe is worth at current
-// stock levels. Uses MaxStock/2 as the normalizer for crafted goods.
-// Returns 0 if shopInv is nil or no output item is defined.
+// stock levels, normalized via PricingBaseline — the same baseline the player
+// pays. Returns 0 if shopInv is nil or no output item is defined.
 func ProductValue(recipe *crafting.RecipeSpec, shopInv *ShopInventory, cfg PricingConfig) float64 {
 	if shopInv == nil || recipe == nil || recipe.Output.ItemId <= 0 {
 		return 0
@@ -61,19 +51,11 @@ func ProductValue(recipe *crafting.RecipeSpec, shopInv *ShopInventory, cfg Prici
 		return 0
 	}
 	entry := shopInv.GetStock(recipe.Output.ItemId)
-	current, restockQty := 0, 1
+	current := 0
 	if entry != nil {
 		current = entry.Current
-		if entry.RestockQty > 0 {
-			restockQty = entry.RestockQty
-		} else if entry.MaxStock > 0 {
-			restockQty = entry.MaxStock / 2
-			if restockQty < 1 {
-				restockQty = 1
-			}
-		}
 	}
-	price := CalcSellPrice(spec.Value, current, restockQty, cfg)
+	price := CalcSellPrice(spec.Value, current, PricingBaseline(entry, cfg), cfg)
 	return float64(price) * float64(recipe.Output.Quantity)
 }
 
@@ -210,11 +192,7 @@ func EvaluateSalvageOptions(shopInv *ShopInventory, cfg PricingConfig) *CraftDec
 		}
 
 		// Value of the item being broken down (at current stock with one extra)
-		restockNorm := entry.MaxStock / 2
-		if restockNorm < 1 {
-			restockNorm = 1
-		}
-		itemPrice := float64(CalcSellPrice(spec.Value, entry.Current, restockNorm, cfg))
+		itemPrice := float64(CalcSellPrice(spec.Value, entry.Current, PricingBaseline(&entry, cfg), cfg))
 
 		// Value of materials recovered
 		returnValue := 0.0
@@ -224,19 +202,11 @@ func EvaluateSalvageOptions(shopInv *ShopInventory, cfg PricingConfig) *CraftDec
 				continue
 			}
 			matEntry := shopInv.GetStock(matSpec.ItemId)
-			matCurrent, matRestock := 0, 1
+			matCurrent := 0
 			if matEntry != nil {
 				matCurrent = matEntry.Current
-				if matEntry.RestockQty > 0 {
-					matRestock = matEntry.RestockQty
-				} else if matEntry.MaxStock > 0 {
-					matRestock = matEntry.MaxStock / 2
-					if matRestock < 1 {
-						matRestock = 1
-					}
-				}
 			}
-			matPrice := CalcSellPrice(matSpec.Value, matCurrent, matRestock, cfg)
+			matPrice := CalcSellPrice(matSpec.Value, matCurrent, PricingBaseline(matEntry, cfg), cfg)
 			returnValue += float64(matPrice) * float64(ret.Quantity)
 		}
 
