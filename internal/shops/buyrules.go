@@ -72,12 +72,7 @@ func EvaluateBuyRules(
 	var price int
 	entry := shopInv.GetStock(spec.ItemId)
 	if entry != nil {
-		current := entry.Current
-		restock := 1
-		if entry.RestockQty > 0 {
-			restock = entry.RestockQty
-		}
-		price = CalcBuyPrice(spec.Value, current, restock, cfg)
+		price = CalcBuyPrice(spec.Value, entry.Current, PricingBaseline(entry, cfg), cfg)
 	} else {
 		flat := int(float64(spec.Value) * cfg.BuyRatio)
 		if flat < 1 {
