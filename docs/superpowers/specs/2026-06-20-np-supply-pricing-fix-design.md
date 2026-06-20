@@ -114,12 +114,19 @@ func EffectiveRestock(entry *shops.StockEntry, defaultBaseline int) int {
 }
 ```
 
-**Both callers** pass `configs.GetBalanceConfig().DefaultPricingBaselineQty`:
-- `tryPurchaseFromInventory` (`internal/actions/buy.go:513`)
-- `buildShopStockFromInventory` (`internal/usercommands/list.go:99`)
+The baseline rides on `PricingConfig` (both callers already build
+`cfg := shops.PricingConfigFromBalance()`), so each passes `cfg.DefaultBaselineQty`
+— no second global-config read:
+- `tryPurchaseFromInventory` (`internal/actions/buy.go:539`)
+- `buildShopStockFromInventory` (`internal/usercommands/list.go:112`)
 
-(These are the *only* two callers — confirmed via codegraph. No restock-mechanic
-code calls `EffectiveRestock`, so ticker behavior is provably untouched.)
+`PricingConfig` gains a `DefaultBaselineQty int` field, defaulted to 3 in
+`DefaultPricingConfig()` and populated from `Balance.DefaultPricingBaselineQty`
+in `PricingConfigFromBalance()`.
+
+(`tryPurchaseFromInventory` and `buildShopStockFromInventory` are the *only* two
+callers — confirmed via codegraph. No restock-mechanic code calls
+`EffectiveRestock`, so ticker behavior is provably untouched.)
 
 ### Effect (current `ScarcityMultiplier` curve, `MaxStock:20`)
 
@@ -216,10 +223,12 @@ callers + tests). The §2 recipe as **documentation only**.
 
 | File | Change |
 |---|---|
-| `internal/configs/config.balance.shops.go` | Add `DefaultPricingBaselineQty int` field + default 3 (follow the file's existing shop-knob pattern) |
+| `internal/configs/config.balance.go` | Add `DefaultPricingBaselineQty ConfigInt` field to the `Balance` struct (where all shop knobs are declared) |
+| `internal/configs/config.balance.shops.go` | Default it to 3 in `validateShops` |
+| `internal/shops/pricing.go` | Add `DefaultBaselineQty int` to `PricingConfig`; default 3; populate from balance |
 | `internal/actions/buy.go:499` | `EffectiveRestock` gains `defaultBaseline int` param; `RestockQty==0` returns it |
-| `internal/actions/buy.go:513` | `tryPurchaseFromInventory` passes the config value |
-| `internal/usercommands/list.go:99` | `buildShopStockFromInventory` passes the config value |
+| `internal/actions/buy.go:539` | `tryPurchaseFromInventory` passes `cfg.DefaultBaselineQty` |
+| `internal/usercommands/list.go:112` | `buildShopStockFromInventory` passes `cfg.DefaultBaselineQty` |
 | `internal/actions/buy_test.go` | New `EffectiveRestock` tests |
 | `internal/shops/pricing_test.go` | Extended scarcity-band tests |
 
