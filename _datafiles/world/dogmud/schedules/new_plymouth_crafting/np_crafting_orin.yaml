@@ -1,0 +1,29 @@
+id: np_crafting_orin
+description: "Orin the Bookseller: tends the bookstall from mid-morning through
+  the evening, reading long after the light is gone, sleeps above the stall."
+segments:
+  - start: 7
+    end: 21
+    target_room: 5706
+    activity: ""
+    idlecommands:
+      - emote reads in the dim without apparent difficulty, the ink-stained eyes
+        moving in their measured way down the column of text.
+      - emote straightens a stack of folded maps on the counter, fitting them to
+        an order that appears to make sense only to him.
+      - emote traces a route on an open map with one finger, pausing at certain
+        marks, then closes it without writing anything down.
+      - say I still carry the last maps Edvar drew. I have not been in a hurry
+        to sell them. He priced his work honestly. I intend to do the same.
+      - emote dusts the spine of a particular volume with particular care and
+        puts it back in exactly the right place.
+      - say The eyes read in the dark — that is the Chrysalis, and I find it
+        useful in a business that involves a great deal of small print.
+  - start: 21
+    end: 7
+    target_room: 5707
+    activity: sleeping
+    idlecommands:
+      - emote sleeps above the bookstall; the ink-dark eyes are closed, though
+        even in sleep they hold a faint shifting depth, like water over a
+        dark bottom.

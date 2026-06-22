@@ -1,5 +1,6 @@
 mobid: 9332
 zone: New Plymouth Crafting
+schedule_id: np_crafting_orin
 craft_support: general
 behavior_archetype: noncombat_shopkeeper
 non_combatant: true

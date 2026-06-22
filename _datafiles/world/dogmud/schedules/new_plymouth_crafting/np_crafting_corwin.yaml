@@ -1,0 +1,28 @@
+id: np_crafting_corwin
+description: "Corwin the Tanner: works the Tannery from morning through evening
+  without comment about the smell, sleeps in the loft above."
+segments:
+  - start: 6
+    end: 21
+    target_room: 5717
+    activity: ""
+    idlecommands:
+      - emote works a length of leather between both hands, stretching and
+        releasing in a steady rhythm that does not need his full attention.
+      - emote turns the hide on the frame to check the cure from a second angle
+        before moving on.
+      - emote runs a thumb along the grain of a finished strip, nods once, and
+        hangs it with the rest.
+      - say The hides come in from the warehouse — what I do to them after is
+        my own work. The smell is part of the process. I have stopped
+        mentioning it because no one was helped by me mentioning it.
+      - emote tests the caustic bath with a bare forearm, reads the concentration
+        by the lack of reaction, and adjusts the measure.
+      - emote does the work without commentary, which is how he does most things.
+  - start: 21
+    end: 6
+    target_room: 5717
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the loft above the tannery, the hides curing below in
+        their baths, his leather-tough hands resting easy on the blanket.

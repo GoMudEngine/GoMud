@@ -1,0 +1,46 @@
+id: np_crafting_vesna
+description: "Vesna: works the Alchemist's Lab from morning through evening with
+  a brief midday stop at the craftwell, sleeps above the lab."
+segments:
+  - start: 6
+    end: 12
+    target_room: 5711
+    activity: ""
+    idlecommands:
+      - emote draws a measured pour from a stoppered flask and holds the vial to
+        the light before adding it to the mixing bowl.
+      - emote stirs a small clay pot in slow, deliberate rotations, watching the
+        colour shift, lips counting something silently.
+      - say The morning batch has to set before I can work the second stage.
+        The timing is not negotiable — the compound is.
+      - emote catalogues three vials by scent alone, eyes closed, setting each
+        in its rack without looking.
+  - start: 12
+    end: 13
+    target_room: 5722
+    activity: ""
+    idlecommands:
+      - emote draws a cup of water from the craftwell and stands in the square
+        for a moment, eyes on nothing, letting the focus rest.
+      - say The square is good for this. Quiet, mostly. The air moves.
+  - start: 13
+    end: 21
+    target_room: 5711
+    activity: ""
+    idlecommands:
+      - emote records an entry in the workbench ledger in the concentrated
+        brevity of someone who has written this down before.
+      - emote tilts a covered flask against the lamp, watching the iridescent
+        sheen of her own skin catch the same light the compound does.
+      - say The afternoon work is always the careful work. The morning sets
+        the terms — the afternoon finds out whether they hold.
+      - emote returns a finished vial to its place in the rack with both hands,
+        the way you set something down that has cost you attention.
+  - start: 21
+    end: 6
+    target_room: 5712
+    activity: sleeping
+    idlecommands:
+      - emote sleeps above the lab, the sealed compounds below undisturbed,
+        the faint oil-sheen of her skin catching what little light reaches the
+        upper room.

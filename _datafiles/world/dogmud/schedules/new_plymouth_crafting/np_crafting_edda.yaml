@@ -1,0 +1,30 @@
+id: np_crafting_edda
+description: "Edda Glass: tends the Glass Kiln from before dawn through the
+  evening, sleeping near the banked kiln — she has never seen the point in
+  going far from the work."
+segments:
+  - start: 5
+    end: 21
+    target_room: 5713
+    activity: ""
+    idlecommands:
+      - emote gathers molten glass on the blowpipe with a practiced rotation,
+        shaping the gather before it cools too far to work.
+      - emote turns the pipe in both scarred hands at a steady rhythm,
+        glass-clear nails catching the kiln light.
+      - emote holds a finished piece to the kiln glow for a long moment,
+        face neutral, then sets it in the annealing rack.
+      - say The kiln north of the cooperage. The work south of it. That was
+        how it was. I tend the north end. Someone else made choices about
+        the south.
+      - emote tends the kiln with the small adjustments of someone who has
+        had this conversation with the fire for years.
+      - emote stands at the glory-hole with a finished gather, pausing before
+        she begins to work it — a moment that does not look like hesitation.
+  - start: 21
+    end: 5
+    target_room: 5713
+    activity: sleeping
+    idlecommands:
+      - emote sleeps near the banked kiln, the annealing rack full from the
+        day's work, glass-clear fingernails faintly luminous in the dim.

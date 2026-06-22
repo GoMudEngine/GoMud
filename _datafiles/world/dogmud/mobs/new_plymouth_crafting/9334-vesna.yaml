@@ -1,5 +1,6 @@
 mobid: 9334
 zone: New Plymouth Crafting
+schedule_id: np_crafting_vesna
 craft_support: alchemy
 behavior_archetype: noncombat_shopkeeper
 non_combatant: true
