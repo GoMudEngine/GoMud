@@ -9,6 +9,7 @@ description: |
   quite removed; to those who ask the wrong questions, they are a problem that
   gets tidied away. They smile, and process everything by the letter.
 default_rep: -10
-allies: []
+allies:
+  - temple_np
 enemies:
   - cooperage_circle
