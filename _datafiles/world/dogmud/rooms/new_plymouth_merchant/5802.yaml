@@ -1,0 +1,81 @@
+roomid: 5802
+zone: New Plymouth Merchant
+title: The Central Square
+description: >
+  The square opens with the suddenness of a breath
+  released — a full city block of dressed stone where
+  the Long Market and the Processional cross, and every
+  edge of it dense with the apparatus of commerce.
+  Stalls rim three sides of the open center, their
+  awnings in a dozen competing colors, goods beneath
+  them ranging from everyday provisions to items that
+  have no apparent business being sold casually in
+  daylight. At the center stands the
+  <ansi fg="itemname">proclamation-post</ansi> — a
+  thick oak column bound in iron rings, its surface
+  layered with sealed official notices and public
+  announcements nailed over them, the city's written
+  voice accumulated in wax and paper. The
+  <ansi fg="itemname">crossing-eye</ansi>, a circle
+  of pale contrasting stone inset in the paving at the
+  arteries' exact meeting point, is worn to a dull shine
+  that has nothing to do with decoration and everything
+  to do with the weight of years. South, the Processional
+  descends in a long grade toward the Common Quarter;
+  north it climbs toward the palace district. Certain
+  eyes in this square have learned to note who lingers
+  without evident business, and those eyes report to
+  someone.
+biome: city
+coord:
+  x: -14
+  y: 89
+  z: 0
+exits:
+  west:
+    roomid: 5801
+  east:
+    roomid: 5805
+  north:
+    roomid: 5803
+nouns:
+  proclamation-post: A column of seasoned oak, perhaps
+    a foot and a half across, banded at intervals with
+    iron rings that keep it from splitting in the
+    weather. The surface is entirely covered in posted
+    material — official decrees with wax seals intact,
+    guild announcements, a tax schedule from two seasons
+    past, a missing-person notice that has been up long
+    enough to lose its urgency. At the column's base
+    someone has been chalking a running tally of something
+    for months; the numbers make no obvious sense. A
+    city clerk removes what is outdated and posts what
+    is new every third day and has done so for years
+    without missing.
+  crossing-eye: A circle of pale limestone set flush
+    into the darker square paving, perhaps six feet
+    across, marking the exact center of the two
+    arteries' crossing. A compass rose was carved into
+    it at installation — north, south, east, west in
+    incised lines — but the relief is almost entirely
+    worn smooth now. You can find the marks only by
+    running your foot slowly across the surface. The
+    stone is several shades lighter than the rest of
+    the square from daily washing; it is understood to
+    be the city's symbolic center, though that
+    understanding is not written anywhere official.
+idlemessages:
+- A city crier at the proclamation-post reads a new
+  notice aloud in a carrying voice; most of the square
+  does not look up.
+- The crossing-eye is briefly clear of foot-traffic
+  and then the crowd closes over it again.
+- A merchant's factor threads the press with a leather
+  satchel held close to the body — the satchel is
+  clearly heavier than it looks.
+- From the south, the Processional delivers a small
+  column of militia heading somewhere with the purposeful
+  pace of people who have been given orders.
+- The noise in the square is layered — argument,
+  haggling, greeting, hawking, cart-wheels — and the
+  city produces it without effort or interruption.
