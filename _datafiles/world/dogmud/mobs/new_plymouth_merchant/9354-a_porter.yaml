@@ -1,0 +1,40 @@
+mobid: 9354
+zone: New Plymouth Merchant
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote wheels a loaded cart from the ranked line to the armoury
+    back entrance in the particular diagonal that avoids the
+    tally-post without appearing to think about it.'
+  - ''
+  - 'emote sets a crate down at the yard''s edge, reads the tally-man''s
+    mark on its side, and moves it to the correct stack without
+    asking.'
+  - ''
+  - 'emote lowers the cart handles, rolls both shoulders back once, and
+    picks the handles up again in the same motion.'
+activitylevel: 9
+character:
+  name: A Porter
+  description: |
+    The porter works the dock behind the arms row from early morning
+    to late afternoon, shifting goods between the yard and the shop
+    back-doors by hand-cart. He is large across the shoulder and
+    not in conversation about it. The hand-cart he uses is his by
+    long custom if not by paper, and he would notice immediately if
+    someone had moved it. He does his work at the pace that fits
+    the load and does not hurry for theatrical reasons.
+  speciesid: 1
+  level: 1
+  gold: 7
+  stats:
+    strength:
+      training: 14
+    vitality:
+      training: 6

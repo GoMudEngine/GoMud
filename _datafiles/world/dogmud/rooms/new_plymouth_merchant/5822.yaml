@@ -76,3 +76,6 @@ idlemessages:
   office above.
 - The alley does not smell of anything in particular,
   which in this city is an achievement.
+spawninfo:
+  - mobid: 9353
+    respawnrate: "10 real minutes"

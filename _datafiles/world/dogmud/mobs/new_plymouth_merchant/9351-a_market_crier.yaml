@@ -1,0 +1,43 @@
+mobid: 9351
+zone: New Plymouth Merchant
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote fills his lungs and delivers the current grain-price in a
+    carrying voice that clears the immediate press without apparent
+    effort.'
+  - ''
+  - 'emote turns at the crossing-eye, faces south, and runs through
+    the morning''s bloodline announcements from memory, looking past
+    the crowd rather than at it.'
+  - ''
+  - 'emote pauses at the proclamation-post, reads a newly nailed notice
+    with quick eyes, and files its contents behind his forehead before
+    the next circuit begins.'
+activitylevel: 8
+character:
+  name: A Market Crier
+  description: |
+    The market crier works the Central Square from first light to
+    midday in a circuit from the proclamation-post to the fountain
+    approach, his voice a brass instrument tuned by long practice
+    to carry over the crowd without breaking. He does not read from
+    notes — the prices and guild notices are in his head, updated
+    each morning from the exchange boards, and he delivers them
+    without variation or error. He is paid by the guild of recognized
+    merchants and is considered neutral infrastructure, which means
+    everyone finds him useful and no one particularly likes him.
+  speciesid: 1
+  level: 1
+  gold: 6
+  stats:
+    charisma:
+      training: 12
+    perception:
+      training: 6

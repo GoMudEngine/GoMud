@@ -68,3 +68,6 @@ idlemessages:
   work mingles with the cooler metal-smell pleasantly.
 - Brun does not speak much during fitting sessions.
   The measuring cord does most of the communicating.
+spawninfo:
+  - mobid: 9348
+    respawnrate: "10 real minutes"

@@ -81,3 +81,6 @@ idlemessages:
 - The noise in the square is layered — argument,
   haggling, greeting, hawking, cart-wheels — and the
   city produces it without effort or interruption.
+spawninfo:
+  - mobid: 9351
+    respawnrate: "10 real minutes"

@@ -1,0 +1,42 @@
+mobid: 9355
+zone: New Plymouth Merchant
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote pauses at one of the glazed window-fronts, tilts his head
+    at the arrangement inside, and moves on without indicating whether
+    he was interested.'
+  - ''
+  - 'emote adjusts his coat-front with the small unconscious gesture
+    of someone whose clothes are good enough that they occasionally
+    require noticing.'
+  - ''
+  - 'emote glances south along the Walk with an expression that
+    conveys neither urgency nor particular intention, and remains
+    where he is.'
+activitylevel: 3
+character:
+  name: A Well-Dressed Customer
+  description: |
+    The customer moves along the Gilded Walk with the unhurried
+    pace of someone who does not need anything urgently and is
+    aware that appearing to need nothing urgently is itself a form
+    of currency here. His coat is good wool, his boots are clean,
+    and neither of these facts is accidental. He considers window
+    arrangements with a slight tilt of the head that does not
+    commit him to entering, and occasionally does not enter.
+    Whatever he is actually here for, browsing is the cover for it.
+  speciesid: 1
+  level: 1
+  gold: 28
+  stats:
+    charisma:
+      training: 8
+    perception:
+      training: 6

@@ -74,3 +74,6 @@ idlemessages:
 - A completed application is filed in the rack behind
   the counter — a slot already labeled for exactly
   that category of filing.
+spawninfo:
+  - mobid: 9349
+    respawnrate: "10 real minutes"

@@ -77,3 +77,6 @@ idlemessages:
   lowered from a wagon at the yard's south entrance,
   marked and cleared by the tally-man in under a
   minute.
+spawninfo:
+  - mobid: 9354
+    respawnrate: "10 real minutes"

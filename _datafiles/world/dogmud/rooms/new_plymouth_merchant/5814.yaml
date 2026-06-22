@@ -72,3 +72,6 @@ idlemessages:
 - Footsteps on the stair above — an arrival or a
   departure — and then the room's low undertone
   resumes.
+spawninfo:
+  - mobid: 9350
+    respawnrate: "10 real minutes"

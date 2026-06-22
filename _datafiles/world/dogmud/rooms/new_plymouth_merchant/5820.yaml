@@ -58,3 +58,6 @@ idlemessages:
   considers these different things.
 - The bloodline watcher inside does not look at you
   directly. This is also a form of attention.
+spawninfo:
+  - mobid: 9344
+    respawnrate: "10 real minutes"

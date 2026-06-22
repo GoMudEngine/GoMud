@@ -66,3 +66,6 @@ idlemessages:
   checks the light from the street door.
 - Paper is shuffled. A stamp is applied. A clerk
   replaces the pen and moves to the next station.
+spawninfo:
+  - mobid: 9346
+    respawnrate: "10 real minutes"

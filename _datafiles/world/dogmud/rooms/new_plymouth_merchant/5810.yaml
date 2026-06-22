@@ -69,3 +69,6 @@ idlemessages:
 - Ostry assesses a piece brought in for valuation —
   holding it in two hands while the third makes notes
   on condition.
+spawninfo:
+  - mobid: 9347
+    respawnrate: "10 real minutes"

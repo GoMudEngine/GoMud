@@ -59,3 +59,6 @@ idlemessages:
 - The noise from the square ahead rises briefly — a
   shout, a bell, something indeterminate — and settles
   back to its steady hum.
+spawninfo:
+  - mobid: 9352
+    respawnrate: "10 real minutes"

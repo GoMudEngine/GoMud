@@ -72,3 +72,6 @@ idlemessages:
   something about to be used.
 - A lot from the morning's session remains under the
   block — a cloth-wrapped parcel, tagged and waiting.
+spawninfo:
+  - mobid: 9345
+    respawnrate: "10 real minutes"

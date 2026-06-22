@@ -68,3 +68,6 @@ idlemessages:
   deliberate.
 - Someone has chalked a price on the pavement near
   the fountain end — legible, but without context.
+spawninfo:
+  - mobid: 9355
+    respawnrate: "10 real minutes"
