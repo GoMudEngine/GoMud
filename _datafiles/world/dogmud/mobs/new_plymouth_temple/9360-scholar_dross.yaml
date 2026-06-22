@@ -1,0 +1,46 @@
+mobid: 9360
+zone: New Plymouth Temple
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+  - temple_np
+idlecommands:
+  - 'emote paces the length of the courtyard, stops at the eastern
+    wall, studies it, and paces back. He does this a great deal.'
+  - ''
+  - 'emote makes a notation in a small journal, underlines something
+    twice, and puts it back in his breast pocket with an air of
+    someone who has just strengthened an already strong argument.'
+  - ''
+  - 'emote gestures at the wall as though making a point to someone
+    who is not there, finds this insufficient, and gestures again.'
+  - ''
+activitylevel: 10
+character:
+  name: Scholar Dross
+  description: |
+    Scholar Dross paces the temple courtyard with the restless
+    energy of a man who has worked something out that nobody else
+    will admit is worked out. He is a visiting scholar attached to
+    the temple by a research grant he uses primarily to argue with
+    the senior keepers about the age of the eastern inscription.
+    His Bloom-change is the most immediately visible thing about
+    him — the cranium has enlarged in the way of extreme intellectual
+    elaboration, veined at his brow and forehead, expanding the
+    skull in a way that most people notice before they notice
+    anything else. He finds this either useful or irrelevant
+    depending on whether it has given him a better argument, which
+    it usually has. He is loud, precise, and largely ignored by
+    everyone with a formal position in the temple, which does not
+    slow him down.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    perception:
+      training: 14

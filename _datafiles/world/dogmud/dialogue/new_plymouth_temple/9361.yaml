@@ -1,0 +1,89 @@
+mobid: 9361
+zone: New Plymouth Temple
+defaultMood: friendly
+
+greetings:
+  - text: "Come in. If something needs tending, sit down and let me
+      look before you explain it. What is it?"
+    moods: ["friendly", "neutral"]
+  - text: "You're back. Has it held, or are we looking at it again?"
+    moods: ["neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Sit down if you need to."
+      - "In. The chapel is open. What brings you?"
+
+  - keywords: [""]
+    responses:
+      - "Tell me what it is. I have heard most things."
+
+tree:
+  root:
+    text: "The chapel is open and I am in it. If something needs
+      tending — a wound, an illness, whatever it is — bring it
+      here. If you are curious about the work, or about the healer
+      in the Common Quarter, I can probably answer that too. What
+      is it?"
+    hints: "You could ask Sister Alms about her healing work and
+      how the chapel runs, about the healer named Ysolde in the
+      Common Quarter and how they compare, or about who she will
+      and will not help."
+
+  nodes:
+    - id: healing
+      triggers: ["heal", "healing", "hurt", "wound", "wounds", "sick",
+                 "illness", "medicine", "work", "chapel", "what", "how",
+                 "service", "treat", "treatment", "care", "blessing",
+                 "cost", "price", "free", "light", "open", "tend",
+                 "tending", "help", "do you", "offer", "does it",
+                 "hands", "warm", "mutation", "change", "bloom"]
+      text: "The rule here is simple. I look at what is wrong and I
+        try to put it right. I do not ask where you got it, who gave
+        it to you, or whether there are circumstances you would prefer
+        not to discuss. People who need tending get tended. The chapel
+        has what I need for most things — poultice materials, clean
+        cloth, water that stays reasonably hot. For serious injuries
+        there are limits to what I can do here, but I will tell you
+        honestly when you have hit those limits and what to do next.
+        There is no fee. That is not how this works."
+      hints: "You could ask about the healer named Ysolde in the
+        Common Quarter, or about who Sister Alms will and will not
+        help."
+
+    - id: ysolde
+      triggers: ["ysolde", "common", "quarter", "shadow", "alley",
+                 "unofficial", "outside", "compare", "comparison",
+                 "similar", "difference", "elsewhere", "other healer",
+                 "back alley", "know her", "heard of", "reputation"]
+      text: "I know her by reputation — this work is a small enough
+        community that word travels. She is competent. She is careful
+        about her patients, which matters more than a credential.
+        She tends people who cannot come here for one reason or
+        another, which means she handles things I would handle if
+        those people could walk through this door. The difference
+        between us, as I can work it out, is that I am in a building
+        with a sign on it and she is in an alley without one. I do
+        not think that difference reflects especially well on the sign.
+        She does what she does because people need it and she can do
+        it. That is a sufficient reason."
+      hints: "You could ask about Sister Alms's own healing work and
+        the chapel, or about who she will and will not help."
+
+    - id: turn_away
+      triggers: ["turn", "refuse", "reject", "all", "everyone", "anyone",
+                 "no one", "outcast", "enemy", "criminal", "worthy",
+                 "unworthy", "deserve", "deny", "limit", "limits",
+                 "will not", "none", "guard", "wrong", "bad",
+                 "not welcome", "who gets"]
+      text: "No one. That is the only answer I have to that question
+        and it has not changed. I have tended people who were going
+        to use the health I gave them for things I disagreed with. I
+        have tended people who had done things I could not approve
+        of. Need is need — it is not a moral assessment. If you
+        come through that door with something that needs tending, I
+        will tend it. That is all there is to it."
+      hints: "You could ask about the healing work itself, or about
+        the healer Ysolde in the Common Quarter."
+      moodChange: neutral

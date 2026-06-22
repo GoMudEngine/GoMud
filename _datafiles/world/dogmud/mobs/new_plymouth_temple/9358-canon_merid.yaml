@@ -1,0 +1,48 @@
+mobid: 9358
+zone: New Plymouth Temple
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 38
+maxwander: 0
+groups:
+  - humanoid
+  - temple_np
+idlecommands:
+  - 'emote reads from a slim volume in his lap, turning each page
+    with the unhurried care of someone for whom reading is a
+    form of practice rather than a task.'
+  - ''
+  - 'emote folds his hands and sits still for a long moment, his
+    lips barely moving — a prayer or a thought, impossible to
+    distinguish from the outside.'
+  - ''
+  - 'emote shifts slightly toward the window, and for a moment the
+    light catches him at an angle that leaves a faint, even glow
+    at the edge of his outline before it fades.'
+  - ''
+activitylevel: 8
+character:
+  name: Canon Merid
+  description: |
+    Canon Merid occupies his cell near the Archive entrance with
+    the unhurried quality of a man for whom serenity is not a
+    practice but a settled fact. He is the senior canon of the
+    temple — he grants blessings, oversees the Archive's public
+    collection, and mediates between the keepers and the city's
+    civil administration. His Bloom-change is subtle and constant
+    — a faint luminous quality, barely perceptible, that rings him
+    most clearly at dawn and at the end of evening prayer, as
+    though the light of those hours remains on him a moment longer
+    than it does on everything else. He does not discuss it. He is
+    a careful, gracious man who speaks precisely and commits to
+    nothing he does not mean to commit to.
+  speciesid: 1
+  level: 1
+  gold: 35
+  stats:
+    willpower:
+      training: 10
+    perception:
+      training: 8

@@ -1,0 +1,108 @@
+mobid: 9358
+zone: New Plymouth Temple
+defaultMood: neutral
+
+greetings:
+  - text: "Welcome. Take a moment if you need one. What brings you
+      to the Canon's cell?"
+    moods: ["neutral"]
+  - text: "You came back. I am glad. What is it this time?"
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Come in. The door is always open."
+      - "Welcome. I am Canon Merid. How can I help you?"
+
+  - keywords: [""]
+    responses:
+      - "There is no question I find unwelcome here. Ask it."
+
+tree:
+  root:
+    text: "The temple's purpose is service — blessings, the keeping of
+      records, and care for the keepers who come through the house.
+      I am Canon Merid. If there is something you are looking for
+      here, I will try to help you find it, or tell you honestly
+      why I cannot."
+    hints: "You could ask Canon Merid about blessings and the faith's
+      work, about the Archive and how access to it is managed, or
+      about the order that governs the temple's place in the city."
+
+  nodes:
+    - id: blessings
+      triggers: ["bless", "blessing", "blessings", "faith", "work",
+                 "mission", "purpose", "service", "pray", "prayer",
+                 "spiritual", "keeper", "calling", "what do you", "offer",
+                 "care", "heal", "help", "temple", "believe", "teach"]
+      text: "A blessing is a formal act of the faith — a seal on an
+        intention, a mark of the community's witness. I grant them
+        for new postings, for departures, for grief, for recovery.
+        They are not magic in the mechanical sense. They are a way
+        of saying that something matters and that the community of
+        those who practice here acknowledges it. Beyond blessings,
+        the temple's work is pastoral — keepers who counsel, a
+        healer who tends the chapel, records that keep the community's
+        history legible. The work is quieter than most people expect
+        and more necessary than most people know."
+      hints: "You could ask about the Archive and how access to it
+        is arranged, or about the order that shapes the temple's
+        relationship with the city."
+      moodChange: friendly
+
+    - id: archive
+      triggers: ["archive", "archives", "library", "collection",
+                 "records", "document", "documents", "access", "entry",
+                 "permission", "scholar", "study", "read", "enter",
+                 "open", "catalogue", "catalog", "history", "texts",
+                 "holdings"]
+      text: "The Archive holds the temple's historical and administrative
+        records — ceremonial documents, community histories, some
+        civic correspondence going back to the founding period. The
+        public collection is available to credentialed readers in the
+        morning hours — credentials through my office, straightforward
+        process. There is also a Restricted Collection, maintained
+        separately. That section operates under particular oversight
+        and is not accessible to general readers. Access to it is
+        managed by the archivist at the lower door."
+      hints: "You could ask about the restricted portion of the Archive,
+        or about the faith's other work."
+
+    - id: restricted
+      triggers: ["restricted", "forbidden", "sealed", "locked", "secret",
+                 "lower door", "what's in", "inside", "contents",
+                 "particular section", "special", "kept", "why restricted",
+                 "what is restricted"]
+      text: "The Restricted Collection contains materials that require
+        a certain context to read usefully. That is the most accurate
+        thing I can say about it. Access is not granted through this
+        office alone — the archivist at the lower door manages the
+        process, and it requires authorizations from two sources. I
+        am one source. I do not discuss what the second authorization
+        is, or what the collection holds. If you have a scholarly
+        purpose that might warrant access, the archivist can begin
+        the inquiry. Most inquiries do not proceed very far."
+      hints: "You could ask about the faith's general work and what
+        the temple offers, or about the order that shapes the city's
+        arrangement with the faith."
+
+    - id: order
+      triggers: ["order", "noble", "ruling", "bloodline", "lord",
+                 "authority", "city", "governor", "arrangement",
+                 "power", "political", "relationship", "who", "governs",
+                 "civic", "administration", "city's", "city hall",
+                 "district", "family"]
+      text: "The temple has always existed within a civic context.
+        Faith and the ordering of civic life are not separate things
+        — they illuminate each other, when the relationship is well
+        tended. The current arrangement in New Plymouth reflects a
+        long history of that tending. I find it well ordered. The
+        faith serves its purpose and the city's administration serves
+        its purpose, and they are complementary rather than in
+        tension. I do not think it useful to be more specific than
+        that. The order of things is larger than any particular
+        accounting of it."
+      hints: "You could ask about blessings and the faith's daily
+        work, or about the Archive."
+      moodChange: cautious

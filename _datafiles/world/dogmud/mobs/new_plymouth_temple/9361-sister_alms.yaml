@@ -1,0 +1,47 @@
+mobid: 9361
+zone: New Plymouth Temple
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 34
+maxwander: 0
+groups:
+  - humanoid
+  - temple_np
+idlecommands:
+  - 'emote measures a small amount of dried herb into a cloth, folds
+    it neatly, and sets it with several others in a row on the
+    altar table.'
+  - ''
+  - 'emote checks on the candles — flame height, pooling, wick
+    condition — with the attention of someone for whom this is both
+    ritual and practical maintenance.'
+  - ''
+  - 'emote warms her hands together for a moment, studies them, and
+    returns to what she was doing.'
+  - ''
+activitylevel: 9
+character:
+  name: Sister Alms
+  description: |
+    Sister Alms tends the Healer's Chapel with the organized calm
+    of someone who has been doing this long enough to have stopped
+    improvising. She is a compact, practical woman whose hands are
+    the center of her work in a way that is literal as well as
+    metaphorical — her Bloom-change is in those hands, which run
+    warm even in cold rooms and produce a particular quality of
+    heat when placed against a wound or a sick place in the body.
+    It is not a cure in the mechanical sense, but it is consistently
+    more than comfort. She does not ask who sent you or what you
+    were doing when you got hurt. She makes a single assessment
+    and sets to work. The chapel's door has not had a lock on it
+    since she took over the room.
+  speciesid: 1
+  level: 1
+  gold: 10
+  stats:
+    willpower:
+      training: 10
+    charisma:
+      training: 6

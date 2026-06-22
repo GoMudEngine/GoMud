@@ -1,0 +1,47 @@
+mobid: 9357
+zone: New Plymouth Temple
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+  - temple_np
+idlecommands:
+  - 'emote writes a line in the register, blots it, and turns to the
+    next page with the measured efficiency of someone who has done
+    this long enough to make it look effortless.'
+  - ''
+  - 'emote reviews a sheaf of papers, sets one aside, and clips the
+    rest together with the deliberate care of a man for whom order
+    is a professional value.'
+  - ''
+  - 'emote rests his pen a moment, looks at nothing in particular,
+    then picks it up and continues.'
+  - ''
+activitylevel: 8
+character:
+  name: Father Thane
+  description: |
+    Father Thane manages the Keeper's House intake register with
+    the particular precision of someone who knows that orderly
+    records are what keeps a house like this from becoming chaos.
+    He is a man of middle years with a deliberate, unhurried way
+    about him that many visitors mistake at first for coldness —
+    until he speaks. His Bloom-change is in the voice — it does
+    not compel, does not command, but something in the register
+    of it reaches into the anxious part of a person and quiets it.
+    Grieving keepers leave his desk calmer than they arrived. New
+    arrivals stop fidgeting before they finish their first sentence.
+    He uses this without drawing attention to it, the way a man
+    uses a tool he has carried long enough to stop noticing.
+  speciesid: 1
+  level: 1
+  gold: 18
+  stats:
+    charisma:
+      training: 12
+    perception:
+      training: 4
