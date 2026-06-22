@@ -12,8 +12,18 @@ supply-runner wiring recipe from `2026-06-20-np-supply-pricing-fix-design.md` §
 
 ## 0. Scope (locked with user 2026-06-22)
 
-IN: rooms + mobs + dialogue + **supply-runner wiring** + **Bloom Trail middle**
-+ **anchor schedules**. Activate the **`cooperage_circle`** faction.
+IN: rooms + mobs + dialogue + **a visible NP supply runner** + **Bloom Trail
+middle** + **anchor schedules**. Activate the **`cooperage_circle`** faction.
+
+> **SUPPLY DECISION (user, 2026-06-22) — "generalize engine now."** Investigation
+> (§5) found the caravan engine is hardcoded to ONE crew (single consts
+> `LeaderMobId=357`/`WagonMobId=374`/`RunnerMobId=359`; `FindRunnerInRoom`/
+> `FindWagonInRoom` look up those exact template IDs; the circuit is triggered by
+> Ketil's master wagon arriving at depot waypoints). The spec's inherited "~6
+> lines" estimate was wrong. The user chose to **generalize the engine** to
+> support a second, independent NP runner. This is a distinct subsystem → it gets
+> **its own implementation plan** (`…-np-supply-runner.md`), separate from the
+> district-content plan (`…-np-crafting-district.md`). See §5 for the architecture.
 
 OUT (deferred): **a district quest** (user: "hold off on quests until we have the
 rest in"); the Merchant/Old-Quarter/Common physical seams (stubbed); the
@@ -114,43 +124,104 @@ Define `_datafiles/world/dogmud/factions/cooperage_circle.yaml`:
 - Members (via `groups:`): Toby (16), Edda (18), Orin (19). The hot/soft-trade
   anchors (Halvard, Vesna, Corwin, Nessa) stay faction-neutral artisans.
 
-## 5. Supply-runner wiring (the deferred Docks engine work)
+## 5. The NP supply runner (caravan engine generalization)
 
-Executes `2026-06-20-np-supply-pricing-fix-design.md` §2 end-to-end, proving the
-**Docks → Crafting** delivery leg (the first real district destination). The
-pricing-fix (`DefaultPricingBaselineQty`) already shipped, so `RestockQty:0`
-prices sanely.
+**This is its own plan** (`…-np-supply-runner.md`). Architecture below; symbols
+verified against the live tree via codegraph 2026-06-22.
 
-1. **Config** (`_datafiles/config.yaml`): add `new_plymouth_crafting` (and the
-   other NP zones already built — `new_plymouth_docks`, `new_plymouth_common`,
-   `new_plymouth_outskirts`) to `CaravanServedZones` so tiers 30/20/10 flow from
-   the runner, not the ticker. Tier 50/40 basics still trickle via baseline restock.
-2. **Register the NP runner circuit (~6 lines, the only Go change):**
-   - `internal/caravan/runner_completion_listener.go` — add
-     `"np_docks_runner_circuit": {}` to `runnerCircuitPatrols`.
-   - `internal/caravan/arrival_listener.go` `bucketsForRunnerPatrol` — add a case
-     returning the NP delivery buckets (e.g. `[]string{"np_imported", "base"}`),
-     pickup `[]string{}` (delivery-only).
-   - `internal/economy/buckets.go` — route NP imported items into the `itemBucket`
-     map (sea salt, exotic cloth, spice, reagents, etc.) or via `"base"`/`"overlap"`.
-3. **The warehouse origin = a Dock Master merchant** in the **Docks** zone, NOT in
-   `CaravanServedZones`, so it self-restocks imported goods via the tier ticker;
-   the runner's pickup pass drains its overstock. Author this as Dunmar Wells'
-   warehouse shop (canon warehouse master, Docks mob 9303) — give the existing
-   Dunmar a merchant shop block, or a co-located Dock-Master vendor if cleaner.
-   (Verify Dunmar's current mob def before deciding.)
-4. **Runner circuit patrol YAML** `_datafiles/world/dogmud/patrols/new_plymouth/`
-   — `loop_shape: oneshot`, originates at the Docks depot (5506 area), waypoints
-   tagged `arrival_event: "caravan_vendor"` at each **Crafting vendor room**.
-5. **Crafting vendors pre-declare** every deliverable as a `StockEntry`
-   (`Current:0`, `MaxStock:<buffer>`, `RestockQty:0`) — `VisitVendorsInRoom`
-   silently skips items with no existing entry.
-6. **Smoke-test** that the runner actually walks the circuit and fills the
-   Crafting vendor stocks (watch for `caravan_vendor` arrival + stock deltas).
+### 5.1 Why the engine needs generalizing
 
-*Common/Merchant/Temple are added to the circuit as those districts land; this
-build proves the leg with Crafting as the first destination. Common's existing
-self-restocking vendors are left as-is (not retrofitted this build).*
+The existing supply system (`internal/caravan`) is built around exactly ONE crew:
+single constants `LeaderMobId=357` (Ketil), `WagonMobId=374` (cargo wagon),
+`RunnerMobId=359` (Lars). `FindRunnerInRoom(roomId)` / `FindWagonInRoom(roomId)`
+look up *those exact template IDs only*. The vendor-delivery circuit is started by
+**Ketil's master wagon** arriving at a depot waypoint (`handleDepotArrival` →
+`startRunnerCircuit` → `TransferCargoToRunner` → `StartOneshotPatrol`); Lars then
+walks an `oneshot` patrol whose `caravan_vendor` waypoints fire `handleVendorArrival`
+→ `VisitVendorsInRoom`. There is **no per-zone/per-circuit runner registry**.
+
+NP's canon supply is different: imports arrive by **sea** → Dunmar's Docks
+warehouse → a local runner (Dobb) distributes. **No traveling inter-zone wagon
+arrives to trigger a circuit.** So we need a second, self-perpetuating runner.
+
+### 5.2 Verified existing facts (codegraph 2026-06-22)
+
+- `applyPatrolPlan` (`internal/hooks/NewRound_IdleMobs_patrol.go:100`) emits
+  `events.PatrolWaypointArrival{MobInstanceId, PatrolId, WaypointIdx, RoomId,
+  ArrivalEvent}` on arrival at **every** waypoint of **any** patrol — including an
+  always-on (`patrol_id:`) **looping** patrol. (Confirmed: emits on both the
+  zero-dwell `WantsAdvance` branch and the first-dwell-tick `WantsDwellWait` branch.)
+- `CaravanArrivalListener` (`internal/caravan/arrival_listener.go:30`) dispatches
+  on `ArrivalEvent` name; runner circuits are gated by membership in
+  `runnerCircuitPatrols`. New `ArrivalEvent` tags it doesn't recognize are no-ops —
+  so an additive NP path cannot regress the shipped Thornwall/Stillwater economy.
+- `VisitVendorsInRoom(roomId, carrier, deliveryBuckets, pickupBuckets)`
+  (`internal/caravan/visit.go:42`) delivers carrier→vendor for items whose
+  `economy.BucketFor` ∈ deliveryBuckets and whose vendor `StockEntry.Current <
+  MaxStock`; pickup is independent. Passing `pickupBuckets=nil` makes it
+  **delivery-only** (what NP needs).
+- Dobb (mob **9304**) and Dunmar (mob **9303**) already exist in the Docks zone.
+  Dobb is non-combatant, `maxwander:0`, no patrol yet — purpose-built as the runner
+  ("completing the full city circuit without once sitting down"; idle commands
+  recite "today's delivery route stop by stop"). Dunmar has a shop + the
+  warehouse-master role. **No new mobs needed.**
+
+### 5.3 Design — a looping runner with a self-replenishing import source
+
+Chosen over the wagon-triggered oneshot model because NP has no traveling wagon.
+
+1. **Circuit registry** — new `internal/caravan/import_circuits.go`:
+   ```go
+   type ImportCircuit struct {
+       PatrolId        string   // the runner's looping patrol id
+       RunnerMobId     int      // who runs it (Dobb = 9304)
+       DepotEvent      string   // ArrivalEvent tag at the load stop ("np_runner_depot")
+       VendorEvent     string   // ArrivalEvent tag at delivery stops ("np_runner_vendor")
+       DeliveryBuckets []string // {"base","overlap"} — existing crafter feedstock
+       ImportItems     []int    // the sea-import manifest (item IDs Dobb loads)
+       LoadCap         int      // max items Dobb carries per loop (bounded)
+   }
+   var importCircuits = map[string]ImportCircuit{ "np_docks_runner_circuit": {…} }
+   ```
+   Additive — the legacy `runnerCircuitPatrols` oneshot path is left untouched.
+2. **Generalize the runner lookup** — add `FindMobByTemplateInRoom(roomId, mobId)`
+   (or give `FindRunnerInRoom` a `mobId` param + update its single legacy caller to
+   pass `RunnerMobId`). The NP path finds Dobb by `circuit.RunnerMobId`.
+3. **Dispatch (additive branch in `CaravanArrivalListener`)** — if
+   `arrival.PatrolId` ∈ `importCircuits`:
+   - `ArrivalEvent == DepotEvent` → `LoadRunnerFromImport(runner, circuit)`
+   - `ArrivalEvent == VendorEvent` → `VisitVendorsInRoom(roomId, runner,
+     circuit.DeliveryBuckets, nil)` + room flavor.
+4. **`LoadRunnerFromImport`** — new `internal/caravan/import_load.go`: top the
+   runner's inventory up to `LoadCap` with fresh `items.New(id)` drawn round-robin
+   from `circuit.ImportItems` (the **sea-import abstraction** — bounded, so no
+   unbounded growth). On the next loop the leftover is overwritten/added up to cap.
+5. **Dobb's looping patrol** — `patrols/new_plymouth/np_docks_runner_circuit.yaml`,
+   `loop_shape: strict`. wp0 = the Docks depot room (Dunmar's warehouse;
+   `arrival_event: np_runner_depot`, longer dwell = "loading"); wp1..N = each
+   **Crafting vendor room** (`arrival_event: np_runner_vendor`, short dwell), then
+   the strict loop returns to wp0. Assigned via `patrol_id: np_docks_runner_circuit`
+   on Dobb's mob YAML (always-on patrol — auto-runs, no wagon trigger).
+6. **Crafting vendors pre-declare deliverables** — each Crafting vendor's shop
+   pre-declares the feedstock items Dobb delivers as `StockEntry{Current:0,
+   MaxStock:<buffer>, RestockQty:0}`. `VisitVendorsInRoom` silently skips items
+   with no existing entry; pricing is sane at `RestockQty:0` (fix already shipped).
+7. **Config** — add `New Plymouth Crafting` (display name) to `CaravanServedZones`
+   so its tier-30/20/10 slots are runner-served, not ticker-served. (Tier 50/40
+   basics still trickle via baseline restock — acceptable.)
+8. **Smoke-test** end-to-end: boot, wipe instances, watch Dobb walk the loop and
+   the Crafting vendor `Current` counts climb after `np_runner_vendor` arrivals.
+
+### 5.4 TDD seams (engine portion is unit-testable in isolation)
+
+`LoadRunnerFromImport` (caps + round-robin), the dispatch branch (event routing by
+tag), and `FindMobByTemplateInRoom` are all table-testable with synthetic
+mobs/rooms in `internal/caravan/*_test.go`, mirroring the existing
+`visit_test.go` / `cargo_handoff_test.go` patterns. The only manual step is the
+in-game delivery smoke (§5.3.8), which depends on the district vendors existing.
+
+*Merchant/Temple/Common vendors join the loop as those districts land (extend the
+patrol YAML + their StockEntries); this build proves the Docks→Crafting leg.*
 
 ## 6. Bloom Trail middle (content-only)
 
@@ -185,25 +256,36 @@ as dialogue (don't block the build on it).
 Other anchors converge on a Crafting-local social/meal node (or the nearest
 existing cookshop) midday/evening.
 
-## 8. Build staging (each stage boot-verified before the next)
+## 8. Build staging — TWO plans (each stage boot-verified before the next)
 
 > **Pre-smoke ritual every time** (CLAUDE.md SOP): wipe instance saves —
 > `rm -rf _datafiles/world/dogmud/mobs.instances/* _datafiles/world/dogmud/rooms.instances/*`
 > — then restart. Do NOT wipe `shops/`. Boot-poll for `ERROR:.*PANIC` or
 > `fatal error:`, NOT bare "panic" (gotcha #8: matches the config line).
 
+This spec produces **two implementation plans** (per the writing-plans scope
+check — two independent subsystems):
+
+**Plan 1 — `…-np-crafting-district.md` (content; build first):**
 - **Stage A — rooms 5700–5712:** Long Market stretch + the Inkwalk + the
   footbridge entry (wire Docks 5523 `north`). `cartcheck`-clean; update
   `docs/coordinate_map.md`. Boot-verify (`ValidateZoneConsistency errors=0`).
 - **Stage B — rooms 5713–5724:** hot trades (forge/lab/kiln), soft trades
   (tailor/tannery), the abandoned cooperage (`down` stub). Boot-verify.
-- **Stage C — population:** 7 anchors + ambient + dialogue + shops +
-  `cooperage_circle` faction + room spawns. Boot-verify mob count + faction count.
-- **Stage D — supply-runner wiring:** §5 (config + ~6 Go lines + Dock Master
-  origin + patrol YAML + vendor StockEntries). Smoke-test delivery.
-- **Stage E — Bloom Trail middle + anchor schedules:** §6 dialogue/nouns + §7
+- **Stage C — population:** 7 anchors + ambient + dialogue + shops (vendors
+  pre-declare deliverable `StockEntry`s per §5.3.6) + `cooperage_circle` faction
+  + room spawns. Boot-verify mob count + faction count.
+- **Stage D — Bloom Trail middle + anchor schedules:** §6 dialogue/nouns + §7
   schedule YAMLs. Boot-verify schedule validators. **District harness playtest**
   (`/playtest local feature-tester`) → report in `tools/playtest/reports/`.
+
+**Plan 2 — `…-np-supply-runner.md` (engine generalization; build after Plan 1's
+vendors exist):**
+- **Stage 1 (engine, TDD, isolation):** circuit registry, `FindMobByTemplateInRoom`,
+  `LoadRunnerFromImport`, the additive dispatch branch — unit-tested (§5.4).
+- **Stage 2 (wiring, needs Plan 1 rooms):** Dobb's looping patrol YAML, the import
+  manifest, `CaravanServedZones` config, Crafting vendor StockEntry confirmation.
+- **Stage 3:** in-game delivery smoke-test (§5.3.8).
 
 ## 9. Definition of done
 
