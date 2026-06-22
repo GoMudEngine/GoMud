@@ -1,0 +1,75 @@
+mobid: 9335
+zone: New Plymouth Crafting
+defaultMood: neutral
+
+greetings:
+  - text: "Mind the kiln. Can I help you?"
+    moods: ["neutral"]
+  - text: "You're back. The vials are ready when you need them."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Watch your step near the kiln."
+
+  - keywords: [""]
+    responses:
+      - "I'm in the middle of a gather. Speak quickly."
+
+tree:
+  root:
+    text: "I'm the glassblower. The kiln's mine, the work's mine, the
+      vials you see on the shelf are ready stock. If you want to talk
+      about the glass I don't mind. The old days here — what this
+      complex used to be — that depends on who's asking."
+    hints: "You could ask Edda about her glasswork and the kiln, about
+      the old days when this complex ran full, or about the quarter
+      and its people."
+
+  nodes:
+    - id: glass
+      triggers: ["glass", "kiln", "work", "blow", "vial", "bottle",
+                 "make", "craft", "what", "do", "sell", "buy", "heat",
+                 "fire", "gather", "pipe", "annealing", "here",
+                 "nails", "arms", "scarred"]
+      text: "I blow glass — mostly small pieces, vials and vessels for
+        the alchemist and the apothecaries, some decorative work when
+        there's a commission. The kiln here is good; it was part of
+        the original complex and it was built for serious work. I keep
+        it running. The heat-scarring on my arms is older than my
+        Chrysalis-change — those burns came from the years before the
+        change made the close work easier. The nails are the clearest
+        sign of it; they went clear sometime in the second year."
+      hints: "You could ask Edda about the old days when this complex
+        ran full, or about the quarter and the people still in it."
+
+    - id: old_days
+      triggers: ["old", "days", "past", "before", "cooperage", "asha",
+                 "people", "gone", "left", "vanish", "complex", "full",
+                 "ran", "who", "used", "was", "remember", "history",
+                 "south", "barrel", "quiet"]
+      text: "The complex ran kilns and cooperage together — glass on
+        the north end, barrels on the south. There were more of us
+        then. Good workers, people I knew by name and habit. One of
+        them was named Asha. She was on the barrel side, mostly. I
+        don't know what happened; I know that one day they were here
+        and the next they weren't, and the south end went quiet, and
+        nobody in this quarter asked too many questions about it. I
+        stayed. I work. That's most of what I'll say about the old
+        days to someone I don't know."
+      hints: "Edda seems guarded about the old days but not entirely
+        closed. You could ask about the glasswork or the quarter."
+      moodChange: cautious
+
+    - id: quarter
+      triggers: ["quarter", "district", "crafting", "city", "neighbors",
+                 "here", "live", "people", "neighborhood", "new",
+                 "plymouth", "corwin", "bookseller", "orin", "near"]
+      text: "It's a working quarter — honest trade, mostly. The smell
+        from Corwin's tannery carries on the wrong wind but that's the
+        Common border for you. The bookseller on the main lane is worth
+        talking to if you have questions about this part of the city.
+        I keep to my kiln. It suits me."
+      hints: "You could ask about Edda's glasswork or the old days when
+        this complex ran full."

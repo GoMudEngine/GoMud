@@ -1,0 +1,75 @@
+mobid: 9334
+zone: New Plymouth Crafting
+defaultMood: neutral
+
+greetings:
+  - text: "Looking for something specific, or browsing?"
+    moods: ["neutral"]
+  - text: "Back again? I have a fresh batch if the last was what you
+      needed."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. What do you need?"
+
+  - keywords: [""]
+    responses:
+      - "If you have a question, ask it plainly."
+
+tree:
+  root:
+    text: "I brew compounds and extract reagents — standard alchemical
+      work, mostly salves and curatives with occasional specialty
+      orders. Ask about the brewing work itself, about Ysolde in the
+      Common Quarter who takes my salve supply, or about where the
+      reagents come from."
+    hints: "You could ask Vesna about her alchemical brewing work,
+      about a healer named Ysolde who buys her salves, or about how
+      she sources her reagents."
+
+  nodes:
+    - id: work
+      triggers: ["work", "alchemy", "brew", "compound", "craft",
+                 "make", "do", "what", "potion", "salve", "curative",
+                 "extract", "mix", "lab", "here", "batch", "produce",
+                 "sell", "buy"]
+      text: "I process raw plant and mineral material into stable
+        compounds — primarily salves and curatives, which sell
+        consistently, and some specialty preparations for clients with
+        specific needs. The lab here is well-suited for mid-scale
+        production; I can maintain steady output without rushing the
+        process, which matters more in this work than most people
+        realise. A batch that was hurried is a batch I can tell apart
+        from the outside before I open it."
+      hints: "You could ask about Vesna's client Ysolde in the Common
+        Quarter, or about where she sources her raw materials."
+
+    - id: ysolde
+      triggers: ["ysolde", "healer", "salve", "common", "client",
+                 "who", "buy", "buyer", "sell", "order", "standing",
+                 "quarter", "back_alley", "supply"]
+      text: "Ysolde works out of the Common Quarter — she takes my
+        salve production on a standing order. She does good work with
+        what I give her; I know because the order stays consistent and
+        she doesn't come back with complaints. What she uses the more
+        unusual preparations for, I don't ask. A reliable customer
+        who pays on time earns some discretion."
+      hints: "You could ask about Vesna's brewing work or about how
+        she sources her raw materials."
+
+    - id: reagents
+      triggers: ["reagent", "source", "supply", "ingredient", "forager",
+                 "warehouse", "material", "root", "herb", "thistle",
+                 "docks", "where", "come", "from", "get", "edda",
+                 "vial", "glass", "import"]
+      text: "Some comes from the docks warehouse — raw bulk material
+        that Dunmar's people import by weight. The rest comes from
+        foragers who work the marshes and steppe country around the
+        city. Forager supply is less predictable but higher quality
+        for the things that matter. I work with both. The glass vials
+        are from Edda in the kiln next street over — local, which means
+        I can check the seal quality myself before I use them."
+      hints: "You could ask about Vesna's brewing work or about her
+        client Ysolde in the Common Quarter."

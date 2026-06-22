@@ -1,0 +1,69 @@
+mobid: 9337
+zone: New Plymouth Crafting
+defaultMood: neutral
+
+greetings:
+  - text: "You get used to the smell. What do you need?"
+    moods: ["neutral"]
+  - text: "Good timing — fresh stock just came off the frame."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Right. What's the need?"
+
+  - keywords: [""]
+    responses:
+      - "Ask plain. I'm working."
+
+tree:
+  root:
+    text: "I work the tannery — hides in, finished leather out. I sell
+      what I produce here. If you have questions about the work, the
+      smell, or the quarter in general, I'll answer them."
+    hints: "You could ask Corwin about his leatherwork and the tanning
+      trade, about the smell and his neighbors along the Common border,
+      or about life in the Crafting Quarter."
+
+  nodes:
+    - id: work
+      triggers: ["work", "leather", "hide", "tan", "cure", "strip",
+                 "make", "craft", "what", "do", "sell", "buy", "skin",
+                 "tough", "trade", "produce", "hides", "tanning",
+                 "frame", "caustic", "baths"]
+      text: "I take hides in from the warehouse — Dunmar's people bring
+        them up from the docks on the caravan circuit — and I cure them
+        here. Scraping, bating, tanning, finishing. It's methodical work
+        and the method matters. The Chrysalis-change toughened my skin
+        to the point where the caustic baths don't trouble me the way
+        they would otherwise, which is useful. The leather I sell is as
+        honest as anything in this quarter. I take some pride in that."
+      hints: "You could ask about the smell and the Common border, or
+        about the Crafting Quarter more broadly."
+
+    - id: smell
+      triggers: ["smell", "stink", "odor", "nose", "bad", "common",
+                 "neighbor", "seam", "border", "lane", "tannery",
+                 "street", "near", "close", "beside", "wind"]
+      text: "The smell is the work. I'm not going to pretend otherwise.
+        The tannery sits on the border between this quarter and the
+        Common — there are tannery lanes running south through there
+        and the people on that side know what they're living beside.
+        My neighbors here have made their peace with it. Nobody's
+        moved away on my account. The wind helps some days."
+      hints: "You could ask about the leatherwork itself or about the
+        Crafting Quarter and how it runs."
+
+    - id: quarter
+      triggers: ["quarter", "district", "crafting", "city", "here",
+                 "live", "people", "trade", "neighborhood", "new",
+                 "plymouth", "how", "runs", "honest"]
+      text: "My tannery sits right on the seam where the Crafting
+        Quarter runs into the Common — close enough that the neighbors
+        on that side have made their peace with the smell, or learned
+        to stand upwind of it. People come to this quarter to get
+        things made, not to look at them, and that suits me. Honest
+        work, and nobody minds their nose for long."
+      hints: "You could ask about Corwin's leatherwork or about the
+        smell and his Common Quarter neighbors."
