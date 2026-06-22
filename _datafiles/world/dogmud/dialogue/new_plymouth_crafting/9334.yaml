@@ -35,7 +35,7 @@ tree:
       triggers: ["work", "alchemy", "brew", "compound", "craft",
                  "make", "do", "what", "potion", "salve", "curative",
                  "extract", "mix", "lab", "here", "batch", "produce",
-                 "sell", "buy"]
+                 "sell"]
       text: "I process raw plant and mineral material into stable
         compounds — primarily salves and curatives, which sell
         consistently, and some specialty preparations for clients with
