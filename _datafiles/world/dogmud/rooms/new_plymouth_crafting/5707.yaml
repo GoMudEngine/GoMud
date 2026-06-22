@@ -1,0 +1,56 @@
+roomid: 5707
+zone: New Plymouth Crafting
+title: Above the Bookstall
+description: >
+  A low garret above the bookstall, the ceiling close
+  enough to feel the weight of the roof-beams. The boards
+  were used for something before they were used for living
+  — dark stains along the north wall, a faint grid of
+  ruled lines still visible on the floor beneath the
+  current scatter of belongings. A tilted <ansi fg="itemname">writing-desk</ansi>
+  occupies the best corner, angled to catch north light
+  through a narrow window above it. A <ansi fg="itemname">lamp-bracket</ansi>
+  is fixed to the wall at the desk's left side, its iron arm bent
+  from long use into exactly the angle needed to swing
+  a lamp over the work surface. Whatever happens here
+  happens mostly at night, and in some volume.
+biome: city
+coord:
+  x: -17
+  y: 89
+  z: 1
+exits:
+  down:
+    roomid: 5706
+nouns:
+  writing-desk: A slanted desk of plain deal, old enough
+    that the surface has taken on the grain of a decade
+    of ink-stains, palm-rests, and the movement of papers.
+    The front edge is worn to a softer shape where arms
+    have rested against it. A pen-holder holds three
+    quills in varying stages of use, one trimmed very
+    recently. The surface holds a half-finished page in
+    a close, rapid hand — not a fair copy; something
+    being worked out. The content is upside-down from
+    where you stand.
+  lamp-bracket: An iron bracket fixed to the wall at
+    the desk's left side, its arm bent at exactly the
+    angle needed to swing a lamp over the work surface.
+    The bend was made by use, not design — the original
+    arm was straight; someone bent it over time, under
+    the daily pressure of having the light at the wrong
+    angle. The cup at the end holds a stub of candle,
+    recently replaced, the old wax still pooled in the
+    socket beneath. At night this lamp is probably the
+    only light visible on the Inkwalk.
+idlemessages:
+- A creak from the roof-beams overhead, settling in
+  the afternoon heat.
+- The north window admits a strip of grey sky and the
+  faint smell of canal water from somewhere below.
+- From the bookstall below comes the sound of Orin
+  adjusting stock — a book spine tapping into place.
+- The half-finished page on the desk shifts in a draft
+  from the stairway and settles without falling.
+- The room is very quiet at this hour, the market noise
+  filtered to a murmur by the time it reaches this height.

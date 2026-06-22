@@ -1,0 +1,53 @@
+roomid: 5701
+zone: New Plymouth Crafting
+title: The Long Market — West End
+description: >
+  The Long Market quiets at its western end, trade thinning
+  as the street narrows and the buildings press close on
+  either side. A cooper's workshop occupies the ground
+  floor to the north here — behind half-open shutters comes
+  the muffled sound of a mallet on stave-wood, patient and
+  even. The <ansi fg="itemname">street-gutter</ansi> runs
+  grey today, carrying shavings and sawdust down from the
+  workshops higher in the district. A <ansi fg="itemname">trade-board</ansi>
+  is nailed to the cooper's wall, carrying the usual notices
+  in uneven hand. To the west the lane runs on toward the
+  canal-side buildings, though what lies that way is not yet
+  open to you; east, the market returns to its full noise
+  at the crossing.
+biome: city
+coord:
+  x: -19
+  y: 88
+  z: 0
+exits:
+  east:
+    roomid: 5702
+nouns:
+  street-gutter: A shallow channel cut along the edge of
+    the paving, running grey today with water from somewhere
+    uphill. It carries the waste of the craftsmen's morning
+    — fine wood-shavings, a smear of oil, something that
+    was cloth and is now fiber. In a drier season the gutter
+    sits empty and smells of hot stone; today it moves with
+    quiet purpose. Someone has placed a stone across it at
+    the corner to make a stepping point.
+  trade-board: A rough board nailed to the cooper's
+    workshop wall, overlapping notices tacked over older
+    ones in layers that read like archaeology. A journeyman
+    seeks work. A supplier offers seasoned oak at winter
+    rate. Someone has lost a dog. One notice has been torn
+    half away, leaving only a name — "Edvar" — in thick
+    ink, and below it a line that has not survived intact.
+idlemessages:
+- From behind the cooper's shutters, the measured rhythm
+  of a mallet on wood counts out the afternoon.
+- The street-gutter carries a curl of wood-shaving past
+  your feet and around the corner east.
+- A cat sits in the shade of a doorway and declines to
+  move for anyone.
+- The lane to the west is empty and quiet, catching the
+  last of the afternoon light.
+- A journeyman carrying a bundle of barrel-staves rounds
+  the corner from the east, ducks into the workshop,
+  and does not come out again.

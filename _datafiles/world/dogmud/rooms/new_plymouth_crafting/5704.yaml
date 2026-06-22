@@ -1,0 +1,57 @@
+roomid: 5704
+zone: New Plymouth Crafting
+title: The Long Market — East End
+description: >
+  The Long Market's eastern end is quieter — the last of
+  the open stalls taper to a blank wall and a wider
+  junction where the road continues toward the Central
+  Square and the Merchant Quarter beyond, though that
+  way is not yet open. A lone <ansi fg="itemname">lamp-post</ansi>
+  stands at the junction, its iron arm angled to light
+  the transition between districts, unlit now in the
+  daytime. The wall beside it carries several seasons'
+  worth of broadsheet notices and the <ansi fg="itemname">paste-residue</ansi>
+  of older ones beneath, a stratigraphic record of the
+  quarter's affairs printed in small runs and glued over
+  one another without apology. West, the stall-stretch
+  resumes its noise.
+biome: city
+coord:
+  x: -16
+  y: 88
+  z: 0
+exits:
+  west:
+    roomid: 5703
+nouns:
+  lamp-post: An iron post topped with an oil-lantern
+    housing, the arm angled to throw light onto the
+    junction. The lantern glass is clean, the wick
+    trimmed — someone maintains it with attention. The
+    post's base was recently re-set in fresh mortar
+    after paving work; the mortar has not yet taken the
+    weathered grey of the surrounding stone. At night
+    this lamp marks the point where the Crafting Quarter
+    ends.
+  paste-residue: The wall carries an uneven skin of
+    broadsheet layers — notice over notice, some still
+    legible and some reduced to papery substrate. Guild
+    announcements, a militia call from two seasons back,
+    a tanner's advertisement repeated so often it has
+    formed its own geological stratum. At the bottom of
+    the column, barely readable under the rest, is a
+    city surveyor's seal on what appears to be a public
+    posting. The date is from before the last building
+    work on the street. Someone was warning of something.
+idlemessages:
+- The junction at the east end is quieter than the stall-
+  stretch — foot-traffic crosses rather than lingering.
+- A broadsheet has come loose from the wall and skitters
+  a few feet in a gust before catching on a boot-scraper.
+- The lamp-post's housing rattles faintly in the wind,
+  the lantern inside shifting on its pivot.
+- A pair of merchants' agents stops at the junction,
+  consults a written note, and turns back west without
+  explanation.
+- The road to the east ends at a fence-post and raw
+  timber, the Merchant Quarter still taking shape beyond.

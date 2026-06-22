@@ -1,0 +1,61 @@
+roomid: 5706
+zone: New Plymouth Crafting
+title: Orin's Bookstall
+description: >
+  A cramped stall with more merchandise than floor-space,
+  its shelves running floor to ceiling along three walls
+  and an overflow of map-tubes stacked in the corners.
+  Orin sells books and maps here — used volumes alongside
+  new, city charts alongside hand-copied regional surveys
+  — and the stock smells of paper handled by many hands
+  and taken seriously by most of them. A narrow <ansi fg="itemname">map-rack</ansi>
+  dominates the east wall, its slots holding rolled
+  charts in a system only Orin understands. The shelves
+  to the north carry tightly packed <ansi fg="itemname">bound-volumes</ansi>
+  — ledgers, histories, technical manuals — each labelled
+  in Orin's consistent hand. A stair at the back rises
+  to a low-lintel door; whoever lives above has made the
+  bookstall into their own corridor.
+biome: city
+coord:
+  x: -17
+  y: 89
+  z: 0
+exits:
+  west:
+    roomid: 5705
+  up:
+    roomid: 5707
+nouns:
+  map-rack: A wooden rack of slotted channels on the
+    east wall, each slot holding a rolled chart in a
+    loose linen wrapper. The wrappers are labelled in
+    a small precise hand — regions, dates, scales, with
+    occasional notes on reliability. The rack covers
+    most of this wall from waist-height to nearly the
+    ceiling, arranged by region east-to-west along the
+    slots. A few slots near the top are empty; the
+    labels there have been rewritten over older labels
+    in a way that suggests the old charts are gone and
+    something is being waited for to fill the gap.
+  bound-volumes: Shelves of tightly packed books —
+    practical volumes mostly, the kind that get used
+    rather than collected. Technical manuals for trades
+    practiced in this district. City ledgers, some from
+    the previous administration, their spines stamped
+    in faded gold. A set of coastal pilots for the
+    river-mouth and harbour approaches. Orin's handwritten
+    labels identify each precisely. One volume sits out
+    from the shelf by a finger's width, recently returned
+    or recently consulted.
+idlemessages:
+- Orin moves along the shelves adjusting the position
+  of volumes with small, particular movements.
+- A customer bends over the map-rack, pulling a chart
+  out and tilting it toward the light from the lane.
+- From above — through the low-lintel door at the stair
+  top — comes the creak of floorboards and then quiet.
+- The smell of paper and old binding-glue is dense in
+  here, close and particular.
+- A tube of rolled charts falls from the corner stack;
+  Orin catches it without looking up.

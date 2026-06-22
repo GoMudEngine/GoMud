@@ -1,0 +1,62 @@
+roomid: 5702
+zone: New Plymouth Crafting
+title: The Long Market — the Crossing
+description: >
+  The Long Market's main thoroughfare meets the Inkwalk
+  lane here, and the intersection is busy with it — hand-
+  carts loaded with incoming goods threading between foot-
+  traffic, the air carrying both the market's working smell
+  and a quieter drift of ink from the north. A painted
+  <ansi fg="itemname">direction-board</ansi> stands on an
+  iron post at the crossing's center, its arms lettered
+  plainly for the quarter's main points. The <ansi fg="itemname">crossing-stones</ansi>
+  around the post's base are worn to a shallow concavity
+  from the weight of years of passage. The Long Market
+  runs east into the stall-stretch and west toward the
+  quieter end; the Inkwalk turns north.
+biome: city
+coord:
+  x: -18
+  y: 88
+  z: 0
+exits:
+  south:
+    roomid: 5700
+  west:
+    roomid: 5701
+  east:
+    roomid: 5703
+  north:
+    roomid: 5705
+nouns:
+  direction-board: A painted board on an iron post, cut
+    into four compass arms — the Long Market east and west,
+    the Inkwalk north, the bridge approach south. The
+    lettering has been touched up recently; older paint
+    shows through at the edges in a darker, more worn
+    shade. The iron post itself is worn bright at chest
+    height where hands have steadied themselves, perhaps
+    while reading, perhaps simply while waiting in the
+    press of foot-traffic.
+  crossing-stones: The paving here is a mosaic of repairs
+    — original stone, then darker replacement stone, then
+    lighter stone again, a column of maintenance decisions.
+    The heaviest wear is in a rough circle around the
+    direction-board post, where foot-traffic pivots and
+    changes direction. The center of the concavity is worn
+    a full finger-width below the surrounding surface,
+    which speaks to how long this crossing has been the
+    busiest yard in the quarter. Someone patches the worst
+    of it before each winter; they always patch it
+    imprecisely.
+idlemessages:
+- A hand-cart rattles through the crossing, its driver
+  calling ahead for room without slowing.
+- Two workers exchange a brief word at the direction-board
+  and separate, each heading a different way.
+- A smell of fresh sawdust cuts through the market air
+  on a shift of wind from the east.
+- Someone has chalked a correction onto one arm of the
+  direction-board. The original lettering holds underneath.
+- The afternoon foot-traffic thickens for a moment at
+  the crossing and passes, leaving a brief clear space.

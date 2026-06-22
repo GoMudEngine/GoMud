@@ -1,0 +1,60 @@
+roomid: 5703
+zone: New Plymouth Crafting
+title: The Long Market — Artisan Stalls
+description: >
+  The stall-stretch is the busiest section of the Long
+  Market — open-fronted workshops spill their displays
+  onto trestle-tables along both sides of the street,
+  and the noise and press of it is constant. Sea-import
+  goods come up from the Docks most mornings; by midday
+  the <ansi fg="itemname">stall-tables</ansi> hold a
+  working mixture of raw materials and finished goods,
+  priced in chalk on small boards and renegotiated
+  constantly. Above the stalls, <ansi fg="itemname">canvas-awnings</ansi>
+  in faded guild-stripes shade the merchandise and the
+  buyers in equal measure, their ropes strung from
+  bracket to bracket across the street. What is sold
+  here today is different from last week and will be
+  different again tomorrow — this is a market of
+  process, not inventory.
+biome: city
+coord:
+  x: -17
+  y: 88
+  z: 0
+exits:
+  west:
+    roomid: 5702
+  east:
+    roomid: 5704
+nouns:
+  stall-tables: Long trestle-tables set out before open-
+    fronted workshops, their surfaces showing the grain
+    of many years of outdoor use. The goods change daily
+    — raw timber, cured leather, ingots of various metals,
+    bolts of canvas, coils of rope, finished tools
+    alongside unfinished ones. Chalk prices are propped
+    on small boards against each heap, amended often. A
+    buyer leaning over the table to examine something is
+    entirely expected; a buyer touching anything without
+    asking is not.
+  canvas-awnings: A run of faded canvas panels rigged on
+    rope across the street, shading the stalls in the
+    hours when the sun hits this side of the market. Each
+    panel shows a guild-stripe — alternating amber and
+    rust-red — worn to something quieter than it began.
+    The ropes are strung through iron brackets set into
+    the building faces, replaced periodically; the
+    brackets are original and show it, pitted and stained
+    with long use.
+idlemessages:
+- A buyer and a stall-holder argue the price of something
+  in low, practiced tones. Both seem comfortable.
+- A hand-cart noses through the stall-stretch from the
+  west, taking the center of the street by unspoken right.
+- The canvas awnings shift in a gust, admitting a bar of
+  afternoon sun, then settling back.
+- Someone from a workshop overhead leans out to exchange
+  a word with a stall-holder below, then withdraws.
+- The chalk price on the nearest board has been revised
+  at least twice. The latest number is circled.
