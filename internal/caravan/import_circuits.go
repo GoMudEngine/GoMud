@@ -19,17 +19,26 @@ var importCircuits = map[string]ImportCircuit{
 	"np_docks_runner_circuit": {
 		PatrolId:        "np_docks_runner_circuit",
 		RunnerMobId:     9304, // Dobb
-		DepotEvent:      "np_runner_depot",
-		VendorEvent:     "np_runner_vendor",
-		DeliveryBuckets: []string{"base", "overlap"},
-		// Crafter feedstock imported by sea (base/overlap bucket items):
+		DepotEvent:  "np_runner_depot",
+		VendorEvent: "np_runner_vendor",
+		// Must cover EVERY bucket the Crafting vendors sell from — in a
+		// CaravanServedZone the ticker restock is suppressed, so any vendor item
+		// whose bucket is not delivered here would starve. Steel ingot (40018) is
+		// classified "thornwall"; the tag is internal/invisible and the runner
+		// only ever touches its own Crafting circuit, so including it is safe.
+		DeliveryBuckets: []string{"base", "overlap", "thornwall"},
+		// The full sea-import manifest = the union of every Crafting vendor's
+		// shop items, so the runner can refill all of them:
 		ImportItems: []int{
 			40001, // iron ingot (Halvard)
 			40018, // steel ingot (Halvard)
+			40019, // chain link (Halvard)
 			40020, // coal dust (Halvard)
-			40006, // glass vial (Vesna/Edda)
+			40006, // glass vial (Vesna/Edda/Orin)
 			40004, // healer's root (Vesna)
+			40005, // bitter thistle (Vesna)
 			40012, // thread spool (Nessa)
+			40013, // bone needle (Nessa)
 			40007, // cloth strip (Nessa)
 			40002, // leather strip (Corwin)
 		},
