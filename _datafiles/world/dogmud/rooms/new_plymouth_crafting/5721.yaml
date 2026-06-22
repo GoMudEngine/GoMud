@@ -1,0 +1,59 @@
+roomid: 5721
+zone: New Plymouth Crafting
+title: The Boarded Cellar-Mouth
+description: >
+  A short passage off the cooperage floor ends at a
+  descending stair-head, the opening filled floor to
+  ceiling with planks. The <ansi fg="itemname">boarding</ansi>
+  is heavy and cross-hatched, each layer of planks
+  spiked in hard — the boards have been added to over
+  time rather than replaced, as if each round of nails
+  was someone's answer to a question the previous round
+  had not settled. A <ansi fg="itemname">chalk-notice</ansi>
+  chalked onto the topmost plank is old enough to have
+  been renewed at least once. Below the boarding, a
+  stair descends to a passage that once ran beneath
+  the waterline into the Old Quarter — sealed from this
+  side when the cellar took water and the way became
+  more trouble than it was worth. The chalk says not
+  to go down.
+biome: city
+coord:
+  x: -17
+  y: 92
+  z: 0
+exits:
+  west:
+    roomid: 5720
+nouns:
+  boarding: Heavy planks nailed across the stair-head
+    in overlapping layers — the first was a single
+    board with a simple notice, then more boards were
+    added, then the nails doubled, then a cross-plank
+    laid over the top. The work has accumulated over
+    years in the way of something that keeps needing
+    to be reinforced. The lowest board has begun to
+    bow slightly from the humidity rising through the
+    cracks, but it holds. The wood is sound; this is
+    not neglect but intention.
+  chalk-notice: Chalked onto the topmost plank in a
+    hand that is not large and not small. The chalk
+    has been renewed at some point — the original
+    lettering is still visible underneath, slightly
+    different in form. The message is the same in both
+    versions. A faint cold rises through the cracks
+    in the boards below it, which gives the notice
+    a kind of authority.
+idlemessages:
+- From below the boarding — the particular silence of
+  closed water. A faint cold rises through the cracks.
+- The chalk notice was renewed at some point. The
+  earlier lettering is still visible underneath.
+- One nail at the board-edge has worked loose over
+  time. Someone bent it back and hammered it twice
+  more. It holds.
+- The stair stone below the bottom board is wet. You
+  can just see the edge of the top step in the light
+  from the passage behind you.
+- The silence below the boards is not the silence
+  of the cooperage floor. It is older and deeper.

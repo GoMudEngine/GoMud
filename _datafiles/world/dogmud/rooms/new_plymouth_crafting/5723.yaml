@@ -1,0 +1,61 @@
+roomid: 5723
+zone: New Plymouth Crafting
+title: Tinpot Alley
+description: >
+  A narrow service passage behind the alchemist's lab,
+  wide enough for a hand-cart and little else, ending
+  at a timber wall with nothing behind it. The lab's
+  back door opens here for deliveries and outbound
+  stock, and a <ansi fg="itemname">lean-to</ansi> against
+  the south face of the building provides the minimal
+  shelter of someone who has been given just enough —
+  a folding stool, a cup bleached by weather, the rest
+  of it arrangement rather than comfort. Running both
+  walls at shoulder height, <ansi fg="itemname">hook-strips</ansi>
+  of tin and bent nails hold rope coils, empty reagent-
+  frames, and a pair of leather gloves that have been
+  forgotten for some time. The floor is uneven stone.
+  The smell is the lab's chemical atmosphere diluted
+  by the alley's open air — a thin version of what
+  fills the workshop proper, still unmistakable.
+biome: city
+coord:
+  x: -20
+  y: 89
+  z: 0
+exits:
+  north:
+    roomid: 5711
+nouns:
+  lean-to: A rough shelter of salvaged boards and old
+    tin, nailed to the south wall of the lab building
+    at a slope to shed rain. Under it, a folding stool
+    wedged to hold steady on the uneven stone, and a
+    ceramic cup on a wooden block beside it. The cup
+    is bleached by weather and use — it has been here
+    through several seasons. The lean-to's tin roof
+    makes a hollow sound when rain falls, audible
+    through the lab's back door, which is how whoever
+    works inside knows it is raining.
+  hook-strips: Lengths of tin board nailed to both
+    walls at shoulder height, each carrying a row of
+    bent-nail hooks. The hooks hold rope, measures,
+    empty reagent-frames, and leather gloves forgotten
+    some time ago. The strip on the east wall has been
+    pulled off its lower nail and rehung; the original
+    hole is still visible beside the current one. The
+    whole system was put up quickly and maintained
+    slowly, which is how useful alley infrastructure
+    works.
+idlemessages:
+- The tin roof of the lean-to settles with a small tick
+  as temperature changes.
+- The alley smells of the lab behind the back door —
+  chemical and faint heat, different from the open
+  air just around the corner.
+- A reagent-frame on the hook-strip rotates slightly
+  in the draft from the lab door.
+- The folding stool under the lean-to is empty, but
+  the cup beside it is right-side-up.
+- The alley ends at a plain timber wall — no exit,
+  no gap. Just the end of the passage.

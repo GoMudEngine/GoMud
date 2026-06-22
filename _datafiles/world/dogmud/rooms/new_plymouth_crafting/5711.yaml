@@ -1,0 +1,70 @@
+roomid: 5711
+zone: New Plymouth Crafting
+title: The Alchemist's Lab
+description: >
+  The alchemist's workshop is crammed to the ceiling
+  with the working evidence of the craft. Tall <ansi fg="itemname">glassware-racks</ansi>
+  line both long walls — retorts, flasks, connecting
+  tubes in a system that looks improvised but functions
+  — and the smell in here is complex and layered, burnt
+  sulphur underneath, something sweet and chemical
+  above, the warm amber note of the reagent-stone
+  burner below everything. The <ansi fg="itemname">main-bench</ansi>
+  runs the room's full center length, its surface
+  scarred with heat marks and chemical stains in a
+  palimpsest of past experiments, each zone of the
+  bench informally demarcated by habit and long use.
+  A narrow stair at the back wall leads to the rooms
+  above; a door at the south opens to the service alley
+  behind the building. To the north an archway breathes
+  the hot mineral air of the glass kiln, and to the east
+  the ring of the forge carries through the party wall.
+  At the bench's center, a covered
+  flask of something pale yellow is held at temperature
+  on the reagent-stone burner — the work is ongoing.
+biome: city
+coord:
+  x: -20
+  y: 90
+  z: 0
+exits:
+  east:
+    roomid: 5709
+  up:
+    roomid: 5712
+  north:
+    roomid: 5713
+  south:
+    roomid: 5723
+nouns:
+  glassware-racks: Shelving of board-and-bracket
+    construction, each shelf padded with cloth along
+    the front edge against breakage from vibration.
+    The glassware is in all stages of use — clean,
+    dirty, mid-process with a cloudy residue at the
+    bottom, set aside with a paper tab. Connecting
+    tubes sealed at each joint with wax of different
+    colors, a code that makes sense to the person who
+    built it. Nothing here is decorative; all of it
+    earns its shelf-space.
+  main-bench: A long workbench of heavy timber, the
+    surface bearing years of chemical and heat work
+    — pale rings where flasks stood, dark scorches
+    from runaway heat, a long discoloration along
+    the eastern third where something went wrong and
+    was contained. The bench is wiped down regularly,
+    which does not undo the stains but respects them.
+    At the center, the reagent-stone burner sits on
+    a heat-brick platform, flame low, maintaining
+    the covered flask at a precise temperature.
+idlemessages:
+- The reagent-stone burner gives off a low controlled
+  heat and a faint sweet-chemical smell.
+- Glass ticks somewhere in the rack as temperature
+  shifts on a draft from the south door.
+- The smell here has layers — you notice different
+  notes depending on where in the room you stand.
+- From the alley south, the sound of something set
+  down heavily, then quiet.
+- The stair at the back wall creaks once from above
+  and then settles.

@@ -1,0 +1,61 @@
+roomid: 5720
+zone: New Plymouth Crafting
+title: The Cooperage Floor
+description: >
+  The workshop floor inside has not been cleared, but
+  it has been tidied — which are different things. Planing
+  benches run east and west, and above them the cooper's
+  tools hang in their brackets — the <ansi fg="itemname">heading-knife</ansi>
+  and croze and flagging iron, each slotted into the
+  bracket that was made for it by hands that knew the
+  work. At the north end of the floor a partitioned
+  corner holds a cot with a folded blanket and a pair
+  of boots placed with intention — whoever lives here
+  has organized the space without much room to work
+  with. Cut along the inside edge of the west bench,
+  a <ansi fg="itemname">bench-inscription</ansi> reads
+  a name and below it "Master Stave-Hand," the letters
+  careful and unhurried, the work of someone who believed
+  the bench would outlast them and intended to be in it.
+  The tools are not dusty. Whoever keeps them has been
+  keeping them.
+biome: city
+coord:
+  x: -18
+  y: 92
+  z: 0
+exits:
+  south:
+    roomid: 5719
+  east:
+    roomid: 5721
+nouns:
+  heading-knife: A wide curved blade in its bracket on
+    the wall above the east bench — the tool for shaping
+    barrel-head stock. The blade is clean and oiled, the
+    edge still sharp. Below it in the same bracket-row,
+    more tools placed with the care of teaching or of
+    a very particular mind. Each bracket is labeled in
+    a careful hand with the tool's name. The labels are
+    old but the ink has been gone over more than once.
+  bench-inscription: Cut into the inside edge of the
+    west planing bench where you would only see it if
+    you were working here or looking for it — the name
+    "Asha," and below it in smaller letters "Master
+    Stave-Hand." A second line was started and scratched
+    out; whatever was being added there is gone. The
+    chisel-work is precise and unhurried. Below the
+    inscription, the bench surface has been kept clean.
+idlemessages:
+- The tools on the wall are cold but clean. They have
+  been oiled recently — you can smell it.
+- The cot's blanket has been folded with attention.
+  Someone slept here not long ago.
+- There is no sound from the east passage — only the
+  sense of depth behind the boards at its end.
+- Dust has settled on the floor as it does when no
+  work has been done, but the paths between stations
+  are clear.
+- The bench inscription catches the window light at an
+  angle — a name left by someone who expected to read
+  it again.

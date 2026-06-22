@@ -1,0 +1,59 @@
+roomid: 5718
+zone: New Plymouth Crafting
+title: The Tanning Yard
+description: >
+  The yard behind the tannery holds the vats in a row
+  along the north wall — cut stone, watertight mortar,
+  each filled with oak-bark tanning liquor at a different
+  concentration. The <ansi fg="itemname">bark-vats</ansi>
+  are the oldest part of the works, their coping stained
+  deep brown through its full thickness, the smell from
+  the dark-liquor vats thick and rich. At the south end
+  of the yard, the <ansi fg="itemname">rinsing-rack</ansi>
+  holds four hides stretched and hung to drain, their
+  lower edges still dripping into the stone channel
+  below. The yard floor is worn smooth from years of
+  foot-traffic between door and vat and rack, the path
+  worn as clearly as any road. A drain at the center
+  has been capped in fresh mortar, cleaner than the
+  surrounding stone — the tannery's effluent routes
+  elsewhere now, toward the guild-approved channel.
+biome: city
+coord:
+  x: -15
+  y: 90
+  z: 0
+exits:
+  west:
+    roomid: 5717
+nouns:
+  bark-vats: Six stone-lined tanning vats in a row,
+    each holding a liquor of varying concentration.
+    The progression from pale at the east end to dark
+    and dense at the west represents the hide's journey
+    through the process. Each vat has a wooden probe
+    rod laid across the top coping, used to push hides
+    below the liquor surface. The stone is stained
+    through its full depth in the older vats; in the
+    newer ones, the staining is only surface-deep and
+    will deepen in time.
+  rinsing-rack: A wooden frame of three poles with
+    crossbars at the south end of the yard, designed
+    to hang hides at full stretch for draining. Four
+    hides hang from it now in various stages, their
+    bottom edges still dripping slowly into the channel
+    cut in the stone below. The rack's wood has the
+    same dark color as the tannery's stretching-frames
+    — it has been in this yard long enough to be
+    saturated through.
+idlemessages:
+- The bark-vat liquor is still, dark brown at the
+  surface, rich and particular in smell.
+- A hide at the rinsing-rack turns slowly in a light
+  draft, its bottom edge still dripping.
+- The yard is quiet except for the dripping water
+  from the rack and the occasional creak of its joints.
+- Light comes over the south wall and catches the near
+  vat's surface — clear enough to see the hide beneath.
+- The capped drain sits in slightly cleaner mortar
+  than the surrounding stone — a recent improvement.

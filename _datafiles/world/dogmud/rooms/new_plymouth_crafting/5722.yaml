@@ -1,0 +1,61 @@
+roomid: 5722
+zone: New Plymouth Crafting
+title: Craftwell Square
+description: >
+  The craft quarter gathers at a public well where four
+  lanes meet — forge to the west, tailor to the east,
+  the Inkwalk turning south. The <ansi fg="itemname">well-housing</ansi>
+  is old worked stone, the lip worn smooth by years of
+  rope and hands; the bucket hangs free and the water
+  is good and held in common. A <ansi fg="itemname">slate-bench</ansi>
+  has been set into the nearest building's wall, long
+  enough for three at rest, and in the working day it
+  earns its place. Heat breathes from the forge yard
+  to the west; from the east, on a shifting wind, the
+  honest reek of the tannery arrives unmistakably. The
+  square is not grand — a well, a bench, converging
+  lanes — but it is the quarter's pause point, and
+  pausing is what it is built for.
+biome: city
+coord:
+  x: -18
+  y: 90
+  z: 0
+exits:
+  south:
+    roomid: 5705
+  west:
+    roomid: 5709
+  east:
+    roomid: 5715
+  north:
+    roomid: 5719
+nouns:
+  well-housing: The stone coping has been repaired at
+    least three times — different hands with different
+    mortar in slightly different colors. The bucket-rope
+    is hemp, replaced within the last year; the old
+    one left a darkened groove in the wooden bracket
+    still visible beside the current line. The well
+    serves the whole quarter. A scratched mark on the
+    south face — initials and a year, perhaps twenty
+    years old — has been partially worn away by hands
+    steadying against the drop.
+  slate-bench: A long bench of pale grey slate set flat
+    into a bracket-mount on the building wall, worn
+    smooth in the center and still rough at both ends
+    where people rarely sit. Someone has left a fold
+    of paper on the east end — a broadsheet or a bill
+    — that has been there long enough to weather to
+    the same pale tone as the stone.
+idlemessages:
+- Someone draws a bucket from the well, fills a wide-
+  mouthed jug, and heads east without breaking stride.
+- The heat from the forge yard breathes into the square
+  from the west, stronger when the wind dies.
+- Two tradespeople exchange brief words at the well and
+  go their separate ways into different lanes.
+- A child cuts through the square at the speed of an
+  errand, dodging the bench without looking at it.
+- The smell of hot iron and the tannery's honest reek
+  arrive together briefly as the wind shifts and part.

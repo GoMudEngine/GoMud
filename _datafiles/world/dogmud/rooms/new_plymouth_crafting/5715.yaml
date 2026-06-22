@@ -1,0 +1,63 @@
+roomid: 5715
+zone: New Plymouth Crafting
+title: The Tailor's Shop
+description: >
+  The tailor's workroom takes up the building's full
+  ground floor, lit by south windows and a high north
+  skylight in the way the trade requires. Bolts of
+  fabric range on deep shelves along the north wall —
+  wool, linen, heavier canvas toward the back — and
+  the <ansi fg="itemname">cutting-bench</ansi> at the
+  room's center holds a half-finished piece pinned to
+  a fresh cutting board. Along the south wall, the
+  <ansi fg="itemname">pattern-wall</ansi> carries a grid
+  of iron pegs from floor to near-ceiling, each peg
+  holding a labeled paper pattern in a system entirely
+  consistent within itself. A stair at the back leads
+  to the rooms above. East, a door opens toward the
+  tannery district, where the supply of leather and
+  the trade in finished goods overlap. The room smells
+  of chalk and cut cloth — the baseline scent of
+  patient and careful work.
+biome: city
+coord:
+  x: -17
+  y: 90
+  z: 0
+exits:
+  west:
+    roomid: 5722
+  up:
+    roomid: 5716
+  east:
+    roomid: 5717
+nouns:
+  cutting-bench: A long hardwood table, its surface
+    built up with replaceable cutting-board layers
+    that scar and are replaced. The current board is
+    well-used — a grid of fine lines from the cutting
+    wheel across the whole surface, deeper score marks
+    where the shears came down. A piece of dark wool
+    is pinned to the board, cut out in pieces arranged
+    and rearranged. A chalk line marks where the next
+    cut should go.
+  pattern-wall: The south wall is covered in a grid
+    of small iron pegs, each holding a folded paper
+    pattern on a labeled tag — garment type, reference
+    number, and body measurements in a consistent hand.
+    Some patterns are old enough that the paper has
+    gone amber and the labels are faded. Others are
+    recent. The system has been in use for years without
+    reorganization, which makes it larger and more
+    comprehensive than most.
+idlemessages:
+- Fabric stirs slightly on the nearest bolt as someone
+  passes outside the south window.
+- The chalk line on the cutting-bench catches the
+  window light at a shallow angle, precise and white.
+- From upstairs — a short movement, the settling of
+  floorboards, then quiet.
+- The pattern-wall shifts in the draft when the east
+  door opens — the paper labels turn on their pegs.
+- A faint smell of chalk and cut cloth fills the room,
+  the trade's particular and patient signature.

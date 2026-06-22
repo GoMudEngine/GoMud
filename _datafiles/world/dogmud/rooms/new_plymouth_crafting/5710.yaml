@@ -1,0 +1,58 @@
+roomid: 5710
+zone: New Plymouth Crafting
+title: Above the Forge
+description: >
+  The room above the forge is warm through the floor
+  as much as through the window — the hearth below
+  heats the boards and the boards heat the room, and
+  the smell of iron and coal-smoke rises with it. A
+  rope-strung <ansi fg="itemname">bed-frame</ansi> takes
+  up the north wall, made neatly in the efficient way
+  of a small space, the wool blanket heavy and folded
+  back. The south window looks down over the forge
+  yard and the banked coals; someone has stood at
+  this window in the morning more than once to check
+  the state of yesterday's fire before going down. A
+  growing collection of <ansi fg="itemname">tool-sketches</ansi>
+  covers the east wall — charcoal on paper, each labeled
+  with dimensions and material notes, the thinking of
+  someone who works problems out on paper when they
+  are not working them out at the anvil.
+biome: city
+coord:
+  x: -19
+  y: 90
+  z: 1
+exits:
+  down:
+    roomid: 5709
+nouns:
+  bed-frame: A wooden frame strung with rope in the
+    traditional fashion, the hemp worn smooth along
+    the contact edges and replaced at the headboard
+    end within the last year. The blanket is rough
+    wool, heavy and serviceable. On the small shelf
+    above the headboard — three books, a lamp with
+    a burned-down wick, and a folded piece of paper
+    that has been read often enough to wear through
+    its fold-line.
+  tool-sketches: Charcoal drawings pinned in a rough
+    grid on the east wall — tools, components, and
+    one larger study that appears to be a new design
+    for the bellows bracket. Each is labeled in a
+    cramped hand with measurements and notes on metal
+    type or heat treatment. The drawings range from
+    paper gone yellow at the edges to crisp recent
+    work. The newest sketch has a line crossed out
+    and redrawn twice.
+idlemessages:
+- The floor is noticeably warm underfoot — the forge
+  heat rising through the boards from below.
+- From the south window, a clear view of the yard and
+  the banked forge coals.
+- The sound of work in the yard below comes up clearly
+  through the floor when the hammer starts.
+- The oldest sketches on the east wall are barely
+  legible now, the paper gone soft.
+- The room is tidy in the way of someone who has no
+  extra space and has come to terms with it.

@@ -1,0 +1,54 @@
+roomid: 5719
+zone: New Plymouth Crafting
+title: The Abandoned Cooperage — Front
+description: >
+  The lane north of Craftwell Square ends at a cooper's
+  building whose trade has closed. The front wall carries
+  an <ansi fg="itemname">old-guild-mark</ansi> in faded
+  paint beside the door — a stave and hammer, the cooper's
+  symbol — and the door itself sits hung wrong on its
+  upper hinge, the bottom edge dragging the threshold.
+  A <ansi fg="itemname">hoop-rack</ansi> mounted to the
+  outer wall still holds three iron barrel hoops on its
+  pegs, left as if someone stepped away expecting to
+  return and has not yet conceded that they will not.
+  The window shutters are closed. The building sits in
+  a particular stillness that is different from vacancy.
+biome: city
+coord:
+  x: -18
+  y: 91
+  z: 0
+exits:
+  south:
+    roomid: 5722
+  north:
+    roomid: 5720
+nouns:
+  old-guild-mark: Painted directly on the plaster beside
+    the door — a barrel-stave crossed with a hammer.
+    The paint is cracked and lifting, the original color
+    a dark red that has gone to rust-brown. Below the
+    mark, a date and a name have been painted in a
+    smaller hand, but weather has reduced them to a year
+    and the first letter of a name. The mark has not
+    been removed, which is either because no one thought
+    to or because someone decided they should not.
+  hoop-rack: A bracket of iron pegs mounted to the wall
+    at head height, with three iron barrel hoops hanging
+    from separate pegs. The hoops are weathered to deep
+    rust but structurally sound — they have been there
+    long enough that the pegs have bent slightly under
+    the weight. Two of the four mounting bolts have been
+    replaced more recently than the others. Someone
+    maintained this rack even after the workshop closed.
+idlemessages:
+- The front door shifts slightly in a gust, its broken
+  hinge giving a soft scrape against the threshold.
+- One of the barrel hoops on the rack sways and settles.
+- The building is quiet — not the quiet of vacancy, but
+  the quiet of a place that is waiting.
+- A cat comes around from behind the building, looks
+  at the front wall, and goes back the way it came.
+- Passersby from the square tend to turn before reaching
+  this point. The street here sees little foot-traffic.

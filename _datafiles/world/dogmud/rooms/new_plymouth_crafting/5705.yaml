@@ -29,6 +29,8 @@ exits:
     roomid: 5706
   west:
     roomid: 5708
+  north:
+    roomid: 5722
 nouns:
   stall-awnings: A run of narrow canvas panels mounted
     on wooden arms along the west side of the lane —
