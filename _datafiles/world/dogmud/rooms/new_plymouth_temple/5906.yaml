@@ -3,7 +3,7 @@ zone: New Plymouth Temple
 title: The Keeper's House — Hall
 description: >
   The hall is longer than its entrance suggests
-  and warm in all seasons — the hearth at the
+  and warm in all seasons — the <ansi fg="itemname">hearth</ansi> at the
   far end has been maintained without interruption
   for longer than any current keeper can say, and
   its residual heat has worked into the walls so

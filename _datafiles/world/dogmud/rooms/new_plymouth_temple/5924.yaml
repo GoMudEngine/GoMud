@@ -12,7 +12,7 @@ description: >
   fixtures of the building's daily operation —
   a <ansi fg="itemname">tool-rack</ansi> holding
   the sexton's equipment in documented order,
-  a water-barrel under its iron spigot, a pitch-
+  a <ansi fg="itemname">water-barrel</ansi> under its iron spigot, a pitch-
   bucket and long brush for the stone-joints
   where water comes in at seasons. The walk
   smells of damp stone and pitch and working

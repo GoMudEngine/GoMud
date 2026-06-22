@@ -14,7 +14,7 @@ description: >
   the quality of accumulated brief occupation —
   many different travel-worn packs, many single nights
   of sleep by people who came here for work and not
-  for ease. A window at the corridor's end overlooks
+  for ease. A <ansi fg="itemname">corridor-window</ansi> at the corridor's end overlooks
   the courtyard below; in morning light the precinct
   board is legible from here. The stair descends
   to the hall below.
