@@ -71,7 +71,27 @@ tree:
         who has been acquiring, what they paid, and what sits between
         the registered owner and the actual interest. I know the
         pattern. I am careful about what I say about it, and to whom."
-      hints: "He let something slip — the shape of something he is
-        not saying. You could ask more about the records, or return
-        to the wares."
+      hints: "He let something slip — the shape of something he is not
+        saying. You could press him on the pattern he hinted at, or
+        return to the wares."
+      moodChange: neutral
+
+    - id: pattern
+      triggers: ["pattern", "press", "arrangement", "acquiring",
+                 "interest", "lintel", "canal", "hidden", "actual",
+                 "between", "more"]
+      text: "Since you press — and since you do not look like one of
+        theirs — here is the shape of it. Several properties have
+        changed hands to owners who exist only on paper, and the gold
+        behind every one of them runs back to the same quiet quarter.
+        One in particular sits down in the old canal district, on
+        Lintel Street — registered as a private residence, paid
+        current, never any trouble on the books. But goods move in and
+        out of it at hours no residence keeps, and the carters who
+        service it service nothing else in the city. I do not ask
+        whose interest it is. A man who keeps the district's records
+        learns which questions shorten his life."
+      hints: "Falk has pointed you toward the old canal district — a
+        property on Lintel Street that is more than it claims. You
+        could ask about his wares, or about the Square."
       moodChange: neutral
