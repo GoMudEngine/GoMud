@@ -1,0 +1,70 @@
+roomid: 5907
+zone: New Plymouth Temple
+title: The Keeper's House — Desk
+description: >
+  The desk room occupies the end of the house's
+  west passage — a small, exact space whose purpose
+  does not invite lingering. The
+  <ansi fg="itemname">intake-register</ansi> lies
+  open on the desk surface, its columns filled in
+  a regular professional hand that changes only
+  when the position changes and is immediately
+  recognizable as having changed. Behind the desk,
+  a <ansi fg="itemname">register-shelf</ansi> holds
+  bound volumes of past registers going back three
+  decades — the spines labeled by year, the
+  lettering of the older labels fading toward the
+  left end of the shelf. A small oil lamp sits at
+  the register's left side, positioned to illuminate
+  the page without glare. The room has a single
+  function — the formal entry of arriving keepers
+  into the record — and its arrangement reflects
+  this without apology. Everything here is in its
+  proper place. Nothing is pending.
+biome: city
+coord:
+  x: -8
+  y: 91
+  z: 0
+exits:
+  east:
+    roomid: 5906
+nouns:
+  intake-register: The current intake register —
+    an open book of ruled columns on heavy paper,
+    bound in dark leather. The columns record
+    arrival date, keeper name, purpose of visit,
+    cell assigned, and departure date when known.
+    The departure column has entries still blank
+    for keepers currently in residence. The hand
+    that fills these columns is precise and even,
+    with a characteristic abbreviation system for
+    common purposes of visit. One entry from three
+    weeks prior has been crossed through with a
+    single ruled line — not erased, just voided —
+    and the notation beside it is a single letter
+    that is not an abbreviation in the standard
+    system.
+  register-shelf: A shelf of bound volumes running
+    the full width of the desk room's back wall —
+    thirty years of intake registers, each labeled
+    by year on the spine, each in the same leather
+    binding in slightly varying states of age. The
+    oldest volumes at the left end have spines that
+    are cracking; the leather has gone from dark
+    to a warm grey-brown. A gap exists between the
+    volume from eleven years ago and the one from
+    nine years ago. The gap is not labeled. The
+    desk-keeper, asked about it, gives a complete
+    answer about the shelf-numbering system.
+idlemessages:
+- The intake register lies open to the current
+  page — a column of recent entries, the last few
+  lines still fresh.
+- The lamp at the register's edge burns without
+  movement in the still air of the desk room.
+- From the hall beyond the door, the sound of
+  boots on flagstone, passing without stopping.
+- The register-shelf carries thirty years in
+  a row of spines. The oldest volumes have gone
+  the color of old leaves.

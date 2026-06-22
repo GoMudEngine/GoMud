@@ -33,6 +33,8 @@ coord:
 exits:
   south:
     roomid: 5901
+  north:
+    roomid: 5916
 nouns:
   cloister-columns: Stone columns at regular intervals
     along the walk's open side, their capitals carved

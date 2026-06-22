@@ -1,0 +1,69 @@
+roomid: 5920
+zone: New Plymouth Temple
+title: The Pilgrims' Rest
+description: >
+  The hostel room is plain by design — a long
+  space of close-set cots under a low ceiling,
+  built to accommodate a number of people in
+  minimal comfort for a night before their purpose
+  is completed. The <ansi fg="itemname">pilgrims-cots</ansi>
+  are narrow and serviceable, their blankets a
+  heavy undyed wool that is warm in the way of
+  things made without interest in appearance. A
+  rack near the entrance holds spare blankets and
+  a row of hooks for outer clothing. The room
+  smells of tallow and the mixture of bodies that
+  comes from a space occupied by different people
+  every night. There is a quality of transience
+  here that is not uncomfortable — this room has
+  always been a pause, not a residence, and it
+  carries that understanding in the wood and stone
+  of it. A small
+  <ansi fg="itemname">hostel-window</ansi> looks
+  out over the courtyard below.
+biome: city
+coord:
+  x: -6
+  y: 92
+  z: 0
+exits:
+  south:
+    roomid: 5916
+nouns:
+  pilgrims-cots: Narrow cots in close rows — each
+    with a straw mattress covered by a plain
+    ticking, a folded wool blanket, and a small
+    shelf at head height for personal effects.
+    The cots are not assigned; pilgrims take the
+    next available on arrival. Some cots show the
+    small marks of current occupancy — a pack
+    beneath, a pair of boots set neatly under
+    the frame — and some are made up tight in
+    vacancy. The cots have been repaired and
+    re-strapped many times; the frames are old
+    but sound, the kind of thing that gets
+    maintained because replacement would require
+    a decision that no one has made yet.
+  hostel-window: A small window in the hostel's
+    south wall — a single pane of wavy glass
+    in a wooden frame, looking down into the
+    temple courtyard. From here the yard-well
+    is visible, and the precinct board, and the
+    comings and goings of scholars and pilgrims
+    below. The window sill has been worn smooth
+    by arms resting on it — the occupants of the
+    hostel look out before sleep and after waking,
+    orienting themselves to the precinct below
+    before they descend to it.
+idlemessages:
+- The hostel is quiet at this hour — the cots
+  mostly empty, the blankets folded.
+- From the hostel window the courtyard below
+  is visible — the yard-well, the precinct board,
+  the diagonal paths of pilgrims crossing.
+- The smell of the pilgrims' rest is tallow and
+  wool and the particular warmth of close
+  quarters — not unpleasant, simply present.
+- A traveler's pack rests beneath one of the
+  cots, its owner not yet returned from the
+  sanctuary below.

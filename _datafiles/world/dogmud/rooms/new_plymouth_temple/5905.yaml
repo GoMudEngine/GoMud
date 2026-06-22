@@ -30,6 +30,8 @@ coord:
 exits:
   north:
     roomid: 5901
+  south:
+    roomid: 5910
 nouns:
   bell-rope: The main bell-rope of the temple — a
     length of thick braided hemp descending from the

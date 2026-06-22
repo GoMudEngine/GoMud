@@ -1,0 +1,64 @@
+roomid: 5908
+zone: New Plymouth Temple
+title: The Keeper's House — Lodging
+description: >
+  The upstairs corridor runs along the house's
+  upper story — a row of narrow doors, each giving
+  onto a cell barely wide enough for a bed, a chair,
+  and a small table. The cells are not individually
+  assigned; they are taken in order of arrival and
+  vacated in order of departure, and the keeper who
+  slept in a given room last month is not the keeper
+  who slept there last year. The
+  <ansi fg="itemname">lodging-corridor</ansi> carries
+  the quality of accumulated brief occupation —
+  many different travel-worn packs, many single nights
+  of sleep by people who came here for work and not
+  for ease. A window at the corridor's end overlooks
+  the courtyard below; in morning light the precinct
+  board is legible from here. The stair descends
+  to the hall below.
+biome: city
+coord:
+  x: -7
+  y: 91
+  z: 1
+exits:
+  down:
+    roomid: 5906
+nouns:
+  lodging-corridor: The upstairs passage of the
+    Keeper's House — a plain stone corridor of
+    close-set doors, each identical in proportion
+    and fitting. The cell doors have latches but
+    no locks, in keeping with the understanding
+    that keepers in residence are guests of the
+    institution rather than private tenants. Most
+    cells carry the small residue of current
+    occupancy through the door gaps — a pack
+    against the wall, a coat on the hook, a
+    candle-stub on the table. One cell at the far
+    end has its door standing open and its cot
+    made with the tightness of vacancy.
+  corridor-window: The window at the far end of
+    the lodging corridor faces south and down into
+    the courtyard. The glass is old — slightly
+    wavy, the kind that distorts without obscuring —
+    and the wooden frame is worn smooth at the
+    sill where hands have rested to look out. From
+    this height the courtyard's full shape is
+    visible, and on clear mornings the precinct
+    board on the archive wall is readable if you
+    know what you are looking for. The window
+    latch is stiff and requires both hands.
+idlemessages:
+- A keeper's door opens and closes along the
+  corridor — the brief sound of someone organizing
+  their things for the day.
+- Morning light comes through the corridor window
+  at a low angle, cutting across the floorboards.
+- The lodging is quiet at this hour. What noise
+  there is comes from below, through the floor.
+- The smell up here is different from the hall —
+  less hearth, more habitation, the mild residue
+  of many different travelers.

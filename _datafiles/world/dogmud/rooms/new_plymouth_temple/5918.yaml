@@ -1,0 +1,70 @@
+roomid: 5918
+zone: New Plymouth Temple
+title: The Restricted Collection — Door
+description: >
+  The passage ends at a door of iron-banded oak
+  set in a frame that has been reinforced from
+  this side with additional stone — a later
+  addition, the mortar a slightly different color
+  from the original wall. The door has no handle
+  on this side. It has no visible keyhole on this
+  side. It is not locked in the way that things
+  that can be unlocked are locked — it does not
+  open from this side, and the distinction matters.
+  The <ansi fg="itemname">sealed-door</ansi> is the
+  boundary. On the other side of it is the temple's
+  Restricted Collection — materials gathered over
+  three centuries of the faith's presence in this
+  region, their subjects unknown to anyone not
+  granted access by the canon, their existence
+  acknowledged in the archive's public catalog only
+  by a volume count and the notation: not in
+  general circulation. The archivist has been asked
+  about this door by every scholar who passes
+  through the reading room and has given a complete
+  answer to none of them. The only way forward is
+  back.
+biome: city
+coord:
+  x: -5
+  y: 92
+  z: 0
+exits:
+  south:
+    roomid: 5917
+nouns:
+  sealed-door: Iron-banded oak on reinforced stone
+    — the banding is old work, the bands running
+    both horizontal and diagonal across the door's
+    face, riveted into the wood at intervals. The
+    iron has gone a deep grey-brown with age. On
+    this side there is no handle, no latch, no
+    visible mechanism of any kind. The door sits
+    flush in its frame without gap; if it has
+    hinges they are on the other side. The stone
+    reinforcement added to the frame is a generation
+    newer than the door itself — added after,
+    tightening the fit. Someone at some point
+    decided the original installation was not
+    sufficient. The catalog acknowledges the
+    Restricted Collection's existence by volume
+    count — three hundred and twelve items, as of
+    the last inventory. The inventory was
+    conducted nine years ago. The catalog does
+    not record what the items are. Whatever is
+    kept here has been kept here long enough
+    for the mortar of the reinforcement to have
+    gone the color of the original wall.
+idlemessages:
+- The door at the passage's end offers nothing
+  — no sound through it, no gap around it, no
+  sense that it has recently been opened.
+- The reinforced stone around the door frame
+  is seamless work, well-settled. It was done
+  by someone who knew what they were doing.
+- The archive on the other side of this door
+  holds three hundred and twelve items. The
+  catalog does not say what they are.
+- The passage is quiet. The door does not
+  rattle, does not breathe, does not suggest
+  that it is available to approach.

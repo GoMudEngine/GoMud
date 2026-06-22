@@ -1,0 +1,74 @@
+roomid: 5911
+zone: New Plymouth Temple
+title: The Chapel — Recovery Room
+description: >
+  The ward is kept quieter than the chapel — a
+  quality enforced without force, by the character
+  of the room and the understanding of everyone
+  who enters it. Four beds along the south wall
+  serve the mending; their occupants change with
+  the city's need, the turnover higher in winter.
+  The room smells of clean wool and the same
+  medicinal herb that moves through the chapel's
+  air. A <ansi fg="itemname">water-cabinet</ansi>
+  against the north wall holds the healers' working
+  materials — clean cloth, prepared compounds,
+  a ceramic water jar refilled each morning. Small
+  <ansi fg="itemname">recovery-notes</ansi> are
+  tucked beside each occupied bed — not medical
+  records but instructions for the recovering:
+  when to rise, what to eat, what to return for.
+  The healer's voice is present in these notes,
+  even in the ones written for people who cannot
+  read them yet. The almonry is reached by the
+  north door for those recovered enough to move.
+biome: city
+coord:
+  x: -7
+  y: 87
+  z: 0
+exits:
+  east:
+    roomid: 5910
+  north:
+    roomid: 5921
+nouns:
+  water-cabinet: A wooden cabinet against the
+    north wall, its shelves holding the healers'
+    daily working materials in careful order —
+    clean cloth folded in uniform squares, small
+    ceramic jars of prepared compounds with their
+    contents written on paper labels in a precise
+    hand, a larger jar of clean water with a
+    ladle, and on the top shelf a box of materials
+    that require the healer's presence to use.
+    The cabinet is well-maintained — the wood
+    oiled, the cloth replaced regularly, the
+    compounds dated. It smells of the medicinal
+    herb and something astringent underneath.
+  recovery-notes: Small folded sheets tucked at
+    the head of each occupied bed — the healers'
+    instructions for the person in it. The notes
+    are specific and practical — when to rise, what
+    to eat, what to avoid, when to return for
+    re-examination. The handwriting is the same
+    healer's hand as the main log in the chapel.
+    Where the instructions are for someone not
+    yet able to read, the notes have been written
+    anyway — the healers' practice is to write
+    them regardless, and to read them aloud on
+    the daily round.
+idlemessages:
+- The recovery room is quiet — the kind of quiet
+  that is actively produced by a room built for
+  rest.
+- From one of the occupied beds, the slow sound
+  of a person in genuine sleep, not performance.
+- The water-cabinet catches what light there is —
+  the ceramic jar on the center shelf reflects
+  a steady glow.
+- The medicinal herb smell is thicker here than
+  in the chapel — more preparation, less air.
+- A recovery note beside one bed has been folded
+  and refolded several times, its edges worn from
+  handling.

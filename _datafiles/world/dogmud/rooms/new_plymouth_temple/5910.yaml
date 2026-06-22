@@ -1,0 +1,83 @@
+roomid: 5910
+zone: New Plymouth Temple
+title: The Healer's Chapel
+description: >
+  The chapel is openly so — in a way that other
+  parts of the temple precinct are not. The door
+  from the bell tower passage stands unlatched,
+  the internal doors to the recovery ward and the
+  canon's corridor are plainly visible, and the
+  room offers its purpose without assessment.
+  The <ansi fg="itemname">healing-altar</ansi>
+  against the east wall is the chapel's own — a
+  low table of pale stone with fresh cloth on it,
+  oil lamps burning continuously, and a small
+  bowl of water renewed each morning. The room
+  smells of clean linen and a medicinal herb
+  that the healers steep in the washing water —
+  a smell distinct from the sanctuary's beeswax,
+  belonging to this room only. Cots along the
+  south wall are not for the sick but for those
+  who need to sit before they can stand, or stand
+  before they can walk. A
+  <ansi fg="itemname">healer-list</ansi> on the
+  wall beside the altar records who has been
+  tended here and when, without assessment of
+  their worth or standing. The offering of this
+  place is given freely; there is no gate between
+  need and tending.
+biome: city
+coord:
+  x: -6
+  y: 87
+  z: 0
+exits:
+  north:
+    roomid: 5905
+  west:
+    roomid: 5911
+  east:
+    roomid: 5912
+  south:
+    roomid: 5914
+nouns:
+  healing-altar: A low stone table against the
+    chapel's east wall — pale limestone, its
+    surface dressed smooth, its top covered in
+    clean undyed cloth renewed on a regular
+    rotation by the healers. Two oil lamps stand
+    at the altar's corners; a shallow ceramic
+    bowl holds water. The altar carries no
+    divine image, no symbol beyond the temple's
+    simple mark inlaid in the stone edge. It is
+    a working surface as much as a sacred one —
+    the cloth is practical, the lamps positioned
+    for light. It has been used for tending the
+    sick in this room long enough that the stone
+    edge is worn where hands grip it.
+  healer-list: A running log on the chapel wall —
+    columns of dates, brief descriptions of
+    the care given, and initials rather than
+    names. The initials belong to the healers,
+    not the patients. The entries go back several
+    years on this sheet; older sheets are kept
+    elsewhere. The most recent entries are from
+    this week. The descriptions are precise and
+    practical — the language of people who care
+    about outcomes rather than credit. No entry
+    distinguishes the origin, standing, or means
+    of the person tended.
+idlemessages:
+- The healing-altar lamps burn without moving,
+  steady in the chapel's still air.
+- The smell of the medicinal herb is present
+  here even when the healers are not — soaked
+  into the stone and cloth over many years.
+- From the recovery ward to the west, the quiet
+  sound of someone resting — breathing, no more.
+- A person enters the chapel from the north door
+  and sits on one of the south cots without
+  speaking, hands in their lap.
+- The healer-list on the wall holds hundreds of
+  entries. Each one represents a decision to
+  open the door.

@@ -1,0 +1,79 @@
+roomid: 5919
+zone: New Plymouth Temple
+title: The Archive Stacks
+description: >
+  The stacks room holds the public archive's
+  permitted volumes on floor-to-ceiling shelves
+  of age-darkened oak — several hundred items,
+  organized by the archivist's system, which is
+  not alphabetical and is not chronological but
+  which the archivist insists is learnable. The
+  smell here is thicker than the reading room —
+  old paper, the particular dust of things stored
+  for decades, and beeswax from the candles
+  allowed in this room only in glass-enclosed
+  holders. A <ansi fg="itemname">catalog-index</ansi>
+  on a lectern near the entrance shows the holdings
+  by subject heading. Several topics carry the
+  notation — further volumes in restricted access —
+  and the subjects are not uniform. Someone has
+  penciled a small mark beside one of the headings;
+  the mark has been erased but not completely.
+  The <ansi fg="itemname">archive-shelves</ansi>
+  themselves hold the weight of three centuries
+  of permitted inquiry, which is not the same as
+  three centuries of all inquiry.
+biome: city
+coord:
+  x: -4
+  y: 91
+  z: 0
+exits:
+  west:
+    roomid: 5917
+nouns:
+  catalog-index: A printed catalog on a reading
+    lectern at the stacks' entrance — the public
+    archive's full holdings organized by subject
+    heading with shelf locations. The headings
+    cover theology, history, natural philosophy,
+    medicine, commerce, and several narrower
+    categories. Beside twelve of the headings a
+    notation — further volumes in restricted
+    access. The twelve subjects are not obviously
+    connected. One heading — concerning the faith's
+    early presence in the region prior to the
+    current temple's founding — has a penciled
+    mark at its margin, now erased but still
+    visible as an impression in the paper.
+    The catalog was last updated seven years ago.
+  archive-shelves: Floor-to-ceiling oak shelves
+    in rows filling the stacks room — old wood
+    darkened to near-black at the touch-points,
+    each shelf labeled at its end with the
+    archivist's system. The volumes vary in age
+    from modern bound editions to older items
+    in hand-stitched covers of pale vellum.
+    The shelves are full but not overfull — a
+    maintained collection, not a growing one.
+    The oldest section, in the room's far corner,
+    carries volumes whose spines are too worn
+    to read from standing height. They would
+    require removal from the shelf to be
+    identified, and the catalog's location
+    entries for that section are marked as
+    approximate.
+idlemessages:
+- The stacks are quiet — the kind of quiet
+  that belongs to rooms where the ratio of
+  information to people has always been high.
+- A glass-enclosed candle on one of the shelves
+  burns with a steadiness the reading room's
+  open lamps do not quite achieve.
+- The catalog on the lectern is open to a
+  middle section — someone was here recently,
+  looking for something specific.
+- The oldest volumes in the far corner have
+  gone a pale grey-gold, the vellum covers
+  drawing ambient light differently from the
+  paper-bound items on either side.

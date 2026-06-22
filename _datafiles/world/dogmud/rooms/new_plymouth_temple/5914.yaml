@@ -1,0 +1,83 @@
+roomid: 5914
+zone: New Plymouth Temple
+title: The Seminary — Dormitory
+description: >
+  The novices' dormitory runs the length of the
+  seminary's south wing — a long room of close-set
+  beds, each with a small chest at its foot and
+  a study-slate on the shelf above. The slates
+  carry the evidence of learning in progress —
+  diagrams of the faith's cosmology, copied
+  passages in uneven hands, one slate bearing
+  a question written very small in the corner
+  that the owner has not erased. The
+  <ansi fg="itemname">novice-beds</ansi> are
+  narrow and identically made, their blankets
+  tucked with a care that suggests either
+  precision required or a desire to leave nothing
+  open to correction. The room smells of chalk
+  dust and close air. At the far end, a window
+  looks into the Garden of Repose — the one
+  green thing the novices have access to without
+  leaving the seminary. Near that window, a
+  second <ansi fg="itemname">pushed-slate</ansi>
+  has been pushed under a bed; it is visible
+  only if you look for it, its surface covered
+  with questions rather than answers.
+biome: city
+coord:
+  x: -6
+  y: 86
+  z: 0
+exits:
+  north:
+    roomid: 5910
+  west:
+    roomid: 5915
+  east:
+    roomid: 5923
+nouns:
+  novice-beds: Close-set narrow beds in two rows
+    down the dormitory's length — each with an
+    identical undyed blanket folded and tucked
+    with institutional precision, each with a
+    small chest at the foot and a study-slate
+    on the shelf above. The beds are assigned
+    by seniority of entry into the seminary;
+    the oldest novices are nearest the door,
+    the newest furthest from it, near the
+    garden window. The shelves above the newer
+    beds have more chalk dust on them. The
+    institutional precision of the bed-making
+    is not consistently achieved — some tucks
+    are tighter than others, and the novices
+    nearest the door have learned that the
+    difference matters.
+  pushed-slate: Visible under the bed near the
+    garden window — a study-slate pushed far
+    enough back that it is not immediately
+    apparent and not far enough back that it
+    was forgotten. The slate holds not diagrams
+    or copied passages but a series of questions
+    written in a careful hand — not the
+    compressed student hand of the other slates
+    but a slow deliberate script, each question
+    on its own line, each one a question about
+    the founding story as taught in the study
+    hall. The questions are not hostile. They
+    are precise. The slate has no name on it.
+idlemessages:
+- The dormitory is quiet at this hour — the
+  slates on the shelves holding the morning's
+  incomplete work.
+- Chalk dust in the dormitory air settles on
+  the nearest surfaces in a fine pale coat.
+- The garden window at the dormitory's end
+  shows the repose garden — still, green,
+  unreachable without going through the chapel.
+- One slate on its shelf has a question in
+  the corner, written small, that its owner
+  has not erased.
+- The beds near the door are made with greater
+  precision than those at the far end. The
+  difference took time to learn.
