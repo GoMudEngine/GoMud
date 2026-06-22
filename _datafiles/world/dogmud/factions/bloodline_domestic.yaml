@@ -1,0 +1,14 @@
+faction_id: bloodline_domestic
+display_name: "The Bloodline Domestic"
+description: |
+  The domestic apparatus of the bloodline that rules New Plymouth from beyond
+  the city — its handlers, permit-clerks, and quiet agents who keep the capital
+  compliant and paying. They wear no uniform and need none. Their reach is felt
+  in tribute rounds, stamped permits, and meetings that happen behind the right
+  doors. To the working quarters they are the weight of a hand that is never
+  quite removed; to those who ask the wrong questions, they are a problem that
+  gets tidied away. They smile, and process everything by the letter.
+default_rep: -10
+allies: []
+enemies:
+  - cooperage_circle
