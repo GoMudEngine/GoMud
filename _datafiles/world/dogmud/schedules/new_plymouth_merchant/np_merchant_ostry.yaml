@@ -1,0 +1,33 @@
+id: np_merchant_ostry
+description: "Dame Ostry: works the armoury floor from first light deep into the
+  evening, handling three blades at once and directing Halvard's steel north to
+  buyers who can pay what it is worth; sleeps above the shop."
+segments:
+  - start: 6
+    end: 22
+    target_room: 5810
+    activity: ""
+    idlecommands:
+      - emote holds a sword at arm's length with her third arm and
+        grades the edge with a fingertip of her right hand, expression
+        neutral throughout.
+      - emote sets a blade across all three palms to check the balance
+        — a proper three-point seat — then returns it to the rack
+        without a word.
+      - say Halvard's latest shipment came in light on the dirks.
+        I have told him twice. I will tell him again.
+      - emote tests the edge of a short blade with her thumbnail and
+        nods once — the small nod that means it will do.
+      - say The steel is honest or it is not. I do not sell the kind
+        that makes you think it might be both.
+      - emote lifts an ingot in her off hand and a finished blade in
+        her third, the contrast apparently making a point she does not
+        need to say aloud.
+  - start: 22
+    end: 6
+    target_room: 5811
+    activity: sleeping
+    idlecommands:
+      - emote sleeps above the armoury, the three arms resting at
+        different angles in the way of a body that has long since
+        worked out its own arrangement.

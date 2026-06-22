@@ -1,5 +1,6 @@
 mobid: 9350
 zone: New Plymouth Merchant
+schedule_id: np_merchant_sephe
 craft_support: general
 behavior_archetype: noncombat_shopkeeper
 non_combatant: true

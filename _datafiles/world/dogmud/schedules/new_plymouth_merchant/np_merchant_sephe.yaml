@@ -1,0 +1,35 @@
+id: np_merchant_sephe
+description: "Madam Sephe: works the Gilt Threshold from mid-morning through deep
+  into the small hours, the one warm social room of the Quarter; sleeps above in
+  the lodging room in the brief window before the next day begins."
+segments:
+  - start: 8
+    end: 2
+    target_room: 5814
+    activity: ""
+    idlecommands:
+      - emote wipes the bar in long, even strokes and sets a fresh cup
+        at the end before anyone has asked for it.
+      - emote listens to someone farther down the bar with the
+        particular expression of a person who finds what they are
+        hearing genuinely interesting.
+      - say The Gilt Rest has always been a good room for a quiet
+        conversation. The walls are solid. I have never asked
+        anyone what they discussed.
+      - emote refills a cup at the far end without being summoned
+        and returns to her place at the bar with the ease of very
+        long practice.
+      - say I have been making people comfortable for a long time.
+        I know when someone is pretending to be comfortable and when
+        they actually are. The difference matters to me.
+      - emote sets a fresh cloth on the bar and stands with the
+        attentive stillness of someone waiting without appearing
+        to wait.
+  - start: 2
+    end: 8
+    target_room: 5816
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the lodging above the Gilt Rest, the bar
+        quiet below, whatever she heard tonight filed behind the same
+        pleasant expression she offered to every guest who said it.

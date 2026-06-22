@@ -1,5 +1,6 @@
 mobid: 9348
 zone: New Plymouth Merchant
+schedule_id: np_merchant_brun
 craft_support: blacksmithing
 behavior_archetype: noncombat_shopkeeper
 non_combatant: true

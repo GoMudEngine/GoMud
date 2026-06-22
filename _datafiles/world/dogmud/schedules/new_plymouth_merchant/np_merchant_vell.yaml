@@ -1,0 +1,56 @@
+id: np_merchant_vell
+description: "Clerk Vell: morning at the permits office, midday tribute round at
+  the Central Square to collect filings from the merchant stalls, afternoon back
+  at the office, sleeps in the records room."
+segments:
+  - start: 7
+    end: 12
+    target_room: 5817
+    activity: ""
+    idlecommands:
+      - emote takes a permit application from the top of the queue,
+        reads it without expression, and stamps it or sets it aside
+        — the distinction is not explained.
+      - emote opens the register, adds a line in small, even script,
+        and closes it again.
+      - say There is a queue. The queue exists for a reason. The
+        reason is that everyone believes their matter is the urgent
+        one. It is not.
+      - emote sets a fresh sheet in front of him and readies a pen
+        with the expectant composure of a man who has done this ten
+        thousand times and is prepared to do it ten thousand more.
+  - start: 12
+    end: 13
+    target_room: 5802
+    activity: ""
+    idlecommands:
+      - emote walks the Square stalls in a measured circuit, the
+        collection ledger tucked under one arm, receiving each
+        tribute filing with the same brief nod.
+      - say Your quarterly tribute is due by the fifteenth. This
+        is the fifteenth. I trust the timing is not a surprise.
+      - emote stamps a receipt with the seal-mark on his palm and
+        hands it back without breaking stride.
+  - start: 13
+    end: 20
+    target_room: 5817
+    activity: ""
+    idlecommands:
+      - emote moves a completed file from the pending stack to the
+        closed stack with the satisfaction of a man who finds the
+        motion itself meaningful.
+      - emote reads an application twice without changing expression,
+        then sets it in a third stack that has no label.
+      - say The office closes when the work is done, not when the
+        hour arrives. The work is rarely done at the hour.
+      - emote re-inks his pen, blots it once on a scrap, and
+        continues the line he was writing as if the pause did not
+        occur.
+  - start: 20
+    end: 7
+    target_room: 5818
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the records room behind the office, surrounded
+        by the closed files of the Quarter's civic life, the stamp
+        on his palm pressing a faint mark into the pillow.

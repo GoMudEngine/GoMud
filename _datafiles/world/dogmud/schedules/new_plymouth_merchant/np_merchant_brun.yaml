@@ -1,0 +1,32 @@
+id: np_merchant_brun
+description: "Brun the Armorer: works the plate-works from early morning through
+  the evening, fitting and testing his own chainwork against the hardened skin
+  the Bloom gave him; sleeps in the chamber above."
+segments:
+  - start: 5
+    end: 21
+    target_room: 5812
+    activity: ""
+    idlecommands:
+      - emote pulls a length of chain through closed fingers, feeling
+        for weak links with the ridged skin of his palm.
+      - emote lifts a coif and works the links with his thumb, one
+        section at a time, the ring-by-ring check of a man who does
+        not trust the eye alone.
+      - say Wear it against the skin before you sell it. That is the
+        rule. My skin is better for the test than most.
+      - emote sets a finished vest against his own forearm and works
+        the seam — the rasp of iron on hardened skin audible from
+        across the room.
+      - say Chain holds or it does not. I know before the customer
+        does, and that is the point.
+      - emote checks the buckle on a fitted gorget with two fingers,
+        adjusts it a half-notch, checks it again.
+  - start: 21
+    end: 5
+    target_room: 5813
+    activity: sleeping
+    idlecommands:
+      - emote sleeps above the plate-works, the unfinished vest laid
+        out on the bench below, the ridged plates of his skin catching
+        the low forge-light from the floor.

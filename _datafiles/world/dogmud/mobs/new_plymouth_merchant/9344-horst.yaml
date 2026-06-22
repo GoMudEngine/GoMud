@@ -1,5 +1,6 @@
 mobid: 9344
 zone: New Plymouth Merchant
+schedule_id: np_merchant_horst
 behavior_archetype: noncombat_questgiver
 non_combatant: true
 charm_immune: true
