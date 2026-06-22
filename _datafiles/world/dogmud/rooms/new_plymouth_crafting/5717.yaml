@@ -1,0 +1,65 @@
+roomid: 5717
+zone: New Plymouth Crafting
+title: The Tannery
+description: >
+  The tannery's indoor workroom carries the trade's
+  smell — tanning bark and oak liquor and the honest
+  note of hides in process — and does not apologize
+  for it. Wooden <ansi fg="itemname">stretching-frames</ansi>
+  run both long walls, each holding a hide pinned taut
+  at a different stage of curing; the range from pale
+  new stock to deep finished tan is a visual record of
+  the process. The <ansi fg="itemname">preparation-bench</ansi>
+  at the center is wet at the edges from beaming and
+  fleshing work, the tools racked above in the exact
+  order of use. Beyond the east door, the yard and its
+  vats. South, the way leads to the porter's yard and
+  then toward the Common Quarter, where the tannery
+  district continues in that direction — its smell
+  rides over on any wind shift and tells you the trade
+  is bigger than this one building.
+biome: city
+coord:
+  x: -16
+  y: 90
+  z: 0
+exits:
+  west:
+    roomid: 5715
+  east:
+    roomid: 5718
+  south:
+    roomid: 5724
+nouns:
+  stretching-frames: Wooden frames of mortise-and-tenon
+    construction, each adjustable along two axes to
+    maintain tension as the hide shrinks during curing.
+    The hides on them range from pale new stock to deep
+    tan, each stage carrying its own particular smell.
+    The frames' wood has been saturated by years of
+    tanning residue and has gone to a uniform dark
+    amber-brown throughout.
+  preparation-bench: A wide-topped bench of heavy
+    timber, its surface raised and edge-lipped to
+    contain the liquids of beaming and fleshing work.
+    The tools above it are racked from coarsest at
+    the left to most precise at the right — beaming
+    knife, fleshing knife, two scrapers, a slicker.
+    They are clean and their edges are maintained.
+    The bench surface carries the accumulated staining
+    of the work, a layered record that no amount of
+    washing fully removes.
+idlemessages:
+- The smell of the tannery is present and constant —
+  tanning bark and hides in process and the labor.
+- One of the stretching-frames ticks as the hide
+  on it dries and contracts.
+- From the yard east, the sound of vats being tended
+  — a scrape and then a splash.
+- Light through the east door falls on the near row
+  of frames, illuminating different stages of curing.
+- South, the smell of other tanneries carries on the
+  wind from the direction of the Common Quarter.
+spawninfo:
+  - mobid: 9337
+    respawnrate: "10 real minutes"

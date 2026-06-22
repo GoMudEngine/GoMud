@@ -1,0 +1,28 @@
+id: np_crafting_toby
+description: "Toby the Cooper's Lad: keeps the front of the abandoned cooperage
+  from morning through late evening, sleeps on his cot on the cooperage floor."
+segments:
+  - start: 6
+    end: 22
+    target_room: 5719
+    activity: ""
+    idlecommands:
+      - emote checks the padlock on the cooperage door, tests it with two fingers,
+        finds it sound, and steps back to his spot.
+      - emote sits on the front step with arms around his knees, watching the
+        street end with a quiet that is not quite ease.
+      - emote runs a hand along the wall beside the cooperage door — briefly,
+        the way you might touch something you are keeping safe.
+      - say I am not going anywhere. Something has to stay here. Someone has
+        to be the one who stays.
+      - emote glances toward the cellar without turning his head fully, then
+        looks away and does not explain the glance.
+      - emote does not move far from the door.
+  - start: 22
+    end: 6
+    target_room: 5720
+    activity: sleeping
+    idlecommands:
+      - emote sleeps on the cot inside the cooperage floor, the steam-reddened
+        hands loose at his sides, the padlock on the inner door arm's-reach
+        away.

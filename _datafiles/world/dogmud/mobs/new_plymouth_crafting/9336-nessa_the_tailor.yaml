@@ -1,0 +1,53 @@
+mobid: 9336
+zone: New Plymouth Crafting
+schedule_id: np_crafting_nessa
+craft_support: tailoring
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote threads a needle in a single motion and begins a run of
+    stitching faster than the eye comfortably follows.'
+  - ''
+  - 'emote measures a length of cloth by spanning it between her hands
+    without a tape, folds it once, and it is exactly right.'
+  - ''
+  - 'emote trims a seam with quick, near-invisible passes of the
+    scissors and does not look at the result.'
+  - ''
+  - 'emote holds the piece to the window, fingers reading the tension
+    in each stitch without the eyes needing to drop.'
+activitylevel: 10
+character:
+  name: Nessa the Tailor
+  description: |
+    Nessa the Tailor occupies the Tailor's Shop with the brisk
+    efficiency of someone for whom the work never stops. She is quick
+    in the way her Chrysalis-change made permanent — her fingers move
+    faster than the eye comfortably follows, threading needles and
+    setting stitches at a pace that other tailors find either
+    impressive or unsettling depending on how long they watch. She
+    does not think about it. The cloth comes from the docks warehouse;
+    she turns it into garments that range from the serviceable to the
+    exceptional depending on what the customer can pay. The upper end
+    of that range goes north — a clothier in the Noble Quarter named
+    Modiste Aurel handles her finer pieces, which suits Nessa well
+    enough. She prefers to make the work. Someone else can deal with
+    the clientele that wears it.
+  speciesid: 1
+  level: 1
+  gold: 40
+  stats:
+    dexterity:
+      training: 14
+    charisma:
+      training: 6
+  shop:
+    - itemid: 40012
+    - itemid: 40007
+    - itemid: 40013

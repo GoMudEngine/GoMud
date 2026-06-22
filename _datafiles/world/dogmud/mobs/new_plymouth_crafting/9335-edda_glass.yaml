@@ -1,0 +1,53 @@
+mobid: 9335
+zone: New Plymouth Crafting
+schedule_id: np_crafting_edda
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 34
+maxwander: 0
+groups:
+  - humanoid
+  - cooperage_circle
+idlecommands:
+  - 'emote gathers molten glass on the blowpipe with a practiced
+    rotation, shaping the gather before it cools too far to work.'
+  - ''
+  - 'emote turns the pipe in both scarred hands at a steady rhythm,
+    glass-clear nails catching the kiln light.'
+  - ''
+  - 'emote holds a finished piece to the kiln glow for a long moment,
+    face neutral, then sets it in the annealing rack.'
+  - ''
+  - 'emote tends the kiln with the small adjustments of someone who
+    has had this conversation with the fire for years.'
+activitylevel: 10
+character:
+  name: Edda Glass
+  description: |
+    Edda Glass tends the Glass Kiln as though the work itself is the
+    only thing keeping the place from going quiet the way next door
+    has gone quiet. She is a lean woman with the deliberate patience
+    of someone who has spent years working with things that break,
+    forearms mapped with heat-scarred patches in the distinctive
+    pattern of old thermal burns, and fingernails gone glass-clear
+    — transparent to the bed — from years at the molten gather. Her
+    Chrysalis-change gave her the fingernails and a heat tolerance
+    that lets her work without heavy gloves when the task demands
+    close judgment. She was here when the cooperage complex ran full
+    — kilns north, barrel-work south, people she knew moving between
+    both. One of those people was named Asha. She does not bring Asha
+    up with strangers, and she does not encourage questions about the
+    south end of the building.
+  speciesid: 1
+  level: 1
+  gold: 35
+  stats:
+    dexterity:
+      training: 10
+    perception:
+      training: 6
+  shop:
+    - itemid: 40006

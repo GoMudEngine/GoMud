@@ -1,0 +1,65 @@
+roomid: 5705
+zone: New Plymouth Crafting
+title: The Inkwalk
+description: >
+  A quieter lane turns north from the Long Market's
+  crossing, where the trade in ink and paper settled long
+  enough ago that the name stuck. The noise of the market
+  drops away within a few steps — what reaches you here
+  is the shuffle of pages, the smell of lamp-black ink
+  and sizing, and the occasional murmur of someone
+  reading aloud to verify a purchase. Low <ansi fg="itemname">stall-awnings</ansi>
+  run along the west side of the lane, each one marking
+  a small enterprise in ink or print. To the east,
+  Orin's bookseller's stall projects slightly into the
+  lane; to the west, a shuttered building with boards
+  across the windows stands at the Inkwalk's end. A
+  <ansi fg="itemname">cobblestone-channel</ansi> runs
+  down the lane's center, dry now, laid when the
+  ink-works here required drainage.
+biome: city
+coord:
+  x: -18
+  y: 89
+  z: 0
+exits:
+  south:
+    roomid: 5702
+  east:
+    roomid: 5706
+  west:
+    roomid: 5708
+  north:
+    roomid: 5722
+nouns:
+  stall-awnings: A run of narrow canvas panels mounted
+    on wooden arms along the west side of the lane —
+    an older style than the market's rope-hung awnings,
+    and faded to the particular brown of canvas left out
+    in weather for a decade or more. Under each, a
+    different trade in text and image. A paper-seller.
+    A copyist. An illuminator's shop with a small
+    example piece hung in the window, the colors still
+    precise in the shade.
+  cobblestone-channel: A narrow groove running down the
+    center of the lane, paved in smaller cobbles than
+    the street surface to either side. It was laid,
+    according to a faded notice at the south end, for
+    drainage from the ink-works that once occupied the
+    lane's full length. The works are gone — replaced
+    by individual stalls — but the channel remains,
+    dry now and serving as a visual seam down the middle
+    of the Inkwalk. After heavy rain, someone says,
+    it runs black.
+idlemessages:
+- The lane is quieter than the Long Market — voices
+  here are kept moderate, which here passes for silence.
+- A customer emerges from under one of the stall awnings
+  with a wrapped parcel and holds it as if it matters.
+- The smell of fresh ink is stronger today — someone is
+  running a press somewhere close by.
+- A loose page skips down the center channel in a small
+  gust and catches against a step.
+- From the west end of the lane, no sound at all. The
+  shuttered building there absorbs what little noise
+  reaches it.

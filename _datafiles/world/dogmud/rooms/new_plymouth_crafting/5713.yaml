@@ -1,0 +1,63 @@
+roomid: 5713
+zone: New Plymouth Crafting
+title: The Glass Kiln
+description: >
+  The glassblower's kiln-room is organized entirely
+  around heat and access to heat. The <ansi fg="itemname">glory-hole</ansi>
+  in the north wall — the kiln's working port — radiates
+  continuously even when drawn down, its firebrick face
+  glowing an even orange; the wave of heat coming off
+  it is the room's dominant experience. Sand is scattered
+  thick on the floor, ground in by years of use, and
+  the air smells of hot sand and the mineral sweetness
+  of molten glass cooling on tool-ends and gather rests.
+  Above the passage east, an <ansi fg="itemname">iron-pipe-rack</ansi>
+  holds a dozen blowpipes in graduated lengths, their
+  tips scorched and their lengths marked with the dripped
+  evidence of working use. Through the east opening,
+  the kiln complex continues into a larger and quieter
+  hall.
+biome: city
+coord:
+  x: -20
+  y: 91
+  z: 0
+exits:
+  south:
+    roomid: 5711
+  east:
+    roomid: 5714
+nouns:
+  glory-hole: The kiln's working port is set into the
+    north wall at standing height — an arched opening
+    faced with firebrick gone glassy from sustained
+    heat. Even drawn down, the interior glows a steady
+    orange and the heat coming off the face is a wall
+    you feel several paces back. The port's lip is
+    blackened and chipped from gather rods and blowpipes
+    working against it. A ceramic stopper rests in a
+    bracket beside the opening for when the kiln is
+    fully banked; it has not been needed today.
+  iron-pipe-rack: A horizontal rack of iron brackets
+    above the east passage, holding blowpipes in
+    graduated lengths — the shortest for small work,
+    the longest for large gathers. The pipes are
+    scorched at the tips and carry the wax-drip
+    evidence of hot glass handled and set aside. They
+    are mounted with the tip ends outward, ready to
+    take rather than to give back, which is a habit
+    that speaks to how often they are in use.
+idlemessages:
+- The glory-hole radiates heat in a continuous wave
+  even with the kiln drawn down to working temperature.
+- The smell of hot sand and minerals fills the room
+  — a smell so particular it announces the trade.
+- A blowpipe on the rack ticks softly as metal cools
+  and contracts in the room's shifting heat.
+- Sand on the floor catches the glory-hole's orange
+  light at a low angle, granule by granule.
+- From the east hall, the quieter warmth of the
+  annealing oven bleeds back through the passage.
+spawninfo:
+  - mobid: 9335
+    respawnrate: "10 real minutes"

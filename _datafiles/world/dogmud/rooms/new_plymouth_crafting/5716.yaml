@@ -1,0 +1,56 @@
+roomid: 5716
+zone: New Plymouth Crafting
+title: Above the Tailor
+description: >
+  The room above the tailor's shop is small and used
+  seriously. A <ansi fg="itemname">work-table</ansi>
+  in the north corner doubles as a desk — lamp, ledger,
+  and a tray of thread samples organized by color, the
+  tray shallow so that nothing gets lost. The south
+  window looks out over Craftwell Square; the view from
+  the sill is of the well and the four converging lanes,
+  which is the view of someone who lives in the middle
+  of their own work. A <ansi fg="itemname">mending-basket</ansi>
+  sits beside the bed, full of garments taken upstairs
+  rather than back to the shop floor — the private side
+  of the trade, where pieces too damaged or too personal
+  for the bench get attention in the quiet hours. The
+  room holds the smell of wool and sizing in its walls.
+biome: city
+coord:
+  x: -17
+  y: 90
+  z: 1
+exits:
+  down:
+    roomid: 5715
+nouns:
+  work-table: A narrow table set against the north wall
+    below the window, used for close work and records
+    both. The lamp is positioned to throw light across
+    the left shoulder — the placement of someone who
+    stitches by lamplight and is right-handed. The ledger
+    beside it is open to a recent entry, the handwriting
+    small and economical. Under the table, a box holds
+    additional ledger volumes, the oldest at the back
+    with faded spines.
+  mending-basket: A deep wicker basket beside the bed
+    holding garments at various stages of repair. This
+    is not shop work — these are pieces brought up for
+    attention during off-hours, below the threshold of
+    formal commission. A pair of trousers half-restitched
+    at the knee. A shirt with the collar being replaced.
+    A child's coat folded at the bottom with a hem pin
+    still in it. The basket fills at approximately the
+    rate it empties.
+idlemessages:
+- The south window looks down onto Craftwell Square —
+  the well and the converging lanes are visible.
+- The ledger on the work-table is open. The most recent
+  entries are in darker ink, written not long ago.
+- From below — the sound of the cutting-bench being
+  cleared, then quiet.
+- The thread-sample tray catches the south window's
+  light, each color distinct in the morning.
+- The room holds the quiet of someone who spends their
+  evenings doing the work that doesn't get done below.

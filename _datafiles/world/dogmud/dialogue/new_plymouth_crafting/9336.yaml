@@ -1,0 +1,72 @@
+mobid: 9336
+zone: New Plymouth Crafting
+defaultMood: neutral
+
+greetings:
+  - text: "Looking for something ready-made or placing an order?"
+    moods: ["neutral"]
+  - text: "Good to see you again. The alterations are ready."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. What can I make you?"
+
+  - keywords: [""]
+    responses:
+      - "I'm mid-seam. Quick, please."
+
+tree:
+  root:
+    text: "I'm a tailor — cloth work, alterations, made pieces for
+      anyone from the quarter to the Noble end of town. Ask about
+      the trade itself, about the Noble Quarter clients I supply, or
+      about how cloth ends up on this bench in the first place."
+    hints: "You could ask Nessa about her tailoring work, about the
+      Noble Quarter clients she supplies, or about how cloth moves
+      through the district."
+
+  nodes:
+    - id: work
+      triggers: ["work", "tailor", "sew", "stitch", "cloth", "make",
+                 "garment", "alter", "alteration", "craft", "fabric",
+                 "what", "do", "sell", "buy", "here", "fast", "fingers",
+                 "quick", "nimble", "order", "custom"]
+      text: "I do alterations, original garments, and custom orders.
+        The fingers help — that's the Chrysalis-change, if you haven't
+        noticed. They move faster than they used to, more than fast
+        enough to keep pace with demand. I can turn a fitting into a
+        finished piece in a sitting that would take another tailor
+        half a week. I don't advertise it. I just price what the work
+        is worth and let the output speak for itself."
+      hints: "You could ask about the wealthy clients Nessa supplies
+        uptown, or how cloth reaches her workbench."
+
+    - id: noble
+      triggers: ["noble", "client", "aurel", "modiste", "uptown",
+                 "wealthy", "high", "quality", "fine", "who", "buy",
+                 "order", "upper", "fancy", "rich", "north",
+                 "merchant", "quarter"]
+      text: "I supply a clothier in the Noble Quarter — Modiste Aurel
+        handles the upper-end clientele, the kind who won't come down
+        to the Crafting Quarter to be measured. That suits me. I make
+        the pieces; Aurel sells them to people who have the gold for
+        it and the connections to need to look like they do. The
+        arrangement is straightforward. I don't go uptown often."
+      hints: "You could ask about Nessa's tailoring work or about how
+        cloth reaches the Crafting Quarter from the docks."
+
+    - id: cloth
+      triggers: ["cloth", "fabric", "material", "supply", "warehouse",
+                 "docks", "where", "come", "from", "source", "get",
+                 "import", "dobb", "dunmar", "bolt", "linen", "wool"]
+      text: "The cloth comes from the docks warehouse — Dunmar's people
+        handle the import side and Dobb runs the circuit that brings
+        it up to the quarter shops. I buy what I need in bulk when
+        the quality is right and do my own selection when I can get
+        to the shipment before the other buyers. The good bolts go
+        fast. I have an arrangement with Dobb to be told when the
+        finer weight cloth comes through."
+      hints: "You could ask about Nessa's tailoring or about the Noble
+        Quarter clients she works with."

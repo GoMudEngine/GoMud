@@ -1,0 +1,51 @@
+mobid: 9332
+zone: New Plymouth Crafting
+schedule_id: np_crafting_orin
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 34
+maxwander: 0
+groups:
+  - humanoid
+  - cooperage_circle
+idlecommands:
+  - 'emote reads in the dim without apparent difficulty, the ink-stained
+    eyes moving in their measured way down the column of text.'
+  - ''
+  - 'emote straightens a stack of folded maps on the counter, fitting
+    them to an order that appears to make sense only to him.'
+  - ''
+  - 'emote traces a route on an open map with one finger, pausing at
+    certain marks, then closes it without writing anything down.'
+  - ''
+  - 'emote dusts the spine of a particular volume with particular care
+    and puts it back in exactly the right place.'
+activitylevel: 10
+character:
+  name: Orin the Bookseller
+  description: |
+    Orin the Bookseller runs his stall at the corner where the main
+    Crafting Quarter lane turns toward the cooperage district, which
+    means he has been watching the shuttered building next door for
+    longer than most people in New Plymouth have been paying attention
+    to it. He is a quiet, angular man with permanently ink-stained
+    eyes — the Chrysalis-change that makes him useful at closing time
+    — irises deep with old ink, shifting the way dark water shifts,
+    capable of reading in light that would leave anyone else tracing
+    shapes. He sells books and maps. Among the maps, he still carries
+    the last work of Edvar the cartographer, who occupied the shop
+    next door and is no longer here. He is not in a hurry to sell
+    those particular maps. He prices them fairly.
+  speciesid: 1
+  level: 1
+  gold: 40
+  stats:
+    perception:
+      training: 14
+    willpower:
+      training: 6
+  shop:
+    - itemid: 40006

@@ -1,0 +1,40 @@
+mobid: 9343
+zone: New Plymouth Crafting
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote checks the annealing oven temperature by the glow through
+    the door-gap — not touching, not yet — and makes the small
+    adjustment to the damper that the reading called for.'
+  - ''
+  - 'emote turns a cooled piece on the soapstone bench, examines the
+    rim against the light from the passage, and sets it back with
+    more care than it strictly requires.'
+  - ''
+  - 'emote keeps his hands at his sides when he is not working —
+    the habit of someone who has learned what hot things in low
+    light can do to careless fingers.'
+activitylevel: 8
+character:
+  name: A Glass-Apprentice
+  description: |
+    Young enough that his burn scars are still recent but old enough
+    to be embarrassed by them, the glass-apprentice tends the Kiln
+    Complex while the glassblower works at the kiln next door. He
+    checks temperatures, manages the annealing oven, and does not
+    touch the cooled pieces on the soapstone bench without instruction.
+    He keeps his hands still when there is nothing to do. He has
+    learned why.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    dexterity:
+      training: 8
+    perception:
+      training: 6

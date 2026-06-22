@@ -1,0 +1,58 @@
+mobid: 9333
+zone: New Plymouth Crafting
+schedule_id: np_crafting_halvard
+craft_support: blacksmithing
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 38
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote turns a piece of iron in the forge mouth with bare hands,
+    holds it long enough to read the colour, and draws it free without
+    hurry.'
+  - ''
+  - 'emote hammers the blank in short, deliberate strokes, listening
+    to the ring of each blow as much as watching the shape come up.'
+  - ''
+  - 'emote lifts a finished bar from the rack with bare fingers, sights
+    along its length, sets it down, and picks up the hammer again.'
+  - ''
+  - 'emote lays a palm briefly against the forge mouth — not a test,
+    just a habit — and adjusts the bellows without stepping back.'
+activitylevel: 10
+character:
+  name: Master Halvard
+  description: |
+    Master Halvard runs the Forge Yard with the unhurried certainty of
+    a man who learned the fire young and never decided to fear it. He
+    is broad in the way that only decades at the hammer produce — wide
+    at the shoulder, deliberate in movement, scarred across both
+    forearms with burns that no longer teach him anything. His
+    Chrysalis-change is the kind a blacksmith might have designed if
+    given the chance — his skin will not scorch. He reads the heat of
+    iron with bare hands, holds the work in the flame longer than any
+    tong-dependent smith would risk, and the fire finds nothing to take.
+    He calls it an efficiency. His sister Marda, who brings him a pot
+    of food at midday because he forgets to eat, calls it showing off.
+    He forges for the quarter and sends finished blades to a weapon
+    dealer in the Merchant Quarter when the surplus runs. The iron
+    comes from the docks. What he does to it is his own work.
+  speciesid: 1
+  level: 1
+  gold: 45
+  stats:
+    strength:
+      training: 14
+    vitality:
+      training: 8
+    dexterity:
+      training: 4
+  shop:
+    - itemid: 40001
+    - itemid: 40018
+    - itemid: 40020
+    - itemid: 40019

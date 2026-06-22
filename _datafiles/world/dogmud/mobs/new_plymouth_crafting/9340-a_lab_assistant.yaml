@@ -1,0 +1,37 @@
+mobid: 9340
+zone: New Plymouth Crafting
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote carries a rack of clean glassware to the bench, sets each
+    piece in the drying cradle with deliberate care, and returns for
+    the next without hurrying.'
+  - ''
+  - 'emote checks the ink-smear on her left wrist against her sleeve,
+    considers it, and resigns herself to carrying it through the day.'
+  - ''
+  - 'emote holds a flask up to the window light, examines it for
+    residue, and sets it aside — the glass is not yet clean enough.'
+activitylevel: 8
+character:
+  name: A Lab Assistant
+  description: |
+    The lab assistant moves through Vesna's workshop with the careful
+    economy of someone working among things that break or burn. Her
+    hands carry ink on the left and acid-pale marks on the right, the
+    twin testimony of a season spent between the reagent log and the
+    glassware rack. She is thorough and unhurried, which is what
+    this work requires.
+  speciesid: 1
+  level: 1
+  gold: 6
+  stats:
+    perception:
+      training: 8
+    dexterity:
+      training: 6

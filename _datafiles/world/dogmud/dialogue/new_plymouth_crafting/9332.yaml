@@ -1,0 +1,95 @@
+mobid: 9332
+zone: New Plymouth Crafting
+defaultMood: neutral
+
+greetings:
+  - text: "Books or maps? I have both."
+    moods: ["neutral"]
+  - text: "I wondered when you'd be back. Something caught your eye
+      last time."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Looking for anything specific?"
+
+  - keywords: [""]
+    responses:
+      - "Take your time. I'm reading."
+
+tree:
+  root:
+    text: "I sell books and maps. The books are general — history,
+      natural records, a bit of theology when the Temple scholars
+      come through. The maps are more interesting. Some of them were
+      made by the man who used to work next door. Ask about the maps,
+      about Edvar who made them, or about the old questions this part
+      of the city keeps producing."
+    hints: "You could ask Orin about the books and maps he carries,
+      about a cartographer named Edvar whose shop next door stands
+      shuttered, or about the old questions this district raises."
+
+  nodes:
+    - id: books
+      triggers: ["book", "map", "sell", "carry", "have", "buy",
+                 "what", "stock", "read", "history", "theology",
+                 "natural", "record", "see",
+                 "browse", "here"]
+      text: "I carry general books — regional history, natural surveys,
+        the occasional theological tract when the Temple sends a
+        scholar by to clear shelf space. The maps are the better part
+        of my stock and the part I know best. I buy collections when
+        estates dissolve or scholars move on. The maps Edvar left
+        behind are in a separate category. I price those fairly and
+        I'm careful about who I sell them to."
+      hints: "You could ask about Edvar who made those special maps,
+        or about the old questions this corner of the city raises."
+
+    - id: edvar
+      triggers: ["edvar", "cartographer", "map", "shuttered", "shop",
+                 "next", "door", "neighbor", "who", "was", "made",
+                 "left", "where", "what", "happen", "gone", "missing",
+                 "accurate", "official", "survey"]
+      text: "Edvar was a cartographer — the best I've encountered, and
+        I've handled a great many maps in this work. He occupied the
+        shop next door and spent years surveying this city in more
+        detail than the official records ever attempted. His maps are
+        accurate. More accurate than the ones the city keeps, which
+        means they include some things the city's maps leave out.
+        He is not here anymore. The maps still are. I keep them
+        because they're his best work and because I think they should
+        exist somewhere. That's most of what I'll say to a stranger."
+      hints: "Orin is protective of Edvar's memory and guarded about
+        what the maps contain. You could ask about the old questions
+        this district raises, or about the cooperage nearby."
+      moodChange: cautious
+
+    - id: old_questions
+      triggers: ["question", "old", "district", "cooperage", "circle",
+                 "truth", "official", "city", "missing", "leave", "out",
+                 "includes", "shows", "accurate", "underground", "history",
+                 "what", "know", "tell", "find", "discover", "secret"]
+      text: "There are things in this quarter that the official record
+        does not fully account for. The cooperage went quiet some years
+        ago and nobody in the city administration has pressed for an
+        answer. Edvar documented what he found. I sell those documents.
+        I don't sell them to everyone who asks, and I don't tell every
+        customer what's in them. If you're asking because you already
+        know something about this quarter's history, that is a different
+        conversation. I'm not sure you're ready for it."
+      hints: "Orin is clearly guarded but not dismissive. You could ask
+        about the books and maps he carries, or return to Edvar's story."
+
+    - id: scholars
+      triggers: ["scholar", "temple", "academic", "research", "study",
+                 "learn", "knowledge", "archive", "who", "buys",
+                 "customers", "buyers"]
+      text: "Temple scholars come by when they're researching local
+        history — the quarter has an older layer than most of the
+        city wants to acknowledge. I'm useful to them because I have
+        surveys they can't get from the official archive. I'm careful
+        about what I share and with whom. Scholars with good questions
+        get more from me than scholars with institutional backing."
+      hints: "You could ask about the books and maps Orin carries or
+        about Edvar the cartographer."

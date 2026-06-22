@@ -1,0 +1,77 @@
+mobid: 9333
+zone: New Plymouth Crafting
+defaultMood: neutral
+
+greetings:
+  - text: "What are you after — iron, steel, or just looking at the fire?"
+    moods: ["neutral"]
+  - text: "Good timing. I've got finished stock if you need something."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "State what you need."
+      - "If you're buying, the stock's there. If you're talking, I'm listening."
+
+  - keywords: [""]
+    responses:
+      - "Say it plain. I'm mid-work."
+
+tree:
+  root:
+    text: "I run the forge — steel and ironwork, mostly. If you need
+      materials I carry ingots and fittings. If you want to talk, I
+      don't mind that either. My sister says I don't talk enough. Ask
+      about the work, about her, or about how this quarter gets its
+      iron."
+    hints: "You could ask Halvard about his work at the forge, about
+      his sister Marda over in the Common Quarter, or about how iron
+      moves through the Crafting Quarter."
+
+  nodes:
+    - id: work
+      triggers: ["work", "forge", "steel", "iron", "smith", "craft",
+                 "make", "ingot", "blade", "weapon", "tools", "metal",
+                 "what", "do", "sell", "buy", "here", "materials",
+                 "fittings", "coal"]
+      text: "I make what the quarter needs — ingots, fittings, finished
+        blades when the order calls for it. The raw iron comes from
+        Dunmar's warehouse on the docks; I take it from there and turn
+        it into something worth more. Most of it stays in the Crafting
+        Quarter. Some of the finer blades go north to Dame Ostry's shop
+        in the Merchant Quarter — she moves quality work to buyers who
+        pay for it. The rest I sell here direct."
+      hints: "You could ask Halvard about his sister Marda or about
+        the quarter's supply arrangements."
+
+    - id: sister
+      triggers: ["marda", "sister", "family", "sibling", "brother",
+                 "cookshop", "food", "cook", "common", "kin",
+                 "midday", "pot", "grain", "seasoning", "eat"]
+      text: "Marda runs the cook-stall in the Common Quarter — best
+        stew in that half of the city, though she'd say the pepper
+        is what makes it and I'd say any grain you can't taste isn't
+        worth the fire. We've been having this argument since we were
+        small. She comes by at midday with a pot because she says I'd
+        forget to eat otherwise. I say I'm working. She says those
+        aren't different things. She brings good food. I don't tell
+        her that."
+      hints: "Halvard seems fond of his sister despite the ongoing
+        disagreement about seasoning. You could ask about the forge
+        work or the quarter."
+      moodChange: friendly
+
+    - id: quarter
+      triggers: ["quarter", "district", "crafting", "docks", "supply",
+                 "dunmar", "warehouse", "dobb", "city", "trade", "here",
+                 "how", "runs", "iron", "comes", "from"]
+      text: "The quarter runs on what comes up from the docks — Dunmar's
+        warehouse is where all the raw material lives before it reaches
+        the craftsmen here. Iron, cloth, leather, reagents, all of it
+        comes through that door first. Dobb runs the circuit that moves
+        it between the warehouse and the shops. It works. As long as
+        the ships come in and the numbers add up, this quarter stays
+        busy. I don't complain about the arrangement."
+      hints: "You could ask about Halvard's work at the forge or about
+        his sister Marda in the Common Quarter."

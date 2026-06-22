@@ -1,0 +1,65 @@
+roomid: 5714
+zone: New Plymouth Crafting
+title: The Kiln Complex
+description: >
+  The hall behind the glassworks was built for expansion
+  and never fully put to use. A second furnace stands
+  cold against the north wall, its draw-port closed
+  with a ceramic stopper — the structure is sound,
+  only unlit. The <ansi fg="itemname">annealing-oven</ansi>
+  at the east end of the same wall is still in service,
+  its door standing open, a row of ceramic cooling
+  pads visible on the interior shelf with the mark of
+  a recently removed piece still warm on them. Along
+  the south wall, the <ansi fg="itemname">cooling-bench</ansi>
+  of heavy soapstone runs the room's full length, its
+  surface a record of every piece set down hot here —
+  ring upon overlapping ring. The new brickwork of the
+  expansion is visible in the east wall and the ceiling
+  is a handspan lower than the kiln-room next door,
+  the join ungainly and unapologized for.
+biome: city
+coord:
+  x: -19
+  y: 91
+  z: 0
+exits:
+  west:
+    roomid: 5713
+nouns:
+  annealing-oven: A smaller box kiln built into the
+    east end of the wall, its door a cast-iron panel
+    with a simple latch. The interior is lined with
+    ceramic fiber and carries a rack of shallow pads
+    for setting finished pieces during the anneal
+    cycle — each pad sized for different work. The
+    oven has been used recently; the pads inside still
+    carry the ghost-heat of a piece removed not long
+    ago. The iron door's latch has been repaired with
+    different-grade iron; the join shows in the color.
+  cooling-bench: The long soapstone surface of the
+    south wall has been in service since before the
+    expansion — the older western half carries more
+    accumulated work than the newer eastern end. Rings
+    from cooling pieces form an overlapping record,
+    each one marking the exact diameter of a piece
+    and the degree of heat it held when it arrived.
+    Someone scratched calibration marks into the stone
+    near the west end, still readable. The soapstone
+    does not crack and does not pass heat quickly,
+    which is why it is here.
+idlemessages:
+- The annealing oven holds its temperature slowly,
+  heat bleeding from the ceramic walls at its own pace.
+- Some of the rig in the expansion half is covered
+  with canvas; some is not. The work of putting things
+  away without quite finishing.
+- A shard of broken glass has been swept to the floor's
+  edge near the cooling bench and left there.
+- The kiln-room's heat filters through the west wall
+  and keeps the air here warm even with the fire down.
+- The ceiling is lower here than in the kiln-room —
+  the change is abrupt enough that you notice.
+spawninfo:
+  - mobid: 9343
+    respawnrate: "10 real minutes"

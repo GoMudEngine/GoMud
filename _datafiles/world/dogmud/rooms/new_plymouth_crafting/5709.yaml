@@ -1,0 +1,66 @@
+roomid: 5709
+zone: New Plymouth Crafting
+title: The Forge Yard
+description: >
+  A working blacksmith's yard opens west of Craftwell
+  Square, proportioned to take the heat and noise of
+  the trade. The <ansi fg="itemname">banked-forge</ansi>
+  at the center is stone-built and low, its coals held
+  at an orange glow — worked today and banked only for
+  the midday pause, the tuyere pipe running below the
+  yard floor to the bellows mount at the eastern face.
+  Around the forge's base a dark ring of <ansi fg="itemname">forge-scale</ansi>
+  has built up over years, flat and black as old leaves,
+  and the yard stone is scorched in the pattern of long
+  use. A narrow door on the outbuilding's north face
+  leads to a stair; above, someone has made rooms in
+  the space over the working floor. The heat coming
+  off the coals is a constant low presence, filling
+  the yard from center to wall.
+biome: city
+coord:
+  x: -19
+  y: 90
+  z: 0
+exits:
+  east:
+    roomid: 5722
+  west:
+    roomid: 5711
+  up:
+    roomid: 5710
+nouns:
+  banked-forge: A hearth of shaped firebrick and iron
+    plate, open at the working face, flanked by the
+    bellows mount. The brick is blackened to glassy
+    in the hottest section. The current charge has been
+    banked with ash across the top — a technique for
+    holding temperature without burning fuel. The
+    tuyere pipe runs below the floor; the stone around
+    it is warm underfoot. This forge has not been cold
+    in some time.
+  forge-scale: Flakes and scale from metalwork that
+    have built up in a dark ring around the forge base,
+    accumulating over years of work. Flat and dull-dark,
+    they scatter to the edges of the yard by degrees
+    and pile against the walls. The fine black
+    particulate from the forge's working has settled
+    on every horizontal surface in the yard — thin
+    enough to look like shadow until you run a finger
+    across it.
+idlemessages:
+- The forge coals pulse orange in the banked center,
+  a low thermal shimmer rising above the hearth.
+- Metal cools somewhere in the yard — a faint tick as
+  something settles in the heat and contracts.
+- The smell of hot iron and quench-water hangs in the
+  yard air even through the midday pause.
+- From above, through the stair-door, the sound of
+  movement on wooden boards — light and unhurried.
+- Scale flakes near the forge edge catch the light
+  flat and dark, blown there by the bellows exhaust.
+spawninfo:
+  - mobid: 9333
+    respawnrate: "10 real minutes"
+  - mobid: 9339
+    respawnrate: "10 real minutes"

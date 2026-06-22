@@ -1,0 +1,94 @@
+mobid: 9334
+zone: New Plymouth Crafting
+defaultMood: neutral
+
+greetings:
+  - text: "Looking for something specific, or browsing?"
+    moods: ["neutral"]
+  - text: "Back again? I have a fresh batch if the last was what you
+      needed."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. What do you need?"
+
+  - keywords: [""]
+    responses:
+      - "If you have a question, ask it plainly."
+
+tree:
+  root:
+    text: "I brew compounds and extract reagents — standard alchemical
+      work, mostly salves and curatives with occasional specialty
+      orders. Ask about the brewing work itself, about Ysolde in the
+      Common Quarter who takes my salve supply, about where the reagents
+      come from — or, if you've a mind to, about the one standing order
+      I would rather not think about."
+    hints: "You could ask Vesna about her alchemical brewing work, about
+      a healer named Ysolde who buys her salves, about how she sources
+      her reagents, or about a buyer she seems uneasy about."
+
+  nodes:
+    - id: work
+      triggers: ["work", "alchemy", "brew", "compound", "craft",
+                 "make", "do", "what", "potion", "salve", "curative",
+                 "extract", "mix", "lab", "here", "batch", "produce",
+                 "sell"]
+      text: "I process raw plant and mineral material into stable
+        compounds — primarily salves and curatives, which sell
+        consistently, and some specialty preparations for clients with
+        specific needs. The lab here is well-suited for mid-scale
+        production; I can maintain steady output without rushing the
+        process, which matters more in this work than most people
+        realise. A batch that was hurried is a batch I can tell apart
+        from the outside before I open it."
+      hints: "You could ask about Vesna's client Ysolde in the Common
+        Quarter, or about where she sources her raw materials."
+
+    - id: ysolde
+      triggers: ["ysolde", "healer", "salve", "common", "client",
+                 "who", "buy", "sell", "back_alley", "supply"]
+      text: "Ysolde works out of the Common Quarter — she takes my
+        salve production on a standing order. She does good work with
+        what I give her; I know because the order stays consistent and
+        she doesn't come back with complaints. What she uses the more
+        unusual preparations for, I don't ask. A reliable customer
+        who pays on time earns some discretion."
+      hints: "You could ask about Vesna's brewing work or about how
+        she sources her raw materials."
+
+    - id: reagents
+      triggers: ["reagent", "source", "supply", "ingredient", "forager",
+                 "warehouse", "material", "root", "herb", "thistle",
+                 "docks", "where", "come", "from", "get", "edda",
+                 "vial", "glass", "import"]
+      text: "Some comes from the docks warehouse — raw bulk material
+        that Dunmar's people import by weight. The rest comes from
+        foragers who work the marshes and steppe country around the
+        city. Forager supply is less predictable but higher quality
+        for the things that matter. I work with both. The glass vials
+        are from Edda in the kiln next street over — local, which means
+        I can check the seal quality myself before I use them."
+      hints: "You could ask about Vesna's brewing work or about her
+        client Ysolde in the Common Quarter."
+
+    - id: buyer
+      triggers: ["buyer", "uneasy", "unsettled", "unusual", "canal",
+                 "wafer", "copper", "perfumer", "carter", "worried",
+                 "strange", "thinking"]
+      text: "There is one standing order I do not like, if I am honest
+        with myself, which I try not to be. A buyer I have never met —
+        payment through a third party, always exact, always early —
+        takes a refined extract I would otherwise sell maybe twice a
+        year. They take it by the case. I tell myself it goes to a
+        perfumer; the base note has a copper-flower sharpness that would
+        suit one. But the carter who collects it goes down toward the
+        canal, toward the Old Quarter, not toward any perfumer I know of.
+        I have learned not to follow that thought too far. My end of the
+        work is honest. I need that part to be true."
+      hints: "Vesna seems genuinely unsettled — by the buyer, and by
+        where the goods go. You could ask about her brewing work or
+        about Ysolde."
+      moodChange: neutral

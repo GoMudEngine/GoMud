@@ -1,0 +1,63 @@
+roomid: 5724
+zone: New Plymouth Crafting
+title: The Porter's Yard
+description: >
+  A paved transit yard between the Long Market and the
+  tannery district, used for staging and hand-off.
+  Several <ansi fg="itemname">hand-carts</ansi> along the east
+  wall wait without ownership — three of them, communal
+  by long practice, in varying states of repair,
+  available to whoever needs one and accountable to
+  no one. Near the north entrance, a <ansi fg="itemname">tally-post</ansi>
+  of painted timber carries this morning's chalk marks
+  — consignment lines, delivery windows, quantities —
+  in several different hands written over the remains
+  of yesterday's entries, the chalk never fully cleaning.
+  The yard stone is stained from years of wet goods
+  set down here, and the smell coming down from the
+  north is the tannery's, carried ahead of anyone
+  walking up from the market. South, the Long Market's
+  east end is a short walk.
+biome: city
+coord:
+  x: -16
+  y: 89
+  z: 0
+exits:
+  north:
+    roomid: 5717
+  south:
+    roomid: 5704
+nouns:
+  hand-carts: Three hand-carts in various states of
+    use, parked without precision along the east wall
+    — a large two-wheel freight cart, a smaller single-
+    barrow with a rope handle, and a flat four-wheel
+    trolley with a broken front pin jammed back in
+    and held with wire. All three belong to anyone
+    doing work in the yard and to no one in particular.
+    The freight cart has a load of empty barrel-frames
+    on it that have not been moved in some time. The
+    trolley's pin-repair is clearly the work of someone
+    who needed it today and had no time for more.
+  tally-post: A timber post of painted pine set in a
+    mortar block, standing about chest height. The chalk
+    marks are today's — consignment references, weight
+    estimates, recipient names and delivery windows —
+    in three different hands. The morning's marks sit
+    over yesterday's partial erasures; old chalk does
+    not come off cleanly and leaves a grey underlayer
+    that accumulates into a record of the yard's traffic.
+    The post is repainted each season; the current
+    erasure-layer is about that old.
+idlemessages:
+- The hand-carts along the east wall are empty and
+  unattended — between loads, or waiting for someone.
+- The tally-post carries new chalk marks from this
+  morning, still sharp against the grey underlayer.
+- The tannery's smell comes down from the north
+  entrance on any drift of air — rich and present.
+- Someone crosses the yard heading south, a folded
+  freight note under one arm, without pausing.
+- The yard stone underfoot is stained by years of
+  wet goods set down here — hides, barrels, produce.

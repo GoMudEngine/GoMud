@@ -1,0 +1,49 @@
+id: np_crafting_halvard
+description: "Master Halvard: works the Forge Yard from first light, breaks at
+  midday to eat at his sister's cookshop in the Common Quarter whether he likes
+  it or not, returns to the forge through the evening, sleeps above the yard."
+segments:
+  - start: 5
+    end: 12
+    target_room: 5709
+    activity: ""
+    idlecommands:
+      - emote turns a piece of iron in the forge mouth with bare hands, holds it
+        long enough to read the colour, and draws it free without hurry.
+      - emote hammers the blank in short, deliberate strokes, listening to the
+        ring of each blow as much as watching the shape come up.
+      - say Iron in the morning has the best grain. I cannot explain it. I
+        stopped trying to explain it years ago.
+      - emote lays a palm briefly against the forge mouth — not a test, just a
+        habit — and adjusts the bellows without stepping back.
+  - start: 12
+    end: 13
+    target_room: 5605
+    activity: ""
+    idlecommands:
+      - emote takes the stool at the cookshop counter with the air of a man
+        keeping an appointment under mild protest.
+      - say Marda says I forget to eat. Marda is not wrong. I am here. That
+        is the concession I am able to make.
+      - emote eats the broth without comment, which is the closest he gets to
+        a compliment.
+  - start: 13
+    end: 21
+    target_room: 5709
+    activity: ""
+    idlecommands:
+      - emote lifts a finished bar from the rack with bare fingers, sights along
+        its length, sets it down, and picks up the hammer again.
+      - emote works the afternoon with the same unhurried rhythm as the morning
+        — the fire does not care what hour it is, and neither does he.
+      - say An edge is either honest or it is not. There is nothing in between
+        that is worth selling.
+      - emote banks the forge for the last draw of the day, running the iron out
+        one more time before the light goes.
+  - start: 21
+    end: 5
+    target_room: 5710
+    activity: sleeping
+    idlecommands:
+      - emote sleeps above the forge, the banked fire still breathing below,
+        hands resting open and unmarked by the heat that took everything else.

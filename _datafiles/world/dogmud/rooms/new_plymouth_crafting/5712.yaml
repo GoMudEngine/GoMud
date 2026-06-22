@@ -1,0 +1,60 @@
+roomid: 5712
+zone: New Plymouth Crafting
+title: Above the Lab
+description: >
+  The room above the alchemist's lab carries the smell
+  of the work below — chemical traces filter up through
+  the floorboards and have been absorbed by every
+  surface. A <ansi fg="itemname">reading-table</ansi>
+  in the north corner holds a lamp, a ledger open to
+  a recent entry, and a tray of paper references in a
+  hand that does not waste space on the page. The south
+  window is cracked at the top — a permanent arrangement,
+  apparently, to manage the air — and has faded at the
+  upper sash differently from the lower where it never
+  fully closes. A <ansi fg="itemname">shelf-by-the-bed</ansi>
+  holds a small collection of sealed glass vessels,
+  each labeled in the same careful hand as the ledger,
+  arranged by some logic other than size or color. The
+  room is functional; comfort has been adjusted around
+  the work, not the reverse.
+biome: city
+coord:
+  x: -20
+  y: 90
+  z: 1
+exits:
+  down:
+    roomid: 5711
+nouns:
+  reading-table: A small table against the north wall
+    below the window, its surface covered with pages
+    and a working notebook. The handwriting in the
+    notebook is compressed and regular — someone
+    transcribing quickly without sacrificing precision.
+    Annotations have been added in a different pen,
+    and those annotations have their own annotations.
+    The pages beside it appear to be references, some
+    printed and some hand-copied, ordered in a way
+    that only makes sense if you know what they are
+    for.
+  shelf-by-the-bed: A plain shelf mounted at arm-reach
+    beside the bed, holding a small collection of
+    sealed glass vessels. Each is labeled in a hand
+    identical to the notebook. One vessel holds a
+    dark fluid kept flat, not moving when the shelf
+    trembles. Another holds something amber, sealed
+    with wax broken and re-sealed at least once. The
+    shelf is old. The vessels are not. They have been
+    moved here from somewhere more formal.
+idlemessages:
+- The chemical smell from below is faint but constant
+  — it has settled into the grain of everything here.
+- The window sash, cracked at the top, lets in a thin
+  line of outside air that does not reach the bed.
+- Light from the north window falls on the open
+  notebook at a working angle.
+- The floorboards carry the faint vibration of work
+  at the bench in the lab below.
+- The room is arranged by use rather than appearance
+  — what is needed is within reach; the rest is not.

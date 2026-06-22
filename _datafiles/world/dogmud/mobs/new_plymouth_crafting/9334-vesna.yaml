@@ -1,0 +1,54 @@
+mobid: 9334
+zone: New Plymouth Crafting
+schedule_id: np_crafting_vesna
+craft_support: alchemy
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote draws a measured pour from a stoppered flask and holds the
+    vial to the light before adding it to the mixing bowl.'
+  - ''
+  - 'emote stirs a small clay pot in slow, deliberate rotations,
+    watching the colour shift, lips counting something silently.'
+  - ''
+  - 'emote catalogues three vials by scent alone, eyes closed, setting
+    each in its rack without looking.'
+  - ''
+  - 'emote records an entry in the workbench ledger in the concentrated
+    brevity of someone who has written this down before.'
+activitylevel: 10
+character:
+  name: Vesna
+  description: |
+    Vesna works the Alchemist's Lab with the focused stillness of
+    someone for whom every action has a reason and the reason was
+    established hours ago. She is slight and precise, with a measuring
+    quality to how she moves through the cluttered space — never
+    rushing, never wasting a step. Her Chrysalis-change shows in
+    certain lights — a faint iridescent oil-sheen plays across her
+    skin, rainbow-edged, shifting as she turns. She has learned not
+    to think about it. Her supply comes from the docks warehouse and
+    from the foragers who work the surrounding country; she processes
+    raw material here and sells finished product to healers and
+    apothecaries across the quarter. The largest standing order goes
+    to Ysolde in the Common Quarter — salves, primarily, and the
+    occasional compound. Vesna finds Ysolde a reliable customer and
+    does not ask what she uses the more unusual preparations for.
+  speciesid: 1
+  level: 1
+  gold: 50
+  stats:
+    willpower:
+      training: 14
+    perception:
+      training: 8
+  shop:
+    - itemid: 40006
+    - itemid: 40004
+    - itemid: 40005

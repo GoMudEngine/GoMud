@@ -1,0 +1,67 @@
+mobid: 9338
+zone: New Plymouth Crafting
+defaultMood: cautious
+
+greetings:
+  - text: "This isn't open. What is it you need?"
+    moods: ["cautious"]
+  - text: "You're back."
+    moods: ["neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello."
+
+  - keywords: [""]
+    responses:
+      - "Ask what you actually want to know."
+
+tree:
+  root:
+    text: "I keep the place. That's the job. If you want to know about
+      the cooperage, I'll answer what I can. The people who were here
+      — that's a shorter conversation. What's downstairs is not one
+      I'm having."
+    hints: "You could ask Toby about the cooperage and what it used to
+      do, about the people who are no longer here, or about what is
+      downstairs — though he seems very certain about that last one."
+
+  nodes:
+    - id: cooperage
+      triggers: ["cooperage", "barrel", "work", "stave", "hoop",
+                 "craft", "what", "here", "do", "make", "open",
+                 "closed", "shut", "why", "keeper", "keep", "place",
+                 "building", "door", "lock", "job"]
+      text: "It used to make barrels — good ones, export quality.
+        Barrel staves, hoops, the full cooperage trade. There was
+        a full crew here when it was running. It went quiet and I
+        stayed to keep the building sound and the door locked. That
+        is the job. I'm not paid for it. I just do it."
+      hints: "You could ask Toby about the people who were here, or
+        about what is downstairs."
+
+    - id: people
+      triggers: ["people", "crew", "who", "gone", "missing", "left",
+                 "them", "where", "what", "happen", "workers", "asha",
+                 "circle", "others", "names", "remember", "were",
+                 "here", "before", "vanish"]
+      text: "There were good people here. I'm not going to list their
+        names for someone I don't know. They're not here anymore.
+        That's true. Past that — I don't know who sent you, I don't
+        know what you're looking for, and I'm not going to make
+        either easier until I do. The people who were here mattered.
+        I'm not giving them up to curiosity."
+      hints: "Toby is clearly protective of whoever was here. You
+        could ask about the cooperage itself or what is downstairs."
+      moodChange: cautious
+
+    - id: downstairs
+      triggers: ["downstairs", "basement", "below", "under", "down",
+                 "cellar", "floor", "beneath", "what", "inside",
+                 "through", "door", "open", "unlock", "in", "there",
+                 "stairs", "below"]
+      text: "No."
+      hints: "Toby has nothing more to say about what is downstairs.
+        You could ask about the cooperage's history or the people
+        who once worked here."

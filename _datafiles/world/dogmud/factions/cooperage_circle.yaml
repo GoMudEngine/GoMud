@@ -1,0 +1,16 @@
+faction_id: cooperage_circle
+display_name: "The Cooperage Circle"
+description: |
+  What remains of the dissidents who once met above an honest cooper's
+  shop and asked the wrong questions about the city's founding. Most
+  left or were made to leave; what survives is a loose thread of
+  sympathizers — a cooper's lad who keeps the door shut and the memory
+  alive, a glassblower who knew the ones who vanished, a bookseller who
+  still sells a dead cartographer's maps. They are not an organization
+  so much as a shared refusal to forget, scattered through the Crafting
+  Quarter and quietly recoverable as lore. They keep their heads down;
+  the bloodline's office regards their kind as a tidied-away problem,
+  and they would rather it stayed that way.
+default_rep: 5
+allies: []
+enemies: []

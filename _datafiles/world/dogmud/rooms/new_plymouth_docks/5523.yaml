@@ -16,8 +16,7 @@ description: >
   that have worked the latch many more times than restocking
   shelves would require. To the north a low stone footbridge is
   visible over a canal cut — a span connecting this quarter's edge
-  to the Crafting Quarter beyond. The far approach is closed off;
-  what lies that way is not yet reachable. South returns to the
+  to the Crafting Quarter beyond. South returns to the
   outer lane; a stair leads down behind the cupboard door.
 biome: city
 coord:
@@ -27,6 +26,8 @@ coord:
 exits:
   south:
     roomid: 5522
+  north:
+    roomid: 5700
   down:
     roomid: 5524
 nouns:

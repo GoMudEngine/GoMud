@@ -1,0 +1,49 @@
+mobid: 9337
+zone: New Plymouth Crafting
+schedule_id: np_crafting_corwin
+craft_support: tailoring
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote works a length of leather between both hands, stretching and
+    releasing in a steady rhythm that does not need his full attention.'
+  - ''
+  - 'emote turns the hide on the frame to check the cure from a second
+    angle before moving on.'
+  - ''
+  - 'emote runs a thumb along the grain of a finished strip, nods once,
+    and hangs it with the rest.'
+  - ''
+  - 'emote does the work without commentary, which is how he does most
+    things.'
+activitylevel: 10
+character:
+  name: Corwin the Tanner
+  description: |
+    Corwin the Tanner runs the Tannery at the east edge of the Crafting
+    Quarter, where the district bleeds into the tannery lanes that run
+    south into the Common. He is a solid, unhurried man with leather-
+    tough skin — the Chrysalis-change that the work practically asked
+    for — dry and close-grained as good hide, resistant to the caustic
+    baths and knife-work that would roughen ordinary hands into
+    uselessness. He does not apologize for the smell. He has never
+    found it worth discussing. Hides come in from the warehouse; he
+    cures and cuts them here, and what comes out is as honest as
+    anything in the Crafting Quarter. He has no strong opinions about
+    most things and several very firm ones about leather.
+  speciesid: 1
+  level: 1
+  gold: 35
+  stats:
+    strength:
+      training: 10
+    vitality:
+      training: 8
+  shop:
+    - itemid: 40002

@@ -1,0 +1,55 @@
+roomid: 5700
+zone: New Plymouth Crafting
+title: Bridge End
+description: >
+  The footbridge from the Docks deposits you onto a small
+  flagged landing where the Crafting Quarter begins. Behind
+  you the low stone <ansi fg="itemname">canal-span</ansi>
+  crosses a narrow cut of still green water, its parapet
+  worn smooth at hand-height from years of daily passage;
+  ahead, the canal smell gives way to sawdust and linseed
+  oil and the bright, clean edge of worked metal. A painted
+  <ansi fg="itemname">ward-post</ansi> stands at the
+  landing's north edge — rust-red and amber, the Crafting
+  Quarter's colours — marking where the Docks jurisdiction
+  ends and the guild streets begin. The lane opens north
+  into the district proper.
+biome: city
+coord:
+  x: -18
+  y: 87
+  z: 0
+exits:
+  south:
+    roomid: 5523
+  north:
+    roomid: 5702
+nouns:
+  canal-span: A modest arch of cut stone bridging a narrow
+    canal cut, its brickwork stained green at the waterline
+    where weed has taken hold over the years. The parapet
+    is low enough to be a suggestion of safety rather than
+    a guarantee, and worn to a pale smooth finish from the
+    hands of workers crossing every day. On the south pier,
+    someone has scratched the outline of a barge into the
+    stone — rough, unhurried, old enough that the edges
+    have weathered soft.
+  ward-post: A squat wooden post painted in the Crafting
+    Quarter's rust-red and amber, standing at the exact
+    line where the Docks end. A carved hand points north;
+    below it a smaller inscription names the guilds'
+    maintenance claim on all streets from this post
+    forward. At the base, someone has left a dried bundle
+    of herbs — between custom and coincidence — long enough
+    ago that the color is mostly gone.
+idlemessages:
+- A worker crosses the bridge behind you with bundled stock
+  under one arm, not slowing for the ward-post.
+- The canal below the span holds a wavering reflection of
+  the buildings on either side.
+- From the north comes the tap and ring of metal on metal,
+  rhythmic, measuring out someone's working day.
+- A gull follows the canal south and turns back at the
+  bridge, as if the Crafting Quarter holds nothing for it.
+- The flagging at the ward-post is swept clean. Someone
+  considers that small duty their own.

@@ -1,0 +1,30 @@
+id: np_crafting_nessa
+description: "Nessa the Tailor: works the Tailor's Shop from mid-morning through
+  the evening, sleeps above the shop."
+segments:
+  - start: 7
+    end: 21
+    target_room: 5715
+    activity: ""
+    idlecommands:
+      - emote threads a needle in a single motion and begins a run of stitching
+        faster than the eye comfortably follows.
+      - emote measures a length of cloth by spanning it between her hands without
+        a tape, folds it once, and it is exactly right.
+      - say The upper end of the range goes north — Noble Quarter, Modiste
+        Aurel's place. I make the work. He can handle the clientele that wears
+        it.
+      - emote trims a seam with quick, near-invisible passes of the scissors
+        and does not look at the result.
+      - emote holds the piece to the window, fingers reading the tension in each
+        stitch without the eyes needing to drop.
+      - say The stitching speed is the Chrysalis. It does not bother me anymore.
+        The customers occasionally watch, and then I ask if they came for a
+        garment or a show.
+  - start: 21
+    end: 7
+    target_room: 5716
+    activity: sleeping
+    idlecommands:
+      - emote sleeps above the tailor's shop, the unfinished piece folded on
+        the table below, needles set precisely at the edge of the cloth.

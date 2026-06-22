@@ -1,0 +1,39 @@
+mobid: 9342
+zone: New Plymouth Crafting
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote works the broom in long slow arcs across the cobbles,
+    moving the day''s dust toward the square edge without looking up.'
+  - ''
+  - 'emote pauses at the well-housing, rests the broom handle against
+    the coping, and addresses the stone briefly in a low voice before
+    continuing.'
+  - ''
+  - 'emote sweeps a drift of forge-scale from the lane mouth back
+    toward where it came from, with the patience of someone who knows
+    it will return by morning.'
+activitylevel: 6
+character:
+  name: A Street-Sweep
+  description: |
+    Old enough to remember when Craftwell Square was a loading yard
+    and the lane she sweeps was unpaved, the street-sweep works the
+    square and the two nearest lanes from morning to afternoon, one
+    broom-width at a time. She moves with the methodical progress of
+    someone who knows exactly how long it takes and is not in a hurry
+    because of it. She talks to the cobbles occasionally. They do
+    not argue.
+  speciesid: 1
+  level: 1
+  gold: 4
+  stats:
+    perception:
+      training: 6
+    charisma:
+      training: 3
