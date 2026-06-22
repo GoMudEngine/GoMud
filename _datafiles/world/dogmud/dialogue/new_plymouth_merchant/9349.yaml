@@ -37,13 +37,13 @@ tree:
                  "paper", "form", "register", "registration", "filing",
                  "stall", "operate", "open", "approval", "deny",
                  "how", "long"]
-      text: "Operating a commercial stall or fixed premises on the
-        Square requires a quarterly permit. The application requires
-        proof of residency, a statement of goods category, and a
-        surety deposit refunded at the end of the permitted term if
-        the premises are left in order. Processing takes three to five
-        working days. There is a queue. Taking a number when you arrive
-        is recommended."
+      text: "To operate a commercial stall or fixed premises on the
+        Square, you will need a quarterly permit. I will need proof of
+        residency from you, a statement of goods category, and a surety
+        deposit — refunded at term-end if the premises are left in
+        order. I process applications in three to five working days.
+        There is a queue. I recommend you take a number when you
+        arrive."
       hints: "The process is clear, impersonal, and entirely designed
         to be inconvenient without being blockable. You could ask
         about the tribute, or about who sets these requirements."

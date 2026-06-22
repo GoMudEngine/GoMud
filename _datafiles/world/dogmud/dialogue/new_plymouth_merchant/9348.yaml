@@ -64,7 +64,7 @@ tree:
     - id: skin
       triggers: ["skin", "hide", "callus", "mutation", "change",
                  "chrysalis", "bloom", "tough", "hard", "shale",
-                 "plate", "natural", "notice", "different"]
+                 "natural", "notice", "different"]
       text: "The Bloom did this — over about four years it went from
         noticeably rough to what you see now. I did not choose it and
         I did not ask for it. What I found was that it makes fitting
