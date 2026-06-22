@@ -1,0 +1,74 @@
+roomid: 5810
+zone: New Plymouth Merchant
+title: Dame Ostry's Armoury
+description: >
+  The armoury floor opens full-width — no counter
+  between the customer and the stock, no glass case,
+  just racked weapons lining both long walls and a
+  clear central aisle where a buyer can be handed a
+  blade to assess without ceremony. The
+  <ansi fg="itemname">sword-wall</ansi>
+  to the west carries the most traded stock — short-
+  blades, long-blades, fighting knives arranged by
+  weight — each clipped to a rack, each with a card
+  noting condition and price. The east wall carries
+  <ansi fg="itemname">pole-arms</ansi>
+  and heavier pieces, angled for display but still
+  accessible. Dame Ostry moves through this space with
+  a proprietary ease that is difficult to replicate —
+  she handles every blade in inventory herself, and
+  the extra arm descending from her left shoulder,
+  a consequence of a mutation she has never explained
+  and does not appear to find remarkable, allows her
+  to hold three weapons at once during assessment. The
+  floor is swept to the boards and the air carries the
+  faint iron smell of oiled metal in quantity.
+biome: city
+coord:
+  x: -10
+  y: 88
+  z: 0
+exits:
+  north:
+    roomid: 5822
+  up:
+    roomid: 5811
+nouns:
+  sword-wall: The west rack covers the full wall from
+    chest height to well above reach — a spread of
+    bladed weapons in individual clip-mounts, each
+    spaced far enough for clear assessment. Price cards
+    on small wire loops hang from each clip. The stock
+    is not ceremonial — these are working weapons,
+    selected for use rather than display. The rack has
+    no gaps in its sequence; what is sold is replaced
+    before the end of the day.
+  pole-arms: The east wall's heavier stock — spears,
+    halberds, a pair of glaives, and several items
+    that do not have standard names, hanging at angles
+    from brackets sized for each piece. The bracket
+    heights have been adjusted from the original
+    installation; whoever rehung them understood the
+    balance requirements of each weapon and positioned
+    them accordingly. The highest pieces require asking
+    Ostry, who manages the reach without moving the
+    ladder.
+idlemessages:
+- Dame Ostry moves between the racks making small
+  adjustments — a blade repositioned, a price card
+  straightened — with the three-armed ease of someone
+  for whom this space was designed around herself.
+- The iron smell in here is particular — not rust,
+  not heat — the dry specific scent of oiled metal
+  in a closed room.
+- A customer runs a thumb along a blade's flat, looks
+  at Ostry for confirmation, and gets a brief nod.
+- One of the pole-arms on the east wall is marked
+  with a strip of red card — held for a buyer, or
+  priced above idle browsing.
+- Ostry assesses a piece brought in for valuation —
+  holding it in two hands while the third makes notes
+  on condition.
+spawninfo:
+  - mobid: 9347
+    respawnrate: "10 real minutes"

@@ -25,6 +25,8 @@ exits:
     roomid: 5703
   north:
     roomid: 5724
+  east:
+    roomid: 5800
 nouns:
   lamp-post: An iron post topped with an oil-lantern
     housing, the arm angled to throw light onto the

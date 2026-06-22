@@ -1,0 +1,68 @@
+roomid: 5805
+zone: New Plymouth Merchant
+title: The Long Market — East Reach
+description: >
+  The Long Market east of the square takes on a settled
+  tone — wider pavement, buildings with proper shop-
+  fronts rather than stall-awnings, the kind of
+  commercial street where the neighbors have a covenant
+  about appearances and keep it. The
+  <ansi fg="itemname">shop-fronts</ansi> carry carved
+  signs in dark wood set with brass lettering, each
+  presenting its trade with the quiet confidence of an
+  establishment that expects customers to come to it
+  rather than being lured in. A
+  <ansi fg="itemname">lamp-bracket</ansi> jutting from
+  the corner building holds a lantern that burns
+  longer-oil — you can tell by the steadier, more
+  golden waver of the flame through the glass. East,
+  the Long Market continues toward the Temple district,
+  the avenue running straight between the merchant
+  houses and into a distance that carries the faint
+  smell of incense on the right wind.
+biome: city
+coord:
+  x: -13
+  y: 89
+  z: 0
+exits:
+  north:
+    roomid: 5804
+  west:
+    roomid: 5802
+nouns:
+  shop-fronts: Carved signs in aged dark wood, each
+    specific to its trade — a sheaf for the grain-
+    merchant, a spool for the thread-merchant, a simple
+    key that could belong to several businesses but is
+    generally understood in context. The brass lettering
+    on most signs is kept polished; one has let the
+    polish lapse and the brass has gone green, which is
+    the subject of quiet comment among the neighbors.
+    Each front has a step worn into it and a door-handle
+    bright from hands.
+  lamp-bracket: An iron bracket bolted to the corner
+    building's stone face at about twice head-height,
+    holding an enclosed lantern that burns longer-oil
+    from the eastern coast. You can identify the oil by
+    the flame's quality — steadier, more golden than
+    the tallow used on cheaper brackets. The bracket
+    itself is old enough to have rust bleeding from the
+    bolt-holes, but sound. It has been there since before
+    the current building was built, outlasting at least
+    one owner and several tenants.
+idlemessages:
+- A shop-front shutter opens along this stretch with a
+  familiar creak; inside a counter is being cleared for
+  the day's business.
+- The lamp-bracket's flame bends in a gust and steadies;
+  the longer-oil keeps it from guttering out.
+- A customer emerges from one of the shop-fronts with a
+  wrapped parcel under one arm, reading a receipt while
+  walking.
+- The Long Market runs east from here in a clean line,
+  and in the middle distance a temple spire marks where
+  the avenue changes character.
+- This stretch is quieter than the square — the commerce
+  here is more deliberate, the transactions longer and
+  less public.

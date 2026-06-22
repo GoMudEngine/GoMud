@@ -1,0 +1,57 @@
+roomid: 5809
+zone: New Plymouth Merchant
+title: Above the Auction House
+description: >
+  Falk's room above the auction house occupies the
+  north half of the building's upper story — the south
+  half above the block is a staging loft with its own
+  access, which Falk has not connected to his quarters
+  by any door that visitors could find. The room is the
+  workspace of a man who handles information as much as
+  goods — a desk dominated by the current
+  <ansi fg="itemname">bid-book</ansi>,
+  shelves of indexed correspondence, and a wall-mounted
+  <ansi fg="itemname">lot-calendar</ansi>
+  where the next several weeks of scheduled sales are
+  marked with client codes rather than names. A single
+  armchair faces the street-side window, positioned for
+  reading rather than watching, though it appears to
+  serve both purposes. The room is tidier than the
+  floor below and warmer; Falk works late.
+biome: city
+coord:
+  x: -11
+  y: 88
+  z: 1
+exits:
+  down:
+    roomid: 5808
+nouns:
+  bid-book: The current auction ledger — a hardbound
+    volume open on the desk at a page of registered
+    bids with their associated lot numbers and buyer
+    codes. The codes are not names; they are a
+    shorthand that Falk has used long enough that the
+    key to them exists only in his head and in a
+    second ledger whose location is not obvious from
+    this desk. Some codes appear more frequently than
+    the lot calendar would suggest coincidence.
+  lot-calendar: A ruled sheet mounted on a wooden
+    backing, its columns laid out by week and its
+    rows by lot sequence. Client codes appear in the
+    margin beside items of interest to repeat buyers.
+    One code — a simple double line with a small mark
+    beneath — appears in the margins of seven of the
+    next nine scheduled lots. It is not a code that
+    appears anywhere in the property-roll downstairs.
+idlemessages:
+- The desk lamp is clean and well-trimmed — Falk has
+  not left it to run low.
+- From below, the acoustic rumble of the auction floor
+  comes up through the boards.
+- The lot-calendar margin has been annotated in at
+  least two different hands.
+- The armchair faces the window at an angle that
+  catches the street without requiring leaning.
+- A cup on the desk is cold — Falk has been elsewhere
+  this morning.

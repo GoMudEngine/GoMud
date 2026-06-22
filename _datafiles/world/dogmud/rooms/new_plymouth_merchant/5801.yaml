@@ -1,0 +1,64 @@
+roomid: 5801
+zone: New Plymouth Merchant
+title: The Long Market — Merchant Approach
+description: >
+  The road jogs slightly and widens heading east toward
+  the square, and with the widening the crowd density
+  climbs — shoulders closer together, pace adjusted,
+  each person navigating the press with the unconscious
+  economy of daily habit. A costermonger has posted a
+  <ansi fg="itemname">street-barrow</ansi> against the
+  building to the left and is selling parcelled spice
+  from it in rapid, repeated phrases; the wheel is
+  chocked against rolling with a wedge of cut timber.
+  The <ansi fg="itemname">cobbles</ansi> underfoot are
+  worn to a dark gloss from the volume of daily passage,
+  the mortar joints invisible under the polish of feet.
+  East, the noise of the Central Square begins to
+  separate itself from the general city sound — more
+  layered, more various, the particular register of
+  a place where everyone passes through.
+biome: city
+coord:
+  x: -15
+  y: 89
+  z: 0
+exits:
+  south:
+    roomid: 5800
+  east:
+    roomid: 5802
+nouns:
+  street-barrow: A two-wheeled cart painted in fading
+    yellow, its frame loaded with small parcels of spice
+    wrapped in brown paper and tied with string. Each
+    parcel carries the same printed stamp — a small sun,
+    or possibly a star, the ink gone slightly off-register
+    from use. The costermonger has run this pitch at this
+    spot long enough that the cobbles beside the wheel-
+    chock are slightly more worn than the surrounding
+    stones.
+  cobbles: The paving here is old enough to have been
+    relaid twice — original stone, then a darker
+    replacement, then lighter again — each layer's edge
+    visible where the mortar has worked loose. The center
+    of the road is worn deepest, where foot-traffic
+    concentrates. The polish is real, not decorative,
+    accumulated from the pressure of thousands of
+    crossings each day. In wet weather this stretch is
+    known for its grip.
+idlemessages:
+- The crowd here has learned to flow around the barrow's
+  obstruction without acknowledging that it exists.
+- Someone calls a greeting to someone ahead of them;
+  the voice carries well over the press of bodies.
+- The costermonger repeats the same phrase for the
+  fourth time in a minute without varying it at all.
+- A broadsheet boy squeezes through the crowd heading
+  south, earning complaints from two directions at once.
+- The noise from the square ahead rises briefly — a
+  shout, a bell, something indeterminate — and settles
+  back to its steady hum.
+spawninfo:
+  - mobid: 9352
+    respawnrate: "10 real minutes"

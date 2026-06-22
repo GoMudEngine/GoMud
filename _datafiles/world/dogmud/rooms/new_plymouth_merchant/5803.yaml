@@ -1,0 +1,68 @@
+roomid: 5803
+zone: New Plymouth Merchant
+title: The Processional — North End
+description: >
+  The Processional widens north of the square and takes
+  on a more deliberate character — the paving better-
+  dressed, buildings running to cut stone rather than
+  timber, ground floors given over to factors' offices
+  and bonded warehouses whose signs are small and do
+  not invite the general public. A row of
+  <ansi fg="itemname">civic-lamps</ansi> lines the
+  western side at measured intervals, each housing
+  identical and freshly painted in the city's blue and
+  silver, lit each evening by a lamplighter who begins
+  at the square and works north. The
+  <ansi fg="itemname">guild-seals</ansi> carved into
+  the lintel of the nearest building are difficult to
+  count from the pavement, but numerous enough to
+  suggest an authority that has been accruing quietly
+  over a long time. North, the Processional continues
+  toward the Noble Quarter and the palace avenue; the
+  northern stretch is gated during working hours,
+  admitting only those carrying the correct papers,
+  and the gateguards know their faces.
+biome: city
+coord:
+  x: -14
+  y: 90
+  z: 0
+exits:
+  south:
+    roomid: 5802
+  east:
+    roomid: 5804
+nouns:
+  civic-lamps: Lantern standards of iron painted blue
+    and silver, each one identical — clearly ordered in
+    a single commission and installed in a single season.
+    The housings are hinged for refilling and the hinges
+    are kept oiled; you notice this because they do not
+    squeak when the wind moves them. The glass in each
+    housing is clean. Someone maintains these with more
+    attention than the work strictly requires, which may
+    be a form of civic pride or simply the habit of a
+    person who does not know how to do anything
+    carelessly.
+  guild-seals: Stone relief carvings set into the lintel
+    above a heavy oak door — five of them, overlapping
+    slightly, each representing a different merchant
+    guild. The oldest is worn nearly flat; the newest
+    is sharp enough that the chisel-marks are still
+    visible. Together they record the history of this
+    building's changing tenure across four generations
+    of commerce. The door below them is locked.
+idlemessages:
+- A man in a factor's coat crosses the Processional at
+  a brisk diagonal, not making eye contact with anyone.
+- The civic-lamps are unlit in the daytime, their
+  housings spotless and waiting for evening.
+- A courier comes south from the direction of the palace
+  gate at a walk that is almost a run, a sealed document
+  case held under one arm.
+- The bonded warehouse beside the guild-sealed building
+  has its door rolled partway open; inside is cedar-
+  smell and methodical shadow.
+- Someone has pinned a handwritten notice below the
+  lowest guild-seal. It is too small to read from
+  the pavement.

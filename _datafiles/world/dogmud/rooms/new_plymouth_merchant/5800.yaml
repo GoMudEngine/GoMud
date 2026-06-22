@@ -1,0 +1,62 @@
+roomid: 5800
+zone: New Plymouth Merchant
+title: The Long Market — Merchant Gate
+description: >
+  The character of the street changes in a dozen steps —
+  rougher Crafting Quarter granite giving way to dressed
+  limestone set with tighter joints and swept more
+  deliberately, the maintenance here funded by rents
+  rather than guild dues. A wrought-iron
+  <ansi fg="itemname">ward-arch</ansi> spans the road,
+  the Merchant Quarter's mark worked into its crown — a
+  pair of balanced scales in silver-painted metal — and
+  beneath it a merchants' watch post stands unmanned in
+  the daytime but visibly occupied each evening. The
+  smell shifts too — less sawdust and linseed, more of
+  the complex layered warmth of commerce, wax and spice
+  and the faint paper-and-ink undertone of contracts. The
+  <ansi fg="itemname">threshold-stone</ansi> set into the
+  pavement at the arch's center carries the city crest,
+  worn almost smooth by the crossing of feet. The Crafting
+  Quarter falls away behind you to the west; north, the
+  road opens toward the square.
+biome: city
+coord:
+  x: -15
+  y: 88
+  z: 0
+exits:
+  west:
+    roomid: 5704
+  north:
+    roomid: 5801
+nouns:
+  ward-arch: Wrought iron, spanning the road at a height
+    that clears a loaded cart with room to spare. The
+    scales in the crown are silver-painted and recently
+    touched up — someone considers the arch's appearance
+    part of the district's address. On the eastern pier
+    a small square of text is set in brass, naming the
+    Merchants' Guild and the year of the arch's
+    construction. The year is older than most of the
+    buildings on this street.
+  threshold-stone: A flat slab set into the road's center,
+    the city crest carved into its face — the walled crown
+    above three wavy lines. The relief is worn almost
+    entirely smooth by the passage of feet, legible now
+    only in raking light. Below the crest, in lettering
+    still just readable, the old charter phrase — all who
+    pass here are within our covenant. Few who cross it
+    know it says anything.
+idlemessages:
+- A merchants' watch officer steps through the arch
+  heading west, checking something in the Crafting
+  Quarter beyond.
+- The smell of the working quarter — sawdust and linseed
+  — reaches the arch on a shift of wind and fades.
+- Two porters with a laden barrow come north through the
+  arch, wheel-rims loud on the dressed limestone.
+- A traveller pauses under the arch and reads the brass
+  inscription, lips moving slightly, then passes on.
+- The threshold-stone is swept each morning. This
+  morning's sweeping is already undone by foot-traffic.

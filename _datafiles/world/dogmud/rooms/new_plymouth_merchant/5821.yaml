@@ -1,0 +1,75 @@
+roomid: 5821
+zone: New Plymouth Merchant
+title: The Square Fountain
+description: >
+  The fountain plaza opens between the Gilded Walk and
+  the auction house block — a roughly square space
+  paved in the same dressed stone as the Walk, broken
+  at the center by the
+  <ansi fg="itemname">civic-fountain</ansi>
+  that gives it its informal name. The fountain is
+  older than the Walk — a four-sided basin of grey
+  limestone with a central column that once carried a
+  figure and now carries a civic seal on an iron bracket
+  instead, the swap made during some change of
+  administration and not reversed since. Water still
+  runs from the column's base into the basin with a
+  steadiness that makes the plaza feel cooler than the
+  surrounding streets. A ring of stone benches surrounds
+  the basin — the informal claim-staking of the midday
+  crowd, who arrive early and use this space as the
+  commercial district's meeting room without walls.
+  A
+  <ansi fg="itemname">carved-date</ansi>
+  on the basin's south face is the oldest text in this
+  part of the quarter; the event it commemorates has
+  been forgotten but the date has not.
+biome: city
+coord:
+  x: -11
+  y: 89
+  z: 0
+exits:
+  west:
+    roomid: 5824
+  east:
+    roomid: 5822
+  south:
+    roomid: 5808
+nouns:
+  civic-fountain: A four-sided basin of grey limestone,
+    the stone worn smooth at the lip from decades of
+    people sitting on it. The central column carries
+    a civic seal on an iron bracket — the original
+    figure removed at some point, only the mounting
+    stub remaining below the bracket, indicating a
+    statue of roughly human scale. Water runs from
+    four spouts at the column's base with a constant
+    low sound. The basin is clean; the overflow drains
+    to a street channel that also runs clean. Someone
+    reliable maintains this fountain and has done so
+    for a long time.
+  carved-date: An incised date in the south face of
+    the basin, the numerals cut deep enough to survive
+    this many years of weather and touch. The date is
+    old enough that the calendar reckoning has changed
+    twice since — converting it to the current system
+    gives an event roughly a hundred and forty years
+    past. What the event was is not recorded here.
+    The date was considered sufficient.
+idlemessages:
+- The fountain's steady water-sound is audible all
+  the way to the auction house end of the plaza.
+- Someone has left a cup on the basin rim — not
+  recently, but not so long ago that it has been
+  cleared by whoever looks after these things.
+- A cluster of factors occupies two of the stone
+  benches at the midday hour, the conversation
+  inaudible but the hand-gestures recognizable
+  as negotiation.
+- The plaza empties quickly when it rains; the
+  covered Walk and the auction house arcade absorb
+  the crowd in minutes.
+- A pigeon lands on the civic seal at the column
+  top, inspects its position, and remains there with
+  the calm of something that has established occupancy.

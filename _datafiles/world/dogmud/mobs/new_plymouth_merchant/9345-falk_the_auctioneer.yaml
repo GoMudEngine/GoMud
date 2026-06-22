@@ -1,0 +1,50 @@
+mobid: 9345
+zone: New Plymouth Merchant
+schedule_id: np_merchant_falk
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote turns a small ledger page with one finger and reads a
+    column of figures without moving his lips.'
+  - ''
+  - 'emote holds a pendant to the light — tilting it once, twice —
+    then sets it in a velvet-lined tray without comment.'
+  - ''
+  - 'emote scans the room with the unhurried efficiency of a man who
+    has already noted everyone in it and priced what they are wearing.'
+activitylevel: 10
+character:
+  name: Falk the Auctioneer
+  description: |
+    Falk the Auctioneer runs the Exchange's bidding floor with a
+    memory that has never once failed him. Every face that has
+    crossed his threshold, every price called in his rooms, every
+    lot that changed hands under his gavel — he retains all of it
+    with the same unhurried certainty he uses to quote last season's
+    sale figures without consulting a ledger. His Chrysalis-change
+    is subtle and unsettling in equal measure — he simply does not
+    forget. He is well-dressed in a manner that suggests prosperity
+    without display, and keeps his prices firm. The Exchange also
+    handles property registrations and estate transfers on the
+    Square's behalf — a clerical function Falk has performed for
+    long enough to know where most of the city's ownership lines
+    actually run, as opposed to where the deeds say they do.
+  speciesid: 1
+  level: 1
+  gold: 50
+  stats:
+    perception:
+      training: 12
+    charisma:
+      training: 6
+  shop:
+    - itemid: 20037
+    - itemid: 20036
+    - itemid: 20034

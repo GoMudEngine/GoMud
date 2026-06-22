@@ -1,0 +1,62 @@
+roomid: 5816
+zone: New Plymouth Merchant
+title: The Gilt Threshold — Lodging
+description: >
+  The lodging floor runs the full width of the inn
+  above the public room, its corridor low enough to
+  encourage instinctive caution at the stair-head
+  lintel. Four rooms open off the hall — their doors
+  closed, their numbered plates small and plain. The
+  hall itself is carpeted in a heavy runner that has
+  seen better decades but has been cleaned into a kind
+  of dignity anyway. A
+  <ansi fg="itemname">hallway-table</ansi>
+  against the north wall holds a lamp on a timer-wick
+  and a flat tray carrying a folded note — unsealed,
+  no name written on the outside, left for someone
+  who has not yet collected it or has not yet arrived.
+  At the far end of the corridor a
+  <ansi fg="itemname">window-seat</ansi>
+  looks out over the Gilded Walk below; someone has
+  left a cup on the sill, cold now. The floor is quiet
+  in the specific way that expensive walls make things
+  quiet — sound absorbed rather than stopped, the
+  absence of the city more present than the city
+  itself.
+biome: city
+coord:
+  x: -12
+  y: 90
+  z: 1
+exits:
+  down:
+    roomid: 5814
+nouns:
+  hallway-table: A low side-table in dark wood, its
+    surface holding the corridor lamp and a flat
+    correspondence tray. One folded note rests there,
+    unsealed, with nothing written on the outside.
+    Whether it is for a guest who has not yet
+    collected it or one who has not yet arrived is
+    not settled by looking at the table.
+  window-seat: A padded bench in the far hall window,
+    the cushion worn flat at the center from habitual
+    use. Below, the Gilded Walk is visible — the clean
+    paving, the costly window-fronts of the shops
+    across the way, a porter moving with a covered
+    basket. Someone has left a cup on the sill here,
+    its interior stained by whatever was in it. Cold
+    now.
+idlemessages:
+- The corridor carries no sound from the floor below
+  — the inn's construction is deliberate about this.
+- One of the numbered doors along the hall is not
+  quite fully latched; it does not open, but it does
+  not close.
+- The timer-wick lamp on the hallway table will burn
+  for another few hours.
+- Behind a closed door, a brief cough — muffled —
+  and then silence again.
+- The window-seat at the end of the corridor catches
+  the morning light better than anywhere else on
+  this floor.

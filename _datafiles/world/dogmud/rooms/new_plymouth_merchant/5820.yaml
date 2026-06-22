@@ -1,0 +1,63 @@
+roomid: 5820
+zone: New Plymouth Merchant
+title: The Watched House — Gate
+description: >
+  The lane ends at a wall of dressed stone, eight feet
+  high, and the heavy gate set into it. The gate is
+  wrought iron — old work, its vertical bars spaced
+  to allow inspection from either side — and it is
+  closed and chained with a padlock whose key is not
+  here and has not been offered. Beyond the bars the
+  rented house is visible in outline — two stories,
+  upper shutters drawn, ground-floor windows dark
+  behind curtains, a lamp burning faint and steady
+  behind one of them. A figure in bloodline house-
+  colors stands inside the gate, close enough to be
+  addressed and positioned so that addressing them is
+  the first decision a visitor must make. The figure
+  does not acknowledge approach. The gate does not
+  open from this side. Whatever business the occupant
+  of this house conducts is conducted on their terms
+  and at their invitation, and you have not been
+  invited. The
+  <ansi fg="itemname">house-gate</ansi>
+  and the watcher behind it are the full extent of
+  what this side of the wall offers.
+biome: city
+coord:
+  x: -9
+  y: 91
+  z: 0
+exits:
+  south:
+    roomid: 5819
+nouns:
+  house-gate: Wrought iron on heavy stone piers, the
+    bars old and solid — this gate has been here
+    longer than the bloodline's current tenancy. The
+    chain looped through the bars is newer, its links
+    bright where the older ironwork has gone grey.
+    The padlock is the quality that does not suggest
+    it is available to negotiation. Through the bars,
+    the house door is visible — closed — and to one
+    side a small window showing light behind a curtain.
+    Someone is home. The gate does not open from this
+    side.
+idlemessages:
+- The watcher inside the gate holds a position three
+  steps from the bars — close enough to speak, far
+  enough to be deliberate about it.
+- Through the gate, a lamp is visible behind the
+  curtained ground-floor window. The light does not
+  move.
+- The chain on the gate is not for show. The weight
+  of it against the bars carries the sound of a
+  decision already made.
+- The upper windows of the house are shuttered. The
+  house is occupied but not open. The occupant
+  considers these different things.
+- The bloodline watcher inside does not look at you
+  directly. This is also a form of attention.
+spawninfo:
+  - mobid: 9344
+    respawnrate: "10 real minutes"

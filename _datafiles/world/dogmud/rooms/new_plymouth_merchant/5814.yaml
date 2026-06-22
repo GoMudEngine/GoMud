@@ -1,0 +1,77 @@
+roomid: 5814
+zone: New Plymouth Merchant
+title: The Gilt Threshold
+description: >
+  The Gilt Threshold occupies a corner plot where the
+  Gilded Walk opens north toward the inn's quiet
+  entrance — a building wide enough to carry weight
+  and narrow enough to stay out of sight. The public
+  room inside is low-ceilinged and warm, lit by good
+  oil lamps set in iron brackets, the tables wiped to
+  a cleanliness that costs more than it appears to.
+  Somewhere in this city's social arithmetic, a
+  certain class of person drinks here — merchants
+  with letters of credit, factors with information
+  to sell, and occasionally someone who sits with
+  their back to the wall and watches the room without
+  appearing to. The
+  <ansi fg="itemname">hearth-bar</ansi> anchors the
+  south wall behind a long timber counter, staffed by
+  someone who pours without asking and does not repeat
+  what they have heard. The
+  <ansi fg="itemname">guest-ledger</ansi> sits on a
+  stand beside the stair with its clasp fastened; the
+  innkeeper opens it for some arrivals and not for
+  others, and the criterion for this is not stated. A
+  passage east leads to a private parlor; the stair
+  climbs to lodging above.
+biome: city
+coord:
+  x: -12
+  y: 90
+  z: 0
+exits:
+  west:
+    roomid: 5804
+  south:
+    roomid: 5824
+  east:
+    roomid: 5815
+  up:
+    roomid: 5816
+nouns:
+  hearth-bar: A counter of dark-stained timber running
+    the south wall, its surface worn smooth by years of
+    cups and elbows. The shelving behind holds bottles
+    arranged by height rather than label, which tells
+    you something about who chooses the stock. The
+    person serving does not catch your eye and has not
+    failed to notice you — the distinction is a
+    professional one, practiced here until it is
+    seamless.
+  guest-ledger: A heavy ledger in an oiled leather
+    slipcase, its brass clasp fastened on the stand
+    beside the stair. Guest registers in an inn of
+    this kind do two things — accounting for who is
+    present, and recording who would prefer not to be.
+    The cover carries no title. The spine is worn from
+    handling. Whose names appear in the current pages,
+    and under what designation, is information the
+    innkeeper controls.
+idlemessages:
+- A patron at the back table receives a folded note
+  from the taproom boy, reads it without expression,
+  and pockets it without haste.
+- The oil lamps produce a steady even light that costs
+  more than candles and announces it quietly.
+- The room is not loud. The business conducted here
+  moves at the volume that money finds natural.
+- A server moves between tables with the calm of
+  someone who has learned not to hear anything in
+  particular.
+- Footsteps on the stair above — an arrival or a
+  departure — and then the room's low undertone
+  resumes.
+spawninfo:
+  - mobid: 9350
+    respawnrate: "10 real minutes"

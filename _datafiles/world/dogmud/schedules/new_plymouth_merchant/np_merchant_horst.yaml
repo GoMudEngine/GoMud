@@ -1,0 +1,52 @@
+id: np_merchant_horst
+description: "Horst: keeps the watched house gate through the day with cold
+  patience; in the evening walks to the Gilt Threshold private parlor for a
+  quiet meeting; returns late to the gate; sleeps at the gate in the small
+  hours — watchful even in stillness."
+segments:
+  - start: 8
+    end: 19
+    target_room: 5820
+    activity: ""
+    idlecommands:
+      - emote stands at the gate with the patience of a man who has
+        learned that stillness draws less notice than movement.
+      - emote scans the Square in a slow, unhurried pass — left to
+        right, each face noted — then returns his gaze to the middle
+        distance.
+      - emote adjusts the front of his coat with a single precise
+        motion and is immediately still again.
+      - say The gate is the gate. I do not need to explain what that
+        means to anyone who belongs here.
+  - start: 19
+    end: 22
+    target_room: 5815
+    activity: ""
+    idlecommands:
+      - emote takes the corner seat in the private parlor and does
+        not speak until he has assessed the room.
+      - emote listens without nodding, without indicating what he
+        makes of what he hears, without moving his hands.
+      - say I will convey what you have said. Whether it matters
+        is not my determination to make.
+      - emote sits with the unhurried stillness of a man who arrived
+        exactly when he intended and expects to leave the same way.
+  - start: 22
+    end: 2
+    target_room: 5820
+    activity: ""
+    idlecommands:
+      - emote stands at the gate in the late dark, the Square empty,
+        the same watchful composure as the day — less an absence of
+        concern than a decision that concern would change nothing.
+      - emote marks something in a small notebook, closes it, and
+        returns it to his coat without looking at it again.
+  - start: 2
+    end: 8
+    target_room: 5820
+    activity: sleeping
+    idlecommands:
+      - emote sleeps at the gate in a chair that is not quite
+        comfortable, by what appears to be deliberate choice — a man
+        who does not trust deep sleep near a door he is responsible
+        for.

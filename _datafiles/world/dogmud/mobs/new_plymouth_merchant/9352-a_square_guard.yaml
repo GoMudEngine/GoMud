@@ -1,0 +1,44 @@
+mobid: 9352
+zone: New Plymouth Merchant
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+  - bloodline_domestic
+idlecommands:
+  - 'emote turns a slow quarter-circle at her post, takes in both ends
+    of the approach in one unhurried sweep, and returns to her
+    original position.'
+  - ''
+  - 'emote straightens slightly as a cart passes too close to the
+    barrow — registers it, decides it is not her matter, and settles
+    back.'
+  - ''
+  - 'emote rests her hand on her belt without urgency and does a full
+    scan of the far end of the approach before letting it fall again.'
+activitylevel: 4
+character:
+  name: A Square Guard
+  description: |
+    The guard wears bloodline house-colors over a padded gambeson
+    and stands at a position that covers both approaches to the
+    square without obviously covering either — the placement is
+    deliberate, the posture learned, the attention too consistent
+    to be accidental. She is civic muscle operating at the edge of
+    bloodline authority, licensed to keep order in this district
+    and paid accordingly rather than by the city. She does not
+    start trouble. She ends it, with the calm of someone who has
+    already calculated where on the street she will have room to
+    move if it comes to that.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    strength:
+      training: 8
+    perception:
+      training: 10

@@ -1,0 +1,42 @@
+mobid: 9353
+zone: New Plymouth Merchant
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote lifts a coin from the exchange tray, runs it across the
+    scale, and records the weight in the ledger with three quick
+    pen-marks.'
+  - ''
+  - 'emote checks the rate-sheet, adjusts a figure by two points
+    without visible concern, and files the old sheet in the slotted
+    box at the desk''s back corner.'
+  - ''
+  - 'emote makes a small notation in the margin of the ledger,
+    blots it, and turns the page without looking up.'
+activitylevel: 7
+character:
+  name: A Moneylender's Clerk
+  description: |
+    The clerk manages the changers-desk in Coin Alley with the
+    contained efficiency of someone who has been doing this long
+    enough that the work is automatic and the watching is the real
+    job. Ink marks the outer edge of his right hand from wrist to
+    knuckle in a pattern left by the same type of pen used the same
+    way for years. He handles denomination queries, rate disputes,
+    and the occasional difficult customer with a tone that is
+    professional, brief, and entirely without warmth. He does not
+    advertise the desk and does not need to.
+  speciesid: 1
+  level: 1
+  gold: 18
+  stats:
+    perception:
+      training: 10
+    willpower:
+      training: 4

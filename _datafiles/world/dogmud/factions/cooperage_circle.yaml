@@ -13,4 +13,5 @@ description: |
   and they would rather it stayed that way.
 default_rep: 5
 allies: []
-enemies: []
+enemies:
+  - bloodline_domestic

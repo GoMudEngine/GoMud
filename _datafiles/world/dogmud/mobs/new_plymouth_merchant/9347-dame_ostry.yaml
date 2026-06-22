@@ -1,0 +1,52 @@
+mobid: 9347
+zone: New Plymouth Merchant
+schedule_id: np_merchant_ostry
+craft_support: blacksmithing
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 38
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote holds a sword at arm''s length with her third arm and grades
+    the edge with a fingertip of her right hand, expression neutral.'
+  - ''
+  - 'emote sets a blade across all three palms to check the balance,
+    nods once, and returns it to the rack.'
+  - ''
+  - 'emote lifts an ingot in her off hand and tests its weight with
+    the same assessing motion she would use on a finished blade.'
+activitylevel: 10
+character:
+  name: Dame Ostry
+  description: |
+    Dame Ostry's shop fills one of the better ground-floor spaces in
+    the Square, and she occupies it without crowding. The third arm
+    is the first thing anyone notices — it grew from her left shoulder
+    in the years after her Bloom, a full working limb, slightly longer
+    than the other two and habitually in motion when the right two are
+    occupied. She does not hide it or explain it. She uses it to hold
+    a blade she is examining while the other two hands grade the edge
+    and check the balance, which is the obvious use and the one she
+    settled on immediately. She deals in steel — finished weapons and
+    the raw material that goes into them — and she is relentlessly
+    practical about all of it. Halvard the smith in the Crafting
+    Quarter sends her his better work. She moves it north to buyers
+    who can pay what good steel is worth.
+  speciesid: 1
+  level: 1
+  gold: 55
+  stats:
+    strength:
+      training: 10
+    dexterity:
+      training: 8
+  shop:
+    - itemid: 40018
+    - itemid: 40001
+    - itemid: 10015
+    - itemid: 10009
+    - itemid: 10006

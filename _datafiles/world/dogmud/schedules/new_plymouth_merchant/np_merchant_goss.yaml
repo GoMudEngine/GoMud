@@ -1,0 +1,32 @@
+id: np_merchant_goss
+description: "Goss the Moneylender: works the Exchange lending desk through the
+  long day, weighing coin by touch and holding the ledger against the city's
+  memory of itself; sleeps in the counting room above at night."
+segments:
+  - start: 6
+    end: 21
+    target_room: 5806
+    activity: ""
+    idlecommands:
+      - emote draws a coin slowly across his palm, the thumbnail barely
+        moving, and sets it down in the right stack without looking.
+      - emote opens the ledger to a marked page and adds three figures
+        in the margin — no ink wasted, no line crossed out.
+      - say The debt is not the insult. Missing the payment date is
+        the insult. I note both, but I record only the latter.
+      - emote weighs two coins together in one hand — different metals,
+        different ages — and separates them by feel without examining
+        either.
+      - say Interest does not accumulate out of malice. It accumulates
+        because time has a cost, and someone has to account for it.
+      - emote blots a completed column, closes the ledger with a flat
+        palm, and opens the next without pause.
+  - start: 21
+    end: 6
+    target_room: 5807
+    activity: sleeping
+    idlecommands:
+      - emote sleeps above the Exchange in the counting room, the locked
+        strongbox beneath the floorboards, the ledger on the desk
+        where he left it — open to the page he will resume in the
+        morning.

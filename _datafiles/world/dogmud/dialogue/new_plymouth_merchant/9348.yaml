@@ -1,0 +1,77 @@
+mobid: 9348
+zone: New Plymouth Merchant
+defaultMood: neutral
+
+greetings:
+  - text: "What do you need?"
+    moods: ["neutral"]
+  - text: "Chain, leather, or a finished piece?"
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "What is it?"
+      - "Name what you are after."
+
+  - keywords: [""]
+    responses:
+      - "Say it directly."
+      - "I am listening. Get to it."
+
+tree:
+  root:
+    text: "I sell armor — chain and leather components for smiths who
+      want to work their own pieces, and finished work for those who
+      want something ready. I fit everything I carry. Ask about the
+      fitting and what I stock, about where the materials come from,
+      or about the skin — it comes up."
+    hints: "You could ask Brun about the armor he stocks and how
+      fitting works, about his supply from the docks and the
+      warehouses, or about the skin and what the Chrysalis did
+      to him."
+
+  nodes:
+    - id: armor
+      triggers: ["armor", "armour", "chain", "leather", "coif", "vest",
+                 "legging", "fitting", "fit", "stock", "sell", "buy",
+                 "shield", "piece", "wares", "carry", "protection",
+                 "wear", "size"]
+      text: "I carry chain components and leather strips for smiths,
+        and finished pieces for those who want something off the rack
+        — a chain shirt, coif, leggings. I fit everything before it
+        leaves the shop. Armor that does not fit right does not
+        protect right, and I would rather spend the time fitting than
+        have someone come back with a complaint after a bad outcome.
+        What are you looking to cover?"
+      hints: "You could ask about where the materials come from, or
+        about the skin."
+      moodChange: friendly
+
+    - id: supply
+      triggers: ["supply", "source", "warehouse", "docks", "material",
+                 "crafting", "import", "arrives", "leather", "chain",
+                 "plate", "where", "come", "from", "get"]
+      text: "The chain links and leather come from Dunmar's warehouse
+        on the docks — bulk material, consistent grade. I inspect
+        everything that comes in because bulk supply is variable and
+        I do not pass on weak links. The plate fittings come from
+        the Crafting Quarter when I need them. The arrangement is
+        straightforward and it holds."
+      hints: "You could ask about the finished armor he sells or
+        about the skin."
+
+    - id: skin
+      triggers: ["skin", "hide", "callus", "mutation", "change",
+                 "chrysalis", "bloom", "tough", "hard", "shale",
+                 "natural", "notice", "different"]
+      text: "The Bloom did this — over about four years it went from
+        noticeably rough to what you see now. I did not choose it and
+        I did not ask for it. What I found was that it makes fitting
+        chain directly against the body reliable in a way that ordinary
+        skin does not allow — I can feel the pressure points the way
+        you feel a pebble underfoot. So I use it. I wear the work
+        against my own skin until I am satisfied, and then I sell it."
+      hints: "A plain accounting of something unusual. You could ask
+        about the armor he stocks or about his supply chain."
+      moodChange: neutral

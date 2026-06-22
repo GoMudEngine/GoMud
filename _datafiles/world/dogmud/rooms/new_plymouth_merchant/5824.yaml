@@ -1,0 +1,73 @@
+roomid: 5824
+zone: New Plymouth Merchant
+title: The Gilded Walk
+description: >
+  The Gilded Walk runs east from the Gilt Threshold,
+  a stretch of broad paving kept cleaner than the
+  market behind it by the collective effort of the
+  businesses facing it — each proprietor sweeps their
+  own frontage, and the cumulative effect is a street
+  that announces money without advertising it directly.
+  The <ansi fg="itemname">window-fronts</ansi> here are glazed, a detail that
+  costs more in a city this far inland than might be
+  obvious, and the goods behind the glass are arranged
+  with care rather than merely displayed. To the south
+  the Walk descends toward the Exchange and the shops
+  of the financial row; east it opens into the fountain
+  plaza where the cross-traffic collects at midday. The
+  <ansi fg="itemname">paving-seam</ansi>
+  running the center of the street, where the original
+  cobbles meet the later dressed stone, is the oldest
+  thing on this block — everything else has been rebuilt
+  around it. The Walk in the afternoon is a different
+  place than the Walk at night, and both are different
+  from the early morning hour when the glaziers' boys
+  come to clean the windows before trade opens.
+biome: city
+coord:
+  x: -12
+  y: 89
+  z: 0
+exits:
+  north:
+    roomid: 5814
+  south:
+    roomid: 5806
+  east:
+    roomid: 5821
+nouns:
+  window-fronts: Glazed shop windows in a city that mostly
+    makes do with shutters — clear panes set in good frames,
+    kept clean, the goods behind them laid out in considered
+    arrangements rather than piled for volume. You cannot
+    always tell what a given front is selling; that, too,
+    seems to be the point. A window like this says the owner
+    can afford to glaze it, and lets you draw the rest of the
+    conclusion yourself.
+  paving-seam: A line running the center of the Walk
+    where two eras of construction meet — older
+    cobblestone to the east, newer dressed limestone
+    flags to the west, the join filled with a mortar
+    that has been repacked twice and shows it. The
+    seam is barely visible under foot-traffic but runs
+    true from one end of the block to the other without
+    deviation. Whatever the Walk was before it was the
+    Gilded Walk, this is what is left of it.
+idlemessages:
+- A factor in a good coat moves along the Walk at the
+  measured pace of someone who is both busy and aware
+  of being seen.
+- One of the glazed window-fronts catches the light
+  at an angle that makes the interior impossible to
+  read from the street.
+- A delivery arrives at a side entrance further down
+  the block — a covered cart, handled quickly and
+  without ceremony.
+- The Walk is wide enough here that two carts could
+  pass; in practice the foot-traffic makes one
+  deliberate.
+- Someone has chalked a price on the pavement near
+  the fountain end — legible, but without context.
+spawninfo:
+  - mobid: 9355
+    respawnrate: "10 real minutes"

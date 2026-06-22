@@ -1,0 +1,68 @@
+roomid: 5819
+zone: New Plymouth Merchant
+title: The Watched Lane
+description: >
+  The Watched Lane is a residential side-street off
+  the Permit Office corner — short, quiet, and watched.
+  It carries perhaps six buildings on its east side,
+  each a rented dwelling of the kind taken by people
+  who value privacy over proximity to the market, and
+  it terminates at the walled gate of the northernmost
+  house. The lane itself is clean but not serviced by
+  the district's formal sweeping — someone keeps it
+  clear, but that person is not on a city payroll. A
+  <ansi fg="itemname">liveried-watcher</ansi>
+  stands at the lane's entrance near the Permit Office
+  corner — a figure in bloodline house-colors who
+  neither explains their presence nor moves from the
+  position. Foot-traffic with no evident business in
+  the lane does not come in twice. The
+  <ansi fg="itemname">lane-wall</ansi>
+  at the far end, enclosing the private house to the
+  north, is never unattended. The lane has the quality
+  of deliberate quiet — the kind that is not natural
+  to a city but can be maintained with enough
+  consistent attention.
+biome: city
+coord:
+  x: -9
+  y: 90
+  z: 0
+exits:
+  south:
+    roomid: 5823
+  west:
+    roomid: 5817
+  north:
+    roomid: 5820
+nouns:
+  liveried-watcher: A figure in the bloodline's house-
+    colors — a deep grey-and-blue that is not quite
+    a uniform and is not quite civilian dress — standing
+    at the lane's entrance without visible purpose.
+    The watcher does not address arrivals unless
+    necessary, and what "necessary" encompasses is
+    a matter of judgment exercised without reference
+    to anyone else. The eyes are attentive. The posture
+    is permanent.
+  lane-wall: A wall of dressed stone at the lane's
+    north end, perhaps eight feet high, with a
+    wrought-iron gate set into it — closed, chained,
+    and watched from inside by a second figure in
+    the same house-colors. The house behind the wall
+    is visible only as a roofline and an upper window.
+    They do not respond to approach.
+idlemessages:
+- The liveried-watcher at the lane entrance holds a
+  position that takes in both the lane and the Permit
+  Office corner without appearing to watch either.
+- The lane is quiet. From the main streets to the
+  south and west, the market noise arrives as a
+  distant undertone.
+- A resident of one of the lane's middle buildings
+  emerges, glances at the watcher, and goes south
+  without eye contact.
+- The gate at the north end of the lane has not
+  opened in the time you have been standing here.
+- The watcher's house-colors are freshly pressed.
+  This is not a casual post.

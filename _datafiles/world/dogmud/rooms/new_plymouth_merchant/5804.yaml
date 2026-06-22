@@ -1,0 +1,70 @@
+roomid: 5804
+zone: New Plymouth Merchant
+title: The Central Square — Market Stalls
+description: >
+  The stall-stretch that spills east from the square is
+  the loudest quarter-acre in New Plymouth — a dense
+  press of open-front shops and temporary awnings where
+  hawkers work their pitches with practiced urgency and
+  delivery boys from three different provisioners cut
+  through the crowd on overlapping routes. The
+  <ansi fg="itemname">stall-row</ansi> nearest the
+  Processional carries dry goods and small luxuries;
+  further east it shades toward bulk provisions ordered
+  by the quarter's inns and kitchen operations. A runner
+  named Dobb is sometimes seen here between errands —
+  recognizable by a patched green jacket and the habit
+  of knowing which stall received a delivery before the
+  stall-keeper does. The <ansi fg="itemname">red-awning</ansi>,
+  a large permanent canvas structure in faded merchant-
+  red, marks the stall-stretch's informal center and
+  the place where the day's pricing is discussed, then
+  argued about, then accepted.
+biome: city
+coord:
+  x: -13
+  y: 90
+  z: 0
+exits:
+  west:
+    roomid: 5803
+  south:
+    roomid: 5805
+  east:
+    roomid: 5814
+nouns:
+  stall-row: The stalls here are not temporary — they
+    have permanent wooden frameworks, hinged shutters
+    that fold down to form display counters, and
+    weathered paint that has been refreshed enough times
+    to show the history of color choices. Each stall is
+    narrow, close to its neighbors, separated by
+    convention rather than wall. The competition is not
+    unfriendly; the stall-keepers know each other's
+    names and each other's prices. On slow afternoons
+    they talk across the gap.
+  red-awning: Canvas on a frame of bent iron pipe, faded
+    from what was probably a vivid red to something more
+    like dried clay, patched in three places — each patch
+    a slightly different shade of not-quite-matching red
+    — and still serviceable. Under it a cluster of
+    produce and provision stalls operates at greater
+    density than anywhere else in the stretch. The
+    awning's shadow is considered valuable real estate;
+    the stall directly beneath the peak pays a nominal
+    fee to the man who owns the frame.
+idlemessages:
+- Dobb cuts through the stall-stretch on some errand,
+  nods to a stall-keeper, and is gone before you can
+  be certain you recognized him.
+- A hawker calls the price of something you cannot
+  quite see, pauses, and calls it again louder.
+- Two delivery boys from competing houses nearly
+  collide between stalls and part with practiced
+  indifference.
+- The smell here is layered — spice, fresh bread,
+  raw cloth, the warm undertone of too many people
+  in too small a space.
+- A stall-keeper pulls a cloth over their display and
+  steps inside; the neighboring stall immediately fills
+  the silence with its pitch.

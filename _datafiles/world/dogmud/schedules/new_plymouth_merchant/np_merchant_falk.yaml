@@ -1,0 +1,32 @@
+id: np_merchant_falk
+description: "Falk the Auctioneer: works the auction house floor and registry
+  desk through the day, appraising lots and noting faces; sleeps in the chamber
+  above at night."
+segments:
+  - start: 7
+    end: 21
+    target_room: 5808
+    activity: ""
+    idlecommands:
+      - emote holds a pendant to the auction lamp and tilts it once
+        without comment, already having made his judgment on the
+        first look.
+      - emote turns the page of a thick valuation register and reads
+        a column of past prices without moving his lips.
+      - say The face I do not recognise is always the one worth
+        watching. The regulars I already know what they will bid.
+      - emote scans the room in a slow, unhurried circuit — not
+        looking for anything in particular, simply adding it to
+        the record.
+      - say Every lot finds its price eventually. The question is
+        whether the seller is patient enough to let it.
+      - emote marks a lot number in the ledger with a single careful
+        line and sets the pen down parallel to the page.
+  - start: 21
+    end: 7
+    target_room: 5809
+    activity: sleeping
+    idlecommands:
+      - emote sleeps above the auction floor, the day's transactions
+        already committed to the ledger, every face from the session
+        stored precisely where he left it.

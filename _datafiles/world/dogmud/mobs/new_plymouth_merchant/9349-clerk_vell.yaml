@@ -1,0 +1,45 @@
+mobid: 9349
+zone: New Plymouth Merchant
+schedule_id: np_merchant_vell
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 34
+maxwander: 0
+groups:
+  - humanoid
+  - bloodline_domestic
+idlecommands:
+  - 'emote takes a document from the top of the stack, reads it
+    without apparent interest, and moves it to a different stack.'
+  - ''
+  - 'emote opens the register, adds a line in small, even script,
+    and closes it again.'
+  - ''
+  - 'emote sets a fresh sheet in front of him and readies a pen,
+    though no one has yet arrived at the desk.'
+activitylevel: 10
+character:
+  name: Clerk Vell
+  description: |
+    Clerk Vell processes permit applications, tribute filings, and
+    registration queries from a high desk in the Quarter's civic
+    office with an air of complete administrative calm. He is young
+    to hold the position — mid-twenties at most — and precise in the
+    way that people who have been granted institutional authority
+    early sometimes become. His Chrysalis-change is small and easily
+    dismissed — a seal-shaped birthmark on his right palm, the exact
+    impression of an official stamp, in dark ink he was born with
+    rather than acquired. He does not use it. He does not need to.
+    The desk does his work for him, and the bloodline stands behind
+    the desk. The residents of the Quarter are uniformly polite to
+    him. They do not have a better option.
+  speciesid: 1
+  level: 1
+  gold: 30
+  stats:
+    perception:
+      training: 10
+    charisma:
+      training: 6
