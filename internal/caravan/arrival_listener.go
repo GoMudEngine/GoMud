@@ -33,6 +33,13 @@ func CaravanArrivalListener(e events.Event) events.ListenerReturn {
 		return events.Continue
 	}
 
+	// NP import circuits (looping runner, stationary sea-import source). Additive:
+	// new ArrivalEvent tags the legacy paths don't recognize, so non-regressing.
+	if c, isImport := ImportCircuitFor(arrival.PatrolId); isImport {
+		handleImportArrival(c, arrival)
+		return events.Continue
+	}
+
 	// Runner-circuit vendor stops (chunk 3.8): Lars walks vendor rooms on
 	// his oneshot circuit; dispatch directly without the main-caravan leader lookup.
 	if _, isRunner := runnerCircuitPatrols[arrival.PatrolId]; isRunner {
