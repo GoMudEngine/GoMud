@@ -951,6 +951,7 @@ Balance:
   CaravanServedZones:
     - "Stillwater"
     - "Thornwall City"
+    - "New Plymouth Crafting"
 
   # Rounds the caravan rests at each depot between transit legs.
   # 360 rounds ≈ 24 min real ≈ a half-game-day. Halved from 720 on

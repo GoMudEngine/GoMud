@@ -1,0 +1,17 @@
+id: np_docks_runner_circuit
+description: "Dobb's daily delivery loop — load sea-imports at the Docks depot, then run them out to the Crafting Quarter's artisan vendors and back. A looping import circuit (engine generalization, 2026-06-22)."
+loop_shape: strict
+max_path_retries: 40
+waypoints:
+  # Depot/load stop is zero-dwell on purpose: a zero-dwell waypoint emits its
+  # arrival event via the WantsAdvance path, which fires even at the patrol's
+  # spawn waypoint. A non-zero dwell here would be skipped on the very first lap
+  # (patrol_dwell_remaining starts at 0 on spawn), so the runner would set out
+  # empty. Zero-dwell makes the sea-import load fire reliably on every lap.
+  - { room: 5506, dwell_rounds: 0, arrival_event: np_runner_depot }
+  - { room: 5709, dwell_rounds: 3, arrival_event: np_runner_vendor }
+  - { room: 5711, dwell_rounds: 3, arrival_event: np_runner_vendor }
+  - { room: 5713, dwell_rounds: 3, arrival_event: np_runner_vendor }
+  - { room: 5706, dwell_rounds: 3, arrival_event: np_runner_vendor }
+  - { room: 5715, dwell_rounds: 3, arrival_event: np_runner_vendor }
+  - { room: 5717, dwell_rounds: 3, arrival_event: np_runner_vendor }

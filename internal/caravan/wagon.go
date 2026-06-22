@@ -63,6 +63,13 @@ func FindWagonInRoom(roomId int) *mobs.Mob {
 // the given room, or nil if Lars is not present. Mirrors
 // FindWagonInRoom. Chunk 3.8.
 func FindRunnerInRoom(roomId int) *mobs.Mob {
+	return FindMobByTemplateInRoom(roomId, RunnerMobId)
+}
+
+// FindMobByTemplateInRoom returns the first co-located mob with the given
+// template id in the room, or nil. Generalizes FindRunnerInRoom/FindWagonInRoom
+// so multiple independent runner crews (e.g. the NP import runner) can be found.
+func FindMobByTemplateInRoom(roomId, mobTemplateId int) *mobs.Mob {
 	room := rooms.LoadRoom(roomId)
 	if room == nil {
 		return nil
@@ -72,7 +79,7 @@ func FindRunnerInRoom(roomId int) *mobs.Mob {
 		if m == nil {
 			continue
 		}
-		if int(m.MobId) == RunnerMobId {
+		if int(m.MobId) == mobTemplateId {
 			return m
 		}
 	}
