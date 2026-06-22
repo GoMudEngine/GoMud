@@ -22,6 +22,8 @@ description: >
   At the bench's center, a covered
   flask of something pale yellow is held at temperature
   on the reagent-stone burner — the work is ongoing.
+  Pinned to the shelf-edge above it, a <ansi fg="itemname">consignment-slip</ansi>
+  curls in the rising heat, marked for collection.
 biome: city
 coord:
   x: -20
@@ -57,6 +59,15 @@ nouns:
     At the center, the reagent-stone burner sits on
     a heat-brick platform, flame low, maintaining
     the covered flask at a precise temperature.
+  consignment-slip: A standing-order slip in a clerk's
+    neat hand, the kind a third party leaves when the
+    payment is already settled. The reagent named is a
+    refined extract; the quantity, a full case; the
+    buyer, a cipher — no name, only a collection mark.
+    In the margin, in a smaller hand and then half
+    scratched out again, a single word remains legible
+    — canal. Whoever wrote it did not set down where
+    the goods truly go. Only where they suspected.
 idlemessages:
 - The reagent-stone burner gives off a low controlled
   heat and a faint sweet-chemical smell.
