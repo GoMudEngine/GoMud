@@ -15,3 +15,10 @@ waypoints:
   - { room: 5706, dwell_rounds: 3, arrival_event: np_runner_vendor }
   - { room: 5715, dwell_rounds: 3, arrival_event: np_runner_vendor }
   - { room: 5717, dwell_rounds: 3, arrival_event: np_runner_vendor }
+  # On east through the Crafting->Merchant seam into the Central Square (a
+  # visible transit through the great market — the heart of the moving economy),
+  # then the Merchant arms row. Ostry/Brun stock the same base/overlap/thornwall
+  # materials already in the import manifest, so no manifest change is needed.
+  - { room: 5802, dwell_rounds: 4, arrival_event: np_runner_vendor }
+  - { room: 5810, dwell_rounds: 3, arrival_event: np_runner_vendor }
+  - { room: 5812, dwell_rounds: 3, arrival_event: np_runner_vendor }
