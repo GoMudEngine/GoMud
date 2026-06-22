@@ -1,0 +1,60 @@
+roomid: 5813
+zone: New Plymouth Merchant
+title: Above the Plate-Works
+description: >
+  The room above the plate-works holds the ambient
+  warmth of the shop below — not forge-heat, but the
+  steady temperature of a building in active daily
+  use. Brun's domestic arrangements are simple — a
+  bed against the north wall and a south work-table
+  that handles the design side of the trade away from
+  the shop floor. A long
+  <ansi fg="itemname">pattern-shelf</ansi>
+  runs the east wall, its surface crowded with wooden
+  sizing patterns for every customer whose measurements
+  Brun carries on file — the record of years of fitting
+  work, labeled in chalk renewed as needed. The
+  <ansi fg="itemname">design-drawings</ansi>
+  covering the work-table are technical work —
+  orthographic views of armor components, dimension
+  annotations, material notes — the kind of drawings
+  that exist to be used rather than preserved. The
+  north window gives a clear view of the Porters' Dock
+  and the tally-post in the yard below.
+biome: city
+coord:
+  x: -9
+  y: 88
+  z: 1
+exits:
+  down:
+    roomid: 5812
+nouns:
+  pattern-shelf: A long shelf running the east wall,
+    holding a row of wooden sizing patterns — flat-cut
+    outlines of chest and back plates in a range of
+    forms, each labeled with a customer code in chalk
+    renewed periodically. The patterns are the record
+    of years of fitting; losing one means remeasuring
+    from scratch, so the shelf is treated with more
+    care than it looks. Some patterns are newer, some
+    older; the old ones are not discarded.
+  design-drawings: Technical drawings on the work-
+    table in careful line work, with dimension
+    annotations and material notes in the cramped
+    hand of someone writing for themselves rather
+    than for readers. The current drawing on top shows
+    a new gorget design with three alternative shoulder
+    connections sketched in the margins. Two have been
+    crossed out. The third is circled.
+idlemessages:
+- The floor is warm — the shop below has been active
+  all day and the building holds it.
+- From the north window, the Porters' Dock is visible
+  — a cart being unloaded, the tally-man at the post.
+- The pattern-shelf carries work going back years;
+  the oldest patterns at the far end have faded chalk.
+- The design-drawings on the table are covered in
+  annotation — the current problem is not simple.
+- From the shop below, the occasional tap of metal
+  work reaches the room through the floor.

@@ -1,0 +1,63 @@
+roomid: 5807
+zone: New Plymouth Merchant
+title: The Counting Room
+description: >
+  The stair from the Exchange floor leads up through
+  a low door into the counting room — the moneylender's
+  private workspace above the public trade floor, warm
+  from the lamps below and quiet in the way of rooms
+  where the work never stops but also rarely raises
+  its voice. A
+  <ansi fg="itemname">strong-box</ansi>
+  occupies the north wall, iron-banded and floor-bolted,
+  its double keyhole prominent and unadorned. The east
+  wall runs entirely to shelving —
+  <ansi fg="itemname">ledgers</ansi>
+  stacked in chronological order, their spines dated
+  in a small consistent hand going back more than a
+  decade. The desk in the center of the room is the
+  working heart of the space — papers, a lamp of good
+  quality, and the particular organized disorder of
+  someone who knows where everything is and has no
+  interest in explaining the system to visitors. The
+  window looks over the back of the Walk. The counting
+  room does not receive visitors who have not been
+  specifically expected.
+biome: city
+coord:
+  x: -12
+  y: 88
+  z: 1
+exits:
+  down:
+    roomid: 5806
+nouns:
+  strong-box: Iron-banded wood, floor-bolted through
+    a plate set into the boards — the kind of
+    installation that required cutting the floor and
+    was not done lightly. Two keyholes, a locking bar,
+    and on the lid a scratch that someone has worked
+    at with an abrasive and almost removed. The box
+    shows no marks of tampering. This is simply where
+    the significant money lives, in a room above the
+    room where it moves.
+  ledgers: A shelf-run of dated volumes in matching
+    cloth binding — not ostentatious, but consistent,
+    the mark of a business that has operated long
+    enough to develop its own material culture. The
+    spines are dated by season and year. There are no
+    gaps in the sequence. The most recent volume is
+    pulled slightly out from the shelf at a useful
+    working angle.
+idlemessages:
+- From below, the muffled sounds of the transaction
+  floor — coins, a stamp, a chair.
+- The strong-box keyhole catches the lamplight at a
+  particular angle and then loses it.
+- A ledger on the desk is open to a middle page, a
+  column of figures running in a hand more careful
+  than quick.
+- The counting room is quieter than the floor below,
+  quieter than the street, quieter than it looks.
+- The lamp on the desk is a good one — low-smoke,
+  steady flame, maintained rather than merely replaced.

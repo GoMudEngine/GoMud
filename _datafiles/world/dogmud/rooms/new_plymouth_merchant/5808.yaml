@@ -1,0 +1,74 @@
+roomid: 5808
+zone: New Plymouth Merchant
+title: Falk's Auction House
+description: >
+  The auction house floor runs wider than the frontage
+  suggests — a double-depth room with high ceilings to
+  hold the noise of a crowd, fitted rows of plain wooden
+  benches facing a raised
+  <ansi fg="itemname">auction-block</ansi>
+  at the south wall, and a rail separating the viewing
+  floor from the principals' area around the block.
+  Goods of real value pass through Falk's — estate lots,
+  merchant stock sold under obligation, single items of
+  the kind that need a buyer found rather than a price
+  named. To the left of the block, the
+  <ansi fg="itemname">property-roll</ansi>
+  is mounted in a glass frame where any interested party
+  may inspect the record of what has moved through this
+  room. Falk himself is seldom far from the block. He
+  is a careful man with an excellent memory for who has
+  bought what and at what price, and a less reliable
+  memory, apparently, for whose name was not supposed
+  to appear in the public roll. A stair at the rear
+  leads to the auctioneer's room above; the room smells
+  of good wood and handled paper.
+biome: city
+coord:
+  x: -11
+  y: 88
+  z: 0
+exits:
+  north:
+    roomid: 5821
+  up:
+    roomid: 5809
+nouns:
+  auction-block: A raised platform of dressed hardwood,
+    its surface worn pale at the presenter's position
+    from years of standing and turning to face the
+    crowd. The rail at the front edge has been gripped
+    often enough to show it in the finish. Behind the
+    block, a small door leads to a staging room where
+    lots are held before presentation — the door is
+    closed. A lot-number placard sits face-down on
+    the block surface, meaning the current interval
+    is between sales.
+  property-roll: A ledger mounted in a glass-faced
+    frame bolted to the wall beside the block — the
+    public record of sales, open to inspection by any
+    party seeking to confirm a transaction. Most entries
+    are unremarkable — estate goods, quantities of
+    trade stock, one or two personal effects of some
+    value. But a recurring entry type repays careful
+    reading — lots catalogued simply as "consideration,"
+    buyer listed as "the arrangement," prices bearing
+    no apparent relation to market rates for anything
+    identifiable. The entries recur at irregular
+    intervals. They are not highlighted. They are not
+    hidden, either. Falk's hand is consistent
+    throughout.
+idlemessages:
+- A prospective buyer examines the property-roll with
+  the focused attention of someone who came here
+  specifically to read it.
+- The benches are half-occupied in the lull between
+  lots — people waiting with the patience of those
+  who have done their research.
+- Falk passes through the principals' area with a
+  sheaf of papers, nods at no one in particular, and
+  goes through the side door.
+- The auction-block is empty but has the quality of
+  something about to be used.
+- A lot from the morning's session remains under the
+  block — a cloth-wrapped parcel, tagged and waiting.

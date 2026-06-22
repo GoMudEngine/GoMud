@@ -1,0 +1,67 @@
+roomid: 5818
+zone: New Plymouth Merchant
+title: The Permit Office — Records
+description: >
+  The records room above the permit office is accessed
+  through a door at the stair-head that carries a
+  notice in the bloodline's typeface stating that entry
+  is restricted to authorized personnel. The room is
+  given over entirely to storage —
+  <ansi fg="itemname">filing-racks</ansi>
+  floor to ceiling on three walls, their contents
+  divided by year, by permit type, and by a third
+  category that is not labeled in any publicly visible
+  way. The center of the room holds a small work-table
+  with a lamp and a chair for reviewing files; the
+  chair's cushion has the permanent depression of
+  regular use. A
+  <ansi fg="itemname">sealed-cabinet</ansi>
+  stands against the north wall, separate from the open
+  racks — its drawer handles are blank, its wood darker
+  than the surrounding shelves, and it carries a lock
+  of the kind that requires a key rather than a code.
+  The room smells of the dry must of paper and wax seal
+  accumulated over a long period of close and systematic
+  documentation.
+biome: city
+coord:
+  x: -10
+  y: 90
+  z: 1
+exits:
+  down:
+    roomid: 5817
+nouns:
+  filing-racks: Three walls of open shelving divided
+    by labeled sections — permit categories on the
+    west, calendar years running north to south, and
+    along the east wall a section whose labels have
+    been covered with blank paper slips. The coverage
+    is recent. What was written on the underlying
+    labels can be faintly discerned if the lamp is
+    held at the right angle — the letters are there
+    but not legible at normal reading distance. The
+    racks are full; overflow stacks are beginning to
+    develop at floor level along the west wall.
+  sealed-cabinet: A cabinet of dark wood with two
+    lockable drawer banks, its key-plate showing the
+    small marks of regular use by a single key. The
+    wood differs from the surrounding shelves — older,
+    heavier, brought from somewhere else rather than
+    built into the room. Whatever filing system the
+    open racks use, this cabinet's contents are not
+    indexed on any list visible in the room. The lock
+    is good quality. The cabinet does not rattle.
+idlemessages:
+- The filing-racks hold more paper than the room's
+  size would suggest — the system is efficient but
+  the volume is considerable.
+- The sealed cabinet against the north wall is quiet
+  in a way that differs from the simple absence of
+  sound.
+- The lamp at the work-table has been in use recently
+  — the oil is low and the glass is warm.
+- The restricted-entry notice on the stair-head door
+  faces inward as well as outward.
+- A file folder on the work-table has been replaced
+  in its rack but not quite aligned with its neighbors.

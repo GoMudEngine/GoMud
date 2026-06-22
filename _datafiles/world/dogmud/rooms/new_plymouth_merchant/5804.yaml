@@ -30,6 +30,8 @@ exits:
     roomid: 5803
   south:
     roomid: 5805
+  east:
+    roomid: 5814
 nouns:
   stall-row: The stalls here are not temporary — they
     have permanent wooden frameworks, hinged shutters

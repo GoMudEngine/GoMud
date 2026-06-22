@@ -1,0 +1,72 @@
+roomid: 5815
+zone: New Plymouth Merchant
+title: The Gilt Threshold — Private Parlor
+description: >
+  The private parlor is at the end of the east passage,
+  behind a heavy
+  <ansi fg="itemname">velvet-curtain</ansi>
+  on a brass rod — the kind of curtain that stops sound
+  as much as light, thick enough that someone standing
+  in the corridor hears nothing, or catches a phrase,
+  depending on how close they stand and how still they
+  hold themselves. The room inside is furnished for
+  meetings rather than comfort — a round table of
+  polished walnut, four chairs, a lamp on a stand, and
+  nothing that does not serve a purpose. At this moment
+  the chairs have been pushed back from the table and
+  the surface wiped, but the
+  <ansi fg="itemname">cup-rings</ansi>
+  left by two vessels have not quite been removed — the
+  cloth was in a hurry, or the person using it did not
+  care. On the floor near the west-facing chair, almost
+  against the baseboard, a small
+  <ansi fg="itemname">paper-scrap</ansi>
+  has been missed in whatever tidying was done before
+  you arrived. The room smells faintly of a particular
+  pipe-tobacco — expensive, and not common. The curtain
+  behind you still moves.
+biome: city
+coord:
+  x: -11
+  y: 90
+  z: 0
+exits:
+  west:
+    roomid: 5814
+nouns:
+  velvet-curtain: Deep garnet velvet on a polished
+    brass rod, the fabric dense enough to muffle the
+    taproom noise behind you to something close to
+    silence. The curtain's edge carries a faint crease
+    at shoulder height on the outer side — someone has
+    braced a hand against the wall here, or stood with
+    their ear close to the gap. The crease is not new.
+    This curtain has been a useful piece of furniture
+    to more than one person who was not inside the
+    parlor.
+  cup-rings: Two overlapping marks on the walnut
+    table where cups stood long enough to leave
+    moisture. One ring is slightly larger than the
+    other. The surface around them has been wiped
+    but the rings themselves were not caught in the
+    pass — whoever cleaned this table was quick about
+    it, or was thinking of something else. The cups
+    themselves are gone.
+  paper-scrap: A torn corner of paper, dropped or
+    slid from the table and not retrieved. The visible
+    face carries four words in a close, careful hand —
+    "before the permit clears" — and nothing more.
+    The edge is a clean tear rather than a scissors
+    cut. The rest of whatever this came from is not
+    in this room.
+idlemessages:
+- The velvet curtain shifts at the hem as someone
+  moves in the corridor beyond.
+- The lamp on the stand gutters once in a draft that
+  has no obvious source, then steadies.
+- A single word from the taproom is briefly audible
+  through the curtain, then swallowed again.
+- The room has a waiting quality — not empty, but
+  between uses.
+- The pipe-smoke smell is fading. Whoever was here
+  was not here long ago.

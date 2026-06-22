@@ -1,0 +1,68 @@
+roomid: 5806
+zone: New Plymouth Merchant
+title: The Exchange
+description: >
+  The Exchange presents a narrow frontage to the Walk
+  — a door of banded oak, a small inlaid plate with
+  the name of the business in letters that are neither
+  plain nor ostentatious — and opens behind it into a
+  room considerably larger than the exterior suggests.
+  The counting-house smell is immediate and particular
+  — coin-metal and ledger-wax, dry paper, the faint
+  tallow of lamps kept burning later than the
+  surrounding shops. A long
+  <ansi fg="itemname">transaction-table</ansi>
+  runs the east wall, its surface divided into
+  numbered stations by low iron rails; behind it a
+  clerk or two handles the business that does not
+  require the moneylender directly. Deeper in, past
+  a low rail and a hinged gate, the floor rises a step
+  to the
+  <ansi fg="itemname">principals-counter</ansi>,
+  where the significant transactions take place — loans
+  assessed, liens placed, the kind of money that moves
+  in this city's upper registers. The room smells like
+  the inside of a decision made in the absence of
+  urgency. A stair at the back leads to the counting
+  room above.
+biome: city
+coord:
+  x: -12
+  y: 88
+  z: 0
+exits:
+  north:
+    roomid: 5824
+  up:
+    roomid: 5807
+nouns:
+  transaction-table: A counter of dark wood running
+    the east wall, divided by low iron rails into five
+    numbered stations — each with its own lamp, its
+    own inkwell, and a worn leather pad for paperwork.
+    The rails keep the business at each station
+    separate in the way that convention makes physical
+    when it cannot be made private. Three of the five
+    stations are currently occupied. The queue for the
+    others forms in a marked lane near the door.
+  principals-counter: A raised platform at the room's
+    interior, behind the hinged rail, where a desk of
+    considerable age and purpose stands. The desk is
+    arranged with the precision of someone who returns
+    to it daily and knows exactly where everything is.
+    A single sealed document sits centered on the
+    blotter, waiting for a signature or already past
+    the need of one — from this distance, it is
+    impossible to say which.
+idlemessages:
+- A clerk at the transaction-table counts coins with
+  the flat quick movements of someone who has done
+  nothing else all day.
+- The sealed document on the principals-counter has
+  not moved.
+- The coin-smell in here is not ambient — it is
+  specific, the product of metal handled in quantity.
+- A patron in the numbered queue shifts weight and
+  checks the light from the street door.
+- Paper is shuffled. A stamp is applied. A clerk
+  replaces the pen and moves to the next station.

@@ -1,0 +1,79 @@
+roomid: 5823
+zone: New Plymouth Merchant
+title: The Porters' Dock
+description: >
+  The Porters' Dock is the goods-handling yard behind
+  the arms row — a paved-over gap between buildings
+  where the supply side of the merchant block conducts
+  its business without occupying the frontage. Hand-
+  carts are ranked along the east wall, their handles
+  facing out for quick access; the ground around them
+  is worn smooth by the particular turning pattern of
+  a cart maneuvered in a small space. A
+  <ansi fg="itemname">tally-post</ansi>
+  stands at the yard's center — a waist-high bollard
+  with a rotating head carrying a chalkboard surface,
+  used by the dock's informal tally-man to record
+  incoming and outgoing loads for the day. The tally
+  runs in a system of marks rather than names, each
+  mark assigned to a regular shipper and known to the
+  tally-man without reference to a written key. The
+  Watched Lane is visible at the north end of the yard
+  — its entrance, and the watcher at it — a clear
+  sightline that the dock handles goods across regularly,
+  including deliveries that stop at the watcher's
+  position and turn back. The
+  <ansi fg="itemname">hand-carts</ansi>
+  know more about this block's supply lines than
+  anything else here.
+biome: city
+coord:
+  x: -9
+  y: 89
+  z: 0
+exits:
+  west:
+    roomid: 5822
+  south:
+    roomid: 5812
+  north:
+    roomid: 5819
+nouns:
+  tally-post: A short bollard at the yard's center,
+    capped with a rotating wooden head carrying a
+    chalkboard surface on each of its four faces.
+    The current face shows today's incoming tally
+    in a system of marks and numbers — each line a
+    delivery, each mark a shipper's code. The chalk
+    is recent; the board was current as of this
+    morning's first arrival. The marks are consistent
+    and unintelligible without the key, which the
+    tally-man carries in their head and has never
+    been asked to write down.
+  hand-carts: A row of wooden hand-carts along the
+    east wall, their handles standardized to a single
+    height and their beds designed for the boxes and
+    crates that move through this yard regularly.
+    The carts carry no marks of ownership — no house-
+    colors, no branded handles — which is either an
+    economy or a privacy measure, depending on whose
+    goods they are moving when they are not parked
+    here. Three carts carry dried mud on their wheels.
+    Two are clean.
+idlemessages:
+- The tally-man updates the chalkboard without
+  stopping the count — a mark for an incoming cart,
+  the chalk back in a pocket.
+- A porter collects a hand-cart from the ranked line
+  and wheels it north toward the lane's mouth, then
+  stops at the watcher's position and turns back.
+- The yard is not loud, but it is active — movement,
+  the rattle of cart-wheels on stone, quick exchanges
+  in low voices.
+- The Watched Lane entrance at the north end of the
+  yard is a clear sightline. Whatever happens at that
+  gate is visible from here.
+- A delivery is being tallied in — a covered crate
+  lowered from a wagon at the yard's south entrance,
+  marked and cleared by the tally-man in under a
+  minute.

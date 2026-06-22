@@ -1,0 +1,78 @@
+roomid: 5822
+zone: New Plymouth Merchant
+title: Coin Alley
+description: >
+  Coin Alley runs east-west between the fountain plaza
+  and the Porters' Dock — a narrow thoroughfare of the
+  kind that develops behind every row of commercial
+  frontage, where secondary and unofficial business
+  happens. The
+  <ansi fg="itemname">changers-desk</ansi>
+  operates here — a folding table under a permanent
+  awning at the north wall, staffed by a clerk who
+  provides a money-changing service that the Exchange
+  across the Walk does not technically offer to
+  customers below a certain account size. The Exchange
+  does not formally acknowledge the desk's existence;
+  the desk does not acknowledge the Exchange. The alley
+  is narrow enough that two people passing require
+  courtesy to manage, and the traffic of porters and
+  factors through the day means the courtesy gets
+  considerable exercise. A
+  <ansi fg="itemname">drainage-grate</ansi>
+  in the center of the alley paving serves its drainage
+  function and additionally serves as an informal
+  message-drop, its lip worn by a generation of specific
+  use that is not its official purpose. The alley
+  connects the four main draws of this block — the
+  fountain, the dock, the armoury, and the permit office
+  — and those who use it regularly know all four.
+biome: city
+coord:
+  x: -10
+  y: 89
+  z: 0
+exits:
+  west:
+    roomid: 5821
+  east:
+    roomid: 5823
+  south:
+    roomid: 5810
+  north:
+    roomid: 5817
+nouns:
+  changers-desk: A folding table under a fixed awning
+    at the north wall — the table is set up and taken
+    down daily, but the awning is permanent, which
+    tells you something about the tenure of this
+    operation. A clerk in an unremarkable coat sits
+    behind the table with a locked cash-box, a scale,
+    and a reference sheet for current exchange rates.
+    The rates on the sheet differ from the Exchange's
+    posted rates by an amount that is not unreasonable
+    and in a direction consistently favorable to the
+    clerk. The clerk does not advertise.
+  drainage-grate: A cast-iron grate set flush in the
+    alley paving, its purpose ostensibly to manage
+    runoff from heavy rain. The lip is worn smooth at
+    one point — east side, near the corner — in a
+    pattern inconsistent with foot-traffic or weather.
+    The grate is hinged on one side and latches on
+    the other. The latch is not locked. Whether
+    anything lies beneath it at a given time is a
+    question for someone who uses this alley regularly
+    and has occasion to check.
+idlemessages:
+- The changers-desk clerk does a transaction without
+  looking up — the rate is remembered, the coin
+  assessed by weight and sound rather than inspection.
+- Two porters navigate the alley's narrow pass with
+  the brief courtesy of people who do this many times
+  a day.
+- The drainage-grate is clear at this moment.
+  The latch is down.
+- From the north, faint stamp-sounds from the permit
+  office above.
+- The alley does not smell of anything in particular,
+  which in this city is an achievement.

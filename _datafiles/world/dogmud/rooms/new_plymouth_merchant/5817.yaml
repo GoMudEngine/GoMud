@@ -1,0 +1,76 @@
+roomid: 5817
+zone: New Plymouth Merchant
+title: The Permit Office
+description: >
+  The permit office occupies a building that was
+  something else before the bloodline required a
+  presence in this district — the repurposing is
+  visible in a layout that does not quite fit its
+  function, the service counter positioned where a
+  window used to be, the queue-lane running at an
+  angle to the original floor plan. A
+  <ansi fg="itemname">notice-board</ansi>
+  covers the east wall from floor to shoulder height
+  — permit schedules, fee tables, and regulatory
+  announcements in the bloodline's typeface, layered
+  over each other in the order they were issued rather
+  than any order of clarity. The counter runs the south
+  end of the room, staffed by clerks who process
+  applications with the precise unhurried efficiency of
+  people working in an institution that does not need
+  to hurry because the applicants cannot go elsewhere.
+  The
+  <ansi fg="itemname">queue-rope</ansi>
+  guides arrivals to the correct window in a way that
+  is not optional. The air smells of stamp-ink and the
+  dry must of official paper accumulated in quantity.
+  East, the Watched Lane leads toward the bloodline's
+  private residence; the records room is above.
+biome: city
+coord:
+  x: -10
+  y: 90
+  z: 0
+exits:
+  south:
+    roomid: 5822
+  up:
+    roomid: 5818
+  east:
+    roomid: 5819
+nouns:
+  notice-board: A board covering the east wall, its
+    surface deep in layered notices — the current fee
+    schedule pinned over an older one, permit categories
+    reorganized twice in the last season, a set of new
+    regulations in the bloodline's formal hand pinned
+    over what they supersede. Nothing is removed;
+    everything is added to. The effect is an archive
+    of changes delivered without explanation, each one
+    adjusting the cost or difficulty of conducting
+    business in this quarter. The board is updated
+    regularly. The queue arrives regularly.
+  queue-rope: A velvet rope on brass posts — the same
+    furniture used in better hotels, which may be
+    coincidence or may be a deliberate choice about
+    what this interaction is supposed to feel like.
+    The rope guides arrivals through a path to the
+    correct window that is longer than the room's
+    geometry requires. The extra length is not
+    accidental. The clerks can see the queue from
+    the counter; the queue cannot easily see the
+    clerks until they arrive at the window.
+idlemessages:
+- A clerk at the counter reviews an application
+  without expression and stamps it — approval or
+  denial not immediately clear from the sound.
+- The queue-rope holds five people in the current
+  wait. None of them speak.
+- A notice on the board carries a recent date and
+  adjusts the quarterly tribute assessment for
+  trading operations above a certain volume.
+- Stamp-ink smells specific in closed rooms. This
+  room has been stamping things for some time.
+- A completed application is filed in the rack behind
+  the counter — a slot already labeled for exactly
+  that category of filing.

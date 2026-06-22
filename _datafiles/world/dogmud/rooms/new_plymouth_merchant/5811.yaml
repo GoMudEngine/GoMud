@@ -1,0 +1,58 @@
+roomid: 5811
+zone: New Plymouth Merchant
+title: Above the Armoury
+description: >
+  Ostry's room above the armoury is not large and is
+  not decorated — both facts consistent with her general
+  approach to non-functional things. The floor is at
+  the ambient temperature of the building, which the
+  armoury below keeps warmer than the street. A
+  <ansi fg="itemname">weapons-stand</ansi>
+  in the east corner holds what are clearly personal
+  arms — a short-blade, a buckler, and a longer piece
+  in a worn leather scabbard — distinct from the shop
+  inventory by the conspicuous absence of a price card.
+  The desk along the north wall holds ordering records
+  and a stack of
+  <ansi fg="itemname">assay-notes</ansi>
+  — Ostry's written evaluations of pieces brought in
+  for valuation, filed in order and marked by outcome.
+  The room is spare in the way of someone who spends
+  most of their waking hours one floor below.
+biome: city
+coord:
+  x: -10
+  y: 88
+  z: 1
+exits:
+  down:
+    roomid: 5810
+nouns:
+  weapons-stand: A wooden rack in the east corner,
+    three pegs currently holding a short-blade in a
+    plain scabbard, an off-hand buckler with a worn
+    center-grip, and a longer piece — possibly a
+    bastard sword — in leather that has been repaired
+    at the throat twice and fits the blade well
+    regardless. These are not shop stock. There is no
+    price card, no lot number, no evaluation tag.
+  assay-notes: A stack of folded papers on the desk,
+    each carrying a brief written evaluation of a
+    weapon brought in for assessment — condition,
+    grade, estimated value, recommendation. The most
+    recent is on top. The handwriting is compressed
+    and consistent; the judgments are short and carry
+    no diplomatic padding. The bottom line of the top
+    sheet reads "do not offer less" without elaborating
+    on the consequences of the instruction.
+idlemessages:
+- The floor is quiet. From the shop below, faintly,
+  the sound of metal against a mounting bracket.
+- The weapons-stand is arranged with the precision of
+  someone who knows exactly what is on it.
+- The desk is organized but not tidy — a working
+  surface, not a display.
+- The window looks north over Coin Alley — a narrow
+  view of the money-changers' stretch.
+- The assay-notes stack has grown by one since
+  whatever piece recently came in for valuation.
