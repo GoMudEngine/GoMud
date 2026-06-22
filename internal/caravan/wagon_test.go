@@ -102,3 +102,50 @@ func TestFindWagonInRoom_NonWagonMobReturnsNil(t *testing.T) {
 		t.Errorf("FindWagonInRoom(9997) with non-wagon mob: got mobId %d, want nil", got.MobId)
 	}
 }
+
+func TestFindMobByTemplateInRoom_FindsByTemplate(t *testing.T) {
+	// An NP import runner (Dobb, template 9304) co-located in a room.
+	dobb := &mobs.Mob{
+		MobId:      mobs.MobId(9304),
+		InstanceId: 99304,
+		HomeRoomId: 9990,
+		Zone:       "TestZone",
+	}
+	dobb.Character.Name = "Dobb"
+	dobb.Character.Buffs = buffs.New()
+	dobb.Character.RoomId = 9990
+
+	r := &rooms.Room{
+		RoomId: 9990,
+		Zone:   "TestZone",
+		Title:  "Test Depot",
+		Exits:  map[string]exit.RoomExit{},
+	}
+	cleanRoom := rooms.SeedRoomsForTest(
+		map[int]*rooms.Room{9990: r},
+		map[string]*rooms.ZoneConfig{},
+	)
+	defer cleanRoom()
+
+	mobs.SetInstanceForTest(dobb.InstanceId, dobb)
+	defer mobs.SetInstanceForTest(dobb.InstanceId, nil)
+	r.AddMob(dobb.InstanceId)
+
+	got := FindMobByTemplateInRoom(9990, 9304)
+	if got == nil {
+		t.Fatal("FindMobByTemplateInRoom(9990, 9304): got nil, want Dobb")
+	}
+	if int(got.MobId) != 9304 {
+		t.Errorf("got mobId %d, want 9304", got.MobId)
+	}
+	// A template id NOT present must return nil.
+	if other := FindMobByTemplateInRoom(9990, 12345); other != nil {
+		t.Errorf("FindMobByTemplateInRoom(9990, 12345): got %v, want nil", other)
+	}
+}
+
+func TestFindMobByTemplateInRoom_NilRoomReturnsNil(t *testing.T) {
+	if m := FindMobByTemplateInRoom(424243, 9304); m != nil {
+		t.Errorf("expected nil for missing room, got %v", m)
+	}
+}
