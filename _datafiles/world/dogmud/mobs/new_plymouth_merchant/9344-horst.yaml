@@ -1,0 +1,43 @@
+mobid: 9344
+zone: New Plymouth Merchant
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+  - bloodline_domestic
+idlecommands:
+  - 'emote stands at the gate with the patience of a man who has
+    learned to watch without appearing to watch.'
+  - ''
+  - 'emote scans the Square in a slow, unhurried pass — left to right,
+    nothing missed — then returns his gaze to the middle distance.'
+  - ''
+  - 'emote adjusts the front of his coat with a single precise motion
+    and is immediately still again.'
+activitylevel: 10
+character:
+  name: Horst
+  description: |
+    Horst keeps the gate of the watched house with the patient ease
+    of a man who has learned that stillness is its own authority.
+    He is neither large nor particularly striking — his power runs
+    quieter than that, in the quality of a well-kept coat and the
+    way his gaze maps a space and files everything it finds. He
+    carries no visible weapon. He shows no Chrysalis-change at all —
+    skin plain, hands unmarked, face ordinary in every way that
+    matters. In a city where the Bloom touches nearly everyone who
+    stays long enough, the absence of mutation is itself a statement.
+    Whatever the bloodline selects for in its handlers, Horst was
+    positioned before any of it arrived.
+  speciesid: 1
+  level: 1
+  gold: 60
+  stats:
+    charisma:
+      training: 12
+    perception:
+      training: 10

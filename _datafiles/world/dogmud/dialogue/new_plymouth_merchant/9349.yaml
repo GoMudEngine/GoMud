@@ -1,0 +1,80 @@
+mobid: 9349
+zone: New Plymouth Merchant
+defaultMood: neutral
+
+greetings:
+  - text: "Next in queue. State your application type and I will
+      find the relevant form."
+    moods: ["neutral"]
+  - text: "What is the nature of your business with the office?"
+    moods: ["cautious"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "State your business."
+      - "The queue is moving. What do you need?"
+
+  - keywords: [""]
+    responses:
+      - "I will need something more specific than that."
+      - "Be precise, please. Imprecision creates processing delays."
+
+tree:
+  root:
+    text: "This is the Quarter's permit and tribute office. I process
+      applications, collect the quarterly assessments, and maintain
+      the registration records. Ask about the permits and how the
+      process works, about the tribute and the collection schedule,
+      or about the office itself."
+    hints: "You could ask Clerk Vell about permits and how the
+      application process works, about the tribute and what it
+      covers, or about who the office ultimately serves."
+
+  nodes:
+    - id: permits
+      triggers: ["permit", "license", "application", "process", "queue",
+                 "paper", "form", "register", "registration", "filing",
+                 "stall", "operate", "open", "approval", "deny",
+                 "how", "long"]
+      text: "Operating a commercial stall or fixed premises on the
+        Square requires a quarterly permit. The application requires
+        proof of residency, a statement of goods category, and a
+        surety deposit refunded at the end of the permitted term if
+        the premises are left in order. Processing takes three to five
+        working days. There is a queue. Taking a number when you arrive
+        is recommended."
+      hints: "The process is clear, impersonal, and entirely designed
+        to be inconvenient without being blockable. You could ask
+        about the tribute, or about who sets these requirements."
+
+    - id: tribute
+      triggers: ["tribute", "tax", "fee", "payment", "assessment",
+                 "quarterly", "tithe", "collect", "rate", "cost",
+                 "owe", "charge", "owed", "amount", "due"]
+      text: "The quarterly tribute is assessed at four per cent of
+        declared gross revenue, collected on the first day of each
+        quarter at this desk. Underdeclaration is subject to audit.
+        Audit findings carry a penalty of the unpaid balance plus
+        interest. The rate is set by charter and is not a subject
+        I negotiate. It is a legal obligation, not a preference, and
+        I apply it uniformly."
+      hints: "He explained it with the confidence of someone who
+        knows the rules are on his side. You could ask about permits,
+        or about who issued this charter and who benefits from it."
+
+    - id: bloodline
+      triggers: ["bloodline", "ruling", "lord", "noble", "dominus",
+                 "charter", "authority", "power", "family", "serves",
+                 "office", "benefits", "who", "above", "behind",
+                 "govern"]
+      text: "The office operates under a charter granted by the
+        governing authority of New Plymouth. I am a civil functionary
+        — I process applications, I collect assessed revenues, and
+        I maintain records. The charter's origins are a matter for
+        legal counsel, not for this desk. Is there an application I
+        can help you with?"
+      hints: "He pivoted back to paperwork without acknowledging the
+        question. The politeness itself is the menace. You could ask
+        about permits or tribute if you need the office for something."
+      moodChange: cautious

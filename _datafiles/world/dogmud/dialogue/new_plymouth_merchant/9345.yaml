@@ -1,0 +1,77 @@
+mobid: 9345
+zone: New Plymouth Merchant
+defaultMood: neutral
+
+greetings:
+  - text: "Something catch your eye — or are you here for the books?"
+    moods: ["neutral"]
+  - text: "Good timing. I have fresh stock on the tray."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "What can I do for you?"
+      - "Afternoon. Browsing, or did you have something specific in mind?"
+
+  - keywords: [""]
+    responses:
+      - "Name it and I will tell you if I have it."
+      - "Ask plainly. I keep records."
+
+tree:
+  root:
+    text: "I run the Exchange — auction lots, curios, quality goods
+      that move through this district. I also handle property
+      registrations and estate transfers for the Square. Ask about
+      the wares, about the auction floor, or about records — though
+      I will be selective about the last."
+    hints: "You could ask Falk about his wares and the auction floor,
+      about the Square and how commerce works here, or about property
+      records and who owns what in New Plymouth."
+
+  nodes:
+    - id: wares
+      triggers: ["wares", "goods", "stock", "auction", "lot", "curio",
+                 "sell", "buy", "pendant", "ring", "necklace", "jewelry",
+                 "item", "bid", "floor", "gavel", "exchange", "carry",
+                 "browse", "show"]
+      text: "I carry quality pieces — jewelry, curios, things that hold
+        their value and move quickly when the right buyer arrives. The
+        auction floor takes sealed bids on lots twice a week. If you
+        have something worth selling, I will appraise it and tell you
+        honestly what it will fetch. If you want to buy, the tray
+        behind me has what I am holding today."
+      hints: "You could ask about the Square and how commerce runs
+        here, or about property records — if you have an interest in
+        ownership questions."
+      moodChange: friendly
+
+    - id: square
+      triggers: ["square", "commerce", "market", "district", "merchant",
+                 "trade", "quarter", "city", "business", "here",
+                 "crowd", "busy", "capital", "new_plymouth"]
+      text: "The Square is the commercial center of the capital — most
+        of what moves through New Plymouth eventually touches this
+        district in one way or another. The Exchange sits at the
+        center of that. Goods, valuables, property transfers — we
+        see all of it. The district has been stable for a long time.
+        Stability is good for business."
+      hints: "You could ask about the property records Falk keeps, or
+        go back to the wares on the auction floor."
+
+    - id: property
+      triggers: ["property", "record", "deed", "estate", "title",
+                 "ownership", "land", "register", "owns", "owned",
+                 "transfer", "survey", "building", "who"]
+      text: "The Exchange maintains the district's transfer ledgers —
+        every sale, every conveyance, every estate that changed hands
+        in the last thirty years is in the register. That is a matter
+        of public record. What is not entirely public is the pattern —
+        who has been acquiring, what they paid, and what sits between
+        the registered owner and the actual interest. I know the
+        pattern. I am careful about what I say about it, and to whom."
+      hints: "He let something slip — the shape of something he is
+        not saying. You could ask more about the records, or return
+        to the wares."
+      moodChange: neutral

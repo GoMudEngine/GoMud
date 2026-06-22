@@ -1,0 +1,76 @@
+mobid: 9346
+zone: New Plymouth Merchant
+defaultMood: neutral
+
+greetings:
+  - text: "State your business."
+    moods: ["neutral", "cautious"]
+  - text: "I remember you. What do you need?"
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "What is it?"
+      - "I am not here for pleasantries. State what you need."
+
+  - keywords: [""]
+    responses:
+      - "Make it plain. I do not have patience for roundabout questions."
+
+tree:
+  root:
+    text: "I lend coin and I collect it — that is the whole of it. If
+      you need a loan, I will hear your terms and tell you mine. If
+      you want to ask about the debts I hold, or about the coin
+      itself and what my touch tells me about it, I will answer
+      what I find worth answering."
+    hints: "You could ask Goss about loans and how the lending works,
+      about the debts he holds across the city's districts, or
+      about the mutation that lets him weigh coin by touch."
+
+  nodes:
+    - id: loans
+      triggers: ["loan", "lend", "borrow", "credit", "rate", "interest",
+                 "money", "coin", "repay", "term", "need", "fund",
+                 "advance"]
+      text: "I lend at fifteen per cent for a six-month term, secured
+        against collateral I agree to hold. Extensions are available
+        at five per cent per additional month. I do not negotiate the
+        rate — it is what it is, and if you had another option you
+        would be there instead of here. The ledger is straightforward.
+        What is the amount you are looking for?"
+      hints: "He named his terms without apology. You could ask about
+        the debts he already holds, or about what his touch tells him
+        about coin."
+
+    - id: debtors
+      triggers: ["debtor", "owe", "arrear", "common", "quarter", "folk",
+                 "people", "winter", "who", "owes", "hold", "collecting",
+                 "unpaid", "past", "district", "owed"]
+      text: "I hold paper on a fair number of households in the Common
+        Quarter — they had a difficult winter two years running and came
+        to me for bridge loans. Some have kept current. Some have not.
+        I do not feel especially one way or the other about it. A debt
+        is a number, and a number either clears or it does not. The ones
+        that do not clear eventually become a different kind of
+        arrangement. That is how this works. Everyone knew that going in."
+      hints: "He said it without a trace of satisfaction or regret. You
+        could ask about the lending terms, or about how he assesses
+        coin by touch."
+
+    - id: touch
+      triggers: ["touch", "weigh", "palm", "mutation", "change",
+                 "chrysalis", "hand", "feel", "sense", "gold", "silver",
+                 "purity", "assay", "know", "tell"]
+      text: "The Bloom did something useful with my hands, which is
+        more than most people can say. I press a coin to my palm and
+        I know — weight, alloy, cut — instantly, the way you know
+        whether a surface is rough or smooth. I do not understand the
+        mechanism and I do not try to. It means I cannot be cheated on
+        coin, which in my line of work is worth more than most mutations
+        a man could draw. No one passes short weight at this desk. They
+        know that going in."
+      hints: "A rare moment of something like satisfaction. You could
+        ask about the loans he offers or the debts he holds."
+      moodChange: neutral

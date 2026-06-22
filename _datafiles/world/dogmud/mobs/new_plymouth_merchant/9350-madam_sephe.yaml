@@ -1,0 +1,50 @@
+mobid: 9350
+zone: New Plymouth Merchant
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote wipes the bar in long, even strokes and sets a fresh cup
+    at the end without being asked.'
+  - ''
+  - 'emote listens to someone farther down the bar with the expression
+    of a person genuinely interested in what they are hearing.'
+  - ''
+  - 'emote refills a cup at the far end and resumes her place at the
+    bar with the ease of very long practice.'
+activitylevel: 10
+character:
+  name: Madam Sephe
+  description: |
+    Madam Sephe runs the Gilt Rest with the composed authority of
+    someone who has been making people comfortable for a long time
+    and knows exactly how that is done. Her Chrysalis-change is not
+    a thing you can locate precisely — it presents as warmth, as
+    ease, as the particular sense that you are welcome here
+    specifically and she is genuinely glad you came. People tell
+    her things they had not intended to tell anyone. She does not
+    encourage it. She does not discourage it. She keeps what she
+    hears behind the same pleasant expression she offers every
+    guest, and she has been keeping things behind it long enough
+    that there is probably quite a lot back there. The Gilt Rest
+    has a private parlor off the main room for guests who prefer
+    their business conducted away from the bar. She is discreet
+    about who uses it.
+  speciesid: 1
+  level: 1
+  gold: 45
+  stats:
+    charisma:
+      training: 14
+    perception:
+      training: 6
+  shop:
+    - itemid: 30025
+    - itemid: 30023
+    - itemid: 30021

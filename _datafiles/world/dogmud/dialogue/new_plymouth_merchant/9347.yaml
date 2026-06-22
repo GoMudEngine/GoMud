@@ -1,0 +1,75 @@
+mobid: 9347
+zone: New Plymouth Merchant
+defaultMood: neutral
+
+greetings:
+  - text: "What are you after — blades, ingots, or just a look?"
+    moods: ["neutral"]
+  - text: "Good timing. Fresh stock from Halvard came in yesterday."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Name what you need."
+      - "If you are buying, the rack is behind me."
+
+  - keywords: [""]
+    responses:
+      - "Ask it plainly. I am mid-work."
+
+tree:
+  root:
+    text: "I sell steel — finished blades and the raw material for
+      smiths who want to work their own. Ask about the blades and
+      what I carry, about how my supply reaches me from the Crafting
+      Quarter, or about the third arm — people usually get to it
+      eventually."
+    hints: "You could ask Dame Ostry about her blades and the weapons
+      she stocks, about where her supply comes from and how iron
+      moves from the docks to her shop, or about the third arm."
+
+  nodes:
+    - id: blades
+      triggers: ["blade", "sword", "weapon", "steel", "iron", "dagger",
+                 "longsword", "ingot", "stock", "sell", "buy", "wares",
+                 "rack", "carry", "edge", "quality", "price", "cost"]
+      text: "I carry ingots for smiths and finished blades for people
+        who want something ready to use — iron and steel both, in a
+        few lengths and weights. The steel blades are Halvard's work
+        from the Crafting Quarter; the iron pieces come through the
+        docks warehouse. I grade everything that comes in. Nothing
+        on that rack is there by accident."
+      hints: "You could ask about the supply chain from the docks and
+        the Crafting Quarter, or about the third arm."
+      moodChange: friendly
+
+    - id: supply
+      triggers: ["supply", "halvard", "crafting", "docks", "warehouse",
+                 "material", "source", "import", "arrive", "shipment",
+                 "dunmar", "circuit", "runner", "quarter"]
+      text: "The raw iron comes from Dunmar's warehouse on the docks —
+        bulk import, standard grade. That goes to Halvard's forge in
+        the Crafting Quarter; he turns it into something worth selling.
+        His better blades come up to me on a regular schedule — I move
+        them at a proper price rather than the craft-district rate.
+        He gets a fair split and I get quality stock. The arrangement
+        has held for three years."
+      hints: "You could ask about the blades themselves or about
+        the third arm."
+
+    - id: third_arm
+      triggers: ["arm", "third", "extra", "limb", "mutation", "change",
+                 "chrysalis", "bloom", "shoulder", "grew", "three",
+                 "hand", "notice", "different"]
+      text: "It grew in the second year after the Bloom started —
+        slowly at first, then at a pace that was frankly alarming until
+        it finished. Full sensation, full strength, full range of motion.
+        I spent about a week being bothered by it and then I went back
+        to work, because there was work to do and an extra hand turns
+        out to be genuinely useful in this trade. I can grade an edge,
+        test the balance, and hold the piece steady at the same time.
+        I do not miss not having it."
+      hints: "She said it completely matter-of-factly. You could ask
+        about her blades or about the supply chain."
+      moodChange: friendly

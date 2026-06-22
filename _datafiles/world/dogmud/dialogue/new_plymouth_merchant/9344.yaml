@@ -1,0 +1,77 @@
+mobid: 9344
+zone: New Plymouth Merchant
+defaultMood: cautious
+
+greetings:
+  - text: "Yes?"
+    moods: ["cautious", "neutral"]
+  - text: "Is there something you need?"
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Good day."
+      - "Was there something you needed?"
+
+  - keywords: [""]
+    responses:
+      - "Say what you came to say."
+      - "I am listening."
+
+tree:
+  root:
+    text: "The gate is private property. Is there something I can
+      help you with — or were you simply enjoying the Square?"
+    hints: "You could ask Horst about the house and what goes on
+      inside, about the kind of work he does here, or about the
+      visitors he receives at the gate."
+
+  nodes:
+    - id: house
+      triggers: ["house", "gate", "building", "inside", "enter",
+                 "door", "private", "property", "place", "guarding",
+                 "standing", "watching"]
+      text: "The house is occupied. Beyond that, the interior is the
+        business of the people who use it — not something I discuss
+        at the gate. You understand, I am sure."
+      hints: "He gave you nothing. You could ask about the work he
+        does here, or about the visitors who come to the gate."
+
+    - id: work
+      triggers: ["work", "job", "role", "position", "manage", "task",
+                 "duty", "facilitate", "handle", "arrange", "doing",
+                 "here", "reason"]
+      text: "I facilitate meetings. When people have business with
+        certain parties, they come to the gate first. I assess whether
+        the meeting serves everyone's interests, and then I either
+        arrange it or I do not. It is a straightforward role."
+      hints: "He described his role without naming a single name. You
+        could ask about the visitors he receives, or about the
+        bloodline."
+
+    - id: visitors
+      triggers: ["visit", "appointment", "client", "contact", "arrive",
+                 "person", "people", "come", "see", "receive", "meet",
+                 "who", "important", "men"]
+      text: "The individuals I work with value discretion above most
+        other things. That is not incidental to the arrangement — it
+        is the arrangement. If you have a name and a reason, we can
+        discuss whether a conversation is worth their time. Otherwise,
+        the Square is quite pleasant this time of day."
+      hints: "He answered your question by describing the shape of an
+        answer without giving one. You could ask about the bloodline,
+        or simply leave him to his watching."
+
+    - id: bloodline
+      triggers: ["bloodline", "ruling", "lord", "noble", "dominus",
+                 "authority", "power", "family", "serve", "master",
+                 "employ", "order"]
+      text: "The city runs — that is the relevant thing. It has
+        governing interests. Those interests need people who are good
+        at what they do. I am good at what I do. The rest of that
+        question is not one I find very useful to answer."
+      hints: "He gave you a complete non-answer delivered with complete
+        composure. There is nothing more to ask that he will answer
+        directly."
+      moodChange: cautious

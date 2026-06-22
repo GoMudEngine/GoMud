@@ -1,0 +1,77 @@
+mobid: 9350
+zone: New Plymouth Merchant
+defaultMood: friendly
+
+greetings:
+  - text: "Welcome in. What can I get you?"
+    moods: ["friendly", "neutral"]
+  - text: "Good to see you again. The usual?"
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Come in, come in. What will it be?"
+      - "Welcome to the Gilt Rest. What can I do for you?"
+
+  - keywords: [""]
+    responses:
+      - "Just say what you need — no ceremony required here."
+      - "What will it be?"
+
+tree:
+  root:
+    text: "I run the Gilt Rest — rooms, food, and drink. Good wine,
+      a warm bowl, a bed that does not move. Ask about the lodging,
+      about what I serve at the bar, or about the private parlor
+      at the back — we get some notable guests through that door."
+    hints: "You could ask Madam Sephe about the rooms and lodging,
+      about the food and drink she serves, or about the private
+      parlor and the guests who use it."
+
+  nodes:
+    - id: lodging
+      triggers: ["room", "lodging", "stay", "bed", "night", "sleep",
+                 "rest", "accommodation", "rate", "cost", "price",
+                 "available", "how_much", "long", "week"]
+      text: "I have four guest rooms upstairs — two singles and two
+        larger. Single is two silver a night, large is four. That
+        includes breakfast and the use of the common room as long as
+        you are a paying guest. The rooms are clean and the locks
+        work. I ask that guests not bring trouble through the front
+        door — I have a reputation for being a quiet house, and I
+        intend to keep it."
+      hints: "You could ask about the food and drink, or about the
+        private parlor at the back."
+      moodChange: friendly
+
+    - id: food
+      triggers: ["food", "drink", "wine", "stew", "ration", "eat",
+                 "serve", "menu", "bar", "meal", "bread", "warm",
+                 "bowl", "cup", "tonight", "hungry", "thirsty"]
+      text: "Spiced wine by the cup, hearty stew when the pot is
+        running, and trail rations for travelers who want something
+        that keeps. The wine is the house specialty — I blend the
+        spices myself and I will not tell you the ratio. The stew
+        is fresh most evenings. I am told it is good. I try not to
+        be the one who says that about my own cooking."
+      hints: "You could ask about the lodging upstairs, or about the
+        private parlor and the guests who use it."
+      moodChange: friendly
+
+    - id: parlor
+      triggers: ["parlor", "private", "meeting", "notable", "important",
+                 "guest", "horst", "men", "business", "back", "room",
+                 "who", "uses", "there", "quiet", "discreet", "secret"]
+      text: "The parlor is for guests who prefer their conversations
+        away from the bar. I rent it by the evening to individuals
+        who value privacy and can pay for the privilege. I do not
+        discuss the names of people who use it — that is rather the
+        point of having a private parlor. What I will say is that
+        the kinds of business conducted there tend to be of the sort
+        that shapes how things work in this district. Beyond that, I
+        am afraid I have wine to pour."
+      hints: "She confirmed the parlor is where serious business
+        happens — and confirmed she will not tell you more than
+        that. The discretion itself is its own answer."
+      moodChange: neutral

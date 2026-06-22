@@ -1,0 +1,49 @@
+mobid: 9348
+zone: New Plymouth Merchant
+craft_support: blacksmithing
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 38
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote pulls a length of chain through closed fingers, feeling
+    for weak links, then sets it down without expression.'
+  - ''
+  - 'emote lifts a coif and works the links with his thumb, checking
+    each section before moving to the next.'
+  - ''
+  - 'emote runs a bare hand along the seam of a chain vest — his
+    own skin rasping audibly against the iron rings.'
+activitylevel: 10
+character:
+  name: Brun the Armorer
+  description: |
+    Brun the Armorer is a large man, and the Chrysalis made him
+    larger in the ways that count. His skin has hardened over the
+    years since his Bloom into something between leather and shale —
+    layered and callused, ridged at the joints in a way that catches
+    the light like hammered plate. He tests his own chainwork by
+    wearing it against bare skin before he sells it, which is a kind
+    of quality assurance most armorsmiths cannot offer. He stocks
+    chain and leather components alongside finished pieces, and he
+    will fit anything he carries. He is not a warm man, but he is
+    thorough, and in his line of work thorough is the quality
+    that matters.
+  speciesid: 1
+  level: 1
+  gold: 50
+  stats:
+    vitality:
+      training: 12
+    strength:
+      training: 6
+  shop:
+    - itemid: 40002
+    - itemid: 40019
+    - itemid: 20011
+    - itemid: 20047
+    - itemid: 20050
