@@ -59,3 +59,6 @@ idlemessages:
   errand, dodging the bench without looking at it.
 - The smell of hot iron and the tannery's honest reek
   arrive together briefly as the wind shifts and part.
+spawninfo:
+  - mobid: 9342
+    respawnrate: "10 real minutes"

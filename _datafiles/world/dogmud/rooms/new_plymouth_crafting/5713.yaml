@@ -58,3 +58,6 @@ idlemessages:
   light at a low angle, granule by granule.
 - From the east hall, the quieter warmth of the
   annealing oven bleeds back through the passage.
+spawninfo:
+  - mobid: 9335
+    respawnrate: "10 real minutes"

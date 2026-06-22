@@ -59,3 +59,6 @@ idlemessages:
   here, close and particular.
 - A tube of rolled charts falls from the corner stack;
   Orin catches it without looking up.
+spawninfo:
+  - mobid: 9332
+    respawnrate: "10 real minutes"

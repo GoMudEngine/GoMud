@@ -59,3 +59,6 @@ idlemessages:
   the cup beside it is right-side-up.
 - The alley ends at a plain timber wall — no exit,
   no gap. Just the end of the passage.
+spawninfo:
+  - mobid: 9341
+    respawnrate: "10 real minutes"

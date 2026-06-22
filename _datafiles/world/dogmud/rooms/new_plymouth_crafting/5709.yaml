@@ -59,3 +59,8 @@ idlemessages:
   movement on wooden boards — light and unhurried.
 - Scale flakes near the forge edge catch the light
   flat and dark, blown there by the bellows exhaust.
+spawninfo:
+  - mobid: 9333
+    respawnrate: "10 real minutes"
+  - mobid: 9339
+    respawnrate: "10 real minutes"

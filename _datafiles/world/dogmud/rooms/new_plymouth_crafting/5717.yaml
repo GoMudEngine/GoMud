@@ -60,3 +60,6 @@ idlemessages:
   of frames, illuminating different stages of curing.
 - South, the smell of other tanneries carries on the
   wind from the direction of the Common Quarter.
+spawninfo:
+  - mobid: 9337
+    respawnrate: "10 real minutes"

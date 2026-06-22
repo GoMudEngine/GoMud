@@ -61,3 +61,6 @@ idlemessages:
   door opens — the paper labels turn on their pegs.
 - A faint smell of chalk and cut cloth fills the room,
   the trade's particular and patient signature.
+spawninfo:
+  - mobid: 9336
+    respawnrate: "10 real minutes"

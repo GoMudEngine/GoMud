@@ -1,0 +1,39 @@
+mobid: 9339
+zone: New Plymouth Crafting
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote hauls a coal scuttle from the side stack and tips it into
+    the forge bunker with the practiced efficiency of someone who has
+    done this a hundred times this week alone.'
+  - ''
+  - 'emote takes up the bellows handle and pumps — three even strokes,
+    then checks the color of the coals, then three more — keeping the
+    heat where the smith left it.'
+  - ''
+  - 'emote wipes soot from both hands onto a rag already black with it
+    and steps back to check what else needs moving.'
+activitylevel: 9
+character:
+  name: A Smith's Apprentice
+  description: |
+    The apprentice is soot-darkened at the collar and cuffs in the
+    way that several washes have not yet shifted, which is the
+    permanent condition of working a forge. He carries coal and
+    works the bellows and keeps the yard clear of scale for Halvard,
+    who does not explain more than once. He is eager in the manner
+    of someone learning a trade that demands competence, not speed,
+    and has not quite distinguished between the two.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    strength:
+      training: 8
+    dexterity:
+      training: 4

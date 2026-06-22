@@ -68,3 +68,8 @@ idlemessages:
   down heavily, then quiet.
 - The stair at the back wall creaks once from above
   and then settles.
+spawninfo:
+  - mobid: 9334
+    respawnrate: "10 real minutes"
+  - mobid: 9340
+    respawnrate: "10 real minutes"

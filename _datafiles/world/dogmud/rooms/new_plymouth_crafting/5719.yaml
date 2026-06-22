@@ -52,3 +52,6 @@ idlemessages:
   at the front wall, and goes back the way it came.
 - Passersby from the square tend to turn before reaching
   this point. The street here sees little foot-traffic.
+spawninfo:
+  - mobid: 9338
+    respawnrate: "10 real minutes"

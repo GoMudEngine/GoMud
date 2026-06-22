@@ -60,3 +60,6 @@ idlemessages:
   and keeps the air here warm even with the fire down.
 - The ceiling is lower here than in the kiln-room —
   the change is abrupt enough that you notice.
+spawninfo:
+  - mobid: 9343
+    respawnrate: "10 real minutes"

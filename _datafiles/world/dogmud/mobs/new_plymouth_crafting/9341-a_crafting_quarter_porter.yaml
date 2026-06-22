@@ -1,0 +1,38 @@
+mobid: 9341
+zone: New Plymouth Crafting
+behavior_archetype: noncombat_passive
+non_combatant: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+  - np_dockfolk
+idlecommands:
+  - 'emote wheels the hand-cart along the alley wall, stops, adjusts
+    the load with both palms, and continues toward the lab back door
+    at the same unhurried pace.'
+  - ''
+  - 'emote lowers the cart handles, stretches her back against the
+    lean-to post, and considers what still needs shifting today.'
+  - ''
+  - 'emote hefts a crate from the alley floor onto the cart, balances
+    it with the instinct of long practice, and does not drop it.'
+activitylevel: 8
+character:
+  name: A Crafting-Quarter Porter
+  description: |
+    The porter moves goods between the quarter's stalls and yards by
+    hand-cart, a circuit she runs from first light to late afternoon
+    with no variation and no complaint. She is dock-affiliated labor
+    and is careful to rest precisely as long as she is entitled to in
+    the shade of the lean-to behind the lab. The hand-cart is hers.
+    She does not lend it.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    strength:
+      training: 10
+    vitality:
+      training: 6
