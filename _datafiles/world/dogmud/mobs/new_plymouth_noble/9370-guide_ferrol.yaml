@@ -1,0 +1,50 @@
+mobid: 9370
+zone: New Plymouth Noble
+schedule_id: np_noble_ferrol
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+  - bloodline_domestic
+idlecommands:
+  - 'emote reviews the printed tour summary with the focused attention
+    of someone checking the work of a trusted subordinate — which is
+    to say, himself.'
+  - ''
+  - 'emote presses his lips together in a brief, precise way and then
+    releases the expression, as if rehearsing its suppression.'
+  - ''
+  - 'emote marks a pause-reminder at a particular paragraph in his
+    printed copy, nods once, and sets the pen down.'
+activitylevel: 7
+character:
+  name: Guide Ferrol
+  description: |
+    Guide Ferrol is New Plymouth's official tour interpreter, which
+    means he knows the founding history forward and backward and
+    has delivered it so many times that the phrasing has become
+    indistinguishable from memory. He is polished and confident in
+    the particular way of someone whose confidence has been built
+    around a fixed text — certain within its borders, armored by
+    the repetition. His Chrysalis-change is a smile: it sits
+    at the lower half of his face at what appears to be all times,
+    the muscles around his mouth settled into a practiced openness
+    that has become structural. The eyes above it are watching you
+    evaluate the gap between what his face offers and what his eyes
+    do, and the eyes have noticed that you noticed, and the smile
+    does not change. He will tell you the founding story with
+    genuine pleasure. He will steer you away from the gallery's
+    older panels with the same genuine pleasure. The script is
+    the script, and Ferrol is very good at the script.
+  speciesid: 1
+  level: 1
+  gold: 25
+  stats:
+    charisma:
+      training: 12
+    willpower:
+      training: 8

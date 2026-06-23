@@ -1,0 +1,65 @@
+roomid: 6000
+zone: New Plymouth Noble
+title: The Processional — Noble Approach
+description: >
+  The Processional climbs its last block before the
+  Noble Quarter's outer precinct, and the change
+  announces itself without drama — dressed limestone
+  underfoot where there was rougher work before,
+  buildings whose shutters are hung square and painted
+  in matching grey, a quiet that has displaced the
+  market noise behind you without your quite noticing
+  it happen. A pair of
+  <ansi fg="itemname">precinct-posts</ansi> stand to
+  either side of the passage, low iron standards capped
+  in pale brass, marking the threshold without blocking
+  it — no gate, but a clear line. Above the nearest
+  doorway the <ansi fg="itemname">ward-cipher</ansi>,
+  the Noble Quarter's administrative seal, has been cut
+  into the stone in a careful hand; arriving here for
+  the first time, you would register that you are in a
+  different kind of place even before you had a name
+  for the difference.
+biome: city
+coord:
+  x: -14
+  y: 91
+  z: 0
+exits:
+  south:
+    roomid: 5803
+  north:
+    roomid: 6001
+nouns:
+  precinct-posts: Low iron standards capped in pale
+    brass, placed to either side of the passage into
+    the Noble Quarter at precisely the line where the
+    paving changes character. They do not bar the way
+    and no one is stationed beside them; they serve
+    only as markers, and yet the gap between them
+    reads clearly as a threshold. The brass caps are
+    polished on a regular schedule — they catch what
+    light there is without showing any fingerprints.
+  ward-cipher: A cartouche cut into the stone above
+    a doorway lintel — the Noble Quarter's
+    administrative seal, which appears in the same
+    form on every official communication and every
+    building that falls under the Quarter's direct
+    jurisdiction. The design is a stylized compass
+    rose inside a closed chain, the chain-links
+    detailed enough to count. Whether the meaning is
+    territory, order, or enclosure probably depends
+    on who is looking.
+idlemessages:
+- A man in a dark coat descends from the north at
+  a measured pace, glancing at you once without
+  slowing.
+- The precinct-posts cast short shadows into the
+  center of the passage.
+- From the south, the noise of the market is clearly
+  audible; from the north, nothing answers back.
+- A courier moves through the approach at a pace that
+  signals urgency without suggesting anxiety.
+- The grey shutters along the western buildings are
+  all closed and have probably been closed all
+  morning.

@@ -1,0 +1,44 @@
+mobid: 9375
+zone: New Plymouth Noble
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+  - bloodline_domestic
+idlecommands:
+  - 'emote holds his position on the Noble Way, his posture the
+    result of training rather than effort — a formal ease that
+    signals availability and complete absence of invitation.'
+  - ''
+  - 'emote adjusts the set of his jacket-front by a fraction that
+    only someone wearing it would notice, then returns to the same
+    composed stillness.'
+  - ''
+  - 'emote takes in the length of the Way from his post with the
+    unhurried scan of someone who has done it many times before
+    and is doing it again now.'
+activitylevel: 4
+character:
+  name: A Liveried Footman
+  description: |
+    The footman is stationed at the inner edge of the Noble Way
+    in the bloodline's house-colors — a deep blue-grey livery
+    over pressed whites, the household cipher embroidered in
+    silver thread at the left breast. He stands at the angle
+    that covers the approach without blocking it, which is the
+    angle he was taught to hold. His expression is the expression
+    of someone who has learned that incuriosity is a form of
+    service — he registers arrivals without acknowledging them
+    and departures without watching them go.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    perception:
+      training: 8
+    charisma:
+      training: 4

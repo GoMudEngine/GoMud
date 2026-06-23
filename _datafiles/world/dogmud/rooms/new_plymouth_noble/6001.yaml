@@ -1,0 +1,78 @@
+roomid: 6001
+zone: New Plymouth Noble
+title: The Watched Plaza
+description: >
+  The plaza opens at the Noble Quarter's heart, wide
+  and clean in the way that money keeps things clean —
+  dressed stone washed each morning, gutters empty, no
+  stall or cart permitted inside the square's perimeter.
+  The <ansi fg="itemname">central-basin</ansi>, a shallow
+  oval of pale granite at the plaza's center, holds still
+  water in which the upper stories of the surrounding
+  buildings are reversed and clarified; they look more
+  orderly in reflection than they do in fact. A pair of
+  the Quarter's
+  <ansi fg="itemname">liveried-watchers</ansi> stand at
+  the northern side — blue-and-grey tabards, arms at
+  rest, nothing visible but the fact of their attention
+  — and they have already made note of your arrival.
+  The upper windows of the buildings ringing the square
+  are shuttered, but not all of those shutters are
+  entirely closed, and some of the gaps are the right
+  width for a person to stand in without being visible
+  from below.
+biome: city
+coord:
+  x: -14
+  y: 92
+  z: 0
+exits:
+  south:
+    roomid: 6000
+  north:
+    roomid: 6002
+  west:
+    roomid: 6003
+  east:
+    roomid: 6004
+nouns:
+  central-basin: A shallow oval cut from a single
+    piece of pale granite, perhaps twelve feet along
+    its long axis, set flush into the plaza paving
+    at its center. The water is still, changed on a
+    schedule that keeps it clear, and reflects the
+    buildings and sky above with a quality that seems
+    deliberate — as if the basin's depth has been
+    precisely calculated to produce a readable image.
+    There is no fountain mechanism, no inscription,
+    nothing to explain or decorate it. Its presence
+    here is a statement of the kind that does not
+    require words.
+  liveried-watchers: Men and women in the Quarter's
+    blue-and-grey tabard, stationed through the plaza
+    in pairs. They carry no visible weapons but their
+    posture has the quality of people who know where
+    weapons are. Their attention is comprehensive and
+    undemonstrative — no staring, no challenge, only
+    a steady ambient awareness that includes you and
+    everything else in the square. The tabards bear
+    no insignia beyond the Quarter's cipher at the
+    breast, and the watchers do not introduce
+    themselves.
+idlemessages:
+- One of the liveried-watchers shifts his weight
+  without turning his head, tracking a pedestrian
+  crossing the southern approach.
+- The central-basin's surface shudders once from
+  something beneath the stone — a distant cart,
+  perhaps — then goes still again.
+- A woman in a high-collared coat crosses the plaza
+  from west to east without looking at anything,
+  including you.
+- The shuttered windows on the eastern side of the
+  square are all closed; at least one has a lamp
+  burning behind it.
+- Two officials emerge from a doorway to the north,
+  confer briefly in low voices, then separate and
+  go in different directions without having appeared
+  to agree on anything.

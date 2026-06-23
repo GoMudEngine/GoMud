@@ -1,0 +1,75 @@
+roomid: 6003
+zone: New Plymouth Noble
+title: Guide Ferrol's Flat
+description: >
+  The flat is small and carefully ordered in the way
+  of a space used for preparation rather than living —
+  a narrow desk facing the window, the floor swept
+  clean, the walls bare except for the
+  <ansi fg="itemname">founding-history</ansi> displayed
+  in a frame of polished wood above the desk — a
+  broadsheet-sized printed account of New Plymouth's
+  origins, its lettering crisp, its paragraphs
+  arriving in the exact order that a founding history
+  should. The desk holds a writing-case and a stack
+  of the same account in smaller formats — the same
+  version of events rendered in different sizes for
+  different audiences, all of them arriving at the
+  same conclusion. The <ansi fg="itemname">guide-desk</ansi>
+  is positioned so that whoever sits at it faces the
+  history directly; the arrangement suggests the text
+  is consulted regularly, though its content presumably
+  does not change.
+biome: city
+coord:
+  x: -15
+  y: 92
+  z: 0
+exits:
+  east:
+    roomid: 6001
+nouns:
+  founding-history: A printed broadsheet in a frame
+    of polished cherrywood, hung level on the wall
+    above the desk. The account opens with the
+    founding families' arrival by sea, passes through
+    the clearing of the site and the first winter,
+    the laying of the charter stone, and the election
+    of the first Council — all in measured, confident
+    prose, with dates given precisely and sources not
+    cited. The edges of the story are smooth. There
+    are no gaps, no uncertainties, nothing that would
+    require a reader to hold two possibilities at
+    once. It is the version of events that has been
+    approved for repeated presentation, which is a
+    different thing from the version that happened.
+  guide-desk: A plain writing desk of dark wood,
+    functional and nothing more — a surface for work,
+    not for display. On it — a closed writing-case,
+    a trimmed pen, a small pot of blue-black ink, and
+    a stack of the printed tour summaries, each one
+    folded to a standard size for distribution. One
+    of the summaries near the top has been marked in
+    pencil at a particular paragraph. The marks are
+    not corrections — they look more like reminders
+    to pause, to let the words settle before
+    continuing.
+idlemessages:
+- The founding-history hangs straight and level; the
+  nail-shadow on the wall behind the frame is a
+  slightly different shape, suggesting it was moved
+  and rehung not long ago.
+- The window admits a clean wedge of light that
+  crosses the desk but does not reach the history
+  on the far wall.
+- A copy of the printed tour summary lies open on
+  the desk, a passage near the middle marked with
+  a soft pencil line.
+- The flat smells of clean paper and a trace of lamp
+  oil — a working room, not a living one.
+- The preparations here have the thoroughness of
+  someone who expects questions and has prepared for
+  all the likely ones.
+spawninfo:
+  - mobid: 9370
+    respawnrate: "10 real minutes"

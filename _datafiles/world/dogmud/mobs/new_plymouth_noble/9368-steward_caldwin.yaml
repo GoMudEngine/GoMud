@@ -1,0 +1,52 @@
+mobid: 9368
+zone: New Plymouth Noble
+schedule_id: np_noble_caldwin
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 38
+maxwander: 0
+groups:
+  - humanoid
+  - bloodline_domestic
+idlecommands:
+  - 'emote moves a sealed document from the incoming tray to the outgoing
+    tray with one precise motion and does not look up.'
+  - ''
+  - 'emote draws a ruled line across an open ledger page, checks it against
+    something in his head, and sets the pen down.'
+  - ''
+  - 'emote straightens the stack of loose correspondence by tapping it
+    once against the worktable — a small, final sound — and leaves it
+    there.'
+activitylevel: 8
+character:
+  name: Steward Caldwin
+  description: |
+    Steward Caldwin runs the bloodline's city-facing administration
+    from behind the long worktable, and the worktable fits him the
+    way a post fits a man who selected it himself. He is precise
+    and thin, dressed in dark plain cloth with no ornament beyond
+    the wax seal on his signet ring, and he carries the quality of
+    composure that has been maintained so long it reads as character
+    rather than effort. His skin is unmarked. His eyes are ordinary.
+    His hands are the hands of someone who has spent twenty years
+    moving paper rather than anything heavier. In the Noble Quarter,
+    where the Chrysalis has touched nearly every long-term resident
+    in some visible way, Caldwin's completeness is itself a thing
+    worth noting — a body that arrived before the Bloom and was
+    apparently not invited to change. He takes a certain pride in
+    this, if pride is the right word for something he wears the way
+    he wears the dark cloth — correctly, without explanation. He
+    gives you the sense that every question has been heard before
+    and that the answers are already sorted into what you will be
+    told and what you will not.
+  speciesid: 1
+  level: 1
+  gold: 70
+  stats:
+    willpower:
+      training: 12
+    charisma:
+      training: 10

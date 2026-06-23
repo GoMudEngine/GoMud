@@ -1,0 +1,67 @@
+roomid: 6012
+zone: New Plymouth Noble
+title: The Servants' Stair
+description: >
+  The servants' stair is the Noble Quarter's real
+  circulation — the passage through which the work
+  of the quarter moves while the quarter itself
+  presents an uninterrupted face of order and ease.
+  The stair runs between the service court below
+  and the garret level above, its treads worn to a
+  distinct shallow groove at the center — the groove
+  of a foot placed in exactly the same position for
+  many years, moving fast, carrying something. The
+  walls are unplastered stone. The
+  <ansi fg="itemname">stair-marks</ansi> accumulated
+  on the walls at hand and shoulder height are the
+  record of what has been moved through here — a
+  dark band at hand height where people have steadied
+  themselves under loads, a paler scuff at elbow
+  height, a painted number at each landing that no
+  longer corresponds to anything in the current layout
+  but which no one has had occasion to remove.
+  This stair is for staff. It is clean because it is
+  maintained, not because it is impressive.
+biome: city
+coord:
+  x: -12
+  y: 95
+  z: 0
+exits:
+  west:
+    roomid: 6011
+  north:
+    roomid: 6013
+  south:
+    roomid: 6014
+nouns:
+  stair-marks: The accumulated evidence on the
+    walls of long service — a dark band at hand
+    height running the full length of the stair
+    on the left side, the right side cleaner but
+    with shoulder-marks near the landings where
+    loads are shifted. At the mid-landing, a
+    painted number — 3 — in white over an earlier
+    number that has bled through the new paint,
+    and beneath that a faint impression of
+    something written in a different hand that
+    has been painted over twice and is still not
+    entirely gone. What it said is not fully
+    recoverable. The shape of the last word
+    suggests a name.
+idlemessages:
+- Quick footsteps on the stair from below —
+  someone ascending from the service court,
+  their tread practiced and fast.
+- The stair is empty between passages, its
+  worn treads and shoulder-marks waiting for
+  the next transit.
+- From the stair, the sounds of the service
+  court below and the garret above are equally
+  faint and equally purposeful.
+- Someone left a small cloth bundle on the
+  mid-landing and returned for it. It is gone.
+- The painted number at the landing has
+  been there long enough that the earlier
+  number beneath it is becoming visible
+  again as the newer paint wears.

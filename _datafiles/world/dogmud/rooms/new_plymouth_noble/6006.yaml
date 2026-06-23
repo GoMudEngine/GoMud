@@ -1,0 +1,59 @@
+roomid: 6006
+zone: New Plymouth Noble
+title: The Office Antechamber
+description: >
+  The antechamber exists for one purpose — to hold
+  petitioners at a remove from the office proper
+  while their business is considered, their
+  paperwork checked, or their appointment confirmed.
+  The <ansi fg="itemname">waiting-bench</ansi> along
+  the north wall is the room's only furnishing that
+  acknowledges human presence; the walls are bare
+  dressed stone, the floor the same pale tile as the
+  Processional approach, and there is no window.
+  The lamp in the wall bracket gives adequate light
+  and nothing more. There is nothing to read, nothing
+  to examine, nothing that would make the wait feel
+  shorter or longer than it is. This is not an
+  oversight. The room communicates one thing with
+  precision — the person in the office controls
+  the pace of what happens next, and this is the
+  space in which that becomes concrete. The office
+  door to the east is closed.
+biome: city
+coord:
+  x: -16
+  y: 94
+  z: 0
+exits:
+  east:
+    roomid: 6005
+nouns:
+  waiting-bench: A bench of the same dressed stone
+    as the walls, cut from a single piece and
+    built into the north wall at seat height.
+    There is no cushioning. The surface is smooth
+    but not polished — there was never any intention
+    to make it pleasant, only adequate. The bench
+    holds three people with room between them, or
+    four at close quarters. You can tell without
+    sitting that it is cold. It has been cold
+    for as long as the building has stood, and
+    will continue to be.
+idlemessages:
+- The antechamber is empty at present.
+  This does not mean the wait is over.
+- The lamp in the wall bracket gives
+  even, adequate light that casts no
+  interesting shadows. This is also
+  not an oversight.
+- The office door to the east is closed.
+  The sound from the other side is
+  indistinct.
+- The waiting bench is unoccupied. It
+  will be occupied again today, as it
+  is most days.
+- Time passes at a consistent rate in
+  the antechamber. The room makes no
+  particular effort to make this less
+  apparent.

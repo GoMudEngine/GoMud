@@ -1,0 +1,94 @@
+roomid: 6009
+zone: New Plymouth Noble
+title: The Gallery — Old Wing
+description: >
+  The old wing is where the gallery keeps the work
+  it does not show. Not hidden — present, lit, on
+  the wall in the same frames as everything else —
+  simply never brought to the attention of anyone
+  on the standard tour. The
+  <ansi fg="itemname">old-canvases</ansi>
+  here are the earliest material in the collection,
+  predating the bloodline's acquisition of the Noble
+  Quarter by several generations, and their subject
+  matter belongs to an account of this region that
+  the official history does not include. A settlement —
+  not New Plymouth as built, but an older arrangement
+  of structures, their geometry non-rectilinear, their
+  placement on a promontory that no longer exists in
+  its depicted form — appears in three separate works
+  on the north wall, rendered in different hands and
+  different decades but with consistent detail in
+  certain elements. The
+  <ansi fg="itemname">convergence-panel</ansi>
+  at the wing's west end is the largest of these
+  and the most complete in its depiction of what
+  appears to be an assembly — figures gathered before
+  a structure whose peak carries a mark the artist
+  clearly considered important. The hall continues east.
+biome: city
+coord:
+  x: -16
+  y: 95
+  z: 0
+exits:
+  east:
+    roomid: 6007
+nouns:
+  old-canvases: Three paintings on the north wall,
+    each by a different hand, each predating the
+    bloodline's Quarter by several generations. All
+    three depict the same settlement from slightly
+    different vantage points — an arrangement of
+    structures on a coastal promontory, their building
+    style consistent with the region but unlike
+    anything in the current city's fabric. The
+    structures at the center of each composition
+    share a feature — a geometric form worked into
+    the uppermost element, rendered with care in each
+    work — the same eight-pointed figure as the hall's
+    older panels but here larger, clearer, undeniable.
+    The settlement does not match any marked location
+    in the bloodline's survey records, which are
+    public and described as complete. The coastline
+    shown in the background of the second painting
+    corresponds to a stretch of shore north of New
+    Plymouth currently described in those surveys as
+    uninhabited and always having been.
+  convergence-panel: The largest canvas in the wing —
+    perhaps five feet wide, occupying most of the
+    west wall. It shows a gathering of figures before
+    the settlement's central structure at what the
+    composition implies is a significant moment —
+    figures turned inward, their postures the postures
+    of an assembly attending something rather than
+    simply present. The structure's upper peak carries
+    an eight-pointed mark in the deepest layer of
+    the paint, visible under the varnish where the
+    pigment has thinned with age. Beneath the peak,
+    in the structure's upper story, a single window
+    shows a light that is not the painting's ambient
+    light — its direction is wrong, its color slightly
+    off the palette used for the rest of the scene.
+    The artist knew the difference. The artist painted
+    it differently on purpose, and then varnished
+    over it, and the varnish has had time to clarify.
+idlemessages:
+- The old wing is unoccupied. It is usually
+  unoccupied. No arranged tour comes here.
+- The three north-wall canvases depict the
+  same settlement from three slightly different
+  vantage points, as if each artist stood a few
+  steps from where the previous one stood.
+- The convergence-panel's upper edge carries
+  a thin deposit of dust — the cleaning schedule
+  that maintains the hall does not extend quite
+  to this end of the wing.
+- The old wing's light comes through a single
+  high north window. At certain hours it falls
+  directly on the convergence-panel while the
+  second canvas is in shadow.
+- The wing smells older than the hall —
+  linseed and age and the quality of pigment
+  that has had time to become part of the
+  canvas rather than merely on top of it.

@@ -1,0 +1,83 @@
+roomid: 6010
+zone: New Plymouth Noble
+title: Modiste Aurel's Atelier
+description: >
+  The atelier occupies the ground floor of a building
+  on the Processional's eastern side, its windows set
+  high to give working light without street exposure.
+  Bolts of cloth are ranked along the western wall
+  on iron pegs — silks, a heavy brocade in the
+  bloodline's blue-grey, wool in the finer weights —
+  and the <ansi fg="itemname">cutting-table</ansi>
+  at the room's center holds work in the middle of
+  being worked, pinned and marked and partly assembled
+  with the organized disorder of something being made
+  by someone who knows exactly where everything is.
+  The <ansi fg="itemname">modiste-mannequins</ansi>
+  along the north wall carry garments at various
+  stages of completion — a formal jacket half-finished,
+  a commission in bloodline house-colors whose
+  measurements are written on a card at its collar.
+  Aurel's atelier is not a shop; it makes specific
+  things for specific people who have arranged for
+  them to be made, and those people have already
+  been in contact. The service court is east; the
+  estate lane gatehouse is north.
+biome: city
+coord:
+  x: -13
+  y: 94
+  z: 0
+exits:
+  west:
+    roomid: 6015
+  north:
+    roomid: 6011
+  east:
+    roomid: 6014
+nouns:
+  cutting-table: A table of hardwood at the
+    atelier's center, its surface marked by decades
+    of chalk-line and pin-hole at the edges but
+    kept clean at the active working area. The
+    current work — pinned and partly assembled —
+    is a formal jacket in mid-weight wool, the
+    kind of garment that serves all occasions of
+    a certain type. Chalk marks indicate alterations
+    beyond the standard cut; this has been measured
+    for a specific person whose dimensions are noted
+    on a card clipped to the near edge. The name
+    on the card is not visible from where you stand.
+  modiste-mannequins: A row of adjustable forms
+    along the north wall, each holding a garment
+    at some stage of making. The commission in
+    bloodline house-colors — blue-grey wool, silver
+    buttons, collar of a pattern restricted to the
+    Quarter's senior household — is nearest
+    completion, its finishing work still pending.
+    The card at its collar gives a date and a cipher
+    that names a household rather than a person.
+    The mannequin wears it well. It was not made
+    for the mannequin.
+idlemessages:
+- The atelier is quiet in the way of rooms
+  whose work requires concentration — the
+  silence is not absence but intention.
+- A length of thread lies at the cutting
+  table's edge, trailing to the floor where
+  it has been there long enough to be
+  stepped over automatically.
+- The bloodline commission on the north
+  mannequin catches the working light in
+  the silver of its buttons.
+- From the back rooms beyond the north door,
+  cloth is being moved — the sound of a
+  bolt set down and a brief evaluation of
+  something in hand.
+- A basket of pins sits at the cutting
+  table's right edge, its contents depleted
+  on one side and restocked on the other —
+  the record of a morning's work.
+spawninfo:
+  - mobid: 9373
+    respawnrate: "10 real minutes"

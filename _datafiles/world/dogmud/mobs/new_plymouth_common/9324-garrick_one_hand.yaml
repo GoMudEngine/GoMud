@@ -7,6 +7,10 @@ charm_immune: true
 hostile: false
 statpool: 32
 maxwander: 0
+relationships:
+  - to: 9374
+    type: friend
+    subtype: old_comrade
 groups:
   - humanoid
   - np_commonfolk

@@ -1,0 +1,70 @@
+mobid: 9368
+zone: New Plymouth Noble
+defaultMood: cautious
+
+greetings:
+  - text: "What is your business here?"
+    moods: ["cautious", "neutral"]
+  - text: "The office is open. State your purpose."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Good day."
+      - "Was there something you needed."
+
+  - keywords: [""]
+    responses:
+      - "Say what you came to say."
+      - "I am listening."
+
+tree:
+  root:
+    text: "I manage the Quarter's administrative correspondence and the
+      bloodline's city requirements. Was there something specific you
+      needed, or are you simply familiarizing yourself with the layout?"
+    hints: "You could ask Steward Caldwin about the office and the work
+      he manages, about the bloodline and the authority he serves, or
+      about the limits of his patience for questions that reach too far."
+
+  nodes:
+    - id: office
+      triggers: ["office", "administration", "ledger", "papers", "manage",
+                 "running", "business", "work", "role", "desk",
+                 "worktable", "correspondence", "city", "quarter", "job",
+                 "task", "position", "here", "does", "doing"]
+      text: "I process the bloodline's city-facing requirements —
+        correspondence, civic arrangements, licensing, the various
+        agreements that keep a city running at this scale. It is
+        detailed work. Most of it is not interesting to anyone not
+        directly involved in it. The worktable handles it efficiently."
+      hints: "You could ask about the bloodline and the order he serves,
+        or about the kind of questions he has no patience for."
+
+    - id: order
+      triggers: ["order", "bloodline", "ruling", "authority", "power",
+                 "noble", "lord", "family", "serve", "master", "structure",
+                 "hierarchy", "governing", "employ", "who"]
+      text: "The city has governing interests. Those interests require
+        execution — decisions that have been made need to become actions,
+        actions need to become records, records need to be maintained.
+        I execute that chain. The people at the top of it are not part
+        of this conversation. The city running is the relevant fact."
+      hints: "He described a system without naming anyone in it. You could
+        ask about those who press him further than that answer covers."
+
+    - id: patience
+      triggers: ["patience", "impatient", "difficult", "tolerate", "bother",
+                 "annoy", "displease", "press", "persistent", "probe",
+                 "excessive", "push", "insist", "rude", "far", "limit",
+                 "reach too", "too much", "curious"]
+      text: "I have considerable patience for necessary questions. I have
+        rather less for curiosity that presents itself as necessity.
+        People who develop a habit of asking for more than the work
+        requires tend to find that the arrangements they depend on
+        become — less reliable. I say this without heat. It is simply
+        how the administration functions."
+      hints: "He delivered a warning with absolute composure. There is
+        nothing further he will offer."
+      moodChange: cautious

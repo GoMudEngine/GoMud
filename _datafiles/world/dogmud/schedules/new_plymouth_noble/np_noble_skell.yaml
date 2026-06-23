@@ -1,0 +1,33 @@
+id: np_noble_skell
+description: "Porter Skell: the immovable post — nearly the entire day at the
+  gatehouse recess, sleeps there too. He barely leaves and does not seem to
+  find this remarkable."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6011
+    activity: ""
+    idlecommands:
+      - emote stands in the gatehouse recess with the specific quality
+        of stillness that comes from a body that has decided it is
+        furniture until further notice.
+      - emote registers your continued presence with a slow, complete
+        look — not hostile, simply complete — and returns to station.
+      - say The lane is for residents and those on bloodline business.
+        I will not need to tell you that twice.
+      - emote moves not at all. The bell-pull beside the gate swings
+        in the draft. He does not look at it.
+      - emote turns his head a precise degree to track someone
+        passing the far end of the lane, confirms they have passed,
+        and returns his attention to center.
+      - say There is nothing I can do about how long you stand here.
+        There is also nothing you can do about how long I stand here.
+        We are in agreement on the gate itself, which is closed.
+  - start: 22
+    end: 6
+    target_room: 6011
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the gatehouse recess in the same posture he
+        stands in — weight evenly placed, the architecture of the
+        station absorbed into the architecture of the man.

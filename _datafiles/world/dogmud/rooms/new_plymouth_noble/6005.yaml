@@ -1,0 +1,71 @@
+roomid: 6005
+zone: New Plymouth Noble
+title: The Administrative Office
+description: >
+  The bloodline's administrative seat in New Plymouth
+  occupies a building of the same dressed stone as
+  the Processional, its interior arranged for the
+  expedient transmission of authority through paper.
+  The <ansi fg="itemname">central-worktable</ansi>
+  is long and undecorated, its surface divided by
+  invisible convention into distinct working areas —
+  correspondence to one end, ledgers to the other,
+  rolled survey instruments in a rack at the far
+  end that has not been touched today. The room's
+  occupant — whoever holds the steward's post this
+  season — conducts the bloodline's city-facing
+  business from behind that table with the manner
+  of someone who represents a power they did not
+  originate and will not inherit. Everything here
+  is competent and nothing here is warm. The gallery
+  is accessible to the north; the antechamber lies
+  west. The Processional is east. The office connects
+  the Quarter's public axis to its institutional
+  interior, and is aware of that function.
+biome: city
+coord:
+  x: -15
+  y: 94
+  z: 0
+exits:
+  east:
+    roomid: 6015
+  west:
+    roomid: 6006
+  north:
+    roomid: 6007
+nouns:
+  central-worktable: A long table of dark hardwood
+    running most of the office's east-west length,
+    its surface worn to a flat polish by years of
+    papers set down and lifted, seals pressed, and
+    instruments unrolled across it. The invisible
+    working zones are apparent to anyone who spends
+    five minutes here — active correspondence to
+    the right, the bloodline's city-facing ledgers
+    to the left, the center kept clear for
+    consultation. The table has no decorative
+    elements. It does not require any.
+idlemessages:
+- Papers are moved from one end of the central
+  table to the other in an order that is the
+  order that matters — and then re-ordered
+  again as circumstances change.
+- A courier enters briefly from the Processional,
+  delivers a sealed letter to the in-tray near
+  the table's right end, and leaves without
+  exchanging words.
+- The office is cool at midday — the stone keeps
+  the temperature even and does not care whether
+  this is comfortable.
+- The ledgers on the left side of the central
+  table are current to the prior week. This
+  week's entries are still loose pages waiting
+  to be bound.
+- From the northern door, the faint sound of
+  the gallery is barely audible — quiet movement,
+  or the particular near-silence of someone
+  studying something closely.
+spawninfo:
+  - mobid: 9368
+    respawnrate: "10 real minutes"

@@ -1,0 +1,79 @@
+roomid: 6008
+zone: New Plymouth Noble
+title: The Gallery — Upper
+description: >
+  The keeper's rooms above the gallery are a working
+  scholar's space in the way that implies the scholar
+  has been at this for a long time. The
+  <ansi fg="itemname">analysis-table</ansi> at the
+  room's center holds the tools of close inspection —
+  magnifying lenses in stands of various focal
+  lengths, raking-light lamps whose angles can be
+  adjusted precisely, annotated sketches reproduced
+  from the collection's oldest works in a hand that
+  is both careful and urgent, as if the notes were
+  taken in the gap between other duties. The smell
+  of the room is pigment and varnish and old paper,
+  with something underneath those smells that takes
+  a moment to identify — the quality of a room where
+  someone has been thinking very carefully for a
+  long time about something they cannot discuss.
+  The <ansi fg="itemname">reference-shelves</ansi>
+  along the east wall contain volumes whose spines
+  have been turned inward on the lower two rows.
+  The gallery below is accessed via the stair
+  to the south.
+biome: city
+coord:
+  x: -15
+  y: 95
+  z: 1
+exits:
+  down:
+    roomid: 6007
+nouns:
+  analysis-table: The work surface carries the
+    evidence of extended, careful inquiry —
+    magnifying lenses adjusted to precise angles,
+    raking-light lamps positioned as if reproducing
+    the exact angle at which a detail becomes
+    visible in a specific painting below, annotated
+    sketches of details too small to read from the
+    gallery floor. The sketches include a recurring
+    form — eight points distributed around a center,
+    its geometry precise, each rendering improved
+    on the last as if someone has been refining an
+    understanding of the symbol across many sessions.
+    The most recent sketch is on top. It is the
+    most accurate. The notes beside it are not in
+    a language currently in use in New Plymouth
+    or any of its adjacent regions.
+  reference-shelves: Two rows of volumes along the
+    east wall have been turned spine-inward — present
+    and accessible, simply not identified by title
+    to a casual visitor. The upper shelves are the
+    collection's standard provenance records and
+    technique manuals, their spines clearly visible.
+    The two lower rows, turned inward, are the older
+    material. One volume has been recently moved —
+    its dust-gap is newer than the others — and
+    returned to its position with slightly less
+    precision than the rest.
+idlemessages:
+- The raking-light lamps on the analysis table
+  are adjusted to serve a specific painting on
+  the wall of the gallery below — though here,
+  the sketches, not the gallery, hold the study.
+- The turned-spine volumes on the lower shelves
+  are present and accounted for. Someone counts
+  them occasionally.
+- The analysis table's sketches are held by a
+  small smooth river-stone — the kind of object
+  a person picks up without intending to keep,
+  and keeps without intending to use as a weight.
+- The room holds the particular quiet of a
+  scholar absent but expected back soon.
+- At this angle, the afternoon light falls
+  across the analysis table's top sketch —
+  the eight-pointed form, carefully drawn,
+  carefully labeled in the old hand.

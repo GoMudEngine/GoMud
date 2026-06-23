@@ -1,0 +1,61 @@
+id: np_noble_wenna
+description: "Wenna the Servant: furtive morning errands at the service court,
+  midday in the square keeping her head down and distance from the office, back
+  to her garret by evening, sleeps there — the particular routine of someone
+  for whom unnoticed is the goal."
+segments:
+  - start: 6
+    end: 12
+    target_room: 6014
+    activity: ""
+    idlecommands:
+      - emote moves through the service court in quick, efficient steps
+        — never pausing unless she must, as if stillness invites
+        attention she has not invited.
+      - emote lifts a bundle of linens, counts them against her memory,
+        and carries them toward the stairway without a sound.
+      - emote glances up at a footstep overhead, holds still for a
+        moment, and returns to work when it passes without incident.
+      - emote folds a cloth to a fresh face and wipes a surface that
+        was already clean — a thing to do with her hands while she
+        waits for the hall to quiet again.
+  - start: 12
+    end: 18
+    target_room: 6002
+    activity: ""
+    idlecommands:
+      - emote keeps to the wall of the way, her eyes on the cobblestones
+        ahead — the gait of someone whose aim is to complete a crossing
+        without appearing to cross.
+      - emote pauses near the arch, checks the far end of the square for
+        something specific, and moves again without announcing what she
+        found there.
+      - emote's skin brightens faintly at the corners of her eyes — a
+        brief involuntary glow — and fades as she stills herself with
+        visible effort.
+      - emote adjusts the bundle she carries to block her face from the
+        direction of the office stairs, moving on before the adjustment
+        could be noted.
+  - start: 18
+    end: 21
+    target_room: 6013
+    activity: ""
+    idlecommands:
+      - emote sits on the edge of the low cot with her feet still on
+        the floor and her hands folded — not resting exactly, just
+        not working.
+      - emote checks that the single sheet of paper is where she keeps
+        it under the mattress, smooths the bed covering back into
+        place, and sits again.
+      - say No one comes up here. That used to be frightening. Now
+        I think of it as the best thing about this room.
+      - emote folds and refolds the corner of her apron, stops when
+        she notices she is doing it.
+  - start: 21
+    end: 6
+    target_room: 6013
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the garret with one arm tucked beneath her
+        head, the low cot fitted to her shape — the room smaller than
+        the corridors she walks all day, and for that reason more hers.

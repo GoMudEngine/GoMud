@@ -1,0 +1,66 @@
+roomid: 6011
+zone: New Plymouth Noble
+title: The Estate Lane — Gatehouse
+description: >
+  A gated passage connects the atelier's building
+  to the private lane behind the estate holdings —
+  a service route used by residents of the lane and
+  their household staff, and no one else. The
+  <ansi fg="itemname">lane-gate</ansi> ahead closes
+  the northern passage — a solid iron affair, fitted
+  with a deadbolt whose key is not kept at this post
+  and a bell-pull mounted to the side that is used
+  only by those who have been expected. A porter in
+  liveried house-colors occupies the small gatehouse
+  recess, their attention low and steady — not
+  hostile, simply present in the specific way of
+  someone whose entire function is to register who
+  is here and confirm they belong here. You have not
+  been confirmed. The lane beyond serves the residence
+  households of this block — their private courts,
+  their staff arrangements, the domestic fabric that
+  the Quarter's public face prefers not to make visible.
+  The gate does not open to inspection or persistence.
+  The servants' passages behind the estate block
+  are accessible to the east.
+biome: city
+coord:
+  x: -13
+  y: 95
+  z: 0
+exits:
+  south:
+    roomid: 6010
+  east:
+    roomid: 6012
+nouns:
+  lane-gate: Iron, solid-panel rather than barred —
+    you cannot see directly through it. The lock
+    is a double-keyed deadbolt, its keyhole the
+    only element that invites close inspection, and
+    close inspection confirms that the key is not
+    present here and is not available at this post.
+    The bell-pull to the gate's right is polished
+    from frequent use and rings somewhere beyond
+    the gate's solid face — a sound you have not
+    heard, because you have not rung it, because
+    you have not been expected. The gate does not
+    open from this side without the key or the
+    confirmation of a resident within.
+idlemessages:
+- The porter in the gatehouse recess notes
+  your presence without acknowledging it
+  verbally. This is the courtesy form.
+- The lane-gate is closed. The lane beyond
+  is not currently anyone's business except
+  those who live behind it.
+- The bell-pull beside the gate swings very
+  slightly in the draft from the passage.
+  It does not ring.
+- The porter's tabard shows the estate
+  block's household cipher — a different
+  mark from the Quarter's general livery,
+  narrower, more domestic in its form.
+spawninfo:
+  - mobid: 9372
+    respawnrate: "10 real minutes"

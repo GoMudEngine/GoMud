@@ -1,0 +1,64 @@
+roomid: 6018
+zone: New Plymouth Noble
+title: The Sentry Walk
+description: >
+  The stretch between the Processional and the Palace
+  gatehouse is known informally as the Sentry Walk —
+  a name not carved anywhere but understood by anyone
+  who has come this far. There is always someone in
+  sight here. Not always the same someone, not always
+  posted at the same point, but the geometry of the
+  approach ensures that no position along this stretch
+  goes unobserved for any meaningful interval. The
+  <ansi fg="itemname">worn-posts</ansi> set into the
+  paving at intervals are the quarter's original
+  patrol anchor points — predating the current
+  bloodline's tenancy of the Palace, worn smooth at
+  shoulder height by generations of guards who rested
+  arms against them during long watches. The gatehouse
+  is visible ahead to the north, its stonework heavier
+  than anything on the Processional. The approach to
+  it is designed so that your silhouette is readable
+  long before you reach it.
+biome: city
+coord:
+  x: -14
+  y: 95
+  z: 0
+exits:
+  south:
+    roomid: 6015
+  north:
+    roomid: 6016
+nouns:
+  worn-posts: Short square-section posts of grey
+    basalt, set flush with the paving at measured
+    intervals along the Walk's centerline. Each one
+    is worn smooth at the top and on its south-facing
+    face — the resting-point for a guard's forearm
+    during a long watch. The wear is old, predating
+    the current bloodline by at least two prior
+    regimes. No one has replaced them. The posts
+    serve no structural function now; their function
+    is presence, and presence is what they have.
+idlemessages:
+- A watcher rounds from the garden side, walks
+  the Sentry Walk at an even pace, and turns
+  back toward the gatehouse without pausing
+  or altering direction.
+- The Sentry Walk is never quite empty. Even
+  in the interval between watches, someone is
+  passing through it in one direction or another.
+- Your footsteps on this stretch carry ahead
+  of you. The stone here is very flat and very
+  hard.
+- One of the worn patrol posts catches the
+  low afternoon light along its rounded
+  upper edge.
+- From the Sentry Walk, the Palace gatehouse
+  is visible in its full width — stone, iron,
+  and the studied stillness of those who
+  stand before it.
+spawninfo:
+  - mobid: 9378
+    respawnrate: "10 real minutes"

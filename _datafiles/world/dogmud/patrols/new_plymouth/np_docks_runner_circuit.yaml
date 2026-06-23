@@ -22,6 +22,10 @@ waypoints:
   - { room: 5802, dwell_rounds: 4, arrival_event: np_runner_vendor }
   - { room: 5810, dwell_rounds: 3, arrival_event: np_runner_vendor }
   - { room: 5812, dwell_rounds: 3, arrival_event: np_runner_vendor }
+  # Branch up the Processional into the Noble Quarter to Modiste Aurel's atelier
+  # (cloth from Nessa) — delivers thread 40012 / cloth strip 40007 (both in the
+  # import manifest). Off the Long Market spine; the path is validated reachable.
+  - { room: 6010, dwell_rounds: 3, arrival_event: np_runner_vendor }
   # On east to the temple gate plaza — the Long Market's eastern terminus. A
   # visible transit stop completing the spine Docks->Crafting->Merchant->Temple;
   # no vendor there, so the np_runner_vendor event delivers nothing (harmless).

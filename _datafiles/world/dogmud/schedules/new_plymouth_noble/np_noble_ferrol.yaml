@@ -1,0 +1,74 @@
+id: np_noble_ferrol
+description: "Guide Ferrol: morning prep at his flat, tour circuit at the Steps
+  then the Plaza through the afternoon, back to the flat by evening, sleeps there
+  — the approved history delivered with genuine pleasure."
+segments:
+  - start: 7
+    end: 9
+    target_room: 6003
+    activity: ""
+    idlecommands:
+      - emote reads through the tour summary with the focused attention
+        of someone checking a trusted subordinate's work — the
+        subordinate being, in this case, himself from yesterday.
+      - emote marks a pause-reminder at a particular paragraph, nods
+        once, and sets the pen down.
+      - emote presses his lips together in a brief, precise way and
+        releases the expression — rehearsing its suppression.
+  - start: 9
+    end: 14
+    target_room: 6004
+    activity: ""
+    idlecommands:
+      - emote gestures toward the stonework with the practiced arc of
+        a man who arrived at this gesture through repetition and finds
+        it still entirely correct.
+      - say This section of the precinct was laid down in the founding
+        year by the bloodline's chief surveyor. The grade has not
+        settled so much as a finger-width in the decades since.
+      - emote pauses at the head of the steps and faces the view with
+        the composed pleasure of a man presenting a picture he does
+        not privately own.
+      - say I have given this tour two hundred and forty-seven times.
+        The founding history does not change. I find that a comfort,
+        not a constraint.
+  - start: 14
+    end: 19
+    target_room: 6001
+    activity: ""
+    idlecommands:
+      - say The Plaza is where the Quarter's public life takes its
+        proper form. The symmetry of the facades is not accidental.
+        Nothing in this precinct is accidental.
+      - emote circles the square's perimeter with the unhurried pace
+        of a man who knows exactly how many steps it takes and has
+        decided that the knowledge confers dignity.
+      - emote addresses an invisible question with the warmth of a
+        public performance — every word in its place, the structural
+        smile settled and unchanged throughout.
+      - say If you are wondering about the older section of the wall
+        there — that is part of the original fortification. The tour
+        notes do address it. Later in the circuit.
+  - start: 19
+    end: 22
+    target_room: 6003
+    activity: ""
+    idlecommands:
+      - emote sets the tour summary on the writing shelf and removes
+        his coat with the care of someone archiving something.
+      - emote sits by the window with the particular stillness of
+        someone who has been performing all day and has only just
+        stopped.
+      - say It was a good group today. They asked the expected
+        questions. I prefer that. It keeps everything orderly.
+      - emote opens the tour ledger, records the day's count in
+        small neat figures, and closes it again.
+  - start: 22
+    end: 7
+    target_room: 6003
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the flat above the Tour Steps, the summary
+        folded on the shelf, his face in rest still carrying the
+        structural smile — a permanent arrangement, muscle and bone,
+        tending toward openness even in sleep.

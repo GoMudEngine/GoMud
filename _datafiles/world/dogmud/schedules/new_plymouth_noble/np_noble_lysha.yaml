@@ -1,0 +1,66 @@
+id: np_noble_lysha
+description: "Keeper Lysha: gallery hours tending the lower hall, afternoon
+  research in the upper study reading pigments the gallery's official purpose
+  does not ask her to read, last check of the hall at closing, sleeps above
+  — close enough to the older panels to be responsible for them."
+segments:
+  - start: 8
+    end: 13
+    target_room: 6007
+    activity: ""
+    idlecommands:
+      - emote leans close to one of the older panels — close enough
+        that her breath would reach the varnish — and reads something
+        in the pigment that requires this proximity.
+      - emote steps back from a painting, tilts her head at a slight
+        angle, holds the position for a moment, and then straightens.
+      - emote takes a soft cloth from her pocket and touches it —
+        barely touches it — to the corner of a frame, then examines
+        what the cloth received.
+      - say The older panels on the lower hall were restored in
+        different hands at different times. You can read the layers
+        if you know what to look for.
+  - start: 13
+    end: 19
+    target_room: 6008
+    activity: ""
+    idlecommands:
+      - emote opens the bound provenance ledger, finds her page, and
+        reads in silence with the attention of someone cross-referencing
+        against something she is not writing down.
+      - say I know where each layer in this panel comes from. The
+        hand of the third restoration is distinctive — it was done
+        in a hurry, and in pigment that came from somewhere different
+        than what the record says.
+      - emote places two small pigment samples side by side on the
+        work cloth, closes her eyes over them, and reads the
+        difference between her palms with a slow, careful pass.
+      - emote turns a page in the provenance ledger, marks a line
+        in the margin with a small symbol of her own devising, and
+        continues reading.
+  - start: 19
+    end: 22
+    target_room: 6007
+    activity: ""
+    idlecommands:
+      - emote dims the lamp at the far end of the hall to its minimum
+        setting, then makes one quiet pass of each panel before
+        returning to center.
+      - emote pauses before the oldest panel at the hall's far end —
+        longer than her other checks — and moves on without touching
+        it.
+      - say I leave the lamps very low at night. The older pigments
+        do better in darkness. It is a reasonable thing to do for
+        them.
+      - emote stands in the center of the hall for a moment with
+        her eyes closed, as if taking in the whole room in the
+        dark, and then opens them and goes upstairs.
+  - start: 22
+    end: 8
+    target_room: 6008
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the study above the gallery, the provenance
+        ledger closed on the worktable — the older panels resting
+        in the low lamplight two floors below, close enough to
+        feel responsible for.

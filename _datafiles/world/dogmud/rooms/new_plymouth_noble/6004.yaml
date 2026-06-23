@@ -1,0 +1,74 @@
+roomid: 6004
+zone: New Plymouth Noble
+title: The Tour Steps
+description: >
+  A low platform of dressed stone extends off the
+  plaza's eastern edge, enclosed on three sides and
+  open to the square, its northern face a clean
+  balustrade offering an elevated sight-line over the
+  plaza and the Noble Way beyond. The
+  <ansi fg="itemname">viewing-rail</ansi>, waist-height
+  coping worn smooth where hands have rested on it,
+  runs the platform's full width; the view from here
+  shows the plaza's formal geometry whole and the
+  Noble Way running north with a clarity the
+  ground-level perspective does not allow. At the
+  platform's center the
+  <ansi fg="itemname">founding-plaque</ansi> stands on
+  a simple iron post — a panel of pale marble, lettered
+  in incised capitals, presenting the city's origin in
+  six tidy paragraphs. The text is confident, the
+  account's edges are smooth, and the dates are
+  precise; it is everything a founding history should
+  be, which is a particular kind of thing to be.
+biome: city
+coord:
+  x: -13
+  y: 92
+  z: 0
+exits:
+  west:
+    roomid: 6001
+nouns:
+  viewing-rail: Stone coping at waist height running
+    the full width of the platform's open northern
+    face, worn smooth along its top edge by the
+    accumulated press of hands over many guided tours.
+    The view it presents is the Watched Plaza below
+    and the Noble Way running north — the same
+    geography as the ground, but differently legible
+    from height. From here the symmetry of the
+    Quarter's design is readable in a way it is not
+    at street level; whether that legibility is
+    deliberate is a question the viewing-rail does
+    not answer.
+  founding-plaque: A panel of pale marble on an iron
+    stand at the platform's center, perhaps two feet
+    wide and three feet tall, its surface incised
+    with six paragraphs of text in even capitals.
+    The account begins with the founding families,
+    passes through the first Council's charter, and
+    arrives at the present city as a straight-line
+    story without detour. The dates are precise, the
+    prose is certain, and the marble is clean.
+    Someone maintains this plaque with the same
+    attention that maintains the civic-lamps on the
+    Processional — with more care than the work
+    strictly requires.
+idlemessages:
+- A small group listens while a guide reads portions
+  of the founding-plaque aloud, pointing to sections
+  as he goes.
+- From the viewing-rail, the whole of the Watched
+  Plaza is laid out below — including the liveried-
+  watchers, who have not stopped watching you.
+- The founding-plaque's incised lettering catches the
+  morning light at an angle; the letters briefly look
+  deeper than they are.
+- One of the printed tour summaries from the guide's
+  flat has been left behind the iron stand, its
+  corners beginning to curl in the open air.
+- Looking north from the viewing-rail, the Noble
+  Way's full promenade is visible, and at its far
+  end the pale face of a building that might be the
+  gallery.

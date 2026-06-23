@@ -1,0 +1,44 @@
+mobid: 9377
+zone: New Plymouth Noble
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote crosses the service court with the quick stride of
+    someone whose pause has a cost — eyes down, hands free,
+    route direct from one door to the next.'
+  - ''
+  - 'emote checks the service-roster in the alcove, confirms
+    the entry she needed, and moves on without pausing to
+    read anything else on the board.'
+  - ''
+  - 'emote shifts a bundle from one arm to the other with a
+    practiced single motion and continues without breaking
+    stride.'
+activitylevel: 5
+character:
+  name: A Watched Servant
+  description: |
+    The servant moves through the service court with the
+    practiced efficiency of someone whose value lies in being
+    useful before being noticed. She carries the posture of
+    downcast attention — eyes at platform level, never at face
+    level, a trained arrangement of the body that signals
+    neither threat nor idleness. Her clothes are the estate's
+    standard-issue grey, clean and pressed. Whatever she is
+    going toward, she is going toward it quickly enough that
+    she will not be available to speak.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    dexterity:
+      training: 8
+    perception:
+      training: 4

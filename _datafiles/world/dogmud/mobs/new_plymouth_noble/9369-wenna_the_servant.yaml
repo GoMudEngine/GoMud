@@ -1,0 +1,48 @@
+mobid: 9369
+zone: New Plymouth Noble
+schedule_id: np_noble_wenna
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 34
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote folds and refolds the corner of her apron, stopping when she
+    notices she is doing it.'
+  - ''
+  - 'emote glances toward the stairwell for a moment — not expecting
+    anyone, just checking — and goes back to what she was doing.'
+  - ''
+  - 'emote sits very still, listening to the sounds from the floor below,
+    until she is satisfied they mean nothing.'
+activitylevel: 6
+character:
+  name: Wenna the Servant
+  description: |
+    Wenna the Servant works a long day in the Noble Quarter and
+    sleeps in a garret that is hers in the same way that the
+    borrowed blanket on the bed is hers — provisionally, at
+    someone else's sufferance. She is young and slight and carries
+    herself with the particular smallness of someone who has
+    learned that being unnoticed is a form of safety. The
+    Chrysalis-change came to her gently, as far as such things
+    go — a faint luminescence, a cold-light quality that surfaces
+    at the skin when she is startled badly. Not painful, just
+    visible. She has no way to suppress it and has instead
+    become very good at not being startled, which in the Noble
+    Quarter requires considerable skill. Ask her the wrong kind
+    of question and the light shows anyway — a flinch you can
+    see from across a room, soft and involuntary, gone in a moment
+    but not before you have seen it.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    perception:
+      training: 8
+    willpower:
+      training: 8

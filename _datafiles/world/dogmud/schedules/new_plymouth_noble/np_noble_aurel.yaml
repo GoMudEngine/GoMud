@@ -1,0 +1,38 @@
+id: np_noble_aurel
+description: "Modiste Aurel: works the atelier from early morning deep into the
+  night, reading cloth by touch, sleeps in the narrow cot behind the worktable
+  — an arm's length from the current commission."
+segments:
+  - start: 7
+    end: 23
+    target_room: 6010
+    activity: ""
+    idlecommands:
+      - emote takes a fold of cloth from the worktable, closes her
+        eyes, and works her fingertips along the weave in a slow,
+        assessing pass before setting it aside with a small nod.
+      - emote holds a length of thread to the light without looking
+        at it — eyes already closed — and reads something in the
+        tension before cutting it to length.
+      - emote presses the flat of her thumb against a seam on the
+        work in progress, feels along it with her eyes shut, and
+        opens them to find precisely the problem she already knew
+        was there.
+      - say I have made twelve pieces for the bloodline this season.
+        Every one came back for a second fitting. I expect this one
+        will as well.
+      - emote pins a seam with three quick movements, steps back,
+        closes her eyes, runs her palm along the silhouette — and
+        unpins one of them.
+      - emote sets a length of fabric aside, lifts another, and
+        spends ten seconds reading it with her fingertips before
+        deciding. The second one goes on the table.
+  - start: 23
+    end: 7
+    target_room: 6010
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the narrow cot behind the worktable, the
+        current commission hung on the standing frame above — an
+        arm's length from the work, as if sleep were merely a
+        different kind of attending to it.
