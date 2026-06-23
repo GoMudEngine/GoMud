@@ -1,0 +1,69 @@
+roomid: 6017
+zone: New Plymouth Noble
+title: The Gatehouse Barracks
+description: >
+  The barracks wing occupies the eastern tower of the
+  gatehouse complex, its ground floor given over to
+  the ceremonial guard's off-watch hours. The room is
+  immaculate in the specific way that reflects standing
+  orders rather than personal inclination — the
+  <ansi fg="itemname">guard-kit</ansi> racked along
+  the south wall in exact columns, the
+  <ansi fg="itemname">duty-board</ansi> current and
+  correctly initialed at every line. Nothing is out
+  of place. A smell of oil and laundered wool and the
+  particular polish applied to ceremonial boots is the
+  room's dominant register — domestic and institutional
+  at once, the smell of people required to maintain
+  an appearance and trained to do it without visible
+  effort. The guards who rotate through here are not
+  performing comfort; they are performing readiness,
+  and the room accommodates that with the same
+  precision they bring to the gate outside.
+biome: city
+coord:
+  x: -13
+  y: 96
+  z: 0
+exits:
+  west:
+    roomid: 6016
+nouns:
+  guard-kit: Equipment racked along the barracks'
+    south wall in columns corresponding to each
+    guard's assigned post — ceremonial weapons
+    cleaned and oiled, dress-uniform components
+    hanging in sequence, boots paired and polished
+    beneath. The rack is a catalogue of the
+    gatehouse guard's public identity — there are
+    no personal effects here, no modifications to
+    standard issue, no wear that has not been
+    addressed. The kit exists to be put on and
+    to look right when it is on.
+  duty-board: A board of hardwood mounted near
+    the room's east wall, its surface carrying
+    the current watch roster — names, posts,
+    watch-times, relief schedules, all in a
+    clear hand with each line initialed by the
+    responsible officer at shift change. The
+    board is current to the hour. There are no
+    erased lines, no corrections, no ambiguous
+    entries. The guard who keeps it takes the
+    keeping seriously, which is its own form
+    of communication.
+idlemessages:
+- The barracks holds its readiness between
+  watches — kit in order, board current,
+  the room prepared for the next occupant
+  as for the last.
+- The smell of boot-polish in the barracks
+  is the specific professional smell of
+  people whose appearance is a requirement
+  rather than a preference.
+- The current duty roster is initialed
+  to this morning, its relief schedule
+  already accounting for the evening watch.
+- The rack of ceremonial equipment along
+  the south wall is in exact order.
+  Nothing is missing. Nothing is
+  slightly wrong.

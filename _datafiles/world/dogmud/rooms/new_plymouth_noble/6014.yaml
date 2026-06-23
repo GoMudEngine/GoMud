@@ -1,0 +1,72 @@
+roomid: 6014
+zone: New Plymouth Noble
+title: The Service Court
+description: >
+  The service court is where the Noble Quarter's
+  real needs arrive — a back-court of plain stone,
+  accessible from the atelier to the west and the
+  servants' stair to the north, where deliveries
+  are received away from the Processional's sight-
+  lines. The <ansi fg="itemname">loading-platform</ansi>
+  along the court's north wall is worn at the edge
+  where crates are set down and lifted — a different
+  kind of wear from the Processional's carriage-
+  grooves, more vertical, the mark of weight borne
+  and released. There is always something in transit
+  here — bolts of cloth for the atelier, household
+  provisions for the estate lane, the category of
+  supply that the Quarter's public face prefers not
+  to be seen receiving, though the Quarter requires
+  it no less than anywhere else. A
+  <ansi fg="itemname">service-roster</ansi> hangs
+  in the alcove by the north door — today's
+  deliveries, times, suppliers, the unpoetic
+  logistics of keeping the Noble Quarter running.
+  It is read, checked, and current.
+biome: city
+coord:
+  x: -12
+  y: 94
+  z: 0
+exits:
+  west:
+    roomid: 6010
+  north:
+    roomid: 6012
+nouns:
+  loading-platform: A raised stone platform along
+    the court's north wall, level with a cart's
+    bed — the height at which things transfer from
+    one surface to another without being set on the
+    ground. The platform's edge is worn at the front
+    face and corners, the wear-pattern the record of
+    crates dragged to the edge and lowered. The
+    surface is swept clean. This is a working surface
+    and is treated accordingly.
+  service-roster: A board in the alcove by the north
+    door, its current page the day's deliveries and
+    their status — arrival times, supplier, description
+    of goods, the initial of whoever received them.
+    The handwriting on the receiving initials changes
+    across the day as different staff take the post.
+    The current line is not yet initialed. The
+    expected delivery is slightly late but not yet
+    overdue.
+idlemessages:
+- A cart pulls into the service court from
+  behind the building — the driver and a court
+  attendant exchange a look and begin the
+  transfer without discussion.
+- The service court is quiet between deliveries.
+  The loading platform is clear, the roster
+  pending its next entry.
+- Someone checks the service-roster in the
+  alcove, finds it current, and returns
+  to other work.
+- The court's stone holds the particular
+  smell of a working delivery space — cloth
+  dust, fresh sawdust from packing crates,
+  and the cold-stone underlying everything.
+- An empty crate has been stacked at the
+  court's east wall — its contents received
+  and distributed, waiting for collection.

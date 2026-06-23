@@ -1,0 +1,86 @@
+roomid: 6007
+zone: New Plymouth Noble
+title: The Art Gallery — Hall
+description: >
+  The gallery's main hall runs east-west, its walls
+  hung with the Noble Quarter's collection — bloodline
+  portraits in formal commission above the wainscoting,
+  civic scenes in the panels between. The
+  <ansi fg="itemname">bloodline-portraits</ansi> are
+  what a visiting dignitary would be shown — recent
+  work, excellent technical quality, subjects rendered
+  in the correct poses with the correct objects and
+  the correct expressions for their stations. Between
+  them, set slightly lower and less prominently lit,
+  are the <ansi fg="itemname">older-paintings</ansi> —
+  not the collection's pride, not on the tour, and not
+  easily dismissed once noticed. Their subject matter
+  is, on the surface, the same as the newer work —
+  landscapes of this region, early settlement scenes,
+  a horizon or two — but the details in them do not
+  match the history the newer paintings confirm.
+  A stair at the hall's north wall leads up to the
+  keeper's rooms above. The old wing continues west.
+biome: city
+coord:
+  x: -15
+  y: 95
+  z: 0
+exits:
+  south:
+    roomid: 6005
+  west:
+    roomid: 6009
+  up:
+    roomid: 6008
+nouns:
+  bloodline-portraits: A series of formal commissions
+    in matching frames, occupying the upper register
+    of the hall's main wall. They are excellent work —
+    subjects rendered with authority and precision,
+    their faces made legible without being made
+    individual, their settings correct in every detail
+    of dress, emblem, and posture. They tell the
+    story of a lineage that has always been here,
+    always been in authority, and has always looked
+    exactly like this. The story is consistent; there
+    are no gaps in the series, no contradictions
+    between portraits. They are the kind of work that
+    takes considerable effort to look so inevitable.
+  older-paintings: Set between the bloodline
+    commissions at a slightly lower register, these
+    are older work — the pigment warmed by age, the
+    varnish slightly crazed at the corners, the frames
+    the prior pattern that the newer ones have
+    replaced. The subjects are landscapes, settlement
+    scenes, a coastal horizon labeled in a script not
+    the current city's formal hand. A careful eye
+    finds an eight-pointed figure in the background
+    of the third panel from the left — worked into
+    the detail of a structure in what appears to be
+    an earlier settlement, geometrically distinct from
+    anything in the official iconography. The
+    settlement's position, relative to the coastline
+    visible in the same panel, is not the position
+    of New Plymouth. The official history has a
+    founding location. This is not it.
+idlemessages:
+- The older paintings between the bloodline
+  portraits receive no guided attention.
+  A visitor who paused at them would
+  pause alone.
+- The gallery is cool and still, paintings
+  evenly lit by reflected light from the
+  clerestory above.
+- A gallery visitor moves through the
+  bloodline portraits at the pace of someone
+  who already knows them, reading subjects'
+  names from the plaques at the frame bases.
+- The stair to the keeper's rooms above
+  produces a faint sound — the particular
+  creak of a step that the keeper has
+  long stopped noticing.
+- The older paintings' varnish catches the
+  afternoon light at a low angle — at this
+  hour, the detail in the third panel
+  from the left is briefly very clear.

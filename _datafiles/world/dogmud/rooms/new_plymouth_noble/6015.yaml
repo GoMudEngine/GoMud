@@ -1,0 +1,83 @@
+roomid: 6015
+zone: New Plymouth Noble
+title: The Palace Processional
+description: >
+  The Processional opens northward from the Noble
+  Way as a different order of street — wider, emptier,
+  the paving here a paler stone than the Way, dressed
+  and fitted with a precision that carries the quality
+  of deliberate statement. Nothing grows along it;
+  no vendor cart, no planted tree, no wall broken by
+  a gate or ordinary door. The
+  <ansi fg="itemname">processional-paving</ansi>
+  runs uninterrupted from here to the Sentry Walk
+  ahead — a space that exists to conduct those who
+  have been summoned toward the Palace and to ensure
+  that anyone making that approach is visible the
+  entire way. The
+  <ansi fg="itemname">bloodline-cipher</ansi>
+  is carved above each of the four corner pilasters
+  at the intersections flanking this stretch — not
+  decorative, or not only decorative — and the
+  acoustic quality of the stone here returns sound
+  in a way that makes ordinary speech audible at a
+  distance one would not predict.
+biome: city
+coord:
+  x: -14
+  y: 94
+  z: 0
+exits:
+  south:
+    roomid: 6002
+  north:
+    roomid: 6018
+  west:
+    roomid: 6005
+  east:
+    roomid: 6010
+nouns:
+  processional-paving: The pale stone underfoot is
+    a different cut from the Noble Way — larger
+    flags, tighter joints, fitted with a tolerance
+    that does not permit settlement or weed. It has
+    the quality of a surface maintained by people
+    who understand that perfection is itself a
+    message. The carriage-grooves of the Way do not
+    continue here; coaches do not travel the
+    Processional. Those summoned to the Palace
+    arrive on foot, visible the entire length
+    of the approach.
+  bloodline-cipher: The carved device above each
+    corner pilaster — a closed form in two
+    concentric rings, the inner ring divided at
+    intervals by short radial marks, the outer
+    plain. It appears on every formal surface in
+    the Noble Quarter, though it is rendered with
+    the most precision here, where the stone is
+    newest and the carvers were best paid. The
+    symbol does not appear in any of the faith's
+    iconography at the Temple. The bloodline
+    considers this unremarkable and is not
+    pressed on it.
+idlemessages:
+- A pair of watchers in full quarter-livery
+  pace the Processional from north to south —
+  steady, unhurried, not looking at anything
+  in particular, which is also a form of
+  looking.
+- The Processional holds a quiet that feels
+  less like the absence of sound and more like
+  a standing policy about it.
+- A courier in dispatch-colors crosses from
+  the administrative office to the east at a
+  pace calculated to suggest urgency without
+  implying alarm.
+- The pale stone reflects afternoon light
+  differently than the Noble Way below —
+  cooler, less amber, the color of official
+  business conducted without warmth.
+- The corner pilasters at the intersection
+  cast clean shadows across the paving at
+  low sun. The cipher above each is
+  briefly legible.

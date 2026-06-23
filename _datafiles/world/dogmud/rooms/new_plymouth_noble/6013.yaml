@@ -1,0 +1,75 @@
+roomid: 6013
+zone: New Plymouth Noble
+title: Wenna's Garret
+description: >
+  The garret room under the eave is Wenna's — her
+  name scratched into the wooden sill of the single
+  window, at the inside edge where no visitor would
+  think to look. The room is the size that a servant's
+  room is in the Noble Quarter — enough for a
+  <ansi fg="itemname">narrow-bed</ansi>, a clothes
+  chest at its foot, a small shelf at head height
+  with a cup and a candle-stub and a folded piece
+  of cloth that serves as a
+  <ansi fg="itemname">letter-case</ansi>. The window
+  faces the service court below, which means the
+  light is adequate in the mornings and the sounds
+  of delivery and early loading arrive before the
+  Quarter's official day begins. The room is very
+  clean. The cleanliness has the quality of someone
+  who has decided that this, at least, is under her
+  control, in a situation where other things are not.
+  The chest at the bed's foot is locked with a small
+  padlock — the personal lock of someone who has
+  decided that some things are hers.
+biome: city
+coord:
+  x: -12
+  y: 96
+  z: 0
+exits:
+  south:
+    roomid: 6012
+nouns:
+  narrow-bed: An iron-framed bed just wide enough
+    to sleep in without being wide enough to be
+    comfortable about it, its mattress the household-
+    issue straw tick topped with a blanket in the
+    estate's grey wool. The bed is made with an
+    exactness that exceeds any visible requirement —
+    corners turned, pillow set, everything straight.
+    The blanket's weave shows a pattern at the border
+    that is not the standard estate pattern — a small
+    variation, almost too subtle to notice, repeated
+    at intervals. The blanket was made for someone,
+    or by someone, before it was this bed's blanket.
+  letter-case: The folded cloth on the high shelf
+    serves as a holder for what it holds — folded
+    papers whose edges are soft from being opened
+    and refolded many times, and a dried flower head
+    pressed flat between them. The cloth is a quality
+    slightly better than the rest of the room's
+    contents — a gift, or a salvage from something
+    that wore out in another way. What the letters
+    say is private. That they exist, and that she
+    keeps them above eye-line from the door, is its
+    own kind of information.
+idlemessages:
+- The window onto the service court admits
+  the morning's sounds — carts, the specific
+  voice of delivery, the rhythm of the
+  Quarter's hidden work beginning.
+- The room is exactly as it was left.
+  It will be this way when she returns.
+- The candle-stub on the high shelf has
+  been replaced recently — the wax still
+  pale, the wick barely used.
+- The garret is quiet in the specific
+  way of rooms that are only occupied
+  at the margins of the day — very early,
+  or very late, with the hours between
+  belonging to somewhere else.
+- The name scratched into the window
+  sill is there if you know to check
+  the inner edge — careful work,
+  made in a moment of decision.

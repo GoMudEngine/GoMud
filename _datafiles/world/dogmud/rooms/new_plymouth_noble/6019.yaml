@@ -1,0 +1,74 @@
+roomid: 6019
+zone: New Plymouth Noble
+title: The Noble Garden
+description: >
+  The garden occupying the western approach to the
+  Palace gatehouse is beautiful in the way that
+  presupposes a viewer and controls what that viewer
+  sees. The
+  <ansi fg="itemname">gravel-paths</ansi> are pale
+  stone chip, raked in a consistent direction at a
+  consistent depth; the
+  <ansi fg="itemname">formal-plantings</ansi> are
+  composed of species that do not produce disorder —
+  no fruit to drop, no flower past its precise moment
+  of bloom, no branching that has not been anticipated
+  and preempted. Nothing in the garden suggests that
+  anything here is not exactly as intended. A garden
+  attendant is sometimes visible at work in the
+  borders, moving with the particular efficiency of
+  someone whose task is to maintain a perfection they
+  themselves may not enter socially. The garden does
+  not invite lingering. It is too precisely itself
+  for that.
+biome: city
+coord:
+  x: -15
+  y: 96
+  z: 0
+exits:
+  east:
+    roomid: 6016
+nouns:
+  gravel-paths: Fine pale stone chip, raked in
+    straight parallel lines at a uniform depth
+    across the garden's floor surface. The raking
+    is directional — north-to-south along the main
+    path, east-to-west on the side runs — and the
+    meeting-points at the corners show the mark
+    of someone who works the boundaries with care.
+    There are no footprints in the gravel. You have
+    not yet stepped off the border stones, and it
+    is not clear you should.
+  formal-plantings: Box hedge, clipped topiary in
+    geometric forms — sphere and cone and a stepped
+    pyramid at the garden's center — and borders of
+    a grey-leafed herb whose name is not immediately
+    apparent. Nothing flowers beyond its scheduled
+    moment. The topiary at the center has been worked
+    into a form that, from certain angles, suggests
+    a sphere within a sphere — concentric, like a
+    model of something orbital or cosmological. The
+    hedge around it is recent work, still carrying
+    the pale cut-marks of new shearing.
+idlemessages:
+- The gravel paths show this morning's raking
+  undisturbed. No one has walked the garden
+  yet today, or they have walked it without
+  leaving a trace.
+- The topiary at the garden's center is the
+  one piece of work here that seems to have
+  been enjoyed as much as maintained — its
+  form deliberate, its upkeep careful beyond
+  what duty alone would require.
+- A garden attendant moves along the western
+  border with a pair of shears, addressing a
+  single overreaching branch with evident focus.
+- The garden is quiet in the particular way
+  that very controlled spaces are quiet —
+  all the things that might make noise have
+  been removed or contained.
+- Light falls on the central topiary from
+  the west at this hour, its nested spherical
+  form casting a layered shadow on the
+  raked gravel beneath it.

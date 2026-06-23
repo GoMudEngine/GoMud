@@ -27,6 +27,8 @@ coord:
 exits:
   south:
     roomid: 6001
+  north:
+    roomid: 6015
 nouns:
   gated-frontages: Iron-railed gates set in high
     stone walls at regular intervals along both sides
