@@ -68,3 +68,6 @@ idlemessages:
 - The register-shelf carries thirty years in
   a row of spines. The oldest volumes have gone
   the color of old leaves.
+spawninfo:
+  - mobid: 9357
+    respawnrate: "10 real minutes"

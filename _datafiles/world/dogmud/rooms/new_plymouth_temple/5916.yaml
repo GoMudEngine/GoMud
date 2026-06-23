@@ -85,3 +85,6 @@ idlemessages:
 - A novice crosses the yard with a stack of folded
   cloth, following a path worn into the paving by
   the same repeated crossing.
+spawninfo:
+  - mobid: 9360
+    respawnrate: "10 real minutes"

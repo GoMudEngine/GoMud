@@ -67,3 +67,6 @@ idlemessages:
 - A traveler's pack rests beneath one of the
   cots, its owner not yet returned from the
   sanctuary below.
+spawninfo:
+  - mobid: 9363
+    respawnrate: "10 real minutes"

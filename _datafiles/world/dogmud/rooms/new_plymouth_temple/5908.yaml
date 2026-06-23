@@ -62,3 +62,6 @@ idlemessages:
 - The smell up here is different from the hall —
   less hearth, more habitation, the mild residue
   of many different travelers.
+spawninfo:
+  - mobid: 9367
+    respawnrate: "10 real minutes"

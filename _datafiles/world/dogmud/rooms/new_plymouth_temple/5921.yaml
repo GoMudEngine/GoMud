@@ -73,6 +73,9 @@ idlemessages:
   that the stone has given way.
 - The almonry ledger at the counter's end holds
   years of numbers. The numbers are large.
-- From the south door, the sound of the lane
-  outside — ordinary city noise, closer here
-  than in the rest of the precinct.
+- From the south door, the low murmur of the recovery
+  ward — quiet voices, the small sounds of the mending —
+  closer here than the rest of the precinct.
+spawninfo:
+  - mobid: 9364
+    respawnrate: "10 real minutes"

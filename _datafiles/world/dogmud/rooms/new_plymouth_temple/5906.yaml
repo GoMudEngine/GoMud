@@ -76,3 +76,6 @@ idlemessages:
 - The runner down the hall's center shows where
   the traffic runs — straight through, rarely
   pausing at the sides.
+spawninfo:
+  - mobid: 9356
+    respawnrate: "10 real minutes"

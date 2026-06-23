@@ -1,0 +1,39 @@
+mobid: 9367
+zone: New Plymouth Temple
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote sets a worn travel-pack against the corridor wall with the
+    careful placement of someone who has learned not to leave things
+    where they become obstacles.'
+  - ''
+  - 'emote stands at the corridor window looking down into the
+    courtyard, taking in an unfamiliar precinct with a kept-still
+    attention.'
+  - ''
+activitylevel: 3
+character:
+  name: A Visiting Keeper
+  description: |
+    The visiting keeper arrived from a smaller shrine some distance
+    from the city, carrying a sealed document case and the travel-worn
+    quality of someone who does not regard journeys as events. They
+    are lodged in one of the upstairs cells and have taken a numbered
+    coat from the rack in the hall below. They speak when spoken to
+    and not otherwise, and what they do speak is accurate and unhurried.
+    They are here on the business of their own shrine's administration
+    and the nature of that business is not theirs to share.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    perception:
+      training: 10
+    willpower:
+      training: 6

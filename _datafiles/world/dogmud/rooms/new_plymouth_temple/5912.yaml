@@ -82,3 +82,6 @@ idlemessages:
   longer than the current occupancy.
 - The room is quiet in a way that includes
   the person currently in it, if anyone is.
+spawninfo:
+  - mobid: 9358
+    respawnrate: "10 real minutes"

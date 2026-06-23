@@ -68,3 +68,6 @@ idlemessages:
 - The passage is quiet. The door does not
   rattle, does not breathe, does not suggest
   that it is available to approach.
+spawninfo:
+  - mobid: 9362
+    respawnrate: "10 real minutes"

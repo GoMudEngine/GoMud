@@ -71,3 +71,6 @@ idlemessages:
 - The figure at the alms-bench does not move, and
   the plaza traffic moves around them with the
   ease of long habit.
+spawninfo:
+  - mobid: 9366
+    respawnrate: "10 real minutes"

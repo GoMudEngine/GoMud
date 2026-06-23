@@ -1,0 +1,39 @@
+mobid: 9365
+zone: New Plymouth Temple
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+  - temple_np
+idlecommands:
+  - 'emote takes a slow swing of the nearest censer chain and holds it
+    at the arc''s peak, watching the smoke rise before letting it
+    descend.'
+  - ''
+  - 'emote refills the censer''s fuel chamber from a small clay vessel,
+    working carefully to keep the ash undisturbed.'
+  - ''
+activitylevel: 5
+character:
+  name: An Acolyte
+  description: |
+    The acolyte is young enough that the incense smoke has taken
+    permanent residence in the skin around their eyes — a grey-lavender
+    stain of long devotional exposure that gives them a perpetually
+    half-dreaming look that is not entirely misleading. They tend the
+    censers with the focused attention of someone for whom this task
+    is both assigned duty and genuine practice, and they do not rush
+    the work or neglect any step of it. The smoke-smell follows them
+    out of the court and back into the rest of the precinct.
+  speciesid: 1
+  level: 1
+  gold: 2
+  stats:
+    willpower:
+      training: 10
+    perception:
+      training: 6

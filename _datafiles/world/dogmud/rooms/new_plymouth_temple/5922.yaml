@@ -77,3 +77,6 @@ idlemessages:
 - The walls of the censer court have absorbed
   thirty years of incense. The smell here is
   the smell of the building's interior history.
+spawninfo:
+  - mobid: 9365
+    respawnrate: "10 real minutes"

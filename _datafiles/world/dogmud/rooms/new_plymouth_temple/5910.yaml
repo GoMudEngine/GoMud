@@ -81,3 +81,6 @@ idlemessages:
 - The healer-list on the wall holds hundreds of
   entries. Each one represents a decision to
   open the door.
+spawninfo:
+  - mobid: 9361
+    respawnrate: "10 real minutes"

@@ -81,3 +81,6 @@ idlemessages:
 - The beds near the door are made with greater
   precision than those at the far end. The
   difference took time to learn.
+spawninfo:
+  - mobid: 9359
+    respawnrate: "10 real minutes"

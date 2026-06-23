@@ -1,0 +1,38 @@
+mobid: 9366
+zone: New Plymouth Temple
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote adjusts position on the alms-bench with the economy of long
+    practice, resettling without appearing to move at all.'
+  - ''
+  - 'emote watches a new arrival cross the plaza without turning their
+    head — a peripheral attention that misses nothing.'
+  - ''
+activitylevel: 3
+character:
+  name: A Beggar at the Gate
+  description: |
+    The beggar at the gate has occupied the alms-bench beside the
+    precinct arch long enough that the city and the temple have both
+    arrived at an unspoken understanding that this is their position.
+    They know every face that regularly crosses the plaza — the market-
+    morning pace versus the grief-pace, the returning pilgrim versus
+    the first-time arrival — without having been told any of it. What
+    they have asked of the world in exchange for keeping this threshold
+    is not disclosed. They are patient in the way of someone who has
+    stopped counting what patience costs.
+  speciesid: 1
+  level: 1
+  gold: 4
+  stats:
+    perception:
+      training: 14
+    charisma:
+      training: 4
