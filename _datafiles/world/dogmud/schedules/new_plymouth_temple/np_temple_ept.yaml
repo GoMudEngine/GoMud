@@ -1,0 +1,89 @@
+id: np_temple_ept
+description: "Novice Ept: morning office at the Sanctuary, study in the Dormitory,
+  class in the Study Hall, afternoon study, evening vespers, sleeps in the
+  Dormitory."
+segments:
+  - start: 6
+    end: 7
+    target_room: 5901
+    activity: ""
+    idlecommands:
+      - emote stands for the morning office with the faint institutional
+        straightness of someone who has not yet found his own posture
+        for it, but has not stopped trying.
+      - emote watches the altar wall during the office until the symbol
+        begins to resolve in the grain of the stone — then looks away,
+        then looks back.
+      - say I attend the morning office every day. I understand the words.
+        I am still working on the part that comes after understanding
+        the words.
+  - start: 7
+    end: 12
+    target_room: 5914
+    activity: ""
+    idlecommands:
+      - emote sits at the edge of his bunk with a study text open in his
+        lap, jaw set, not reading.
+      - emote traces something in the plasterwork with one finger
+        — a quick, tight movement — then stops and puts his hand back
+        in his lap.
+      - emote rubs his eyes and picks up his study text again, not
+        turning to the right page.
+      - say The prescribed texts say the vision is noise. I am trying
+        to believe they are right. I am having a harder time with it
+        than I expected to have.
+  - start: 12
+    end: 15
+    target_room: 5915
+    activity: ""
+    idlecommands:
+      - emote sits at a study table in the hall, slate in front of him,
+        making the marks he has been told to make and checking them
+        against the text.
+      - emote looks up at whoever else is in the hall, then back down
+        at his slate, as though the interruption was interesting but
+        the slate is still what he is supposed to be doing.
+      - say I am told that working through the rote portions is what
+        makes the harder portions accessible. I am in the rote portion.
+        I believe this.
+      - emote scratches a notation, stares at it, crosses it out, and
+        writes it again slightly differently.
+  - start: 15
+    end: 19
+    target_room: 5914
+    activity: ""
+    idlecommands:
+      - emote reads through an afternoon text, glancing up at the
+        dormitory wall every few minutes, long enough to see whether
+        the symbol is there, which it usually is.
+      - emote glances up at the door, then at the wall, then at the
+        floor, then back at his text — the sequence takes two seconds
+        and produces no visible result.
+      - say Two years. Two years of texts that do not mention it, and
+        a Bloom-change that shows it to me in every surface I look
+        at long enough. I have stopped mentioning this to people who
+        have not seen it.
+  - start: 19
+    end: 20
+    target_room: 5901
+    activity: ""
+    idlecommands:
+      - emote attends evening vespers standing slightly apart from the
+        other novices, not intentionally — it is the position he keeps
+        arriving in without deciding to.
+      - emote watches the altar during vespers until the symbol begins
+        to emerge in the stone, then closes his eyes for the rest of
+        the service.
+      - say I attend vespers. I say what is said. It is possible that
+        what I am looking at in the stone and what the texts are
+        pointing to are the same thing. I do not know how to ask
+        this without it sounding wrong.
+  - start: 20
+    end: 6
+    target_room: 5914
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the dormitory bunk, one arm across his eyes, the
+        study text closed on the floor beside him — the symbol is
+        probably still in the ceiling plaster but he has learned to
+        sleep before he thinks to look.

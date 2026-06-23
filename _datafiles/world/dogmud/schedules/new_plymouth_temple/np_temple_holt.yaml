@@ -1,0 +1,54 @@
+id: np_temple_holt
+description: "Archivist Holt: long day and evening at the Restricted Collection
+  door, late-night reading in the Archive Reading Room, short sleep there.
+  Does not attend the offices."
+segments:
+  - start: 2
+    end: 7
+    target_room: 5917
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the reading room across a narrow bench, one hand
+        resting on a closed ledger — not so much resting as maintaining
+        custody over the interval before morning.
+  - start: 7
+    end: 23
+    target_room: 5918
+    activity: ""
+    idlecommands:
+      - emote consults a narrow ledger, makes a small note with a precise
+        economy of motion, and closes it.
+      - emote sweeps the room with a single lateral glance — corners,
+        door, the distance between you and the door — and returns his
+        attention to the door behind him.
+      - say The collection is restricted. There is a process for access.
+        The process involves two offices. I can tell you which offices.
+        I cannot tell you in what order to visit them. I understand
+        this is frustrating. It is the process.
+      - emote adjusts his position fractionally, as though a degree of
+        precision in his stance is part of the function he performs.
+      - emote catalogues a returned volume without looking at the title
+        — the position of it relative to the shelf is sufficient.
+      - say I know what is in the collection to the last volume and
+        the last shelf. I know when something has been moved. I notice
+        when someone is standing at a particular angle that suggests
+        they are trying to read a title past me. I catalog everything.
+  - start: 23
+    end: 2
+    target_room: 5917
+    activity: ""
+    idlecommands:
+      - emote reads at the archive table in the late hours, the room
+        otherwise empty, moving through a folio with the rapid lateral
+        eye movement of someone for whom reading at this speed is
+        ordinary.
+      - emote makes a brief note in a ledger, cross-references it
+        against another ledger, and sets both aside in a precise
+        arrangement.
+      - say There is material in the restricted collection that I
+        have not yet fully catalogued. This is the hour I work on
+        that. I do not discuss what it contains except with the two
+        offices I answer to, and neither office is here at this hour,
+        which is part of why I chose it.
+      - emote closes a folio, marks its position on the shelf with
+        a slip of paper, and opens the next one.

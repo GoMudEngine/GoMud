@@ -1,0 +1,66 @@
+id: np_temple_alms
+description: "Sister Alms: morning office at the Sanctuary, long chapel hours,
+  evening ward-round in the Recovery Room, sleeps in the Recovery Room."
+segments:
+  - start: 6
+    end: 7
+    target_room: 5901
+    activity: ""
+    idlecommands:
+      - emote attends the morning office with the composed practicality
+        of someone who has cleared the early hour for this and will
+        clear the next hours for work.
+      - say I attend the morning office and then I open the chapel.
+        In between is a short walk. I have found this to be enough
+        of a transition between one thing and the other.
+      - emote warms her hands together during the office — a habit,
+        apparently, not a response to cold.
+  - start: 7
+    end: 20
+    target_room: 5910
+    activity: ""
+    idlecommands:
+      - emote measures a small amount of dried herb into a cloth, folds
+        it neatly, and adds it to a row of others on the altar table.
+      - emote checks on the candles — flame height, pooling, wick
+        condition — with the attention of someone for whom this is both
+        ritual and practical maintenance.
+      - say Need is need. I do not ask what brought you here or who
+        sent you. Come in, let me look at what is wrong, and I will
+        do what I can do. The door has not had a lock on it since
+        I took this room.
+      - emote places her hands on someone's shoulder with a deliberate
+        warmth — the heat in them is noticeable, even from across the
+        room.
+      - emote clears the altar table methodically, wiping it down,
+        replacing what belongs there and setting aside what does not,
+        without reference to any list.
+      - say I have been doing this work long enough to know what I
+        can do and what I cannot do. I do not pretend about the
+        difference. That is more useful than pretending.
+      - emote refolds a cloth bandage that was already folded, achieves
+        some marginal improvement, and adds it to the stack.
+  - start: 20
+    end: 22
+    target_room: 5911
+    activity: ""
+    idlecommands:
+      - emote moves through the recovery room checking on each person
+        in turn, her hands warm against foreheads, against the sides
+        of necks, against injured places — not hurrying.
+      - emote adjusts a blanket, replenishes a water cup, makes a brief
+        note on a small card at the foot of a bed.
+      - say Rest if you can. I will be here through the night or there
+        will be someone who will be. You are not going to be alone
+        with it.
+      - emote pauses at the window briefly, one hand on the frame,
+        then goes back to the round.
+  - start: 22
+    end: 6
+    target_room: 5911
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the recovery room on a narrow cot near the door,
+        close enough to hear if anyone needs something in the night
+        — the position of someone who has been doing this long enough
+        to sleep lightly and wake quickly and find both acceptable.

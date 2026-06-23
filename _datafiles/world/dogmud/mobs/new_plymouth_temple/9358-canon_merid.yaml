@@ -6,6 +6,7 @@ charm_immune: true
 hostile: false
 statpool: 38
 maxwander: 0
+schedule_id: np_temple_merid
 groups:
   - humanoid
   - temple_np

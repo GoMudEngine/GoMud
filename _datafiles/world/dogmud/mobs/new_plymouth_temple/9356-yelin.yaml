@@ -6,6 +6,7 @@ charm_immune: true
 hostile: false
 statpool: 36
 maxwander: 0
+schedule_id: np_temple_yelin
 groups:
   - humanoid
   - temple_np

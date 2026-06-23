@@ -1,0 +1,76 @@
+id: np_temple_merid
+description: "Canon Merid: pre-dawn private prayer in the Oratory, morning office
+  at the Sanctuary, long day of blessings in his cell, evening vespers, sleeps
+  in his cell."
+segments:
+  - start: 4
+    end: 6
+    target_room: 5913
+    activity: ""
+    idlecommands:
+      - emote sits in the Oratory in the hour before the offices begin,
+        lips barely moving, the faint glow at the edge of his outline
+        most visible in this hour before dawn.
+      - emote holds a small volume open in his lap without reading from
+        it — his attention elsewhere, inward, present in a way that is
+        not entirely spatial.
+      - say I come here before the offices because this room requires
+        nothing of me. It receives whatever I bring and returns it
+        clarified. Not answered — clarified. That is a different thing.
+  - start: 6
+    end: 7
+    target_room: 5901
+    activity: ""
+    idlecommands:
+      - emote stands before the Sanctuary altar for the morning office
+        as the first light reaches the eastern window — and for a moment
+        the light on him is indistinguishable from the light in him.
+      - emote leads the morning office with the measured cadence of
+        someone for whom the words have become transparent with
+        repetition, and what passes through them now is not the words.
+  - start: 7
+    end: 19
+    target_room: 5912
+    activity: ""
+    idlecommands:
+      - emote receives someone at the door of his cell, listens, places
+        his hands in a specific position, and speaks a blessing in a
+        register just below what the room can make out.
+      - emote sits in his chair with the ease of a man who has found a
+        working arrangement between serenity and the demands of the day
+        and is not interested in revising it.
+      - say I offer what is mine to offer — what the order of things
+        allows. I have found this is generally sufficient and
+        occasionally more than that. I do not make promises beyond
+        what the order of things permits.
+      - emote turns toward the window at a particular angle and closes
+        his eyes — not asleep, but present in a different way than when
+        they are open.
+      - emote closes a small notebook with the unhurried care of someone
+        returning a thing to its proper place.
+      - say A blessing is not a guarantee. It is an alignment of
+        intention with the order of things. I have been doing it long
+        enough to have some confidence in the distinction.
+  - start: 19
+    end: 20
+    target_room: 5901
+    activity: ""
+    idlecommands:
+      - emote stands for the evening office as the last daylight leaves
+        the Sanctuary — the faint glow rings him again, brief and
+        precise, before the room settles to lamplight.
+      - emote attends the close of vespers with the same quality of
+        presence he brings to the dawn office — unhurried, entire, not
+        performing attention but actually paying it.
+      - say The evening and the morning are the brackets. What is held
+        between them is what we make of the day. I find this
+        framing sufficient.
+  - start: 20
+    end: 4
+    target_room: 5912
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in his cell in the interval between vespers and the
+        pre-dawn Oratory — a short rest, taken without ceremony, by a
+        man for whom the hours of prayer are a form of rest the hours
+        of sleep are not quite.
