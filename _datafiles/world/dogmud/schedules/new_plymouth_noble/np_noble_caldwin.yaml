@@ -1,0 +1,35 @@
+id: np_noble_caldwin
+description: "Steward Caldwin: all-day administration at the office he has never
+  quite left, sleeps at the worktable when the hour demands it — the bloodline's
+  will made paperwork."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6005
+    activity: ""
+    idlecommands:
+      - emote moves a sealed brief from the left stack to the right with
+        one steady motion and does not consult the clock.
+      - emote draws a ruled line beneath a completed entry, initials it
+        in the margin, and turns the page.
+      - say I am aware of the hour. The work does not share my
+        awareness of it. We proceed regardless.
+      - emote opens a locked drawer, removes a sealed letter, reads the
+        seal — not the contents — returns it, closes the drawer. He
+        does this at intervals, the same expression each time.
+      - say The bloodline's affairs require precision before all else.
+        Haste belongs to people who can afford to be wrong.
+      - emote writes a single line on a fresh document, reads it twice,
+        folds the paper once, and presses the crease flat with his
+        thumbnail.
+      - emote straightens the correspondence stack by tapping it once
+        against the worktable — a small, final sound — and leaves it
+        there.
+  - start: 22
+    end: 6
+    target_room: 6005
+    activity: sleeping
+    idlecommands:
+      - emote sleeps at the office worktable with his head bent over
+        his arms — a position selected for correctness and carried out
+        with precision even in rest.

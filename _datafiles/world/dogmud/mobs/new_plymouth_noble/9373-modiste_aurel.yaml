@@ -1,5 +1,6 @@
 mobid: 9373
 zone: New Plymouth Noble
+schedule_id: np_noble_aurel
 craft_support: tailoring
 behavior_archetype: noncombat_shopkeeper
 non_combatant: true

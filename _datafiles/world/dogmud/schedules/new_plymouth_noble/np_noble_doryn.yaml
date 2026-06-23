@@ -1,0 +1,49 @@
+id: np_noble_doryn
+description: "Guard-Captain Doryn: day watch at the Palace Gatehouse, evening
+  in the barracks writing the duty log and thinking of Garrick, sleeps there
+  — parade-perfect even at rest."
+segments:
+  - start: 6
+    end: 18
+    target_room: 6016
+    activity: ""
+    idlecommands:
+      - emote stands before the palace gate with the quality of someone
+        for whom standing in exactly this way is a complete and
+        sufficient occupation.
+      - emote rests one hand on the gate-post — not leaning, just the
+        contact of a man at ease in a very specific form of attention.
+      - say The Palace is closed to visitors. I am sorry for that — I
+        mean it without any irony. I simply cannot tell you otherwise.
+      - emote glances once along the Sentry Walk toward the garden,
+        a slow scan of the approach, and returns his attention to the
+        gate with no change in expression.
+      - say Garrick and I served together before I had any kind of
+        title. He is doing something genuine down in the Common Quarter
+        — I am glad for it. I miss him, if I am honest about it.
+      - emote completes a slow turn of the approach, returns to center,
+        and resumes his post with the air of a man who found everything
+        exactly as he expected and is satisfied by that.
+  - start: 18
+    end: 22
+    target_room: 6017
+    activity: ""
+    idlecommands:
+      - emote removes his dress coat in one steady motion and hangs
+        it on its hook with its alignment checked.
+      - emote sits at the small table and writes in the duty log with
+        the neat, unhurried hand of a man filling out a record of a
+        day that went entirely as planned.
+      - say I was thinking today about the year we held the crossing
+        outside Hartcharn. Garrick talked a man into not dying through
+        sheer argument. I have never seen anything like it since.
+      - emote sets the log aside, stretches his arms once — a single,
+        precise gesture — and becomes still again.
+  - start: 22
+    end: 6
+    target_room: 6017
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the barracks room with his dress coat hung
+        on its hook, alignment checked, the duty log closed and
+        straight on the table — the same order sleeping as waking.
