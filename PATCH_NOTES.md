@@ -1,5 +1,53 @@
 # DOGMud Patch Notes
 
+## 2026-06-22 — New Plymouth: the capital takes shape [building toward the capital — not yet on prod]
+
+Four more quarters of the capital are now built and walkable, and the Long
+Market — the city's great spine — runs unbroken from the waterfront to the
+temple steps. From the Docks you can follow it east through the **Crafting
+Quarter**, into the **Merchant Quarter** at the city's heart, and on to the
+**Temple Quarter** at its eastern edge; and from the markets the Processional
+climbs north into the **Noble Quarter** and the watched streets of the elite.
+
+**The Crafting Quarter** is where the city is made: a blacksmith who handles hot
+steel barehanded, an alchemist, a glassblower who remembers people no one else
+will name, a tailor, a tanner, a bookseller beside a dead cartographer's
+shuttered shop, and a cooper's lad keeping the door of an abandoned workshop
+shut on something. The smith walks across the city at midday to eat with his
+sister at her Common-quarter cookshop — one of many small lives that cross the
+quarters.
+
+**The Merchant Quarter** is the beating heart — the Central Square, the great
+market everyone passes through, ringed by the auction house, the moneylender's
+Exchange, the arms row, and the high inn where the well-connected drink. It is
+also where the city's quiet power keeps its office: a permit-clerk whose tribute
+rounds everyone resents, and a handler named Horst you will learn to fear and
+cannot touch.
+
+**The Temple Quarter** is faith, the Archive, and the place the dead return to
+the world — and you can now make the Grand Temple your home, so that when you
+fall you wake beneath its vault. A warden, a desk-keeper, a canon, a healer who
+mends in the light, a doubting novice who sees an old symbol everywhere, and an
+archivist who guards a collection no supplicant may enter.
+
+**The Noble Quarter** is cold, expensive, and watched — and in its art gallery,
+read against the official history the tour guide recites, the city's real and
+suppressed past hangs in plain sight on old canvases, if you know how to look.
+The Palace gate at the top of the Processional stays closed; some doors in the
+capital are not for you, yet.
+
+The city's economy now moves where you can see it. A tireless runner loads
+imported goods at the docks warehouse and walks them through the streets to the
+artisans and merchants who need them — the supply of the city made visible,
+crossing the great market on its daily round.
+
+And a thread runs under all of it. A reagent that goes somewhere it shouldn't, a
+property on a canal-district street that is more than it claims, a delivery-house
+no servant will look at directly, a symbol that predates the story the city
+tells about itself — follow them, quarter to quarter, and they all point the
+same way: down, toward the old buried city, which is still being built. One
+quarter remains.
+
 ## 2026-06-20 — New Plymouth: the first districts come alive [building toward the capital — not yet on prod]
 
 The capital's gates are no longer just the end of the northern road. The first
