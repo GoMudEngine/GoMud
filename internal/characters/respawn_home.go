@@ -8,18 +8,20 @@ package characters
 // cutover so the Spoke A death-and-wake lesson is testable. The Sanctum
 // Basin newbie area is being retired by the rework.)
 var HomeLocations = map[string]int{
-	"default":    5209,
-	"thornwall":  468,
-	"stillwater": 4123,
-	"coulee":     5209,
+	"default":     5209,
+	"thornwall":   468,
+	"stillwater":  4123,
+	"coulee":      5209,
+	"newplymouth": 5901,
 }
 
 // HomeLocationNames is the display-string companion to HomeLocations.
 var HomeLocationNames = map[string]string{
-	"default":    "Pothole Coulee (The Mending Hut)",
-	"thornwall":  "Thornwall City (Temple Interior)",
-	"stillwater": "Stillwater (Temple of Stillwater)",
-	"coulee":     "Pothole Coulee (The Mending Hut)",
+	"default":     "Pothole Coulee (The Mending Hut)",
+	"thornwall":   "Thornwall City (Temple Interior)",
+	"stillwater":  "Stillwater (Temple of Stillwater)",
+	"coulee":      "Pothole Coulee (The Mending Hut)",
+	"newplymouth": "New Plymouth (The Grand Temple)",
 }
 
 // ResolveRespawnRoom returns the destination room ID for a
