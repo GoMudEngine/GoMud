@@ -1,0 +1,58 @@
+mobid: 9373
+zone: New Plymouth Noble
+craft_support: tailoring
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 38
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote takes a fold of cloth from the worktable, closes her eyes,
+    and works her fingertips along the weave in a slow, assessing pass
+    before setting it aside with a small nod.'
+  - ''
+  - 'emote holds a length of thread to the light without looking at it —
+    eyes already closed — and reads something in the tension before
+    cutting it to length.'
+  - ''
+  - 'emote presses the flat of her thumb against a seam on the work in
+    progress, feels along it with her eyes shut, and opens them to find
+    precisely the problem she already knew was there.'
+activitylevel: 9
+character:
+  name: Modiste Aurel
+  description: |
+    Modiste Aurel dresses the bloodline and a select few others
+    whose names she does not volunteer. Her atelier occupies a
+    ground-floor space on the Processional's eastern side, and
+    she occupies the atelier with the same unargued authority
+    that the bloodline occupies the Quarter — fully, without
+    apology, by virtue of being the best at what she does. The
+    Chrysalis gave her fingertips: she can assess a cloth's
+    thread count, weave quality, structural integrity, and dye
+    saturation with her eyes closed, reading the fabric the way
+    a reader reads a page. She uses this constantly. She will
+    close her eyes in the middle of a sentence and make an
+    assessment of something in her hands, and when she opens
+    them again she will continue the sentence having lost no
+    thread of it. Her fine cloth arrives from Nessa's workshop
+    in the Crafting Quarter — the only source she trusts at the
+    weights the bloodline's commissions require. She sells
+    materials and finished pieces to those who have the sense
+    to ask.
+  speciesid: 1
+  level: 1
+  gold: 45
+  stats:
+    dexterity:
+      training: 14
+    perception:
+      training: 8
+  shop:
+    - itemid: 40012
+    - itemid: 40007
+    - itemid: 20024
+    - itemid: 20020

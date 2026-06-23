@@ -1,0 +1,76 @@
+mobid: 9369
+zone: New Plymouth Noble
+defaultMood: cautious
+
+greetings:
+  - text: "Oh — sorry. I wasn't expecting anyone."
+    moods: ["cautious", "neutral"]
+  - text: "Hello. Did you need something?"
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Yes? Sorry — I didn't hear you come in."
+      - "Hello. I'm just — yes?"
+
+  - keywords: [""]
+    responses:
+      - "I don't know much. I just work here."
+      - "I — sorry, I'm not sure I can help."
+
+tree:
+  root:
+    text: "I — yes? Sorry. I was listening for the stair. I wasn't
+      expecting anyone."
+    hints: "You could ask Wenna about her work and what her days are
+      like, about why she is so careful around the steward, or about
+      what she has seen come through the gated lane at night."
+
+  nodes:
+    - id: work
+      triggers: ["work", "job", "doing", "servant", "service", "day",
+                 "duties", "tasks", "chores", "cleaning", "quarter",
+                 "employed", "live", "garret", "here", "stay"]
+      text: "I serve the household — the one that uses the upper rooms,
+        not the administration. Laundry, meals for the staff, cleaning
+        the passages and the service court. I start before the Quarter
+        wakes and finish when it has gone to bed. The garret is mine
+        to sleep in. That is the arrangement."
+      hints: "She said it without complaint but without warmth either.
+        You could ask about the steward, or about what she has seen
+        on the gated lane at odd hours."
+
+    - id: caldwin
+      triggers: ["caldwin", "steward", "boss", "superior", "afraid",
+                 "fear", "scared", "nervous", "cautious", "worried",
+                 "careful", "noticed", "attention", "eye", "watch",
+                 "him", "scary", "dangerous", "wrong"]
+      text: "He doesn't — I mean, he's proper enough. He doesn't do
+        anything. It's just how he looks at you when you are somewhere
+        you might have heard something. Like he's deciding something.
+        I don't go near the administrative office any more than my
+        work requires. That's all. Some things you learn not to invite."
+      hints: "Her fear-light flickered at the skin for just a moment —
+        cold and soft and gone before you could be certain. You could
+        ask about what she has seen on the gated lane at odd hours."
+      moodChange: cautious
+
+    - id: delivery_house
+      triggers: ["delivery", "goods", "lane", "estate", "night", "arrive",
+                 "shipment", "odd", "hours", "canal", "gated", "late",
+                 "crates", "packages", "house", "deliver", "cargo",
+                 "unmarked", "dark", "quiet", "behind", "back"]
+      text: "There's — you'd have to be up early to see it, or late.
+        The estate at the far end of the lane gets deliveries that
+        aren't on the household schedule. Unmarked crates. Before the
+        Quarter is awake, or after it has stopped paying attention.
+        The steward signs for them sometimes — I've seen him out there
+        in the cold when it's still dark, with a lamp. I don't know
+        what they are. I've learned it's better not to. The carters
+        who bring them don't come from the docks warehouse. Wrong
+        direction. They come from the canal side."
+      hints: "She is very still, watching the stair. The deliveries
+        come from the canal side — not the docks. She has told you
+        what she knows and decided not to know more than that."
+      moodChange: cautious

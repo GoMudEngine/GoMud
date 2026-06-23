@@ -1,0 +1,52 @@
+mobid: 9374
+zone: New Plymouth Noble
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 42
+maxwander: 0
+groups:
+  - humanoid
+  - bloodline_domestic
+idlecommands:
+  - 'emote stands before the palace gate with the quality of someone
+    for whom standing in exactly this way is a complete and sufficient
+    occupation.'
+  - ''
+  - 'emote rests one hand on the gate-post — not leaning, just the
+    contact of a man at ease in a very specific version of attention.'
+  - ''
+  - 'emote glances once along the Sentry Walk toward the garden, a
+    slow scan of the approach, and returns his attention to the
+    gate with no change in expression.'
+activitylevel: 7
+character:
+  name: Guard-Captain Doryn
+  description: |
+    Guard-Captain Doryn stands before the Palace gate in full
+    ceremonial dress, and the dress fits him with a precision
+    that is itself worth examining. The Chrysalis took his
+    proportions and made them exact — symmetrical in a way that
+    a sculptor would aim for and a human body would never quite
+    achieve, every proportion in its correct geometric relation to
+    every other. He is not unnaturally large or unnaturally still;
+    he is simply correct, in the way that a diagram of a man is
+    correct. Up close this is slightly disconcerting, in the same
+    way that a room measured to the millimeter is slightly
+    disconcerting. He is not cold. He is courteous to a fault,
+    genuinely kind when occasion allows, and speaks warmly of his
+    old comrade Garrick who runs the pit in the Common Quarter —
+    a man who kept Doryn alive in a situation or two before
+    Doryn was anything so formal as a guard-captain. He will not
+    let you past the gate. He will tell you this as a friend
+    would tell you something difficult — without pleasure, but
+    without hesitation.
+  speciesid: 1
+  level: 1
+  gold: 30
+  stats:
+    willpower:
+      training: 10
+    charisma:
+      training: 12

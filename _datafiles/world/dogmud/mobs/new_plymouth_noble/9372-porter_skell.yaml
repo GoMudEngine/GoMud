@@ -1,0 +1,48 @@
+mobid: 9372
+zone: New Plymouth Noble
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 40
+maxwander: 0
+groups:
+  - humanoid
+  - bloodline_domestic
+idlecommands:
+  - 'emote stands in the gatehouse recess with the specific quality of
+    stillness that comes from a body that has decided it is furniture
+    until further notice.'
+  - ''
+  - 'emote registers your continued presence with a slow, complete look —
+    not hostile, simply complete — and returns to station.'
+  - ''
+  - 'emote moves not at all. The bell-pull beside the gate swings in the
+    draft. He does not look at it.'
+activitylevel: 5
+character:
+  name: Porter Skell
+  description: |
+    Porter Skell occupies the gatehouse recess in the liveried
+    house-colors of the estate block, and the recess might have
+    been built for him specifically — he fits it so completely that
+    the architecture seems like an extension of his person rather
+    than the other way around. He is broad and patient, and he has
+    the Chrysalis-change in his stance rather than his skin — a
+    density to the way he stands that is not quite natural, as if
+    his bones have made some private arrangement with the ground
+    beneath them. You would not move him unless he chose to move.
+    He is aware of this quality and finds nothing remarkable about
+    it. He will tell you that the lane is for residents only in a
+    tone that communicates the finality of natural law rather than
+    human decision. He is not threatening about this. He is simply
+    immovable, which is a different and in some ways more
+    discouraging quality.
+  speciesid: 1
+  level: 1
+  gold: 15
+  stats:
+    strength:
+      training: 12
+    vitality:
+      training: 10

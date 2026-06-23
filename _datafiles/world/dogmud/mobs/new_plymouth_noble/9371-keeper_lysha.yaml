@@ -1,0 +1,50 @@
+mobid: 9371
+zone: New Plymouth Noble
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+  - cooperage_circle
+idlecommands:
+  - 'emote leans close to one of the older panels, close enough that
+    her breath would touch the varnish if she allowed it to, and
+    reads something in the pigment that requires this proximity.'
+  - ''
+  - 'emote steps back from a painting, tilts her head at a very slight
+    angle, and holds that position for a moment before straightening.'
+  - ''
+  - 'emote takes a soft cloth from her pocket and touches it — barely
+    touches it — to the corner of a frame, then examines what the
+    cloth received.'
+activitylevel: 7
+character:
+  name: Keeper Lysha
+  description: |
+    Keeper Lysha manages the gallery with a particular kind of
+    attention — not the attention of a custodian moving dust from
+    place to place, but the attention of someone reading a very
+    long text very slowly, unwilling to skip the difficult parts.
+    She is quiet and deliberate, with the careful quality of
+    someone who has learned that what she sees in the older
+    paintings is not what the gallery's official purpose asks
+    her to see, and has decided to keep seeing it anyway. Her
+    Chrysalis-change came on as a sharpening of color perception
+    beyond the range of ordinary human sight — she reads pigment
+    the way a trained appraiser reads metal, seeing age, origin,
+    and the specific hand of a particular period in the saturation
+    of a color or the way a varnish has crazed at the edges. In
+    the gallery, this makes her extraordinarily good at her work.
+    It also means the older paintings between the bloodline
+    portraits have told her things she has not been asked to report.
+    She is careful about this. She is careful about most things
+    that touch the circle she privately holds to.
+  speciesid: 1
+  level: 1
+  gold: 20
+  stats:
+    perception:
+      training: 14

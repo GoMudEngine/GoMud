@@ -1,0 +1,83 @@
+mobid: 9374
+zone: New Plymouth Noble
+defaultMood: neutral
+
+greetings:
+  - text: "The gate is closed. If there's something I can help you
+      with, I'm happy to."
+    moods: ["neutral", "friendly"]
+  - text: "Still closed. Still happy to talk, though."
+    moods: ["cautious"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Good day to you."
+      - "Hello. The gate is closed, but I don't mind company."
+
+  - keywords: [""]
+    responses:
+      - "I'm not going anywhere. Ask what you need."
+      - "Happy to talk. Just not to open the gate."
+
+tree:
+  root:
+    text: "The gate is closed. The Palace isn't receiving visitors.
+      If there's something I can help you with before you head back
+      down the Sentry Walk — I'm not going anywhere."
+    hints: "You could ask Guard-Captain Doryn about the Palace gate
+      and what lies beyond it, about his duty here and what it means
+      to hold this post, or about Garrick One-Hand — an old comrade
+      of his who runs the fighting pit in the Common Quarter."
+
+  nodes:
+    - id: gate
+      triggers: ["gate", "palace", "beyond", "inside", "enter", "pass",
+                 "open", "closed", "through", "invite", "invitation",
+                 "visit", "cross", "north", "go north", "door",
+                 "what is", "inside there", "see inside", "past"]
+      text: "The Palace is the bloodline's private residential half of
+        the Quarter. It is not open to visitors — not to most people,
+        and not today. The gate has been closed since the last Council
+        session. I don't have a date for when that changes. If you had
+        legitimate business inside, you would not be asking me."
+      hints: "Final, and said without any edge to it. You could ask
+        about his duty here and the ceremonial guard, or about Garrick
+        One-Hand in the Common Quarter."
+
+    - id: duty
+      triggers: ["duty", "job", "role", "guard", "captain", "ceremonial",
+                 "uniform", "station", "position", "serve", "standing",
+                 "post", "why", "purpose", "function", "honor",
+                 "six years", "how long", "always here", "proud",
+                 "patrol", "work"]
+      text: "Ceremonial, yes — the dress is formal and the function
+        largely symbolic when the Palace is closed. But the gate needs
+        someone who will hold it without exception, and the bloodline
+        needs that person to look as though the exception is
+        unthinkable. I am good at that. The uniform helps. I have held
+        this post for six years and I have never had a bad day in it."
+      hints: "He said 'never had a bad day' and meant it completely.
+        You could ask about Garrick One-Hand — his old comrade who
+        runs the fighting pit in the Common Quarter."
+      moodChange: friendly
+
+    - id: garrick
+      triggers: ["garrick", "comrade", "friend", "pit", "common",
+                 "one-hand", "one hand", "fighter", "fighting",
+                 "old friend", "knew", "know him", "army", "together",
+                 "soldier", "served", "owe", "drink", "lower city",
+                 "common quarter", "who do you know", "anyone you know"]
+      text: "Garrick. You know the pit in the Common Quarter? He runs
+        it now — keeps the order, trains the fighters, makes sure
+        nobody gets killed who didn't choose to be there. We served
+        together before either of us was anything like what we are
+        now. He kept me on my feet in a situation that did not go the
+        way it was supposed to. I still owe him a drink I have not
+        managed to deliver. The quarter gap is bigger than it used to
+        be. If you see him down there, tell him I asked after him."
+      hints: "His whole manner changed — warmer, more direct, the
+        formal distance gone for a moment. Garrick One-Hand runs the
+        Common Quarter fighting pit, and Doryn clearly still misses
+        the man he served with."
+      moodChange: friendly

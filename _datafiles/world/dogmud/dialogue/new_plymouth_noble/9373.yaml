@@ -1,0 +1,95 @@
+mobid: 9373
+zone: New Plymouth Noble
+defaultMood: neutral
+
+greetings:
+  - text: "Come in. Don't touch the work in progress on the table."
+    moods: ["neutral", "cautious"]
+  - text: "Back again. The stock is on the shelves — thread and cloth
+      on the left."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Yes. What do you need?"
+      - "Come in. Mind the pins."
+
+  - keywords: ["buy", "shop", "purchase", "browse", "sell", "trade",
+               "stock", "have", "items"]
+    responses:
+      - "Materials and finished pieces. Ask the steward's office if
+        you want a bespoke commission — that is a longer conversation."
+
+  - keywords: [""]
+    responses:
+      - "I am mid-work. Ask plainly."
+      - "Say what you need."
+
+tree:
+  root:
+    text: "I make things for specific people who have arranged to
+      have them made. For everything else, I have materials and
+      finished pieces on the shelf. What is it you wanted to
+      know — about the craft, or where the cloth comes from, or
+      something else entirely?"
+    hints: "You could ask Modiste Aurel about her craft and the
+      work she does for the bloodline's wardrobe, about where
+      her fine cloth comes from and who supplies it, or about
+      what a clothier sees in the people they dress."
+
+  nodes:
+    - id: craft
+      triggers: ["craft", "make", "sew", "tailor", "stitch", "garment",
+                 "clothing", "wardrobe", "commission", "wear", "suit",
+                 "atelier", "bloodline", "work", "doing", "make",
+                 "built", "create", "produce", "clothes", "outfit"]
+      text: "I make the bloodline's formal wear — commissions for the
+        senior household, the ceremonial uniforms, the pieces that
+        appear at Council sessions and civic occasions. I also take
+        select outside work for people who can say what they need and
+        afford what I charge. The atelier is not a shop; it is a
+        workroom. The shop part is incidental. The work is what
+        this space is for."
+      hints: "You could ask about where her fine cloth comes from,
+        or about what she sees in the people she dresses."
+      moodChange: friendly
+
+    - id: supply
+      triggers: ["supply", "nessa", "crafting", "quarter", "material",
+                 "cloth", "fabric", "source", "import", "arrive",
+                 "procure", "quality", "linen", "wool", "silk",
+                 "brocade", "thread", "bolt", "where", "come from",
+                 "who makes", "supplier", "get"]
+      text: "The fine cloth comes from Nessa's workshop in the Crafting
+        Quarter — the only source I trust at the weights the bloodline's
+        commissions require. Nessa has been weaving at a level most
+        suppliers in this city cannot match. I have been working with
+        her cloth for four years. The rest of what I stock — thread,
+        base cloth, lighter weights — that comes through the standard
+        supply circuit. The distinction matters. The bloodline can tell
+        the difference. I make sure they never have to."
+      hints: "She named Nessa's workshop in the Crafting Quarter as her
+        primary source. You could ask about what she reads in the people
+        she dresses."
+
+    - id: power
+      triggers: ["power", "station", "status", "appear", "image",
+                 "impression", "dress", "reveal", "tell", "read",
+                 "people", "showing", "seen", "present", "what you",
+                 "signal", "class", "bloodline shows", "who they are",
+                 "identity", "mask", "truth"]
+      text: "A clothier sees what people want to be seen as. The
+        bloodline wants to be seen as inevitable — the cloth I make
+        for them says this has always been here, this is the only
+        possible form of this thing. Other clients want to be seen
+        as prosperous, or serious, or dangerous, or safe. They come
+        in knowing what they want to convey and I translate that into
+        something they wear. Sometimes I close my eyes and read the
+        cloth they are already wearing before they say a word. It
+        tells me more than they usually intend to say. I don't
+        mention what I learn."
+      hints: "She said it entirely matter-of-factly — she reads people
+        through fabric the same way she reads quality through touch.
+        She does not mention what she learns. She simply knows it."
+      moodChange: friendly

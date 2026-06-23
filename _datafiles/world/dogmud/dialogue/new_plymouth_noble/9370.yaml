@@ -1,0 +1,94 @@
+mobid: 9370
+zone: New Plymouth Noble
+defaultMood: friendly
+
+greetings:
+  - text: "Welcome to the Noble Quarter. Are you here for the tour, or
+      just looking around on your own?"
+    moods: ["friendly", "neutral"]
+  - text: "Good to see you again. The Quarter is looking well today."
+    moods: ["cautious"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome. I'm Guide Ferrol — if you have questions about the
+        Quarter, I'm the person to ask."
+      - "Good day to you."
+
+  - keywords: [""]
+    responses:
+      - "Ask me anything about the Quarter — I know it very well."
+      - "If you have questions, I'm happy to answer them."
+
+tree:
+  root:
+    text: "The Noble Quarter is one of New Plymouth's finest districts —
+      a working part of the city as well as a historical one. I give
+      tours here most days. What can I tell you about — the founding
+      history perhaps, or the gallery, or how the Quarter functions
+      today?"
+    hints: "You could ask Guide Ferrol about the founding story of New
+      Plymouth, about the gallery and its collection, or about what
+      he keeps to his script when visitors push at the edges of it."
+
+  nodes:
+    - id: founding
+      triggers: ["founding", "found", "history", "origin", "charter",
+                 "story", "arrival", "families", "first", "establish",
+                 "begin", "started", "began", "settle", "settlement",
+                 "past", "old", "when", "early"]
+      text: "New Plymouth was established by seven founding families who
+        arrived by sea in what the charter records as the third year
+        of the coast-clearing expedition. They chose this site for the
+        harbor, the defensible ridge to the north, and the fresh water
+        source that still feeds the city today. The charter stone was
+        laid in the first winter, which was harsh, and the first Council
+        met in the second spring. That Council's line is the bloodline
+        that governs today — continuous, documented, unbroken. It is
+        a city with a very clear account of itself, which I find is
+        not always true of cities."
+      hints: "He told the founding story well — fluently, with the
+        confidence of someone who has delivered it many times. You
+        could ask about the gallery and its paintings, or press him
+        on what he keeps close to the script."
+      moodChange: friendly
+
+    - id: gallery
+      triggers: ["gallery", "painting", "portrait", "picture", "collection",
+                 "display", "hang", "hung", "canvas", "decorative",
+                 "provenance", "uncertain", "between", "art", "artwork",
+                 "older", "panels", "viewing", "exhibit"]
+      text: "The gallery holds the Quarter's formal collection — the
+        bloodline portraits are the centerpiece, excellent commissions,
+        very fine work. There are some older pieces between them —
+        decorative, of uncertain provenance, not really part of the
+        curated collection. They fill the wall space well. The keeper
+        looks after them, but they are not on the standard tour. I
+        usually steer visitors toward the portraits and the civic
+        panels — that is where the real story is."
+      hints: "He dismissed the older paintings between the portraits
+        as 'decorative, of uncertain provenance' with particular
+        smoothness. You could ask what he is actually keeping close
+        to the script when visitors push at the edges."
+
+    - id: script
+      triggers: ["script", "rehearse", "deviate", "doubt", "hesitate",
+                 "truth", "real", "press", "beneath", "actually",
+                 "close", "sticking", "different", "holding", "keeping",
+                 "what really", "avoiding", "uncertain provenance"]
+      text: "I — the founding history is well-documented. There is no
+        shortage of evidence for it. I have given this tour enough
+        times that I know exactly where the text holds and where it
+        — doesn't repay close examination. The older panels in the
+        gallery are not my department. If you want someone who will
+        talk to you about what the gallery actually contains, there
+        is a keeper. Her name is Lysha. She is upstairs. I would not
+        necessarily recommend asking her about the third panel from
+        the left."
+      hints: "Something shifted in him for just a moment — a pause
+        that had nothing to do with the script — before the expression
+        returned. He mentioned Keeper Lysha, upstairs in the gallery,
+        and told you not to ask about the third panel. Which is
+        the one you should ask about."
+      moodChange: neutral

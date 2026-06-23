@@ -1,0 +1,104 @@
+mobid: 9371
+zone: New Plymouth Noble
+defaultMood: neutral
+
+greetings:
+  - text: "The gallery is open. Let me know if you have questions about
+      any of the pieces."
+    moods: ["neutral", "friendly"]
+  - text: "Back again. Take your time."
+    moods: ["cautious"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Take your time with the collection."
+      - "Welcome. I am here if you have questions."
+
+  - keywords: [""]
+    responses:
+      - "I know this collection very well. Ask what you need."
+      - "If something in the gallery caught your eye, I may be able
+        to tell you more."
+
+tree:
+  root:
+    text: "The collection is my responsibility. I know it very well.
+      If you have questions about the paintings or what they show —
+      I try to answer what I am able."
+    hints: "You could ask Keeper Lysha about the older paintings in
+      the gallery and what she reads in them, about the cipher or
+      symbol she has found in the third panel, or about what the
+      founding history actually shows when set against what those
+      paintings record."
+
+  nodes:
+    - id: paintings
+      triggers: ["painting", "collection", "gallery", "canvas", "pigment",
+                 "color", "colour", "varnish", "hang", "older",
+                 "display", "see", "notice", "between", "portraits",
+                 "age", "aged", "antique", "read", "look", "examine",
+                 "observe", "third", "panel"]
+      text: "The bloodline portraits are recent and well-made — I have
+        no criticism of them as commissions. The older panels between
+        them are different work. They are earlier — fifty years at
+        minimum, possibly more, judging by the varnish crazing and
+        the specific palette used, which I can read to within a decade
+        if I know the source. Whoever painted them painted from
+        observation. The landscapes are accurate. The settlement scenes
+        are accurate. The details in the third panel from the left
+        are accurate. That last part is where things become interesting."
+      hints: "She read those paintings the way a scholar reads a text.
+        You could ask her about the cipher or symbol in the third panel,
+        or about what the founding history shows when compared to what
+        she sees in those older pigments."
+
+    - id: cipher
+      triggers: ["cipher", "symbol", "eight", "pointed", "figure",
+                 "orbital", "mark", "geometry", "pattern", "glyph",
+                 "interesting", "eight-pointed", "structure", "image",
+                 "detail", "background", "shape", "what is it"]
+      text: "The eight-pointed figure in the third panel's background —
+        worked into the detail of a structure at what appears to be
+        an early settlement site. I have seen that same symbol in three
+        places since: in documents the cooperage circle's archive holds,
+        in survey material someone called Orin had compiled before the
+        old route was cleared, and in a reference — secondhand — from
+        someone called Dross who works near the Temple. The same
+        eight-pointed figure in different contexts, pointing at the
+        same location. It is not random decoration. It marks something
+        that was there before the city's official beginning. Whether
+        the bloodline knows what it marks, I do not know. Whether
+        they know I can read it — I am careful not to make that obvious."
+      hints: "She named the cooperage circle's archive, a surveyor
+        called Orin, and someone called Dross near the Temple —
+        three separate threads arriving at the same symbol. You could
+        ask her what the founding history actually shows, and what the
+        older paintings reveal about where this city first began."
+      moodChange: cautious
+
+    - id: truth
+      triggers: ["truth", "founding", "history", "settlement", "location",
+                 "different", "real", "actual", "hidden", "suppressed",
+                 "prior", "original", "earlier", "before", "began",
+                 "where", "position", "coastline", "began", "started",
+                 "first city", "first settlement", "beginning"]
+      text: "The settlement in the third panel is not in the position
+        of New Plymouth. The coastline in the same panel is accurate —
+        I can verify the landform against the harbor surveys. The
+        structure with the eight-pointed symbol stands at a location
+        that would be inland from the current docks, roughly where
+        the canal district meets the edge of the Old Quarter. The
+        official founding history has a specific place and time for
+        this city's beginning. These paintings show an earlier one.
+        I do not know what that earlier place was, or what happened
+        to it, or why the history was written over it. I know that
+        the difference is real, and that the gallery's lighting was
+        not designed to make the third panel easy to examine. Someone
+        decided what this room was for."
+      hints: "She told you what the paintings show and what she believes
+        the suppression means. The earlier settlement stood where the
+        canal district meets the Old Quarter — and what the Old Quarter
+        itself holds may be the final answer. She is very quiet after
+        saying this."
+      moodChange: cautious

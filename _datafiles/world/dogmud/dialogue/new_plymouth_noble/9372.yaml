@@ -1,0 +1,69 @@
+mobid: 9372
+zone: New Plymouth Noble
+defaultMood: neutral
+
+greetings:
+  - text: "The lane is for residents."
+    moods: ["neutral", "cautious"]
+  - text: "The lane is for residents. Nothing has changed since the
+      last time."
+    moods: ["hostile"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "The lane is for the residents of this block."
+      - "Good day. The lane is closed to visitors."
+
+  - keywords: [""]
+    responses:
+      - "The lane is for residents."
+      - "There's nothing I can help you with here."
+
+tree:
+  root:
+    text: "The lane is for the residents of this block. The gate
+      doesn't open to visitors."
+    hints: "You could ask Porter Skell about the lane and who it
+      serves, about who the residents are, or about the particular
+      art of maintaining the perfect refusal."
+
+  nodes:
+    - id: lane
+      triggers: ["lane", "gate", "pass", "through", "enter", "beyond",
+                 "open", "closed", "block", "private", "access",
+                 "inside", "behind", "forward", "door", "passage",
+                 "locked", "go", "north", "through here", "get past"]
+      text: "It is a residential lane for the families who hold the
+        estates back there. There is no circumstance that opens it
+        to visitors. You are not a resident. The gate is closed."
+      hints: "Final. You could ask about who the residents are, or
+        about what it takes to hold a post like this one."
+
+    - id: residents
+      triggers: ["resident", "live", "family", "families", "estate",
+                 "household", "who", "name", "person", "people",
+                 "back there", "behind", "occupy", "own", "names",
+                 "lives", "houses", "which", "what family"]
+      text: "The households behind this gate conduct their arrangements
+        privately, which is the whole point of having a gate. Their
+        names are not part of my function here. My function is to
+        confirm who belongs here. You don't."
+      hints: "He answered the question about residents by explaining
+        precisely why that answer isn't available in any form you
+        are getting. You could ask about the job itself."
+
+    - id: job
+      triggers: ["job", "position", "duty", "role", "doing", "standing",
+                 "purpose", "function", "pride", "skill", "satisfying",
+                 "enjoy", "like", "feel", "staying", "point", "why",
+                 "good at", "refusal", "art", "perfect"]
+      text: "It suits me. Most work has something moving in it —
+        deliveries, transactions, some form of arrival and departure.
+        This post is about one thing: someone arrives, I establish
+        whether they belong here, and the gate either opens or it
+        doesn't. It has opened exactly as often as it should. I find
+        that satisfying."
+      hints: "He said it with the serenity of someone who has found
+        their exact right work. There is nothing more he will offer."
+      moodChange: friendly
