@@ -38,6 +38,8 @@ exits:
     roomid: 5812
   north:
     roomid: 5819
+  east:
+    roomid: 5900
 nouns:
   tally-post: A short bollard at the yard's center,
     capped with a rotating wooden head carrying a

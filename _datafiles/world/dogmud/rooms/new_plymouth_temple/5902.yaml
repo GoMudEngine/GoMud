@@ -1,0 +1,72 @@
+roomid: 5902
+zone: New Plymouth Temple
+title: The High Altar
+description: >
+  The sanctuary narrows at its eastern end and the
+  altar fills the space with a weight that has
+  nothing to do with its dimensions. The
+  <ansi fg="itemname">altar-table</ansi> is raised
+  two steps above the nave floor — a great slab of
+  pale stone, its surface covered in a layered cloth
+  of deep amber and grey that has been replaced so
+  many times the stone beneath has not been seen by
+  anyone now living. The cloth is not ornate; the
+  ornamentation is concentrated in the
+  <ansi fg="itemname">dedicatory-panel</ansi>
+  mounted above and behind it — three carved stone
+  reliefs in the flat archaic style of the founding
+  era, depicting the three moments the faith names
+  at the heart of its teaching — the leaving, the
+  passage, the return — worn near-smooth at the
+  edges but still distinct at center where the
+  chisel went deepest. The candles at the altar's
+  four corners are always fresh. Someone sees to
+  this before the first arrival of the day and
+  after the last.
+biome: city
+coord:
+  x: -5
+  y: 89
+  z: 0
+exits:
+  west:
+    roomid: 5901
+nouns:
+  altar-table: The altar is older than the building
+    around it — a single limestone slab, visibly
+    pre-cut, that the current sanctuary was built
+    to house rather than the other way around. Its
+    surface carries the layered altar-cloth and,
+    at the corners, four candle-holders of plain
+    iron that have been here long enough to develop
+    a dark permanent discoloration. The stone
+    beneath the cloth has been seen by only the
+    lamp-keepers and the priests who maintain it,
+    and they do not describe what is on it.
+  dedicatory-panel: Three carved stone reliefs
+    mounted in a triptych behind the altar — left
+    panel, central panel, right panel. The style
+    is archaic, figures simplified into posture
+    and line rather than feature. Left — a figure
+    mid-step, moving away from something not shown.
+    Center — the same figure in transit, surrounded
+    by the blank field the carver used for passage.
+    Right — the same figure arriving, one hand
+    extended toward something not shown. The story
+    is complete without captions. The edges of
+    each panel are worn to near-abstraction; the
+    center cuts remain.
+idlemessages:
+- A priest moves around the altar-table with the
+  unhurried efficiency of long routine — cloth
+  adjusted, candles checked, nothing said.
+- The dedicatory-panel catches the lamplight from
+  the nave at an angle that gives brief depth to
+  the central relief.
+- The space before the altar holds a directed
+  quiet, focused rather than ambient.
+- Fresh candles have been set at the altar's
+  corners since you last looked. The timing is
+  invisible.
+- The altar-cloth folds go dark at the deepest
+  crease — a color that has no name in daylight.

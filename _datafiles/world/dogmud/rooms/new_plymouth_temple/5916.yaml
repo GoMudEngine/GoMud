@@ -1,0 +1,90 @@
+roomid: 5916
+zone: New Plymouth Temple
+title: The Temple Courtyard
+description: >
+  The courtyard opens between the cloister's north
+  bend and the precinct buildings arranged around it
+  — the Keeper's House to the west, the archive
+  wing to the east, the pilgrims' hostel passage
+  to the north. The paving is laid in an older
+  pattern than the surrounding stonework, its rows
+  angling slightly off-perpendicular to the
+  buildings above them — a tell that this open
+  space predates the current precinct's
+  organization. A
+  <ansi fg="itemname">precinct-board</ansi> on
+  the archive wall carries chalked notices — the
+  reading-room schedule, a roster of keepers in
+  residence, a list of names some of which are
+  marked with symbols whose meaning is not
+  explained here. Beneath the board two scholars
+  conduct a disagreement in the tone of people
+  who have been at this particular point for
+  longer than today. The
+  <ansi fg="itemname">yard-well</ansi> at the
+  courtyard's center has served the precinct
+  longer than the buildings around it. Pilgrims
+  cross diagonally without stopping, their
+  purposes moving between the hostel and the
+  cloister walk below. The city noise is present
+  here in a way it is not inside — at the
+  perimeter of the temple's stillness rather than
+  within it.
+biome: city
+coord:
+  x: -6
+  y: 91
+  z: 0
+exits:
+  south:
+    roomid: 5904
+  west:
+    roomid: 5906
+  east:
+    roomid: 5917
+  north:
+    roomid: 5920
+nouns:
+  precinct-board: A board of heavy planking fixed
+    to the archive wall, its surface carrying
+    chalked notices in several hands — some
+    official, some clearly appended without
+    authorization. The current notices include the
+    reading-room schedule, a roster of keepers in
+    residence with cell assignments, and a column
+    of names with marks beside them that the
+    board's official entries do not explain. The
+    marks are not all the same. Some names appear
+    more than once in slightly different forms. The
+    board is wiped and rewritten each morning by
+    the desk-keeper, but the morning's writing
+    suggests familiarity with what was there before.
+  yard-well: The well at the courtyard's center is
+    older than the precinct it serves — the stone
+    of its coping is a different origin from the
+    building stone around it, and the well-shaft
+    goes deeper than a precinct well would need to.
+    The water is cold and slightly mineral. The
+    coping is worn at two grip-points where hands
+    have reached over for the bucket — the wear
+    asymmetric, one side more used than the other.
+    A protective roof was added after the main
+    precinct was built; its wood is maintained but
+    not replaced, and the shingle has gaps.
+idlemessages:
+- The two scholars beneath the board reach a pause
+  in their disagreement and then begin again from
+  a slightly different position.
+- A pilgrim crosses the courtyard at the diagonal,
+  carrying something wrapped in cloth, not stopping.
+- The bucket at the yard-well swings once in a
+  gust and settles without completing the arc.
+- From the archive's direction, a door closes with
+  the deliberateness of someone who means it to
+  stay closed.
+- A novice crosses the yard with a stack of folded
+  cloth, following a path worn into the paving by
+  the same repeated crossing.
+spawninfo:
+  - mobid: 9360
+    respawnrate: "10 real minutes"

@@ -1,0 +1,81 @@
+roomid: 5906
+zone: New Plymouth Temple
+title: The Keeper's House — Hall
+description: >
+  The hall is longer than its entrance suggests
+  and warm in all seasons — the <ansi fg="itemname">hearth</ansi> at the
+  far end has been maintained without interruption
+  for longer than any current keeper can say, and
+  its residual heat has worked into the walls so
+  that the room holds warmth as a property of
+  itself rather than a product of the current
+  fire. The flagstone floor is covered at its
+  center by a woven runner darkened and compressed
+  by years of foot-traffic, the original colors
+  still visible at the selvedge. A rack of
+  <ansi fg="itemname">numbered-coats</ansi> along
+  the east wall holds the house's stock of
+  keeper-coats — heavy wool, iron-numbered at the
+  collar, belonging to the building rather than
+  to the individuals who wear them. They are hung
+  here on arrival and retrieved on departure. The
+  desk is through the door to the west; the
+  warden's passage opens to the north; the
+  lodging stairs go up.
+biome: city
+coord:
+  x: -7
+  y: 91
+  z: 0
+exits:
+  east:
+    roomid: 5916
+  west:
+    roomid: 5907
+  north:
+    roomid: 5909
+  up:
+    roomid: 5908
+nouns:
+  numbered-coats: A rack of heavy wool coats along
+    the east wall — sixteen of them, numbered on
+    small iron plates at the collar, in descending
+    size from largest to smallest. They belong to
+    the house rather than to individuals; a keeper
+    hangs their coat on arrival and retrieves it
+    on departure. The coats are all different ages,
+    some showing significant wear at the elbows
+    and cuffs, one near the end of the rack
+    noticeably newer than its neighbors. Number
+    seven is absent. The numbered-plate system
+    has been in use for at least forty years —
+    the older numbers are worn near-illegible on
+    their plates.
+  hearth: A wide-mouthed stone hearth at the
+    hall's far end, its lintel blackened by decades
+    of smoke, its iron fireback embossed with
+    three vertical lines — the precinct's internal
+    mark rather than the temple's public symbol.
+    The fire is banked rather than burning outright,
+    producing a steady low heat felt before it is
+    seen. The hearthstone is polished smooth at
+    the position a person stands to warm their
+    hands; there is a slight depression there, or
+    the suggestion of one.
+idlemessages:
+- A keeper in a numbered coat moves through the
+  hall with purpose, not pausing.
+- The banked hearth carries a faint smell of pine
+  resin — old burning residue in the stone.
+- From the north passage, the sound of the
+  warden's door — a characteristic settle of
+  old wood, familiar.
+- The numbered-coat rack has no apparent logic
+  to its gaps. Something determines which coats
+  are absent and at what hour.
+- The runner down the hall's center shows where
+  the traffic runs — straight through, rarely
+  pausing at the sides.
+spawninfo:
+  - mobid: 9356
+    respawnrate: "10 real minutes"

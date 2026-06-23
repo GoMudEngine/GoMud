@@ -1,0 +1,71 @@
+roomid: 5905
+zone: New Plymouth Temple
+title: The Bell Tower Base
+description: >
+  The tower narrows from the sanctuary's south exit
+  into a rough stone chamber that smells of rope-oil
+  and cold air from the shaft above. The great
+  <ansi fg="itemname">bell-rope</ansi> descends from
+  high in the tower — thick braided hemp, worn smooth
+  at hand-height from daily pulling, its coiled lower
+  end tied off at a wall-hook so the bell's weight
+  does not work against the rope at rest. Above the
+  rope's reach the tower becomes its own atmosphere —
+  shadow, the residual ring of metal in cold stone,
+  and the sounds of the city arriving at a distance
+  and a remove that belong to height. The
+  <ansi fg="itemname">tower-stair</ansi> begins here,
+  spiraling right in a tight curve, each tread worn
+  at the center, climbing past the bell chamber to
+  the upper platform above the city's roofline. Two
+  doorways open from the tower's base — passages
+  reaching toward the temple chapel and the attached
+  seminary — the chapel passage lies open to the south,
+  while the seminary's corridor stands shut at this hour,
+  extending out of sight.
+biome: city
+coord:
+  x: -6
+  y: 88
+  z: 0
+exits:
+  north:
+    roomid: 5901
+  south:
+    roomid: 5910
+nouns:
+  bell-rope: The main bell-rope of the temple — a
+    length of thick braided hemp descending from the
+    shaft overhead, its surface worn to a smooth near-
+    polish at hand-height and rougher above and below
+    that zone. At rest the rope has a slight movement
+    in the tower's internal draft, a slow pendulum of
+    negligible arc. Its lower end is coiled and tied
+    off at a hook in the wall. To pull it is to set
+    the bell above in motion; the sound it produces
+    is felt in the chest before it is heard clearly,
+    and it can be felt throughout the temple precinct.
+  tower-stair: A spiral stair cut from the tower's
+    inner wall — narrow, with no handrail, the treads
+    worn concave at their centers from the daily
+    ascent of the bell-keepers. The stair curves out
+    of sight to the right within the first few steps.
+    What light there is comes from slits in the outer
+    wall at intervals, each one admitting a thin bar
+    of exterior light that crosses the stair and cuts
+    off. The stair continues past the bell chamber to
+    a platform at the top; on clear days that platform
+    can see the full length of the city.
+idlemessages:
+- The bell-rope moves in the tower draft — a slow
+  arc, almost imperceptible.
+- The hour bell rings above; the sound comes down
+  the shaft before you hear it from outside, felt
+  in the stone of the walls.
+- A step on the tower-stair — unhurried, descending —
+  stops before reaching the base and does not resume.
+- Cold air runs along the floor here, channeled down
+  from the tower shaft.
+- The shadow in the tower base is cut and angular —
+  different from the nave's warmth, older somehow,
+  belonging to height and stone rather than lamp.

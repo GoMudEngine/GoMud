@@ -1,0 +1,48 @@
+mobid: 9359
+zone: New Plymouth Temple
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 32
+maxwander: 0
+schedule_id: np_temple_ept
+groups:
+  - humanoid
+  - temple_np
+idlecommands:
+  - 'emote stares at the wall opposite his bunk, jaw set, then
+    shakes his head and looks back down at the text in his lap.'
+  - ''
+  - 'emote traces something in the plasterwork with one finger
+    — a quick, tight movement — then stops and puts his hand in
+    his lap.'
+  - ''
+  - 'emote rubs his eyes and picks up his study text again,
+    though he does not immediately turn to the right page.'
+  - ''
+  - 'emote glances up at the door, then at the wall, then at the
+    floor, then back at his text. The sequence takes about two
+    seconds and produces no visible result.'
+activitylevel: 10
+character:
+  name: Novice Ept
+  description: |
+    Novice Ept is young enough that the temple still shows in his
+    posture — a faint institutional straightness that has not yet
+    softened into genuine ease. He has been a novice for two years
+    and has not, in that time, resolved the problem the training
+    set for him. His Bloom-change is of the visual kind — he sees
+    an old eight-pointed orbital symbol embedded in surfaces he
+    looks at long enough. Stonework, wood grain, shadows across a
+    plastered wall — the same arrangement of arcs and points, in
+    an old style he cannot find in any of the temple's approved
+    texts. He is aware that this is not entirely comfortable and
+    has stopped mentioning it to the senior keepers, who tell him
+    it is not real. He has not stopped seeing it.
+  speciesid: 1
+  level: 1
+  gold: 4
+  stats:
+    willpower:
+      training: 8

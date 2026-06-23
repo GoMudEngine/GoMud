@@ -1,0 +1,14 @@
+faction_id: temple_np
+display_name: "The Temple of New Plymouth"
+description: |
+  The faith that keeps New Plymouth's calendar, its altars, and its Archive — lay
+  brothers and wardens, canons and healers, scholars and doubting novices. It
+  shelters pilgrims, returns the dead to the world, and keeps the city's longer
+  memory. It is also, at its institutional summit, intertwined with the bloodline
+  that rules: the canons answer to interests beyond the altar, and the Restricted
+  Collection answers to no one a supplicant can name. To most of the city it is
+  simply the place you go to be tended, to grieve, and to come back.
+default_rep: 0
+allies:
+  - bloodline_domestic
+enemies: []

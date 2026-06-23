@@ -1,0 +1,83 @@
+roomid: 5915
+zone: New Plymouth Temple
+title: The Seminary — Study Hall
+description: >
+  The study hall is the room where the founding
+  story is taught — where the canon or a senior
+  keeper lays out the faith's account of its
+  origins in this region, the revelation, the
+  first settlement, the original compact between
+  the temple and the city. The
+  <ansi fg="itemname">teaching-lectern</ansi>
+  stands at the room's east end, its wood worn
+  at the grip-points by many hands. The row of
+  benches facing it holds — in the middle section,
+  second bench — a
+  <ansi fg="itemname">question-scratch</ansi>:
+  a small mark cut into the wood with something
+  sharp and narrow, a single horizontal line that
+  is not a word and not a symbol but which has
+  been noticed and not removed. A first-year
+  novice put it there. The founding story as
+  given here is true in all its details. The
+  question it represents — the one that cannot
+  be asked at the lectern — is the question
+  this room teaches its occupants how to carry.
+  The study hall does not know it does this.
+biome: city
+coord:
+  x: -7
+  y: 86
+  z: 0
+exits:
+  east:
+    roomid: 5914
+nouns:
+  teaching-lectern: A standing lectern of heavy
+    oak at the east end of the study hall, its
+    reading surface worn smooth by decades of
+    laid-open texts. The grip-points at the
+    lectern's sides — where the teacher holds
+    it during the longer passages — are worn
+    to a different finish from the reading
+    surface, slightly more polished, the mark
+    of emphasis rather than weight. The lectern
+    holds, when occupied, the primary teaching
+    text of the faith — a bound volume kept
+    in the study hall and used here only. At
+    the moment the lectern is empty. The text
+    is in its locked case below, as it is
+    between lessons.
+  question-scratch: A single horizontal line
+    cut into the wood of the second bench's
+    middle section — perhaps an inch and a
+    half long, narrow, made with a deliberate
+    tool and not an accidental mark. It is
+    not a letter, not a symbol from the faith's
+    iconography, not a tally. It has been here
+    long enough to have darkened slightly in
+    the grain. Someone who inspects the bench
+    systematically would find it; someone who
+    sits on it would not feel it; someone who
+    noticed it would recognize it as intentional.
+    It has not been removed. Possibly whoever
+    is responsible for removing things has not
+    decided what category this falls into.
+idlemessages:
+- The benches of the study hall face the lectern
+  in two rows — the wood worn to a patina by
+  years of students sitting in the same posture.
+- The room is quiet between lessons. The
+  founding story is not present when no one
+  is telling it, and the room holds only
+  the potential of it.
+- Light through the study hall's single window
+  falls on the teaching lectern at midday —
+  the lectern empty, the text in its case.
+- The question-scratch on the second bench
+  is visible if you know to look — a mark
+  that is not loud enough to demand attention
+  and not small enough to be an accident.
+- The study hall smells of chalk and old wood
+  and the faint residue of close attention —
+  the smell of a room that has been thought in.

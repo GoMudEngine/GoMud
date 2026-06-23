@@ -1,0 +1,38 @@
+mobid: 9363
+zone: New Plymouth Temple
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote stands very still before the altar with lowered eyes, lips
+    barely moving — not asking, exactly, or not only asking.'
+  - ''
+  - 'emote shifts weight carefully off the right foot with the quiet
+    economy of someone who has been walking for several days and has
+    learned to manage the cost.'
+  - ''
+activitylevel: 4
+character:
+  name: A Pilgrim
+  description: |
+    The pilgrim arrived this morning after a journey counted in blisters
+    rather than miles, carrying their purpose with the inward attention
+    of someone who made a decision weeks ago and has been living toward
+    it since. Their clothing is road-worn at the hem and around the
+    pack-strap line. They move through the temple precinct with the
+    careful presence of someone doing something that matters without
+    performing that it does — a distinction the precinct's practiced
+    inhabitants tend to notice. They will be gone by tomorrow.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    vitality:
+      training: 8
+    perception:
+      training: 4

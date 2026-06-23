@@ -1,0 +1,73 @@
+roomid: 5913
+zone: New Plymouth Temple
+title: The Canon's Oratory
+description: >
+  The oratory is small enough that the word
+  chapel does not fit — a prayer-room, a room
+  whose purpose is the canon's own and not shared
+  downward. It is reached by a steep stair through
+  a trapdoor in the floor; the trapdoor is not
+  locked. A
+  <ansi fg="itemname">standing-cross</ansi> of
+  dark wood against the east wall is the room's
+  only furnished object; the rest is bare stone
+  floor, low ceiling, and a single
+  <ansi fg="itemname">oratory-window</ansi> of
+  thick old glass that faces east toward morning
+  light. The window's sill has been worn smooth
+  by arms resting on it. Whatever the canon
+  brings up here — the difficulty of a day's
+  determinations, the weight of access granted
+  and withheld — it does not come back down
+  in visible form. The room smells of nothing
+  but cold stone and the trace of someone else's
+  long attention.
+biome: city
+coord:
+  x: -5
+  y: 87
+  z: 1
+exits:
+  down:
+    roomid: 5912
+nouns:
+  standing-cross: A cross of dark dense wood —
+    not decorative but functional in the way
+    of objects made to be stood before rather
+    than looked at. It is slightly taller than
+    a person, fixed into a weighted base, the
+    surface worn at the transverse beam where
+    hands have rested on it over years. The
+    wood is old and has gone very dark; the
+    grain is still visible in certain light.
+    There is no figure on it and no inscription
+    on it. The cross belongs to this room
+    specifically — it was not moved here from
+    elsewhere and would not make sense elsewhere.
+  oratory-window: A single east-facing window
+    of thick old glass — the kind whose surface
+    has slight waves and irregularities from
+    its making, so that the morning light
+    entering it is not quite parallel. The
+    frame is deep stone, and the sill has been
+    worn smooth by arms at rest. In early
+    morning the window fills the oratory with
+    a diffuse grey-gold light that does not
+    quite reach the floor. In the afternoon
+    the window gives only sky. The glass has
+    a small repair in the lower corner, neatly
+    done in a different weight of material
+    from the original.
+idlemessages:
+- The oratory is silent in a way that is
+  specific to height — the city below at a
+  remove, the temple's daily sounds muffled
+  by the floor.
+- Morning light through the oratory window
+  crosses the standing-cross at an angle that
+  changes slowly as the sun moves.
+- The bare stone floor of the oratory holds
+  the cold of the night until midday.
+- Whatever is worked through in this room
+  leaves no visible trace — the room resets
+  to bare stone and silence after each use.

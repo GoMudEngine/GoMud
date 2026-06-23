@@ -1,0 +1,57 @@
+id: np_temple_thane
+description: "Father Thane: morning office at the Sanctuary, long day at the
+  intake desk registering keepers, evening vespers, sleeps at his post."
+segments:
+  - start: 5
+    end: 6
+    target_room: 5901
+    activity: ""
+    idlecommands:
+      - emote joins the morning office with the composed manner of a man
+        for whom the early hour is simply the correct hour to begin.
+      - say The morning office is the first task of the day. I have found
+        that beginning with a task of this kind sets the register of
+        everything that follows.
+      - emote stands through the office without apparent effort — the
+        posture of someone who finds the hour comfortable.
+  - start: 6
+    end: 19
+    target_room: 5907
+    activity: ""
+    idlecommands:
+      - emote opens the intake register, uncaps his pen, and settles into
+        the particular readiness of someone prepared to receive whatever
+        the day sends to his desk.
+      - emote listens to a keeper's account with complete attention, makes
+        a note in the register, and speaks a few words — the person who
+        arrived tense leaves less tense, without being sure why.
+      - say Everything goes in the register. A name, a date of arrival,
+        the nature of the errand. Recorded things become real in ways
+        that unrecorded things do not.
+      - emote writes without hurry, the lines even and legible, adding
+        one entry at a time to a register that has accumulated many
+        years of careful notation.
+      - emote caps his pen, sets it parallel to the desk's edge, and
+        waits for whoever is next without appearing to wait.
+      - say A soothing word costs nothing and is frequently worth more
+        than what the person came to ask for. I have found this to be
+        reliable over a long time.
+  - start: 19
+    end: 20
+    target_room: 5901
+    activity: ""
+    idlecommands:
+      - emote attends the evening office with the same unhurried presence
+        he brings to the desk — fully there, asking nothing of the hour
+        beyond what it offers.
+      - say Evening vespers is the close of the register for the day.
+        Tomorrow, a fresh page. That is a reasonable way to live.
+  - start: 20
+    end: 5
+    target_room: 5907
+    activity: sleeping
+    idlecommands:
+      - emote sleeps at the desk in the small hours, the register closed
+        beside him, his pen capped and parallel to the edge — the
+        position of a man who will be ready to open both again at the
+        proper hour, which is early.

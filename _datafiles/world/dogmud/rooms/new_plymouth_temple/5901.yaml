@@ -1,0 +1,91 @@
+roomid: 5901
+zone: New Plymouth Temple
+title: The Grand Temple — Sanctuary
+description: >
+  The nave opens around you with a quality you do
+  not immediately have a word for — wide enough that
+  the columns at its edges are half-resolved in
+  lamplight, high enough that the vault above
+  dissolves into warm shadow, and the sound of the
+  city stops at the west doors without apparent
+  remainder. Every row of
+  <ansi fg="itemname">nave-lamps</ansi>, hung on
+  iron chains at twice head-height, burns with a
+  steadiness untroubled by the slow drafts moving
+  through the space; the light they produce seems to
+  originate in the stone itself rather than in
+  anything suspended from it. The floor carries its
+  history in worn smooth paths — the lines of
+  people who have arrived here and paused, uncertain
+  where to put their feet next, while the rest of
+  the room continued quietly around them. At the
+  center of the nave the great
+  <ansi fg="itemname">threshold-stone</ansi> sits
+  flush with the paving — a wide circle of pale
+  granite, polished to a faint luminance by the
+  weight of accumulated arrivals, the place where
+  in this faith's understanding the boundary between
+  gone and present is at its thinnest. The space
+  does not ask anything of you; it receives. The
+  altar passage opens to the east, the cloister
+  walk to the north, and the bell tower to the
+  south.
+biome: city
+coord:
+  x: -6
+  y: 89
+  z: 0
+mutators:
+- mutatorid: sanctuary
+exits:
+  west:
+    roomid: 5903
+  east:
+    roomid: 5902
+  north:
+    roomid: 5904
+  south:
+    roomid: 5905
+nouns:
+  nave-lamps: Rows of iron-chained lamps filling
+    the nave above head-height, each one a vessel
+    of rendered tallow with a trimmed wick, replaced
+    on a rotation by the temple's lamp-keepers
+    without interrupting the burning. They are not
+    identical — collected over centuries from
+    donations and replacements — but at this height
+    the variation disappears into the collective
+    warmth they produce. The chains run in rows from
+    east to west, and in certain light near the
+    altar end they appear to converge. They have
+    been burning in this space, in one form or
+    another, without interruption for longer than
+    the current building has stood.
+  threshold-stone: A circle of pale granite set
+    flush into the nave floor at its center — perhaps
+    ten feet across, its surface worn to a smoothness
+    that catches light differently from the
+    surrounding paving. There is no inscription.
+    The faith holds that this is where the world
+    is closest to whatever lies beyond it, and that
+    those who have passed through that boundary in
+    one direction may return through it in the
+    other. The wear pattern on the stone is concentric
+    — smoothest at the center, rougher toward the
+    rim — as if the returning always begin at the
+    same point, however they arrive.
+idlemessages:
+- The nave-lamps burn without visible flicker
+  through a draft that should move them.
+- Someone kneels at the threshold-stone for a long
+  moment, then rises and continues toward the altar
+  without looking back.
+- A soft exchange of voices carries from the north
+  cloister walk, too low to resolve into words.
+- The west doors open briefly and the sounds of
+  the plaza enter — then the doors close and the
+  nave takes back its quiet.
+- The smell of the sanctuary is beeswax and old
+  stone and cool cloth — the accumulated smell of
+  a place that has burned lamps in the same air
+  for a very long time.

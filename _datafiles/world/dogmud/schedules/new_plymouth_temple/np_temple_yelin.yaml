@@ -1,0 +1,58 @@
+id: np_temple_yelin
+description: "Warden Yelin: morning office at the Sanctuary, long day receiving
+  keepers in the Hall, evening vespers, sleeps in the Warden's Cell."
+segments:
+  - start: 5
+    end: 6
+    target_room: 5901
+    activity: ""
+    idlecommands:
+      - emote stands at the edge of the morning office, hands folded,
+        counting heads without appearing to count.
+      - emote watches the assembled keepers with the steady attention of
+        a man who has noted this same gathering for nineteen years and
+        still tracks who is absent.
+      - say The morning office begins at the same hour every day. In
+        nineteen years that has not changed, and I do not expect it to.
+  - start: 6
+    end: 19
+    target_room: 5906
+    activity: ""
+    idlecommands:
+      - emote receives a keeper at the hall entrance, listens to their
+        errand, and directs them with a single economical gesture.
+      - emote counts the numbered coats on the row of hooks by the door
+        — a habit acquired long enough ago that the count is involuntary.
+      - say Everything in its place. The coats in order, the register
+        current, the door open at the correct hour. Nineteen years of
+        that and the house runs itself — almost.
+      - emote moves a chair two inches closer to the wall, considers it,
+        and leaves it there.
+      - emote stands in the center of the hall not appearing to be doing
+        anything, which is precisely what the hall requires of him at
+        this moment.
+      - say I have received keepers here in the worst moments of their
+        lives and the best. The hall asks nothing of them except to
+        come in. I try to match the hall in that.
+  - start: 19
+    end: 20
+    target_room: 5901
+    activity: ""
+    idlecommands:
+      - emote takes his place for evening vespers and settles into a
+        stillness that carries the weight of an unbroken practice across
+        nineteen years.
+      - emote observes the keepers filing in for the evening office with
+        the mild, steady attention of a man who knows every face and
+        notices the ones that are missing.
+      - say The evening office closes the day. After this the house is
+        quiet. That is the proper order of things.
+  - start: 20
+    end: 5
+    target_room: 5909
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the warden's cell, coat on its hook by the door,
+        the numbered coats in the hall outside one part of a house that
+        has been in his keeping for nineteen years and has not, in that
+        time, required of him more than he could provide.

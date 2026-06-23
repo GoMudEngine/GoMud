@@ -93,3 +93,21 @@ tree:
         get more from me than scholars with institutional backing."
       hints: "You could ask about the books and maps Orin carries or
         about Edvar the cartographer."
+
+    - id: symbol
+      triggers: ["symbol", "orbital", "ept", "novice", "eight",
+                 "mark", "sign"]
+      text: "So the temple sent you — or one of its novices did. The
+        boy who sees the eight-pointed mark everywhere. He is not
+        imagining it. It is on Edvar's oldest surveys, scratched into
+        the margins of charts that predate the founding the temple
+        teaches — the same mark, in the same place, on works drawn a
+        century apart by people who never met. I do not know what it
+        meant. I know it was here before the city decided what its own
+        story was. Tell the novice he is not mad. Tell him also to be
+        careful who he says it to."
+      hints: "Orin has confirmed the novice's symbol is real and older
+        than the official founding — and warned of the danger in saying
+        so. You could ask about Edvar, or the old questions of the
+        quarter."
+      moodChange: cautious

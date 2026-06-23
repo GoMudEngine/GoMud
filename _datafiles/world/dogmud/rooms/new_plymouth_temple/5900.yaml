@@ -1,0 +1,67 @@
+roomid: 5900
+zone: New Plymouth Temple
+title: The Eastern Processional
+description: >
+  The road changes underfoot as you leave the
+  merchant yards behind — the utilitarian paving
+  of the quarter gives way to dressed stone that
+  has been maintained with different intention,
+  swept clean to a pale uniform color rather than
+  merely kept passable. The market noise falls off
+  by degrees here; ahead, the grade climbs gently
+  toward the pale stonework of the temple precinct.
+  At the roadside a
+  <ansi fg="itemname">waystone</ansi> stands where
+  the pilgrim way begins in earnest — an old marker
+  whose base has gone dark with the accumulation of
+  small offerings set against it over many years,
+  most of them dry and colorless now. The
+  <ansi fg="itemname">road-paving</ansi> itself
+  holds a record — worn in the center on the lower
+  stretch, worn toward the edges on the upper, where
+  pilgrims have tended to walk two abreast rather
+  than single file. Whatever the road was built for,
+  it has been a pilgrim way long enough to show it.
+biome: city
+coord:
+  x: -8
+  y: 89
+  z: 0
+exits:
+  west:
+    roomid: 5823
+  east:
+    roomid: 5903
+nouns:
+  waystone: An old stone marker at the roadside, taller
+    than it is wide, its carved inscription worn to the
+    ghost of letters rather than readable text. The base
+    is dark with years of contact — dried flowers, a
+    wrapped coin, a strip of faded cloth knotted to a
+    crack in the stone. None of these are recent enough
+    to have color. Whatever the practice of leaving them
+    means, it predates anyone who currently performs it.
+  road-paving: The dressed stone of the Processional
+    differs from the merchant quarter's flags by
+    intent rather than material — the same general
+    cut, but laid with tighter joints and replaced in
+    whole sections rather than patched. The wear
+    pattern shows where the daily foot-traffic runs
+    (center, compressed, smooth) and where the pilgrim
+    column moves (a foot from each edge, worn in two
+    parallel tracks). Both uses are present every day.
+    The road accommodates them without differentiation.
+idlemessages:
+- A pilgrim passes you on the grade, moving at the
+  measured pace of someone who has come a considerable
+  distance and is now very nearly there.
+- The market noise behind you is still audible — it
+  takes longer to leave than you would expect.
+- Someone has set a fresh flower against the waystone's
+  base. The placement is deliberate — it is not there
+  to be noticed, only to be left.
+- The road grade carries sound strangely uphill — a
+  bell from the temple precinct arrives before the
+  source comes into view.
+- A goods-runner heading back west from the precinct
+  passes at a trot, empty-handed and efficient.

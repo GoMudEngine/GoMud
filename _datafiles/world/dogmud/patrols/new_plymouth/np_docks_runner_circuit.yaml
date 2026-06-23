@@ -22,3 +22,7 @@ waypoints:
   - { room: 5802, dwell_rounds: 4, arrival_event: np_runner_vendor }
   - { room: 5810, dwell_rounds: 3, arrival_event: np_runner_vendor }
   - { room: 5812, dwell_rounds: 3, arrival_event: np_runner_vendor }
+  # On east to the temple gate plaza — the Long Market's eastern terminus. A
+  # visible transit stop completing the spine Docks->Crafting->Merchant->Temple;
+  # no vendor there, so the np_runner_vendor event delivers nothing (harmless).
+  - { room: 5903, dwell_rounds: 4, arrival_event: np_runner_vendor }

@@ -1,0 +1,77 @@
+mobid: 9356
+zone: New Plymouth Temple
+defaultMood: neutral
+
+greetings:
+  - text: "If you are looking for the intake desk, that is through the
+      door behind me — Father Thane handles registration."
+    moods: ["neutral"]
+  - text: "Back again. What do you need?"
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Can I point you somewhere?"
+      - "The intake desk is through the back door if you are registering."
+
+  - keywords: [""]
+    responses:
+      - "I am not the one to ask for most things, but I can usually
+          point you to who is."
+
+tree:
+  root:
+    text: "I run the hall — receive who comes, keep the house in order,
+      make sure the keepers have what they need for their work.
+      Nineteen years of that, and I find it entirely satisfactory.
+      Was there something you needed, or are you trying to understand
+      the place?"
+    hints: "You could ask Yelin about the Keeper's House and what it
+      is, about his long years of service here, or about the faith
+      as he understands it from where he stands."
+
+  nodes:
+    - id: house
+      triggers: ["house", "keeper", "hall", "warden", "place", "receive",
+                 "visitor", "temple", "what", "building", "job", "purpose",
+                 "run", "manage", "intake", "this"]
+      text: "The Keeper's House is the temple's residential side — where
+        keepers who have come to serve take their meals, sleep, and
+        receive their daily assignments. The hall is the first room
+        they see when they arrive. I make sure it is orderly. I know
+        every keeper who has passed through this door for nineteen
+        years. A number of them I knew before they were keepers."
+      hints: "You could ask Yelin about his years of service, or about
+        the faith as he understands it."
+      moodChange: friendly
+
+    - id: service
+      triggers: ["service", "year", "years", "nineteen", "long", "why",
+                 "stay", "remain", "how long", "since", "time", "tenure",
+                 "still", "kept", "continue", "came"]
+      text: "It stopped being a choice a long time ago, if it ever was
+        one. I came here at twenty-four to sweep the hall, and the
+        hall needed sweeping again the next day, and eventually
+        nineteen years had gone by. I do not miss the life I might
+        have had elsewhere, if I had one. The house is quiet, the work
+        is useful, and the keepers who pass through are generally worth
+        looking after. That is more than most people can say about
+        their circumstances."
+      hints: "You could ask about the Keeper's House itself, or about
+        how Yelin understands the faith."
+
+    - id: faith
+      triggers: ["faith", "believe", "belief", "pray", "prayer", "god",
+                 "worship", "calling", "view", "opinion", "personal",
+                 "lay", "yourself", "devout", "follow", "your faith",
+                 "understand", "think", "feel"]
+      text: "I am not a keeper. I have never taken orders or a
+        congregation. I make the beds and sweep the floor and carry
+        things that need carrying. But I have watched a great number of
+        keepers come through this hall — some frightened, some serene,
+        some who were one and then became the other — and I think
+        whatever it is they find here is real. I cannot say more than
+        that. I have not needed to."
+      hints: "You could ask about the house and how it runs, or about
+        what has kept Yelin here this long."

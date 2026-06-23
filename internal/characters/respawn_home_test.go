@@ -40,3 +40,11 @@ func TestResolveRespawnRoom_UnknownFallsBackToDefault(t *testing.T) {
 		t.Errorf("ResolveRespawnRoom() = %d, want default %d", got, HomeLocations["default"])
 	}
 }
+
+func TestResolveRespawnRoom_NewPlymouthHome(t *testing.T) {
+	c := New()
+	c.SetSetting("home", "newplymouth")
+	if got := c.ResolveRespawnRoom(); got != 5901 {
+		t.Errorf("newplymouth home respawn = %d, want 5901 (the Grand Temple sanctuary)", got)
+	}
+}

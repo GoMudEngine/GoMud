@@ -1,0 +1,95 @@
+mobid: 9362
+zone: New Plymouth Temple
+defaultMood: cautious
+
+greetings:
+  - text: "The Restricted Collection is not open. If you have a
+      reader's credential from the Canon's office, present it
+      and I will verify it. If you do not, this door is not
+      for you."
+    moods: ["cautious"]
+  - text: "You again. The answer is still no. Is there something
+      else I can help you with?"
+    moods: ["neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "State your purpose."
+      - "I do not exchange pleasantries at this post. What do
+          you need?"
+
+  - keywords: [""]
+    responses:
+      - "If you have a specific question, ask it. I will answer
+          what I find worth answering."
+
+tree:
+  root:
+    text: "The Restricted Collection is not open. If you have a
+      reader's credential from the Canon's office, I can verify
+      it here. If you do not, then my door is not for you. Is
+      there something specific you would like to ask, or were
+      you simply curious about the door?"
+    hints: "You could ask Archivist Holt about the Archive and
+      what he manages, about what it would take to gain entry,
+      or about the offices whose authority he answers to."
+
+  nodes:
+    - id: archive
+      triggers: ["archive", "collection", "library", "records",
+                 "document", "documents", "hold", "contains",
+                 "what", "room", "door", "restricted", "sealed",
+                 "closed", "book", "books", "history", "catalogue",
+                 "catalog", "knowledge", "manage", "behind", "there",
+                 "inside", "what's in", "what is"]
+      text: "The Archive holds the temple's historical and
+        administrative records — ceremonial documents, community
+        histories, civic correspondence going back to the founding
+        period. The public collection is available to credentialed
+        readers during morning hours. The Restricted Collection is a
+        separate section, catalogued separately, accessible under
+        separate authorization. I manage access to both. That is
+        what I do. It is most of what I do."
+      hints: "You could ask what it takes to gain access to the
+        Archive, or about the offices Holt answers to."
+
+    - id: entry
+      triggers: ["enter", "entry", "access", "credential", "allow",
+                 "permission", "authorized", "how", "get in", "way in",
+                 "become", "qualify", "reader", "member", "apply",
+                 "application", "process", "request", "possible",
+                 "exception", "special", "visit"]
+      text: "A reader's credential requires a formal application to the
+        Canon's office, a stated research purpose, and the Canon's
+        written authorization. Public collection only, morning hours.
+        The Restricted Collection requires a separate authorization
+        process. That process requires the Canon's approval and the
+        approval of the secondary oversight office. I will not tell you
+        what office that is — that information is not public. In
+        practice, no one without prior standing authorization has been
+        granted new access to the Restricted Collection during my
+        tenure here. I do not know how long that was true before me."
+      hints: "You could ask about the Archive itself, or about the
+        two offices Holt answers to."
+
+    - id: authority
+      triggers: ["authority", "serve", "who", "answer", "report",
+                 "order", "oversight", "office", "canon", "lord",
+                 "noble", "bloodline", "rule", "ruling", "both",
+                 "two", "oversee", "govern", "control", "responsible",
+                 "work for", "employ", "second", "other", "another",
+                 "which", "whose", "two offices", "dual", "twin"]
+      text: "I serve the Canon's office and I serve a secondary
+        oversight authority. Those are the two offices. The secondary
+        authority is not part of the temple — it comes from elsewhere
+        in the city's administrative structure. I will not name it,
+        because that information is not public and it is not mine to
+        share. What I can tell you is that both authorizations are
+        required for the Restricted Collection and that neither of
+        those offices has asked me to explain the arrangement to
+        visitors. I am telling you this because you asked — not
+        because it is useful to you. It is not useful to you."
+      hints: "You could ask about the Archive itself, or about what
+        it takes to gain access to the restricted section."
+      moodChange: neutral

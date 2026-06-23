@@ -1,0 +1,109 @@
+mobid: 9360
+zone: New Plymouth Temple
+defaultMood: neutral
+
+greetings:
+  - text: "You are not a novice and you are not one of the senior
+      keepers. Good. Look at this wall. The oxidation pattern on
+      that mortar is not from the founding period. I have been
+      saying this for two weeks."
+    moods: ["neutral"]
+  - text: "You again. Have you had a look at the inscription yet?
+      Has it changed your mind, or do you still need convincing?"
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Do you know anything about stone oxidation rates?
+          You look like someone who might."
+      - "Good. I need someone who will actually listen to an argument."
+
+  - keywords: [""]
+    responses:
+      - "Ask. I have a great deal to say and very few people asking."
+
+tree:
+  root:
+    text: "The eastern inscription is not from the founding period.
+      I have the oxidation data, the weathering depth, and a
+      comparison to confirmed pre-founding stonework in the
+      civic quarter. The founding plaque is wrong — by at least
+      a century. Do you want the argument, or were you here for
+      something else?"
+    hints: "Scholar Dross is very worked up about something. You
+      could ask him about the inscriptions and his evidence, about
+      a cipher he found in the old temple artwork, or about why
+      no one in authority seems willing to listen to him."
+
+  nodes:
+    - id: inscriptions
+      triggers: ["inscription", "inscribe", "age", "date", "stone",
+                 "wall", "oxidation", "mortar", "evidence", "proof",
+                 "founding", "founded", "claim", "built", "year",
+                 "depth", "cut", "wrong", "fact", "argument", "argue",
+                 "tell", "explain", "century", "older", "weathering",
+                 "compare", "show", "what", "look"]
+      text: "The oxidation rate on limestone mortar in this climate is
+        well documented — I have three reference surveys. The mortar
+        on the eastern inscription oxidizes at a rate consistent with
+        work done roughly a century and a half before the founding
+        date on the plaque. The cut depth on the inscription letters
+        is consistent with that same period. I compared it to the
+        civic quarter's pre-founding foundation stones and the
+        profile matches. The inscription was made before the founding.
+        The plaque saying when it was made is wrong. That is the
+        argument. It is not a subtle argument."
+      hints: "You could ask about the cipher Scholar Dross found in
+        the old artwork, or about why no one in authority is engaging
+        with his findings."
+      moodChange: friendly
+
+    - id: cipher
+      triggers: ["cipher", "gallery", "noble", "painting", "art",
+                 "artwork", "decode", "code", "hidden", "pattern",
+                 "figure", "carving", "relief", "sculpture", "mark",
+                 "image", "hand position", "hands", "arrangement",
+                 "western", "nave", "processional", "pre-founding",
+                 "collection", "artifacts", "noble quarter"]
+      text: "In the western nave there are processional relief figures —
+        old, very old, made before the plaque they are supposed to
+        illustrate. The hand positions of those figures encode a
+        numeric sequence. I counted them four separate times. The
+        sequence is not decorative. It is a date — the real founding
+        date, or something close to it — embedded in the art by
+        whoever commissioned it, presumably because they knew the
+        official record was going to be wrong. The key to reading the
+        full cipher is in the Noble Quarter gallery. There is a
+        collection of pre-founding artifacts there — relief fragments
+        from the same workshop, same hand, same arrangement code. I
+        have submitted a formal request to examine them. I have not
+        heard back."
+      hints: "You could ask about why no one in authority will engage
+        with Scholar Dross's findings, or return to the inscription
+        evidence."
+      moodChange: neutral
+
+    - id: ignored
+      triggers: ["listen", "why", "ignore", "silence", "dismiss",
+                 "official", "blood", "power", "ruling", "lord",
+                 "interested", "no one", "nobody", "refuse", "reject",
+                 "reason", "whose", "benefit", "who benefits",
+                 "not listening", "won't", "formal", "submit",
+                 "rejected", "why not", "care", "respond"]
+      text: "The founding date is not only a historical fact — it is
+        a legal one. The ruling family's charter, their property
+        rights, their authority in the city courts all derive from
+        the founding and its date. If the real founding was a century
+        earlier, the original charter was with a different family
+        entirely. The current family's claim to the city rests on
+        a date that I am now certain is wrong. That is why the Canon
+        changes the subject when I raise it. That is why my formal
+        inquiry to the Noble Quarter gallery has not been answered.
+        That is why the junior archivist told me to submit a query
+        in writing rather than simply letting me through the door.
+        They know. I think they all know. Confirming it in writing
+        would require taking a position."
+      hints: "You could ask about the inscription evidence itself, or
+        about the cipher in the old relief artwork."
+      moodChange: cautious

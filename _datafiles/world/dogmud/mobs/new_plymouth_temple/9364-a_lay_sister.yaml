@@ -1,0 +1,38 @@
+mobid: 9364
+zone: New Plymouth Temple
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+  - temple_np
+idlecommands:
+  - 'emote counts the remaining loaves behind the counter with a quick
+    practiced eye and rearranges the row with two efficient movements.'
+  - ''
+  - 'emote hands a wrapped packet across the counter to someone who
+    does not stay, saying something brief and direct as they go.'
+  - ''
+activitylevel: 7
+character:
+  name: A Lay Sister
+  description: |
+    The lay sister works the almonry in a plain grey robe whose hem
+    she has mended twice with thread she keeps in her right-hand
+    pocket. She moves behind the distribution counter with the
+    efficiency of someone who has learned that briskness and warmth
+    are not in opposition — she does not slow to be kind, she is kind
+    while moving. Every person who comes to the counter gets both the
+    packet and a word spoken directly to them. She does not keep note
+    of whether they return tomorrow.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    charisma:
+      training: 10
+    perception:
+      training: 6

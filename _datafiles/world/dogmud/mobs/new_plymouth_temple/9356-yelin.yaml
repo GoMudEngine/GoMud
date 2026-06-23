@@ -1,0 +1,47 @@
+mobid: 9356
+zone: New Plymouth Temple
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+schedule_id: np_temple_yelin
+groups:
+  - humanoid
+  - temple_np
+idlecommands:
+  - 'emote folds his hands at the small of his back and scans the
+    hall with the unhurried attention of a man who has been watching
+    this same entrance for nineteen years and still finds it worth
+    checking.'
+  - ''
+  - 'emote straightens a bench against the wall by half an inch,
+    considers it, and leaves it where he put it.'
+  - ''
+  - 'emote crosses to the far side of the hall, stands still a moment,
+    then comes back to where he started.'
+  - ''
+activitylevel: 9
+character:
+  name: Yelin
+  description: |
+    Yelin has been the warden of the Keeper's House for nineteen
+    years — longer than most of the keepers he has received have
+    been practicing their calling. He is a quietly broad man in
+    late middle age, unobtrusive in the way that durable furniture
+    is unobtrusive — present, well-placed, doing exactly what it
+    was built to do. His Bloom-change came to his hands, which are
+    worn smooth at the palms and knuckles the way old prayer-stones
+    are worn smooth — not by violence but by long and repeated
+    contact with the world. He moves through the hall with the
+    settled patience of a man who stopped needing to think about
+    where he was going and why a very long time ago. He receives
+    visitors, remembers names, and keeps the house in good order.
+    He finds this work entirely sufficient.
+  speciesid: 1
+  level: 1
+  gold: 15
+  stats:
+    charisma:
+      training: 12

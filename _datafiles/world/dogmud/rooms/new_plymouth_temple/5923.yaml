@@ -1,0 +1,79 @@
+roomid: 5923
+zone: New Plymouth Temple
+title: The Garden of Repose
+description: >
+  The garden is small and the quietest place in
+  the temple precinct. The walls are high enough
+  to block the immediate sounds of the street —
+  the city is present as a murmur and a sense of
+  density beyond the stone, not as noise. The
+  planting is deliberate and low-maintenance —
+  several dense herbs along the south wall, a
+  small <ansi fg="itemname">repose-tree</ansi>
+  whose species has been in this location for
+  over a century, pruned to fit the space rather
+  than allowed to fill it, and gravel in the
+  remaining area, raked in a pattern that is
+  simple and not decorative. A single
+  <ansi fg="itemname">garden-bench</ansi> faces
+  the tree. The bench has no inscription and no
+  designation — it is for whoever needs to sit
+  outside the seminary and think, or not think,
+  in the one place the temple provides for that.
+  The dormitory window is visible from here;
+  occasionally a novice face appears in it and
+  then withdraws.
+biome: city
+coord:
+  x: -5
+  y: 86
+  z: 0
+exits:
+  west:
+    roomid: 5914
+nouns:
+  repose-tree: A small tree of dense, slow-growing
+    habit occupying the garden's northeast corner —
+    old enough that its trunk has gone grey and
+    furrowed, its canopy kept to a roughly spherical
+    shape by careful seasonal pruning. The pruning
+    has been performed for so many generations that
+    the tree's current form has become its permanent
+    character — it no longer grows toward its
+    natural shape but maintains the pruned one.
+    In spring it produces small white flowers that
+    last about a week; in autumn the leaves go
+    a warm yellow before falling. It does not do
+    anything remarkable. It has been here for a
+    very long time.
+  garden-bench: A stone bench facing the repose-
+    tree — plain, without back or inscription,
+    wide enough for two people to sit with
+    comfortable distance between them or one
+    person to lie down. The sitting surface is
+    worn slightly hollow at the center, a small
+    compression from years of use. The bench is
+    not assigned or designated; it is for whoever
+    comes to sit in it, which includes novices
+    in difficulty, senior keepers on intervals,
+    the canon once a week in the early morning,
+    and occasionally people with no particular
+    connection to the temple who have found the
+    garden gate unlocked and sat down without
+    asking anyone's permission.
+idlemessages:
+- The garden is quiet in a way that is active —
+  the walls doing work to produce the quiet,
+  the city pressing against them from outside.
+- The repose-tree's canopy holds still in the
+  garden's sheltered air while the taller
+  trees beyond the wall move in a gust.
+- The gravel of the garden is raked in a simple
+  pattern — parallel lines, no elaboration —
+  that is repaired each morning and disturbed
+  by each afternoon.
+- From the dormitory window above, a face
+  appears briefly in the glass and then is gone.
+- The garden bench is empty. The impression
+  in its surface records countless previous
+  occupants without distinguishing between them.

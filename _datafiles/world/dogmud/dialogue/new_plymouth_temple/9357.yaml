@@ -1,0 +1,86 @@
+mobid: 9357
+zone: New Plymouth Temple
+defaultMood: neutral
+
+greetings:
+  - text: "This is the intake desk. If you are here to register, I
+      will walk you through it. What brings you in?"
+    moods: ["neutral"]
+  - text: "I remember you. Has something come up, or is this a
+      different matter?"
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. What can I help you with?"
+      - "Good timing — it is a quiet morning. What do you need?"
+
+  - keywords: [""]
+    responses:
+      - "Ask it plainly. I am not going anywhere."
+
+tree:
+  root:
+    text: "This is the intake desk. I process keepers arriving for
+      residence and visitors with appointments. If you are registering,
+      I will walk you through the procedure. If you have another
+      purpose here — questions about how the house is run, or
+      something harder to name — I can probably help with that too.
+      What is it?"
+    hints: "You could ask Father Thane about the intake process and
+      how the register works, about how the temple's day-to-day work
+      is organized, or about grief and what the temple offers to those
+      who carry it."
+
+  nodes:
+    - id: intake
+      triggers: ["intake", "register", "registration", "arrive", "arriving",
+                 "newcomer", "join", "become", "apply", "application",
+                 "procedure", "form", "new", "start", "begin", "need"]
+      text: "The registration is straightforward. I take your name and
+        prior affiliation, record your posting assignment, and give
+        you a copy of the house rules. The Canon confirms postings on
+        Tuesdays and Thursdays. If you arrived outside those days, you
+        will have a short wait in a guest room — I will see that it is
+        comfortable. The whole process takes perhaps twenty minutes and
+        produces no surprises."
+      hints: "You could ask how the temple's daily operations are
+        organized, or about what the temple offers when grief is what
+        someone brings through the door."
+      moodChange: friendly
+
+    - id: operations
+      triggers: ["run", "operate", "daily", "day", "organize", "how",
+                 "administration", "staff", "maintenance", "schedule",
+                 "temple", "function", "who", "manage", "behind", "works",
+                 "responsibilities", "routine"]
+      text: "The house has its rhythms — morning prayers, meals at set
+        hours, assignment rotations for cleaning and maintenance. I
+        keep the register current, the Canon approves postings and
+        grants the morning blessing, the warden keeps the hall and
+        common areas in order. The healers and the scholars operate
+        with more independence but within the same structure. It is
+        not complicated. Complications arise when the structure is
+        not respected, and they resolve themselves when it is."
+      hints: "You could ask about the intake and registration process,
+        or about what the temple offers when grief is what brings
+        someone here."
+
+    - id: grief
+      triggers: ["grief", "grieve", "death", "dead", "loss", "lose",
+                 "mourn", "mourning", "die", "dying", "comfort", "bereave",
+                 "sorrow", "passed", "gone", "cope", "someone died",
+                 "lost someone", "hard", "help with"]
+      text: "The temple's primary pastoral work is grief. That is what
+        most people who come here without an appointment are carrying.
+        We do not require a particular form of it — it does not have
+        to look a certain way or happen on a certain timeline. If
+        someone needs to sit in the chapel and be quiet for an hour,
+        that is available. If someone needs to speak with a keeper,
+        I can arrange that. If something more immediate is needed —
+        a healer, a place to stay — those are also available. We
+        do not turn that work away."
+      hints: "You could ask about the registration process, or about
+        how the temple's daily routines are kept."
+      moodChange: friendly

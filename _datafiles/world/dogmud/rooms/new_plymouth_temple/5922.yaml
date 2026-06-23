@@ -1,0 +1,82 @@
+roomid: 5922
+zone: New Plymouth Temple
+title: The Censer Court
+description: >
+  The court is barely large enough for its purpose
+  — a walled enclosure open to the sky, its paving
+  darkened by years of ash and fragrant residue
+  from the offerings burned here. Several
+  <ansi fg="itemname">censer-chains</ansi> hang
+  from iron brackets set into three of the four
+  walls — heavy brass censers on long chains,
+  their surfaces engraved with the temple's mark,
+  swung in full circles during the major devotions
+  and left hanging in still, weighted rest between
+  them. The air is thick with incense even at low
+  use; the walls have absorbed it so completely
+  that the smell is architectural rather than
+  atmospheric. At the court's center, a low
+  <ansi fg="itemname">offering-basin</ansi> of
+  iron-black stone is set flush into the paving,
+  its rim worn from the hands of those who deposit
+  offerings before they are lit. What is burned
+  here is between the offerer and the divine —
+  the temple's records make note of volume, not
+  content.
+biome: city
+coord:
+  x: -4
+  y: 87
+  z: 0
+exits:
+  west:
+    roomid: 5912
+nouns:
+  censer-chains: Brass censers on long chains,
+    suspended from iron brackets set into three
+    walls of the court at a height that allows
+    the full circle-swing of the devotional
+    practice. The censers are heavy — the
+    swinging is effortful, performed by the
+    officiants in the major devotional positions,
+    the chains going taut at the top of each arc.
+    The brass surfaces carry the temple's mark
+    engraved in a repeating pattern and have gone
+    dark with age and smoke except at the contact
+    points of the chains, which remain bright.
+    At rest the censers hang with a slight
+    inertial sway, the residual smoke rising
+    from their vents in thin threads.
+  offering-basin: A shallow basin of dense dark
+    stone set into the center of the court's
+    paving — perhaps two feet across, its lip
+    flush with the surrounding stone. The
+    basin's interior is ash-grey from accumulated
+    burning; its rim is worn where hands grip
+    it to deposit offerings. What is offered
+    here varies by the faith's calendar and
+    by individual need — the basin holds no
+    history of specifics, only the aggregate
+    evidence of long use. The stone is always
+    slightly warm to the touch, even at times
+    when no burning has occurred in recent
+    hours. The canon has a settled explanation
+    for this.
+idlemessages:
+- The censers in the court sway in a very
+  slight arc — the residual movement of a
+  recent devotion, or the court's own small
+  draft.
+- Incense smoke rises from the vents of the
+  hanging censers in thin continuous threads,
+  ascending to the open sky.
+- The offering-basin at the court's center
+  holds the ash of accumulated giving — no
+  single offering distinguishable from the
+  rest.
+- The walls of the censer court have absorbed
+  thirty years of incense. The smell here is
+  the smell of the building's interior history.
+spawninfo:
+  - mobid: 9365
+    respawnrate: "10 real minutes"

@@ -1,0 +1,74 @@
+id: np_temple_dross
+description: "Scholar Dross: early reading at the Archive, long courtyard argument,
+  afternoon reading, sleeps in the Study Hall. Skips the offices."
+segments:
+  - start: 7
+    end: 10
+    target_room: 5917
+    activity: ""
+    idlecommands:
+      - emote reads a folio at one of the archive tables with the rapid,
+        focused attention of someone who knows exactly what they are
+        looking for and is angrier each time they find it.
+      - emote makes a notation in his journal in a cramped, emphatic
+        hand, underlines it twice, and holds it up briefly to the
+        window light as though checking his work.
+      - say The dating inscription on the eastern wall is older than
+        anything in this reading room. Nobody here has processed the
+        implications. I have written them down.
+      - emote replaces a folio on the wrong shelf, notes this, and
+        does not correct it — it will be there when he needs to
+        reference it again.
+  - start: 10
+    end: 17
+    target_room: 5916
+    activity: ""
+    idlecommands:
+      - emote paces the length of the courtyard, stops at the eastern
+        wall, studies the inscription, and paces back. He does this
+        a great deal.
+      - emote gestures at the wall as though making a point to someone
+        who is not there, finds this insufficient, and gestures again
+        more precisely.
+      - say The inscription in this wall is not what the temple records
+        say it is. The material evidence is extremely clear about this.
+        I have been explaining it for three months and nobody in an
+        official position has understood.
+      - emote makes a notation in his journal, underlines it, and puts
+        it back in his breast pocket with the air of someone who has
+        just strengthened an already strong argument.
+      - emote addresses a point to whoever happens to be in the courtyard
+        without pausing to determine whether they are interested — they
+        are presumably interested, the argument is very good.
+      - say I have a grant. The grant is for research. I am doing research.
+        The research has found something significant. I do not understand
+        why the institutional response has been to schedule me for
+        afternoon tea with people who keep changing the subject.
+  - start: 17
+    end: 21
+    target_room: 5917
+    activity: ""
+    idlecommands:
+      - emote reads at the archive table in the late afternoon light,
+        turning pages quickly, cross-referencing two texts at once with
+        the efficiency of someone who has been doing this for a long time
+        and has gotten very fast at it.
+      - emote writes several lines in his journal, stops, reads them
+        back, crosses out one clause, and continues.
+      - say The cipher on the secondary inscription is a writing system
+        predating the current occupation by at least four centuries.
+        I have deciphered approximately one third of it. The third I
+        have deciphered is very interesting. I expect the rest will be
+        more interesting.
+      - emote closes a folio with more force than strictly necessary and
+        sets it back on the shelf correctly — he is tired and
+        careful when he is tired.
+  - start: 21
+    end: 7
+    target_room: 5915
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the study hall, journal open on the table beside
+        him, two folios marked for morning — a man who treats the hours
+        of sleep as a practical interruption in an ongoing argument that
+        will resume at seven.

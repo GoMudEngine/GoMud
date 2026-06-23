@@ -1,0 +1,95 @@
+mobid: 9359
+zone: New Plymouth Temple
+defaultMood: cautious
+
+greetings:
+  - text: "Oh — I didn't hear you come in. I was looking at the wall
+      again. There's a pattern in the plasterwork — a particular
+      shape. It doesn't matter. Sorry. Can I help you with something?"
+    moods: ["cautious", "neutral"]
+  - text: "You again. I'm — yes. Did you ask Orin? Did he have the maps?"
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Sorry — I was distracted. What do you need?"
+      - "Hi. Are you looking for the dormitory, or was there something else?"
+
+  - keywords: [""]
+    responses:
+      - "I'm not sure I'm the right person to ask, but I can try."
+
+tree:
+  root:
+    text: "I was looking at the wall again. There is a shape in the
+      mortar lines — an eight-pointed arrangement, in an old style
+      — and I cannot find it in any of the approved texts. I've
+      stopped mentioning it to the senior keepers. They tell me
+      it isn't real. Was there something specific you wanted?"
+    hints: "Ept seems distracted and unsettled. You could ask him
+      about his doubts and the founding story he's been taught,
+      about the orbital symbol he keeps seeing, or about a
+      bookseller named Orin in the Crafting Quarter he mentioned."
+
+  nodes:
+    - id: doubt
+      triggers: ["doubt", "question", "faith", "founding", "story",
+                 "believe", "belief", "taught", "official", "history",
+                 "founded", "what", "tell", "canon", "told", "uneasy",
+                 "trouble", "troubled", "unhappy", "wrong", "believe",
+                 "teaching", "text", "texts", "approved"]
+      text: "The founding story is that the temple was established at
+        the city's founding — same generation, same charter. That is
+        what we are taught. But the inscription in the eastern nave
+        does not match that date. The stone is older. A visiting
+        scholar named Dross has been saying the same thing for weeks,
+        louder than I would say it, but he is not wrong about the
+        evidence. If the inscription predates the founding, then
+        the founding story is not the whole story. That is what I
+        cannot stop thinking about."
+      hints: "You could ask Ept about the symbol he keeps seeing
+        everywhere, or about who might know the real history."
+      moodChange: neutral
+
+    - id: symbol
+      triggers: ["symbol", "orbital", "eight", "pointed", "pattern",
+                 "shape", "mark", "glyph", "plaster", "wall", "see",
+                 "everywhere", "keep", "vision", "sight", "decoration",
+                 "motif", "carved", "old", "ancient", "predate",
+                 "arrangement", "arcs", "points", "eight-pointed"]
+      text: "I started noticing it two weeks into my first posting here.
+        There is a shape — eight points arranged around a central
+        ring, like an orbital diagram, in a style that predates
+        anything in the approved texts. It is in the stonework. In
+        the wood grain of the dormitory ceiling. In the shadow-lines
+        across the plaster when the light hits the wall at the right
+        angle. I mentioned it to Canon Merid and he told me to pray
+        on it. I tried that. It didn't help. A lay reader in the
+        scriptorium told me there is a bookseller in the Crafting
+        Quarter — a man named Orin — who carries old maps, the kind
+        from before the official survey. He might know what the
+        symbol means. I have not been able to go myself."
+      hints: "You could ask about Orin the bookseller Ept just
+        mentioned, or return to his doubts about the founding."
+      moodChange: neutral
+
+    - id: orin
+      triggers: ["orin", "bookseller", "book", "map", "maps", "crafting",
+                 "quarter", "seller", "find", "where", "real", "answer",
+                 "know", "who", "go", "survey", "pre-founding",
+                 "before the founding", "old maps"]
+      text: "I don't know him personally. The lay reader told me he runs
+        a stall near the cooperage district in the Crafting Quarter
+        — at the corner near the abandoned cooperage building. He
+        carries maps that predate the official city survey, which
+        means they predate the founding story as the temple tells it.
+        If the symbol I keep seeing is in those maps — if it has a
+        name, or a place in the record, or a source — he would know
+        it. That is all I have. I have been trying to find a free
+        afternoon to go myself, but the Canon keeps posting me to
+        afternoon scripture study."
+      hints: "Orin the bookseller is in the Crafting Quarter — you
+        could seek him out there. You could also ask Ept more about
+        the symbol or about his doubts regarding the founding."
+      moodChange: friendly

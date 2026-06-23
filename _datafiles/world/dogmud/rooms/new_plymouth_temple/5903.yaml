@@ -1,0 +1,76 @@
+roomid: 5903
+zone: New Plymouth Temple
+title: The Temple Gate Plaza
+description: >
+  The road opens into a broad plaza of pale dressed
+  stone — the traditional gathering point where
+  pilgrims who have arrived late wait for the inner
+  doors to open, where goods-runners pause to catch
+  their breath before the final delivery into the
+  precinct, and where the city's informal boundary
+  between secular and sacred is most legibly drawn.
+  The great <ansi fg="itemname">gate-arch</ansi>
+  frames the east passage into the sanctuary, its
+  keystone carved with the faith's wheel — worn
+  smooth at the base from the hands of generations
+  who have touched it in passing. Beside the arch's
+  southern foot an
+  <ansi fg="itemname">alms-bench</ansi> occupies
+  the position it has occupied since the precinct
+  was first walled — a flat stone set for the
+  purpose, worn from years of use, beside which
+  a figure keeps a patient watch with the settled
+  quality of someone who has been part of this
+  threshold for a long time and intends to remain
+  so.
+biome: city
+coord:
+  x: -7
+  y: 89
+  z: 0
+exits:
+  west:
+    roomid: 5900
+  east:
+    roomid: 5901
+nouns:
+  gate-arch: The arch over the precinct entrance is
+    built from the same pale stone as the temple, its
+    span wide enough for two carts to pass abreast
+    though no cart has passed here in living memory.
+    The keystone bears a wheel in low relief — the
+    faith's central symbol, six spokes, the rim
+    complete — worn at the base where hands have
+    reached to touch it going in and going out.
+    Whether touching the keystone is a formal
+    observance or a habit that became one, no one
+    now distinguishes between the two.
+  alms-bench: A long flat stone at the arch's foot,
+    broad enough to sit on from either side, set low
+    in the traditional manner for almsgiving at a
+    sacred threshold. The top surface is smooth and
+    slightly concave from years of coins and hands
+    and whatever else passes between a figure at
+    rest and a pilgrim who will not stop long. It
+    carries no inscription. The custom of leaving
+    something here is older than any text that
+    records it.
+idlemessages:
+- A pilgrim stops before the gate-arch and touches
+  the keystone briefly with the flat of the hand
+  before passing through.
+- The plaza is quiet for a moment; then a goods-
+  runner from the market arrives at a trot and
+  pauses to settle themselves before entering.
+- A coin is placed on the alms-bench with the
+  deliberate care of an exchange — set precisely,
+  not dropped.
+- The gate-arch frames the sanctuary's west doors
+  at the far end of the nave — heavy, pale, standing
+  open through the day's hours.
+- The figure at the alms-bench does not move, and
+  the plaza traffic moves around them with the
+  ease of long habit.
+spawninfo:
+  - mobid: 9366
+    respawnrate: "10 real minutes"

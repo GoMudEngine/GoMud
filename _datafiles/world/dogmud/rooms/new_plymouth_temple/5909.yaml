@@ -1,0 +1,73 @@
+roomid: 5909
+zone: New Plymouth Temple
+title: The Warden's Cell
+description: >
+  The room is small and has been arranged once
+  and not rearranged since. A
+  <ansi fg="itemname">service-record</ansi> above
+  the desk lists in columns the warden's formal
+  duties and the dates of their last performance.
+  The list is long. The current entry runs to
+  nineteen years of unbroken service; the column
+  edge has been extended twice to accommodate
+  additional lines, the extensions ruled in a
+  different ink from the original. The warden's
+  desk is clean in the way of a person who
+  resolves each day before sleeping — nothing
+  pending, nothing left mid-task. A single
+  <ansi fg="itemname">warden-chair</ansi> faces
+  the desk across a bare working surface; an
+  identical chair on the other side tells you
+  something about how this room is used when
+  others are in it. The room does not ask for
+  notice. It has had nineteen years of quiet
+  and takes the next moment the same way.
+biome: city
+coord:
+  x: -7
+  y: 92
+  z: 0
+exits:
+  south:
+    roomid: 5906
+nouns:
+  service-record: A hand-written sheet in a
+    wooden frame above the warden's desk — a
+    formal listing of duties by category with
+    a column beside each for last-completion
+    date. The categories are ordinary — morning
+    rounds, lock-check, keeper registration
+    review, incident log, correspondence with
+    the canon's office. The dates are all recent.
+    The incident log column has no entry for
+    this month or the previous five. The frame
+    is the same age as the room's other
+    furnishings; the sheet has been replaced
+    within the past decade but the format has
+    not changed. Below the categories, a line
+    of small text reading "service commenced" —
+    followed by a date nineteen years prior.
+  warden-chair: The chair on the visitor's side
+    of the desk is identical to the warden's own
+    — same construction, same weight, same wear
+    pattern on the legs. The warden has not
+    arranged this room to communicate hierarchy
+    in the furniture. The two chairs face each
+    other across a desk that has nothing on it
+    except the lamp and the day's single sheet
+    of notes, and the arrangement says something
+    precise about how conversations in this room
+    are conducted.
+idlemessages:
+- The warden's desk is empty. Whatever the day
+  required has been completed and set aside.
+- The service-record above the desk catches a
+  draft from the passage below — the frame taps
+  once against the wall and settles.
+- Nineteen years of quiet service is not the
+  same as nineteen years of nothing happening.
+  The record does not explain the difference.
+- From the house below, the soft sound of the
+  hall — a door, a step, the ordinary movements
+  of a building that has been occupied for a
+  very long time.

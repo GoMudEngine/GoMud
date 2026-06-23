@@ -1,0 +1,48 @@
+mobid: 9362
+zone: New Plymouth Temple
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+schedule_id: np_temple_holt
+groups:
+  - humanoid
+  - temple_np
+  - bloodline_domestic
+idlecommands:
+  - 'emote consults a narrow ledger, makes a small note with a
+    precise economy of motion, and closes it.'
+  - ''
+  - 'emote sweeps the room with a single lateral glance — corners,
+    door, visitor — and returns his attention to the door behind
+    him.'
+  - ''
+  - 'emote adjusts his position fractionally, as though a degree
+    of precision in his stance is part of the function he performs.'
+  - ''
+activitylevel: 7
+character:
+  name: Archivist Holt
+  description: |
+    Archivist Holt stands at the entrance to the Restricted
+    Collection with the precise stillness of a man for whom
+    standing at an entrance is not a passive activity. He is
+    thin, exact, and says very little that does not advance his
+    function. His Bloom-change is in the eyes — pale and faintly
+    luminous, moving across a room in a quick lateral sweep that
+    takes in and catalogs what it finds before most people have
+    finished their first look. He knows what is in the Archive
+    to the last volume and the last shelf. He answers to two
+    offices and will not tell you which two, except in the most
+    technical administrative terms, and those terms will not help
+    you. The door behind him does not open.
+  speciesid: 1
+  level: 1
+  gold: 20
+  stats:
+    willpower:
+      training: 8
+    perception:
+      training: 10

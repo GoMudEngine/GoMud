@@ -1,0 +1,81 @@
+roomid: 5921
+zone: New Plymouth Temple
+title: The Almonry
+description: >
+  The almonry is the temple's distribution point
+  for its material obligation to the city's poor —
+  a room of plain practical design whose purpose
+  is evident from the long worn groove in the stone
+  floor tracing the usual path of a queue that
+  extends through the south door and back into the
+  temple's south wing.
+  A <ansi fg="itemname">distribution-counter</ansi>
+  of heavy wood runs along the east wall, its
+  surface scored by countless small exchanges —
+  the setting down of bread, the counting of coin,
+  the placement of wrapped packets. On the shelf
+  behind the counter, loaves are arranged in rows,
+  their number updated each morning by the temple
+  bakehouse. The <ansi fg="itemname">almonry-ledger</ansi>
+  at the counter's end records not names but numbers
+  — how many received, at what date, in what
+  quantity. The ledger does not record what was not
+  given. The line that forms here each morning does
+  not argue about that.
+biome: city
+coord:
+  x: -7
+  y: 88
+  z: 0
+exits:
+  south:
+    roomid: 5911
+  west:
+    roomid: 5924
+nouns:
+  distribution-counter: A counter of heavy dark
+    wood running the width of the almonry's east
+    wall — old construction, the surface scored
+    and worn from decades of daily use. The top
+    is scratched in the particular way of surfaces
+    that have had hard objects set down on them
+    many times without care for the surface. On
+    the shelf behind it, loaves of bread are
+    arranged in rows; to one side, a bin of small
+    coin. The counter has been repaired twice —
+    the repair joints are visible on the front
+    face where a piece of the old wood was
+    replaced with new, the new wood still paler
+    than its surroundings. The height of the
+    counter is calibrated for standing exchange,
+    not for seated transaction.
+  almonry-ledger: A bound volume at the counter's
+    end — the almonry's running record of its
+    distribution, kept in columns of date,
+    number of individuals served, and quantity
+    of each category distributed. The entries
+    are regular and consistent, the hand changing
+    only when the keeper of the almonry changes.
+    The numbers are not small. The ledger does
+    not record what the city's need exceeded
+    what the almonry had, though this has
+    occurred. The current year's volume is
+    about half full.
+idlemessages:
+- The almonry is between distributions — the
+  counter clear, the bread on its shelf, the
+  floor groove empty of a queue.
+- The smell of fresh bread from the shelf
+  behind the counter is present even when no
+  distribution is in progress.
+- The worn groove in the almonry floor marks
+  where the queue has stood so many times
+  that the stone has given way.
+- The almonry ledger at the counter's end holds
+  years of numbers. The numbers are large.
+- From the south door, the low murmur of the recovery
+  ward — quiet voices, the small sounds of the mending —
+  closer here than the rest of the precinct.
+spawninfo:
+  - mobid: 9364
+    respawnrate: "10 real minutes"
