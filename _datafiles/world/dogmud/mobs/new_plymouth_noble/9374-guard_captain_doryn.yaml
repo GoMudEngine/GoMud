@@ -6,6 +6,10 @@ charm_immune: true
 hostile: false
 statpool: 42
 maxwander: 0
+relationships:
+  - to: 9324
+    type: friend
+    subtype: old_comrade
 groups:
   - humanoid
   - bloodline_domestic
