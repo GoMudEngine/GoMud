@@ -32,6 +32,8 @@ exits:
     roomid: 5802
   east:
     roomid: 5804
+  north:
+    roomid: 6000
 nouns:
   civic-lamps: Lantern standards of iron painted blue
     and silver, each one identical — clearly ordered in

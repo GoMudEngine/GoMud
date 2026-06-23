@@ -1,0 +1,67 @@
+roomid: 6002
+zone: New Plymouth Noble
+title: The Noble Way
+description: >
+  The Noble Way runs north from the plaza in a broad
+  corridor of grey stone, the frontages on either side
+  set behind high walls whose
+  <ansi fg="itemname">gated-frontages</ansi> are closed
+  and whose hinges show the dull gleam of frequent use.
+  The <ansi fg="itemname">carriage-track</ansi> worn
+  into the center of the paving is a precise record of
+  the weight and routing habits of the families that
+  live here — two parallel grooves, exact and unvarying,
+  running north from the plaza's edge to beyond where
+  your sight ends. Those who walk this far carry the
+  specific confidence of people who have a reason to be
+  here and are accustomed to that being understood.
+  The Way continues north past where you stand, toward
+  the galleries, the great estates, and the palace
+  avenue — all held behind the Quarter's studied quiet,
+  none of it yet visible from this end.
+biome: city
+coord:
+  x: -14
+  y: 93
+  z: 0
+exits:
+  south:
+    roomid: 6001
+nouns:
+  gated-frontages: Iron-railed gates set in high
+    stone walls at regular intervals along both sides
+    of the Way, each one the same height and finish,
+    each closed. The iron is painted a deep green that
+    reads as black from any distance, and the hinges
+    show wear that places them in regular use —
+    opened and closed multiple times daily, without
+    ceremony. What lies behind them is not visible
+    from the street — no garden-edge, no courtyard,
+    no sign of domestic life above the wall-line —
+    which is probably the point.
+  carriage-track: Two shallow grooves worn into the
+    center of the Way's paving, perfectly parallel,
+    the width of a coach's wheel-spacing. The wear
+    runs the full visible length of the promenade in
+    both directions, deepest near the plaza end where
+    the turns are tightest, shallowing as it goes
+    north. No gravel fill, no patch, no repair — the
+    stone is simply worn, and the wear is the record
+    of generations of regular passage by people who
+    could afford coaches in a city where most could
+    not.
+idlemessages:
+- A coach emerges from one of the northern gates,
+  crosses the Way without hurry, and enters the gate
+  directly opposite.
+- The gated-frontages to either side are all closed.
+  They have probably been closed since before dawn.
+- Someone is cutting something inside one of the
+  walled gardens; the clean sound of shears carries
+  over the top of the stone.
+- A child in expensive clothing stands at the near
+  gate and watches you pass with no particular
+  expression.
+- The silence on the Way is of the kind that has
+  been maintained, not the kind that arrived by
+  accident.
