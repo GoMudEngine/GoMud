@@ -67,3 +67,6 @@ idlemessages:
 - The silence on the Way is of the kind that has
   been maintained, not the kind that arrived by
   accident.
+spawninfo:
+  - mobid: 9375
+    respawnrate: "10 real minutes"

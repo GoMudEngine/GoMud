@@ -72,3 +72,6 @@ idlemessages:
   the west at this hour, its nested spherical
   form casting a layered shadow on the
   raked gravel beneath it.
+spawninfo:
+  - mobid: 9376
+    respawnrate: "10 real minutes"

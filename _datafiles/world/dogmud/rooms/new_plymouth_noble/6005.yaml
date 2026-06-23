@@ -66,3 +66,6 @@ idlemessages:
   the gallery is barely audible — quiet movement,
   or the particular near-silence of someone
   studying something closely.
+spawninfo:
+  - mobid: 9368
+    respawnrate: "10 real minutes"

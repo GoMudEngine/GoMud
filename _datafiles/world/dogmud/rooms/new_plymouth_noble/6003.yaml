@@ -70,3 +70,6 @@ idlemessages:
 - The preparations here have the thoroughness of
   someone who expects questions and has prepared for
   all the likely ones.
+spawninfo:
+  - mobid: 9370
+    respawnrate: "10 real minutes"

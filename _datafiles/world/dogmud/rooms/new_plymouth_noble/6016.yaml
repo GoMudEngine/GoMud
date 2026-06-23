@@ -73,3 +73,6 @@ idlemessages:
   insignia beyond the bloodline cipher
   at the breast and shoulder — embroidered
   here in silver thread rather than painted.
+spawninfo:
+  - mobid: 9374
+    respawnrate: "10 real minutes"

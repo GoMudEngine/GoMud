@@ -61,3 +61,6 @@ idlemessages:
   block's household cipher — a different
   mark from the Quarter's general livery,
   narrower, more domestic in its form.
+spawninfo:
+  - mobid: 9372
+    respawnrate: "10 real minutes"

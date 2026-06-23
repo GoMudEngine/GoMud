@@ -1,0 +1,43 @@
+mobid: 9376
+zone: New Plymouth Noble
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote moves through the garden along the border stones,
+    her route carrying the precision of someone who has walked
+    this path many times without once stepping on the gravel.'
+  - ''
+  - 'emote adjusts the fall of her coat with the small gesture
+    of someone for whom their clothing is exactly correct and
+    is simply confirming this.'
+  - ''
+  - 'emote glances at the central topiary with the brief look
+    of someone who decided long ago what they think of it and
+    has not revised that assessment since.'
+activitylevel: 3
+character:
+  name: A Noble Passer-by
+  description: |
+    The passer-by moves through the Noble Garden at the pace of
+    someone for whom arriving on time is a matter of choosing
+    when the appointment is. Her coat is good silk with a
+    raised-thread pattern at the cuffs — the kind of fabric
+    that communicates wealth to those who know fabric. She does
+    not look at the garden's plantings, having seen them many
+    times, and she does not look at you, for similar reasons.
+    The faint quality of disdain she carries is not personal.
+    It is categorical.
+  speciesid: 1
+  level: 1
+  gold: 35
+  stats:
+    charisma:
+      training: 10
+    perception:
+      training: 4

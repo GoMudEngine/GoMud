@@ -78,3 +78,6 @@ idlemessages:
   table's right edge, its contents depleted
   on one side and restocked on the other —
   the record of a morning's work.
+spawninfo:
+  - mobid: 9373
+    respawnrate: "10 real minutes"

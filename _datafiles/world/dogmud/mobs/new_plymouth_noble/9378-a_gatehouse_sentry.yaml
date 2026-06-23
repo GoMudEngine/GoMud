@@ -1,0 +1,44 @@
+mobid: 9378
+zone: New Plymouth Noble
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+  - bloodline_domestic
+idlecommands:
+  - 'emote completes his sweep of the Sentry Walk from post to
+    gatehouse and back, his attention moving at the pace of a
+    watch practiced into steadiness over many years.'
+  - ''
+  - 'emote rests his arm on the worn post at shoulder height —
+    the same worn-smooth contact point many prior sentries have
+    found — and returns his gaze to the approach.'
+  - ''
+  - 'emote shifts his weight marginally, completing the alignment
+    check that is the only movement a parade post sentry makes
+    between the formal watches.'
+activitylevel: 3
+character:
+  name: A Gatehouse Sentry
+  description: |
+    The sentry holds the Walk at one of the worn patrol posts,
+    his posture the particular stillness of long practice rather
+    than discomfort — parade-correct in the bloodline's formal
+    ceremonial dress, distinguished from work-dress by silver
+    thread at the collar and the polished plate at his breast.
+    His attention moves across the approach in the slow scan of
+    someone who has done it long enough that the scan is
+    automatic. He does not acknowledge approach. This is the
+    correct behavior.
+  speciesid: 1
+  level: 1
+  gold: 10
+  stats:
+    perception:
+      training: 12
+    strength:
+      training: 4

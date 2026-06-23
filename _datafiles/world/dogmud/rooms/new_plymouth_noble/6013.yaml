@@ -73,3 +73,6 @@ idlemessages:
   sill is there if you know to check
   the inner edge — careful work,
   made in a moment of decision.
+spawninfo:
+  - mobid: 9369
+    respawnrate: "10 real minutes"

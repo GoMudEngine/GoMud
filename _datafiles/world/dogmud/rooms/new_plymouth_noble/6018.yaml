@@ -59,3 +59,6 @@ idlemessages:
   is visible in its full width — stone, iron,
   and the studied stillness of those who
   stand before it.
+spawninfo:
+  - mobid: 9378
+    respawnrate: "10 real minutes"

@@ -84,3 +84,6 @@ idlemessages:
   afternoon light at a low angle — at this
   hour, the detail in the third panel
   from the left is briefly very clear.
+spawninfo:
+  - mobid: 9371
+    respawnrate: "10 real minutes"
