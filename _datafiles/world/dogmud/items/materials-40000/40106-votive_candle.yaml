@@ -1,0 +1,13 @@
+itemid: 40106
+name: Votive Candle
+namesimple: votive
+description: A slender candle of bleached white tallow, meant to be
+  left burning at a temple shrine rather than taken home. It burns
+  slowly and clean, and the wax smells faintly of pine resin. The
+  wick is braided fine so it will not gutter out in a draft.
+type: object
+subtype: mundane
+weight: 0.2
+value: 1
+vendor_categories:
+- blacksmithing

@@ -1,0 +1,13 @@
+itemid: 40105
+name: Tinderbox
+namesimple: tinderbox
+description: A small tin box holding a flint, a curved steel striker,
+  and a pinch of charred linen folded in a scrap of oilcloth. The
+  hinge is stiff and the lid fits tight to keep the char dry. It
+  starts a fire reliably if you know what you are doing.
+type: object
+subtype: mundane
+weight: 0.3
+value: 2
+vendor_categories:
+- blacksmithing

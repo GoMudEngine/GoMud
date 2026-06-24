@@ -1,0 +1,13 @@
+itemid: 40103
+name: Waterskin
+namesimple: waterskin
+description: A treated goat-leather skin for carrying water, stoppered
+  with a wooden plug and sealed with tallow at the seams. It holds
+  about a quart and is a little stiff when new, softening with use.
+  The mark of a practical traveller.
+type: object
+subtype: mundane
+weight: 0.5
+value: 2
+vendor_categories:
+- tailoring

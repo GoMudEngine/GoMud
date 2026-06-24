@@ -1,0 +1,13 @@
+itemid: 40102
+name: Coil of Rope
+namesimple: rope
+description: A coil of stout hemp rope, the kind every household, dockhand,
+  and carter keeps a length of close at hand. It smells of salt and
+  old sheds and has been spliced at least once. Serviceable and thick
+  enough to bear real weight.
+type: object
+subtype: mundane
+weight: 1.0
+value: 3
+vendor_categories:
+- tailoring
