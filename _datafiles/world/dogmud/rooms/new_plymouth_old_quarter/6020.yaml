@@ -1,0 +1,68 @@
+roomid: 6020
+zone: New Plymouth Old Quarter
+title: The Canal Mouth
+description: >
+  The bilge channel widens here into a dead canal that
+  has not moved in living memory. The flow entering from
+  the underdocks to the east spreads into that stillness
+  and goes no further — you watch the <ansi
+  fg="itemname">still canal</ansi> and nothing changes
+  on its surface. The copper-flower smell from the
+  pilings haunt thins as the passage opens westward,
+  giving way to something older and more mineral —
+  sealed air, damp stone, the smell of enclosure that
+  has had more time than can be easily reckoned. The
+  passage walls carry <ansi fg="itemname">pre-colonial
+  stonework</ansi> here for the first time — fitted
+  without mortar, each joint still tight under whatever
+  the colony has piled above. A <ansi
+  fg="itemname">bilge flow</ansi> enters from the east
+  and is absorbed without ripple. The way west is the
+  buried quarter.
+biome: city
+coord:
+  x: -21
+  y: 80
+  z: -1
+exits:
+  east:
+    roomid: 5520
+  west:
+    roomid: 6021
+nouns:
+  still canal: The surface is black and completely
+    unmoving — no tide, no current, no wind ever
+    reaches it down here. The bilge flow entering from
+    the east is too thin to raise a ripple; it joins
+    a stillness that has had a long time to establish
+    itself. How deep the water runs below that surface
+    cannot be determined — it returns nothing but dark.
+  pre-colonial stonework: Fitted without mortar, the
+    joints between courses tight enough that a blade
+    would not pass between them even now. The stone is
+    a different variety from the colonial work found
+    above — harder, darker, cut in a slightly different
+    style. Whoever built this quarter built it to last.
+    The colony arrived and paved over it as though it
+    were simply ground.
+  bilge flow: The channel from the underdocks ends here
+    at the canal's edge — a thin brown seep entering
+    the still water with barely enough force to mark
+    its own arrival. It does not stir the surface. It
+    simply enters and is absorbed, as though the dead
+    canal had been waiting for exactly this much and
+    no more, for a very long time.
+idlemessages:
+- The canal surface holds perfectly still — not a
+  ripple reaches it even as the bilge flow enters
+  from the east.
+- A ghost of the copper-flower smell arrives from
+  the east on a shift of underground air, then the
+  mineral cold takes it back.
+- Overhead the colony continues in its business,
+  entirely unaware of what it stands on.
+- The silence here is the silence of a very old place
+  that has had nothing to do but wait.
+- A sound from the east — the knock of water against
+  the bilge channel wall — arrives once and is not
+  repeated.

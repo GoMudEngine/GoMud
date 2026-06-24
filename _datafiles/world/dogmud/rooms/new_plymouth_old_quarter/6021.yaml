@@ -1,0 +1,67 @@
+roomid: 6021
+zone: New Plymouth Old Quarter
+title: Lower Lintel Street
+description: >
+  The canal runs close on your right — a wrong step in
+  the dark would put you in it. This is the lowest and
+  wettest end of Lintel Street. The <ansi
+  fg="itemname">old lintels</ansi> that name the street
+  are here in their original form — massive pre-colonial
+  door-headers spanning thresholds the rising damp has
+  slowly claimed. The nearest has a <ansi
+  fg="itemname">drowned threshold</ansi>, its sill a
+  hand-span below the canal's edge, whatever once lay
+  inside now silted over and sealed. Higher on the wall,
+  above the water's reach, salvaged cloth and rope mark
+  where people have taken up the dry doorways for
+  shelter — the poorest end of the poorest quarter. A
+  <ansi fg="itemname">guttering lamp</ansi> hangs from
+  a peg in the old stone, its oil running low.
+biome: city
+coord:
+  x: -22
+  y: 80
+  z: -1
+exits:
+  east:
+    roomid: 6020
+  west:
+    roomid: 6022
+nouns:
+  old lintels: Pre-colonial door-headers, each cut from
+    a single piece of dark stone and set across a
+    doorway with a precision the colony's later
+    brickwork does not match. Most are still in place
+    despite the damp and the weight above — they were
+    built for a city meant to last. At this end of the
+    street they span thresholds the water has since
+    claimed; the lintels themselves hold even where
+    all else below them has given way.
+  drowned threshold: The sill sits a hand-span below
+    the canal's edge — in a wet season the water would
+    rise and take the doorway outright. Now it sits at
+    the margin, the interior dark and silted. A few
+    pale shapes are visible just below the surface
+    inside the threshold; whether they were furnishings
+    or have drifted in from the canal is not
+    determinable in this light.
+  guttering lamp: A clay lamp, nearly out of oil, hung
+    from a wrought iron peg driven between two courses
+    of old stone. Someone keeps it lit — the wick is
+    trimmed and the peg is set at a height that
+    suggests regular use. The light reaches perhaps a
+    body-length in either direction before the dark of
+    the buried street takes it back.
+idlemessages:
+- The canal water touches the stone wall in a slow
+  patient knock, very close to where you stand.
+- The guttering lamp breathes and recovers, breathes
+  and recovers — the oil is nearly gone.
+- From one of the doorways above the waterline comes
+  a sound of habitation — nothing definite, then
+  silence.
+- The cold here is a wet cold, different from the
+  mineral cold farther west — it comes from the water
+  as much as the stone.
+- Water drips somewhere in the dark between the lamp's
+  reach and the canal surface.

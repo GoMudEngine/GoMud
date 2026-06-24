@@ -1,0 +1,68 @@
+roomid: 6022
+zone: New Plymouth Old Quarter
+title: The Stone Footbridge
+description: >
+  Lintel Street ducks under a pre-colonial footbridge
+  here — the <ansi fg="itemname">stone arch</ansi>
+  comes low and you feel the change before you see it,
+  the ceiling dropping to dressed stone a handspan above
+  your head. The <ansi fg="itemname">bridge
+  underside</ansi> is green with damp and cold to the
+  touch — the cutting beneath the growth is fine enough
+  that the joints are still visible. The bridge is older
+  than the colony and was old before the colonists
+  arrived; they paved over it and did not mark where it
+  was. On the arch-face at eye level a thin band of
+  <ansi fg="itemname">old waterline</ansi> deposit runs
+  level across the stone — at some earlier period the
+  canal stood higher than it does now. Below the arch
+  the canal lies black and still. The street continues
+  west through the bridge's shadow.
+biome: city
+coord:
+  x: -23
+  y: 80
+  z: -1
+exits:
+  east:
+    roomid: 6021
+  west:
+    roomid: 6023
+nouns:
+  stone arch: The bridge itself — a single pre-colonial
+    span, wider than it appears from below, set without
+    supports and fitted without mortar. What the bridge
+    once crossed is still crossed by it — the dead
+    canal has not moved in a long time, but the bridge
+    did not know the canal would stop. It spans the
+    gap with the quiet confidence of something that
+    has never been given a reason to doubt itself.
+  bridge underside: Green with accumulated damp — a
+    soft mineral growth that is not quite moss but
+    shares its register. The stone beneath is fine-cut,
+    the joints still sharp, the work of builders who
+    expected to be examined from below. At the arch's
+    crown a repeating chevron device runs along the
+    stone — not a colonial mark. Whoever carved it,
+    it was not the colonists.
+  old waterline: A thin band of pale crystalline
+    mineral on the arch-face, running level at about
+    shoulder height — the mark of where the canal
+    once stood before it dropped to its present level.
+    The deposit is several finger-widths, the product
+    of a long time at a consistent height. Below the
+    line the stone is stained darker; above it slightly
+    cleaner, though both have had time to accumulate
+    what they carry.
+idlemessages:
+- Under the arch the sound of movement changes —
+  the stone catches it and returns it slightly
+  different.
+- A droplet falls from the bridge underside onto
+  the canal below, and the sound of it carries.
+- The arch is cold when you brush it — not surface
+  cold but something from deep in the stone.
+- The chevron device at the arch crown repeats
+  without a clear beginning or end to the pattern.
+- The smell here is the bridge itself — wet cut
+  stone and the mineral of a very long time.

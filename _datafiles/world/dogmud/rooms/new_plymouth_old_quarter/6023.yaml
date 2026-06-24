@@ -1,0 +1,68 @@
+roomid: 6023
+zone: New Plymouth Old Quarter
+title: Lintel Street
+description: >
+  The street climbs slightly here — not enough to see
+  but enough to feel underfoot, a few inches of grade
+  that leave the worst of the standing water behind you.
+  The <ansi fg="itemname">old lintels</ansi> continue
+  in their row — wider here than at the lower end, the
+  stonework a degree more deliberate, as though this
+  part of the buried city was of slightly more
+  consequence. Above each lintel the colony's later
+  work fills in with rough <ansi fg="itemname">clay
+  brickwork</ansi> — a different color and weight from
+  the pre-colonial stone below, the two periods of
+  building separated by burial and forgetting. Ahead
+  a <ansi fg="itemname">sealed doorway</ansi> faces
+  the street — pre-colonial stone blocked with colonial
+  brick, shut since the burial. The street is quiet.
+  From somewhere ahead the dark carries a quality of
+  attention that is not quite emptiness.
+biome: city
+coord:
+  x: -24
+  y: 80
+  z: -1
+exits:
+  east:
+    roomid: 6022
+  west:
+    roomid: 6024
+nouns:
+  old lintels: The lintels here are a step grander than
+    those to the east — wider spans, better-dressed
+    stone, a more considered placement. They are set
+    at a height suggesting the original rooms behind
+    them had decent ceilings, which the colony's later
+    infill has reduced considerably. Whatever the
+    buildings once were, the lintels outlasted them
+    and are outlasting the later work as well.
+  clay brickwork: The colony's contribution to the
+    buried street — rough clay brick, fired locally
+    and set without the finesse of the pre-colonial
+    work below. The color is muddy red-brown where
+    the older stone is grey-black, and the joints are
+    thicker, visible at a distance. Several courses
+    have cracked and been re-mortared more than once.
+    The two construction traditions share the same
+    wall face without reconciling.
+  sealed doorway: A pre-colonial opening whose
+    interior has been filled with rubble and colonial
+    brick — sealed from the outside at some point
+    after the burial. The lintel above it is intact
+    and the stonework is sound. Whatever once lay
+    beyond has been inaccessible for a long time,
+    and the sealed face shows no evidence of recent
+    attempt.
+idlemessages:
+- The street holds a particular silence here — denser
+  than the lower reaches, less empty.
+- The cold comes from the stone itself, not the canal;
+  the canal is behind you now.
+- Somewhere ahead in the dark, nothing moves — but
+  the quality of the nothing changes when you listen.
+- A faint sound — cloth on stone, or a breath — and
+  then the quiet of the buried street resumes.
+- The old lintels cast shadows that the available
+  light does not quite account for.
