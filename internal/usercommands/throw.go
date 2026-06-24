@@ -94,7 +94,7 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	// AoE resolution: opposed roll per hostile mob in room
 	skillWeight := float64(cfg.SkillWeight)
 	skullduggery := user.Character.GetSkillLevel(skills.Skullduggery)
-	dexterity := user.Character.Stats.Dexterity.ValueAdj
+	dexterity := user.Character.GetEffectiveDexterity()
 
 	attackerScore := float64(dexterity) + float64(skullduggery)*skillWeight
 
@@ -127,8 +127,8 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			continue
 		}
 
-		defenderScore := float64(mob.Character.Stats.Dexterity.ValueAdj) +
-			float64(mob.Character.Stats.Perception.ValueAdj)*skillWeight*0.5
+		defenderScore := float64(mob.Character.GetEffectiveDexterity()) +
+			float64(mob.Character.GetEffectivePerception())*skillWeight*0.5
 
 		attackSuccess, _, atkRoll, _ := dice.OpposedRollStat(attackerScore, defenderScore)
 

@@ -87,9 +87,9 @@ func ExecuteMaul(actor Actor) MaulResult {
 	result := combat.ExecuteSkillMove(combat.SkillMoveParams{
 		Attacker:        char,
 		Defender:        target.Char,
-		AttackStat:      char.Stats.Dexterity.ValueAdj,
+		AttackStat:      char.GetEffectiveDexterity(),
 		AttackSkill:     char.GetSkillLevel(skills.UnarmedCombat),
-		DefenseStat:     target.Char.Stats.Dexterity.ValueAdj,
+		DefenseStat:     target.Char.GetEffectiveDexterity(),
 		DefenseSkill:    target.Char.GetCombatSkillLevel(),
 		DamagePercent:   float64(cfg.KickDamagePercent),
 		KnockdownChance: 0, // No knockdown — savage bleed instead

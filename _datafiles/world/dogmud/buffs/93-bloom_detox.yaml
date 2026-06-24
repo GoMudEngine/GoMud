@@ -1,0 +1,19 @@
+buffid: 93
+name: Bloom Detox
+description: The purge is doing its work -- convulsions, sweating, a burning
+  in the gut and behind the eyes. Your body is fighting the Bloom out of itself
+  the fast way, and the fast way is not kind.
+triggerrate: 1 round
+triggercount: 50
+statmods:
+  healthrecovery: -2
+  staminarecovery: -2
+  convictionrecovery: -2
+  strength: -12
+  dexterity: -12
+  perception: -12
+  vitality: -12
+  willpower: -12
+  charisma: -12
+end_user_text: The worst of the purge passes. You are wrung out and hollow,
+  but the Bloom's grip on you has slipped.

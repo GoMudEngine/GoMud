@@ -62,7 +62,7 @@ func ResolveFleeBlockers(fleer *characters.Character, room *rooms.Room) *FleeBlo
 	if fleer.IsProne() || fleer.IsSupine() {
 		pronePenalty = 0.5
 	}
-	fleeScore := float64(fleer.Stats.Dexterity.ValueAdj+
+	fleeScore := float64(fleer.GetEffectiveDexterity()+
 		fleer.GetSkillLevel(skills.Skullduggery)*25) * pronePenalty
 
 	// Mobs first, then players. Both loops use FindFighting to scope
@@ -79,7 +79,7 @@ func ResolveFleeBlockers(fleer *characters.Character, room *rooms.Room) *FleeBlo
 		if !mobTargetsFleer(m, fleerUid, fleerMid) {
 			continue
 		}
-		blockScore := float64(m.Character.Stats.Dexterity.ValueAdj +
+		blockScore := float64(m.Character.GetEffectiveDexterity() +
 			m.Character.GetSkillLevel(skills.UnarmedCombat)*25)
 		success, _, _, _ := dice.OpposedRollStat(fleeScore, blockScore)
 		if !success {
@@ -101,7 +101,7 @@ func ResolveFleeBlockers(fleer *characters.Character, room *rooms.Room) *FleeBlo
 		if !playerTargetsFleer(u, fleerUid, fleerMid) {
 			continue
 		}
-		blockScore := float64(u.Character.Stats.Dexterity.ValueAdj +
+		blockScore := float64(u.Character.GetEffectiveDexterity() +
 			u.Character.GetSkillLevel(skills.UnarmedCombat)*25)
 		success, _, _, _ := dice.OpposedRollStat(fleeScore, blockScore)
 		if !success {

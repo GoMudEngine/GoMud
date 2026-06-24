@@ -96,9 +96,9 @@ func ExecutePounce(actor Actor) PounceResult {
 	result := combat.ExecuteSkillMove(combat.SkillMoveParams{
 		Attacker:        char,
 		Defender:        target.Char,
-		AttackStat:      char.Stats.Dexterity.ValueAdj,
+		AttackStat:      char.GetEffectiveDexterity(),
 		AttackSkill:     char.GetSkillLevel(skills.UnarmedCombat),
-		DefenseStat:     target.Char.Stats.Dexterity.ValueAdj,
+		DefenseStat:     target.Char.GetEffectiveDexterity(),
 		DefenseSkill:    target.Char.GetCombatSkillLevel(),
 		DamagePercent:   float64(cfg.BashDamagePercent),
 		KnockdownChance: int(cfg.BashKnockdownChance),

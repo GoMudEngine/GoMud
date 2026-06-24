@@ -331,7 +331,7 @@ func (c *Character) GetDefenseSequence() []string {
 
 // GetDefenseScore calculates defense score for a given defense type (Stage 7.1)
 func (c *Character) GetDefenseScore(defenseType string) float64 {
-	dex := float64(c.Stats.Dexterity.ValueAdj)
+	dex := float64(c.GetEffectiveDexterity())
 	skillWeight := float64(configs.GetBalanceConfig().SkillWeight)
 
 	switch defenseType {

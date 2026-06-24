@@ -47,8 +47,8 @@ func AttemptGrapple(attacker *characters.Character, defender *characters.Charact
 	// Check for 1-round grapple opportunity from prior dodge crit (Stage 8.4)
 	opportunityBonus := GetGrappleOpportunityBonus(attacker)
 
-	result.AttackScore = (float64(attacker.Stats.Dexterity.ValueAdj) + attackerCombatSkill) * opportunityBonus
-	result.DefenseScore = float64(defender.Stats.Dexterity.ValueAdj) + defenderCombatSkill
+	result.AttackScore = (float64(attacker.GetEffectiveDexterity()) + attackerCombatSkill) * opportunityBonus
+	result.DefenseScore = float64(defender.GetEffectiveDexterity()) + defenderCombatSkill
 
 	// Clear opportunity after use if it was active (Stage 8.4)
 	if opportunityBonus > 1.0 {

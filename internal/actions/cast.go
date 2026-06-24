@@ -293,7 +293,7 @@ func GetSpellStatAndSkill(char *characters.Character, spellData *spells.SpellDat
 			char.GetSkillLevel(skills.Manifestation)
 	}
 	// Default: perception + spellcasting (traditional magic)
-	return char.Stats.Perception.ValueAdj,
+	return char.GetEffectivePerception(),
 		char.GetSkillLevel(skills.Spellcasting)
 }
 

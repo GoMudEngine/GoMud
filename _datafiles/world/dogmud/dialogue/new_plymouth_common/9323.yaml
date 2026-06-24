@@ -78,6 +78,22 @@ tree:
         tell you where they come from or who sends them, because that is not
         information I have or would share if I did. I treat who walks through
         the door. The rest is not my work."
-      hints: "Ysolde knows the Bloom withdrawal by its smell and course. She
-        keeps the rest to herself — by practice and by principle."
+      hints: "Ysolde knows the Bloom withdrawal well and keeps who brings it
+        to herself. If you are looking for a faster way through, you could
+        ask about a detox or a cure."
       moodChange: cautious
+
+    - id: detox
+      triggers: ["detox", "cure", "purge", "cleanse", "quit", "clean",
+                 "fast", "faster", "quick", "hurry", "get clean", "kick it",
+                 "cut it", "break it"]
+      text: "I have something for it. It is not comfortable -- your body will
+        know what it is doing and argue about every step. Sweating, shaking,
+        worse than you are now for a short while. The slow way is quieter but
+        it takes longer, and some people do not have longer. If you want the
+        purge, drink it when you are ready. I won't ask how bad it is."
+      givesItem: 40109
+      hints: "Ysolde has handed you a sealed clay cup. The choice of when to
+        drink it is yours. She treats what walks through the door -- no
+        records, no questions."
+      moodChange: neutral

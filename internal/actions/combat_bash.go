@@ -94,7 +94,7 @@ func ExecuteBash(actor Actor) BashResult {
 		Defender:        target.Char,
 		AttackStat:      char.Stats.Strength.ValueAdj,
 		AttackSkill:     char.GetSkillLevel(skills.WeaponCombat),
-		DefenseStat:     target.Char.Stats.Dexterity.ValueAdj,
+		DefenseStat:     target.Char.GetEffectiveDexterity(),
 		DefenseSkill:    target.Char.GetCombatSkillLevel(),
 		DamagePercent:     float64(cfg.BashDamagePercent),
 		KnockdownChance:   int(cfg.BashKnockdownChance),

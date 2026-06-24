@@ -45,7 +45,7 @@ type FireResult struct {
 // with a block rating is equipped. Parry contributes nothing to ranged
 // defense by design (you can't parry a bolt).
 func rangedDefenseScore(defender *characters.Character) float64 {
-	score := float64(defender.Stats.Dexterity.ValueAdj) + float64(defender.GetCombatSkillLevel())
+	score := float64(defender.GetEffectiveDexterity()) + float64(defender.GetCombatSkillLevel())
 	if defender.Equipment.Offhand.ItemId > 0 {
 		// NOTE: Item.GetSpec() returns an ItemSpec by VALUE, not a pointer, so
 		// there is intentionally no nil check here (one would not even compile).
@@ -185,14 +185,14 @@ func ExecuteFire(actor Actor, rest string) FireResult {
 	result.MoveResult = combat.ExecuteSkillMove(combat.SkillMoveParams{
 		Attacker:             char,
 		Defender:             defChar,
-		AttackStat:           char.Stats.Perception.ValueAdj,
+		AttackStat:           char.GetEffectivePerception(),
 		AttackSkill:          rangedRank,
 		DefenseStat:          0, // folded into DefenseSkill via rangedDefenseScore
 		DefenseSkill:         int(rangedDefenseScore(defChar)),
 		DamagePercent:        shotMult,
 		KnockdownChance:      0,
 		SkillRank:            rangedRank,
-		DamageStat:           char.Stats.Perception.ValueAdj,
+		DamageStat:           char.GetEffectivePerception(),
 		MitigationMultiplier: 1.0,
 	})
 	result.Executed = true

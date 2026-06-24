@@ -1,0 +1,20 @@
+buffid: 92
+name: Bloom Withdrawal
+description: Your body knows what it wants. The craving is a physical thing --
+  a clench behind the ribs, a restless hunger nothing else will satisfy.
+triggerrate: 1 round
+triggercount: 200
+statmods:
+  healthrecovery: -1
+  staminarecovery: -1
+  convictionrecovery: -1
+  strength: -5
+  dexterity: -5
+  perception: -5
+  vitality: -5
+  willpower: -5
+  charisma: -5
+start_user_text: "The need for Bloom rises like a tide -- your hands shake,
+  your mouth is dry, and your thoughts keep circling back to the wafer and
+  its warmth."
+end_user_text: The craving subsides, for now.

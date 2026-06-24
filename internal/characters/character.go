@@ -110,6 +110,9 @@ type Character struct {
 	Stamina             int              // The stamina of the character (physical energy)
 	Conviction          int              // The conviction of the character (mental/spiritual energy)
 	Toxicity            float64          `yaml:"toxicity,omitempty"` // Current toxicity from potions
+	BloomAddiction      int              `yaml:"bloom_addiction,omitempty"` // Bloom-drug addiction level (0 = clean)
+	BloomLastDoseRound  uint64           `yaml:"-"`                          // runtime: round of last Bloom dose (abstinence clock)
+	BloomHadCommunion   bool             `yaml:"-"`                          // runtime: true while buff 90 was active last tick (Crash transition gate)
 	ActionPoints        int              // The resevoir of action points the character has to spend on movement etc.
 	Gold                int              // The gold the character is holding
 	Bank                int              // The gold the character has in the bank

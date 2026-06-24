@@ -263,13 +263,41 @@ func (c *Character) GetToxicityMax() float64 {
 	return float64(bal.ToxicityBaseMax) + float64(c.Stats.Vitality.ValueAdj)/float64(bal.ToxicityVitalityScale)
 }
 
-// AddToxicity attempts to add toxicity. Returns false if it would exceed max.
+// AddToxicity adds (or removes, if amount is negative) toxicity, clamping to the
+// valid [0, max] range. Returns true (always applies — toxicity rides at max rather
+// than silently rejecting the add, so high-toxicity harm can accrue).
 func (c *Character) AddToxicity(amount float64) bool {
-	if c.Toxicity+amount > c.GetToxicityMax() {
-		return false
-	}
 	c.Toxicity += amount
+	if max := c.GetToxicityMax(); c.Toxicity > max {
+		c.Toxicity = max
+	}
+	if c.Toxicity < 0 {
+		c.Toxicity = 0
+	}
 	return true
+}
+
+// ToxicitySicknessDamage returns the acute HP damage to apply this regen tick from
+// dangerously high toxicity (0 below the top ≥90% band). Percentage-of-max-HP, scaled
+// by how deep into / past the top band the character is — the canon "shortened life":
+// sustained max toxicity poisons the body and, if ignored, can kill (the AutoHeal
+// non-combat death check catches Health<1).
+func (c *Character) ToxicitySicknessDamage() int {
+	max := c.GetToxicityMax()
+	if max <= 0 {
+		return 0
+	}
+	ratio := c.Toxicity / max
+	if ratio < 0.90 {
+		return 0
+	}
+	bal := configs.GetBalanceConfig()
+	over := (ratio - 0.90) / 0.10 // 0 at the 90% line, 1.0 at max, >1 past max
+	dmg := float64(c.HealthMax.Value) * float64(bal.ToxicitySicknessDamagePct) * (1.0 + over)
+	if dmg < 1 {
+		dmg = 1
+	}
+	return int(dmg)
 }
 
 // GetToxicityPenalties returns stat multipliers based on toxicity threshold.
@@ -290,6 +318,45 @@ func (c *Character) GetToxicityPenalties() (float64, float64, float64) {
 		return 0.90, 0.90, 1.0  // -10% regen, -10% Per
 	default:
 		return 1.0, 1.0, 1.0   // no penalty
+	}
+}
+
+// ToxicityBand returns the toxicity severity band:
+//   0 = clear   (<50%)
+//   1 = queasy  (>=50%)
+//   2 = sick    (>=75%)
+//   3 = critical (>=90%)
+//
+// Thresholds mirror GetToxicityPenalties exactly.
+func (c *Character) ToxicityBand() int {
+	max := c.GetToxicityMax()
+	if max <= 0 {
+		return 0
+	}
+	ratio := c.Toxicity / max
+	switch {
+	case ratio >= 0.90:
+		return 3
+	case ratio >= 0.75:
+		return 2
+	case ratio >= 0.50:
+		return 1
+	default:
+		return 0
+	}
+}
+
+// ToxicityBandName returns the descriptive tier word for the current band.
+func (c *Character) ToxicityBandName() string {
+	switch c.ToxicityBand() {
+	case 3:
+		return "critical"
+	case 2:
+		return "sick"
+	case 1:
+		return "queasy"
+	default:
+		return "clear"
 	}
 }
 

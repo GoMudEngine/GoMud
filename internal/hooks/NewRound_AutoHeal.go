@@ -59,12 +59,49 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			continue
 		}
 
-		// Toxicity decay
+		// Snapshot the toxicity band before this tick's decay so we can
+		// detect threshold crossings and send a single descriptive message.
+		prevToxBand := user.Character.ToxicityBand()
+
+		// Toxicity decay (clears slower at high levels) + acute high-toxicity harm.
 		if user.Character.Toxicity > 0 {
 			bal := configs.GetBalanceConfig()
-			user.Character.Toxicity -= float64(bal.ToxicityDecayPerTick)
+			decay := float64(bal.ToxicityDecayPerTick)
+			if tMax := user.Character.GetToxicityMax(); tMax > 0 && user.Character.Toxicity/tMax >= 0.75 {
+				decay *= float64(bal.ToxicityHighDecaySlowMult)
+			}
+			user.Character.Toxicity -= decay
 			if user.Character.Toxicity < 0 {
 				user.Character.Toxicity = 0
+			}
+			// The body poisons itself at dangerous toxicity ("shortened life").
+			// Lethal toxicity is caught by the Health<1 non-combat death check above
+			// on the next tick.
+			if dmg := user.Character.ToxicitySicknessDamage(); dmg > 0 {
+				user.Character.Health -= dmg
+			}
+		}
+
+		// Notify player when toxicity crosses a named threshold — once per
+		// crossing, not every tick.
+		if newToxBand := user.Character.ToxicityBand(); newToxBand != prevToxBand {
+			if newToxBand > prevToxBand {
+				// Worsening — band-specific onset messages.
+				switch newToxBand {
+				case 1:
+					user.SendText(messaging.CategoryWarning,
+						`A faint nausea settles in and will not quite lift.`)
+				case 2:
+					user.SendText(messaging.CategoryWarning,
+						`Your hands have a fine tremor now, and your sight swims at the edges.`)
+				case 3:
+					user.SendText(messaging.CategoryWarning,
+						`Your whole body is in revolt — sweat, shakes, the taste of metal.`)
+				}
+			} else {
+				// Improving — one relief line for any downward crossing.
+				user.SendText(messaging.CategoryWarning,
+					`The worst of the sickness ebbs; you can breathe a little easier.`)
 			}
 		}
 
