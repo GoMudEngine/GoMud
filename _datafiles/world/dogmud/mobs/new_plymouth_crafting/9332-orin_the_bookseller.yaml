@@ -11,6 +11,10 @@ maxwander: 0
 groups:
   - humanoid
   - cooperage_circle
+relationships:
+  - to: 9381
+    type: friend
+    subtype: lore_source
 idlecommands:
   - 'emote reads in the dim without apparent difficulty, the ink-stained
     eyes moving in their measured way down the column of text.'

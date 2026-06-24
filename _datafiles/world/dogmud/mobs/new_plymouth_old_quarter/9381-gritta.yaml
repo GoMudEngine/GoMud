@@ -1,0 +1,55 @@
+mobid: 9381
+zone: New Plymouth Old Quarter
+schedule_id: np_oldquarter_gritta
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 32
+maxwander: 0
+groups:
+  - humanoid
+relationships:
+  - to: 9320
+    type: friend
+    subtype: lore_source
+  - to: 9332
+    type: friend
+    subtype: lore_source
+idlecommands:
+  - 'emote runs her fingertips along the cut stone of the wall, reading
+    something in it that is not visible on the surface.'
+  - ''
+  - 'emote withdraws a worked fragment from her pack and holds it flat
+    on her palm, studying it with the patience of someone waiting for
+    it to finish saying something.'
+  - ''
+  - 'emote crouches at the edge of the flooded passage and stares into
+    the dark water for a long moment before standing again.'
+activitylevel: 8
+character:
+  name: Gritta
+  description: |
+    She is a stocky woman of indeterminate years who smells of deep
+    water and old clay. Her hands are permanently discolored at the
+    knuckles from work in the flooded chambers beneath the Old
+    Quarter, and she moves with the slightly forward lean of a person
+    perpetually ducking a lintel that is not there. Something in her
+    responds to the buried gray stone of this place — not a visible
+    change, but a quality of attention, as though the walls are
+    speaking at a frequency she alone receives. She has pulled carved
+    fragments, broken seals, and worked pieces from the drowned
+    chambers below and sent them upward through a chain of contacts
+    to people who can read what she can only feel. She does not
+    explain what she knows. She explains what the stone tells her,
+    which is not the same thing.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    perception:
+      training: 12
+    vitality:
+      training: 8
+    willpower:
+      training: 4

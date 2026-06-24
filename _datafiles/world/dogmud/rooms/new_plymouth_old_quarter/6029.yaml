@@ -1,0 +1,71 @@
+roomid: 6029
+zone: New Plymouth Old Quarter
+title: Deren's Ledger Room
+description: >
+  A small room immediately behind the iron door — low
+  ceiling, no window, the air carrying old tallow and
+  something papery that has had time to settle into the
+  stone. A <ansi fg="itemname">desk</ansi> against the
+  wall bears the wear of regular use stopped not long
+  since — a surface scored by pen and ink-ring stains,
+  a dry inkwell, a pen still in its holder as though
+  set down mid-thought. On the desk, an open <ansi
+  fg="itemname">ledger</ansi> in a close, careful hand;
+  the last entry runs off mid-column without a closing
+  line, the figures unfinished. In the desk's corner,
+  a short <ansi fg="itemname">cord</ansi> lies coiled —
+  the kind a key is worn on, day and night, by someone
+  who does not care to set it down. A stair descends
+  through the floor at the room's far end. The fourth
+  step creaks. The seventh as well.
+biome: city
+coord:
+  x: -26
+  y: 79
+  z: -1
+exits:
+  east:
+    roomid: 6025
+  down:
+    roomid: 6026
+nouns:
+  desk: A working desk — plain, utilitarian, the kind
+    that accumulates the marks of its use without
+    ceremony. The surface carries pen-scoring, old ink
+    rings, a depression from the heel of a hand used
+    many times in the same place. The inkwell is dry
+    and has been dry long enough that the residue has
+    crusted at the lip. The pen in its holder is good
+    quality. Someone who worked here paid for good
+    tools and used them steadily over a long period.
+  ledger: A bound ledger of columns and entries in a
+    precise, compressed hand. Dates run down the left
+    margin; figures and brief notations fill the
+    columns to the right. The entries are in a coded
+    shorthand — close enough to a standard commercial
+    notation to pass a quick inspection, not close
+    enough to be read directly. The last entry is
+    half-finished, the final figure absent. The page
+    has not been turned.
+  cord: A length of thin cord, coiled in the desk
+    corner, with a loop at one end sized for wearing
+    around a neck. The cord is worn soft from long
+    contact with skin; a small brass fitting at the
+    loop end is bright from the same contact. The key
+    it held is not here. Whatever lock that key served,
+    the key went with its owner — or was surrendered.
+idlemessages:
+- The stair below is quiet — no sound comes up
+  from the lower level.
+- The ledger lies open as it was left, the last
+  entry unfinished and the pen still in its place.
+- The cord on the desk corner catches the eye;
+  the absence it marks is harder to define.
+- The air in the room is closed and used — the
+  smell of a workspace that has been sealed awhile.
+- The fourth step below produces a faint sound
+  on its own when the temperature of the stairwell
+  shifts in the cold.
+spawninfo:
+  - mobid: 9379
+    respawnrate: "10 real minutes"

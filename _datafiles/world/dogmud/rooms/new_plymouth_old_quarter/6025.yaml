@@ -1,0 +1,72 @@
+roomid: 6025
+zone: New Plymouth Old Quarter
+title: 215 Lintel Street — the Iron Door
+description: >
+  A side passage off Upper Lintel Street opens onto a
+  short stretch of worn stone ending at a doorway. The
+  colonial number is scratched into the lintel above the
+  frame — 215, in a plain hand, the kind of designation
+  that means nothing unless you know to look for it.
+  The <ansi fg="itemname">iron door</ansi> stands a few
+  inches ajar, iron-banded across heavy dark timber that
+  once required a pattern-knock to open; at fist-height
+  on the banding the iron is worn bright by long regular
+  use at exactly one point, the wear of knuckles finding
+  the right sequence over many visits. The <ansi
+  fg="itemname">house number</ansi> above the frame
+  carries no name and no trade sign beside it. The <ansi
+  fg="itemname">open threshold</ansi> beyond the door
+  leads west into a low interior. Whatever once
+  controlled entry here no longer does.
+biome: city
+coord:
+  x: -25
+  y: 79
+  z: -1
+exits:
+  north:
+    roomid: 6024
+  west:
+    roomid: 6029
+nouns:
+  iron door: Iron-banded across heavy timber — the
+    banding is not decorative but functional, the kind
+    of reinforcement that is meant to resist forced
+    entry rather than simply deter it. The iron itself
+    is old and has been maintained; no rust at the
+    joints, the hardware oiled. At fist-height on the
+    right-side band, the metal is worn smooth and
+    slightly bright — the work of knuckles returning
+    to exactly this point in exactly this sequence for
+    a long time. The door stands ajar. It opens inward.
+  house number: 215, scratched into the lintel stone
+    in plain colonial numerals — no flourish, no
+    maker's mark, no trade designation beneath. The
+    sort of address that appears in no directory and
+    on no official register. The stone around the
+    numbers shows no weathering — the designation was
+    cut after the street was buried and has never
+    seen open air.
+  open threshold: The door was kept closed and is not
+    closed now. Whatever arrangement controlled entry
+    here — the pattern-knock, the recognition — has
+    ended. The room beyond is low and dark and quiet,
+    and the way into it stands open.
+idlemessages:
+- The iron door holds the position where it was
+  left — not fully open, not quite closed, as
+  though it was interrupted mid-swing.
+- The worn place on the door banding catches what
+  little light reaches this passage, a small
+  bright point in the old iron.
+- The number 215 above the frame says nothing and
+  asks nothing. It has been saying nothing for
+  some time now.
+- A cold breath comes through the open threshold
+  from the room beyond — stiller than the passage,
+  and colder.
+- The wear pattern on the door hardware reads as
+  a record of regular use, though not a legible one.
+spawninfo:
+  - mobid: 9382
+    respawnrate: "10 real minutes"

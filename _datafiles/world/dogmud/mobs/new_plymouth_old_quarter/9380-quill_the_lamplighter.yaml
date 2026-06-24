@@ -1,0 +1,44 @@
+mobid: 9380
+zone: New Plymouth Old Quarter
+schedule_id: np_oldquarter_quill
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote tilts the wick of his lamp, checks the oil level through
+    the glass, and rights it with a small practiced motion.'
+  - ''
+  - 'emote moves to the next bracket on the wall and inspects the
+    glass for soot — not appearing to look at anything else.'
+  - ''
+  - 'emote wipes both hands on the cloth at his belt and becomes
+    very still, as though listening to the water in the canal below.'
+activitylevel: 7
+character:
+  name: Quill the Lamplighter
+  description: |
+    He is very thin and very quiet — the kind of person the city
+    produces in its lowest reaches, where warmth is tended rather
+    than assumed. His eyes are wrong in a way you notice only when
+    the light shifts — too wide, too dark, the pupils spread as a
+    cat's in deep shadow and slow to contract even in lamplight.
+    Long years below have left him adapted to the dark in ways the
+    surface cannot undo. He carries an oil can, a wick-trimmer, and
+    nothing else. His clothes are clean only relative to everything
+    else in the canal quarter. He tends the only warm lights in the
+    Old Quarter, and what he sees by those lights, he keeps very
+    carefully to himself.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    perception:
+      training: 14
+    dexterity:
+      training: 4

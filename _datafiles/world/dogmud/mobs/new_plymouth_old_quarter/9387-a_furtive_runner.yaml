@@ -1,0 +1,49 @@
+mobid: 9387
+zone: New Plymouth Old Quarter
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 1
+groups:
+  - humanoid
+  - bloom_trade
+idlecommands:
+  - 'emote stops at the mouth of the passage, checks the
+    length of the street in both directions with a single
+    unhurried look that takes in everything without
+    appearing to, then moves on.'
+  - ''
+  - 'emote adjusts the fold of the coat with one hand —
+    the hand passes over a specific point inside the
+    lapel and comes away without taking anything — and
+    continues walking.'
+  - ''
+  - 'emote pauses, listens, does not look around. Then
+    the pause is over and the runner is moving again
+    at exactly the same pace as before.'
+activitylevel: 4
+character:
+  name: A Furtive Runner
+  description: |
+    The runner is not running. The name is operational
+    rather than descriptive — what the runner does is
+    move through the buried quarter at a pace that reads
+    as purposeful enough to avoid questions and ordinary
+    enough to avoid attention. The coat is nondescript
+    in color and fit, chosen to be unremarkable. The
+    hands are always visible and always empty. The eyes
+    do not settle on any single point for long. Whatever
+    the runner is carrying, or not carrying, or
+    delivering, or collecting, this information is not
+    offered and the bearing of the person makes clear
+    it is not invited.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    dexterity:
+      training: 10
+    perception:
+      training: 6

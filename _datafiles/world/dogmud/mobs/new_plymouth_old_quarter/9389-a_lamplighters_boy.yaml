@@ -1,0 +1,50 @@
+mobid: 9389
+zone: New Plymouth Old Quarter
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 22
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote checks the lamp on the wall — looks at the
+    oil level, trims the wick with a small iron tool
+    drawn from a coat pocket, reseats the clay body
+    with practiced hands, and moves on.'
+  - ''
+  - 'emote stands on the balls of the feet to reach the
+    next lamp on its peg, oil flask in hand, and tops
+    it off with the careful pour of someone who does
+    not spill oil and has not spilled it in a long time.'
+  - ''
+  - 'emote pauses and tilts the head, listening for the
+    particular sound of a lamp about to go out — the
+    slight change in the flame — then relaxes, and
+    continues along the walk.'
+activitylevel: 4
+character:
+  name: A Lamplighter's Boy
+  description: |
+    The boy is young — not a child, not quite grown —
+    with the quick, economical movements of someone
+    who has been given a job that matters and knows it.
+    An oil flask hangs from one shoulder on a leather
+    strap; a small tin of spare wicks and a wick-iron
+    are in the coat pocket on the opposite side, the
+    weight balanced from practice. He moves the lamp-
+    walk with the route in his body rather than his
+    head — checking, topping off, trimming — without
+    pausing to consider the sequence because the
+    sequence is settled. He works for the lamplighter
+    and he does the work properly.
+  speciesid: 1
+  level: 1
+  gold: 4
+  stats:
+    dexterity:
+      training: 6
+    perception:
+      training: 4

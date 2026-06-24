@@ -1,0 +1,78 @@
+mobid: 9379
+zone: New Plymouth Old Quarter
+defaultMood: cautious
+
+greetings:
+  - text: "You found the address. Whatever you came to close is already
+      closed — but ask what you came to ask."
+    moods: ["cautious", "neutral"]
+  - text: "Still here. Still watched. The question you carried all this
+      way deserves to be asked."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Ask what you came to ask."
+      - "I expected someone would come eventually."
+
+  - keywords: [""]
+    responses:
+      - "I have nowhere left to be cautious about. Speak."
+      - "Say it plainly."
+
+tree:
+  root:
+    text: "I have been at this address long enough that my name is on
+      a list somewhere — it has been there for some time. The watch
+      knows where I live. If you came here for a confession, I have
+      nothing to say to you that is not already known to people with
+      the authority to hear it. But ask what you came to ask."
+    hints: "You could ask Deren about the Bloom and the arrangement
+      that ran from this address, about Marn — the Docks contact —
+      or about the captive and the key."
+
+  nodes:
+    - id: operation
+      triggers: ["bloom", "operation", "arrangement", "trade",
+                 "product", "address", "lintel", "distribution",
+                 "supply", "here", "what", "doing", "run", "running"]
+      text: "There was a supply arrangement that moved through this
+        address. I managed the distribution end — the quantities, the
+        timing, the contacts. I did not need to know more than my
+        part, and I did not know more than my part. That arrangement
+        no longer operates from here. Whatever questions remain are
+        for people with the authority to press them — and none of
+        those people are you."
+      hints: "He told you something and nothing in the same sentence.
+        You could ask about Marn — the Docks contact — or about the
+        captive and the key."
+
+    - id: marn
+      triggers: ["marn", "docks", "contact", "draper", "cloth",
+                 "shop", "upstream", "other", "who", "partner"]
+      text: "The Docks end is a man named Marn. He keeps a cloth
+        shop on the docks — clean front, well maintained, nothing
+        that draws attention. He and I did not meet in person. You
+        will understand why. Whether he continues to operate now
+        that this end has gone quiet, I would not know — that is
+        his calculation to make, not mine."
+      hints: "He named the contact and said what he knows about him
+        plainly. You could ask about the captive, or about the
+        arrangement that ran from this address."
+
+    - id: captive
+      triggers: ["captive", "key", "prisoner", "held", "locked",
+                 "hostage", "surrendered", "person", "they",
+                 "someone", "kept"]
+      text: "That situation is resolved. I held a key — to an
+        arrangement that required one party to remain in place. That
+        party has since departed. The key was surrendered to the
+        appropriate people. I did not make decisions about them
+        personally — I managed the logistics of a circumstance
+        someone else created and someone else closed. It is a closed
+        account. I record it as such."
+      hints: "He described the captive like a ledger entry with no
+        outstanding balance. There is nothing more he will give you
+        on this."
+      moodChange: cautious

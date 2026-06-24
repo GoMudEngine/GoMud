@@ -1,0 +1,52 @@
+mobid: 9388
+zone: New Plymouth Old Quarter
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 18
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote sits against the old stone with the composed
+    patience of something placed there rather than someone
+    who sat down — a stillness that has had a very long
+    time to settle into its shape.'
+  - ''
+  - 'emote watches whoever is moving through the quarter
+    with eyes that do not move much but take in a great
+    deal, the look of someone who has seen all the
+    variations before and is simply noting which one
+    this is.'
+  - ''
+  - 'emote speaks something under the breath — not to
+    anyone present, possibly to no one at all, possibly
+    to the quarter itself, which has been listening a
+    long time and has opinions.'
+activitylevel: 2
+character:
+  name: A Canal-side Crone
+  description: |
+    She is very old in the way the stone around her is
+    old — worn to smoothness at the points of contact,
+    unchanged everywhere else. She has been in the Old
+    Quarter long enough that the quarter's residents
+    measure their own time here against how long she
+    has already been here, which gives them a fixed
+    point for their own duration. She knows the names
+    of everyone who has lived in the hovels and the
+    courts within a long walk of this spot, going back
+    several generations, and she knows where most of
+    them ended up and under what circumstances. She
+    does not offer this information. She offers nothing.
+    But she remembers.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    perception:
+      training: 12
+    charisma:
+      training: 4

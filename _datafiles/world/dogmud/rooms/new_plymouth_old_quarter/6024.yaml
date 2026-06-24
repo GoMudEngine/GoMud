@@ -1,0 +1,66 @@
+roomid: 6024
+zone: New Plymouth Old Quarter
+title: Upper Lintel Street
+description: >
+  The street reaches its highest and driest point here —
+  still underground, still mineral-cold, but no standing
+  water, no trace of the canal. The <ansi
+  fg="itemname">old lintels</ansi> are grander at this
+  end — wider spans, finer-dressed stone, the work of
+  a neighborhood that had some standing when the colony
+  buried it. Above the lintels the later houses crowd
+  the passage from both sides; their <ansi
+  fg="itemname">dark windows</ansi> are shuttered or
+  open-dark, showing nothing within. At the base of one
+  building face, a <ansi fg="itemname">worn threshold</ansi>
+  opens onto interior dark — stone polished by use
+  older than the colony. The character of the street
+  changes here — not the emptiness of the lower reaches
+  but something more deliberate, a quiet that comes from
+  people who have chosen to be still. The far end bends
+  into shadow beyond any lamp's reach.
+biome: city
+coord:
+  x: -25
+  y: 80
+  z: -1
+exits:
+  east:
+    roomid: 6023
+  south:
+    roomid: 6025
+nouns:
+  old lintels: The lintels at this end of the street
+    are the finest in the buried quarter — wider spans
+    than those to the east, the stone dressed to a
+    tighter finish, the corners still crisp. The work
+    is consistent with civic or merchant-class
+    construction. The colony buried it with the same
+    indifference it buried everything else, and the
+    lintels endure regardless.
+  dark windows: Set deep in the old stone — original
+    openings widened slightly by the later colonial
+    work above. Some are shuttered with grey wood gone
+    tight with age; others are simply open, the
+    interior darkness complete. Looking into them you
+    see nothing. Whether that means nothing is there
+    is a different question.
+  worn threshold: A pre-colonial doorsill whose stone
+    has been polished smooth by a very long history of
+    use — the original traffic before the burial, and
+    whatever has passed over it since. The wear pattern
+    is centered, the product of steady traffic in both
+    directions over a long time. The stone here is
+    clean of the fine mineral dust that coats the
+    lintels above, which is worth noting.
+idlemessages:
+- The silence here is a chosen silence — the kind
+  that requires someone to be maintaining it.
+- A lamp somewhere farther along gives a thin light
+  that does not reach this stretch of street.
+- The cold is dry here — bone-cold rather than the
+  wet cold of the canal end.
+- Something moves in one of the upper windows — or
+  the light shifts — and then nothing.
+- The far shadow where the street bends holds its
+  shape without moving.

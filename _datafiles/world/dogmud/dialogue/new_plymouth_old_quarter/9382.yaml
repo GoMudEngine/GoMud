@@ -1,0 +1,55 @@
+mobid: 9382
+zone: New Plymouth Old Quarter
+defaultMood: neutral
+
+greetings:
+  - text: "The door is there. I am here. What you do next is your
+      own business."
+    moods: ["neutral", "cautious"]
+  - text: "Still here. Same door."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Mm."
+      - "Still here."
+
+  - keywords: [""]
+    responses:
+      - "I do not get paid to talk."
+      - "Mm."
+
+tree:
+  root:
+    text: "I am not paid to stop people walking into a place that
+      is already finished. Go in, go out — none of my concern. I
+      am here because standing somewhere else has not occurred to me."
+    hints: "You could ask the doorman about the iron door and what
+      he still guards, or about Deren and whether the operation
+      is truly over."
+
+  nodes:
+    - id: door
+      triggers: ["door", "215", "watch", "watching", "standing",
+                 "guard", "iron", "entrance", "stop", "block",
+                 "through", "inside", "in", "enter"]
+      text: "I stand here. The door is behind me. I have been
+        standing here for four years and I do not have a reason
+        to stop that has been clearly communicated to me. If you
+        want to go in — go in. There is nothing to guard against
+        and no one left to report to. That does not change the
+        standing."
+      hints: "He confirmed the way is clear — no one is stopping
+        you. You could ask whether Deren is still inside."
+
+    - id: deren
+      triggers: ["deren", "over", "finished", "done", "operation",
+                 "business", "man", "him", "end", "who"]
+      text: "He is inside. He does not go out. The arrangement
+        is finished — I know this, he knows this, the people who
+        were watching it know this. I was employed to stand here.
+        I am standing here. That is all I have for you."
+      hints: "The doorman has said what he will. The door is open
+        to you."
+      moodChange: cautious

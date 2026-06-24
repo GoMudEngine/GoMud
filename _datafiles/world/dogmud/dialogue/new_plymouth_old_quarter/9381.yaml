@@ -1,0 +1,83 @@
+mobid: 9381
+zone: New Plymouth Old Quarter
+defaultMood: neutral
+
+greetings:
+  - text: "Watch your step near the passage — the floor is wet and
+      the stone shifts where the canal has eaten through it."
+    moods: ["neutral", "cautious"]
+  - text: "You made it down. Not many bother. What is it?"
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Down here with a question. Make it quick."
+      - "What is it."
+
+  - keywords: [""]
+    responses:
+      - "The stone does not wait for questions to be formed carefully."
+      - "I am between dives. Say what you mean."
+
+tree:
+  root:
+    text: "I work the flooded chambers below — what the water has not
+      taken, the silt has covered, and what the silt has covered I
+      find. If you are down here with a question, the stone can
+      probably answer it better than I can. But ask."
+    hints: "You could ask Gritta about the gray material she senses
+      in the deep stone, about the pre-Founding symbol on the buried
+      lintels, or about where her finds go and who receives them."
+
+  nodes:
+    - id: stone
+      triggers: ["gray", "material", "stone", "sense", "feel",
+                 "feeling", "walls", "weight", "pressure", "deep",
+                 "sealed", "mutation", "change"]
+      text: "The deep stone — the gray, the oldest layer — it carries
+        a different quality than the stone above. Not the weight —
+        the weight is what you expect. Something else — a kind of
+        pressure, as though the material is holding a shape it was
+        forced into a very long time ago and has not fully accepted.
+        The newer foundations do not have this. Only the gray stone,
+        and only in the lowest chambers, near the sealed courses."
+      hints: "She described what she senses with the precision of
+        someone who has measured the same thing many times. You could
+        ask about the pre-Founding symbols on the buried lintels, or
+        about who receives her finds."
+
+    - id: founding
+      triggers: ["founding", "symbol", "lintel", "old", "before",
+                 "eight", "orbital", "settlement", "colony",
+                 "inscription", "carving", "markings", "older",
+                 "history", "original"]
+      text: "The lintels in the lowest chambers — the gray-stone
+        ones — carry markings the colony has no record of. Eight
+        points, with an orbital element — the kind of symbol that
+        tracked something, measured something regular. The Founding
+        story has us arriving to empty ground. But the stone below
+        is worked stone. Someone built a passage and set a lintel
+        and carved into it, and then stopped — or was stopped —
+        long before the colony came. I have sent the best fragments
+        to Coll and to Orin. They can read script I cannot."
+      hints: "She named Coll and Orin — contacts up in the city who
+        receive her finds. You could ask about the gray material in
+        the deep stone, or about the finds she sends upward."
+
+    - id: finds
+      triggers: ["finds", "coll", "orin", "fragments", "pieces",
+                 "contacts", "bookseller", "sweeper", "send",
+                 "above", "up", "receives", "routes"]
+      text: "Coll is a street-sweeper in the Common Quarter — he
+        has been collecting fragments longer than I have been sending
+        them, and he knows how to route what he receives to the right
+        people. Orin keeps a book stall in the Crafting Quarter — he
+        has access to old survey records and pre-colony maps that the
+        Archive does not officially hold. Between the two of them,
+        the fragments reach where they need to go. My part is the
+        finding. The reading is theirs."
+      hints: "She named both contacts directly — Coll in the Common
+        Quarter, Orin in the Crafting Quarter. You could ask about
+        the pre-Founding symbols, or about what she senses in the
+        gray stone."

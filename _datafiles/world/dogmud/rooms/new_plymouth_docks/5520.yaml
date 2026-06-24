@@ -12,9 +12,11 @@ description: >
   strips, the waterline working the stone in a slow patient knock
   you do not hear from above. A <ansi fg="itemname">bilge
   channel</ansi> runs along the base of the far wall, ankle-deep
-  and brown, draining nothing in particular. The passage east
-  continues into the dark between the piles. The stair is behind
-  you.
+  and brown, draining nothing in particular — west, it slips
+  beneath a low stone arch into an older dark that the docks
+  never paved, where the buried canal of the Old Quarter lies
+  dead and waiting. The passage east continues into the dark
+  between the piles. The stair is behind you.
 biome: city
 coord:
   x: -20
@@ -25,6 +27,8 @@ exits:
     roomid: 5509
   east:
     roomid: 5521
+  west:
+    roomid: 6020
 nouns:
   rotten pilings: The dock's foundations — heavy timber driven into
     the riverbed long enough ago that the wood has gone dark to the

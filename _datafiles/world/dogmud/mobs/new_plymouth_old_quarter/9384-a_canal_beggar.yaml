@@ -1,0 +1,47 @@
+mobid: 9384
+zone: New Plymouth Old Quarter
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 18
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote sits with the back against the old stone wall and
+    the knees drawn up, a clay cup between the feet on the
+    ledge. The cup has been there a long time. It contains
+    very little.'
+  - ''
+  - 'emote watches the canal water with an expression that
+    has passed through several stages of feeling and arrived
+    at the last one, which looks like nothing in particular.'
+  - ''
+  - 'emote draws the coat tighter with one hand. The gesture
+    takes a long time and ends without the coat being any
+    warmer than it was.'
+activitylevel: 2
+character:
+  name: A Canal Beggar
+  description: |
+    The beggar has found the driest point of the
+    canal-side ledge and arranged themselves in it
+    with the economy of someone who has done this
+    many times and knows exactly how much space they
+    occupy. A clay cup sits on the flags in front
+    of their feet — not held out, not announced, just
+    present. They do not ask. Whatever asking there
+    was has been concluded, some time ago, and what
+    replaced it is this: sitting, watching the still
+    water, wearing the cold at this depth with the
+    practiced endurance of someone who has learned
+    that it does not get better and does not get
+    worse, only continues.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: 4

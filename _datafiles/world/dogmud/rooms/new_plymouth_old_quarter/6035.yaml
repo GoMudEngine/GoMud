@@ -1,0 +1,68 @@
+roomid: 6035
+zone: New Plymouth Old Quarter
+title: Gritta's Flooded Cellar
+description: >
+  A vaulted cellar at the base of the stair — the
+  ceiling higher than anything in the buried quarter
+  above, the stone differently cut and more precisely
+  fitted, the vault's curve describing an older geometry
+  than the colonial work it underlies. Knee-deep water
+  fills the floor and has filled it long enough that the
+  waterline mark on the vault walls is a settled band.
+  On a raised stone shelf along one wall, a careful
+  arrangement of <ansi fg="itemname">salvaged
+  stone</ansi> — shaped pieces, carved edges, a fragment
+  still carrying part of a decorative course — laid out
+  in an order that implies study rather than collection.
+  Beside them, a <ansi fg="itemname">silt probe</ansi>
+  and a stiff brush stand in a clay jar, handles up,
+  the tools of someone who searches the floor below the
+  water for what the silt holds. An iron lamp hangs on
+  a hook in the vault — burning. The passage west leads
+  into the older, deeper structure beyond.
+biome: city
+coord:
+  x: -24
+  y: 81
+  z: -2
+exits:
+  up:
+    roomid: 6034
+  west:
+    roomid: 6036
+nouns:
+  salvaged stone: Pieces of shaped pre-Founding stone,
+    laid on the shelf with the care of a collection
+    rather than a pile — each piece positioned so its
+    carved or cut surface is visible. A carved edge
+    on one fragment shows part of a repeating device;
+    another holds a section of a drilled hole that may
+    have been part of a larger fitting. The arrangement
+    represents a long, patient survey of the floor
+    below the water, piece by piece, over many visits.
+  silt probe: A length of iron rod with a flattened
+    end, stored upright with a stiff-bristled brush
+    in a clay jar — the tools of someone who works the
+    flooded floor systematically, probing through silt
+    to find stone below, brushing what they find to
+    read what was cut into it. The rod is bent slightly
+    from long use. The brush is worn at the bristle
+    ends from the same work.
+idlemessages:
+- The lamp in the vault burns its low flame onto
+  the shelf and the water alike, touching both.
+- The salvaged pieces on the shelf hold what they
+  were cut to hold — a fragment of something larger,
+  laid out for careful examination.
+- The water is cold at knee-depth and perfectly
+  still — no current reaches this far below the
+  court.
+- The silt probe stands in its clay jar with the
+  patience of a tool that knows it will be used
+  again before long.
+- The vault carries sounds differently from the
+  passages above — a drip from the stair tunnel
+  arrives here modified, flattened, made strange.
+spawninfo:
+  - mobid: 9381
+    respawnrate: "10 real minutes"

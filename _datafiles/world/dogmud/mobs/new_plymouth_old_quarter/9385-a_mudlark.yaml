@@ -1,0 +1,48 @@
+mobid: 9385
+zone: New Plymouth Old Quarter
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 25
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote crouches at the flood edge and works a hand into
+    the silt, feeling along the bottom with the careful
+    systematic patience of someone who has done this long
+    enough to know where to press and where to leave off.'
+  - ''
+  - 'emote draws out a fragment of shaped stone, turns it
+    in the lamp-light — one surface cut, one rough — and
+    places it with the others in the cloth beside the knee.'
+  - ''
+  - 'emote wipes both arms down with a piece of sacking
+    that is already the color of the silt, then goes back
+    to the water without particular ceremony.'
+activitylevel: 3
+character:
+  name: A Mudlark
+  description: |
+    The mudlark is wet to the elbows in the particular
+    way that is no longer worth attending to — the
+    arms have been wet at this depth so many times
+    that the skin has taken on the color and texture
+    of the work itself. A piece of cloth beside the
+    knee holds the day's finds — shaped stone, carved
+    fragments, the occasional fitting — arranged in
+    the order they were pulled from the silt. The
+    mudlark does not look up when the passage is
+    crossed; the floor below the flood is the point
+    of attention, and what is on it has not yet been
+    fully surveyed. Each fragment that comes up goes
+    to the old woman at the cellar.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    perception:
+      training: 10
+    vitality:
+      training: 4

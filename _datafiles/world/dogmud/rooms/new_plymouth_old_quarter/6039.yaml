@@ -1,0 +1,81 @@
+roomid: 6039
+zone: New Plymouth Old Quarter
+title: A Silted Gallery
+description: >
+  The deepest and oldest accessible space in the buried
+  city — a pre-Founding gallery where the gray material
+  is not a seam or a vein but the primary surface of the
+  <ansi fg="itemname">gallery walls</ansi>, continuous
+  from the silt line to the vault above. This is, as far
+  as any search of the deep has established, the source —
+  the original interior of whatever structure the buried
+  canal and the pre-Founding stonework were part of.
+  The floor is not visible; <ansi fg="itemname">deep
+  silt</ansi> covers it to boot depth, undisturbed except
+  where careful searching has left probe-marks in the
+  settled surface. The <ansi fg="itemname">gray
+  facing</ansi> does not smell like stone when you stand
+  close to it — not metal either, not any category
+  available in the colony's vocabulary for material
+  things. It does not yield to a blade or take a scratch.
+  The lamp carried here does not seem to reach the
+  gallery's full extent — the space feels larger than a
+  lamp can confirm, or the dark at the far end is simply
+  very complete.
+biome: city
+coord:
+  x: -26
+  y: 82
+  z: -2
+exits:
+  south:
+    roomid: 6037
+  east:
+    roomid: 6038
+nouns:
+  gallery walls: Faced entirely with the gray material —
+    not stone with a seam of it, but the material itself
+    as the surface, from the silt line at the base to
+    the vault above. Whatever function this gallery had,
+    the material was integral to it. The surface is
+    smooth and cold to the touch and does not warm at
+    the hand's contact the way stone does. Running a
+    lamp along the wall, the material carries no
+    inscription, no device — only the smooth gray facing,
+    continuous and unbroken around the full interior.
+  deep silt: The original pre-Founding floor is below
+    this — somewhere beneath however much has accumulated
+    in however long this gallery has been sealed under
+    the colony. The silt surface carries the marks of
+    searching — probe-lines, a few brushed patches where
+    something was found and read — but no substantial
+    finds have been removed. Either nothing substantial
+    is down there or it has not been found yet. The silt
+    is very old and very still.
+  gray facing: Close to it, the smell is the detail
+    that stays with you — not mineral, not organic,
+    not metal. A smell that has no name in the colony
+    because the colony has never encountered this
+    material before. The facing does not yield to a
+    blade, does not scratch, does not warm at touch or
+    cool at depth in the way stone or metal would.
+    Whatever it is, it was placed here — with evident
+    precision, as a designed interior surface — by
+    whoever built the original structure, for whatever
+    the original structure was for.
+idlemessages:
+- The gray facing carries the lamplight without
+  reflecting it — the surface absorbs the glow
+  and returns nothing.
+- The silt surface is undisturbed except where it
+  has already been searched, carefully and more
+  than once.
+- The gallery extends farther west than the lamp
+  confirms — or the dark at the far end is simply
+  very complete.
+- The silence here is the silence of the oldest
+  accessible room in the buried city, which has
+  had a long time to settle into itself.
+- Close to the gray facing, the smell is something
+  the colony has no word for, which is itself a
+  kind of information.

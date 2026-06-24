@@ -1,0 +1,45 @@
+mobid: 9382
+zone: New Plymouth Old Quarter
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 42
+maxwander: 0
+groups:
+  - humanoid
+  - bloom_trade
+idlecommands:
+  - 'emote does not move. His back is to the iron door and his arms
+    are at his sides and he does not move.'
+  - ''
+  - 'emote watches the far end of the corridor with the deliberate
+    attention of a man still doing a job that no longer exists.'
+  - ''
+  - 'emote shifts his weight from one foot to the other — the only
+    motion he makes — and is immediately still again.'
+activitylevel: 4
+character:
+  name: The Doorman
+  description: |
+    He is very large and very still in the way that large things
+    sometimes are — a stillness that reads as threat rather than
+    peace, because of the mass behind it. He stands in front of
+    the iron door with the fixed quality of something set in place
+    rather than a person who chose to stand there, and nothing
+    about his posture suggests any intention of changing this.
+    The Bloom has left its mark on him — not the copper veining or
+    the wide night-eyes, but something structural, a density to
+    his stance, as though he were slightly heavier than gravity
+    alone accounts for. The operation he guarded is finished. He
+    has not adjusted his behavior to this fact.
+  speciesid: 1
+  level: 1
+  gold: 20
+  stats:
+    strength:
+      training: 14
+    vitality:
+      training: 8
+    perception:
+      training: 6

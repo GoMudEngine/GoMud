@@ -1,0 +1,80 @@
+roomid: 6033
+zone: New Plymouth Old Quarter
+title: Canal-side Hovels
+description: >
+  A cluster of doorways along the outer canal wall —
+  the driest part of the court's margin, a stone ledge
+  that stands a hand-span above the permanent flood.
+  People have settled here accordingly. <ansi
+  fg="itemname">Washing lines</ansi> run between the
+  old stone piers above head-height, garments strung
+  clear of the flood and close enough to the nearest
+  lamp to take its warmth — a practical arrangement
+  that has become a permanent feature of the space.
+  Below the lines, the ledge is dry in patches and
+  damp in others — the border of the flood shifts with
+  the season and the residents know exactly where the
+  line is. Against the walls and in the open doorways,
+  the evidence of managed habitation accumulates — a
+  bucket on a shelf, a <ansi fg="itemname">pair of
+  boots</ansi> set upside-down on a peg to drain, the
+  small practical arrangements of people who have been
+  here a long time and expect to remain. The doors
+  themselves are <ansi fg="itemname">salvaged
+  timber</ansi>, fitted to pre-colonial openings they
+  were not made for, hung on old iron that does not
+  quite match.
+biome: city
+coord:
+  x: -23
+  y: 82
+  z: -1
+exits:
+  south:
+    roomid: 6032
+nouns:
+  washing lines: Strung between old stone piers at a
+    height that puts the garments above any expected
+    flood while keeping them in the warmth of the
+    nearest lamp. The garments are not new — patched,
+    faded, worn to the colors of long use — but clean.
+    Someone is doing laundry at this depth, which
+    requires carrying clean water down, or using what
+    the court provides, which requires not thinking
+    too carefully about its origins.
+  pair of boots: Set upside-down on a wrought iron
+    peg driven between two old stone courses — working
+    boots, the leather gone soft from long use in wet
+    conditions, the toes pointing at the wall in the
+    manner of someone who knows exactly where to find
+    them. The left boot has been mended at the sole
+    with a strip of leather in a different color from
+    the original. They are not new and they are all
+    someone has.
+  salvaged timber: Doors cut from whatever wood was
+    available — not matched to their frames, not fitted
+    the way a proper door is fitted. Each is held on
+    iron hinges that were not made for this opening;
+    the hardware was salvaged as surely as the timber.
+    What they provide is not privacy exactly but the
+    closed-door arrangement that gives people the
+    sense of it, which is close enough down here.
+idlemessages:
+- The washing lines stir once — a draft from the
+  court below — and then go still again.
+- From behind one of the salvaged doors, the small
+  sounds of someone going about what passes for
+  normal at this depth.
+- The boots on the peg are familiar enough to have
+  been placed by someone who does it every time
+  without making a decision about it.
+- The ledge is dry here for now; the waterline mark
+  on the wall below records where it is not always.
+- The silence in the hovels is a habited silence —
+  the particular quiet of people who have learned
+  not to make unnecessary noise.
+spawninfo:
+  - mobid: 9386
+    respawnrate: "10 real minutes"
+  - mobid: 9388
+    respawnrate: "10 real minutes"

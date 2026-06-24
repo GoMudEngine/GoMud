@@ -10,6 +10,10 @@ maxwander: 0
 groups:
   - humanoid
   - np_commonfolk
+relationships:
+  - to: 9381
+    type: friend
+    subtype: lore_source
 idlecommands:
   - 'emote draws the broom in a long practiced stroke, pauses in
     mid-sweep, and presses one ear to the nearest wall for a moment

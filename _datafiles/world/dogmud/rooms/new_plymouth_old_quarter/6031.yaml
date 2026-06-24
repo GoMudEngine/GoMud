@@ -1,0 +1,71 @@
+roomid: 6031
+zone: New Plymouth Old Quarter
+title: Quill's Hovel
+description: >
+  A single room in the old stone — low ceiling, one
+  <ansi fg="itemname">alley window</ansi> cut high and
+  narrow in the back wall, admitting cold air and a
+  thin strip of the quarter's unlit dark. A clay lamp
+  burns on a wall shelf — not guttering and not low,
+  tended. Beneath it, a <ansi fg="itemname">sleeping
+  pallet</ansi> with a folded blanket at one end, the
+  blanket worn clean if not new, the fold deliberate.
+  Along the opposite wall, the tools of a lamp-tender's
+  work arranged on a low shelf — a <ansi
+  fg="itemname">tending kit</ansi> of oil-flask, wick-
+  trimmer, a striker and spare flints, each in its
+  place with the order of someone who finds things in
+  the dark by location rather than sight. The room is
+  poor, and the poverty in it is managed — these are
+  two different conditions, and the difference between
+  them is visible in the arrangement of the shelf.
+biome: city
+coord:
+  x: -22
+  y: 82
+  z: -1
+exits:
+  south:
+    roomid: 6030
+nouns:
+  alley window: Cut high in the back wall — a pre-
+    colonial opening, narrow enough to have been
+    further narrowed by old mortar and in any case
+    too small and too high to serve as more than
+    ventilation. Cold air comes through it steadily.
+    Whatever it looks out onto, the view is not
+    visible from inside the room. The lamp on the
+    shelf was not positioned to light the window;
+    the window is not the point of the lamp.
+  sleeping pallet: A low frame with canvas, the kind
+    of bedding that has been used long enough to carry
+    the shape of its occupant. The blanket at one end
+    is folded with a precision that looks automatic —
+    the fold of someone who has done it every morning
+    without thinking about it for a long time. The
+    pallet is currently unoccupied.
+  tending kit: An oil-flask, a wick-trimmer, a striker,
+    and four spare flints — arranged on the shelf in
+    the same order, each item touching the next. The
+    flask is not full but not empty; it has been
+    recently used and not yet refilled from whatever
+    reserve keeps it current. The kit has the feel of
+    professional equipment maintained to a standard
+    rather than simply owned.
+idlemessages:
+- The lamp on the shelf burns without wavering —
+  no draft reaches this room through the narrow
+  window above.
+- The tending kit sits in its arrangement on the
+  shelf, each item where it always is.
+- The fold of the blanket at the pallet's end is
+  exact — the same fold, probably, every morning.
+- Cold air comes through the alley window in a
+  thin steady current that the lamp does not
+  acknowledge.
+- The room is quiet in the way a room is quiet
+  when its occupant has stepped out and will
+  return shortly.
+spawninfo:
+  - mobid: 9380
+    respawnrate: "10 real minutes"

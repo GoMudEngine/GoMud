@@ -1,0 +1,72 @@
+roomid: 6037
+zone: New Plymouth Old Quarter
+title: The Buried Lintel
+description: >
+  The passage narrows here. A single massive stone
+  spans the full width of the corridor at head-height —
+  a <ansi fg="itemname">lintel</ansi> cut from one piece
+  of the same dark stone as the surrounding courses,
+  seated without mortar at either end with no visible
+  crack at either joint after however long it has held
+  its position. Its underside is carved. The <ansi
+  fg="itemname">symbol</ansi> covers most of that face —
+  concentric rings, eight points at equal intervals,
+  incised with a precision that required a drawing
+  before it required a chisel. It is not a colonial
+  device, not a navigational rose, not an emblem from
+  any faith currently practiced in the settlement — it
+  predates all of those. The partial device in the Noble
+  gallery's oldest painting was a copy of something.
+  You are standing beneath the something. The colony
+  arrived here, found this, and wrote itself into the
+  founding record as first. The lintel makes no argument
+  against that version. It simply continues to be older.
+biome: city
+coord:
+  x: -26
+  y: 81
+  z: -2
+exits:
+  east:
+    roomid: 6036
+  north:
+    roomid: 6039
+nouns:
+  lintel: A single stone spanning the full width of
+    the corridor — pre-Founding work at this depth,
+    the same dark variety as the surrounding courses
+    but cut to a single piece of unusual size. It is
+    seated without mortar and shows no visible shift
+    after however long it has been in position. The
+    length of it is such that placing it required
+    planning — the passage was built around the lintel
+    or the lintel was cut to the passage, and either
+    way the result is a stone that has not moved.
+  symbol: Concentric rings — four of them — with eight
+    points at equal intervals, each point aligned
+    precisely with the next. The incision is clean and
+    consistent in depth across the full extent of the
+    carving, the work of a skilled hand on good stone
+    with adequate time. The symbol occupies most of the
+    lintel's visible underside. It is not incidental
+    decoration; it was placed here deliberately, at a
+    scale and in a position intended to be read by
+    people passing beneath it. Someone wanted this seen.
+    They expected people to look up.
+idlemessages:
+- The lintel sits in its courses without sound or
+  movement — it has sat in them for a very long
+  time.
+- The symbol on the underside is clear in any light
+  brought close, the incision clean and consistent
+  across its full extent.
+- The eight points of the symbol align exactly with
+  each other. The precision of that alignment is
+  one of the things about this room that is not
+  accidental.
+- Something in the passage to the north carries a
+  faint sound — water, or very deep silence — that
+  is difficult to resolve.
+- The colony has been standing on top of this lintel
+  since it arrived. It did not know the lintel was
+  here.
