@@ -163,17 +163,32 @@ Crash severity scales with **addiction level** (B4) — deeper addicts crash har
 
 ### B5. Mutation acceleration
 On each dose, roll (high chance, config `BloomMutationAdvanceChance`) to **advance the
-character's strongest/most-used mutation** by one level (cap-aware — `Mutations` is
-`map[string]int`; pick the **highest-level** entry, ties broken deterministically; if
-the player has NO mutations, seed/advance a default — canon's bark-skin, if a bark-skin
-mutation exists or is added). A **smaller** chance to grant a **new random** mutation
-instead. Reuse the existing mutation-progression rails (cf. buff 73 mutagen-brew / 74
+character's strongest mutation** by one level (cap-aware — `Mutations` is
+`map[string]int`; pick the **highest-level** entry as the "strongest", ties broken
+deterministically). A **smaller** chance to grant a **new random** mutation instead.
+- **Zero-mutations case:** if the doser has NO mutations, **seed a RANDOM mutation
+  with a lean toward mid/high-tier** ones (weight the random pick toward the
+  more-impactful mutations, not the trivial low-tier ones — Bloom kick-starts a real
+  change, not a cosmetic one). NOT a forced bark-skin; bark-skin is just one possible
+  roll (canon was Vane's *particular* mutation, not universal).
+Reuse the existing mutation-progression rails (cf. buff 73 mutagen-brew / 74
 chrysalis-catalyst, which already advance mutations) — **the plan pins the exact
 cap-aware advance call** (likely incrementing `Mutations[id]` within the slot/cap
 validators in `internal/characters/validate.go:validateMutationSlots` /
-`mutations` pkg). Mutations carry pro+con, so deepening is the built-in gamble. A
-descriptive message on advance ("Something under your skin shifts and settles
-differently.").
+`mutations` pkg) and the **tier weighting** for the random seed (the `mutations` pkg
+should expose or derive a tier/impact ordering). Mutations carry pro+con, so deepening
+is the built-in gamble. A descriptive message on advance ("Something under your skin
+shifts and settles differently.").
+
+> **Forward synergy (design intent, NOT built here) — [[project-moon-crash-remort-potion]]:**
+> a planned very-rare loot potion from the "moon" crash-site instance **clears ALL
+> mutations and gives a chance to "remort" into higher-tier mutations.** It pairs with
+> Bloom by design: Bloom cheaply but dangerously *deepens* your mutations (including
+> ones you'd rather not have); the remort potion is the rare, expensive **reroll** —
+> clear the accumulated load and gamble for a better high-tier set. Keep the Bloom
+> mutation-advance implementation clean enough that a future "clear all mutations +
+> reroll" operation composes with it (a single cap-aware `Mutations` map both sides
+> mutate). Don't build the potion here; just don't foreclose it.
 
 ### B6. Withdrawal
 - While `BloomAddiction > 0` and **no Bloom for `BloomWithdrawalOnsetRounds`**, apply
@@ -190,16 +205,27 @@ bands → Part A's acute harm (A4) IS the "shortened life." No separate Bloom-sp
 life stat. A chronic Bloom user lives at high toxicity, taking ongoing harm, with the
 mutation load deepening — the slow burn.
 
-### B8. Escape (brutal but escapable)
-- **Endure:** stop dosing. Toxicity decays (A5), withdrawal eventually subsides (B6),
-  `BloomAddiction` slowly drops (B4). Hard because withdrawal hurts — but free.
-- **Detox via Ysolde (mob 9323, Common back-alley healer — canon treats addicts):** a
-  **detox service/cure** that accelerates the kick — clears toxicity faster and/or
-  steps down `BloomAddiction` (a multi-step or paid/quest-gated service; the Bloom
-  Trail quest can make a full cure its reward). The plan defines the exact mechanism
-  (a dialogue-triggered effect / a consumable cure item Ysolde provides).
+Two escape paths with a deliberate **fast-but-brutal vs slow-but-gentle** tradeoff —
+the player chooses how to pay:
+
+- **Cold turkey (endure):** stop dosing and ride it out. Toxicity decays (A5),
+  withdrawal (B6) persists but is **less egregious moment-to-moment**, and
+  `BloomAddiction` drops **slowly** — so the *total* ordeal lasts **longer** but no
+  single moment is unbearable. Free, no NPC needed.
+- **Ysolde detox (mob 9323, Common back-alley healer — canon treats addicts):** a
+  **fast** kick that is **brutal upfront** — applies a **heavy immediate toxicity
+  spike** (a purge that floods the body — pushes toxicity up into the dangerous bands
+  per A4) **+ a strong pools debuff for a while** (the detox sickness), but in
+  exchange **clears `BloomAddiction` much faster** (a large step-down, or to zero over
+  a short, rough window). Rip the bandage: shorter total ordeal, far worse upfront.
+  Mechanism (plan-defined): a Ysolde dialogue-triggered effect or a cure item she
+  provides that stamps a **Bloom Detox** buff (the heavy upfront toxicity + pools
+  debuff) and schedules the rapid addiction step-down. The Bloom Trail quest may gate
+  or discount this (detox-as-reward).
+- **Net:** cold turkey = long + mild; detox = short + savage. Both end at clean.
 - **Mutations are permanent** — you are what Bloom made you. (Mutation *reversal* is
-  out of scope; a future "cure mutation" is a separate idea.)
+  out of scope here; the forward-synergy moon-crash remort potion (B5) is the eventual
+  reroll — a separate build.)
 
 ### B9. Part B definition of done
 - Bloom Wafer consumable exists; consuming it applies Communion → (on expiry) Crash;
