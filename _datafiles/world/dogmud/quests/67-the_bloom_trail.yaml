@@ -28,29 +28,29 @@ steps:
       never ask questions.
     hint: >-
       Ask the auctioneer Falk in the Merchant Quarter about the Lintel
-      Street property.
+      Street address.
   - id: lintel
     description: >-
       Falk knows the Lintel Street address as a quiet property held
       through nominal owners.
     hint: >-
       The deliveries pass through the Noble Quarter. Ask the servant
-      Wenna what she has seen.
+      Wenna about the unmarked crates she has seen.
   - id: delivery
     description: >-
       Wenna confirmed the delivery house -- unmarked goods at odd hours,
       under the bloodline office's eye.
     hint: >-
-      Go down into the Old Quarter. Find 215 Lintel Street and see the
-      operation for yourself.
+      Go down into the Old Quarter to 215 Lintel Street, and confront
+      Deren about the source to his face.
   - id: source
     description: >-
       You found 215 Lintel Street -- the production room, the apparatus,
       and Deren, exposed but untouchable, the bloodline office at his
       back.
     hint: >-
-      Find a witness. The lamplighter Quill walks these canals -- he
-      sees what passes the iron door.
+      Find a witness. The lamplighter Quill walks these canals -- ask
+      him for his account of what passes the iron door.
   - id: witness
     description: >-
       Quill gave his account. With the wrapper, the address, the
