@@ -1,0 +1,77 @@
+mobid: 9390
+zone: New Plymouth Common
+defaultMood: neutral
+
+greetings:
+  - text: "What do you need — if it keeps a day running, I have likely got it."
+    moods: ["neutral"]
+  - text: "Good to see you back. The waterskins are fresh-stoppered today."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Come closer — hard to hear over the square."
+      - "Here for supplies or just passing through?"
+
+  - keywords: [""]
+    responses:
+      - "Speak up. The market is loud and I am listening to everyone at once."
+
+tree:
+  root:
+    text: "I keep the stall that sells what people actually need — rope,
+      waterskins, soap, tinderboxes, tallow dips, flour. Not glamorous
+      work, but the kind the Common cannot do without. Ask me about
+      the goods, the quarter, or where my supplies come from."
+    hints: "You could ask Mardle about her wares and what she stocks,
+      about everyday life in the Common Quarter, or about where her
+      supplies come from."
+
+  nodes:
+    - id: wares
+      triggers: ["wares", "goods", "sundries", "buy", "stock", "sell",
+                 "what", "have", "here", "rope", "candles", "candle",
+                 "soap", "tinderbox", "waterskin", "flour", "sack",
+                 "tallow", "need", "carry"]
+      text: "Rope, waterskins, soap, tinderboxes, tallow dips, flour — the
+        things you reach for when the day stops going smoothly and you
+        need it to start again. I do not carry anything you would call
+        a luxury. The Common Market has not much call for luxuries. It
+        has a great deal of call for rope and candles and a full
+        waterskin, and I have kept this stall stocked long enough that
+        people come here first before they check anywhere else. That is
+        worth more to me than a fancier set of goods."
+      hints: "Mardle knows her trade clearly. You could also ask about
+        the quarter itself, or where she gets her supplies."
+
+    - id: quarter
+      triggers: ["common", "quarter", "market", "folk", "people", "city",
+                 "square", "well", "neighborhood", "district", "life",
+                 "work", "live", "around", "place"]
+      text: "The Common Quarter is what the city is actually made of, under
+        everything else. The Merchant Quarter has the money, the Noble
+        Quarter has the name — but the Common is where people get up in
+        the morning and make the day happen. The well by the fountain
+        court is where half the news in New Plymouth gets exchanged by
+        midday. I know more about what is moving through this city just
+        from standing at this stall than most people know from asking."
+      hints: "Mardle has a clear-eyed view of the quarter's place in the
+        city. You could ask about her goods or where her supplies come from."
+
+    - id: supply
+      triggers: ["supply", "where", "come", "from", "get", "source",
+                 "docks", "warehouse", "dobb", "runner", "cart", "delivery"]
+      text: "Everything comes up from the docks warehouses — rope, wax,
+        soap, grain, all of it lands at the waterfront first and works
+        its way here. Dobb runs the circuit that moves stock from the
+        Crafting Quarter down through the Common, and I get my restocks
+        when he comes by. The system is not elegant but it works, and I
+        have learned that working is the only standard worth holding a
+        supply chain to. When the ships are late, I ration the flour
+        and move the soap to the back. When they are on time, this
+        table is full."
+      hints: "The supply chain from the docks to the stall is the backbone
+        of the Common Market. You could ask about the goods or about life
+        in the quarter."
+      moodChange: friendly

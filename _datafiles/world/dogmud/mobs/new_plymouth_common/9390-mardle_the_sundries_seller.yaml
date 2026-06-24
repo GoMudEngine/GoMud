@@ -1,0 +1,54 @@
+mobid: 9390
+zone: New Plymouth Common
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote squares the coils of rope on the front edge of the stall and
+    shifts the loosest one to the back without looking.'
+  - ''
+  - 'say Rope, waterskins, candles — whatever keeps the day moving,
+    I have it right here.'
+  - ''
+  - 'emote rubs both knuckles once, glances at the sky, and draws a
+    second bundle of tallow dips to the front of the table.'
+  - ''
+  - 'emote lifts a waterskin from the rack, checks the stopper, and
+    sets it back with a small satisfied tap.'
+activitylevel: 10
+character:
+  name: Mardle the Sundries-Seller
+  description: |
+    Mardle the Sundries-Seller has kept her corner of the Common Market
+    long enough that the stall is a fixed point — rope coils, waterskins,
+    soap cakes, tinderboxes, tallow dips, and sacks of flour arranged
+    with the settled certainty of someone who stopped taking inventory
+    years ago and simply knows. She is compact and steady, with a worn
+    canvas apron and a voice pitched to carry across the square without
+    apparent effort. Her Chrysalis-change is the quiet kind — her joints
+    ache before rain arrives, reliably, a few hours ahead of any cloud.
+    The quarter's working people have learned to watch her knuckles. She
+    moves extra candles to the front of the table on those mornings, and
+    has never once said why.
+  speciesid: 1
+  level: 1
+  gold: 40
+  stats:
+    perception:
+      training: 8
+    charisma:
+      training: 6
+  shop:
+    - itemid: 40102
+    - itemid: 40103
+    - itemid: 40104
+    - itemid: 40105
+    - itemid: 40077
+    - itemid: 40076
