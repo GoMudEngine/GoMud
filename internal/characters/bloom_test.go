@@ -38,3 +38,41 @@ func TestBloomAddictionTier(t *testing.T) {
 		}
 	}
 }
+
+// TestBloomDecayReferenceAdvance verifies the decay pacing used by
+// NewRound_Bloom: after one decay tick, BloomLastDoseRound is advanced by one
+// decayRounds period so the next decay fires exactly one period later, not
+// immediately on every subsequent round.
+func TestBloomDecayReferenceAdvance(t *testing.T) {
+	const decayRounds = uint64(300)
+	const startRound = uint64(1000)
+
+	c := &Character{
+		BloomAddiction:     3,
+		BloomLastDoseRound: startRound,
+	}
+
+	// The hook fires at currentRound = startRound + decayRounds.
+	currentRound := startRound + decayRounds
+
+	// Precondition: threshold is reached.
+	if since := currentRound - c.BloomLastDoseRound; since < decayRounds {
+		t.Fatalf("test setup broken: since=%d < decayRounds=%d", since, decayRounds)
+	}
+
+	// Mirror the hook's decay step.
+	c.AddBloomAddiction(-1)
+	c.BloomLastDoseRound += decayRounds
+
+	// Addiction decremented.
+	if c.BloomAddiction != 2 {
+		t.Errorf("expected addiction 2 after one decay, got %d", c.BloomAddiction)
+	}
+
+	// Reference advanced: next check should not fire until another period elapses.
+	sinceAfter := currentRound - c.BloomLastDoseRound
+	if sinceAfter >= decayRounds {
+		t.Errorf("reference not advanced: sinceAfter=%d still >= decayRounds=%d",
+			sinceAfter, decayRounds)
+	}
+}

@@ -2,8 +2,10 @@ package usercommands
 
 import (
 	"fmt"
+	"math/rand"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
@@ -13,6 +15,13 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
+
+// bloomWaferItemId is the item ID for the Bloom Wafer (40108).
+// The wafer's effect (Communion buff, addiction tick, mutation roll) is
+// handled as a special case in Drink rather than through the generic buffids
+// path, because it also needs to stamp BloomLastDoseRound and call
+// BloomAdvanceMutation.
+const bloomWaferItemId = 40108
 
 func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
@@ -178,6 +187,43 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			tickAmt := buffs.ComputeTickAmount(maxPool, buffSpec.TickPercent, buffSpec.TickVariance, buffSpec.TickMin, 1.0)
 			user.Character.Buffs.SetTickAmount(buffId, tickAmt)
 		}
+	}
+
+	// ── Bloom Wafer special-case ──────────────────────────────────────────────
+	// The wafer has no buffids in its YAML; all Bloom effects are wired here.
+	// Toxicity (35) was already applied by the normal path above — don't
+	// apply it again. The order relative to the buff loop above doesn't matter
+	// since the loop is empty for this item.
+	if itemSpec.ItemId == bloomWaferItemId {
+		bal := configs.GetBalanceConfig()
+
+		// Communion high. Buff 90 baseline triggercount is 30, which equals
+		// BloomCommunionRounds default — durationMult 1.0 gives the right
+		// baseline; the config knob adjusts without touching this call.
+		_ = user.Character.AddBuffScaled(90, 1.0)
+
+		// Tick addiction counter.
+		user.Character.AddBloomAddiction(int(bal.BloomAddictionPerDose))
+
+		// Stamp the dose round for withdrawal / decay timing.
+		user.Character.BloomLastDoseRound = util.GetRoundCount()
+
+		// Mutation acceleration — roll against BloomMutationAdvanceChance.
+		// BloomNewMutationChance is implicit: BloomAdvanceMutation falls through
+		// to seed a new mutation automatically when all owned are at cap.
+		if rand.Float64() < float64(bal.BloomMutationAdvanceChance) {
+			if id, _ := user.Character.BloomAdvanceMutation(nil); id != "" {
+				user.SendText(messaging.CategoryWarning,
+					`Something under your skin shifts and settles differently.`)
+			}
+		}
+
+		// Euphoric onset message — replaces the generic "you drink" that was
+		// already sent above. Sent last so it reads as the climax of the
+		// consume sequence.
+		user.SendText(messaging.CategoryWarning,
+			`The wafer dissolves to nothing on your tongue and the world goes `+
+				`warm and wide — communion.`)
 	}
 
 	return true, nil

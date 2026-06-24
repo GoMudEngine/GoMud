@@ -39,6 +39,7 @@ func RegisterListeners() {
 	//
 	events.RegisterListener(events.NewRound{}, PresenceTick)
 	events.RegisterListener(events.NewRound{}, AutoHeal)
+	events.RegisterListener(events.NewRound{}, BloomTick) // Bloom drug: Crash, Withdrawal, decay
 	events.RegisterListener(events.NewRound{}, BroadcastHints)
 	events.RegisterListener(events.NewRound{}, IdleMobs)
 	events.RegisterListener(events.MobIdle{}, HandleIdleMobs)
