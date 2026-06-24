@@ -1,0 +1,43 @@
+mobid: 9326
+zone: New Plymouth Common
+defaultMood: friendly
+
+greetings:
+  - text: "Fresh cut this morning — they will outlast anything you will find
+      cheaper. What can I tie for you?"
+    moods: ["friendly", "neutral"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "morning"]
+    responses:
+      - "Morning. The blooms are open and the price is fair — look while they last."
+      - "Buy early. I sell out before midday, every day, and I do not hold any back."
+
+tree:
+  root:
+    text: "I sell cut flowers — a posy for a table, a stem for a windowsill, a
+      bunch for someone you have wronged or want to. Ask about the flowers, or
+      about the rise, if you have a moment to spend that is not coin."
+    hints: "You could ask the flower seller about her flowers, or about
+      Carter's Rise where she keeps her stall."
+
+  nodes:
+    - id: flowers
+      triggers: ["flowers", "flower", "blooms", "bloom", "posy", "stem", "buy",
+                 "wares", "sell", "price", "bunch", "cut", "fresh"]
+      text: "Cut fresh off the carts at first light and tied while the dew is
+        still on them. Mine hold their color a day longer than anyone else's on
+        the rise — I do not say why, and you do not need to know why to enjoy it.
+        A stem is a small thing to carry home. People forget how much a small
+        thing can do."
+      hints: "She nodded at the trestle of blooms. You could ask about
+        Carter's Rise, or simply buy a bunch."
+
+    - id: rise
+      triggers: ["rise", "carter", "carters", "well", "market", "here", "square",
+                 "spot", "corner", "stall"]
+      text: "Carter's Rise — the well at the top, the talk all around it, and me
+        on the outer corner where the light is good and the cart-noise is
+        someone else's problem. I have had this spot longer than most have had
+        their trades. The other sellers gave it to me without anyone deciding to."
+      hints: "You could ask about the flowers, or buy a bunch before they sell out."

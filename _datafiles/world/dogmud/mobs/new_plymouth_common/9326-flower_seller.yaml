@@ -1,6 +1,7 @@
 mobid: 9326
 zone: New Plymouth Common
-behavior_archetype: noncombat_passive
+behavior_archetype: noncombat_shopkeeper
+craft_support: general
 non_combatant: true
 hostile: false
 statpool: 28
@@ -42,3 +43,5 @@ character:
       training: 8
     perception:
       training: 6
+  shop:
+    - itemid: 40107
