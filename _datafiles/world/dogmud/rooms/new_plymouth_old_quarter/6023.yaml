@@ -66,3 +66,6 @@ idlemessages:
   then the quiet of the buried street resumes.
 - The old lintels cast shadows that the available
   light does not quite account for.
+spawninfo:
+  - mobid: 9387
+    respawnrate: "10 real minutes"

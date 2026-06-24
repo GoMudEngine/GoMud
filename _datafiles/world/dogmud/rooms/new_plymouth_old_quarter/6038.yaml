@@ -77,3 +77,6 @@ idlemessages:
 - The carved mark at the upper corner is visible
   when light is brought close; at general lamp
   distance it is easy to miss.
+spawninfo:
+  - mobid: 9385
+    respawnrate: "10 real minutes"

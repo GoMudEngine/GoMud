@@ -67,3 +67,6 @@ idlemessages:
   and colder.
 - The wear pattern on the door hardware reads as
   a record of regular use, though not a legible one.
+spawninfo:
+  - mobid: 9382
+    respawnrate: "10 real minutes"

@@ -1,0 +1,44 @@
+mobid: 9386
+zone: New Plymouth Old Quarter
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 20
+maxwander: 0
+groups:
+  - humanoid
+  - np_commonfolk
+idlecommands:
+  - 'emote sits with both hands around a clay cup, not
+    drinking — just holding it, getting the warmth of
+    whatever was in it before it ran out.'
+  - ''
+  - 'emote looks at the salvaged door without expression,
+    as someone looks at a thing they have looked at many
+    times and long since stopped seeing.'
+  - ''
+  - 'emote shifts position on the ledge in the careful
+    way of someone who has learned exactly which positions
+    hurt and which merely ache, and adjusting accordingly.'
+activitylevel: 2
+character:
+  name: A Destitute Resident
+  description: |
+    The resident has claimed a section of the canal-side
+    ledge that is dry enough and arranged a few
+    belongings against the wall behind them — a rolled
+    coat, a clay cup, a length of rope that may have
+    had a use at some point. The face carries the
+    specific expression of someone who has been in this
+    quarter long enough that the cold and the damp and
+    the permanent dark have become background rather
+    than event. They are not well. They are not in
+    immediate danger of anything worse than what
+    already applies. This is a distinction they make.
+  speciesid: 1
+  level: 1
+  gold: 1
+  stats:
+    vitality:
+      training: 6

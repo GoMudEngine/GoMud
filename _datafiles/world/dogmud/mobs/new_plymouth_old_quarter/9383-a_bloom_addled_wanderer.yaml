@@ -1,0 +1,46 @@
+mobid: 9383
+zone: New Plymouth Old Quarter
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 20
+maxwander: 1
+groups:
+  - humanoid
+idlecommands:
+  - 'emote mouths something without sound, hands held slightly
+    away from the body as though they expect to be handed
+    something, or to drop something — the gesture is not
+    resolved in either direction.'
+  - ''
+  - 'emote stops walking. Stands in place with the particular
+    stillness of someone listening to a voice that is not
+    present, then resumes moving in the same direction.'
+  - ''
+  - 'emote looks at the canal surface for a long moment. The
+    look has the quality of recognition. Nothing in the canal
+    surface responds.'
+activitylevel: 3
+character:
+  name: A Bloom-Addled Wanderer
+  description: |
+    The veining at the temples and jaw is copper-bright
+    against pale skin — the Bloom's specific signature,
+    worn here openly, without the concealment you see
+    above ground. The eyes are wide and fixed at a
+    middle distance that does not correspond to anything
+    present in the buried street. The wanderer moves
+    without apparent destination, navigating by some
+    internal map that does not match the quarter's
+    geometry. The clothes are not new and have been
+    worn a long time without particular attention.
+    Whatever the wanderer had before the Bloom, the
+    evidence of it has been used up. What remains is
+    the wandering.
+  speciesid: 1
+  level: 1
+  gold: 2
+  stats:
+    perception:
+      training: 4

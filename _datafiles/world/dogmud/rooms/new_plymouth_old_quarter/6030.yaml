@@ -69,3 +69,6 @@ idlemessages:
   quiet returns.
 - The walk is empty but it does not feel unattended.
   The lamps are evidence of someone's regular work.
+spawninfo:
+  - mobid: 9389
+    respawnrate: "10 real minutes"

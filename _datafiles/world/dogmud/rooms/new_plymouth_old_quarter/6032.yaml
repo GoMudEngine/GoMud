@@ -73,3 +73,6 @@ idlemessages:
 - Someone behind one of the drowned doors moves —
   the sound of something set on a shelf — then
   quiet.
+spawninfo:
+  - mobid: 9384
+    respawnrate: "10 real minutes"

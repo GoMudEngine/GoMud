@@ -66,3 +66,6 @@ idlemessages:
 - The fourth step below produces a faint sound
   on its own when the temperature of the stairwell
   shifts in the cold.
+spawninfo:
+  - mobid: 9379
+    respawnrate: "10 real minutes"

@@ -73,3 +73,8 @@ idlemessages:
 - The silence in the hovels is a habited silence —
   the particular quiet of people who have learned
   not to make unnecessary noise.
+spawninfo:
+  - mobid: 9386
+    respawnrate: "10 real minutes"
+  - mobid: 9388
+    respawnrate: "10 real minutes"

@@ -63,3 +63,6 @@ idlemessages:
 - The vault carries sounds differently from the
   passages above — a drip from the stair tunnel
   arrives here modified, flattened, made strange.
+spawninfo:
+  - mobid: 9381
+    respawnrate: "10 real minutes"

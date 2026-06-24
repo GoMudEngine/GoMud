@@ -66,3 +66,6 @@ idlemessages:
 - The room is quiet in the way a room is quiet
   when its occupant has stepped out and will
   return shortly.
+spawninfo:
+  - mobid: 9380
+    respawnrate: "10 real minutes"

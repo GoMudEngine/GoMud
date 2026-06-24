@@ -67,3 +67,6 @@ idlemessages:
   as much as the stone.
 - Water drips somewhere in the dark between the lamp's
   reach and the canal surface.
+spawninfo:
+  - mobid: 9383
+    respawnrate: "10 real minutes"
