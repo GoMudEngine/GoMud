@@ -1,0 +1,86 @@
+mobid: 9391
+zone: New Plymouth Temple
+defaultMood: neutral
+
+greetings:
+  - text: "If you are here for the altar, I have what you need. Candles,
+      incense, charms — the offering table is just inside the gate."
+    moods: ["neutral"]
+  - text: "The gate is open. Let me know what you are looking for."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Peace to you. Let me know what you need."
+      - "Welcome to the plaza."
+
+  - keywords: [""]
+    responses:
+      - "I am here if you need something for the altar."
+
+tree:
+  root:
+    text: "I am the almoner at the gate — I keep offerings in stock
+      for supplicants who wish to bring something to the altar
+      inside. Candles, incense, charms, whatever suits the occasion.
+      If you are curious about what each one is for, or about the
+      plaza and the gate itself, ask. I am glad to say."
+    hints: "You could ask Almoner Sten about the offerings he carries
+      and what each one is for at the altar, about the temple gate
+      and the plaza, or about why people bring offerings here."
+
+  nodes:
+    - id: offerings
+      triggers: ["offerings", "offering", "votive", "incense", "candle",
+                 "candles", "charm", "charms", "buy", "bring", "altar",
+                 "what", "sell", "stock", "purchase", "need", "item",
+                 "items", "taper", "light", "smoke", "wax", "folk",
+                 "carry", "have", "cost", "price"]
+      text: "The incense is for the air around the altar — it carries
+        intention upward, or so it is said, and whether or not that
+        is literally true it changes the quality of attention in the
+        room. A votive candle is a kept flame — you light it at the
+        altar and let it burn through. What it marks is between you
+        and whatever you are marking it for. A folk charm is older
+        than the temple's own rites, but we carry them because the
+        desire behind them is the same as any other offering. Tallow
+        candles are plain working light — some people want practical
+        rather than ceremonial, and I do not argue with that.
+        Whatever you bring, the altar takes it as given."
+      hints: "You could ask Almoner Sten about the temple gate and
+        the plaza, or about why people leave offerings at the altar."
+
+    - id: temple
+      triggers: ["temple", "gate", "plaza", "here", "grand", "inside",
+                 "beyond", "through", "door", "enter", "look", "building",
+                 "where", "go", "place", "courtyard", "grounds", "open",
+                 "when", "hours", "this"]
+      text: "The Grand Temple is through the gate — you will know it
+        by the columns and the height of the central hall. The
+        offering table is just inside, to the left as you enter.
+        This plaza is where people stop before they decide whether
+        to go in. Some of them do. Some sit on the steps for a
+        while and then leave. I do not press anyone. The gate is
+        open from dawn to the last bell, and so am I."
+      hints: "You could ask about the offerings I carry, or about
+        why people bring things to the altar here."
+
+    - id: devotion
+      triggers: ["why", "faith", "pray", "prayer", "devotion", "believe",
+                 "belief", "reason", "point", "meaning", "purpose", "god",
+                 "gods", "spirit", "comfort", "ritual", "habit",
+                 "practice", "does it", "worth", "matters", "matter"]
+      text: "That is a question I hear more often than you might
+        expect, and not usually from the irreverent. People who have
+        suffered something come here and want to know if there is a
+        reason to leave a candle rather than nothing at all. My
+        honest answer is that I cannot tell you what the altar
+        receives. What I can say is that the act of bringing
+        something — of choosing it, purchasing it, carrying it in
+        — changes something in the person who does it. The offering
+        is often more for the giver than for anyone else. That does
+        not make it small. It makes it sensible."
+      hints: "You could ask about the offerings themselves, or about
+        the temple gate and plaza."
+      moodChange: friendly
