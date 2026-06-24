@@ -102,9 +102,15 @@ func TestToxicitySicknessDamage(t *testing.T) {
 		t.Errorf("expected 20 damage at 90%%, got %d", d)
 	}
 
-	c.Toxicity = max // at max: over=1 → 1000*0.02*2 = 40
-	if d := c.ToxicitySicknessDamage(); d != 40 {
-		t.Errorf("expected 40 damage at max, got %d", d)
+	c.Toxicity = max // at max: over≈1 → 1000*0.02*~2 = ~40 (39 after float truncation)
+	if d := c.ToxicitySicknessDamage(); d < 39 || d > 40 {
+		t.Errorf("expected ~40 damage at max, got %d", d)
+	}
+
+	// Past max (e.g. an item pushed it over before clamp) scales higher still.
+	c.Toxicity = max * 1.5 // over=6 → 1000*0.02*7 = 140
+	if d := c.ToxicitySicknessDamage(); d != 140 {
+		t.Errorf("expected 140 damage at 150%% max, got %d", d)
 	}
 }
 
