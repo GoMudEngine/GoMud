@@ -1,0 +1,17 @@
+itemid: 40109
+name: Ysolde's Purge
+namesimple: purge
+description: A small clay cup sealed with wax -- the kind Ysolde hands across
+  the table without ceremony and doesn't explain. The smell, once the wax is
+  broken, is medicinal and deeply unpleasant -- bitter bark, something
+  sulfurous, something astringent that makes your eyes water. You have been
+  warned about what this does. There is nothing pleasant about it.
+type: potion
+subtype: drinkable
+uses: 1
+not_salable: true
+toxicity: 45
+buffids:
+  - 93
+weight: 0.2
+value: 0

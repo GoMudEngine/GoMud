@@ -23,6 +23,14 @@ import (
 // BloomAdvanceMutation.
 const bloomWaferItemId = 40108
 
+// ysoldesPurgeItemId is the item ID for Ysolde's Purge (40109).
+// The purge carries a heavy toxicity load (45) and buff 93 (Bloom Detox)
+// through the normal drink path. Its special-case here drives the addiction
+// step-down. It also bypasses the toxicity pre-check — addicts presenting
+// for detox are expected to already have elevated toxicity, and the flood is
+// the mechanism, not a mistake.
+const ysoldesPurgeItemId = 40109
+
 func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	// Chunk 4e: can't drink while grappled — both hands committed.
@@ -106,11 +114,13 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
-	// Check toxicity before consuming
-	if itemSpec.Toxicity > 0 {
+	// Check toxicity before consuming.
+	// Exception: Ysolde's Purge bypasses this cap -- the toxicity flood is
+	// intentional and the detox must be drinkable even at high toxicity.
+	if itemSpec.Toxicity > 0 && itemSpec.ItemId != ysoldesPurgeItemId {
 		toxCost := float64(itemSpec.Toxicity)
 		if user.Character.Toxicity+toxCost > user.Character.GetToxicityMax() {
-			user.SendText(messaging.CategorySystem, 
+			user.SendText(messaging.CategorySystem,
 				`<ansi fg="red">Your body rejects the potion — too much toxicity.</ansi>`)
 			return true, nil
 		}
@@ -187,6 +197,17 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			tickAmt := buffs.ComputeTickAmount(maxPool, buffSpec.TickPercent, buffSpec.TickVariance, buffSpec.TickMin, 1.0)
 			user.Character.Buffs.SetTickAmount(buffId, tickAmt)
 		}
+	}
+
+	// ── Ysolde's Purge special-case ──────────────────────────────────────────
+	// Toxicity (45) and the detox debuff (buff 93) are applied by the normal
+	// drink path above. Here we drive the addiction step-down -- the brutal-
+	// fast path to clean.
+	if itemSpec.ItemId == ysoldesPurgeItemId {
+		user.Character.AddBloomAddiction(-5)
+		user.SendText(messaging.CategoryWarning,
+			`The purge takes hold -- your body convulses as it expels the `+
+				`Bloom. It is violent, and it is fast.`)
 	}
 
 	// ── Bloom Wafer special-case ──────────────────────────────────────────────
