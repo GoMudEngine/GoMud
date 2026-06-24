@@ -1,5 +1,6 @@
 mobid: 9390
 zone: New Plymouth Common
+schedule_id: np_common_sundries
 craft_support: general
 behavior_archetype: noncombat_shopkeeper
 non_combatant: true

@@ -1,5 +1,6 @@
 mobid: 9391
 zone: New Plymouth Temple
+schedule_id: np_temple_offerings
 craft_support: general
 behavior_archetype: noncombat_shopkeeper
 non_combatant: true

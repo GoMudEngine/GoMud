@@ -1,0 +1,20 @@
+id: np_common_sundries
+description: "Mardle the Sundries-Seller: keeps her general-goods stall in the
+  Common Market through the day, closes down and sleeps beside it at night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 5604
+    activity: ""
+    idlecommands:
+      - emote squares the stacked goods on the trestle so every label faces the aisle, then steps back to judge the line of them.
+      - say Rope, soap, candles, a skin for your water — whatever the day needs, I likely have it. Ask if you don't see it.
+      - emote rolls a stiff shoulder, glances once at the sky, and quietly moves the tallow dips into the shade before any cloud shows.
+      - emote counts a customer's change into their palm without looking at the coins, her eyes already on the next person waiting.
+  - start: 22
+    end: 6
+    target_room: 5604
+    activity: sleeping
+    idlecommands:
+      - emote sleeps on a pallet drawn up behind the shuttered stall, a hand resting on the strongbox out of long habit.
+      - emote stirs at the night-noise of the market square, settles, and does not wake.
