@@ -85,20 +85,10 @@ rewards:
     who has done what could be done.
 
 triggers:
-  # ── WITNESS: Quill's dialogue node grants 67-witness;
-  #    this trigger assembles the case-file and gives it to the player ──
-  - event: quest_granted
-    quest_token: "67-witness"
-    conditions:
-      missing: ["67-report"]
-    actions:
-      - give_item: 40111
-      - send_text: >-
-          You gather together what you have -- the spent wax wrapper,
-          the Lintel Street address, Falk's word on the nominal owners,
-          Wenna's account of the unmarked deliveries, and Quill's
-          lamplighter testimony. Laid out in a single document, it is a
-          case the watch cannot ignore. Take it to the Dock Constable.
+  # WITNESS: Quill's dialogue node grants 67-witness AND givesItem 40111 (the
+  # assembled case-file) directly — dialogue grantsQuest does not reliably fire
+  # the quest_granted event (gotcha #9), so the case-file is handed over in
+  # Quill's dialogue node rather than by a quest_granted trigger here.
 
   # ── REPORT: case-file to the Dock Constable (9316) ──
   - event: item_give

@@ -57,6 +57,25 @@ tree:
       hints: "Teels needs you to bring the wax wrapper to Ysolde in
         the Common Quarter. The alley entrance is the only way in."
 
+    - id: bloom_trail_done
+      triggers: ["bloom", "trail", "marn", "deren", "constable",
+                 "closed", "done", "source", "better", "how",
+                 "teels", "quest", "help", "recovering", "stable",
+                 "what", "now", "next"]
+      questRequired: ["67-end"]
+      text: "I heard. I don't know from who -- the docks talk, when
+        something finally closes. I don't feel what I thought I would.
+        I thought I would feel something large. Mostly I feel like I
+        can stand on the wharf without wondering which direction I am
+        pointing. That's more than I had last season. I don't know
+        what comes after this for me. I know what I was before. I
+        think I can get back to being that, eventually. Thank you for
+        not -- for not walking past."
+      hints: "Teels is steadier than when you first found them --
+        still fragile, but pointed in a direction that makes sense.
+        The Bloom trail is closed."
+      moodChange: friendly
+
     - id: done
       triggers: ["ysolde", "healer", "bloom", "help", "done",
                  "better", "how", "teels", "treatment", "purge",
