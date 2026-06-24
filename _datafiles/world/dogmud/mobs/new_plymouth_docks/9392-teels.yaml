@@ -1,0 +1,48 @@
+mobid: 9392
+zone: New Plymouth Docks
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+hostile: false
+statpool: 22
+maxwander: 0
+groups:
+  - humanoid
+  - np_dockfolk
+idlecommands:
+  - 'emote presses one hand flat against a mooring-bollard and holds it there,
+    breathing steadily, as though steadying something inside.'
+  - ''
+  - 'emote turns the left wrist toward the low light -- faint copper lines
+    trace the veins there, just under the surface, barely visible against
+    the skin.'
+  - ''
+  - 'emote murmurs something quiet and unfinished -- a name, or a count
+    of some kind -- then lets it go without finishing it.'
+  - ''
+  - 'emote straightens suddenly and looks out at the water, hands at their
+    sides, with the careful stillness of someone trying not to want something.'
+  - ''
+activitylevel: 7
+character:
+  name: Teels
+  description: |
+    A former dockhand -- you can tell by the calluses and the way they
+    stand near the water, at ease with the noise and the weight of the
+    place even now. The body is mostly intact, but the face has changed:
+    drawn tight, the skin around the eyes gone pale, the color not quite
+    right. At the left wrist, just visible beneath the cuff, a faint
+    tracery of copper lines follows the veins -- the earliest sign of
+    something the docks call the Bloom, the bark-skin only beginning,
+    the body only starting to rewrite itself from the inside. They hold
+    it together well enough that a passing glance would miss it entirely.
+    They are not holding it together.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    perception:
+      training: 3
+    willpower:
+      training: -2
+    vitality:
+      training: -3

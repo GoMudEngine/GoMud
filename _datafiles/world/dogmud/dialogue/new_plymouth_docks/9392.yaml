@@ -1,0 +1,90 @@
+mobid: 9392
+zone: New Plymouth Docks
+defaultMood: neutral
+
+greetings:
+  - text: "..."
+    moods: ["neutral"]
+  - text: "It's -- I'm still here."
+    moods: ["friendly"]
+
+patterns:
+  - keywords: ["hello", "hi", "hey", "greet", "morning", "evening"]
+    responses:
+      - "Right."
+      - "..."
+
+  - keywords: [""]
+    responses:
+      - "Not now."
+      - "I'm -- leave it."
+
+tree:
+  root:
+    text: "I used to run cargo on this wharf. I know every bollard by
+      its scar. I'm not -- I'm not what I was."
+    hints: "You could ask Teels if there is something wrong, whether
+      they need help, or what has happened to them."
+
+  nodes:
+    - id: plea
+      triggers: ["quest", "task", "help", "bloom", "sick", "teels",
+                 "wrong", "wrist", "arm", "copper", "veins",
+                 "what", "need", "can I", "can you", "are you"]
+      questExcluded: ["66-start", "66-end"]
+      text: "I need -- I need someone to go to the healer in the Common.
+        The one in the back alley, no questions, no records. Ysolde.
+        I can't get there on my own right now, and I can't send a message
+        anyone should see. Take this to her -- she'll know the smell. It
+        came from a clean little shop, a draper, somewhere down the dock
+        streets here. She'll know what it means. Please. Just take it
+        to her."
+      grantsQuest: "66-start"
+      givesItem: 40110
+      hints: "Teels has pressed a spent wax wrapper into your hands --
+        the cloth carries a faint copper-flower smell. They've named a
+        healer called Ysolde in the Common Quarter who works out of a
+        back alley and asks no questions."
+
+    - id: plea_active
+      triggers: ["help", "ysolde", "healer", "wrapper", "bloom",
+                 "how", "going", "still", "progress", "on it",
+                 "working", "found"]
+      questRequired: ["66-start"]
+      questExcluded: ["66-end"]
+      text: "I'm -- managing. Go. The alley, Common Quarter. Ysolde.
+        She'll recognize it."
+      hints: "Teels needs you to bring the wax wrapper to Ysolde in
+        the Common Quarter. The alley entrance is the only way in."
+
+    - id: bloom_trail_done
+      triggers: ["bloom", "trail", "marn", "deren", "constable",
+                 "closed", "done", "source", "better", "how",
+                 "teels", "quest", "help", "recovering", "stable",
+                 "what", "now", "next"]
+      questRequired: ["67-end"]
+      text: "I heard. I don't know from who -- the docks talk, when
+        something finally closes. I don't feel what I thought I would.
+        I thought I would feel something large. Mostly I feel like I
+        can stand on the wharf without wondering which direction I am
+        pointing. That's more than I had last season. I don't know
+        what comes after this for me. I know what I was before. I
+        think I can get back to being that, eventually. Thank you for
+        not -- for not walking past."
+      hints: "Teels is steadier than when you first found them --
+        still fragile, but pointed in a direction that makes sense.
+        The Bloom trail is closed."
+      moodChange: friendly
+
+    - id: done
+      triggers: ["ysolde", "healer", "bloom", "help", "done",
+                 "better", "how", "teels", "treatment", "purge",
+                 "detox", "source", "draper", "shop"]
+      questRequired: ["66-end"]
+      text: "I know. She told me. The purge holds -- for now. The
+        source is still running, and I know it is. I'm not going back.
+        I just know it is still there."
+      hints: "Teels seems steadier, but clear-eyed about what the
+        detox cannot fix while the Bloom is still flowing from somewhere
+        on the docks."
+      moodChange: neutral

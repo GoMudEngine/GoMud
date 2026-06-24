@@ -1,0 +1,126 @@
+questid: 67
+name: The Bloom Trail
+description: >-
+  Teels will relapse unless the Bloom's source is stopped. Ysolde has
+  done what she can -- the purge holds only until the craving returns.
+  Follow the trade from the docks to its roots and bring the watch
+  enough to act.
+secret: false
+
+flags:
+  - key: entry
+    values: [undercover, evidence]
+    description: "How the player got past Marn's back room -- by posing
+      as a user, or by evidence and leverage"
+
+steps:
+  - id: start
+    description: >-
+      Trace the Bloom to its source. It starts with a clean little
+      draper's shop on the docks.
+    hint: >-
+      Find the draper Teels mentioned -- Marn, down the dock streets --
+      and get into his back room.
+  - id: front
+    description: >-
+      You got past Marn's front. The supply comes up from an address in
+      the Old Quarter -- 215 Lintel Street -- routed through people who
+      never ask questions.
+    hint: >-
+      Ask the auctioneer Falk in the Merchant Quarter about the Lintel
+      Street address.
+  - id: lintel
+    description: >-
+      Falk knows the Lintel Street address as a quiet property held
+      through nominal owners.
+    hint: >-
+      The deliveries pass through the Noble Quarter. Ask the servant
+      Wenna about the unmarked crates she has seen.
+  - id: delivery
+    description: >-
+      Wenna confirmed the delivery house -- unmarked goods at odd hours,
+      under the bloodline office's eye.
+    hint: >-
+      Go down into the Old Quarter to 215 Lintel Street, and confront
+      Deren about the source to his face.
+  - id: source
+    description: >-
+      You found 215 Lintel Street -- the production room, the apparatus,
+      and Deren, exposed but untouchable, the bloodline office at his
+      back.
+    hint: >-
+      Find a witness. The lamplighter Quill walks these canals -- ask
+      him for his account of what passes the iron door.
+  - id: witness
+    description: >-
+      Quill gave his account. With the wrapper, the address, the
+      delivery note, and the testimony, you have a case the watch
+      cannot ignore.
+    hint: >-
+      Take the case-file to the Dock Constable.
+  - id: report
+    description: >-
+      The Dock Constable has the case-file. The trade will be disrupted
+      -- but Deren himself stays beyond her reach.
+    hint: >-
+      The watch will act on what it can.
+  - id: end
+    description: >-
+      The Bloom trade is disrupted and the truth is known. Some powers
+      in this city you can reach, and some you cannot. Teels, at least,
+      has a chance.
+
+rewards:
+  gold: 75
+  rep_faction: np_dockfolk
+  rep_amount: 20
+  playermessage: >-
+    The trade is broken -- for now. The constable took the case-file
+    and her jaw was set when she read it. Deren stays untouched; the
+    bloodline office is a wall you cannot move with evidence. But the
+    supply stops, and that buys Teels a chance. One life you could
+    reach.
+  roommessage: >-
+    A wharfside quiet settles over the traveller, the look of someone
+    who has done what could be done.
+
+triggers:
+  # WITNESS: Quill's dialogue node grants 67-witness AND givesItem 40111 (the
+  # assembled case-file) directly — dialogue grantsQuest does not reliably fire
+  # the quest_granted event (gotcha #9), so the case-file is handed over in
+  # Quill's dialogue node rather than by a quest_granted trigger here.
+
+  # ── REPORT: case-file to the Dock Constable (9316) ──
+  - event: item_give
+    mob: 9316
+    item: 40111
+    conditions:
+      has: ["67-witness"]
+      missing: ["67-report"]
+    actions:
+      - grant: "67-report"
+      - npc_say:
+          mob: 9316
+          lines:
+            - {delay: 1, text: "Let me read this properly."}
+            - {delay: 4, text: "The wrapper. The address. A delivery account
+                and the lamplighter's word. This is enough to move on
+                the trade. The supply stops."}
+            - {delay: 7, text: "Deren is another matter. The bloodline office
+                holds a hand over him I cannot reach around. I can disrupt
+                what he runs. The man himself stays out of my reach. You
+                understand what I'm telling you."}
+
+  # ── AUTO-COMPLETE: report → end + bloom_trade rep drop ──
+  #    bump_rep: bloom_trade -15 -- disrupting the trade costs standing
+  #    with the trade network. The single rewards rep_faction above gives
+  #    dockfolk +20 (the positive outcome for the wharves).
+  - event: quest_granted
+    quest_token: "67-report"
+    conditions:
+      missing: ["67-end"]
+    actions:
+      - bump_rep:
+          faction: bloom_trade
+          delta: -15
+      - grant: "67-end"

@@ -44,6 +44,29 @@ tree:
         traffic he has seen at the iron door at 215, or about the
         people who live in the Old Quarter."
 
+    - id: bloom_witness
+      triggers: ["traffic", "witness", "testimony", "215", "door",
+                 "case", "constable", "tell", "saw", "seen",
+                 "movement", "iron", "account", "quest", "task"]
+      questRequired: ["67-source"]
+      questExcluded: ["67-witness", "67-end"]
+      grantsQuest: "67-witness"
+      givesItem: 40111
+      text: "You are asking what I have seen. I walk past that door
+        twice a day, every day, for eleven years. I have seen crates
+        moved in the small hours -- heavy ones, by the way the carriers
+        walked. I have seen the steward from the noble house. I have
+        seen the iron door open and close at hours no iron door opens
+        and closes for honest reasons. I will say so, in front of who
+        needs to hear it. [Quill sets down his lamp trimmer and hands
+        you a folded document -- dates, times, descriptions, in a steady
+        unfancy hand.] Take that to the Dock Constable. The record
+        speaks for itself."
+      hints: "Quill has given you eleven years of lamping testimony in
+        a folded document -- the assembled case-file. Take it to the
+        Dock Constable on the New Plymouth Docks to close the trail."
+      moodChange: friendly
+
     - id: traffic
       triggers: ["traffic", "215", "door", "lintel", "night",
                  "hours", "movement", "visitors", "iron",

@@ -76,6 +76,27 @@ tree:
         return to the wares."
       moodChange: neutral
 
+    - id: bloom_lintel
+      triggers: ["lintel", "address", "215", "street", "canal",
+                 "quest", "task"]
+      questRequired: ["67-front"]
+      questExcluded: ["67-lintel", "67-end"]
+      grantsQuest: "67-lintel"
+      text: "You are further into this than I would have gone. The
+        address in my books is 215 Lintel Street -- registered as a
+        private residence in the canal district, the Old Quarter. The
+        owner on paper is a name I do not expect to find breathing if
+        anyone looked. The gold behind it came through the same quiet
+        source as three other properties I could name -- I will not
+        name them. But 215 is the one you want. The back entrance is
+        the working one. That is what the register shows, and that is
+        as far as I go."
+      hints: "Falk has given you the specific address -- 215 Lintel
+        Street in the Old Quarter, a registered private residence with
+        a working back entrance and a paper owner. Follow the trail
+        from there."
+      moodChange: cautious
+
     - id: pattern
       triggers: ["pattern", "press", "arrangement", "acquiring",
                  "interest", "lintel", "canal", "hidden", "actual",

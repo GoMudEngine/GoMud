@@ -1,0 +1,14 @@
+itemid: 40111
+name: Case File
+namesimple: case file
+description: A bundle of documents gathered over the course of a single
+  inquiry. The wax-wrapper trace is in there, stained with the
+  copper-flower note of what it carried. The Lintel Street address, a
+  copied delivery note in an unfamiliar hand, and a lamplighter's
+  account of what passes the iron door at odd hours -- laid out
+  together, it is a case the watch cannot wave off.
+type: object
+subtype: mundane
+not_salable: true
+weight: 0.3
+value: 0

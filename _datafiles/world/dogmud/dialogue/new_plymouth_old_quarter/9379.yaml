@@ -33,6 +33,28 @@ tree:
       or about the captive and the key."
 
   nodes:
+    - id: bloom_source
+      triggers: ["bloom", "operation", "source", "215", "trade",
+                 "confront", "evidence", "case", "know", "caught",
+                 "over", "done", "arrest", "face", "quest", "task"]
+      questRequired: ["67-delivery"]
+      questExcluded: ["67-source", "67-end"]
+      grantsQuest: "67-source"
+      text: "You have gotten this far. I will concede that much. What
+        you cannot do from here is close it. The bloodline's domestic
+        office has been aware of this address for some time -- they are
+        also aware of the value of what ran through it, and they hold
+        an opinion about interruptions. You have a case that goes
+        nowhere without a witness who has seen what moved through that
+        door and will say so in a venue that matters. I am not that
+        witness. Good luck finding one."
+      hints: "Deren is exposed but untouchable -- the bloodline office
+        stands between him and any consequence you could bring. He named
+        what you need: a witness who has seen what moved through the iron
+        door and will testify. The lamplighter walks this canal every
+        day. You could find him and ask."
+      moodChange: neutral
+
     - id: operation
       triggers: ["bloom", "operation", "arrangement", "trade",
                  "product", "address", "lintel", "distribution",
