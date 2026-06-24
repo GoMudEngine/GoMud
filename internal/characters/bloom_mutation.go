@@ -61,7 +61,16 @@ func (c *Character) BloomAdvanceMutation(rng *rand.Rand) (string, int) {
 		// All owned mutations are at cap — fall through to seed a new one.
 	}
 
-	// ── No owned mutations (or all capped): seed a new mid/high-tier mutation ─
+	return c.BloomSeedNewMutation(rng)
+}
+
+// BloomSeedNewMutation grants the character a brand-new mutation drawn from a
+// Rarity-weighted pool (biased toward mid/high-tier), respecting ownership,
+// conflicts, and species body-part requirements. Used both as BloomAdvanceMutation's
+// fall-through (no owned / all-capped) AND directly by the dose hook's separate
+// BloomNewMutationChance roll (the "Bloom occasionally pushes a whole new change"
+// path). Returns (id, 1) or ("", 0) if no candidate exists. rng nil → global rand.
+func (c *Character) BloomSeedNewMutation(rng *rand.Rand) (string, int) {
 	allSpecs := mutations.GetAll()
 	if len(allSpecs) == 0 {
 		return "", 0

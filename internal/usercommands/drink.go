@@ -218,10 +218,13 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if itemSpec.ItemId == bloomWaferItemId {
 		bal := configs.GetBalanceConfig()
 
-		// Communion high. Buff 90 baseline triggercount is 30, which equals
-		// BloomCommunionRounds default — durationMult 1.0 gives the right
-		// baseline; the config knob adjusts without touching this call.
-		_ = user.Character.AddBuffScaled(90, 1.0)
+		// Communion high. Buff 90's YAML baseline is 30 rounds; scale it by the
+		// BloomCommunionRounds knob so config actually tunes the duration.
+		communionMult := float64(bal.BloomCommunionRounds) / 30.0
+		if communionMult <= 0 {
+			communionMult = 1.0
+		}
+		_ = user.Character.AddBuffScaled(90, communionMult)
 
 		// Tick addiction counter.
 		user.Character.AddBloomAddiction(int(bal.BloomAddictionPerDose))
@@ -229,14 +232,20 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		// Stamp the dose round for withdrawal / decay timing.
 		user.Character.BloomLastDoseRound = util.GetRoundCount()
 
-		// Mutation acceleration — roll against BloomMutationAdvanceChance.
-		// BloomNewMutationChance is implicit: BloomAdvanceMutation falls through
-		// to seed a new mutation automatically when all owned are at cap.
-		if rand.Float64() < float64(bal.BloomMutationAdvanceChance) {
-			if id, _ := user.Character.BloomAdvanceMutation(nil); id != "" {
-				user.SendText(messaging.CategoryWarning,
-					`Something under your skin shifts and settles differently.`)
-			}
+		// Mutation acceleration. First roll the (small) BloomNewMutationChance to
+		// push a brand-new change even if the user already has mutations — Bloom's
+		// "occasionally something wholly new" variety. Otherwise roll the (larger)
+		// BloomMutationAdvanceChance to deepen the strongest existing mutation
+		// (which falls through to seeding when the user has none / all are capped).
+		var mutId string
+		if rand.Float64() < float64(bal.BloomNewMutationChance) {
+			mutId, _ = user.Character.BloomSeedNewMutation(nil)
+		} else if rand.Float64() < float64(bal.BloomMutationAdvanceChance) {
+			mutId, _ = user.Character.BloomAdvanceMutation(nil)
+		}
+		if mutId != "" {
+			user.SendText(messaging.CategoryWarning,
+				`Something under your skin shifts and settles differently.`)
 		}
 
 		// Euphoric onset message — replaces the generic "you drink" that was

@@ -15,8 +15,5 @@ statmods:
   vitality: -12
   willpower: -12
   charisma: -12
-start_user_text: "The purge takes hold at once -- your body heaves and shakes,
-  a deep cold sweat breaking across your skin as the compounds fight their way
-  out. It is brutal. It is fast. And it is working."
 end_user_text: The worst of the purge passes. You are wrung out and hollow,
   but the Bloom's grip on you has slipped.
