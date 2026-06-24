@@ -1,0 +1,49 @@
+mobid: 9379
+zone: New Plymouth Old Quarter
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 36
+maxwander: 0
+groups:
+  - humanoid
+  - bloom_trade
+idlecommands:
+  - 'emote stands with his back to the wall and his face toward the
+    passage stairs — the habit of a man who has always watched the
+    entrance.'
+  - ''
+  - 'emote turns one hand over slowly, studying the faint copper
+    branching beneath the skin of his wrist, then lets his arm fall
+    without comment.'
+  - ''
+  - 'emote says nothing for a long moment. His eyes track something
+    in the canal shadow and then return, unhurried, to the room.'
+activitylevel: 8
+character:
+  name: Deren
+  description: |
+    He is a compact man in his early fifties who moves with the
+    particular stillness of someone for whom sudden motion in
+    enclosed spaces has long been costly. His eyes do the work
+    his body does not — quick, recording, filing, never settling
+    anywhere for sentiment. Under the skin of his forearms and up
+    the sides of his neck, faint copper lines branch and rejoin
+    like the veining of a leaf pressed against the light — long
+    Bloom exposure working its slow illustration into him, a mark
+    he no longer bothers to hide. He carries no weapon. He has
+    the bearing of a man who once had a large arrangement behind
+    him and now has something quieter — the certainty that he is
+    already watched, and that the question of what comes next
+    is no longer his to control.
+  speciesid: 1
+  level: 1
+  gold: 80
+  stats:
+    perception:
+      training: 12
+    charisma:
+      training: 8
+    willpower:
+      training: 6
