@@ -114,6 +114,41 @@ func TestToxicitySicknessDamage(t *testing.T) {
 	}
 }
 
+// TestToxicityBand verifies the four band thresholds on a zero-Vitality
+// character (GetToxicityMax == ToxicityBaseMax == 100).
+func TestToxicityBand(t *testing.T) {
+	c := &Character{} // zero Vitality → max = 100
+	max := c.GetToxicityMax()
+	if max <= 0 {
+		t.Fatalf("expected positive toxicity max (config defaults), got %v", max)
+	}
+
+	cases := []struct {
+		pct      float64
+		wantBand int
+		wantName string
+	}{
+		{0.00, 0, "clear"},
+		{0.49, 0, "clear"},
+		{0.50, 1, "queasy"},
+		{0.74, 1, "queasy"},
+		{0.75, 2, "sick"},
+		{0.89, 2, "sick"},
+		{0.90, 3, "critical"},
+		{1.00, 3, "critical"},
+	}
+
+	for _, tc := range cases {
+		c.Toxicity = max * tc.pct
+		if got := c.ToxicityBand(); got != tc.wantBand {
+			t.Errorf("at %.0f%% tox: ToxicityBand()=%d want %d", tc.pct*100, got, tc.wantBand)
+		}
+		if got := c.ToxicityBandName(); got != tc.wantName {
+			t.Errorf("at %.0f%% tox: ToxicityBandName()=%q want %q", tc.pct*100, got, tc.wantName)
+		}
+	}
+}
+
 // TestStaminaPerRound_SleepMultiplier verifies the multiplier applies to
 // StaminaPerRound, composing on top of any mutation modifier.
 func TestStaminaPerRound_SleepMultiplier(t *testing.T) {

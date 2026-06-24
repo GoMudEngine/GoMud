@@ -321,6 +321,45 @@ func (c *Character) GetToxicityPenalties() (float64, float64, float64) {
 	}
 }
 
+// ToxicityBand returns the toxicity severity band:
+//   0 = clear   (<50%)
+//   1 = queasy  (>=50%)
+//   2 = sick    (>=75%)
+//   3 = critical (>=90%)
+//
+// Thresholds mirror GetToxicityPenalties exactly.
+func (c *Character) ToxicityBand() int {
+	max := c.GetToxicityMax()
+	if max <= 0 {
+		return 0
+	}
+	ratio := c.Toxicity / max
+	switch {
+	case ratio >= 0.90:
+		return 3
+	case ratio >= 0.75:
+		return 2
+	case ratio >= 0.50:
+		return 1
+	default:
+		return 0
+	}
+}
+
+// ToxicityBandName returns the descriptive tier word for the current band.
+func (c *Character) ToxicityBandName() string {
+	switch c.ToxicityBand() {
+	case 3:
+		return "critical"
+	case 2:
+		return "sick"
+	case 1:
+		return "queasy"
+	default:
+		return "clear"
+	}
+}
+
 // Where 1000 = a full round
 func (c *Character) MovementCost() int {
 	modifier := 3                                    // by default they should be able to move 3 times per round.

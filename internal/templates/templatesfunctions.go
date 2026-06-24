@@ -273,6 +273,28 @@ var (
 				return "solid"
 			}
 		},
+		// toxicityQuality(bandName[, padTo]) — returns a colored label for the
+		// toxicity band name returned by Character.ToxicityBandName(). Color
+		// escalates with severity; optionally padded to padTo visual characters
+		// (matching the vitalQuality convention used in the status template).
+		"toxicityQuality": func(bandName string, padTo ...int) string {
+			var color string
+			switch bandName {
+			case "queasy":
+				color = "yellow"
+			case "sick":
+				color = "red"
+			case "critical":
+				color = "red-bold"
+			default: // "clear"
+				color = "green"
+			}
+			result := `<ansi fg="` + color + `">` + bandName + `</ansi>`
+			if len(padTo) > 0 && padTo[0] > len(bandName) {
+				result += strings.Repeat(" ", padTo[0]-len(bandName))
+			}
+			return result
+		},
 		"mitigationQuality": func(pct float64) string {
 			percent := pct * 100
 			switch {

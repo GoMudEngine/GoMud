@@ -59,6 +59,10 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			continue
 		}
 
+		// Snapshot the toxicity band before this tick's decay so we can
+		// detect threshold crossings and send a single descriptive message.
+		prevToxBand := user.Character.ToxicityBand()
+
 		// Toxicity decay (clears slower at high levels) + acute high-toxicity harm.
 		if user.Character.Toxicity > 0 {
 			bal := configs.GetBalanceConfig()
@@ -75,6 +79,29 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			// on the next tick.
 			if dmg := user.Character.ToxicitySicknessDamage(); dmg > 0 {
 				user.Character.Health -= dmg
+			}
+		}
+
+		// Notify player when toxicity crosses a named threshold — once per
+		// crossing, not every tick.
+		if newToxBand := user.Character.ToxicityBand(); newToxBand != prevToxBand {
+			if newToxBand > prevToxBand {
+				// Worsening — band-specific onset messages.
+				switch newToxBand {
+				case 1:
+					user.SendText(messaging.CategoryWarning,
+						`A faint nausea settles in and will not quite lift.`)
+				case 2:
+					user.SendText(messaging.CategoryWarning,
+						`Your hands have a fine tremor now, and your sight swims at the edges.`)
+				case 3:
+					user.SendText(messaging.CategoryWarning,
+						`Your whole body is in revolt — sweat, shakes, the taste of metal.`)
+				}
+			} else {
+				// Improving — one relief line for any downward crossing.
+				user.SendText(messaging.CategoryWarning,
+					`The worst of the sickness ebbs; you can breathe a little easier.`)
 			}
 		}
 

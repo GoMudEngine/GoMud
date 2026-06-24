@@ -614,6 +614,24 @@ func (u *UserRecord) ProcessPromptString(promptStr string) string {
 				}
 				promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, encColor, encLabel))
 
+			case `{tox}`:
+				// Toxicity band tier word, colored by severity. Omitted
+				// when clear so it stays silent in default prompts.
+				band := u.Character.ToxicityBand()
+				if band > 0 {
+					bandName := u.Character.ToxicityBandName()
+					var toxColor string
+					switch band {
+					case 1:
+						toxColor = "yellow"
+					case 2:
+						toxColor = "red"
+					default:
+						toxColor = "red-bold"
+					}
+					promptOut.WriteString(fmt.Sprintf(`<ansi fg="%s">%s</ansi>`, toxColor, bandName))
+				}
+
 			case `{i}`:
 				promptOut.WriteString(strconv.Itoa(len(u.Character.Items)))
 

@@ -507,6 +507,8 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 			HpReserved:         user.Character.GetPoolReservation("health", user.Character.HealthMax.Value),
 			StaminaReserved:    user.Character.GetPoolReservation("stamina", user.Character.StaminaMax.Value),
 			ConvictionReserved: user.Character.GetPoolReservation("conviction", user.Character.ConvictionMax.Value),
+
+			Toxicity: user.Character.ToxicityBandName(),
 		}
 
 		if !all {
@@ -961,6 +963,10 @@ type GMCPCharModule_Payload_Vitals struct {
 	HpReserved         int `json:"hp_reserved,omitempty"`
 	StaminaReserved    int `json:"stamina_reserved,omitempty"`
 	ConvictionReserved int `json:"conviction_reserved,omitempty"`
+
+	// Toxicity severity band: "clear", "queasy", "sick", or "critical".
+	// Always present so the web client can track transitions.
+	Toxicity string `json:"toxicity"`
 }
 
 // /////////////////
