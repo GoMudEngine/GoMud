@@ -64,7 +64,7 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if hasAging && phase == items.PhaseSpoiled {
 		// Spoiled potions apply 3x toxicity
 		spoiledTox := float64(itemSpec.Toxicity) * 3.0
-		user.Character.Toxicity += spoiledTox
+		user.Character.AddToxicity(spoiledTox)
 
 		user.Character.CancelBuffsWithFlag(buffs.Hidden)
 
@@ -118,7 +118,7 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	// Apply toxicity
 	if itemSpec.Toxicity > 0 {
-		user.Character.Toxicity += float64(itemSpec.Toxicity)
+		user.Character.AddToxicity(float64(itemSpec.Toxicity))
 	}
 
 	// Quest engine: command notification — a successful drink advances

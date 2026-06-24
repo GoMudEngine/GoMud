@@ -263,12 +263,17 @@ func (c *Character) GetToxicityMax() float64 {
 	return float64(bal.ToxicityBaseMax) + float64(c.Stats.Vitality.ValueAdj)/float64(bal.ToxicityVitalityScale)
 }
 
-// AddToxicity attempts to add toxicity. Returns false if it would exceed max.
+// AddToxicity adds (or removes, if amount is negative) toxicity, clamping to the
+// valid [0, max] range. Returns true (always applies — toxicity rides at max rather
+// than silently rejecting the add, so high-toxicity harm can accrue).
 func (c *Character) AddToxicity(amount float64) bool {
-	if c.Toxicity+amount > c.GetToxicityMax() {
-		return false
-	}
 	c.Toxicity += amount
+	if max := c.GetToxicityMax(); c.Toxicity > max {
+		c.Toxicity = max
+	}
+	if c.Toxicity < 0 {
+		c.Toxicity = 0
+	}
 	return true
 }
 

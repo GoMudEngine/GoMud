@@ -62,6 +62,30 @@ func TestHealthPerRound_SleepMultiplier(t *testing.T) {
 	}
 }
 
+// TestAddToxicity_ClampsToMaxAndReturnsTrue verifies AddToxicity clamps into
+// [0, max] (rather than rejecting an over-max add) and always returns true.
+func TestAddToxicity_ClampsToMaxAndReturnsTrue(t *testing.T) {
+	c := &Character{} // zero Vitality → GetToxicityMax == ToxicityBaseMax (100)
+	max := c.GetToxicityMax()
+	if max <= 0 {
+		t.Fatalf("expected positive toxicity max (config defaults), got %v", max)
+	}
+
+	c.Toxicity = max - 1
+	if ok := c.AddToxicity(10); !ok {
+		t.Fatalf("AddToxicity should always return true")
+	}
+	if c.Toxicity != max {
+		t.Errorf("expected clamp to max %v, got %v", max, c.Toxicity)
+	}
+
+	// Negative amounts floor at 0.
+	c.AddToxicity(-1000)
+	if c.Toxicity != 0 {
+		t.Errorf("expected floor at 0, got %v", c.Toxicity)
+	}
+}
+
 // TestStaminaPerRound_SleepMultiplier verifies the multiplier applies to
 // StaminaPerRound, composing on top of any mutation modifier.
 func TestStaminaPerRound_SleepMultiplier(t *testing.T) {
