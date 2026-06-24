@@ -1,0 +1,19 @@
+buffid: 91
+name: Bloom Crash
+description: The aftershock of communion -- trembling limbs, a sour taste, and
+  a mind that cannot settle on anything but how good it felt before.
+triggerrate: 1 round
+triggercount: 75
+statmods:
+  healthrecovery: -1
+  staminarecovery: -1
+  convictionrecovery: -1
+  strength: -8
+  dexterity: -8
+  perception: -8
+  vitality: -8
+  willpower: -8
+  charisma: -8
+start_user_text: "The communion ends. Your body feels suddenly heavy, your
+  thoughts thick and gray. You are left with the crash."
+end_user_text: The worst of the crash passes, though you still feel wrung out.

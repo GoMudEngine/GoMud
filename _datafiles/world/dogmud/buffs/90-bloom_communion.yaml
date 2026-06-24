@@ -1,0 +1,21 @@
+buffid: 90
+name: Bloom Communion
+description: An overwhelming sense of peace fills you -- colors deepen, sounds
+  ring clear, and your body hums with painless vitality.
+triggerrate: 1 round
+triggercount: 30
+statmods:
+  healthrecovery: 4
+  staminarecovery: 4
+  convictionrecovery: 4
+  strength: 5
+  dexterity: 5
+  perception: 5
+  vitality: 5
+  willpower: 5
+  charisma: 5
+start_user_text: "The world falls away. A slow warmth floods from your center
+  outward -- every ache dissolves, every edge softens. You feel capable of
+  anything."
+end_user_text: The warmth recedes, leaving a hollow ache in its wake. The world
+  feels harder-edged than it did before.

@@ -1,0 +1,15 @@
+itemid: 40108
+name: Bloom Wafer
+namesimple: wafer
+description: A thin disc of pressed botanical matter, iridescent at the edges
+  and nearly odorless -- the kind of thing you could mistake for a breath mint
+  if you didn't know better. It sits light in the palm. The sort of thing that
+  changes hands quickly in dim-lit corners and is never sold from a proper
+  stall.
+type: potion
+subtype: drinkable
+uses: 1
+not_salable: true
+toxicity: 35
+weight: 0.1
+value: 25
