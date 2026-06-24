@@ -8,6 +8,13 @@ statpool: 32
 maxwander: 0
 groups:
   - humanoid
+relationships:
+  - to: 9320
+    type: friend
+    subtype: lore_source
+  - to: 9332
+    type: friend
+    subtype: lore_source
 idlecommands:
   - 'emote runs her fingertips along the cut stone of the wall, reading
     something in it that is not visible on the surface.'
