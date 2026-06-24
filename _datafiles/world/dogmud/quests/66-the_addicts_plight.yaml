@@ -1,0 +1,97 @@
+questid: 66
+name: The Addict's Plight
+description: >-
+  A Bloom addict named Teels is barely holding on -- collapsing on the Lower
+  Wharf, lucid only in flashes. They press a spent wax wrapper into your
+  hands and beg you to find the healer Ysolde in the Common Quarter. Help
+  them, and you will learn the drug's grip up close -- and that it has a
+  source that must be traced.
+secret: false
+
+flags:
+  - key: addict-fate
+    values: [saved, lost]
+    description: "Whether Teels was saved (detoxed) or lost"
+
+steps:
+  - id: start
+    description: >-
+      Teels, a Bloom addict on the Lower Wharf, begged you for help.
+      They pressed a spent wax wrapper into your hands -- the copper-flower
+      smell of Bloom is on the cloth, and a healer who knows that smell
+      may know what to do.
+    hint: >-
+      Take the wax wrapper Teels gave you to Ysolde, the back-alley healer
+      in the Common Quarter. She asks no questions and she will know what
+      the smell means.
+  - id: escort
+    description: >-
+      Ysolde took the wrapper, looked at the wax, and recognized the
+      copper-flower note at once. She has seen this kind of sickness more
+      than she would like.
+    hint: >-
+      Hear what Ysolde has to say -- about the wrapper, about Teels, and
+      about what a purge can and cannot do.
+  - id: detox
+    description: >-
+      Ysolde can purge the Bloom from Teels' system. She made something
+      plain -- the detox holds only until the craving returns, and the
+      craving returns every time while the source is still running.
+    hint: >-
+      Teels is stable for now. The Bloom has a source somewhere on the
+      docks. It must be found.
+  - id: end
+    description: >-
+      Teels is detoxed and stable. You learned what the Bloom does to a
+      person up close, that a healer in the Common knows the symptoms by
+      heart, and that the trade has a source somewhere on the docks that
+      is still running.
+
+rewards:
+  gold: 25
+  rep_faction: np_commonfolk
+  rep_amount: 10
+  playermessage: >-
+    Teels is stable -- for now. Ysolde was clear -- the purge holds until
+    the craving comes back, and the craving comes back while the source
+    is still running. The wrapper is gone but the smell stays with you.
+    The docks know where the Bloom comes from, or someone on them does.
+  roommessage: >-
+    The traveller looks up from a quiet dockside exchange with the look
+    of someone who has just learned something they cannot unlearn.
+
+triggers:
+  # ── ESCORT: player brings the wax wrapper (40110) to Ysolde (9323) ──
+  - event: item_give
+    mob: 9323
+    item: 40110
+    conditions:
+      has: ["66-start"]
+      missing: ["66-escort"]
+    actions:
+      - grant: "66-escort"
+      - npc_say:
+          mob: 9323
+          lines:
+            - {delay: 1, text: "This wrapper. I know this smell."}
+            - {delay: 3, text: "Copper-flower, underneath the wax. I've
+                been taking it off people's skin for the better part of two
+                seasons. You said someone gave this to you -- they need the
+                purge, not just the sympathy."}
+            - {delay: 5, text: "I can get Teels through withdrawal. Hear me
+                on this -- the purge holds until the craving comes back. And
+                the craving comes back every time while the source is still
+                running. Someone is putting this on the docks. That is the
+                problem I cannot fix."}
+      - grant: "66-detox"
+
+  # ── AUTO-COMPLETE: detox → end ──
+  - event: quest_granted
+    quest_token: "66-detox"
+    conditions:
+      missing: ["66-end"]
+    actions:
+      - set_flag:
+          key: "66-addict-fate"
+          value: "saved"
+      - grant: "66-end"

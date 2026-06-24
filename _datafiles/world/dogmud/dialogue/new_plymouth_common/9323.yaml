@@ -65,6 +65,22 @@ tree:
         she sees most."
       moodChange: cautious
 
+    - id: teels_q66
+      triggers: ["teels", "addict", "wrapper", "patient", "treated",
+                 "bloom", "source", "draper", "shop", "who"]
+      questRequired: ["66-escort"]
+      text: "I've seen to Teels. The purge is a rough crossing -- your body
+        knows what it is losing and it argues about every step. But they came
+        through. What I cannot do is make the craving stop for good while
+        someone is still putting the Bloom on the docks. Every person I treat
+        will be back in front of me as long as that keeps running. That is not
+        a problem I can fix. I don't know who and I won't guess -- but someone
+        down here does."
+      hints: "Ysolde treated Teels but is plain -- the detox does not hold
+        while the source keeps flowing. If you want to do more than treat the
+        symptom, the Bloom has a source somewhere on the docks."
+      moodChange: cautious
+
     - id: bloom
       triggers: ["bloom", "sick", "withdrawal", "copper", "flower", "wafer",
                  "sickness", "craving", "dependent", "shaking", "sweating",

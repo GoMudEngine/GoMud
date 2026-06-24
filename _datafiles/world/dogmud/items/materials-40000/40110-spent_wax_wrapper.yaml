@@ -1,0 +1,14 @@
+itemid: 40110
+name: Spent Wax Wrapper
+namesimple: wrapper
+description: A fold of pale wax cloth, the kind used to wrap small trade
+  goods for damp transit. Used -- the wax is cracked along the fold lines,
+  the corners gone soft. There is a smell to it that the wrapper does not
+  account for -- copper-flower, sweet and slightly wrong at the back of the
+  throat, the same note that clings to certain corners of the Pilings Haunt.
+  Someone carried something in this, and the something left its mark.
+type: object
+subtype: mundane
+not_salable: true
+weight: 0.05
+value: 0
