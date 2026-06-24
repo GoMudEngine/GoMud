@@ -1,0 +1,79 @@
+roomid: 6038
+zone: New Plymouth Old Quarter
+title: The Deep Canal
+description: >
+  The buried canal ends here — the old channel meets a
+  wall of dressed stone and goes no further west. Flood
+  water fills the space to waist-height and deeper in
+  the channel center, black and cold enough that the
+  air above it carries a bitter chill. Along the base
+  of the far wall, where the old courses meet the flood
+  line, a seam of <ansi fg="itemname">gray material</ansi>
+  is exposed — wider here than in the gallery to the
+  south, running at the waterline in a continuous band
+  of several hand-spans. Its surface is smooth where
+  the water works it and does not wear; it does not
+  corrode, does not stain. The <ansi fg="itemname">canal
+  end wall</ansi> is dressed stone in the same pre-
+  Founding style as the galleries — the courses tight,
+  the fit exact, the work of builders who sealed this
+  end of the canal on purpose and built it to remain
+  sealed. At the upper right corner of the end wall,
+  above the flood line, a small <ansi fg="itemname">carved
+  mark</ansi> is incised into the stone — a single
+  concentric ring, without the eight points. An earlier
+  draft or a maker's mark or something else entirely.
+biome: city
+coord:
+  x: -25
+  y: 82
+  z: -2
+exits:
+  south:
+    roomid: 6036
+  west:
+    roomid: 6039
+nouns:
+  gray material: The seam is wider here than in the
+    gallery to the south — not a thin vein but a band
+    running continuously at the flood line for several
+    hand-spans. Close to it, the smell of the water
+    changes — still mineral, but differently so, the
+    way a different kind of stone smells when wet. The
+    surface of the material does not yield to a nail,
+    does not scratch, does not take a mark. The flood
+    has been working it for a long time and has not
+    worn it at all.
+  canal end wall: Dressed pre-Founding stone, sealed
+    at every joint — the wall was not built as a
+    temporary barrier but a permanent terminus. The
+    courses above the flood line are clean and dry;
+    below, the gray material seam runs across the
+    base. The whole assembly reads as deliberate and
+    complete — the canal was meant to end here, at
+    this wall, and the wall was built for exactly that
+    purpose.
+  carved mark: A single concentric ring, incised at
+    the upper corner of the end wall above the flood
+    line — smaller than the symbol on the buried
+    lintel, and without the eight points. Whether it
+    is a maker's mark, a draft for a device not
+    completed, or a notation entirely different from
+    the lintel symbol is not determinable from the
+    incision alone. It was placed precisely in this
+    corner.
+idlemessages:
+- The canal water holds its level at the gray seam
+  — rising no higher, going no further west.
+- The canal end wall carries no sound through it.
+  Whatever lies beyond it, if anything does, is
+  perfectly quiet.
+- The gray material at the flood line does not move
+  when touched — it is fixed in the courses as
+  though it is part of the original pour.
+- The cold in this room is the cold of a dead end —
+  the same water, going nowhere, for a very long
+  time.
+- The carved mark at the upper corner is visible
+  when light is brought close; at general lamp
+  distance it is easy to miss.

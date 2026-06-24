@@ -27,6 +27,8 @@ coord:
 exits:
   east:
     roomid: 6023
+  south:
+    roomid: 6025
 nouns:
   old lintels: The lintels at this end of the street
     are the finest in the buried quarter — wider spans

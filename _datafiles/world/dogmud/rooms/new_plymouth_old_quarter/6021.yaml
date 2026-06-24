@@ -27,6 +27,8 @@ exits:
     roomid: 6020
   west:
     roomid: 6022
+  north:
+    roomid: 6030
 nouns:
   old lintels: Pre-colonial door-headers, each cut from
     a single piece of dark stone and set across a

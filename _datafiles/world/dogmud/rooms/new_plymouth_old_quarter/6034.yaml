@@ -1,0 +1,71 @@
+roomid: 6034
+zone: New Plymouth Old Quarter
+title: The Flooded Stair
+description: >
+  A stone stair descends from the court's west edge
+  into water — the upper steps are clear, the flood
+  beginning on the third tread and deepening with each
+  step below. The <ansi fg="itemname">water surface</ansi>
+  at the stair's edge is level with the court flood to
+  the east, but the stair continues below it; the lower
+  treads vanish into a cold dark that the court's lamps
+  do not reach. A breath of air rises from below —
+  several degrees colder than the court above, carrying
+  a mineral smell that is deeper and older than the
+  buried quarter itself. The <ansi fg="itemname">iron
+  rail</ansi> descends with the stair; below the
+  waterline it carries a pale soft growth that does not
+  mind the cold or the dark. The stairwell walls are
+  <ansi fg="itemname">deep stonework</ansi> — a different
+  cut and a different age from the colonial buildings
+  at the court's rim. This stair was here before the
+  court was built over it.
+biome: city
+coord:
+  x: -24
+  y: 81
+  z: -1
+exits:
+  east:
+    roomid: 6032
+  down:
+    roomid: 6035
+nouns:
+  water surface: The flood meets the stair at the
+    third tread and the surface is exactly level with
+    the court flood to the east — they are connected
+    at depth. The surface is still, as all the water
+    in the buried quarter is still. Below it the stair
+    continues into a cold dark; the depth of the lower
+    space is not determinable from above without a
+    lamp carried down into it.
+  iron rail: Wrought iron, fixed to the stairwell
+    wall with stone-set brackets — old work, the metal
+    dense and heavy in the way old iron is. Above the
+    waterline it is clear; below it the rail carries a
+    pale soft growth that covers it evenly, the kind
+    of thing that grows where no light reaches and
+    moisture is constant. The rail continues down past
+    the point where the lower space can be seen.
+  deep stonework: The stairwell walls below the
+    flood line are not colonial construction — the
+    stone is different, the cuts finer, the joints
+    tighter than anything the colony has built. The
+    courses here are heavier and more precisely fitted
+    than the work above. The stair descends through
+    something older than what surrounds it at street
+    level, and the descent makes the age of it physical.
+idlemessages:
+- The cold air from below rises in a thin current
+  around the stair rail — steady, not drafting,
+  simply present.
+- The water surface at the stair is perfectly still.
+  Below it, nothing is visible without a lamp.
+- The iron rail is cold above the waterline and
+  colder below — the only thing the water tells
+  you about the depth.
+- The court behind you makes its small sounds of
+  habitation; ahead, the stair is entirely silent.
+- The mineral smell from below is not the same as
+  the canal smell — it comes from a different kind
+  of stone at a different depth.

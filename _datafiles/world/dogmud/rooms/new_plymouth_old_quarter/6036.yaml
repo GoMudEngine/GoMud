@@ -1,0 +1,78 @@
+roomid: 6036
+zone: New Plymouth Old Quarter
+title: The Pre-Founding Stonework
+description: >
+  The cellar opens westward into a gallery of stonework
+  older than the colony, older than the buried quarter
+  above, older than any structure the colony has
+  catalogued or acknowledged. The <ansi fg="itemname">
+  dressed courses</ansi> are massive — each block a pace
+  or more in length, fitted in dry courses without mortar
+  on a geometry that does not correspond to anything
+  above. The builders used a different module — different
+  proportions, different corner logic — and what they
+  built was organized around purposes the colonial plan
+  does not share. The <ansi fg="itemname">vault</ansi>
+  rises higher here than in the cellar, the cut clean
+  and dry despite the depth and the flood at the floor.
+  Along the base of the far wall, where the flood laps,
+  a seam of <ansi fg="itemname">gray material</ansi>
+  runs at the waterline — not stone, not metal, set into
+  the lowest courses as a continuous element that passes
+  through the joints and is not interrupted by them.
+biome: city
+coord:
+  x: -25
+  y: 81
+  z: -2
+exits:
+  east:
+    roomid: 6035
+  west:
+    roomid: 6037
+  north:
+    roomid: 6038
+nouns:
+  dressed courses: Massive cut stone — each block a
+    pace in length and half a pace in height, dressed
+    to a surface that is still smooth to the touch
+    after however long this has been here. Fitted
+    without mortar, the joints tight enough that no
+    water has found them in all the time the flood has
+    been at this level. The stone is a different variety
+    from the colonial work above — harder, darker, less
+    reactive to the damp. Whoever quarried and cut this
+    intended it to outlast their own ability to maintain
+    it, and it has.
+  vault: A pointed vault, the two curves meeting at a
+    line rather than a point — a form not used in any
+    colonial structure above ground. The vault is dry;
+    even at this depth, the fit of the stone is
+    sufficient that no water seeps through the joints.
+    The height of it, and the dryness, give the space
+    a quality entirely unlike the rest of the buried
+    quarter.
+  gray material: A continuous seam running along the
+    base of the far wall at the flood line — a
+    substance that is neither stone nor metal nor
+    anything with a name in the colony's material
+    vocabulary. Its surface is smooth where the water
+    works it and does not wear. It does not corrode or
+    erode. It was set into the original courses as an
+    integral element and has been there since the
+    courses were laid. The colony has not encountered
+    it because the colony has never dug this deep.
+idlemessages:
+- The vault overhead is dry. The floor is not, but
+  the vault does not seem to know it.
+- The dressed courses carry no inscription, no
+  decoration — only the fit of stone against stone,
+  which is sufficient.
+- The gray material at the flood line does not shift
+  or stain where the water touches it.
+- The silence here is the silence of something that
+  has been waiting without impatience for a very
+  long time.
+- The colony above goes about its business on top
+  of this room, which has never been entered in
+  the colony's history until now.

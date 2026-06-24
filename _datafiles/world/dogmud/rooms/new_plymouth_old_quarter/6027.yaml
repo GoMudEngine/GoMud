@@ -1,0 +1,65 @@
+roomid: 6027
+zone: New Plymouth Old Quarter
+title: The Stone Corridor
+description: >
+  The stairwell opens into a short corridor at the base
+  of the descent — low ceiling continuing from the
+  stair, the same mineral cold, no ventilation except
+  what reaches down from the room above. Two <ansi
+  fg="itemname">wall lamps</ansi> are fixed at the
+  corridor's ends, mirrors of the ones in the stairwell
+  above — clay in iron brackets, both burning at the
+  same low maintained flame. They have not been snuffed.
+  Between them, the <ansi fg="itemname">stone
+  passage</ansi> is perhaps four paces — long enough
+  to walk, short enough to see end to end in the lamp-
+  light. The walls are pre-colonial work, tight-fitted
+  without mortar, the same dark stone as everything
+  below this depth. A <ansi fg="itemname">south
+  opening</ansi> at the corridor's far end gives onto
+  the room beyond — the lamps were lit to serve what
+  lies through that opening.
+biome: city
+coord:
+  x: -27
+  y: 79
+  z: -2
+exits:
+  east:
+    roomid: 6026
+  south:
+    roomid: 6028
+nouns:
+  wall lamps: Two clay lamps at the corridor ends,
+    both burning. They have been maintained — not
+    abandoned with the operation. The flames are
+    steady, the oil current. If what required this
+    space has ended, no one came back to snuff these
+    lamps before leaving. They will burn until the
+    oil runs out and then the corridor will be dark.
+  stone passage: Pre-colonial construction — the
+    same dark, tight-fitted stone as the stairwell
+    above, the joints still sharp and dry despite
+    the depth. The corridor's dimensions are precise,
+    not the rough proportions of a utility passage
+    but the measured work of deliberate planning.
+    Someone designed this space and built it to be
+    exactly what it is.
+  south opening: A doorway without a door — the
+    stone cut cleanly at frame-width, no frame, no
+    threshold feature. The lamp nearest it throws
+    its light through the opening and does not
+    illuminate much of what is inside; the room
+    beyond requires its own lamp, which it has.
+idlemessages:
+- The two lamps burn at the same pace — the same
+  flame height, the same oil level as each other.
+- The corridor is entirely quiet. No sound comes
+  through the south opening from the room beyond.
+- The stone walls are cold to the touch, the cold
+  of stone at depth that has held its temperature
+  for a very long time.
+- The lamplight does not reach the stairwell to
+  the east; the corridor ends cleanly at the dark.
+- The south opening does not move and does not
+  sound. Whatever is in the room beyond it is still.

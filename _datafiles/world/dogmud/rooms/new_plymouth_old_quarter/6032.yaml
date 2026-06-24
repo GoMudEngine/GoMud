@@ -1,0 +1,75 @@
+roomid: 6032
+zone: New Plymouth Old Quarter
+title: A Drowned Court
+description: >
+  The passage opens into a court that has not been dry
+  in any living memory — standing water covers the flags
+  from wall to wall, shin-deep and black, perfectly
+  still in the lampless air. The <ansi fg="itemname">
+  standing water</ansi> has found the level of the
+  buried canal and holds it; in a wet season it runs
+  deeper. Around the court's edge, doorways open
+  directly onto the flood — <ansi fg="itemname">drowned
+  sills</ansi> where the stone threshold sits below the
+  surface and the interior spaces beyond are dark and
+  wet-floored. Above each doorway, a lamp or rush-light
+  has been placed on a high ledge or hung from an iron
+  peg, out of reach of the water — the one concession
+  made to the people who live behind those doors. A
+  <ansi fg="itemname">waterline band</ansi> runs level
+  across every wall in the court at roughly chest height,
+  recording the flood's highest historical reach in a
+  thin pale band of mineral deposit.
+biome: city
+coord:
+  x: -23
+  y: 81
+  z: -1
+exits:
+  east:
+    roomid: 6030
+  north:
+    roomid: 6033
+  west:
+    roomid: 6034
+nouns:
+  standing water: Shin-deep, cold, and perfectly still —
+    the same water that fills the buried canal to the
+    east, connected at depth through the flags. The
+    surface carries a faint film of mineral and
+    something organic, not unpleasant exactly but not
+    clean either. Below it the flagstones are visible
+    in the lamp-light from the doorway ledges — old
+    pre-colonial stone, darker now from permanent
+    immersion.
+  drowned sills: The doorway thresholds at the court's
+    edge sit a hand-span below the flood surface —
+    the water has been at this level long enough that
+    the stone is stained to a consistent depth. Inside
+    the doorways, the floors are also flooded; people
+    have arranged their belongings on shelves and
+    platforms to stay clear of the water. The
+    arrangements are visible in the light from the
+    ledges above each door.
+  waterline band: A line of pale mineral deposit
+    running level across all four walls at roughly
+    chest height — the record of the court's highest
+    historical flood. Below the line the stone is
+    stained darker from submersion; above it slightly
+    cleaner. The current flood sits well below the
+    historical high mark, which is either reassuring
+    or simply informative, depending on how long you
+    intend to stay.
+idlemessages:
+- The standing water does not move. No ripple
+  crosses it from wall to wall.
+- A lamp on the ledge above one of the doorways
+  breathes and steadies — the oil is running low.
+- The reflection of the distant lamp on the water
+  surface is the only light in the court's center.
+- Water drips somewhere above — from the ceiling
+  of the buried quarter — and the sound of it
+  carries flat across the standing water.
+- Someone behind one of the drowned doors moves —
+  the sound of something set on a shelf — then
+  quiet.

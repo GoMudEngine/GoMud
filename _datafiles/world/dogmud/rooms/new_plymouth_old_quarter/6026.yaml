@@ -1,0 +1,61 @@
+roomid: 6026
+zone: New Plymouth Old Quarter
+title: The Seven Steps
+description: >
+  Seven stone steps descend. They can be counted —
+  there is nothing else to do here but descend them.
+  The ceiling drops at the first step and does not
+  rise again, the stone close above the head for the
+  full length of the descent. Two <ansi
+  fg="itemname">oil lamps</ansi> are fixed to the wall,
+  one near the top of the stair and one near the bottom,
+  both holding a low maintained flame that has not been
+  snuffed. Their light fills the stairwell without
+  reaching much beyond it. The <ansi
+  fg="itemname">stone steps</ansi> are worn at the
+  center — the wear of careful descent over a long
+  period, the tread compressed where the foot finds
+  its place in the dark. The cold deepens on the way
+  down; by the seventh step the temperature has dropped
+  several degrees and the air is completely still.
+  The passage west opens at the bottom.
+biome: city
+coord:
+  x: -26
+  y: 79
+  z: -2
+exits:
+  up:
+    roomid: 6029
+  west:
+    roomid: 6027
+nouns:
+  oil lamps: Two clay lamps, one fixed above the
+    first step and one above the seventh, each set
+    in an iron bracket driven into the stairwell
+    wall. Both are burning. Someone has been keeping
+    them filled and trimmed, and whoever that was
+    has not snuffed them on leaving. The flames are
+    steady — this deep, there is no draft to trouble
+    them. Their light makes the stairwell navigable
+    and the world beyond it dark.
+  stone steps: Seven steps, each cut from the same
+    dark stone as the walls around them — pre-colonial
+    work at this depth, the same tight-fitted courses.
+    The center of each tread is worn smooth by use,
+    the edges still sharp. The wear pattern is
+    consistent — whoever used these steps came and
+    went regularly, in the same careful pace, and
+    did not rush on the descent.
+idlemessages:
+- The oil lamp at the stair top burns without
+  flickering — no movement of air reaches this
+  deep to trouble it.
+- The seventh step produces a faint sound on its
+  own when the temperature shifts in the stairwell.
+- The cold from below rises in a thin current that
+  the lamps do not dispel.
+- The stairwell amplifies small sounds — a breath,
+  a shift of weight on the stone.
+- Seven steps. The count is exact and has always
+  been exact, for whatever time this has been here.
