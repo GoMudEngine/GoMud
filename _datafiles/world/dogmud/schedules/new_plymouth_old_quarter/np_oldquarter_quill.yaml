@@ -1,0 +1,38 @@
+id: np_oldquarter_quill
+description: "Quill the Lamplighter: sleeps through the day in his hovel,
+  wakes at dusk to tend the canal lamps, walks the lamp-walk through the
+  small hours."
+segments:
+  - start: 0
+    end: 6
+    target_room: 6030
+    activity: ""
+    idlecommands:
+      - emote lifts the pole and trims a guttering wick without breaking stride, the small flame steadying under his hand.
+      - emote stands a moment in the one warm pool of lamplight and lets his wide dark eyes rest, seeing more of the dark than the dark would prefer.
+      - say The lamps want tending most in the deep hours. Nobody else is awake to mind them.
+      - emote moves to the next bracket along the canal, unhurried, a man who has walked this exact line ten thousand times.
+  - start: 6
+    end: 16
+    target_room: 6031
+    activity: sleeping
+    idlecommands:
+      - emote sleeps curled toward the wall, the single lamp turned low, the day-light he never sees passing somewhere far above.
+      - emote breathes slow and even in the dark of the hovel, resting through the hours the rest of the city calls its own.
+  - start: 16
+    end: 18
+    target_room: 6031
+    activity: ""
+    idlecommands:
+      - emote fills a battered oil-can from a larger tin, careful of every drop, the price of oil written in the care.
+      - say Evening already. The brackets will be cold. Best see to them.
+      - emote works a stiff joint in the lamp-pole back and forth until it gives, then nods once, satisfied.
+  - start: 18
+    end: 24
+    target_room: 6030
+    activity: ""
+    idlecommands:
+      - emote touches flame to wick along the lamp-walk, and one by one the canal edge gathers a string of small warm lights against the dark.
+      - say There. Now a body can see where the water ends and the stone begins. That much I can do.
+      - emote pauses at a bracket where the lamp has been broken, looks at the empty hook a long moment, and lights the next one instead.
+      - emote watches a figure pass at the edge of the lamplight, says nothing, and turns back to the wick — light the lamps, see nothing, say less.

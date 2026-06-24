@@ -1,0 +1,36 @@
+id: np_oldquarter_gritta
+description: "Gritta: works the flooded cellar and the silted gallery through
+  the day, surfaces to the flooded stair to sort her finds, sleeps in the
+  cellar among the pre-Founding stone."
+segments:
+  - start: 22
+    end: 6
+    target_room: 6035
+    activity: sleeping
+    idlecommands:
+      - emote sleeps among the laid-out fragments, one hand fallen open toward the gray stone she swears she can feel even in the dark.
+      - emote breathes slow in the cold of the cellar, the canal-water lapping somewhere close and patient.
+  - start: 6
+    end: 12
+    target_room: 6035
+    activity: ""
+    idlecommands:
+      - emote lays a silt-blackened fragment in the row with the others, tilts her head, and moves it a finger's width as though the stone told her to.
+      - say The water gives a little back every day if you know where it sets things down. The trick is knowing.
+      - emote runs her fingertips along a course of the old wall, reading the joins the way another person reads a page.
+  - start: 12
+    end: 17
+    target_room: 6039
+    activity: ""
+    idlecommands:
+      - emote stands before the gray facing at the bottom of the buried city, very still, the way a person stands who is listening to something the rest of us cannot hear.
+      - say It is down here at its strongest. The oldest layer. The thing the colony built itself on top of and called empty ground.
+      - emote works loose a flake of the gray material into her palm, weighs it, and closes her hand around it with great care.
+  - start: 17
+    end: 22
+    target_room: 6034
+    activity: ""
+    idlecommands:
+      - emote sorts the day's finds on the flooded stair where the light from above reaches a little, setting aside the best fragments for Coll and for Orin.
+      - say These two go up the city. One to a sweeper who knows where to send them, one to a bookseller who can read what I cannot.
+      - emote wipes silt from a carved shard with her thumb until a fragment of an old eight-pointed mark shows through, and nods to herself.

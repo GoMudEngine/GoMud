@@ -1,5 +1,6 @@
 mobid: 9380
 zone: New Plymouth Old Quarter
+schedule_id: np_oldquarter_quill
 behavior_archetype: noncombat_questgiver
 non_combatant: true
 charm_immune: true

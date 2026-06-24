@@ -1,0 +1,29 @@
+id: np_oldquarter_deren
+description: "Deren: keeps to his ledger room above the closed operation by
+  day, a single careful evening turn along Lower Lintel Street, sleeps where
+  he works."
+segments:
+  - start: 22
+    end: 7
+    target_room: 6029
+    activity: sleeping
+    idlecommands:
+      - emote sleeps upright in the chair more often than in the cot, the habit of a man who has always kept one ear toward the stair.
+      - emote stirs at a sound from the passage, listens, finds it nothing, and settles again without fully waking.
+  - start: 7
+    end: 20
+    target_room: 6029
+    activity: ""
+    idlecommands:
+      - emote turns a page of the ledger, reads a line he has read many times, and turns it back — there is nothing in the book that is still his to change.
+      - say The account is closed. I keep the book because keeping the book is what is left to keep.
+      - emote rests two fingers on the desk and watches the doorway, the copper veining at his wrist catching the lamplight when he is still.
+      - emote sets the key-cord aside on the desk, an empty habit now — the key it held was surrendered to other hands.
+  - start: 20
+    end: 22
+    target_room: 6021
+    activity: ""
+    idlecommands:
+      - emote walks the lower street once, slow, hands visible, a man who knows precisely how closely he is watched and has decided to be easy to watch.
+      - say A turn in the evening air, such as it is down here. Nothing more than that. There is nothing more than that to have.
+      - emote pauses at the canal edge, looks east toward the docks where his one contact keeps a clean shop, and does not go that way.
