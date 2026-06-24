@@ -1,0 +1,14 @@
+itemid: 40107
+name: Cut Flowers
+namesimple: flowers
+description: A bright clutch of fresh-cut blooms from a Carter's Rise
+  stall — a mix of whatever was in season this morning. The stems
+  are bound with a strip of damp rag to keep them from wilting, but
+  the seller says they go fast and the good bundles are gone before
+  midday.
+type: object
+subtype: mundane
+weight: 0.2
+value: 1
+vendor_categories:
+- alchemy

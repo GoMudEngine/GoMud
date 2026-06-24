@@ -1,0 +1,20 @@
+id: np_temple_offerings
+description: "Almoner Sten: tends the offerings stall at the Temple Gate Plaza
+  through the day, keeps a quiet vigil there and sleeps beside it at night."
+segments:
+  - start: 5
+    end: 21
+    target_room: 5903
+    activity: ""
+    idlecommands:
+      - emote arranges the votives in even rows, the wicks all turned the same way, and lights one as a sample that he never lets gutter out.
+      - say Incense for the smoke, a votive for the light, a charm for the keeping — bring what your heart asks to the altar.
+      - emote folds a square of cloth around a charm for a supplicant and presses it into their hands with both of his.
+      - emote stands a moment with his head bowed toward the temple gate, the small amber light in his eyes steady as the candle on the trestle.
+  - start: 21
+    end: 5
+    target_room: 5903
+    activity: sleeping
+    idlecommands:
+      - emote sleeps on a mat at the foot of the offerings stall, within sight of the temple gate he has tended for years.
+      - emote breathes slow in the dark, the one sample votive still burning low beside him.

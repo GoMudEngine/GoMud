@@ -1,0 +1,56 @@
+mobid: 9391
+zone: New Plymouth Temple
+schedule_id: np_temple_offerings
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - temple_np
+idlecommands:
+  - 'emote sets a row of votive candles along the gate ledge, spacing
+    them by touch with the habit of a man who has done this enough
+    times to know the distance without measuring.'
+  - ''
+  - 'emote lights a taper from the flame at the gate post and carries
+    it carefully to a new candle at the end of the row, shielding
+    the small fire with one cupped hand.'
+  - ''
+  - 'emote straightens a small stack of wrapped incense on the corner
+    shelf and turns to face the gate, hands folded, watching
+    supplicants pass with quiet attention.'
+  - ''
+activitylevel: 8
+character:
+  name: Almoner Sten
+  description: |
+    Almoner Sten keeps the offering table at the Temple Gate Plaza
+    with the unhurried certainty of a man whose role is both humble
+    and necessary. He is thin and careful-handed, and tends toward
+    silence in the way of someone who finds the weight of words more
+    consequential than most people do. His Bloom-change is in his
+    eyes — they carry the light of candle-flame in them even when no
+    candle is near, a steady amber point that does not waver with
+    his movement or the wind. Supplicants who meet his gaze in the
+    dark leave quieter than they arrived. He uses this without
+    flourish, the way he arranges the incense — with purpose, without
+    theater. He sells votives and offerings to those who wish to
+    bring something to the altar, and knows, to the item, what each
+    one is for.
+  speciesid: 1
+  level: 1
+  gold: 30
+  stats:
+    willpower:
+      training: 10
+    charisma:
+      training: 6
+  shop:
+    - itemid: 40106
+    - itemid: 27
+    - itemid: 40077
+    - itemid: 20089

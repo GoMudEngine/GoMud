@@ -1,0 +1,13 @@
+itemid: 40104
+name: Cake of Tallow Soap
+namesimple: soap
+description: A hard, pale cake of rendered tallow and wood-ash lye,
+  faintly animal in smell and rough on the hands. It is what ordinary
+  people wash with — not pretty, not scented, but it lifts grease
+  and grime well enough.
+type: object
+subtype: mundane
+weight: 0.2
+value: 1
+vendor_categories:
+- alchemy
