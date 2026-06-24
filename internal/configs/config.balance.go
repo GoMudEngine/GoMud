@@ -461,9 +461,20 @@ type Balance struct {
 	CarryCapacityMultiplier ConfigFloat `yaml:"CarryCapacityMultiplier"` // Strength multiplier for carry capacity in lbs (default 0.65)
 
 	// ── TOXICITY ────────────────────────────────────────────────────────────
-	ToxicityDecayPerTick  ConfigFloat `yaml:"ToxicityDecayPerTick"`  // Points decayed per regen tick (default 1.0)
-	ToxicityBaseMax       ConfigFloat `yaml:"ToxicityBaseMax"`       // Base max before vitality bonus (default 100)
-	ToxicityVitalityScale ConfigFloat `yaml:"ToxicityVitalityScale"` // Vitality divisor for max bonus (default 5)
+	ToxicityDecayPerTick      ConfigFloat `yaml:"ToxicityDecayPerTick"`      // Points decayed per regen tick (default 1.0)
+	ToxicityBaseMax           ConfigFloat `yaml:"ToxicityBaseMax"`           // Base max before vitality bonus (default 100)
+	ToxicityVitalityScale     ConfigFloat `yaml:"ToxicityVitalityScale"`     // Vitality divisor for max bonus (default 5)
+	ToxicitySicknessDamagePct ConfigFloat `yaml:"ToxicitySicknessDamagePct"` // % max-HP/tick acute harm at top band (default 0.02)
+	ToxicityHighDecaySlowMult ConfigFloat `yaml:"ToxicityHighDecaySlowMult"` // decay multiplier when toxicity >= 75% (default 0.5 = clears slower)
+
+	// ── BLOOM ───────────────────────────────────────────────────────────────
+	BloomAddictionPerDose      ConfigInt   `yaml:"BloomAddictionPerDose"`      // addiction gained per dose (default 1)
+	BloomAddictionDecayRounds  ConfigInt   `yaml:"BloomAddictionDecayRounds"`  // rounds of abstinence per -1 addiction (default 300)
+	BloomWithdrawalOnsetRounds ConfigInt   `yaml:"BloomWithdrawalOnsetRounds"` // abstinence rounds before withdrawal (default 60)
+	BloomMutationAdvanceChance ConfigFloat `yaml:"BloomMutationAdvanceChance"` // chance/dose to advance strongest mutation (default 0.50)
+	BloomNewMutationChance     ConfigFloat `yaml:"BloomNewMutationChance"`     // chance/dose to instead grant a new mutation (default 0.10)
+	BloomCommunionRounds       ConfigInt   `yaml:"BloomCommunionRounds"`       // communion high duration in rounds (default 30)
+	BloomCrashRoundsMult       ConfigFloat `yaml:"BloomCrashRoundsMult"`       // crash duration = communion * this (default 2.5)
 
 	// ── MANIFESTATION / COMPANION SCALING ───────────────────────────────────
 	ManifestStatScaleChaFactor   ConfigInt   `yaml:"ManifestStatScaleChaFactor"`   // Charisma divisor for companion stat scaling (default 150)

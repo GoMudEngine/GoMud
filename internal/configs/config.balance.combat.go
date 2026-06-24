@@ -212,4 +212,33 @@ func (b *Balance) validateCombat() {
 	if b.ToxicityVitalityScale <= 0 {
 		b.ToxicityVitalityScale = 5
 	}
+	if b.ToxicitySicknessDamagePct <= 0 {
+		b.ToxicitySicknessDamagePct = 0.02
+	}
+	if b.ToxicityHighDecaySlowMult <= 0 {
+		b.ToxicityHighDecaySlowMult = 0.5
+	}
+
+	// ── BLOOM ───────────────────────────────────────────────────────────────
+	if b.BloomAddictionPerDose <= 0 {
+		b.BloomAddictionPerDose = 1
+	}
+	if b.BloomAddictionDecayRounds <= 0 {
+		b.BloomAddictionDecayRounds = 300
+	}
+	if b.BloomWithdrawalOnsetRounds <= 0 {
+		b.BloomWithdrawalOnsetRounds = 60
+	}
+	if b.BloomMutationAdvanceChance <= 0 {
+		b.BloomMutationAdvanceChance = 0.50
+	}
+	if b.BloomNewMutationChance <= 0 {
+		b.BloomNewMutationChance = 0.10
+	}
+	if b.BloomCommunionRounds <= 0 {
+		b.BloomCommunionRounds = 30
+	}
+	if b.BloomCrashRoundsMult <= 0 {
+		b.BloomCrashRoundsMult = 2.5
+	}
 }
