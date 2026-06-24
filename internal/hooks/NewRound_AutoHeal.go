@@ -59,12 +59,22 @@ func AutoHeal(e events.Event) events.ListenerReturn {
 			continue
 		}
 
-		// Toxicity decay
+		// Toxicity decay (clears slower at high levels) + acute high-toxicity harm.
 		if user.Character.Toxicity > 0 {
 			bal := configs.GetBalanceConfig()
-			user.Character.Toxicity -= float64(bal.ToxicityDecayPerTick)
+			decay := float64(bal.ToxicityDecayPerTick)
+			if tMax := user.Character.GetToxicityMax(); tMax > 0 && user.Character.Toxicity/tMax >= 0.75 {
+				decay *= float64(bal.ToxicityHighDecaySlowMult)
+			}
+			user.Character.Toxicity -= decay
 			if user.Character.Toxicity < 0 {
 				user.Character.Toxicity = 0
+			}
+			// The body poisons itself at dangerous toxicity ("shortened life").
+			// Lethal toxicity is caught by the Health<1 non-combat death check above
+			// on the next tick.
+			if dmg := user.Character.ToxicitySicknessDamage(); dmg > 0 {
+				user.Character.Health -= dmg
 			}
 		}
 
