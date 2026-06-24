@@ -1,5 +1,42 @@
 # DOGMud Patch Notes
 
+## 2026-06-24 — New Plymouth: the capital is complete — the buried Old Quarter
+
+The seventh and final quarter of the capital is built, and **New Plymouth is now
+whole** — you can arrive by sea at the Docks and walk a living city of seven
+districts, from the waterfront up the Long Market to the temple steps, north along
+the Processional to the watched Noble streets, and down — beneath all of it — into
+the **Old Quarter**.
+
+Below the docks, where a bilge channel slips under a low stone arch, the buried
+canal city begins. This is the oldest, poorest, deepest part of New Plymouth:
+**Lintel Street** running beside a dead, still canal, ducking under a pre-colonial
+stone footbridge; drowned courts and half-flooded hovels where the destitute live
+close to the water; and the only warm lights in the dark are the ones a
+night-adapted **lamplighter** keeps lit on his endless rounds. He sees everything
+that passes the iron door at number 215, and says as little as a frightened poor
+man can.
+
+For those who have followed the whispers across the whole city — a Merchant
+landlord's hint about an old canal address, a terrified Noble servant's slip about
+a delivery house, a too-clean Docks draper and his unnamed supplier — the trail
+ends here, at **215 Lintel Street**. Past a heavy at the iron door, seven steps
+down, a cold stone room holds the truth of the Bloom trade: the apparatus, the
+drain, the empty pallet with its worn iron ring. The operator is still here,
+exposed and watched, with nothing left to guard and nothing he can be made to
+answer for — some powers in this city you can reach, and cannot touch.
+
+And in the deepest flooded chambers, a relic-scavenger who can feel the gray stone
+the colony was built on works the silt for fragments of a city that came before.
+Beneath a single massive lintel, carved with eight points and concentric rings, the
+oldest secret of New Plymouth waits for anyone who has gathered the threads — a
+sweeper's collection, a bookseller's forbidden maps, a doubting novice's recurring
+symbol, a Noble gallery's suppressed paintings — to look up and understand what the
+Founding story was written to bury.
+
+Seven districts, well over a hundred residents who live, work, eat, sleep, and walk
+their own lives across the quarters — the capital is finished.
+
 ## 2026-06-22 — New Plymouth: the capital takes shape [building toward the capital — not yet on prod]
 
 Four more quarters of the capital are now built and walkable, and the Long
