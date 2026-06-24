@@ -58,8 +58,8 @@ func TriggerToxicBite(actor Actor, opts MutationOpts) MutationResult {
 	targetUserId := opts.TargetActor.GetUserId()
 
 	attackerScore := float64(char.GetSkillLevel(skills.UnarmedCombat)) +
-		float64(char.Stats.Dexterity.ValueAdj)
-	defenderScore := float64(target.Stats.Dexterity.ValueAdj) +
+		float64(char.GetEffectiveDexterity())
+	defenderScore := float64(target.GetEffectiveDexterity()) +
 		float64(target.GetCombatSkillLevel())
 
 	attackSuccess, _, _, _ := dice.OpposedRollStat(attackerScore, defenderScore)

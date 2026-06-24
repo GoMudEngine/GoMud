@@ -95,7 +95,7 @@ func ExecuteDrain(actor Actor) DrainResult {
 		Defender:        target.Char,
 		AttackStat:      char.Stats.Strength.ValueAdj,
 		AttackSkill:     char.GetSkillLevel(skills.UnarmedCombat),
-		DefenseStat:     target.Char.Stats.Dexterity.ValueAdj,
+		DefenseStat:     target.Char.GetEffectiveDexterity(),
 		DefenseSkill:    target.Char.GetCombatSkillLevel(),
 		DamagePercent:   float64(cfg.TripDamagePercent),
 		KnockdownChance: 0, // No knockdown — the drain itself is the payoff

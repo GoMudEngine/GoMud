@@ -87,7 +87,7 @@ func calcSwingCount(sourceChar *characters.Character, weaponSpeed float64, extra
 		softCap = 50
 	}
 
-	dex := float64(sourceChar.Stats.Dexterity.ValueAdj)
+	dex := float64(sourceChar.GetEffectiveDexterity())
 	skillLevel := float64(sourceChar.GetCombatSkillLevel()) * float64(bal.SkillWeight)
 
 	// Core swing count formula
@@ -382,7 +382,7 @@ func buildDamageParams(sourceChar *characters.Character, targetChar *characters.
 // calcAttackScore computes the attack roll score with all modifiers.
 func calcAttackScore(sourceChar *characters.Character, targetChar *characters.Character, penalty int, ctx combatContext) float64 {
 	bal := configs.GetBalanceConfig()
-	attackScore := float64(sourceChar.Stats.Dexterity.ValueAdj) + float64(sourceChar.GetCombatSkillLevel())*float64(bal.SkillWeight)
+	attackScore := float64(sourceChar.GetEffectiveDexterity()) + float64(sourceChar.GetCombatSkillLevel())*float64(bal.SkillWeight)
 	attackScore -= float64(penalty)
 
 	// Apply smooth stamina-based hit chance penalty

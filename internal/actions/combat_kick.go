@@ -121,7 +121,7 @@ func ExecuteKick(actor Actor) KickResult {
 		Defender:             target.Char,
 		AttackStat:           char.Stats.Strength.ValueAdj,
 		AttackSkill:          char.GetSkillLevel(skills.UnarmedCombat),
-		DefenseStat:          target.Char.Stats.Dexterity.ValueAdj,
+		DefenseStat:          target.Char.GetEffectiveDexterity(),
 		DefenseSkill:         target.Char.GetCombatSkillLevel(),
 		DamagePercent:        damagePercent,
 		KnockdownChance:      knockdownChance,

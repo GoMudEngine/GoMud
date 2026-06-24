@@ -188,7 +188,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if isManifestation {
 		primaryStatForCast = user.Character.Stats.Charisma.ValueAdj
 	} else {
-		primaryStatForCast = user.Character.Stats.Perception.ValueAdj
+		primaryStatForCast = user.Character.GetEffectivePerception()
 		if len(user.Character.Mutations) > 0 {
 			eyeFrac := (gametime.GetEyePhase() - 0.5) * 2 * float64(configs.GetBalanceConfig().MoonStatModMax)
 			primaryStatForCast += int(float64(primaryStatForCast) * eyeFrac)
@@ -225,7 +225,7 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if isManifestation {
 		baseStatForCast = user.Character.Stats.Charisma.ValueAdj
 	} else {
-		baseStatForCast = user.Character.Stats.Perception.ValueAdj
+		baseStatForCast = user.Character.GetEffectivePerception()
 	}
 	if primaryStatForCast != baseStatForCast {
 		manifestSkill := user.Character.GetSkillLevel(skills.Manifestation)

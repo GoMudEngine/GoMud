@@ -83,7 +83,7 @@ func ExecuteGore(actor Actor) GoreResult {
 		Defender:          target.Char,
 		AttackStat:        char.Stats.Strength.ValueAdj,
 		AttackSkill:       char.GetSkillLevel(skills.UnarmedCombat),
-		DefenseStat:       target.Char.Stats.Dexterity.ValueAdj,
+		DefenseStat:       target.Char.GetEffectiveDexterity(),
 		DefenseSkill:      target.Char.GetCombatSkillLevel(),
 		DamagePercent:     float64(cfg.KickDamagePercent),
 		KnockdownChance:   int(cfg.BashKnockdownChance),

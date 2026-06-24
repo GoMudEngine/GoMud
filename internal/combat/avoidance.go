@@ -24,7 +24,7 @@ func TrySpellDeflection(attacker *characters.Character, defender *characters.Cha
 	attackScore := float64(attacker.Stats.Willpower.ValueAdj) + atkSpellcasting
 
 	defSpellcasting := float64(defender.GetSkillLevel(skills.Spellcasting)) * skillWeight
-	defenseScore := float64(defender.Stats.Perception.ValueAdj) + defSpellcasting
+	defenseScore := float64(defender.GetEffectivePerception()) + defSpellcasting
 
 	success, _, _, defRoll := dice.OpposedRollStat(attackScore, defenseScore)
 

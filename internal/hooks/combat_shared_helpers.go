@@ -228,14 +228,14 @@ func applyCritEffects(attacker, defender *characters.Character, roundResult comb
 		tripResult := combat.ExecuteSkillMove(combat.SkillMoveParams{
 			Attacker:        defender,
 			Defender:        attacker,
-			AttackStat:      defender.Stats.Dexterity.ValueAdj,
+			AttackStat:      defender.GetEffectiveDexterity(),
 			AttackSkill:     defender.GetSkillLevel(skills.UnarmedCombat),
-			DefenseStat:     attacker.Stats.Dexterity.ValueAdj,
+			DefenseStat:     attacker.GetEffectiveDexterity(),
 			DefenseSkill:    attacker.GetCombatSkillLevel(),
 			DamagePercent:   float64(cfg.TripDamagePercent),
 			KnockdownChance: int(cfg.TripKnockdownChance),
 			SkillRank:       defender.GetSkillLevel(skills.UnarmedCombat),
-			DamageStat:      defender.Stats.Dexterity.ValueAdj,
+			DamageStat:      defender.GetEffectiveDexterity(),
 		})
 		result.AutoTrip = true
 		result.TripResult = tripResult
@@ -273,7 +273,7 @@ func applyCritEffects(attacker, defender *characters.Character, roundResult comb
 			Defender:          attacker,
 			AttackStat:        defender.Stats.Strength.ValueAdj,
 			AttackSkill:       defender.GetSkillLevel(skills.WeaponCombat),
-			DefenseStat:       attacker.Stats.Dexterity.ValueAdj,
+			DefenseStat:       attacker.GetEffectiveDexterity(),
 			DefenseSkill:      attacker.GetCombatSkillLevel(),
 			DamagePercent:     float64(cfg.BashDamagePercent),
 			KnockdownChance:   int(cfg.BashKnockdownChance),
