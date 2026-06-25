@@ -1,0 +1,45 @@
+roomid: 6055
+zone: Amber Valley
+title: Valley Road
+description: >
+  The heat reaches you first — a dry, kind warmth rising off pale dust, nothing
+  like the damp chill of the roads north. The lane runs down between low fieldstone
+  walls into a bowl of green, every furrow fed by hand-cut channels that catch the
+  sun and throw it back as bright thread. Somewhere a child laughs, unbothered.
+
+  This is where the valley greets you. A plain timber gate stands open and clearly
+  unused for keeping anyone out; its posts are hung with dried vines and a faded
+  ribbon or two from some past festival. The first houses sit close, doors propped,
+  washing snapping on lines. A woman pauses her weeding to nod at you, and the long
+  ridged crest that runs down her bare forearms catches the light without a flicker
+  of shame — a Blooming worn the way another town might wear a good coat.
+
+  Beside the gate, <ansi fg="itemname">the welcome stone</ansi> leans where the road
+  bends toward the square.
+biome: land
+coord: {x: -8, y: -29, z: 0}
+exits:
+  north: {roomid: 6054, zone: South Road}
+  south: {roomid: 6056}
+nouns:
+  the welcome stone: >
+    A flat slab of valley limestone, sun-warm to the touch, set upright at the
+    gate. Someone has chiseled words into it and someone else, generations on,
+    has kept the cuts clean: "Come changed or come whole — Amber Valley keeps a
+    table for all." Below the letters, dozens of small handprints have been
+    scratched in over the years, no two quite the same shape.
+  the gate: >
+    Two weathered posts and a crossbar, the kind of gate meant to mark a place
+    rather than guard it. The latch is rope, and the rope has gone soft and gray
+    from never being pulled tight. Dried vines twine the posts, knotted with
+    ribbons bleached to the color of straw — the leavings of a festival nobody
+    bothered to tidy away.
+  the channels: >
+    Narrow stone-lined runnels carry water down from somewhere higher, threading
+    between the field-walls in a pattern too deliberate to be accident. The water
+    moves slow and clear, and where it passes the dust gives way to a startling,
+    deliberate green.
+idlemessages:
+- A warm gust carries the smell of dust and ripe fruit down the lane.
+- The water in the channels murmurs over a smooth stone.
+- Far off, someone calls a greeting and someone else laughs back.

@@ -1,0 +1,47 @@
+roomid: 6061
+zone: Amber Valley
+title: The Golden Bough
+description: >
+  Warmth and woodsmoke wrap around you, and under them the good smells of a working
+  kitchen — bread, stewed fruit, a haunch turning somewhere out of sight. The common
+  room of the Golden Bough is low and broad, its ceiling beams hung with drying herbs
+  and a few dusty bunches of grapes left up for luck.
+
+  A wide stone hearth holds a banked fire even in the day's heat, more for the heart
+  than the warmth, and a long communal table runs down the middle of the room with
+  benches worn smooth on both sides. This is plainly the place the valley comes to
+  talk — to trade news, settle small scores, and let the day's grievances dissolve
+  in cider. The walls carry the clutter of years: a cracked yoke, a faded festival
+  mask, a row of tankards each with a name burned into the base. A serving-woman
+  ducks between the benches with a tray, a fan of soft feather-down at her nape
+  catching the firelight as she passes.
+
+  <ansi fg="itemname">the long table</ansi> dominates the room, and over
+  <ansi fg="itemname">the hearth</ansi> hangs a carved bough.
+biome: land
+coord: {x: -6, y: -30, z: 0}
+exits:
+  west: {roomid: 6058}
+nouns:
+  the long table: >
+    A single great slab of oak, scarred and ring-stained and scrubbed pale, running
+    the length of the room with bench seating either side. There are no private
+    tables here; strangers and neighbors share the board alike, which is exactly
+    how the valley likes its news to travel. Initials and idle carvings crowd the
+    edges, decades deep.
+  the hearth: >
+    A broad fieldstone fireplace, its mantel a single charred beam. Mounted above
+    it is the inn's namesake — a forked branch of golden-grained applewood, polished
+    and lacquered, hung with a frayed ribbon. Tradition holds it was cut from the
+    valley's oldest orchard tree the year the first Rite was held, though every
+    teller gives the story a little differently.
+  the tankards: >
+    A long shelf of pewter and fired-clay tankards, each with a name seared into
+    its base — the regulars' own cups, kept here so they need never drink from a
+    stranger's vessel. A few have a second, smaller mark beside the name: the
+    Blooming-sign of someone who wanted it remembered with their cup.
+idlemessages:
+- The banked hearth-fire pops and settles.
+- Laughter rolls down the long table and someone thumps the wood for emphasis.
+- The serving-woman calls an order back toward the kitchen.
+- A draught of cider is drawn with a long woody glug from the cask in the corner.

@@ -1,0 +1,45 @@
+roomid: 6057
+zone: Amber Valley
+title: Pavilion Walk
+description: >
+  The din of the square falls away behind you, and what rises in its place is a
+  hush — the kind that gathers in places people treat gently. Banners hang still
+  in the warm air, long panels of undyed linen each painted with a single emblem:
+  a moth, a budding branch, an opening hand.
+
+  The walk is short and straight, paved with broad processional stones worn into
+  soft hollows by bare feet. They are old, these stones, older than the houses,
+  and they have been walked the same way so many times that the path almost steers
+  you on its own. A faint smell of beeswax and crushed herbs drifts up from the
+  pavilion ahead. Off to one side a woman sits mending a banner, her needle moving
+  in a hand with one too many graceful fingers, and she hums as she works.
+
+  <ansi fg="itemname">The banners</ansi> line the way, and underfoot lie
+  <ansi fg="itemname">the processional stones</ansi>.
+biome: land
+coord: {x: -8, y: -31, z: 0}
+exits:
+  north: {roomid: 6056}
+  south: {roomid: 6060}
+nouns:
+  the banners: >
+    Long panels of pale linen hung from cross-poles down both sides of the walk,
+    each bearing one painted emblem in earth-reds and ochres: a moth with spread
+    wings, a branch breaking into bud, a hand opening like a flower. They are the
+    signs of Blooming, and the paint has been freshened so many times the cloth
+    beneath has gone soft as a worn shirt.
+  the processional stones: >
+    Broad flat slabs laid end to end, their centers dished and polished by the
+    passage of bare feet over more years than anyone counts. Walk them and you can
+    feel the hollows guide your step — generations of folk have come this way to
+    the pavilion, and the road remembers each of them a little.
+  the mender: >
+    A woman seated on a low stool with a half-stitched banner across her knees,
+    drawing thread through linen with unhurried care. One hand carries an extra
+    finger, long and deft, and she uses it to hold the cloth taut while the others
+    sew. She hums something old and tuneless and pays you a friendly, unbothered
+    glance.
+idlemessages:
+- A banner stirs, just barely, in a breath of warm air.
+- The smell of beeswax drifts up from the pavilion.
+- The mender's needle catches the light as it rises and dips.

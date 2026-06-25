@@ -1,0 +1,43 @@
+roomid: 6062
+zone: Amber Valley
+title: The General Store
+description: >
+  The light dims and cools as you step in, and a hundred smells crowd together —
+  dried beans and twine, lamp-oil and soap, the dusty sweetness of grain in open
+  sacks. Motes drift in the bars of sun that slant through a small front window.
+
+  Every wall of the general store is shelved to the ceiling, and every shelf is
+  full: bolts of cloth, coils of rope, crocks of preserved fruit, candles, nails,
+  needles, the small necessary things a farming valley can't grow for itself. A
+  scarred wooden counter runs across the back, a brass scale balanced on one end and
+  a ledger open on the other. Sacks of dried apricot and shelled bean slump against
+  the counter's foot, scoops buried in them to the handle. The whole place has the
+  comfortable density of a shop that has never once thrown anything useful away.
+
+  <ansi fg="itemname">the shelves</ansi> climb every wall, and at the back stands
+  <ansi fg="itemname">the counter</ansi> with its scale and ledger.
+biome: land
+coord: {x: -10, y: -30, z: 0}
+exits:
+  east: {roomid: 6059}
+nouns:
+  the shelves: >
+    Floor-to-ceiling planks crammed with the valley's dry goods — folded cloth,
+    coiled cord, jars of seed, tins of oil, stacked candles, a drawer-wall of nails
+    and pins and buttons sorted by size. A sliding ladder leans against one run to
+    reach the high stock. Nothing is labeled; the keeper plainly carries the whole
+    inventory in their head.
+  the counter: >
+    A long wooden counter worn glassy at the elbows, a polished brass scale at one
+    end and a fat ledger at the other. The ledger's pages are dense with names and
+    running tallies — half the valley buys on account here and squares up at
+    harvest, which the keeper records in a small, patient, unhurried hand.
+  the sacks: >
+    Burlap sacks slouched open against the counter, scoops standing in dried
+    apricot, shelled bean, barley, and coarse salt. A hand-lettered card on each
+    gives the price by the measure, weighed out fresh on the brass scale. The grain
+    smells warm and faintly nutty in the dim.
+idlemessages:
+- Dust turns slowly in a shaft of light from the front window.
+- The brass scale's pans tick gently as they settle.
+- A floorboard creaks somewhere among the shelves.

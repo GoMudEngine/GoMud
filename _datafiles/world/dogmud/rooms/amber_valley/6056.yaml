@@ -1,0 +1,53 @@
+roomid: 6056
+zone: Amber Valley
+title: The Market Square
+description: >
+  Voices reach you before anything else — a braided, easy din of haggling and
+  greeting and laughter, threaded through with the steady chuckle of water. The
+  square opens wide and sun-flooded, its hard-packed earth swept clean and worn
+  pale by generations of market days.
+
+  At the center stands the old market cross, and around its base a low well-trough
+  catches channel-water that townsfolk dip from in passing. Stalls ring the open
+  space, fruit and cloth and pottery under faded awnings, and folk drift between
+  them in no particular hurry. Two grizzled farmers have squared off near the
+  trough, jabbing fingers at each other over some boundary ditch — a quarrel so
+  well-worn it draws more grins than concern. A boy weaves through with a basket
+  on his head, the soft pale down covering his arms catching the light like frost.
+
+  <ansi fg="itemname">The market cross</ansi> rises at the heart of it all, and
+  <ansi fg="itemname">the well-trough</ansi> circles its foot.
+biome: land
+coord: {x: -8, y: -30, z: 0}
+exits:
+  north: {roomid: 6055}
+  south: {roomid: 6057}
+  east: {roomid: 6058}
+  west: {roomid: 6059}
+nouns:
+  the market cross: >
+    Worn limestone, its four faces carved with the valley's old emblems: a sheaf,
+    a vine, a sun, and a fourth that time has rubbed to a blur — folk argue
+    whether it was a moth, a hand, or a face. The stone is polished smooth at
+    shoulder height where countless people have leaned against it to gossip,
+    and a sun-faded notice or two flutters from a nail driven near its base.
+  the well-trough: >
+    A circular stone trough rings the foot of the cross, fed by a thin pipe off
+    the channel system so it never quite runs dry. The water is cool and clear;
+    a tin dipper hangs on a chain for anyone who's thirsty, and a few green ferns
+    have rooted in the damp seams of the stonework.
+  the feuding farmers: >
+    Two sun-leathered old men, red-faced and delighted to be furious, arguing
+    over a boundary ditch their fathers argued over before them. Neither seems to
+    want it settled. One has a second thumb on his left hand that he uses to
+    great effect for jabbing; the other doesn't appear to notice or care.
+  the stalls: >
+    Trestle tables under patched awnings, heaped with the valley's plenty —
+    apricots and plums, coiled rope, fired clay, bolts of plain dyed cloth.
+    Nothing fancy, all of it good. The vendors call prices more out of habit
+    than haggle, and slip an extra fruit to children without being asked.
+idlemessages:
+- The two old farmers' voices rise to a crescendo, then collapse into laughter.
+- A dipper clinks against the rim of the well-trough.
+- A vendor calls out the morning's price for apricots, then knocks it down for a child.
+- Somewhere a hand-drum keeps a loose, lazy rhythm.
