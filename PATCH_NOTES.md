@@ -1,5 +1,62 @@
 # DOGMud Patch Notes
 
+## 2026-06-25 — New Plymouth: the capital gets its quests
+
+The city was a beautiful place to walk. Now it is a place with things to do. Five
+districts that had no quests of their own each get one, and all four new
+questlines pull on a single thread buried under the whole city — the suspicion
+that New Plymouth's founding date is a lie, and that the ruling bloodline's
+charter, courts, and quarterly tribute all rest on it.
+
+- **The Cooperage Circle** (Crafting Quarter) — a bookseller who asks the wrong
+  questions, a shuttered cooper's shop that someone still keeps, and a real
+  choice: throw in with the quiet people preserving what the city wrote over, or
+  hand them to the bloodline's clerk for a heavier purse. The choice sticks, and
+  the people you meet later remember which way you went.
+- **The Gallery Cipher** (Temple → Noble Quarter) — a scholar nobody important
+  will listen to, a cipher worked into the temple's oldest carvings, and a
+  gallery keeper who reads what the lamps above the third painting were hung to
+  keep you from seeing.
+- **The Pre-Founding Web** (Old Quarter) — down past the flood line, a stone
+  older than the colony, carved with a symbol that was never supposed to be
+  there. Carry the proof back up to the people who can read it — and mind the
+  black water on the way down, because something lives in it.
+- **The Tribute** (Merchant → Noble Quarter) — a blade-seller bled dry by a levy
+  no one will explain, a permit clerk who hides behind the charter, and a private
+  gate you cannot argue your way through. You will not break the bloodline. You
+  might still buy one honest merchant a little air.
+
+Each quest stands on its own and can be taken in any order, but a traveller who
+follows all four watches the same buried truth surface from four directions. And
+the people who have something to ask of you now show it when you stop to talk —
+no more guessing who has work and who is only passing the time.
+
+## 2026-06-25 — The Bloom: a habit that costs you
+
+The copper-flower drug that shadows the docks is no longer just something people
+whisper about — it is a mechanic with teeth, and so is the toxicity that rides
+with it. A Bloom wafer gives a real surge across body, stamina, and conviction
+all at once; then comes the crash, the craving, a rising sickness in the blood,
+and a body that begins rewriting itself faster than nature intended — old
+mutations deepening, new ones stirring. Toxicity now shows on your status and in
+the prompt, dulls your eye and your hands as it climbs, and at the worst of it
+starts doing you real harm. Push too hard and you are an addict; the back-alley
+healer in the Common Quarter keeps a purge for it, brutal and fast where going
+cold turkey is slower and meaner.
+
+Paired with it: the **Bloom Trail**, a two-quest chain that starts with one
+shaking dockhand and a spent wax wrapper, and runs the supply up from a clean
+little draper's shop to a name the watch can almost — but not quite — reach.
+
+## 2026-06-24 — New Plymouth: a marketplace that trades
+
+The capital's districts felt lived-in but thinly stocked. Several now actually
+sell: a sundries-seller working the Common market, an almoner taking offerings at
+the temple gate, and the Carter's Rise flower-seller who used to just stand there
+now keeps a real stall. New small goods move through the quarters, and the
+city-wide supply runner keeps the vendors fed — so prices breathe with what is in
+stock the way the rest of the world's shops already do.
+
 ## 2026-06-24 — New Plymouth: the capital is complete — the buried Old Quarter
 
 The seventh and final quarter of the capital is built, and **New Plymouth is now
