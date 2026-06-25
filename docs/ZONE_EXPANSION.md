@@ -1073,8 +1073,8 @@ column so the next zone-builder knows what's free.
 | 11 | NP Noble Quarter | 20 | 2 | ⬜ Not started | |
 | 12 | NP Common Quarter | 25 | 3 | ⬜ Not started | |
 | 13 | NP Sewers | 20 | 2 | ⬜ Not started | |
-| 14 | South Road | 15 | 2 | ⬜ Not started | |
-| 15 | Amber Valley | 35 | 4 | ⬜ Not started | |
+| 14 | South Road | 15 | 2 | ✅ Built | NEW 2026-06-25. rooms 6040–6054 (straight N–S spine); attaches at Marches Spur Road crossroads **4014** (new south exit). Inn (Lake & Ladle), shepherd, merchant; the dried-channel breadcrumb at the Dryside Farmstead. Boots clean, ValidateZoneConsistency errors=0 mode=panic. |
+| 15 | Amber Valley | 35 | 4 | ✅ Built | NEW 2026-06-25. rooms 6055–6089 (folder amber_valley): town center + residential/farms + valley-edges & a 5-room cave dungeon (z-descent; sun/cave fauna 9407–9409) + the Chrysalis grove (seeded near-flat orbital marker). 13 NPCs 9394–9406 (Hesper/Golden Bough giver, Davan's father Corwin, the feuding farmers Fenn + Ayres, Rite deacon Pember [seeded], Blooming youth), each a unique mutation. **Quest 72 The Water Dispute** (3 paths: mediate / restore-source / record; outcome flag) — harness-verified (attach, giver hook, grant, restore-path completion + flag). Deferred: NPC schedules (anchors stay put — better for the giver's findability) + forageables. Bloom-mutation link kept latent. Attaches South Road 6054↔6055; south frontier stub toward the unbuilt River Road. Boots clean, errors=0. |
 | 16 | River Road to Confluence | 15 | 2 | ⬜ Not started | |
 | 17 | The Confluence | 70 | 7 | ⬜ Not started | |
 | 18 | East Road to Greenford | 15 | 2 | ⬜ Not started | |
@@ -1082,7 +1082,7 @@ column so the next zone-builder knows what's free.
 | 20 | Cascade Pass Road | 20 | 2 | ⬜ Not started | |
 | 21 | Eastern Highlands | 30 | 3 | ⬜ Not started | |
 | 22 | Crash Site Interior | 20 | 2 | ⬜ Not started | |
-| **TOTAL** | **28 zones** | **~720 rooms** | **~70 mini-stages** | **5 / 28 built** | 2026-06-19: Stillwater→NP corridor **expanded** (the 5.1–5.5 zones, +~94 rooms) so the capital is ~4–5 travel-days north with open reaches reserved for outdoor expansion and a farm/industry hinterland — see the World Atlas (`docs/world_atlas_mock.html`) and the "Water Routes & Ferries" section. New Plymouth itself is scoped to grow well beyond its initial 170 (→300+ via stubs, and likely larger). PLUS large off-plan built footprint not counted here (Pothole Coulee newbie 169rm, Ironwind 123rm, A Dark Forest 81rm, Thornwall, Watchers Crossing, Dustwalk, Labyrinth, Stillwater Marsh, Fernway South). **Next on-plan: #5 North Road — Northern** (attaches at Stillwater's north gate ~4111). |
+| **TOTAL** | **28 zones** | **~720 rooms** | **~70 mini-stages** | **7 / 28 built** (+South Road, Amber Valley — the Southern Road leg 1, 2026-06-25) | 2026-06-19: Stillwater→NP corridor **expanded** (the 5.1–5.5 zones, +~94 rooms) so the capital is ~4–5 travel-days north with open reaches reserved for outdoor expansion and a farm/industry hinterland — see the World Atlas (`docs/world_atlas_mock.html`) and the "Water Routes & Ferries" section. New Plymouth itself is scoped to grow well beyond its initial 170 (→300+ via stubs, and likely larger). PLUS large off-plan built footprint not counted here (Pothole Coulee newbie 169rm, Ironwind 123rm, A Dark Forest 81rm, Thornwall, Watchers Crossing, Dustwalk, Labyrinth, Stillwater Marsh, Fernway South). **Next on-plan: #5 North Road — Northern** (attaches at Stillwater's north gate ~4111). |
 
 *New Plymouth's 170 initial rooms include 21 expansion stubs (3 per
 district) that are visible but inaccessible. When all stubs are built
