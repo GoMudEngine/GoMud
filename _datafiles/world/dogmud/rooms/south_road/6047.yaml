@@ -1,0 +1,46 @@
+roomid: 6047
+zone: South Road
+title: The Valley Overlook
+description: >
+  The land falls away at your feet and the whole of Amber Valley opens
+  below, and for a moment the heat and the wind and the long dusty miles
+  are worth it for the look of the thing. From this shoulder of high
+  ground the valley lies spread like a map thrown down: a great warm bowl
+  of farmland hazed gold to the far hills, and across it, stitched in vivid
+  living green, the <ansi fg="itemname">irrigation channels</ansi> — a
+  branching silver-green tracery of water carrying the high country's
+  snowmelt out across the dry gold fields. Smoke stands up straight from
+  far-off steadings; a town glints small and pale where the channels
+  gather. A flat <ansi fg="itemname">vista stone</ansi> juts from the verge
+  at the very lip of the drop, worn smooth by everyone who ever stopped to
+  take in the view.
+biome: land
+coord: {x: -8, y: -21, z: 0}
+exits:
+  north: {roomid: 6046}
+  south: {roomid: 6048}
+nouns:
+  irrigation channels: >
+    Seen from above, the valley's lifework: a hand-cut
+    net of water spread across the gold. The main leats run dead straight
+    from the high northern springs, then branch and branch again into
+    field-ditches finer than thread, and everywhere the water reaches the
+    land answers in green. Where it does not reach, the gold runs to brown.
+    The whole valley's wealth, you understand at once, is a matter of who
+    holds the water and where they let it go.
+  vista stone: >
+    A broad flat slab at the cliff's lip, its top dished and
+    polished by a thousand seated travellers. Names and dates are scratched
+    all over it, the oldest worn to ghosts, the newest sharp; nearly every
+    one was cut by someone resting here on the way down, looking at exactly
+    what you are looking at, feeling the same lift of the heart.
+  town: >
+    Far off where the green channels gather thickest, a pale smudge of
+    walls and roofs catches the afternoon light — the valley's market town,
+    a long day's easy walk down the descending road. Even at this distance
+    you can make out the dark stipple of orchards crowding close around it.
+idlemessages:
+- A hawk hangs motionless on the updraft below the overlook, level with your
+  eyes, then peels away over the valley.
+- Far below, sunlight slides along a filling channel and the whole thread of
+  it flashes silver for a heartbeat.

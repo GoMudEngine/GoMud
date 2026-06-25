@@ -1,0 +1,44 @@
+roomid: 6050
+zone: South Road
+title: Irrigation Row
+description: >
+  Water is everywhere here, and you hear it before anything else — a
+  many-throated trickle and rush and gurgle on every side, the sound of a
+  whole landscape being fed. The road runs along the top of a low bank
+  between fields, and from it you look down on the valley's plumbing laid
+  bare: a <ansi fg="itemname">main leat</ansi> running fast and full
+  alongside the road, and from it a comb of smaller channels striking off
+  at right angles across the farmland, each gated by a little
+  <ansi fg="itemname">sluice board</ansi> that the farmers raise and drop
+  to share the flow. The fields between run a green so deep it looks black
+  against the gold of the dry slopes you have left behind. Everything that
+  grows here grows because someone, upstream, opened a gate.
+biome: land
+coord: {x: -8, y: -24, z: 0}
+exits:
+  north: {roomid: 6049}
+  south: {roomid: 6051}
+nouns:
+  main leat: >
+    The artery of this stretch — a broad stone-lined channel
+    running fast and brimming alongside the road, carrying far more water
+    than any one field could want. It comes down from the high springs and
+    feeds the whole comb of lesser channels below; foul it or block it, and
+    a hundred fields downstream go thirsty. The valley's law, you suspect,
+    has more to say about this ditch than about murder.
+  sluice board: >
+    A planed oak board set in a slotted stone frame across the
+    mouth of a field-channel, raised or dropped by a peg to let water in or
+    hold it back. This one is up, and the channel beyond runs full and
+    silver into a flooded field. Each board is a small daily decision about
+    who drinks and who goes dry, and each is watched.
+  fields: >
+    Squared plots of deep-watered crop running off on both sides —
+    bean and onion and standing barley, green to the point of black,
+    quilted by the channels into a patchwork. The line where the watered
+    land ends and the dry slope begins is as sharp as a drawn knife.
+idlemessages:
+- A sluice somewhere downstream is lifted and the leat beside you drops a
+  finger's width with a sucking gurgle.
+- A heron stalks stiff-legged along a flooded channel, stabs once, and comes
+  up with something silver.

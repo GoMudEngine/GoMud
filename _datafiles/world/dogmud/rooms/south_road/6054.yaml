@@ -1,0 +1,48 @@
+roomid: 6054
+zone: South Road
+title: Valley Gate
+description: >
+  The road levels, the dust gives way to swept cobble underfoot, and the
+  noise of a town reaches you all at once — voices, cartwheels, a smith's
+  ringing somewhere ahead, the busy human sound you have not heard since
+  the crossroads far above. This is where the South Road ends and Amber
+  Valley begins: a broad stone <ansi fg="itemname">gateway</ansi> stands
+  across the way, its arch worn but its gates flung wide, and beyond it the
+  pale walls and crowded orange-tiled roofs of the valley town rise close
+  enough now to count the chimneys. Orchards press right up to the walls,
+  and the great gathered channels of the valley run in beneath them. By the
+  gate a <ansi fg="itemname">toll keeper's lodge</ansi> sits in the shade,
+  and a last weathered <ansi fg="itemname">boundary marker</ansi> closes
+  the road that brought you down.
+biome: land
+coord: {x: -8, y: -28, z: 0}
+exits:
+  north: {roomid: 6053}
+  south: {roomid: 6055, zone: Amber Valley}
+nouns:
+  gateway: >
+    A broad arch of honey-coloured valley stone spanning the road,
+    old enough that its keystone carving has weathered to a smooth lump and
+    its gates, iron-studded oak, have plainly not been closed in a
+    generation. Travellers stream through it both ways without a glance.
+    Beyond, the road runs on as a proper paved street into the bustle of
+    the town, and the warm valley air is thick with cooking and dust and
+    voices.
+  toll keeper's lodge: >
+    A small flat-roofed booth of mud-brick set in the
+    gate's shade, a shuttered window at counter height. A board beside it
+    lists the tolls — a copper a cart-wheel, free for those on foot — but
+    the shutter is up and the stool inside empty, the keeper off about some
+    other business and the gate left to mind itself in the heat.
+  boundary marker: >
+    A final road-stone at the gate's foot, twin to the one
+    far up at the verge where this road began. Its valley face bears the
+    wheat-sheaf of Amber Valley, freshly cut and proud; its northward face,
+    the worn apple of the orchard country you have left a long hot day
+    behind you. You have walked the whole seam, top to bottom, and here it
+    closes.
+idlemessages:
+- A laden cart rumbles in through the gateway from the town, the carter
+  nodding to no one in particular.
+- The mingled smells of the town roll out under the arch — bread, dung,
+  hot stone, and somewhere close, frying fish.

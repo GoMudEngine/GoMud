@@ -1,0 +1,48 @@
+roomid: 6044
+zone: South Road
+title: The Lake & Ladle
+description: >
+  Woodsmoke and frying onions reach you a hundred paces before the
+  building does — the first cooking-smell since the crossroads, and after
+  the dry mile it pulls at you like a hand. The road widens into a swept
+  dirt yard before a long, low waystation of grey stone and sun-faded
+  thatch, its door wedged open onto a dim common-room where a
+  <ansi fg="itemname">hearth</ansi> burns low even in the heat, more for
+  the cook-pot than for warmth. Benches and trestle tables fill the cool
+  inside; a water-trough and hitching rail line the yard for the teams
+  that stop here. Above the door, an <ansi fg="itemname">inn-sign</ansi>
+  creaks on its iron bracket, and a chalked <ansi fg="itemname">slate</ansi>
+  by the threshold lists what the kitchen has today.
+biome: land
+coord: {x: -8, y: -18, z: 0}
+exits:
+  north: {roomid: 6043}
+  south: {roomid: 6045}
+nouns:
+  inn-sign: >
+    A weather-blistered board painted with a still blue lake and,
+    floating improbably upon it, an enormous wooden ladle. The joke is old
+    and local: there is no lake within thirty miles, only the long thirst
+    of the road and the promise that here, at least, the ladle comes full.
+    The paint has faded but the lettering beneath — THE LAKE & LADLE — has
+    been freshly picked out in red.
+  hearth: >
+    A broad stone fireplace banked low, a black iron pot swinging on
+    a crane above the coals. Whatever simmers in it has been going since
+    morning by the smell — onions, barley, a bone or two. A long-handled
+    ladle hangs ready on a hook beside it, worn pale where hands have
+    gripped it.
+  slate: >
+    A square of slate by the door, chalked in a careful hand: barley
+    pottage, bread and dripping, small beer, and — crossed through already,
+    though the day is young — mutton. Below the list, smaller: "Beds in the
+    loft. Pay the keeper. No boots on the tables."
+  common-room: >
+    A long dim room kept cool by thick stone walls, smelling of
+    woodsmoke, spilled beer, and the wax of the tables. Trestle benches run
+    its length, polished by years of travellers' elbows; a stair in the
+    corner climbs to a sleeping-loft under the thatch.
+idlemessages:
+- A pot-lid rattles over the hearth and a gust of barley-steam rolls across
+  the room.
+- Out in the yard a horse stamps and blows, and the hitching rail creaks.
