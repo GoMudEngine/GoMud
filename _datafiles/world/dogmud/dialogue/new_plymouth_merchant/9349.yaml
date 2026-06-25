@@ -32,6 +32,30 @@ tree:
       covers, or about who the office ultimately serves."
 
   nodes:
+    - id: q68_vell_report
+      triggers: ["cooperage", "edvar", "survey", "report", "derelict",
+                 "map", "deliver", "give", "circle"]
+      questRequired: ["68-choice"]
+      questExcluded: ["68-end"]
+      text: "You have something pertaining to the cooperage filing? Then it is
+        no longer idle talk -- it is a document. Hand it across the desk and I
+        will examine it. The office is attentive to citizens who assist it."
+      hints: "Clerk Vell will take Edvar's map-fragment if you choose to side
+        with the bloodline. Give the map-fragment to Vell to report the
+        circle."
+
+    - id: q68_vell_dismiss
+      triggers: ["cooperage", "circle", "orin", "edvar", "survey",
+                 "derelict"]
+      questExcluded: ["68-choice", "68-end"]
+      text: "The cooperage on the craft streets? It is a derelict-property
+        matter, filed and pending. I do not discuss filings with the public,
+        and I would not know what a survey or a circle has to do with a
+        question of occupancy. If you have business at this office, state the
+        form you need."
+      hints: "Clerk Vell will not discuss the cooperage filing with someone
+        who has no standing in it."
+
     - id: permits
       triggers: ["permit", "license", "application", "process", "queue",
                  "paper", "form", "register", "registration", "filing",

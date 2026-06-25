@@ -1,0 +1,136 @@
+questid: 68
+name: The Cooperage Circle
+description: >-
+  Orin the bookseller asks the wrong questions about the city's founding,
+  and he is not the only one. A shuttered cooperage in the quarter still
+  has someone tending its tools. The bloodline means to seize it. What you
+  do about that is yours to decide.
+secret: false
+
+flags:
+  - key: allegiance
+    values: [circle, bloodline]
+    description: "Whether the player aided the cooperage circle or reported
+      it to the bloodline domestic"
+
+steps:
+  - id: start
+    description: >-
+      Orin asked you to visit the shuttered cooperage and find Toby -- to
+      see whether anyone still tends the place, and bring back proof.
+    hint: >-
+      Go to the abandoned cooperage north of Craftwell Square and speak with
+      Toby. Bring Orin proof the place is still kept.
+  - id: evidence
+    description: >-
+      Toby keeps the cooperage's tools oiled and its master's bench-mark
+      clean, and gave you a rubbing of it. He says Edvar's hidden survey is
+      under a loose floorboard inside -- the pre-founding map the bloodline
+      would seize the place to bury. Clerk Vell has filed to take the
+      cooperage as derelict.
+    hint: >-
+      Find Edvar's map-fragment under the loose floorboard on the cooperage
+      floor, then take what you have back to Orin.
+  - id: choice
+    description: >-
+      Orin laid out the choice: help the circle hold the cooperage, or take
+      Edvar's survey to Clerk Vell and be paid for it.
+    hint: >-
+      To aid the circle, re-cut the guild-mark over the cooperage door. To
+      side with the bloodline, give Edvar's map-fragment to Clerk Vell in
+      the Merchant Quarter permit office.
+  - id: end
+    description: >-
+      The matter of the cooperage is settled -- one way, or the other.
+
+rewards:
+  playermessage: ""
+  roommessage: ""
+
+triggers:
+  # Edvar's map-fragment: under the loose floorboard on the cooperage floor (5720)
+  - event: room_interact
+    room: 5720
+    noun: loose-floorboard
+    conditions:
+      has: ["68-evidence"]
+      missing_item: 40113
+    actions:
+      - give_item: 40113
+      - send_text: >-
+          A floorboard by the cot sits proud of its neighbors. Beneath it,
+          wrapped in oilcloth against the damp, is a torn quarter of a survey
+          in an old, exact hand -- Edvar's work, the map Toby said was hidden
+          here. You ease it free and pocket it.
+      - room_text: "works a loose floorboard free and lifts something wrapped in oilcloth."
+
+  # loose floorboard, before Toby's word
+  - event: room_interact
+    room: 5720
+    noun: loose-floorboard
+    conditions:
+      missing: ["68-evidence"]
+    actions:
+      - send_text: >-
+          One floorboard near the cot sits a little proud of the rest. Prying
+          up the floor of an occupied workshop without a reason is the kind of
+          thing that ends a welcome before it starts. You leave it.
+
+  # CIRCLE BRANCH: re-cut the guild-mark over the cooperage door (5719)
+  - event: room_interact
+    room: 5719
+    noun: old-guild-mark
+    conditions:
+      has: ["68-choice"]
+      missing: ["68-end"]
+    actions:
+      - set_flag: {key: "68-allegiance", value: "circle"}
+      - give_gold: 60
+      - bump_rep: {faction: cooperage_circle, delta: 20}
+      - bump_rep: {faction: bloodline_domestic, delta: -15}
+      - give_item: 40114
+      - send_text: >-
+          You re-cut the old guild-mark over the door until it reads as a
+          working shop again, a cooper's mark a clerk cannot easily call
+          derelict -- and you carry Edvar's survey out to where the circle
+          can keep it safe. Orin presses a copy of the map on you before you
+          go. "The original is below," he says, "where the canal meets the old
+          quarter. Someone outside this should know it is real."
+      - room_text: "re-cuts a faded guild-mark over a shuttered door until it reads as a working shop again."
+      - grant: "68-end"
+
+  # guild-mark, before the choice
+  - event: room_interact
+    room: 5719
+    noun: old-guild-mark
+    conditions:
+      missing: ["68-choice"]
+    actions:
+      - send_text: >-
+          The cooper's guild-mark is set above the door in faded paint -- a
+          stave and hammer. Re-cutting it would be a real act with real
+          consequences. You do not yet have a reason to.
+
+  # BLOODLINE BRANCH: give Edvar's map-fragment to Clerk Vell (9349)
+  - event: item_give
+    mob: 9349
+    item: 40113
+    conditions:
+      has: ["68-choice"]
+      missing: ["68-end"]
+    actions:
+      - set_flag: {key: "68-allegiance", value: "bloodline"}
+      - give_gold: 100
+      - bump_rep: {faction: bloodline_domestic, delta: 20}
+      - bump_rep: {faction: cooperage_circle, delta: -15}
+      - npc_say:
+          mob: 9349
+          lines:
+            - {delay: 1, text: "Let me see what you have brought me."}
+            - {delay: 4, text: "A pre-founding survey, and the address that keeps it. This resolves the question of whether the cooperage is genuinely derelict. It is not. It is occupied by people without standing to occupy it."}
+            - {delay: 7, text: "The office is grateful. Discretion is part of the arrangement, and the office rewards it. The matter is closed."}
+      - send_text: >-
+          The cooperage will be seized within the quarter, and Toby put out of
+          the only place he keeps. You have what the office pays for
+          discretion -- and the weight of having earned it.
+      - grant: "68-end"

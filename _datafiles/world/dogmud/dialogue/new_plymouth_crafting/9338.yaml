@@ -28,6 +28,29 @@ tree:
       downstairs — though he seems very certain about that last one."
 
   nodes:
+    - id: q68_toby
+      triggers: ["quest", "task", "cooperage", "tools", "circle", "orin",
+                 "kept", "tend", "proof", "rubbing", "edvar", "map", "asha",
+                 "stave"]
+      questRequired: ["68-start"]
+      questExcluded: ["68-evidence", "68-end"]
+      grantsQuest: "68-evidence"
+      givesItem: 40112
+      text: "You came from Orin, then. Yes -- I keep them. Somebody has to.
+        The day they shut this place they did not take the tools, and a tool
+        left to rust is a thing I will not watch happen. So I oil them, and I
+        keep the master's bench-mark clean, and I sleep where the master
+        slept. Here -- a rubbing of the bench-mark, proof enough for Orin.
+        And there is more: Edvar's last survey is under a loose floorboard by
+        the cot inside, the one they would pull this shop down to bury. Vell
+        has filed to call us derelict. Find it, and take it to Orin -- there
+        is not much time."
+      hints: "Toby tends the cooperage alone and gave you a rubbing of the
+        master's bench-mark. He says Edvar's hidden survey is under a loose
+        floorboard by the cot on the cooperage floor inside. Find it, then
+        take what you have to Orin."
+      moodChange: cautious
+
     - id: cooperage
       triggers: ["cooperage", "barrel", "work", "stave", "hoop",
                  "craft", "what", "here", "do", "make", "open",

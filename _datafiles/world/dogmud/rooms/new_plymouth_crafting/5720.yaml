@@ -12,7 +12,8 @@ description: >
   corner holds a cot with a folded blanket and a pair
   of boots placed with intention — whoever lives here
   has organized the space without much room to work
-  with. Cut along the inside edge of the west bench,
+  with. One floorboard beside the cot sits slightly
+  proud of its neighbors. Cut along the inside edge of the west bench,
   a <ansi fg="itemname">bench-inscription</ansi> reads
   a name and below it "Master Stave-Hand," the letters
   careful and unhurried, the work of someone who believed
@@ -46,6 +47,10 @@ nouns:
     out; whatever was being added there is gone. The
     chisel-work is precise and unhurried. Below the
     inscription, the bench surface has been kept clean.
+  loose-floorboard: A single floorboard beside the cot sits a little proud
+    of the rest, the nails near one end backed out and re-seated more than
+    once. It has been lifted before, and recently. Something is kept beneath
+    it.
 idlemessages:
 - The tools on the wall are cold but clean. They have
   been oiled recently — you can smell it.
