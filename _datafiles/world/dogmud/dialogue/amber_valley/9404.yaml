@@ -1,0 +1,35 @@
+mobid: 9404
+zone: Amber Valley
+defaultMood: friendly
+greetings:
+  - text: "Morning! Mind the puddle — and yes, before you ask, the third arm's new, and yes, it IS handy at market. Pun intended, I make it daily."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello there! Lovely day for it, whatever 'it' turns out to be."
+  - keywords: ["market", "buy", "stall", "goods"]
+    responses:
+      - "Stalls are just down the lane. Tell them Sela sent you; won't get you a discount, but it's nice to be mentioned."
+  - keywords: [""]
+    responses:
+      - "Ask me again? I was watching that gull and lost the thread entirely."
+tree:
+  root:
+    text: "Sela Brim, valley born and valley proud. I'm just a market soul — I haunt the stalls, I know everyone, and I'll talk the ear clean off a statue if you let me. What's caught your eye?"
+    hints: "You could ask Sela about the market and valley life, about the mutation
+      she wears so proudly, or just for the latest valley gossip."
+  nodes:
+    - id: market
+      triggers: ["market", "valley", "life", "stalls", "goods"]
+      text: "The market's the best part of any day. Amber honey, woven cloth, fruit so ripe it's nearly rude — and the people, the people are the real goods. Valley life is slow and sweet and everybody's in everybody's business, which I personally consider a feature. I couldn't live anywhere they didn't know my name by breakfast."
+      hints: "You could ask Sela about her mutation, or for the latest valley
+        gossip."
+    - id: mutation
+      triggers: ["mutation", "arm", "change", "blooming", "rite", "gift"]
+      text: "This third arm? Bloomed in two springs ago and I've never looked back. Out in the wide world they'd have me hiding it under a cloak, poor things. Here the valley threw me a feast and I cried like a fool and ate too much honey-cake. The Chrysalis Rite has it right — your body knows what it's doing better than your worries do. I wear my gift in the open and I pity anyone taught to be ashamed of theirs."
+      moodChange: friendly
+    - id: gossip
+      triggers: ["gossip", "news", "talk", "feud", "rumor", "rumour"]
+      text: "Oh, where to start. The Tarrow boy's sweet on the miller's daughter, the Deacon's gone all broody over the Bloomings, and — well, you'll have heard the big one. Fenn and Ayres, the two farmers, snapping at each other over the water like a pair of wet cats. The whole valley's tired of it. It's put a grey cloud over a green place, and that's not how we do things here. Somebody ought to knock their heads together, gently. Hesper at the Golden Bough's about ready to."
+      hints: "You could ask Sela about the market, or about her mutation."

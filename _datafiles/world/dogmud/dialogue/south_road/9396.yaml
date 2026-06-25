@@ -1,0 +1,36 @@
+mobid: 9396
+zone: South Road
+defaultMood: neutral
+greetings:
+  - text: "Buying? Selling? Just looking? Doesn't matter, talk to me anyway — I've been on the road three days with only a mule for conversation."
+    moods: ["neutral"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hah! A face that talks back. Come here, come here."
+  - keywords: ["buy", "sell", "trade", "goods", "wares"]
+    responses:
+      - "Pots, pins, ribbon, a little of everything. Ask me what you need, I might surprise you."
+  - keywords: [""]
+    responses:
+      - "I'd tell you, but I've forgotten the question. Ask me plainer."
+tree:
+  root:
+    text: "Name's Pell. I run a peddler's circuit — north to the kilns and the corridor towns, south down into Amber Valley and back, round and round till my boots wear through. I carry goods, and what I really trade in is news. Which do you want?"
+    hints: "You could ask Pell about his goods and his route, about the news he's
+      carrying from the valley and the north, or about the road itself."
+  nodes:
+    - id: goods
+      triggers: ["goods", "wares", "buy", "sell", "route", "trade", "circuit"]
+      text: "Small and light, that's the peddler's rule — needles, thread, lamp oil, a few sweets the valley children would trample me for. The big stuff I leave to the caravans. My circuit's a long loop: up to the Kilnreach works, across the corridor, down the South Road into the valley, then home before the next dry moon. I know every pothole on it by name."
+      hints: "You could ask Pell what news he's carrying, or about the road ahead."
+    - id: news
+      triggers: ["news", "valley", "north", "gossip", "water", "feud"]
+      text: "North's quiet — kilns smoking, roads passable, nothing to write home about. The valley, though, that's where the talk is. Two farmers down there feuding over water like it's the last cup in the world. A cut channel, a dry field, and two stubborn men each sure he's the wronged one. It's the kind of quarrel that spoils a whole village's mood. If you're nosy — and you look nosy, no offense — the Golden Bough's where you'd hear it all."
+      hints: "You could ask Pell about his goods, or about the road down into the
+        valley."
+      moodChange: friendly
+    - id: road
+      triggers: ["road", "south road", "ahead", "way", "valley road"]
+      text: "Easy walking from here on, mostly downhill. You'll pass Wick's sheep and the Lake and Ladle if you haven't already, then the land softens and you smell the orchards before you see them. Safe enough by day. I never travel it after dark — not for fear, just for the mule. She's dramatic about owls."
+      hints: "You could ask Pell about his goods, or about the news he carries."

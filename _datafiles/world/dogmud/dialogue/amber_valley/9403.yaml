@@ -1,0 +1,35 @@
+mobid: 9403
+zone: Amber Valley
+defaultMood: neutral
+greetings:
+  - text: "Oh — hello. Sorry, I'm a bit... my hands keep doing things on their own today. It's the change. They tell me it's a gift."
+    moods: ["neutral"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hi. Don't mind me if I stare — my eyes are doing something new and it's a lot."
+  - keywords: ["change", "blooming", "mutation", "rite"]
+    responses:
+      - "It's happening to me right now. Bit much, honestly. But it's a gift. Everyone says."
+  - keywords: [""]
+    responses:
+      - "Um. Ask me something easy? My head's full enough as it is."
+tree:
+  root:
+    text: "I'm Linnet. I'm in my Blooming — that's what they call it when the change comes on you. It's... a lot. The whole valley says it's the best thing that'll ever happen to me, and I'm trying to believe them, I really am."
+    hints: "You could ask Linnet about her change, about the valley she's grown up
+      in, or about what it's like growing up here facing a Blooming."
+  nodes:
+    - id: change
+      triggers: ["change", "blooming", "mutation", "gift", "happening"]
+      text: "It started a few days ago. There's a — a warmth under my skin, all the time now, and my eyes see colours in the dark that weren't there before. Deacon Pember says it's coming on fast, faster than usual, and the way he says it makes me feel both special and a little bit scared. Mostly I just lie awake feeling my own bones decide things without asking me. They keep telling me it's a gift. I want it to be. I think if I say it enough I'll start to feel it."
+      hints: "You could ask Linnet about the valley, or about growing up here."
+    - id: valley
+      triggers: ["valley", "amber", "home", "village", "people"]
+      text: "Amber Valley's the only place I know. It's warm and everybody knows everybody — which is lovely when you scrape your knee and awful when you'd like one single secret. They're kind about the Bloomings here, not like the stories from outside where folk get driven off for changing. Here you get a feast. I'd just... I'd like the feast to feel as nice as it looks, from the inside."
+      hints: "You could ask Linnet about her change, or about growing up in the
+        valley."
+    - id: growing
+      triggers: ["growing", "young", "grow", "child", "future", "scared"]
+      text: "Everyone older than me has already Bloomed, so they all talk like they remember being where I am — but I don't think they do, not really. They remember the festival and forget the night before. I used to watch the Rite as a little girl and think it looked like magic. Now it's my turn and it feels less like magic and more like a door I didn't choose to walk through, opening anyway. I'm being brave about it. That's a thing you learn to do here. Be brave about the gift."
+      hints: "You could ask Linnet about her change, or about the valley itself."

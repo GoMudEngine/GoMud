@@ -1,0 +1,34 @@
+mobid: 9406
+zone: Amber Valley
+defaultMood: neutral
+greetings:
+  - text: "Aye, it reeks, I know it reeks, you needn't make the face. Tanning's an honest stink. Come in if your nose can stand it."
+    moods: ["neutral"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Breathe through your mouth, you'll get used to it."
+  - keywords: ["leather", "hide", "tan", "work", "trade"]
+    responses:
+      - "Good leather starts long before you'd ever guess. Patience and a strong stomach, that's the craft."
+  - keywords: [""]
+    responses:
+      - "Speak up — the soaking vats eat half of what's said in here."
+tree:
+  root:
+    text: "Hollin Tarrow, tanner. End of the craft lane, downwind by general agreement. I turn raw hide into good leather, and I've the brown hands and the brave nose to prove it. What brings you to the smelly end of town?"
+    hints: "You could ask Hollin about his trade, about the valley, or about life
+      here in Amber Valley."
+  nodes:
+    - id: trade
+      triggers: ["trade", "leather", "hide", "tan", "tanning", "work"]
+      text: "It's slow, patient work and most folk don't want to know the half of it — there's soaking and scraping and curing that'd turn your stomach, and weeks of it before a single belt comes out the far end. But valley folk need boots and harness and bindings same as anyone, so somebody's got to stand in the stink. I've made my peace with it. The leather's good. That's what lasts; the smell washes off, mostly."
+      hints: "You could ask Hollin about the valley, or about life here."
+    - id: valley
+      triggers: ["valley", "amber", "lane", "place", "village"]
+      text: "Amber Valley's treated me fair, downwind posting and all. Folk here don't look down on a working trade — the Rite's got something to do with that, I think. When a place believes every change is a gift, it gets harder to sneer at the man who does the dirty necessary jobs. I'm part of the weave same as the potter and the weaver. Just the part you smell before you see."
+      hints: "You could ask Hollin about his trade, or about life in the valley."
+    - id: life
+      triggers: ["life", "live", "people", "rite", "chrysalis", "day"]
+      text: "A tanner's life is early mornings and aching hands, and I wouldn't swap it. I've a wife who's gone nose-blind to me, bless her, and a steady stream of work, and a stool at the Golden Bough when the day's done. The Chrysalis Rite says be content with what your body and your lot have made of you. I am. Smell and all. There's worse things to be than the man whose leather everybody trusts."
+      hints: "You could ask Hollin about his trade, or about the valley."

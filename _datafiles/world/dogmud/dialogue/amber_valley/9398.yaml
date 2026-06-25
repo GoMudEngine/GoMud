@@ -1,0 +1,37 @@
+mobid: 9398
+zone: Amber Valley
+defaultMood: neutral
+greetings:
+  - text: "Morning. If it's on a shelf I've got it, if it's not I can likely send for it. What do you need?"
+    moods: ["neutral"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Mind the barrels by the door, folk always trip on the barrels by the door."
+  - keywords: ["buy", "sell", "shop", "store", "goods"]
+    responses:
+      - "Have a look round. Prices are fair and I don't haggle before noon."
+  - keywords: [""]
+    responses:
+      - "Can't help if I don't know what you're after. Be plain with me."
+tree:
+  root:
+    text: "Goss Harrow. I keep the general store — flour to fishhooks, rope to ribbon. If the valley needs it and it isn't grown in a field, odds are it passed through my hands first."
+    hints: "You could ask Goss about the shop and the valley's goods, about supply
+      and the road, or about life here in Amber Valley."
+  nodes:
+    - id: shop
+      triggers: ["shop", "store", "goods", "wares", "stock", "buy"]
+      text: "Practical things, mostly. Valley folk grow their food and weave a good deal of their own cloth, so what they come to me for is the in-between — nails, oil, salt, the odd luxury when the markets are good. I stock what sells and don't fuss over the rest. A shop that tries to carry everything ends up carrying dust."
+      hints: "You could ask Goss about supply and the road, or about life in the
+        valley."
+    - id: supply
+      triggers: ["supply", "road", "caravan", "merchant", "trade", "north"]
+      text: "Most of my goods come down the South Road, or up from the lower river when the water's high. Pell the peddler keeps me topped up between caravans — restless fellow, but reliable. Lately the deliveries have been slow and dear, what with everyone up the road fussing. A store lives or dies by its supply line, so I watch the road like a farmer watches the sky."
+      hints: "You could ask Goss about the shop, or about life in the valley."
+    - id: life
+      triggers: ["life", "valley", "amber", "people", "rite", "chrysalis"]
+      text: "It's a good place to keep a shop. Folk are honest, they pay their tabs, and the Chrysalis Rite keeps everybody in a generous mood — you'd be surprised how a festival loosens a purse. I'm not a religious man, but I sell twice as much candle and ribbon in Rite season, so I'll not say a word against it."
+      hints: "You could ask Goss about the shop's goods, or about how supply gets
+        into the valley."
+      moodChange: friendly
