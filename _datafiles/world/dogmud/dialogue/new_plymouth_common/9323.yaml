@@ -30,6 +30,26 @@ tree:
       what kind of illness she sees most in the quarter."
 
   nodes:
+    - id: q67_grant
+      triggers: ["quest", "task", "source", "bloom", "trail", "marn",
+                 "draper", "docks", "follow", "trade", "stop", "next",
+                 "do more", "what now", "what next"]
+      questRequired: ["66-end"]
+      questExcluded: ["67-start", "67-end"]
+      grantsQuest: "67-start"
+      text: "I can only fix what walks through my door. Teels is stable --
+        for now. But the craving comes back, every time, while the source
+        keeps running. I can tell you what I have seen. There is a draper
+        named Marn on the docks -- keeps a clean shop, respectable-looking.
+        I cannot tell you what he moves or how it moves. But the
+        copper-flower note I have been pulling off people's skin for two
+        seasons -- that smell is in what he handles. He is where the trail
+        starts."
+      hints: "Ysolde has done what she can for Teels -- the rest is in the
+        docks. She names a draper called Marn as the start of the Bloom
+        trail. You could ask about the quest, the task, or what to do next,
+        and follow the trail from there."
+
     - id: healing
       triggers: ["heal", "healing", "fix", "treat", "treatment", "wound",
                  "wounds", "injury", "medicine", "help", "rule", "no questions",
@@ -113,24 +133,4 @@ tree:
         drink it is yours. She treats what walks through the door -- no
         records, no questions."
       moodChange: neutral
-
-    - id: q67_grant
-      triggers: ["quest", "task", "source", "bloom", "trail", "marn",
-                 "draper", "docks", "follow", "trade", "stop", "next",
-                 "do more", "what now", "what next"]
-      questRequired: ["66-end"]
-      questExcluded: ["67-start", "67-end"]
-      grantsQuest: "67-start"
-      text: "I can only fix what walks through my door. Teels is stable --
-        for now. But the craving comes back, every time, while the source
-        keeps running. I can tell you what I have seen. There is a draper
-        named Marn on the docks -- keeps a clean shop, respectable-looking.
-        I cannot tell you what he moves or how it moves. But the
-        copper-flower note I have been pulling off people's skin for two
-        seasons -- that smell is in what he handles. He is where the trail
-        starts."
-      hints: "Ysolde has done what she can for Teels -- the rest is in the
-        docks. She names a draper called Marn as the start of the Bloom
-        trail. You could ask about the quest, the task, or what to do next,
-        and follow the trail from there."
       moodChange: cautious
