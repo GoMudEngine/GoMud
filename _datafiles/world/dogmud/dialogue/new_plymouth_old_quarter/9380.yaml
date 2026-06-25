@@ -29,21 +29,6 @@ tree:
       past it at odd hours, or about who lives in the Old Quarter."
 
   nodes:
-    - id: lamps
-      triggers: ["lamps", "lamp", "work", "light", "wick", "oil",
-                 "tend", "lantern", "lighting", "route", "rounds",
-                 "brackets", "trim", "fill"]
-      text: "Six brackets from the canal mouth to the far court —
-        twelve lamps total. Longer than it looks, because the flooded
-        section adds a detour. I do the route twice — once at dusk to
-        light them, once midmorning to trim and check the oil. Eleven
-        years of the same walk. I know every step of it in the dark,
-        which helps, because most of it is."
-      hints: "He described the route with the care of someone who
-        has walked it ten thousand times. You could ask about the
-        traffic he has seen at the iron door at 215, or about the
-        people who live in the Old Quarter."
-
     - id: bloom_witness
       triggers: ["traffic", "witness", "testimony", "215", "door",
                  "case", "constable", "tell", "saw", "seen",
@@ -66,6 +51,21 @@ tree:
         a folded document -- the assembled case-file. Take it to the
         Dock Constable on the New Plymouth Docks to close the trail."
       moodChange: friendly
+
+    - id: lamps
+      triggers: ["lamps", "lamp", "work", "light", "wick", "oil",
+                 "tend", "lantern", "lighting", "route", "rounds",
+                 "brackets", "trim", "fill"]
+      text: "Six brackets from the canal mouth to the far court —
+        twelve lamps total. Longer than it looks, because the flooded
+        section adds a detour. I do the route twice — once at dusk to
+        light them, once midmorning to trim and check the oil. Eleven
+        years of the same walk. I know every step of it in the dark,
+        which helps, because most of it is."
+      hints: "He described the route with the care of someone who
+        has walked it ten thousand times. You could ask about the
+        traffic he has seen at the iron door at 215, or about the
+        people who live in the Old Quarter."
 
     - id: traffic
       triggers: ["traffic", "215", "door", "lintel", "night",

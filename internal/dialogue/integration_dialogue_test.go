@@ -337,3 +337,58 @@ func TestIntegration_MoodManagement(t *testing.T) {
 	// Clean up
 	delete(moodCache, mobId)
 }
+
+// TestTreeAdvance_SubstringShadowAndReorderFix reproduces the Bloom Trail
+// trigger-collision bug and proves the reorder fix. TreeAdvance matches nodes
+// in file order using SUBSTRING matching (strings.Contains(topic, trigger)), so
+// an EARLIER lore node with a short trigger that is an incidental substring of
+// the topic shadows a later gated grant node. Real instance: a "work" node with
+// trigger "live" shadowed "bloom_delivery" because "deLIVEry" contains "live".
+// The fix is to place the gated grant node FIRST.
+func TestTreeAdvance_SubstringShadowAndReorderFix(t *testing.T) {
+	loreNode := TreeNode{
+		Id:       "lore",
+		Triggers: []string{"live"}, // substring of "delivery"
+		Text:     "lore text",
+	}
+	grantNode := TreeNode{
+		Id:            "grant",
+		Triggers:      []string{"delivery"},
+		QuestRequired: []string{"prereq"},
+		GrantsQuest:   "next-token",
+		Text:          "grant text",
+	}
+
+	makePS := func(grantedOut *string) *PlayerState {
+		return &PlayerState{
+			HasQuest:  func(tok string) bool { return tok == "prereq" },
+			GiveQuest: func(tok string) { *grantedOut = tok },
+		}
+	}
+
+	// BUGGY ORDER: lore before grant. "delivery" hits lore via the "live"
+	// substring; the grant node is shadowed and never fires.
+	buggy := &DialogueFile{MobId: 7777, Zone: "test", DefaultMood: "neutral",
+		Tree: &Tree{Nodes: []TreeNode{loreNode, grantNode}}}
+	var grantedBuggy string
+	text, _, _, advanced := TreeAdvance(buggy, 7777, 8888, "delivery", makePS(&grantedBuggy))
+	assert.True(t, advanced, "some node advances")
+	assert.Equal(t, "lore text", text, "BUG: lore node shadows the grant via 'live' substring")
+	assert.Equal(t, "", grantedBuggy, "BUG: grant never fires, no token granted")
+
+	// FIXED ORDER: grant before lore. The gated grant node matches "delivery"
+	// first and fires; non-quest players still fall through (gate skips it).
+	fixed := &DialogueFile{MobId: 7779, Zone: "test", DefaultMood: "neutral",
+		Tree: &Tree{Nodes: []TreeNode{grantNode, loreNode}}}
+	var grantedFixed string
+	text, _, _, advanced = TreeAdvance(fixed, 7779, 8889, "delivery", makePS(&grantedFixed))
+	assert.True(t, advanced, "grant node advances")
+	assert.Equal(t, "grant text", text, "FIX: grant-first node wins over the lore substring")
+	assert.Equal(t, "next-token", grantedFixed, "FIX: the quest token is granted")
+
+	// Non-quest player on the fixed order: grant gate fails, falls through to lore.
+	noQuest := &PlayerState{HasQuest: func(string) bool { return false }, GiveQuest: func(string) {}}
+	text, _, _, advanced = TreeAdvance(fixed, 7781, 8890, "delivery", noQuest)
+	assert.True(t, advanced, "non-quest player still gets a node")
+	assert.Equal(t, "lore text", text, "non-quest player falls through to lore (no regression)")
+}

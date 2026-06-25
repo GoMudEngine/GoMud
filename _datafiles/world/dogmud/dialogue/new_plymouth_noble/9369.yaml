@@ -28,6 +28,29 @@ tree:
       what she has seen come through the gated lane at night."
 
   nodes:
+    - id: bloom_delivery
+      triggers: ["delivery", "house", "goods", "night", "crates",
+                 "canal", "arrive", "dark", "unmarked", "late",
+                 "address", "215", "lintel", "quest", "task"]
+      questRequired: ["67-lintel"]
+      questExcluded: ["67-delivery", "67-end"]
+      grantsQuest: "67-delivery"
+      text: "I -- I've said too much to too many people already and I
+        know it. But since you're asking. The estate at the end of the
+        lane -- the unmarked crates, the early hours -- the carters
+        who bring them don't come from the docks. They come from below.
+        The canal side. There is a way in from the old towpath, in the
+        buried quarter, and that is where the goods actually move from.
+        The address they end at is 215 Lintel Street, in the Old
+        Quarter. I heard a direction given once. I should not have been
+        in that passage. Please. Please do not say you heard this from
+        me."
+      hints: "Wenna confirmed the supply route and immediately regretted
+        doing so. She named 215 Lintel Street in the Old Quarter as the
+        delivery endpoint, reached from the canal towpath below. She
+        asked not to be named as a source."
+      moodChange: cautious
+
     - id: work
       triggers: ["work", "job", "doing", "servant", "service", "day",
                  "duties", "tasks", "chores", "cleaning", "quarter",
@@ -54,29 +77,6 @@ tree:
       hints: "Her fear-light flickered at the skin for just a moment —
         cold and soft and gone before you could be certain. You could
         ask about what she has seen on the gated lane at odd hours."
-      moodChange: cautious
-
-    - id: bloom_delivery
-      triggers: ["delivery", "house", "goods", "night", "crates",
-                 "canal", "arrive", "dark", "unmarked", "late",
-                 "address", "215", "lintel", "quest", "task"]
-      questRequired: ["67-lintel"]
-      questExcluded: ["67-delivery", "67-end"]
-      grantsQuest: "67-delivery"
-      text: "I -- I've said too much to too many people already and I
-        know it. But since you're asking. The estate at the end of the
-        lane -- the unmarked crates, the early hours -- the carters
-        who bring them don't come from the docks. They come from below.
-        The canal side. There is a way in from the old towpath, in the
-        buried quarter, and that is where the goods actually move from.
-        The address they end at is 215 Lintel Street, in the Old
-        Quarter. I heard a direction given once. I should not have been
-        in that passage. Please. Please do not say you heard this from
-        me."
-      hints: "Wenna confirmed the supply route and immediately regretted
-        doing so. She named 215 Lintel Street in the Old Quarter as the
-        delivery endpoint, reached from the canal towpath below. She
-        asked not to be named as a source."
       moodChange: cautious
 
     - id: delivery_house
