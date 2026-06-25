@@ -1,0 +1,43 @@
+mobid: 9401
+zone: Amber Valley
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+hostile: false
+statpool: 24
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote folds his smooth grey-stone hands across his chest and plants
+    himself in the lane like a boundary-marker, immovable.'
+  - ''
+  - 'emote glances downstream toward the dryside fields, sets his jaw, and
+    looks deliberately away again.'
+  - ''
+  - 'emote raps his knuckles against the head-gate post -- a hard, dull
+    clack of stone on wood -- as if to remind himself the share is his.'
+  - ''
+activitylevel: 6
+character:
+  name: Ayres
+  description: |
+    Ayres holds the western ground, the upstream farm, and with it the old
+    head-gate share that lets him take the beck first before it runs on down
+    the valley. He is a heavy, slow-moving man with a face like a closed door,
+    and he has dug in on the water question the way he has dug in on every
+    question of his life: the right is his, written and witnessed, and he will
+    not be moved by another man's misfortune. His Blooming has made him over
+    in his own stubborn image -- his hands and forearms have turned to smooth
+    river-grey stone, knuckles rounded like water-worn pebbles, cool and hard
+    to the touch, and he sets them on the gatepost when he means to make a
+    point. He is not a liar and not, in his own mind, unjust. He simply cannot
+    see why his lawful share should run dry to wet another man's field, and no
+    amount of arguing has yet shown him.
+  speciesid: 1
+  level: 1
+  gold: 11
+  stats:
+    perception:
+      training: 2
+    vitality:
+      training: 4

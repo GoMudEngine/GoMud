@@ -1,0 +1,49 @@
+roomid: 6086
+zone: Amber Valley
+title: The Grove Gate
+description: >
+  Two trees stand here older than any in the orchards, their trunks broad as
+  doorposts and leaning faintly toward one another, and the path passes
+  between them as through a gate that was never built but only grown. Set
+  across the gap where their lowest boughs once met is a single span of gray
+  stone, a worn <ansi fg="itemname">lintel-stone</ansi> laid by hands long
+  gone, polished to a soft sheen along its underside by the brush of countless
+  heads bowing as they pass beneath. To step under it is to feel the
+  temperature of the air change, to feel watched in a way that is not
+  unkind. The hush of the path deepens into something held, something kept.
+  Carved shallow into one trunk, weathered nearly smooth, is an old
+  <ansi fg="itemname">threshold mark</ansi> that the valley still renews each
+  spring.
+biome: land
+coord: {x: -6, y: -38, z: 0}
+exits:
+  west: {roomid: 6085}
+  east: {roomid: 6087}
+nouns:
+  lintel-stone:
+    >
+    The stone is a single weathered span, gray gone soft with lichen along
+    its top and rubbed pale and smooth beneath. No mortar holds it; it simply
+    rests across the leaning boughs as it has for longer than the valley's
+    memory runs. Those who pass into the grove bow their heads to clear it,
+    and so the bowing is not asked of anyone — the stone asks it, gently, of
+    every body that comes through.
+  threshold mark:
+    >
+    The mark is a simple thing, a spiral closing on itself, cut shallow into
+    the bark and darkened with each spring's renewal so the tree does not
+    grow it over. It is the valley's oldest sign for change held safe — a
+    turning that comes home. The keepers of the Rite touch it as they pass,
+    two fingers laid to the groove, the way one touches a doorframe leaving
+    home or returning to it.
+  trees:
+    >
+    The two trees are far older than the orchard stock, gnarled and broad and
+    leaning together overhead until their canopies merge into one. No one
+    planted them in any line; they were here, and the path was made to pass
+    between them, and so they became a gate. Their bark is deeply furrowed
+    and warm to the touch where the afternoon sun has rested on it.
+idlemessages:
+- A breath of wind moves through the joined canopy and the two old trees seem, for a moment, to lean closer.
+- Light slides along the underside of the lintel-stone, finding the places worn smooth by passing heads.
+- The held quiet beyond the gate presses gently outward, like warmth from an open hearth.

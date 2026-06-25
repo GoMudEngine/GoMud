@@ -1,0 +1,46 @@
+roomid: 6052
+zone: South Road
+title: The Dryside Track
+description: >
+  The contrast hits you like two different countries laid edge to edge. On
+  the western hand the watered land runs on, deep green and humming; but on
+  the eastern hand, where the road's bank cuts the fields off from the main
+  leat, the farmland is going dry — the barley there stands short and
+  yellowing, the soil between the rows cracked into a crazed pale crust
+  that crunches and puffs dust at a footfall. The
+  <ansi fg="itemname">boundary ditch</ansi> that should water this side runs
+  empty, its bed silted and weed-choked, and you can see how recently the
+  green failed: the dying crop is still half-green at the roots, killed
+  within the season. A hand-lettered <ansi fg="itemname">notice board</ansi>
+  has been driven into the verge where the track turns off east toward the
+  thirsty fields.
+biome: land
+coord: {x: -8, y: -26, z: 0}
+exits:
+  north: {roomid: 6051}
+  south: {roomid: 6053}
+nouns:
+  boundary ditch: >
+    A field-channel that has not carried water in weeks. Its
+    bed is caked and cracked, threaded with the wiry stems of weeds that
+    only grow where the flow has stopped, and the little sluice at its head
+    stands not merely closed but choked with packed clay, as though someone
+    upstream did more than simply drop the board. On the dry side, the
+    crop is dying row by row in the order the water used to reach it.
+  notice board: >
+    A plank nailed to a post, weathering fast, scrawled in tar
+    by an angry hand: "WATER STOPPED 3 WKS. THE DRYSIDE GOES TO RUIN WHILE
+    SOME DRINK THEIR FILL. ASK AT THE FARM WHO HOLDS THE GATE." Below, in a
+    different hand and fresher tar, someone has added a single word:
+    "AYRES." It has not been crossed out.
+  crop: >
+    Barley that started the season green and is ending it short and
+    sere, the heads light and half-filled, the leaves curling from the tip
+    back. It dies in stripes that follow the dry channels, a slow map of
+    where the water no longer goes — proof, if any were needed, that
+    drought here is a thing done by a person, not the sky.
+idlemessages:
+- A dry-soil wind lifts a curl of pale dust off the cracked field and walks
+  it across the road.
+- A single magpie picks over the failing barley, finding nothing, and rattles
+  off in disgust.

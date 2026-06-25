@@ -1,0 +1,39 @@
+roomid: 6074
+zone: Amber Valley
+title: The Vineyard
+description: >
+  Down the warm hillside below the dryside farm the vines come into their own,
+  and the smell is intoxicating: sun-hot fruit, fermenting windfall, and the
+  sweet-sour breath of the pressing-shed all rolled together. Heavy clusters
+  hang so thick along the trellises that the leaves can barely hold the light
+  between them, the grapes split-ripe and weeping sugar where the wasps have
+  found them. At the foot of the rows squats a low open-fronted
+  <ansi fg="itemname">pressing-shed</ansi>, and beside it a cool dark
+  <ansi fg="itemname">vine-hollow</ansi> dug back into the bank.
+biome: land
+coord: {x: -7, y: -37, z: 0}
+exits:
+  north: {roomid: 6072}
+nouns:
+  the pressing-shed: >
+    An open-sided shed sheltering a great screw-press, its timber stained
+    purple-black to the grain by years of vintage. The flagstone floor slopes
+    to a channel and a catch-trough, sticky underfoot, loud with happy flies. A
+    stack of empty baskets waits to be filled. The whole place smells of must
+    and sun and the good kind of rot — of fruit turning, deliberately, into
+    something better.
+  the vine-hollow: >
+    A cellar-cool recess dug into the shaded bank behind the shed, screened by
+    a curtain of trailing vine. It is where the pressed juice is set to begin
+    its work out of the heat. Tucked among the resting crocks you find a stowed
+    skin of last year's wine, a heel of bread and cheese wrapped in cloth, and a
+    flat stone someone uses as a seat — a private spot for a long, quiet lunch.
+  the heavy fruit: >
+    Grapes hanging in clusters so dense and ripe they pull the canes into
+    swags, the skins gone translucent, beading sugar at the splits. Another
+    week and they'll be too far gone to do anything but wine. The valley grows
+    more than it can ever drink, and turns the rest into something that keeps.
+idlemessages:
+- The drone of wasps over the split fruit rises to a contented roar.
+- A clutch of overripe grapes lets go and patters down through the leaves.
+- The sweet-sour breath of the pressing-shed drifts up the warm rows.

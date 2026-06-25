@@ -1,0 +1,44 @@
+mobid: 9397
+zone: Amber Valley
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+hostile: false
+statpool: 24
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote pulls a brimming tray through the common-room without spilling a
+    drop, reading the table-talk on her way past like a woman skimming a
+    letter.'
+  - ''
+  - 'emote sets her knuckles on the bar, leans, and lets out a slow breath at
+    something a farmer just said -- and a scatter of freckles across her cheek
+    glows the soft green of a fen-lantern before fading.'
+  - ''
+  - 'emote settles a quarrel at the long table with three words and a look,
+    then carries on as though nothing had happened.'
+  - ''
+activitylevel: 6
+character:
+  name: Hesper Vane
+  description: |
+    Hesper runs the Golden Bough, and the Golden Bough is where the valley
+    comes to find out what the valley is thinking. She is tall and spare,
+    grey threading her dark hair, with a quick warm mouth and eyes that miss
+    nothing -- the sort of landlady who can pour you a cup, take your measure,
+    and decide your business all in the one motion. Her Blooming is a dusting
+    of pale freckles across her cheekbones that kindle to a soft green glow
+    when feeling runs high in her, gentle when she laughs, sharper when she is
+    angry; her regulars read her mood by it the way sailors read a lamp. She
+    is warm with everyone and patient with most, but she is bone-tired of the
+    two farmers feuding over the head-gate, and the freckles burn a hard green
+    every time the matter comes up in her common-room.
+  speciesid: 1
+  level: 1
+  gold: 16
+  stats:
+    perception:
+      training: 4
+    charisma:
+      training: 5

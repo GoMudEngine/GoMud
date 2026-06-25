@@ -1,0 +1,46 @@
+mobid: 9409
+zone: Amber Valley
+behavior_archetype: ambusher
+aiprofile: serpent
+archetype: fighting
+hostile: true
+statpool: 36
+itemdropchance: 20
+maxwander: 1
+groups:
+  - animal
+idlecommands:
+  - 'emote hangs motionless in the dark of its den, only the slow bellows of
+    its flanks betraying that it lives at all.'
+  - ''
+  - 'emote tastes the air with a long shudder and draws itself deeper into
+    the killing dark of the back wall.'
+  - ''
+  - 'emote shifts its weight with a dry scrape of chitin on stone, patient as
+    the rock it waits in.'
+  - ''
+activitylevel: 10
+character:
+  name: A Cave Lurker
+  description: |
+    The thing that owns the deep den is bigger than anything else under these
+    hills, and it has never once needed to leave to feed -- it waits, and the
+    dark brings it dinner. Half again the size of a man, it is a low armoured
+    bulk of slate-grey plate and folded limbs, blind as all the deep things
+    are and twice as patient, wedged into the back of its lair where the air
+    goes still and cold. It hunts by ambush and ambush only: it will let a
+    warm body come all the way in, all the way to the back wall, before the
+    folded limbs unfold all at once and the dark becomes teeth. It does not
+    pursue beyond its own den -- it has never had to -- but within those walls
+    it is the surest death in the valley, and the bones scattered across its
+    floor are the only warning you will get.
+  speciesid: 8
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 7
+    dexterity:
+      training: 5
+    vitality:
+      training: 6

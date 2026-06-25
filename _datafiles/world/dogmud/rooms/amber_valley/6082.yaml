@@ -1,0 +1,42 @@
+roomid: 6082
+zone: Amber Valley
+title: The Cave — Pool
+description: >
+  The gallery opens and the sound changes — a soft, vast, lapping hush — and you
+  stand at the edge of water. A still black <ansi fg="itemname">pool</ansi>
+  fills the floor of this chamber, so flat and dark it makes no surface at all
+  until a drip falls and rings it with spreading silver. The cold here is a wet
+  cold that gets into the bones. Off to one side a
+  <ansi fg="itemname">dripstone basin</ansi> catches the ceiling's slow seep,
+  brimming clear and cold. The water gives back no reflection, only depth. Beyond
+  the pool the floor falls away, and the way down continues into the dark.
+biome: land
+coord: {x: -12, y: -40, z: -2}
+exits:
+  east: {roomid: 6081}
+  down: {roomid: 6083}
+nouns:
+  the pool: >
+    A sheet of black water lies still as poured glass across the chamber floor,
+    so dark and so motionless that you only know it is there by the cold coming
+    off it and the way a fallen drip sends slow silver rings out across nothing.
+    It is impossible to guess how deep it goes; the light you carry sinks into it
+    and finds no bottom. The water is achingly cold and tastes, when you dare it,
+    of stone and of nothing else at all.
+  the dripstone basin: >
+    Against the wall the slow ceiling-drip has, over uncountable years, built
+    itself a shallow stone bowl and worn it smooth, and there it stands brimming
+    with water clear enough to read by — if there were any light. It is the
+    purest water you will find anywhere in this dry country: cold, clean, filtered
+    through the whole weight of the hill. A careful traveller could fill a skin
+    here.
+  the falling-away floor: >
+    Past the far lip of the pool the stone floor drops in dark ledges toward an
+    even deeper chamber, and a colder, closer draught comes up from it carrying a
+    rank animal smell — den-smell — that the clean water has masked until now.
+    The way down lies that way, and something below knows you are coming.
+idlemessages:
+- A drip strikes the black pool and rings it with slow spreading silver.
+- The dripstone basin overflows a single bead that falls without a sound.
+- A wet, close draught rises from the dark beyond the water.
+- Far down, something stirs the deeper water, and the lapping changes.

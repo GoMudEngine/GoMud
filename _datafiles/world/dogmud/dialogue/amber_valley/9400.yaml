@@ -1,0 +1,37 @@
+mobid: 9400
+zone: Amber Valley
+defaultMood: hostile
+greetings:
+  - text: "If you've come from Ayres, you can turn right round. If you've come to look at a dying field, well — look your fill."
+    moods: ["hostile"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Aye, hello. Forgive me if I've no smiles left this season."
+  - keywords: ["water", "channel", "ayres"]
+    responses:
+      - "Robbed. That's the word for it. Robbed by my own neighbour."
+  - keywords: [""]
+    responses:
+      - "Speak plain. I've a farm to mourn and no patience for riddles."
+tree:
+  root:
+    text: "Marrow Fenn. I farm the east side — the dry side, the hard side, and harder still this year. You're standing in what should be green and isn't, and I'll tell you exactly whose fault that is if you've the stomach to hear it."
+    hints: "You could ask Marrow about his farm and the drought, about the dispute
+      over the water from his side, or about Ayres, the neighbour he blames."
+  nodes:
+    - id: farm
+      triggers: ["farm", "drought", "field", "crop", "land", "dry"]
+      text: "Three generations my people have worked this ground. It was never easy land — east of the channel, you live and die by what water reaches you. We made it work. We always made it work, because the channel fed us fair. This year the channel's dry as bone and my barley's curling brown in the row. You can't eat righteousness and you can't drink a promise. I'm watching a year's work die in the dirt."
+      hints: "You could ask Marrow about the dispute itself, or about Ayres
+        upstream."
+    - id: dispute
+      triggers: ["dispute", "channel", "water", "cut", "feud", "trouble"]
+      text: "Here's the truth, plain as I can say it. The channel that's fed both our farms since before either of us was born — it got cut this spring, up at the head-gate where Ayres holds the ground. Cut, or packed, or dammed, call it what you like. And funny thing, the water all goes HIS way now and none comes mine. I didn't do that to my own crop. So you tell me who did. The water that reaches the valley was meant for both of us. He took the lot, and he's got a hundred fine words for why that's fair."
+      hints: "You could ask Marrow about his farm, or hear what he has to say about
+        Ayres himself."
+    - id: ayres
+      triggers: ["ayres", "neighbour", "neighbor", "upstream", "him"]
+      text: "Ayres. We grew up two fields apart, and I'd have called him a friend once. But he's got it fixed in his skull that the head-gate's HIS by some old right, that the water's his to share or keep as he pleases. There's no old right that says let your neighbour's children go hungry. He'll smile and talk about tradition while my field dies downstream of his good fortune. If you mean to judge between us, go and look at his fat green rows, then come back and look at mine."
+      hints: "You could ask Marrow more about the dispute, or about his own farm and
+        the drought he's facing."

@@ -1,0 +1,59 @@
+mobid: 9397
+zone: Amber Valley
+defaultMood: friendly
+greetings:
+  - text: "Welcome to the Golden Bough — best beds in Amber Valley and the only ear in it that hears everything. Come in, come in, you look road-worn."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello yourself, stranger. Sit. You'll have heard half the valley's business before your ale's warm."
+  - keywords: ["room", "bed", "stay", "inn", "lodging"]
+    responses:
+      - "Clean beds, fair price. You'll sleep better here than anywhere in the valley."
+  - keywords: [""]
+    responses:
+      - "Mm. Ask me plainer, love — I've too much in my head to guess."
+tree:
+  root:
+    text: "Hesper Vane, and this is my house — the Golden Bough. If a thing happens in Amber Valley, it gets argued about over my tables within the hour. I love this place and the people in it, even when they wear me to the bone."
+    hints: "You could ask Hesper about the inn and the valley, about the Chrysalis
+      Rite and how folk live here, or about the farmers' feud that's been souring
+      her common room — a cut water channel, two stubborn men, and nobody local
+      willing to step between them. A level-headed traveller might be just what
+      she's been wishing would walk through the door."
+  nodes:
+    - id: water_start
+      triggers: ["quest", "task", "feud", "farmers", "water", "dispute", "channel", "help", "settle", "sides"]
+      questExcluded: ["72-start", "72-end"]
+      grantsQuest: "72-start"
+      text: "You'd really walk out and stand between those two? Bless you for it. Here's the shape of it: Marrow Fenn farms the dry east side, his crop is dying, and he swears Ayres dammed the channel out of spite. Ayres holds the upstream ground and swears the head-gate share is his by right. The old channel that fed them both got cut this spring, and neither will hear his neighbour anymore. Go hear them both -- Fenn east, Ayres upstream -- and then there are three ways I can see to end it: come back and I'll help you broker a fair compromise, or restore the water at its source if the old foothill channel has fallen in, or settle it cold by the old written water-right kept among the records out at the Rite pavilion."
+      hints: "Hesper has asked you to settle the feud. Hear both farmers out first -- Marrow Fenn on the dry east side, Ayres on the upstream holding. Then you can come back and ask Hesper to broker a compromise, examine the collapsed channel in the western foothills to restore the water at its source, or examine the records in the Rite pavilion to settle it by the old water-right."
+      moodChange: friendly
+    - id: water_mediate
+      triggers: ["mediate", "broker", "compromise", "split", "deal", "agree", "agreed", "propose"]
+      questRequired: ["72-start"]
+      questExcluded: ["72-end"]
+      grantsQuest: "72-end"
+      setsQuestFlag: {key: "72-outcome", value: "mediated"}
+      text: "You've heard them both, and you think they'll wear a fair split? Then let us make it stick. I will stand surety for it -- both their marks, my witness, and the whole common room to see it done. Fenn gets a fixed share down the channel every week whatever the season, and Ayres keeps the gate but loses the right to shut it. Neither walks away cock-a-hoop, which is how you know it is fair. It is done. Bless you, traveller -- my hearth is yours tonight."
+      hints: "You brokered a compromise and Hesper made it binding before the whole common room. The feud is settled."
+      moodChange: friendly
+    - id: inn
+      triggers: ["inn", "golden bough", "valley", "amber", "place"]
+      text: "I've kept the Bough nineteen years. It's the heart of the valley, if I say so myself — wedding feasts, Rite suppers, and every fight that ever needed witnesses. Amber Valley's a kind place to live. Warm soil, warm folk. We've our troubles, but they're small ones, mostly. Mostly."
+      hints: "You could ask Hesper about the Chrysalis Rite, or about the farmers'
+        feud she keeps having to referee."
+    - id: rite
+      triggers: ["rite", "chrysalis", "mutation", "blooming", "gift", "life"]
+      text: "The Chrysalis Rite — it's the soul of us. When a body changes, when a mutation comes on, the valley doesn't whisper or shun. We celebrate it. The Rite says the body knows itself better than we do, and a change is the body giving you a gift. Deacon Pember runs the Bloomings out at the pavilion if you want the holy version. Me, I just think it's a fine excuse for a feast, and I'm not too proud to say so."
+      hints: "You could ask Hesper about the inn and valley, or about the feud
+        between the farmers."
+      moodChange: friendly
+    - id: feud
+      triggers: ["feud", "farmers", "water", "channel", "dispute", "fenn", "ayres", "trouble", "help"]
+      text: "Don't get me started — but you asked, so. Marrow Fenn farms the dry east side, and Ayres holds the upstream ground where the water comes into the valley. There's an old channel that's always fed both their fields, and this spring it got cut. Fenn's crop is dying and he swears Ayres dammed it out of spite. Ayres swears the head-gate share is his by right and Fenn's grasping for more than his due. They both sit in MY common room and grumble at each other, and the whole valley's catching their black mood. Truth is, neither will hear his own neighbour anymore — but a stranger with no stake in it? A traveller they might both talk to. If you've a mind to walk out and hear both sides, I'd bless you for it. Lord knows nobody local can get near it."
+      hints: "You could go hear both men out — Marrow Fenn on the dry east side,
+        Ayres up where the water enters the valley — and come back to tell Hesper
+        what you find. You could also ask her more about the valley or the Rite."
+      moodChange: friendly

@@ -1,0 +1,44 @@
+mobid: 9399
+zone: Amber Valley
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+hostile: false
+statpool: 24
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote runs the third small hand at his forearm along a length of planed
+    ash, feeling for a roughness his eyes have already passed over.'
+  - ''
+  - 'emote sets a chisel to the wood, taps it twice with the heel of his
+    palm, and lifts away a curl of shaving thin as paper.'
+  - ''
+  - 'emote pauses with a half-turned spindle in his grip, looks out the door
+    toward the road, and something passes over his face before he bends back
+    to the work.'
+  - ''
+activitylevel: 6
+character:
+  name: Corwin Ashlade
+  description: |
+    Corwin is the valley's woodworker, and his shop smells of sawdust and
+    linseed and slow patient care. He is a broad, gentle man going grey at the
+    temples, with the forearms of someone who has pushed a plane for forty
+    years and the soft, unhurried voice of someone who would rather get a
+    joint right than get it done. His Blooming suits his trade as if the
+    valley meant it kindly: a third small hand, perfectly formed and no bigger
+    than a child's, has grown from the inside of his left forearm, and it is
+    deft past believing -- it holds the work, steadies the dowel, runs ahead
+    of his eyes feeling for flaws. He is proud of it, and prouder still of the
+    pieces it lets him make. He speaks warmly of his son Davan, who learned at
+    this bench and then left the valley for somewhere larger, and there is an
+    ache under the warmth that he does not trouble to hide.
+  speciesid: 1
+  level: 1
+  gold: 10
+  stats:
+    perception:
+      training: 4
+    dexterity:
+      training: 4

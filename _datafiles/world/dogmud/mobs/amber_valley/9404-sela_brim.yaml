@@ -1,0 +1,41 @@
+mobid: 9404
+zone: Amber Valley
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+hostile: false
+statpool: 24
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote arranges a basket of early plums into a tidy pyramid, turning each
+    one bruise-side down with a fruit-seller''s care.'
+  - ''
+  - 'emote stretches in a slant of sun, and the small blossoms along her
+    collarbone open a little wider, palest pink, as if drinking the light.'
+  - ''
+  - 'emote calls a cheerful price at a passerby, then mutters the real figure
+    she''ll settle for under her breath.'
+  - ''
+activitylevel: 6
+character:
+  name: Sela Brim
+  description: |
+    Sela keeps a market stall on the valley square, selling whatever the
+    season hands her -- plums and greens now, walnuts and pressed cider come
+    autumn. She is brisk and bright and built for the haggle, with a laugh she
+    deploys like a closing argument. Her Blooming is the prettiest in the
+    market and she knows it: a spray of small living blossoms has opened along
+    her collarbone and the slope of her shoulders, real flowers rooted in her
+    skin, pale pink and faintly sweet-scented, and they open wider in the sun
+    and fold half-shut in the cool of evening. She wears collars cut low to
+    show them off, tucks a fresh one behind her ear when one drops, and would
+    no more hide them than she'd hide good coin.
+  speciesid: 1
+  level: 1
+  gold: 13
+  stats:
+    perception:
+      training: 3
+    charisma:
+      training: 4

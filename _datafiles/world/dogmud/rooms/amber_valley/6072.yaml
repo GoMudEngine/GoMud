@@ -1,0 +1,41 @@
+roomid: 6072
+zone: Amber Valley
+title: Farmer A's Holding
+description: >
+  The crackle of dying crops underfoot tells the whole story before you raise
+  your eyes. This is the eastern holding, the one the dry channel was meant to
+  feed, and it is going to ruin a row at a time. Bean-frames stand half-stripped,
+  the leaves curled to brown paper; a vegetable plot lies cracked and gasping;
+  even the chickens look dusty and cross. A man's frustration is written across
+  every fence here. Near the gate, a row of empty <ansi fg="itemname">water
+  butts</ansi> stands tipped and bone-dry, and beyond them the parched
+  <ansi fg="itemname">east fields</ansi> run down toward the silent ditch.
+biome: land
+coord: {x: -7, y: -36, z: 0}
+exits:
+  west: {roomid: 6068}
+  south: {roomid: 6074}
+nouns:
+  the water butts: >
+    A line of big wooden barrels set to catch the channel's overflow, all of
+    them tipped on their sides to show they hold nothing. The staves have dried
+    and shrunk till you could see daylight between them. Someone has hauled
+    these out to the gate on purpose — a mute, furious display, aimed west at
+    the neighbour who holds the gate shut.
+  the east fields: >
+    Good soil dying of thirst. The furrows were ploughed hopeful and straight
+    in spring; now they crack and powder, the young crops in them stunted and
+    bolting early. Below the lowest field the irrigation ditch lies dry as a
+    bone — the water this land was promised goes west instead, and everyone here
+    knows exactly whose hand keeps it there.
+  the gate: >
+    A sturdy farm gate, its top rail worn pale where a man leans on it to glare
+    west toward the head-gate. Scratched into the wood, hard enough to gouge,
+    is a tally of dry days. The count is long, and the last few marks are deep.
+idlemessages:
+- A dry bean-leaf rattles loose and skitters across the cracked plot.
+- Somewhere a hen complains in the heat, low and aggrieved.
+- The wind off the dry fields smells of dust and disappointment.
+spawninfo:
+  - mobid: 9400
+    respawnrate: "20 real minutes"

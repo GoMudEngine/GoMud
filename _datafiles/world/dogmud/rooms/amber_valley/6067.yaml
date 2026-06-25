@@ -1,0 +1,35 @@
+roomid: 6067
+zone: Amber Valley
+title: Vineyard Walk
+description: >
+  Crushed leaf and ripening grape — that green, peppery sweetness rises off the
+  warm slope and follows you down the path. Rows of trellised vines climb the
+  hillside in tidy ranks, their broad leaves going gold at the edges, their
+  fruit hanging in dense purple clusters just beginning to fog with bloom. The
+  earth between the rows is baked pale and cracked, radiating the day's stored
+  heat. A line of <ansi fg="itemname">tasting stakes</ansi> marks where the
+  grower walks each evening to thumb a berry and judge the season.
+biome: land
+coord: {x: -8, y: -35, z: 0}
+exits:
+  north: {roomid: 6066}
+  south: {roomid: 6068}
+nouns:
+  the tasting stakes: >
+    Short marked posts set at the head of every few rows, each notched and
+    painted to track when that block ripens. A vintner reads these the way a
+    sailor reads the sky. The most recent notches cluster early — the heat has
+    pushed the whole valley ahead of itself this year.
+  the vines: >
+    Old wood thick as a wrist, trained along wire and pruned hard, throwing up
+    a riot of new green every spring. The grapes hang heavy and close, dusted
+    with a pale waxy bloom that smudges at a touch. Pinch one and the smell of
+    the whole coming vintage bursts across your fingers.
+  the slope: >
+    The hillside faces the long afternoon sun and holds its warmth past dusk,
+    the stones underfoot still tepid at midnight. This is why the wine here is
+    good: the land works a second shift after the growers have gone home.
+idlemessages:
+- A breath of wind sets the whole hillside of leaves hissing softly.
+- The smell of warm grape and crushed leaf swells and fades.
+- A bird flits down the trellis-rows, stealing fruit as it goes.

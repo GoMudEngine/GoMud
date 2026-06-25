@@ -1,0 +1,39 @@
+roomid: 6069
+zone: Amber Valley
+title: Lower Orchard Lane
+description: >
+  The light goes dim and green under the old trees, and the air turns cool and
+  damp and mushroomy, thick with the smell of leaf-mould and slow rot. This is
+  the orchard's elder quarter: trees gnarled into strange crouching shapes,
+  hollow-trunked, mossy, still throwing fruit out of sheer stubborn habit. The
+  lane runs on south, but a narrower side-path peels off east, ducking under
+  the boughs toward the deeper grove. An old <ansi fg="itemname">fruit-loft</ansi>
+  hunches on stilts where the two ways part.
+biome: land
+coord: {x: -8, y: -37, z: 0}
+exits:
+  north: {roomid: 6068}
+  south: {roomid: 6070}
+nouns:
+  the fruit-loft: >
+    A small slat-walled store raised on stilts to keep the mice off, its door
+    hanging on one hinge. Inside, on shallow racks, a few late apples have been
+    laid out to keep — wrinkling now, going sweet and heavy and faintly
+    cidery. Tucked behind them, half-forgotten, sits a stoppered crock of dark
+    fruit preserved in spirit, and a child's slingshot someone hid up here long
+    ago and never reclaimed.
+  the old trees: >
+    Ancient grafted stock bent into knees and elbows by a century of bearing,
+    their trunks rotted hollow, their bark furred with moss and grey lichen.
+    They should have been pulled out generations back. Instead the valley lets
+    them stand, and every autumn they answer with one more crop, smaller and
+    sweeter than the young trees' glut.
+  the side-path: >
+    A foot-worn track turning east off the lane, dipping low under the heavy
+    boughs so you'd duck to follow it. The grove it heads for is older and
+    quieter than the orchard, the kind of green dark where people go to be
+    unseen.
+idlemessages:
+- Cool damp air breathes out of the hollow trees as you pass.
+- A spongy windfall gives way underfoot with a soft squelch.
+- Something small rustles in the leaf-litter and goes still.

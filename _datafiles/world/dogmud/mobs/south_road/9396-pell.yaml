@@ -1,0 +1,41 @@
+mobid: 9396
+zone: South Road
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+hostile: false
+statpool: 24
+maxwander: 1
+groups:
+  - humanoid
+idlecommands:
+  - 'emote shrugs the pack-straps higher on his shoulders, sets his feet, and
+    eyes the next rise of the road with a pedlar''s patient resignation.'
+  - ''
+  - 'emote unrolls a corner of oilcloth to check that the small mirrors and
+    needle-cards inside have not jostled loose, then ties it down again.'
+  - ''
+  - 'emote hums two notes at once, low and high together, and the sound hangs
+    in the air a moment longer than it ought.'
+  - ''
+activitylevel: 6
+character:
+  name: Pell
+  description: |
+    Pell is a packman, one of the road's small wandering traders, bent
+    cheerfully under a frame hung with tin goods, ribbon, pins, and the
+    hundred little things a valley too far from town runs short of. He walks
+    the South Road end to end and back, north today, south tomorrow, never
+    still for long. His Blooming is in his throat: he has grown a second set
+    of cords, and his voice comes doubled, a low drone humming always under
+    the higher line of his speech, so that he seems to harmonise with himself.
+    He has learned to use it -- a hawker's call from Pell carries twice as far
+    and twice as sweet -- and he is forever a little pleased about it, the way
+    a man is pleased with a tool that turned out better than he paid for.
+  speciesid: 1
+  level: 1
+  gold: 18
+  stats:
+    perception:
+      training: 3
+    charisma:
+      training: 4

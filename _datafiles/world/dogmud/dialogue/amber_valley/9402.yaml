@@ -1,0 +1,40 @@
+mobid: 9402
+zone: Amber Valley
+defaultMood: friendly
+greetings:
+  - text: "Peace of the Chrysalis on you, traveller. You've come at a blessed season — the Bloomings are upon us. Though they... they come strangely this year."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Blessings on you. Forgive me — my mind wanders to the grove of late."
+  - keywords: ["rite", "chrysalis", "blooming", "mutation"]
+    responses:
+      - "The body gives itself a gift, and we gather to honour it. That is the whole of the Rite."
+  - keywords: [""]
+    responses:
+      - "Ask me plainly, friend, and I'll answer as the Rite allows."
+tree:
+  root:
+    text: "I am Deacon Pember, and I travel the valleys keeping the Chrysalis Rite — I bless the Bloomings, those moments when a body changes and a soul is asked to accept its gift. It is holy work, and I have done it twenty years. I confess this year it has begun to trouble me, though I'd be hard pressed to tell you exactly why."
+    hints: "You could ask the Deacon about the Chrysalis Rite and how the valley
+      reads mutation as a gift, about the grove and pavilion where the Bloomings
+      are held, or about what's been troubling him this season — he seems to carry
+      a worry he can't quite put into words."
+  nodes:
+    - id: rite
+      triggers: ["rite", "chrysalis", "gift", "mutation", "faith", "belief"]
+      text: "The Rite teaches a simple, beautiful thing: that a mutation is not a curse to be hidden, nor an accident to be mourned, but a gift the body bestows upon itself. When the change comes — the Blooming, we call it — the valley gathers, and we ask the soul to receive what the flesh has offered. Out in the wider world they flinch from such changes. Here we kneel and give thanks. I have seen it bring more peace to frightened people than any sermon I could preach."
+      hints: "You could ask the Deacon about the grove and pavilion, or about what's
+        been troubling him this season."
+    - id: grove
+      triggers: ["grove", "pavilion", "place", "sacred", "where"]
+      text: "The Bloomings are held at the pavilion, in the old grove at the valley's heart — a ring of amber trees older than the village itself. When a Blooming comes upon someone, they come there, and the valley comes with them. There's a girl in her change now, young Linnet, over by the Old Well Yard. Frightened, brave, the way they always are. The grove has held a thousand such nights. It steadies a soul to stand where so many have changed before."
+      hints: "You could ask the Deacon about the Rite itself, or about the worry
+        that's been weighing on him."
+    - id: worry
+      triggers: ["worry", "troubled", "trouble", "strange", "wrong", "this year", "bloomings"]
+      text: "I'll speak it aloud and trust your discretion. The Bloomings this year are... wrong. Not in their nature — a gift is a gift — but in their manner. They come faster than they should. Stronger. Stranger. A change that ought to take a slow season unfolds in days, and more dramatic than anything in my twenty years of keeping the Rite. I have prayed on it and the answer doesn't come. The faithful say it's an especially blessed season and perhaps it is. But a shepherd knows the difference between a fat lamb and a swollen one, and something in me whispers this is the second kind. I don't yet know what to do with that whisper. So I bless, and I watch, and I worry."
+      hints: "You could ask the Deacon more about the Rite, or about the grove where
+        the Bloomings happen."
+      moodChange: friendly

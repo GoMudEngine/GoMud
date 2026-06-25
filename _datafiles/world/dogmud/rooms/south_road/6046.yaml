@@ -1,0 +1,43 @@
+roomid: 6046
+zone: South Road
+title: The Long Furlong
+description: >
+  The wind owns this stretch. It comes straight up the open road off the
+  valley floor, steady and warm and full of grit, and it never stops — it
+  presses at your back going down and shoves at your chest coming up, and
+  it fills your ears with a low continuous rush that swallows every other
+  sound. There is nothing to break it here: the pasture has fallen behind,
+  the scrub has thinned to bare stony ground, and the road simply runs, a
+  long straight pale furlong of it, dwindling to a point against the gold
+  below. The only marks of man are a roadside <ansi fg="itemname">cairn</ansi>
+  heaped at the verge and a leaning row of <ansi fg="itemname">withy
+  stakes</ansi> that once held a fence and now hold only the wind.
+biome: land
+coord: {x: -8, y: -20, z: 0}
+exits:
+  north: {roomid: 6045}
+  south: {roomid: 6047}
+nouns:
+  cairn: >
+    A waist-high heap of stones built up handful by handful at the
+    verge, the road's custom: each traveller adds one for luck and for the
+    next walker's reassurance that the way is true. Tucked into a hollow on
+    the lee side, sheltered from the wind, sits a small weathered tin box —
+    a wayfarers' cache. Inside, a stub of pencil and a curl of paper where
+    those who passed have written a word or a name. The latest, in a shaky
+    hand: "going down at last."
+  withy stakes: >
+    A line of grey willow stakes marching off across the stony
+    ground, leaning all the same way like men walking into the wind. The
+    wire and withies that once wove them into a fence are long gone; only
+    the posts remain, whistling faintly where the gale finds a crack.
+  road: >
+    Pale chalk-and-flint, dead straight for a full furlong, worn into a
+    shallow trough by the centuries of traffic the wind keeps swept clean.
+    Looking south along it, the eye is dragged all the way down to where it
+    pricks out against the valley's gold and is lost.
+idlemessages:
+- The wind gusts hard up the furlong, snatching at your clothes and flinging
+  grit against your skin.
+- A loose stone clatters down off the cairn and the wind carries the sound
+  away before it lands.

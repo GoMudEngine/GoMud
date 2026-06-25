@@ -1,0 +1,44 @@
+mobid: 9407
+zone: Amber Valley
+behavior_archetype: ambusher
+aiprofile: serpent
+archetype: fighting
+hostile: true
+statpool: 28
+itemdropchance: 20
+maxwander: 1
+groups:
+  - animal
+idlecommands:
+  - 'emote basks flattened against a hot stone, soaking the heat into its
+    dark hide until it is almost too torpid to move.'
+  - ''
+  - 'emote pumps its forelegs in a quick threat-display, throat fanning a
+    sudden flare of orange.'
+  - ''
+  - 'emote skitters a hand-span across the rubble and freezes again, perfectly
+    still.'
+  - ''
+activitylevel: 10
+character:
+  name: A Sun-Lizard
+  description: |
+    A heavy-bodied lizard the length of a man's forearm, the colour of the
+    sun-baked rubble it lives among, banded in dusty ochre and char-grey so
+    that it vanishes the instant it stops moving. It is a creature of the hot
+    scrub, sluggish in the cool of dawn and lightning-fast once the stone has
+    warmed it, and it does not like things blundering through its basking
+    ground. A frill of loose skin at its throat can flare a startling orange
+    when it means to threaten, and its bite, while no great danger to a
+    healthy traveller, is quick, hard, and meant to make you take your boots
+    elsewhere.
+  speciesid: 8
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 4
+    dexterity:
+      training: 6
+    vitality:
+      training: 4

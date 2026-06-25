@@ -1,0 +1,42 @@
+roomid: 6041
+zone: South Road
+title: The Drovers' Descent
+description: >
+  The heat finds you before the view does — it climbs off the pale road in
+  slow waves, and the cool of the crossroads behind is gone within a dozen
+  steps. The way bends south and downward here, the verge-grass yellowing
+  where the orchard country gives out, and the first
+  <ansi fg="itemname">milestone</ansi> of the southern road leans at the
+  bend, its cut face softened by weather. Below and ahead the land falls
+  open: a long warm valley hazed gold with afternoon, the green threads of
+  irrigation channels stitched faint across it. A
+  <ansi fg="itemname">drystone wall</ansi> runs along the western verge,
+  tumbled in one place where something heavy went over it, and the dust of
+  many hooves lies thick in the road's worn centre.
+biome: land
+coord: {x: -8, y: -15, z: 0}
+exits:
+  north: {roomid: 6040}
+  south: {roomid: 6042}
+nouns:
+  milestone: >
+    A squat stone, its cut face reading "AMBER VALLEY" above a
+    worn figure that was once a number of miles and is now a smooth dish
+    where ten thousand thumbs have pressed for luck. Someone has scratched
+    a newer mark beneath it — a tally of days, four strokes and a fifth
+    struck through, the count of a walk done often.
+  drystone wall: >
+    Fieldstone laid without mortar, the patient work of hands
+    that had more time than timber. Where it has tumbled, the gap is wide
+    enough to step through, and the grass beyond is cropped low — sheep
+    have been using the breach as a gate, and the wall's keeper has plainly
+    given up mending it.
+  road: >
+    The drovers' road, scuffed to chalk down its middle by generations
+    of driven beasts. The dust holds a cast of prints if you stoop to it:
+    cloven sheep, broad cattle, and over them all the deep twin ruts of
+    laden carts rolling down empty and coming back heavy.
+idlemessages:
+- A hot wind moves up the road from the valley, carrying dust and the far
+  sound of bells.
+- Somewhere below, a dog barks twice and falls silent.

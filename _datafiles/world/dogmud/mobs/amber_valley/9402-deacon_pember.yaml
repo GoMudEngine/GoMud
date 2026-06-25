@@ -1,0 +1,42 @@
+mobid: 9402
+zone: Amber Valley
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+hostile: false
+statpool: 24
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote moves down the pavilion straightening the offering-cloths,
+    pausing now and then to murmur a blessing over no one in particular.'
+  - ''
+  - 'emote raises a hand to his brow and presses his fingers there, where the
+    small new eye-buds have begun, this season, to stir and flutter.'
+  - ''
+  - 'emote watches a passing valley-Blooming go by, and a shadow of unease
+    crosses his face before he masters it with practiced calm.'
+  - ''
+activitylevel: 6
+character:
+  name: Deacon Pember
+  description: |
+    Deacon Pember travels the Rite circuit, carrying the blessing from valley
+    to valley, and the Amber dale is fond of him -- a soft-spoken, careful man
+    who has watched these folk wear their Bloomings with pride for thirty
+    years and rejoiced with them. Across his brow runs a ring of small closed
+    eye-buds, his own Blooming, seamed shut since boyhood and long since taken
+    for a saint's mark. But this season they have begun to flutter, the lids
+    parting and sealing as if half-waking, and it troubles him more than he
+    will say from the pavilion steps. It is not only him. The Bloomings here
+    this year have come on stranger and more dramatic than any in living
+    memory -- faster, deeper, stranger -- and where the valley sees only
+    abundance, the deacon has begun, very quietly, to count it and to worry.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    perception:
+      training: 4
+    willpower:
+      training: 4

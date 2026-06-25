@@ -1,0 +1,46 @@
+roomid: 6048
+zone: South Road
+title: The Warm Descent
+description: >
+  The air thickens as you drop. It loses the high wind's edge and turns
+  heavy and close, soft with the smell of sun-baked earth and warm stone,
+  and you feel the change on your skin like stepping into a kept room. The
+  road gives up its straight run at last and begins to switchback down the
+  steepening face, each turn dropping you another notch toward the valley
+  floor that no longer lies below you but ahead, rising to meet you. The
+  cuttings on either hand show the land's bones — pale baked clay and bands
+  of rust-red rock, radiating the day's heat back at you. A
+  <ansi fg="itemname">spring</ansi> seeps from the foot of one cutting,
+  the first running water of the descent, and beside the road a
+  <ansi fg="itemname">wayside shrine</ansi> stands in a niche cut from the
+  living rock.
+biome: land
+coord: {x: -8, y: -22, z: 0}
+exits:
+  north: {roomid: 6047}
+  south: {roomid: 6049}
+nouns:
+  spring: >
+    A thread of cold water seeping out where a band of red rock meets
+    the clay, gathering in a hollowed stone basin some traveller cut long
+    ago and worn green with moss. It is the first water since the inn and
+    the sweetest of the road — drovers know it, and the mud around the basin
+    is printed thick with the feet of those who stopped to drink and fill a
+    skin before the last hot miles down.
+  wayside shrine: >
+    A shallow niche cut into the rock at head height, holding
+    a crude weathered figure with a wheat-sheaf in its arms — some valley
+    saint of harvest and safe roads. Travellers have left small offerings on
+    the ledge: a few dried flowers, a copper coin gone green, a heel of
+    bread for luck. The stone above the niche is blackened where votive
+    candles have burned.
+  cuttings: >
+    The raw faces where the road was hacked through the hillside,
+    layered pale clay over bands of iron-red stone. They hold the heat long
+    after the sun has moved on, so the descent stays warm into the evening,
+    and swallows nest in holes drilled all along the upper bands.
+idlemessages:
+- Heat shimmers up off the red rock of the cutting, bending the air above
+  the road.
+- Water drips steadily into the spring-basin, the only cool sound in all the
+  warm stillness.

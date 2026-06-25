@@ -1,0 +1,43 @@
+mobid: 9403
+zone: Amber Valley
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+hostile: false
+statpool: 24
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote sits on the well-coping turning her shoulders in the light,
+    watching the new chitin plates along her spine throw back little rainbows.'
+  - ''
+  - 'emote shivers suddenly, hugs her arms, and laughs at herself -- half
+    delight, half nerves -- as another seam of shell rises wet under her skin.'
+  - ''
+  - 'emote tilts her head as if listening to her own back, eyes wide, not yet
+    certain whether to be proud or frightened.'
+  - ''
+activitylevel: 6
+character:
+  name: Linnet
+  description: |
+    Linnet is barely past girlhood, and she is in the thick of her first
+    Blooming -- the whole valley's favourite thing to witness, and right now
+    it is happening to her in the open by the old well. Along her spine and
+    over the caps of her shoulders, plates of iridescent chitin are surfacing
+    one by one, still soft and wet and shining like beetle-shell, oil-slick
+    blues and greens shifting as she moves. It is not finished; it is plainly
+    still coming on, a seam rising here, hardening there, hour by hour. The
+    elders stop to admire her and tell her how fine it is, and it IS fine, and
+    she is proud -- but it is also a great deal, all at once, in a body that
+    was hers and simple only a fortnight ago, and she has the dazed, brave,
+    slightly overwhelmed look of someone being remade in public and trying to
+    enjoy it as she is told she should.
+  speciesid: 1
+  level: 1
+  gold: 2
+  stats:
+    perception:
+      training: 3
+    charisma:
+      training: 3

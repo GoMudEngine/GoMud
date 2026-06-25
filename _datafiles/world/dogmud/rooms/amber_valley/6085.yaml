@@ -1,0 +1,45 @@
+roomid: 6085
+zone: Amber Valley
+title: The Grove Path
+description: >
+  The orchard rows thin and then end, and with them ends the ordinary noise
+  of the valley — the creak of ladders, the calling of pickers, the dry
+  rattle of carts on the lane. A few more steps and all of it has fallen
+  behind you into a hush so complete it seems poured rather than merely
+  present. The path narrows to a single worn track of pale earth, beaten
+  smooth by generations of bare and reverent feet, and the light comes
+  down through high leaves in slow gold coins that shift across the ground.
+  The warm resin-smell of the orchards gives way to something older and
+  greener here. Beside the track, half-swallowed in moss, leans a
+  weather-grayed <ansi fg="itemname">boundary post</ansi> that marks where
+  the working land ends and the held land begins.
+biome: land
+coord: {x: -7, y: -38, z: 0}
+exits:
+  west: {roomid: 6070}
+  east: {roomid: 6086}
+nouns:
+  boundary post:
+    >
+    The post is old cedar, silvered and grain-deep with the years, leaning
+    as if it has grown tired of standing so long alone. No fence runs from
+    it in either direction; it marks nothing you could climb or cross. It
+    only says, to those who know how to read it, that the soil beyond is not
+    for planting and not for harvest — that what grows past this point is
+    left to grow as it will, and watched, and not disturbed.
+  light:
+    >
+    The light falls in slow coins through the canopy, gold shading to amber
+    where it pools on the path. It does not hurry. There is a quality to it
+    here that the orchards do not have, as though the leaves above were
+    filtering out not just the glare but the haste of the world beyond.
+  hush:
+    >
+    The quiet is not the absence of sound but a presence of its own, the way
+    a held breath is. You find yourself walking more softly without deciding
+    to, and lowering your eyes, and feeling — before you have seen anything
+    at all — that you are approaching something the valley loves.
+idlemessages:
+- A single leaf detaches high above and drifts down through the gold light, turning, in no hurry to land.
+- Somewhere behind you, faint and already far, a picker's call rises and is swallowed by the hush.
+- The warm air shifts, carrying a breath of green and resin from the deeper trees.

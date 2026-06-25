@@ -1,0 +1,54 @@
+roomid: 6053
+zone: South Road
+title: The Dryside Farmstead
+description: >
+  A dog barks itself hoarse somewhere behind the buildings, the frantic
+  note of a place on edge. The road passes close by a small farmstead on
+  the dry eastern side — a low mud-brick house, a leaning barn, a yard of
+  beaten earth — and everything about it speaks of a holding fighting to
+  stay alive on water it no longer gets. Wilted bean-rows sag in the kitchen
+  garden; a row of stoppered pots stands ready by the well to ration what
+  little is drawn. Running past the house and on into the parched fields
+  beyond is the farmstead's <ansi fg="itemname">dried channel</ansi>, cut
+  off and silted to a hard grey scar. A weary <ansi fg="itemname">farmwife
+  </ansi> watches from the doorway as you pass, and a <ansi fg="itemname">
+  cracked cistern</ansi> stands empty in the yard.
+biome: land
+coord: {x: -8, y: -27, z: 0}
+exits:
+  north: {roomid: 6052}
+  south: {roomid: 6054}
+nouns:
+  dried channel: >
+    The farmstead's lifeline, and it is dead. The channel
+    runs from the yard out across the holding's fields, and along its whole
+    length the bed is cracked grey clay, silted hard, not a damp patch in
+    it. Follow it back toward the road with your eye and the reason is
+    plain: where it should tap the high leat, the head-gate has been shut
+    and packed solid with clay, the water turned off somewhere upstream by
+    a hand that meant it to stay off. The folk here say the neighbour who
+    holds the upper gate — Ayres, by the name on the notice — has stopped
+    their share out of an old grudge, and that the law in the valley town
+    has done nothing. Three weeks dry, and the crop dying by the day. There
+    is a story here for anyone with the time to chase it down to the town
+    below.
+  farmwife: >
+    A spare, sun-dark woman in a faded apron, a baby on her hip and
+    no welcome to spare. She watches the road the way people watch it when
+    they are hoping for someone in particular and bracing for the wrong
+    one. "Going down to the valley?" she says, when you catch her eye.
+    "Then you'll pass the Ayres place, and the magistrate's after. Ask them
+    why a man'll dry out his neighbour over a thing twenty years buried." She
+    does not say more; the dog is barking again.
+  cracked cistern: >
+    A round stone tank in the yard, the household's reserve,
+    built to hold a winter's water against a dry summer. It is empty now but
+    for a hand's depth of green scum and a drowned wasp or two, the inner
+    walls ringed pale where the level has dropped week by week. A wooden lid
+    leans beside it, no longer needed. There is nothing in it worth guarding
+    any more, and that is the whole tragedy of the place.
+idlemessages:
+- The farmstead dog starts up again, throws itself to the end of its chain,
+  and is hauled back to silence.
+- A dry gust rattles the dead bean-poles in the garden like a handful of
+  thrown sticks.

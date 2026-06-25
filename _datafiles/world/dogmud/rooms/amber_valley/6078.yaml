@@ -1,0 +1,42 @@
+roomid: 6078
+zone: Amber Valley
+title: The Collapsed Channel
+description: >
+  The path climbs to a shoulder of high ground and stops at a wound in the land.
+  Here the old upper irrigation works run out of the hill — and here they have
+  fallen in. A whole stretch of the <ansi fg="itemname">collapsed channel</ansi>
+  lies buried under a grey slide of rock and slumped earth, the fitted stones of
+  the aqueduct snapped and shouldered aside. You can hear water somewhere under
+  the rubble, trapped and muttering, with nowhere to go. Above the slide the
+  channel still runs full and bright; below it, the stone bed lies bone-dry all
+  the way down toward the farms.
+biome: land
+coord: {x: -10, y: -38, z: 0}
+exits:
+  south: {roomid: 6076}
+nouns:
+  the collapsed channel: >
+    The aqueduct was good old work — squared blocks set true, mortared tight,
+    carrying the highland water down to the valley for longer than anyone living
+    can say. A slope above it gave way in some wet season and buried a full
+    span: a dam of tumbled rock and slumped earth, with the snapped ends of the
+    channel poking out either side. Above the slide the water stands brimming and
+    blocked; below it the bed is dry as a bone. It would be brutal work — but you
+    can see it plainly: clear the slide, and the water would run again, down to
+    BOTH the farms below at once. Whoever hauled this stone clear would set the
+    whole green heart of the valley flowing.
+  the trapped water: >
+    Down in the rubble, out of sight, the dammed water seeps and gurgles, feeling
+    blindly for a way through the stone. A little of it weeps out at the foot of
+    the slide and sinks at once into the thirsty ground, doing no one any good. A
+    cool, mossy smell rises off it — the only damp thing for miles.
+  the dry bed: >
+    Below the collapse the empty channel runs on down the hillside, its fitted
+    stone bleached and dusty, a thin green stain of long-dead weed along the
+    bottom where water used to stand. It points like an accusing finger straight
+    down at the farms that are going without.
+idlemessages:
+- Water mutters somewhere deep under the fallen rock, going nowhere.
+- A trickle weeps from the foot of the slide and vanishes into the dust.
+- The brimming channel above the dam laps quietly at the blockage.
+- Dry wind sifts grit down the buried, useless aqueduct bed.

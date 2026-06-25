@@ -1,0 +1,42 @@
+roomid: 6042
+zone: South Road
+title: The Drying Mile
+description: >
+  The grass on the verges has stopped being green. It rasps against your
+  legs as you pass, bleached the colour of old straw, and underfoot the
+  road gives back a dry crunch where seed-husks and brittle bramble have
+  blown into the ruts. The orchard is failing on either side now — the
+  apple rows that crowded the high country have thinned to a scatter of
+  stunted trees, their fruit small and freckled, the spaces between them
+  filling with grey scrub and gorse. A <ansi fg="itemname">hollow log</ansi>
+  lies on its side just off the western verge, a fallen pine long stripped
+  of bark, and a lone <ansi fg="itemname">gorse bush</ansi> blazes yellow
+  at the bend, the only living colour left to the mile.
+biome: land
+coord: {x: -8, y: -16, z: 0}
+exits:
+  north: {roomid: 6041}
+  south: {roomid: 6043}
+nouns:
+  hollow log: >
+    A grey pine bole, fallen long enough that its heart has
+    rotted clean away, leaving a dry tunnel an arm could reach down. Inside,
+    out of the weather, someone has tucked a small bundle: a stub of candle,
+    a flint, and a twist of waxed cloth keeping a few dry matches. A
+    walker's cache, left for the next cold night on the road — take only if
+    you mean to replace it.
+  gorse bush: >
+    A dense knot of green spines starred all over with coconut-
+    scented yellow flowers. It thrives where the grass has given up, roots
+    driven deep after water the topsoil no longer holds. Drovers curse it —
+    it tears at fleece and shins alike — but in the dry mile it is the only
+    thing still trying to bloom.
+  scrub: >
+    Low grey-leaved bushes and tussock, the vegetation of land that
+    has tipped from orchard toward heath. It smells of warm dust and crushed
+    thyme when the wind stirs it, and hides quail that burst up underfoot if
+    you stray off the road.
+idlemessages:
+- A hot gust rattles the dry grass like a held breath let slowly out.
+- A grasshopper saws once from the verge, then thinks better of it in the
+  heat.

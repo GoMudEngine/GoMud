@@ -1,0 +1,59 @@
+roomid: 6060
+zone: Amber Valley
+title: The Rite Pavilion
+description: >
+  Coolness folds over you the moment you step beneath the roof — deep shade after
+  the bright lane, and with it a smell of beeswax, dried herbs, and old stone. The
+  pavilion is open on all four sides, its broad tiled roof held up on smooth timber
+  pillars, so the valley breeze drifts straight through and the green of the fields
+  is always in view past the columns.
+
+  This is where the Chrysalis Rite is held, where the valley gathers to witness its
+  young come through their Blooming. The floor is worn flagstone, swept and waxed,
+  with a low central dais ringed by stone benches polished by long use. There is no
+  grandeur here, only care — the reverence of a people who have made peace with
+  change and chosen to honor it. Garlands of dried herb hang from the rafters, and
+  the names of those who have Bloomed are scratched, thousands of them, into the
+  soft sandstone of the pillars.
+
+  Along the eastern wall stands a cedar chest holding <ansi fg="itemname">the
+  records</ansi>, and at the center waits <ansi fg="itemname">the dais</ansi>.
+biome: land
+coord: {x: -8, y: -32, z: 0}
+exits:
+  north: {roomid: 6057}
+  south: {roomid: 6065}
+nouns:
+  the records: >
+    A long cedar chest, lid worn pale where hands lift it, holding the valley's
+    written memory: the ceremony rolls listing every Blooming witnessed here back
+    further than the ink stays legible, and bound among them the old water-rights —
+    brittle agreements parceling out the channel-flow field by field, season by
+    season, signed and counter-signed by farmers centuries dead. Reading the rolls,
+    you notice the water-pacts and the ceremony lists were kept by the same hands,
+    in the same books, as though in this valley a person's change and a person's
+    share of the water were matters of equal and ordinary weight. Some of the
+    older pacts divert flow to fields no map seems to show anymore.
+  the dais: >
+    A single low step of pale sandstone at the pavilion's heart, just high enough
+    to lift one figure above the gathered benches. Its surface is worn to a soft
+    sheen in a shape like two overlapping footprints — the spot where, generation
+    after generation, the Blooming has stood to be seen. There is nothing else to
+    it. The plainness is the point.
+  the pillars: >
+    Smooth columns of soft sandstone holding up the wide roof, and every reachable
+    inch of them is covered in names — scratched, carved, pressed in with a
+    thumbnail — the record of everyone the valley has watched change. Newer names
+    crowd the lower stretches; the highest are worn almost smooth, ghosts of ghosts.
+  the garlands: >
+    Ropes of dried herb and everlasting flower looped along the rafters, gone
+    dusty-fragrant with age. Rosemary, lavender, and a pale moth-winged blossom
+    that grows only in the valley's high seeps. They are renewed before each Rite
+    and left to fade between.
+idlemessages:
+- The breeze passes clean through the open pavilion, stirring the rafter garlands.
+- A loose thread of dust turns slowly in a shaft of light over the dais.
+- Somewhere outside, the channel-water murmurs against stone.
+spawninfo:
+  - mobid: 9402
+    respawnrate: "20 real minutes"

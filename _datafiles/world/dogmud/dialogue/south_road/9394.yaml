@@ -1,0 +1,40 @@
+mobid: 9394
+zone: South Road
+defaultMood: neutral
+greetings:
+  - text: "Mind the sheep, friend. They wander into the road and won't thank you for it."
+    moods: ["neutral"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Good day to you. Long road behind you, longer ahead."
+  - keywords: ["sheep", "flock", "lamb"]
+    responses:
+      - "Fine wool this season. The valley grass agrees with them."
+  - keywords: [""]
+    responses:
+      - "I keep to my flock mostly. The road brings what it brings."
+tree:
+  root:
+    text: "I'm Wick. I keep sheep along this stretch of the South Road, just above where it drops into Amber Valley. Quiet work, but you hear things, standing on a hill all day."
+    hints: "You could ask Wick about the valley and the road, about his flock, or
+      about the water trouble he's heard brewing down in the valley between the two
+      farms. He hears most of the valley's gossip up here on his hill."
+  nodes:
+    - id: valley
+      triggers: ["valley", "road", "amber", "south road"]
+      text: "Amber Valley's a warm place, friendliest in the region if you ask me. They take the Chrysalis Rite seriously down there — they hold a body's mutations as a blessing, not a curse. Road's safe enough by day. Just keep walking and the green opens up below you."
+      hints: "You could ask Wick about his flock, or about the water trouble he's
+        heard is stirring among the valley farmers."
+      moodChange: friendly
+    - id: flock
+      triggers: ["flock", "sheep", "lamb", "wool"]
+      text: "Forty head, give or take a lamb. They're simple souls and I like them for it. Up before dawn, down after dusk, and the same hill in between. A man could do worse for a life."
+      hints: "You could ask Wick about the valley itself, or about the water trouble
+        down among the farms."
+    - id: water
+      triggers: ["water", "trouble", "feud", "farm", "channel", "dispute"]
+      text: "Aye, there's bad blood down valley. Two farms — Fenn on the dry east side and Ayres up where the water comes in. Word is a channel got cut, and now each swears the other did him wrong. Old Fenn's fields are browning and he's loud about it. I keep my nose out of it, but you hear the grumbling come up the hill on a still evening. If you're heading down, Hesper at the Golden Bough will know more than me — folk talk in her common room."
+      hints: "You could ask Wick more about the valley, or take his word down to the
+        Golden Bough inn and ask Hesper about the feud yourself."
+      moodChange: friendly

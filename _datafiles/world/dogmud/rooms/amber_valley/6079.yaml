@@ -1,0 +1,39 @@
+roomid: 6079
+zone: Amber Valley
+title: Cave Mouth
+description: >
+  Three steps down off the bright ridge and the world changes. The sun stops
+  dead at the lip of the <ansi fg="itemname">cave mouth</ansi> as though it were
+  a curtain, and beyond it the air turns cool and damp and still, smelling of wet
+  stone after the dust outside. Your own breathing sounds suddenly loud. The
+  throat of the cave goes back and down into the hill, a cool dark drinking the
+  daylight a few feet in and giving nothing back. Behind you the white scrub
+  glares; ahead, the dark slopes away below.
+biome: land
+coord: {x: -11, y: -40, z: 0}
+exits:
+  north: {roomid: 6077}
+  down: {roomid: 6080}
+nouns:
+  the cave mouth: >
+    A low arch of pale rock, smoothed at the lip by ten thousand passing hands
+    and shoulders, where the fissure in the ridge opens into a true cave. There
+    is a hard line on the floor where bright dust gives way to cool damp stone —
+    the exact reach of the noon sun. Beyond it the daylight fails by inches and
+    the dark begins in earnest, sloping away down into the hill.
+  the cool air: >
+    Air drifts up out of the dark and pours past you toward the heat outside,
+    steady and cold and damp, carrying the breath of deep stone — wet mineral,
+    a faint sourness of bat, and far under that, the clean cold smell of water
+    that has never seen the sky. After the baked country above it is a shock,
+    almost a relief.
+  the threshold: >
+    The last of the daylight pools on the cave floor in a fading grey wedge and
+    goes no further. Past it you would be feeling your way. Lichen and a few
+    blanched, leggy plants crowd the very edge of the light, leaning toward it,
+    and stop where it stops.
+idlemessages:
+- Cold air pours steadily up out of the dark and past you.
+- Far down in the hill, a drip falls and echoes, and falls again.
+- Your own breathing sounds suddenly loud in the hush.
+- The daylight at the cave's lip seems to dim as your eyes adjust.

@@ -1,0 +1,47 @@
+roomid: 6045
+zone: South Road
+title: The Shepherd's Reach
+description: >
+  Bells reach you first — the flat, irregular clonk of sheep-bells drifting
+  up from somewhere below the road, a dozen different notes never quite
+  falling into time. The verge gives way on the western side to open
+  pasture that rolls down and away, close-cropped and dotted with grazing
+  flocks, and the air carries lanolin and warm dung and dry grass. The
+  vantage here is the best of the descent so far: you can see the road
+  thread on down toward the valley floor, and the gold haze of farmland
+  spreading at the bottom. A <ansi fg="itemname">drystone fold</ansi> sits
+  just off the road where the slope steepens, its gate a single hurdle of
+  bound hazel, and a lone <ansi fg="itemname">whitethorn</ansi> leans over
+  the verge, its trunk rubbed smooth by generations of itching sheep.
+biome: land
+coord: {x: -8, y: -19, z: 0}
+exits:
+  north: {roomid: 6044}
+  south: {roomid: 6046}
+nouns:
+  drystone fold: >
+    A round pen of mortarless fieldstone, chest-high, built to
+    hold a flock against the night and the wolves the high country still
+    remembers. Inside it is empty now but well used, the ground churned and
+    rich; in the lee of the wall a shepherd has stowed gear out of the
+    weather — a coil of rope, a battered tar-pot for marking fleeces, and a
+    crook leaned in the corner. Whoever keeps it is nearby, and means to
+    come back.
+  whitethorn: >
+    A solitary hawthorn bent permanently downhill by the valley
+    wind, its bark polished glassy-smooth at sheep height where ten
+    thousand flanks have scratched an itch against it. Tufts of greasy wool
+    snag in the lower thorns, pale as the flowers it carried in spring.
+  pasture: >
+    Sweet short turf running down the western slope, cropped to a
+    lawn by the flocks and starred with the yellow of tormentil. From up
+    here the sheep look like scattered chalk; their bells carry better than
+    they do, a sound that means someone, somewhere below, is watching them.
+idlemessages:
+- A scatter of sheep-bells swells as the flock shifts, then settles back to
+  its lazy clonking.
+- A buzzard wheels high over the pasture, tilts, and slides off down the
+  valley on the heat.
+spawninfo:
+  - mobid: 9394
+    respawnrate: "20 real minutes"

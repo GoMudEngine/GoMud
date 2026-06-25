@@ -1,0 +1,41 @@
+mobid: 9394
+zone: South Road
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+hostile: false
+statpool: 24
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote leans on his crook and watches the flock below, counting heads
+    by their bells without seeming to look at all.'
+  - ''
+  - 'emote spits, squints down the road toward the valley floor, and shakes
+    his head at some private reckoning.'
+  - ''
+  - 'emote runs a thumb along a coil of greasy wool snagged on his sleeve,
+    rolls it to a pellet, and flicks it away.'
+  - ''
+activitylevel: 6
+character:
+  name: Wick
+  description: |
+    Wick has the look of a man assembled from the hillside he works -- lean,
+    wind-cured, his face brown and creased to the texture of an old saddle.
+    He keeps the high pasture above the descent and knows every fold of it
+    by the sound of the bells. A soft pelt of pale, wool-fine fuzz has come
+    up over his forearms and the back of his neck, downy as a new lamb; he
+    wears it the way the valley wears all its Bloomings, with no fuss at all,
+    and on a cold dawn it keeps the wet off him better than oilcloth. He is
+    not a talker by trade, but he watches the water in the becks the way he
+    watches the sky, and lately the water has been telling him things he does
+    not much like about the dryside farms down below.
+  speciesid: 1
+  level: 1
+  gold: 6
+  stats:
+    perception:
+      training: 4
+    vitality:
+      training: 3

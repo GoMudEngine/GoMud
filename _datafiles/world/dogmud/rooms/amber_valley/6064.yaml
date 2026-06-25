@@ -1,0 +1,50 @@
+roomid: 6064
+zone: Amber Valley
+title: The Old Well Yard
+description: >
+  The noise of the town thins to almost nothing here, and the quiet has a sound of
+  its own — the slow drip and echo of deep water, the buzz of one drowsy fly, the
+  rustle of a fig tree's broad leaves. The sun pools warm in this dead-end corner,
+  held by old walls that have soaked up a thousand afternoons.
+
+  The yard is a forgotten pocket behind the working lanes, paved in cracked stone
+  with grass pushing up between. At its center stands the old well, older than the
+  town's piped channels and long since left for the cool deep water it still gives.
+  A gnarled fig leans over one wall, dropping soft fruit that nobody clears. On the
+  well's low rim a youth sits with knees drawn up, half in shade, watching the
+  surface of a drawn bucket — quiet, a little wary, a faint shimmer of new color
+  rippling beneath the skin of their hands as a Blooming comes on. The valley gives
+  such ones this corner, and lets them be.
+
+  <ansi fg="itemname">the old well</ansi> waits at the center, and over the wall
+  leans <ansi fg="itemname">the fig tree</ansi>.
+biome: land
+coord: {x: -7, y: -32, z: 0}
+exits:
+  north: {roomid: 6063}
+nouns:
+  the old well: >
+    A ring of mossy fieldstone around a deep dark shaft, a worn rope on a wooden
+    windlass dropping away into cool echoing black. It predates the channel system
+    and was never filled in — the water that comes up is colder and sweeter than
+    any in the valley, and folk still draw from it for the things that matter. Drop
+    a pebble and the splash comes back a long, slow heartbeat later.
+  the fig tree: >
+    An old fig grown sideways over the yard wall, its trunk gone gray and gnarled,
+    its broad leaves throwing soft moving shade across the well. Ripe figs split
+    and drop unharvested onto the stones, where wasps and birds finish them. It
+    scents the whole corner with a warm honeyed musk.
+  the youth: >
+    A young person seated on the well's rim, knees up, half-shaded, turning their
+    hands slowly in the light. Beneath the skin a faint shifting iridescence is
+    surfacing — the first hours of a Blooming, when a body decides what it will
+    become. They watch you arrive with the guarded calm of someone in a fragile,
+    private moment, neither hiding nor inviting. In this valley, the kindest thing
+    is simply to let them sit.
+idlemessages:
+- Deep in the well, water drips and the sound comes back doubled.
+- A ripe fig drops from the leaning tree and bursts soft on the stones.
+- A single drowsy fly circles and settles in the warm quiet.
+spawninfo:
+  - mobid: 9403
+    respawnrate: "20 real minutes"

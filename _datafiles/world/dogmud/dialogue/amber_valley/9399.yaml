@@ -1,0 +1,39 @@
+mobid: 9399
+zone: Amber Valley
+defaultMood: friendly
+greetings:
+  - text: "Ah — mind the shavings, they get everywhere. Pull up that stool, the one I carved. Tell me it's comfortable; I need to hear it today."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello, friend. Forgive the sawdust — it's the smell of a good day's work."
+  - keywords: ["carve", "wood", "craft", "work", "chair", "stool"]
+    responses:
+      - "Every piece of wood wants to be something. My job's just to listen to it."
+  - keywords: [""]
+    responses:
+      - "Sit a while. I do my best talking with a chisel in my hand."
+tree:
+  root:
+    text: "Corwin Ashlade. I'm the valley's woodworker — chairs, doors, cradles, whatever folk need to live their lives sitting and sleeping and being born. It's quiet, honest work, and most days it's enough."
+    hints: "You could ask Corwin about his craft and carving, about the valley and
+      the Chrysalis Rite, or about his son Davan — he speaks of the boy with a
+      proud, worried warmth, the way a father does when his child has gone far
+      from home."
+  nodes:
+    - id: craft
+      triggers: ["craft", "carve", "carving", "wood", "work", "chairs"]
+      text: "Forty years with my hands in wood. I learned to read grain the way some men read books — where it'll split, where it'll bend, where it's hiding something beautiful under the bark. People think a chair is a chair. It isn't. A chair is the place a family will sit for thirty years. You make it like you mean it, or you don't make it at all."
+      hints: "You could ask Corwin about the valley and the Rite, or about his son
+        Davan."
+    - id: davan
+      triggers: ["davan", "son", "boy", "child", "family", "left"]
+      text: "My boy. My Davan. He grew up under this bench, you know — first thing he ever made was a wonky little spoon, I still have it. But he was never made for chairs and cradles, that one. There was something in him that pointed north, away, out past the valley walls. The Rite would say his change called him somewhere, and maybe it did. He went, last autumn. Wrote me twice, then the letters thinned. I'm proud of him — I am, truly. I just... I find myself making two stools out of habit. Then I remember, and I put one back. A father shouldn't keep his child here when the world's pulling him out. But the bench is quieter than it used to be."
+      hints: "You could ask Corwin about his craft, or about the valley and the
+        Rite that he thinks called Davan away."
+      moodChange: friendly
+    - id: valley
+      triggers: ["valley", "amber", "rite", "chrysalis", "mutation", "home"]
+      text: "Amber Valley's the only home I've known, and a kind one. The Chrysalis Rite taught me how to let go — that's the heart of it, really. When the body changes, you don't fight it, you thank it. I thought I understood that. Then my own son's change pointed him out the door, and I learned the Rite asks more of a father than a few kind words at a festival. I believe it still. I just believe it with a heavier hand now."
+      hints: "You could ask Corwin about his carving, or about his son Davan."

@@ -1,0 +1,38 @@
+mobid: 9395
+zone: South Road
+defaultMood: friendly
+greetings:
+  - text: "Welcome to the Lake and Ladle! Roof's sound, soup's hot, and the ale's only a little watered. Sit yourself down."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Evening, traveller. Or morning. Hard to tell in here, no windows worth the name."
+  - keywords: ["ale", "drink", "beer", "food", "soup"]
+    responses:
+      - "Bowl and a mug's the same price as a kind word. Cheaper if the word's funny."
+  - keywords: [""]
+    responses:
+      - "I keep the lamps lit and the door open. That's the whole trade, really."
+tree:
+  root:
+    text: "Bram Ostle, at your service — I run the Lake and Ladle, last honest roof before the valley road bends down. Folk stop here to shake the dust off before Amber Valley, and I'm glad of the company."
+    hints: "You could ask Bram about the inn and the road, about the travellers who
+      pass through, or about the valley waiting ahead."
+  nodes:
+    - id: inn
+      triggers: ["inn", "lake", "ladle", "road", "waypoint"]
+      text: "Named for a lake that dried up two generations back, and a ladle my grandmother swore was lucky. The lake's a meadow now and the ladle's still on the wall, so you tell me which one was the bigger fool. We're the only proper stop on this leg, so I get everyone — and everyone's got somewhere to be but here."
+      hints: "You could ask Bram about the travellers passing through, or about the
+        valley ahead."
+    - id: travellers
+      triggers: ["travellers", "traveler", "guests", "passing", "people", "news"]
+      text: "All sorts. Pilgrims for the Chrysalis Rite, merchants chasing the valley markets, the odd lost soul who took the wrong fork at Hartcharn. Lately a fair few valley folk coming UP the road instead of down — and grumbling about water the whole way. Dry tempers, those ones. I keep their mugs full and my opinions to myself."
+      hints: "You could ask Bram about the inn, or about the valley itself."
+      moodChange: friendly
+    - id: valley
+      triggers: ["valley", "amber", "ahead", "chrysalis", "rite"]
+      text: "Amber Valley's a soft landing after this hard road. Warm folk, green fields, and they make a festival of the Chrysalis Rite — they'll tell you a mutation's a gift the body gives itself. Strange to some, but I've seen worse manners in places that called themselves refined. Ask for the Golden Bough when you're down there; Hesper sets a finer table than mine, though I'll deny saying it."
+      hints: "You could ask Bram about the inn and the road, or about the travellers
+        he sees come through."
+      moodChange: friendly

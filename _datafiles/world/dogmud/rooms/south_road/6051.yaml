@@ -1,0 +1,47 @@
+roomid: 6051
+zone: South Road
+title: The Vineward Bend
+description: >
+  The road swings east around a warm south-facing slope, and the whole
+  hillside above it is given over to vines. They come down almost to the
+  verge in long ordered ranks, gnarled old <ansi fg="itemname">vine
+  stocks</ansi> trained along low wires, their broad leaves cupping the
+  heat and their fruit hanging in tight green clusters just beginning to
+  blush. The smell is of hot leaf and dust and the faint sourness of last
+  year's pressings; the ground between the rows is bone-dry and pale, for
+  the vine, unlike the valley's thirsty crops, is left wanting on purpose
+  to sweeten what it bears. At the bend's outer edge a stone
+  <ansi fg="itemname">field-shrine</ansi> guards the vineyard's corner,
+  and a <ansi fg="itemname">drystone gap</ansi> in the boundary wall lets
+  the pickers' path through to the rows.
+biome: land
+coord: {x: -8, y: -25, z: 0}
+exits:
+  north: {roomid: 6050}
+  south: {roomid: 6052}
+nouns:
+  vine stocks: >
+    Old vines, black-stemmed and thick as a wrist at the root,
+    twisted by decades of pruning into squat clawed shapes that hold their
+    arms of green out along the wires. The clusters beneath the leaves are
+    still hard and green, weeks from the press, but already heavy enough to
+    bow the canes. Up here on the dry warm slope the vine is given less
+    water than anything in the valley, and is the better for it.
+  field-shrine: >
+    A small mortared pillar at the vineyard's corner, topped
+    with a worn carving of a man treading grapes in a tub, knee-deep and
+    laughing. A dish at its base holds the last of someone's offering —
+    raisins, a splash of wine gone to vinegar, a coin. The vintners pour a
+    measure here at the start of every pressing, for luck and for a sweet
+    year.
+  drystone gap: >
+    A deliberate breach in the low boundary wall, its edges
+    squared and capped, where the pickers' path runs up into the vines. A
+    flat stone set just inside the gap has been hollowed as a dry store —
+    under a slab you find a coil of binding-twine, a blunt pruning-knife,
+    and a stoppered gourd of water gone warm, the small kit a vineyard hand
+    leaves where it will be wanted again tomorrow.
+idlemessages:
+- A lizard suns itself motionless on the warm coping of the wall, then is
+  gone too fast to follow.
+- The dry vine-leaves hiss faintly as a warm breeze combs up the slope.

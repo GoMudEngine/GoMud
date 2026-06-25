@@ -1,0 +1,47 @@
+roomid: 6043
+zone: South Road
+title: Orchard's End
+description: >
+  Here the orchard simply stops. The last of the fruit-trees stand in a
+  ragged line across the slope, and they are dying on their feet —
+  branches bare to the sky, the few leaves left curling brown at the
+  edges, the ground beneath littered with windfalls too dry to rot. Past
+  them the road runs out into open scrub with nothing overhead, and the
+  sun lies on the back of your neck without mercy. This is a place
+  travellers pause: northbound merchants coming up from the valley often
+  rest their teams in the last shade before the long climb, and the verge
+  is scuffed bare where wheels have stood. An
+  <ansi fg="itemname">abandoned cart</ansi> tilts in the ditch with one
+  wheel gone, and a row of dead <ansi fg="itemname">apple trees</ansi>
+  marks the orchard's final boundary.
+biome: land
+coord: {x: -8, y: -17, z: 0}
+exits:
+  north: {roomid: 6042}
+  south: {roomid: 6044}
+nouns:
+  abandoned cart: >
+    A two-wheeled trade cart run into the ditch and left,
+    its near wheel shattered and never mended, the spokes scavenged for
+    firewood. The bed still holds what the owner didn't think worth
+    carrying out: a split sack with a handful of dusty walnuts gone to
+    powder, a torn tarpaulin, and wedged under the seat-board a small clay
+    flask, stoppered and forgotten, that rattles like it still holds
+    something. Someone gave up here and walked the rest of the way.
+  apple trees: >
+    The orchard's last sentinels, planted by someone who hoped
+    the fruit country reached farther south than it does. They have died
+    standing — heartwood grey, bark peeling, a single mummified apple here
+    and there still clinging where the birds couldn't reach. Below this
+    line, nothing planted for apples will take.
+  windfalls: >
+    Shrunken apples scattered through the dry grass, too parched
+    to rot, gone hard and brown as walnuts. Wasps work the few that split,
+    drunk and slow in the heat. They crunch like gravel if you tread on
+    them.
+idlemessages:
+- A dry branch creaks overhead in the heat, though no wind moves it.
+- The far rumble of cartwheels rises briefly from the valley road and fades.
+spawninfo:
+  - mobid: 9396
+    respawnrate: "20 real minutes"

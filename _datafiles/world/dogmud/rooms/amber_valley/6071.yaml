@@ -1,0 +1,37 @@
+roomid: 6071
+zone: Amber Valley
+title: Valley's South Lane
+description: >
+  This is the edge of the known and tended world. The lane gives out at the
+  valley's southern lip, where the cultivated land surrenders all at once to
+  open scrub and the long fall of country beyond. A weathered
+  <ansi fg="itemname">south road</ansi> — a sign and the ghost of a track —
+  points on toward the river country, but the way is barred. West, a faint foot
+  path climbs into the dry foothills. The wind up here comes uncombed off the
+  open land, smelling of hot stone and distance and nothing planted.
+biome: land
+coord: {x: -8, y: -39, z: 0}
+exits:
+  north: {roomid: 6070}
+  west: {roomid: 6075}
+nouns:
+  the south road: >
+    A leaning sign-post and the bleached ruts of an old road running south. The
+    board, in faded paint, reads: TO THE RIVER COUNTRY & THE CONFLUENCE. Below
+    it, in newer, blunter letters: WAY WASHED OUT — NO PASSAGE. Beyond the sign
+    the track simply ends at a raw gully where a flood tore the road away; the
+    far country it names lies green and distant and, for now, wholly out of
+    reach. Someone has scratched a single word under the warning: SOON.
+  the open country: >
+    South past the broken road the land tilts away in long dry folds toward a
+    far green seam of riverbank, hazed blue with distance. That is the way to
+    the Confluence, everyone here will tell you — once the road is mended, once
+    the season turns, once someone gets round to it. For now it is only a view.
+  the foot path: >
+    A thin pale track climbing west out of the lane into the foothills, beaten
+    by goats and the people who chase them. It is the only way on that the
+    flood didn't take.
+idlemessages:
+- The open wind gusts up over the lip of the valley, dry and restless.
+- The washed-out sign creaks on its post, pointing at nothing.
+- Far off to the south, a hawk hangs motionless on the heat.

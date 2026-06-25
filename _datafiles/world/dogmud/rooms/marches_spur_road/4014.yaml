@@ -24,6 +24,9 @@ exits:
   east:
     roomid: 4015
     zone: Ashwick
+  south:
+    roomid: 6040
+    zone: South Road
 nouns:
   signposts: A cluster of weathered wooden signposts driven into the
     center of the crossroads. Each arm points a different direction,

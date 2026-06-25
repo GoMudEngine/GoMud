@@ -1,0 +1,45 @@
+roomid: 6080
+zone: Amber Valley
+title: The Cave — Upper
+description: >
+  The slope levels into the first true chamber, and the dark closes over you.
+  What light leaks down from the mouth above is grey and useless; you find your
+  way by the cold and the sound. Water drips somewhere in the blackness — a slow,
+  patient ticking that the stone catches and throws back doubled, so the whole
+  <ansi fg="itemname">chamber</ansi> seems to whisper to itself. The floor is
+  cool and faintly greasy underfoot. Where the dimness gathers, pale
+  <ansi fg="itemname">cave life</ansi> clings to the damp walls, blanched and
+  blind. The throat goes on down, deeper.
+biome: land
+coord: {x: -11, y: -40, z: -1}
+exits:
+  up: {roomid: 6079}
+  down: {roomid: 6081}
+nouns:
+  the chamber: >
+    A rounded room of damp grey stone, its ceiling lost in dark above the reach
+    of any light you carry. The walls sweat. Every small sound — a drip, a
+    breath, a scuff of your own boot — comes back to you off the curved rock a
+    half-second late, so the place feels both close around you and impossibly
+    larger than it is. The cold here is the steady, even cold of a country that
+    never feels the sun.
+  the cave life: >
+    On the wet walls, where a little of the daylight from above still reaches,
+    blanched things grow — colourless lichen, pale leggy moulds, soft fungus the
+    grey of a drowned man's skin. None of it has any colour to lose; this far in,
+    colour is no use to anything. Faint movement at the edge of hearing suggests
+    other, larger life keeps to the deeper dark below, and does not care to be
+    seen.
+  the drip: >
+    Somewhere in the black above, water gathers and lets go, gathers and lets go,
+    each drop striking stone with a small clear note that the chamber repeats and
+    repeats. It is the loudest thing here, and the most patient. The whole cave is
+    being built and unbuilt, one drop at a time, on a clock with no hands.
+idlemessages:
+- A drip falls in the dark and the chamber repeats it, doubled, fading.
+- Cold damp air moves across the back of your neck and is gone.
+- Something pale shifts against the wet wall, or seems to.
+- The hush down here has a weight to it, a pressure on the ears.
+spawninfo:
+  - mobid: 9408
+    respawnrate: "10 real minutes"

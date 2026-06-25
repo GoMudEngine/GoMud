@@ -1,0 +1,34 @@
+mobid: 9405
+zone: Amber Valley
+defaultMood: friendly
+greetings:
+  - text: "Careful, the glaze is still wet on that one. Welcome to the craft lane — mind your sleeves."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello! Don't touch the drying rack and we'll be fast friends."
+  - keywords: ["craft", "pottery", "work", "wares", "make"]
+    responses:
+      - "Bowls, jugs, tiles — anything you can shape from good valley clay."
+  - keywords: [""]
+    responses:
+      - "Hm? Say again, my hands were busy and my ears followed them."
+tree:
+  root:
+    text: "Ferris Dale, potter of the craft lane. I throw clay all day and call it a living — and a good one, in a valley that likes its tables set pretty. What can I tell you?"
+    hints: "You could ask Ferris about his craft, about the valley, or about the
+      Chrysalis Rite the valley keeps."
+  nodes:
+    - id: craft
+      triggers: ["craft", "pottery", "clay", "work", "wares", "make"]
+      text: "The valley clay's the secret — comes out of the riverbank a warm amber colour, fires to a glow like honey held to candlelight. I've thrown pots since I was knee-high to the wheel. There's a rhythm to it that empties your head in the best way. Folk think a bowl is a small thing. A small thing you use every single day is not a small thing at all."
+      hints: "You could ask Ferris about the valley, or about the Chrysalis Rite."
+    - id: valley
+      triggers: ["valley", "amber", "lane", "life", "home"]
+      text: "The craft lane's a cheerful row — me at my wheel, a weaver, old Hollin tanning hides at the end and complaining about the smell of his own trade. We work with our doors open and our gossip louder. Amber Valley's good to its makers. There's always a feast wanting plates and a wedding wanting jugs. A potter never goes hungry where people still gather."
+      hints: "You could ask Ferris about his craft, or about the Rite."
+    - id: rite
+      triggers: ["rite", "chrysalis", "mutation", "blooming", "gift", "faith"]
+      text: "The Chrysalis Rite? I'm fond of it, in my potter's way. There's a Blooming and a change is like the firing, see — you put the soft, uncertain thing into the heat and what comes out is harder, truer, finished. We don't fear the kiln here, and we don't fear the change. Both just make a person more themselves. Deacon Pember would put it holier than that. I put it in clay terms because clay's the only sermon I trust."
+      hints: "You could ask Ferris about his craft, or about the valley."

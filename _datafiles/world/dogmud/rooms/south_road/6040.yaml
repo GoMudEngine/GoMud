@@ -1,0 +1,39 @@
+roomid: 6040
+zone: South Road
+title: The Southern Verge
+description: >
+  The smell changes first — the cidery damp of the crossroads orchards
+  falls away behind you, and what rises in its place is hot dust and the
+  resin tang of sun-warmed pine, a southern smell that means the land is
+  drying. The road forks from the Ashwick crossroads here and commits
+  itself downhill, its surface paling from packed brown to chalky grey as
+  the shade thins. Behind, the close-set apple rows of the marches still
+  hold their cool; ahead, the trees stand farther apart and the light
+  comes through them harder. A weathered
+  <ansi fg="itemname">finger-post</ansi> marks the parting of the ways,
+  and at its foot a <ansi fg="itemname">boundary stone</ansi> sits half
+  buried in the verge, marking where one country's care of the road ends
+  and another's begins.
+biome: land
+coord: {x: -8, y: -14, z: 0}
+exits:
+  north: {roomid: 4014, zone: Marches Spur Road}
+  south: {roomid: 6041}
+nouns:
+  finger-post: >
+    A grey oak post with two arms. The arm pointing back north
+    reads ASHWICK in deep-cut letters kept fresh by someone's knife. The
+    arm pointing south reads only AMBER VALLEY, the paint long gone, the
+    wood beneath silvered and split. Travellers heading down clearly do
+    not feel the need to be reminded where they are going.
+  boundary stone: >
+    A squat grey marker worn round at the shoulders. One
+    face bears a shallow-cut sheaf of wheat, the sign of the valley below;
+    the other, facing the orchards, an apple. Whoever set it understood
+    the road as a seam between two harvests, and meant anyone passing to
+    feel the change underfoot.
+idlemessages:
+- A dry warmth rolls up the road from the south, and the orchard leaves
+  behind you stir without quite cooling you.
+- A few late bees work the verge flowers, then drift off downhill toward
+  the heat.

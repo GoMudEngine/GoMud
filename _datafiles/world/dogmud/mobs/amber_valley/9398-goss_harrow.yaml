@@ -1,0 +1,41 @@
+mobid: 9398
+zone: Amber Valley
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+hostile: false
+statpool: 24
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote runs a stub of chalk down a tally-board, totting up a column of
+    short marks under his breath.'
+  - ''
+  - 'emote shifts a crate of seed-packets a hand''s width to the left, frowns
+    at it, and shifts it back.'
+  - ''
+  - 'emote scratches absently at the base of one of the little horns at his
+    temple, the way another man might rub a careworn brow.'
+  - ''
+activitylevel: 6
+character:
+  name: Goss Harrow
+  description: |
+    Goss keeps the valley's general store, a single low room crammed floor to
+    rafter with seed and twine, salt and nails, lamp-oil and boot-grease and
+    every other thing a farm forgets it needs until the moment it needs it.
+    He is a square, deliberate man, slow to speak and slower to be hurried,
+    with a memory for prices that goes back further than his ledgers do. From
+    each temple rises a short, blunt nub of amber keratin, no longer than a
+    thumb-joint -- horns, plainly, though they have stopped growing and serve
+    no purpose but to be admired. He keeps them filed smooth and faintly
+    polished, and is quietly vain about them in the way of a man who has
+    decided to like the hand he was dealt.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    perception:
+      training: 3
+    willpower:
+      training: 3

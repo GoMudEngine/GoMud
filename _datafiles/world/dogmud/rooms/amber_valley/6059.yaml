@@ -1,0 +1,50 @@
+roomid: 6059
+zone: Amber Valley
+title: West Lane
+description: >
+  Sound defines this lane — the rhythmic knock of a mallet on a hoop, the wet slap
+  of clay being thrown, the rasp of a drawknife peeling a curl of pale wood. The
+  smells follow close behind: fresh-cut timber, fired earth, and the faint linseed
+  tang of finishing oil.
+
+  This is the craft lane, where the valley makes the things it can't grow. A cooper
+  works under an open shed, raising a barrel from staves, his bare arms dusted to
+  the elbow in shavings. Across the way a potter sits hunched at a kicked wheel, a
+  long cool ribbon of clay rising under her hands. She has an extra joint in each
+  finger, and they fold and steady the wet clay in ways an ordinary hand never
+  could — she works half again as fast as anyone, and says so cheerfully to anyone
+  who asks. Finished work leans and stacks along the walls, drying in the sun.
+
+  <ansi fg="itemname">the cooper's shed</ansi> stands open on the left, and
+  <ansi fg="itemname">the potter's wheel</ansi> turns on the right.
+biome: land
+coord: {x: -9, y: -30, z: 0}
+exits:
+  east: {roomid: 6056}
+  west: {roomid: 6062}
+nouns:
+  the cooper's shed: >
+    An open-fronted workshop hung with tools and ringed with barrels in every
+    stage of making — bare staves, half-raised hoops, finished casks gleaming with
+    oil. The floor is ankle-deep in fragrant curls of shaved wood, and a low fire
+    smolders in a brazier the cooper uses to char the insides of his barrels. The
+    whole place smells of resin and warm oak.
+  the potter's wheel: >
+    A heavy stone flywheel kicked steadily round by the potter's foot while her
+    hands coax a vessel up out of the spinning clay. Drying ware crowds the shelves
+    behind her — bowls, jugs, the wide shallow water-crocks every valley house
+    keeps. Her double-jointed fingers move over the clay in a quick rippling
+    fashion that's oddly hypnotic to watch.
+  the finished work: >
+    Rows of made things set out to dry and cure along the lane's sunny wall:
+    tight little casks, stacked bowls, coils of rope, a cradle, a stack of clay
+    pipe for the irrigation channels. Each piece carries a maker's mark scratched
+    in the base — and beside several, a second small mark, the Blooming-sign of a
+    crafter proud of the hands that made it.
+idlemessages:
+- A drawknife rasps, and a long pale curl of wood drops to the floor.
+- The potter's wheel hums round, steady as a heartbeat.
+- The cooper's mallet rings against an iron hoop, three quick strokes.
+spawninfo:
+  - mobid: 9405
+    respawnrate: "20 real minutes"

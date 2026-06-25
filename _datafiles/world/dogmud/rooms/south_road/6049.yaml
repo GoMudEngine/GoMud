@@ -1,0 +1,43 @@
+roomid: 6049
+zone: South Road
+title: The First Orchards
+description: >
+  The smell tells you you've reached the valley floor before your feet are
+  sure of it — a wave of ripening fruit, sweet and heavy and green, rolling
+  up the road to meet the dry descent. The scrub ends as abruptly as the
+  orchard did far above, and irrigated green comes back all at once: rows
+  of low trained <ansi fg="itemname">fruit trees</ansi> march off on either
+  side, dark-leaved and laden, their feet running with water from a ditch
+  that murmurs along the verge. After the long dry miles the shade and the
+  damp are a physical relief. The road runs level here for the first time,
+  soft with fallen blossom and trodden fruit, and a <ansi fg="itemname">
+  picking-ladder</ansi> leans forgotten against a tree at the row's end.
+biome: land
+coord: {x: -8, y: -23, z: 0}
+exits:
+  north: {roomid: 6048}
+  south: {roomid: 6050}
+nouns:
+  fruit trees: >
+    Not the failing apples of the high country but valley
+    stock — peach and apricot and fig, trained low and spread wide on
+    wires to catch the heat, each tree's feet fed by a runnel of channel
+    water. They hang heavy with fruit going gold and blushing, and the air
+    beneath them is thick and humming with wasps and the smell of sugar.
+    Here water makes all the difference, and here there is water.
+  picking-ladder: >
+    A tall narrow ladder of grey ash, three-legged so it can
+    stand among the trees, left leaning where a picker quit for the heat of
+    the day. Its rungs are polished by bare feet and its top is stained
+    with the juice of a hundred harvests. A half-filled basket sits at its
+    foot, the fruit in it already drawing flies.
+  ditch: >
+    A channel of clear running water hand-cut along the verge, cool
+    and quick, branching off through gaps to flood each row in turn. Trail
+    your fingers in it and you feel where the valley's wealth comes from —
+    snowmelt led patiently down from the high country to wake the warm dry
+    ground.
+idlemessages:
+- A ripe fig drops from a laden branch and bursts soft on the road.
+- The irrigation ditch chuckles past, and somewhere down the rows a picker
+  is singing to herself.

@@ -1,0 +1,80 @@
+questid: 72
+name: The Water Dispute
+description: >-
+  Two farms at Amber Valley's dry edge are at each other's throats over the
+  water that once fed them both. The channel between them has been cut, and
+  each man blames the other. Someone from outside might see it clearer.
+secret: false
+
+flags:
+  - key: outcome
+    values: [mediated, restored, fenn]
+    description: "How the water dispute was settled -- a brokered compromise,
+      the source restored for both, or by the letter of the old water-right"
+
+steps:
+  - id: start
+    description: >-
+      Amber Valley's two dryside farms are feuding over a cut irrigation
+      channel. Hear both sides, and find a way to settle it.
+    hint: >-
+      Hear both farmers out -- Marrow Fenn on the dry eastern fields, and
+      Ayres on the upstream holding. Then you might broker a compromise back
+      with Hesper at the Golden Bough, restore the water at its source by
+      examining the collapsed channel up in the foothills, or settle it by
+      the old written agreement among the records in the Rite pavilion.
+  - id: end
+    description: >-
+      The water dispute is settled -- one way or another, the valley's dry
+      edge has its answer.
+
+rewards:
+  gold: 60
+  playermessage: >-
+    Word of the settling runs the valley before you have even left the lane.
+    Whatever was decided, the shouting at the Golden Bough will quiet now,
+    and that alone has earned you a place at its hearth.
+  roommessage: >-
+    The traveller has the settled look of someone who has untangled a thing
+    that stayed knotted for a long time.
+
+triggers:
+  # PATH B — RESTORE THE SOURCE: haul the collapsed channel clear (6078).
+  #   Restores the water to BOTH farms; favours neither. Flag: restored.
+  - event: room_interact
+    room: 6078
+    noun: the collapsed channel
+    conditions:
+      has: ["72-start"]
+      missing: ["72-end"]
+    actions:
+      - set_flag: {key: "72-outcome", value: "restored"}
+      - send_text: >-
+          You set your back to the fallen slabs and haul the slide clear,
+          stone by stone, until the old channel runs open again -- and the
+          water finds its lost path and goes downhill to both farms at once.
+          Neither man gets to be right. The valley does.
+      - room_text: "hauls a slide of fallen stone clear of an old aqueduct until the water runs through it again."
+      - grant: "72-end"
+
+  # PATH C — THE RECORD: read the old water-right among the records (6060).
+  #   The letter of the old agreement favours Fenn. Flag: fenn.
+  - event: room_interact
+    room: 6060
+    noun: the records
+    conditions:
+      has: ["72-start"]
+      missing: ["72-end"]
+    actions:
+      - set_flag: {key: "72-outcome", value: "fenn"}
+      - send_text: >-
+          The old water-right is here among the ceremony rolls, dated and
+          witnessed in a careful hand: the head-gate share was set to feed
+          both holdings, turn and turn about. By the letter of it, Ayres has
+          taken more than his due for years. It is not a kind answer. It is
+          the true one, and it favours Fenn.
+      - grant: "72-end"
+
+  # PATH A — MEDIATE is granted in Hesper Vane's dialogue (9397): a brokered
+  #   compromise grants 72-end + sets the flag 'mediated'. The reward block
+  #   below fires on holding 72-end regardless of which path completed it.
