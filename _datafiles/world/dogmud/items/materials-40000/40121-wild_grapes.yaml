@@ -1,0 +1,14 @@
+itemid: 40121
+name: Wild Grapes
+namesimple: grapes
+description: A heavy cluster of small dark grapes, sun-warm and splitting
+  ripe, gathered from a vine gone wild along a wall or hedgerow.
+type: object
+subtype: mundane
+component_tag: wild-grapes
+weight: 0.2
+value: 4
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking

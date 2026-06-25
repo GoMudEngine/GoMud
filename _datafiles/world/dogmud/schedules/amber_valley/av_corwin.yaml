@@ -1,0 +1,22 @@
+id: av_corwin
+description: "Corwin Ashlade works wood through the daylight, the unused stool at
+  the far bench gathering its quiet, and sleeps in the back room."
+segments:
+  - start: 7
+    end: 21
+    target_room: 6066
+    activity: ""
+    idlecommands:
+      - emote runs a thumb along a half-finished joint, feeling for a catch the
+        chisel left, then sets it back without correcting it.
+      - say A chair should outlast the man who made it. Mine do. That is the
+        whole of the trade, really.
+      - emote glances, without meaning to, at the smaller stool at the end of
+        the bench, and goes back to his work a little more slowly.
+  - start: 21
+    end: 7
+    target_room: 6066
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the back room of the workshop, shavings still curled on
+        the floor beside the cold bench.

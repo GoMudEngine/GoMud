@@ -1,0 +1,22 @@
+id: av_hesper
+description: "Hesper Vane keeps the Golden Bough from before the first cart to
+  after the last cup, then sleeps in the room behind the taproom."
+segments:
+  - start: 6
+    end: 23
+    target_room: 6061
+    activity: ""
+    idlecommands:
+      - emote wipes down the long table with a grey cloth, listening to three
+        conversations at once and pretending to follow none.
+      - say Sit anywhere that is clean. If it is not clean, tell me, and I will
+        know exactly who to blame.
+      - emote tilts her head toward the door as someone enters, weighing them
+        in a single glance the way innkeepers do.
+  - start: 23
+    end: 6
+    target_room: 6061
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the small room behind the taproom, the day's takings
+        already counted and put away.

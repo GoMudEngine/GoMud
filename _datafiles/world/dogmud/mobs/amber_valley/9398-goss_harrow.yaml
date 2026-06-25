@@ -1,4 +1,5 @@
 mobid: 9398
+schedule_id: av_goss
 zone: Amber Valley
 behavior_archetype: noncombat_questgiver
 non_combatant: true

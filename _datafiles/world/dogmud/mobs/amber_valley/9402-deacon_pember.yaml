@@ -1,4 +1,5 @@
 mobid: 9402
+schedule_id: av_pember
 zone: Amber Valley
 behavior_archetype: noncombat_questgiver
 non_combatant: true

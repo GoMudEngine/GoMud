@@ -1,4 +1,5 @@
 mobid: 9397
+schedule_id: av_hesper
 zone: Amber Valley
 behavior_archetype: noncombat_questgiver
 non_combatant: true
