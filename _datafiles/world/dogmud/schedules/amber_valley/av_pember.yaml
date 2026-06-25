@@ -1,0 +1,22 @@
+id: av_pember
+description: "Deacon Pember keeps the Rite pavilion through the day, troubled in
+  the quiet hours, and sleeps in the small cell behind the dais."
+segments:
+  - start: 7
+    end: 21
+    target_room: 6060
+    activity: ""
+    idlecommands:
+      - emote walks the line of ceremony-rolls with his hands behind his back,
+        pausing at the most recent and frowning at it as if it might change.
+      - say The Rite says a change is the body knowing itself. I have believed
+        that all my life. I still do. Mostly.
+      - emote touches the brow where the new eye-buds have come in, catches
+        himself doing it, and lowers his hand.
+  - start: 21
+    end: 7
+    target_room: 6060
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the small cell behind the dais, a lamp left burning
+        lower than it needs to be.

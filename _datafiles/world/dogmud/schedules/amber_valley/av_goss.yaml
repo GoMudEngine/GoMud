@@ -1,0 +1,20 @@
+id: av_goss
+description: "Goss Harrow opens the general store at dawn and shutters it at dusk,
+  sleeping on a cot among the stock."
+segments:
+  - start: 6
+    end: 20
+    target_room: 6062
+    activity: ""
+    idlecommands:
+      - emote restacks a shelf of crocks so the chipped ones face the wall, the
+        way they have faced the wall for years.
+      - say If I do not stock it, you did not need it. That has held for twenty
+        years and I am not minded to test it now.
+  - start: 20
+    end: 6
+    target_room: 6062
+    activity: sleeping
+    idlecommands:
+      - emote sleeps on a cot wedged between the flour barrels and the back
+        shelf, a tally-slate within arm's reach.
