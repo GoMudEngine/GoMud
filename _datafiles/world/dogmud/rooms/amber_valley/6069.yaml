@@ -14,7 +14,6 @@ coord: {x: -8, y: -37, z: 0}
 exits:
   north: {roomid: 6068}
   south: {roomid: 6070}
-  east: {roomid: 6085}
 nouns:
   the fruit-loft: >
     A small slat-walled store raised on stilts to keep the mice off, its door

@@ -1,0 +1,53 @@
+roomid: 6089
+zone: Amber Valley
+title: The Inner Grove
+description: >
+  South of the clearing the trees draw close and the light grows scarce, and
+  the path ends in the oldest, stillest corner of the grove. Here the moss is
+  deep and undisturbed and the hush has weight, pressing soft against the
+  ears. Nothing is tended in this corner. No spring renewal touches it; no
+  keeper carves here. The valley comes to the bright clearing to name its
+  Bloomings, but this place it leaves alone, the way one leaves alone a thing
+  one does not fully understand and has learned to honor anyway. Set into the
+  earth at the very back, beneath a single ancient trunk, leans a
+  <ansi fg="itemname">weathered marker</ansi> worn so nearly flat that at
+  first it seems only a pale stone among the roots. It is older than the
+  Rite. It is older than the markers' walk, older than the lintel-stone at
+  the gate, older — the keepers will admit if pressed — than anything the
+  valley can account for.
+biome: land
+coord: {x: -5, y: -39, z: 0}
+exits:
+  north: {roomid: 6087}
+nouns:
+  weathered marker:
+    >
+    The stone is worn almost to smoothness, its face turned up to the scant
+    light and softened by ages past any reckoning. No name survives on it,
+    no Blooming named or dated — the valley's careful way of carving is
+    nowhere in it. But as your eyes adjust and the dapple shifts, you make
+    out, faint beneath the wear, a symbol someone cut here long before the
+    Rite was ever dreamed: a single point ringed round, and from that ring
+    eight rays going out, even-spaced, an inner orbit older than the
+    theology that grew up around this grove. It belongs to no story the
+    keepers tell. They do not know who set it here, or when, or what it
+    asks. They have only learned to leave it be, and to feel, standing
+    before it, that the valley's faith is a young thing laid over something
+    far older that has been waiting in the ground a very long time.
+  trunk:
+    >
+    The single trunk that shelters the marker is the oldest tree in the grove
+    and perhaps in the valley, its bark gone gray and hard as stone, its
+    crown lost somewhere in the high dark. Its roots cradle the worn marker
+    as though they had grown down around it on purpose, holding it the way
+    cupped hands hold something fragile and not quite owned.
+  hush:
+    >
+    The quiet here has a different grain than the bright clearing's. That
+    hush is a welcome; this one is a waiting. It does not feel unfriendly.
+    It feels patient, the way deep water is patient, and very old, and not
+    yet finished with whatever it began.
+idlemessages:
+- The deep moss drinks every sound, and the silence settles back heavier than before.
+- A thin blade of light reaches the worn marker, lingers on the faint ringed symbol, and slips away.
+- The ancient trunk creaks once, very softly, somewhere high in the dark, and is still.

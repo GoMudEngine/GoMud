@@ -14,6 +14,7 @@ coord: {x: -8, y: -38, z: 0}
 exits:
   north: {roomid: 6069}
   south: {roomid: 6071}
+  east: {roomid: 6085}
 nouns:
   the thirsty fields: >
     Smallholdings that should be green and aren't: bean-rows wilting to

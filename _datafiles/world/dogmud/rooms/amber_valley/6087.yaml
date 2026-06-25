@@ -1,0 +1,64 @@
+roomid: 6087
+zone: Amber Valley
+title: The Chrysalis Grove
+description: >
+  The trees open into a clearing, and the clearing holds the light like
+  water held in cupped hands. Ancient trunks ring it round, their canopies
+  knitting high overhead into a vault of leaf and gold, and the floor is soft
+  with moss and years of fallen leaves gone to a quiet brown. The air is
+  warm and still and smells of resin and sun-warmed bark, and the hush here
+  is not emptiness but fullness — a held place, a kept thing. This is the
+  heart of the valley's faith. When a child of Amber Valley wakes one
+  morning changed — scaled or many-eyed, antlered or strange of voice, a
+  Blooming come upon them in the night — they are brought here, into the
+  ring of the old trees, and the valley gathers to name the change a gift.
+  Other places, harsher places, would call such a marking a curse and the
+  marked one cursed. Here they read it otherwise: that the world itself
+  reached out and chose this person, set its hand on them, asked them to
+  carry something the rest cannot. At the clearing's center stands a smooth
+  <ansi fg="itemname">naming stone</ansi> where each new Bloom is welcomed,
+  and a path of <ansi fg="itemname">markers</ansi> leads east among the
+  trees.
+biome: land
+coord: {x: -5, y: -38, z: 0}
+exits:
+  west: {roomid: 6086}
+  east: {roomid: 6088}
+  south: {roomid: 6089}
+nouns:
+  naming stone:
+    >
+    A low round stone, waist-high and worn smooth on top by generations of
+    laid-on hands, stands at the clearing's heart. Here the changed one is
+    set before the gathered valley, and the keeper of the Rite names the
+    Blooming aloud — not the person's old name, but the new thing the world
+    has given them — and the valley answers, welcoming it. The top of the
+    stone is warm even in shade, as though it has kept some heat of every
+    hand that ever rested there.
+  trees:
+    >
+    The trees that ring the clearing are the oldest living things in the
+    valley, broad-trunked and slow, their roots gone deep into soil no plow
+    has ever turned. The people here believe the trees remember every
+    Blooming named beneath them, holding the memory the way heartwood holds
+    the rings of dry years and wet. To stand among them is to feel held by
+    something patient and very old.
+  Blooming:
+    >
+    A Blooming is what the valley calls a mutation — the morning a body wakes
+    changed, grown strange and new. Where others flinch from such changes,
+    Amber Valley has built its whole faith around welcoming them: the world,
+    they say, does not mark you idly. It marks those it means to use. To
+    Bloom is to be chosen, set apart, asked to carry a gift whose purpose may
+    not be clear for years. The grief and the fear are not denied — only held
+    inside a larger gladness.
+  markers:
+    >
+    East of the clearing, half-seen among the trunks, runs a path lined with
+    standing stones — the memorial markers of the valley's most remembered
+    Bloomings. Each names a person and the change that took them. The path
+    invites a slow walk and a slower reading.
+idlemessages:
+- The high canopy shifts and the pooled gold light trembles across the moss without ever leaving it.
+- A deep, resin-warm stillness settles over the clearing, as though the old trees had drawn a slow breath.
+- Somewhere in the ring of trunks a bird tries one soft note, thinks better of it, and falls silent.

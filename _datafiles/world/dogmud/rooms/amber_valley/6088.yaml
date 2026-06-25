@@ -1,0 +1,53 @@
+roomid: 6088
+zone: Amber Valley
+title: The Markers' Walk
+description: >
+  A narrow path winds east among the old trunks, and it is lined on both
+  sides with standing stones — the <ansi fg="itemname">memorial markers</ansi>
+  of the valley's most remembered Bloomings. They are not graves. No one is
+  buried here; the marked ones lived long lives and many are living still.
+  The stones are remembrances, raised so the change each person carried is
+  not forgotten when the person is gone. The light comes down dappled and
+  gentle, moving over carved names and worn faces of rock, and the moss
+  grows thick at every base. To walk here slowly, reading, is a kind of
+  prayer the valley teaches without ever saying so. The stones nearest the
+  clearing are gray with great age and their carving nearly smoothed away;
+  the <ansi fg="itemname">newest markers</ansi>, set further along, are
+  sharper-cut and still pale at the edges.
+biome: land
+coord: {x: -4, y: -38, z: 0}
+exits:
+  west: {roomid: 6087}
+nouns:
+  memorial markers:
+    >
+    Each marker names a person and the Blooming that took them, and the valley
+    has carved them with love and not with fear. SELDA, reads one of the
+    oldest, WHO GREW WINGS THE SUMMER OF THE LOW RIVER AND CARRIED WORD OVER
+    THE HILLS WHEN THE BRIDGES WASHED. Another, moss-bearded and leaning:
+    OREN, WHOSE SKIN WENT TO BARK, WHO STOOD IN THE EAST FIELD THROUGH THREE
+    FROSTS AND DID NOT FALL. A smaller stone, lovingly tended: LITTLE MAB,
+    WHO WOKE WITH A SECOND PAIR OF EYES AND SAW, SHE SWORE, THE COLOR OF THE
+    WIND. The valley remembers each not as a victim of some affliction but as
+    one the world reached out and chose.
+  newest markers:
+    >
+    Further along the walk, where the stones are sharp-cut and still pale,
+    the carved changes read stranger than the old ones. THE BROTHERS FENN,
+    reads one, WHO WOKE WITH ONE MIND BETWEEN TWO BODIES AND FINISH EACH
+    OTHER'S WORK WITHOUT A WORD. And another, very recent, the moss not yet
+    started: KESS, WHOSE SHADOW MOVES A HEARTBEAT BEFORE SHE DOES. The
+    keepers carve them with the same love as the rest. If anyone has noticed
+    that the recent Bloomings come on stranger and more dramatic than the
+    old — that the gentle wings and bark-skin of the elder stones have given
+    way to changes harder to name — no one here has thought to say it aloud.
+  light:
+    >
+    The dappled light moves slowly along the row of stones, finding a carved
+    name, leaving it, finding the next. There is no hurry in it. It seems to
+    read the markers the way a mourner might, lingering, unwilling to skip a
+    single one.
+idlemessages:
+- Dappled light slides along a row of carved names and then moves gently on to the next stone.
+- The moss at the base of an old marker holds a single bead of light like a held tear.
+- A breath of warm air stirs the leaves overhead and the shadows shift across the standing stones.
