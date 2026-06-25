@@ -25,7 +25,12 @@ description: >
   granite, polished to a faint luminance by the
   weight of accumulated arrivals, the place where
   in this faith's understanding the boundary between
-  gone and present is at its thinnest. The space
+  gone and present is at its thinnest. Along the
+  lower courses of the north wall a row of
+  <ansi fg="itemname">processional-reliefs</ansi> runs
+  at waist height -- worn figures in slow procession,
+  their hands held in postures too specific to be only
+  devotion. The space
   does not ask anything of you; it receives. The
   altar passage opens to the east, the cloister
   walk to the north, and the bell tower to the
@@ -74,6 +79,13 @@ nouns:
     — smoothest at the center, rougher toward the
     rim — as if the returning always begin at the
     same point, however they arrive.
+  processional-reliefs: A row of carved figures worked into the lower
+    courses of the nave wall, much older than the smooth plaster above
+    them -- a slow procession, each figure's hands held in a particular
+    posture. The postures are not the gestures of any rite still
+    practiced here. Read along the row, the hand positions have the
+    deliberate look of a sequence someone meant to be counted, not
+    merely admired.
 idlemessages:
 - The nave-lamps burn without visible flicker
   through a draft that should move them.

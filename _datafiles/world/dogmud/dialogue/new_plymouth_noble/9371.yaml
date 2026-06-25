@@ -33,6 +33,40 @@ tree:
       paintings record."
 
   nodes:
+    - id: q69_lysha
+      triggers: ["quest", "task", "third", "panel", "cipher", "rubbing",
+                 "dross", "read", "left"]
+      questRequired: ["69-gallery"]
+      questExcluded: ["69-reading", "69-end"]
+      grantsQuest: "69-reading"
+      givesItem: 40116
+      text: "The third panel from the left. So someone finally came up the
+        stairs to ask. Give me the rubbing. ... Yes. This is the same hand
+        as the panel, or the same workshop -- the eight-pointed device, the
+        ringed geometry, identical. The painter worked from observation; the
+        landscape is accurate, and so is the structure. It stands inland of
+        the present docks, where the canal district meets the edge of the
+        Old Quarter. The gallery's lighting was not built to make this panel
+        easy to examine. Someone decided what this room was for. Here -- my
+        reading, written out. Take it to Dross. He will know what it
+        completes."
+      hints: "Keeper Lysha matched your rubbing to the third panel: the
+        eight-pointed structure stood inland of the docks, before the
+        founding. She gave you her annotated reading. Take it back to Scholar
+        Dross at the Temple."
+      moodChange: cautious
+
+    - id: q69_lysha_circle_aside
+      triggers: ["circle", "cooperage", "orin", "trust", "side"]
+      questRequired: ["69-gallery"]
+      questFlagRequired: {"68-allegiance": "circle"}
+      text: "Orin vouches for you -- quietly, the way we do anything. Then I
+        will say plainly what I would not say to a stranger: I am of the
+        circle, here, inside the bloodline's own gallery, reading the thing
+        they hung the lights to hide. Be careful with what you now carry."
+      hints: "Lysha, knowing you stood with the circle, trusts you with her
+        own part in it. The work is the same -- take her reading to Dross."
+
     - id: paintings
       triggers: ["painting", "collection", "gallery", "canvas", "pigment",
                  "color", "colour", "varnish", "hang", "older",

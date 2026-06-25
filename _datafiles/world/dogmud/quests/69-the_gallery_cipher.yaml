@@ -1,0 +1,106 @@
+questid: 69
+name: The Gallery Cipher
+description: >-
+  Scholar Dross can prove the Grand Temple's eastern inscription predates
+  the city's official founding -- if he can read the cipher hidden in the
+  processional reliefs. The key is in the Noble Quarter gallery, behind a
+  guide who steers visitors away from it.
+secret: false
+
+steps:
+  - id: start
+    description: >-
+      Dross needs a rubbing of the hand-position cipher worked into the
+      processional relief figures in the Grand Temple nave.
+    hint: >-
+      In the Grand Temple sanctuary, make a rubbing of the processional
+      relief figures, then bring it to Dross in the temple courtyard.
+  - id: rubbing
+    description: >-
+      You took the cipher rubbing from the reliefs. Dross can read part of
+      it, but the key to the full sequence is in the Noble Quarter gallery.
+    hint: >-
+      Take the rubbing to Dross, then go to the Noble Quarter art gallery
+      and find the key to the cipher.
+  - id: gallery
+    description: >-
+      Dross sent you to the gallery. The guide, Ferrol, steers visitors to
+      the bloodline portraits and away from the older paintings -- and away
+      from the keeper.
+    hint: >-
+      In the gallery, get past Ferrol's tour to Keeper Lysha. Ask her about
+      the third panel from the left.
+  - id: reading
+    description: >-
+      Keeper Lysha read the third panel against your rubbing: the
+      eight-pointed structure stands at a site inland of the present docks.
+      She gave you her annotated reading.
+    hint: >-
+      Bring Lysha's annotated reading back to Scholar Dross at the Temple.
+  - id: end
+    description: >-
+      Dross has his proof: the founding the city celebrates is not the
+      first, and the date is wrong by something close to a century. The
+      truth is provable. Whether anyone with power will hear it is another
+      matter.
+
+rewards:
+  gold: 70
+  rep_faction: temple_np
+  rep_amount: 10
+  playermessage: >-
+    Dross lays the rubbing and the reading side by side and goes very
+    quiet, which for him is remarkable. "It holds," he says. "Every line of
+    it holds." He has a proof now that no honest examiner could dismiss --
+    and he is, you both understand, a man no one with power has ever been
+    obliged to honestly examine. Still. It is known now, and you are one of
+    the few who know it.
+  roommessage: >-
+    The traveller has the look of someone who has read something that
+    cannot be un-read.
+
+triggers:
+  - event: room_interact
+    room: 5901
+    noun: processional-reliefs
+    conditions:
+      has: ["69-start"]
+      missing: ["69-rubbing"]
+    actions:
+      - grant: "69-rubbing"
+      - give_item: 40115
+      - send_text: >-
+          You press paper to the processional relief and work charcoal
+          across it. The figures come up under your hand -- and the longer
+          you look, the less devotional they seem. Each hand is positioned
+          too precisely to be art. Read along the row, they are a sequence:
+          a number, set into stone by someone who wanted it kept where it
+          could not be edited out.
+      - room_text: "takes a careful charcoal rubbing of the old processional reliefs."
+
+  - event: room_interact
+    room: 5901
+    noun: processional-reliefs
+    conditions:
+      missing: ["69-start"]
+    actions:
+      - send_text: >-
+          The processional figures are very old -- older, somehow, than the
+          plaque that names them. Their hands are oddly placed. Without a
+          reason to study them you move on.
+
+  - event: item_give
+    mob: 9360
+    item: 40116
+    conditions:
+      has: ["69-reading"]
+      missing: ["69-end"]
+    actions:
+      - bump_rep: {faction: cooperage_circle, delta: 5}
+      - npc_say:
+          mob: 9360
+          lines:
+            - {delay: 1, text: "You reached her. You actually reached her."}
+            - {delay: 4, text: "The third panel -- painted from observation, of a structure that stands inland of the docks, exactly where the cipher's geometry points. The rubbing and the panel agree. The same hand, or the same workshop, and they agree."}
+            - {delay: 8, text: "Then it is settled, as far as evidence settles anything. The inscription predates the founding. The founding date is wrong. And everything the bloodline holds in law derives from a date that is wrong. You should know what you have helped prove. And be careful who you prove it to."}
+      - grant: "69-end"
