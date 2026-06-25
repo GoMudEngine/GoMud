@@ -1,0 +1,42 @@
+mobid: 9400
+zone: Amber Valley
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+hostile: false
+statpool: 24
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote stoops over a furrow, crumbles a fistful of dust between his
+    fingers, and lets it blow away with a curse too quiet to catch.'
+  - ''
+  - 'emote stares west across his thirsting fields toward the head-gate he
+    cannot reach, jaw working.'
+  - ''
+  - 'emote slaps the dry crust of his own forearm with the flat of his hand,
+    where the skin has cracked to ridges like a riverbed in drought.'
+  - ''
+activitylevel: 6
+character:
+  name: Marrow Fenn
+  description: |
+    Marrow works the eastern holding, the dryside, the low ground that has
+    always taken its water last and this year has scarcely taken any at all.
+    He is a wiry, sun-blackened man with a grievance he has polished to a fine
+    edge, and he will hand it to you whether you ask or not: Ayres upstream
+    has shut the head-gate and is bleeding the beck dry, and Marrow's barley
+    is curling brown in the field for it. His Blooming has the bitter look of
+    an omen, though he would strike you for saying so -- the skin of his
+    forearms and the backs of his hands has hardened and cracked into deep
+    ridged plates, grey-brown and fissured like cracked clay, like the very
+    drought has crept up into his body. He is not a cruel man, only a frightened
+    and a righteous one, and right now those amount to nearly the same thing.
+  speciesid: 1
+  level: 1
+  gold: 4
+  stats:
+    perception:
+      training: 2
+    strength:
+      training: 4

@@ -42,3 +42,6 @@ idlemessages:
   its lazy clonking.
 - A buzzard wheels high over the pasture, tilts, and slides off down the
   valley on the heat.
+spawninfo:
+  - mobid: 9394
+    respawnrate: "20 real minutes"

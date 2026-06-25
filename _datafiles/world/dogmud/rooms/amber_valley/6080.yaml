@@ -40,3 +40,6 @@ idlemessages:
 - Cold damp air moves across the back of your neck and is gone.
 - Something pale shifts against the wet wall, or seems to.
 - The hush down here has a weight to it, a pressure on the ears.
+spawninfo:
+  - mobid: 9408
+    respawnrate: "10 real minutes"

@@ -54,3 +54,6 @@ idlemessages:
 - The breeze passes clean through the open pavilion, stirring the rafter garlands.
 - A loose thread of dust turns slowly in a shaft of light over the dais.
 - Somewhere outside, the channel-water murmurs against stone.
+spawninfo:
+  - mobid: 9402
+    respawnrate: "20 real minutes"

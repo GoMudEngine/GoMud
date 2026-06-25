@@ -46,3 +46,6 @@ idlemessages:
 - A hide slaps wetly onto a drying frame.
 - Steam curls up off the hot madder-vat, sharp and red-smelling.
 - Someone wrings out a dyed cloth, and blue water patters on the stained ground.
+spawninfo:
+  - mobid: 9406
+    respawnrate: "20 real minutes"

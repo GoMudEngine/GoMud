@@ -40,3 +40,6 @@ idlemessages:
 - A shaving curls off some unseen blade and drifts to the floor.
 - The smell of warm beeswax thickens as the sun crosses the bench.
 - Somewhere a tool is set down, picked up, and set down again.
+spawninfo:
+  - mobid: 9399
+    respawnrate: "20 real minutes"

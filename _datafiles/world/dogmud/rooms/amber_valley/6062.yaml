@@ -41,3 +41,6 @@ idlemessages:
 - Dust turns slowly in a shaft of light from the front window.
 - The brass scale's pans tick gently as they settle.
 - A floorboard creaks somewhere among the shelves.
+spawninfo:
+  - mobid: 9398
+    respawnrate: "20 real minutes"

@@ -37,3 +37,6 @@ idlemessages:
 - Far below, sunlight glints off a thread of channel-water in the fields.
 - A cool breath drifts up out of the dark slot in the rock.
 - A hawk's thin cry carries up from somewhere out over the valley.
+spawninfo:
+  - mobid: 9407
+    respawnrate: "10 real minutes"

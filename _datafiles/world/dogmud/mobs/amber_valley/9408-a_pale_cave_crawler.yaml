@@ -1,0 +1,44 @@
+mobid: 9408
+zone: Amber Valley
+behavior_archetype: ambusher
+aiprofile: serpent
+archetype: fighting
+hostile: true
+statpool: 30
+itemdropchance: 20
+maxwander: 1
+groups:
+  - animal
+idlecommands:
+  - 'emote feels its way along the cold stone on too many legs, antennae
+    sweeping the dark in slow searching arcs.'
+  - ''
+  - 'emote freezes at a breath of warm air, body arching, every pale segment
+    tensing.'
+  - ''
+  - 'emote folds itself into a crevice until only the gleam of its feelers
+    shows.'
+  - ''
+activitylevel: 10
+character:
+  name: A Pale Cave-Crawler
+  description: |
+    A long, low, many-legged thing the colour of bone, bred in the lightless
+    crevices under the foothills and gone blind and bleached for it. It is
+    nearly as long as a man's leg, its flattened body a chain of overlapping
+    pale segments, and it navigates the dark by a pair of restless feelers and
+    a hunter's sense for the warmth of living blood. It does not fear what it
+    cannot see, only what it can feel, and a warm body moving through its
+    galleries reads to it as prey. It strikes by folding double and seizing
+    with the pincered first pair of legs; the grip is fierce but the creature
+    itself is brittle, and a solid blow tells on it quickly.
+  speciesid: 8
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 5
+    dexterity:
+      training: 5
+    vitality:
+      training: 5

@@ -46,3 +46,6 @@ idlemessages:
 - A pot-lid rattles over the hearth and a gust of barley-steam rolls across
   the room.
 - Out in the yard a horse stamps and blows, and the hitching rail creaks.
+spawninfo:
+  - mobid: 9395
+    respawnrate: "20 real minutes"

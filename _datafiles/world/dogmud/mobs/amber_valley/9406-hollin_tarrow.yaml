@@ -1,0 +1,42 @@
+mobid: 9406
+zone: Amber Valley
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+hostile: false
+statpool: 24
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote works a hide back and forth over the beam, hauling the fleshing
+    knife in long even strokes, sweat standing on his neck.'
+  - ''
+  - 'emote stoops over the reeking tan-pit and, instead of squinting, draws a
+    pale amber film sideways across each eye against the fumes.'
+  - ''
+  - 'emote rubs a thumb over a patch of his own forearm where the skin has
+    gone thick and supple as cured leather.'
+  - ''
+activitylevel: 6
+character:
+  name: Hollin Tarrow
+  description: |
+    Hollin is the valley's tanner, and his yard sits downwind of everything
+    for the obvious reason -- a place of stretched hides and stinking pits and
+    the deep animal reek that follows him faintly wherever he goes, though the
+    valley has long since forgiven him for it. He is big and patient and
+    splashed to the elbow, with a craftsman's pride in turning raw skin into
+    something soft and lasting. His own Blooming has fitted him to the work as
+    snug as a glove: a second eyelid, a pale amber membrane, slides sideways
+    across each eye to shield it from the lye-fumes and the splashes, and
+    patches of his own hide have toughened to something very near the leather
+    he makes, supple and proof against scald and scratch alike. He blinks the
+    inner lids at you slow and unbothered, and goes on with his scraping.
+  speciesid: 1
+  level: 1
+  gold: 7
+  stats:
+    perception:
+      training: 3
+    vitality:
+      training: 4

@@ -51,3 +51,6 @@ idlemessages:
 - A dipper clinks against the rim of the well-trough.
 - A vendor calls out the morning's price for apricots, then knocks it down for a child.
 - Somewhere a hand-drum keeps a loose, lazy rhythm.
+spawninfo:
+  - mobid: 9404
+    respawnrate: "20 real minutes"

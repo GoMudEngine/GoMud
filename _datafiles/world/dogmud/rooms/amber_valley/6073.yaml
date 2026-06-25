@@ -41,3 +41,6 @@ idlemessages:
 - Water chuckles cool and steady through the runnels between the beds.
 - A broad squash-leaf nods under the weight of its own shade.
 - Somewhere behind the thorn barricade, a dog growls low and settles again.
+spawninfo:
+  - mobid: 9401
+    respawnrate: "20 real minutes"

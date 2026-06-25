@@ -40,3 +40,6 @@ idlemessages:
 - The flowstone breathes cold against your hand where you steady yourself.
 - Far to the west, water laps once on stone, then nothing.
 - The stillness here is so complete your own pulse sounds loud.
+spawninfo:
+  - mobid: 9408
+    respawnrate: "10 real minutes"

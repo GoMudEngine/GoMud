@@ -1,0 +1,41 @@
+mobid: 9405
+zone: Amber Valley
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+hostile: false
+statpool: 24
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote draws a hardened fingertip down a length of leather like a stylus,
+    scoring a guide-line the eye can barely follow.'
+  - ''
+  - 'emote holds his hand up to the light and turns it, watching the horn of
+    his nails shift colour from honey to deep amber and back.'
+  - ''
+  - 'emote taps out a quick little rhythm on the bench-top with all ten
+    talon-tips, a sound like rain on a shingle roof.'
+  - ''
+activitylevel: 6
+character:
+  name: Ferris Dale
+  description: |
+    Ferris works the craft-lane, a finisher and a fixer who does the close
+    work others bring him -- inlay, fine-stitching, the scribing of patterns
+    too small for an ordinary hand. He is young and quick and a little vain,
+    with the showman's habit of letting you watch him work. His Blooming is
+    made for exactly his trade: his fingertips have hardened into smooth
+    pointed caps of horn, and his nails have grown to short curved talons that
+    shift colour in the light, honey to amber to near-black, like polished
+    tortoiseshell. He uses them as awl and stylus and burnisher all at once,
+    needing fewer tools than any man on the lane, and he is not shy about
+    flashing them when there's an audience to flash them at.
+  speciesid: 1
+  level: 1
+  gold: 9
+  stats:
+    perception:
+      training: 3
+    dexterity:
+      training: 4

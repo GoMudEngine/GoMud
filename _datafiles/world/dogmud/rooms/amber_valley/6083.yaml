@@ -41,3 +41,6 @@ idlemessages:
 - Crystal glints once in the cracked ore-pocket and is swallowed again.
 - Something heavy shifts in the blackness and goes still, listening.
 - A drip falls into the deep cold and the chamber holds its breath.
+spawninfo:
+  - mobid: 9409
+    respawnrate: "15 real minutes"

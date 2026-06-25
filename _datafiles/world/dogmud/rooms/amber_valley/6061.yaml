@@ -45,3 +45,6 @@ idlemessages:
 - Laughter rolls down the long table and someone thumps the wood for emphasis.
 - The serving-woman calls an order back toward the kitchen.
 - A draught of cider is drawn with a long woody glug from the cask in the corner.
+spawninfo:
+  - mobid: 9397
+    respawnrate: "20 real minutes"

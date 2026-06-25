@@ -1,0 +1,41 @@
+mobid: 9395
+zone: South Road
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+hostile: false
+statpool: 24
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote draws a jug from the cool-shelf, turns it once to read the level,
+    and sets it back exactly where it stood.'
+  - ''
+  - 'emote wipes down a trestle that was already clean, more for the rhythm
+    of it than the dirt.'
+  - ''
+  - 'emote tilts his head at the road outside, judging by the dust whether
+    the next traveller will want a bed or only the ladle.'
+  - ''
+activitylevel: 6
+character:
+  name: Bram Ostle
+  description: |
+    Bram keeps the Lake and Ladle, the last good roof before the road tips
+    down into the valley proper, and he keeps it the way a careful man keeps
+    a boat -- everything stowed, everything to hand. He is round through the
+    middle and easy in the face, with the publican's gift of making a
+    stranger feel expected. The skin of his hands and forearms has taken on
+    a faint pebbled sheen, and water will not wet it: pour a cup over his
+    knuckles and it beads and runs straight off, leaving him dry. It makes
+    him the envy of every washer in the dale and saves his sleeves besides.
+    He hears every rumour that comes up or down the road and forgets none of
+    them, though he will only share the ones he judges you can be trusted with.
+  speciesid: 1
+  level: 1
+  gold: 14
+  stats:
+    perception:
+      training: 3
+    charisma:
+      training: 4

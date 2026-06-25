@@ -45,3 +45,6 @@ idlemessages:
 - Deep in the well, water drips and the sound comes back doubled.
 - A ripe fig drops from the leaning tree and bursts soft on the stones.
 - A single drowsy fly circles and settles in the warm quiet.
+spawninfo:
+  - mobid: 9403
+    respawnrate: "20 real minutes"

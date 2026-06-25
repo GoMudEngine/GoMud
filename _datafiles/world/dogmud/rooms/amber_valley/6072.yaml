@@ -36,3 +36,6 @@ idlemessages:
 - A dry bean-leaf rattles loose and skitters across the cracked plot.
 - Somewhere a hen complains in the heat, low and aggrieved.
 - The wind off the dry fields smells of dust and disappointment.
+spawninfo:
+  - mobid: 9400
+    respawnrate: "20 real minutes"

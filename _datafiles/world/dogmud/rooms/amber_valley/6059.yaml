@@ -45,3 +45,6 @@ idlemessages:
 - A drawknife rasps, and a long pale curl of wood drops to the floor.
 - The potter's wheel hums round, steady as a heartbeat.
 - The cooper's mallet rings against an iron hoop, three quick strokes.
+spawninfo:
+  - mobid: 9405
+    respawnrate: "20 real minutes"

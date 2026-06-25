@@ -42,3 +42,6 @@ nouns:
 idlemessages:
 - A dry branch creaks overhead in the heat, though no wind moves it.
 - The far rumble of cartwheels rises briefly from the valley road and fades.
+spawninfo:
+  - mobid: 9396
+    respawnrate: "20 real minutes"

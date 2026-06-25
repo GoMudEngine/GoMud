@@ -36,3 +36,6 @@ idlemessages:
 - Heat shivers up off the bare stone in visible ribbons.
 - The hawk slides a long slow circle across the white sky.
 - A lizard flickers off a hot rock and is gone.
+spawninfo:
+  - mobid: 9407
+    respawnrate: "10 real minutes"
