@@ -1,0 +1,42 @@
+roomid: 6081
+zone: Amber Valley
+title: The Cave — Gallery
+description: >
+  The chamber above narrows and lets you out into a long hall of stone that runs
+  away into a dark deeper than any you have walked yet. Underfoot the rock is dry
+  and ribbed; you feel rather than see the great sheets of
+  <ansi fg="itemname">flowstone</ansi> that pour down the walls here, cool and
+  smooth and faintly rippled, like a frozen waterfall under your palm. The air is
+  utterly still and very old. Scattered along the gallery floor, your foot finds
+  the dry, light, hollow shapes of <ansi fg="itemname">old bones</ansi> — small
+  things that came down here once and did not climb back out. The dark thickens
+  to the west.
+biome: land
+coord: {x: -11, y: -40, z: -2}
+exits:
+  up: {roomid: 6080}
+  west: {roomid: 6082}
+nouns:
+  the flowstone: >
+    Down the walls of the gallery the dissolved stone has run and reset over ages
+    into smooth draperies and frozen cascades of rock, cool and glassy to the
+    touch, rippled like cloth caught mid-fall. In places it has built out into
+    blunt columns where a ceiling drip met a floor drip and, after some
+    unthinkable span of years, the two finally joined.
+  the old bones: >
+    Strewn down the gallery, dry and weightless and the colour of old ivory, lie
+    the bones of small creatures — a goat that fell down the throat, the delicate
+    cages of birds and bats, the curl of something snake-like. Nothing rots down
+    here; it only dries and waits. Whatever larger thing dens deeper in cracked
+    these clean and left them, and that is a thought to carry forward into the
+    dark.
+  the deeper dark: >
+    West, the gallery runs on and the last grey ghost of daylight finally,
+    wholly fails. From that direction comes a colder draught and the faint,
+    far-off lap of water on stone — and under it, now and then, a sound that is
+    not water and not echo, and that stops when you stop to listen.
+idlemessages:
+- A dry bone shifts and clicks somewhere down the dark gallery.
+- The flowstone breathes cold against your hand where you steady yourself.
+- Far to the west, water laps once on stone, then nothing.
+- The stillness here is so complete your own pulse sounds loud.

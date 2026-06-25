@@ -1,0 +1,41 @@
+roomid: 6084
+zone: Amber Valley
+title: The Old Aqueduct Stub
+description: >
+  The side path drops off the foothill rim and dead-ends here, in a dusty pocket
+  of dry scrub against the hillside, hot and still and going nowhere. The only
+  thing to find is the broken end of the old waterworks: a stub of the
+  <ansi fg="itemname">old aqueduct</ansi> juts from the bank, its channel
+  snapped clean off and long dry, the last of the highland water never reaching
+  this far. Tough, fragrant <ansi fg="itemname">rock-herbs</ansi> have colonised
+  the cracks where a little shade and old damp linger, and the air down here
+  smells of hot resin and dust. The path back up to the foothills runs north.
+biome: land
+coord: {x: -9, y: -40, z: 0}
+exits:
+  north: {roomid: 6075}
+nouns:
+  the old aqueduct: >
+    A broken length of the same fitted-stone channel that runs, blocked, up on
+    the heights — but this stub is its lowest, lost end, snapped off and tumbled
+    where some old slip carried the bank away. Bone-dry now, of course; the water
+    has not reached this far in a generation. A few of the squared blocks have
+    been carted off for somebody's wall, and the rest sit half-buried, slowly
+    going back to hillside. It is a quiet little monument to the same trouble
+    that dams the channel above.
+  the rock-herbs: >
+    Wherever the dry stone holds a thread of shade or a memory of damp, tough
+    little herbs have taken hold — silver thyme, a low spiky sage, a creeping
+    grey plant that smells sharply of resin when you crush it. The valley
+    foragers climb up here for them; they keep, they flavour, and a few of them
+    heal. Worth a careful gathering for anyone who knows what to look for.
+  the dead-end: >
+    The path simply gives out here against the foot of the hill, in a still hot
+    pocket where the scrub grows close and the wind cannot reach. It is the kind
+    of forgotten corner where the only traffic is goats and the occasional
+    forager, and where a dropped thing might lie undisturbed for years.
+idlemessages:
+- Heat ticks off the broken aqueduct stones in the dead still air.
+- The sharp resin smell of crushed rock-herb drifts up from underfoot.
+- A bee bumbles heavily among the grey scrub-flowers and moves on.
+- Dust hangs in the hot motionless air of the dead-end.

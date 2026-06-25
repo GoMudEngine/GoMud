@@ -1,0 +1,38 @@
+roomid: 6076
+zone: Amber Valley
+title: Dry Scrub Slope
+description: >
+  The rim widens here into a long slope of thornbrush and sun-cracked earth, the
+  kind of ground that grabs at your shins and gives back nothing but dust. Dry
+  <ansi fg="itemname">thornbrush</ansi> stands in stiff grey clumps, each one
+  ticking with insects, and the dirt between them has split into a crazed mosaic
+  of curling plates. The path forks: it runs back east toward the green, climbs
+  north toward an old stone channel cut into the higher ground, and the bare
+  ridge carries on west toward the valley's dry edge.
+biome: land
+coord: {x: -10, y: -39, z: 0}
+exits:
+  east: {roomid: 6075}
+  west: {roomid: 6077}
+  north: {roomid: 6078}
+nouns:
+  the thornbrush: >
+    Waist-high clumps of grey, thorned scrub, leafless and stiff, the survivors
+    of a country that gets too much sun and too little water. Sparrows and
+    lizards shelter in the deep tangles. Snagged on the spines here and there
+    are tufts of goat-hair and, once, a faded scrap of someone's sleeve — the
+    foothills take a small tax off everything that passes.
+  the cracked earth: >
+    Between the brush the bare dirt has dried and split into a mosaic of curling
+    clay plates, each edge lifted like an old scab. Nothing grows in it. In the
+    deeper cracks you can see how thin the soil is here — a finger's depth of
+    dust over the same pale bedrock that bones the whole rim.
+  the old stone channel: >
+    Up the slope to the north, half-buried in scrub, runs a straight cut line of
+    fitted stone — the upper reach of an irrigation channel, old work, that once
+    carried water down off the heights to the farms. From here you cannot tell
+    if it still runs. The path climbs north toward it.
+idlemessages:
+- A dry wind hisses through the thornbrush and dies.
+- Something small rustles deep in the grey scrub and goes still.
+- The cracked earth ticks and pops faintly as it bakes.

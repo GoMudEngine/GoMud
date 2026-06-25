@@ -1,0 +1,38 @@
+roomid: 6075
+zone: Amber Valley
+title: Foothill Path
+description: >
+  The green of the valley gives out behind you, and the land turns mean and
+  bright. Here the path leaves the tended fields for dry scrub, and the heat
+  comes up off the bare stone in a steady, buzzing shimmer; cicadas saw the air
+  to rags. The ground is all sun-cracked dirt and pale rubble, threaded by a
+  thin foot track that came up out of the lane to the east and runs on west
+  along the rim. Overhead a lone <ansi fg="itemname">hawk</ansi> wheels on the
+  rising heat, and a side path drops away south to some old broken stonework.
+biome: land
+coord: {x: -9, y: -39, z: 0}
+exits:
+  east: {roomid: 6071}
+  west: {roomid: 6076}
+  south: {roomid: 6084}
+nouns:
+  the hawk: >
+    A red-shouldered hawk rides the thermals coming off the hot foothills,
+    barely moving its wings, a dark deliberate cross against the white sky. It
+    is hunting the scrub-mice and lizards that live among the hot stones, and it
+    pays you no mind at all — just one more slow animal blundering across its
+    larder.
+  the hot stone: >
+    The path is laid over a spine of pale bedrock that the valley's soil never
+    managed to bury. By midmorning it is too hot to sit on. Heat-haze lifts off
+    it in visible ribbons, and tough silver-leaved scrub clings in every crack
+    where a little shade and a little dust have collected.
+  the foot track: >
+    A goat-beaten thread of a path, dust over stone, running east back down to
+    the valley lane and west along the dry rim of the country. It is the only
+    easy footing in a landscape that otherwise wants to turn an ankle.
+idlemessages:
+- Cicadas saw the hot air into a steady, droning rasp.
+- Heat shivers up off the bare stone in visible ribbons.
+- The hawk slides a long slow circle across the white sky.
+- A lizard flickers off a hot rock and is gone.

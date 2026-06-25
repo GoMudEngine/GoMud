@@ -1,0 +1,39 @@
+roomid: 6077
+zone: Amber Valley
+title: The Ridge Path
+description: >
+  This is the dry rim of the whole valley, and from here the land lays itself
+  out below you. The path runs along a stony spine where the wind never quite
+  stops, and behind and east the green <ansi fg="itemname">vista</ansi> of the
+  farms spreads soft and patchworked, hazed gold in the heat — orchard, field,
+  and the silver thread of the channels, everything Amber Valley grows. Forward
+  is only more dry country. Just below the path, where the ridge breaks away in
+  a tumble of pale rock, a dark <ansi fg="itemname">slot</ansi> gapes in the
+  stone, and the air that drifts up out of it is startlingly, wrongly cool.
+biome: land
+coord: {x: -11, y: -39, z: 0}
+exits:
+  east: {roomid: 6076}
+  south: {roomid: 6079}
+nouns:
+  the vista: >
+    From the ridge the valley opens below you in a single sweep — the dark crowns
+    of the orchards, the quilted greens and golds of the fields, the bright
+    stitching of the irrigation channels carrying the water down. From up here
+    you can see plainly how the whole green miracle depends on those thin silver
+    lines, and how the dry country presses in close on every side, waiting.
+  the slot: >
+    A jagged dark mouth in the rock below the path, half-screened by scrub, where
+    the ridge has cracked and one fissure runs back and down into the hill. Cool
+    air seeps out of it even at noon, carrying a mineral smell of wet stone and
+    something older underneath. The way down toward it leads south.
+  the wind: >
+    A steady dry wind combs along the spine of the ridge, never strong, never
+    still, smelling of hot rock and far-off rain that never seems to arrive. It
+    has worn the exposed stone into smooth pale humps and scoured every loose
+    grain of soil away into the scrub below.
+idlemessages:
+- The ridge wind worries at your collar and moves on.
+- Far below, sunlight glints off a thread of channel-water in the fields.
+- A cool breath drifts up out of the dark slot in the rock.
+- A hawk's thin cry carries up from somewhere out over the valley.
