@@ -1,0 +1,14 @@
+itemid: 40114
+name: Copy of Edvar's Map
+namesimple: map copy
+description: >-
+  A careful copy of Edvar's inland survey, made in Orin's own
+  hand and pressed on you for safe-keeping away from the cooperage. The
+  eight-pointed mark sits where the founding story insists nothing stood.
+  Orin's note in the margin reads: "The original is below, where the canal
+  meets the old quarter. Someone should know it is real."
+type: object
+subtype: mundane
+not_salable: true
+weight: 0.1
+value: 0

@@ -1,0 +1,14 @@
+itemid: 40119
+name: Tribute Ledger Page
+namesimple: ledger page
+description: >-
+  A single page lifted from a tally left in the Gilt Threshold's
+  parlor -- quarterly sums against vendor names, every column routed upward
+  to the same unnamed account, with a note in the margin: "hold until the
+  permit clears." It does not prove a crime. It proves where the money goes,
+  and that is its own kind of leverage.
+type: object
+subtype: mundane
+not_salable: true
+weight: 0.1
+value: 0

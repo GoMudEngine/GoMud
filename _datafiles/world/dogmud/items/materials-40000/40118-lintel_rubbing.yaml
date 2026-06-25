@@ -1,0 +1,14 @@
+itemid: 40118
+name: Lintel Rubbing
+namesimple: lintel rubbing
+description: >-
+  A large rubbing Gritta took for you from the underside of the
+  Buried Lintel: four concentric rings and eight points at equal intervals,
+  carved with a precision that required prior drawing, set at head height
+  for people meant to look up and read it as they passed beneath. It is the
+  original the gallery's oldest painting only copied.
+type: object
+subtype: mundane
+not_salable: true
+weight: 0.2
+value: 0

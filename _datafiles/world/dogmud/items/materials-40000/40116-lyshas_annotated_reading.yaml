@@ -1,0 +1,15 @@
+itemid: 40116
+name: Lysha's Annotated Reading
+namesimple: annotated reading
+description: >-
+  Keeper Lysha's working notes, matching the cipher rubbing to
+  the third panel of the gallery's oldest paintings. Her conclusion, in a
+  small even hand: the eight-pointed structure stands at a site inland of
+  the present docks, where the canal district meets the Old Quarter -- and
+  the panel was painted from observation, by someone who had seen it
+  standing.
+type: object
+subtype: mundane
+not_salable: true
+weight: 0.1
+value: 0
