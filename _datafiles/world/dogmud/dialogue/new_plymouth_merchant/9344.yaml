@@ -44,8 +44,8 @@ tree:
         their own carelessness, not my disclosure. Mind how you leave."
       hints: "Horst confirms the tribute funnels upward to unnamed parties and
         will show you nothing himself -- but he as good as points at the
-        parlor, where papers are left among the cup-rings. Look there for the
-        evidence Ostry needs."
+        parlor, where papers are left among the cup-rings. Examine the papers
+        there for the evidence Ostry needs."
       moodChange: cautious
 
     - id: house

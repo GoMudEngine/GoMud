@@ -47,8 +47,8 @@ tree:
         is not much time."
       hints: "Toby tends the cooperage alone and gave you a rubbing of the
         master's bench-mark. He says Edvar's hidden survey is under a loose
-        floorboard by the cot on the cooperage floor inside. Find it, then
-        take what you have to Orin."
+        floorboard by the cot on the cooperage floor inside. Examine the
+        floorboard to find it, then take what you have to Orin."
       moodChange: cautious
 
     - id: cooperage

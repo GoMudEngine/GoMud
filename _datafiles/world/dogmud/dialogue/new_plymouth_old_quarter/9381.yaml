@@ -28,7 +28,9 @@ tree:
       probably answer it better than I can. But ask."
     hints: "You could ask Gritta about the gray material she senses
       in the deep stone, about the pre-Founding symbol on the buried
-      lintels, or about where her finds go and who receives them."
+      lintels, or about where her finds go and who receives them. She
+      studies you the way someone does when they are deciding whether to
+      ask a stranger to witness something for themselves."
 
   nodes:
     - id: q70_start
@@ -48,7 +50,7 @@ tree:
         little chain should witness it and carry the proof to where it can
         be read."
       hints: "Gritta asked you to descend to the Buried Lintel, take a
-        rubbing of the eight-pointed symbol on its underside, and carry it
+        examine the eight-pointed symbol on its underside to take a rubbing, and carry it
         up to Orin the bookseller in the Crafting Quarter. Mind the canal
         water on the way. You could ask about the quest or the task."
       moodChange: cautious

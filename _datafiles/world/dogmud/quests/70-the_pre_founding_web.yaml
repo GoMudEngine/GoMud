@@ -15,8 +15,8 @@ steps:
       sealed Deep Canal with your own eyes, take a rubbing of the lintel
       symbol, and carry it up to Orin in the Crafting Quarter.
     hint: >-
-      Go west and deeper to the Buried Lintel. Take a rubbing of the
-      symbol carved on its underside. Mind the canal -- it is not empty.
+      Go west and deeper to the Buried Lintel. Examine the symbol carved
+      on its underside to take a rubbing. Mind the canal -- it is not empty.
   - id: witness
     description: >-
       You stood beneath the Buried Lintel and took a rubbing of the
