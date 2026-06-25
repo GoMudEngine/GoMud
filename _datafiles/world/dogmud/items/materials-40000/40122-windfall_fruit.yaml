@@ -1,0 +1,15 @@
+itemid: 40122
+name: Windfall Fruit
+namesimple: fruit
+description: A double handful of fallen orchard fruit -- bruised on one
+  side and perfectly sweet on the other, the kind the trees give up to
+  anyone who stoops to gather it.
+type: object
+subtype: mundane
+component_tag: windfall-fruit
+weight: 0.3
+value: 4
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking
