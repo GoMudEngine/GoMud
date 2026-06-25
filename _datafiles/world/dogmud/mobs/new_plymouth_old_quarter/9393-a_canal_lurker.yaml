@@ -1,0 +1,44 @@
+mobid: 9393
+zone: New Plymouth Old Quarter
+behavior_archetype: ambusher
+aiprofile: serpent
+archetype: fighting
+hostile: true
+statpool: 30
+itemdropchance: 20
+maxwander: 1
+groups:
+  - animal
+  - aquatic
+activitylevel: 10
+idlecommands:
+  - 'emote breaks the black water with a slow ripple and is gone again before
+    the eye can fix it.'
+  - ''
+  - 'emote drags a pale, segmented length across the canal stone and tastes
+    the air with something that is not quite a tongue.'
+  - ''
+  - 'emote settles below the flood line, only the wet gleam of its back
+    showing in the lamplight.'
+character:
+  name: A Canal Lurker
+  description: |
+    A pale, eyeless thing the length of a man's arm, bred by generations of
+    lightless water into something between an eel and a crayfish -- a
+    segmented body, too many short legs folded along its underside, and a
+    blunt head that hunts by pressure and smell. It has never needed sight
+    and has lost it. It lies along the flood line where the canal narrows,
+    and it does not flee warm movement; it closes on it. The bite is not
+    venomous. It is simply strong, and the thing is not afraid of you.
+  speciesid: 8
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 6
+    dexterity:
+      training: 6
+    vitality:
+      training: 5
+    perception:
+      training: 4

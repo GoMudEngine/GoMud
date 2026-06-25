@@ -37,6 +37,43 @@ tree:
       no one in authority seems willing to listen to him."
 
   nodes:
+    - id: q69_start
+      triggers: ["quest", "task", "cipher", "rubbing", "reliefs", "help",
+                 "prove", "do"]
+      questExcluded: ["69-start", "69-end"]
+      grantsQuest: "69-start"
+      text: "You will listen? Good -- most do not. The eastern inscription
+        is older than the founding it supposedly records; I have the
+        oxidation data and the stone comparison. And the processional
+        reliefs in the nave encode the real date in the hand positions of
+        the figures. I cannot prove the full sequence without the key, and
+        the key is a set of relief fragments in the Noble Quarter gallery --
+        where my formal inquiry has gone unanswered for a year. But you are
+        not a formal inquiry. Make me a rubbing of those reliefs, in the
+        sanctuary nave, and bring it here. That is where it starts."
+      hints: "Scholar Dross wants a rubbing of the processional reliefs in
+        the Grand Temple sanctuary nave. Make the rubbing there, then bring
+        it back to him in the courtyard. You could ask about the quest, the
+        cipher, or the reliefs."
+
+    - id: q69_gallery
+      triggers: ["rubbing", "cipher", "read", "gallery", "key", "next",
+                 "lysha", "panel", "fragments", "quest", "task"]
+      questRequired: ["69-rubbing"]
+      questExcluded: ["69-gallery", "69-end"]
+      grantsQuest: "69-gallery"
+      text: "Yes -- yes, this is the sequence, but it runs past what I can
+        anchor without the gallery's fragments to fix the zero point. Go to
+        the Noble Quarter gallery. There is a guide there, Ferrol, who will
+        walk you past the portraits and call the older panels decorative.
+        They are not. Get past him to the keeper -- her name is Lysha -- and
+        ask her, in those words, about the third panel from the left. She
+        will know what you mean."
+      hints: "Dross read part of the cipher but needs the gallery's key. Go
+        to the Noble Quarter art gallery, get past the guide Ferrol to Keeper
+        Lysha, and ask her about the third panel from the left."
+      moodChange: friendly
+
     - id: inscriptions
       triggers: ["inscription", "inscribe", "age", "date", "stone",
                  "wall", "oxidation", "mortar", "evidence", "proof",

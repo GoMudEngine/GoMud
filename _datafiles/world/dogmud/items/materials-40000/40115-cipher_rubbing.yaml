@@ -1,0 +1,13 @@
+itemid: 40115
+name: Cipher Rubbing
+namesimple: cipher rubbing
+description: A rubbing taken from the processional relief figures in the
+  Grand Temple nave -- old work, older than the plaque it is meant to
+  illustrate. The hand positions of the figures are not devotional. Read in
+  sequence they are a numeric cipher, and Scholar Dross believes the number
+  is a date.
+type: object
+subtype: mundane
+not_salable: true
+weight: 0.1
+value: 0

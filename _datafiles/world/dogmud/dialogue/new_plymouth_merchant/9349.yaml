@@ -32,6 +32,66 @@ tree:
       covers, or about who the office ultimately serves."
 
   nodes:
+    - id: q68_vell_report
+      triggers: ["cooperage", "edvar", "survey", "report", "derelict",
+                 "map", "deliver", "give", "circle"]
+      questRequired: ["68-choice"]
+      questExcluded: ["68-end"]
+      text: "You have something pertaining to the cooperage filing? Then it is
+        no longer idle talk -- it is a document. Hand it across the desk and I
+        will examine it. The office is attentive to citizens who assist it."
+      hints: "Clerk Vell will take Edvar's map-fragment if you choose to side
+        with the bloodline. Give the map-fragment to Vell to report the
+        circle."
+
+    - id: q68_vell_dismiss
+      triggers: ["cooperage", "circle", "orin", "edvar", "survey",
+                 "derelict"]
+      questExcluded: ["68-choice", "68-end"]
+      text: "The cooperage on the craft streets? It is a derelict-property
+        matter, filed and pending. I do not discuss filings with the public,
+        and I would not know what a survey or a circle has to do with a
+        question of occupancy. If you have business at this office, state the
+        form you need."
+      hints: "Clerk Vell will not discuss the cooperage filing with someone
+        who has no standing in it."
+
+    - id: q71_vell
+      triggers: ["quest", "task", "tribute", "charter", "audit", "ostry",
+                 "deposit", "rate", "appeal", "pays"]
+      questRequired: ["71-start"]
+      questExcluded: ["71-vell", "71-end"]
+      grantsQuest: "71-vell"
+      text: "The tribute rate is set by charter and is not a subject I
+        negotiate. It is a legal obligation, not a preference, and I apply it
+        uniformly. What it pays for is not a question this office answers; the
+        charter was granted by the governing authority and the governing
+        authority is its own justification. As for Dame Ostry's audit -- a
+        filing is pending and will resolve when it resolves. If you want to
+        know where the obligation leads above this desk, that is not a door I
+        open. The Gilt Threshold keeps its own gate, and a man named Horst
+        keeps that."
+      hints: "Vell will say only that the rate is set by charter -- and the
+        charter rests on the founding. The tribute runs upward, past the
+        clerk, to the Gilt Threshold gate and a man named Horst. Go there."
+      moodChange: cautious
+
+    - id: q71_vell_charter_aside
+      triggers: ["charter", "founding", "date", "false", "wrong", "cipher",
+                 "lintel"]
+      questRequired: ["71-vell", "69-end"]
+      text: "You say the founding date is wrong as though it were a small
+        thing. If it were true it would not be small at all -- the charter,
+        the courts, this office, all of it derives from the founding and its
+        date. But I process filings; I do not adjudicate the foundations of
+        the state, and I would advise you not to say that sentence aloud in
+        the wrong room. The obligation still runs upward. The gate is still
+        Horst's."
+      hints: "Knowing what you know about the founding, Vell's certainty reads
+        differently -- and he half-admits it. Either way the trail leads up to
+        Horst at the Gilt Threshold gate."
+      moodChange: cautious
+
     - id: permits
       triggers: ["permit", "license", "application", "process", "queue",
                  "paper", "form", "register", "registration", "filing",

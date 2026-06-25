@@ -1,0 +1,14 @@
+itemid: 40112
+name: Bench-Mark Rubbing
+namesimple: rubbing
+description: A sheet of thin paper pressed and charcoal-rubbed over a
+  worked-bench inscription -- the name "Asha" above the words "Master
+  Stave-Hand," and beneath them a second line scratched out before it
+  could be finished. The tools it was taken from are clean and freshly
+  oiled. Someone is still keeping that cooperage, whatever the shuttered
+  door says.
+type: object
+subtype: mundane
+not_salable: true
+weight: 0.1
+value: 0

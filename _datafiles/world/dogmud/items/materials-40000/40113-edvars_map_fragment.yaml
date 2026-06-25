@@ -1,0 +1,14 @@
+itemid: 40113
+name: Edvar's Map-Fragment
+namesimple: map-fragment
+description: A torn quarter of a hand-drawn survey, far older and far more
+  exact than any city map sold openly. It charts ground inland of the
+  current docks and marks one structure with an eight-pointed figure --
+  four concentric rings, eight points at equal intervals -- where the
+  official record shows only empty founding ground. The cartographer Edvar
+  drew it. Edvar is no longer here.
+type: object
+subtype: mundane
+not_salable: true
+weight: 0.1
+value: 0

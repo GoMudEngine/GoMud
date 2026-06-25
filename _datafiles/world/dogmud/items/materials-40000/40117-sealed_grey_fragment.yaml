@@ -1,0 +1,13 @@
+itemid: 40117
+name: Sealed Grey Fragment
+namesimple: grey fragment
+description: A shard of the oldest, greyest stone, wrapped and sealed by
+  Coll the sweeper to carry down to Gritta in the flooded quarter. It is
+  smooth and unscratched and oddly heavy, and it holds a kind of pressure,
+  as though the material is keeping a shape it was forced into a very long
+  time ago and has not fully accepted.
+type: object
+subtype: mundane
+not_salable: true
+weight: 0.4
+value: 0

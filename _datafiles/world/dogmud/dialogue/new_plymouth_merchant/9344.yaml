@@ -28,6 +28,26 @@ tree:
       visitors he receives at the gate."
 
   nodes:
+    - id: q71_horst
+      triggers: ["quest", "task", "tribute", "ostry", "vell", "money",
+                 "where", "arrangement", "parlor", "charter", "evidence"]
+      questRequired: ["71-vell"]
+      questExcluded: ["71-horst", "71-end"]
+      grantsQuest: "71-horst"
+      text: "You came up the chain politely, so I will be brief in return. I
+        facilitate meetings. Money, like people, comes to the gate first, and
+        I assess whether passing it along serves everyone's interests, and
+        then it passes -- upward, to parties who value discretion above almost
+        everything. That is the arrangement, and the arrangement is why the
+        city runs. I will not name the account and I will not show you the
+        books. What is left lying in the parlor when men talk over a cup is
+        their own carelessness, not my disclosure. Mind how you leave."
+      hints: "Horst confirms the tribute funnels upward to unnamed parties and
+        will show you nothing himself -- but he as good as points at the
+        parlor, where papers are left among the cup-rings. Look there for the
+        evidence Ostry needs."
+      moodChange: cautious
+
     - id: house
       triggers: ["house", "gate", "building", "inside", "enter",
                  "door", "private", "property", "place", "guarding",

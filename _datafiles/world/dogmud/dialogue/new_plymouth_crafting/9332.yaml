@@ -31,6 +31,43 @@ tree:
       shuttered, or about the old questions this district raises."
 
   nodes:
+    - id: q68_start
+      triggers: ["quest", "task", "cooperage", "circle", "help", "join",
+                 "do"]
+      questExcluded: ["68-start", "68-end"]
+      grantsQuest: "68-start"
+      text: "You keep asking the kind of question that closed the cooperage.
+        I will not pretend I have no answer -- but I do not hand answers to
+        strangers. There is a shuttered cooper's shop north of the square,
+        shut by order years ago. Someone still tends the tools inside. Go and
+        see for yourself, and find the lad, Toby. Bring me proof the place is
+        still kept, and we will talk about what you are really asking."
+      hints: "Orin will not say more until you prove you can be trusted. He
+        wants you to visit the shuttered cooperage north of Craftwell Square,
+        find Toby, and bring back proof someone still keeps the place. You
+        could ask about the quest or the task."
+
+    - id: q68_choice
+      triggers: ["report", "back", "proof", "toby", "rubbing", "map",
+                 "decide", "choice", "seize", "vell", "circle", "quest",
+                 "task"]
+      questRequired: ["68-evidence"]
+      questExcluded: ["68-choice", "68-end"]
+      grantsQuest: "68-choice"
+      text: "So it is true -- the tools are kept, the mark is clean, the
+        circle did not all leave. Then you know what we are. We keep what the
+        founding story leaves out, and we pay for it quietly. Clerk Vell has
+        filed to take the cooperage as derelict; the inspection is days away.
+        You can help me hold it -- re-cut the guild-mark over the door so it
+        reads as a working shop, and I will move Edvar's survey somewhere
+        safe. Or you can take what you found to Vell, and be paid for it.
+        That is a real choice, and it is yours."
+      hints: "Orin lays out the choice. To aid the circle, return to the
+        cooperage and re-cut the guild-mark over its door. To side with the
+        bloodline, take Edvar's map-fragment to Clerk Vell in the Merchant
+        Quarter permit office. Decide for yourself."
+      moodChange: cautious
+
     - id: books
       triggers: ["book", "map", "sell", "carry", "have", "buy",
                  "what", "stock", "read", "history", "theology",

@@ -30,6 +30,25 @@ tree:
       moves from the docks to her shop, or about the third arm."
 
   nodes:
+    - id: q71_start
+      triggers: ["quest", "task", "tribute", "audit", "permit", "deposit",
+                 "vell", "squeeze", "help", "tax", "do"]
+      questExcluded: ["71-start", "71-end"]
+      grantsQuest: "71-start"
+      text: "You want honest work or honest talk? Take talk, it is cheaper.
+        I pay the tribute like everyone -- a cut of gross, every quarter, to
+        the bloodline through Vell's office. Fine. But now there is an audit
+        on my books and my surety deposit is held, and between the two I am
+        bleeding for no reason anyone will put in writing. I am too practical
+        to rage at it. What I want is to understand it. Go and ask Vell what
+        the tribute actually pays for, and whether there is any floor under
+        it at all. Start there. See how far it goes."
+      hints: "Dame Ostry is squeezed by an audit and a held deposit on top of
+        the quarterly tribute. She wants you to ask Clerk Vell, at the Civic
+        Permit Office, what the tribute pays for and whether it can be
+        appealed. You could ask about the quest or the tribute."
+      moodChange: neutral
+
     - id: blades
       triggers: ["blade", "sword", "weapon", "steel", "iron", "dagger",
                  "longsword", "ingot", "stock", "sell", "buy", "wares",

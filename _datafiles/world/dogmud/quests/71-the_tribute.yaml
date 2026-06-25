@@ -1,0 +1,115 @@
+questid: 71
+name: The Tribute
+description: >-
+  Dame Ostry pays the bloodline's quarterly tribute like every vendor in
+  the city, but an audit and a held deposit are bleeding her. She wants to
+  know what the tribute is for, and whether there is any floor under it at
+  all. The answer runs from a permit clerk's desk to a private gate no one
+  argues with.
+secret: false
+
+steps:
+  - id: start
+    description: >-
+      Dame Ostry is squeezed by Clerk Vell's audit and a held surety
+      deposit. She asked you to find out what the tribute pays for and
+      whether it can be appealed.
+    hint: >-
+      Ask Clerk Vell at the Civic Permit Office about the tribute and the
+      audit on Ostry's shop.
+  - id: vell
+    description: >-
+      Vell says the rate is set by charter and is not negotiable. The
+      charter derives from the founding -- and you may know more about the
+      founding than Vell does.
+    hint: >-
+      The tribute runs upward, past the clerk. Get to Horst at the Gilt
+      Threshold gate and learn where it goes.
+  - id: horst
+    description: >-
+      Horst gatekeeps the bloodline's private business and told you, in so
+      many words, that the tribute funnels up and discretion is the whole
+      arrangement. Papers were left in the parlor.
+    hint: >-
+      Look for evidence in the Gilt Threshold parlor of where the tribute
+      goes.
+  - id: ledger
+    description: >-
+      You lifted a page of the tribute ledger -- vendor sums all routed to
+      one unnamed account, with a note to hold filings until permits clear.
+      It does not prove a crime. It proves leverage.
+    hint: >-
+      Take the ledger page back to Dame Ostry.
+  - id: end
+    description: >-
+      Ostry cannot break the bloodline, and neither can you. But with the
+      ledger page and a quiet word, her deposit is released and her permit
+      clears. One merchant breathes. The arrangement goes on.
+
+rewards:
+  gold: 110
+  rep_faction: np_dockfolk
+  rep_amount: 10
+  itemid: 40120
+  playermessage: >-
+    Ostry reads the page once, folds it, and puts it somewhere you do not
+    see. "I cannot fight them with this," she says, "and I am not fool
+    enough to try. But I can let the right person know I have it, and
+    tomorrow my deposit comes back and my permit clears, and nobody says
+    why. That is how it works down here." She presses a blade into your
+    hands before you can decline it. "You will get more use from it than
+    from my thanks."
+  roommessage: >-
+    Dame Ostry clasps the traveller's forearm once, hard and brief, the
+    nearest thing she has to ceremony.
+
+triggers:
+  # LEDGER: lift the tribute ledger page in the Gilt Threshold parlor (5815)
+  - event: room_interact
+    room: 5815
+    noun: paper-scrap
+    conditions:
+      has: ["71-horst"]
+      missing: ["71-ledger"]
+    actions:
+      - grant: "71-ledger"
+      - give_item: 40119
+      - send_text: >-
+          The torn scrap on the floor reads "before the permit clears" --
+          and the page it tore from is still on the table among the
+          cup-rings, slid half under a ledger-board. You take it: a column
+          of quarterly sums against vendor names, every figure routed up to
+          one unnamed account. It does not prove a crime. It proves exactly
+          where the money goes, and who waits on whom.
+      - room_text: "palms a page from the table among the cup-rings."
+
+  # paper-scrap, before reaching Horst
+  - event: room_interact
+    room: 5815
+    noun: paper-scrap
+    conditions:
+      missing: ["71-horst"]
+    actions:
+      - send_text: >-
+          A torn scrap on the floor carries four words -- "before the permit
+          clears" -- in a careful hand. There is more to it somewhere, but
+          lifting papers from this room uninvited, before you know whose they
+          are, is the kind of mistake the Gilt Threshold is built to punish.
+
+  # REPORT: give the ledger page to Ostry (9347) -> grant 71-end directly
+  - event: item_give
+    mob: 9347
+    item: 40119
+    conditions:
+      has: ["71-ledger"]
+      missing: ["71-end"]
+    actions:
+      - grant: "71-end"
+
+  # bonus: cooperage rep if the player has already proven the false founding (Q69)
+  - event: quest_granted
+    quest_token: "71-end"
+    conditions:
+      has: ["69-end"]
+    actions:
+      - bump_rep: {faction: cooperage_circle, delta: 5}
