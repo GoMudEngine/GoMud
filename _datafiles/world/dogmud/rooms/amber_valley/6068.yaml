@@ -1,0 +1,45 @@
+roomid: 6068
+zone: Amber Valley
+title: The Irrigation Head-Gate
+description: >
+  Water talks here — a steady, important rushing, channelled and close. The
+  valley's main irrigation channel comes down out of the hills in a stone-lined
+  cut and reaches a fork at your feet, where one course bends east and another
+  west to feed two different farms. The whole quarrel of the lower valley turns
+  on the timber sluice planted in the splitting-stone: the
+  <ansi fg="itemname">head-gate</ansi>. Tracks beat hard into the dirt come at
+  this spot from every side, and not all of them were made walking calmly.
+biome: land
+coord: {x: -8, y: -36, z: 0}
+exits:
+  north: {roomid: 6067}
+  south: {roomid: 6069}
+  east: {roomid: 6072}
+  west: {roomid: 6073}
+nouns:
+  the head-gate: >
+    A heavy board sluice set into the channel's stone lip, raised or dropped on
+    a wooden screw to send the water east or west. Right now it sits jammed
+    hard over to the western course — the eastern channel below it runs to a
+    sad trickle, then to wet mud, then to nothing. Someone has wedged a stone
+    behind the screw so the board cannot be lifted, and someone else has
+    plainly been trying to lever it free. Whoever holds this board holds the
+    lower valley's thirst in their fist.
+  the channel: >
+    A stone-lined cut bringing the high snowmelt down clean and cold. Above the
+    fork it runs brim-full and fast. Below the fork, only the western branch
+    carries water; the eastern lies dry, its bed cracking pale in the sun. The
+    line between green and dust is drawn right here, by a single board.
+  the splitting-stone: >
+    A great squared block set where the channel forks, its top scored with old
+    measuring-marks for dividing the flow fairly between the two farms. The
+    marks have been crossed out and recut more than once, in different hands.
+    The arithmetic of water is never settled for long.
+  the tracks: >
+    Footprints and cart-ruts beaten into the bank from east, west, and north,
+    overlapping and churned. Some come and go at a walk. A few sets arrive
+    fast, dig in hard at the gate, and leave faster.
+idlemessages:
+- Water hisses down the western branch; the eastern bed only cracks wider.
+- The wind carries a snatch of shouting from one of the farms, then drops it.
+- The jammed screw of the head-gate creaks once under the water's push.

@@ -1,0 +1,35 @@
+roomid: 6065
+zone: Amber Valley
+title: Orchard Lane
+description: >
+  The hum hits you first: the drowsy, two-toned drone of the whole valley
+  working, bees and flies and far-off voices all blurred into one warm sound.
+  The lane runs south out of town between trees so heavy with fruit their
+  branches are propped on forked stakes, and the ground is bruised and sticky
+  with windfall nobody has gathered yet. Wasps stagger drunk across the fallen
+  apples. A weathered <ansi fg="itemname">orchard ladder</ansi> leans against
+  the nearest trunk, left mid-pick.
+biome: land
+coord: {x: -8, y: -33, z: 0}
+exits:
+  north: {roomid: 6060}
+  south: {roomid: 6066}
+nouns:
+  the orchard ladder: >
+    A tall three-legged picking ladder, narrowing to a point so it can be set
+    in among the branches. The rungs are worn pale and smooth by generations of
+    bare feet. A half-filled basket still hangs from a hook on its side, as
+    though the picker stepped away only a moment ago and never came back.
+  the fallen fruit: >
+    Apples, mostly, and a scatter of early pears, lying thick in the grass and
+    going soft. The smell of them is enormous: sweet, sharp, faintly winey
+    where the wasps have been at the splits. A thrifty town would have pressed
+    these for cider. Amber Valley simply has more than it can use.
+  the trees: >
+    Old grafted stock, their trunks gnarled and lichened, their crowns so
+    freighted with fruit that every limb is shored up on a forked prop. Someone
+    has tended these with patience measured in decades, not seasons.
+idlemessages:
+- A ripe apple lets go of its branch and thumps softly into the grass.
+- The drone of the working valley rises and falls like slow breathing.
+- A wasp blunders past your ear, heavy and unhurried.

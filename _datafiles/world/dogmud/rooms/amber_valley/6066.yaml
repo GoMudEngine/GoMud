@@ -1,0 +1,42 @@
+roomid: 6066
+zone: Amber Valley
+title: The Woodworker's House
+description: >
+  Curls of fresh shaving lie ankle-deep across the floor, and the air is all
+  resin and beeswax and the clean bite of cut pear-wood. A low house and its
+  open-fronted workshop share one roof here, the bench under the window catching
+  the best of the light. Finished things crowd every shelf: spoons, bowls,
+  toys, a cradle. But a second stool stands at the far end of the bench, swept
+  clean and untouched, its <ansi fg="itemname">child's stool</ansi> facing
+  tools no hand has lifted in a long while.
+biome: land
+coord: {x: -8, y: -34, z: 0}
+exits:
+  north: {roomid: 6065}
+  south: {roomid: 6067}
+nouns:
+  the child's stool: >
+    A small carved stool, lower than the other, worn smooth on the seat by a
+    boy who once sat there learning the grain. The chisels racked above it are
+    sized for younger hands. They have been oiled and put away with great care,
+    and not a one of them has been moved in months. A father keeps a place set
+    even when no one comes to fill it.
+  the workbench: >
+    A massive slab of seasoned oak, scarred by a lifetime of clamps and gouges,
+    its surface burnished to a soft shine where forearms have rested. Vises at
+    both ends, a tray of half-finished spoons, a single cup gone cold. Whoever
+    works here works alone now, and works longer than he needs to.
+  the finished work: >
+    Spoons and bowls and bright-painted toys crowd every shelf, more than this
+    quiet house could ever sell. Among them sit things made for no buyer: a
+    string of carved animals, a little wooden cart. Gifts, maybe, that were
+    never given.
+  the carvings: >
+    Along the lintel runs a frieze of leaping figures mid-change, half-beast
+    half-man — the Chrysalis Rite rendered joyful in pear-wood. The valley
+    celebrates the turning. The hand that cut these clearly believed in it,
+    once, with his whole heart.
+idlemessages:
+- A shaving curls off some unseen blade and drifts to the floor.
+- The smell of warm beeswax thickens as the sun crosses the bench.
+- Somewhere a tool is set down, picked up, and set down again.

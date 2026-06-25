@@ -1,0 +1,43 @@
+roomid: 6073
+zone: Amber Valley
+title: Farmer B's Holding
+description: >
+  Cool, green, and quietly defensive — the difference is almost an insult after
+  the dust to the east. This is the upstream holding, the one the channel
+  reaches first, and it shows: lush rows of greens, fat-leaved squash sprawling
+  over black damp earth, an orchard corner heavy and shining. Little runnels of
+  water thread the beds, fed straight off the western branch. Yet the place
+  doesn't feel easy. A makeshift <ansi fg="itemname">barricade</ansi> of stakes
+  and thorn guards the path back toward the head-gate, and the
+  <ansi fg="itemname">water share-board</ansi> nailed to the well-house has been
+  reworked to argue a point.
+biome: land
+coord: {x: -9, y: -36, z: 0}
+exits:
+  east: {roomid: 6068}
+nouns:
+  the water share-board: >
+    A planed board nailed up by the well-house, ruled into columns: a record of
+    how the channel's flow is meant to be split between the two farms. The old
+    even division has been crossed through and rewritten in a firm hand to claim
+    the larger share for this holding — with a long marginal note about
+    upstream rights, ancestral grants, and "what was agreed." It reads less like
+    a ledger than a defence brief, written by someone who expects to be accused.
+  the barricade: >
+    A rough breastwork of driven stakes and piled thornbrush blocking easy
+    approach from the east, toward the head-gate. It is new, and it is meant to
+    be seen. The farmer here clearly expects the dryside neighbour to come for
+    the gate, and means to make the coming difficult.
+  the runnels: >
+    Shallow channels cut to carry the western branch's water in among the beds,
+    chuckling cool and steady. This land drinks its fill and more. Stand here
+    and you can hear, faintly, the same water that the eastern fields are dying
+    without.
+  the green rows: >
+    Greens, squash, beans, all of it thriving — the same crops that wilt and die
+    a stone's throw east, here glossy and fat with water. Nothing about the soil
+    or the sun is different between the two farms. Only the gate is different.
+idlemessages:
+- Water chuckles cool and steady through the runnels between the beds.
+- A broad squash-leaf nods under the weight of its own shade.
+- Somewhere behind the thorn barricade, a dog growls low and settles again.

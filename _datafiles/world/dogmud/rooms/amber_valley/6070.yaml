@@ -1,0 +1,37 @@
+roomid: 6070
+zone: Amber Valley
+title: The Dryside Track
+description: >
+  The change underfoot is sudden enough to feel: green turf gives way to a
+  gritty crunch, and the cool of the orchard drops behind you into a flat dry
+  glare. This is where the water stops reaching. The trees thin and dwindle to
+  scrub, the grass yellows to straw, and the track ahead runs pale with dust
+  that lifts at every step and hangs in the still air. A line of
+  <ansi fg="itemname">thirsty fields</ansi> stretches off to either side,
+  cracked and waiting on a rain that keeps not coming.
+biome: land
+coord: {x: -8, y: -38, z: 0}
+exits:
+  north: {roomid: 6069}
+  south: {roomid: 6071}
+nouns:
+  the thirsty fields: >
+    Smallholdings that should be green and aren't: bean-rows wilting to
+    grey-brown, a patch of stunted barley gone to early straw, the soil between
+    cracked into a crazed mosaic you could lose a coin down. These farms sit
+    below the head-gate's eastern branch — the branch that runs dry. Their owners
+    watch the western farms stay lush and say little, loudly.
+  the dust: >
+    Fine pale grit that the orchard's shade had been keeping at bay. It films
+    your boots, your lips, the back of your throat, and lifts in a little ghost
+    at every footfall. You can taste the difference between watered land and
+    this: one is sweet, the other is chalk.
+  the scrub: >
+    Hardy grey-green stuff that has given up on the orchard's generosity —
+    thistle, dry broom, a few wind-stunted thorns. It marks the boundary of
+    what the channel can still keep alive, and the boundary keeps creeping
+    north.
+idlemessages:
+- A dry gust lifts a curl of dust off the track and lets it sift back down.
+- Heat shimmers over the cracked fields, bending the far fence-line.
+- A grasshopper rattles up out of the straw and is gone.
