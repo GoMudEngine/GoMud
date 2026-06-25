@@ -52,8 +52,9 @@ tree:
         not a formal inquiry. Make me a rubbing of those reliefs, in the
         sanctuary nave, and bring it here. That is where it starts."
       hints: "Scholar Dross wants a rubbing of the processional reliefs in
-        the Grand Temple sanctuary nave. Make the rubbing there, then bring
-        it back to him in the courtyard. You could ask about the quest, the
+        the Grand Temple sanctuary nave. Examine the reliefs there to take a
+        rubbing, then bring it back to him in the courtyard. You could ask
+        about the quest, the
         cipher, or the reliefs."
 
     - id: q69_gallery

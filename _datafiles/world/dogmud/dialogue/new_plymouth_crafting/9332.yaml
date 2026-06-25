@@ -28,7 +28,9 @@ tree:
       of the city keeps producing."
     hints: "You could ask Orin about the books and maps he carries,
       about a cartographer named Edvar whose shop next door stands
-      shuttered, or about the old questions this district raises."
+      shuttered, or about the old questions this district raises. He keeps
+      glancing up the lane toward the shuttered cooperage as he talks, as
+      though weighing whether to trust you with it."
 
   nodes:
     - id: q68_start
@@ -63,7 +65,7 @@ tree:
         safe. Or you can take what you found to Vell, and be paid for it.
         That is a real choice, and it is yours."
       hints: "Orin lays out the choice. To aid the circle, return to the
-        cooperage and re-cut the guild-mark over its door. To side with the
+        cooperage and examine the old guild-mark over its door. To side with the
         bloodline, take Edvar's map-fragment to Clerk Vell in the Merchant
         Quarter permit office. Decide for yourself."
       moodChange: cautious

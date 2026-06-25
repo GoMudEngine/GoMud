@@ -29,15 +29,15 @@ steps:
       would seize the place to bury. Clerk Vell has filed to take the
       cooperage as derelict.
     hint: >-
-      Find Edvar's map-fragment under the loose floorboard on the cooperage
-      floor, then take what you have back to Orin.
+      Examine the loose floorboard on the cooperage floor to find Edvar's
+      map-fragment, then take what you have back to Orin.
   - id: choice
     description: >-
       Orin laid out the choice: help the circle hold the cooperage, or take
       Edvar's survey to Clerk Vell and be paid for it.
     hint: >-
-      To aid the circle, re-cut the guild-mark over the cooperage door. To
-      side with the bloodline, give Edvar's map-fragment to Clerk Vell in
+      To aid the circle, examine the old guild-mark over the cooperage door.
+      To side with the bloodline, give Edvar's map-fragment to Clerk Vell in
       the Merchant Quarter permit office.
   - id: end
     description: >-

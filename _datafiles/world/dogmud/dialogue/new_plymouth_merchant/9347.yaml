@@ -27,7 +27,9 @@ tree:
       eventually."
     hints: "You could ask Dame Ostry about her blades and the weapons
       she stocks, about where her supply comes from and how iron
-      moves from the docks to her shop, or about the third arm."
+      moves from the docks to her shop, or about the third arm. Beneath
+      the shop talk there is a tightness about a tribute and an audit she
+      plainly wants to be rid of."
 
   nodes:
     - id: q71_start
