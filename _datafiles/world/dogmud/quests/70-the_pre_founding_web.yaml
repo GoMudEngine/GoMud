@@ -1,0 +1,106 @@
+questid: 70
+name: The Pre-Founding Web
+description: >-
+  Gritta works the flooded chambers below the Old Quarter, where the
+  oldest stone carries a symbol the colony has no record of. She needs
+  someone from outside her quiet network to witness the Buried Lintel
+  and carry proof of it up to the surface, where the readers can match
+  it to what they have.
+secret: false
+
+steps:
+  - id: start
+    description: >-
+      Gritta asked you to go deeper -- to see the Buried Lintel and the
+      sealed Deep Canal with your own eyes, take a rubbing of the lintel
+      symbol, and carry it up to Orin in the Crafting Quarter.
+    hint: >-
+      Go west and deeper to the Buried Lintel. Take a rubbing of the
+      symbol carved on its underside. Mind the canal -- it is not empty.
+  - id: witness
+    description: >-
+      You stood beneath the Buried Lintel and took a rubbing of the
+      eight-pointed symbol -- the original the gallery's oldest painting
+      only copied, carved before the colony arrived.
+    hint: >-
+      Carry the lintel rubbing up to Orin the bookseller in the Crafting
+      Quarter, who can match it to the surface records.
+  - id: end
+    description: >-
+      The web is closed: the discovery below, the cipher at the Temple,
+      the panel in the gallery -- all of it agrees. The colony arrived,
+      found this, and wrote itself into the record as first. The stone
+      simply goes on being older.
+
+rewards:
+  gold: 70
+  rep_faction: np_commonfolk
+  rep_amount: 10
+  playermessage: >-
+    Orin turns the rubbing toward the lamp and is quiet for a long moment.
+    "So it is really down there," he says. "The painting copied this, and
+    the cipher counts toward it, and now there is a rubbing of the thing
+    itself. Gritta found it, you stood under it, and I will see it reaches
+    the people who can hold it." He files it away with a care that is its
+    own kind of reverence. You are, without anything being said, part of
+    the quiet now.
+  roommessage: >-
+    The old bookseller gives the traveller a slow nod, the kind that
+    settles something unspoken between them.
+
+triggers:
+  # WITNESS: take a rubbing of the lintel symbol (6037)
+  - event: room_interact
+    room: 6037
+    noun: symbol
+    conditions:
+      has: ["70-start"]
+      missing_item: 40118
+    actions:
+      - grant: "70-witness"
+      - give_item: 40118
+      - send_text: >-
+          You press paper to the underside of the lintel and bring the
+          symbol up in charcoal -- four concentric rings, eight points at
+          equal intervals, cut by someone who drew it before they carved
+          it. The colony arrived here, found this, and wrote itself into
+          the founding record as first. The rubbing in your hands says
+          otherwise, quietly, the way the stone does.
+      - room_text: "takes a careful rubbing of the symbol carved beneath the buried lintel."
+
+  # lintel symbol, no quest
+  - event: room_interact
+    room: 6037
+    noun: symbol
+    conditions:
+      missing: ["70-start"]
+    actions:
+      - send_text: >-
+          The symbol on the lintel's underside is clean and deliberate --
+          rings and eight points, cut to be read by someone passing
+          beneath. Without a reason to record it, you only look.
+
+  # flavor: the sealed Deep Canal seam (6038)
+  - event: room_interact
+    room: 6038
+    noun: gray material
+    conditions:
+      has: ["70-start"]
+    actions:
+      - send_text: >-
+          The seam of gray material runs along the flood line, wider here
+          than in the galleries -- smooth where the black water works it,
+          taking no mark, no wear. It does not belong to any stone the
+          colony has a name for. It was here before the canal, before the
+          quarter, before the founding the city teaches.
+
+  # END: carry the rubbing up to Orin (9332)
+  - event: item_give
+    mob: 9332
+    item: 40118
+    conditions:
+      has: ["70-witness"]
+      missing: ["70-end"]
+    actions:
+      - bump_rep: {faction: cooperage_circle, delta: 5}
+      - grant: "70-end"

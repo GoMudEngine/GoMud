@@ -31,6 +31,28 @@ tree:
       lintels, or about where her finds go and who receives them."
 
   nodes:
+    - id: q70_start
+      triggers: ["quest", "task", "help", "witness", "lintel", "prove",
+                 "outside"]
+      questExcluded: ["70-start", "70-end"]
+      grantsQuest: "70-start"
+      text: "You came down here on your own feet -- that already makes you
+        rarer than most. Then I will ask something of you. The lowest
+        chambers hold a lintel of the gray stone, and on its underside a
+        symbol the colony has no record of -- older than the founding,
+        carved before anyone admits there were people here. I have sent
+        fragments up for years, but a fragment is not the thing. Go west
+        and down, stand beneath the lintel, take a rubbing of the symbol,
+        and look at the sealed canal while you are there. Then carry the
+        rubbing up to Orin in the Crafting Quarter. Someone outside my
+        little chain should witness it and carry the proof to where it can
+        be read."
+      hints: "Gritta asked you to descend to the Buried Lintel, take a
+        rubbing of the eight-pointed symbol on its underside, and carry it
+        up to Orin the bookseller in the Crafting Quarter. Mind the canal
+        water on the way. You could ask about the quest or the task."
+      moodChange: cautious
+
     - id: stone
       triggers: ["gray", "material", "stone", "sense", "feel",
                  "feeling", "walls", "weight", "pressure", "deep",
