@@ -1,0 +1,78 @@
+mobid: 9424
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Come in, sit down. River's up and the traffic's good -- interesting
+      week for gossip, if that's worth anything to you."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome to the Quayside. Drink, food, or information -- I do
+        all three."
+  - keywords: ["drink", "eat", "food", "ale", "wine", "meal", "hungry",
+      "thirsty", "buy"]
+    responses:
+      - "I serve what the dock people drink, which is honest and nothing
+        fancy. All of it at reasonable prices."
+  - keywords: ["gossip", "news", "rumors", "hear", "know", "happening",
+      "word", "talk"]
+    responses:
+      - "Always something moving through the Landings. Sit down and I'll
+        tell you what's come through this week."
+  - keywords: [""]
+    responses:
+      - "You look like someone who needs to sit down. Take the far table
+        and I'll come over."
+tree:
+  root:
+    text: "I've been running the Quayside since my sister took her share
+      and went to raise chickens inland, which tells you something about
+      both of us. Barge crews, merchants, pilgrims, the odd curious
+      traveler down from upriver -- they all end up here eventually.
+      I know most of their names and more of their business than
+      they'd comfortably guess."
+    hints: "You could ask Sybba about the gossip and news from the
+      Landings this week, about the people she sees come through,
+      or about the Confluence and what kind of city it is."
+  nodes:
+    - id: gossip
+      triggers: ["gossip", "news", "rumor", "hear", "word", "talk",
+        "happening", "what", "lately", "recently", "week", "latest"]
+      text: "River's running high, which means faster current and more
+        traffic -- barge masters hate it, freight owners love it. There's
+        a grain surplus somewhere up the Aldren and three merchants came
+        through in the past fortnight asking the same questions about
+        prices in the same order, which means one of them knows something
+        the others don't yet. I don't know which one. And there's a
+        pilgrim group camped on the south overlook that has been there
+        four days longer than the usual circuit. Nobody's asked them why
+        yet. Including me. Yet."
+      hints: "You could ask Sybba about the people who come through,
+        or about the Confluence and what it's like."
+    - id: people
+      triggers: ["people", "crew", "barge", "merchant", "pilgrim",
+        "face", "remember", "who", "comes", "through", "travelers",
+        "customers", "see", "pass"]
+      text: "I see everyone who comes through the Landings eventually.
+        Barge crews are the regulars -- half of them I know by name, all
+        of them I know by preferred drink. Merchants come and go by
+        season. Pilgrims are reliable spring traffic on the Chrysalis
+        circuit. I never forget a face -- that's not a saying in my
+        case, it's just how I am. Every person I've served I can
+        describe in detail years later. Makes the Quayside efficient,
+        if nothing else."
+      hints: "You could ask Sybba about gossip this week or about the
+        Confluence."
+    - id: confluence
+      triggers: ["confluence", "city", "three", "rivers", "district",
+        "landings", "here", "what", "place", "feel", "like", "kind"]
+      text: "It's a river-trade city, which means it has the virtues
+        and the vices of a place where everything is in transit. People
+        passing through, money passing through, news passing through.
+        The permanent residents are the dockfolk -- us -- and we keep
+        the whole thing running while the rest of the world moves over
+        us. It's not a bad life. The Aldren keeps changing and we stay
+        put, and that's its own kind of stability."
+      hints: "You could ask Sybba about the week's gossip or about
+        the people she sees come through."

@@ -1,0 +1,51 @@
+mobid: 9423
+zone: The Confluence
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - quayfolk
+idlecommands:
+  - 'emote coils a length of tarred line around his forearm in
+    measured loops, checks the lay of the braid, and sets it on
+    the rack with a single light press.'
+  - ''
+  - 'say Line, lamp oil, tar, tinder -- if you''re going out on
+    the water, I''ve got what keeps you coming back.'
+  - ''
+  - 'emote trims the wick on a hanging lantern with a small pair
+    of scissors, checks the flame height, and nods once.'
+  - ''
+activitylevel: 10
+character:
+  name: Ferrick the Chandler
+  description: |
+    Ferrick the Chandler stocks the things boats need to keep
+    running and people need to keep moving: rope in four gauges,
+    lamp oil, tallow dips, tinderboxes, waterskins, tar thread,
+    and a selection of small ironware sourced from up the Brenn.
+    The shop smells of pine tar and lantern-oil and has for as
+    long as anyone in the Landings can remember, because Ferrick
+    took it from his father who took it from his uncle. His
+    Chrysalis-change is useful in the trade: his fingertips can
+    read the quality and lay of rope by touch alone -- twist
+    tension, fiber separation, grade -- well enough to assess a
+    coil from across the counter without unwinding it.
+  speciesid: 1
+  level: 1
+  gold: 40
+  stats:
+    perception:
+      training: 6
+    charisma:
+      training: 6
+  shop:
+    - itemid: 40129
+    - itemid: 40102
+    - itemid: 40103
+    - itemid: 40105

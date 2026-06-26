@@ -1,0 +1,43 @@
+mobid: 9420
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - quayfolk
+idlecommands:
+  - 'emote checks the mooring lines at the barge cleat, tugs once,
+    then again, and lets the rope settle with a satisfied release.'
+  - ''
+  - 'say She won''t be loaded until the afternoon tide. I don''t
+    rush a barge and I don''t push a river. They''ll both lose.'
+  - ''
+  - 'emote rubs both palms together, studies the sky downriver, and
+    runs a silent count of something only he can see.'
+  - ''
+activitylevel: 10
+character:
+  name: Osse the Barge Master
+  description: |
+    Osse the Barge Master is broad across the chest and economical
+    with motion, in the way of people who spend their working lives
+    on a deck where an unnecessary step can put you in the water.
+    The barge is his -- a wide-bellied freight hauler rigged for
+    the three-river run -- and he knows every snag and sandbar on
+    the Aldren between here and New Plymouth well enough to navigate
+    the worst of it in low light, by feel. His Chrysalis-change
+    thickened the callus on both palms into something closer to
+    horn; he takes a loop of hawser without gloves in weather that
+    would skin an ordinary man's hands raw.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    strength:
+      training: 6
+    perception:
+      training: 4

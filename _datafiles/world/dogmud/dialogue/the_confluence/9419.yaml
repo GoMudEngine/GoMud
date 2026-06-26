@@ -1,0 +1,63 @@
+mobid: 9419
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Come on through. Gate's open, river's open. Good morning for it."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. First time through the Landings?"
+  - keywords: ["gate", "closed", "open", "season", "ice", "lock"]
+    responses:
+      - "She was sealed after the ice came. Now the ice has gone. Simple as that."
+  - keywords: ["road", "south", "river road", "came"]
+    responses:
+      - "Road's good all the way back up the Aldren, from what I hear. You
+        made it fine."
+  - keywords: [""]
+    responses:
+      - "I mostly watch the gate. Not a lot more to say than that."
+tree:
+  root:
+    text: "The gate was shut most of the cold season -- ice gets into
+      the lock mechanism and we can't move it safely until the thaw.
+      This morning was the first good morning. It's open now. Head on
+      in -- fish market is down to your left, the main quay is straight
+      ahead, and the overlook stair takes you up if you want to see
+      where the three rivers come together."
+    hints: "You could ask Holt about the gate itself, about what's in
+      the Landings, or about the Confluence where the rivers meet."
+  nodes:
+    - id: gate
+      triggers: ["gate", "closed", "winter", "ice", "season", "lock",
+        "how", "open", "mechanism"]
+      text: "It's more lock mechanism than door -- iron fittings, counter-
+        weights, a channel pin that the ice binds solid in a hard winter.
+        You can't force it without breaking something, so we leave it
+        until the thaw and then check every fitting before we swing her
+        open. Takes about half a morning. I've done it maybe fifteen
+        times. Gets routine."
+      hints: "You could ask Holt about the Landings, or about the
+        Confluence where the rivers meet."
+    - id: landings
+      triggers: ["landings", "here", "city", "town", "around", "where",
+        "directions", "find", "market", "quay", "dock", "what", "district"]
+      text: "This is the Landings -- river-ward district, first place you
+        hit coming off the Aldren. Quay is straight ahead, that's where
+        the barges load and the dockmaster holds court. Fish market is
+        below the stair to your left. Chandler is along the front row --
+        rope and lamp oil. Tavern is further in if you need to sit down.
+        The overlook stair is up top; you can see all three rivers come
+        together from there. Worth the climb."
+      hints: "You could ask Holt about the gate or about the Confluence."
+    - id: confluence
+      triggers: ["confluence", "rivers", "three", "meet", "together",
+        "south", "city", "overlook", "temple", "where"]
+      text: "Three rivers converge just south of the quay -- Aldren comes
+        from the north, Brenn from the west, Solt from the east. Where
+        they meet is what the whole city's built on. The Landings is the
+        river-trade quarter. There's more city beyond it -- the Confluence
+        proper is built up the slopes from here. Good place to arrive."
+      hints: "You could ask Holt about the gate or about what's in the
+        Landings."

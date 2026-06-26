@@ -1,0 +1,69 @@
+mobid: 9423
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Line, tar, oil, tinder -- I've got the lot. What does your
+      boat need?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Looking to outfit something?"
+  - keywords: ["buy", "sell", "shop", "price", "cost", "stock"]
+    responses:
+      - "Everything in the rack is priced fair. River-trade markup keeps
+        the lights on -- nothing more than that."
+  - keywords: ["rope", "line", "cord", "twine", "tarred"]
+    responses:
+      - "I carry four gauges. Mooring, haul, rigging, and fine-line for
+        net repair. What's the use you have in mind?"
+  - keywords: [""]
+    responses:
+      - "I'm mostly useful for outfitting. Tell me what you need."
+tree:
+  root:
+    text: "Chandler is the proper word for it -- ship's chandler, though
+      most of my trade is barge-folk and not tall-ship folk. Rope in
+      four gauges, lamp oil, tallow dips, tinderboxes, waterskins, tar
+      thread, small ironware from up the Brenn. If it keeps a vessel
+      moving and a crew alive, I stock it."
+    hints: "You could ask Ferrick about rope and line, about lamp oil
+      and tinder, or about the chandler trade and the Confluence."
+  nodes:
+    - id: rope
+      triggers: ["rope", "line", "cord", "haul", "mooring", "rigging",
+        "knot", "gauge", "thick", "thin", "tarred", "braid", "hemp"]
+      text: "The tarred line is the workhorse -- coated for the wet,
+        holds the knot better than raw hemp once the moisture gets into
+        it. Mooring gauge is two fingers thick. Haul line is lighter,
+        higher tensile for the block-and-tackle work. Rigging line is
+        the finest I carry and I don't keep a lot -- it moves fast.
+        If you're not on a boat, the mooring weight is what you want
+        for general use: lashing cargo, pulling, tying off. I can read
+        the grade by touch if you want me to check a coil you've
+        brought in."
+      hints: "You could ask Ferrick about lamp oil and tinder, or about
+        the chandler trade here."
+    - id: lamps
+      triggers: ["lamp", "oil", "lantern", "light", "tallow", "candle",
+        "dip", "fire", "tinder", "tinderbox", "dark", "night", "fuel"]
+      text: "River work goes after dark, so the lamp oil moves faster
+        than anything else I stock. I carry pressed fish oil -- cheaper,
+        smokier -- and rendered tallow. Tallow is cleaner for an
+        enclosed cabin, better if you're sleeping near the flame.
+        Tinderboxes I keep in the dry-cabinet, sealed until purchased.
+        Dock air eats the flint-and-steel fast if you leave it sitting
+        out, and a wet striker is no good to anyone."
+      hints: "You could ask Ferrick about rope and line, or about the
+        trade."
+    - id: trade
+      triggers: ["trade", "business", "history", "father", "family",
+        "long", "years", "uncle", "shop", "old", "how"]
+      text: "My uncle started this shop, my father took it over, and I
+        came in after him -- three generations of outfitting barges
+        before they built the second dock. The Confluence has grown
+        around the shop, which is an odd thing to watch. City got
+        bigger, dock got busier, price of tar line went up twice. I
+        adjusted. You adjust or you close. We haven't closed."
+      hints: "You could ask Ferrick about rope and line or about lamp
+        oil and tinder."

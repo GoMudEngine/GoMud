@@ -1,0 +1,45 @@
+mobid: 9422
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - quayfolk
+idlecommands:
+  - 'emote folds a freight manifest under one arm, marks something
+    with a stub of charcoal, and tucks the charcoal behind his ear.'
+  - ''
+  - 'say Keep the cargo off the upper deck while she''s loading
+    below. I don''t want another incident like last week.'
+  - ''
+  - 'emote pivots on his heel, scans the quay from end to end in a
+    single sweep, then settles back into stillness with the economy
+    of a man who has done this ten thousand times.'
+  - ''
+activitylevel: 10
+character:
+  name: Wult the Dockmaster
+  description: |
+    Wult the Dockmaster is a compact man who carries authority the
+    way a good bolt-pin carries load: without fuss and without
+    giving. He runs the Landings quay the way it has always been
+    run -- by freight tallies and tide tables and the occasional
+    hard word delivered without malice. The Confluence is the
+    entry-node of three-river trade, which means everything that
+    moves through the region passes across his dock first, and he
+    knows it. His Chrysalis-change is inconvenient: he no longer
+    sleeps more than two hours at a stretch, and has not for going
+    on twelve years. He fills the extra waking hours with ledgers.
+    The ledgers are impeccable.
+  speciesid: 1
+  level: 1
+  gold: 10
+  stats:
+    perception:
+      training: 6
+    charisma:
+      training: 6
