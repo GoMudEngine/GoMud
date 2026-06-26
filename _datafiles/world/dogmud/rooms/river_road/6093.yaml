@@ -1,0 +1,24 @@
+roomid: 6093
+zone: River Road
+title: Riverside Road
+description: >
+  The stream has grown. It runs alongside the road now as a proper river,
+  unhurried and wide enough to be a presence — you feel the cool air it
+  carries and hear it over everything else. Where the road forks east, a
+  rough-cut board on a post reads FISHERS' LANDING in black paint, and
+  below it in smaller letters, THE SMOKEHOUSE. The smell of river mud
+  and fresh catch drifts in from the east. South the river broadens
+  further, the channel going grey-green and slow.
+biome: water
+coord: {x: -8, y: -43, z: 0}
+exits:
+  north: {roomid: 6092}
+  south: {roomid: 6094}
+  east: {roomid: 6097}
+spawninfo:
+  - mobid: 9417
+    respawnrate: "10 real minutes"
+idlemessages:
+- The river murmurs steadily alongside the track, always south.
+- A river otter surfaces mid-channel, regards the bank, and slides under.
+- Ahead, the water glints where the channel bends.

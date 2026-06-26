@@ -1,0 +1,33 @@
+roomid: 6098
+zone: River Road
+title: Netmender's Row
+description: >
+  The center of the village: a short row of low buildings, a stall with
+  baskets of river fish laid on river-cooled fronds of weed, and between
+  two posts the span of a mended net, its new twine bright against the
+  weathered old mesh. The smell of fresh catch is everywhere. Smoked and
+  salted fish hang in bundles along the near wall; a hand-lettered board
+  lists prices in a clear round script.
+biome: water
+coord: {x: -6, y: -43, z: 0}
+exits:
+  west: {roomid: 6097}
+  east: {roomid: 6099}
+nouns:
+  the nets: >
+    Long hand-knotted nets strung between the posts to dry, some old and
+    salt-darkened, some freshly mended with pale new twine where the
+    river tore them. The repair work is close and even, the kind done by
+    someone who has replaced the same stretch of mesh a hundred times.
+  the stall: >
+    A fish-stall with low flat baskets and the river's cold still on them.
+    Pike, bream, roach — the catch laid on fronds of river-weed to keep.
+    Prices chalked on a smooth river stone. What is fresh today will be
+    smoked and salted by tomorrow.
+spawninfo:
+  - mobid: 9412
+    respawnrate: "20 real minutes"
+idlemessages:
+- The hanging nets creak softly on the line, still damp from the river.
+- The smell of fresh fish is sharp and metallic in the afternoon air.
+- Flies circle over the catch-baskets, indifferent to the hand that waves.

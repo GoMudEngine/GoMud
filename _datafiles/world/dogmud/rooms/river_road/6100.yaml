@@ -1,0 +1,35 @@
+roomid: 6100
+zone: River Road
+title: Old Waystone Rise
+description: >
+  A low rise detached from the bluff to the east, reachable by a worn
+  path through river grass. The ground here is old and dry, the soil
+  thin over a shelf of grey rock. At the center of the rise stands a
+  squat stone marker, set so deep it has not shifted in a very long
+  time. Pilgrims passing on the river road below have worn a faint
+  track up to it; offerings of river pebbles are piled at the base.
+  There is nothing else on the rise, only the stone and the wide sky.
+biome: land
+coord: {x: -9, y: -46, z: 0}
+exits:
+  east: {roomid: 6096}
+nouns:
+  the waystone: >
+    A squat stone column, waist-high, set in a collar of fitted stones
+    that have sunk with the rise over many decades. The face has been
+    dressed flat and then covered in work: shallow-carved rings,
+    concentric and overlapping, the lines worn almost level with the
+    surface. River moss has settled into the carving but not obscured it.
+    Whatever road this marked, it is older than the road you came by.
+  the symbol: >
+    Nested rings in a pattern that is not quite symmetrical: the
+    outermost three concentric, the inner workings showing a series of
+    smaller circles placed at intervals around a central ring — like a
+    diagram of something revolving. Pilgrims call the shape a Chrysalis
+    motif, the transformation at the center, the unbroken rings of before
+    and after. But the stone pre-dates any Chrysalis teaching here.
+    Whatever it meant, it was meant first by someone else.
+idlemessages:
+- The wind off the bluff moves through the grass on the rise, cold and clean.
+- A river pebble at the waystone's base was placed by a more recent hand.
+- Nothing moves on the rise. The stone sits in the silence it has always sat in.

@@ -1,0 +1,34 @@
+roomid: 6094
+zone: River Road
+title: The Barge Landing
+description: >
+  A timber jetty extends from the bank on tarred pilings, and against it
+  a flat-bottomed barge sits moored on long lines. The barge is old but
+  sound — caulked and painted, with a covered hold and a long steering
+  oar. Mid-channel, a second barge works slowly south under a pole, its
+  deck loaded with baled goods. The landing itself is worn plank and mud
+  and the smell of pine tar, the traffic of this stretch written plainly
+  in the grooved wood at the tie-up posts.
+biome: water
+coord: {x: -8, y: -44, z: 0}
+exits:
+  north: {roomid: 6093}
+  south: {roomid: 6095}
+nouns:
+  the barge: >
+    A river barge, flat-bellied, stained with pitch and sun. The hold is
+    sealed now, locked iron hasp; the last run's cargo-marks stenciled on
+    the hatch-board. A mooring rope as thick as a wrist runs to the piling.
+    It is the kind of vessel built for work and for waiting, not speed.
+  the river traffic: >
+    In the middle of the channel a barge poles slowly south, its deck
+    piled with bales. Downriver is the Confluence — the city where the
+    waters meet — and beyond it, eventually, New Plymouth. The barge
+    traffic runs that way, not back. Nothing is coming north today.
+spawninfo:
+  - mobid: 9411
+    respawnrate: "20 real minutes"
+idlemessages:
+- The moored barge shifts softly on its lines as the current tugs at it.
+- A kingfisher drops from the jetty post and hits the water and rises.
+- From mid-channel comes the rhythmic thump of a bargeman's pole.

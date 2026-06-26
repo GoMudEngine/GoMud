@@ -1,0 +1,23 @@
+roomid: 6101
+zone: River Road
+title: The River Road South
+description: >
+  Below the bluff the road carries on south, the joined river always in
+  sight to the right. Here the traffic is thickening: foot-worn ruts and
+  scattered evidence of recent passage — a broken sandal-strap pressed
+  into the mud, a fire-ring of river stones beside the road, a handful
+  of way-markers driven at the curve. Pilgrims, mostly. The road is old
+  here but recently trodden, and the air has a settled, purposeful feel,
+  like a place that knows where it is going.
+biome: water
+coord: {x: -8, y: -47, z: 0}
+exits:
+  north: {roomid: 6096}
+  south: {roomid: 6102}
+spawninfo:
+  - mobid: 9418
+    respawnrate: "10 real minutes"
+idlemessages:
+- A way-marker carved with an open ring stands at the road's edge.
+- The river runs close here, brown and quiet, always moving south.
+- Footprints in the mud, all of them pointing the same direction.

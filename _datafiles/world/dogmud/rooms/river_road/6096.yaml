@@ -1,0 +1,38 @@
+roomid: 6096
+zone: River Road
+title: The Confluence Bluff
+description: >
+  The road climbs briefly onto a low bluff where the land juts toward
+  the water, and the view opens all at once. Below, two rivers meet —
+  the one you have followed south, and a second broad channel pressing
+  in from the east, the two joining into a wide dark body of water that
+  spills away southwest. The meeting is quiet, not dramatic: the waters
+  simply agree and go on together. A worn path descends west to a rise
+  set apart from the bluff. South the road drops back down to follow
+  the joined river onward.
+biome: water
+coord: {x: -8, y: -46, z: 0}
+exits:
+  north: {roomid: 6095}
+  south: {roomid: 6101}
+  west: {roomid: 6100}
+nouns:
+  the meeting of waters: >
+    Two rivers, joined. The one from the north — the stream that became
+    this road's companion — and the broader eastern channel, slower,
+    darker, coming in from hills beyond sight. Where they press together
+    the water goes opaque for a moment, surface eddies spinning, and
+    then clears to a single unhurried southward flow.
+  the rivers: >
+    From this bluff both channels are visible at once: the river of the
+    road, running south from the valley, and the eastern tributary
+    broadening to join it. The joined waters fill the valley floor ahead,
+    running on toward the spires of a city beginning to show on the
+    horizon.
+spawninfo:
+  - mobid: 9417
+    respawnrate: "10 real minutes"
+idlemessages:
+- Below the bluff, the two rivers press together and turn south.
+- A raft of debris where the channels meet spirals slowly and is gone.
+- The wind off the bluff smells equally of both rivers now.

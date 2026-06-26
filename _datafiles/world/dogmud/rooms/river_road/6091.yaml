@@ -1,0 +1,21 @@
+roomid: 6091
+zone: River Road
+title: Descending Track
+description: >
+  The road drops here in long loops of worn dirt, the scrub thinning on
+  either side as the valley lip falls away behind. The soil changes color
+  underfoot — first the pale clay of the cut, then older grey dirt, then
+  something darker and damper that means the grade is working. Below,
+  where the ground levels and the verge goes green, a thread of silver
+  catches the light: the first water you have seen since the valley farms,
+  already suggesting more. No shade to speak of. The heat sits on the
+  slope.
+biome: land
+coord: {x: -8, y: -41, z: 0}
+exits:
+  north: {roomid: 6090}
+  south: {roomid: 6092}
+idlemessages:
+- The road dust lifts on the slope and drifts south, ahead of you.
+- A lizard skitters off the path into the dry scrub and is gone.
+- Below, a glint of water winks between the scrub trunks.

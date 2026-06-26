@@ -1,0 +1,23 @@
+roomid: 6095
+zone: River Road
+title: Broadwater Road
+description: >
+  The river has settled into its character here — wide, unhurried, the
+  surface grey-green and barely ruffled. Willows lean over the far bank,
+  their trailing branches stirring the current in long slow arcs. The
+  road follows close to the water's edge, sometimes only a yard of
+  trampled grass between the track and the bank. Insects hover over the
+  shallows. The afternoon light lies flat on the broad water, and the
+  only sound is the river and whatever moves through it.
+biome: water
+coord: {x: -8, y: -45, z: 0}
+exits:
+  north: {roomid: 6094}
+  south: {roomid: 6096}
+spawninfo:
+  - mobid: 9416
+    respawnrate: "10 real minutes"
+idlemessages:
+- A grey heron stands motionless in the shallows, waiting on its own time.
+- The river sounds here merge into a low, continuous hiss.
+- A line of ducks works against the slow current, then gives in and drifts.
