@@ -1,0 +1,14 @@
+itemid: 40130
+name: River-Spice
+namesimple: river-spice
+description: A warm-smelling ground spice traded up the Solt from the southwestern
+  country, sold by the twist of paper at the Spice Quay.
+type: object
+subtype: mundane
+component_tag: river-spice
+weight: 0.1
+value: 8
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking
