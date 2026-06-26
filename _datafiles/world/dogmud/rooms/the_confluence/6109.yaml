@@ -1,0 +1,33 @@
+roomid: 6109
+zone: The Confluence
+title: The Barge Dock
+description: >
+  A timber dock juts east from the quay road, its planking worn
+  grey and smooth. A broad flat-bottomed barge is moored alongside,
+  hull dark from years on the river, cargo rings and rope coils on
+  its deck. This is the regular run between the Confluence and New
+  Plymouth — the barge works the river channel south, takes freight
+  and passengers both, and knows the way by long habit. The smell
+  of river mud is strong here, and tar, and old wet rope.
+biome: water
+coord: {x: -4, y: -54, z: 0}
+exits:
+  west: {roomid: 6108}
+  south: {roomid: 6110}
+nouns:
+  the barge: >
+    A flat-bottomed river barge, wide and low, built for cargo and
+    the patient pace of a slow river. Its hull is stained with
+    years of river silt and calked fresh each spring; the deck
+    planks are worn pale from boot and freight. A single sweep oar
+    lies shipped, and a coil of dock rope is neatly set on the
+    near bollard. The run south takes two days on a favoring
+    current and three against one; the Barge Master knows every
+    bend.
+spawninfo:
+  - mobid: 9420
+    respawnrate: "20 real minutes"
+idlemessages:
+- The barge shifts on its lines as the current nudges beneath the dock.
+- Gulls circle the dock end, riding the river wind without moving their wings.
+- A rope end trailing in the water wraps and unwraps around a dock piling.

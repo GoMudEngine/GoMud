@@ -1,0 +1,38 @@
+roomid: 6108
+zone: The Confluence
+title: The Quayhead
+description: >
+  The low building at the head of the main quay serves as customs
+  office, weigh-house, and Dockmaster's desk all at once. A broad
+  counter runs the front, faced with iron brackets and a sliding
+  grate. Ledgers are stacked behind in good order, most of them
+  open. Through the wide south door the quay proper begins: the
+  smell of river water and fresh-cut plank comes in on every
+  breath. The Barge Dock lies to the east; the warehouses are to
+  the west.
+biome: water
+coord: {x: -5, y: -54, z: 0}
+exits:
+  north: {roomid: 6107}
+  south: {roomid: 6119}
+  west: {roomid: 6113}
+  east: {roomid: 6109}
+nouns:
+  the ledgers: >
+    Stacked behind the counter and cross-indexed — this year's and
+    last year's both open. Cargo manifests, barge arrivals, bond
+    records, tonnage. The Dockmaster keeps them in a hand so neat
+    it looks printed. A running total on the rightmost open page
+    shows today's intake, already substantial.
+  the counter: >
+    A heavy timber counter faced with iron, a sliding grate on its
+    upper sash that can close the whole front window with a clang.
+    It is open now. A set of balance scales occupies one end, the
+    brass pans polished by use.
+spawninfo:
+  - mobid: 9422
+    respawnrate: "20 real minutes"
+idlemessages:
+- Ledger pages turn somewhere behind the counter; a quill scratches.
+- The smell of river water comes in the south door, fresh and cold.
+- A bell on the dock rings twice, and someone shouts a count in reply.

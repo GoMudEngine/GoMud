@@ -1,0 +1,37 @@
+roomid: 6110
+zone: The Confluence
+title: The Fish Quay
+description: >
+  The river-fish market runs along a low stone quay east of the
+  main dock, the catch laid out in woven baskets on beds of cold
+  river weed to keep them fresh through the morning. The smell is
+  strong and clean: cold water, silver scales, the river itself.
+  Gulls work the edge of the quay constantly, dropping when no one
+  is watching. The Fish-Trader keeps a stall at the near end,
+  talking value and weight with the quiet authority of long habit.
+biome: water
+coord: {x: -4, y: -55, z: 0}
+exits:
+  north: {roomid: 6109}
+  west: {roomid: 6119}
+  south: {roomid: 6111}
+nouns:
+  the catch: >
+    River fish of a dozen kinds, arranged by size and species in
+    low woven baskets on river weed. Bream, pike, perch, and a
+    few flatfish from the slower water near the confluence mouth.
+    All fresh this morning — the boats went out before dawn and
+    the market opened as the light came up.
+  the baskets: >
+    Broad, shallow, woven from river rush, the weave wide enough
+    to let air move through. The weed bedding is changed through
+    the day to keep the cold in. A stack of empties by the wall
+    shows how the morning has gone: the market is already half
+    cleared.
+spawninfo:
+  - mobid: 9421
+    respawnrate: "20 real minutes"
+idlemessages:
+- A gull drops to the quay edge, steals a scrap, and is gone before the cry.
+- The cold smell of fresh river fish carries on the air here.
+- Water laps against the quay stones below, slow and brown.

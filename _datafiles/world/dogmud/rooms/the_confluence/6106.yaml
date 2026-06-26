@@ -1,0 +1,38 @@
+roomid: 6106
+zone: The Confluence
+title: The River Gate
+description: >
+  The road passes beneath a broad stone arch and opens into a paved
+  customs plaza, the first ground of the city proper. The gate-bar
+  is raised and hooked back against its post; a warden stands at
+  the near pillar tallying incomers with practiced disinterest.
+  Beyond, the street curves south into buildings that press close,
+  and over the rooflines comes the noise of the docks: water, rope,
+  gulls, and the low groan of laden timber. The river-smell here
+  is all mud and tar.
+biome: water
+coord: {x: -5, y: -52, z: 0}
+exits:
+  north: {roomid: 6105, zone: River Road}
+  south: {roomid: 6107}
+nouns:
+  the gate: >
+    The arch is dressed river stone, heavy and old. The bar hangs
+    clear of the road on its hook, iron worn smooth where a hundred
+    wardens have lifted and set it back. Below the arch, a small
+    brass plate is bolted into the stone: LANDINGS — THE CONFLUENCE,
+    and a date in an older script no one stops to read anymore.
+  the customs plaza: >
+    A square of worn paving inside the arch, open to the sky. A
+    warden's booth occupies one corner, a rack of impound hooks is
+    set into the wall beside it, and a painted board of tariffs in
+    three languages leans nearby — the third script faded to near-
+    nothing. A city smell after so long on the road: coal smoke,
+    river mud, and the yeast of something fermenting to the west.
+spawninfo:
+  - mobid: 9419
+    respawnrate: "20 real minutes"
+idlemessages:
+- Gulls wheel over the rooflines to the south, crying flat and sharp.
+- The gate-bar creaks once on its iron hook; the warden does not look up.
+- The river-smell thickens off the dock rooftops: mud, tar, old rope.

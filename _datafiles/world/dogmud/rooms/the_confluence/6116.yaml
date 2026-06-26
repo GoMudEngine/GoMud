@@ -1,0 +1,30 @@
+roomid: 6116
+zone: The Confluence
+title: The Quayside Tavern
+description: >
+  A low building at the south end of the cooper's yard, older than
+  most of the quay and settled into its foundations accordingly.
+  The smell is smoke and river-yeast and the particular warmth of
+  a room that has been warm a long time. Inside, benches and long
+  tables fill most of the floor; the bar is a single plank across
+  two barrels, kept clean and well-stocked. Dockers and barge-crew
+  use this place; the conversation is trade talk and river gossip,
+  low and comfortable.
+biome: water
+coord: {x: -6, y: -57, z: 0}
+exits:
+  north: {roomid: 6115}
+nouns:
+  the bar: >
+    A plank set across two solid barrels, worn to a high shine at
+    the elbow-height where drinkers lean. The taproom behind holds
+    casks on their sides in a timber rack, taps set in the ends.
+    The tavern-keeper moves between bar and rack with the easy
+    economy of someone who knows this place by feel.
+spawninfo:
+  - mobid: 9424
+    respawnrate: "20 real minutes"
+idlemessages:
+- Laughter breaks from a table inside, easy and brief, then settles back.
+- The smell of river-yeast and warm smoke drifts from the tavern doorway.
+- A stool scrapes on the stone floor inside; someone stands to leave.

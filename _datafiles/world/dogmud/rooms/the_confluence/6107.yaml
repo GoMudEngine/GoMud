@@ -1,0 +1,22 @@
+roomid: 6107
+zone: The Confluence
+title: Gate Street
+description: >
+  A short street between the gate plaza and the first proper
+  buildings of the Landings. The cobbles here are old and uneven,
+  worn into gentle hollows by foot and wheel. To the south the road
+  widens and the dock noise swells — rope-creak, gull-cry, the
+  deep groan of a barge settling on its lines. To the west a side
+  lane opens onto a small plaza. Buildings crowd both sides: a
+  chandler's shutter is latched up, pallets lean against a wall,
+  a cat watches from a window sill.
+biome: water
+coord: {x: -5, y: -53, z: 0}
+exits:
+  north: {roomid: 6106}
+  south: {roomid: 6108}
+  west: {roomid: 6117}
+idlemessages:
+- A cart rounds the corner from the south, its wheels loud on old cobbles.
+- A gull drops to the street, finds nothing, and lifts away again.
+- The smell of tar and river-mud settles in the still air between buildings.

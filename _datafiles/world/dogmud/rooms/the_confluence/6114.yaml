@@ -1,0 +1,36 @@
+roomid: 6114
+zone: The Confluence
+title: The Chandlery
+description: >
+  The chandlery occupies a squat building with an open front, its
+  wares organized in the way of a practical trade: coiled rope
+  sorted by diameter, lamp oil in sealed crocks, canvas rolls
+  ranked by weight, tar in covered iron pots stacked three high.
+  The smell is the chandlery smell — linseed, tar, the dry-dust
+  of rope fiber — undercut by the river outside. A wide counter
+  across the middle keeps the stock from the customers.
+biome: water
+coord: {x: -6, y: -55, z: 0}
+exits:
+  north: {roomid: 6113}
+  east: {roomid: 6119}
+  south: {roomid: 6115}
+nouns:
+  the rope: >
+    Coiled and hung or laid in loops on pegs by the door, organized
+    by thickness from fine cordage to dock line heavy enough to moor
+    a barge. The chandler keeps the stock turned and dry; even the
+    thickest coils are supple. A smell of hemp and linseed rises
+    from the rack.
+  the tar: >
+    Sealed iron pots stacked against the back wall, a smear of old
+    tar on the lip of each one where the sealing cloth was lifted
+    to check consistency. River tar, for calking and treating dock
+    timber. On a warm day the smell carries halfway down the lane.
+spawninfo:
+  - mobid: 9423
+    respawnrate: "20 real minutes"
+idlemessages:
+- The smell of tar and linseed from the chandlery clings to the air here.
+- A coil of dock rope shifts on its peg as someone brushes past it.
+- From inside, the sound of a measuring cord snapped taut and cut clean.
