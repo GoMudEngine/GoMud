@@ -1,0 +1,35 @@
+roomid: 6147
+zone: The Confluence
+title: Inn Lane
+description: >
+  A cobbled passage between the Three Waters' south wall
+  and the row of buildings facing it — service access
+  rather than street, carrying the people who need it
+  and no others. The inn's kitchen hatch opens onto the
+  lane here; the smell of stew-stock and woodsmoke comes
+  through it in steady warm drafts, along with the
+  occasional percussion of iron on iron from whoever is
+  running the pots. A row of empty barrels stands against
+  the inn's wall waiting for the dray. The lane connects
+  the south edge of the square to the east through to
+  the notary's building, and to the hall side west.
+biome: city
+coord:
+  x: -4
+  y: -68
+  z: 0
+exits:
+  west:
+    roomid: 6141
+  north:
+    roomid: 6146
+  east:
+    roomid: 6152
+idlemessages:
+- The kitchen hatch opens briefly; a wash of steam and
+  stew-smell rolls into the lane and the hatch closes.
+- A potboy navigates the lane with a stack of empty
+  pottery, going somewhere with purpose.
+- The barrels against the inn wall have been here long
+  enough that someone has chalked a running tally on
+  one of them.

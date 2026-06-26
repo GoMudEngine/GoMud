@@ -1,0 +1,48 @@
+roomid: 6148
+zone: The Confluence
+title: The Three Waters — Lodging
+description: >
+  The upper floor runs the full width of the inn above
+  the common room, its corridor quieter than the noise
+  below would suggest — the Three Waters builds its
+  guest floors to a standard. Four numbered doors open
+  off the landing, their painted room-plates plain, their
+  thresholds carpeted in a runner that has seen better
+  decades but has been cleaned into a serviceable
+  dignity. At the landing's end, a
+  <ansi fg="itemname">window</ansi>
+  looks out over Tri-Cross Square below — the monument
+  at the square's center, the Municipal Hall's facade
+  across the way, the ordinary foot-traffic of the city
+  going about its afternoon. The stair descends from
+  the near end of the landing back to the common room.
+biome: city
+coord:
+  x: -4
+  y: -67
+  z: 1
+exits:
+  down:
+    roomid: 6146
+nouns:
+  window: >
+    A wide sash window at the landing's end with a
+    cushioned bench seat beneath it. The glass is
+    good — the Three Waters has spent money where
+    guests will notice it. Below, Tri-Cross Square is
+    laid out in its full width: the worn paving flags,
+    the civic monument, citizens crossing in all four
+    directions, the Municipal Hall's broad approach
+    stair and the bell-tower's squat silhouette beyond
+    it to the west. Someone has left a cold cup on the
+    bench. The view is better than the room below would
+    prepare you for.
+idlemessages:
+- The corridor carries none of the common room's noise;
+  the walls here are built with that purpose.
+- One of the numbered doors along the landing is not
+  quite fully latched — it does not open, but it does
+  not close.
+- A burst of laughter from the floor below reaches the
+  landing as a murmur, and the corridor resumes its
+  quiet.

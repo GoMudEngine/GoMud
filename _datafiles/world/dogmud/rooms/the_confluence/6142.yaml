@@ -1,0 +1,50 @@
+roomid: 6142
+zone: The Confluence
+title: The Hall Steps
+description: >
+  The broad approach stair to the Municipal Hall, carved
+  from the same limestone as the hall's facing but worn
+  considerably more — the outer edge of each tread
+  rounded and hollowed by the passage of feet over a
+  long civic life. The steps are wide enough to make the
+  climb feel deliberate rather than merely necessary,
+  which is the point of broad approach stairs. The hall's
+  entrance above is flanked by plain stone columns, their
+  capitals simple. To the west, the
+  <ansi fg="itemname">bell-tower</ansi>
+  rises squat and older than everything around it, the
+  civic bell visible in its open upper stage. The square
+  lies to the east; the hall's south service lane
+  descends below.
+biome: city
+coord:
+  x: -6
+  y: -66
+  z: 0
+exits:
+  east:
+    roomid: 6139
+  south:
+    roomid: 6143
+  west:
+    roomid: 6151
+nouns:
+  bell-tower: >
+    The civic bell-tower stands west of the hall
+    approach — shorter than the hall itself and older,
+    its lower courses a darker stone than the civic
+    limestone of the building beside it, as though
+    found here and built around rather than raised
+    fresh. The bell in the open upper chamber is
+    visible from the steps: a substantial casting,
+    green-patinated, hung in a timber frame. It rings
+    the quarter-hours with a single note and counts
+    the full hours plainly. The tower's base is worth
+    examining more closely.
+idlemessages:
+- Citizens climb or descend the hall steps in the
+  purposeful rhythm of civic appointment.
+- The bell rings once from the tower to the west —
+  a quarter-hour marked and passed.
+- A pigeon has claimed the top step near the east
+  column and is being largely ignored.

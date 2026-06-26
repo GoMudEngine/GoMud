@@ -1,0 +1,33 @@
+roomid: 6138
+zone: The Confluence
+title: Cross Street
+description: >
+  The waterfront commerce falls away behind you as the
+  road changes character — wider paving, dressed
+  limestone in place of rougher harbour stone, joints
+  set with a tighter margin and swept more deliberately,
+  the upkeep here paid for by civic rents rather than
+  guild dues. The river sound has gone entirely; the
+  city has taken over from the wharves. Buildings to
+  either side stand three storeys and have been standing
+  three generations — plain, settled, maintained with
+  the consistency that comes from no one being in a
+  particular hurry to let things slide. The road runs
+  south toward the square, open and broad.
+biome: city
+coord:
+  x: -5
+  y: -65
+  z: 0
+exits:
+  north:
+    roomid: 6137
+  south:
+    roomid: 6139
+idlemessages:
+- A clerk in a good coat passes south without looking
+  up from the sheaf of papers rolled under one arm.
+- The distant note of the civic bell carries faintly
+  from the west, once, and settles.
+- Pigeons work the gutter along the limestone frontages,
+  indifferent to foot-traffic.

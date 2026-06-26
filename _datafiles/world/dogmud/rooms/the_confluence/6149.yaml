@@ -1,0 +1,60 @@
+roomid: 6149
+zone: The Confluence
+title: The Hall of Records
+description: >
+  The records room behind the Municipal Hall, its
+  shelves running floor to ceiling on all four walls
+  with the accumulated documentation of a city that
+  has been keeping records for a long time. Bound
+  folios of charter amendments, rolled surveys in
+  ribbon, indexed ledgers of civic ordinance, and
+  older materials in the far corner shelved by date
+  rather than subject. The room smells of old paper,
+  linseed, and the faint mineral undertone of the
+  stone itself. On the north wall, a section known
+  here simply as
+  <ansi fg="itemname">the old wall</ansi>
+  predates the building around it — darker stone,
+  differently cut, the mortar of the current building
+  running to it rather than through it. Something has
+  been cut into its sheltered interior face. The records
+  in this room do not appear to address it.
+biome: city
+coord:
+  x: -7
+  y: -67
+  z: 0
+exits:
+  east:
+    roomid: 6143
+nouns:
+  the old wall: >
+    A section of the records room's north wall in a
+    stone darker and differently textured than the
+    surrounding building-stone — an older block,
+    sheltered from street-damp and the wear of foot-
+    traffic by the building that went up around it.
+    The mortar of the current structure runs to it
+    rather than through it. The block predates the
+    records room and predates the hall. On its interior
+    face, something has been cut into the stone.
+  the mark: >
+    Cut into the interior face of the old north-wall
+    block, sheltered from wear by the building around
+    it: concentric rings, the outer two clear, the
+    inner circles more numerous and arranged at regular
+    intervals around a central point. The stonecutter's
+    lines are still crisp. The mark predates the records
+    room and has sat in the dark of this room while the
+    records gathered on the shelves around it. Nothing
+    stored here refers to it or appears to have been
+    filed under any question about what it is or when
+    it was cut.
+idlemessages:
+- The shelves carry the specific stillness of a room
+  where old things are kept without urgency.
+- A clerk enters briefly, pulls a folio from the
+  middle shelves, and leaves with it under one arm.
+- The old wall's stone is colder than the rest of
+  the room — a mineral chill that the shelves around
+  it do not share.

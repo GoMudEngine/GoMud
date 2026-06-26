@@ -1,0 +1,71 @@
+roomid: 6146
+zone: The Confluence
+title: The Three Waters
+description: >
+  The common room of the Three Waters is wide and warm,
+  its great
+  <ansi fg="itemname">hearth</ansi>
+  taking up most of the north wall, the settle nearest
+  it already occupied by the time most people arrive.
+  Long tables run the room's center in the habit of a
+  house that regularly feeds a full house; smaller
+  settle-tables line the walls for those who want to
+  be heard only by the person across from them. The
+  smell is stew and woodsmoke and the specific warm
+  compound of a room that has been feeding people for
+  years without interruption. The city's gossip moves
+  through this room — who is coming, who has gone,
+  what the morning tide brought in, what the hall
+  decided about the river tariffs this quarter. The
+  innkeeper keeps track of all of it from behind the
+  bar. A broad
+  <ansi fg="itemname">stair</ansi>
+  climbs from the east corner to the lodging rooms
+  above.
+biome: city
+coord:
+  x: -4
+  y: -67
+  z: 0
+exits:
+  west:
+    roomid: 6140
+  north:
+    roomid: 6145
+  south:
+    roomid: 6147
+  up:
+    roomid: 6148
+nouns:
+  hearth: >
+    A stone hearth deep enough to burn a full round of
+    river-oak, its lintel smoke-blackened and its fire-
+    basket wide. The settle nearest it has been worn to
+    the shape of habitual occupancy — a cushion
+    permanently depressed at its center, the back-rail
+    polished by shoulders. On the mantelpiece: a tallow
+    candle in a clay saucer, a pair of iron tongs on a
+    hook, and a carved wooden fish that has been there
+    as long as any member of staff can remember and
+    that no one in the house has a story about.
+  stair: >
+    A solid stair of wide oak treads climbing from the
+    room's east corner to the lodging floor above, its
+    banister rail worn to a shine by ascending hands.
+    A chalk board on the newel-post lists room
+    availability in the innkeeper's round, unhurried
+    hand. The stair is wide enough for guests carrying
+    baggage to pass on it without difficulty, which is
+    not always the case.
+spawninfo:
+  - mobid: 9436
+    respawnrate: "20 real minutes"
+idlemessages:
+- The common room's talk runs under the creak of the
+  settle-boards and the chink of pottery cups.
+- A traveler by the fire asks the room whether the
+  Solt ferry is running today and gets three different
+  answers.
+- The innkeeper moves behind the bar with the calm of
+  someone who has had a full house before and is
+  having one now.

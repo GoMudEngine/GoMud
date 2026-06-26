@@ -1,0 +1,49 @@
+roomid: 6152
+zone: The Confluence
+title: The Notary's Office
+description: >
+  The office of a civic notary and scrivener of record,
+  its work defined by a smell of wax, ink, and old
+  paper that has worked itself into the walls over a
+  long practice. A wide desk occupies most of the floor
+  space, its surface carrying the organized clutter of
+  professional life — stacked deeds, a blotter, a sand-
+  shaker, pen-nibs sorted by weight in a handled cup.
+  Against the far wall, shelving holds bound folios and
+  rolled documents in labeled cases. The city's paperwork
+  passes through this office: land deeds, charter
+  amendments, cargo attestations, the formal record of
+  agreements reached on the square in plain conversation.
+  The
+  <ansi fg="itemname">seal-press</ansi>
+  on the desk's corner is the pivot of all of it.
+biome: city
+coord:
+  x: -3
+  y: -68
+  z: 0
+exits:
+  west:
+    roomid: 6147
+nouns:
+  seal-press: >
+    An iron notarial press bolted to the desk's corner,
+    its die-block engraved with the Confluence's civic
+    crest and the notary's registration number. The
+    press is used often; the die is clean and the hinge
+    moves smoothly. Beside it, sealing wax in three
+    grades — plain, witnessed, and certified — and pen-
+    nibs in ascending weights for different classes of
+    document. Without the press, the desk is just a
+    desk. With it, what is written here becomes part
+    of the city's formal record.
+spawninfo:
+  - mobid: 9438
+    respawnrate: "20 real minutes"
+idlemessages:
+- The seal-press rings against the desk as a document
+  receives its formal mark.
+- Wax smoke drifts from the notary's work — a clean
+  sharp smell, brief.
+- A citizen waits on the bench near the door, a deed
+  held carefully in both hands.
