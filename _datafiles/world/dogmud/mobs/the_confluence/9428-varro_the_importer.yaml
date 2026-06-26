@@ -1,0 +1,52 @@
+mobid: 9428
+zone: The Confluence
+craft_support: cooking
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - quayfolk
+idlecommands:
+  - 'emote lifts the lid from a clay crock, inhales slowly, and
+    replaces the lid with a single nod -- satisfied.'
+  - ''
+  - 'say Solt spice is in. First good shipment of the season, and
+    it didn''t get soaked this time. Makes a difference, believe me.'
+  - ''
+  - 'emote lines up jars on the front shelf by height, adjusts two
+    of them a finger-width left, then steps back to check the row.'
+  - ''
+activitylevel: 10
+character:
+  name: Varro the Importer
+  description: |
+    Varro the Importer operates out of the Spice Quay with the
+    permanent air of a man who has seen too many disappointing
+    shipments to get excited about anything too quickly. He
+    sources salt-cured roe from the Solt's estuary traders, river-
+    spice from the hill-country posts, and preserved river fish
+    from the same boats that supply the main fish market -- though
+    he pays for better cuts and cures them himself when the season
+    runs right. His Chrysalis-change is a precision in his sense
+    of taste: he can detect adulteration or mislabeling in a spice
+    or preserved food without opening the container -- a pressure
+    response on his tongue when he handles the package. He has
+    sent back three shipments this season on this basis alone.
+    Varro does not advertise the ability but does not hide it.
+  speciesid: 1
+  level: 1
+  gold: 40
+  stats:
+    perception:
+      training: 8
+    charisma:
+      training: 4
+  shop:
+    - itemid: 40130
+    - itemid: 40131
+    - itemid: 40123
+    - itemid: 40125

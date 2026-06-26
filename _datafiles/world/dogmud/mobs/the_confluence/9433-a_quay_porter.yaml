@@ -1,0 +1,47 @@
+mobid: 9433
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - quayfolk
+idlecommands:
+  - 'emote shoulders a sack from the freight stack, pivots on one
+    heel, and carries it to the cargo platform at a brisk walk.'
+  - ''
+  - 'say Making way -- freight coming through, clear the walkway.'
+  - ''
+  - 'emote sets a crate down at the Weighhouse steps, blows out a
+    long breath, and turns back toward the wharf at the same pace
+    he came.'
+  - ''
+  - 'say River-cloth off the Aldren! Market stall at the center
+    cross -- get it fresh!'
+  - ''
+activitylevel: 10
+character:
+  name: a quay porter
+  description: |
+    A porter works the Long Quay freight runs -- loading, off-
+    loading, shifting cargo between the wharf and the Weighhouse,
+    and filling in wherever a piece of freight needs to move from
+    where it is to where it needs to be. This one has the build
+    of someone who has done this for years: forearms like cable,
+    unhurried walk, the careful pivot of a person who moves weight
+    for a living and plans not to throw out their back doing it.
+    Their Chrysalis-change is a minor one: their sense of balance
+    under load is uncanny, steadying a swaying crate on one
+    shoulder without looking, adjusting automatically to every
+    shift in the weight as if the correction comes before the tilt.
+  speciesid: 1
+  level: 1
+  gold: 2
+  stats:
+    strength:
+      training: 6
+    vitality:
+      training: 6

@@ -1,0 +1,49 @@
+mobid: 9432
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - quayfolk
+idlecommands:
+  - 'emote opens a thick register across the hall counter, traces
+    a column of entries with one finger, and places a check mark
+    at the end of a row.'
+  - ''
+  - 'say Charter renewal runs to the end of the month. If you''re
+    on the active manifest, come in before then or I''ll have to
+    flag the vessel on the commercial list.'
+  - ''
+  - 'emote closes the register, squares it to the corner of the
+    counter, and looks out at the quay with the calm of a man
+    whose records are in order.'
+  - ''
+activitylevel: 10
+character:
+  name: Oslen the Guild Steward
+  description: |
+    Oslen the Guild Steward administers the Rivermen's Guild
+    charter on the Long Quay: certifying crews, issuing commercial
+    working permits, logging toll assessments, and conducting the
+    arbitrations that arise when two freight houses disagree about
+    a delivery gone wrong. He is unhurried in the way of someone
+    confident that the system he administers will still be running
+    after the current urgency has passed. His Chrysalis-change is
+    an uncomfortable gift for administrative work: he reads the
+    emotional undercurrent of a room with unusual accuracy -- not
+    quite what anyone is thinking, but where the fault line between
+    parties sits and how close it is to opening. This proves useful
+    in arbitrations. It makes casual social interactions somewhat
+    one-sided, which suits him well enough.
+  speciesid: 1
+  level: 1
+  gold: 7
+  stats:
+    charisma:
+      training: 6
+    willpower:
+      training: 6
