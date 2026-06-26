@@ -1,0 +1,38 @@
+roomid: 6131
+zone: The Confluence
+title: The Scriveners' Stall
+description: >
+  A stall and back-room together at the Weighhouse Yard's western
+  end, the Scrivener's trade stacked in bins and flat-cases under
+  the counter. Trade charts, certified copy-work, river-guild forms,
+  and a selection of older maps fill the shelves. The charts are
+  hand-copied, recopied from earlier copies, and some of the older
+  ones show the river-junction here a little differently — more
+  channels marked in, more detail at the confluence-point — in a
+  way that may be error or may be older survey work. The Scrivener
+  neither vouches for them nor dismisses them. They were sold
+  with the rest.
+biome: water
+coord: {x: -6, y: -62, z: 0}
+exits:
+  north: {roomid: 6130}
+  east: {roomid: 6129}
+  west: {roomid: 6135}
+nouns:
+  the charts: >
+    Stacks of hand-copied harbor charts and river maps, the newer
+    ones drawn clean on good parchment, the older on something
+    stiffer and yellower. A few of the oldest show the junction
+    area with more channel-lines than current maps carry — more
+    water, differently distributed, the notation in a hand that
+    predates the guild's current forms. Whether these reflect
+    genuine older survey work, copyist error propagated through
+    generations, or something else, the Scrivener cannot say with
+    certainty. They are priced the same as the rest.
+spawninfo:
+  - mobid: 9431
+    respawnrate: "20 real minutes"
+idlemessages:
+- The Scrivener rolls a finished chart and slides it into a leather tube.
+- "Old maps smell of dust and sizing: the newer ones smell of fresh ink."
+- A buyer holds a chart up to the light, comparing two river-lines.

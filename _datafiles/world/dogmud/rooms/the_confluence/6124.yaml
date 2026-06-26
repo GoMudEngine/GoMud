@@ -1,0 +1,36 @@
+roomid: 6124
+zone: The Confluence
+title: The Long Quay
+description: >
+  The great trade wharf that gives the district its name runs along
+  the river's edge, wide enough for two laden carts to pass abreast.
+  To the east the water, broad and quick-running; moored along the
+  face are deep-keeled barges under the low creak of rigging and
+  the smell of tar and river silt. Cargo moves in both directions —
+  bales being swung up from holds, casks rolled down planks to
+  waiting carts — and the factor's voice carries over it all, steady
+  and carrying the full authority of the quay. The river works here.
+  It always has.
+biome: water
+coord: {x: -4, y: -60, z: 0}
+exits:
+  west: {roomid: 6123}
+  east: {roomid: 6125}
+  south: {roomid: 6128}
+nouns:
+  the wharf: >
+    The Long Quay's main trading face, built of close-fitted stone
+    and heavy timber, rebuilt and extended so many times the seams
+    show different stone in different ages. Iron rings are set every
+    four paces for mooring; at each one a vessel of some kind is
+    always tied. The boards of the loading section are dark with old
+    oil and river silt. The sound is constant — the creak of rope
+    against iron, the thump of a bale going down, the water under
+    the planking never quite still.
+spawninfo:
+  - mobid: 9427
+    respawnrate: "20 real minutes"
+idlemessages:
+- A barge works in against the quay face, lines thrown and caught.
+- The water under the wharf planking knocks and sucks at the pilings.
+- "A factor calls a count along the quay: one, two, three — tallied."

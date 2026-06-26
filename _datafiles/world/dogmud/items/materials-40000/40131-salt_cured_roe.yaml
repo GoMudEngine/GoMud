@@ -1,0 +1,14 @@
+itemid: 40131
+name: Salt-Cured Roe
+namesimple: cured-roe
+description: River-fish roe packed in salt and clay, a Confluence luxury that
+  keeps for the long haul upriver.
+type: object
+subtype: mundane
+component_tag: cured-roe
+weight: 0.2
+value: 10
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking

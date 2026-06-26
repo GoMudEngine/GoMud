@@ -1,0 +1,73 @@
+mobid: 9429
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "River-cloth, rope, waterskins, tinderboxes. If you need the
+      basics, I've got them. What are you after?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Looking to stock up, or just browsing?"
+  - keywords: ["buy", "sell", "shop", "price", "cost", "stock", "have"]
+    responses:
+      - "Prices are chalked on the board. Everything is priced for the
+        everyday market, not the guild-house crowd."
+  - keywords: ["cloth", "rope", "waterskin", "tinder", "tinderbox",
+      "what", "carry", "stock"]
+    responses:
+      - "River-cloth is light and fast-drying -- made for the water trade.
+        Rope in three weights. Waterskins and tinderboxes I keep well
+        in stock. That covers most of what people need."
+  - keywords: [""]
+    responses:
+      - "Tell me what you need and I'll tell you if I have it."
+tree:
+  root:
+    text: "The River Market runs on everyday trade -- what people need to
+      move freight, make a camp, outfit a barge for a run. I'm not a
+      specialty shop for anything, but I carry what most travelers and
+      crews need without sending them to four different vendors. Cloth,
+      line, tinder, skins. The practical tier."
+    hints: "You could ask Lenne about the cloth and what it's made for,
+      about the rope she stocks, or about the market and what's here."
+  nodes:
+    - id: cloth
+      triggers: ["cloth", "river-cloth", "fabric", "textile", "weave",
+        "bolt", "river", "light", "dry", "quality", "material", "what",
+        "made", "for"]
+      text: "River-cloth is a particular weave -- lighter than wool, faster
+        drying, holds its shape in damp conditions without the rot problems
+        you get with cheap linen. It's made upriver on the Aldren for the
+        barge trade and comes down on the freight runs. Most of what I
+        stock is undyed -- people bleach or dye it according to their use.
+        If you want finished cloth, the textile guilds have their shops
+        up in the upper quarter, but they sell by the roll. I sell by
+        the length, which is what most people actually need."
+      hints: "You could ask Lenne about rope and cord, or about the market
+        and what's around."
+    - id: rope
+      triggers: ["rope", "line", "cord", "weight", "gauge", "three",
+        "light", "medium", "haul", "mooring", "tie", "lash", "buy"]
+      text: "I carry three weights. Light is for lashing and bundling --
+        net repair, securing packs. Medium is your everyday mooring line,
+        handles most knot work. Haul weight is heavy-duty, more than most
+        travelers need, but the barge crews buy it in lengths between
+        resupply stops. The chandler on the Landings quay carries a
+        fourth rigging-grade gauge if you need specialist line, but
+        that's a different trade."
+      hints: "You could ask Lenne about river-cloth, or about the market."
+    - id: market
+      triggers: ["market", "river market", "stall", "trade", "who",
+        "here", "around", "other", "vendors", "where", "find", "what",
+        "else"]
+      text: "The River Market runs most of the year -- shuts down in the
+        deep freeze, opens again when the ice breaks. The Weighhouse is
+        just north of here if you have a cargo to certify. The Spice
+        Quay vendor is further along the waterfront -- preserved food
+        and hill-country spice. For bigger chandler goods, lamp oil and
+        tarred line, the chandler on the Landings quay is the one to
+        find. I cover the middle of the market, which is where most
+        people end up anyway."
+      hints: "You could ask Lenne about river-cloth or about rope and
+        cord."

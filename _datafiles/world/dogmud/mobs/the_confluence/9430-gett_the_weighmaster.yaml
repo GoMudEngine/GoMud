@@ -1,0 +1,51 @@
+mobid: 9430
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - quayfolk
+idlecommands:
+  - 'emote sets a counterweight on the far pan, watches the beam
+    swing and settle to level, and writes a number in the log
+    without looking at it twice.'
+  - ''
+  - 'say Declared weight and actual weight are not the same thing
+    nearly as often as they should be. Bring your cargo in before
+    the Weighhouse closes -- not after.'
+  - ''
+  - 'emote levels a sealed crate onto the platform scale, adjusts
+    it with a flat-handed tap to center the load, and watches the
+    indicator needle drop to its mark.'
+  - ''
+activitylevel: 10
+character:
+  name: Gett the Weighmaster
+  description: |
+    Gett the Weighmaster runs the Weighhouse on the Long Quay with
+    the meticulous patience of a man whose entire professional value
+    is the unimpeachable accuracy of his records. He issues certified
+    weight certificates the Rivermen's Guild requires for all
+    significant cargo movements, assesses tariff liability on behalf
+    of the city, and has filed thirty-seven formal disputes with the
+    guild on behalf of the Weighhouse in six years of service. He
+    mentions this number without pride or irritation, the way someone
+    mentions the height of a bridge -- it is simply a fact of the
+    structure. His Chrysalis-change is the appropriate one for his
+    work: he has an internal sense of weight accurate to within a
+    fraction of a standard measure. He still uses the certified
+    scales because the charter requires them, but he knows the answer
+    before the beam settles. Three of his fraud catches started with
+    a number that felt wrong before he weighed it.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    perception:
+      training: 9
+    vitality:
+      training: 3

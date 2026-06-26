@@ -1,0 +1,80 @@
+mobid: 9427
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "If you're moving cargo through the Long Quay, you'll want
+      to know who to talk to. That's me, or the guild steward in the
+      hall -- depending on the size of the shipment."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Something moving downriver, or are you just passing
+        through?"
+  - keywords: ["trade", "cargo", "broker", "factor", "who", "business",
+      "what", "do", "work"]
+    responses:
+      - "I represent three of the upriver houses on retainer and assess
+        cargo for two more on commission. The rest I refer to the guild."
+  - keywords: ["river", "aldren", "brenn", "solt", "which", "goods",
+      "brings", "carry"]
+    responses:
+      - "Three rivers is three supply chains. Once you understand which
+        goods run which water, the rest of this quay makes sense."
+  - keywords: [""]
+    responses:
+      - "If it's a trade question, I can likely answer it. Otherwise
+        the guild hall is north end of the quay."
+tree:
+  root:
+    text: "The Long Quay handles the bulk of the Confluence's commercial
+      freight -- grain and timber off the Aldren, wool bales off the
+      Brenn, ore and spice off the Solt. Three rivers means three supply
+      cycles that don't align with each other. My work is making sure
+      the houses I represent don't miss their windows. I've been at this
+      long enough that I don't miss them."
+    hints: "You could ask Edric about what each river brings, about how
+      the trade works here, or about the guild."
+  nodes:
+    - id: rivers
+      triggers: ["river", "rivers", "aldren", "brenn", "solt", "three",
+        "grain", "timber", "wool", "ore", "spice", "what", "brings",
+        "carries", "runs", "goods", "north", "east", "southwest"]
+      text: "The Aldren comes from the north -- grain out of the vale
+        farms, timber from the hill-cutting operations. Heavy cargo, slow
+        boats, reliable schedule. The Brenn runs in from the east with
+        wool mostly, some finished cloth, the odd specialty dye. The Solt
+        is the interesting one -- it drops down from the eastern hills
+        and brings raw ore from the Kilnreach workings, cured spice from
+        the hill-country posts, hides. Lower volume than the grain runs,
+        but better margin on the spice. I keep a closer eye on the Solt
+        manifests for that reason."
+      hints: "You could ask Edric about how the trade works, or about
+        the guild."
+    - id: trade
+      triggers: ["trade", "how", "work", "broker", "factor", "assess",
+        "houses", "numbers", "manifest", "job", "verify", "value"]
+      text: "A factor's job is matching cargo to buyers before the boat
+        ties up. The houses I work for send their manifests ahead -- I
+        receive them, assess the declared values against the guild tariff
+        schedule, and arrange the off-load order based on which buyers
+        have cleared funds. If the declared value and the actual cargo
+        disagree, I find that out at the scales before the weighmaster
+        does, which everyone prefers. Fewer arguments at the Weighhouse
+        door."
+      hints: "You could ask Edric about what the three rivers carry, or
+        about the guild."
+    - id: guild
+      triggers: ["guild", "steward", "rivermen", "charter", "toll",
+        "hall", "guildhall", "allowed", "permit", "certified", "who",
+        "oslen"]
+      text: "The Rivermen's Guild sets who can work the Confluence
+        commercially -- which boats can tie up, which crews are certified,
+        what the toll structure is. I work within the guild system but
+        I'm not a guild officer. The steward is Oslen. He's in the
+        guildhall at the north end of the quay if you need a charter
+        question answered or a crew certified. Thorough man. Nobody has
+        filed a fraudulent charter while he's been there, which is
+        probably the point."
+      hints: "You could ask Edric about what the rivers carry, or about
+        how the trade works."

@@ -1,0 +1,22 @@
+roomid: 6134
+zone: The Confluence
+title: The Counting House
+description: >
+  A narrow building set into the market row, its shuttered windows
+  closed even in fair weather. Inside the single working room,
+  three counting tables are arranged end to end, each fitted with
+  an abacus on a fixed bracket and a locked strongbox under the
+  seat. Inkwells and taper-stubs and the smell of sealing-wax and
+  dry paper. This is a place for the money behind the market — for
+  loans made against expected cargo, for the settlement of trade
+  debts, for the quiet recording of agreements that will not be
+  spoken of in the open yard. It is always quieter here than the
+  lane outside.
+biome: water
+coord: {x: -7, y: -61, z: 0}
+exits:
+  east: {roomid: 6130}
+idlemessages:
+- Wax drips from a taper onto the counting table, cooling quickly.
+- The shut shutters muffle the market noise to something almost bearable.
+- "The scratch of a quill on paper: figures, columns, a long sum."

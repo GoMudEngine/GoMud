@@ -1,0 +1,12 @@
+faction_id: margin
+display_name: "The Margin"
+description: |
+  A quiet community of Confluence scholars, scriveners, and chart-keepers who
+  study the old records and notice where they disagree — particularly the
+  pre-Founding maps and marks the temple reads one way and the evidence reads
+  another. They hold no office and make no noise; they simply keep asking the
+  questions the official account would rather were settled. Most of the city
+  takes them for harmless antiquarians. A few know better.
+default_rep: 10
+allies: []
+enemies: []

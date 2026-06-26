@@ -1,0 +1,88 @@
+mobid: 9432
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Rivermen's Guild. Charter questions, crew certification,
+      toll queries -- what brings you to the hall?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Guild business, or were you looking for something
+        else?"
+  - keywords: ["charter", "permit", "license", "allowed", "work",
+      "commercial", "certified", "register", "how", "get"]
+    responses:
+      - "Commercial work on the Confluence requires a guild charter in
+        good standing. I can explain what that means for your situation
+        if you describe it."
+  - keywords: ["toll", "tariff", "fee", "charge", "cost", "rate",
+      "guild", "pay"]
+    responses:
+      - "Guild tolls are separate from the city tariff the Weighhouse
+        assesses. They cover right-of-way on the quay and access to
+        guild-certified wharves and infrastructure."
+  - keywords: [""]
+    responses:
+      - "Guild matters I can help with. If it's not guild business, I
+        can likely point you to who can."
+tree:
+  root:
+    text: "The Rivermen's Guild controls commercial access to the
+      Confluence waterway -- which boats can tie up here, which crews
+      are certified to work the quay, what the toll structure is for
+      different cargo categories. We're not the city's tax arm -- the
+      Weighhouse handles tariff. We're the trade body. If you're moving
+      goods commercially through this quay, you're working within our
+      charter whether you know it or not."
+    hints: "You could ask Oslen about the guild charter and what it
+      covers, about tolls and what they pay for, or about the guild's
+      role in disputes."
+  nodes:
+    - id: charter
+      triggers: ["charter", "permit", "license", "work", "allowed",
+        "certified", "crew", "register", "commercial", "get", "how",
+        "qualify", "what", "need", "require", "apply", "application"]
+      text: "A guild charter covers the right to conduct commercial
+        freight operations on the Confluence and use the certified
+        wharves. Crew certification is separate -- individual riverworkers
+        can be certified without a boat charter, but a charted boat needs
+        at least one certified crew member to operate commercially. The
+        application process is documented; I have the forms here. Most
+        applicants run about two weeks from first inquiry to certification,
+        longer if the crew record requires verification from an outside
+        port. I've seen it take six weeks. I've seen it take three days.
+        Depends on the paperwork."
+      hints: "You could ask Oslen about tolls and what they pay for, or
+        about the guild's role in disputes."
+    - id: tolls
+      triggers: ["toll", "tolls", "fee", "fees", "pay", "cost", "charge",
+        "how much", "why", "rate", "structure", "wharf", "access",
+        "what", "cover", "include"]
+      text: "The guild toll covers right-of-way on the Long Quay wharves
+        and access to guild-certified infrastructure -- the Weighhouse
+        and the dock crane. The rate is tiered by cargo category and load
+        size. It's not cheap if you're running a single-boat operation,
+        but what you get in return is certified access to the best-
+        maintained wharves on the Confluence and the guild's arbitration
+        service if something goes wrong. Something always goes wrong
+        eventually. The boats that aren't guild-chartered tie up at the
+        outer slips and sort their disputes out themselves. I see how
+        that goes. Mostly not well."
+      hints: "You could ask Oslen about the guild charter, or about
+        the guild's role in disputes."
+    - id: disputes
+      triggers: ["dispute", "disputes", "arbitration", "fight", "argument",
+        "wrong", "problem", "issue", "case", "settle", "between",
+        "houses", "freight", "how", "resolve", "ruling", "finding"]
+      text: "Arbitration is part of the guild charter. If two charted
+        parties have a freight dispute -- missing cargo, damaged goods,
+        missed delivery, short payment -- either party can request guild
+        arbitration. I convene a hearing, both sides present their
+        accounts, I ask questions, and I issue a finding. The finding
+        is binding if both parties are guild-charted, which is usually
+        the case. I've done forty-odd arbitrations. The findings hold.
+        People don't always like them, but they hold. The guild is only
+        worth something if the arbitration means something, and it does."
+      hints: "You could ask Oslen about the guild charter, or about
+        tolls and what they pay for."

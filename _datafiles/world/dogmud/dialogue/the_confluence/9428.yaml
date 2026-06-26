@@ -1,0 +1,79 @@
+mobid: 9428
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Solt goods on the counter, river fish smoked fresh this week.
+      What are you looking to eat out here?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Don't rush -- there's plenty to look at."
+  - keywords: ["buy", "sell", "shop", "food", "eat", "price", "cost",
+      "stock"]
+    responses:
+      - "Everything on the counter came in this week or I smoked it
+        myself. Have a look at what I've got out."
+  - keywords: ["spice", "solt", "exotic", "strange", "from", "where",
+      "source"]
+    responses:
+      - "The Solt runs down from the eastern hills and the hill-country
+        posts put up goods you won't find on the Aldren or Brenn runs.
+        That's the interesting part of my trade."
+  - keywords: [""]
+    responses:
+      - "Ask me about what I stock or where it comes from. I know both."
+tree:
+  root:
+    text: "Most of what comes up the Solt is ore and raw material -- that's
+      not my trade. My trade is the smaller cargo: the spice packs from
+      the hill-country posts, the salt-cured roe from the estuary traders,
+      the preserved goods the Kilnreach crews put up for the long season.
+      Lower volume, better margin, and more interesting to work with than
+      a barge full of iron ingots."
+    hints: "You could ask Varro about the Solt and what it carries, about
+      the spices and preserved goods he stocks, or about his trade."
+  nodes:
+    - id: solt
+      triggers: ["solt", "river", "hill", "east", "eastern", "kilnreach",
+        "estuary", "where", "come", "from", "source", "posts", "origin"]
+      text: "The Solt drops fast out of the eastern hills -- too fast for
+        heavy-cargo barging on the upper stretch, which is why it takes
+        pack-mule trains to get goods down to the navigable section. That
+        extra handling is why hill-country goods cost more. The estuary
+        traders at the Solt's mouth do their own salt-curing -- roe
+        mostly, sometimes whole fish. I buy direct when I can get a
+        reasonable price, which is not always. The Kilnreach crews put
+        up spice blends and preserved food for their own use, and the
+        surplus comes downriver. River-spice isn't a proper region name.
+        It's just what the crews call it, and it stuck."
+      hints: "You could ask Varro about the goods he stocks, or about
+        his trade."
+    - id: stock
+      triggers: ["spice", "roe", "fish", "smoked", "watercress", "cured",
+        "salt", "buy", "carry", "preserved", "what", "sell", "have",
+        "river-spice", "goods"]
+      text: "River-spice is the main draw -- a dry blend from the hill-
+        country posts, good with meat and river fish both. The salt-cured
+        roe packs well and keeps for weeks without cooling. Smoked river-
+        fish I source from the same boats as the main market but I pick
+        the cuts that cure better and run a longer smoke. Watercress I
+        buy fresh off the Solt bank vendors most mornings -- I don't
+        stock a lot of it, it moves fast. If you're cooking on the road,
+        the roe and the spice will carry you further than anything else
+        I sell."
+      hints: "You could ask Varro about the Solt and where he sources,
+        or about his trade."
+    - id: trade
+      triggers: ["trade", "import", "business", "how", "work", "why",
+        "interesting", "margin", "worth", "money", "living", "advantage"]
+      text: "The advantage of my end of the trade is that nobody else
+        wants to bother with it. The big houses move grain and ore
+        because the volume is predictable. One pack-mule load of hill
+        spice is harder to arrange than a barge of barley, so most
+        factors leave it alone. I don't mind the complexity. The goods
+        are better and the buyers are more interesting. Half the specialty
+        cooks in this city order from me exclusively. The other half
+        will, eventually."
+      hints: "You could ask Varro about the Solt, or about the stock
+        he carries."

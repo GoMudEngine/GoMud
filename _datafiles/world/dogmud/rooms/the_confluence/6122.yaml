@@ -1,0 +1,21 @@
+roomid: 6122
+zone: The Confluence
+title: South Quay Road
+description: >
+  The road broadens south of the old gateposts, the working-dock
+  character of the Landings giving way to something more deliberate.
+  The buildings here are taller and better-kept; a painted sign above
+  a doorway, shutters that close square, stone-laid gutters running
+  clear. The sound of the market comes from further ahead — a bell,
+  voices carrying, the creak of wheels on stone — and the smell shifts
+  from raw river mud toward spice and salt and something warm and
+  pressed. The Long Quay begins here.
+biome: water
+coord: {x: -5, y: -59, z: 0}
+exits:
+  north: {roomid: 6121}
+  south: {roomid: 6123}
+idlemessages:
+- A laden hand-cart passes south, its wheels loud on the stone road.
+- The market bell rings once in the distance, then falls quiet.
+- The smell of spice and river-smoke drifts up from the south.

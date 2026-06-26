@@ -1,0 +1,35 @@
+roomid: 6123
+zone: The Confluence
+title: The Market Cross
+description: >
+  The broad junction at the heart of the Long Quay. A stone post
+  stands at the center with a bronze bell hung from its crossbar,
+  the rim worn bright where the market-keeper's hammer strikes.
+  Traffic moves in four directions here: east to the great trade
+  wharf, west to the market rows, north back toward the Landings,
+  south deeper into the commerce of the city. Voices overlap — the
+  calls of carriers, the low talk of factors and buyers, the count
+  of coin — and underfoot the stone is worn to a shine from years
+  of foot traffic and loaded carts.
+biome: water
+coord: {x: -5, y: -60, z: 0}
+exits:
+  north: {roomid: 6122}
+  south: {roomid: 6126}
+  east: {roomid: 6124}
+  west: {roomid: 6127}
+nouns:
+  the market bell: >
+    A bronze bell hung from an iron crossbar on the junction post,
+    its rim worn bright from use. It is rung at market-open and
+    market-close, and again when a dispute needs the Weighmaster
+    or the Guild Steward. The tone is deep and carries well down
+    the quay road and out over the river. The hammer hangs from
+    a chain on the post below it.
+spawninfo:
+  - mobid: 9433
+    respawnrate: "20 real minutes"
+idlemessages:
+- The market bell rings twice and voices pause, then resume louder.
+- A porter shouts a way-call and pushes a barrow through the press.
+- "Coin changes hands at the junction post: a fast deal, sealed with a nod."

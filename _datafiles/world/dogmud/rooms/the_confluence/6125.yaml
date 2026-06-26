@@ -1,0 +1,22 @@
+roomid: 6125
+zone: The Confluence
+title: The Import Wharf
+description: >
+  The quay extends east into a bonded wharf where the big import
+  cargoes are offloaded and held. Goods from the Solt river trade
+  are stacked here under heavy canvas tarp, banded in rope and
+  marked with chalk tallies. A tall cargo crane stands at the far
+  end, its arm out over the water, cables down to a moored barge
+  still half-unloaded. The smells arrive before the sights: black
+  pepper and dried bark, tar from the casks, strange dense wood
+  from far upriver and farther beyond that. The birds overhead are
+  not the usual gulls — smaller, darker, riding the crane arm
+  without apparent concern.
+biome: water
+coord: {x: -3, y: -60, z: 0}
+exits:
+  west: {roomid: 6124}
+idlemessages:
+- A tarp shifts in the river wind, showing a corner of stacked casks.
+- The cargo crane's cable runs taut, then slackens as a load is set down.
+- The air here smells of pepper and strange wood and old tar.

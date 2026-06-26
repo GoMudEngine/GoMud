@@ -1,0 +1,54 @@
+mobid: 9429
+zone: The Confluence
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - quayfolk
+idlecommands:
+  - 'emote shakes out a bolt of river-cloth across the counter,
+    checks the edge weave with a quick pass of both thumbs, then
+    folds it back into a clean rectangle.'
+  - ''
+  - 'say Looking for rope? Three weights in stock -- light, medium,
+    and haul. Anything heavier, the chandler on the Landings quay
+    is your man.'
+  - ''
+  - 'emote counts a stack of tinderboxes, sets three aside on the
+    reserve shelf, and writes a number on the slate beside the rack.'
+  - ''
+activitylevel: 10
+character:
+  name: Lenne the Provisioner
+  description: |
+    Lenne the Provisioner holds a trade stall in the River Market
+    with the organized calm of someone who has answered the same
+    questions about rope and waterskins many thousands of times
+    and still answers them correctly. She stocks the practical
+    middle tier of river-trade goods -- cloth, line, tinder,
+    waterskins -- things the big chandlers don't bother with in
+    small quantities and the fish market doesn't cover at all.
+    Her Chrysalis-change lives in her fingertips: she can detect
+    thread-count, weave integrity, and fiber quality in cloth by
+    touch without looking, which means she can identify a reblended
+    salvage bolt or a rotten-fiber piece before it reaches the
+    counter. She has quietly returned more bad cloth than she has
+    ever sold. She does not make a fuss about it.
+  speciesid: 1
+  level: 1
+  gold: 40
+  stats:
+    perception:
+      training: 7
+    charisma:
+      training: 5
+  shop:
+    - itemid: 40132
+    - itemid: 40102
+    - itemid: 40103
+    - itemid: 40105

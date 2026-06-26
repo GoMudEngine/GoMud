@@ -1,0 +1,37 @@
+mobid: 9433
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Bit busy. If you need something, make it quick."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Freight doesn't wait, but I've got a minute."
+  - keywords: ["quay", "market", "where", "find", "directions", "help",
+      "around", "here"]
+    responses:
+      - "Market cross is back behind you. Weighhouse is the stone
+        building north of center. Guild hall is past that, through
+        the arch. Spice stall is east along the waterfront."
+  - keywords: [""]
+    responses:
+      - "I'm moving freight. Ask someone with more time than I've got."
+tree:
+  root:
+    text: "Long Quay, busy day. Everything moves through here eventually
+      -- the trick is not being in the way when it does."
+    hints: "You could ask about the quay and where to find things."
+  nodes:
+    - id: quay
+      triggers: ["quay", "market", "where", "weighhouse", "guild",
+        "find", "looking", "directions", "around", "stall", "vendor",
+        "here", "spice", "factor"]
+      text: "Market cross is the center of the quay, that's where the
+        general stalls are. Weighhouse is the big stone building north
+        of the cross -- cargo certification. Guild hall is past that,
+        through the arch -- that's for charters and tolls. Spice stall
+        is further east along the waterfront. The trade factor with the
+        document case works out of the Long Quay, around the front.
+        Now if you'll excuse me, this freight won't move itself."
+      hints: "You could ask about where to find things on the quay."

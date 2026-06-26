@@ -1,0 +1,24 @@
+roomid: 6129
+zone: The Confluence
+title: The Weighhouse Yard
+description: >
+  A stone yard set back from the quay road, open to the sky, where
+  the city takes its cut of the trade. Two great platform scales
+  dominate the center, their iron arms balanced by counterweights
+  bolted to the beam — large enough to weigh a cart's full load in
+  one pass. A queue of carts and barrows winds back toward the road,
+  drivers waiting their turn with the patient ease of people who
+  have done this many times. A chalk-board by the weighhouse door
+  shows the current tariff rates, updated when the Weighmaster
+  sees fit.
+biome: water
+coord: {x: -5, y: -62, z: 0}
+exits:
+  north: {roomid: 6126}
+  south: {roomid: 6136}
+  east: {roomid: 6132}
+  west: {roomid: 6131}
+idlemessages:
+- A cart rolls onto the platform scale; the arm dips and the tallyman calls.
+- The iron counterweights ring dully against each other when the wind moves them.
+- A driver at the back of the queue counts their remaining coin while they wait.

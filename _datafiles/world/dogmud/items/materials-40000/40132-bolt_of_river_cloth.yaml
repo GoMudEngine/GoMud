@@ -1,0 +1,14 @@
+itemid: 40132
+name: Bolt of River-Cloth
+namesimple: river-cloth
+description: A bolt of sturdy plain-woven cloth dyed in the valley's madder-red,
+  a staple of the river trade.
+type: object
+subtype: mundane
+component_tag: river-cloth
+weight: 0.6
+value: 9
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- tailoring
