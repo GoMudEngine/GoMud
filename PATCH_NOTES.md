@@ -1,6 +1,34 @@
 # DOGMud Patch Notes
 
-## 2026-06-25 — New Plymouth: the capital gets its quests
+## 2026-06-25 — The road south: Amber Valley opens
+
+The signpost at the Ashwick crossroads has always promised a south road to
+"Amber Valley, the Confluence." Now the road is actually there. Walk south and
+the country warms and dries as you descend — orchard land thinning to scrub, a
+waypoint inn, a shepherd who knows everyone's business, the valley opening gold
+below you — until you come down into **Amber Valley** itself.
+
+It is a warm farming town, and the first place in the world that does not flinch
+at mutation. Here a change in the body — a "Blooming" — is treated as a gift, not
+a curse, and celebrated at the Chrysalis Rite. Every soul you meet wears their
+own change with quiet pride: glowing freckles, river-stone hands, a third small
+deft hand at the bench. It is the home Davan left, and his father still works
+wood in a shop with one stool gone empty.
+
+- **A quarrel worth settling.** Two farms at the valley's dry edge are at each
+  other's throats over a cut irrigation channel, and the whole town is sick of
+  the shouting. Hear both men out, then end it your own way — broker a fair
+  compromise, climb to the foothills and restore the water at its fallen source,
+  or settle it cold by the letter of the old written water-right. Each path
+  leaves the valley a little different.
+- **The dry rim.** Past the farms the land breaks into hot scrub and a cave that
+  goes down into the cool dark — sun-lizards on the slopes, paler things below,
+  and something at the bottom that dens where the light gives out.
+- **Gather as you go.** The orchards and wild vines give up windfall fruit and
+  grapes to anyone who stops to forage.
+- A quiet grove outside town remembers its most remarkable Bloomings in stone —
+  and holds one marker older than the faith itself, worn almost flat, that no one
+  in the valley can quite explain.
 
 The city was a beautiful place to walk. Now it is a place with things to do. Five
 districts that had no quests of their own each get one, and all four new
