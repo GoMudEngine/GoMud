@@ -1,0 +1,15 @@
+itemid: 40129
+name: Coil of Tarred Line
+namesimple: tarred-line
+description: >
+  A coil of stout cordage soaked in pine tar against the wet; the
+  chandler's staple for rigging and mooring along the Confluence wharves.
+type: object
+subtype: mundane
+component_tag: tarred-line
+weight: 0.5
+value: 6
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- tailoring

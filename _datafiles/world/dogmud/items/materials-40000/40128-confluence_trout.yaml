@@ -1,0 +1,15 @@
+itemid: 40128
+name: Confluence Trout
+namesimple: confluence-trout
+description: >
+  A fat trout taken where the three rivers' cold currents meet; the
+  mingled chill keeps the flesh firm and pale, prized in the city markets.
+type: object
+subtype: mundane
+component_tag: confluence-trout
+weight: 0.4
+value: 5
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking
