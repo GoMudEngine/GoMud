@@ -3,32 +3,32 @@ zone: River Road
 title: The Confluence Gates
 description: >
   The road ends here at the city's river-ward approach: two broad stone
-  gateposts with a bar across, a river-warden's booth to one side, a
-  sign in several hands nailed below the arch. The gates are solid work,
-  not hostile — a traveler's gate, open in season. Beyond them, the road
-  curves under the first buildings of the Confluence, where three rivers
-  and a city have been arriving at each other for a very long time.
-  The gate is not open yet; the warden is not at post; the bar sits
-  across the road, unhurried about it.
+  gateposts, a river-warden's booth to one side, a sign in several hands
+  nailed below the arch. The bar is up now, swung clear and hooked back
+  against the post — the season has turned and the warden is returned to
+  duty. Beyond the gate the road curves on under the first buildings of
+  the Confluence, where three rivers and a city have been arriving at each
+  other for a very long time, and the way south runs open into it at last.
 biome: water
 coord: {x: -5, y: -51, z: 0}
 exits:
   northwest: {roomid: 6104}
+  south: {roomid: 6106, zone: The Confluence}
 nouns:
   the gates: >
     Gateposts of squared river stone, the bar between them worn smooth
-    from being lifted and set back a thousand times. The warden's booth
-    is empty today — the season not quite right, or the last span of
-    road not yet settled. A brass fitting on the post shows where the
-    lock goes when the bar is set in earnest. Right now it is simply
-    resting there. Not locked. Just set.
+    from being lifted and set back a thousand times. It hangs raised now,
+    hooked clear against its post, and the warden's booth is manned again.
+    A brass fitting on the post shows where the lock goes when the bar is
+    set in earnest, but the bar is up and the road is open: travelers pass
+    through with a nod and a word, in and out of the city beyond.
   the road south: >
     A short span of old paving between the gate and the city's first
     buildings, the stones older than the bar across the road and older
-    than the warden's booth. Through the gap, city sounds arrive: street
-    noise, river noise, the smell of a city built on moving water. It is
-    all there, waiting for the gate to open. Word is it will, when the
-    season turns and the river-warden returns to post. Come back then.
+    than the warden's booth. Through the open gate the city arrives all at
+    once: street noise, river noise, the smell of a place built on moving
+    water. The way runs south into it now, the gate raised and the season
+    turned — the Confluence lies open ahead.
 idlemessages:
 - Beyond the gate, the sound of the city drifts over the bar.
 - The river runs on both sides of the gate, paying the bar no attention.
