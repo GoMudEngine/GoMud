@@ -1,0 +1,50 @@
+roomid: 6150
+zone: The Confluence
+title: The Civic Stores
+description: >
+  A general-provisions shop on the square's east side,
+  occupying the ground floor of a narrow building that
+  has been in this business long enough that the word
+  STORES is cut into the stone above the door rather
+  than painted on wood. A broad
+  <ansi fg="itemname">counter</ansi>
+  runs the shop's width, its surface marked with the
+  accumulated business of years. Shelves behind run
+  floor to ceiling with the sundry of city life —
+  coils of rope, stacked paper, sticks of sealing wax,
+  lamp-wicks by the bundle, candles in three grades,
+  and dry goods in labeled jars. The prices are chalked
+  on a board above the door. The shopkeeper knows what
+  every office in the civic district needs and keeps it
+  in stock without waiting to be asked.
+biome: city
+coord:
+  x: -3
+  y: -66
+  z: 0
+exits:
+  west:
+    roomid: 6145
+nouns:
+  counter: >
+    A timber counter running the shop's full width,
+    its surface marked by years of candle-wax drips,
+    twine-cuts, and the rings of ink bottles set down
+    without care. Behind it, the shelving is dense
+    and organized in the way of a shop that looks
+    crowded but yields exactly what you ask for
+    without the shopkeeper looking twice. The prices
+    on the board above the door are reasonable in the
+    specific way of a shop whose customers are the
+    city's own offices and who would quickly hear
+    about it otherwise.
+spawninfo:
+  - mobid: 9437
+    respawnrate: "20 real minutes"
+idlemessages:
+- A civic errand-runner collects a wrapped parcel
+  from the counter and tucks it under one arm.
+- The lamp-wick smell — dry and faintly sweet —
+  is the room's undertone beneath everything else.
+- The bell above the door rings as someone leaves,
+  and the shop settles back to its quiet industry.

@@ -1,0 +1,46 @@
+roomid: 6153
+zone: The Confluence
+title: Processional Gate
+description: >
+  The road reaches its last civic marker here at the
+  gate-piers of the Processional approach — two columns
+  of dressed stone, each carrying the Confluence's
+  crest and the date of the piers' construction,
+  flanking the road that runs on south. Beyond them
+  the paving broadens and the buildings draw back, the
+  avenue given room to breathe and to be seen from a
+  distance. The civic square and the hall lie behind;
+  what lies ahead is the full ceremonial weight of the
+  Processional district, its great temple at the far
+  end of the avenue. The gate stands open, as it has
+  always stood.
+  <ansi fg="itemname">The way south</ansi>
+  is a walk for another day, but the road is clear
+  and well-maintained.
+biome: city
+coord:
+  x: -5
+  y: -69
+  z: 0
+exits:
+  north:
+    roomid: 6141
+nouns:
+  the way south: >
+    The road continues past the gate-piers into the
+    Processional district — the broad ceremonial
+    avenue of the Confluence, its paving wider than
+    anything in the civic square behind you, the
+    buildings on either side set deliberately back
+    to give the approach its scale. The great temple
+    is at the far end of this avenue, another
+    district's worth of city away. The gate stands
+    open and the road is clear. It is a walk for
+    another day.
+idlemessages:
+- Travelers pass through the gate-piers heading south,
+  road-worn and purposeful.
+- The gate-piers carry decades of chalked names and
+  merchant counter-marks, worn almost to texture.
+- The civic bell is audible from here, now behind
+  you to the north, marking the hours.

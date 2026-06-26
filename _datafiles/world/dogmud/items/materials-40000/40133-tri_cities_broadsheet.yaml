@@ -1,0 +1,16 @@
+itemid: 40133
+name: Tri-Cities Broadsheet
+namesimple: broadsheet
+description: >
+  A single printed sheet of civic news, public notices, and the
+  week's river-trade prices, run off cheap and sold by the armful
+  at the square in the Confluence.
+type: object
+subtype: mundane
+component_tag: broadsheet
+weight: 0.1
+value: 2
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- tailoring

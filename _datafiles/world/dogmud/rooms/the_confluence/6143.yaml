@@ -1,0 +1,65 @@
+roomid: 6143
+zone: The Confluence
+title: The Municipal Hall
+description: >
+  The main chamber of the Confluence's civic hall — a
+  room built to accommodate public business, with rows
+  of benches for petitioners, a raised dais for the
+  city's presiding officers, and the accumulated texture
+  of a hall in long active use. Filing shelves line the
+  walls between the windows. The floor is worn pale at
+  the paths traffic takes most often. On the wall facing
+  the benches, a large framed
+  <ansi fg="itemname">map</ansi>
+  of the Confluence and its three rivers is hung where
+  all who wait may consult it. A hall-clerk manages the
+  counter at the room's north end with the unhurried
+  efficiency of someone who has heard most questions
+  before; a scholar in a worn coat works one of the
+  margin tables, surrounded by books and papers and
+  apparently at home.
+biome: city
+coord:
+  x: -6
+  y: -67
+  z: 0
+exits:
+  east:
+    roomid: 6140
+  north:
+    roomid: 6142
+  south:
+    roomid: 6144
+  west:
+    roomid: 6149
+nouns:
+  the map: >
+    A large framed chart of the Confluence's river-
+    courses and district boundaries, hung on the wall
+    in clear view of the waiting benches. The three
+    rivers are drawn in clean professional ink: the
+    Aldren from the north, the Brenn from the east,
+    the Solt from the southwest, their courses meeting
+    at the junction point at the chart's center. In
+    one margin, in a hand older and less practiced
+    than the chart-maker's, a fourth channel has been
+    pencilled in — its course running south-southwest
+    from the junction point. The line has been half-
+    struck-through with a horizontal mark. A note
+    beside it, in faded ink: the surveyors could not
+    agree. No other annotation addresses it. The chart
+    has hung here long enough that the staff do not
+    remark on the marginal note.
+spawninfo:
+  - mobid: 9434
+    respawnrate: "20 real minutes"
+  - mobid: 9435
+    respawnrate: "20 real minutes"
+idlemessages:
+- The hall-clerk handles a query at the counter
+  without looking up from the ledger being annotated.
+- The scholar at the margin table turns a page and
+  makes a note with the precision of someone for whom
+  the note is the important thing.
+- The hall's ventilation carries a faint smell of old
+  paper and the residue of official business.

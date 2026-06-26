@@ -1,0 +1,50 @@
+roomid: 6145
+zone: The Confluence
+title: The Inn-Yard
+description: >
+  The Three Waters' yard occupies the space between
+  the inn's north face and the square road — wide
+  enough for a coach-and-four to turn in without
+  difficulty, cobbles kept clean by yard staff who
+  understand that the first thing a guest sees sets
+  a tone. A
+  <ansi fg="itemname">mounting-block</ansi>
+  of dressed stone stands at the yard's entrance, its
+  tether-ring recently re-mortared. The stable eaves
+  run along the north side; the smell of horse and
+  straw is present but managed. Arriving coaches and
+  road-weary animals are handed off here with the
+  practiced efficiency of a house that sees heavy
+  traffic and has organized itself accordingly. The
+  inn's common-room door opens south; the Civic Stores
+  occupy the building to the east.
+biome: city
+coord:
+  x: -4
+  y: -66
+  z: 0
+exits:
+  west:
+    roomid: 6139
+  south:
+    roomid: 6146
+  east:
+    roomid: 6150
+nouns:
+  mounting-block: >
+    Two steps of dressed stone, the top surface worn
+    smooth by years of boot-leather. The iron tether-
+    ring fixed beside it is set into a sound stone
+    anchor and has been recently re-mortared — the
+    new work is cleaner than the block around it.
+    The yard keeps this in good order because it is
+    the first thing a rider sees on arrival, and the
+    Three Waters is a house that considers what its
+    guests see first.
+idlemessages:
+- A stable-hand leads a road-weary horse under the
+  eave stalls, speaking to it in low unhurried tones.
+- A coach has recently arrived; the yard-cobbles still
+  carry the scrape of wheel-iron on the stone.
+- Pigeons work the yard's far corner, finding what
+  the horses have missed.

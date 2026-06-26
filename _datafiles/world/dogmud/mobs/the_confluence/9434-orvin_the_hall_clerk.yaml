@@ -1,0 +1,51 @@
+mobid: 9434
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote draws the next form from the intake stack, sets it flat on
+    the desk, and reads it over with the quick attentiveness of
+    someone who has processed a great many forms and still reads each
+    one.'
+  - ''
+  - 'say Civic registration is down the left corridor. If you are
+    here for the chart on the wall, help yourself -- the scholars
+    know where the door is.'
+  - ''
+  - 'emote presses the municipal seal onto a completed form, lifts the
+    block cleanly, and adds the form to the outgoing pile without
+    interrupting his work.'
+  - ''
+activitylevel: 10
+character:
+  name: Orvin the Hall-Clerk
+  description: |
+    Orvin the Hall-Clerk occupies the main receiving desk of the
+    Municipal Hall with the settled permanence of a man who has run
+    this particular post long enough that the desk has adjusted to
+    his habits rather than the other way around. He processes
+    registrations, deed inquiries, civic petitions, and the
+    administrative volume that a city of the Confluence's size
+    generates as a matter of course. He is not unfriendly; he is
+    methodically occupied, and the difference has become difficult
+    to notice from the outside. The notation chart on the wall
+    behind him draws a steady trickle of scholars and curious
+    travelers, none of whom he has managed to redirect. His
+    Chrysalis-change is practical: he cannot misread an altered
+    date or a tampered signature in any document he examines.
+    The ink shows him its true age. The municipal auditors
+    consider this an asset. Forgers have found it discouraging.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    perception:
+      training: 7
+    willpower:
+      training: 4

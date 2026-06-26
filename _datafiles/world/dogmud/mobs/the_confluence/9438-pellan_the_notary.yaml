@@ -1,0 +1,50 @@
+mobid: 9438
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote drips wax onto the fold of a deed with methodical
+    precision, centers the seal-stamp over it, and applies
+    steady downward pressure until the wax sets.'
+  - ''
+  - 'say A deed without a notarial seal is not a deed. It is a
+    letter of intent. A very different thing in front of a
+    civic council, legally speaking.'
+  - ''
+  - 'emote spreads a property deed flat on the review stand,
+    checks the party names against the land register, and makes
+    a careful mark in the margin before reaching for the wax.'
+  - ''
+activitylevel: 10
+character:
+  name: Pellan the Notary
+  description: |
+    Pellan the Notary works from a narrow office off Civic Lane
+    where he handles the sealing and certification of deeds,
+    contracts, letters of attestation, and any document requiring
+    the municipality's formal witness. He is precise, measured,
+    and faintly skeptical of anything that is not properly written
+    down and sealed -- which covers most of what people claim to
+    him verbally. He takes his office seriously because he has
+    witnessed enough property disputes to know what happens when
+    the original paperwork is unsigned or ambiguous. His
+    Chrysalis-change is quiet and strange: the wax under his
+    certified seal remains faintly warm indefinitely -- not hot,
+    just perceptibly warmer than the surrounding document.
+    Forgeries of his seal run cold. He cannot account for the
+    mechanism and has stopped trying. The civic auditors have
+    run independent tests. He is correct.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    perception:
+      training: 6
+    willpower:
+      training: 6

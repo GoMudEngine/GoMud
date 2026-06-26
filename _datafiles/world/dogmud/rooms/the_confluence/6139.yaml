@@ -1,0 +1,53 @@
+roomid: 6139
+zone: The Confluence
+title: The North Cross
+description: >
+  The north side of Tri-Cross Square opens here, the
+  paving widening and the buildings to either side
+  stepping back from the road to give the square its
+  breathing room. A
+  <ansi fg="itemname">notice-board</ansi>
+  stands on a post at the corner, dense with handbills
+  and civic postings pasted over one another in
+  chronological layers. At the square's center,
+  visible south, the civic monument rises above the
+  worn stone of the crossing. The west side of the
+  square carries the Municipal Hall's dressed-stone
+  facade; the east holds the broad front of the great
+  inn. A town crier works this corner at the noon-bell,
+  voice pitched to carry to the inn-yard and back.
+biome: city
+coord:
+  x: -5
+  y: -66
+  z: 0
+exits:
+  north:
+    roomid: 6138
+  south:
+    roomid: 6140
+  east:
+    roomid: 6145
+  west:
+    roomid: 6142
+nouns:
+  notice-board: >
+    A board mounted on a square post at the corner,
+    carrying notices in various stages of age: tide-
+    table updates, an ordinance regarding cart-axle
+    widths on the processional road, a ferry departure
+    change, and several handwritten postings for
+    goods for sale or lost items sought. Someone has
+    pasted a new bill over the center of an older one
+    without reading what was underneath. The board is
+    full. It is always full.
+spawninfo:
+  - mobid: 9439
+    respawnrate: "20 real minutes"
+idlemessages:
+- A citizen pauses at the notice-board, reads two
+  lines of a posting, and moves on without comment.
+- The town crier's voice rings out the noon count
+  from this corner — once, twice, then gone.
+- A pair of children cut across the north end of the
+  square chasing something that has escaped a basket.

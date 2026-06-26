@@ -1,0 +1,37 @@
+roomid: 6141
+zone: The Confluence
+title: The South Cross
+description: >
+  The south side of Tri-Cross Square, where the paving
+  narrows again and the civic heart of the city begins
+  to yield to the processional. A low stone curb and
+  a pair of old worn posts mark the square's southern
+  edge; the road between them runs on south toward the
+  Processional Gate and the great temple district beyond.
+  The posts have been here longer than most things in
+  the immediate vicinity — their stone is different,
+  their surface carved with marks that weather has
+  made illegible. The inn's south lane opens east, the
+  Municipal Hall's service lane west. The square's
+  monument is visible north, centered in the paving.
+biome: city
+coord:
+  x: -5
+  y: -68
+  z: 0
+exits:
+  north:
+    roomid: 6140
+  south:
+    roomid: 6153
+  east:
+    roomid: 6147
+  west:
+    roomid: 6144
+idlemessages:
+- Citizens moving between the square and the
+  processional road pass through here without pausing.
+- The civic bell's note reaches even this corner
+  of the square, a half-beat behind the west.
+- A flower-seller with a handcart takes up a position
+  near the south posts for the afternoon trade.

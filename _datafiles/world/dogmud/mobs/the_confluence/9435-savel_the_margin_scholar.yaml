@@ -1,0 +1,51 @@
+mobid: 9435
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - margin
+idlecommands:
+  - 'emote traces a finger above a line on the notation map without
+    touching the surface, following the junction annotation with
+    more precision than the line itself permits.'
+  - ''
+  - 'say The correction at the junction margin was added after the
+    original survey. Different hand, different period. That much
+    I can establish from here.'
+  - ''
+  - 'emote sets her notes aside, returns to the map, and spends
+    a long moment comparing two sections of it before writing
+    something in the margin of her folio.'
+  - ''
+activitylevel: 10
+character:
+  name: Savel the Margin Scholar
+  description: |
+    Savel the Margin Scholar has claimed the reading table nearest
+    the notation map in the Municipal Hall and shows no sign of
+    relinquishing it soon. She is a member of the Margin, the
+    Confluence's scholarly society, which she is here representing
+    in the particular sense of sitting in front of a very old
+    chart and taking precise notes on its annotation sequence.
+    She has been doing this, on and off, for two seasons. The
+    map has not changed. Her notes have grown considerably. Her
+    Chrysalis-change is perceptual: she can distinguish different
+    periods of ink and annotation in a document without any
+    chemical analysis, reading the layers of addition and
+    correction in a single chart the way a geologist reads stone.
+    This is directly relevant to her work here. The notation map
+    has at least five distinct layers of annotation, which is
+    most of what she came to establish.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    perception:
+      training: 8
+    willpower:
+      training: 4

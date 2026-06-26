@@ -1,0 +1,65 @@
+roomid: 6151
+zone: The Confluence
+title: The Bell-Tower
+description: >
+  The civic bell-tower stands older than the hall it
+  serves, its lower courses built from a stone darker
+  and closer-grained than the civic limestone above —
+  as though a pre-existing foundation was found here
+  and the tower raised up from it rather than clearing
+  and starting fresh. The upper stage is later work,
+  the bell in its open frame audible across the square.
+  The
+  <ansi fg="itemname">base</ansi>
+  of the tower is worth examining — the original stone,
+  whatever it was before the Confluence decided it
+  needed a bell-tower here. The same ring-motif that
+  appears on the newer civic building-fronts as carved
+  ornament is present here too, in the original stone,
+  worn and not ornamental at all.
+biome: city
+coord:
+  x: -7
+  y: -66
+  z: 0
+exits:
+  east:
+    roomid: 6142
+nouns:
+  the base: >
+    The tower's lower courses are cut from a stone
+    darker and closer-grained than the civic limestone
+    above — the original foundation, incorporated when
+    the tower was raised rather than cleared and
+    replaced. The surface is smooth from years of rain
+    and the occasional hand trailing along it. At the
+    corner where the base-stone meets the Hall Steps
+    paving, the face of the block is still legible even
+    in weathered condition. Something has been cut into
+    it, sheltered partly by the paving-overhang above.
+  the symbol: >
+    Carved into the corner face of the tower's old
+    base-stone: concentric rings, the outer two clear,
+    the inner circles more numerous and arranged at
+    regular intervals around a central point. The
+    stonecutter's lines remain sharp where the
+    overhang has sheltered them from direct rain-wear.
+    The shape is not a guild mark or a mason's counter-
+    sign in any current form. The same shape — refined,
+    symmetrical, made decorative — appears as carved
+    ornament on the lintels and friezes of the newer
+    buildings around the square: the cocoon-ring motif,
+    a common touch in the more recently built parts of
+    the Confluence. The old mark in the tower's base-
+    stone and the ornament on the new frontages are
+    plainly the same shape. No one appears to have
+    remarked on this in writing.
+idlemessages:
+- The bell in the tower's upper frame rings the hour
+  with a counted stroke — the sound close and full
+  from directly below.
+- The base-stone's dark courses are noticeably
+  different from the paler civic limestone above them,
+  especially in a raking light.
+- A sparrow has a nest in the bell-frame's timbers
+  above; it argues about the hour from up there.

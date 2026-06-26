@@ -1,0 +1,56 @@
+mobid: 9437
+zone: The Confluence
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote restacks a row of tinderboxes on the counter shelf,
+    gives the row a final adjustment, and marks the count on
+    the ledger without touching a single box more than once.'
+  - ''
+  - 'say Broadsheets came in this morning -- tri-cities edition,
+    all three arms. If you want to know what the whole Confluence
+    is arguing about, that''s where to start.'
+  - ''
+  - 'emote lifts a crate of candles from below the counter,
+    glances at the contents for a moment without counting, and
+    notes a number on a strip of paper she tucks into the crate.'
+  - ''
+activitylevel: 10
+character:
+  name: Corliss the Shopkeeper
+  description: |
+    Corliss the Shopkeeper runs the Civic Stores with the practical
+    efficiency of someone who has decided that a well-stocked
+    shelf and an accurate ledger are the two things standing
+    between order and disorder, and who takes both seriously. She
+    carries the sundries of urban life -- candles, rope,
+    tinderboxes, waterskins, the tri-cities broadsheet -- in
+    quantities sized for the municipal district: small enough to
+    move quickly, restocked often enough to stay current. Her
+    Chrysalis-change is a shopkeeper's gift made precise: she
+    can look at any bin or crate and tell you exactly how many
+    units it holds without counting. Her inventory has not been
+    off by a single item since the change. She considers this
+    the most useful thing that has happened to her in several
+    years.
+  speciesid: 1
+  level: 1
+  gold: 40
+  stats:
+    perception:
+      training: 7
+    charisma:
+      training: 4
+  shop:
+    - itemid: 40133
+    - itemid: 40077
+    - itemid: 40102
+    - itemid: 40103
+    - itemid: 40105

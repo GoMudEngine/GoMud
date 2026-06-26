@@ -1,0 +1,94 @@
+mobid: 9435
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "One moment. I'm in the middle of a count."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Yes? I can speak briefly. I'm in the middle of
+        something."
+  - keywords: ["map", "chart", "notation", "survey", "what",
+      "study", "research", "fourth", "water", "channel",
+      "waters", "junction", "look", "interesting"]
+    responses:
+      - "The notation map, yes. I'm here on behalf of the
+        Margin -- we have had an open question on this chart
+        for about thirty years. I'm establishing the annotation
+        layers."
+  - keywords: ["margin", "scholar", "society", "who", "are",
+      "what", "do", "group", "organization", "scholarly"]
+    responses:
+      - "The Margin is the Confluence's scholarly society. We
+        maintain the Scholars' Quarter upriver. Cartography,
+        natural history, the usual remit."
+  - keywords: [""]
+    responses:
+      - "I'm working. If you have a question about the map
+        or the Margin's research, ask it."
+tree:
+  root:
+    text: "I'm here studying the Municipal Hall's notation map
+      on behalf of the Margin -- specifically, the annotation
+      sequence at the junction area. It is a long-standing
+      cartographic question, and I am trying to establish how
+      many distinct hands have worked on this particular chart.
+      What did you want to know?"
+    hints: "You could ask Savel about what she is studying,
+      about the fourth water question, or about the Margin and
+      the Scholars' Quarter."
+  nodes:
+    - id: studying
+      triggers: ["study", "studying", "map", "chart", "notation",
+        "what", "doing", "work", "annotation", "layer", "count",
+        "hands", "version", "copy", "original", "survey",
+        "how", "why", "long", "here", "who", "wrote"]
+      text: "The chart has been annotated multiple times over
+        its history -- you can see corrections, additions, and
+        at least two full re-surveys overlaid on the original
+        notation. I'm trying to establish a chronology: how
+        many distinct annotation layers, in what order, by
+        whom if the scribal hands can be identified. My
+        Chrysalis-change lets me read ink periods visually,
+        which makes the sequencing faster than it would
+        otherwise be. The work is methodical. I'm not finished."
+      hints: "You could ask Savel about the fourth water
+        question, or about the Margin and the Scholars' Quarter."
+    - id: fourth_water
+      triggers: ["fourth", "water", "channel", "waters", "count",
+        "junction", "old", "older", "original", "disagree",
+        "different", "question", "shows", "marking", "struck",
+        "annotation", "correction", "interesting", "what",
+        "number", "narrow", "river", "three", "four", "extra"]
+      text: "The oldest surveys at the junction consistently
+        mark a fourth channel -- narrower than the Aldren,
+        Brenn, or Solt, shown as a distinct waterway rather
+        than a confusion of currents. Subsequent hands have
+        struck it through in three separate surveys, then
+        re-marked it in two, then struck it again. The
+        disagreement recurs across independent surveys spanning
+        sixty-odd years. Whether it records an actual channel,
+        a periodic overflow, a surveyor's error that propagated
+        through copies, or something else -- that is the open
+        question. The work on it is in the Scholars' Quarter.
+        That is where the Margin keeps its source surveys and
+        where the serious analysis is done. If you want to know
+        more, that is where to go."
+      hints: "You could ask Savel about her annotation work,
+        or about the Margin and the Scholars' Quarter."
+    - id: scholars_quarter
+      triggers: ["scholars", "quarter", "margin", "society",
+        "where", "who", "find", "more", "learn", "upriver",
+        "headquarters", "visit", "go", "guild", "academic",
+        "library", "archive", "research", "more"]
+      text: "The Scholars' Quarter is upriver, at the northern
+        end of the Confluence. The Margin keeps its library and
+        source archive there -- original surveys, pilot records,
+        natural history collections going back several
+        generations. If you are interested in the fourth-water
+        question or the Confluence's cartographic history more
+        broadly, the primary materials are there. Ask for the
+        survey room when you arrive."
+      hints: "You could ask Savel about what she is studying,
+        or about the fourth water question."

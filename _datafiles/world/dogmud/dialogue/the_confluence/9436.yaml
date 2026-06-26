@@ -1,0 +1,95 @@
+mobid: 9436
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Welcome to the Three Waters. Room, a meal, or just a drink
+      to take the road off?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Come in. Room, food, or a drink -- what can I get you?"
+  - keywords: ["room", "stay", "bed", "lodging", "night", "sleep",
+      "rate", "price", "cost", "how much"]
+    responses:
+      - "Rooms on the river side and the square side. River side
+        is quieter after the sixth hour; square side gets the
+        crier's bell at sunrise, which some guests find useful."
+  - keywords: ["food", "eat", "meal", "drink", "wine", "ale",
+      "bread", "menu", "kitchen", "what", "serve", "have",
+      "fish", "lunch", "dinner", "breakfast"]
+    responses:
+      - "Kitchen runs all day. Bread and broth for simple fare,
+        river fish when the boats have had a good morning.
+        House wine is reliable. The strong ale I would try
+        yourself before recommending to anyone."
+  - keywords: ["news", "gossip", "city", "hear", "going on",
+      "confluence", "what's", "latest", "rumor", "talk",
+      "council", "word"]
+    responses:
+      - "You hear everything across this bar eventually. Ferry
+        levies, the guild petition, the usual. Pull up a stool."
+  - keywords: [""]
+    responses:
+      - "Rooms, food, or a drink -- Three Waters has you covered.
+        What is it?"
+tree:
+  root:
+    text: "Three Waters has been running since my father's time --
+      good rooms, a reliable kitchen, and a common room where
+      half the city's business gets concluded over wine. We get
+      administrators, travelers, the odd scholar from upriver.
+      All sorts. What brings you in?"
+    hints: "You could ask Bremm about rooms and food, about city
+      news, or about the river tales he has heard at the bar."
+  nodes:
+    - id: rooms_food
+      triggers: ["room", "stay", "bed", "lodging", "food", "eat",
+        "meal", "drink", "wine", "ale", "bread", "kitchen",
+        "price", "rate", "cost", "serve", "menu", "what",
+        "fish", "night", "sleep", "river", "side"]
+      text: "Rooms by the night or the week. River side is quieter;
+        square side gets the town crier's bell at sunrise, which
+        some guests find useful and others find grounds for
+        complaint. Kitchen serves morning through late evening --
+        bread and broth always, river fish when the boats have
+        cooperated. The house wine comes up from the Amber
+        Valley and is a reasonable choice. The strong ale I
+        would characterize as honest."
+      hints: "You could ask Bremm about city news, or about
+        the river tales he has heard at the bar."
+    - id: fourth_water
+      triggers: ["fourth", "water", "channel", "tale", "story",
+        "rumor", "old", "map", "river", "bargeman", "heard",
+        "strange", "curious", "junction", "history", "waters",
+        "tell", "hear", "rosse", "survey", "narrow"]
+      text: "You hear all sorts across this bar. Had an old
+        Aldren bargeman -- Rosse, came in every spring for
+        thirty-odd years, good tipper -- who swore the oldest
+        maps at the junction showed a fourth water. Narrower
+        than the main three, he said, a little channel that
+        must have dried up or shifted course long before his
+        time. Whether the maps were right, whether the river
+        changed, whether old Rosse was reading them wrong over
+        his third cup -- I couldn't tell you. The scholars up
+        in their quarter apparently argue about it still.
+        Rosse figured it was an old run of the Solt from some
+        earlier course. Could be. You hear all sorts."
+      hints: "You could ask Bremm about rooms and food, or
+        about the city news."
+    - id: city_news
+      triggers: ["news", "gossip", "city", "confluence", "council",
+        "going on", "latest", "hear", "tell", "happen", "recent",
+        "administration", "ferry", "levy", "guild", "petition",
+        "trade", "charter", "road", "south", "latest", "word"]
+      text: "The council is at it again over the ferry levies --
+        the Long Quay traders say they're too high, the council
+        says the maintenance costs are real, and no one agrees
+        on the numbers. The Crafters' Row guild petition about
+        registration rules went to committee last Twoday, which
+        means it will come back in some changed form that neither
+        side wanted. And there's been talk of a new trade charter
+        for the roads south, though that one's been talk for
+        three seasons running. The usual."
+      hints: "You could ask Bremm about rooms and food, or
+        about the river tales he has heard at the bar."

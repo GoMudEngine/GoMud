@@ -1,0 +1,45 @@
+mobid: 9439
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Hall notices for the day. Anything posted at the
+      Municipal Hall, I can repeat."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. I've got the day's notices if you need them."
+  - keywords: ["news", "notice", "today", "what", "announcement",
+      "post", "hall", "public", "hear", "tell", "latest",
+      "morning", "current", "say", "cry"]
+    responses:
+      - "Trade licenses at the hall. Ferry resuming the morning
+        crossing. Council sitting the second Threeday. Lost mare
+        near the South Gate, reward posted. That's today."
+  - keywords: [""]
+    responses:
+      - "I carry the hall's notices. If it's posted, I'll
+        repeat it."
+tree:
+  root:
+    text: "Whatever the hall posts by the first hour, I carry
+      through the square. Licenses, council notices, lost
+      property, public announcements. It's a public record.
+      Ask if you want something repeated."
+    hints: "You could ask the town crier what today's notices
+      say."
+  nodes:
+    - id: notices
+      triggers: ["notice", "news", "post", "today", "what",
+        "announcement", "hall", "public", "hear", "tell",
+        "morning", "latest", "council", "license", "ferry",
+        "lost", "mare", "property", "all", "say", "read",
+        "current", "cry", "repeat"]
+      text: "Today: three new trade licenses registered at the
+        hall. Three Waters ferry resuming the morning crossing
+        after weather delays -- schedule back to normal from
+        tomorrow. Council sitting the second Threeday of this
+        month, open session. Lost property: one grey mare,
+        white foreleg marking, last seen near the South Gate.
+        Reward posted at the hall."
+      hints: "That's everything posted today."

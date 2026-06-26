@@ -1,0 +1,33 @@
+roomid: 6144
+zone: The Confluence
+title: Hall Lane
+description: >
+  The narrow service lane along the Municipal Hall's
+  south side, its cobbles still showing the rut-marks
+  of builders' carts from when the hall was raised and
+  never re-laid since. A small ventilation grate in the
+  hall's south wall lets out the slow exhale of old
+  paper and dust from the records room within. The lane
+  is not on any map of the Confluence. It does not need
+  to be — it carries the quiet few who have reason for
+  it: staff, late deliveries, the occasional clerk
+  taking a longer way around. The south edge of the
+  square connects through it to the east, and the hall's
+  north entry above.
+biome: city
+coord:
+  x: -6
+  y: -68
+  z: 0
+exits:
+  east:
+    roomid: 6141
+  north:
+    roomid: 6143
+idlemessages:
+- The ventilation grate in the hall wall exhales a
+  breath of old paper and lamp-oil into the lane.
+- A hall clerk moves through quickly, not looking at
+  the lane's walls, not slowing.
+- The cobblestones carry the shadow of the hall's eave
+  for most of the afternoon.

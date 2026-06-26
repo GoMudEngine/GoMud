@@ -1,0 +1,66 @@
+roomid: 6140
+zone: The Confluence
+title: Tri-Cross Square
+description: >
+  The square opens wide here — old worn paving in
+  irregular flags, the joins between them dark with
+  the grout of generations. Three roads converge on
+  this crossing: the road from the north along which
+  the Aldren River trade descends, the Brenn Road
+  from the east where the ferry traffic joins it,
+  and the Solt Way from the southwest where the river
+  runs up from the lowlands. The Confluence was built
+  here because this is where the roads were. At the
+  center, the civic
+  <ansi fg="itemname">monument</ansi>
+  stands on its old stone plinth. The Municipal Hall
+  occupies the square's west side, its dressed-stone
+  face and broad approach stair giving the whole west
+  end a settled authority; the Three Waters inn faces
+  it from the east, a wide door and a hanging sign.
+  Some of the newer building-fronts carry a carved
+  cocoon-ring motif on their lintels and friezes — a
+  common ornamental touch in the Confluence's more
+  recently built quarters, present enough on the
+  square to be unremarkable.
+biome: city
+coord:
+  x: -5
+  y: -67
+  z: 0
+exits:
+  north:
+    roomid: 6139
+  south:
+    roomid: 6141
+  east:
+    roomid: 6146
+  west:
+    roomid: 6143
+nouns:
+  the monument: >
+    A four-sided plinth of old stone at the square's
+    center, its faces carved with the names of the
+    Confluence's founding trading families in letters
+    that have been recut at least once over the years.
+    Below the names, on each face, the same phrase is
+    cut in a different hand: three rivers, one city.
+    The top surface is flat and weathered. A winter-
+    hazel wreath has been placed on it — dry now,
+    held mostly by its wire frame, with no indication
+    of who placed it or when. The plinth is old. The
+    names cut into it are older than most of the
+    buildings visible from where you stand.
+spawninfo:
+  - mobid: 9440
+    respawnrate: "20 real minutes"
+idlemessages:
+- Foot-traffic crosses the square in all four
+  directions — the pattern of a city going about
+  its ordinary business.
+- The civic bell rings the hour from the tower to
+  the west, its counted note dropping across the
+  square.
+- "A cart laden with river-freight crosses from the
+  Brenn Road: iron-rimmed wheels loud on the old
+  paving flags."
