@@ -1,0 +1,60 @@
+mobid: 9410
+zone: River Road
+defaultMood: friendly
+greetings:
+  - text: "Road's open -- I'll have you know it took near three months to get
+      it that way. Watch the ford, but beyond that she's sound."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Day to you. Mind the verge on the south shoulder -- haven't packed
+        that strip yet."
+  - keywords: ["road", "repair", "work", "mend", "fixed"]
+    responses:
+      - "Four men and a borrowed ox. Three months. We're all proud of it and
+        won't pretend otherwise."
+  - keywords: [""]
+    responses:
+      - "I'm watching the road, friend. Ask me straight and I'll answer."
+tree:
+  root:
+    text: "I'm the warden for this stretch of south road -- I report to the
+      Council at New Plymouth on the state of the crossings and the grade.
+      This section washed out badly in the spring floods. We have it back
+      now. Took too long, but it's done right."
+    hints: "You could ask Carew about the road repair and why it took so long,
+      about what lies south past the river country, or about the pilgrims
+      he sees come through."
+  nodes:
+    - id: repair
+      triggers: ["repair", "flood", "long", "washed", "work", "months", "why",
+        "how"]
+      text: "The spring floods came early and fast -- the south channel jumped
+        its bank and ran straight down the road cut for near six weeks. We
+        couldn't touch it while the water was moving. Then it drained and
+        left four feet of silt and a broken culvert. We dug it out, re-cut
+        the grade, packed the shoulders with clay-gravel. Proper work, the
+        kind that lasts. Took the time it took."
+      hints: "You could ask Carew what lies south down the road, or about the
+        pilgrim traffic he sees passing through."
+    - id: south
+      triggers: ["south", "confluence", "river", "country", "beyond", "ahead",
+        "destination", "where"]
+      text: "South of here the road hugs the west bank of the Aldren River,
+        follows it down to where the three rivers meet -- that's the
+        Confluence, if you've heard of it. Pilgrim traffic mostly, heading
+        for the temple there. Beyond that she picks up again toward the
+        coast, though that's outside my remit. I just keep the stretch
+        between Amber Valley and the river crossing sound."
+      hints: "You could ask Carew about the flood that closed the road, or
+        about the pilgrims travelling through."
+    - id: pilgrims
+      triggers: ["pilgrim", "temple", "traffic", "people", "travellers",
+        "how many"]
+      text: "More of them this season than I can remember. The temple at the
+        Confluence draws folk from all over the river country -- I've seen
+        some come from as far as the coast road. Mostly peaceful. They're
+        careful with the road too, which I appreciate. A road's only as
+        good as the people who walk it gently."
+      hints: "You could ask about the road south or the flood that closed it."

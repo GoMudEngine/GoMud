@@ -1,0 +1,44 @@
+mobid: 9411
+zone: River Road
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote coils a rope into a loose loop and drops it over the bollard
+    with the casual accuracy of someone who has done it ten thousand
+    times.'
+  - ''
+  - 'emote shades his eyes and peers downriver, reading the current
+    with the quick professional squint of someone who trusts moving
+    water to tell him things.'
+  - ''
+  - 'say She is running high today. Barges will draft deep on the
+    down-run. Fine going south, mind the turns coming back.'
+  - ''
+activitylevel: 10
+character:
+  name: Tarro the Dock-hand
+  description: |
+    Tarro the Dock-hand works the river landing where the Aldren
+    barges put in to unload and take on cargo before continuing
+    south. He is lean and rope-scarred through the palms, with a
+    way of watching the water that looks like idle staring but is
+    closer to professional assessment -- he is reading depth and
+    current, always. His Chrysalis-change runs along his forearms:
+    a faint iridescent scale-pattern, like a fish seen from below,
+    that catches the river light when his sleeves are rolled. He
+    does not comment on it; around river folk it hardly rates a
+    glance.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    strength:
+      training: 4
+    perception:
+      training: 4

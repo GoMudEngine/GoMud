@@ -1,0 +1,20 @@
+roomid: 6097
+zone: River Road
+title: Fishers' Landing
+description: >
+  The village edge begins here at the water: a rank of beached coracles
+  pulled above the tide-line, their tarred skins gleaming in the flat
+  light. Nets hang from poles between the boats, drying in the river-
+  smell breeze. A path of packed mud runs down to the bank where the
+  fishers launch and return by day. The street east carries deeper into
+  the village, where the smell of smoked fish and cook-fires takes over
+  from the raw smell of the river.
+biome: water
+coord: {x: -7, y: -43, z: 0}
+exits:
+  west: {roomid: 6093}
+  east: {roomid: 6098}
+idlemessages:
+- A coracle rocks gently at its tether, tugged by the river.
+- Fish-smell and river mud, sharp in the afternoon warmth.
+- Someone has mended a net here and left it half-finished in the sun.

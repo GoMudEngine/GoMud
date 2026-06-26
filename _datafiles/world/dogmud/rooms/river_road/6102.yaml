@@ -1,0 +1,21 @@
+roomid: 6102
+zone: River Road
+title: Pilgrims' Way
+description: >
+  The road bends southeast here, following the river's great curve toward
+  the city. Small shrines appear at intervals along the verge: a flat
+  stone with a ring carved into it, a bundle of dried river-rush, a cup
+  of water set on a rock and long evaporated. The pilgrims who left
+  these offerings were here yesterday, or a week ago, or a month — it is
+  impossible to say. The road has the quality of a place walked by many
+  people all pointed at the same thing, and it carries you in their
+  direction.
+biome: water
+coord: {x: -8, y: -48, z: 0}
+exits:
+  north: {roomid: 6101}
+  southeast: {roomid: 6103}
+idlemessages:
+- A small offering-stone rests at the verge, a ring cut into its face.
+- The river is louder here, though the bank is no closer.
+- Around the road's bend, a figure in dusty clothes walks south ahead.

@@ -1,0 +1,35 @@
+roomid: 6105
+zone: River Road
+title: The Confluence Gates
+description: >
+  The road ends here at the city's river-ward approach: two broad stone
+  gateposts with a bar across, a river-warden's booth to one side, a
+  sign in several hands nailed below the arch. The gates are solid work,
+  not hostile — a traveler's gate, open in season. Beyond them, the road
+  curves under the first buildings of the Confluence, where three rivers
+  and a city have been arriving at each other for a very long time.
+  The gate is not open yet; the warden is not at post; the bar sits
+  across the road, unhurried about it.
+biome: water
+coord: {x: -5, y: -51, z: 0}
+exits:
+  northwest: {roomid: 6104}
+nouns:
+  the gates: >
+    Gateposts of squared river stone, the bar between them worn smooth
+    from being lifted and set back a thousand times. The warden's booth
+    is empty today — the season not quite right, or the last span of
+    road not yet settled. A brass fitting on the post shows where the
+    lock goes when the bar is set in earnest. Right now it is simply
+    resting there. Not locked. Just set.
+  the road south: >
+    A short span of old paving between the gate and the city's first
+    buildings, the stones older than the bar across the road and older
+    than the warden's booth. Through the gap, city sounds arrive: street
+    noise, river noise, the smell of a city built on moving water. It is
+    all there, waiting for the gate to open. Word is it will, when the
+    season turns and the river-warden returns to post. Come back then.
+idlemessages:
+- Beyond the gate, the sound of the city drifts over the bar.
+- The river runs on both sides of the gate, paying the bar no attention.
+- Someone has left a small ring of stones at the base of the gatepost.

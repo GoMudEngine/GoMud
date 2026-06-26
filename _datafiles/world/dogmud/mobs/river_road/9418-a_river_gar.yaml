@@ -1,0 +1,44 @@
+mobid: 9418
+zone: River Road
+behavior_archetype: ambusher
+aiprofile: serpent
+archetype: fighting
+hostile: true
+statpool: 30
+itemdropchance: 20
+maxwander: 1
+groups:
+  - animal
+idlecommands:
+  - 'emote drifts in the shallows without moving, indistinguishable from
+    a waterlogged branch until you notice the slow blink of one pale eye.'
+  - ''
+  - 'emote stirs the silty bottom with one lazy sweep of its tail, raising
+    a brief plume of mud that drifts downstream and settles back to nothing.'
+  - ''
+  - 'emote lunges at something near the bank with a violent crack of its
+    long jaws, then goes completely still again as if nothing happened.'
+  - ''
+activitylevel: 10
+character:
+  name: A River Gar
+  description: |
+    A long, narrow fish, easily four feet from the tip of its armoured
+    bony snout to the ragged trailing edge of its tail, drifting
+    motionless in the shallows with all the menace of a waterlogged
+    stick. Its jaw is lined with small, backward-curved teeth designed
+    not to let go. Its scales carry a faint bioluminescent tinge -- a
+    mutation common to the gar of this river-stretch -- and when the
+    light catches it just right the thing looks less like a fish and
+    more like a blade left sitting in slow current. It will not move
+    until something gets close. Then it moves very quickly indeed.
+  speciesid: 8
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 6
+    dexterity:
+      training: 4
+    vitality:
+      training: 6

@@ -1,0 +1,69 @@
+mobid: 9415
+zone: River Road
+defaultMood: friendly
+greetings:
+  - text: "If you're going to ask if we're lost -- we're not. We're taking the
+      long way. On purpose. Allegedly."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Watch that rut back there -- I nearly didn't."
+  - keywords: ["temple", "confluence", "pilgrim", "going", "south", "bound"]
+    responses:
+      - "Yes, we're going. Wess is going faithfully. I'm going supportively.
+        Different posture, same road."
+  - keywords: ["lost", "where", "direction", "road"]
+    responses:
+      - "We are not lost. I want to be very clear about that. We are slow."
+  - keywords: [""]
+    responses:
+      - "Ask me something. I've been walking all day and conversation helps."
+tree:
+  root:
+    text: "I'm Nara. Walking to the Temple of Confluence with Wess -- she's
+      the one with the calling, I'm the one with the better boots. Which I
+      am wearing out on her behalf, I'll note. We've been on the road ten
+      days and it has been fine. Mostly fine. The last camp was fine."
+    hints: "You could ask Nara about the long road and what the journey has
+      been like, about how they've been camping and travelling, or about
+      what she expects to find at the Confluence."
+  nodes:
+    - id: road
+      triggers: ["road", "long", "journey", "walk", "days", "how", "travel",
+        "far", "distance", "ten"]
+      text: "Ten days from the valley, more or less -- we started further north
+        than most pilgrims, so we came the longer way. The road's been
+        decent since the warden's crew fixed the south cut. Before that
+        I'm told it was a muddy slog for three months, which -- I am
+        grateful I missed. My feet have opinions about soft ground. The
+        river country's been beautiful, honestly. I'd rather take the
+        pretty road and complain about it than take the easy road and
+        have nothing to say."
+      hints: "You could ask Nara about the camp and how they've been sleeping
+        on the road, or about what she expects at the Confluence."
+    - id: camp
+      triggers: ["camp", "sleep", "night", "rest", "stopping", "lodging",
+        "stay", "inn"]
+      text: "We camp when there's no roof and take a roof when there is one.
+        The landing here had a decent inn, which I made a case for, and
+        won, and I am going to feel vindicated about that for the rest of
+        the journey. The road camps before that were fine -- the weather
+        held. There is a pilgrim camp a day south of here where the
+        river-road folk stop in groups. I am looking forward to other
+        people's campfire cooking. Mine is serviceable. Wess's is not."
+      hints: "You could ask Nara about the long road and journey, or about
+        what she expects at the Confluence."
+    - id: confluence
+      triggers: ["confluence", "temple", "find", "hope", "expect", "believe",
+        "faith", "what", "there"]
+      text: "I'll say what I told Wess when she asked me to come: I don't know
+        what the temple is. I've heard it's very old and that people come
+        back from it different, and I've been skeptical of both claims.
+        But Wess has had a hard two years and this is what she needs, and
+        I'm not the kind of person who lets someone walk a long road alone
+        when I can help it. If the temple turns out to be what she thinks
+        it is, I'll be glad. If it turns out to be stones and river sound,
+        I'll still be glad -- it's a very nice river."
+      hints: "You could ask Nara about the long road and journey, or about
+        the camp and how they've been travelling."

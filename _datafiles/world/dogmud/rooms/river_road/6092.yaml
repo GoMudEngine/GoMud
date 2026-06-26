@@ -1,0 +1,23 @@
+roomid: 6092
+zone: River Road
+title: Where the River Begins
+description: >
+  A thin stream appears beside the road without announcement — a thread
+  of dark water pushing through the roots of a willow, and then another,
+  and then it is simply there: a stream running alongside the track,
+  making its small sound over stones. The road surface goes damp. The
+  air changes. Reeds push up through the gravel at the verge, and the
+  smell is wet clay and something alive and green. The country that began
+  dry has decided to become something else.
+biome: water
+coord: {x: -8, y: -42, z: 0}
+exits:
+  north: {roomid: 6091}
+  south: {roomid: 6093}
+spawninfo:
+  - mobid: 9416
+    respawnrate: "10 real minutes"
+idlemessages:
+- A grey heron lifts from the reed-fringe and flaps slow and low downriver.
+- Water moves over stones with a patient, clinking sound.
+- The wet-clay smell drifts up from the bank whenever the breeze shifts.

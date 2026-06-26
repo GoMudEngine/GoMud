@@ -1,0 +1,46 @@
+mobid: 9413
+zone: River Road
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 24
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote tends the smoking rack with slow unhurried hands, turning
+    each fish a quarter-turn before stepping back to judge the color
+    of the smoke.'
+  - ''
+  - 'emote settles onto his low stool and watches the river for a
+    long while with the patient attention of someone who has nothing
+    more important to do.'
+  - ''
+  - 'say She is running a little bronze this afternoon. That is the
+    clay coming down from the north bend. Means good mud-catfish
+    later.'
+  - ''
+activitylevel: 6
+character:
+  name: Sedge the Old Fisher
+  description: |
+    Sedge the Old Fisher has been at this smokehouse longer than
+    most of the locals have been alive, and he wears that fact the
+    way the smokehouse wears its char -- as something that just
+    accumulated, without drama, year by year. He is very old, very
+    thin, and very comfortable, with a way of talking about the
+    river that makes it sound like a person he has known all his
+    life, which is approximately what it is. His Chrysalis-change
+    is old enough that no one is sure anymore what it looked like
+    when it came: his eyes have gone to a flat river-grey with no
+    visible iris, and he sees best in low light, which is useful
+    when you tend a smokehouse.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    perception:
+      training: 6
+    willpower:
+      training: 3

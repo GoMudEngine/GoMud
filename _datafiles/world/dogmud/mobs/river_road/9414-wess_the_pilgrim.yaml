@@ -1,0 +1,44 @@
+mobid: 9414
+zone: River Road
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote shifts the pack on her shoulders and pauses to look south
+    down the road, her lips moving slightly as if counting the days.'
+  - ''
+  - 'emote closes her eyes a moment, chin lifting, then opens them
+    and walks a slow circle before settling again.'
+  - ''
+  - 'say Every step on the road is a prayer. My teacher told me that.
+    I used to think it was a comfort. Now I think it is just true.'
+  - ''
+activitylevel: 10
+character:
+  name: Wess the Pilgrim
+  description: |
+    Wess the Pilgrim travels south to the Temple of Confluence with
+    the road-worn certainty of someone who has been planning this
+    journey for a long time and is now, at last, making it. She is
+    lean and calloused, with a walking pack that shows its miles and
+    a calm face that is not the absence of feeling so much as its
+    management. Her faith is not the showy kind -- she does not
+    announce herself or seek the company of strangers for their own
+    sake, but when asked she speaks of the Confluence temple plainly
+    and without embarrassment, as one discusses going home. Her
+    Chrysalis-change is a narrow ring of luminescent skin around
+    each wrist, barely visible by day, that pulses faintly at night.
+    She considers it a sign that she was always meant to walk south.
+  speciesid: 1
+  level: 1
+  gold: 4
+  stats:
+    willpower:
+      training: 5
+    perception:
+      training: 3

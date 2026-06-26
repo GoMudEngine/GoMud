@@ -32,7 +32,7 @@ var ForageYields = map[string][]int{
 	"farmland":  {40004, 40004, 40005, 40007, 40121, 40121, 40122, 40122},   // cultivated land yields more orchard/vine produce
 	"swamp":     {40005, 40005, 40004, 40055, 40055, 40056, 40057, 40057},
 	"shore":     {40004, 40058},
-	"water":     {40058, 40058, 40058, 40058, 40058, 40059},
+	"water":     {40058, 40058, 40058, 40058, 40058, 40059, 40123, 40124}, // +40123 watercress, +40124 freshwater mussels (river country, e.g. River Road)
 	"mountains": {40001, 40004, 40005, 40020, 40024, 40025, 40069, 40069}, // +40069 basalt-iron ore (foraged from the scablands basalt, e.g. the Pothole Coulee Forge-spoke talus slope)
 	"cliffs":    {40005, 40020, 40024},
 	"cave":      {40001, 40001, 40020, 40020, 40005, 40024, 40025, 40026, 40027, 40029, 40011}, // 40011 hive fragment (crystallized hive matter, e.g. Ironwind Steppe caves)

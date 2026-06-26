@@ -57,6 +57,24 @@ func TestForageYields_ForestHasCookingFlora(t *testing.T) {
 	}
 }
 
+func TestForageYields_WaterHasRiverForageables(t *testing.T) {
+	water := ForageYields["water"]
+	has := func(id int) bool {
+		for _, x := range water {
+			if x == id {
+				return true
+			}
+		}
+		return false
+	}
+	if !has(40123) {
+		t.Error("water forage should include watercress (40123)")
+	}
+	if !has(40124) {
+		t.Error("water forage should include freshwater mussels (40124)")
+	}
+}
+
 func TestForageCore_NightYieldsAppendedForForestAtNight(t *testing.T) {
 	// At night, moonpetal (40046) is added to forest yields.
 	// We can't deterministically force a moonpetal, but we can confirm

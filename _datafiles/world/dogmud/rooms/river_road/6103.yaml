@@ -1,0 +1,33 @@
+roomid: 6103
+zone: River Road
+title: The Pilgrim Camp
+description: >
+  A flat stretch beside the road where travelers have stopped in numbers:
+  blackened fire-rings, rope-lines between trees with cloaks hung out,
+  the pressed-grass rings where bedrolls lay. Two pilgrims sit at the
+  edge of the camp by a small cook-fire, sharing a meal and a
+  conversation that has the relaxed quality of people who have nearly
+  arrived. The spires of the city are not yet visible from here, but
+  everyone in the camp seems to be leaning toward them.
+biome: water
+coord: {x: -7, y: -49, z: 0}
+exits:
+  northwest: {roomid: 6102}
+  southeast: {roomid: 6104}
+nouns:
+  the camp: >
+    The camp shows the signatures of many different parties — fire rings
+    of varying age, rope-lines still up from last night's sleepers, a
+    heel-worn path from the water-carrying spot to the fire. People come
+    here to rest before the last miles to the Confluence. The talk around
+    the fires runs to the Temple, the three waters, the symbol carved
+    above the great door.
+spawninfo:
+  - mobid: 9414
+    respawnrate: "20 real minutes"
+  - mobid: 9415
+    respawnrate: "20 real minutes"
+idlemessages:
+- Someone's fire has gone to ash; they have already moved on south.
+- Voices in the camp, low and companionable, talking about the Temple.
+- A line of crows investigates the old fire-rings for what was left behind.

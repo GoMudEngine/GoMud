@@ -1,0 +1,44 @@
+mobid: 9415
+zone: River Road
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 28
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote stretches both arms above her head and rotates her
+    shoulders with a wince, working out the knots from the road.'
+  - ''
+  - 'emote checks the sole of one boot, frowns at what she finds,
+    and resigns herself to it.'
+  - ''
+  - 'say I agreed to a week on the road. We are on day ten. I am
+    noting this for the record.'
+  - ''
+activitylevel: 10
+character:
+  name: Nara the Pilgrim
+  description: |
+    Nara the Pilgrim is road-weary in the honest, physical sense:
+    her boots have been resoled once since they set out, her back
+    aches from the pack, and she says so. She is traveling south
+    with her companion Wess to the Temple of Confluence, and if
+    she is not herself a true believer, she is the next best thing
+    -- a person who does not require others to explain their belief
+    but still wants to understand it. She asks practical questions
+    and listens to theological answers with more patience than she
+    lets on. Her Chrysalis-change is the kind people joke about:
+    her hair grows back in three different colors simultaneously,
+    cycling, so that she is always striped in a different mix. She
+    has stopped finding it amusing and mostly just ties it back.
+  speciesid: 1
+  level: 1
+  gold: 4
+  stats:
+    charisma:
+      training: 4
+    dexterity:
+      training: 3

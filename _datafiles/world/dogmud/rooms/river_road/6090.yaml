@@ -1,0 +1,39 @@
+roomid: 6090
+zone: River Road
+title: The Mended Road
+description: >
+  The road emerges here from a raw cut of hillside, the fresh work of a
+  gang who closed the last breach between the valley and the river country
+  below. The fill is new and pale — packed stone chips, mortar that hasn't
+  taken its first rain. A work-camp lingers at the roadside: iron tools
+  stacked against a cart, a banked fire, rope and canvas. South the grade
+  steepens and the land begins its long drop toward water.
+biome: land
+coord: {x: -8, y: -40, z: 0}
+exits:
+  north: {roomid: 6071, zone: Amber Valley}
+  south: {roomid: 6091}
+nouns:
+  the work: >
+    The repair crew left their mark: a stone-filled gully, a smooth grade
+    cut where flood-water once carried the road clean away. The fill is
+    solid enough — stones packed with clay and mortared at the face — but
+    it still smells of fresh-cut earth. A surveyor's stake marks the
+    center of the old breach.
+  the new road: >
+    A fresh-cut grade running south off the valley lip, picking up the
+    ruts of the old road on the far side of the repaired breach. Wherever
+    you step on the fill you feel the solidity of the new work underfoot.
+    Someone took care here. The work will hold.
+  the valley: >
+    Looking back north the valley rises, the lane climbing toward Amber
+    Valley's south edge, the cultivated land returning, the mountains
+    beyond a distant blue bar. The work behind you is what lets you stop
+    looking back and go south.
+spawninfo:
+  - mobid: 9410
+    respawnrate: "20 real minutes"
+idlemessages:
+- A dry wind slides down off the valley lip and out onto the open road.
+- The work-camp fire sits banked and muttering, smoke rising straight up.
+- A stone shifts somewhere in the new fill, settling under its own weight.

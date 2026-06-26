@@ -1,0 +1,14 @@
+itemid: 40123
+name: Watercress
+namesimple: watercress
+description: A bunch of peppery greens gathered from cold river shallows,
+  leaves bright and crisp with a sharp bite.
+type: object
+subtype: mundane
+component_tag: watercress
+weight: 0.1
+value: 3
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking
