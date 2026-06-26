@@ -1,0 +1,17 @@
+itemid: 40135
+name: Bowl of River Broth
+namesimple: broth
+description: >
+  A wooden bowl of hot river broth — fish-stock, barley, and whatever the
+  morning catch left over, with a heel of bread to push through it. Plain,
+  filling dock food, the kind that keeps a stevedore upright through an
+  afternoon shift.
+type: object
+subtype: mundane
+component_tag: broth
+weight: 0.5
+value: 3
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking

@@ -35,20 +35,6 @@ tree:
     hints: "You could ask Tallis about the charts he copies, about the
       old charts and what they show, or about his copy work."
   nodes:
-    - id: charts
-      triggers: ["chart", "charts", "map", "harbor", "navigation", "copy",
-        "current", "pilot", "approach", "layout", "river", "what",
-        "which", "carry", "have", "buy"]
-      text: "The harbor chart covers the Confluence approach and quay
-        layout -- current as of last season's pilot survey, which is
-        more current than most of what's in circulation. The navigation
-        chart for the Aldren upstream is more involved: I source from
-        the pilot association's master copy and check it against the
-        seasonal sounding notes before I sign off on a copy. The Brenn
-        and Solt upper reaches I carry in rougher form -- the surveying
-        is less regular up there. Buyers know what they're getting."
-      hints: "You could ask Tallis about the old charts and what they
-        show, or about his copy work."
     - id: old_charts
       triggers: ["old", "older", "original", "ancient", "early", "first",
         "oldest", "history", "historical", "archive", "source",
@@ -67,6 +53,20 @@ tree:
         and leave the argument to them."
       hints: "You could ask Tallis about the charts he copies, or about
         his copy work."
+    - id: charts
+      triggers: ["chart", "charts", "map", "harbor", "navigation", "copy",
+        "current", "pilot", "approach", "layout", "river", "what",
+        "which", "carry", "have", "buy"]
+      text: "The harbor chart covers the Confluence approach and quay
+        layout -- current as of last season's pilot survey, which is
+        more current than most of what's in circulation. The navigation
+        chart for the Aldren upstream is more involved: I source from
+        the pilot association's master copy and check it against the
+        seasonal sounding notes before I sign off on a copy. The Brenn
+        and Solt upper reaches I carry in rougher form -- the surveying
+        is less regular up there. Buyers know what they're getting."
+      hints: "You could ask Tallis about the old charts and what they
+        show, or about his copy work."
     - id: copy_work
       triggers: ["copy", "work", "job", "write", "handwriting", "how",
         "long", "scrivener", "trade", "why", "business", "precision",

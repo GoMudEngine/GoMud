@@ -22,7 +22,7 @@ patterns:
       - "I've got a barge to load. Ask me something useful."
 tree:
   root:
-    text: "I run freight and passengers down the Aldren to New Plymouth
+    text: "I run freight and passengers downriver to New Plymouth
       and back up when there's cause. Next departure is the afternoon
       tide -- she won't be loaded before that. If you need passage,
       I'm the man. If you need a conversation, the tavern's further
@@ -36,7 +36,7 @@ tree:
         "how", "long", "days", "time", "distance", "schedule"]
       text: "Two days downstream in good conditions. New Plymouth back
         up here is two and a half going against the current with a full
-        load -- barge doesn't love fighting the Aldren in spring when
+        load -- barge doesn't love fighting the river's spring pull when
         the snowmelt is pushing hard. I know every snag between here
         and the estuary. You learn them the first time they nearly put
         you on the bank and you don't forget them after that."

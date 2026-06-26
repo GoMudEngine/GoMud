@@ -47,7 +47,7 @@ tree:
       triggers: ["room", "stay", "bed", "lodging", "food", "eat",
         "meal", "drink", "wine", "ale", "bread", "kitchen",
         "price", "rate", "cost", "serve", "menu", "what",
-        "fish", "night", "sleep", "river", "side"]
+        "fish", "night", "sleep", "side"]
       text: "Rooms by the night or the week. River side is quieter;
         square side gets the town crier's bell at sunrise, which
         some guests find useful and others find grounds for

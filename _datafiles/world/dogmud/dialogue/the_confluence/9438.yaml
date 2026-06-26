@@ -48,7 +48,7 @@ tree:
       in the Confluence."
   nodes:
     - id: services
-      triggers: ["deed", "seal", "certify", "attest", "witness",
+      triggers: ["deed", "certify", "attest", "witness",
         "document", "contract", "property", "transfer", "register",
         "what", "how", "help", "service", "legal", "official",
         "binding", "land", "house", "certificate", "process",

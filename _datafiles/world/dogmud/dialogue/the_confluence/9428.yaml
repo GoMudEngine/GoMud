@@ -17,7 +17,7 @@ patterns:
   - keywords: ["spice", "solt", "exotic", "strange", "from", "where",
       "source"]
     responses:
-      - "The Solt runs down from the eastern hills and the hill-country
+      - "The Solt runs down from the southwestern hills and the hill-country
         posts put up goods you won't find on the Aldren or Brenn runs.
         That's the interesting part of my trade."
   - keywords: [""]
@@ -37,7 +37,7 @@ tree:
     - id: solt
       triggers: ["solt", "river", "hill", "east", "eastern", "kilnreach",
         "estuary", "where", "come", "from", "source", "posts", "origin"]
-      text: "The Solt drops fast out of the eastern hills -- too fast for
+      text: "The Solt drops fast out of the southwestern hills -- too fast for
         heavy-cargo barging on the upper stretch, which is why it takes
         pack-mule trains to get goods down to the navigable section. That
         extra handling is why hill-country goods cost more. The estuary

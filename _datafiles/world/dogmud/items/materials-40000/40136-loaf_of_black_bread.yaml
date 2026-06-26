@@ -1,0 +1,16 @@
+itemid: 40136
+name: Loaf of Black Bread
+namesimple: bread
+description: >
+  A dense, dark loaf of the cheap rye-and-barley bread the dock taverns keep
+  by the basket. It is more crust than crumb and keeps for days, which is the
+  point — you tear it, you dip it, you carry the rest in a pocket for later.
+type: object
+subtype: mundane
+component_tag: bread
+weight: 0.4
+value: 2
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking
