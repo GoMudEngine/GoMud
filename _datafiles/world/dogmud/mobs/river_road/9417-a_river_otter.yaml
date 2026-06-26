@@ -1,0 +1,41 @@
+mobid: 9417
+zone: River Road
+archetype: fighting
+hostile: false
+statpool: 24
+itemdropchance: 10
+maxwander: 2
+groups:
+  - animal
+idlecommands:
+  - 'emote slides down the muddy bank on its belly, hits the water in a
+    barely-there splash, and bobs up a moment later looking pleased.'
+  - ''
+  - 'emote rolls onto its back in the current, balancing a river mussel on
+    its chest, and cracks it open with a stone it was apparently carrying.'
+  - ''
+  - 'emote dives below the brown water and vanishes, leaving only a ring
+    of ripples and a string of rising bubbles.'
+  - ''
+activitylevel: 10
+character:
+  name: A River Otter
+  description: |
+    A sleek brown creature the length of a man's arm, riding the current
+    with its paws folded against its chest before rolling belly-up to
+    crack something against its stomach. Its eyes are dark and quick, and
+    it watches the bank with apparent curiosity before deciding you are
+    not interesting enough to bother with. It dives in a smooth arc that
+    barely disturbs the surface, resurfaces twenty yards downstream, and
+    shakes itself dry on a mossy rock with an air of complete
+    indifference.
+  speciesid: 8
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 3
+    dexterity:
+      training: 7
+    vitality:
+      training: 3

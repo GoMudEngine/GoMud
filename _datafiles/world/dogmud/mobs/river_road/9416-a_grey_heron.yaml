@@ -1,0 +1,41 @@
+mobid: 9416
+zone: River Road
+archetype: fighting
+hostile: false
+statpool: 24
+itemdropchance: 10
+maxwander: 2
+groups:
+  - animal
+idlecommands:
+  - 'emote stands motionless in the shallows, head cocked, one yellow eye
+    fixed on something moving beneath the surface.'
+  - ''
+  - 'emote strikes with sudden violence, a blur of long neck and yellow beak,
+    then lifts its head with something silver wriggling in its grip.'
+  - ''
+  - 'emote spreads enormous grey wings and rises from the water on slow,
+    heavy wingbeats, legs trailing long behind it.'
+  - ''
+activitylevel: 10
+character:
+  name: A Grey Heron
+  description: |
+    A tall grey-blue bird standing still as a stake in knee-deep water at
+    the river's edge, patient as carved stone. Its neck is coiled back
+    against its breast, one amber eye fixed on the shallows below. It
+    moves so slowly between positions that a traveller might mistake it
+    for a painted carving -- until it strikes, a blur of beak and neck,
+    and lifts something silver from the current. Startled, it will unfold
+    enormous wings and climb away on slow, heavy wingbeats, legs trailing
+    behind it like a bent afterthought.
+  speciesid: 8
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 3
+    dexterity:
+      training: 8
+    vitality:
+      training: 3
