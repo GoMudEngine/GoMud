@@ -19,7 +19,7 @@ Q74 hook). Threshold-only — the *why* stays for the crash site.
 
 - **14 rooms, 6218–6231** (the umbrella's reserved block for the Scholars' Quarter).
 - **Mobs/dialogue 9441–9448** (8).
-- **Items 40134–40135** (a bookseller good + the Q73 reward item).
+- **Items 40137–40138** (a bookseller good + the Q73 reward item).
 - **Quest 73** (next free; declared with steps + flags if needed).
 - **Zone:** `The Confluence` (existing folder; no new zone-config).
 - **Biome:** `city` throughout.
@@ -93,7 +93,7 @@ ambient student.
 | 9441 | The Q73 Giver — a senior Margin scholar | 6220 | An old cartographer-historian who has chased the four-waters question for decades (failing eyesight from a life of faded charts). **Grants Q73**; receives the evidence; delivers the synthesis + the temple/undercroft hook. `margin`. |
 | 9442 | The Archivist | 6221 | Keeps the Margin's source surveys; helps lay the evidence side by side at the synthesis. `margin`. |
 | 9443 | A Cartographer-Scholar | 6223 | Map-work; river-survey lore (canon directions). `margin`. |
-| 9444 | The Bookseller | 6226 | **Vendor** (book good 40134); owns **the damaged chart** (Q73 source). `[humanoid]` (a tradesperson, Margin-sympathetic but not a member). |
+| 9444 | The Bookseller | 6226 | **Vendor** (book good 40137); owns **the damaged chart** (Q73 source). `[humanoid]` (a tradesperson, Margin-sympathetic but not a member). |
 | 9445 | A Margin Scholar | 6227 | The quarter's life; the open question, the temple's official account. `margin`. |
 | 9446 | A Copyist | 6228 | Copy-work, the chart trade (a peer of Tallis). `margin`. |
 | 9447 | The Gate-Porter | 6218 | Keeps the quarter's gate; directs visitors (ambient/short). `[humanoid]` or `margin`. |
@@ -126,7 +126,7 @@ mystery; the allegiance choice is reserved for Q74). Giver: **9441** (Margin Hal
 
 **Rewards** (reward-block keys are NO-underscore — `playermessage`/`gold`/`itemid`/
 `rep_faction`/`rep_amount`): gold (~30), **`rep_faction: margin`** (+15), and
-**`itemid: 40135`** — *A Fair Copy of the Compiled Survey* (a lore item the player
+**`itemid: 40138`** — *A Fair Copy of the Compiled Survey* (a lore item the player
 carries; threads toward Q74). A `playermessage` delivering the threshold beat.
 
 **Quest gotchas (SOP — carry into the build):**
@@ -140,7 +140,7 @@ carries; threads toward Q74). A `playermessage` delivering the threshold beat.
   seeded noun isn't highlighted, highlight it (a small edit to that room).
 - A quest trigger may only **grant a DECLARED step token** — declare every step
   id used; final completion grants the `end` step.
-- Item **40135** (40xxx) lives in `items/materials-40000/` regardless of type.
+- Item **40138** (40xxx) lives in `items/materials-40000/` regardless of type.
 - If any quest **flag** is used, declare it in the quest YAML (undeclared flag →
   panic). This quest is linear; likely **no flags** needed.
 
@@ -170,7 +170,7 @@ Standard pipeline, branch `feature/confluence-scholars-quarter`:
 1. Open the 6149 seam (after testers done).
 2. Rooms 6218–6231 (`city` biome; final coords + exits, cartchecked; quote colon
    idlemessages; Title-Case mob names).
-3. Items 40134 (book) + 40135 (Q73 reward, lore item).
+3. Items 40137 (book) + 40138 (Q73 reward, lore item).
 4. Mobs 9441–9448 + dialogue; the giver's grant node (Q73 SOP); the Bookseller
    vendor; the `margin` groups.
 5. **Quest 73 YAML** (`quests/73-the_margin_notation.yaml`): steps + rewards +

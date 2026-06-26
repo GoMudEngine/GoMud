@@ -1,6 +1,7 @@
 mobid: 9424
 zone: The Confluence
-behavior_archetype: noncombat_passive
+craft_support: cooking
+behavior_archetype: noncombat_shopkeeper
 non_combatant: true
 charm_immune: true
 hostile: false
@@ -37,9 +38,13 @@ character:
     whether you have been behaving yourself.
   speciesid: 1
   level: 1
-  gold: 15
+  gold: 40
   stats:
     charisma:
       training: 8
     perception:
       training: 5
+  shop:
+    - itemid: 40134
+    - itemid: 40135
+    - itemid: 40136

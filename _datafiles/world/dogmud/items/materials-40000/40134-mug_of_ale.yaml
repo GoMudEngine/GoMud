@@ -1,0 +1,17 @@
+itemid: 40134
+name: Mug of Ale
+namesimple: ale
+description: >
+  A dented pewter mug of the Quayside's own ale — dark, a little cloudy, and
+  poured with more honesty than ceremony. It tastes of the river towns: malt,
+  a faint bitterness, and the particular flat warmth of a barrel that has sat
+  behind the bar a while.
+type: object
+subtype: mundane
+component_tag: ale
+weight: 0.4
+value: 2
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking

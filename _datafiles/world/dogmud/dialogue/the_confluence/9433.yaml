@@ -12,8 +12,9 @@ patterns:
       "around", "here"]
     responses:
       - "Market cross is back behind you. Weighhouse is the stone
-        building north of center. Guild hall is past that, through
-        the arch. Spice stall is east along the waterfront."
+        building south of here, down the quay road. Guild hall is
+        west, through the market arch. Spice stall is east along
+        the waterfront."
   - keywords: [""]
     responses:
       - "I'm moving freight. Ask someone with more time than I've got."
@@ -28,9 +29,9 @@ tree:
         "find", "looking", "directions", "around", "stall", "vendor",
         "here", "spice", "factor"]
       text: "Market cross is the center of the quay, that's where the
-        general stalls are. Weighhouse is the big stone building north
-        of the cross -- cargo certification. Guild hall is past that,
-        through the arch -- that's for charters and tolls. Spice stall
+        general stalls are. Weighhouse is the big stone building south
+        of the cross -- cargo certification. Guild hall is west,
+        through the market arch -- that's for charters and tolls. Spice stall
         is further east along the waterfront. The trade factor with the
         document case works out of the Long Quay, around the front.
         Now if you'll excuse me, this freight won't move itself."
