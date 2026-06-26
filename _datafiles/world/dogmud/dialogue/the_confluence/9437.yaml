@@ -1,0 +1,66 @@
+mobid: 9437
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Sundries and broadsheets. What do you need?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Looking for something in particular?"
+  - keywords: ["buy", "sell", "stock", "have", "carry", "what",
+      "shop", "goods", "supplies"]
+    responses:
+      - "Candles, tinderboxes, rope, waterskins, and the
+        tri-cities broadsheet. Practical goods for the district."
+  - keywords: ["broadsheet", "news", "paper", "read", "tri-cities",
+      "today", "edition", "morning", "current"]
+    responses:
+      - "Broadsheet came in this morning -- tri-cities edition,
+        all three arms in one. Good way to know what the whole
+        Confluence is arguing about."
+  - keywords: ["candle", "tallow", "light", "rope", "line",
+      "cord", "waterskin", "water", "flask", "tinderbox",
+      "tinder", "fire", "flint"]
+    responses:
+      - "All on the counter. Standard weights and sizes."
+  - keywords: [""]
+    responses:
+      - "Broadsheets, candles, rope, waterskins, tinderboxes.
+        That's what I carry. What do you need?"
+tree:
+  root:
+    text: "Civic Stores covers the practical middle: candles, rope,
+      waterskins, tinderboxes, and the tri-cities broadsheet.
+      Nothing fancy. If you need something heavier, the chandlers
+      on the Long Quay or the market on Crafters' Row are your
+      next stop."
+    hints: "You could ask Corliss about the goods she carries, or
+      about the tri-cities broadsheet."
+  nodes:
+    - id: goods
+      triggers: ["candle", "rope", "waterskin", "tinderbox",
+        "what", "carry", "stock", "have", "buy", "supplies",
+        "goods", "sell", "price", "cost", "much", "tallow",
+        "light", "fire", "cord", "line", "flask", "water"]
+      text: "Tallow candles in bundles, rope in three lengths,
+        waterskins in small and standard, tinderboxes with flint
+        and striker included. Practical goods for the district --
+        the sort of thing you don't want to discover you're short
+        on when you need it. All on the counter or the shelf
+        behind. Ask if you don't see what you're after."
+      hints: "You could ask Corliss about the broadsheet she
+        carries, or use the shop counter to browse and buy."
+    - id: broadsheet
+      triggers: ["broadsheet", "news", "paper", "read", "edition",
+        "today", "morning", "tri-cities", "current", "what",
+        "happening", "city", "buy", "three", "arms", "latest"]
+      text: "Tri-cities broadsheet comes in every morning --
+        covers all three city arms in a single edition: the
+        Aldren side, the Brenn side, and the Solt side. Trade
+        news, council notices, civic appointments, the odd
+        letter from a correspondent upriver. If you want to
+        know what the Confluence is arguing about this week,
+        that is where to start."
+      hints: "You could ask Corliss about the other goods she
+        carries, or use the shop counter to browse and buy."

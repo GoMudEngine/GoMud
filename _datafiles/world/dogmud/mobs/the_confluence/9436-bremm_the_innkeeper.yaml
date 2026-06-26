@@ -1,0 +1,50 @@
+mobid: 9436
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote sets a fresh loaf on the end of the bar, cuts it to
+    portions with a few efficient strokes, and slides the board
+    toward the serving side without looking up.'
+  - ''
+  - 'say Room on the river side is ready. Best view in the square
+    when the morning light comes off the Aldren -- and the noise
+    settles by the sixth hour, which the square side does not.'
+  - ''
+  - 'emote leans both hands on the bar and surveys the common room
+    with the satisfied appraisal of someone who finds the current
+    state of things acceptable.'
+  - ''
+activitylevel: 10
+character:
+  name: Bremm the Innkeeper
+  description: |
+    Bremm the Innkeeper runs the Three Waters Inn from behind the
+    bar with the calm authority of someone who has never once lost
+    track of a tab or misremembered a guest's name. He is broad
+    through the shoulders, unhurried in manner, and precise in
+    his recollection of faces: he will greet a traveler by name
+    on their second visit if he met them once two years prior,
+    which guests tend to find either flattering or unsettling
+    depending on temperament. The Three Waters is the best inn
+    in the civic quarter -- well-kept rooms, a reliable kitchen,
+    and a common room where the city's administrators have been
+    resolving each other's problems over wine for as long as the
+    hall across the square has been generating them. His
+    Chrysalis-change simply made his natural gift for faces and
+    names into something absolute. He has not forgotten a guest
+    since.
+  speciesid: 1
+  level: 1
+  gold: 20
+  stats:
+    charisma:
+      training: 7
+    perception:
+      training: 5

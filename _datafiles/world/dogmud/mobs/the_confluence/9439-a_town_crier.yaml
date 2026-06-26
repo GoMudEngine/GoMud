@@ -1,0 +1,50 @@
+mobid: 9439
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote holds up a handbell and gives it three clean rings,
+    then calls in a voice that carries the length of the square:
+    "New trade licenses posted at the Municipal Hall. Three
+    Waters ferry resumes the morning crossing. Council sits the
+    second Threeday."'
+  - ''
+  - 'emote rings the handbell twice, waits for a passing cart to
+    clear, then calls: "Lost: one grey mare, white foreleg
+    marking, last seen near the South Gate. Reward posted at
+    the Municipal Hall."'
+  - ''
+  - 'emote tucks a folded notice back into his coat, adjusts the
+    handbell on its strap, and resumes his circuit of the square
+    at a steady pace.'
+  - ''
+activitylevel: 10
+character:
+  name: A Town Crier
+  description: |
+    A Town Crier moves through Tri-Cross Square in a steady
+    circuit, pausing at the four corners to ring his handbell
+    and call the day's notices in a voice that carries farther
+    than the square requires. He has the measured delivery of
+    a man whose job is to be heard, not agreed with -- he reads
+    what is posted at the Municipal Hall, rings the bell at
+    appropriate intervals, and keeps moving. His Chrysalis-change
+    makes the work easier than it was: his voice simply carries.
+    On a still morning, the far end of the Long Market can hear
+    him clearly when he calls from the hall steps without any
+    particular effort on his part. He has not lost a notice
+    yet.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    charisma:
+      training: 6
+    strength:
+      training: 3

@@ -1,0 +1,98 @@
+mobid: 9438
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Notary's office. Do you have a deed to seal, a document
+      to certify, or a contract to witness?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Yes. What document needs handling?"
+  - keywords: ["deed", "seal", "certify", "certificate", "attest",
+      "witness", "document", "register", "contract", "legal",
+      "official", "property", "land", "transfer", "binding"]
+    responses:
+      - "Bring the document to the desk. I'll review the parties,
+        confirm the registration with the hall, apply the seal,
+        and you'll have a certified copy within the hour."
+  - keywords: ["what", "do", "service", "offer", "help", "how",
+      "process", "work", "need", "use"]
+    responses:
+      - "Deeds, contracts, letters of attestation -- anything
+        requiring a formal municipal witness. Without a notarial
+        seal, a document is an agreement. With one, it is a
+        legal instrument."
+  - keywords: ["seal", "wax", "warm", "cold", "real", "fake",
+      "forgery", "chrysalis", "change", "how", "detect",
+      "genuine", "verify"]
+    responses:
+      - "The wax runs warm on a genuine seal. Always has, since
+        my Chrysalis-change. Forgeries run cold. The civic
+        auditors have tested it. I can't account for the
+        mechanism, but the result is consistent."
+  - keywords: [""]
+    responses:
+      - "If you have a document requiring certification, bring
+        it to the desk. Deeds, contracts, attestations."
+tree:
+  root:
+    text: "The notary's function is certification -- making
+      agreements legally binding by adding the municipality's
+      formal witness. Deeds, contracts, letters of attestation,
+      property transfers. If a document needs a seal to be
+      enforceable in civic law, this is the office for it.
+      What do you need certified?"
+    hints: "You could ask Pellan about his services, about his
+      seal and how it works, or about the role of the notary
+      in the Confluence."
+  nodes:
+    - id: services
+      triggers: ["deed", "seal", "certify", "attest", "witness",
+        "document", "contract", "property", "transfer", "register",
+        "what", "how", "help", "service", "legal", "official",
+        "binding", "land", "house", "certificate", "process",
+        "get", "need", "take", "long"]
+      text: "I handle deed transfers, contract witnessing, and
+        letters of attestation for the civic district. Most
+        transactions I can process same-day -- I review the
+        document, confirm the relevant registration with the
+        hall's records, apply the seal, and provide a certified
+        copy. Contested transfers or properties with unclear
+        title go to committee, which takes longer and costs
+        more patience than money. Bring the paperwork and I
+        will tell you where it sits."
+      hints: "You could ask Pellan about his seal, or about
+        the role of the notary in Confluence law."
+    - id: seal
+      triggers: ["seal", "wax", "warm", "cold", "real", "genuine",
+        "forgery", "fake", "chrysalis", "change", "how", "works",
+        "special", "detect", "tell", "verify", "temperature",
+        "interesting", "strange", "unique"]
+      text: "The certified seal stays warm in the wax. Not
+        obviously warm -- you would have to know to check.
+        But perceptibly warmer than the surrounding document,
+        and it stays that way indefinitely. A forgery of my
+        seal runs cold; the impression looks correct but the
+        warmth is absent. This has been consistent since my
+        Chrysalis-change. The civic auditors have verified it
+        independently. I cannot account for the mechanism and
+        have stopped trying. The result is what matters."
+      hints: "You could ask Pellan about his services, or
+        about the role of the notary in the Confluence."
+    - id: notary_role
+      triggers: ["notary", "role", "function", "why", "important",
+        "law", "legal", "confluence", "city", "history",
+        "binding", "official", "government", "witness",
+        "purpose", "office", "exist", "matter", "need"]
+      text: "The notary's office exists because an agreement
+        between parties is only as good as the record of it.
+        Without a formal witness and seal, a contract is a
+        statement of intent that one side can disavow when
+        convenient. I have handled enough property disputes
+        where the original deed was unsigned or unwitnessed
+        to know what that looks like in practice. The seal
+        is what makes the record binding. The record is what
+        makes the city function."
+      hints: "You could ask Pellan about his services, or
+        about his seal and how it works."

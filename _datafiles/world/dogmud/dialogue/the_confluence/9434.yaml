@@ -1,0 +1,85 @@
+mobid: 9434
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Civic business? State your matter and I'll direct you.
+      Registrations and certifications are processed at this desk."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Busy. If you have business with the hall, the ledger is
+        on the desk. Sign in if you're waiting."
+  - keywords: ["register", "registration", "deed", "petition",
+      "transfer", "document", "record", "civic", "official",
+      "certificate", "business", "license"]
+    responses:
+      - "Registrations and deed transfers are processed at this
+        desk. Petitions to the council go through the clerk's
+        office -- door to the left, second room in."
+  - keywords: ["map", "chart", "notation", "wall", "fourth",
+      "water", "scholar", "old", "history", "interesting",
+      "famous", "survey"]
+    responses:
+      - "The chart on the wall has been there longer than I have.
+        Ask the Margin Scholar at the reading table -- she's the
+        one who actually studies it. I have forms to process."
+  - keywords: [""]
+    responses:
+      - "If you have civic business, I can help. Registrations,
+        certifications, deed queries. Otherwise, the notice board
+        by the entrance lists the hall's services."
+tree:
+  root:
+    text: "The hall handles registrations, deed transfers, civic
+      petitions, and letters of civic authority. If you need
+      something sealed by the municipality, this is the desk.
+      Most requests I can route or process directly. What
+      do you need?"
+    hints: "You could ask Orvin about civic records and what the
+      hall processes, or about the notation map on the wall."
+  nodes:
+    - id: records
+      triggers: ["register", "records", "deed", "transfer",
+        "petition", "certificate", "official", "process",
+        "services", "help", "business", "civic", "license",
+        "what", "how", "seal", "authority", "letter"]
+      text: "Standard registrations -- land, trade licenses,
+        residency -- are processed here same-day if the
+        paperwork is in order. Deed transfers require the
+        notary's seal in addition to the hall's; for those,
+        you'll want Pellan at the Notary's Office on Civic
+        Lane. Petitions to the council are logged and queued;
+        turnaround on those depends on the council's calendar,
+        which is not something I control."
+      hints: "You could ask Orvin about the notation map on
+        the wall, or about the hall's administration."
+    - id: notation_map
+      triggers: ["map", "chart", "notation", "wall", "old",
+        "history", "fourth", "water", "channel", "scholar",
+        "interesting", "famous", "survey", "hanging", "notice",
+        "junction", "study", "what", "about"]
+      text: "It's a survey chart from a few administrations
+        back. Old. It hangs there because it was already
+        hanging there when I arrived, and no one has given
+        me a reason to move it. Scholars come in from time
+        to time -- something about the count of waters at
+        the junction, or the notation style, or both. The
+        Margin Scholar at the reading table has been at it
+        for two seasons now. If you want to know what the
+        map says, she is a considerably better source than
+        I am."
+      hints: "You could ask Orvin about civic records, or
+        speak with the Margin Scholar about the notation map."
+    - id: hall_admin
+      triggers: ["hall", "building", "municipal", "council",
+        "government", "city", "administration", "who", "runs",
+        "authority", "in charge", "confluence", "manage"]
+      text: "The Municipal Hall is the Confluence's administrative
+        center -- land registry, civic licensing, council
+        correspondence, official seals. The council chamber is
+        on the upper floor; the council sits infrequently.
+        Most governance runs through the permanent staff, which
+        is to say, through this desk."
+      hints: "You could ask Orvin about civic records, or
+        about the notation map on the wall."

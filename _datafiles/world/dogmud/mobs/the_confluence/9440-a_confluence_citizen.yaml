@@ -1,0 +1,44 @@
+mobid: 9440
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote pauses in the middle of the square, crumbles the heel
+    of a roll between both hands, and scatters the pieces toward
+    a cluster of pigeons without apparent interest in the result.'
+  - ''
+  - 'say The morning ferry was late again. Third time this
+    fortnight. Someone ought to say something at the hall.'
+  - ''
+  - 'emote adjusts a wrapped parcel under one arm, glances toward
+    the Municipal Hall, and continues across the square at the
+    unhurried pace of someone who is not quite late yet.'
+  - ''
+activitylevel: 10
+character:
+  name: A Confluence Citizen
+  description: |
+    A Confluence Citizen is crossing Tri-Cross Square today, as
+    they do most days, on their way to somewhere else. They carry
+    the general air of a person with moderate business in the
+    civic district -- a parcel under one arm, an opinion on the
+    ferry schedule, a crumbled roll for the pigeons -- and move
+    through the square with the comfortable familiarity of someone
+    who has been doing this long enough that the pigeons have
+    learned their schedule. Their Chrysalis-change is minor and
+    they seem largely unbothered by it: small things go right
+    for them in unremarkable ways. The coin they drop does not
+    roll into the drain. The pigeon they aim for takes the
+    bread. They have not thought much about this.
+  speciesid: 1
+  level: 1
+  gold: 4
+  stats:
+    perception:
+      training: 3

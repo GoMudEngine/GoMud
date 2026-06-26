@@ -1,0 +1,44 @@
+mobid: 9440
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Oh -- good morning. Lovely day for the square."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Decent day for it."
+  - keywords: ["pigeon", "pigeons", "birds", "feed", "bread",
+      "crumbs", "throwing"]
+    responses:
+      - "They're here every morning at this hour. I figure
+        someone might as well bother with them."
+  - keywords: ["ferry", "morning", "late", "again", "schedule",
+      "third", "time"]
+    responses:
+      - "Late again. Third time this fortnight. I keep meaning
+        to say something at the hall, but I never quite get
+        there."
+  - keywords: [""]
+    responses:
+      - "Just passing through."
+tree:
+  root:
+    text: "Nice enough morning. I cut through the square most
+      days on my way to the market. The pigeons are always
+      here at this hour, and I had bread left over."
+    hints: "You could ask the citizen about the square, or
+      about what is going on in the city today."
+  nodes:
+    - id: square
+      triggers: ["square", "pigeons", "crossing", "market",
+        "city", "going", "what", "doing", "here", "bread",
+        "birds", "morning", "day", "hall", "about", "fair",
+        "busy", "crier", "inn", "usual", "today"]
+      text: "The square's busy most mornings -- hall business
+        on one end, the Three Waters on the other, and the
+        town crier going round in between ringing that bell.
+        I pass through most days. The pigeons have learned
+        my schedule, which I think says something either about
+        pigeons or about me."
+      hints: "That is about the extent of what they know."
