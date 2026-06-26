@@ -23,9 +23,9 @@ tree:
     text: "The gate was shut most of the cold season -- ice gets into
       the lock mechanism and we can't move it safely until the thaw.
       This morning was the first good morning. It's open now. Head on
-      in -- fish market is down to your left, the main quay is straight
-      ahead, and the overlook stair takes you up if you want to see
-      where the three rivers come together."
+      in -- the main quay's straight ahead, the fish market's down
+      along the waterfront, and the overlook's out at the south end of
+      the wharf if you want to see where the three rivers come together."
     hints: "You could ask Holt about the gate itself, about what's in
       the Landings, or about the Confluence where the rivers meet."
   nodes:
@@ -46,18 +46,18 @@ tree:
       text: "This is the Landings -- river-ward district, first place you
         hit coming off the Aldren. Quay is straight ahead, that's where
         the barges load and the dockmaster holds court. Fish market is
-        below the stair to your left. Chandler is along the front row --
+        down along the waterfront. Chandler is along the front row --
         rope and lamp oil. Tavern is further in if you need to sit down.
-        The overlook stair is up top; you can see all three rivers come
-        together from there. Worth the climb."
+        The overlook's out at the south end of the wharf; you can see all
+        three rivers come together from there. Worth the walk."
       hints: "You could ask Holt about the gate or about the Confluence."
     - id: confluence
       triggers: ["confluence", "rivers", "three", "meet", "together",
         "south", "city", "overlook", "temple", "where"]
       text: "Three rivers converge just south of the quay -- Aldren comes
-        from the north, Brenn from the west, Solt from the east. Where
+        from the north, Brenn from the east, Solt from the southwest. Where
         they meet is what the whole city's built on. The Landings is the
         river-trade quarter. There's more city beyond it -- the Confluence
-        proper is built up the slopes from here. Good place to arrive."
+        proper spreads back from the water. Good place to arrive."
       hints: "You could ask Holt about the gate or about what's in the
         Landings."
