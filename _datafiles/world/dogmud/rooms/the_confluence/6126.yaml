@@ -1,0 +1,23 @@
+roomid: 6126
+zone: The Confluence
+title: Quay Road South
+description: >
+  The spine of the Long Quay runs on south, the road wide enough
+  for traffic to move in both directions without much argument.
+  Shopfronts line the west side — shutters open, goods displayed
+  on boards laid across barrels — and on the east the buildings
+  give way to glimpses of water between them. Money-changers work
+  from counters at ground level, coin weights and scales visible
+  from the road. The smell of spice is layered here over the river
+  smell, and the foot traffic is dense through the middle of the day.
+biome: water
+coord: {x: -5, y: -61, z: 0}
+exits:
+  north: {roomid: 6123}
+  south: {roomid: 6129}
+  east: {roomid: 6128}
+  west: {roomid: 6130}
+idlemessages:
+- A coin-changer tips a scale and sets a brass weight on the lighter side.
+- Two carters argue briefly at the road's center, then move apart.
+- "The road smells of spice and river-smoke: it deepens going south."

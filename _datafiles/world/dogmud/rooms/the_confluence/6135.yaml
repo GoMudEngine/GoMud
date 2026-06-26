@@ -1,0 +1,42 @@
+roomid: 6135
+zone: The Confluence
+title: The Old Customs House
+description: >
+  The weighhouse yard's business moved to the new building and this
+  one was quietly set aside; it is still structurally sound and used
+  for storage of empty crates and rolled canvas, but no customs work
+  happens here anymore. The door is unlocked, the shelves mostly
+  bare, the smell of old paper and damp wood. At the base of the
+  eastern wall, where the ground-course of the building meets the
+  yard stone, a section of foundation-block is visibly different
+  from the rest — darker stone, finer-cut, set at a slightly
+  different angle, as though it was here before the building and
+  the building went up around it. The clerks who worked here for
+  years never gave it a thought.
+biome: water
+coord: {x: -7, y: -62, z: 0}
+exits:
+  east: {roomid: 6131}
+nouns:
+  the foundation-stone: >
+    A block of dark stone at the base of the eastern wall, finer-
+    cut than the surrounding building-stone and set at a slightly
+    different angle. It predates the customs house; the mortar of
+    the building runs up to it rather than through it. The surface
+    is smooth from years of foot traffic and the river damp that
+    works in through the floor. On the face closest to the wall, a
+    pattern is just legible under the grime of the building's long
+    occupation.
+  the mark: >
+    Carved into the face of the old foundation-stone where it meets
+    the wall: concentric rings, the outer two clear, the inner
+    circles tighter and arranged at intervals around a central
+    point. The stonecutter's lines are still sharp where the wall
+    has sheltered them from wear. The style is not the guild's work,
+    not anything the current masons would call a trade mark. The
+    clerks who spent years in this room tallying duties above it did
+    not remark on it in any record that survives.
+idlemessages:
+- Empty crates are stacked along the far wall, waiting to be needed.
+- The old customs house is quiet; the trade moved on without ceremony.
+- River damp has worked into the floor-stone; the air tastes of it.

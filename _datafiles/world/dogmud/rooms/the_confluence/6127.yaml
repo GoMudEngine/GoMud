@@ -1,0 +1,26 @@
+roomid: 6127
+zone: The Confluence
+title: The River Market
+description: >
+  Market stalls line the western face of the quay here, packed in
+  close under a shared run of awning-poles hung with oiled canvas.
+  The goods are practical — salt and grain and rope and cooking
+  oil, cured meat hung in loops, jars of river-honey, bundles of
+  dried rivergrass for livestock bedding. The sellers call their
+  prices with the tired ease of long habit. This is not where the
+  grand trade of the quay gets done; this is where the city feeds
+  itself, day by day, from boats that come down the Aldren and
+  the Brenn and the Solt every morning.
+biome: water
+coord: {x: -6, y: -60, z: 0}
+exits:
+  east: {roomid: 6123}
+  south: {roomid: 6130}
+  west: {roomid: 6133}
+spawninfo:
+  - mobid: 9429
+    respawnrate: "20 real minutes"
+idlemessages:
+- A stall-holder calls a price, waits, drops it, calls again.
+- The smell of salt fish and river-honey mixes under the awning shade.
+- "A buyer holds a rope length to the light, checking it: good enough."

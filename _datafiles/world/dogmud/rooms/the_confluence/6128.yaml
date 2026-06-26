@@ -1,0 +1,25 @@
+roomid: 6128
+zone: The Confluence
+title: The Spice Quay
+description: >
+  The riverside landing where Solt-trade imports come off the
+  barges and onto the quay. Sacks of spice are stacked two-high
+  against the bollards — black pepper, dried river-cane, pressed
+  oil-cake, and things with no local name yet, still in the cloth
+  wrappings of wherever they came from. The smell is sharp and
+  layered and a little intoxicating when the wind is off the south.
+  The river is close here, the water moving fast between the barge
+  hulls. The Importer keeps a tally-board on a post beside the
+  mooring rings, chalk marks in three columns.
+biome: water
+coord: {x: -4, y: -61, z: 0}
+exits:
+  west: {roomid: 6126}
+  north: {roomid: 6124}
+spawninfo:
+  - mobid: 9428
+    respawnrate: "20 real minutes"
+idlemessages:
+- Spice-sacks exhale a warmth when the sun hits them directly.
+- A barge noses in from the south, low in the water with cargo.
+- "The tally-board shows three columns of chalk marks: today's count."

@@ -1,0 +1,24 @@
+roomid: 6130
+zone: The Confluence
+title: The Market Lane
+description: >
+  The market row runs through here, stalls pressed in on both sides
+  of a passage barely wide enough for a laden cart. Oilcloth awnings
+  overhead cut the light and keep the rain off the goods displayed
+  below — bolts of cloth, dried herbs, secondhand tools, cages of
+  river-fowl, bags of spice decanted from the big Spice Quay
+  shipments into smaller lots for household buyers. Hawkers move
+  through the crowd in both directions. The noise is continuous,
+  voices and cart-wheels and the occasional sharp note of the
+  toll-bell from the weighhouse to the east.
+biome: water
+coord: {x: -6, y: -61, z: 0}
+exits:
+  north: {roomid: 6127}
+  south: {roomid: 6131}
+  east: {roomid: 6126}
+  west: {roomid: 6134}
+idlemessages:
+- Awning canvas snaps in a river gust overhead.
+- A buyer digs in a bin of dried herbs and raises a handful to their nose.
+- Cart-wheels on the stone lane rattle the stall-boards as it passes.

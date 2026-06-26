@@ -1,0 +1,22 @@
+roomid: 6136
+zone: The Confluence
+title: The South Market
+description: >
+  The market thins as the road runs south. The stalls here are more
+  widely spaced, the awnings smaller, the sellers fewer and more
+  deliberate in their calling. The goods are the kind that do not
+  require a crowd to move — fine spice in small quantities, carved
+  river-wood, a tailor working from a folding table. The bulk of
+  the trade is behind and the sound of it is distant, the market
+  bell a faint note from back at the Cross. The road ahead continues,
+  the way opening south toward the city's center and the quieter
+  civic life beyond the waterfront.
+biome: water
+coord: {x: -5, y: -63, z: 0}
+exits:
+  north: {roomid: 6129}
+  south: {roomid: 6137}
+idlemessages:
+- The market sound carries up from the north, quieter with distance.
+- A tailor at a folding table runs a seam with practiced efficiency.
+- The road south is less pressed here; foot traffic has thinned out.

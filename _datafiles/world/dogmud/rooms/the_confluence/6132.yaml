@@ -1,0 +1,24 @@
+roomid: 6132
+zone: The Confluence
+title: The Weighhouse
+description: >
+  The covered building that houses the city's precision scales and
+  the Weighmaster's official post. Inside, the air is cool and dry
+  compared to the yard; the walls hold racks of certified counter-
+  weights, each one stamped with the city mark and checked annually
+  against a reference set kept in a locked chest. The Weighmaster
+  works from a high stool behind a counter, recording each weighing
+  in the daybook and collecting the tariff coin before the cart is
+  allowed to leave. The scales here are calibrated to a fineness
+  the yard scales are not; contested lots come inside.
+biome: water
+coord: {x: -4, y: -62, z: 0}
+exits:
+  west: {roomid: 6129}
+spawninfo:
+  - mobid: 9430
+    respawnrate: "20 real minutes"
+idlemessages:
+- The Weighmaster records a figure without looking up from the daybook.
+- A counterweight clinks as it is lifted from the rack and set on the scale.
+- "The tariff coin goes into the box: the Weighmaster notes the amount."

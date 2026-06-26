@@ -1,0 +1,36 @@
+roomid: 6133
+zone: The Confluence
+title: The Rivermen's Guildhall
+description: >
+  A wide low building of cut stone set back from the market row,
+  its door framed by carved rope-knots in the stone lintel — old
+  work, worn smooth by years of hands. Inside, the walls are hung
+  with the charter documents of the river-trade guilds, framed in
+  dark wood, the ink faded to brown. A long counter runs across
+  the far side where the Guild Steward works the ledgers of charters
+  and tolls, logging every barge that pays to moor on the Long
+  Quay. The building smells of old paper and tallow candles and
+  the faint damp of the river that is never entirely out of the
+  stone here.
+biome: water
+coord: {x: -7, y: -60, z: 0}
+exits:
+  east: {roomid: 6127}
+nouns:
+  the guildhall: >
+    Built to last — cut stone and heavy roof timbers, the kind of
+    building that says the guild expected to be here a long time.
+    The charter documents on the walls run back further than anyone
+    living can place; some name merchants whose families are still
+    on the quay. The rope-knot carving above the door is a guild
+    mark, sign that a riverman is under the hall's authority and
+    protection when he trades here. The Weighmaster's tolls, the
+    Factor's rates, the Steward's ledgers — the guild sets them
+    all and argues about them at length.
+spawninfo:
+  - mobid: 9432
+    respawnrate: "20 real minutes"
+idlemessages:
+- A quill scratches across parchment at the counter; the Steward tallies a toll.
+- Somewhere deeper in the hall a door opens and closes without urgency.
+- The guildhall smells of old ink and damp stone and tallow candle.
