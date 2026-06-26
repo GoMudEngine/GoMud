@@ -1,0 +1,67 @@
+mobid: 9412
+zone: River Road
+defaultMood: friendly
+greetings:
+  - text: "River perch or smoked eel -- both fresh, both worth your silver.
+      Or have a look and tell me what you need. I'm not proud."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Day to you! Mind you don't lean on the net frame -- it's drying."
+  - keywords: ["net", "mend", "mending", "repair"]
+    responses:
+      - "Best nets on this stretch of the Aldren, and I'd know -- I repair
+        every one of them."
+  - keywords: ["news", "gossip", "talk", "heard", "village", "what"]
+    responses:
+      - "Oh, I've heard plenty. Buy something first and then I'll share."
+  - keywords: [""]
+    responses:
+      - "Ask me anything, friend. I have opinions on most of it."
+tree:
+  root:
+    text: "Net mending in the mornings, fish selling in the afternoons -- you
+      can find me here most days unless it's a market day or I've gone
+      upriver to check my traps. What can I do for you?"
+    hints: "You could ask Birrel about her fish and what she sells, about the
+      village and the river folk, or about the pilgrims passing through."
+  nodes:
+    - id: fish
+      triggers: ["fish", "sell", "eat", "food", "perch", "eel", "smoked",
+        "buy", "wares"]
+      text: "Perch right out of the Aldren, smoked over alder chips the way
+        my mother taught me. The eel's stronger -- not everyone's taste,
+        but river folk swear by it. I also keep dried river mussels and
+        pressed reed cakes, travel food, good for the pilgrims who don't
+        want to carry much. Everything I sell I either caught or smoked
+        myself. I can't speak for what's downriver at the Confluence
+        market, but up here my word is my guarantee."
+      hints: "You could ask Birrel about the village folk, or about the
+        pilgrims she sees come through."
+    - id: village
+      triggers: ["village", "folk", "people", "here", "local", "who", "lives",
+        "neighbors"]
+      text: "Oh, we're a small lot. The fishers, the dock workers, the road
+        warden Carew who we're all a little afraid of, old Sedge at the
+        smokehouse who has been here since the river was narrow. Good
+        people, mostly. We get pilgrim traffic now, more every year since
+        the temple opened its outer courts. Some are strange, some are
+        devout -- you can't always tell which is which. I have a rule:
+        they buy fish, I talk to them; they try to convert me, I go back
+        to my nets."
+      hints: "You could ask Birrel about her fish and nets, or about the
+        pilgrims passing through."
+    - id: pilgrims
+      triggers: ["pilgrim", "temple", "confluence", "south", "traveller",
+        "passing", "convert"]
+      text: "More of them every year, I'll say that. They come through in
+        twos and threes, some in whole families. The devout ones are
+        quiet and buy things without haggling, which I respect. The ones
+        who've been at the Confluence and are coming back -- they're
+        different again. Steadier somehow. More themselves. Or maybe
+        just tired from the road. Hard to say. Old Sedge at the
+        smokehouse says the river's been busy like this before, in his
+        father's day, before the temple was anything but a ruin."
+      hints: "You could ask Birrel about her fish and nets, or about the
+        village folk here at the landing."

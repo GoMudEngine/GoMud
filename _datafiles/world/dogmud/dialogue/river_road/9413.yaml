@@ -1,0 +1,69 @@
+mobid: 9413
+zone: River Road
+defaultMood: friendly
+greetings:
+  - text: "Smoke needs another hour. Sit if you like. The river's good company
+      while you wait."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Mm. Day to you. Don't rush me on the smoke."
+  - keywords: ["fish", "catch", "smoke", "smoked", "buy"]
+    responses:
+      - "The Aldren gives what it gives. I've stopped arguing with it."
+  - keywords: ["old", "long", "years", "always"]
+    responses:
+      - "Long enough to know the river better than my own children. Which
+        is its own kind of shame, but there it is."
+  - keywords: [""]
+    responses:
+      - "I'm an old man with a slow fire. Ask me slowly."
+tree:
+  root:
+    text: "I've been at this smokehouse since before the dock was built, before
+      the road was cut south. Just me and the river. It changes -- higher
+      some years, lower others, different fish -- but it's always itself.
+      Good to know something that's always itself."
+    hints: "You could ask Sedge about the river and his years fishing it, about
+      his method for smoking fish, or about the Confluence where the rivers
+      come together."
+  nodes:
+    - id: river
+      triggers: ["river", "aldren", "water", "years", "long", "fishing",
+        "life", "always", "know"]
+      text: "I've fished the Aldren sixty years, give or take. Seen it flood
+        five times bad and drop three times to stone. The fish change with
+        it -- some years it's perch and pike, some years the catfish come
+        up from the south mud in numbers that'd make your eyes water. My
+        father fished it before me, and his mother before him. We don't
+        own it. We just show up and see what it's offering. That's about
+        all fishing is."
+      hints: "You could ask Sedge about his method for smoking the fish, or
+        about the Confluence where the rivers come together."
+    - id: smoking
+      triggers: ["smoke", "smokehouse", "dry", "preserve", "how", "method",
+        "cure", "make"]
+      text: "Alder wood for the light smoke, a little green willow if you
+        want the sweetness, nothing wet and nothing resinous or you'll
+        taste the resin for a week. Low heat, long time. People want it
+        done fast and they ruin it. Fish'll tell you when it's ready --
+        the flesh goes from translucent to chalky at the center, and
+        then you're done. I've ruined maybe three batches in sixty years.
+        I keep count."
+      hints: "You could ask Sedge about the river and his years on it, or
+        about the Confluence where the rivers meet."
+    - id: confluence
+      triggers: ["confluence", "south", "three", "rivers", "meet", "temple",
+        "where", "meeting", "waters"]
+      text: "Three rivers meet down there, that's the saying. Aldren, Brenn,
+        Solt -- they've got a name for each. My grandfather used to say
+        there were four, once, that there was a fourth channel that went
+        dry before his time and people stopped counting it. Some old
+        watercourse dried up or went underground, he said, and after a
+        generation or two nobody thought to include it in the naming
+        anymore. I don't know if it's true. Old men tell you things.
+        Anyway, three is what's there now, and three is enough for a
+        temple."
+      hints: "You could ask Sedge about the river and his years fishing it,
+        or about his method for smoking fish."

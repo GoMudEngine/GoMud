@@ -1,0 +1,59 @@
+mobid: 9411
+zone: River Road
+defaultMood: friendly
+greetings:
+  - text: "Want passage south, you'll need to catch the Confluence barge-master
+      for that. I just get the cargo off and the deck swept."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Heya. Mind the stern line -- she's slack and wants coiling."
+  - keywords: ["barge", "boat", "river", "passage", "south", "travel"]
+    responses:
+      - "Barges run downriver to the Confluence every few days when they're
+        loaded. I don't book passage -- that's for the barge-master."
+  - keywords: [""]
+    responses:
+      - "I've got a landing to keep. Ask plainly."
+tree:
+  root:
+    text: "River landing here -- we take cargo off the barges coming down from
+      upriver, load what's going south to the Confluence. Grain, timber,
+      trade goods, pilgrims if they pay for deck space. The water runs
+      deep through here, good current. It's good work."
+    hints: "You could ask Tarro about the barge runs and how often they go,
+      about what cargo moves on the river, or about the Confluence itself."
+  nodes:
+    - id: barges
+      triggers: ["barge", "boat", "vessels", "run", "schedule", "how often",
+        "when", "frequency"]
+      text: "They run the downriver leg every few days when there's a load
+        worth running. The Aldren is deep enough here that a good-draft
+        barge makes the Confluence in a day and a half if the current
+        cooperates. Coming back upstream takes twice as long -- you're
+        poling against the flow most of the way. Most goods come back by
+        road. The barges mostly run south."
+      hints: "You could ask Tarro about what cargo moves on the river, or
+        about the Confluence itself."
+    - id: cargo
+      triggers: ["cargo", "goods", "load", "carry", "trade", "what", "brings"]
+      text: "Grain from the valley farms, mostly. Dressed timber from the mill
+        upriver. Some clay from the diggers along the north bank. The
+        pilgrims add up too -- six pilgrims is a paying load when they're
+        heading to the temple and not looking to walk. Confluence sends
+        back salted fish, temple goods, ironwork from their smiths. Busy
+        water. I have been landing cargo here seven years and it only
+        gets busier."
+      hints: "You could ask Tarro about the barge schedule or the Confluence."
+    - id: confluence
+      triggers: ["confluence", "temple", "south", "city", "what", "there",
+        "place"]
+      text: "I haven't been down to the Confluence myself in three seasons.
+        But from what I unload I can tell you it's a proper place -- they
+        export ironwork, fine cloth, carved stone. The pilgrims who come
+        back up by road mostly look settled somehow. Like they found the
+        thing they went looking for, or something near enough. The
+        barge-master could tell you more. He makes the run monthly."
+      hints: "You could ask about the barge runs or the cargo moving on the
+        river."

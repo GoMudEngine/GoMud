@@ -1,0 +1,44 @@
+mobid: 9410
+zone: River Road
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote tucks both thumbs into his belt and squints south down the
+    road, checking the grade as if he half-expects the runoff to return.'
+  - ''
+  - 'say Packed earth holds better than stone when the ground heaves.
+    Takes a few seasons to prove it out, but it holds.'
+  - ''
+  - 'emote crouches and presses two fingers into the road shoulder,
+    testing the soil, then rises with a slow, approving nod.'
+  - ''
+activitylevel: 10
+character:
+  name: Carew the Road Warden
+  description: |
+    Carew the Road Warden has the build of a man who has spent more
+    time in the mud than out of it -- broad through the shoulders,
+    with clay still worked into the knees of his boots and a survey
+    rod tucked under one arm like a walking staff. He reopened this
+    section of road after the spring floods carved it into a ditch,
+    and the quiet pride of having done it right is written in the way
+    he stands -- weight on both feet, chin slightly raised, watching
+    the southbound grade as if it were his own work on display, which
+    it is. His Chrysalis-change is modest: the first two fingers of
+    his left hand have fused at the base, and he uses the broad flat
+    joint to tamp survey stakes with a precision no ordinary hand
+    could manage.
+  speciesid: 1
+  level: 1
+  gold: 6
+  stats:
+    perception:
+      training: 4
+    strength:
+      training: 4

@@ -1,0 +1,71 @@
+mobid: 9414
+zone: River Road
+defaultMood: friendly
+greetings:
+  - text: "Peace on the road to you. We are bound for the Confluence temple.
+      Two more days, if the weather holds."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Well met. The road has been kind today -- I take that as a sign."
+  - keywords: ["temple", "confluence", "south", "going", "bound", "headed"]
+    responses:
+      - "The Temple of Confluence, yes. I have meant to make this journey
+        for three years. I should have started sooner."
+  - keywords: ["pilgrim", "faith", "believe", "prayer"]
+    responses:
+      - "The road teaches patience, and patience teaches faith. Or that is
+        what I tell myself on the steep parts."
+  - keywords: [""]
+    responses:
+      - "Ask. I have time -- I am walking to a temple, not running from
+        anything."
+tree:
+  root:
+    text: "I'm Wess. My companion Nara and I are pilgrims heading south to
+      the Temple of Confluence -- the great meeting place at the three
+      rivers. I was raised hearing about it. I should have gone years ago.
+      Now I've gone, or going, which is the same thing I suppose."
+    hints: "You could ask Wess about the Temple of Confluence and why she is
+      making the journey, about the symbol carved above the temple doors,
+      or about what she hopes to find when she arrives."
+  nodes:
+    - id: temple
+      triggers: ["temple", "confluence", "place", "great", "what", "tell",
+        "describe", "like"]
+      text: "The Temple of Confluence stands at the joining of the three rivers.
+        They say the old builders chose that spot because moving water never
+        forgets where it came from -- it carries everything it has touched,
+        all the way to the sea. The temple is old, older than the capital.
+        The outer courts were opened to pilgrims within living memory. I
+        have heard that inside, where the three rivers join in a single
+        channel below the floor, the sound is extraordinary. That is what
+        I want to hear, I think. The sound of things joining."
+      hints: "You could ask Wess about the symbol carved above the temple
+        doors, or about what she hopes to find when she arrives."
+    - id: symbol
+      triggers: ["symbol", "door", "carved", "sign", "mark", "above", "glyph",
+        "carving", "doors"]
+      text: "Above the great doors there is a carved symbol -- three rivers
+        flowing together into a single line, with a circle at the meeting
+        point. They say it predates the temple itself, that the builders
+        found it already cut into the foundation stone and built around it.
+        Some pilgrims I have spoken with say the symbol appears in other
+        places too, out in the countryside on old stones. I would not know.
+        I have only seen drawings of it. I intend to see the real thing."
+      hints: "You could ask Wess about the Temple of Confluence, or about
+        what she hopes to find when she arrives."
+    - id: why
+      triggers: ["why", "hope", "find", "expect", "looking", "reason",
+        "journey", "going", "what for"]
+      text: "I lost my brother two winters back. He was -- the grief was long.
+        Someone told me the temple is a place where things that have been
+        divided can be held together again, that it was built for exactly
+        that feeling. I don't know if that's theology or poetry. I'm going
+        to find out. My companion Nara is coming because she's kind enough
+        to walk a long road with a sad woman, and because she's not
+        entirely convinced it's a waste of time, which is the most faith
+        she'll claim."
+      hints: "You could ask Wess about the temple or the symbol carved above
+        its doors."
