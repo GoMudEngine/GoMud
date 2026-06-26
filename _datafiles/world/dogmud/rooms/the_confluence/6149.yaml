@@ -3,8 +3,8 @@ zone: The Confluence
 title: The Hall of Records
 description: >
   The records room behind the Municipal Hall, its
-  shelves running floor to ceiling on all four walls
-  with the accumulated documentation of a city that
+  shelves running floor to ceiling along most of the
+  walls with the accumulated documentation of a city that
   has been keeping records for a long time. Bound
   folios of charter amendments, rolled surveys in
   ribbon, indexed ledgers of civic ordinance, and
@@ -18,7 +18,11 @@ description: >
   differently cut, the mortar of the current building
   running to it rather than through it. Something has
   been cut into its sheltered interior face. The records
-  in this room do not appear to address it.
+  in this room do not appear to address it. A propped
+  door in the west wall opens through into the Scholars'
+  Quarter — the Margin's halls back onto this archive,
+  and its scholars come and go through here as if the
+  records were half their own.
 biome: city
 coord:
   x: -7
@@ -27,6 +31,8 @@ coord:
 exits:
   east:
     roomid: 6143
+  west:
+    roomid: 6218
 nouns:
   the old wall: >
     A section of the records room's north wall in a

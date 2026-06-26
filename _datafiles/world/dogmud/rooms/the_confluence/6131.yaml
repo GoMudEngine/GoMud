@@ -5,7 +5,8 @@ description: >
   A stall and back-room together at the Weighhouse Yard's western
   end, the Scrivener's trade stacked in bins and flat-cases under
   the counter. Trade charts, certified copy-work, river-guild forms,
-  and a selection of older maps fill the shelves. The charts are
+  and a selection of <ansi fg="itemname">old charts</ansi> fill the
+  shelves. The charts are
   hand-copied, recopied from earlier copies, and some of the older
   ones show the river-junction here a little differently — more
   channels marked in, more detail at the confluence-point — in a
@@ -29,6 +30,15 @@ nouns:
     genuine older survey work, copyist error propagated through
     generations, or something else, the Scrivener cannot say with
     certainty. They are priced the same as the rest.
+  the old charts: >
+    The oldest charts in the stall, on stiff yellowed stock in a hand
+    that predates the guild's forms. Set against the current maps they
+    disagree on one thing in particular: the count of waters at the
+    junction. Where today's charts show three rivers meeting, several of
+    these draw a fourth — a narrow channel running off to the southwest,
+    struck through in some copies and re-marked in others, as though
+    generations of copyists could not agree whether it belonged. One of
+    the records the Margin would want compared.
 spawninfo:
   - mobid: 9431
     respawnrate: "20 real minutes"

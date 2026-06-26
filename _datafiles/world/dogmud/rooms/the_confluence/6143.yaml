@@ -12,7 +12,9 @@ description: >
   the benches, a large framed
   <ansi fg="itemname">map</ansi>
   of the Confluence and its three rivers is hung where
-  all who wait may consult it. A hall-clerk manages the
+  all who wait may consult it; a faded
+  <ansi fg="itemname">marginal note</ansi> in an older hand
+  crowds one edge of the chart. A hall-clerk manages the
   counter at the room's north end with the unhurried
   efficiency of someone who has heard most questions
   before; a scholar in a worn coat works one of the
@@ -50,6 +52,14 @@ nouns:
     agree. No other annotation addresses it. The chart
     has hung here long enough that the staff do not
     remark on the marginal note.
+  the marginal note: >
+    The annotation crowding one margin of the hall map: a fourth channel
+    pencilled in by an older, less practiced hand than the chart-maker's,
+    its course running south-southwest from the junction, then half-
+    struck-through with a single horizontal line. Beside it, in faded
+    ink: the surveyors could not agree. It is the civic record's own
+    admission that the count of the waters was once in dispute — hung in
+    plain public view, and unremarked for so long that no one sees it.
 spawninfo:
   - mobid: 9434
     respawnrate: "20 real minutes"
