@@ -10,11 +10,12 @@ description: >
   here — the wharves are a fair walk back — and the air is a little
   less loud with spice and tar. The quay road runs on south from
   these posts toward Tri-Cross Square and the center of the city,
-  a walk for another day.
+  open and straight ahead.
 biome: water
 coord: {x: -5, y: -64, z: 0}
 exits:
   north: {roomid: 6136}
+  south: {roomid: 6138}
 nouns:
   the way south: >
     The road past the gateway posts runs south toward Tri-Cross
@@ -23,8 +24,8 @@ nouns:
     itself wide enough to hold a market of its own on feast days.
     The three-district waterfront lies behind; what lies ahead is
     the deep city, the full weight of civic life at the rivers'
-    crossing. The way is open and straight and not far, a walk
-    for another day.
+    crossing. The way is open and straight and not far — the
+    square lies just south down the road.
 idlemessages:
 - The old guild marks on the boundary posts are rubbed smooth at hand-height.
 - The market sound is distant here; the quay road runs quiet to the south.
