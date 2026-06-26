@@ -1,0 +1,30 @@
+roomid: 6113
+zone: The Confluence
+title: Warehouse Row
+description: >
+  A row of bonded warehouses lines the west side of the Landings,
+  their great double doors banded with iron and chalked with lot
+  numbers in white. Pallets of freight are stacked outside the
+  nearest door, waiting on a tallymaster who has not yet arrived.
+  The smell is the smell of stored goods: old sacking, vinegar,
+  beeswax, and below it all the damp of the river held in the
+  walls. The Quayhead lies to the east; the chandlery is south.
+biome: water
+coord: {x: -6, y: -54, z: 0}
+exits:
+  north: {roomid: 6117}
+  east: {roomid: 6108}
+  south: {roomid: 6114}
+nouns:
+  the warehouses: >
+    Three of them in a row, identical in construction: timber-
+    framed, river-stone lower walls, thatched roofs raised high to
+    let the stored goods breathe. The doors are banded iron over
+    heavy oak, chalked with lot numbers changed each season. What
+    is inside shifts with the trade: grain, baled cloth, salted
+    river catch, lamp oil, hides. The Quayfolk call the lot "the
+    bond," and bonded goods cannot leave without a warden's mark.
+idlemessages:
+- The big warehouse doors creak in the river wind, their chains rattling.
+- The smell of old sacking and vinegar seeps from under the warehouse doors.
+- A rat runs the length of the pallet stack and vanishes into a gap.

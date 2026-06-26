@@ -1,0 +1,46 @@
+mobid: 9419
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - quayfolk
+idlecommands:
+  - 'emote rolls one shoulder back and glances toward the river gate,
+    then nods to himself -- approving something that does not need
+    approval, but gets it anyway.'
+  - ''
+  - 'say Gate is open. Hasn''t been, most of the cold season. Good to
+    have it open again.'
+  - ''
+  - 'emote squares up against the gatepost, crosses both arms, and
+    watches the road south with the alert stillness of a man who has
+    done this a long time.'
+  - ''
+activitylevel: 10
+character:
+  name: Holt the Gate-Warden
+  description: |
+    Holt the Gate-Warden is a lean man with the weathered look of
+    someone who has spent decades standing at a fixed point while
+    everything else moved past him -- merchants, pilgrims, freight
+    wagons, seasons. He wears a plain river-cloth coat and carries
+    a short cudgel at his belt more out of habit than necessity;
+    the gate behind him opens onto the Landings quay, and this
+    morning he swung it wide for the first time since the autumn
+    ice sealed the river. There is quiet satisfaction in how he
+    stands. His Chrysalis-change is subtle: his eyes have taken on
+    a faint amber cast, and he can pick out movement on the river
+    at distances that make barge pilots nervous.
+  speciesid: 1
+  level: 1
+  gold: 6
+  stats:
+    perception:
+      training: 6
+    strength:
+      training: 3

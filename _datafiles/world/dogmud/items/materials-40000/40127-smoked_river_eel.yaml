@@ -1,0 +1,15 @@
+itemid: 40127
+name: Smoked River-Eel
+namesimple: river-eel
+description: >
+  A length of river-eel, split and smoked dark and oily over hardwood coals;
+  a Confluence dock staple that keeps long and packs dense.
+type: object
+subtype: mundane
+component_tag: river-eel
+weight: 0.3
+value: 7
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking

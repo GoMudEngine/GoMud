@@ -1,0 +1,22 @@
+roomid: 6119
+zone: The Confluence
+title: Market Lane
+description: >
+  A lane running east to west across the mid-quay, busy in the way
+  that working waterfronts are always busy: not loud or festive but
+  purposeful, people and carts moving with the patience of those
+  who have done this a thousand times. Stalls line the south side —
+  a rope-seller, a bread-cart, a woman with a tray of smoked eel.
+  The Chandlery lies west; the Fish Quay is to the east. The
+  Quayhead is north and the Quay Crossing is south.
+biome: water
+coord: {x: -5, y: -55, z: 0}
+exits:
+  north: {roomid: 6108}
+  south: {roomid: 6120}
+  west: {roomid: 6114}
+  east: {roomid: 6110}
+idlemessages:
+- A cart driver calls ahead down the lane, one slow syllable of warning.
+- The bread-cart seller wraps a loaf in cloth; a coin changes hands quietly.
+- From the east, the salt and cold smell of fresh river catch rolls in.

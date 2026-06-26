@@ -1,0 +1,32 @@
+roomid: 6115
+zone: The Confluence
+title: Cooper's Yard
+description: >
+  An open yard between the chandlery and the tavern, loud in the
+  easy rhythmic way of craft work: the mallet on a barrel stave,
+  the rasp of a drawknife on fresh wood. Barrel blanks are stacked
+  against the west wall; finished barrels, hooped and tested, stand
+  in a row ready for collection. A net-frame leans against the far
+  fence, weighted floats hanging from the mesh. The pace here is
+  quieter than the quay — dock work running on its own time.
+biome: water
+coord: {x: -6, y: -56, z: 0}
+exits:
+  north: {roomid: 6114}
+  east: {roomid: 6120}
+  south: {roomid: 6116}
+nouns:
+  the barrels: >
+    Finished cooperage, standing upright and ready: staves fitted
+    tight, hoops driven and clinched. The cooper tests each one
+    with a mallet tap, listening for the note that says the fit
+    is good. These go to the warehouses and to the barge dock
+    both, packed with salt fish, lamp oil, or river tar depending
+    on the bond.
+spawninfo:
+  - mobid: 9426
+    respawnrate: "20 real minutes"
+idlemessages:
+- The mallet on a barrel stave sounds from the yard, steady as a clock.
+- Wood shavings curl from a drawknife stroke and settle in the dirt.
+- The smell of fresh timber and sawdust rises from the stack of stave blanks.

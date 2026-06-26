@@ -1,0 +1,31 @@
+mobid: 9425
+zone: The Confluence
+defaultMood: neutral
+greetings:
+  - text: "Mind the pallets."
+    moods: ["neutral"]
+  - text: "I'm working here."
+    moods: ["neutral"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Mm."
+  - keywords: ["work", "job", "freight", "cargo", "load", "dock", "what"]
+    responses:
+      - "Freight comes off the barge, goes in the warehouse. When it
+        needs to go back out, it comes from the warehouse. That's the job."
+  - keywords: [""]
+    responses:
+      - "Got nothing much to add."
+tree:
+  root:
+    text: "Freight doesn't move itself."
+    hints: "You could ask Goran about the work on the docks."
+  nodes:
+    - id: work
+      triggers: ["work", "job", "dock", "freight", "cargo", "load",
+        "heavy", "hard", "how", "long", "do", "what", "move"]
+      text: "Bales, barrels, crates. Stack it, move it, stack it again
+        when the order changes. Shoulders hold up or they don't. Mine
+        do. If you want complicated work, find an office."
+      hints: "You could ask Goran about the work on the docks."

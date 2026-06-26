@@ -1,0 +1,74 @@
+mobid: 9422
+zone: The Confluence
+defaultMood: neutral
+greetings:
+  - text: "Name and cargo. If you're not carrying cargo, name and purpose.
+      We keep a manifest here."
+    moods: ["neutral"]
+  - text: "Morning. The quay's full until the afternoon barge loads out. Find
+      space on the upper dock if you need to stand somewhere."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Mm. Here on business?"
+  - keywords: ["trade", "cargo", "freight", "manifest", "load", "unload",
+      "goods"]
+    responses:
+      - "Everything goes through the manifest. That's the rule and it's
+        been the rule since before I took this post."
+  - keywords: ["tax", "toll", "fee", "customs", "duty", "how much"]
+    responses:
+      - "Standard river toll -- one in twenty of declared value. You
+        declare, I log, we both move on."
+  - keywords: [""]
+    responses:
+      - "I've got a dock to run. Be brief."
+tree:
+  root:
+    text: "The Landings is the entry-point for all three-river trade --
+      everything coming south off the Aldren, everything in from the
+      Brenn or the Solt, passes through this quay. I make sure it
+      keeps moving. Freight tallies, passenger manifests, tide
+      scheduling, toll collection, the occasional dispute -- it all
+      lands here first. What do you need?"
+    hints: "You could ask Wult about how the Landings works, about the
+      river trade that moves through, or about the Quayfolk who run it."
+  nodes:
+    - id: landings
+      triggers: ["landings", "quay", "dock", "here", "what", "how",
+        "district", "run", "works", "does", "role"]
+      text: "River-ward district -- first land you hit coming off the
+        Aldren, first water you reach going out. We handle freight
+        intake, customs inspection, passenger manifests, barge
+        scheduling, and overnight holds when a cargo can't move before
+        tide. Everything beyond the gate is the Confluence proper --
+        markets, civic hall, temple quarter, the high roads. We just
+        move what comes in and send out what leaves. Not glamorous.
+        Essential."
+      hints: "You could ask Wult about the river trade or about the
+        Quayfolk."
+    - id: trade
+      triggers: ["trade", "river", "cargo", "goods", "what", "moves",
+        "freight", "transport", "business", "import", "export"]
+      text: "Aldren brings grain, timber, quarry stone from the north.
+        Brenn brings wool and finished cloth from the hill country to
+        the west. Solt carries copper ore and tallow out of the eastern
+        mining settlements. What goes back up -- mostly finished tools,
+        medicine, glassware, the things the upriver towns can't produce
+        themselves. I see all of it on the manifest. Gives you a clearer
+        picture of what the region actually needs than any merchant or
+        politician could give you."
+      hints: "You could ask Wult about the Landings or about the
+        Quayfolk."
+    - id: quayfolk
+      triggers: ["quayfolk", "quay", "folk", "people", "faction", "group",
+        "who", "workers", "us", "them", "what"]
+      text: "Quayfolk is what they call the river-trade people -- barge
+        crews, dockhands, traders, chandlers, the tavern. Not a guild,
+        not a union, just people who've built their lives around the
+        water. No ceremony to it. The work's the thing. You do the
+        work, you're one of us. You don't, you're not. Simple enough,
+        and it's served us well."
+      hints: "You could ask Wult about the Landings or about the river
+        trade."

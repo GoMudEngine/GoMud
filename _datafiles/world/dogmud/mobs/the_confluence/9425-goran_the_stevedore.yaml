@@ -1,0 +1,40 @@
+mobid: 9425
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - quayfolk
+idlecommands:
+  - 'emote braces a cargo bale against one knee, adjusts his grip,
+    and swings it up onto the stack in a single smooth heave.'
+  - ''
+  - 'emote rolls an empty barrel to the warehouse door, kicks the
+    wedge under it, and dusts both hands on his trousers.'
+  - ''
+  - 'say Watch your step around the pallets. Wet dock, loose boards.
+    Someone always finds out the hard way.'
+  - ''
+activitylevel: 10
+character:
+  name: Goran the Stevedore
+  description: |
+    Goran the Stevedore is a large, quiet man who spends his days
+    moving freight from the barges to the warehouse and back again,
+    a job he has pursued with unvarying competence and no apparent
+    ambition beyond doing it well. His Chrysalis-change reinforced
+    the structure of his shoulder joints into something denser than
+    bone; he carries loads that would leave another man folded, and
+    does it with a gait that barely changes under the weight.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    strength:
+      training: 8
+    vitality:
+      training: 4

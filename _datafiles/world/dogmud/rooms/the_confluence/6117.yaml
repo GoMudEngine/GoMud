@@ -1,0 +1,35 @@
+roomid: 6117
+zone: The Confluence
+title: Gate Plaza
+description: >
+  A small square tucked west of the gate road, quieter than the
+  streets to the south. A stone well sits at its center, a carved
+  fish above the windlass, the rope darkened from years of wet
+  hands. A notice-board leans against the well's rim, boards dense
+  with chalked and parchment postings: tariff amendments, crew
+  calls, lost cargo notices, a wanted bill with the ink run from
+  rain. Flagstones slope gently south toward Warehouse Row.
+biome: water
+coord: {x: -6, y: -53, z: 0}
+exits:
+  east: {roomid: 6107}
+  south: {roomid: 6113}
+nouns:
+  the notice-board: >
+    A timber board propped against the well, covered in layers of
+    postings. Tacked bills, chalked slates, rolled notices tied
+    with twine. The older ones are faded or crossed out; the newer
+    ones crowd the top: a crew call for the Aldren barge, a tariff
+    amendment in fresh ink, and a brief notice from the Dockmaster's
+    office reading ATTENTION CARGO CARRIERS — NEW BOND TERMS in
+    block letters. Most eyes pass over it.
+  the well: >
+    A broad well-cap of river stone with a carved fish above the
+    windlass, its scales worn to soft suggestions. The rope is
+    clean and the water below is cold and good — the Quayfolk
+    maintain the well as common goods, kept fresh by a slow seep
+    from the same gravel bed that feeds the channel.
+idlemessages:
+- A rope end tied to the notice-board flaps in a gust off the river.
+- The well rope sways from a recent draw, dripping into the dark below.
+- From the south, the smell of stacked timber and treated canvas drifts up.

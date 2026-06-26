@@ -1,0 +1,52 @@
+mobid: 9421
+zone: The Confluence
+craft_support: cooking
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - quayfolk
+idlecommands:
+  - 'emote lays out a row of wrapped river-eel on the front of the
+    slab, straightens each one with a practiced tap, then steps back
+    to check the line.'
+  - ''
+  - 'say Three rivers means three kinds of water, and three kinds of
+    water means fish that don''t know each other. Best variety in
+    the region, right here.'
+  - ''
+  - 'emote lifts the cloth from a basket of confluence trout, fans
+    the smell forward with one hand, then folds the cloth back.'
+  - ''
+activitylevel: 10
+character:
+  name: Pella the Fish-Trader
+  description: |
+    Pella the Fish-Trader works the fish slab at the foot of the
+    landing stair from before first light until the ice runs out,
+    which is to say she is always there and the slab is always
+    fresh. She sources from four boats on the Aldren and two on
+    the Brenn, and can name the crew and the stretch of water each
+    catch came from without checking a label. Her Chrysalis-change
+    landed on her sense of smell: she can detect the precise hour
+    a fish came out of the water, a fact she considers professionally
+    indispensable and mentions only when someone tries to pass off
+    a day-old catch as morning-fresh.
+  speciesid: 1
+  level: 1
+  gold: 40
+  stats:
+    perception:
+      training: 8
+    charisma:
+      training: 4
+  shop:
+    - itemid: 40127
+    - itemid: 40128
+    - itemid: 40125
+    - itemid: 40123
+    - itemid: 40124

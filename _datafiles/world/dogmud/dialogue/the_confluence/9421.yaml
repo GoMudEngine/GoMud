@@ -1,0 +1,72 @@
+mobid: 9421
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Morning catch is on the slab. River eel, confluence trout, smoked
+      fish that'll keep you for days. Take a look."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Here early -- good. Best selection is first thing."
+  - keywords: ["buy", "sell", "shop", "food", "eat", "hungry", "price", "cost"]
+    responses:
+      - "Everything on the slab is today's catch or yesterday's smoked.
+        Take your pick or ask me what's freshest right now."
+  - keywords: ["fresh", "freshness", "old", "stale", "today", "yesterday"]
+    responses:
+      - "Nothing on this slab came out of the water more than two days
+        ago. I'd know."
+  - keywords: [""]
+    responses:
+      - "Fish questions I can answer. Other things you'll have to ask
+        someone with more time."
+tree:
+  root:
+    text: "Three rivers means three different fish populations that
+      haven't worked out the territory between them. Pike from the
+      Aldren, silver trout from the Brenn, eel where the Solt runs
+      cold along the eastern bank. I source from all three boats and
+      nothing on this slab sits long. Best variety in the region,
+      if I say so myself."
+    hints: "You could ask Pella about her fish and how to cook them,
+      about the three rivers and what each one offers, or about
+      the Confluence."
+  nodes:
+    - id: fish
+      triggers: ["fish", "eel", "trout", "mussels", "cress", "watercress",
+        "smoked", "cook", "recipe", "how", "prepare", "eat", "buy"]
+      text: "The eel is best smoked -- you want the oil in the flesh,
+        and smoking keeps it where it belongs instead of running out
+        in the pan. The trout is good raw-salted if you're eating it
+        today, better over a fire. Watercress I pick fresh from the
+        Solt bank most mornings -- pairs with anything and keeps the
+        scurvy off if you've been living out of a pack. The mussels
+        come from the confluence pool where the water goes a little
+        brackish -- different flavor from a river mussel. Worth trying
+        if you haven't."
+      hints: "You could ask Pella about the three rivers, or about
+        the Confluence where they meet."
+    - id: rivers
+      triggers: ["river", "rivers", "aldren", "brenn", "solt", "three",
+        "water", "different", "each", "which"]
+      text: "The Aldren runs cold and dark out of the north -- deep
+        channel, good for pike and the big catfish in summer. Brenn
+        comes in from the west warmer and shallower, gravel bottom,
+        that's your trout water. The Solt is the fast one, drops clear
+        out of the eastern hills, and that's where the eel like the
+        current. Different chemistry in each one. I can taste the
+        source in a fish without being told. I don't advertise that.
+        People get strange about it."
+      hints: "You could ask Pella about the fish on the slab, or
+        about the Confluence."
+    - id: confluence
+      triggers: ["confluence", "city", "landings", "here", "where",
+        "meeting", "together", "south", "what", "place"]
+      text: "I've had my slab in the Landings since I was young and
+        I'm not young anymore, so take that as your measure of the
+        place. Good market -- everything moving downriver passes
+        through, every upriver boat stops here first. Steady trade.
+        I'm not going anywhere and neither is the fish."
+      hints: "You could ask Pella about the fish or about the three
+        rivers."

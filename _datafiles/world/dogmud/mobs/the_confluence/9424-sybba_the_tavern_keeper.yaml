@@ -1,0 +1,45 @@
+mobid: 9424
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - quayfolk
+idlecommands:
+  - 'emote wipes down the bar counter with a cloth, working from the
+    far end to the near in a long, unhurried sweep.'
+  - ''
+  - 'say Aldren''s running high this week. High water means more
+    traffic, and more traffic means better gossip. Good week.'
+  - ''
+  - 'emote refills an empty cup on the counter, holds it to the light
+    to check the fill, and sets it back with quiet satisfaction.'
+  - ''
+activitylevel: 10
+character:
+  name: Sybba the Tavern-keeper
+  description: |
+    Sybba the Tavern-keeper has run the Quayside since her sister
+    gave it up and went inland to raise chickens, which is a longer
+    story than Sybba usually tells unless someone buys a second cup.
+    She is tall and loose-limbed, with the relaxed watchfulness of
+    someone who has learned to read the room without appearing to.
+    Every barge crew, every merchant, every pilgrim passing through
+    the Landings ends up at her counter eventually, and she
+    catalogues them all -- names, cargos, moods, rumors. Her
+    Chrysalis-change is social in nature: she never forgets a face.
+    Every person she has served she can describe in detail years
+    later, a gift that is flattering or unsettling depending on
+    whether you have been behaving yourself.
+  speciesid: 1
+  level: 1
+  gold: 15
+  stats:
+    charisma:
+      training: 8
+    perception:
+      training: 5

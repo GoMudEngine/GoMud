@@ -1,0 +1,29 @@
+roomid: 6121
+zone: The Confluence
+title: South Quay Gate
+description: >
+  The quay road narrows here at the Landings' south edge, passing
+  between a pair of old posts that no longer carry a bar. Beyond
+  them the road runs on — more wharves, a longer market, the
+  deeper districts of the Confluence where the city proper begins.
+  That way is a walk for another day. The crossing behind is the
+  Quay Crossing, the heart of the Landings; everything here is
+  still the waterfront, still the smell of rope and river mud and
+  the sound of gulls over the channel.
+biome: water
+coord: {x: -5, y: -58, z: 0}
+exits:
+  north: {roomid: 6120}
+nouns:
+  the way south: >
+    The road continues past the gateposts toward the Long Quay
+    district, the bulk of the Confluence's waterfront trade. More
+    wharves, more markets, the guild halls and counting houses of
+    the city proper. It lies along the same river, the same smell,
+    the same sound of moving water under the docks — just more of
+    it, and deeper into the city. The road is open; today's walk
+    ends at the Landings.
+idlemessages:
+- The old gateposts cast short shadows across the road at midday.
+- Somewhere south, down the quay road, a market bell rings twice.
+- The river smell follows the road south; it never quite leaves you.

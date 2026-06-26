@@ -1,0 +1,68 @@
+mobid: 9420
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "She won't be ready until the afternoon tide. If you want passage,
+      come back then and we'll talk fare."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Don't get in the way of the loading and we'll be fine."
+  - keywords: ["fare", "passage", "ticket", "price", "cost", "pay", "how much"]
+    responses:
+      - "Depends on cargo weight and whether you need a berth. Come back
+        when she's loaded and I'll give you a number."
+  - keywords: ["plymouth", "new plymouth", "north", "capital", "downriver"]
+    responses:
+      - "Downstream to New Plymouth, two days in good water. Three if the
+        sandbar at the northern bend is running high."
+  - keywords: [""]
+    responses:
+      - "I've got a barge to load. Ask me something useful."
+tree:
+  root:
+    text: "I run freight and passengers down the Aldren to New Plymouth
+      and back up when there's cause. Next departure is the afternoon
+      tide -- she won't be loaded before that. If you need passage,
+      I'm the man. If you need a conversation, the tavern's further
+      along the quay."
+    hints: "You could ask Osse about the river run to New Plymouth,
+      about the barge and what she carries, or about the passengers
+      he has brought through."
+  nodes:
+    - id: run
+      triggers: ["river", "aldren", "run", "route", "trip", "journey",
+        "how", "long", "days", "time", "distance", "schedule"]
+      text: "Two days downstream in good conditions. New Plymouth back
+        up here is two and a half going against the current with a full
+        load -- barge doesn't love fighting the Aldren in spring when
+        the snowmelt is pushing hard. I know every snag between here
+        and the estuary. You learn them the first time they nearly put
+        you on the bank and you don't forget them after that."
+      hints: "You could ask Osse about the barge and cargo, or about
+        the travelers he has carried."
+    - id: barge
+      triggers: ["barge", "boat", "ship", "vessel", "cargo", "load",
+        "freight", "what", "carry", "hold", "she"]
+      text: "She's a wide-bellied river hauler, built for freight but
+        I keep two passenger berths clear as a courtesy. Grain, timber,
+        finished goods mostly -- the manifests change by season. Cargo
+        pays more reliably than passengers. Passengers ask too many
+        questions. Though I'll admit the river is worth looking at
+        even after this many years of it."
+      hints: "You could ask Osse about the river run, or about the
+        travelers he has carried."
+    - id: passengers
+      triggers: ["passenger", "passengers", "people", "carry", "travel",
+        "traveler", "who", "remember", "man", "folk", "brought"]
+      text: "I carry all sorts. Merchants, pilgrims on the Chrysalis
+        circuit, laborers headed for the capital. Had a quiet young man
+        come aboard a while back -- came down out of the Amber Valley
+        with a set of carving tools, not much else. Good hand on deck,
+        helped with the mooring lines without being asked. Said he was
+        headed for New Plymouth to find work as a craftsman. Kept to
+        himself the whole run, which suited me. I hope he found what
+        he was looking for. Some of them do."
+      hints: "You could ask Osse about the river run or about the barge
+        and what she carries."

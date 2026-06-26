@@ -1,0 +1,41 @@
+mobid: 9426
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - quayfolk
+idlecommands:
+  - 'emote drives an iron hoop down a barrel stave with steady mallet
+    taps, working around the circumference until the wood seats.'
+  - ''
+  - 'emote holds a finished barrel up on one end, sights down the
+    stave seam, and gives the hoop a single corrective tap.'
+  - ''
+  - 'say This dock runs on barrels. People forget that. Barrels and
+    rope. Everything else is secondary.'
+  - ''
+activitylevel: 10
+character:
+  name: Clout the Cooper
+  description: |
+    Clout the Cooper keeps a small workshop at the edge of the
+    dockside where he builds and repairs the barrels the river
+    trade moves through in constant supply. He works with a mallet
+    and a hooping iron and speaks seldom unless a barrel is
+    involved, on which subject he can become surprisingly expansive.
+    His Chrysalis-change warmed his hands slightly above the normal
+    range, which proved useful when working with heated iron hoops
+    and spared him the burns that plagued his apprentice years.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    strength:
+      training: 6
+    dexterity:
+      training: 5

@@ -1,0 +1,12 @@
+faction_id: quayfolk
+display_name: "The Confluence Quayfolk"
+description: |
+  The river-trade community of the Confluence waterfront — barge masters,
+  dockmasters, fish-traders, chandlers, and the stevedores who keep the
+  three rivers' cargo moving. Pragmatic and outward-facing, they care more
+  about tides and freight than temple politics, and they measure a stranger
+  by whether they're good for the work. They run the passage downriver to
+  New Plymouth and the markets that feed the city.
+default_rep: 10
+allies: []
+enemies: []

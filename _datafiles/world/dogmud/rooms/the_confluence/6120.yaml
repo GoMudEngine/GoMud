@@ -1,0 +1,22 @@
+roomid: 6120
+zone: The Confluence
+title: Quay Crossing
+description: >
+  The central junction of the Landings, where Market Lane meets the
+  main quay road running north to south. The crossing is always in
+  motion: hand-carts and shoulder-loads moving in four directions,
+  dockers calling ahead, a bell-post at the center for the shift
+  changes that the Quayfolk run their day by. The smell here is
+  all-of-it at once: tar, fish, bread, canvas, river mud.
+  Cooper's Yard and the Chandlery lie west; the Long Wharf is east.
+biome: water
+coord: {x: -5, y: -56, z: 0}
+exits:
+  north: {roomid: 6119}
+  south: {roomid: 6121}
+  west: {roomid: 6115}
+  east: {roomid: 6111}
+idlemessages:
+- The bell-post rings a short double note; the shift changes at the crossing.
+- A hand-cart loaded with bundled canvas turns east toward the Long Wharf.
+- For a moment the crossing empties; river noise fills the gap.

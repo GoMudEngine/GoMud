@@ -1,0 +1,39 @@
+roomid: 6118
+zone: The Confluence
+title: The Old Mole
+description: >
+  An old stone jetty pushes east from the wharf, lower than the
+  main dock and narrower, its blocks weathered to a grey that no
+  longer matches anything recently built. The dockers use it for
+  light skiff moorings and as a place to sit out of the way; ring-
+  bolts are set in the blocks for tying off. At the far end, one
+  mooring-stone stands taller than the rest, its surface worn but
+  its footing absolutely firm. The river runs alongside, dark and
+  unhurried.
+biome: water
+coord: {x: -3, y: -56, z: 0}
+exits:
+  west: {roomid: 6111}
+nouns:
+  the mooring-stone: >
+    A single block of dark stone at the jetty's end, taller and
+    squarer than the surrounding ironstone. The ring-bolt driven
+    into its top is the most recent thing about it; the stone itself
+    predates the bolt, the jetty, and most of what is built around
+    it. The surface is smooth from river weather and from the ropes
+    that have been tied to it for a very long time. Dockers loop
+    their lines around it without a second thought. On the east
+    face, sheltered from the worst of the weather, a pattern is
+    just legible: nested rings, worn almost smooth.
+  the mark: >
+    Carved into the sheltered east face of the old stone: a series
+    of concentric rings, the outermost three clear, the inner work
+    a tighter arrangement of smaller circles set at intervals around
+    a central point — like something revolving, caught at rest. The
+    carving is deep enough to have survived decades of river weather,
+    but no one tends it. The Quayfolk moor their skiffs to the same
+    stone daily and do not remark on it.
+idlemessages:
+- The river moves past the mole end without hurry, dark and wide.
+- A skiff line tied to the old mooring-stone shifts and resettles.
+- Somewhere out on the channel, a slow knock of wood against wood.

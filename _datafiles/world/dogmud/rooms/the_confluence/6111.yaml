@@ -1,0 +1,34 @@
+roomid: 6111
+zone: The Confluence
+title: The Long Wharf
+description: >
+  The main cargo wharf of the Landings runs south along the river's
+  edge, its planking broad enough for two carts abreast. Bales and
+  crates are stacked in working rows down the center, chalked with
+  lot marks on their end-boards. Stevedores move between them in
+  a slow and practiced chain, lifting and setting with the economy
+  of people who carry heavy things all day. At the south end the
+  wharf widens into a stone platform; to the east an old stone
+  jetty juts into the channel.
+biome: water
+coord: {x: -4, y: -56, z: 0}
+exits:
+  north: {roomid: 6110}
+  west: {roomid: 6120}
+  south: {roomid: 6112}
+  east: {roomid: 6118}
+nouns:
+  the freight: >
+    Bales of cloth, crates of worked metal goods, barrels of oil
+    and salt fish, bolts of canvas. All chalked with lot marks on
+    the end-boards. Some of it is waiting for a barge; some of it
+    just arrived on one. The stevedores move it in a chain without
+    hurrying, shifting weight from back to boards to cart in one
+    practiced motion.
+spawninfo:
+  - mobid: 9425
+    respawnrate: "20 real minutes"
+idlemessages:
+- A stevedore sets a bale down and rolls his shoulders once, then lifts again.
+- The wharf timbers carry the river's slow movement underfoot.
+- A cargo-hook swings idle on its ring; someone will come back for it.

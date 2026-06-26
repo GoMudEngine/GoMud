@@ -1,0 +1,33 @@
+mobid: 9426
+zone: The Confluence
+defaultMood: neutral
+greetings:
+  - text: "If it's not about barrels, it can probably wait."
+    moods: ["neutral"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hmm."
+  - keywords: ["barrel", "cask", "cooper", "wood", "hoop", "stave", "make",
+      "build"]
+    responses:
+      - "Now that I can talk about. What do you need to know?"
+  - keywords: [""]
+    responses:
+      - "Got my hands full. Try later."
+tree:
+  root:
+    text: "Barrel-making. It's what I do."
+    hints: "You could ask Clout about barrel-making and the cooper's
+      craft."
+  nodes:
+    - id: barrels
+      triggers: ["barrel", "cask", "cooper", "hoop", "stave", "wood",
+        "make", "build", "craft", "how", "work", "why", "important"]
+      text: "Oak staves, iron hoops, a mallet, and a hooping iron.
+        That's most of it. The trick is getting the taper right so
+        the hoops seat without gaps -- you leak a barrel once and
+        you learn the taper fast. Takes a year to learn the work and
+        a decade to stop making the avoidable mistakes. This dock runs
+        on barrels. People forget that."
+      hints: "You could ask Clout more about his craft here."

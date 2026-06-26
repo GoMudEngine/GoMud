@@ -1,0 +1,41 @@
+roomid: 6112
+zone: The Confluence
+title: Three-Rivers Overlook
+description: >
+  The wharf widens at its south end into a stone platform that juts
+  over the channel, and here the view is everything. Three rivers
+  come together below: the Aldren from the north, long and quick
+  from the hill country; the Brenn pressing in from the east, wider
+  and slower; and the Solt arriving from the southwest to complete
+  the joining. At the meeting they lose their names and go on as
+  one wide water toward the lowlands. Across the channel, close
+  enough to see the stonework, the temple island rises from the
+  water. The Quayfolk call this city the Tri-Cities and they mean
+  it plainly, without ceremony: three rivers, one city.
+biome: water
+coord: {x: -4, y: -57, z: 0}
+exits:
+  north: {roomid: 6111}
+nouns:
+  the rivers: >
+    Three rivers, named and distinct until this point. The Aldren
+    comes from the north, long and quick from the hill country,
+    carrying cold water and grey silt. The Brenn arrives from the
+    east, wider and slower, brown with the soil of the flatlands.
+    The Solt comes from the southwest, the shortest of the three
+    but the deepest-channeled. Where the three press together the
+    water goes opaque for a breath, then clears to a single wide
+    southward flow with no memory of its division.
+  the temple: >
+    A stone island in the channel, close enough to hear its morning
+    bell if the wind is right. The temple on it is old — older than
+    the quay, older than the city as it stands now — built of the
+    same grey river stone as the mole and the gate arch and the
+    oldest warehouse walls. Its spires are plain and tall. The
+    Quayfolk cross to it for ceremony and for settling disputes of
+    contract; the island belongs to no district and all of them
+    at once.
+idlemessages:
+- The three rivers press together below the platform and go on as one.
+- The temple island's morning bell carries across the channel in still air.
+- A barge moves south on the joined water, barely making ripples.
