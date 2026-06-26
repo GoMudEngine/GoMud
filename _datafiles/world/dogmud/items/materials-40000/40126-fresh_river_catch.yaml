@@ -1,0 +1,14 @@
+itemid: 40126
+name: Fresh River Catch
+namesimple: river-catch
+description: A fresh-caught river fish, silver-scaled and still river-cold,
+  its gills yet flushing red.
+type: object
+subtype: mundane
+component_tag: river-catch
+weight: 0.4
+value: 5
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking

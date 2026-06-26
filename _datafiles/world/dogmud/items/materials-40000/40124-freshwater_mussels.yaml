@@ -1,0 +1,14 @@
+itemid: 40124
+name: Freshwater Mussels
+namesimple: mussels
+description: A cluster of river mussels prised from the shallows, shells
+  gritty with silt and flesh briny from the current.
+type: object
+subtype: mundane
+component_tag: freshwater-mussels
+weight: 0.3
+value: 4
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking

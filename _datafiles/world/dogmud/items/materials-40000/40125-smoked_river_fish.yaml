@@ -1,0 +1,14 @@
+itemid: 40125
+name: Smoked River-Fish
+namesimple: river-fish
+description: A split river-fish brined and hung over slow alder-smoke until
+  amber; keeps well for the road and river towns trade them by the string.
+type: object
+subtype: mundane
+component_tag: river-fish
+weight: 0.3
+value: 6
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking
