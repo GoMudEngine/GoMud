@@ -17,10 +17,10 @@ description: >
 biome: city
 coord:
   x: -17
-  y: 86
-  z: 0
+  y: 85
+  z: 1
 exits:
-  south:
+  down:
     roomid: 5525
 nouns:
   stock ledger: A bound account book, current year, open to a

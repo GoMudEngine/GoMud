@@ -15,7 +15,7 @@ description: >
   once a grain closet — just large enough to stand in, or to sit
   on the single bench if you fold your knees right. It is empty
   at present, which is something. West returns to the outer lane;
-  north leads to the foreman's office above.
+  a stair in the corner climbs to the foreman's office above.
 biome: city
 coord:
   x: -17
@@ -24,7 +24,7 @@ coord:
 exits:
   west:
     roomid: 5522
-  north:
+  up:
     roomid: 5526
 nouns:
   notice board: A panel of grey board fixed to the east wall,
@@ -44,8 +44,8 @@ nouns:
     worn in the stone around it from years of use. The cell is
     empty at present. The lock is a good one.
 idlemessages:
-- A constable comes in from the north, reads something on the
-  notice board, makes a note in a ledger, and goes back.
+- A constable comes in from the lane, reads something on the
+  notice board, makes a note in a ledger, and goes back out.
 - The lamp on the desk burns down another fraction and nobody
   trims the wick.
 - From outside, through the gap under the door, the sounds of
