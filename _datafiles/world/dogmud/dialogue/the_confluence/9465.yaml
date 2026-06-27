@@ -64,9 +64,10 @@ tree:
         Cael in the Archive."
     - id: q74_turnin
       questRequired: ["74-survey"]
-      questExcluded: ["74-descent"]
+      questExcluded: ["74-descent", "74-end"]
       triggers: ["report", "return", "found", "done", "descent",
-        "stair", "below", "ready", "back", "seen", "results"]
+        "stair", "below", "ready", "back", "seen", "results",
+        "quest", "task"]
       text: "You have seen all three, then -- the ledger's silence,
         the record's careful wording, the mason's plain note. Three
         hands, and they agree on the one thing the founding story
