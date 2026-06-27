@@ -1,5 +1,6 @@
 mobid: 9465
 zone: The Confluence
+schedule_id: cf_cael
 behavior_archetype: noncombat_passive
 non_combatant: true
 charm_immune: true

@@ -1,0 +1,22 @@
+id: cf_aldric
+description: "Aldric the Keeper presides in the Chapter House through the day,
+  withdraws to his study in the evening, and sleeps there overnight."
+segments:
+  - start: 6
+    end: 19
+    target_room: 6188
+    activity: ""
+    idlecommands:
+      - emote stands a long moment before the consecration-record, hands folded,
+        reading it as though it might have changed.
+      - say The temple's work is the temple's work. I have held to that a long
+        time. It has held me up in return.
+      - emote turns at the sound of a footstep, weighing the visitor with the
+        patience of a man who has learned what most of them want.
+  - start: 19
+    end: 6
+    target_room: 6195
+    activity: sleeping
+    idlecommands:
+      - emote sits late in the study with a single lamp, neither reading nor
+        sleeping, before the lamp finally goes out.

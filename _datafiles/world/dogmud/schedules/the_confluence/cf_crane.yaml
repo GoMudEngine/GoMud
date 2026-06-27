@@ -1,0 +1,22 @@
+id: cf_crane
+description: "Prioress Crane keeps her oratory through the day at devotion and
+  counsel, then rests there overnight."
+segments:
+  - start: 5
+    end: 21
+    target_room: 6196
+    activity: ""
+    idlecommands:
+      - emote kneels a while at the small altar, then rises and sets the
+        cushion straight, unhurried.
+      - say Faith is not the absence of questions. I have a great many. I have
+        decided which to live inside of.
+      - emote trims the wick of the oratory lamp and watches the flame settle
+        before turning back to her book.
+  - start: 21
+    end: 5
+    target_room: 6196
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the narrow cell behind the oratory, the lamp left
+        burning low against the dark.

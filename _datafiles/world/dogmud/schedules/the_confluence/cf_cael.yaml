@@ -1,0 +1,22 @@
+id: cf_cael
+description: "Brother Cael keeps the Archive through the day among the building
+  records, then dozes by the reading-stand overnight."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6189
+    activity: ""
+    idlecommands:
+      - emote returns a ledger to its shelf with both hands and squares it
+        against the edge.
+      - say The records are honest, if you read all of them. Most people read
+        only the ones that agree with them.
+      - emote turns a brittle page of the open building-ledger, careful at the
+        corner.
+  - start: 22
+    end: 6
+    target_room: 6189
+    activity: sleeping
+    idlecommands:
+      - emote has banked the archive lamp and dozes in the chair by the
+        reading-stand, a ledger still open before him.
