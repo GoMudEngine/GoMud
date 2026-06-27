@@ -2,14 +2,14 @@ mobid: 9460
 zone: The Confluence
 defaultMood: friendly
 greetings:
-  - text: "Welcome. Candles are at the window if you need one for
-      a prayer. What else can I do for you?"
+  - text: "Welcome. The almonry keeps candles for prayer and bread
+      for those short of it. What can I do for you?"
     moods: ["friendly"]
 patterns:
   - keywords: ["hello", "hi", "greet", "hey"]
     responses:
-      - "Hello. Take a candle if you need one. That is what
-        they are here for."
+      - "Hello. Candles for prayer, bread on the market days --
+        the almonry's small comforts. What do you need?"
   - keywords: ["alms", "poor", "need", "help", "give", "bread",
       "food", "hungry", "coin", "aid"]
     responses:
@@ -31,10 +31,11 @@ tree:
     - id: candles
       triggers: ["candle", "candles", "light", "prayer", "pray",
         "take", "free", "cost", "give", "have", "here"]
-      text: "Take one -- they are not for sale, they are for the
-        purpose. Light it at any of the nave's stands and leave it
-        to burn. The Keepers replace them each morning. That is the
-        only thing we ask: that they burn where others can see them."
+      text: "Candles for prayer, yes -- not for sale, but kept for
+        the purpose. Pilgrims light them for a prayer and leave them
+        among the others on the nave's stands, and the Keepers
+        replace them each morning. A small thing, freely given to
+        any who came for it."
       hints: "You could ask about the alms the Keepers offer,
         or about any other need the almonry covers."
     - id: alms

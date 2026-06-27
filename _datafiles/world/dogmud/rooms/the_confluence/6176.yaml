@@ -8,8 +8,9 @@ description: >
   at the island. The air here is warmer and heavier than
   in the Aldren chapel to the north; the walls are hung
   with woven reed panels, and the floor is inlaid with
-  a mosaic of dark and pale stone suggesting a river
-  spreading across open ground. The Aldren chapel is
+  a <ansi fg="itemname">floor-mosaic</ansi> of dark and
+  pale stone suggesting a river spreading across open
+  ground. The Aldren chapel is
   back to the north; the sanctuary opens to the east;
   the sacristy is through the south door.
 biome: city
@@ -24,6 +25,15 @@ exits:
     roomid: 6173
   south:
     roomid: 6179
+nouns:
+  floor-mosaic: >
+    The floor is laid in a mosaic of dark and pale stone, the
+    pattern a single broad river fanning out across flat country
+    -- the Solt as it nears the lowland, losing its banks and
+    spreading wide before it reaches the island. Worshippers sit
+    along its edges and follow the spreading water with their
+    eyes. The tesserae underfoot are worn smooth where the
+    pattern's mouth opens toward the chapel door.
 idlemessages:
 - The reed panels on the walls shift faintly, though
   there is no obvious draft to account for it.
