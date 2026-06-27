@@ -1,0 +1,31 @@
+roomid: 6190
+zone: The Confluence
+title: The Scriptorium
+description: >
+  A long bright room above the north walk, its windows
+  set high to catch the northern light without direct
+  glare. Copying desks run in parallel rows, each fitted
+  with an angled surface and an ink-stand. A scribe works
+  here amid the soft sounds of quill and turned page,
+  producing the copies and fair records the Keepers
+  require -- liturgical texts, river-accounts, the slow
+  business of institutional memory. The North Walk is
+  back to the south.
+biome: city
+coord:
+  x: 7
+  y: -75
+  z: 0
+exits:
+  south:
+    roomid: 6186
+spawninfo:
+  - mobid: 9467
+    respawnrate: "20 real minutes"
+idlemessages:
+- The scribe does not look up; the work requires a kind
+  of deliberate forgetting of everything else.
+- 'Quills and ink-stands are set out at every desk: the
+  room is ready for more scribes than are here.'
+- Light falls across the desks in long clean lines from
+  the north windows.

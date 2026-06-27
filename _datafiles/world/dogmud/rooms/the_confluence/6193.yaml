@@ -1,0 +1,30 @@
+roomid: 6193
+zone: The Confluence
+title: The Infirmary
+description: >
+  A long room of plain cots, each with a folded blanket
+  and a small shelf for a cup and a candle. The smell
+  here is of dried herbs and beeswax, not illness; the
+  infirmary has its own insistent good order. The
+  infirmarian keeps a long table of medicines and
+  dressings against the south wall, labeled in the same
+  careful hand as the archive's drawers. The East Walk
+  is back to the north.
+biome: city
+coord:
+  x: 8
+  y: -78
+  z: 0
+exits:
+  north:
+    roomid: 6192
+spawninfo:
+  - mobid: 9469
+    respawnrate: "20 real minutes"
+idlemessages:
+- The infirmarian checks each cot in order, straightening
+  a blanket or moving a cup without apparent urgency.
+- 'The herbs on the south shelf are labeled simply:
+  what each is, and what each does.'
+- 'Several cots are prepared and waiting: the infirmary
+  is kept ready at all hours.'

@@ -1,0 +1,27 @@
+roomid: 6195
+zone: The Confluence
+title: Aldric's Study
+description: >
+  A private room beyond the archive, smaller than the
+  chapter house and unmistakably lived in: books at
+  angles on the desk, a marked-up copy of the temple
+  calendar, an extinguished lamp recently set down. The
+  order here is a working order, not a formal one. The
+  man who keeps this room has made his peace with
+  something, though the room does not advertise what.
+  The archive is back to the west.
+biome: city
+coord:
+  x: 9
+  y: -76
+  z: 0
+exits:
+  west:
+    roomid: 6189
+idlemessages:
+- 'The desk holds a spread of papers: the head Keeper
+  has been here recently, and will be back.'
+- A thin mark has been pressed into the desk-wood by
+  years of the same pen in the same place.
+- 'The lamp is cold but not long cold: the room still
+  holds a trace of its warmth.'

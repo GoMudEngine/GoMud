@@ -1,0 +1,28 @@
+roomid: 6197
+zone: The Confluence
+title: The Kitchen Court
+description: >
+  A working kitchen and its small courtyard, open to the
+  sky where the smoke can clear. The kitchen occupies the
+  north half: a wide hearth, iron pot-cranes, a cutting
+  table bearing the marks of years of use. The court to
+  the south is paved with river-stone and holds the
+  kitchen's water-trough and wood-store. The work here is
+  ongoing -- bread, porridge, the simple regular food of
+  the community's table. The refectory is back to the
+  north.
+biome: city
+coord:
+  x: 6
+  y: -79
+  z: 0
+exits:
+  north:
+    roomid: 6191
+idlemessages:
+- 'A pot hangs over the banked fire: not boiling yet,
+  but building toward it.'
+- Wood smoke drifts across the courtyard and out over
+  the temple roofline.
+- 'The cutting table shows the marks of years of the same
+  work: precise, repeated, unhurried.'

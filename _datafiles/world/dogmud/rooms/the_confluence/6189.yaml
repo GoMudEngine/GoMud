@@ -1,0 +1,43 @@
+roomid: 6189
+zone: The Confluence
+title: The Archive
+description: >
+  The temple's archive, a long vaulted room of shelved
+  ledgers and map-drawers, kept dim to spare the ink.
+  Brother Cael works here among the building records --
+  the accounts of the temple's raising, generation by
+  generation. One bound
+  <ansi fg="itemname">building-ledger</ansi>
+  lies open on a reading-stand, turned to the earliest
+  pages. The North Walk is back to the west; a low door
+  east leads to the head Keeper's study.
+biome: city
+coord:
+  x: 8
+  y: -76
+  z: 0
+exits:
+  west:
+    roomid: 6186
+  east:
+    roomid: 6195
+nouns:
+  building-ledger: >
+    The oldest of the temple's construction ledgers, its
+    early pages accounting for stone, labor, and coin
+    through the years of the raising. The records are
+    meticulous -- and oddly silent on the lowest and
+    oldest courses, as though the foundation were a thing
+    received rather than built. A reader with a reason
+    to look would find the silence louder than the
+    figures.
+spawninfo:
+  - mobid: 9465
+    respawnrate: "20 real minutes"
+idlemessages:
+- Brother Cael moves along the shelves, returning a
+  ledger to its place with both hands.
+- 'Dust hangs in the one shaft of window-light: the
+  archive keeps its own slow weather.'
+- The drawers in the cabinet are labeled in a hand so
+  fine it is almost script rather than print.

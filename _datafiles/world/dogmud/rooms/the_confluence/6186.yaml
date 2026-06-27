@@ -1,0 +1,32 @@
+roomid: 6186
+zone: The Confluence
+title: The North Walk
+description: >
+  The covered walk along the garth's north side, open to
+  the quadrangle through a row of low arches. The paving
+  here is worn pale where feet have passed generations
+  over it. Doors open from the walk's inner wall into
+  the chapter house to the west and the archive to the
+  east; the scriptorium lies north. The Cloister Garth
+  is back to the south through the arcade.
+biome: city
+coord:
+  x: 7
+  y: -76
+  z: 0
+exits:
+  south:
+    roomid: 6185
+  north:
+    roomid: 6190
+  west:
+    roomid: 6188
+  east:
+    roomid: 6189
+idlemessages:
+- A breath of herb-scent drifts in from the garth
+  through the open arches.
+- 'The walk is dim at this hour: the sun is south,
+  and the arcade shade reaches the paving.'
+- Sandalled footsteps sound along the walk and then
+  are gone.

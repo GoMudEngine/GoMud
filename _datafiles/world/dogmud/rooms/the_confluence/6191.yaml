@@ -1,0 +1,34 @@
+roomid: 6191
+zone: The Confluence
+title: The Refectory
+description: >
+  A long room given over entirely to the community's meals:
+  two parallel tables of age-dark wood, benches worn to
+  body-shapes by decades of the same Keepers in the same
+  places. The room smells of bread and old timber. A small
+  rostrum at the north end holds an open book; it is the
+  custom here to read aloud during meals from the river-
+  accounts or the records of the founding generation. The
+  cellarer moves between the kitchen court to the south
+  and the serving table against the wall. The South Walk
+  is back to the east.
+biome: city
+coord:
+  x: 6
+  y: -78
+  z: 0
+exits:
+  east:
+    roomid: 6187
+  south:
+    roomid: 6197
+spawninfo:
+  - mobid: 9468
+    respawnrate: "20 real minutes"
+idlemessages:
+- 'The tables are set for a meal: the same care in each
+  placement, cup to the right, spoon across the bowl.'
+- 'The reading-stand is open to a page of river-records:
+  the passage is mid-account, paused mid-reading.'
+- The cellarer goes between the serving table and the
+  kitchen door without apparent haste.

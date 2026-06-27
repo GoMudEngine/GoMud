@@ -1,0 +1,26 @@
+roomid: 6194
+zone: The Confluence
+title: The Cells
+description: >
+  A plain corridor lined with the Keepers' sleeping cells,
+  each behind a wooden door fitted with a simple latch and
+  no lock. The doors are close together; the cells are
+  narrow. There is nothing in the corridor to indicate
+  whose cell is which -- no names, no marks -- but the
+  Keepers know without looking. The South Walk is back
+  to the north.
+biome: city
+coord:
+  x: 7
+  y: -79
+  z: 0
+exits:
+  north:
+    roomid: 6187
+idlemessages:
+- 'One cell door stands open: inside, a neatly made cot,
+  a shelf with a candle and a book, nothing else.'
+- The corridor is empty and quiet; the cells here are
+  for sleeping and for nothing louder.
+- 'Footsteps approach from deeper in the corridor: a
+  door closes, and the quiet returns.'
