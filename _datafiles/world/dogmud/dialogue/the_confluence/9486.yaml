@@ -31,7 +31,7 @@ tree:
       a cold patrol. Sit down. What can I get you?"
     hints: "You could ask the innkeeper about the food she serves,
       about rooms for the night, or about who passes through the
-      the Travelers' Inn."
+      Travelers' Inn."
   nodes:
     - id: food
       triggers: ["food", "eat", "meal", "stew", "bread", "broth",
