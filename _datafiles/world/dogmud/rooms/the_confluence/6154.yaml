@@ -1,0 +1,31 @@
+roomid: 6154
+zone: The Confluence
+title: Processional Avenue, North End
+description: >
+  Past the gate-piers the paving broadens into something
+  deliberate — the avenue given scale by buildings set
+  well back on both sides, their fronts reduced to narrow
+  court-mouths and the occasional pillar. The openness is
+  planned. At the far south end of the avenue, across the
+  full length of the district, the temple sits on its
+  island above the water, a pale stone presence at a
+  distance. The Aldren runs somewhere off to the north,
+  a low sound beneath the city noise. The gate-piers are
+  behind; the avenue runs straight and long to the south.
+biome: city
+coord:
+  x: -5
+  y: -70
+  z: 0
+exits:
+  north:
+    roomid: 6153
+  south:
+    roomid: 6155
+idlemessages:
+- Pilgrims move south on the avenue with the purposeful
+  step of those who have already walked some distance.
+- The broad paving holds sound differently than the
+  city's narrower streets — footsteps spread out here.
+- A vendor calls from a side-court to the east, but
+  the avenue itself is clear of stalls at this end.

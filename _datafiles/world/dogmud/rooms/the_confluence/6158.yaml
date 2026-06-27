@@ -1,0 +1,32 @@
+roomid: 6158
+zone: The Confluence
+title: The Meditation Garden
+description: >
+  A walled garden off the forecourt's west side, its
+  entrance narrow enough to make clear this is not the
+  main approach. Inside the wall the city's noise
+  diminishes to background. The plantings are slow-
+  growing things chosen for quiet — low herbs, clipped
+  hedges, a small stone bench set to face nothing in
+  particular. The garden has the composure of a space
+  that has been maintained the same way for a long time
+  and expects to be maintained that way for longer.
+  The forecourt is back to the east; a smaller enclosure
+  lies further west.
+biome: city
+coord:
+  x: -6
+  y: -73
+  z: 0
+exits:
+  east:
+    roomid: 6157
+  west:
+    roomid: 6159
+idlemessages:
+- The garden holds a stillness that the forecourt,
+  with its pilgrim traffic, does not.
+- A sparrow moves through the clipped hedges with
+  more noise than the garden usually permits itself.
+- A pilgrim sits on the stone bench, eyes closed,
+  making use of the garden as it was designed.

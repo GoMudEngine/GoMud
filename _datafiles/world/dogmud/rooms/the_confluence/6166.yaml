@@ -1,0 +1,32 @@
+roomid: 6166
+zone: The Confluence
+title: The Temple Steps
+description: >
+  The causeway ends at the island's near bank where a
+  broad stair rises from the water's edge to the portico
+  above. The steps are wide dressed stone, each tread
+  deep enough for two to ascend side by side without
+  difficulty — a scale that expects procession. The
+  island's stone retaining wall runs along the bank to
+  either side of the stair-foot, the water moving at
+  its base. The temple fills the southern view from
+  here, its facade rising above the top of the stair.
+  The causeway runs west back toward the city and
+  the far bank.
+biome: city
+coord:
+  x: 3
+  y: -73
+  z: 0
+exits:
+  west:
+    roomid: 6165
+  south:
+    roomid: 6167
+idlemessages:
+- A pilgrim pauses at the stair-foot and looks up at
+  the facade before beginning the ascent.
+- The retaining wall is close at this end — the island
+  is narrower here than it appears from the bank.
+- The stone at the center of each tread is worn to
+  a particular polish by the weight of arrivals.

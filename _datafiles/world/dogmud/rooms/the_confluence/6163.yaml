@@ -1,0 +1,32 @@
+roomid: 6163
+zone: The Confluence
+title: The Causeway, West Span
+description: >
+  The causeway begins at the forecourt's east edge,
+  its stone wider than it first appears from the bank —
+  wide enough for a column of pilgrims to cross without
+  crowding. The bridge spans open water. Below and on
+  both sides the joined rivers move, the Aldren and
+  Brenn come together from north and east, the Solt
+  from the southwest, all three running together now
+  beneath the causeway stone. The island and the temple
+  are ahead to the east, their scale growing perceptibly
+  as the causeway climbs toward its crown. The forecourt
+  is back to the west.
+biome: city
+coord:
+  x: -4
+  y: -73
+  z: 0
+exits:
+  west:
+    roomid: 6157
+  east:
+    roomid: 6164
+idlemessages:
+- The river's sound is immediately different out here —
+  open on all sides, not channeled by walls.
+- A pilgrim pauses near the west railing and looks
+  down at the joined waters before continuing east.
+- The causeway stone is wide and level, worn smooth by
+  more crossings than could be counted.

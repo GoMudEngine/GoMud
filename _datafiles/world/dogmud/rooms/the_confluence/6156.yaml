@@ -1,0 +1,33 @@
+roomid: 6156
+zone: The Confluence
+title: Processional Avenue, South End
+description: >
+  The avenue reaches its end here where the stone
+  broadens further into the great forecourt ahead.
+  The buildings that have kept their distance along
+  the whole processional approach give out entirely
+  at this point, the city falling away to north and
+  sides; what remains is the forecourt and the water
+  beyond. To the east a low arch opens into the Hall
+  of the Founding, the temple's account of its own
+  beginning. The causeway and the island are visible
+  ahead to the south across the forecourt's width.
+biome: city
+coord:
+  x: -5
+  y: -72
+  z: 0
+exits:
+  north:
+    roomid: 6155
+  south:
+    roomid: 6157
+  east:
+    roomid: 6162
+idlemessages:
+- The avenue's final stretch is quieter than the
+  stall-section behind — a deliberate transition.
+- Small groups pause here before the forecourt,
+  arranging offerings or gathering their party.
+- A keeper at the eastern arch catches arrivals who
+  look uncertain and directs them where they need to go.

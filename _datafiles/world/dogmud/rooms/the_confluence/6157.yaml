@@ -1,0 +1,42 @@
+roomid: 6157
+zone: The Confluence
+title: The Temple Forecourt
+description: >
+  A broad stone plaza at the water's edge — the full
+  ceremonial width of the avenue arrives here and then
+  stops, the paving ending at the joined rivers' near
+  bank. To the east the causeway begins, a long bridge
+  spanning open water to the temple island where the
+  three rivers meet. The temple itself is visible on
+  the island at the causeway's far end, pale stone
+  above the water on all sides. Pilgrims gather here
+  to prepare before the crossing, to arrange offerings,
+  or to wait for others in their company. A meditation
+  garden lies to the west; a rest-hall to the south
+  for those who have traveled far.
+biome: city
+coord:
+  x: -5
+  y: -73
+  z: 0
+exits:
+  north:
+    roomid: 6156
+  west:
+    roomid: 6158
+  south:
+    roomid: 6160
+  east:
+    roomid: 6163
+spawninfo:
+  - mobid: 9450
+    respawnrate: "20 real minutes"
+  - mobid: 9453
+    respawnrate: "20 real minutes"
+idlemessages:
+- Pilgrims cross the forecourt with deliberate steps,
+  offerings tucked under their arms.
+- The joined rivers are audible here — a low, broad
+  sound at the base of the city's noise.
+- A keeper at the forecourt's edge gestures pilgrims
+  toward the causeway when the way seems clear.

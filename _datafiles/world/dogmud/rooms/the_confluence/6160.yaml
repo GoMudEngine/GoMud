@@ -1,0 +1,39 @@
+roomid: 6160
+zone: The Confluence
+title: The Pilgrim Hall
+description: >
+  A wide low-ceilinged hall maintained by the temple
+  for pilgrims who have traveled far to reach the
+  Confluence. Long benches line the walls; a trestle
+  table near the door holds a water-jug and cups for
+  new arrivals. The floor is worn where the benches
+  are, unworn where foot-traffic avoids the drafts
+  from the door. A broad stair at the hall's north
+  end climbs to the dormitory above. Keepers come
+  through twice daily to see to those resting here
+  and to answer questions about what comes next.
+  The forecourt is back to the north.
+biome: city
+coord:
+  x: -5
+  y: -74
+  z: 0
+exits:
+  north:
+    roomid: 6157
+  up:
+    roomid: 6161
+spawninfo:
+  - mobid: 9452
+    respawnrate: "20 real minutes"
+  - mobid: 9455
+    respawnrate: "20 real minutes"
+  - mobid: 9456
+    respawnrate: "20 real minutes"
+idlemessages:
+- A pilgrim on the bench nearest the door removes
+  their sandals and examines a blister with resignation.
+- The water-jug is refilled by a keeper moving through
+  the hall on what is clearly a practiced routine.
+- A low conversation runs along the far bench between
+  people who appear to have met on the road here.

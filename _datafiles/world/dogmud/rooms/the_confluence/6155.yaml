@@ -1,0 +1,35 @@
+roomid: 6155
+zone: The Confluence
+title: Processional Avenue, Votive Stalls
+description: >
+  The votive stalls begin here on both sides of the
+  avenue — wood-framed and canvas-roofed, each one
+  hung with what pilgrims require for the temple
+  approach. Reed wreaths dyed in the Keepers' colors,
+  beeswax candles in bundles of three, incense in clay
+  sachets, folded votives printed with the ringed seal.
+  The stall-holders call their wares in practiced half-
+  voices, not loud enough to seem impious this close
+  to the temple, loud enough to be understood. The
+  avenue's full ceremonial width continues south toward
+  the forecourt and the water.
+biome: city
+coord:
+  x: -5
+  y: -71
+  z: 0
+exits:
+  north:
+    roomid: 6154
+  south:
+    roomid: 6156
+spawninfo:
+  - mobid: 9451
+    respawnrate: "20 real minutes"
+idlemessages:
+- A stall-holder lights a bundle of incense to show
+  a customer how cleanly it takes the flame.
+- The smell of beeswax and dried reed is heavy here,
+  warm and close, not unpleasant.
+- A pilgrim counts coins carefully before deciding
+  between two different grades of candle.
