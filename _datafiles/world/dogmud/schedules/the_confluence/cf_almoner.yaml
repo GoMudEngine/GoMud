@@ -1,0 +1,22 @@
+id: cf_almoner
+description: "The Almoner keeps the almonry through the day, giving out alms and
+  candles to the poor, then closes the dole and sleeps overnight."
+segments:
+  - start: 6
+    end: 20
+    target_room: 6180
+    activity: ""
+    idlecommands:
+      - emote measures out a portion of candle-ends into a waiting hand and
+        adds a heel of bread without being asked.
+      - say There is a candle and a crust here for any who need one. The
+        temple keeps that much, at least.
+      - emote tallies the day's dole in a worn ledger, the column of small
+        marks longer than the column of coin.
+  - start: 20
+    end: 6
+    target_room: 6180
+    activity: sleeping
+    idlecommands:
+      - emote has closed the dole for the night and sleeps on a cot among
+        the almonry's stacked baskets.

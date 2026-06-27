@@ -1,5 +1,6 @@
 mobid: 9460
 zone: The Confluence
+schedule_id: cf_almoner
 behavior_archetype: noncombat_passive
 non_combatant: true
 charm_immune: true

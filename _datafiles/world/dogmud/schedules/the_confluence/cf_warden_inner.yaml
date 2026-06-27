@@ -1,0 +1,22 @@
+id: cf_warden_inner
+description: "The Threshold Warden keeps the warded inner door from early through
+  late, turning the public back, then sleeps at the landing overnight."
+segments:
+  - start: 5
+    end: 23
+    target_room: 6183
+    activity: ""
+    idlecommands:
+      - emote stands at ease beside the warded door, neither forbidding nor
+        inviting, simply present.
+      - say The nave and the great hall are the public temple. The cloisters
+        are not. Ask, if you need direction.
+      - emote answers a pilgrim's low question with a few words, and the
+        pilgrim turns back toward the nave.
+  - start: 23
+    end: 5
+    target_room: 6183
+    activity: sleeping
+    idlecommands:
+      - emote rests on a bench at the landing, the warded door barred and
+        quiet behind them through the night.

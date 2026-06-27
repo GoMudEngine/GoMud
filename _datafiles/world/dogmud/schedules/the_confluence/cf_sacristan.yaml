@@ -1,0 +1,22 @@
+id: cf_sacristan
+description: "The Sacristan tends the reliquary and vestry through the day, then
+  secures the relics and sleeps in the sacristy overnight."
+segments:
+  - start: 6
+    end: 21
+    target_room: 6178
+    activity: ""
+    idlecommands:
+      - emote straightens the cloth beneath a relic and checks the seal on
+        the display case with a careful hand.
+      - say The oldest piece rests on stone older than the temple. We keep
+        it as it was given to us.
+      - emote moves down the row of relics, naming each under their breath
+        the way the old inventory requires.
+  - start: 21
+    end: 6
+    target_room: 6178
+    activity: sleeping
+    idlecommands:
+      - emote has drawn the curtain across the reliquary and dozes in the
+        sacristy within earshot of the relics.
