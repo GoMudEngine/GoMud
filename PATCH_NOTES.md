@@ -1,5 +1,50 @@
 # DOGMud Patch Notes
 
+## 2026-06-26 — The Confluence: a city where three rivers meet
+
+The south road runs on. Past Amber Valley the dry country gives way to **River
+Road**, a quiet river-valley leg where the land turns green and a river gathers
+itself alongside you — a barge landing, a three-house fishing village, an old
+waystone, and a bluff where a second river joins the first below. Pilgrims walk
+this road south, and at its end a gate that was long barred has finally opened
+onto **the Confluence** itself.
+
+The Confluence is a tri-city: three rivers — the Aldren, the Brenn, and the
+Solt — come together here, and a temple-city has grown up around the meeting,
+built on the island where the waters join. Four of its districts are open to
+walk now, the first of many to come:
+
+- **The Landings.** You arrive at the working river-ward waterfront — barge
+  docks (the barge still runs downriver to New Plymouth), a fish market,
+  warehouses, a chandler, and an overlook where all three rivers and the temple
+  island open out before you. The dock folk are pragmatic river-trade people who
+  measure you by whether you're good for the work.
+- **The Long Quay.** The prosperous trade waterfront: a long river market, guild
+  halls, counting houses, a spice quay where goods come up from the south. And a
+  quiet scrivener who keeps the old charts, and has noticed they don't agree.
+- **Tri-Cross Square.** The civic heart — the great square, the Three Waters inn
+  (with rooms upstairs), the Municipal Hall and its old river-map on the wall.
+  Look closely at the city's older stone and you will start to see a strange
+  carved mark — the same shape the newer buildings wear as fashionable ornament,
+  though no one seems to remember it ever meant anything.
+- **The Scholars' Quarter.** The home of the Margin: a quiet community of
+  scholars who keep the old records and ask the questions the official account
+  would rather were settled.
+
+**A new quest — The Margin Notation.** An old scholar named Quist has spent his
+life on a question everyone else considers answered: how many rivers meet at the
+Confluence? Everyone says three. The oldest surveys do not agree. Examine the
+three disagreeing records he sends you to — a water-damaged chart in a
+bookseller's shop, a scrivener's old copies on the quay, the city's own map in
+the hall — and bring back what you found. The answer is not a comfortable one,
+and it points somewhere deeper: under the temple, into the stone the founders
+built upon and would not explain. (The temple and its undercroft are still to
+come.)
+
+Plus a polish pass on the new waterfront: clearer directions from the locals, a
+few maps and rivers pointing the right way at last, and a dockside tavern that
+will finally sell you a mug of ale and a bowl of broth.
+
 ## 2026-06-25 — The road south: Amber Valley opens
 
 The signpost at the Ashwick crossroads has always promised a south road to
