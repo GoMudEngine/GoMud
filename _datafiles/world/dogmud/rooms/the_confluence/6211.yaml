@@ -9,9 +9,10 @@ description: >
   The pre-Founding builders knew what they were doing
   with this stone; whether the echo is deliberate is
   not clear. The walls are uncarved, the floor clean
-  and level. It has the quality of a place meant to
-  be passed through rather than occupied. The gallery
-  is back to the east.
+  and level. It has the shape of a passage -- but it
+  ends here, at a blank wall of fitted stone, as though
+  it once led somewhere that has since been closed off.
+  The gallery is back to the east.
 biome: city
 coord:
   x: 4
@@ -23,8 +24,8 @@ exits:
 idlemessages:
 - 'A footstep echoes back after a pause: the timing
   is slightly off and the direction wrong.'
-- The passage has the quality of a threshold -- less
-  a destination than a space between two things.
+- The walk ends at a blank fitted wall: a passage that
+  goes nowhere now, or once went somewhere since sealed.
 - The sound of the gallery's channel arrives here
   as something lower and less distinct than the room
   behind you would suggest.

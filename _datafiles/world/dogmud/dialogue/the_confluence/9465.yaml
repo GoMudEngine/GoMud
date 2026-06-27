@@ -79,6 +79,21 @@ tree:
       hints: "You could descend the stair in the older east corridor
         when you are ready."
       grantsQuest: "74-descent"
+    - id: q74_recovery
+      questRequired: ["74-reveal"]
+      questExcluded: ["74-end"]
+      triggers: ["rubbing", "lost", "copy", "replace", "spare",
+        "dropped", "gone", "another", "misplaced", "again"]
+      text: "You took a rubbing and you have mislaid it? It happens
+        to better archivists than you. Sit a moment -- I can lay out
+        a clean copy from what you describe; the lines are simple
+        enough, four rings where there should be three. There. Do
+        not lose this one. And think on who should have it: Aldric in
+        the cloisters, who would keep it quiet, or the scholars at
+        the portico, who would not."
+      hints: "You could take the rubbing to Aldric in the cloisters,
+        or to the Margin scholar at the temple portico."
+      givesItem: 40142
     - id: what_the_ledger_says
       triggers: ["disagree", "differ", "silence", "says", "ledger",
         "what it", "founding", "account", "why kept",

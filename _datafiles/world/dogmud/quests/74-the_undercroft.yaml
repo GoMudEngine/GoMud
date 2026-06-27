@@ -37,11 +37,19 @@ steps:
       granted a supervised descent. The stair down lies in the older east
       corridor. Go down when you are ready."
     hint: "Descend the stair in the older east corridor when you are ready."
-  # ── steps below are granted in district 6b (the Undercroft) ──
   - id: reveal
-    description: "(The descent into the undercroft -- district 6b.)"
+    description: "In a sealed chamber beneath the temple you found the old sky
+      carved in four rings, where the temple above teaches three -- and took a
+      rubbing of it. There was a fourth. What you do with the proof is yours to
+      decide."
+    hint: "Bring the rubbing to Aldric the Keeper in the cloisters, to keep the
+      Keepers' confidence -- or to the Margin scholar at the temple portico, to
+      carry the truth out. The choice is yours."
   - id: end
-    description: "(The threshold reveal and its aftermath -- district 6b.)"
+    description: "You made your choice with the rubbing of the old sky. The
+      Confluence's deepest secret is either carried out into the light, or kept
+      quiet a little longer -- and either way the thread runs onward, north and
+      older, to wherever the sky was changed."
 
 flags:
   - key: allegiance
