@@ -1,0 +1,16 @@
+itemid: 40143
+name: A Fruit Pastry
+namesimple: pastry
+description: >
+  A flaky pastry from the Craftsmen's Row bakery, folded around
+  stewed valley fruit and still warm if you are quick about it.
+  The kind of small comfort a working quarter runs on.
+type: object
+subtype: mundane
+component_tag: baked-good
+weight: 0.2
+value: 4
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking
