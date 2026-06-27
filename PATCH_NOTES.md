@@ -1,5 +1,48 @@
 # DOGMud Patch Notes
 
+## 2026-06-27 — The Confluence complete: the temple, the undercroft, and the road on
+
+The tri-city is finished. Where four districts opened last time, the whole of the
+Confluence is now open to walk — the temple at its heart, the deep beneath it, and
+the working quarters out to the city's edge.
+
+- **The Processional.** A ceremonial avenue runs from the civic square to the
+  water, and a causeway carries you out over the joined rivers to the temple
+  island. A historian keeps the Hall of the Founding and the city's official
+  account; the symbol cut over the temple doors is older than the doctrine beneath
+  it, and a Margin scholar sits at the portico copying it, stroke by stroke.
+- **The Temple of Confluence.** The public temple — a nave, side chapels for each
+  of the three rivers, a reliquary, and at its heart the great hall built over the
+  grate where the three waters become one beneath the floor. The Keepers keep the
+  rite here, and they keep the count at three.
+- **The Cloisters & Archive.** Beyond the warded door, the inner temple and the
+  senior Keepers: Aldric, who has read the building records and made his peace
+  with what they say; Brother Cael in the archive, who has not; Prioress Crane,
+  who believes with her whole self. Win your way in and the temple's own records
+  will show you what it was raised upon.
+- **The Undercroft.** And below it all, the deep — levels of pre-Founding stone
+  the temple was built over and would not explain, an ancient ward still keeping
+  its threshold, and a sealed chamber with a carving of an older sky.
+
+**A new quest — The Undercroft.** The thread from the Margin Notation runs down
+into the dark. Earn the leave to descend, pass the ward, and see for yourself what
+the founders built upon. What you do with the proof is yours to decide: carry the
+truth out to the Margin, or keep the Keepers' confidence. The answer the city has
+kept is not a comfortable one — and it points on, north and older, to somewhere
+this road has not yet reached.
+
+- **Craftsmen's Row & Residential.** The lived-in working quarter — a craft row,
+  a daily market, a baker, ordinary homes. A riverman's wife counting the days
+  till her husband is back off the water; a retired toll-clerk who remembers every
+  figure the city has forgotten.
+- **The East Gate & the Brennside.** A bridge over the eastern river to the far
+  bank, a travelers' gate and inn, and the road running on east toward Greenford
+  and the wider world — for another day.
+
+The Confluence is whole now: river waterfront, civic heart, scholars, temple,
+undercroft, and the gates out — the keystone of a long mystery, and a real second
+city to walk.
+
 ## 2026-06-26 — The Confluence: a city where three rivers meet
 
 The south road runs on. Past Amber Valley the dry country gives way to **River
