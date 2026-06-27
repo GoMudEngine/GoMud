@@ -13,7 +13,7 @@ description: >
   <ansi fg="itemname">map</ansi>
   of the Confluence and its three rivers is hung where
   all who wait may consult it; a faded
-  <ansi fg="itemname">marginal note</ansi> in an older hand
+  <ansi fg="itemname">marginal-note</ansi> in an older hand
   crowds one edge of the chart. A hall-clerk manages the
   counter at the room's north end with the unhurried
   efficiency of someone who has heard most questions
@@ -52,7 +52,7 @@ nouns:
     agree. No other annotation addresses it. The chart
     has hung here long enough that the staff do not
     remark on the marginal note.
-  the marginal note: >
+  marginal-note: >
     The annotation crowding one margin of the hall map: a fourth channel
     pencilled in by an older, less practiced hand than the chart-maker's,
     its course running south-southwest from the junction, then half-

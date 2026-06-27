@@ -1,6 +1,7 @@
 itemid: 40138
 name: A Fair Copy of the Compiled Survey
 namesimple: survey
+not_salable: true
 description: >
   A clean fair-copy on good paper: three reconciled old survey records
   laid side by side, the disputed fourth channel drawn back in where the

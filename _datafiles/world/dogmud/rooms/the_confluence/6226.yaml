@@ -11,8 +11,8 @@ description: >
   oddments bought from estates and cleared offices.
   Near the counter, a small crate serves as a display
   for notable stock; among the papers and bound volumes
-  in it, a water-damaged old harbor
-  <ansi fg="itemname">damaged chart</ansi>
+  in it, an old harbor
+  <ansi fg="itemname">damaged-chart</ansi>
   is propped at an angle, its lower half badly stained
   but the junction rendering still visible past the
   damage. The bookseller knows what is in stock and
@@ -29,7 +29,7 @@ spawninfo:
   - mobid: 9444
     respawnrate: "20 real minutes"
 nouns:
-  the damaged chart: >
+  damaged-chart: >
     A harbor chart on heavy paper, water-damaged across
     its lower third where a brown stain has spread from
     one corner and consumed most of the inshore detail

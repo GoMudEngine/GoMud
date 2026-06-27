@@ -48,8 +48,9 @@ tree:
         damaged chart here, Tallis's old charts on the Long Quay, and the
         marginal note on the Municipal Hall map at Tri-Cross Square. Then
         return to Quist."
+      grantsQuest: "73-start"
     - id: report
-      questRequired: "73-map"
+      questRequired: ["73-map"]
       questExcluded: ["73-end"]
       triggers: ["report", "return", "found", "done", "back", "finished",
         "examined", "seen", "evidence", "results"]
@@ -61,8 +62,9 @@ tree:
         and all three draw the same fourth channel, struck out by later hands
         that wanted it gone."
       hints: "You could hear Quist's conclusion -- ask him what it means."
+      grantsQuest: "73-end"
     - id: progress
-      questRequired: "73-start"
+      questRequired: ["73-start"]
       questExcluded: ["73-map"]
       triggers: ["progress", "remind", "which", "where", "again", "still",
         "lost", "what", "charts", "map", "doing"]
