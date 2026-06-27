@@ -1,5 +1,6 @@
 mobid: 9486
 zone: The Confluence
+schedule_id: cf_innkeeper
 craft_support: cooking
 behavior_archetype: noncombat_shopkeeper
 non_combatant: true

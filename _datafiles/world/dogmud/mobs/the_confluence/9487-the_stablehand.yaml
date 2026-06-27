@@ -1,5 +1,6 @@
 mobid: 9487
 zone: The Confluence
+schedule_id: cf_stablehand
 behavior_archetype: noncombat_passive
 non_combatant: true
 charm_immune: true
