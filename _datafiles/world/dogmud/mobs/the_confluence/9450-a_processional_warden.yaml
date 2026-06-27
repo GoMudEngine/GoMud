@@ -1,0 +1,48 @@
+mobid: 9450
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - keepers
+idlecommands:
+  - 'emote scans the forecourt with a slow, practiced sweep, hands
+    clasped behind his back, and gives the scholar at the portico
+    a brief glance before returning his gaze to the road.'
+  - ''
+  - 'say The scholar copying the stonework -- she has been there
+    three days. Harmless, the Prior says, so we leave her be. But
+    I watch.'
+  - ''
+  - 'emote shifts his weight, turns to check the causeway, and
+    straightens again, resuming his position by the forecourt
+    gate with the unhurried economy of someone trained to stand
+    for long stretches.'
+  - ''
+activitylevel: 10
+character:
+  name: A Processional Warden
+  description: |
+    A Processional Warden stands at the forecourt gate where the
+    road widens into the temple approach. He wears the dove-grey
+    of the Keepers with a warden's cord at the shoulder, and he
+    has the posture of someone who spent years in a less
+    ceremonial post before taking this one. He keeps order at
+    the forecourt -- a task that consists mostly of watching
+    pilgrims file past and ensuring no one tries to bring a
+    cart over the causeway. His Chrysalis-change is minor: a
+    heightened sense of tension, crowd or individual, that
+    lets him read a space without appearing to. He has not
+    needed it here yet. The forecourt has been orderly.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    perception:
+      training: 7
+    strength:
+      training: 4

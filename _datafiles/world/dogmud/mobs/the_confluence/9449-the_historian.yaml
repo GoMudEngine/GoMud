@@ -1,0 +1,46 @@
+mobid: 9449
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - keepers
+idlecommands:
+  - 'emote gestures at the painted founding account on the wall, tracing
+    the arc of the three rivers with one finger and murmuring something
+    beneath his breath.'
+  - ''
+  - 'say The account is clear -- three rivers, one island, one beginning.
+    I am happy to explain any part of it.'
+  - ''
+  - 'emote straightens the printed legend below the founding panel and
+    steps back to regard the full length of the wall, as though checking
+    the work is still in order.'
+  - ''
+activitylevel: 10
+character:
+  name: The Historian
+  description: |
+    The Historian stands near the painted founding account along the
+    Hall's south wall, available to those who want the story explained.
+    He is a Keeper of middle years, with the practiced patience of
+    someone who has answered the same questions ten thousand times and
+    still believes the answers matter. His robes are the pale grey of
+    the Keepers' order, neatly pressed, and his hands are ink-stained
+    in the professional way of a man who has been copying records
+    since before the ink mattered. His Chrysalis-change is a small
+    one: his memory for text is absolute. He can recite any passage
+    he has read, word for word, from any point in his career. He does
+    not regard this as unusual. He regards it as useful.
+  speciesid: 1
+  level: 1
+  gold: 10
+  stats:
+    willpower:
+      training: 6
+    perception:
+      training: 5

@@ -1,0 +1,48 @@
+mobid: 9454
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - margin
+idlecommands:
+  - 'emote raises a small brass instrument to measure the angle of
+    the mark above the temple doors, holds very still for a long
+    count, then lowers it and records something in her folio
+    without looking up.'
+  - ''
+  - 'say I am recording what is carved. The analysis is done
+    upriver, not here.'
+  - ''
+  - 'emote turns a page in her folio, traces a finger along a
+    previous entry, and glances once at the mark above the doors
+    before writing a short addition in the margin.'
+  - ''
+activitylevel: 10
+character:
+  name: A Margin Scholar
+  description: |
+    A Margin Scholar has set up at the base of the temple portico
+    stairs with a folio, a brass measuring tool, and the particular
+    stillness of someone doing precise work in a place where they
+    are not entirely welcome. She is here to copy the symbol above
+    the temple doors -- the oldest stonework on the island -- with
+    the dimensional accuracy that field measurement permits. She is
+    not a Keeper and she is careful not to obstruct the pilgrims.
+    The Warden has noted her. She has noted the Warden. Neither has
+    said anything that required a response. Her Chrysalis-change
+    runs toward geometry: she perceives spatial relationships and
+    proportions with an exactness that her brass instruments only
+    partially capture. She does not mention this on temple ground.
+  speciesid: 1
+  level: 1
+  gold: 6
+  stats:
+    perception:
+      training: 8
+    willpower:
+      training: 4

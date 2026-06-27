@@ -1,0 +1,92 @@
+mobid: 9451
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Candles, wreaths, or incense -- all proper for the
+      altar. What will it be?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome. Looking for an offering for the altar, or
+        just browsing?"
+  - keywords: ["buy", "sell", "stock", "price", "cost", "have",
+      "sell", "what", "offer"]
+    responses:
+      - "Votive candles, reed wreaths, temple incense. All the
+        traditional forms. Pilgrims carry one or all three --
+        it is a matter of custom and what the altar calls for."
+  - keywords: ["candle", "votive", "wax", "light", "flame"]
+    responses:
+      - "The beeswax candles are the standard form -- lit at
+        the altar and left to burn. The Keepers say the flame
+        carries the intention. I say it is a proper candle,
+        well-made, and it does what candles do."
+  - keywords: ["wreath", "reed", "woven", "river"]
+    responses:
+      - "Reed wreaths from the river margins -- the pilgrims
+        from the western roads favor them. Woven the morning
+        they are sold, still green. A living offering, they
+        call it."
+  - keywords: ["incense", "smoke", "burn", "temple", "twist"]
+    responses:
+      - "Temple incense, the same blend the Keepers use in
+        the evening ceremony. I source from their supplier.
+        It is no different inside the temple than what you
+        buy here -- I want you to know that."
+  - keywords: [""]
+    responses:
+      - "Candles, wreaths, incense. All three are proper.
+        Take what suits your devotion."
+tree:
+  root:
+    text: "I have the three traditional forms: votive candles,
+      river-reed wreaths, and temple incense. Pilgrims carry one
+      or more to the altar. What will suit you?"
+    hints: "You could ask about the votive candles, the reed
+      wreaths, the incense, or how offerings are used at the
+      altar."
+  nodes:
+    - id: offerings_use
+      triggers: ["how", "use", "altar", "what", "do", "with",
+        "why", "bring", "tradition", "ritual", "custom",
+        "proper", "right", "form", "offering"]
+      text: "The candle is lit at the altar and left to burn --
+        the Keepers say the flame carries what you bring to it.
+        The wreath is laid at the base of the altar-stone, green
+        when you arrive. The incense is burned in the censers
+        along the nave. All three are proper. You need not
+        bring all three -- most pilgrims choose one. What calls
+        to you is the right answer."
+      hints: "You could ask about the candles, the wreaths, or
+        the incense."
+    - id: candle
+      triggers: ["candle", "votive", "wax", "beeswax", "light",
+        "flame", "burn", "fire"]
+      text: "Beeswax, made locally -- the same candles the Keepers
+        put on the altar stands during the evening service. I am
+        not selling you something lesser because you bought it
+        outside. They are proper candles and they burn clean."
+      hints: "You could ask about the reed wreaths or the incense,
+        or about how offerings are used."
+    - id: wreath
+      triggers: ["wreath", "reed", "woven", "green", "river",
+        "living", "western", "pilgrims", "laid"]
+      text: "Woven fresh each morning from the river reeds -- I
+        go to the bank at first light. They are still green when
+        you buy them. The tradition is that a living offering
+        carries more than a made one. I do not argue theology;
+        I weave a sound wreath and sell it before it dries."
+      hints: "You could ask about the votive candles or the
+        incense, or about how offerings are used."
+    - id: incense
+      triggers: ["incense", "smoke", "burn", "scent", "twist",
+        "temple", "ceremony", "evening", "blend", "same"]
+      text: "I source from the same supplier as the Keepers --
+        the same blend they burn in the evening ceremony. There
+        is no distinction between the incense in the temple
+        and what I sell out here. The Keepers know I say this
+        and have never contradicted me, which I take as
+        confirmation."
+      hints: "You could ask about the candles or the wreaths,
+        or about how offerings are used."

@@ -1,0 +1,39 @@
+mobid: 9456
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote sits on a bench along the pilgrim hall wall, boots off
+    and feet flat on the cool stone floor, eyes half-shut.'
+  - ''
+  - 'say Seven days from Amber Valley. Longest I have walked since
+    the last time I did this. Worth it both times.'
+  - ''
+  - 'emote rolls a shoulder slowly, wincing, then takes a long pull
+    from a water skin and stares at the ceiling with the
+    contentment of someone who is no longer walking.'
+  - ''
+activitylevel: 10
+character:
+  name: A Road-Worn Pilgrim
+  description: |
+    A Road-Worn Pilgrim sits against the pilgrim hall wall with
+    boots off and feet at rest, in the comfortable aftermath of
+    a long road. They have the look of someone who has done this
+    before and will do it again -- a regular traveler to the
+    temple, for whom the journey is as much the point as the
+    destination. The road has left its marks: dust on the cloak,
+    wear on the heel, a particular satisfaction in the eyes that
+    only comes from arriving.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    vitality:
+      training: 4

@@ -1,0 +1,44 @@
+mobid: 9453
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - keepers
+idlecommands:
+  - 'emote sweeps a slow arc across the forecourt stones, gathering
+    petals and road-dust into a tidy pile at the gutter edge with
+    the patient focus of someone for whom this is a form of prayer.'
+  - ''
+  - 'say The meditation garden is just through the side gate, if you
+    want a quiet place before the crossing.'
+  - ''
+  - 'emote pauses in her sweeping to press her palms together briefly
+    at the temple doors, then resumes with the same unhurried rhythm.'
+  - ''
+activitylevel: 10
+character:
+  name: An Acolyte
+  description: |
+    An Acolyte tends the small meditation garden at the side of
+    the Hall and sweeps the forecourt stones between the morning
+    pilgrims and the evening service. She is young -- eighteen
+    at most -- with the careful, deliberate quality of someone
+    who has recently decided to be earnest about something and
+    is still learning what that costs. Her robes are the
+    undyed linen of a first-year Keeper, not yet grey. Her
+    Chrysalis-change has not come yet, which she does not
+    discuss, and which the senior Keepers say is not unusual
+    at her age and is, in any case, not the point.
+  speciesid: 1
+  level: 1
+  gold: 2
+  stats:
+    willpower:
+      training: 5
+    vitality:
+      training: 3

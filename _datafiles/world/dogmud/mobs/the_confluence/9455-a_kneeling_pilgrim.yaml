@@ -1,0 +1,37 @@
+mobid: 9455
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote kneels with head bowed and eyes closed, hands pressed
+    palm-to-palm at chest height, still as carved stone.'
+  - ''
+  - 'emote remains perfectly motionless for a long moment, then
+    exhales slowly and settles deeper into the posture, as though
+    the prayer has further to go.'
+  - ''
+  - 'emote opens their eyes briefly, looks up at the temple
+    across the causeway, and closes them again, returning to
+    the stillness.'
+  - ''
+activitylevel: 10
+character:
+  name: A Kneeling Pilgrim
+  description: |
+    A Kneeling Pilgrim is at prayer in the pilgrim hall, knees
+    on the stone floor, oblivious to the traffic of the approach
+    around them. They have the road on their boots and the peace
+    of someone who has arrived where they were going. Whatever
+    they came to say to the Chrysalis, they are saying it now.
+  speciesid: 1
+  level: 1
+  gold: 1
+  stats:
+    willpower:
+      training: 3

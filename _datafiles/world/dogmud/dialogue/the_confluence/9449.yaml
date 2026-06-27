@@ -1,0 +1,100 @@
+mobid: 9449
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Welcome to the Hall of the Founding. Ask, and I will tell
+      you how the Confluence began."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome. The founding account is on the wall, and I am
+        here to explain it."
+  - keywords: ["symbol", "mark", "stone", "ring", "cocoon",
+      "chrysalis", "door", "oldest", "carving", "above"]
+    responses:
+      - "The first mark, yes -- the ringed cocoon above the temple
+        doors. The earliest rendering of the Chrysalis truth, the
+        Founders' own hand. Older than anything else we keep."
+  - keywords: ["keepers", "order", "who", "clergy", "priests",
+      "temple", "serve"]
+    responses:
+      - "We are the Keepers -- we tend the temple, maintain the
+        record, and explain the founding to those who ask. It is
+        not a difficult charge. The story is a clear one."
+  - keywords: [""]
+    responses:
+      - "Ask about the founding, the temple, or the old mark
+        above the doors."
+tree:
+  root:
+    text: "I keep the founding account here -- how the three rivers
+      were drawn together, the temple raised on the island, the first
+      Keepers set to tend it. What did you wish to know?"
+    hints: "You could ask about the temple's founding, about the old
+      mark above the doors, or about the inner temple."
+  nodes:
+    - id: margin_aside
+      questRequired: ["73-end"]
+      triggers: ["symbol", "mark", "fourth", "water", "waters",
+        "count", "margin", "survey", "older", "wrong", "ring",
+        "cocoon", "doubt", "scholar", "disagree", "question",
+        "records", "notation"]
+      text: "You have the look of someone who has been talking to
+        the scholars upriver. I will say this once, quietly: I give
+        the account as I was given it. Whether the first mark is
+        doctrine or something the doctrine was laid over -- that is
+        not a question the Hall is for. If you mean to press it, it
+        is the senior Keepers you want, in the cloisters across the
+        way. Not me."
+      hints: "You could ask about the inner temple, or about the
+        old work beneath the foundations."
+    - id: founding
+      triggers: ["founding", "history", "begin", "rivers",
+        "account", "raised", "first", "keepers", "story", "tell",
+        "explain", "three", "aldren", "brenn", "solt"]
+      text: "Three rivers -- the Aldren from the north, the Brenn
+        from the east, the Solt from the southwest -- join below
+        the island, and on that island the first Founders raised
+        the temple, on ground they held sacred before a stone was
+        cut. The Keepers have tended it ever since. It is a tidy
+        beginning, and we are fond of it."
+      hints: "You could ask about the old mark above the doors,
+        or about the inner temple."
+    - id: symbol
+      triggers: ["symbol", "mark", "carving", "ring", "cocoon",
+        "chrysalis", "door", "above", "oldest", "first", "what",
+        "stone", "relief", "above"]
+      text: "The ringed cocoon above the temple doors -- it is the
+        earliest rendering of the Chrysalis truth we have. The
+        sealed soul at the center, the cocoon of transformation
+        around it, the ring of becoming. The Founders cut it
+        before the altar-stone was laid. It is older than
+        everything else in the temple, and we treat it
+        accordingly."
+      hints: "You could ask about the founding, or about the
+        inner temple."
+    - id: inner_temple
+      triggers: ["inner", "cloister", "cloisters", "undercroft",
+        "beneath", "below", "older", "foundation", "senior",
+        "deeper", "inside", "inside", "further", "beyond",
+        "what", "lies", "past"]
+      text: "The public temple is open to all across the causeway.
+        Beyond it lie the cloisters and the archive, kept by the
+        senior Keepers, and beneath the island older work the
+        Founders consecrated -- the undercroft, which is not shown
+        to visitors. If your questions run that deep, it is the
+        senior Keepers you must satisfy, not the Hall."
+      hints: "You could ask about the founding account, or about
+        the old mark above the doors."
+    - id: keepers
+      triggers: ["keeper", "keepers", "order", "who", "clergy",
+        "priest", "what", "role", "charge", "serve", "tend"]
+      text: "The Keepers are the temple's order -- we tend the
+        sacred fire, maintain the founding record, and keep the
+        account available to those who come. We are not a
+        contemplative order; we are a practical one. The record
+        must be kept. The account must be explained. That is the
+        work."
+      hints: "You could ask about the founding, or about the old
+        mark above the doors."

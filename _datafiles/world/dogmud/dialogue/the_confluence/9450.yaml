@@ -1,0 +1,67 @@
+mobid: 9450
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Move along if you're passing through. Stop if you have
+      a question about the forecourt."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Warden. Something you need?"
+  - keywords: ["scholar", "woman", "copying", "portico", "stonework",
+      "standing", "writing", "margin", "watching"]
+    responses:
+      - "She is copying the old stonework above the doors. The Prior
+        says to leave her. We do. I watch anyway."
+  - keywords: ["inside", "enter", "causeway", "temple", "cross",
+      "go", "through", "pilgrim", "visit"]
+    responses:
+      - "The causeway is open to pilgrims. The cloisters beyond
+        are kept by the senior Keepers -- ask them if you want
+        to go further in."
+  - keywords: [""]
+    responses:
+      - "Keep the road clear. If you need the temple, cross the
+        causeway."
+tree:
+  root:
+    text: "Forecourt's open. If you need the temple, the causeway
+      is straight ahead. If you are here to cause trouble, I ask
+      that you reconsider."
+    hints: "You could ask the warden about the scholar at the
+      portico, about the forecourt, or about what lies past the
+      causeway."
+  nodes:
+    - id: scholar
+      triggers: ["scholar", "woman", "copy", "copying", "portico",
+        "stonework", "standing", "margin", "watch", "writing",
+        "notes", "there", "that"]
+      text: "She has been here three days, copying the mark above
+        the doors. The Prior said harmless, so we leave her be.
+        I do not think she is a problem. I watch anyway. It is
+        a habit."
+      hints: "You could ask the warden about the causeway, or
+        about who keeps the cloisters."
+    - id: causeway
+      triggers: ["causeway", "cross", "temple", "through", "past",
+        "beyond", "inside", "visit", "enter", "open", "allowed",
+        "can", "go"]
+      text: "Straight over the causeway. The public temple is
+        open -- services, the founding reliefs, the altar. The
+        cloisters past that are for the Keepers and those they
+        invite in. A pilgrim can go as far as the altar without
+        asking anyone."
+      hints: "You could ask the warden about the scholar at the
+        portico, or about the forecourt itself."
+    - id: forecourt
+      triggers: ["forecourt", "here", "road", "approach", "what",
+        "processional", "why", "you", "job", "do", "guard",
+        "keep", "order"]
+      text: "I keep the forecourt clear. No carts over the
+        causeway, no disruptions during services, no one
+        bothering the pilgrims at their business. It is not
+        complicated work. Most days it is just standing and
+        watching the road."
+      hints: "You could ask the warden about the causeway, or
+        about the scholar copying the stonework."
