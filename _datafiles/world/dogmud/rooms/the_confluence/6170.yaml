@@ -1,0 +1,29 @@
+roomid: 6170
+zone: The Confluence
+title: The West Aisle
+description: >
+  A passage running alongside the nave on its west side,
+  narrower than the central walk and quieter. Candle-
+  racks stand at intervals against the outer wall, each
+  holding many small flames left by those seeking the
+  rivers' attention for one thing or another. The nave
+  is back to the east; the Chapel of the Aldren opens
+  at the south end of the aisle, where the passage
+  gives onto the crossing-side chapels.
+biome: city
+coord:
+  x: 2
+  y: -76
+  z: 0
+exits:
+  east:
+    roomid: 6169
+  south:
+    roomid: 6174
+idlemessages:
+- A pilgrim lights a small candle at the rack and sets
+  it carefully among the others before standing again.
+- The aisle smells of beeswax and old stone, which is
+  to say it smells of every hour the temple has stood.
+- 'The candle-rack is crowded this morning: the names
+  they are lit for are nowhere written down.'

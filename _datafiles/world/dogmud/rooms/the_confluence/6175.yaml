@@ -1,0 +1,48 @@
+roomid: 6175
+zone: The Confluence
+title: Chapel of the Brenn
+description: >
+  A chapel off the crossing's east side, given to the
+  Brenn -- the eastern river, broad and slow through the
+  lowland stretches before it reaches the Confluence.
+  The back wall is painted in tones of deep ochre and
+  umber, a flat river running between dense reeds, the
+  water dark with sediment and full of life.
+  <ansi fg="itemname">offering-bowl</ansi>s
+  along the ledge hold dried flowers and small handfuls
+  of river-clay left by those who made the journey along
+  the Brenn's road. The crossing opens to the west; the
+  east aisle connects to the north; a disused alcove
+  opens to the south; a passage leads east to the inner
+  threshold.
+biome: city
+coord:
+  x: 4
+  y: -77
+  z: 0
+exits:
+  west:
+    roomid: 6172
+  north:
+    roomid: 6171
+  south:
+    roomid: 6177
+  east:
+    roomid: 6183
+nouns:
+  offering-bowl: >
+    Low bowls of fired clay set along a ledge at the
+    back of the chapel, each holding whatever the last
+    pilgrim left. Today's accumulation includes dried
+    meadow-flowers, a pinch of river-clay pressed into
+    a disc, and a few strands of reed tied at the center.
+    They are not collected or cleared; they sit until
+    time and weather reduce them, which takes longer in
+    here than you might expect.
+idlemessages:
+- A pilgrim sets a handful of dried river-grass in one
+  of the offering bowls and steps back without speaking.
+- 'The painted Brenn on the back wall is cool to the
+  touch: condensation gathers on the deep pigment.'
+- A keeper polishes the offering ledge with unhurried
+  attention, working around the things left there.

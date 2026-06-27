@@ -1,0 +1,27 @@
+roomid: 6182
+zone: The Confluence
+title: The Gallery Walk
+description: >
+  The gallery extends here above the crossing, the walk
+  following the rail out to the edge of the great hall
+  below. Through the rail the water-grate is visible
+  directly underfoot, and from this height the sound
+  of the joined rivers is different -- less felt and
+  more heard, the three currents almost distinguishable
+  for a moment before they close into one beneath the
+  stone. The nave gallery is back to the north.
+biome: city
+coord:
+  x: 3
+  y: -77
+  z: 1
+exits:
+  north:
+    roomid: 6181
+idlemessages:
+- 'From this height the water-grate is directly below:
+  the joined rivers visible through the iron bars.'
+- A visitor stands at the rail in silence, watching the
+  crossing fill and empty with worshippers below.
+- The three rivers can almost be told apart from here,
+  before their voices close into a single sound.

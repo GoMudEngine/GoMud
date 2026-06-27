@@ -1,0 +1,63 @@
+roomid: 6172
+zone: The Confluence
+title: The Crossing -- Great Hall over the Waters
+description: >
+  The temple opens out here into its great hall, the
+  point the whole island was built to hold. Set into the
+  floor at the center is a broad iron
+  <ansi fg="itemname">water-grate</ansi>,
+  and beneath it the three rivers meet and become one --
+  the Aldren from the north, the Brenn from the east, the
+  Solt from the southwest, their separate voices closing
+  into a single deep sound that fills the hall from below.
+  The stone of the floor around the grate is older and
+  darker than the temple raised on it. An
+  <ansi fg="itemname">offering-brazier</ansi>
+  near the south passage holds candle-ends and woven
+  rushes left by those who passed through. The nave runs
+  back to the north; the sanctuary lies south; chapels
+  open to either side.
+biome: city
+coord:
+  x: 3
+  y: -77
+  z: 0
+exits:
+  north:
+    roomid: 6169
+  south:
+    roomid: 6173
+  west:
+    roomid: 6174
+  east:
+    roomid: 6175
+nouns:
+  water-grate: >
+    A grate of black iron bars set flush into the floor,
+    wide as a cart is long. Through it the joined waters
+    move close beneath -- you can feel the cool off them
+    and the steady pull of the current finding its single
+    channel. The slabs the grate is seated in are older
+    than anything else underfoot, cut and laid by hands
+    the temple's own account does not quite reach. The
+    Keepers say the temple was raised to honor this
+    meeting of waters. The stone says only that it was
+    here first.
+  offering-brazier: >
+    A low iron stand holding dozens of small candle-ends
+    and a scattering of woven rush braids left by those
+    who paused here. The offerings are simple -- a candle
+    stub, a braid of river-grass -- the sort of thing
+    carried a long way and set down carefully.
+spawninfo:
+  - mobid: 9457
+    respawnrate: "20 real minutes"
+  - mobid: 9461
+    respawnrate: "20 real minutes"
+idlemessages:
+- A worshipper kneels at the edge of the grate, listening
+  to the water move beneath the floor.
+- 'The hall holds a single sound: the three waters closing
+  into one, somewhere just below the stone.'
+- The Officiant's voice carries across the hall, naming
+  the rivers in the old order of the rite.
