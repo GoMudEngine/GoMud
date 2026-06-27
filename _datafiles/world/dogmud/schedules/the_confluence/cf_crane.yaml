@@ -18,5 +18,5 @@ segments:
     target_room: 6196
     activity: sleeping
     idlecommands:
-      - emote sleeps in the narrow cell behind the oratory, the lamp left
+      - emote sleeps on a cot at the back of the oratory, the lamp left
         burning low against the dark.

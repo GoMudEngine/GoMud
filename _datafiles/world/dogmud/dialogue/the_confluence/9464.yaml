@@ -33,7 +33,7 @@ tree:
       he will permit a look at what lies below."
   nodes:
     - id: aldric_q74_permission
-      questRequired: ["74-start"]
+      questRequired: ["74-survey"]
       triggers: ["permission", "allow", "descent", "below",
         "stair", "down", "deeper", "underneath", "supervise",
         "look", "see", "permitted", "consent", "agreed",
