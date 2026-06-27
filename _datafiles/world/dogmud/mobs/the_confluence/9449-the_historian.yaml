@@ -1,5 +1,6 @@
 mobid: 9449
 zone: The Confluence
+schedule_id: cf_historian
 behavior_archetype: noncombat_passive
 non_combatant: true
 charm_immune: true

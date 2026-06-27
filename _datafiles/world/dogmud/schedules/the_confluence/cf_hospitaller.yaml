@@ -1,0 +1,23 @@
+id: cf_hospitaller
+description: "The Hospitaller runs the pilgrim hall from early morning through
+  the evening, feeding and resting travelers, then sleeps by the hearth in
+  the small hours."
+segments:
+  - start: 5
+    end: 23
+    target_room: 6160
+    activity: ""
+    idlecommands:
+      - emote ladles broth into a bowl and sets it at the end of the long
+        table for whoever comes in next.
+      - say There is broth on the fire and bread on the board. If your feet
+        brought you this far, they have earned a meal.
+      - emote moves along the row of pallets, straightening a blanket and
+        checking the settled pilgrims before returning to the hearth.
+  - start: 23
+    end: 5
+    target_room: 6160
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in a chair by the banked hearth, within reach of
+        anyone who arrives in the night.

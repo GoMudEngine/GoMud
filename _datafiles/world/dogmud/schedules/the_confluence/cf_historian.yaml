@@ -1,0 +1,23 @@
+id: cf_historian
+description: "The Historian keeps the Hall of the Founding through the day,
+  explaining the temple's account to whoever asks, then banks the Hall's
+  lamps and sleeps in the keeper's chair through the night."
+segments:
+  - start: 6
+    end: 21
+    target_room: 6162
+    activity: ""
+    idlecommands:
+      - emote gestures along the founding-relief, naming the three rivers
+        for a knot of listeners.
+      - say The first mark above the doors is the oldest thing we keep --
+        the Founders' own hand.
+      - emote straightens the printed legend below the founding panel and
+        steps back to check the work is still in order.
+  - start: 21
+    end: 6
+    target_room: 6162
+    activity: sleeping
+    idlecommands:
+      - emote has banked the Hall's lamps and dozes in the keeper's chair
+        beside the founding-relief.
