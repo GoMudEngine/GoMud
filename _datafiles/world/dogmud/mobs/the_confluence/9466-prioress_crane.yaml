@@ -1,0 +1,46 @@
+mobid: 9466
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - keepers
+idlecommands:
+  - 'emote kneels briefly before the oratory altar, lips moving
+    without sound, then rises and settles back into stillness.'
+  - ''
+  - 'say The rite sustains us as surely as bread. Perhaps more
+    surely. Bread I can go without for a day.'
+  - ''
+  - 'emote lights a taper from the oratory lamp and sets it in the
+    iron stand beside the altar, watching it take hold before
+    stepping away.'
+  - ''
+activitylevel: 10
+character:
+  name: Prioress Crane
+  description: |
+    Prioress Crane is a compact woman of sixty or so, with the
+    composed bearing of someone who has held the same office for
+    many years and is not done with it. Her grey robes carry the
+    double-hem of the prioress's rank, and her hair is close-
+    cropped, gone white, though her eyes are dark and alert. Her
+    Chrysalis-change is a warmth she radiates in the way of heated
+    stone -- not heat itself, but the memory of it, and people in
+    the oratory tend to drift toward her without knowing why. She
+    looks at you the way a practised believer looks at something
+    that has not yet been categorized as a problem.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    charisma:
+      training: 8
+    willpower:
+      training: 7
+    perception:
+      training: 5

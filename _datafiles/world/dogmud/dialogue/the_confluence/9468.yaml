@@ -1,0 +1,44 @@
+mobid: 9468
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "The refectory is between meals at the moment. If you
+      are hungry, come back at the sixth hour."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Cellarer. I run the stores and the table. If you need
+        the Archive or the Prioress, they are further in."
+  - keywords: ["food", "eat", "meal", "hungry", "bread", "drink",
+      "store", "stores"]
+    responses:
+      - "The order eats twice a day -- sixth hour and eighteenth.
+        Visitors are permitted to join at the common table if
+        they have business in the cloisters. The bread is good.
+        I am particular about the bread."
+  - keywords: [""]
+    responses:
+      - "Sixth hour and eighteenth. Or ask the Archive if it
+        is records you need."
+tree:
+  root:
+    text: "I keep the refectory and the stores. Simple work, done
+      consistently, which is how all the important work goes. Was
+      there something you needed?"
+    hints: "You could ask the Cellarer about the refectory, the
+      stores, or what the order's daily life looks like."
+  nodes:
+    - id: the_stores
+      triggers: ["stores", "supplies", "cellarer", "provisions",
+        "what keep", "stock", "managed", "account"]
+      text: "Three months of grain, two months of oil. A good
+        supply of preserved fish from the Quay traders. The
+        temple has been here three hundred years; it has a
+        relationship with continuity. I keep the stores the
+        same way -- enough to last, never so much that we stop
+        paying attention to what we have. The old cellarer who
+        trained me called it the middle path between hoarding
+        and faith. I have found it a sound principle."
+      hints: "You could ask about the daily life of the order,
+        or let the Cellarer return to the provisions."

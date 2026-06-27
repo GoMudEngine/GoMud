@@ -1,0 +1,45 @@
+mobid: 9469
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "This is the Infirmary -- not the place for curiosity,
+      usually. Are you unwell, or just wandering?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Infirmarian. I tend the sick. If you have a need I can
+        address, tell me. Otherwise I am occupied."
+  - keywords: ["sick", "ill", "hurt", "wound", "heal", "help",
+      "medicine", "patient"]
+    responses:
+      - "Sit there. Let me look. The order tends its own, and
+        travelers in genuine need -- I do not draw a fine line
+        between them."
+  - keywords: [""]
+    responses:
+      - "If you are not ill, the Archive is through the east
+        walk. Brother Cael keeps it."
+tree:
+  root:
+    text: "I keep the Infirmary. If you are here for the medicine,
+      I can help. If you are here for the cloisters in general,
+      you want the Archive, further east."
+    hints: "You could ask the Infirmarian about the Infirmary,
+      about medicine and the Chrysalis-changes she sees, or about
+      the order's inner life."
+  nodes:
+    - id: the_infirmary
+      triggers: ["infirmary", "medicine", "sick", "patients",
+        "tend", "care", "chrysalis", "change", "changes",
+        "what you see", "wounds", "heal"]
+      text: "The Chrysalis-changes make the work interesting.
+        Every person who comes through here is changed in some
+        way that affects what works and what does not -- the
+        infirmarian's art is in reading the individual, not the
+        category. My own change tells me exactly how feverish
+        someone is by touch. It has made me very good at
+        diagnosis. It has also made me very bad at shaking
+        hands at social occasions, which is a fair trade."
+      hints: "You could ask about the order itself, or let the
+        Infirmarian return to her patients."

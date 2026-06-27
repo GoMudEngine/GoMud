@@ -1,0 +1,97 @@
+mobid: 9466
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Welcome to the oratory. The rite here is quiet, and I
+      prefer it that way. Come in, or ask what you need -- both
+      are acceptable."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Prioress Crane. I keep the oratory and the order's inner
+        life, for what either is worth. Speak freely."
+  - keywords: ["faith", "rite", "prayer", "believe", "god",
+      "the waters", "chrysalis"]
+    responses:
+      - "Faith is not certainty -- it is choosing to act as
+        though the thing you cannot prove still matters. I have
+        done that every morning for forty years. It has not
+        become easier. It has become more honest."
+  - keywords: [""]
+    responses:
+      - "Ask what is on your mind. The oratory is for that
+        as much as for prayer."
+tree:
+  root:
+    text: "I am Crane -- Prioress Crane, though I have stopped
+      correcting people who drop the title. I keep the order's
+      inner life: the oratory, the prayer hours, the pastoral
+      work with the novices. I have been a Keeper for forty
+      years. I believe what I believe with my full self, and
+      I will not apologize for it, and I will not pretend it
+      makes every question easy."
+    hints: "You could ask Prioress Crane about the faith and
+      the rite, about the Keepers and their purpose, or about
+      what it means to believe when questions press in."
+  nodes:
+    - id: crane_believer_aside
+      questRequired: ["73-end"]
+      triggers: ["question", "doubt", "older", "beneath",
+        "foundation", "records", "margin", "scholars",
+        "fourth", "what lies", "under", "built", "raised",
+        "trouble", "worry", "crack", "faith", "wonder"]
+      text: "I have prayed on the questions your sort bring. I
+        have faith, which is not the same as an answer, and I
+        have made my peace with the difference. The rite we
+        keep is real. The meeting of the waters is real. If the
+        ground beneath us holds something older -- if the first
+        Founders built on a foundation they did not lay -- that
+        does not unmake what the waters do, or what we do when
+        we attend to them. I have found this argument very
+        persuasive. I notice I have had to keep finding it for
+        twenty years. I think that is what faith is."
+      hints: "You could ask Prioress Crane about the rite itself,
+        or about what the Keepers hold and why."
+    - id: the_rite
+      triggers: ["rite", "service", "ceremony", "prayer",
+        "hours", "morning", "what do", "what you",
+        "keep", "tend", "attend"]
+      text: "The rite is simple enough in its words and demanding
+        in its discipline -- every morning, every evening, the
+        same naming of the three rivers and the same marking of
+        their meeting. I have done it ten thousand times. I
+        find it new each time in the way a good sentence stays
+        new, not because the words change but because you have.
+        That is the whole argument for repetition."
+      hints: "You could ask about what the Keepers believe, or
+        about what lies at the heart of the faith."
+    - id: the_faith
+      triggers: ["chrysalis", "soul", "becoming", "change",
+        "what you believe", "doctrine", "temple",
+        "mutation", "transformation", "what it means"]
+      text: "We hold that the Chrysalis is the soul's nature --
+        that everything living is in the process of becoming
+        something more fully itself, and that the river-meeting
+        is the oldest sign of it we have: waters arriving
+        different, leaving as one, changed. The Chrysalis-changes
+        people carry are the visible part of a truth that runs
+        through everything. That is what the rite marks. That is
+        what I believe."
+      hints: "You could ask Prioress Crane about the rite, or
+        about what questions her faith has had to hold."
+    - id: the_order
+      triggers: ["order", "keepers", "aldric", "cael",
+        "who are", "how many", "cloisters", "history",
+        "three hundred"]
+      text: "We are small -- perhaps thirty in the cloisters now,
+        with another twenty in the outer temple. Aldric leads
+        with his head, which is what is needed. Brother Cael
+        tends the archive with more care than is strictly
+        required by duty, which tells you something about him.
+        I tend the oratory. We have disagreed on very little
+        in thirty years, which I think is not because we agree
+        on everything, but because the things we disagree on
+        are things we have each decided to carry separately."
+      hints: "You could ask about the faith the Keepers hold,
+        or about what questions even a believer must sit with."

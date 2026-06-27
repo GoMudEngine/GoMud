@@ -1,0 +1,121 @@
+mobid: 9465
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Come in -- mind the ledger on the stand. I am in the
+      middle of a reading I have been putting off for ten years,
+      and it is worse than I expected."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Cael. Brother Cael. The Archive is open, within limits.
+        Ask what you need."
+  - keywords: ["archive", "records", "building", "ledger",
+      "what is", "what does"]
+    responses:
+      - "The Archive holds what the temple kept: building records,
+        consecration accounts, maintenance logs from the first
+        century onward. Most of it is routine. Some of it is not."
+  - keywords: [""]
+    responses:
+      - "Ask plainly. I have enough to read without guessing
+        what visitors want."
+tree:
+  root:
+    text: "I keep the Archive -- the temple's building records,
+      its founding accounts, the surveyor's work. Most days no
+      one asks for any of it. Today is not most days, I think."
+    hints: "You could ask Brother Cael about the archive, the
+      building records, or whether he can help you with the
+      questions the Margin raised."
+  nodes:
+    - id: q74_grant
+      questRequired: ["73-end"]
+      questExcluded: ["74-start", "74-end"]
+      triggers: ["quest", "task", "help", "records", "ledger",
+        "building", "temple", "raised", "foundation", "deeper",
+        "cael", "work", "show"]
+      text: "So the Officiant sent you, and you have the Margin's
+        question in your teeth. Good -- I am tired of being the
+        only one who reads these. Here is the work, and it is
+        reading, not digging: three of the temple's own records
+        disagree with its founding story. The building-ledger
+        here, open on the stand. The consecration-record in the
+        Chapter House. And a mason's survey in the old east
+        corridor, by the stair. See all three yourself. Aldric
+        has allowed it -- a supervised look, he calls it. Then
+        come back to me."
+      hints: "You could examine the building-ledger here in the
+        Archive, the consecration-record in the Chapter House,
+        and the mason's survey in the older east corridor --
+        then return to Cael."
+      grantsQuest: "74-start"
+    - id: q74_progress
+      questRequired: ["74-start"]
+      questExcluded: ["74-survey"]
+      triggers: ["progress", "remind", "which", "where", "again",
+        "records", "ledger", "survey", "record", "lost"]
+      text: "Three records. The building-ledger here on the stand.
+        The consecration-record in the Chapter House. The mason's
+        survey in the old east corridor, by the descent stair. See
+        all three, then come back to me."
+      hints: "You could examine the three records, then return to
+        Cael in the Archive."
+    - id: q74_turnin
+      questRequired: ["74-survey"]
+      questExcluded: ["74-descent"]
+      triggers: ["report", "return", "found", "done", "descent",
+        "stair", "below", "ready", "back", "seen", "results"]
+      text: "You have seen all three, then -- the ledger's silence,
+        the record's careful wording, the mason's plain note. Three
+        hands, and they agree on the one thing the founding story
+        will not: the temple was raised on something older, and the
+        Keepers have kept it so. I have told Aldric you should see
+        for yourself. He has allowed a supervised descent -- the
+        stair is in the old east corridor. Go down when you are
+        ready. And... go carefully."
+      hints: "You could descend the stair in the older east corridor
+        when you are ready."
+      grantsQuest: "74-descent"
+    - id: what_the_ledger_says
+      triggers: ["disagree", "differ", "silence", "says", "ledger",
+        "what it", "founding", "account", "why kept",
+        "suppressed", "hidden", "secret"]
+      text: "The ledger records the stones laid and the hands that
+        laid them. It does not editorialize. But the dates in the
+        lowest courses are a generation earlier than the founding
+        account gives them, and the stonework notes reference
+        preexisting load-bearing work already in place. The ledger
+        does not say what that work was. It simply assumes you
+        already know. I find that interesting. I have found it
+        interesting for some years."
+      hints: "You could ask Brother Cael about the archive more
+        broadly, or about what the Margin's scholars have found."
+    - id: the_margin
+      triggers: ["margin", "scholars", "quist", "fourth",
+        "notation", "question", "asked", "came"]
+      text: "The Margin sent someone here, eventually. I wondered
+        when they would. Quist has had the question for forty
+        years; I have had it from the archive side for nearly
+        twenty. The problem is not finding the evidence. The
+        problem is that the evidence is in the temple's own
+        records, and no one has been willing to look at it
+        directly. Until now, perhaps."
+      hints: "You could ask what the building records say, or
+        offer to look at them yourself."
+    - id: aldric_note
+      triggers: ["aldric", "keeper", "head", "permission",
+        "allowed", "who is", "prioress", "crane", "senior"]
+      text: "Aldric is the head of the order, and he is not a
+        fool. He has read these records. He made his peace with
+        what they say a long time ago, and his position since
+        has been that the temple's work is the temple's work,
+        and the ground beneath it is not our business to
+        disturb. I disagree with him quietly, which is the
+        only way I have managed to stay in this room for twenty
+        years. Prioress Crane -- she believes, sincerely and
+        completely, which is its own kind of peace. I have
+        a great deal of respect for her."
+      hints: "You could ask what the building records say, or
+        offer to look at them yourself."

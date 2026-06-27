@@ -1,0 +1,41 @@
+mobid: 9469
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - keepers
+idlecommands:
+  - 'emote checks the pulse of a patient at the nearest cot, nodding
+    quietly to herself before moving to the next.'
+  - ''
+  - 'say Rest is the first medicine. Everything else is the second.
+    In thirty years I have not found a case that reversed the order.'
+  - ''
+  - 'emote prepares a small cup of something from the cabinet beside
+    the window, adding a measured pinch of dried leaves from a
+    sealed box.'
+  - ''
+activitylevel: 10
+character:
+  name: The Infirmarian
+  description: |
+    The Infirmarian is a woman of late middle years, efficient
+    without being hurried, with the quiet authority of someone
+    whose competence is so long-established it no longer needs to
+    announce itself. Her Chrysalis-change -- a pronounced sensitivity
+    to fever in others, felt through touch as an exact temperature --
+    makes her diagnostic sense uncanny. She keeps the Infirmary
+    with a minimal pharmacy and a surplus of patience.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    perception:
+      training: 7
+    willpower:
+      training: 5

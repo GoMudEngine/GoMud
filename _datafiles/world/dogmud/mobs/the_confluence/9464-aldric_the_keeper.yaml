@@ -1,0 +1,45 @@
+mobid: 9464
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - keepers
+idlecommands:
+  - 'emote stands at the window of the Chapter House looking out over
+    the cloister garth, hands clasped behind his back, saying nothing.'
+  - ''
+  - 'say The order endures by keeping what it is given to keep. That
+    is not a small thing. Do not treat it as one.'
+  - ''
+  - 'emote turns from the window and draws a hand across the bindings
+    of the shelf nearest him, as though taking a count of something
+    only he can see.'
+  - ''
+activitylevel: 10
+character:
+  name: Aldric the Keeper
+  description: |
+    Aldric the Keeper is a tall man in his middle sixties, spare and
+    upright, with the stillness of someone who has made a habit of
+    not moving until he has decided to. His robes are the pale grey
+    of the order's senior rank, immaculate, and the Keeper's seal
+    at his throat is old silver, worn smooth. He carries no visible
+    burden -- his is the kind of weight that stays in the face, not
+    the hands. His Chrysalis-change is unreadable: his eyes are
+    the same grey as his robes, and they have looked at you before
+    you have finished looking at him.
+  speciesid: 1
+  level: 1
+  gold: 15
+  stats:
+    willpower:
+      training: 8
+    perception:
+      training: 7
+    charisma:
+      training: 6

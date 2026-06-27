@@ -1,0 +1,40 @@
+mobid: 9467
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - keepers
+idlecommands:
+  - 'emote dips a pen and draws a careful line across a sheet of
+    vellum, lips pressed together in concentration.'
+  - ''
+  - 'emote blots the page, inspects the result, and resumes copying
+    without pausing to look up.'
+  - ''
+  - 'emote rolls a completed sheet and binds it with a narrow strip
+    of ribbon, setting it neatly with the others at the end of
+    the bench.'
+  - ''
+activitylevel: 10
+character:
+  name: A Scribe
+  description: |
+    One of the Keepers' copyists, stationed at the long bench in
+    the Scriptorium, surrounded by vellum in various stages of
+    completion. She works with the focused economy of someone for
+    whom copying is less craft than breathing -- her Chrysalis-
+    change, a slight luminescence in her fingernails, makes
+    exact alignment almost effortless in poor light.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    perception:
+      training: 5
+    dexterity:
+      training: 6
