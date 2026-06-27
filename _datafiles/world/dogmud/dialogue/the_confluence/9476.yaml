@@ -34,15 +34,15 @@ tree:
       triggers: ["tool", "tools", "hinge", "latch", "hook",
         "hoop", "fitting", "hardware", "iron", "what", "make",
         "domestic", "buy", "workshop", "household", "barrel",
-        "hook", "pot", "andiron", "have", "stock", "carry"]
+        "pot", "andiron", "have", "stock", "carry"]
       text: "Hinges, door latches, pot hooks, barrel hoops,
         andirons, the small stuff a city burns through
         without noticing. I supply most of the Row and
         some of the houses beyond. If you know what size
         you need, say so. Otherwise I'll tell you what
         is on the bench."
-      hints: "That is about the extent of what he covers.
-        He is busy."
+      hints: "You could ask the smith about weapons and where
+        to buy them, up the Aldren arm."
     - id: weapons_redirect
       triggers: ["weapon", "sword", "blade", "knife", "dagger",
         "armor", "shield", "mail", "plate", "fight", "where",
@@ -52,4 +52,5 @@ tree:
         reputation, but the third is cheaper and nearly
         as good for plain work. Tell them the Row sent
         you. Probably won't help but it doesn't hurt."
-      hints: "That is where to go for weapons and armor."
+      hints: "You could ask the smith about the ironwork he
+        does make here."
