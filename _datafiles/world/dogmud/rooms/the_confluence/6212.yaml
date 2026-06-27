@@ -1,0 +1,30 @@
+roomid: 6212
+zone: The Confluence
+title: The Deep Landing
+description: >
+  The stair from the water gallery arrives here, at
+  the lowest level the undercroft reaches. The stone
+  is the same dense pre-Founding material as above,
+  but it is dry here -- genuinely dry, not merely
+  less wet than the seeping passage. The sound of the
+  joined channel above is reduced to a low murmur,
+  felt more than heard. The air is cold and utterly
+  still. The stair is back above; the way west opens
+  into a wider space.
+biome: city
+coord:
+  x: 5
+  y: -78
+  z: -3
+exits:
+  up:
+    roomid: 6208
+  west:
+    roomid: 6213
+idlemessages:
+- 'The air here is colder than any level above: the
+  stone seals out even the dampness of the rivers.'
+- The quiet at this depth has a particular quality --
+  very complete, as though the stone intends it.
+- The lamplight holds steady here; there is no draft
+  at all.

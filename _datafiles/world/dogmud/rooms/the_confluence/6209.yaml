@@ -1,0 +1,28 @@
+roomid: 6209
+zone: The Confluence
+title: The Wardroom
+description: >
+  A small square room off the south side of the
+  pillared hall, its purpose not legible from what
+  remains. The walls are plain pre-Founding stone;
+  the floor is slightly raised above the hall's level,
+  like a platform or a watching post. Whatever was
+  kept or done here left no trace. The room is dry,
+  which is notable at this depth, and the air is
+  stale in the way of a space closed for a very long
+  time. The hall is back to the north.
+biome: city
+coord:
+  x: 6
+  y: -79
+  z: -2
+exits:
+  north:
+    roomid: 6207
+idlemessages:
+- 'The raised floor is a handspan above the hall
+  level: enough to stand and look out over it.'
+- The room is entirely plain; whatever decorated or
+  furnished it is gone, or was never there.
+- The silence here is complete; the gallery's water
+  sound does not carry this far south.

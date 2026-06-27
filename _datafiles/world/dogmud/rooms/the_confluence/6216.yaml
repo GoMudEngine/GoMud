@@ -1,0 +1,29 @@
+roomid: 6216
+zone: The Confluence
+title: A Drowned Vault
+description: >
+  A vaulted side room off the antechamber, its floor
+  covered in a dark still pool that reaches to mid-
+  calf. The water here is cold enough to ache. The
+  vault ceiling is intact and the walls are sound;
+  the water has simply risen over time from somewhere
+  below, through stone the rivers eventually find.
+  Whatever this room held or was used for, it is
+  below the waterline now. The ripples from a
+  footfall last a long time before they settle. The
+  antechamber is back to the north.
+biome: city
+coord:
+  x: 4
+  y: -79
+  z: -3
+exits:
+  north:
+    roomid: 6213
+idlemessages:
+- The vault holds cold water that has been rising for
+  longer than the temple has stood above it.
+- 'A ripple crosses the pool from a direction with no
+  visible cause: the stone carries movement.'
+- The water is dark enough that the floor is not
+  visible beneath it.

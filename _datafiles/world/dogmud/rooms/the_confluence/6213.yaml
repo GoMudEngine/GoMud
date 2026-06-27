@@ -1,0 +1,34 @@
+roomid: 6213
+zone: The Confluence
+title: The Antechamber
+description: >
+  A broad, low room that opens between the landing
+  and whatever lies further west. The walls here
+  carry faint traces of something applied long ago --
+  a pigment, or a gesso ground, too degraded to read
+  but indicating that this space was once prepared
+  and decorated. A few marks survive as ghost shapes:
+  the arc of something, the edge of a line. The floor
+  is swept clean, which means someone comes here; the
+  dust should be deeper than this. The landing is
+  east; the way west ends at a door; a vault opens
+  to the south.
+biome: city
+coord:
+  x: 4
+  y: -78
+  z: -3
+exits:
+  east:
+    roomid: 6212
+  west:
+    roomid: 6214
+  south:
+    roomid: 6216
+idlemessages:
+- The ghost marks on the walls suggest preparation --
+  a space between the ordinary and something else.
+- 'The floor is clean for this depth: the dust has
+  been disturbed more recently than the age implies.'
+- A very faint smell of lamp oil lingers here --
+  someone has been down with a light, not long ago.

@@ -1,0 +1,44 @@
+roomid: 6214
+zone: The Confluence
+title: The Sealed Door
+description: >
+  A doorway of unusual construction: the frame is cut
+  from the same dense pre-Founding stone as everything
+  around it, but the closure that once filled it -- a
+  <ansi fg="itemname">sealed-door</ansi> of fitted
+  slabs -- now stands propped open along the west
+  wall, its locking bar set aside by whoever first
+  reached this place and chose not to reseal it. The
+  door is old enough that the Keepers' own records do
+  not say who opened it or when. A vault opens to
+  the south; the antechamber is back east; the
+  chamber waits to the west.
+biome: city
+coord:
+  x: 3
+  y: -78
+  z: -3
+exits:
+  east:
+    roomid: 6213
+  west:
+    roomid: 6215
+  south:
+    roomid: 6217
+nouns:
+  sealed-door: >
+    Fitted stone slabs set in a frame and secured by
+    a locking bar of the same material -- a single
+    piece of pre-Founding construction built to close
+    this space and keep it closed. It was opened, and
+    the bar was set to the side, and whoever did it
+    left no record the Keepers chose to preserve. The
+    lock mechanism is intact; the door could be closed
+    again. It has not been.
+idlemessages:
+- 'The door was made to seal completely: the fit of
+  the slabs is precise enough to exclude air.'
+- The bar mechanism is pre-Founding work; there is
+  nothing like it anywhere in the temple above.
+- 'Standing in the doorway, the chamber beyond is
+  cold and dark and very quiet.'

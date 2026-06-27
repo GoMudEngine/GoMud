@@ -1,0 +1,30 @@
+roomid: 6205
+zone: The Confluence
+title: The Old Cistern
+description: >
+  A roughly oval chamber lower than the passage above,
+  its floor given over almost entirely to a pool of
+  still dark water. The pool is not deep -- a long
+  stick would find the bottom -- but it is fed
+  continuously from a seam in the west wall and shows
+  no drain; it simply holds, motionless, at its
+  constant level. The chamber is pre-Founding stone
+  throughout, and may have been cut for exactly this
+  purpose. The Keepers come down occasionally to
+  check the level, which they have noted in reports
+  does not change. The passage back is north.
+biome: city
+coord:
+  x: 7
+  y: -79
+  z: -1
+exits:
+  north:
+    roomid: 6203
+idlemessages:
+- The pool surface is perfectly still; the inflow
+  from the west wall seam is too slow to disturb it.
+- 'The water level is marked on the east wall with a
+  scored line: it has not moved.'
+- The sound of the seeping inflow is the only sound
+  in the chamber -- quiet and continuous.

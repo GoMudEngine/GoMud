@@ -1,0 +1,27 @@
+roomid: 6210
+zone: The Confluence
+title: A Flooded Cell
+description: >
+  A small room south of the water gallery, its floor
+  covered to ankle depth in still water that has come
+  in through a crack in the south wall -- seepage
+  from the channel, or the rivers themselves reaching
+  through the stone. The room is otherwise empty, its
+  original use swallowed by water that has been
+  sitting here longer than the temple has stood above.
+  The gallery is back to the north.
+biome: city
+coord:
+  x: 5
+  y: -79
+  z: -2
+exits:
+  north:
+    roomid: 6208
+idlemessages:
+- The water on the floor does not move; whatever
+  keeps it here also keeps it still.
+- 'The crack in the south wall is narrow: barely a
+  finger-width, but it feeds the room steadily.'
+- 'The water reflects the lamplight back from below:
+  the room feels lower than it is.'
