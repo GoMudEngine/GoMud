@@ -1,0 +1,29 @@
+roomid: 6247
+zone: The Confluence
+title: The Brenn Bridge, Crown
+description: >
+  The high point of the bridge, where the span levels
+  over the middle of the Brenn. The eastern river runs
+  broad and brown beneath, slower than the joined waters
+  off the temple island and the wider for it. The city
+  stands at your back to the west — roofs, the civic
+  bell, the temple beyond; ahead to the east the far
+  bank rises, lower and plainer, the road climbing away
+  toward open country. The bridge runs on both ways.
+biome: city
+coord:
+  x: 2
+  y: -67
+  z: 0
+exits:
+  west:
+    roomid: 6246
+  east:
+    roomid: 6248
+idlemessages:
+- A laden cart rumbles past toward the east bank, the
+  driver nodding without slowing.
+- 'The wind on the bridge crown carries two smells: the
+  river below, and dry country ahead to the east.'
+- The Brenn slides by underneath, broad and unhurried,
+  carrying the city's traffic of barges south.

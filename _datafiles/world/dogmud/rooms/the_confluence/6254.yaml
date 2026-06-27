@@ -1,0 +1,47 @@
+roomid: 6254
+zone: The Confluence
+title: The Inn Common Room
+description: >
+  The common room of the Travelers' Inn, a plain space
+  made comfortable by regular use rather than decor.
+  Long tables run the center in the road-house fashion
+  and a
+  <ansi fg="itemname">fire</ansi>
+  burns in the west wall's hearth, doing its work
+  without pretension — warmth, light, the ability to
+  dry a wet coat. The room fills at dusk when the road
+  traffic stops for the night, travelers comparing
+  notes on conditions east and west of the city.
+  The inn entrance is back north; a door east leads
+  out to the drying flats.
+biome: city
+coord:
+  x: 9
+  y: -69
+  z: 0
+exits:
+  north:
+    roomid: 6252
+  east:
+    roomid: 6256
+nouns:
+  fire: >
+    A working hearth fire — nothing like the great
+    river-oak rounds in the Three Waters' hearth
+    across the city, but doing its job honestly. The
+    room is warm, the fire-basket is stacked, and the
+    smoke goes up the flue as it should. A clothes-
+    peg line runs near enough to take advantage of
+    the heat.
+spawninfo:
+  - mobid: 9490
+    respawnrate: "20 real minutes"
+idlemessages:
+- A traveler at the long table asks after road
+  conditions east of the gate; another answers
+  without looking up.
+- The fire in the west wall is doing its essential
+  work — the room is warm, the wet boots by the
+  hearth are drying.
+- Someone at the far end of the long table is asleep
+  on their arms, a half-finished cup beside them.

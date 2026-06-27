@@ -1,0 +1,38 @@
+roomid: 6257
+zone: The Confluence
+title: The Eastern Edge
+description: >
+  The city's last ground — where the east quarter's
+  paving gives out and the earth takes over, the road
+  running on beyond this point into open country. There
+  is no abrupt wall or marker here; the city simply
+  ends, the way cities that have grown organically
+  tend to end, in a thinning of buildings and a
+  thinning of road-keeping and a final point where it
+  is country, not city, underfoot. The
+  <ansi fg="itemname">road east</ansi>
+  continues beyond sight, toward Greenford and the
+  wider world. The city is behind to the north.
+biome: city
+coord:
+  x: 10
+  y: -70
+  z: 0
+exits:
+  north:
+    roomid: 6256
+nouns:
+  road east: >
+    The road continues past the city's last ground
+    into open country, its surface becoming less
+    certain as the city's maintenance ends. Greenford
+    is a full day's travel east by this road — a
+    substantial journey into wider country. The road
+    goes there. The city does not.
+idlemessages:
+- The wind from the east carries grass-smell and dust
+  and the particular absence of city noise.
+- A traveler pauses here, looking east down the road
+  for a long moment before turning back.
+- The city behind is still audible, but less certain
+  out here — further away than the distance suggests.
