@@ -1,0 +1,83 @@
+mobid: 9488
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Mm? Sorry -- just arrived. Two days from Greenford.
+      Still road-dazed."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Pardon the state of me -- just off the east road."
+  - keywords: ["greenford", "road", "east", "travel",
+      "where", "came", "journey", "from", "trip"]
+    responses:
+      - "Greenford, two days back. Good road -- I've walked
+        worse. The last ford ran a little high but nothing
+        dramatic."
+  - keywords: ["confluence", "here", "city", "arrive", "why",
+      "came", "what", "doing"]
+    responses:
+      - "Wanted to see it for myself. The three rivers, the
+        city at the junction. First look was from the bluff
+        above the Brenn, and yes -- it's what people say."
+  - keywords: [""]
+    responses:
+      - "Ask me again once I've finished this stew."
+tree:
+  root:
+    text: "Two days on the Greenford road and the first thing you
+      want is to sit down and not move. I've made it, though.
+      The Confluence. It's real, which is more than I can say
+      for most of the things people talk about."
+    hints: "You could ask the wayfarer about Greenford and the
+      road east, about what she makes of the Confluence, or
+      about what lies beyond the gate."
+  nodes:
+    - id: greenford
+      triggers: ["greenford", "road", "east", "travel", "where",
+        "from", "came", "journey", "trip", "how", "walk", "long",
+        "far", "distance", "ford", "waystation", "day", "two",
+        "pace", "condition", "state", "good", "bad", "safe"]
+      text: "Good road, two days out. The Road Wardens keep the
+        waystations up -- you're never more than half a day from
+        a roof if you need one. The ford near the end ran a
+        little high when I crossed; the marker said passable and
+        it was, but check it before you wade, especially in
+        spring. Greenford is a decent town. Trade and farming,
+        quieter than here. I've passed through twice before.
+        Both times it felt like stepping into a slightly older
+        world. Not a criticism. Just a thing you notice."
+      hints: "You could ask about what she makes of the
+        Confluence, or about what lies beyond the gate east."
+    - id: confluence
+      triggers: ["confluence", "here", "city", "what", "think",
+        "see", "look", "like", "feel", "three rivers", "arrive",
+        "destination", "why", "came", "reason", "first",
+        "impression", "worth", "trip"]
+      text: "I first saw it from the bluff above the Brenn --
+        three rivers coming together in one place, and a city
+        built right at the junction as if someone looked at the
+        map and said: here, obviously. There's something about a
+        confluence that makes it feel necessary. I've only been
+        here an hour; I'll have more to say in a few days. But
+        the first look was yes. Worth the walk."
+      hints: "You could ask about Greenford and the road, or
+        about what lies beyond the gate east."
+    - id: beyond
+      triggers: ["beyond", "east", "world", "out there",
+        "further", "more", "what's", "lies", "past", "other",
+        "places", "elsewhere", "roads", "far", "seen", "been",
+        "bigger", "larger", "explore", "go", "keep going",
+        "continue", "next", "after", "travel"]
+      text: "Greenford isn't the edge of things. There's road
+        beyond it too, east and north, into country I haven't
+        walked yet. I've talked to people who have. The world
+        gets bigger the further you go, which is both the obvious
+        thing and the thing you don't really understand until
+        you've done some walking. The gate here is as good a
+        starting point as any. I'd say go, if you're thinking
+        about it. The road to Greenford alone is worth the boot
+        leather."
+      hints: "You could ask about Greenford and the road, or
+        about what she makes of the Confluence."

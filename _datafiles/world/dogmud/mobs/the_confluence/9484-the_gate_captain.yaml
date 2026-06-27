@@ -1,0 +1,48 @@
+mobid: 9484
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - road_wardens
+idlecommands:
+  - 'emote steps to the gate archway and runs a practiced eye over
+    the eastbound road, checking the approach the way someone does
+    who has learned that trouble announces itself early if you
+    know where to look.'
+  - ''
+  - 'say If you''re heading to Greenford, road''s clear. Two days
+    at a good pace. Watch the last ford in spring.'
+  - ''
+  - 'emote nods to a pair of travelers coming through the arch,
+    gives them a brief professional assessment, and returns to
+    watching the road without ceremony.'
+  - ''
+activitylevel: 10
+character:
+  name: The Gate Captain
+  description: |
+    The Gate Captain stands at the east arch of the Brennside Gate
+    with the unhurried authority of someone who has been in charge
+    of this threshold long enough to stop finding it interesting
+    and start finding it his. He is a solid man in his middle
+    years, wearing the road-warden tabard over practical clothing,
+    a short sword at his hip more for the look of it than from
+    any recent need. The east road to Greenford runs out behind
+    him, and he knows every waystation and ford between here and
+    there. His Chrysalis-change gave him an unusual stillness: in
+    a crowd of moving people he simply does not move unless he
+    means to, and travelers find their eyes drawn to him without
+    quite knowing why.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    perception:
+      training: 6
+    strength:
+      training: 4

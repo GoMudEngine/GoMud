@@ -1,0 +1,46 @@
+mobid: 9485
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - road_wardens
+idlecommands:
+  - 'emote shifts weight from one foot to the other, settles into
+    a new position against the gate post, and continues watching
+    the road with the patient nothing of a guard who knows her
+    shift doesn''t end for another two hours.'
+  - ''
+  - 'say Coming through? Keep to the left of the arch. Right side
+    is for outbound.'
+  - ''
+  - 'emote gives a departing traveler a brief nod and tucks both
+    hands behind her back, resuming the watchful stillness that
+    is the dominant skill of gate-duty.'
+  - ''
+activitylevel: 10
+character:
+  name: A Gate Guard
+  description: |
+    A Gate Guard stands at the east arch in road-warden tabard and
+    sturdy boots, with the particular stillness of someone who has
+    learned to make hours of standing look effortless. She watches
+    the road with alert, unhurried attention -- not the tense
+    watchfulness of someone expecting trouble, but the practiced
+    calm of someone who will recognize it the instant it appears
+    and knows exactly what to do next. Her Chrysalis-change is a
+    minor thing: she simply does not fatigue from standing, which
+    suits her current posting well enough that she has not
+    requested a different assignment in three years.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    perception:
+      training: 5
+    strength:
+      training: 3

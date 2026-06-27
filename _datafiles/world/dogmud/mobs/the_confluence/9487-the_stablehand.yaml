@@ -1,0 +1,45 @@
+mobid: 9487
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote runs a curry comb down the flank of a dun mule in
+    long, even strokes, working with the calm patience of someone
+    who has found that animals settle when you settle first.'
+  - ''
+  - 'say Easy. Easy. You''re done for the day. Oats in a minute.'
+  - ''
+  - 'emote forks fresh straw into an empty stall, pats the
+    partition post twice like punctuation, and moves to the
+    water bucket to check it.'
+  - ''
+activitylevel: 10
+character:
+  name: The Stablehand
+  description: |
+    The Stablehand works the Brennside stable with the quiet
+    efficiency of someone who prefers animal company to human
+    company and has arranged their working life accordingly. He
+    is a young man, broad across the back from hauling feed sacks,
+    with the unhurried manner of someone whose pace is set by the
+    animals and not the clock. The stable serves road travelers:
+    horses ridden in from Greenford, mules that have pulled supply
+    carts two days and need water, the occasional ox that has done
+    something unforgivable to its owner's nerves along the way.
+    His Chrysalis-change is a thing animals sense before people
+    do: anxious horses steady when he approaches, and mules --
+    notoriously difficult -- follow him with easy docility.
+  speciesid: 1
+  level: 1
+  gold: 4
+  stats:
+    strength:
+      training: 5
+    dexterity:
+      training: 3

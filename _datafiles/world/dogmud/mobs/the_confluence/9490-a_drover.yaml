@@ -1,0 +1,47 @@
+mobid: 9490
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote checks the axle pin on a two-wheel cart, gives it a
+    quarter turn with a small iron key, and slaps the wheel
+    once with his palm to test the give -- satisfied, tucks
+    the key into a coat pocket.'
+  - ''
+  - 'say Get up. Get up, you great slow thing. I want to be in
+    Greenford before the night rate kicks in.'
+  - ''
+  - 'emote re-ties a rope securing a load of crates on the cart
+    bed, tests it twice, looks at it for a moment, then ties
+    it a third time for good measure.'
+  - ''
+activitylevel: 10
+character:
+  name: A Drover
+  description: |
+    A Drover is getting his cart ready to head east toward Greenford
+    with the focused urgency of someone who has decided he is behind
+    schedule and is now working to recover time. He is a big,
+    deliberate man with a mule he appears to be in an ongoing
+    professional disagreement with, and a cart loaded with dry goods
+    for the Greenford market. The Confluence is the western end of
+    his usual run; he makes the return trip every few weeks, knows
+    every pothole between here and there, and has opinions about all
+    of them. His Chrysalis-change makes the work easier in one
+    narrow sense: he can feel when a load is balanced correctly
+    without measuring it, which saves him rechecking every tie
+    at the waystations.
+  speciesid: 1
+  level: 1
+  gold: 6
+  stats:
+    strength:
+      training: 6
+    perception:
+      training: 3
