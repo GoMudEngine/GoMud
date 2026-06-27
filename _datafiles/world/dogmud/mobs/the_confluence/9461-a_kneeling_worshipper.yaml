@@ -1,0 +1,34 @@
+mobid: 9461
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 20
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote kneels at the edge of the iron grate, head bowed,
+    listening to the sound of the rivers beneath.'
+  - ''
+  - 'emote presses both palms flat against the grate, holds them
+    there a moment, then sits back on heels and is still.'
+  - ''
+  - 'emote murmurs something too quiet to catch, lips moving
+    briefly, and returns to silence.'
+  - ''
+activitylevel: 5
+character:
+  name: A Kneeling Worshipper
+  description: |
+    A worshipper kneels at the iron grate over the confluence
+    channel, both hands pressed against the iron, eyes closed.
+    The posture looks settled rather than effortful -- someone
+    who has done this before and knows what she is waiting for.
+  speciesid: 1
+  level: 1
+  gold: 2
+  stats:
+    willpower:
+      training: 3

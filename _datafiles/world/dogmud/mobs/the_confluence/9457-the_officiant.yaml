@@ -1,0 +1,43 @@
+mobid: 9457
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - keepers
+idlecommands:
+  - 'emote turns toward the iron grate in the floor, hands folded,
+    listening to the sound of the three rivers beneath.'
+  - ''
+  - 'say Three rivers, one sound. The rite only names what is
+    already happening beneath your feet.'
+  - ''
+  - 'emote lifts his eyes to the symbol carved above the sanctuary
+    doors, holds them a moment, then returns to the nave unhurried.'
+  - ''
+activitylevel: 10
+character:
+  name: The Officiant
+  description: |
+    The Officiant stands at the crossing where the iron grate lets
+    the sound of the three rivers rise into the nave. He is a
+    Keeper of middling years, broad-shouldered and unhurried, with
+    the settled quality of someone who has presided at ceremonies
+    long enough that the ceremony has entered the body. His robes
+    are pale grey, pressed with care, and his hands rest in a
+    manner that took practice. His Chrysalis-change is subtle: a
+    depth of voice that carries in enclosed stone without effort,
+    as though the hall itself attends him. He uses it only for
+    the rite. In conversation he simply speaks.
+  speciesid: 1
+  level: 1
+  gold: 10
+  stats:
+    charisma:
+      training: 7
+    willpower:
+      training: 4

@@ -1,0 +1,42 @@
+mobid: 9460
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - keepers
+idlecommands:
+  - 'emote portions out candles into small linen bundles at the
+    almonry window, tying each with a length of cord.'
+  - ''
+  - 'say If you need a candle for a prayer, take one. They are
+    not for sale. They are for the purpose.'
+  - ''
+  - 'emote writes in the daily ledger -- stock, distributions,
+    names of those who came to the window this morning -- then
+    sets the pen aside and looks up.'
+  - ''
+activitylevel: 10
+character:
+  name: The Almoner
+  description: |
+    The Almoner keeps the almonry window in the nave's south
+    transept, where the Keepers offer candles, bread, and small
+    remedies to those who need them. She is cheerful in the
+    unhurried way of someone who found a job she was made for,
+    and she does not dress her charity in ceremony. Her
+    Chrysalis-change is modest: she never forgets a face, or the
+    last time she saw it, or what was needed then. She does not
+    mention this. She simply asks the right question.
+  speciesid: 1
+  level: 1
+  gold: 15
+  stats:
+    charisma:
+      training: 6
+    perception:
+      training: 4

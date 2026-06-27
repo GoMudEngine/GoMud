@@ -1,0 +1,86 @@
+mobid: 9457
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Welcome to the great hall. Stand a moment at the grate
+      -- the waters are best heard, not described."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome. The rite is open to all who come. Ask, if you
+        wish to understand it."
+  - keywords: ["water", "waters", "grate", "river", "rivers",
+      "below", "sound", "channel"]
+    responses:
+      - "Three rivers, one water, beneath this floor. The temple
+        was raised to honor the meeting. We keep the rite that
+        marks it."
+  - keywords: [""]
+    responses:
+      - "Ask about the rite, the great hall, or the temple
+        beyond."
+tree:
+  root:
+    text: "I keep the public rite here at the crossing, where the
+      three waters become one beneath the floor. The temple was
+      raised over this meeting, and the meeting is the heart of
+      everything we hold. What did you wish to understand?"
+    hints: "You could ask about the rite and the waters below,
+      about the symbol the temple keeps, or about the temple
+      beyond the sanctuary."
+  nodes:
+    - id: margin_aside
+      questRequired: ["73-end"]
+      triggers: ["symbol", "mark", "fourth", "water", "waters",
+        "count", "margin", "survey", "older", "wrong", "ring",
+        "cocoon", "doubt", "scholar", "disagree", "question",
+        "records", "notation", "stone"]
+      text: "You have the look of someone who has stood in the
+        Scholars' Quarter and listened. I will say it once, here,
+        where the water can hear and no one else: I give the rite
+        as it was given to me. Whether the stone beneath the grate
+        was laid for our meaning or for one we have forgotten -- I
+        am not the one to settle that, and the great hall is not
+        the place to ask it. If you must press it, it is the
+        senior Keepers, in the cloisters, who hold what there is
+        to hold. Not the rite. Not me."
+      hints: "You could ask about the temple beyond the sanctuary,
+        or about the old stone beneath the floor."
+    - id: rite
+      triggers: ["rite", "service", "worship", "ceremony", "pray",
+        "prayer", "grate", "sound", "hall", "crossing", "meeting",
+        "how", "do", "name", "three", "aldren", "brenn", "solt",
+        "rivers"]
+      text: "The rite is simple: we name the three rivers in their
+        old order -- Aldren of the north, Brenn of the east, Solt
+        of the southwest -- and we mark their meeting beneath the
+        floor. The water has done it without us for longer than the
+        temple has stood. We only attend, and say so."
+      hints: "You could ask about the symbol the temple keeps, or
+        about the temple beyond the sanctuary."
+    - id: symbol
+      triggers: ["symbol", "mark", "ring", "cocoon", "chrysalis",
+        "door", "doors", "above", "oldest", "carving", "keystone",
+        "relief"]
+      text: "The ringed mark above the doors -- the sealed soul in
+        its cocoon, the ring of becoming. The earliest rendering of
+        the Chrysalis truth, cut by the first Founders. We treat it
+        as the oldest and truest thing we keep. The Sacristan can
+        show you older still, in the reliquary, if relics interest
+        you."
+      hints: "You could ask about the rite, or about the temple
+        beyond the sanctuary."
+    - id: beyond
+      triggers: ["beyond", "cloister", "cloisters", "undercroft",
+        "beneath", "below", "senior", "deeper", "inner",
+        "sanctuary", "further", "lies", "foundation", "past"]
+      text: "The public temple ends at the sanctuary. Past it lie
+        the cloisters and the archive, kept by the senior Keepers,
+        and the old stone runs deeper than the cloisters -- beneath
+        the floor, beneath the grate, older than the temple raised
+        on it. That depth is not shown to visitors. If your
+        questions run that far, it is the senior Keepers you must
+        satisfy, not the rite."
+      hints: "You could ask about the rite and the waters, or
+        about the symbol the temple keeps."

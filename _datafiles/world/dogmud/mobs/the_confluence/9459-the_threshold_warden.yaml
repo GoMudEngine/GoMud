@@ -1,0 +1,43 @@
+mobid: 9459
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - keepers
+idlecommands:
+  - 'emote stands before the warded door, both hands clasped at
+    the small of his back, weight even, gaze on the nave.'
+  - ''
+  - 'say The cloisters are for the Keepers. The public temple is
+    the nave. This door is where that line is kept.'
+  - ''
+  - 'emote glances at the door behind him, then back to the nave,
+    and resettles his stance without hurry.'
+  - ''
+activitylevel: 10
+character:
+  name: The Threshold Warden
+  description: |
+    The Threshold Warden holds his post at the warded door that
+    divides the public nave from the cloisters beyond. He is built
+    like someone who did harder work before this posting, and his
+    manner is entirely without malice -- polite, firm, and
+    unmoved. He wears the dove-grey of the Keepers with a warden's
+    cord at the shoulder, darker than the nave Keepers'. His
+    Chrysalis-change is a fine one: he can tell, from a visitor's
+    approach alone, whether they mean to ask or to push past. He
+    has never been wrong. He is never hostile about it. He simply
+    speaks first.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    perception:
+      training: 8
+    strength:
+      training: 4
