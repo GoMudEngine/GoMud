@@ -1,5 +1,6 @@
 mobid: 9472
 zone: The Confluence
+schedule_id: cf_baker
 craft_support: general
 behavior_archetype: noncombat_shopkeeper
 non_combatant: true

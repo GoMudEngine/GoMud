@@ -1,0 +1,22 @@
+id: cf_riverman_wife
+description: "The Riverman's Wife keeps the house and works the quarter by day --
+  the market, the doorstep, the lane -- and sleeps at home at night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6243
+    activity: ""
+    idlecommands:
+      - emote mends a net stretched across two stools, fingers moving without
+        her seeming to watch them.
+      - say He's out on the water again. I count the days; the river never
+        does me the same courtesy.
+      - emote steps to the door, looks down the lane toward the quay a moment,
+        then goes back to her work.
+  - start: 22
+    end: 6
+    target_room: 6243
+    activity: sleeping
+    idlecommands:
+      - emote sleeps with the lamp left low in the window, the old habit of a
+        woman whose man comes home off the river at odd hours.

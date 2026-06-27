@@ -1,0 +1,21 @@
+id: cf_baker
+description: "The Baker is at the ovens before dawn, sells through the day, and
+  sleeps in the room behind the bakery once the last loaf is gone."
+segments:
+  - start: 4
+    end: 20
+    target_room: 6238
+    activity: ""
+    idlecommands:
+      - emote slides a long peel into the oven and draws out a row of
+        dark-crusted loaves in one practiced motion.
+      - say Bread's fresh till it isn't. Come early if you want the good crust.
+      - emote dusts flour from both hands and stacks cooling loaves on the
+        rack behind the counter.
+  - start: 20
+    end: 4
+    target_room: 6238
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the warm little room behind the ovens, up again well
+        before the rest of the quarter.
