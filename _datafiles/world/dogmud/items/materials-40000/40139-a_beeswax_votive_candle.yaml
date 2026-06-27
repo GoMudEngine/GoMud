@@ -1,0 +1,16 @@
+itemid: 40139
+name: A Beeswax Votive Candle
+namesimple: candle
+description: >
+  A short, honey-colored candle of pressed beeswax, sold at the
+  votive stalls for pilgrims to light at the temple. It smells
+  faintly of the hive and burns clean.
+type: object
+subtype: mundane
+component_tag: votive-candle
+weight: 0.1
+value: 4
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- alchemy

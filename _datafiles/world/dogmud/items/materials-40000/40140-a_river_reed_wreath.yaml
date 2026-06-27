@@ -1,0 +1,17 @@
+itemid: 40140
+name: A River-Reed Wreath
+namesimple: wreath
+description: >
+  A small circlet woven from the pale reeds that grow along the
+  Confluence's banks, sold to pilgrims to lay at the temple as an
+  offering. The reeds are still faintly green and smell of river
+  water.
+type: object
+subtype: mundane
+component_tag: reed-wreath
+weight: 0.2
+value: 5
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- alchemy
