@@ -24,6 +24,9 @@ exits:
     roomid: 6243
   south:
     roomid: 6242
+spawninfo:
+  - mobid: 9483
+    respawnrate: "20 real minutes"
 idlemessages:
 - Someone calls down from a window above the lane and
   gets no answer from the street.
