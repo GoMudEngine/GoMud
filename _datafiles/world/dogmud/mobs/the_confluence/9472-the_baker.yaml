@@ -1,0 +1,45 @@
+mobid: 9472
+zone: The Confluence
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote draws a fresh loaf from the oven and sets it on the
+    cooling rack, tapping the base to hear the hollow knock.'
+  - ''
+  - 'say Fresh bread this morning. Pastries too, if you want
+    something sweeter.'
+  - ''
+  - 'emote dusts flour from her apron and marks a tally on the
+    board by the door without glancing down.'
+  - ''
+activitylevel: 10
+character:
+  name: The Baker
+  description: |
+    The Baker runs the morning bake on Crafters' Row with
+    the efficient calm of someone who has solved every
+    problem the oven can pose. She keeps dark grain bread
+    and lighter wheat loaves, and fruit pastries when the
+    morning allows -- which is most mornings. Her
+    Chrysalis-change is a baker's gift: she can feel the
+    exact heat inside the oven without opening the door,
+    which means her bread comes out even and her pastries
+    never scorch.
+  speciesid: 1
+  level: 1
+  gold: 55
+  stats:
+    perception:
+      training: 5
+    charisma:
+      training: 4
+  shop:
+    - itemid: 40143
+    - itemid: 40136

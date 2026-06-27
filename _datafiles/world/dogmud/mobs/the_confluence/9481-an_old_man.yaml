@@ -1,0 +1,45 @@
+mobid: 9481
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote leans on the well coping with both arms folded
+    and watches the lane with the settled patience of a
+    man who has nowhere to be and opinions about
+    everything he sees.'
+  - ''
+  - 'say They paved this lane in the old Registrar''s time,
+    and they''ve not touched it since. You can see where
+    the stones have gone.'
+  - ''
+  - 'emote pushes off from the well, walks a short distance
+    down the lane, changes his mind, and comes back to
+    lean against it again.'
+  - ''
+activitylevel: 10
+character:
+  name: An Old Man
+  description: |
+    An Old Man has lived in the residential lane long
+    enough that he remembers two different registrars,
+    the original paving of the street, and the guild
+    dispute that split the cooperage circle in his
+    father's time. He spends most of his days at the
+    well, has opinions about the lane, the city, the
+    ferry schedule, and the price of things, and is
+    prepared to share them with anyone who slows down
+    long enough to hear one.
+  speciesid: 1
+  level: 1
+  gold: 6
+  stats:
+    perception:
+      training: 5
+    charisma:
+      training: 3

@@ -1,0 +1,45 @@
+mobid: 9478
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote leans against the doorframe and looks toward the
+    river end of the lane, then straightens with a small
+    shrug and goes back inside.'
+  - ''
+  - 'say Four days this run. He said three. He always says
+    three.'
+  - ''
+  - 'emote knits steadily without looking at her hands,
+    gaze drifting toward the lane and back to her work.'
+  - ''
+activitylevel: 10
+character:
+  name: The Riverman's Wife
+  description: |
+    The Riverman's Wife lives in the Row and keeps the
+    household going through the long stretches when her
+    husband is out on the river -- which is most weeks
+    and most of the year. She is sharp, funny in a dry
+    way, and has strong opinions about the price of bread
+    and the airs put on by certain people in the Scholars'
+    Quarter. Her Chrysalis-change came on gradually: she
+    now knows when the weather is turning before any
+    cloud appears, which she says is the only useful
+    thing the Blooming has done for her, since it means
+    she knows when to worry about her husband and when
+    not to.
+  speciesid: 1
+  level: 1
+  gold: 15
+  stats:
+    charisma:
+      training: 5
+    perception:
+      training: 4

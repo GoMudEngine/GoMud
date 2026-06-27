@@ -1,0 +1,45 @@
+mobid: 9477
+zone: The Confluence
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote arranges a row of clay pots by size along the
+    counter shelf and steps back to assess the order.'
+  - ''
+  - 'say Craft supplies and storage. If it holds something
+    or works something, I probably have it.'
+  - ''
+  - 'emote unfolds a bolt of cloth on the cutting table,
+    measures a length by arm-span, and folds it back.'
+  - ''
+activitylevel: 10
+character:
+  name: The Craft-Supply Seller
+  description: |
+    The Craft-Supply Seller occupies the end of Crafters'
+    Row with a shop that has something of everything:
+    clay vessels, cloth, small tools, the materials that
+    specialists on the Row sell in greater depth but that
+    most buyers want singly and quickly. He is efficient
+    rather than warm, and his prices are fair rather than
+    generous, which is a reasonable arrangement for a
+    general supplier. His Chrysalis-change is minor and
+    administrative: he never forgets what is in stock.
+  speciesid: 1
+  level: 1
+  gold: 60
+  stats:
+    perception:
+      training: 6
+    charisma:
+      training: 5
+  shop:
+    - itemid: 40144
+    - itemid: 40145

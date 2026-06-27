@@ -1,0 +1,52 @@
+mobid: 9475
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "River cloth and homespun. Which do you need?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Looking for cloth?"
+  - keywords: ["cloth", "fabric", "river", "homespun", "weave",
+      "bolt", "textile", "buy", "what", "have", "price", "cost"]
+    responses:
+      - "River cloth or homespun. River cloth is finer and
+        holds a dye better. Homespun is cheaper and softer."
+  - keywords: [""]
+    responses:
+      - "River cloth and homespun, both in stock. What do
+        you need?"
+tree:
+  root:
+    text: "River cloth or homespun -- those are the two. River
+      cloth is what the city is known for: tighter weave,
+      linen blend, holds color well. Homespun is cheaper
+      and softer if that's what the work calls for. Which?"
+    hints: "You could ask the weaver about the river cloth or
+      the homespun, or use the counter to buy."
+  nodes:
+    - id: river_cloth
+      triggers: ["river", "cloth", "bolt", "linen", "fine",
+        "tight", "weave", "dye", "color", "good", "best",
+        "buy", "price", "cost", "much", "nice", "quality",
+        "better", "known", "city"]
+      text: "River cloth -- named for the Confluence weave
+        tradition. Mixed warp with linen thread blended
+        in for the sheen. Holds a dye better than plain
+        wool and wears longer than you would expect for
+        the weight. Mostly used for better garments and
+        presentation work."
+      hints: "You could ask the weaver about the homespun, or
+        use the counter to buy."
+    - id: homespun
+      triggers: ["homespun", "wool", "plain", "cheap", "soft",
+        "simple", "everyday", "wear", "ordinary", "common",
+        "buy", "price", "cost", "much", "work", "good", "use"]
+      text: "Homespun is plain wool, locally sourced, woven
+        here. Softer than you might expect and cheaper than
+        the river cloth. Good for everyday garments, work
+        wear, anything you want comfortable rather than
+        presentable."
+      hints: "You could ask the weaver about the river cloth,
+        or use the counter to buy."

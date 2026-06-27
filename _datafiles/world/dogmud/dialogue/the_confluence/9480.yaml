@@ -1,0 +1,39 @@
+mobid: 9480
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Morning. Mind you don't get the splash."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Nice one, if you don't mind the wet."
+  - keywords: ["wash", "laundry", "linen", "soap", "work",
+      "what", "doing", "take in", "whose", "all", "row"]
+    responses:
+      - "Half the Row's laundry and some of the houses
+        beyond. Good soap, cold water. Gets it done."
+  - keywords: [""]
+    responses:
+      - "Busy morning. Just passing through?"
+tree:
+  root:
+    text: "Take-in washing for the Row, mostly. Good soap is
+      the whole secret -- that and not being afraid of
+      cold water. Was there something?"
+    hints: "You could ask the washerwoman about her work or
+      about the lane."
+  nodes:
+    - id: work
+      triggers: ["wash", "laundry", "linen", "soap", "work",
+        "take in", "whose", "row", "how", "many", "much",
+        "here", "do", "what", "all", "clean", "scrub",
+        "dry", "wring", "houses", "beyond", "trick", "secret"]
+      text: "Everybody's, more or less -- the Row traders, some
+        of the houses up the lane. I know whose linen I'm
+        handling and I keep it to myself. Mostly. Good soap
+        and cold water is the whole trick. People try to
+        save on the soap and then wonder why it takes all
+        day."
+      hints: "That is about what she knows and will say on
+        the matter."

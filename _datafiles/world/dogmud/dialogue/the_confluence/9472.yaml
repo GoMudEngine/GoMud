@@ -1,0 +1,51 @@
+mobid: 9472
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Bread's fresh. Pastries too, if you want something
+      sweeter. What do you need?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Bread or pastries?"
+  - keywords: ["bread", "loaf", "grain", "wheat", "dark",
+      "fresh", "buy", "what", "have", "cost", "price"]
+    responses:
+      - "Dark grain bread and lighter wheat. Both out of
+        the oven this morning."
+  - keywords: ["pastry", "pastries", "fruit", "sweet",
+      "cake", "bun", "something", "else"]
+    responses:
+      - "Fruit pastries -- stone fruit today. Usually gone
+        by midday."
+  - keywords: [""]
+    responses:
+      - "Bread's on the counter. Pastries too."
+tree:
+  root:
+    text: "Morning bake is done -- dark grain and wheat loaves,
+      fruit pastries on the side shelf. I do the bake
+      every day at the same hour. What do you need?"
+    hints: "You could ask the baker about the bread or
+      the pastries, or use the counter to buy."
+  nodes:
+    - id: bread
+      triggers: ["bread", "loaf", "grain", "dark", "wheat",
+        "what", "have", "buy", "how much", "cost", "price",
+        "much", "kind", "fresh", "today", "morning", "bake"]
+      text: "Dark grain is the staple -- mixed flour, slow
+        bake, keeps well. Lighter wheat if you want
+        something easier on the stomach. I do both every
+        morning, same time. Nothing fancy. Just bread."
+      hints: "You could ask the baker about the pastries, or
+        use the counter to browse and buy."
+    - id: pastry
+      triggers: ["pastry", "pastries", "fruit", "sweet", "cake",
+        "bun", "treat", "stone", "something", "nice", "other"]
+      text: "Fruit pastries, whatever is in season from the
+        market. Stone fruit today. I make them when the
+        bake allows, which is most mornings, and they're
+        gone by midday. You've caught a good hour."
+      hints: "You could ask the baker about the bread, or use
+        the counter to browse and buy."

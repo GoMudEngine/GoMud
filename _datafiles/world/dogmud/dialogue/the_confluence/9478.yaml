@@ -1,0 +1,98 @@
+mobid: 9478
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Davel's been out four days on the river -- three was
+      what he said, which is what he always says. You haven't
+      come from the docks?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "You've got the look of someone who's been walking.
+        Come in if you want to rest your feet."
+  - keywords: ["husband", "davel", "river", "man", "riverman",
+      "where", "gone", "out", "boat", "back"]
+    responses:
+      - "Out on the Aldren run, last I knew. Three days, he
+        said. Four now and counting."
+  - keywords: ["weather", "rain", "storm", "wind", "change",
+      "sky", "coming", "know", "feel", "sense"]
+    responses:
+      - "It'll hold another day, then turn. I can feel it --
+        a Blooming thing. Useful, for once."
+  - keywords: [""]
+    responses:
+      - "No news from the river? Then sit a while. I'm
+        knitting."
+tree:
+  root:
+    text: "My husband Davel is out on the river -- the Aldren
+      run this week, which goes up through the meanders and
+      takes three days when the current is fair and four or
+      five when it isn't. He said three. It's been four.
+      I'm knitting, which is what I do when I'm counting
+      days. Was there something?"
+    hints: "You could ask her about her husband and the river,
+      about life in the quarter and what things cost, about
+      the city and its goings-on, or about the weather she
+      can feel coming."
+  nodes:
+    - id: husband_river
+      triggers: ["husband", "davel", "river", "out", "run",
+        "man", "riverman", "boat", "aldren", "meander",
+        "where", "gone", "long", "when", "back", "worry",
+        "fine", "safe", "days", "how long", "return", "trip"]
+      text: "He's been doing the Aldren run for twelve years.
+        Knows every snag and sandbar. He's fine; I know
+        he's fine. It's just that he said three days and
+        it's been four, and I have this habit of counting.
+        The river is the river -- gives when it gives,
+        holds when it holds. He'll be back, and he'll
+        bring me a river spice and say the current was
+        contrary, and I'll tell him I know, and that'll
+        be that."
+      hints: "You could ask her about life in the quarter, or
+        about the weather she can sense coming."
+    - id: quarter_life
+      triggers: ["quarter", "row", "life", "here", "live",
+        "neighborhood", "bread", "price", "cost", "market",
+        "daily", "day", "usual", "ordinary", "baker",
+        "food", "buy", "expensive", "how", "what", "like"]
+      text: "The Row is fine -- good neighbors, the baker does
+        a proper loaf, the smith's hammer doesn't start till
+        a decent hour. My one complaint is the bread price,
+        which has gone up twice since last autumn and nobody
+        at the hall seems to think this is their concern.
+        The scholars up in their quarter probably don't buy
+        their own bread. It shows."
+      hints: "You could ask her about the city and its affairs,
+        or about her sense of the coming weather."
+    - id: city_scholars
+      triggers: ["city", "scholars", "quarter", "scholar",
+        "temple", "confluence", "think", "say", "news",
+        "going on", "affairs", "hall", "council", "opinion",
+        "view", "airs", "learned", "books", "study", "clever",
+        "what", "think of", "feel about"]
+      text: "I'll tell you what I think of the city: it's a
+        fine place to live and a complicated place to
+        understand, and the scholars in their quarter are
+        welcome to try. The temple can count its rivers
+        however it likes. I count the days till Davel's
+        back. That's the number that matters to me."
+      hints: "You could ask her about the quarter and daily
+        life, or about the weather she can feel."
+    - id: weather_change
+      triggers: ["weather", "rain", "storm", "wind", "change",
+        "sky", "coming", "feel", "know", "blooming",
+        "chrysalis", "sense", "gift", "ability", "how",
+        "useful", "since", "when", "turn"]
+      text: "The Blooming came on gradually, maybe three years
+        ago. I started knowing when the weather was turning
+        before any sign appeared. Not vision, not hearing --
+        just knowing, the way you know when a pan is hot
+        without touching it. It'll turn tomorrow, I think.
+        Bit of rain, then clear. Useful for a riverman's
+        wife -- I'll grant it that."
+      hints: "You could ask her about her husband and the
+        river, or about life in the quarter."

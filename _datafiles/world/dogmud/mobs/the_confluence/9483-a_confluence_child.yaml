@@ -1,0 +1,42 @@
+mobid: 9483
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote hops from one paving stone to the next,
+    carefully avoiding the joins, and arrives at the
+    next section with a look of solemn accomplishment.'
+  - ''
+  - 'say The baker said I could come back later for the
+    heel of the last loaf. That''s almost as good as
+    a pastry.'
+  - ''
+  - 'emote spots something interesting near the base of
+    the wall and crouches to look at it with full
+    concentration.'
+  - ''
+activitylevel: 10
+character:
+  name: A Confluence Child
+  description: |
+    A Confluence Child lives somewhere in the residential
+    lane, has errands to run that take considerably longer
+    than they should, and has discovered that the Row's
+    paving stones have a game in them if you look at
+    them correctly. She is currently on errand time,
+    which she is spending on the game. She will get to
+    the errand.
+  speciesid: 1
+  level: 1
+  gold: 1
+  stats:
+    dexterity:
+      training: 5
+    perception:
+      training: 2

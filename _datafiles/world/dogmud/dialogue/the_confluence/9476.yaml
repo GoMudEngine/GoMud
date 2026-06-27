@@ -1,0 +1,55 @@
+mobid: 9476
+zone: The Confluence
+defaultMood: neutral
+greetings:
+  - text: "Tools and fittings only. I don't do weapons."
+    moods: ["neutral", "friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "What is it? Busy morning."
+  - keywords: ["weapon", "sword", "blade", "knife", "armor",
+      "shield", "fight", "combat"]
+    responses:
+      - "Aldren arm for that. Third forge past the bridge
+        or so. Not my trade."
+  - keywords: ["tool", "hinge", "latch", "fitting", "hook",
+      "iron", "work", "pot", "what", "make", "buy", "hardware"]
+    responses:
+      - "Domestic ironwork. Hinges, pot hooks, barrel hoops,
+        latches. What do you need?"
+  - keywords: [""]
+    responses:
+      - "Tools and hardware. No weapons. What do you need?"
+tree:
+  root:
+    text: "I do tools and fittings -- hinges, pot hooks, barrel
+      hoops, latches, the hardware a household or workshop
+      runs through. No weapons. You want a blade or armor,
+      go up the Aldren arm. What is it?"
+    hints: "You could ask the smith about his ironwork, or
+      where to find weapons and armor."
+  nodes:
+    - id: ironwork
+      triggers: ["tool", "tools", "hinge", "latch", "hook",
+        "hoop", "fitting", "hardware", "iron", "what", "make",
+        "domestic", "buy", "workshop", "household", "barrel",
+        "hook", "pot", "andiron", "have", "stock", "carry"]
+      text: "Hinges, door latches, pot hooks, barrel hoops,
+        andirons, the small stuff a city burns through
+        without noticing. I supply most of the Row and
+        some of the houses beyond. If you know what size
+        you need, say so. Otherwise I'll tell you what
+        is on the bench."
+      hints: "That is about the extent of what he covers.
+        He is busy."
+    - id: weapons_redirect
+      triggers: ["weapon", "sword", "blade", "knife", "dagger",
+        "armor", "shield", "mail", "plate", "fight", "where",
+        "aldren", "arm", "forge", "combat", "smith", "war"]
+      text: "Not my trade. Three forges past the bridge on
+        the Aldren arm -- the second one has the better
+        reputation, but the third is cheaper and nearly
+        as good for plain work. Tell them the Row sent
+        you. Probably won't help but it doesn't hurt."
+      hints: "That is where to go for weapons and armor."

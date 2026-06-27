@@ -1,0 +1,42 @@
+mobid: 9480
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote scrubs a garment against the washboard with
+    vigorous, practiced strokes, then holds it up to
+    check the result.'
+  - ''
+  - 'say Good soap is the whole trick. Bad soap and you
+    can scrub all day and get nowhere.'
+  - ''
+  - 'emote wrings out a length of cloth with both hands,
+    gives it a sharp snap to straighten the weave, and
+    hangs it over the line.'
+  - ''
+activitylevel: 10
+character:
+  name: A Washerwoman
+  description: |
+    A Washerwoman works the communal pump and washlines
+    of the residential lane with the focused efficiency
+    of someone doing a job that does not get done unless
+    you do it. She takes in washing from half the Row
+    and some of the residential houses beyond, knows
+    exactly whose linen she is handling, and keeps her
+    opinions on what she has seen on it largely to
+    herself -- largely.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    vitality:
+      training: 4
+    strength:
+      training: 3
