@@ -17,8 +17,9 @@ idlecommands:
   - 'say Three rivers, one sound. The rite only names what is
     already happening beneath your feet.'
   - ''
-  - 'emote lifts his eyes to the symbol carved above the sanctuary
-    doors, holds them a moment, then returns to the nave unhurried.'
+  - 'emote lifts his eyes north along the nave toward the ringed mark
+    above the great doors, holds them a moment, then returns to the
+    rite unhurried.'
   - ''
 activitylevel: 10
 character:

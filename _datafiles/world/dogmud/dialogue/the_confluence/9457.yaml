@@ -50,7 +50,7 @@ tree:
     - id: rite
       triggers: ["rite", "service", "worship", "ceremony", "pray",
         "prayer", "grate", "sound", "hall", "crossing", "meeting",
-        "how", "do", "name", "three", "aldren", "brenn", "solt",
+        "how", "name", "three", "aldren", "brenn", "solt",
         "rivers"]
       text: "The rite is simple: we name the three rivers in their
         old order -- Aldren of the north, Brenn of the east, Solt
@@ -81,6 +81,9 @@ tree:
         the floor, beneath the grate, older than the temple raised
         on it. That depth is not shown to visitors. If your
         questions run that far, it is the senior Keepers you must
-        satisfy, not the rite."
+        satisfy. If they are the kind the Keepers should hear, tell
+        me -- I keep the rite and the order's public face, and I
+        will decide whether to send word to the cloisters on your
+        behalf. It is not a quick process, but it is the way."
       hints: "You could ask about the rite and the waters, or
         about the symbol the temple keeps."
