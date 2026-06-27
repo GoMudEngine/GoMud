@@ -1,0 +1,41 @@
+mobid: 9471
+zone: The Confluence
+behavior_archetype: generic_fighter
+archetype: fighting
+hostile: false
+statpool: 100
+itemdropchance: 0
+maxwander: 0
+groups:
+  - construct
+activitylevel: 8
+idlecommands:
+  - 'emote stands motionless in the gallery, a figure of fitted pre-Founding
+    stone, and does not acknowledge you.'
+  - ''
+  - 'emote shifts its weight a single degree, stone grinding on stone, tracking
+    movement it was set here to track.'
+  - ''
+  - 'emote faces the head of the descending stair, as it has faced it for longer
+    than the temple has stood.'
+  - ''
+character:
+  name: The Ward of the Deep
+  description: |
+    A guardian of fitted grey stone in the rough shape of a robed figure,
+    set into the gallery where the stair goes down. It is older than the
+    temple and answers to nothing the temple teaches -- a ward left by the
+    builders of the deep to keep their threshold. It does not pursue. It
+    does not speak. It permits the quiet and rouses against the forceful,
+    and it has stood here long enough to have forgotten it was ever told
+    why. Whatever moves it is slow, and very strong, and does not tire.
+  speciesid: 1
+  level: 1
+  gold: 0
+  stats:
+    vitality:
+      training: 12
+    strength:
+      training: 9
+    dexterity:
+      training: 3
