@@ -30,6 +30,21 @@ tree:
       about the symbol the temple keeps, or about the temple
       beyond the sanctuary."
   nodes:
+    - id: q74_admit
+      questRequired: ["73-end"]
+      questExcluded: ["74-start", "74-end"]
+      triggers: ["deeper", "cloister", "cloisters", "senior",
+        "keeper", "keepers", "beyond", "further", "undercroft",
+        "cael", "word", "admit"]
+      text: "You have followed this further than most, and the
+        senior Keepers know it -- I have sent word. They will not
+        turn you back at the door now. Go through to the cloisters,
+        beyond the warded door off the great hall, and ask for
+        Brother Cael in the Archive. He keeps the building records.
+        If anyone will show you what the temple was raised on, it
+        is him."
+      hints: "You could go through the warded door to the cloisters
+        and ask Brother Cael in the Archive about the records."
     - id: margin_aside
       questRequired: ["73-end"]
       triggers: ["symbol", "mark", "fourth", "water", "waters",
