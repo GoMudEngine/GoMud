@@ -6,8 +6,9 @@ description: >
   stair — wide columns of pale river-stone, a deep
   shaded overhang, and between them the
   <ansi fg="itemname">great-doors</ansi>
-  of the temple, shut against the day. Cut into the
-  keystone above the doors, plainly visible from the
+  of the temple, standing open through the day onto the
+  nave within. Cut into the keystone above the doors,
+  plainly visible from the
   top of the stair, the
   <ansi fg="itemname">weathered-symbol</ansi>
   is older than the portico around it — a four-ring
@@ -26,6 +27,8 @@ coord:
 exits:
   north:
     roomid: 6166
+  south:
+    roomid: 6168
 nouns:
   weathered-symbol: >
     The four-ring orbital mark cut into the keystone
@@ -39,15 +42,15 @@ nouns:
     cocoon — set here by the first Founders. The stone
     it is cut into does not volunteer the same date.
   great-doors: >
-    The great doors of the Confluence temple are shut
-    and barred from within. Their timber is old and
-    bound with iron fittings, the wood darkened to
-    near-black by years under the overhang. A brass
-    panel to one side reads, in the Keepers' formal
-    hand, that the public temple is not accessible
-    from this approach — pilgrims are directed to the
-    processional entrance on the island's far side.
-    The doors give nothing else away.
+    The great doors of the Confluence temple stand open
+    through the day, folded back against the portico's
+    inner wall so the cool of the nave reaches the top
+    of the stair. Their timber is old, bound with iron
+    fittings darkened near to black by years under the
+    overhang. By day they are an invitation, the way in
+    to the public temple; the Keepers bar them from
+    within only after the last rite, when the temple is
+    given back to the water and the dark.
 spawninfo:
   - mobid: 9454
     respawnrate: "20 real minutes"
