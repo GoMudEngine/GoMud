@@ -1,0 +1,38 @@
+roomid: 6252
+zone: The Confluence
+title: The Travelers' Inn
+description: >
+  A low-eaved building facing the east gate road, its
+  sign a painted boot above the door — the universal
+  language of a house for travelers. The Travelers'
+  Inn sits between the gate to the north and the
+  common room to the south, with a stable entrance
+  east for those arriving mounted or by cart. It is
+  the kind of inn that has been here long enough to
+  have a reputation among road traffic: not luxurious,
+  but clean and reliable, and the keeper knows which
+  rooms face the road and which face the quiet yard.
+biome: city
+coord:
+  x: 9
+  y: -68
+  z: 0
+exits:
+  north:
+    roomid: 6249
+  south:
+    roomid: 6254
+  east:
+    roomid: 6255
+spawninfo:
+  - mobid: 9486
+    respawnrate: "20 real minutes"
+  - mobid: 9488
+    respawnrate: "20 real minutes"
+idlemessages:
+- The inn's boot sign turns in the draft from the
+  gate road, creaking on its bracket.
+- A traveler stops in front of the inn, looks up at
+  the sign, and goes in.
+- The smell of cooking comes from somewhere behind
+  the inn's south wall — the common room, most likely.

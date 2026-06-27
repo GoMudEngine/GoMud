@@ -1,0 +1,51 @@
+mobid: 9489
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - quayfolk
+idlecommands:
+  - 'emote sorts through a morning catch with practiced hands,
+    flipping each fish to gauge weight, setting aside the larger
+    ones with the decisive efficiency of someone who does not
+    waste time on uncertainty.'
+  - ''
+  - 'say East landing gets the Brenn current in the morning.
+    Better for the net than the main quay -- fewer barges to
+    tangle in.'
+  - ''
+  - 'emote rolls up a length of net on one forearm with smooth
+    circular motions, checks the mesh once for tears, and sets
+    it aside with the confidence of someone who knows their
+    gear.'
+  - ''
+activitylevel: 10
+character:
+  name: A Brennside Fisher
+  description: |
+    A Brennside Fisher works the east landing every morning with
+    the early-rising contentment of someone who chose this life
+    deliberately and has not regretted it. He is a wiry man with
+    the deeply calloused hands of someone who has been hauling
+    nets since he was young, and the particular calm of a person
+    whose days are organized by tides and currents rather than
+    clocks and appointments. The east-bank landing draws less
+    traffic than the Long Quay, which suits him: fewer barges
+    mean cleaner net runs, and the Brenn current in the morning
+    is reliable. His Chrysalis-change is the fisher's gift taken
+    one step further -- he can feel where the fish are, a low
+    pressure at the edge of his awareness, and he has not come
+    home empty-handed since.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    perception:
+      training: 6
+    dexterity:
+      training: 4

@@ -1,0 +1,31 @@
+roomid: 6256
+zone: The Confluence
+title: The Drying Flats
+description: >
+  The land east of the travelers' inn where the river-
+  country begins to lose its city manners — the paving
+  gives way to compacted earth, the buildings thin out,
+  and the scrub at the margins has a drier quality than
+  the river-damp of the inner city. It is used for
+  airing and spreading, the domestic and merchant
+  labor that requires flat open ground without roof:
+  drying nets, laying goods out in the sun, stretching
+  hides. The city's edge draws close to the south;
+  the inn is back to the west.
+biome: city
+coord:
+  x: 10
+  y: -69
+  z: 0
+exits:
+  west:
+    roomid: 6254
+  south:
+    roomid: 6257
+idlemessages:
+- Fishing nets are spread across the flat ground here,
+  drying in the afternoon air.
+- A merchant has laid goods out in the sun, walking
+  slowly along the rows checking each item.
+- The city noise drops off noticeably here — the east
+  quarter thins out quickly past the inn.

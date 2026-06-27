@@ -1,0 +1,80 @@
+mobid: 9486
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Come in out of the road. Meal, a drink, or a room
+      for the night?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "In you come. What can I get you?"
+  - keywords: ["food", "eat", "meal", "stew", "bread", "broth",
+      "kitchen", "hungry", "what", "have", "serve", "menu",
+      "cook", "buy", "get"]
+    responses:
+      - "Travelers' stew, river broth, and black bread. Stew's
+        been going since early morning -- best thing I make."
+  - keywords: ["room", "stay", "bed", "night", "lodging", "sleep",
+      "rent", "price", "cost", "how much"]
+    responses:
+      - "Rooms by the night, reasonable rates. Beds are clean
+        and the shutters keep the road noise out after dark."
+  - keywords: [""]
+    responses:
+      - "Meal, a drink, or a room. What do you need?"
+tree:
+  root:
+    text: "The Travelers' Inn -- been here as long as the east gate.
+      Road travelers mostly: merchants bound to or from Greenford,
+      pilgrims arriving at the Confluence, the odd road warden on
+      a cold patrol. Sit down. What can I get you?"
+    hints: "You could ask the innkeeper about the food she serves,
+      about rooms for the night, or about who passes through the
+      the Travelers' Inn."
+  nodes:
+    - id: food
+      triggers: ["food", "eat", "meal", "stew", "bread", "broth",
+        "kitchen", "hungry", "what", "have", "serve", "menu",
+        "cook", "morning", "buy", "get", "order",
+        "taste", "good", "fresh", "recommend", "travelers"]
+      text: "Travelers' stew is the house dish -- whatever came
+        in from the farms and the fish landing, cooked long with
+        salt and a little pepper. Sets you up for the road or
+        settles you after it, which is all a road inn really
+        needs to do. River broth if you want something lighter;
+        black bread baked this morning. I keep the kitchen
+        simple: good food, reliable, enough of it. You'll leave
+        satisfied or I've done something wrong."
+      hints: "You could ask the innkeeper about rooms, or about
+        who passes through the Arms."
+    - id: rooms
+      triggers: ["room", "stay", "bed", "night", "lodging",
+        "sleep", "rent", "price", "cost", "much", "rate",
+        "rest", "how long", "week", "accommodation", "where"]
+      text: "Rooms upstairs -- nothing fancy, but clean and quiet
+        once the road noise settles in the evening. East-facing
+        rooms get the morning light over the Brenn, which some
+        travelers prefer. West-facing rooms are darker but
+        warmer. Most of my guests are one- or two-nighters: road
+        travelers don't linger, which is the nature of the trade.
+        I've made my peace with arrivals and departures."
+      hints: "You could ask the innkeeper about the food she
+        serves, or about who passes through."
+    - id: travelers
+      triggers: ["traveler", "travelers", "who", "guest", "guests",
+        "passes", "comes", "greenford", "pilgrim",
+        "merchant", "see", "through", "people", "tell",
+        "hear", "know", "usual", "sorts", "recently",
+        "lately", "traffic", "road"]
+      text: "All sorts. Greenford merchants heading to the markets
+        here, pilgrims who've come the long way around and
+        arrived at the east gate instead of the river landing,
+        road wardens stopping in on cold mornings, the occasional
+        family with a cart full of everything they own moving
+        one direction or the other. You get a feel for people
+        watching them walk through that door. The ones who've had
+        a good journey and the ones who haven't. Both groups need
+        the same thing, more or less."
+      hints: "You could ask the innkeeper about the food she
+        serves, or about rooms for the night."

@@ -1,0 +1,22 @@
+id: cf_stablehand
+description: "The Stablehand works the inn's stable through the day with the
+  travelers' animals, then sleeps in the loft above them."
+segments:
+  - start: 5
+    end: 21
+    target_room: 6255
+    activity: ""
+    idlecommands:
+      - emote forks fresh straw into a stall and runs a hand down a tired
+        mule's flank, checking it over out of habit.
+      - say Leave the beast with me and it'll be fed, watered, and sounder than
+        you left it. Carts round the side.
+      - emote hauls a saddle up onto the rail and sets to the girth-straps with
+        a rag and a tin of grease.
+  - start: 21
+    end: 5
+    target_room: 6255
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the loft over the stalls, where the warmth of the
+        animals comes up through the boards.

@@ -1,0 +1,35 @@
+roomid: 6246
+zone: The Confluence
+title: The Brenn Bridge, West End
+description: >
+  The civic bridge over the Brenn begins here at the
+  east edge of the city, where the cobbled lane from
+  the Three Waters gives way to the bridge's broad
+  stone. It is a working bridge — built for carts and
+  cattle and loaded wagons, without the ceremony of
+  the temple causeway to the south — iron railings
+  rather than carved stone, the surface worn to a
+  practical smoothness by years of use. The Brenn
+  opens beneath the first arches to the east, the
+  eastern river brown and deliberate, wider here than
+  it looks from the civic bank. The city is behind
+  to the west; the far bank waits ahead.
+biome: city
+coord:
+  x: -3
+  y: -67
+  z: 0
+exits:
+  west:
+    roomid: 6146
+  east:
+    roomid: 6247
+idlemessages:
+- A carter steadies her horse at the bridge entrance,
+  the animal hesitant at the hollow ring of hooves
+  on stone over water.
+- The bridge's iron railings are chipped at hand-
+  height where travelers have gripped them crossing
+  over the years.
+- A fisherman below the first arch resets a line
+  without looking up.

@@ -1,0 +1,34 @@
+roomid: 6251
+zone: The Confluence
+title: The Brennside Wharf
+description: >
+  The east bank's working waterfront, a short stretch
+  of timber-planked wharf running along the Brenn's
+  right bank north of the gate. It handles lighter
+  traffic than the great quays on the civic side —
+  local boats, fishing craft, the occasional river
+  trader who prefers the quieter east approach. The
+  water is close here; the smell is fish and rope
+  and the river-specific scent of wet timber drying
+  in the sun. The eastern landing is further along
+  the bank to the east; the gate is south.
+biome: city
+coord:
+  x: 9
+  y: -66
+  z: 0
+exits:
+  south:
+    roomid: 6249
+  east:
+    roomid: 6253
+spawninfo:
+  - mobid: 9489
+    respawnrate: "20 real minutes"
+idlemessages:
+- A fisherman pushes off from the wharf in a narrow
+  flat-bottomed boat, heading upstream without hurry.
+- The planking underfoot is worn in the paths of
+  habitual use — the same routes, day after day.
+- A tern drops on the river beyond the wharf's edge,
+  rises again with nothing.

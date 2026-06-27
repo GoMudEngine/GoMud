@@ -1,0 +1,84 @@
+mobid: 9484
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Passing through or arriving? Either way, you've found
+      the Brennside Gate. Anything I can help you with?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Gate Captain. You need something?"
+  - keywords: ["gate", "east", "arch", "here", "brennside",
+      "where", "what", "crossing"]
+    responses:
+      - "Brennside Gate -- east crossing. Road to Greenford
+        starts right here. Two days if you pace yourself."
+  - keywords: ["greenford", "road", "travel", "distance",
+      "how far", "way", "direction", "safe", "danger", "ford"]
+    responses:
+      - "Good road all the way. Two days at a decent pace. The
+        last ford, maybe three hours from Greenford, runs high
+        in spring -- check it before you commit."
+  - keywords: [""]
+    responses:
+      - "Anything you need for the road?"
+tree:
+  root:
+    text: "Brennside Gate, east crossing. Road to Greenford runs
+      out from here -- two days' travel, decent road, one ford
+      to watch near the end. Anything you need before you head
+      out, ask now."
+    hints: "You could ask the Gate Captain about the road east
+      to Greenford, about the gate and his work here, or about
+      the Brennside quarter."
+  nodes:
+    - id: road
+      triggers: ["greenford", "road", "east", "travel",
+        "how far", "distance", "walk", "way", "safe", "ford",
+        "danger", "go", "waystation", "out", "pace",
+        "two days", "far", "beyond", "outside", "leave",
+        "depart", "heading", "bound", "get to"]
+      text: "Two days to Greenford at a good pace. Waystations at
+        the half-day and day marks if you need to stop -- Road
+        Wardens maintain them, so there's a roof and a fire.
+        Road's hard-packed trade road the whole way; we keep
+        the stretch between here and Greenford, so bandits
+        aren't a recent concern. The last ford, about three
+        hours out from Greenford, runs high in spring -- check
+        the marker before you wade it. Rest of the road is
+        straightforward. Greenford is trade and farming mostly.
+        Different feel from the Confluence but a decent town."
+      hints: "You could ask the Gate Captain about the gate
+        itself, or about the Brennside quarter."
+    - id: gate_duty
+      triggers: ["gate", "duty", "captain", "warden",
+        "road wardens", "guard", "job", "work", "your",
+        "what do", "responsible", "watch", "check",
+        "in charge", "run", "manage", "here"]
+      text: "I run the east gate -- who comes through, when,
+        whether they're carrying anything that needs to be
+        declared. Most days it's merchants and travelers and I
+        wave them through without a second look. Occasionally
+        someone tries to move something that belongs to someone
+        else, and then it gets more interesting. Road Wardens
+        hold the stretch east from here; my job is the
+        threshold itself. I've been doing it long enough that
+        the gate feels like mine, which I suppose it is by now."
+      hints: "You could ask the Gate Captain about the road
+        east, or about the Brennside quarter."
+    - id: quarter
+      triggers: ["brennside", "quarter", "east bank",
+        "district", "neighborhood", "area", "find",
+        "inn", "stable", "market", "side", "around", "what's"]
+      text: "Brennside is the east-bank quarter -- the travelers'
+        district, if you want to call it that. The inn is back
+        along the main street: Brennside Arms, solid place, good
+        kitchen. Stables down the way if you've got a horse or
+        mule that needs rest. The fish landing is down at the
+        waterfront -- smaller than the Long Quay but the catch
+        is just as good. If you're staying, the inn's the right
+        first stop. If you're heading out, you've already found
+        the gate."
+      hints: "You could ask the Gate Captain about the road
+        east, or about his duty here at the gate."

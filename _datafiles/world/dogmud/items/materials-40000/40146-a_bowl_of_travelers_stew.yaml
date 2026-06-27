@@ -1,0 +1,17 @@
+itemid: 40146
+name: A Bowl of Travelers' Stew
+namesimple: stew
+description: >
+  A thick, no-nonsense stew from the travelers' inn at the east
+  gate -- whatever the kitchen had, cooked long and salted well,
+  the kind of meal that sets a body up for the road to Greenford
+  or settles one come off it.
+type: object
+subtype: mundane
+component_tag: cooked-meal
+weight: 0.4
+value: 5
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking

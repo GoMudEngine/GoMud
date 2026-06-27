@@ -1,0 +1,51 @@
+roomid: 6249
+zone: The Confluence
+title: The East Gate
+description: >
+  The east gate of the Confluence, a wide arch of
+  dressed stone where the road from the Brenn bridge
+  passes through the city wall and continues east
+  toward open country. Gate guards keep the passage
+  here — recording carts and noting travelers, working
+  through the day without particular urgency. The road
+  from the bridge comes in from the west; the way east
+  through the
+  <ansi fg="itemname">gate-arch</ansi>
+  runs toward Greenford and the wider world. The
+  Brennside wharf is a short walk north; the travelers'
+  inn is to the south.
+biome: city
+coord:
+  x: 9
+  y: -67
+  z: 0
+exits:
+  west:
+    roomid: 6248
+  east:
+    roomid: 6250
+  north:
+    roomid: 6251
+  south:
+    roomid: 6252
+nouns:
+  gate-arch: >
+    The arch in the city's east wall, dressed stone
+    with the Confluence's crest at the keystone, wide
+    enough for a laden cart. Through it the road
+    continues east, the paving running level past
+    the wall toward open country and the distant town
+    of Greenford. The gate stands open, as the east
+    gate has stood since the city was young.
+spawninfo:
+  - mobid: 9484
+    respawnrate: "20 real minutes"
+  - mobid: 9485
+    respawnrate: "20 real minutes"
+idlemessages:
+- A gate guard nods a traveler through, marking
+  something in a ledger without breaking pace.
+- A farmer's cart comes in from the east, the driver
+  calling the load without being asked.
+- The guards at the east gate change shift without
+  ceremony, one set of eyes replacing another.

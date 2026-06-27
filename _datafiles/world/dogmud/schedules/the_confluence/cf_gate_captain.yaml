@@ -1,0 +1,22 @@
+id: cf_gate_captain
+description: "The Gate Captain keeps the east gate through the day, watching the
+  Greenford road, then stands the gate down and sleeps by it at night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6249
+    activity: ""
+    idlecommands:
+      - emote looks east down the Greenford road a long moment, reading the
+        traffic on it the way a captain reads a duty he has held for years.
+      - say Road's open to Greenford. Two days, decent going. Mind the last
+        ford; it runs higher than it looks.
+      - emote checks a carter's load with a glance and waves it through the
+        arch without breaking stride.
+  - start: 22
+    end: 6
+    target_room: 6249
+    activity: sleeping
+    idlecommands:
+      - emote dozes in the gate-house with the bar down, half-listening for the
+        road the way old gate-keepers never quite stop doing.

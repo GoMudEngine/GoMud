@@ -21,7 +21,9 @@ description: >
   bar. A broad
   <ansi fg="itemname">stair</ansi>
   climbs from the east corner to the lodging rooms
-  above.
+  above. A low door beside the stair lets out east —
+  the lane runs toward the Brenn bridge and the east
+  quarter beyond.
 biome: city
 coord:
   x: -4
@@ -36,6 +38,8 @@ exits:
     roomid: 6147
   up:
     roomid: 6148
+  east:
+    roomid: 6246
 nouns:
   hearth: >
     A stone hearth deep enough to burn a full round of

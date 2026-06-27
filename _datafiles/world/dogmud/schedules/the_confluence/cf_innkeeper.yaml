@@ -1,0 +1,22 @@
+id: cf_innkeeper
+description: "The Innkeeper keeps the travelers' inn from early through late, feeding
+  road-weary comers and goers, then sleeps behind the common room."
+segments:
+  - start: 5
+    end: 23
+    target_room: 6252
+    activity: ""
+    idlecommands:
+      - emote sets a bowl of stew and a heel of bread at the end of the long
+        table without being asked.
+      - say Bed, board, and a fire that's actually lit. More than the road gives
+        you. Sit where you like.
+      - emote wipes down the counter and glances at the door as each new
+        traveler ducks in out of the weather.
+  - start: 23
+    end: 5
+    target_room: 6252
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the small room behind the common hearth, the fire
+        banked and the door on the latch for late arrivals.

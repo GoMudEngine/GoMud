@@ -1,0 +1,33 @@
+roomid: 6255
+zone: The Confluence
+title: The Stable
+description: >
+  The inn's stable, a long building east of the inn
+  proper, its wide doors kept open during trading
+  hours. Stalls line both sides, most occupied by road
+  horses and pack animals — the stock of travelers who
+  came in by the east gate and will leave by it again
+  in the morning. The smell is hay and horse and clean
+  straw, managed by a stablehand who keeps the place
+  in the methodical order of someone who knows that
+  an unhappy animal causes more trouble than a tidy
+  stall saves. A tack wall runs the far end, hung with
+  harness in various stages of repair.
+biome: city
+coord:
+  x: 10
+  y: -68
+  z: 0
+exits:
+  west:
+    roomid: 6252
+spawninfo:
+  - mobid: 9487
+    respawnrate: "20 real minutes"
+idlemessages:
+- A horse in the nearest stall turns its head as you
+  enter, assessing you briefly, then loses interest.
+- The stablehand moves through the stalls with the
+  pace of someone working a reliable routine.
+- The hay smell is strong in here — clean and dry,
+  recently refreshed.

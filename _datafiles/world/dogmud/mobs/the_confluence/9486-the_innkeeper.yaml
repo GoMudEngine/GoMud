@@ -1,0 +1,54 @@
+mobid: 9486
+zone: The Confluence
+schedule_id: cf_innkeeper
+craft_support: cooking
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote carries a covered pot from the back kitchen to the
+    serving counter with the easy economy of someone who has
+    made this exact trip several hundred times and found the
+    most efficient path for it.'
+  - ''
+  - 'say Stew''s fresh this morning. Road travelers always ask,
+    and the answer''s always yes, and somehow this still seems
+    to come as pleasant news.'
+  - ''
+  - 'emote wipes down the bar top with a cloth, pauses to
+    straighten the salt crock, and tucks the cloth into her
+    belt with the finality of someone who finds this corner
+    of the world now properly arranged.'
+  - ''
+activitylevel: 10
+character:
+  name: The Innkeeper
+  description: |
+    The Innkeeper runs the Travelers' Inn from behind a bar that
+    has seen more travelers than she could count -- Greenford
+    merchants heading west, pilgrims arriving at the Confluence,
+    road wardens stopping in for something warm before the next
+    patrol. She is a compact, brisk woman with gray-streaked hair
+    and the manner of someone who has no patience for drama but
+    considerable patience for tired people who need a meal and a
+    place to sit down. Her Chrysalis-change is a warmth in the
+    hands -- literally: she never burns herself on the cookware,
+    and the bread she sets out stays warm longer than it ought to,
+    which guests appreciate more than they realize.
+  speciesid: 1
+  level: 1
+  gold: 25
+  stats:
+    charisma:
+      training: 6
+    perception:
+      training: 4
+  shop:
+    - itemid: 40146
+    - itemid: 40135
+    - itemid: 40136

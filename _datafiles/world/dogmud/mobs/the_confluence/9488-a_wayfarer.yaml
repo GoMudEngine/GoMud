@@ -1,0 +1,48 @@
+mobid: 9488
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote sets a battered leather pack against the inn wall,
+    rolls her neck twice, and orders a bowl of stew with the
+    tone of someone who has been planning this specific bowl
+    for approximately two days.'
+  - ''
+  - 'say Two days on the Greenford road and you start having
+    opinions about cobblestones. The Confluence''s are better.
+    I appreciate that now.'
+  - ''
+  - 'emote wraps both hands around a bowl of broth and stares
+    at the middle distance with the satisfied vacancy of someone
+    who has arrived and is not yet prepared to think about what
+    happens next.'
+  - ''
+activitylevel: 10
+character:
+  name: A Wayfarer
+  description: |
+    A Wayfarer has arrived at the Brennside Arms with the road-
+    worn look of someone two days out from Greenford: boots scuffed
+    to the ankle, a pack that has been repacked several times
+    along the way, and the particular tired contentment of someone
+    who has made it. She is a compact woman somewhere in her
+    thirties, with the self-contained manner of a person accustomed
+    to moving alone. Her Chrysalis-change is a subtle thing: she
+    always knows which direction is east, not by the sun but by
+    something inside her that simply points and is always right.
+    She finds this useful on the road and faintly disorienting in
+    cities, where east is not always the direction that matters.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    perception:
+      training: 5
+    dexterity:
+      training: 4

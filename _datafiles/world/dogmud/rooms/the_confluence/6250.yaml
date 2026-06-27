@@ -1,0 +1,40 @@
+roomid: 6250
+zone: The Confluence
+title: The Greenford Road
+description: >
+  The paved road running east out of the Confluence,
+  the gate arch behind to the west, the country opening
+  ahead. This is the first stretch of the Greenford
+  road beyond the city wall — the paving is maintained
+  here, firm and even, kept by the same guild that
+  tends the city's other arteries. A stone
+  <ansi fg="itemname">milestone</ansi>
+  stands at the road's edge, marking distance and
+  direction. The road continues east into open country,
+  toward the town of Greenford a full day's travel
+  away. The world is larger than the city, and the
+  road goes there.
+biome: city
+coord:
+  x: 10
+  y: -67
+  z: 0
+exits:
+  west:
+    roomid: 6249
+nouns:
+  milestone: >
+    A dressed stone cylinder at the road's edge, its
+    face carrying two incised lines: GREENFORD, and
+    below it a distance in league-marks. The stone is
+    old, its edges weathered, but the letters are
+    clear enough. Beyond this marker the road runs
+    into open country — it is a long walk, and people
+    who travel it prepare first.
+idlemessages:
+- The paving runs east from the gate, firm and even,
+  the road's first stretch out of the city well kept.
+- A traveler at the milestone traces the letters with
+  a finger, calculating distance.
+- The country air comes in from the east here, drier
+  and more open than the river-smell of the city.
