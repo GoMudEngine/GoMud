@@ -1,0 +1,54 @@
+mobid: 9443
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - margin
+idlecommands:
+  - 'emote unrolls two charts side by side on the drafting board,
+    weights the corners with river stones, and begins marking reference
+    points on a tissue sheet laid over the older of the two.'
+  - ''
+  - 'say The Aldren bends at the ford more than the Pell survey shows.
+    Either the ford has shifted or Pell was working from a dry-season
+    reading. Both are possible and only one of them matters for the
+    comparison.'
+  - ''
+  - 'emote traces the junction notation on the older chart with a dry
+    stylus, comparing it point by point against the newer survey
+    without touching either surface.'
+  - ''
+activitylevel: 10
+character:
+  name: Riss the Cartographer-Scholar
+  description: |
+    Riss the Cartographer-Scholar works in the Cartographers' Room
+    of the Scholars' Quarter with two large drafting boards, a
+    collection of historical surveys pinned and weighted around the
+    room, and a patience for discrepancy she regards as a professional
+    necessity. Her specific interest is in what happens when
+    independent surveys of the same area disagree -- how the error
+    propagated, where it originated, whether the disagreement records
+    a genuine change in the subject rather than a copying fault. The
+    junction surveys are her primary work at present. She is the
+    Margin member most directly responsible for the fourth-water
+    question, and she is careful about terms: it is an open question,
+    not a discovery. Her Chrysalis-change is spatial and eidetic. She
+    can reproduce any map she has studied with geometric accuracy,
+    working from memory, at any scale, without measurable distortion.
+    She uses this for verification rather than drafting -- it lets
+    her compare a remembered survey against a physical chart without
+    needing both on the same table at the same time.
+  speciesid: 1
+  level: 1
+  gold: 6
+  stats:
+    perception:
+      training: 8
+    willpower:
+      training: 4

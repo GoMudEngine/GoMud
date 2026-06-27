@@ -1,0 +1,52 @@
+mobid: 9444
+zone: The Confluence
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote straightens a stack of bound folios on the display shelf,
+    squaring the corners against the edge of the board with small
+    precise movements.'
+  - ''
+  - 'say The Confluence History is the most complete single volume on
+    the founding period. If you want primary sources, you are in the
+    wrong building -- try the archive upstairs.'
+  - ''
+  - 'emote dusts the cover of an old water-stained chart pinned to
+    the wall above the shelf and returns to sorting the new-arrivals
+    stack.'
+  - ''
+activitylevel: 10
+character:
+  name: Drunn the Bookseller
+  description: |
+    Drunn the Bookseller runs a small shop in the Scholars' Quarter
+    that sells history volumes, reference folios, copied texts, and
+    the occasional antiquarian chart to scholars, students, and
+    anyone who has wandered in out of curiosity. He is not a member
+    of the Margin himself but the society's scholars make up the
+    majority of his trade, and he knows the difference between a
+    serious research inquiry and someone who wants something to put
+    on a shelf. He stocks accordingly. The old water-stained chart
+    on the wall behind the counter is not for sale -- it has been
+    there since he bought the shop, it arrived damaged, and the
+    scholars come to squint at it periodically, which he permits.
+    His Chrysalis-change is mild: he senses which book a browser
+    will buy before they have decided themselves. He finds this
+    useful for restocking and does not mention it to customers.
+  speciesid: 1
+  level: 1
+  gold: 40
+  stats:
+    perception:
+      training: 5
+    charisma:
+      training: 7
+  shop:
+    - itemid: 40137

@@ -1,0 +1,79 @@
+mobid: 9442
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "The archive is open during daylight hours. Are you here for
+      the collection or to speak with me?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Fenn. I keep the archive. What do you need?"
+  - keywords: ["survey", "document", "chart", "record", "find",
+      "access", "see", "consult", "look"]
+    responses:
+      - "The surveys are organized by date and waterway. Tell me what
+        you are looking for and I can tell you whether we have it.
+        Not everything is available for general handling."
+  - keywords: [""]
+    responses:
+      - "Ask me about the archive, the collection, or the Margin's
+        source surveys."
+tree:
+  root:
+    text: "I keep the Great Archive for the Margin. Source surveys,
+      pilot records, natural-history folios -- the primary materials
+      the Margin has accumulated since the society was founded. What
+      did you want to know?"
+    hints: "You could ask Fenn about the archive and what it holds,
+      about the source surveys and the fourth-water question, or about
+      the Margin and how the scholarly society operates."
+  nodes:
+    - id: source_surveys
+      triggers: ["fourth", "water", "channel", "source", "primary",
+        "older", "original", "disagree", "number", "count", "three",
+        "four", "junction", "marked", "correction", "question",
+        "open", "rivers", "eleven"]
+      text: "The Margin holds eleven source surveys that touch on the
+        junction area. Eight of them mark a fourth channel, three do
+        not. Of the three that do not, two postdate the major
+        correction period and appear to work from the corrected
+        rather than the original survey. The disagreement does not
+        resolve cleanly -- you cannot simply count and conclude. The
+        cartographers are working through it systematically. I keep
+        the surveys intact and accessible. That is my contribution
+        to the question."
+      hints: "You could ask Fenn about the archive and what it holds,
+        or about the Margin."
+    - id: archive
+      triggers: ["archive", "collection", "hold", "contains", "keep",
+        "library", "material", "documents", "records", "history",
+        "old", "how", "long", "here", "founded", "years", "what",
+        "reading", "room"]
+      text: "The Great Archive holds the Margin's primary materials --
+        surveys, pilot records, natural-history folios, correspondence
+        with river stations upriver. We have original surveys going
+        back about two hundred years, though the oldest are fragile
+        and not available for handling without my presence. The working
+        materials -- charts from the last fifty years, pilot logs, the
+        Margin's own research records -- are accessible in the reading
+        room. If you are looking for something specific, tell me what
+        it is."
+      hints: "You could ask Fenn about the source surveys and the
+        fourth-water question, or about the Margin."
+    - id: margin
+      triggers: ["margin", "society", "scholars", "organization",
+        "join", "work", "member", "do", "how", "function", "who",
+        "purpose", "belong", "dues", "guild"]
+      text: "The Margin is the Confluence's scholarly society --
+        cartography, natural history, river records, the historical
+        account. It has been in the Scholars' Quarter for about
+        eighty years. Membership is open to anyone with a scholarly
+        remit and something to contribute. I joined as the archive
+        keeper, not as a researcher, which is unusual but not
+        unprecedented. The Margin is not a guild. It has no dues
+        structure and no commercial interest. It publishes its
+        findings and keeps its primary materials accessible. That is
+        the entire purpose."
+      hints: "You could ask Fenn about the archive and its collection,
+        or about the source surveys."

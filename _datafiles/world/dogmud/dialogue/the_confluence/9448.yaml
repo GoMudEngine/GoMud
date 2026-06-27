@@ -1,0 +1,60 @@
+mobid: 9448
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "I am studying. Is it urgent?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Is this about the research? I can talk for a few
+        minutes."
+  - keywords: ["fourth", "water", "margin", "research", "study",
+      "what", "doing", "accounts"]
+    responses:
+      - "Secondary-source survey for the Margin's fourth-water
+        research. There are more accounts than I expected and most
+        of them disagree with each other, which is apparently the
+        whole point."
+  - keywords: [""]
+    responses:
+      - "I should get back to this. Ask me something specific or
+        let me read."
+tree:
+  root:
+    text: "I am working through the secondary accounts for the
+      fourth-water research. There are more of them than I expected.
+      What did you need?"
+    hints: "You could ask the student about the fourth-water research,
+      or what it is like to study in the Scholars' Quarter."
+  nodes:
+    - id: research
+      triggers: ["fourth", "water", "research", "accounts", "study",
+        "what", "doing", "work", "secondary", "sources", "reading",
+        "how", "going", "find", "logs", "pilot", "histories",
+        "written", "silence"]
+      text: "The short answer is that the secondary accounts disagree
+        with each other, which Riss says is normal and expected. The
+        written histories say three rivers. Some of the older pilot
+        logs have marginal notes that do not quite fit the
+        three-river account but do not directly support four either.
+        I am writing all of it down and trying not to draw conclusions
+        until I have read everything. Fenn says that is the correct
+        approach. It is also slow."
+      hints: "You could ask the student what it is like to study in
+        the quarter."
+    - id: quarter_life
+      triggers: ["quarter", "life", "here", "like", "living",
+        "scholars", "student", "margin", "is", "people", "community",
+        "good", "quiet", "inkwell", "court", "courtyard", "gloves",
+        "archive", "study", "place"]
+      text: "Quieter than I expected, honestly. Everyone is working
+        on something specific and does not interrupt unless it is
+        relevant. The Inkwell Court is good for reading -- enough
+        light, the courtyard blocks the wind. Fenn makes you wear
+        gloves to touch the old documents, which is correct but
+        takes some getting used to. The copyist upstairs can turn
+        around a folio copy in three days, which is faster than I
+        thought possible."
+      hints: "You could ask the student about the fourth-water
+        research."

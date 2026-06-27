@@ -1,0 +1,51 @@
+mobid: 9442
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - margin
+idlecommands:
+  - 'emote draws on cotton gloves before lifting a rolled survey from
+    the open cabinet, handles it briefly at the edges only, and returns
+    it to its sleeve without unrolling it.'
+  - ''
+  - 'say The shelf labels are there for a reason. If you take something
+    out, put it back in the correct order. The archive has its own
+    logic and I will not spend my afternoon restoring it.'
+  - ''
+  - 'emote checks the accession register with a narrow pen, adds a line
+    in a small precise hand, and closes the book with deliberate care.'
+  - ''
+activitylevel: 10
+character:
+  name: Fenn the Archivist
+  description: |
+    Fenn the Archivist is the keeper of the Great Archive in the
+    Scholars' Quarter, a position he has held for eighteen years
+    and intends to hold for as long as the Margin and his eyesight
+    will permit. He knows every item in the archive's collection
+    by location, accession date, and condition without consulting
+    the register -- the register is for everyone else. He is
+    precise, unhurried, and quietly inflexible about proper
+    handling: cotton gloves, no unrolled storage, no food, no
+    open ink near the primary surveys. Visitors who accept these
+    conditions find him helpful. Visitors who do not find him
+    implacable. His Chrysalis-change is conservative and useful:
+    when he holds a document, he can sense its structural condition
+    -- brittleness, hidden water damage, worm-channels inside a
+    bound spine -- without unrolling or opening it. This has saved
+    several items in the archive from the handling that would have
+    destroyed them.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    perception:
+      training: 7
+    willpower:
+      training: 5

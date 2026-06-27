@@ -1,0 +1,80 @@
+mobid: 9445
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Hello. I am working on the fourth-water research, if you
+      have questions -- or just the Margin in general."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. I am staying in the quarter while I work through the
+        secondary sources. Did you want to talk about the research?"
+  - keywords: ["fourth", "water", "channel", "question", "margin",
+      "research", "open", "study", "accounts"]
+    responses:
+      - "The fourth-water question is the Margin's main open inquiry
+        right now. I am working on the secondary-account side -- the
+        written histories, the temple records, the pilot logs. Looking
+        for what they say, or don't say, about the junction geography."
+  - keywords: [""]
+    responses:
+      - "Ask me about the fourth-water question, the Margin, or life
+        in the Scholars' Quarter."
+tree:
+  root:
+    text: "I am here doing secondary-source research for the Margin --
+      cross-referencing written accounts against the survey record.
+      Most of the primary survey work is upstairs with the
+      cartographers; I am working the written history side. What did
+      you want to know?"
+    hints: "You could ask about the fourth-water question and what the
+      accounts say, about the temple's official position and how the
+      Margin relates to it, or about life in the Scholars' Quarter."
+  nodes:
+    - id: fourth_water
+      triggers: ["fourth", "water", "channel", "question", "survey",
+        "open", "inquiry", "find", "accounts", "say", "secondary",
+        "written", "history", "logs", "pilot", "records", "cross",
+        "reference", "silence", "omit", "missing"]
+      text: "The secondary accounts are interesting precisely because
+        most of them say very little. The written histories mention
+        the three rivers by name -- Aldren, Brenn, Solt -- without
+        reference to any fourth. The temple records are consistent.
+        The pilot logs are mostly focused on current conditions and
+        navigational hazards, not historical geography. The silences
+        are not proof of anything -- written histories routinely omit
+        things the surveys record. But the silences matter for the
+        weight you give the cartographic evidence. I am mapping the
+        silences as carefully as the references."
+      hints: "You could ask about the temple's position on the rivers,
+        or about life in the Scholars' Quarter."
+    - id: temple
+      triggers: ["temple", "official", "account", "position", "church",
+        "religion", "sacred", "divine", "agree", "disagree", "argue",
+        "conflict", "against", "consistent", "orthodox", "founding",
+        "three", "theology"]
+      text: "The temple's account names three rivers -- the Aldren,
+        the Brenn, and the Solt -- and the junction is part of the
+        sacred geography of the founding. I am not arguing with that.
+        The Margin's question is a cartographic and historical one:
+        if a fourth channel existed at some point, what happened to
+        it, and when, and why. Those questions have no necessary
+        conflict with the sacred account. A seasonal channel that
+        silted two hundred years ago is not a theological problem.
+        The Margin is not looking for one."
+      hints: "You could ask about the fourth-water question, or about
+        life in the quarter."
+    - id: quarter_life
+      triggers: ["quarter", "life", "live", "stay", "lodgings",
+        "here", "long", "like", "work", "day", "community", "what",
+        "is", "people", "scholars"]
+      text: "The quarter is quieter than the lower city, which is the
+        point. The archive is close, the cartographers are upstairs,
+        and the copyists can produce a fair copy of a survey folio
+        in two days when I need one for comparison. Drunn's bookshop
+        at the gate end keeps useful reference stock. It is a good
+        place to do slow work without interruption, and this kind
+        of research is slow work."
+      hints: "You could ask about the fourth-water question, or about
+        the temple's position on the rivers."

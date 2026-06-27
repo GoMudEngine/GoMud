@@ -1,0 +1,65 @@
+mobid: 9447
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Scholars' Quarter. Looking for the archive, the hall, or
+      the bookseller?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. First time here? Tell me what you are looking for."
+  - keywords: ["where", "find", "looking", "need", "go", "which",
+      "way", "direction", "how"]
+    responses:
+      - "Archive and Margin Hall are further in. Bookseller is to
+        the right -- Drunn's shop. The Inkwell Court is straight
+        through for the students and lodgings. What are you after?"
+  - keywords: [""]
+    responses:
+      - "Tell me what you are looking for and I can point you right."
+tree:
+  root:
+    text: "I keep the gate. The quarter has the Margin Hall and archive
+      further in, the bookseller's to the right, the Inkwell Court
+      straight through for lodgings and students. What are you here
+      for?"
+    hints: "You could ask the gate-porter about the Margin Hall and
+      archive, about the bookseller's shop, or about the Scholars'
+      Quarter and what is in it."
+  nodes:
+    - id: archive_hall
+      triggers: ["archive", "hall", "margin", "library", "research",
+        "scholar", "archivist", "cartographer", "copyist", "records",
+        "documents", "surveys", "fenn", "riss", "where", "find",
+        "how"]
+      text: "Margin Hall is further in, past the Inkwell Court -- you
+        will see the carved lintel above the entrance. The archive is
+        on the ground floor with the reading room; the cartographers
+        and copyists have rooms above. If you want the archivist
+        specifically, ask at the hall desk and Fenn will come down."
+      hints: "You could ask about the bookseller's shop, or about the
+        Scholars' Quarter generally."
+    - id: bookseller
+      triggers: ["bookseller", "book", "books", "shop", "drunn",
+        "buy", "volumes", "folio", "history", "purchase", "sell",
+        "right", "which", "where"]
+      text: "Drunn's shop is to the right of the gate, ground level.
+        He carries history volumes and reference folios -- the
+        Confluence History is the main general account if you want
+        one. The old chart on his wall is not for sale, before you
+        ask. He gets that a lot."
+      hints: "You could ask about the Margin Hall and archive, or
+        about the Scholars' Quarter generally."
+    - id: quarter
+      triggers: ["quarter", "what", "here", "around", "else", "see",
+        "is", "place", "area", "layout", "who", "lives", "scholars",
+        "student", "inkwell", "court", "lodgings", "tell", "about"]
+      text: "The Scholars' Quarter is the Margin's home district --
+        the society has been here about eighty years. You have the
+        hall and archive at the center, the cartographers and copyists
+        upstairs, the scholars' lodgings nearby. Students tend to
+        gather in the Inkwell Court, which is straight through. It
+        is a quiet district. That is deliberate."
+      hints: "You could ask about the Margin Hall and archive, or
+        about the bookseller's shop."

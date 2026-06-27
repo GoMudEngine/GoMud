@@ -1,0 +1,86 @@
+mobid: 9443
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "I'm doing a comparison. If you have a question about the
+      rivers or the junction work, go ahead."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Riss. I am one of the Margin cartographers. What brings you
+        to the Cartographers' Room?"
+  - keywords: ["map", "chart", "survey", "junction", "river", "channel",
+      "fourth", "aldren", "brenn", "solt"]
+    responses:
+      - "The junction surveys are the Margin's central open question.
+        I am working through the comparison series now. What do you
+        want to know?"
+  - keywords: [""]
+    responses:
+      - "Ask me about the rivers, the junction work, or the
+        fourth-water question. That is most of what I think about."
+tree:
+  root:
+    text: "I compare historical surveys -- looking for where they agree,
+      where they diverge, and what those divergences tell us about the
+      rivers or about the surveys themselves. Right now I am deep in
+      the junction comparison series. What did you want to know?"
+    hints: "You could ask Riss about the fourth-water question and
+      what the old surveys show, about the three rivers and their
+      names, or about the cartography comparison method."
+  nodes:
+    - id: fourth_water
+      triggers: ["fourth", "channel", "extra", "junction", "marked",
+        "struck", "mysterious", "hidden", "question", "open",
+        "disagree", "mystery", "count", "four", "older", "old",
+        "periodic", "seasonal", "silted", "real", "error"]
+      text: "The oldest surveys of the junction area consistently mark
+        a fourth channel -- smaller than the Aldren, Brenn, or Solt,
+        shown as a distinct waterway rather than an overflow.
+        Subsequent surveys strike it through. Later surveys remark
+        it. Then strike it again. This recurs across independent
+        surveys spanning about sixty years. What I cannot determine
+        is whether the original surveys recorded something real -- a
+        seasonal or periodic channel, perhaps now silted -- or whether
+        one early error propagated through copies and generated a
+        tradition of debate around a mistake. Both are possible. I
+        lean toward a real geographic feature, but I cannot establish
+        that from the maps alone. A ground survey would settle it."
+      hints: "You could ask Riss about the three rivers and their
+        names, or about the cartography comparison method."
+    - id: rivers
+      triggers: ["river", "rivers", "three", "aldren", "brenn",
+        "solt", "name", "names", "which", "north", "east",
+        "southwest", "direction", "meet", "confluence", "join",
+        "what", "where"]
+      text: "Three rivers join here. The Aldren comes from the north
+        -- the largest of the three and the main commercial route
+        upriver. The Brenn comes from the east, shorter and
+        faster-moving, with the color that gives it its name. The
+        Solt comes from the southwest, the slowest of the three and
+        the most prone to seasonal silting at the junction. They
+        join roughly at the city, which is where the city is because
+        of that. The fourth-water question concerns a possible fourth
+        channel at or near the junction, marked in the old surveys
+        but not in the current ground truth."
+      hints: "You could ask Riss about the fourth-water question,
+        or about the comparison method."
+    - id: comparison
+      triggers: ["comparison", "method", "how", "work", "do",
+        "compare", "cartography", "technique", "analyze", "approach",
+        "study", "research", "why", "process", "overlay", "tissue",
+        "scale"]
+      text: "I work from the original surveys when I can get access --
+        the archive has eleven that touch the junction area directly.
+        I overlay them at the same scale on tissue and mark where they
+        agree precisely, where they agree roughly, and where they
+        contradict. The contradictions are the useful part. A
+        contradiction might mean error, or it might mean something
+        changed between surveys -- the river moved, a channel shifted,
+        a sandbar appeared or dissolved. Untangling those requires
+        dating the surveys accurately and, ideally, knowing who the
+        original surveyor was. Some of ours are anonymous. Those are
+        the hard ones."
+      hints: "You could ask Riss about the three rivers and their
+        names, or about the fourth-water question."

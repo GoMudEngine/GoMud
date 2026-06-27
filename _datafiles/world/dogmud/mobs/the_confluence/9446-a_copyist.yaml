@@ -1,0 +1,52 @@
+mobid: 9446
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - margin
+idlecommands:
+  - 'emote rules a margin on a fresh sheet with a straightedge and a
+    pale lead stick, then checks its evenness against the light before
+    setting up to work.'
+  - ''
+  - 'say Folio copy is three days, minimum. Survey copy depends on the
+    scale and the detail level. Do not ask me to rush a survey copy.'
+  - ''
+  - 'emote bends close to the copy-board, working a pen in short careful
+    strokes along a coastline detail without lifting it from the
+    surface.'
+  - ''
+activitylevel: 10
+character:
+  name: A Copyist
+  description: |
+    A Copyist works in the Copyists' Room of the Scholars' Quarter,
+    producing accurate reproductions of charts, folios, survey
+    documents, and research records for the Margin's scholars and
+    for paying commissions from the trade and civic quarters. She
+    is a Margin member but her role is more craft than research --
+    she thinks of herself as a bridge between the archive and the
+    people who need usable working copies of its contents. She does
+    not have strong opinions about the fourth-water question herself,
+    but she has copied enough of the relevant surveys to have a
+    better visual familiarity with the junction notation than most
+    of the researchers who study it in text. She knows Tallis the
+    Scrivener, who keeps a copy-stall on the Long Quay in the lower
+    city; their work overlaps at the edges of the chart trade. Her
+    Chrysalis-change is the envy of her colleagues: her hands never
+    cramp. She can work for eight hours with a fine pen without
+    fatigue or variance in the line, which is a considerable
+    professional advantage.
+  speciesid: 1
+  level: 1
+  gold: 4
+  stats:
+    dexterity:
+      training: 8
+    perception:
+      training: 4
