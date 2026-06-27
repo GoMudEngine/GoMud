@@ -1,0 +1,27 @@
+roomid: 6199
+zone: The Confluence
+title: The Descent Stairhead
+description: >
+  The east end of the older corridor opens onto a landing
+  at the head of a stair: broad steps of the same pre-
+  Founding stone descend into the dark beneath the island,
+  switching once before the lamplight fails to follow.
+  Cool air rises from below, carrying the smell of still
+  water and deep stone. Whatever lies beneath is quiet;
+  the descent is not a place for visitors. The corridor
+  is back to the west.
+biome: city
+coord:
+  x: 10
+  y: -78
+  z: 0
+exits:
+  west:
+    roomid: 6198
+idlemessages:
+- 'Cool air comes steadily up the stair: below, the
+  island sits directly on the water and the rock.'
+- The lamplight does not reach far enough to show the
+  bottom landing; the stair bends once and disappears.
+- 'The stone of the stairwell is old and smooth: the
+  same pre-Founding cut as the corridor behind you.'

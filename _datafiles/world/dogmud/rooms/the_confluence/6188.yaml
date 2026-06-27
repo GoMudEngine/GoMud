@@ -1,0 +1,45 @@
+roomid: 6188
+zone: The Confluence
+title: The Chapter House
+description: >
+  A formal chamber where the senior Keepers convene, its
+  walls hung with the seals of past Prioresses and the
+  rolled names of the appointed. A long table of dark
+  wood runs the room's length, its chairs stiff-backed
+  and deliberate. On a slanted reading-stand at the head
+  of the table, the temple's
+  <ansi fg="itemname">consecration-record</ansi>
+  lies open -- the formal account of the founding, the
+  first Keepers' names, and the words of the consecration
+  rite. Aldric presides here. The North Walk is back
+  to the east.
+biome: city
+coord:
+  x: 6
+  y: -76
+  z: 0
+exits:
+  east:
+    roomid: 6186
+nouns:
+  consecration-record: >
+    The temple's founding consecration record, bound in
+    river-leather and kept flat on the stand under a
+    glass plate. Its account is formal and careful -- the
+    names of the first Keepers, the date of the first
+    rite, the words spoken at the altar. What it does not
+    explain is the phrasing of the central passage, which
+    reads "consecrated the site" rather than "established
+    the site" -- as though the ground had received a name
+    it already answered to, and the rite was a recognition
+    rather than a beginning.
+spawninfo:
+  - mobid: 9464
+    respawnrate: "20 real minutes"
+idlemessages:
+- The seals on the walls are old enough that some names
+  below them have worn to near-illegibility.
+- 'Aldric sits at the head of the table with a folder of
+  papers: a meeting adjourned, or one being prepared.'
+- The chairs are pushed in to equal gaps -- a habit that
+  speaks to the meetings held here.

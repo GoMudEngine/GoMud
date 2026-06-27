@@ -1,0 +1,45 @@
+roomid: 6185
+zone: The Confluence
+title: The Cloister Garth
+description: >
+  The central quadrangle of the cloisters, open to the
+  sky at its center and covered on all four sides by a
+  low arcade of pale stone. A shallow
+  <ansi fg="itemname">garth-well</ansi>
+  stands at the middle of a garden plot, surrounded by
+  herbs and river-plants in careful rows. A cloister
+  keeper moves among them with quiet purpose. The whole
+  of the inner temple's life turns around this space --
+  the walks branch north, south, and east from the arcade
+  columns, and the gate passage lies to the west.
+biome: city
+coord:
+  x: 7
+  y: -77
+  z: 0
+exits:
+  west:
+    roomid: 6184
+  north:
+    roomid: 6186
+  south:
+    roomid: 6187
+  east:
+    roomid: 6192
+nouns:
+  garth-well: >
+    A well of plain dressed stone at the center of the
+    garth, fitted with a wooden cover and a wind-worn
+    rope. It serves the kitchen and the infirmary both;
+    the rope's fraying tells how often. The water is
+    cold and very clear.
+spawninfo:
+  - mobid: 9470
+    respawnrate: "20 real minutes"
+idlemessages:
+- A cloister keeper passes through the garth at an unhurried
+  walk, not pausing for the stranger.
+- 'The arcade frames the sky in a square: a pale rectangle
+  of open air above the herb-beds.'
+- Bees work the river-plants in the garden, as unhurried
+  as the Keepers themselves.

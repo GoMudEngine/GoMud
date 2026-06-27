@@ -1,0 +1,45 @@
+roomid: 6198
+zone: The Confluence
+title: The Older East Corridor
+description: >
+  The corridor changes here: the upper courses of dressed
+  pale stone give way, at about knee height, to something
+  older and darker -- a different cut, a different hand.
+  The lower courses are of the same quality as the crossing's
+  floor-stones and the older slab in the reliquary: work
+  from before the temple, laid by hands the Keepers' own
+  records do not name. A
+  <ansi fg="itemname">masons-survey</ansi>
+  note is mounted in a small frame on the wall, placed by
+  a previous Keeper who thought the observation worth
+  preserving. The corridor is quiet; the oratory is back
+  to the north, the stairhead east.
+biome: city
+coord:
+  x: 9
+  y: -78
+  z: 0
+exits:
+  north:
+    roomid: 6196
+  east:
+    roomid: 6199
+nouns:
+  masons-survey: >
+    A surveyor's note, hand-lettered, mounted in a small
+    frame fixed to the wall. It observes that the lower
+    courses from this point east to the descent are not
+    of the temple's construction -- they are older work,
+    laid to a different standard and a different purpose.
+    The stone is cut by hands the temple's records cannot
+    account for, and predates the Founding by an interval
+    the surveyor cannot determine. The note is signed and
+    dated to the third generation of Keepers. There is no
+    indication the archive acted on it.
+idlemessages:
+- The air in the corridor is noticeably cooler than in
+  the garth, and the quiet is of a different quality.
+- 'The lower courses are smooth and very dense: the
+  tools that shaped them were not what the temple used.'
+- 'The seam between old stone and new is visible at eye
+  level: a line where two eras of work meet.'

@@ -1,0 +1,46 @@
+mobid: 9465
+zone: The Confluence
+schedule_id: cf_cael
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - keepers
+idlecommands:
+  - 'emote sets a ledger open on the reading stand, smoothing the
+    spine with two careful fingers before stepping back to consider
+    it.'
+  - ''
+  - 'say Records do not lie. They only fall silent -- which is a
+    different kind of problem.'
+  - ''
+  - 'emote adjusts the angle of the lamp beside the reading stand,
+    tilting the flame closer to the open page, then turns and makes
+    a note on a smaller paper beside it.'
+  - ''
+activitylevel: 10
+character:
+  name: Brother Cael
+  description: |
+    Brother Cael is slight and unhurried, a man of perhaps forty
+    with ink-stained fingers and the quiet manner of someone who
+    has spent most of his adult life in this room. His grey robes
+    are worn at the cuffs in the way of a person who writes more
+    than he stands, and his Chrysalis-change -- a fine hatching of
+    silver lines across his right hand, like a diagram of a leaf's
+    veins -- has made his handwriting exceptionally precise. The
+    building-ledger stands open on the reading stand beside him.
+    He has the look of a man who has been waiting for someone to
+    ask the right question.
+  speciesid: 1
+  level: 1
+  gold: 10
+  stats:
+    willpower:
+      training: 7
+    perception:
+      training: 6

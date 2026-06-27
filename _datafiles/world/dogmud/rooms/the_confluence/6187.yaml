@@ -1,0 +1,31 @@
+roomid: 6187
+zone: The Confluence
+title: The South Walk
+description: >
+  The covered walk along the garth's south side, its
+  arches facing north onto the garden and the well. The
+  walk connects the refectory to the west with the cells
+  to the south, the garth open through the arcade between
+  them. By mid-morning the cloister keeper has usually
+  finished the garden work, and the south walk is briefly
+  empty between the breakfast bell and the midday office.
+  The Cloister Garth is back to the north.
+biome: city
+coord:
+  x: 7
+  y: -78
+  z: 0
+exits:
+  north:
+    roomid: 6185
+  west:
+    roomid: 6191
+  south:
+    roomid: 6194
+idlemessages:
+- 'The walk holds a trace of kitchen-smoke at this hour:
+  the refectory is not far to the west.'
+- Sunlight through the arcade falls across the paving
+  in a line that moves through the morning.
+- A door bangs somewhere in the cells corridor; someone
+  is coming or going without haste.

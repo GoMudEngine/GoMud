@@ -1,0 +1,35 @@
+roomid: 6196
+zone: The Confluence
+title: The Prioress's Oratory
+description: >
+  A private chapel and study combined -- Prioress Crane's
+  own room, set apart from the chapter house and the
+  garth by the east wing's length. A small altar occupies
+  the far wall, dressed without ornamentation; the desk
+  faces it rather than the window. The room holds a
+  quality of sustained attention -- the kind cultivated
+  over years, not affected for an occasion. There is
+  something in how the space is arranged that suggests
+  a question long considered, not yet resolved. The East
+  Walk is back to the west; the older corridor continues
+  to the south.
+biome: city
+coord:
+  x: 9
+  y: -77
+  z: 0
+exits:
+  west:
+    roomid: 6192
+  south:
+    roomid: 6198
+spawninfo:
+  - mobid: 9466
+    respawnrate: "20 real minutes"
+idlemessages:
+- Prioress Crane is at her desk, reading something she
+  turns face-down when another enters.
+- 'The altar is plain: no image, no inscription, only
+  the offering-stand and a lit oil lamp.'
+- The room is very quiet; the garth's sounds do not
+  reach it.

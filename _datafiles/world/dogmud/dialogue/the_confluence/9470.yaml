@@ -1,0 +1,56 @@
+mobid: 9470
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Oh. I did not hear you come in. Mind the pile by the
+      south wall -- I haven't moved it yet."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Sorry -- I'm junior enough that visitors to the cloisters
+        are still surprising. Is there something you need?"
+  - keywords: ["garth", "garden", "cloister", "walk", "sweep",
+      "what is", "courtyard"]
+    responses:
+      - "The Garth. The center of the cloisters -- the walks go
+        around it on all four sides, and the senior Keepers'
+        rooms look onto it. I keep it swept. It is a good job.
+        You can see the sky."
+  - keywords: [""]
+    responses:
+      - "Brother Cael is in the Archive, east walk. The Prioress
+        is in the Oratory, south walk. I am just the sweeper."
+tree:
+  root:
+    text: "I keep the Garth and the walks clean. It sounds small
+      but the Garth is the heart of the cloisters, the part
+      everything else looks onto. I take it seriously."
+    hints: "You could ask the Cloister Keeper about the Garth,
+      the walks, or about the senior Keepers and where to find
+      them."
+  nodes:
+    - id: the_garth
+      triggers: ["garth", "garden", "center", "walks", "heart",
+        "cloister", "what is", "courtyard", "rooms", "looks"]
+      text: "The Garth is the old word for it -- a garden court,
+        though there is not much garden, only the grass and the
+        well and the stone walks around the edge. The senior
+        Keepers' rooms are off those walks. I see them going
+        in and out. I do not ask what they are discussing.
+        I keep the flagstones clean and I try to be
+        unobtrusive, which is a skill I am still learning."
+      hints: "You could ask about the order's senior Keepers
+        and where to find them."
+    - id: keepers_where
+      triggers: ["aldric", "cael", "crane", "senior",
+        "prioress", "archivist", "keeper", "where",
+        "find", "which walk"]
+      text: "Aldric the Keeper is usually in the Chapter House --
+        north walk, the big door. Brother Cael is in the Archive,
+        east walk, always open. Prioress Crane keeps the Oratory,
+        south walk. The Scriptorium is also east -- the scribe
+        works there mornings. I can tell you where everyone is.
+        I have been sweeping these walks for two years."
+      hints: "You could find the senior Keepers in their rooms
+        off the cloister walks."

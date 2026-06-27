@@ -1,0 +1,31 @@
+roomid: 6192
+zone: The Confluence
+title: The East Walk
+description: >
+  The covered walk along the garth's east side, its
+  arches opening onto the garden and well. The walk
+  connects the garth to the west with the prioress's
+  wing to the east, and with the infirmary to the
+  south. Keepers pass through at irregular hours; the
+  stone is worn smooth in two tracks where feet have
+  found their habit. The Cloister Garth is back to
+  the west.
+biome: city
+coord:
+  x: 8
+  y: -77
+  z: 0
+exits:
+  west:
+    roomid: 6185
+  east:
+    roomid: 6196
+  south:
+    roomid: 6193
+idlemessages:
+- Light from the garth falls through the arcade in
+  long intervals between the columns.
+- 'A Keeper passes through quickly, not pausing:
+  the east wing has its own rhythm.'
+- The worn tracks in the paving stone run true;
+  the feet that made them knew where they were going.

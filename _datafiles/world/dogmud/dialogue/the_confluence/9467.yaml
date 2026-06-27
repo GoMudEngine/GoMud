@@ -1,0 +1,53 @@
+mobid: 9467
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Mm. A moment -- I am at a difficult line."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. The Scriptorium is not usually open to visitors,
+        but I am not the one to enforce that."
+  - keywords: ["copy", "writing", "work", "what are"]
+    responses:
+      - "Copying the consecration ledger from the third century.
+        The original is too fragile to handle. My copy will be
+        the working text from now on, which is a strange thing
+        to be responsible for."
+  - keywords: [""]
+    responses:
+      - "I am mid-sentence. Ask Brother Cael in the Archive if
+        you need something from the records."
+tree:
+  root:
+    text: "I am mid-copy. The third-century ledger. It is painstaking
+      work and I have no objection to a short interruption,
+      provided it is short."
+    hints: "You could ask the scribe about the copying work, or
+      about the Archive and who keeps it."
+  nodes:
+    - id: the_work
+      triggers: ["ledger", "copy", "third", "century", "old",
+        "fragile", "what is", "original", "copying"]
+      text: "Third-century consecration records. The original vellum
+        is going at the edges -- Brother Cael decided a fair copy
+        was worth making before we lose the text. I am making it
+        line for line, margin note for margin note. There are a
+        great many margin notes. The people who first kept these
+        records had a lot to say that they did not want to put
+        in the main body."
+      hints: "You could ask the scribe what the margin notes say,
+        or let her return to her work."
+    - id: the_margin_notes
+      triggers: ["margin", "notes", "what they say", "say",
+        "aside", "extra", "additions", "annotations"]
+      text: "Most of them are corrections and glosses. But there
+        are a few -- in a different hand, added after the main
+        text -- that reference older construction work, already
+        in place when the temple was built. Dates that do not
+        match the founding account. I copy them faithfully.
+        I have decided that is my job, and the interpretation
+        is someone else's."
+      hints: "You could ask who to speak to about the older
+        records, or let the scribe return to her work."

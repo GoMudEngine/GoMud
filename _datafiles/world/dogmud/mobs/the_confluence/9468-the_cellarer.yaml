@@ -1,0 +1,42 @@
+mobid: 9468
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - keepers
+idlecommands:
+  - 'emote sets a loaf on the refectory table and covers it with a
+    cloth, then moves to count the cups at the far end of the bench.'
+  - ''
+  - 'say The kitchen order is the whole order in miniature. No one
+    eats who does not attend, and no one attends who cannot be fed.
+    It is simpler than theology.'
+  - ''
+  - 'emote lifts a crock from the shelf beside the hearth, sniffs
+    it once in a considered way, and sets it back with an air of
+    provisional satisfaction.'
+  - ''
+activitylevel: 10
+character:
+  name: The Cellarer
+  description: |
+    The Cellarer is broad-shouldered and brisk, a man of middling
+    years whose Keepers' robes are covered, below the waist, by a
+    long apron of undyed linen. He runs the refectory and the
+    stores with an attention to detail that other members of the
+    order respect and find mildly intimidating. His Chrysalis-
+    change -- an exceptionally acute sense of smell -- is, in his
+    estimation, a professional asset.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    perception:
+      training: 6
+    vitality:
+      training: 5

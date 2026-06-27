@@ -1,0 +1,109 @@
+mobid: 9464
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "The Chapter House is not a public room. You have been
+      admitted to the cloisters, so I will assume you have
+      a reason to be here. State it."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Aldric. I keep this order. If you are in this room,
+        someone decided you should be. What do you need?"
+  - keywords: ["order", "keepers", "temple", "who are"]
+    responses:
+      - "We are the temple's keepers -- of the rite, of the
+        records, of the building and the ground beneath it. The
+        work has been continuous for three hundred years. It will
+        continue after us."
+  - keywords: [""]
+    responses:
+      - "Plainly, if you please. I am not difficult to talk to,
+        only direct."
+tree:
+  root:
+    text: "I am Aldric -- head of this order, for what that
+      is worth. The Chapter House is where the order's decisions
+      are made, and I have made a great many of them in this
+      room. Some of them I would change. Some of them I would
+      not."
+    hints: "You could ask Aldric about the order he leads, about
+      the temple and what it was raised on, or about whether
+      he will permit a look at what lies below."
+  nodes:
+    - id: aldric_q74_permission
+      questRequired: ["74-start"]
+      triggers: ["permission", "allow", "descent", "below",
+        "stair", "down", "deeper", "underneath", "supervise",
+        "look", "see", "permitted", "consent", "agreed",
+        "decision", "older", "foundation", "cael"]
+      text: "Brother Cael tells me you have read the records. Good.
+        I will not pretend you did not. I have permitted this --
+        a supervised descent, no more than that -- because I have
+        spent thirty years deciding that concealment is not
+        custodianship. What is there is there. The temple stands
+        above it and does its work, and that work is real,
+        whatever the ground holds. Go carefully. What you find
+        belongs to the order to interpret, not to you alone. Do
+        you understand that?"
+      hints: "You could go carefully down the stair in the older
+        east corridor when you are ready."
+    - id: q73_aside
+      questRequired: ["73-end"]
+      questExcluded: ["74-start"]
+      triggers: ["question", "margin", "fourth", "record",
+        "scholars", "found", "notation", "asked", "water",
+        "survey"]
+      text: "The Margin's question reached us before you did. They
+        are careful scholars and they are not wrong. I have read
+        every document they have cited, and several they have not
+        found yet. I have known what the building record says for
+        a long time. The question was never what is there -- the
+        question was what to do with knowing. I have not always
+        answered that well."
+      hints: "You could ask Aldric what he means by that, or ask
+        whether he will permit a supervised look at what lies
+        below."
+    - id: the_order
+      triggers: ["order", "keepers", "history", "founded",
+        "purpose", "three hundred", "continuous", "since",
+        "who kept", "before"]
+      text: "The order was established at the temple's founding
+        to tend the rite and the building in which it is kept.
+        Three hundred years is a long time to do one thing. You
+        develop a certain relationship with continuity -- with
+        the idea that the work you were given is worth doing,
+        that the institution is not just you. I believe that.
+        I also believe it can be used to avoid difficult
+        questions, and I have used it that way, and I am not
+        proud of it."
+      hints: "You could ask Aldric about the records, or about
+        what lies beneath the temple."
+    - id: the_ground
+      triggers: ["older", "beneath", "under", "built", "raised",
+        "foundation", "stone", "ground", "deeper", "what is",
+        "what lies", "below"]
+      text: "The temple was raised on work that was already there.
+        The building record says so plainly, if you read it with
+        care. I have read it. The previous heads of this order
+        read it. We kept the rite and we kept our counsel, and
+        the two things became the same habit of mind. I will not
+        tell you what is down there -- I have not gone down myself
+        in many years, and what I remember I am not certain is
+        mine alone to give. What I will tell you: it is not
+        frightening. It is old. There is a difference."
+      hints: "You could ask Aldric whether he would permit a look,
+        or ask about the order and its history."
+    - id: crane_note
+      triggers: ["crane", "prioress", "believer", "faith",
+        "devout", "prayer"]
+      text: "Prioress Crane is the best of us. I mean that without
+        irony. She holds what this order holds with her whole
+        self, and she has never needed me to tell her it is worth
+        holding. I have not told her everything I know. I have
+        wondered, for a long time, whether that was a kindness or
+        a failure of nerve. I still do not have a satisfying
+        answer."
+      hints: "You could ask Aldric about the temple and what lies
+        beneath it, or about the order's history."

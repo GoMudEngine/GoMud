@@ -1,0 +1,133 @@
+questid: 74
+name: The Undercroft
+description: >-
+  The Margin's question has led you under the temple's own roof. Brother Cael,
+  the Confluence's archivist, has set you to examine three of the temple's own
+  building records -- the ones that do not match its founding story -- and, if
+  what you find warrants it, to earn the senior Keepers' leave to descend into
+  the undercroft beneath the island.
+secret: false
+
+steps:
+  - id: start
+    description: "Brother Cael has set you to examine three of the temple's
+      construction records that disagree with its founding story."
+    hint: "Examine the building-ledger in the Archive, the consecration-record
+      in the Chapter House, and the mason's survey in the older east corridor.
+      Then return to Cael."
+  - id: ledger
+    description: "The building-ledger accounts for the temple's raising in
+      meticulous detail -- and is oddly silent on the oldest, lowest courses,
+      as if the foundation were received, not built."
+    hint: "Now examine the consecration-record in the Chapter House, and the
+      mason's survey in the older east corridor. Then return to Cael."
+  - id: record
+    description: "The consecration-record's own wording gives it away: the
+      Founders consecrated the site -- language that assumes something was
+      already standing there to consecrate."
+    hint: "Now examine the mason's survey in the older east corridor, by the
+      descent stair. Then return to Cael in the Archive."
+  - id: survey
+    description: "The mason's survey is plainest of all: the lower courses are
+      older work, cut by hands the temple's records do not name. Three records,
+      one conclusion -- the temple was raised on something older."
+    hint: "Return to Brother Cael in the Archive with what you found."
+  - id: descent
+    description: "Cael has heard you out, and Aldric -- reluctantly -- has
+      granted a supervised descent. The stair down lies in the older east
+      corridor. Go down when you are ready."
+    hint: "Descend the stair in the older east corridor when you are ready."
+  # ── steps below are granted in district 6b (the Undercroft) ──
+  - id: reveal
+    description: "(The descent into the undercroft -- district 6b.)"
+  - id: end
+    description: "(The threshold reveal and its aftermath -- district 6b.)"
+
+flags:
+  - key: allegiance
+    values: [margin, keepers]
+    description: "Whether the player carries the truth to the Margin or keeps
+      the Keepers' confidence. Set at the climax in the undercroft (6b)."
+
+# Rewards fire only on the `end` step (district 6b finalizes flag-conditional
+# reputation and any reward item); declared here so the quest is well-formed.
+rewards:
+  playermessage: >-
+    (Q74 completes in the undercroft -- district 6b.)
+  gold: 0
+
+triggers:
+  # ── RECORD 1: the building-ledger (6189, the Archive) ──
+  - event: room_interact
+    room: 6189
+    noun: building-ledger
+    conditions:
+      has: ["74-start"]
+      missing: ["74-ledger"]
+    actions:
+      - grant: "74-ledger"
+      - send_text: >-
+          You read the building-ledger past its careful columns. It accounts
+          for every stone of the temple's raising -- except the lowest courses,
+          which it simply assumes, as though the foundation were a thing
+          received rather than built. The first of the three records.
+      - room_text: "reads the open building-ledger with sudden attention."
+  - event: room_interact
+    room: 6189
+    noun: building-ledger
+    conditions:
+      missing: ["74-start"]
+    actions:
+      - send_text: >-
+          An old construction ledger open on a reading-stand, meticulous and
+          dry. Without a reason to read it closely, it is only an account book.
+  # ── RECORD 2: the consecration-record (6188, the Chapter House) ──
+  - event: room_interact
+    room: 6188
+    noun: consecration-record
+    conditions:
+      has: ["74-ledger"]
+      missing: ["74-record"]
+    actions:
+      - grant: "74-record"
+      - send_text: >-
+          The consecration-record sets out the Founders' dedication of the
+          temple -- and its own wording betrays it: they consecrated the site,
+          a word that assumes something already stood here to be made holy. The
+          second record agrees with the first.
+      - room_text: "studies the framed consecration-record closely."
+  - event: room_interact
+    room: 6188
+    noun: consecration-record
+    conditions:
+      missing: ["74-ledger"]
+    actions:
+      - send_text: >-
+          The temple's consecration-record, framed in the Chapter House. A
+          formal dedication in old script -- nothing you have reason to parse
+          word by word.
+  # ── RECORD 3: the mason's survey (6198, the Older East Corridor) ──
+  - event: room_interact
+    room: 6198
+    noun: masons-survey
+    conditions:
+      has: ["74-record"]
+      missing: ["74-survey"]
+    actions:
+      - grant: "74-survey"
+      - send_text: >-
+          The mason's survey is the plainest of the three: the lower courses of
+          this corridor are older work, it notes, cut and laid by hands the
+          temple's own records do not name. Three records, three different
+          rooms, one conclusion. Time to report to Cael.
+      - room_text: "examines the old mason's survey pinned in the corridor."
+  - event: room_interact
+    room: 6198
+    noun: masons-survey
+    conditions:
+      missing: ["74-record"]
+    actions:
+      - send_text: >-
+          A mason's survey-note pinned to the corridor wall, marking the
+          stonework's courses. Technical, and old. You have no particular
+          reason to study it.

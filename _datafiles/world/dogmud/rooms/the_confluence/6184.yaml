@@ -1,0 +1,27 @@
+roomid: 6184
+zone: The Confluence
+title: The Cloister Gate
+description: >
+  A brief vaulted passage beyond the warded door, the
+  cloister gate: the threshold between the public temple
+  and the Keepers' own domain. The noise of the nave does
+  not carry here. Stone benches line the passage walls,
+  worn smooth by those who have waited; a single lamp
+  above the east arch burns without guttering in still
+  air. The inner temple lies back to the west; the
+  Cloister Garth opens to the east.
+biome: city
+coord:
+  x: 6
+  y: -77
+  z: 0
+exits:
+  west:
+    roomid: 6183
+  east:
+    roomid: 6185
+idlemessages:
+- The lamp in the arch burns steadily, undisturbed.
+- 'A carved relief above the lintel shows the joined-rivers
+  symbol: three lines becoming one.'
+- Footsteps east fade quickly, swallowed by the garth.
