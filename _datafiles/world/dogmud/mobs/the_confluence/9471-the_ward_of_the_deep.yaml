@@ -19,6 +19,7 @@ idlecommands:
   - 'emote faces the head of the descending stair, as it has faced it for longer
     than the temple has stood.'
   - ''
+activitylevel: 4
 character:
   name: The Ward of the Deep
   description: |
