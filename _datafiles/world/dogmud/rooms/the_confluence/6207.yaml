@@ -1,0 +1,33 @@
+roomid: 6207
+zone: The Confluence
+title: The Pillared Hall
+description: >
+  A hall of unexpected scale for the depth: eight
+  square piers in two rows carry a ceiling of fitted
+  slabs, each pier cut from the same dense stone as
+  everything below the seam. The piers are not
+  decorated, but they are precisely placed -- the
+  spacing is exact, and the ceiling they carry has
+  not shifted in whatever span of time they have been
+  standing. This was built to last, by people who
+  knew how. The landing is east; the way continues
+  west; an alcove opens to the south.
+biome: city
+coord:
+  x: 6
+  y: -78
+  z: -2
+exits:
+  east:
+    roomid: 6206
+  west:
+    roomid: 6208
+  south:
+    roomid: 6209
+idlemessages:
+- The piers cast deep shadows in the lamplight; the
+  hall has more dark in it than light.
+- 'The ceiling slabs are fitted without mortar: they
+  hold by weight and the precision of the cut alone.'
+- A low reverberation moves through the floor when
+  you step -- the water is very near beneath.

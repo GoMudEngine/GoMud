@@ -1,0 +1,32 @@
+roomid: 6200
+zone: The Confluence
+title: The Undercroft Stair-Foot
+description: >
+  The stair arrives at a landing of old stone, dry and
+  still. The lamplight from above reaches here, just:
+  enough to show dressed blocks of two kinds set side
+  by side -- the pale courses the temple uses on its
+  upper floors, and darker, denser stone below the
+  seam, clearly older, clearly something the temple
+  was built on rather than built of. The air is cool
+  and carries the smell of still water from the west.
+  The stair goes back up; the undercroft opens west.
+biome: city
+coord:
+  x: 10
+  y: -78
+  z: -1
+exits:
+  up:
+    roomid: 6199
+  west:
+    roomid: 6201
+idlemessages:
+- The lamplight from the stairwell barely holds at
+  this depth; beyond the landing, the west passage
+  is dark.
+- 'Two stones meet at the seam here, one pale and one
+  dark: the line between what the temple built and
+  what it found.'
+- A draught from the west carries the smell of
+  standing water and stone that is very old and cold.

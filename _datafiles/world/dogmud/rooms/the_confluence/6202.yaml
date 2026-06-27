@@ -1,0 +1,45 @@
+roomid: 6202
+zone: The Confluence
+title: The Early Crypt
+description: >
+  A low rectangular chamber lined with niches cut
+  into the walls at head height: an early crypt, used
+  by the first few generations of Keepers to inter
+  their own. Most niches are sealed with plain stone
+  tablets bearing names and years incised with a
+  simple tool. The tablets are the Keepers' work; the
+  walls they are set into are not -- the whole chamber
+  is of the same dark pre-Founding stone as the piers
+  in the vault behind you. The Keepers found this
+  space and made it their burial room. The
+  <ansi fg="itemname">crypt-tablets</ansi>
+  cover most of the visible wall. The vault is east;
+  the passage continues west.
+biome: city
+coord:
+  x: 8
+  y: -78
+  z: -1
+exits:
+  east:
+    roomid: 6201
+  west:
+    roomid: 6203
+nouns:
+  crypt-tablets: >
+    Stone tablets sealed over the niches, each bearing
+    a name and a pair of dates. The eldest entries are
+    worn enough to read with effort; the most recent
+    are still sharply cut. The names are those of
+    Keepers -- a few honored with longer inscriptions,
+    most given only their name and years. None of the
+    tablets comment on the walls they are set into.
+idlemessages:
+- The niches go in three rows, floor to ceiling, on
+  three sides of the chamber.
+- 'The oldest tablet is nearly smooth: the name it
+  carries has worn to an outline, legible only by
+  light held at an angle.'
+- The pre-Founding stone of the walls has been squared
+  to accept the tablets; someone did careful work here
+  long after the walls were first cut.

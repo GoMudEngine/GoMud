@@ -1,0 +1,30 @@
+roomid: 6204
+zone: The Confluence
+title: A Storeroom
+description: >
+  A square room off the main vault, used by the
+  Keepers as a storeroom for things no longer needed
+  above: spare lamp oil in sealed jars, folded bier-
+  cloth, a pair of empty crates, a coil of rope. The
+  walls are the same dark pre-Founding stone as the
+  vault piers, but a Keeper long ago whitewashed them
+  to make the room serviceable, and the paint has
+  since gone a mottled yellow. Whatever this room
+  once held for the people who cut it, it holds lamp
+  oil and old cloth now. The vault is back north.
+biome: city
+coord:
+  x: 9
+  y: -79
+  z: -1
+exits:
+  north:
+    roomid: 6201
+idlemessages:
+- 'A jar of lamp oil sits on a wooden shelf: the shelf
+  was added by the Keepers, the wall behind it was
+  not.'
+- The whitewash on the pre-Founding stone has cracked
+  in a web of fine lines from corner to corner.
+- The room smells of oil and old cloth and the cold
+  of a space that sees no sun.

@@ -1,0 +1,33 @@
+roomid: 6203
+zone: The Confluence
+title: The Seeping Passage
+description: >
+  The passage narrows and the walls close in:
+  pre-Founding stone on all sides, no temple work
+  visible at all. Water seeps through a crack in the
+  south wall and runs in a thin line along the base
+  of the west side -- the joined rivers are not far
+  below, and here the water finds what paths it can.
+  The floor is slick in patches. A side passage opens
+  to the south; a stair cut into the floor itself
+  descends further into the dark below. The crypt
+  is back to the east.
+biome: city
+coord:
+  x: 7
+  y: -78
+  z: -1
+exits:
+  east:
+    roomid: 6202
+  down:
+    roomid: 6206
+  south:
+    roomid: 6205
+idlemessages:
+- 'Water runs along the base of the west wall in a
+  thin steady trickle: the rivers are near.'
+- 'The stair descending is the same cut as the walls:
+  pre-Founding, older than the crypt behind you.'
+- The passage smells of cold water and of stone that
+  has been wet for a very long time.

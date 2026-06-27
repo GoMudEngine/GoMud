@@ -1,0 +1,32 @@
+roomid: 6206
+zone: The Confluence
+title: The Old Hall Landing
+description: >
+  The stair from above delivers you here, and the
+  character of the space changes entirely: there is
+  no temple work in this chamber at all. The stone
+  is the same dense, dark material as the seeping
+  passage, but the geometry shifts -- the ceiling
+  is lower and more regular than the vault above,
+  the proportions of the room deliberate in a way
+  that belongs to a different tradition of building
+  altogether. Cool air comes from the west, carrying
+  a very faint sound of moving water. The stair back
+  up is here; the hall opens to the west.
+biome: city
+coord:
+  x: 7
+  y: -78
+  z: -2
+exits:
+  up:
+    roomid: 6203
+  west:
+    roomid: 6207
+idlemessages:
+- 'The stair behind you is the last thing the Keepers
+  cut: from here west, the hands are older.'
+- The air at this level has a different quality --
+  cooler, stiller, carrying the weight of more stone.
+- 'The proportions of the landing are deliberate:
+  low, wide, built to a plan, not an afterthought.'

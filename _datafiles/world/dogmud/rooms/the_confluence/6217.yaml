@@ -1,0 +1,29 @@
+roomid: 6217
+zone: The Confluence
+title: The Still Water
+description: >
+  A small chamber south of the sealed doorway, wholly
+  given over to a pool that fills the floor from wall
+  to wall -- shallow at the threshold, deeper toward
+  the south end where the stone descends below the
+  waterline. The water is motionless. The air above
+  it is cold in a way that has nothing to do with
+  temperature alone -- the quality of a place sealed
+  against the world for a long time, come to hold
+  a silence of its own kind. Nothing moves in it.
+  The doorway is back to the north.
+biome: city
+coord:
+  x: 3
+  y: -79
+  z: -3
+exits:
+  north:
+    roomid: 6214
+idlemessages:
+- 'The surface of the pool is perfectly flat: no
+  inflow, no outflow, no current.'
+- The cold here has a quality the drowned vault does
+  not -- stiller, and more complete.
+- Nothing moves in the chamber; the pool seems to
+  have been this way for as long as the stone.

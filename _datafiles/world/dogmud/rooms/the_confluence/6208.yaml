@@ -1,0 +1,53 @@
+roomid: 6208
+zone: The Confluence
+title: The Water Gallery
+description: >
+  A long gallery running east to west, its south side
+  open along most of its length to a wide channel cut
+  directly into the floor: the three rivers run here,
+  joined into one, moving through this level as a dark
+  and steady <ansi fg="itemname">joined-channel</ansi>
+  before they find the earth and rock below. You are
+  beneath the iron grate in the temple's great hall;
+  what the hall presents as a religious monument is
+  here simply a fact of water and stone. The hall is
+  east; the passage continues west; a stair descends
+  further below; a cell opens to the south.
+biome: city
+coord:
+  x: 5
+  y: -78
+  z: -2
+exits:
+  east:
+    roomid: 6207
+  west:
+    roomid: 6211
+  down:
+    roomid: 6212
+  south:
+    roomid: 6210
+spawninfo:
+  - mobid: 9471
+    respawnrate: "20 real minutes"
+nouns:
+  joined-channel: >
+    The channel is cut into the floor along the south
+    side of the gallery -- wide enough that you could
+    not step across it, deep enough that the lamplight
+    does not reach the bottom. Three rivers run in it
+    as one: the Aldren, the Brenn, the Solt, meeting
+    somewhere upstream and arriving here as a single
+    current, black and steady. The water moves without
+    haste. The Keepers above built an iron grate and
+    called it holy. Down here it is only a river,
+    going where water goes.
+idlemessages:
+- The sound of the joined channel is the loudest
+  thing at this depth -- a low continuous motion
+  of water, felt in the stone underfoot.
+- 'The current in the channel is steady and does not
+  vary: three rivers made into one, going somewhere
+  below.'
+- Cool air rises off the dark water and fills the
+  length of the gallery.

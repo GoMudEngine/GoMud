@@ -1,0 +1,32 @@
+roomid: 6201
+zone: The Confluence
+title: The Foundation Vault
+description: >
+  A vaulted space beneath the temple's main structure,
+  wider than the passage that leads in. The ribs of
+  the vault overhead are the temple's work -- cut to
+  the same standard as the nave above -- but they
+  spring from piers of a different stone altogether:
+  the same dark, dense pre-Founding material as the
+  lower courses in the older corridor. Whatever was
+  built here first, the Keepers built the temple's
+  own foundations on top of it. The stair-foot is
+  east; a passage continues west; a door opens south.
+biome: city
+coord:
+  x: 9
+  y: -78
+  z: -1
+exits:
+  east:
+    roomid: 6200
+  west:
+    roomid: 6202
+  south:
+    roomid: 6204
+idlemessages:
+- The vault overhead is the temple's work; the piers
+  it springs from are not.
+- 'The air is motionless here: the vault seals it in.'
+- 'A lamp bracket is fixed to the east wall, temple-
+  made and serviceable; it holds no lamp.'

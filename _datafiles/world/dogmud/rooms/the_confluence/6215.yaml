@@ -1,0 +1,48 @@
+roomid: 6215
+zone: The Confluence
+title: The Chamber of the Old Sky
+description: >
+  The deepest room the stair reaches: a domed chamber
+  of pre-Founding stone, dry where everything above
+  it wept water. The whole of the far wall is given
+  to a single great carving -- the
+  <ansi fg="itemname">orbital-face</ansi>
+  -- a map of the sky in concentric rings, cut by a
+  hand that worked before the temple was a thought.
+  The Keepers built three hundred years of doctrine
+  in the rooms above this one. Down here, the wall
+  keeps its own older count. The way back is east.
+biome: city
+coord:
+  x: 2
+  y: -78
+  z: -3
+exits:
+  east:
+    roomid: 6214
+nouns:
+  orbital-face: >
+    A carving that fills the wall: the night sky
+    rendered as a set of nested rings about a central
+    mark, precise as an instrument. Whoever cut it
+    counted the rings with care -- there are four.
+    The temple above keeps to three in everything it
+    teaches. The stone does not argue; it simply
+    shows what it was cut to show, and lets the
+    difference sit there in the dark.
+  ring-inscription: >
+    Around the outermost ring, cut in a script that
+    is not the temple's script: a line of marks the
+    Keepers have transcribed but not translated. They
+    are not decorative. They were placed to be read
+    by someone, at some time, for some reason the
+    stone no longer explains.
+idlemessages:
+- The chamber is silent in a way the rooms above are
+  not -- no water, no draft, only stone and the
+  carving.
+- 'A faint line of old pigment survives in one ring
+  of the carving: it was painted, once, and meant
+  to be seen.'
+- 'The dome overhead is uncarved but smoothed: a
+  deliberate finish, not raw stone.'
