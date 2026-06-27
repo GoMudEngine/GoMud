@@ -14,7 +14,8 @@ patterns:
       "bar", "keep"]
     responses:
       - "Not secrecy. The cloisters are the Keepers' working
-        space. The work there requires quiet visitors interrupt."
+        space. The work there requires a quiet that visitors
+        interrupt."
   - keywords: [""]
     responses:
       - "The nave and the great hall are the public temple.
