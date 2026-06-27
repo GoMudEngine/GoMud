@@ -6,10 +6,12 @@ description: >
   pillared hall, its purpose not legible from what
   remains. The walls are plain pre-Founding stone;
   the floor is slightly raised above the hall's level,
-  like a platform or a watching post. Whatever was
-  kept or done here left no trace. The room is dry,
-  which is notable at this depth, and the air is
-  stale in the way of a space closed for a very long
+  like a platform or a watching post. Set into the
+  center of the raised floor is a shallow
+  <ansi fg="itemname">socket-base</ansi>,
+  cut to seat a standing figure -- empty now. The room
+  is dry, which is notable at this depth, and the air
+  is stale in the way of a space closed for a very long
   time. The hall is back to the north.
 biome: city
 coord:
@@ -19,10 +21,20 @@ coord:
 exits:
   north:
     roomid: 6207
+nouns:
+  socket-base: >
+    A shallow socket cut into the raised floor-stone,
+    round and deep enough to seat the foot of a standing
+    figure -- a base, like the one the Ward of the Deep
+    stands on out in the gallery. This one is empty. Whatever
+    was set here to keep watch is gone, or was moved, or
+    walked away on whatever the builders gave it for legs.
+    The stone is worn smooth in a ring around the socket,
+    as if something turned here, slowly, for a very long time.
 idlemessages:
 - 'The raised floor is a handspan above the hall
   level: enough to stand and look out over it.'
-- The room is entirely plain; whatever decorated or
-  furnished it is gone, or was never there.
+- The empty socket at the room's center holds nothing now
+  but a ring of stone worn smooth around its rim.
 - The silence here is complete; the gallery's water
   sound does not carry this far south.

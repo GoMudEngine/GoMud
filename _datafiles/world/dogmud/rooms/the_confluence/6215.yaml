@@ -11,7 +11,11 @@ description: >
   hand that worked before the temple was a thought.
   The Keepers built three hundred years of doctrine
   in the rooms above this one. Down here, the wall
-  keeps its own older count. The way back is east.
+  keeps its own older count. Around the outermost ring
+  runs a line of
+  <ansi fg="itemname">ring-inscription</ansi>
+  in a script that is not the temple's. The way back
+  is east.
 biome: city
 coord:
   x: 2

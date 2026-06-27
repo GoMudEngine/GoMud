@@ -8,7 +8,6 @@ itemdropchance: 0
 maxwander: 0
 groups:
   - construct
-activitylevel: 8
 idlecommands:
   - 'emote stands motionless in the gallery, a figure of fitted pre-Founding
     stone, and does not acknowledge you.'
