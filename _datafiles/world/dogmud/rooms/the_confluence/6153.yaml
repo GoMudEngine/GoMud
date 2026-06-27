@@ -15,8 +15,8 @@ description: >
   end of the avenue. The gate stands open, as it has
   always stood.
   <ansi fg="itemname">The way south</ansi>
-  is a walk for another day, but the road is clear
-  and well-maintained.
+  runs on into the Processional district, the avenue
+  open and well-maintained toward the great temple.
 biome: city
 coord:
   x: -5
@@ -25,6 +25,8 @@ coord:
 exits:
   north:
     roomid: 6141
+  south:
+    roomid: 6154
 nouns:
   the way south: >
     The road continues past the gate-piers into the
@@ -35,8 +37,8 @@ nouns:
     to give the approach its scale. The great temple
     is at the far end of this avenue, another
     district's worth of city away. The gate stands
-    open and the road is clear. It is a walk for
-    another day.
+    open and the road is clear, running straight
+    into the Processional district.
 idlemessages:
 - Travelers pass through the gate-piers heading south,
   road-worn and purposeful.

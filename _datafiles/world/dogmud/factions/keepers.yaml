@@ -1,0 +1,13 @@
+faction_id: keepers
+display_name: "The Keepers of the Confluence"
+description: |
+  The temple clergy of the Confluence — priests, wardens, hospitallers, and
+  acolytes who keep the great temple on the island and tend the pilgrims who
+  come to it. They maintain the official account: that the old orbital marks
+  in the temple's oldest stone are early Chrysalis theology, and that the
+  three rivers are the whole of the matter. Some of them believe it. The
+  inner Keepers, who gate the cloisters and the undercroft, know it is more
+  complicated than that, and prefer the question stay settled.
+default_rep: 0
+allies: []
+enemies: []
