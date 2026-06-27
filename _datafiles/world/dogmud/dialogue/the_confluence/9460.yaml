@@ -1,0 +1,61 @@
+mobid: 9460
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Welcome. Candles are at the window if you need one for
+      a prayer. What else can I do for you?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Take a candle if you need one. That is what
+        they are here for."
+  - keywords: ["alms", "poor", "need", "help", "give", "bread",
+      "food", "hungry", "coin", "aid"]
+    responses:
+      - "We give bread twice a week, on the market days, from
+        the temple's share of the tithe. Come to the window in
+        the morning and leave your name."
+  - keywords: [""]
+    responses:
+      - "Ask about the candles, the alms, or anything the
+        temple offers at this window."
+tree:
+  root:
+    text: "The almonry is for practical needs -- a candle for a
+      prayer, bread if you are short of it, a word if that is
+      what you need. What can I do for you?"
+    hints: "You could ask about the candles, the alms the Keepers
+      offer, or the temple's daily charitable work."
+  nodes:
+    - id: candles
+      triggers: ["candle", "candles", "light", "prayer", "pray",
+        "take", "free", "cost", "give", "have", "here"]
+      text: "Take one -- they are not for sale, they are for the
+        purpose. Light it at any of the nave's stands and leave it
+        to burn. The Keepers replace them each morning. That is the
+        only thing we ask: that they burn where others can see them."
+      hints: "You could ask about the alms the Keepers offer,
+        or about any other need the almonry covers."
+    - id: alms
+      triggers: ["alms", "poor", "need", "help", "bread", "food",
+        "hungry", "destitute", "charity", "what", "offer",
+        "do", "remedy", "remedies", "aid", "give"]
+      text: "Bread twice a week, on the market days, from the
+        temple's share of the tithe. Remedies when the infirmary
+        has them to spare -- I keep the list, they fill it when
+        they can. A dry place in the portico if the night turns
+        bad. None of it is sufficient. But it is here without
+        conditions. That is the policy. That is the job."
+      hints: "You could ask about the candles, or about the
+        temple's other charitable work."
+    - id: keepers_work
+      triggers: ["temple", "keepers", "work", "role", "purpose",
+        "why", "serve", "care", "tend", "mission", "three"]
+      text: "We keep the rite, the record, and the almonry. The
+        rite is for meaning. The record is for memory. The almonry
+        is so no one leaves the island worse than they arrived.
+        The third job is the least spoken of. I think the Founders
+        would have recognised it first."
+      hints: "You could ask about the candles, or about the
+        alms the Keepers offer."

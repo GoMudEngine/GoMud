@@ -1,0 +1,33 @@
+roomid: 6179
+zone: The Confluence
+title: The Sacristy
+description: >
+  A working vestry at the temple's south end, furnished
+  for the practical work of rite and service. Tall
+  cupboards hold the Keepers' vestments in order of
+  season and occasion; a long table bears the vessels
+  used in the daily rites, cleaned and set out for
+  tomorrow's use. Oil, incense, and spare candles are
+  stacked in careful inventory along one wall. The room
+  smells of cedar and beeswax and the particular
+  efficiency of a space that is used properly every day.
+  The reliquary is through the east door; the Solt
+  chapel is back to the north.
+biome: city
+coord:
+  x: 2
+  y: -79
+  z: 0
+exits:
+  east:
+    roomid: 6178
+  north:
+    roomid: 6176
+idlemessages:
+- A keeper folds a ceremonial cloth with the practiced
+  precision of someone who has done it ten thousand times.
+- 'The vessels on the long table are arrayed with care:
+  each has its exact place, and the gaps show where
+  others are in service.'
+- Incense smoke drifts through the east door from the
+  reliquary, thin and sweet.

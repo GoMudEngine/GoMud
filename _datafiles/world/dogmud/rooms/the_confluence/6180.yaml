@@ -1,0 +1,31 @@
+roomid: 6180
+zone: The Confluence
+title: The Almonry
+description: >
+  A small room off the narthex, maintained by the Almoner
+  for the daily work of charity. A low counter holds
+  baskets of bread and dried goods for those who arrive
+  without means; beside it, racks of candles are
+  available for the asking -- one to a pilgrim -- to be
+  lit before the chapels or carried home. The room is
+  warm from the candle-racks and from the steady press
+  of people who pass through it. The temple entrance
+  is back to the east.
+biome: city
+coord:
+  x: 2
+  y: -75
+  z: 0
+exits:
+  east:
+    roomid: 6168
+spawninfo:
+  - mobid: 9460
+    respawnrate: "20 real minutes"
+idlemessages:
+- The Almoner counts candles into a basket with a
+  practiced hand, neither slow nor hurried.
+- A pilgrim accepts a small loaf from the counter and
+  bows their head in brief acknowledgment.
+- 'The room is warm and a little close: the press of
+  people and the candle-heat together.'

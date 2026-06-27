@@ -1,0 +1,47 @@
+roomid: 6177
+zone: The Confluence
+title: The Disused Alcove
+description: >
+  A space off the sanctuary's east side that was once a
+  chapel and is now something less defined. The original
+  dedication has been removed -- the niche at the back
+  is bricked up and plastered over, the
+  <ansi fg="itemname">walled-recess</ansi>
+  distinguishable from the rest of the wall only by a
+  slightly different shade of plaster and the faint
+  outline of what was behind it. The alcove now holds
+  folded linens, a pair of unused candlestands, and a
+  stack of wooden boards whose purpose is unclear. No
+  keeper tends it on any regular schedule. The Brenn
+  chapel is back to the north; the sanctuary is to the
+  west.
+biome: city
+coord:
+  x: 4
+  y: -78
+  z: 0
+exits:
+  north:
+    roomid: 6175
+  west:
+    roomid: 6173
+nouns:
+  walled-recess: >
+    The back wall of the alcove holds a shallow niche of
+    newer brick and old plaster, set into the original
+    stonework that makes up the rest of the space. The
+    dedication it covered is gone -- no inscription
+    survives at the margins, no trace of what figure or
+    emblem was set into the back. A keeper asked about
+    it once said only that it had been consecrated to
+    something before the Keepers' time, and was closed
+    when they took the temple on. No one now remembers
+    what it was, and no one seems to have pressed the
+    question.
+idlemessages:
+- The alcove is quiet in a way that feels different from
+  the rest of the temple's quiet.
+- Dust has settled evenly on the candlestands and the
+  linen stacks, suggesting no one disturbs them often.
+- 'The plaster over the recess is slightly newer than
+  the wall around it: a visible seam at its edge.'

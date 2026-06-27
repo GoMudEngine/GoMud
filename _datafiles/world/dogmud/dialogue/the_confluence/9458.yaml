@@ -1,0 +1,75 @@
+mobid: 9458
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "The reliquary is open to visitors. Ask, if any of the
+      pieces interest you."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome. I tend the collection here. Ask about anything
+        you see."
+  - keywords: ["old", "older", "oldest", "relic", "relics",
+      "granite", "stone", "shelf"]
+    responses:
+      - "The dark granite shelf at the bottom holds the oldest
+        piece -- and the stone itself is older than the temple.
+        We have always kept the disc on it."
+  - keywords: [""]
+    responses:
+      - "Ask about the relics, the oldest piece, or the stone
+        the reliquary stands on."
+tree:
+  root:
+    text: "I tend the reliquary -- the objects the Keepers have
+      held since the Founding, and one piece older than that.
+      What did you want to know about them?"
+    hints: "You could ask about the relic collection, about the
+      oldest piece, or about the dark granite shelf it rests on."
+  nodes:
+    - id: margin_aside
+      questRequired: ["73-end"]
+      triggers: ["older", "stone", "granite", "before", "founding",
+        "account", "question", "wrong", "mark", "symbol", "scholar",
+        "margin", "records"]
+      text: "You are not the first to look at that shelf and frame
+        the question carefully. The disc is a Founders' piece --
+        that is the account, and I give it as given. But the
+        granite the disc rests on is older than the account that
+        placed it there. The Founders found it and consecrated
+        what they found. The distinction matters, if you are
+        keeping records. I do not press it in the reliquary. The
+        senior Keepers, in the cloisters beyond the threshold,
+        are the ones to press it with."
+      hints: "You could ask about the relics themselves, or about
+        the oldest piece on the granite shelf."
+    - id: relics
+      triggers: ["relic", "relics", "collection", "objects",
+        "what", "here", "piece", "pieces", "kept", "tools",
+        "altar", "fragment", "ledger", "phial", "catalogue",
+        "all", "show", "founding"]
+      text: "Founding-period tools, a fragment of the first altar-
+        stone, the first Keeper's ledger, a sealed phial from the
+        dedication ceremony. Each piece is catalogued and dated
+        where we can date it. The oldest sits on the dark granite
+        shelf at the bottom. That piece we do not assign a date
+        to. The Keepers' account places it at the Founding. The
+        granite shelf predates the account."
+      hints: "You could ask about the oldest piece specifically,
+        or about the dark stone the reliquary stands on."
+    - id: oldest_piece
+      triggers: ["oldest", "piece", "bottom", "dark", "disc",
+        "single", "symbol", "mark", "ring",
+        "cocoon", "carving", "carved", "granite", "shelf"]
+      text: "The carved disc -- the ringed mark, cut in a different
+        hand and with different wear than the keystone above the
+        temple doors. The Keepers call it a Founders' piece,
+        placed here at the Founding for safekeeping. The dark
+        granite shelf it rests on predates it -- older than the
+        temple's first stone, older than any founding record we
+        hold. The Keepers say the Founders consecrated what was
+        already there. I tend the disc and the shelf and do not
+        argue the account here."
+      hints: "You could ask about the other relics in the
+        collection, or about the cloisters beyond the threshold."

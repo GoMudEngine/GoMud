@@ -1,0 +1,46 @@
+roomid: 6183
+zone: The Confluence
+title: The Inner Threshold
+description: >
+  A landing at the end of the east passage from the
+  Brenn chapel, where the public portions of the temple
+  end. The way forward is a heavy
+  <ansi fg="itemname">warded-door</ansi>
+  of iron-bound timber, set into an arch at the landing's
+  far end; through the iron grating in its upper panel
+  a stair descends east-and-down into the cloisters,
+  where the senior Keepers live and work and where,
+  the Warden says, what lies beneath can be reached.
+  The door is barred from within. The Brenn chapel is
+  back to the west.
+biome: city
+coord:
+  x: 5
+  y: -77
+  z: 0
+exits:
+  west:
+    roomid: 6175
+nouns:
+  warded-door: >
+    A door of iron-bound timber, old and heavy, seated
+    in an arch at the landing's east end. Through the
+    grating set into its upper panel a stair descends
+    east-and-down into the cloisters -- the deep interior
+    of the temple, where the senior Keepers live and work
+    and where, it is said, the way to what lies beneath
+    can be found. The door is barred from the far side.
+    The Threshold Warden is courteous about it: the
+    cloisters are not closed out of secrecy, they will
+    say, but because the work done there requires quiet,
+    and the work done deepest requires more than quiet.
+spawninfo:
+  - mobid: 9459
+    respawnrate: "20 real minutes"
+idlemessages:
+- The Threshold Warden stands at ease beside the door,
+  neither forbidding nor inviting -- simply present.
+- 'Through the grating in the door, the stair continues:
+  down into the cloisters, into the quiet, into the dark.'
+- A pilgrim asks the Warden something in a low voice;
+  the Warden answers briefly, and the pilgrim turns back.

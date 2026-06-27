@@ -1,0 +1,33 @@
+roomid: 6176
+zone: The Confluence
+title: Chapel of the Solt
+description: >
+  The southwesternmost chapel, given to the Solt -- the
+  widest of the three rivers, which winds through low
+  marsh and tidal flat before closing with the others
+  at the island. The air here is warmer and heavier than
+  in the Aldren chapel to the north; the walls are hung
+  with woven reed panels, and the floor is inlaid with
+  a mosaic of dark and pale stone suggesting a river
+  spreading across open ground. The Aldren chapel is
+  back to the north; the sanctuary opens to the east;
+  the sacristy is through the south door.
+biome: city
+coord:
+  x: 2
+  y: -78
+  z: 0
+exits:
+  north:
+    roomid: 6174
+  east:
+    roomid: 6173
+  south:
+    roomid: 6179
+idlemessages:
+- The reed panels on the walls shift faintly, though
+  there is no obvious draft to account for it.
+- A worshipper sits on the floor mosaic, following the
+  river-pattern with their eyes from west to east.
+- 'The Solt chapel is warmer than the others: the stone
+  here holds the heat longer than anywhere else.'

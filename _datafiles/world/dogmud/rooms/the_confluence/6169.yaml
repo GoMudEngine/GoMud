@@ -1,0 +1,40 @@
+roomid: 6169
+zone: The Confluence
+title: The Public Nave
+description: >
+  The long body of the temple runs from the narthex to
+  the crossing, benches on either side and an open walk
+  down the center where worshippers stand or kneel without
+  order. The ceiling is high, the stone cool and faintly
+  damp even in summer. Light enters from slit windows
+  high above the aisles. Broad passages open east and
+  west to the side aisles; a stone stair in the north
+  corner climbs to the gallery above. To the south the
+  nave widens into the crossing, where the sound of
+  water rises from below the floor.
+biome: city
+coord:
+  x: 3
+  y: -76
+  z: 0
+exits:
+  north:
+    roomid: 6168
+  south:
+    roomid: 6172
+  west:
+    roomid: 6170
+  east:
+    roomid: 6171
+  up:
+    roomid: 6181
+spawninfo:
+  - mobid: 9463
+    respawnrate: "20 real minutes"
+idlemessages:
+- A worshipper kneels in the center aisle, eyes closed,
+  hands flat on the bench-back in front of them.
+- The stone of the floor hums faintly with the water
+  moving deep below -- barely perceptible, but present.
+- 'A keeper moves along the west aisle, relighting
+  candles: slow, unhurried work.'

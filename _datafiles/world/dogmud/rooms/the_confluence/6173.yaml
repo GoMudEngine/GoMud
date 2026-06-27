@@ -1,0 +1,45 @@
+roomid: 6173
+zone: The Confluence
+title: The Sanctuary
+description: >
+  Beyond the crossing, the temple narrows again into the
+  sanctuary -- the innermost space open to the public,
+  set a step above the crossing floor. At its center a
+  stone altar holds a small
+  <ansi fg="itemname">altar-flame</ansi>,
+  burning in a bronze dish that the Keepers replenish
+  through the day. The walls are plain dressed stone of
+  the same age as the crossing, with shallow carving at
+  the capitals. The Chapel of the Solt opens to the
+  west; a disused alcove is set into the east wall; the
+  reliquary lies deeper to the south.
+biome: city
+coord:
+  x: 3
+  y: -78
+  z: 0
+exits:
+  north:
+    roomid: 6172
+  south:
+    roomid: 6178
+  west:
+    roomid: 6176
+  east:
+    roomid: 6177
+nouns:
+  altar-flame: >
+    A small fire burning in a bronze dish on the altar
+    stone -- not showy, not ceremonial in its size, but
+    present. The Keepers tend it continuously; it has
+    not gone out, they will say, in the temple's full
+    accounting of itself. Whether that is precise or
+    simply what keepers say, the flame itself does not
+    clarify.
+idlemessages:
+- A keeper tends the altar-flame, adding a measure of
+  oil from a leather-covered flask without ceremony.
+- 'The altar fire is steady and small: it does not
+  perform; it is simply present, as it has been.'
+- A worshipper in the sanctuary kneels on bare stone
+  with the careful discomfort of genuine intention.

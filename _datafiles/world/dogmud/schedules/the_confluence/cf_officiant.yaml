@@ -1,0 +1,22 @@
+id: cf_officiant
+description: "The Officiant keeps the great hall through the day, leading the
+  public rite at the crossing, then gives the hall back to the water overnight."
+segments:
+  - start: 6
+    end: 21
+    target_room: 6172
+    activity: ""
+    idlecommands:
+      - emote names the three rivers in the old order of the rite, voice
+        carrying across the hall.
+      - say Stand at the grate a while. The waters are best heard, not
+        described.
+      - emote bows toward the water-grate at the close of a rite and turns
+        to the next who have come.
+  - start: 21
+    end: 6
+    target_room: 6172
+    activity: sleeping
+    idlecommands:
+      - emote has given the hall back to the water for the night and rests
+        near the cold altar.

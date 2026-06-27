@@ -1,0 +1,46 @@
+mobid: 9458
+zone: The Confluence
+schedule_id: cf_sacristan
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - keepers
+idlecommands:
+  - 'emote adjusts the position of a carved vessel on the reliquary
+    shelf, handling it with the careful habit of long practice.'
+  - ''
+  - 'say The oldest piece sits on the dark granite shelf at the
+    bottom. That stone is older than the temple. We have always
+    kept it there.'
+  - ''
+  - 'emote works a folded cloth methodically across the upper
+    display, murmuring the catalogue names in the soft undertone
+    of someone checking a list against memory.'
+  - ''
+activitylevel: 10
+character:
+  name: The Sacristan
+  description: |
+    The Sacristan tends the reliquary alcove off the south nave,
+    a compact room whose shelves hold the oldest physical objects
+    the Keepers have preserved -- founding-period tools, a
+    fragment of the first altar-stone, and one piece whose
+    provenance the Keepers date to before the Founding. She
+    handles each object with the attentiveness of someone who
+    considers the work a form of prayer. Her Chrysalis-change is
+    proprioceptive: she knows, without looking, the precise
+    position of every object in the reliquary. She has not
+    misplaced anything since the change settled.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    perception:
+      training: 6
+    willpower:
+      training: 5

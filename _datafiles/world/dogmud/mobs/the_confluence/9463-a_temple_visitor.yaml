@@ -1,0 +1,34 @@
+mobid: 9463
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 20
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote moves slowly along the nave wall, looking up at the
+    carved band below the clerestory, taking in each panel.'
+  - ''
+  - 'emote pauses at the inscription panel near the column and
+    tilts the head to catch the light on the lettering.'
+  - ''
+  - 'emote stands in the centre of the nave, turns slowly to take
+    in the full hall, then moves toward the crossing.'
+  - ''
+activitylevel: 5
+character:
+  name: A Temple Visitor
+  description: |
+    A temple visitor moves through the nave at the pace of a first
+    visit, looking at everything. Neither devout nor irreverent --
+    simply curious, taking the space in before deciding what they
+    think of it.
+  speciesid: 1
+  level: 1
+  gold: 4
+  stats:
+    perception:
+      training: 2

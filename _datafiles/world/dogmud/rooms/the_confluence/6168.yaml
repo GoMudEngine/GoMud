@@ -1,0 +1,33 @@
+roomid: 6168
+zone: The Confluence
+title: The Narthex
+description: >
+  The step inside from the portico drops the noise of
+  the island immediately -- the narthex is high-ceilinged
+  and cool, a vestibule that gathers new arrivals before
+  the nave ahead. The floor here is worn pale by the
+  passage of many feet; the walls hold shallow niches
+  with oil-lamps burning steady in the still air. The
+  nave opens to the south into the long body of the
+  temple; a low door to the west leads to the almonry.
+  The great doors of the portico stand open at your
+  back to the north.
+biome: city
+coord:
+  x: 3
+  y: -75
+  z: 0
+exits:
+  north:
+    roomid: 6167
+  south:
+    roomid: 6169
+  west:
+    roomid: 6180
+idlemessages:
+- A pair of pilgrims stand just inside the door, taking
+  in the quiet before moving deeper into the nave.
+- 'The oil-lamps in the wall-niches burn without flicker:
+  the narthex is perfectly still.'
+- A keeper stands near the inner arch, ready to answer
+  questions from those entering for the first time.

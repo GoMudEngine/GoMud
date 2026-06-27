@@ -1,0 +1,33 @@
+mobid: 9462
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 20
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote kneels before the chapel niche, holding a lit candle in
+    cupped hands, lips moving without sound.'
+  - ''
+  - 'emote touches the offering shelf at the chapel niche, sets a
+    small coin there, and bows before straightening.'
+  - ''
+  - 'emote remains at prayer, still, the candle flame steady in
+    still air.'
+  - ''
+activitylevel: 5
+character:
+  name: A Pilgrim at Prayer
+  description: |
+    A pilgrim kneels at the chapel niche, candle in hand, deep in
+    whatever has brought them to the island. Road dust is still on
+    their boots. They have not stopped to wash before coming in.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    willpower:
+      training: 2

@@ -1,0 +1,72 @@
+mobid: 9459
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "The cloisters beyond this door are not open to visitors.
+      The nave is the public temple -- the great hall, the crossing,
+      the reliquary. What did you need?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "The nave is open to you. The door behind me is not."
+  - keywords: ["why", "reason", "secret", "closed", "hidden",
+      "bar", "keep"]
+    responses:
+      - "Not secrecy. The cloisters are the Keepers' working
+        space. The work there requires quiet visitors interrupt."
+  - keywords: [""]
+    responses:
+      - "The nave and the great hall are the public temple.
+        The cloisters are not. Ask about either."
+tree:
+  root:
+    text: "The door behind me leads to the cloisters, the archive,
+      and what lies below. None of that is open to visitors. The
+      nave and the great hall are the public temple. What did you
+      want to know?"
+    hints: "You could ask why the cloisters are closed, or how
+      to reach the senior Keepers if your questions warrant it."
+  nodes:
+    - id: margin_aside
+      questRequired: ["73-end"]
+      triggers: ["open", "past", "through", "enter", "inside",
+        "cloisters", "beneath", "below", "undercroft", "deeper",
+        "scholar", "margin", "question", "records", "stone",
+        "older", "mark", "symbol", "why", "reason", "how"]
+      text: "You have been to the Scholars' Quarter. I can see it
+        in how you are looking at the door rather than at me. The
+        answer is the same: the cloisters are not open to visitors.
+        I do not say that because the questions you are carrying
+        are wrong -- I say it because the work on the other side
+        requires quiet, and what lies deepest requires more than
+        quiet. If your questions are the kind the senior Keepers
+        can address, say so to the Officiant at the crossing. He
+        will decide whether to send word. That is the process."
+      hints: "You could ask about the process for reaching the
+        senior Keepers, or about what the public temple holds."
+    - id: closed
+      triggers: ["closed", "why", "reason", "quiet", "work",
+        "necessity", "secret", "secrecy", "shut", "bar", "block"]
+      text: "Not secrecy -- necessity. The cloisters hold the
+        Keepers' working archive and copying rooms. Visitors in
+        the archive interrupt the work. And the deeper the space
+        runs, the quieter it must be kept. What lies beneath the
+        cloisters requires a quiet we cannot hold with visitors
+        moving through. The nave does not require that. The nave
+        is yours."
+      hints: "You could ask how to reach the senior Keepers, or
+        about the public temple behind you."
+    - id: senior_keepers
+      triggers: ["senior", "keeper", "keepers", "how", "reach",
+        "find", "who", "speak", "talk", "access", "further",
+        "beyond", "pass", "way", "through", "enter", "inside"]
+      text: "The senior Keepers do not take visitors at the door.
+        If your questions run beyond the nave, speak first to the
+        Officiant at the crossing -- he keeps the public rite and
+        is the face of the order here. If your questions are the
+        kind that warrant it, he will send word to the cloisters
+        on your behalf. It is not a short process. But it is the
+        process."
+      hints: "You could ask why the cloisters are closed, or
+        speak to the Officiant at the crossing."

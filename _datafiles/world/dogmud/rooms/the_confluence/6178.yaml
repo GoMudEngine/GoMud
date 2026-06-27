@@ -1,0 +1,52 @@
+roomid: 6178
+zone: The Confluence
+title: The Reliquary
+description: >
+  A small dedicated chamber beyond the sanctuary, kept
+  dim and cool, its walls lined with stone shelves
+  holding the temple's collected relics under glass and
+  linen. River-stones smoothed in ancient channels,
+  fragments of early Keeper vestments, a bound record
+  of the first naming rites -- each labeled in careful
+  script. At the center, on a slab of stone visibly
+  older and darker than the shelving around it, the
+  <ansi fg="itemname">oldest-relic</ansi>
+  rests without label or explanation. The Sacristan
+  attends here, prepared to speak to the newer pieces;
+  the oldest one she describes as simply the first thing
+  found on the island. The sacristy is to the west; the
+  sanctuary is back to the north.
+biome: city
+coord:
+  x: 3
+  y: -79
+  z: 0
+exits:
+  north:
+    roomid: 6173
+  west:
+    roomid: 6179
+nouns:
+  oldest-relic: >
+    A small river-worn disc of stone, dark and smooth,
+    resting on the slab without a mount or label. The
+    slab itself is of a different composition than the
+    shelving around it -- older stone, darker, the same
+    quality visible in the causeway's base courses and
+    in the grate-stone at the crossing. The Sacristan
+    will say that it was the first thing found on the
+    island when the Founders chose the site: that it
+    lay on the bare rock at the water's edge, as if it
+    had been placed and was waiting. The temple account
+    does not pursue the question of who placed it. The
+    stone itself does not volunteer the answer.
+spawninfo:
+  - mobid: 9458
+    respawnrate: "20 real minutes"
+idlemessages:
+- The Sacristan moves along the shelves with the ease
+  of someone who has memorized every label in the room.
+- 'The chamber is cooler than the rest of the temple:
+  the stone here is thick, and the light is kept low.'
+- A pilgrim stands before the oldest relic for a long
+  moment, then steps back without touching the glass.

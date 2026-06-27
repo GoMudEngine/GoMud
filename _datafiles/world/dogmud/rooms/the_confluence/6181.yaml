@@ -1,0 +1,29 @@
+roomid: 6181
+zone: The Confluence
+title: The Gallery
+description: >
+  A broad upper room above the nave, reached by the
+  corner stair, with a low rail at its south edge looking
+  out over the full length of the nave below. From here
+  the geometry of the temple is clear at a glance -- the
+  nave stretching back to the narthex doors in the north,
+  the crossing visible beyond, the chapels flanking.
+  The gallery walk continues south along the rail above
+  the crossing. The stair descends to the nave below.
+biome: city
+coord:
+  x: 3
+  y: -76
+  z: 1
+exits:
+  down:
+    roomid: 6169
+  south:
+    roomid: 6182
+idlemessages:
+- A visitor leans on the gallery rail, watching the
+  worshippers move below without hurry.
+- 'The view from here is instructive: the whole nave
+  legible in one look, the crossing framed beyond.'
+- The sound of the water from below rises here more
+  clearly than anywhere in the nave itself.

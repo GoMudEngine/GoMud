@@ -1,0 +1,49 @@
+roomid: 6174
+zone: The Confluence
+title: Chapel of the Aldren
+description: >
+  A chapel off the crossing's west side, consecrated to
+  the Aldren -- the northern river, which comes down from
+  the high country and arrives at the Confluence cold and
+  fast and clear. The back wall carries a bas-relief of
+  the Aldren's upper reaches: narrow gorge, high stone,
+  water running white over exposed bedrock. A
+  <ansi fg="itemname">cold-channel</ansi>
+  of the same river-water, fed from a source beneath,
+  runs in a shallow stone trough along the base of the
+  relief wall and disappears back into the floor. The
+  crossing is to the east; the west aisle connects to
+  the north; the Chapel of the Solt is to the south.
+biome: city
+coord:
+  x: 2
+  y: -77
+  z: 0
+exits:
+  east:
+    roomid: 6172
+  north:
+    roomid: 6170
+  south:
+    roomid: 6176
+nouns:
+  cold-channel: >
+    A shallow trough of stone running along the base of
+    the relief wall, fed continuously from somewhere
+    beneath the chapel floor. The water in it is cold --
+    noticeably colder than the air in the rest of the
+    temple -- and moves with a quiet purpose, entering
+    from one end of the trough and disappearing into
+    the other without any visible outlet. Pilgrims touch
+    it on the way through, and some cup their hands
+    briefly before moving on.
+spawninfo:
+  - mobid: 9462
+    respawnrate: "20 real minutes"
+idlemessages:
+- A pilgrim kneels at the edge of the channel, touching
+  the water and then pressing a wet hand to their face.
+- 'The trough water is noticeably colder than the air:
+  mountain-cold, even here.'
+- The relief on the back wall has been touched so often
+  that the gorge's high point is worn to a shine.

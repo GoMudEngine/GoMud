@@ -1,0 +1,31 @@
+roomid: 6171
+zone: The Confluence
+title: The East Aisle
+description: >
+  The east aisle runs parallel to the nave on the
+  temple's far side, quieter than the central walk and
+  slightly shadowed under the high windows. A bracket
+  of wrought iron holds candles at each pillar-base,
+  and the floor near these is marked by generations of
+  dripped wax now pressed smooth by foot-traffic. The
+  nave is back to the west; the Chapel of the Brenn
+  opens at the aisle's south end, on the crossing's
+  east side.
+biome: city
+coord:
+  x: 4
+  y: -76
+  z: 0
+exits:
+  west:
+    roomid: 6169
+  south:
+    roomid: 6175
+idlemessages:
+- A pilgrim moves slowly south along the aisle, one hand
+  trailing the pillar-bases as they go.
+- 'The high windows on this side catch the early light:
+  long pale bars across the floor, shifting through the
+  morning.'
+- A pair of worshippers confer in low voices near the
+  aisle's far end, comparing notes on the chapel ahead.
