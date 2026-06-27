@@ -1,0 +1,16 @@
+itemid: 40142
+name: A Rubbing of the Old Sky
+namesimple: rubbing
+description: >
+  A charcoal rubbing taken from the great carving in the
+  undercroft -- the old sky in four nested rings, where the
+  temple above teaches three. Proof, in soft black line,
+  of a count the Confluence stopped keeping. What you do
+  with it is the only question left.
+type: object
+subtype: mundane
+component_tag: sky-rubbing
+weight: 0.2
+value: 0
+rarity_tier: 60
+not_salable: true
