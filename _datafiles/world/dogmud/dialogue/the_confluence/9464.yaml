@@ -81,6 +81,7 @@ tree:
       hints: "You could ask Aldric about the records, or about
         what lies beneath the temple."
     - id: the_ground
+      questRequired: ["73-end"]
       triggers: ["older", "beneath", "under", "built", "raised",
         "foundation", "stone", "ground", "deeper", "what is",
         "what lies", "below"]

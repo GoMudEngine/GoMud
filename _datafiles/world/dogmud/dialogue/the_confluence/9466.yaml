@@ -52,7 +52,8 @@ tree:
         persuasive. I notice I have had to keep finding it for
         twenty years. I think that is what faith is."
       hints: "You could ask Prioress Crane about the rite itself,
-        or about what the Keepers hold and why."
+        or about the order and how she, Aldric, and Cael have held
+        it between them."
     - id: the_rite
       triggers: ["rite", "service", "ceremony", "prayer",
         "hours", "morning", "what do", "what you",
