@@ -1,0 +1,60 @@
+roomid: 6167
+zone: The Confluence
+title: The Temple Portico
+description: >
+  A grand entrance portico at the top of the temple
+  stair — wide columns of pale river-stone, a deep
+  shaded overhang, and between them the
+  <ansi fg="itemname">great-doors</ansi>
+  of the temple, shut against the day. Cut into the
+  keystone above the doors, plainly visible from the
+  top of the stair, the
+  <ansi fg="itemname">weathered-symbol</ansi>
+  is older than the portico around it — a four-ring
+  mark, one ring enclosing the next, worn to near-
+  smoothness at its edges while the stone on either
+  side shows far less weathering. At the foot of one
+  column a Margin scholar sits with a board on her
+  knee, copying the lines of the symbol stroke by
+  stroke; a keeper passes now and then and lets her
+  be. The stair descends to the north.
+biome: city
+coord:
+  x: 3
+  y: -74
+  z: 0
+exits:
+  north:
+    roomid: 6166
+nouns:
+  weathered-symbol: >
+    The four-ring orbital mark cut into the keystone
+    above the great doors — one ring enclosing the
+    next, the outermost nearly flush with the stone's
+    surface from long weathering. The portico columns
+    beside it show far less wear. Whatever it was cut
+    into, the Keepers have built around it. Their
+    account is that it is the earliest rendering of
+    the Chrysalis truth — the sealed soul, the ringed
+    cocoon — set here by the first Founders. The stone
+    it is cut into does not volunteer the same date.
+  great-doors: >
+    The great doors of the Confluence temple are shut
+    and barred from within. Their timber is old and
+    bound with iron fittings, the wood darkened to
+    near-black by years under the overhang. A brass
+    panel to one side reads, in the Keepers' formal
+    hand, that the public temple is not accessible
+    from this approach — pilgrims are directed to the
+    processional entrance on the island's far side.
+    The doors give nothing else away.
+spawninfo:
+  - mobid: 9454
+    respawnrate: "20 real minutes"
+idlemessages:
+- The scholar at the column glances up at the symbol,
+  then down at her board, and makes another careful line.
+- The overhang holds the smell of old incense and
+  candle-wax, the residue of many previous arrivals.
+- 'The great doors do not open: they have been shut
+  in this way since before anyone on staff can say.'

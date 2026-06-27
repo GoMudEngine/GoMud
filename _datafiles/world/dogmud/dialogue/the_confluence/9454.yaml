@@ -1,0 +1,92 @@
+mobid: 9454
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "A moment."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Yes. I am working. Briefly."
+  - keywords: ["what", "doing", "copy", "copying", "mark",
+      "symbol", "measure", "folio", "why", "here",
+      "study", "research"]
+    responses:
+      - "Recording the mark above the doors. The dimensions,
+        the proportions, the chisel technique. The analysis
+        is done upriver. I only record here."
+  - keywords: ["margin", "scholar", "who", "group",
+      "society", "organization", "what", "are"]
+    responses:
+      - "The Margin. Scholars' Quarter, upriver. We keep the
+        source records. If you want the work, go north."
+  - keywords: [""]
+    responses:
+      - "I am working. Questions about the mark or the
+        Margin only."
+tree:
+  root:
+    text: "I am recording the mark above the doors. The
+      proportions, the carving technique, the layering. I do
+      not draw conclusions here. The analysis is in the
+      Scholars' Quarter. What did you want?"
+    hints: "You could ask what is being recorded here, about
+      the mark itself, or about the Margin and the Scholars'
+      Quarter upriver."
+  nodes:
+    - id: q73_aside
+      questRequired: ["73-end"]
+      triggers: ["fourth", "water", "waters", "count", "records",
+        "survey", "notation", "quist", "seen", "scholar",
+        "symbol", "mark", "older", "question", "agree",
+        "disagree", "what", "know", "found", "doctrine",
+        "wrong", "keystone", "carving", "ring", "cocoon"]
+      text: "So you have seen what the records show. Then you
+        already know what I am copying: the keystone is older
+        than the doctrine cut beneath it. The proportions,
+        the chisel work, the weathering sequence -- it does
+        not match the Founding period, not by a generation.
+        I write that down. I do not say it here."
+      hints: "You could ask about the Margin's work, or
+        about the Scholars' Quarter upriver."
+    - id: recording
+      triggers: ["record", "recording", "copy", "copying",
+        "what", "doing", "why", "measure", "dimension",
+        "proportion", "chisel", "technique", "folio",
+        "instrument", "brass", "angle"]
+      text: "Dimensional record of the mark -- the ring
+        geometry, the relief depth at the cocoon element,
+        the chisel sequence. I can read carving technique
+        with enough precision to establish relative dating.
+        That is the purpose. I do not speculate about
+        what it means. That is the work for upriver, with
+        the source surveys laid out properly."
+      hints: "You could ask about the mark itself, or
+        about the Margin and the Scholars' Quarter."
+    - id: the_mark
+      triggers: ["mark", "symbol", "ring", "cocoon",
+        "above", "doors", "stone", "what", "is", "means",
+        "old", "older", "carved", "first", "oldest",
+        "founding", "keepers", "say", "tell"]
+      text: "The Keepers call it the first rendering of
+        the Chrysalis truth -- the sealed soul, the ringed
+        cocoon, the Founders' own hand. That is the official
+        account. I record what I can measure: dimensions,
+        weathering, technique. I do not argue with the
+        account on temple ground. The Scholars' Quarter
+        is north if you want the Margin's reading of it."
+      hints: "You could ask what is being recorded here,
+        or about the Scholars' Quarter and the Margin's work."
+    - id: scholars_quarter
+      triggers: ["scholars", "quarter", "margin", "upriver",
+        "north", "where", "go", "find", "more", "work",
+        "analysis", "library", "archive", "quist", "what",
+        "is", "there"]
+      text: "North along the river, at the top end of the
+        Confluence. The Margin Hall is there -- the library,
+        the source surveys, the cartographers' rooms. If you
+        want the substance of the work rather than the
+        field notes, that is where to go. Ask for the survey
+        room."
+      hints: "You could ask what is being recorded here, or
+        about the mark above the doors."

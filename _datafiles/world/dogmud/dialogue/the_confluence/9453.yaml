@@ -1,0 +1,72 @@
+mobid: 9453
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Oh -- hello. I did not hear you come up. Is there
+      something I can help you find?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. I am sweeping, but -- yes, what is it?"
+  - keywords: ["garden", "meditation", "quiet", "side", "gate",
+      "path", "where"]
+    responses:
+      - "Through the side gate, just there. It is small but
+        very peaceful before the afternoon pilgrims come
+        through. I tend it."
+  - keywords: ["temple", "crossing", "causeway", "altar",
+      "how", "go", "where", "inside"]
+    responses:
+      - "The causeway is straight ahead from the forecourt.
+        The Warden at the gate can tell you what is open
+        to visitors."
+  - keywords: [""]
+    responses:
+      - "I am not very senior -- the Historian knows more,
+        or the Warden at the gate."
+tree:
+  root:
+    text: "I tend the garden and sweep the forecourt. I am
+      not very far into my training yet, but I can answer
+      small questions. What is it?"
+    hints: "You could ask about the meditation garden, about
+      the temple and how to cross to it, or about life as
+      an acolyte."
+  nodes:
+    - id: garden
+      triggers: ["garden", "meditation", "tend", "flowers",
+        "quiet", "plants", "care", "what", "side", "peaceful"]
+      text: "It is a small garden -- stone paths, a few herbs,
+        a fountain that the Keepers maintain. Pilgrims use it
+        to sit before crossing to the temple. I sweep it and
+        tend the herbs in the morning. It is -- I find it a
+        good way to begin the day. Quieter than the forecourt."
+      hints: "You could ask about the temple, or about
+        life as an acolyte here."
+    - id: training
+      triggers: ["acolyte", "training", "learning", "study",
+        "keeper", "how", "long", "what", "do", "you", "are",
+        "become", "first", "year", "robes"]
+      text: "I have been here eight months. The first year is
+        mostly practical -- tending the garden, sweeping the
+        forecourt, helping the Hospitaller with the hall. The
+        senior Keepers say the work grounds you before the
+        doctrine. I think they are right. I think. I am not
+        certain about most things yet, which the Historian
+        says is the correct state for a first-year."
+      hints: "You could ask about the garden, or about
+        the temple across the causeway."
+    - id: temple
+      triggers: ["temple", "causeway", "cross", "altar",
+        "where", "go", "visit", "inside", "how", "open",
+        "can", "allowed"]
+      text: "Straight through the forecourt and across the
+        causeway. The public nave is open -- the altar is
+        at the center, and the founding reliefs run along
+        the north wall. The Historian in the Hall can
+        explain the reliefs if you want the account. The
+        cloisters past the nave are for the senior Keepers,
+        not visitors."
+      hints: "You could ask about the meditation garden,
+        or about acolyte training."

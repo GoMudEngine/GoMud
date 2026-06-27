@@ -1,0 +1,32 @@
+roomid: 6165
+zone: The Confluence
+title: The Causeway, East Span
+description: >
+  The island is close now — the causeway's east span
+  descends from the crown toward the temple steps, the
+  stone of the island's near bank rising ahead. The
+  water is still visible on both sides but the island
+  is filling the eastern view: the step-base of the
+  temple, the dressed stone of the island's retaining
+  wall, the broad stair that climbs from the water's
+  edge up to the portico. A low sound of the river-
+  meeting comes from directly beneath, where the last
+  of the current converges before the island divides
+  it. The causeway crown is back to the west.
+biome: city
+coord:
+  x: 1
+  y: -73
+  z: 0
+exits:
+  west:
+    roomid: 6164
+  east:
+    roomid: 6166
+idlemessages:
+- The island's retaining wall is visible here at near
+  distance — well maintained, well fitted.
+- A returning pilgrim passes coming the other way,
+  making for the forecourt and the city beyond.
+- The sound of the joining rivers is loudest here,
+  directly at the island's upstream edge.

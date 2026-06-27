@@ -1,0 +1,16 @@
+itemid: 40141
+name: A Twist of Temple Incense
+namesimple: incense
+description: >
+  A paper twist of resinous incense, dark and fragrant, blended by
+  the temple and sold at the votive stalls. A pinch on a coal fills
+  a chapel with sweet smoke.
+type: object
+subtype: mundane
+component_tag: temple-incense
+weight: 0.1
+value: 6
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- alchemy

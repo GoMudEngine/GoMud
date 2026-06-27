@@ -1,0 +1,48 @@
+roomid: 6164
+zone: The Confluence
+title: The Causeway, Crown
+description: >
+  The causeway reaches its high point here, the water
+  visible on both sides and the span stretching away
+  in both directions. From the crown the island fills
+  the eastern view — a great hall rising from the water
+  above the joining of the rivers, built where the three
+  channels finally become one. The bridge itself carries
+  age in its lower courses. The
+  <ansi fg="itemname">old-stonework</ansi>
+  at the crown's base is visibly different from the
+  span above — older cut, darker with mineral years,
+  the joints between blocks worn to smooth channels.
+  One block near the east railing carries a worn ring
+  pressed into its face. The western bank and the
+  forecourt lie behind to the west.
+biome: city
+coord:
+  x: -1
+  y: -73
+  z: 0
+exits:
+  west:
+    roomid: 6163
+  east:
+    roomid: 6165
+nouns:
+  old-stonework: >
+    The base courses of the causeway crown are set
+    differently from the span above — older stone,
+    more darkly stained, the cut less precise but the
+    blocks seated deeper into the river-bed. The joints
+    between them have worn to smooth channels over a
+    long count of years. One block near the east railing
+    carries a ring pressed into its face, a circled
+    groove worn to near-uniformity with the stone around
+    it. It could be a maker's mark, or the scar of a
+    mooring ring long since removed, or something older.
+    The rest of the stonework does not remark on it.
+idlemessages:
+- The view from the crown takes in both banks and the
+  open water running away to the southwest below.
+- 'The wind is stronger at the crown: nothing between
+  the causeway here and the open water on all sides.'
+- A pilgrim stops at the east railing and looks at
+  the temple ahead before continuing across.

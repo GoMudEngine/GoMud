@@ -1,0 +1,53 @@
+mobid: 9452
+zone: The Confluence
+schedule_id: cf_hospitaller
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - keepers
+idlecommands:
+  - 'emote ladles broth into a bowl and sets it at the end of the
+    long table with the unhurried movements of someone who has
+    done this a thousand times and expects to do it a thousand
+    more.'
+  - ''
+  - 'say There is broth on the fire and bread on the board. If
+    your feet brought you this far, they have earned a meal.'
+  - ''
+  - 'emote moves along the row of pallets, straightening a blanket
+    here, tucking in a corner there, checking that the sleeping
+    pilgrims are settled before returning to the hearth.'
+  - ''
+activitylevel: 10
+character:
+  name: The Hospitaller
+  description: |
+    The Hospitaller is a Keeper who runs the pilgrim hall beside
+    the temple approach, feeding and resting travelers who have
+    come far enough to need it. She is a broad, practical woman
+    of middle years who regards spiritual matters as things best
+    served alongside a hot meal. She does not proselytize. She
+    feeds people, gives them a place to sleep, and trusts that
+    the temple itself will do whatever the temple is supposed to
+    do. Her Chrysalis-change gives her a physiological read on
+    anyone she looks at -- she can see exhaustion, fever, or
+    injury in a person before they report it. She uses this
+    entirely for practical triage. Pilgrims who look worse than
+    they let on get the better bowl.
+  speciesid: 1
+  level: 1
+  gold: 15
+  stats:
+    vitality:
+      training: 6
+    charisma:
+      training: 5
+  shop:
+    - itemid: 40135
+    - itemid: 40136

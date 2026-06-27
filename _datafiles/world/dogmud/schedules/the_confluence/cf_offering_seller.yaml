@@ -1,0 +1,23 @@
+id: cf_offering_seller
+description: "The Offering-Seller works her stall on the votive-stall stretch
+  of the avenue through the day, then shutters it and dozes behind the
+  counter overnight."
+segments:
+  - start: 6
+    end: 20
+    target_room: 6155
+    activity: ""
+    idlecommands:
+      - emote straightens the display of votive candles into a precise row
+        and smooths a reed wreath that has come undone.
+      - say Candles, wreaths, incense -- whatever your devotion calls for.
+        All proper for the temple.
+      - emote calls a price to a passing pilgrim, then makes change from a
+        worn leather purse without looking down.
+  - start: 20
+    end: 6
+    target_room: 6155
+    activity: sleeping
+    idlecommands:
+      - emote has shuttered the stall for the night and dozes on a stool in
+        its lee, the wares packed away under oilcloth.

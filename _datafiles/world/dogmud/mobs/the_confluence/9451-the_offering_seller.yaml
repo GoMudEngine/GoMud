@@ -1,0 +1,50 @@
+mobid: 9451
+zone: The Confluence
+schedule_id: cf_offering_seller
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote unwraps a new bundle of incense sticks, ties them with a
+    thin cord, and sets them alongside the other bundles on the stall
+    ledge with the efficiency of long practice.'
+  - ''
+  - 'say Candles, wreaths, incense -- whatever your devotion calls
+    for. All traditional, all proper for the temple.'
+  - ''
+  - 'emote wipes down the stall counter, straightening the display of
+    votive candles into a precise row, and smooths a reed wreath that
+    has come slightly undone.'
+  - ''
+activitylevel: 10
+character:
+  name: The Offering-Seller
+  description: |
+    The Offering-Seller runs a tidy stall at the edge of the temple
+    approach, selling the small devotional items pilgrims carry to
+    the altar. She is not a Keeper -- she is a trader who has been
+    working this pitch for nine years and knows exactly what pilgrims
+    want, at what price, at which point in their journey. Her stock
+    is candles, reed wreaths, and temple incense, sourced from the
+    same suppliers the Keepers use for their own ceremonies. This
+    is a point of professional pride. She has no Chrysalis-change
+    worth mentioning, and she does not expect one. The stall is
+    doing fine.
+  speciesid: 1
+  level: 1
+  gold: 35
+  stats:
+    charisma:
+      training: 7
+    perception:
+      training: 4
+  shop:
+    - itemid: 40139
+    - itemid: 40140
+    - itemid: 40141

@@ -1,0 +1,30 @@
+roomid: 6159
+zone: The Confluence
+title: The Still Pool
+description: >
+  The garden narrows here to a small enclosure around
+  a reflecting pool cut from a single wide slab of
+  stone. The water is kept very still — the pool is
+  set into the ground and the enclosure walls break
+  the wind that moves the river-surface nearby. The
+  reflection is clear enough to read as a second sky
+  when clouds are moving. The stone underfoot is older
+  than the garden around it, its surface worn to a
+  texture that the newer paving has not yet reached.
+  There is nothing else here. The garden is back
+  to the east.
+biome: city
+coord:
+  x: -7
+  y: -73
+  z: 0
+exits:
+  east:
+    roomid: 6158
+idlemessages:
+- The pool surface breaks once where a leaf drifts
+  in from the hedge, then stills again completely.
+- The enclosure walls filter the sound of the city
+  to a very low register from here.
+- The stone rim of the pool is worn smooth on the
+  near side, where hands have rested over many years.

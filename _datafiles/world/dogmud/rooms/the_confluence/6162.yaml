@@ -1,0 +1,52 @@
+roomid: 6162
+zone: The Confluence
+title: The Hall of the Founding
+description: >
+  A modest stone hall off the avenue, given over to the
+  temple's account of its own beginning. A long carved
+  <ansi fg="itemname">founding-relief</ansi>
+  runs the length of one wall — the three rivers, the
+  raising of the temple, the first Keepers at the
+  water's edge. A brass
+  <ansi fg="itemname">official-plaque</ansi>
+  beneath it sets out, in confident lettering, what the
+  oldest marks in the temple stone are held to mean.
+  A keeper attends here through the day to explain it
+  to whoever asks.
+biome: city
+coord:
+  x: -4
+  y: -72
+  z: 0
+exits:
+  west:
+    roomid: 6156
+nouns:
+  founding-relief: >
+    The relief is old work, well kept: the three rivers
+    shown as three braided lines drawing together, the
+    temple rising on the island where they meet, robed
+    figures gathered at the banks. The three rivers flow
+    from north, east, and southwest respectively —
+    Aldren, Brenn, Solt — and the raising is orderly,
+    purposeful, the composition of a beginning told
+    with full confidence in how it went.
+  official-plaque: >
+    THE FIRST MARK, the plaque reads, is the earliest
+    rendering of the Chrysalis truth — the sealed soul,
+    the ringed cocoon, cut into the temple stone by the
+    first Founders. It is given as settled doctrine, in
+    the Keepers' formal lettering, earnest and unhurried.
+    A careful reader who has seen the old river surveys
+    might find the confidence a little too tidy to sit
+    beside the evidence without question.
+spawninfo:
+  - mobid: 9449
+    respawnrate: "20 real minutes"
+idlemessages:
+- A keeper murmurs the founding account to a small
+  group of listeners, gesturing at the relief.
+- 'Light from the high window crosses the plaque: brass,
+  then shadow, then brass again.'
+- A pilgrim traces the braided rivers on the relief
+  with one careful finger, following them to the island.
