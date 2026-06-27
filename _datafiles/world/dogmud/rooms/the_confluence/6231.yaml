@@ -13,8 +13,11 @@ description: >
   <ansi fg="itemname">boundary-stone</ansi>
   leans slightly off-true, as if the ground has settled
   under it over a long period. The scholars who walk
-  this path daily pass it without remarking on it.
-  The quiet garden lies east.
+  this path daily pass it without remarking on it. A
+  low gate in the wall's west face opens onto the
+  working quarter beyond — the smells of the trades
+  reach even this secluded end of the walk. The quiet
+  garden lies east; the gate leads west.
 biome: city
 coord:
   x: -12
@@ -23,6 +26,8 @@ coord:
 exits:
   east:
     roomid: 6229
+  west:
+    roomid: 6232
 nouns:
   the boundary-stone: >
     A stone block half-sunk in the moss at the end of

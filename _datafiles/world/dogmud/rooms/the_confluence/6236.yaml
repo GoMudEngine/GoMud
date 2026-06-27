@@ -1,0 +1,62 @@
+roomid: 6236
+zone: The Confluence
+title: The Potter's
+description: >
+  Clay underfoot and clay on every surface — the
+  doorstep has a permanent grey dusting of it that no
+  amount of sweeping entirely removes. The shop front
+  gives onto a workroom where a heavy
+  <ansi fg="itemname">wheel</ansi>
+  sits in the center of a tamped-earth floor, its head
+  still damp from the morning's work. Rows of
+  <ansi fg="itemname">greenware</ansi>
+  — bowls, jars, narrow-necked bottles — stand on
+  boards to either side, waiting for the dryness that
+  precedes the
+  <ansi fg="itemname">kiln</ansi>
+  in the yard. The finished pieces on the front shelf
+  are plain but good — the kind of work a household
+  buys once and keeps for twenty years. The craft row
+  is north; the weaver's is west; the market is south.
+biome: city
+coord:
+  x: -14
+  y: -69
+  z: 0
+exits:
+  north:
+    roomid: 6233
+  west:
+    roomid: 6235
+  south:
+    roomid: 6237
+spawninfo:
+  - mobid: 9474
+    respawnrate: "20 real minutes"
+nouns:
+  the wheel: >
+    A heavy kick-wheel of old construction, its
+    flywheel worn smooth at the kick-point. The head
+    is damp and there is a small mound of worked clay
+    resting on it, covered with a wet cloth to keep it
+    from drying between sessions.
+  the greenware: >
+    Unfired clay pieces drying on boards — bowls in
+    two sizes, jars with tight-fitting lids, and
+    several narrow-necked bottles the purpose of which
+    is not immediately clear. The clay is still dark
+    where it is thickest, lighter where it has begun
+    to dry out.
+  the kiln: >
+    A small domed kiln of fire-brick, visible through
+    the workroom's rear passage, its mouth stopped
+    with a clay plug. The bricks have taken the
+    orange-brown of long use and the ground around
+    the base is grey with old ash.
+idlemessages:
+- The potter's hands work a lump of clay on the wheel
+  without apparent effort, the shape rising steadily.
+- A cat sleeps on a high shelf between a row of drying
+  pots, its tail hanging over the edge.
+- The greenware on the drying board is arranged so
+  evenly it looks as if it was set out with a rule.

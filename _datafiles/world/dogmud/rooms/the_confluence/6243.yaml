@@ -1,0 +1,41 @@
+roomid: 6243
+zone: The Confluence
+title: The Riverman's House
+description: >
+  A single house at the end of a stub of lane, slightly
+  wider than its neighbors, with a low fence that marks
+  the boundary without keeping anything in or out. Nets
+  of various sizes hang to dry from a frame in the small
+  front yard —
+  <ansi fg="itemname">river-nets</ansi>
+  of the type set from a flat-bottomed boat with a long
+  pole, now out of the water and in need of mending in
+  several places. The house smells of river water and
+  scale, which is the smell of a household where someone
+  comes home from the water every morning. The lane is
+  to the east.
+biome: city
+coord:
+  x: -15
+  y: -72
+  z: 0
+exits:
+  east:
+    roomid: 6241
+spawninfo:
+  - mobid: 9478
+    respawnrate: "20 real minutes"
+nouns:
+  the river-nets: >
+    A spread of fine-mesh river net, the kind used from
+    a flat-bottomed punt to catch small fish in the
+    calmer bends. Three tears in the mesh have been
+    marked with bright cord — the net is serviceable
+    but in need of an afternoon's mending work.
+idlemessages:
+- A net is spread across the fence for inspection, the
+  tears marked with a twist of bright cord.
+- The flat-bottomed boat is not here; it is out on the
+  water or stored elsewhere in the quarter.
+- The smell of fresh river-clay and scale comes off
+  the nets in the morning air.

@@ -1,0 +1,49 @@
+roomid: 6237
+zone: The Confluence
+title: The Daily Market
+description: >
+  The row opens into a wider space where the quarter's
+  daily market has been held since the quarter existed.
+  Produce stalls line the north side — root vegetables,
+  onions, river fish on beds of wetted grass, preserved
+  olives in an open jar, a woman selling herb bundles
+  by the armful. A
+  <ansi fg="itemname">notice-post</ansi>
+  occupies the center of the square, layered in chalked
+  boards and pinned scraps: work wanted, goods for sale,
+  a reward offered for a missing dog described in enough
+  detail to suggest the reward is serious. Children move
+  around the stalls at the speed of children who want
+  something and have not been given it. The potter's is
+  north; the baker's is west; the smithy is south.
+biome: city
+coord:
+  x: -14
+  y: -70
+  z: 0
+exits:
+  north:
+    roomid: 6236
+  west:
+    roomid: 6238
+  south:
+    roomid: 6239
+spawninfo:
+  - mobid: 9482
+    respawnrate: "20 real minutes"
+nouns:
+  the notice-post: >
+    A worn post at the center of the market square,
+    its surface too small for the amount posted to it
+    — chalk boards overlapping, paper scraps pinned
+    four deep in places. The oldest layers have gone
+    entirely illegible, which does not stop new ones
+    being added on top.
+idlemessages:
+- A boy ducks under a stall-table and comes up on the
+  other side faster than the stallholder expected.
+- The fish-seller calls a price down the row that no
+  one appears to take up.
+- Two buyers argue the quality of a string of onions
+  with the focused urgency of people who have the
+  morning free.

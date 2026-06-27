@@ -1,0 +1,49 @@
+roomid: 6234
+zone: The Confluence
+title: The Cooperage
+description: >
+  The cooperage takes up a wide, low-ceilinged building
+  with a yard extending behind it, and spills into the
+  street: a row of finished
+  <ansi fg="itemname">barrels</ansi>
+  stands against the outer wall, and loose
+  <ansi fg="itemname">staves</ansi>
+  are bundled and stacked in the passage beneath an
+  overhang. Inside, the smell of cut oak and charring
+  wood is specific and deep — the hoops are fired to
+  bend, and the scorch is never entirely out of the
+  timbers. A half-built cask sits on a stand near the
+  door, waiting for its head. The row is east; the
+  weaver's is south.
+biome: city
+coord:
+  x: -15
+  y: -68
+  z: 0
+exits:
+  east:
+    roomid: 6233
+  south:
+    roomid: 6235
+spawninfo:
+  - mobid: 9473
+    respawnrate: "20 real minutes"
+nouns:
+  the barrels: >
+    A row of finished barrels against the cooperage
+    wall — river-trade sizes, tight-grained, the staves
+    pale oak going dark at the char-line above the
+    bottom hoop. Each has the cooperage's mark burned
+    into the head.
+  the staves: >
+    Long, slightly curved lengths of split oak, bundled
+    with cord and stacked under the overhang. The wood
+    is still green in places and will need another
+    month before it can be worked into a full cask.
+idlemessages:
+- The cooper sets a hoop around a new stave-ring and
+  drives it down with quick mallet-strokes.
+- The scent of charred oak settles over the street in
+  a warm, resinous layer.
+- A stack of finished barrel-lids leans inside the
+  door, sorted by diameter.

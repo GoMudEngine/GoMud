@@ -1,0 +1,44 @@
+roomid: 6235
+zone: The Confluence
+title: The Weaver's
+description: >
+  A narrower shop than the cooperage, its front open
+  to the street by wide folding shutters that are never
+  fully shut in good weather. Three upright looms fill
+  the room, the nearest dressed with a length of dark
+  wool half-finished on the warp. Above them, finished
+  <ansi fg="itemname">cloth</ansi>
+  is draped across rods near the ceiling, airing or
+  drying or waiting for collection. The cloth ranges
+  from rough undyed linen to a tighter wool in a rust-
+  and-cream stripe that seems to be a house specialty
+  — it appears on the shutters as a painted stripe as
+  well. The cooperage is north; the potter's is east.
+biome: city
+coord:
+  x: -15
+  y: -69
+  z: 0
+exits:
+  north:
+    roomid: 6234
+  east:
+    roomid: 6236
+spawninfo:
+  - mobid: 9475
+    respawnrate: "20 real minutes"
+nouns:
+  the cloth: >
+    Bolts and lengths of cloth at various stages —
+    undyed linen in rough rolls, a plain brown wool,
+    and the rust-and-cream stripe that seems to be the
+    weaver's signature work. The stripe is tighter and
+    more consistent in the newer lengths; this is not
+    the weaver's first season with it.
+idlemessages:
+- The shuttle runs across the warp with a wooden knock
+  and the weaver's hand follows it back without pause.
+- A length of cloth hangs from the rod above the door,
+  turning slightly in a draft from the street.
+- The smell here is wool and the faint oily smell of
+  the finishing wax, not unpleasant.

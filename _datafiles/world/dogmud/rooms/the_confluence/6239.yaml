@@ -1,0 +1,55 @@
+roomid: 6239
+zone: The Confluence
+title: The Smithy
+description: >
+  The heat from the forge reaches into the street before
+  you reach the door. Inside, the
+  <ansi fg="itemname">forge</ansi>
+  glows a steady orange-white at the back of the room,
+  with a broad leather bellows hung above it on a pivot
+  arm. The
+  <ansi fg="itemname">anvil</ansi>
+  sits on its heavy oak block in the center of the
+  floor, worn in the face from use and dark with scale.
+  The smith works without ceremony — metal to the fire,
+  metal to the anvil, back to the fire — and the hammer
+  note rings out clearly into the market and the lane
+  below. This is a small-work smithy: nails, hinges,
+  hook-and-staple sets, barrel-hoops. The market is
+  north; the supply stall is east; the lane is south.
+biome: city
+coord:
+  x: -14
+  y: -71
+  z: 0
+exits:
+  north:
+    roomid: 6237
+  east:
+    roomid: 6240
+  south:
+    roomid: 6241
+spawninfo:
+  - mobid: 9476
+    respawnrate: "20 real minutes"
+nouns:
+  the forge: >
+    A coal forge against the smithy's back wall, its
+    firepot glowing through a grate of thick iron bars.
+    The fireback is dark with age and use; the outer
+    bricks have been patched in a different clay from
+    the original, sometime in the past generation.
+  the anvil: >
+    A heavy cast-iron anvil on its oak block, the face
+    worn to a slight bow from years of hammer-work.
+    The horn is dark from use; the heel shows the marks
+    of chiseling work. The weight of it has pressed
+    the block visibly into the earth below.
+idlemessages:
+- The hammer rings twice on the anvil-face, then once
+  on the horn — a working rhythm that carries through
+  the whole quarter.
+- The forge-breath comes out the open door in a wave
+  of heat when the bellows is worked.
+- A bin near the door holds iron scrap waiting to be
+  remelted — bent nails, broken hooks, worn barrel-rings.

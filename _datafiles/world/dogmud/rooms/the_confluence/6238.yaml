@@ -1,0 +1,41 @@
+roomid: 6238
+zone: The Confluence
+title: The Baker's
+description: >
+  The warmest room in the quarter, and the best-
+  smelling. Two brick ovens throw heat across a flour-
+  dusted floor, and racks of cooling loaves line the
+  wall behind a worn counter. The baker works here
+  from before light, and the smell of it reaches
+  halfway up the craft row by dawn. A wide
+  <ansi fg="itemname">shelf</ansi>
+  behind the counter holds today's batch — round loaves,
+  flat loaves, a tray of rolls already a third gone by
+  midmorning. The market is back to the east.
+biome: city
+coord:
+  x: -15
+  y: -70
+  z: 0
+exits:
+  east:
+    roomid: 6237
+spawninfo:
+  - mobid: 9472
+    respawnrate: "20 real minutes"
+nouns:
+  the shelf: >
+    The counter shelf holds today's baking in no
+    particular order — round loaves side by side with
+    smaller flat ones, and a tray of rolls that is
+    already a third gone by midmorning. The baker does
+    not label anything; regular customers know what
+    they want before they come through the door.
+idlemessages:
+- The baker slides a long peel into the oven and draws
+  out a row of dark-crusted loaves in one practiced
+  motion.
+- 'Flour hangs in the warm air: it settles on every
+  shelf and never quite comes off the floor.'
+- A child is sent in with a coin and leaves clutching
+  a hot roll wrapped in cloth.

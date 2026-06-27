@@ -1,0 +1,43 @@
+roomid: 6232
+zone: The Confluence
+title: The Artisans' Gate
+description: >
+  The outer wall of the Scholars' Quarter closes this
+  end of the garden walk, and the
+  <ansi fg="itemname">gate</ansi>
+  in its western face is plainer than any entrance the
+  scholars would claim — iron-barred, set between
+  dressed courses, the passage low enough that a tall
+  man ducks. Past it, the city changes register: the
+  paving underfoot becomes irregular, older, repaired
+  in patches by whoever had material to hand rather
+  than by civic order. The air carries the smell of
+  cut timber, hot iron, and something charred, all at
+  once. The garden walk is east; the craft quarter
+  opens west.
+biome: city
+coord:
+  x: -13
+  y: -68
+  z: 0
+exits:
+  east:
+    roomid: 6231
+  west:
+    roomid: 6233
+nouns:
+  the gate: >
+    A plain iron gate set into the outer wall of the
+    Scholars' Quarter — bars worn dull, mortar cracked
+    at the jamb, the lintel low enough to require
+    attention. On the scholars' side it is an
+    afterthought; on the craft side it is simply the
+    door at the end of the block. It stands open most
+    of the day.
+idlemessages:
+- A handcart loaded with staved timber passes through
+  the gate heading west, the driver not slowing.
+- The gate stands open; it is rarely closed, and the
+  hinges show the fact.
+- The smell of the working quarter seeps through the
+  arch even when the gate is latched.

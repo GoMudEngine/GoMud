@@ -1,0 +1,33 @@
+roomid: 6241
+zone: The Confluence
+title: Craftsmen's Lane
+description: >
+  The street narrows to a lane here, the houses pressed
+  close on both sides — three storeys of plain whitewash
+  and timber, the upper floors nearly touching across
+  the gap. Washing-lines are strung at the second-floor
+  level, and damp cloth hangs in the still air: shirts,
+  work-rags, a pair of brown wool stockings. A child
+  sits on a step at one of the doorways with the patient
+  attention of a child who has been out here for a while
+  and found the lane sufficient. The smithy is north;
+  the riverman's house is west; the court is south.
+biome: city
+coord:
+  x: -14
+  y: -72
+  z: 0
+exits:
+  north:
+    roomid: 6239
+  west:
+    roomid: 6243
+  south:
+    roomid: 6242
+idlemessages:
+- Someone calls down from a window above the lane and
+  gets no answer from the street.
+- The washing turns slowly on its line in a draft from
+  the river-end of the quarter.
+- A cat appears from a gap between the houses, regards
+  the lane briefly, and disappears back into it.

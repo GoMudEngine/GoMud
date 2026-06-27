@@ -1,0 +1,50 @@
+roomid: 6244
+zone: The Confluence
+title: The Functionary's Door
+description: >
+  A house at the edge of the tenement court,
+  differentiated from its neighbors by a degree of
+  maintained order that is slightly pointed in its
+  precision. The
+  <ansi fg="itemname">doorstep</ansi>
+  is chalked white and swept, the window-boxes contain
+  nothing that would get out of hand, and the knocker
+  has been polished within the past week. A
+  <ansi fg="itemname">placard</ansi>
+  beside the door lists the occupant's former titles in
+  a script too small to read comfortably from the
+  street, which is almost certainly not an accident.
+  The court is to the west.
+biome: city
+coord:
+  x: -13
+  y: -73
+  z: 0
+exits:
+  west:
+    roomid: 6242
+spawninfo:
+  - mobid: 9479
+    respawnrate: "20 real minutes"
+nouns:
+  the doorstep: >
+    A chalk-whitened step, swept clean and squared at
+    the edges with a care that implies regular
+    maintenance. The chalk is fresh — either this
+    morning's or last evening's. The step has been
+    swept before the neighboring door was opened.
+  the placard: >
+    A small brass placard beside the door, its text in
+    a flowing civic script too fine to read from the
+    street without moving closer. It lists several
+    former appointments in the municipal service — the
+    offices are real and the length of service is
+    accurate and the placard was commissioned by the
+    occupant personally.
+idlemessages:
+- The doorstep has been swept so recently that the chalk
+  marks are still sharp at the edges.
+- A window above opens a precise two inches and is then
+  adjusted to exactly that.
+- The knocker has been polished so thoroughly that it
+  reflects the light from the lane.
