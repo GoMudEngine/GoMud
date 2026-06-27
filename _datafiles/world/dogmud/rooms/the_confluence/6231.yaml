@@ -1,0 +1,57 @@
+roomid: 6231
+zone: The Confluence
+title: The Garden Walk
+description: >
+  The far end of the garden walk, a gravel path between
+  the court's western edge and the Quarter's outer wall
+  — a secluded strip of ground that sees very little
+  traffic. Moss grows in the joints of the wall-stones
+  and in the spaces between the gravel where it has not
+  been turned in some time. At the walk's end, half-
+  sunk in the moss where the wall meets the ground-
+  course, a weathered old
+  <ansi fg="itemname">boundary-stone</ansi>
+  leans slightly off-true, as if the ground has settled
+  under it over a long period. The scholars who walk
+  this path daily pass it without remarking on it.
+  The quiet garden lies east.
+biome: city
+coord:
+  x: -12
+  y: -68
+  z: 0
+exits:
+  east:
+    roomid: 6229
+nouns:
+  the boundary-stone: >
+    A stone block half-sunk in the moss at the end of
+    the garden walk, its surface weathered to a grey
+    that no longer matches the surrounding wall-stone.
+    It predates the Quarter's outer wall; the dressed
+    building-stone runs to it rather than past it. The
+    scholars' feet have worn the gravel clear around
+    its base but no one tends the stone itself. On the
+    face that leans toward the wall, sheltered from the
+    worst of the weather, a pattern is still legible
+    under the lichen.
+  the mark: >
+    Carved into the sheltered face of the old boundary-
+    stone: concentric rings, the outermost clear, the
+    inner circles arranged at intervals around a central
+    point. The stonecutter's lines are finer than guild
+    work and older than the Quarter's wall. The pattern
+    is the same as others found in the old parts of the
+    Confluence — on a foundation-stone in the customs
+    house, on a mooring-block at the old mole, in the
+    records room behind the Municipal Hall — though the
+    scholars who walk this path daily have not made the
+    connection in any record that survives. The moss
+    grows up to the carved lines but not into them.
+idlemessages:
+- The gravel walk lies undisturbed; no one has come
+  this way recently enough to leave a mark.
+- Moss advances through the wall-joints slowly, in
+  the unhurried way of things with no deadline.
+- The boundary-stone leans at its slight angle, as
+  it has for longer than the Quarter has stood.

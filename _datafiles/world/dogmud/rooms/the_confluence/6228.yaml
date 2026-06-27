@@ -1,0 +1,59 @@
+roomid: 6228
+zone: The Confluence
+title: The Copyists' Room
+description: >
+  The copy-work room: slanted desks along the windows
+  where the natural light is best for close lettering,
+  a line strung from wall to wall near the ceiling for
+  drying freshly written sheets, and a shelf of
+  ink-pots in various states of depletion. Completed
+  copies hang on the line — survey transcriptions, a
+  run of civic minutes, several pages of close tabular
+  notation that looks like tidal records. The room
+  smells of fresh ink and the linen of the drying
+  sheets. A copyist works at the desk nearest the
+  window, transcribing from a manuscript with the
+  disciplined steadiness of someone whose skill is in
+  the hand, not in the judgment of the text. Work
+  accumulates; the copy-line is nearly full.
+biome: city
+coord:
+  x: -10
+  y: -68
+  z: 0
+exits:
+  north:
+    roomid: 6220
+spawninfo:
+  - mobid: 9446
+    respawnrate: "20 real minutes"
+nouns:
+  the drying sheets: >
+    Freshly copied sheets pegged to the drying line:
+    a survey transcription in neat professional hand,
+    two pages of civic minutes in a slightly smaller
+    script, and a long run of close tabular notation
+    whose headings suggest tidal timing over some
+    stretch of the river's coast. The copies are
+    accurate work; the copyist does not improvise.
+    The ink on the near sheets is still dark and
+    wet-bright; the far ones have dried to the faint
+    brownish cast that fresh work always settles into.
+  the ink-pots: >
+    A shelf of ink-pots in four sizes: the tall bottle
+    for ordinary black, a sealed pot of red for
+    annotations, a small pot of faded brown nearly
+    out and not yet replaced, and an unlabeled jar
+    whose contents have dried to a solid plug. The
+    shelf is stained from past spills wiped but not
+    fully removed. The active ink is the tall bottle;
+    its stopper sits to one side where the copyist
+    placed it hours ago and has not replaced it,
+    so the work goes faster.
+idlemessages:
+- The copyist's quill moves across the page with
+  the even pace of someone who is not rushing.
+- A freshly copied sheet on the drying line shifts
+  in the light draught from the window.
+- The ink-pot stopper sits to one side of the desk
+  where the copyist set it and left it there.

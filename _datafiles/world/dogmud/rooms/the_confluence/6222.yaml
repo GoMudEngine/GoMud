@@ -1,0 +1,44 @@
+roomid: 6222
+zone: The Confluence
+title: A Study Hall
+description: >
+  A long room of reading desks arranged to catch north
+  light through a row of narrow windows — the clearest
+  light in the Quarter for close work, and the desks
+  show it: each surface is worn smooth at the center
+  and marked at the corners where tools have been
+  rested and picked up again for years. The room is
+  empty at this hour but the desks are not clean.
+  Papers and open books are spread across three of
+  them — a scholar's morning session abandoned rather
+  than concluded, the notes still legible in the pale
+  window light. A wooden rack near the door holds
+  blank folio sheets and a small jar of drawing pins.
+  The room's quiet is the kind that holds the shape
+  of the people who were just in it.
+biome: city
+coord:
+  x: -8
+  y: -66
+  z: 0
+exits:
+  south:
+    roomid: 6218
+nouns:
+  the abandoned notes: >
+    The papers spread across the desk nearest the north
+    windows: a series of traced shoreline segments,
+    each one labeled with a date and a surveyor's
+    initial, arranged in chronological order across
+    the desk's surface. The latest trace is annotated
+    in pencil with a question that has not yet been
+    answered. The book the segments were traced from
+    is still open to the relevant page, held with a
+    folded strip of cloth. The scholar will return.
+idlemessages:
+- North light falls through the windows and across
+  the empty desks in clean, useful angles.
+- A page on the abandoned desk turns slowly in the
+  draft from the door to the south.
+- The notes left behind hold the shape of a question
+  their author has gone away to think about.

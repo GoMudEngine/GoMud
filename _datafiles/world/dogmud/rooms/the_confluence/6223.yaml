@@ -1,0 +1,60 @@
+roomid: 6223
+zone: The Confluence
+title: The Cartographers' Room
+description: >
+  A room given over entirely to the making and revision
+  of maps: two large draughting tables stand at angles
+  to catch the best light, their surfaces marked with
+  old ink stains and the ghost-impressions of rulers
+  used in the same place for so long the wood has
+  compressed. A rack along the east wall holds rolled
+  surveys of the Confluence and the surrounding
+  territory, each labeled in a careful hand and dated.
+  Instruments hang on hooks beside the rack — dividers
+  in three sizes, a brass protractor, a set of French
+  curves worn smooth from handling, a surveyor's wheel
+  missing its handle. The room smells of fresh ink and
+  the chalk the cartographers use for draft-work before
+  committing to vellum. A cartographer-scholar works
+  at the larger table, draughting with the unhurried
+  precision of someone who does not rush this kind
+  of work.
+biome: city
+coord:
+  x: -9
+  y: -66
+  z: 0
+exits:
+  south:
+    roomid: 6219
+spawninfo:
+  - mobid: 9443
+    respawnrate: "20 real minutes"
+nouns:
+  the instruments: >
+    The cartographic tools hanging beside the survey
+    rack: three pairs of dividers in different sizes,
+    a brass protractor with degree-marks worn into the
+    arc from long use, a set of French curves whose
+    edges have acquired an oil-polish from handling,
+    and a surveyor's wheel whose handle has been lost
+    or removed and not replaced. The tools are clean
+    and orderly despite the room's active state. These
+    are working instruments; they are treated as such.
+  the surveys: >
+    The rolled surveys in the east-wall rack, each one
+    labeled in a careful archival hand: dates, zones,
+    the initials of the original surveyor where known.
+    The oldest rolls have been pushed upward over time
+    by the cartographers' habit of pulling newer
+    material for reference. Most cover the river
+    junction and its environs from a variety of periods
+    and approaches. Rarely do two agree in every detail.
+    The Margin keeps records of the disagreements.
+idlemessages:
+- The cartographer at the draughting table adjusts
+  a divider setting without looking up from the work.
+- A rolled survey shifts in its rack, settling further
+  on the shelf as the building's warmth changes.
+- The sound of a ruling edge drawn across vellum
+  carries clearly in the room's close quiet.

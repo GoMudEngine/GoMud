@@ -1,0 +1,55 @@
+roomid: 6226
+zone: The Confluence
+title: The Bookseller's
+description: >
+  A cramped shop fitted into what was probably a small
+  storage room: shelves floor to ceiling on three walls,
+  more books stacked on the floor where the shelves ran
+  out of space, a narrow path from door to counter. The
+  bookseller's stock is eclectic — trade almanacs,
+  printed pamphlets, second-hand academic texts, and
+  oddments bought from estates and cleared offices.
+  Near the counter, a small crate serves as a display
+  for notable stock; among the papers and bound volumes
+  in it, a water-damaged old harbor
+  <ansi fg="itemname">damaged chart</ansi>
+  is propped at an angle, its lower half badly stained
+  but the junction rendering still visible past the
+  damage. The bookseller knows what is in stock and
+  does not need to be asked twice.
+biome: city
+coord:
+  x: -8
+  y: -68
+  z: 0
+exits:
+  north:
+    roomid: 6218
+spawninfo:
+  - mobid: 9444
+    respawnrate: "20 real minutes"
+nouns:
+  the damaged chart: >
+    A harbor chart on heavy paper, water-damaged across
+    its lower third where a brown stain has spread from
+    one corner and consumed most of the inshore detail
+    along the southern reach. The damage stops well
+    short of the junction rendering: the river meeting-
+    point is intact, the three main channels drawn in
+    the standard professional convention of the period.
+    And past the stain, in the area the damage has not
+    reached, a fourth channel is drawn with the same
+    professional care — narrow, distinct, its course
+    running off to the southwest from the junction
+    point. It is not a smear or an accident. It is a
+    surveyor's line, given the same weight and
+    character as the other three. The chart has no
+    visible date; the cartouche is among the damaged
+    areas.
+idlemessages:
+- The bookseller moves along the shelves behind the
+  counter, pulling volumes to check their condition.
+- The books stacked on the floor shift slightly when
+  someone steps past them in the narrow aisle.
+- The damaged chart in the display crate leans at
+  its angle, the junction rendering still clear.
