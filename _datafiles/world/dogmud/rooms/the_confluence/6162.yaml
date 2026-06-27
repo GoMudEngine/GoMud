@@ -8,7 +8,7 @@ description: >
   runs the length of one wall — the three rivers, the
   raising of the temple, the first Keepers at the
   water's edge. A brass
-  <ansi fg="itemname">official plaque</ansi>
+  <ansi fg="itemname">official-plaque</ansi>
   beneath it sets out, in confident lettering, what the
   oldest marks in the temple stone are held to mean.
   A keeper attends here through the day to explain it
@@ -31,7 +31,7 @@ nouns:
     Aldren, Brenn, Solt — and the raising is orderly,
     purposeful, the composition of a beginning told
     with full confidence in how it went.
-  official plaque: >
+  official-plaque: >
     THE FIRST MARK, the plaque reads, is the earliest
     rendering of the Chrysalis truth — the sealed soul,
     the ringed cocoon, cut into the temple stone by the

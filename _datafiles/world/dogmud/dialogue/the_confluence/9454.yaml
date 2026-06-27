@@ -30,7 +30,7 @@ tree:
       proportions, the carving technique, the layering. I do
       not draw conclusions here. The analysis is in the
       Scholars' Quarter. What did you want?"
-    hints: "You could ask what the scholar is recording, about
+    hints: "You could ask what is being recorded here, about
       the mark itself, or about the Margin and the Scholars'
       Quarter upriver."
   nodes:
@@ -75,7 +75,7 @@ tree:
         weathering, technique. I do not argue with the
         account on temple ground. The Scholars' Quarter
         is north if you want the Margin's reading of it."
-      hints: "You could ask what the scholar is recording,
+      hints: "You could ask what is being recorded here,
         or about the Scholars' Quarter and the Margin's work."
     - id: scholars_quarter
       triggers: ["scholars", "quarter", "margin", "upriver",
@@ -88,5 +88,5 @@ tree:
         want the substance of the work rather than the
         field notes, that is where to go. Ask for the survey
         room."
-      hints: "You could ask what I am recording here, or
+      hints: "You could ask what is being recorded here, or
         about the mark above the doors."

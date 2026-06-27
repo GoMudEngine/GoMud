@@ -5,11 +5,11 @@ description: >
   A grand entrance portico at the top of the temple
   stair — wide columns of pale river-stone, a deep
   shaded overhang, and between them the
-  <ansi fg="itemname">great doors</ansi>
+  <ansi fg="itemname">great-doors</ansi>
   of the temple, shut against the day. Cut into the
   keystone above the doors, plainly visible from the
   top of the stair, the
-  <ansi fg="itemname">weathered symbol</ansi>
+  <ansi fg="itemname">weathered-symbol</ansi>
   is older than the portico around it — a four-ring
   mark, one ring enclosing the next, worn to near-
   smoothness at its edges while the stone on either
@@ -27,7 +27,7 @@ exits:
   north:
     roomid: 6166
 nouns:
-  weathered symbol: >
+  weathered-symbol: >
     The four-ring orbital mark cut into the keystone
     above the great doors — one ring enclosing the
     next, the outermost nearly flush with the stone's
@@ -38,7 +38,7 @@ nouns:
     the Chrysalis truth — the sealed soul, the ringed
     cocoon — set here by the first Founders. The stone
     it is cut into does not volunteer the same date.
-  great doors: >
+  great-doors: >
     The great doors of the Confluence temple are shut
     and barred from within. Their timber is old and
     bound with iron fittings, the wood darkened to

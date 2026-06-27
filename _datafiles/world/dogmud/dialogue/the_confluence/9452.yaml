@@ -39,8 +39,8 @@ tree:
       in the back if your feet need a rest before you go on to
       the temple. What do you need?"
     hints: "You could ask about the food and what it costs, about
-      resting here before the temple, or about what the
-      Hospitaller's role as a Keeper involves."
+      resting here before the temple, or about the Keepers' work
+      here."
   nodes:
     - id: food
       triggers: ["food", "eat", "hungry", "meal", "broth", "bread",
@@ -67,7 +67,7 @@ tree:
         The temple has resources for longer care if you
         need it."
       hints: "You could ask about the food, or about the
-        Hospitaller's work."
+        Keepers' work here."
     - id: role
       triggers: ["keeper", "keepers", "hospitaller", "role",
         "what", "do", "work", "charge", "tend", "why",

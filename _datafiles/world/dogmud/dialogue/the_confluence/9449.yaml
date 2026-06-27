@@ -51,7 +51,7 @@ tree:
         old work beneath the foundations."
     - id: founding
       triggers: ["founding", "history", "begin", "rivers",
-        "account", "raised", "first", "keepers", "story", "tell",
+        "account", "raised", "story", "tell",
         "explain", "three", "aldren", "brenn", "solt"]
       text: "Three rivers -- the Aldren from the north, the Brenn
         from the east, the Solt from the southwest -- join below
@@ -64,7 +64,7 @@ tree:
     - id: symbol
       triggers: ["symbol", "mark", "carving", "ring", "cocoon",
         "chrysalis", "door", "above", "oldest", "first", "what",
-        "stone", "relief", "above"]
+        "stone", "relief"]
       text: "The ringed cocoon above the temple doors -- it is the
         earliest rendering of the Chrysalis truth we have. The
         sealed soul at the center, the cocoon of transformation
@@ -77,7 +77,7 @@ tree:
     - id: inner_temple
       triggers: ["inner", "cloister", "cloisters", "undercroft",
         "beneath", "below", "older", "foundation", "senior",
-        "deeper", "inside", "inside", "further", "beyond",
+        "deeper", "inside", "further", "beyond",
         "what", "lies", "past"]
       text: "The public temple is open to all across the causeway.
         Beyond it lie the cloisters and the archive, kept by the

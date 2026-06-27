@@ -42,8 +42,8 @@ tree:
         to sit before crossing to the temple. I sweep it and
         tend the herbs in the morning. It is -- I find it a
         good way to begin the day. Quieter than the forecourt."
-      hints: "You could ask about the temple, or about the
-        acolyte's training."
+      hints: "You could ask about the temple, or about
+        life as an acolyte here."
     - id: training
       triggers: ["acolyte", "training", "learning", "study",
         "keeper", "how", "long", "what", "do", "you", "are",

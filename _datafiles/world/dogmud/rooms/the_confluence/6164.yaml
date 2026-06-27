@@ -9,7 +9,7 @@ description: >
   above the joining of the rivers, built where the three
   channels finally become one. The bridge itself carries
   age in its lower courses. The
-  <ansi fg="itemname">old stonework</ansi>
+  <ansi fg="itemname">old-stonework</ansi>
   at the crown's base is visibly different from the
   span above — older cut, darker with mineral years,
   the joints between blocks worn to smooth channels.
@@ -27,7 +27,7 @@ exits:
   east:
     roomid: 6165
 nouns:
-  old stonework: >
+  old-stonework: >
     The base courses of the causeway crown are set
     differently from the span above — older stone,
     more darkly stained, the cut less precise but the
