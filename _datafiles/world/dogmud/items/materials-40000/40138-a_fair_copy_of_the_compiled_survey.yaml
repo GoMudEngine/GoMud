@@ -1,0 +1,15 @@
+itemid: 40138
+name: A Fair Copy of the Compiled Survey
+namesimple: survey
+not_salable: true
+description: >
+  A clean fair-copy on good paper: three reconciled old survey records
+  laid side by side, the disputed fourth channel drawn back in where the
+  others struck it out. The Margin's hand is tidy and unhurried, each
+  discrepancy noted in the margin. The evidence, all in one sheet.
+type: object
+subtype: mundane
+weight: 0.2
+value: 0
+rarity_tier: 40
+is_component: false

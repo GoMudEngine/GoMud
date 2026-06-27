@@ -1,0 +1,84 @@
+mobid: 9446
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Copy commissions take time. If you are here to pick up
+      work, check the turnaround with me first."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Copy-work, survey reproductions, folio copies. That
+        is what I do here. What do you need?"
+  - keywords: ["copy", "commission", "order", "reproduce", "how",
+      "long", "turnaround", "time", "days"]
+    responses:
+      - "Folio copies run three days minimum. Survey reproductions
+        depend on scale and detail level. I do not rush survey work
+        -- the whole point is accuracy."
+  - keywords: ["tallis", "scrivener", "quay", "long"]
+    responses:
+      - "Tallis works the Long Quay in the lower city -- navigation
+        charts and cargo manifests, mostly. We know each other. Good
+        work, different trade."
+  - keywords: [""]
+    responses:
+      - "Ask me about copy-work, the chart trade, or the junction
+        surveys."
+tree:
+  root:
+    text: "I produce copies of charts and documents for the Margin
+      and for commissions from the lower city. What did you want
+      to know?"
+    hints: "You could ask about copy-work and how commissions work,
+      about the chart trade and Tallis on the Long Quay, or about
+      what copying the junction surveys has shown."
+  nodes:
+    - id: copy_work
+      triggers: ["copy", "work", "commission", "order", "folio",
+        "document", "reproduce", "how", "long", "turnaround", "price",
+        "cost", "do", "produce", "what", "job", "days", "sign",
+        "verify", "original"]
+      text: "Most of what I do is folio reproductions -- scholars need
+        working copies they can annotate without damaging the originals.
+        Survey reproductions are more demanding: scale must be exact,
+        notation must be legible, and anything I miss or misread in
+        the original becomes a permanent feature of every copy made
+        from mine. I verify against the original before I sign a
+        survey copy. The turnaround is what it is. Tallis down at the
+        Long Quay handles harbor charts and navigation records for the
+        trade -- adjacent work, though his volume is higher and his
+        originals are newer."
+      hints: "You could ask about the chart trade and Tallis on the
+        quay, or about what copying the junction surveys has shown."
+    - id: chart_trade
+      triggers: ["trade", "market", "quay", "tallis", "scrivener",
+        "lower", "city", "sell", "buys", "demand", "navigation",
+        "harbor", "overlap", "commerce", "who", "clients", "lower"]
+      text: "There is a steady demand for chart copies -- the river
+        trade needs current navigation charts, the merchants need
+        cargo manifests, the guild quarter needs certified records.
+        Tallis on the Long Quay covers the navigation side; he is
+        efficient and his work is clean. I cover the research copies
+        here, which are a different product -- larger scale, older
+        sources, more time per sheet. We know each other. When I get
+        a commission for a navigation chart in a hurry I send them
+        to him; when he gets a request for a historical survey he
+        sends them to me."
+      hints: "You could ask about copy-work and commissions, or
+        about what the junction surveys show."
+    - id: junction_surveys
+      triggers: ["junction", "fourth", "water", "channel", "copied",
+        "notation", "see", "notice", "three", "four", "rivers",
+        "look", "pattern", "mark", "interesting", "opinion", "survey",
+        "observation", "hand", "deliberate"]
+      text: "I have copied eight of the eleven junction surveys the
+        archive holds. I do not have opinions about the fourth-water
+        question the way Riss does -- that is not my role. But I can
+        tell you that the notation at the junction changes between
+        surveys in ways that are clearly not just copying errors.
+        Someone made a deliberate choice to include or exclude that
+        marking. That is visible in the hand. The researchers will
+        draw their own conclusions. I copy what is there."
+      hints: "You could ask about copy-work and commissions, or about
+        the chart trade."

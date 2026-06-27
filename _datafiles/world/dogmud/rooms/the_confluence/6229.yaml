@@ -1,0 +1,56 @@
+roomid: 6229
+zone: The Confluence
+title: The Quiet Garden
+description: >
+  A small courtyard enclosed by the archive's south
+  wall and the backs of the lodgings and copyists'
+  rooms, open to the sky with no passage to the wider
+  city from here. A fig tree grows in the court's
+  center, its roots lifting the nearest flagstones
+  slightly; it has been here long enough that the
+  stones were relaid around it rather than replaced.
+  A stone bench worn smooth from use sits against the
+  archive wall, shaded by the tree in the afternoon.
+  The city's noise — carts, voices, the occasional
+  barge-horn from the river — is audible here but
+  distant, filtered by the walls to something
+  manageable. A gravel walk extends west along the
+  garden's far edge.
+biome: city
+coord:
+  x: -11
+  y: -68
+  z: 0
+exits:
+  north:
+    roomid: 6221
+  west:
+    roomid: 6231
+nouns:
+  the fig tree: >
+    A substantial fig tree in the court's center, its
+    trunk the diameter of a large cask, its roots
+    arching visibly where they have lifted the
+    surrounding flagstones. The adjacent stones were
+    relaid to accommodate the roots some years ago,
+    with a slight gap left around the base. The tree
+    is not in season; its leaves cast even shade, and
+    its roots hold the accumulated moisture of the
+    season in the yard's stone-and-soil base. It is
+    the oldest living thing in the Scholars' Quarter.
+  the bench: >
+    A low stone bench set against the archive's south
+    wall in the fig tree's afternoon shade. The surface
+    is worn smooth from use — not dramatically smooth,
+    not famous for it, simply used until the stone is
+    no longer rough. The kind of smooth that accumulates
+    without anyone deciding it. Scholars sit here
+    between sessions when the weather permits; the bench
+    asks nothing of them and they ask little of it.
+idlemessages:
+- The fig tree's leaves shift in a breath of air
+  that does not reach the surrounding rooms.
+- The city's noise arrives here muffled and gentle,
+  at a distance that makes it easy to ignore.
+- The worn stone bench holds the morning's warmth
+  into the afternoon without effort.

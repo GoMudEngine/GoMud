@@ -1,0 +1,47 @@
+mobid: 9447
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote glances down the approach road, then returns to reading from
+    a small worn book held open against the gatehouse ledge.'
+  - ''
+  - 'say Archive is open daylight hours. Ask at the hall desk for the
+    archivist if you need the older materials.'
+  - ''
+  - 'emote straightens as a scholar passes through the gate, nods to
+    them without interrupting their stride, then settles back against
+    the post.'
+  - ''
+activitylevel: 10
+character:
+  name: The Gate-Porter
+  description: |
+    The Gate-Porter keeps the entrance to the Scholars' Quarter,
+    directing visitors to whichever part of the quarter they are
+    looking for and fielding the occasional confused inquiry from
+    travelers who expected something more dramatic from the gate.
+    He knows every member of the Margin by sight and most of them
+    by first name, which is useful when a scholar arrives in the
+    early hours wanting archive access and needs to be identified
+    without waking anyone. He is not a Margin member himself but
+    has been at this gate for eleven years and has absorbed a
+    professional familiarity with the quarter's business without
+    any particular scholarly interest of his own. His
+    Chrysalis-change is subtle: he always knows when someone
+    approaching the gate has not been here before, a few seconds
+    before they arrive, which helps him have the directions ready.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    perception:
+      training: 6
+    willpower:
+      training: 3

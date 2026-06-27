@@ -1,0 +1,54 @@
+roomid: 6219
+zone: The Confluence
+title: Inkwell Court
+description: >
+  The quarter's central court — a small paved space
+  open to the sky through a gap in the roofline, its
+  floor worn smooth by decades of foot traffic between
+  the halls that open off it in every direction. A dry
+  stone fountain stands at the court's center, its
+  basin long unused for water and now holding a stack
+  of flat reference boards someone left there
+  temporarily and then forgot. Benches line two walls;
+  a student sits at one of them with an open folio and
+  the concentrated look of someone working through a
+  problem. Scholars cross the court in ones and twos,
+  arms full of papers, moving between the archive to
+  the east and the halls further west. The smell of
+  ink and old paper is always here, carried on
+  everyone who passes through.
+biome: city
+coord:
+  x: -9
+  y: -67
+  z: 0
+exits:
+  east:
+    roomid: 6218
+  west:
+    roomid: 6220
+  north:
+    roomid: 6223
+  south:
+    roomid: 6227
+spawninfo:
+  - mobid: 9448
+    respawnrate: "20 real minutes"
+nouns:
+  the fountain: >
+    A dry stone fountain, its basin carved from a
+    single piece of pale grey stone that matches the
+    court's flagging. The water-feed was redirected
+    some years ago and the basin has been dry long
+    enough that someone has begun using it for storage.
+    A stack of flat reference boards sits in the basin,
+    the ones at the bottom already acquiring a faint
+    dust-bloom on their edges. The fountain has become
+    furniture without anyone formally deciding so.
+idlemessages:
+- A scholar crosses the court with a rolled survey
+  under each arm and does not slow down.
+- The student on the bench makes a note, crosses it
+  out, and reads the passage again.
+- A brief murmur of argument from the Margin Hall to
+  the west — two voices, then quiet.

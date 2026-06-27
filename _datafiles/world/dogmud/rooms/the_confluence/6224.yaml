@@ -1,0 +1,46 @@
+roomid: 6224
+zone: The Confluence
+title: A Lecture Room
+description: >
+  A small lecture room with tiered benches angled to
+  face a low slate at the room's front wall. The
+  benches are empty and the room is between sessions,
+  but the slate has not been fully cleared from the
+  last one: river diagrams remain in chalk, annotated
+  with surveyor's notation and labeled with arrows
+  indicating current direction. A second set of
+  diagrams has been drawn to one side and then erased
+  into a smear — an argument that was started, revised,
+  and abandoned mid-revision. Chalk dust has settled
+  on the front bench's surface; the erasing cloth lies
+  on the floor beside the slate where it was dropped.
+  The tiered rows hold the accumulated scuff-marks of
+  years of shifting and leaning.
+biome: city
+coord:
+  x: -10
+  y: -66
+  z: 0
+exits:
+  south:
+    roomid: 6220
+nouns:
+  the slate: >
+    A large dark slate mounted on the front wall of the
+    lecture room, its surface covered with the partial
+    remains of the last session's working: river diagrams
+    in white chalk, the junction drawn three times at
+    different scales, current directions indicated with
+    arrows. A series of annotations crowds the right
+    side, some in a larger hand, some in a smaller one
+    — two people, or a correction added later. To one
+    side, the smear of an erased diagram is still
+    visible; whatever argument it represented was not
+    pursued to a conclusion and was not kept.
+idlemessages:
+- The chalk dust on the front bench drifts slightly
+  in the air and settles back undisturbed.
+- The erasing cloth lies where it was dropped, its
+  work only half finished.
+- The diagrams on the slate wait with the patience
+  that unfinished arguments always seem to manage.

@@ -1,0 +1,53 @@
+roomid: 6225
+zone: The Confluence
+title: The Reading Room
+description: >
+  A quiet annexe off the upper end of the archive,
+  fitted with its own locked reference shelves and a
+  row of reading-desk carrels with wooden privacy
+  screens between them. Most of the carrels are
+  unoccupied; at the far end, a single reader sits
+  with a large folio open flat on the desk surface,
+  making notes on a loose sheet beside it. The locked
+  shelves along the north wall hold reference materials
+  that do not leave this room: atlases, concordances,
+  several volumes of the Margin's own published
+  findings, and a set of bound primary surveys that
+  the archive will not release to general loan. The
+  reader does not look up. The room earns its name.
+biome: city
+coord:
+  x: -11
+  y: -66
+  z: 0
+exits:
+  south:
+    roomid: 6221
+nouns:
+  the locked shelves: >
+    Reference shelves secured with a small bar-lock,
+    their contents the materials the archive will not
+    allow to circulate: atlases, the Margin's own
+    published summaries going back four decades, a set
+    of bound primary surveys that cannot be replaced if
+    lost, and a handful of volumes flagged by the
+    Archivist as too significant for ordinary loan. The
+    bar-lock is not heavy, but it is enough — the
+    scholars who use this room do not test it.
+  the carrels: >
+    A row of reading-desk carrels with low wooden
+    screens between them, providing the degree of
+    privacy that lets a scholar concentrate without
+    being entirely alone. The screens are worn at
+    their upper edges from years of hands resting on
+    them; the desk surfaces are stained with the
+    accumulated ghost-marks of ink that went through
+    thin paper over many sessions. Most are empty.
+    The one at the far end is occupied.
+idlemessages:
+- The reader at the far carrel makes a note without
+  looking up from the folio.
+- The locked shelves hold their contents in the same
+  arrangement they have had for months.
+- Only the faint scratch of the reader's quill marks
+  the passage of time in this room.

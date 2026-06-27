@@ -1,0 +1,133 @@
+questid: 73
+name: The Margin Notation
+description: >-
+  The Margin's scholars keep finding the same disagreement in the old maps of
+  the Confluence -- the count of the waters at the junction. Some of the oldest
+  surveys show a fourth channel, struck out and re-drawn over generations. Quist
+  the Elder, the nearest thing the Margin has to a head, has asked you to examine
+  the three records that disagree, and bring back what you find.
+secret: false
+
+steps:
+  - id: start
+    description: "Quist the Elder at the Margin Hall has set you to examine the
+      three disagreeing records of the Confluence's waters."
+    hint: "Examine the damaged chart in the bookseller's shop (here in the
+      Scholars' Quarter), Tallis's old charts at the Scriveners' Stall on the
+      Long Quay, and the marginal note on the Municipal Hall map at Tri-Cross
+      Square. Then return to Quist."
+  - id: chart
+    description: "The bookseller's damaged chart shows a fourth channel at the
+      junction, drawn as a distinct waterway."
+    hint: "Now examine Tallis's old charts at the Scriveners' Stall on the Long
+      Quay, and the marginal note on the Municipal Hall map. Then return to
+      Quist."
+  - id: scrivener
+    description: "Tallis's oldest charts agree -- a fourth channel, struck and
+      re-marked across sixty years of surveys."
+    hint: "Now examine the marginal note on the Municipal Hall map at Tri-Cross
+      Square, then return to Quist at the Margin Hall."
+  - id: map
+    description: "The Municipal Hall's own map carries the fourth channel in its
+      margin, half-struck-through. Three independent records, the same
+      disagreement."
+    hint: "Return to Quist the Elder at the Margin Hall with what you found."
+  - id: end
+    description: "The Margin has laid the three records side by side. There was
+      a fourth water, struck from the record over generations -- and the temple
+      at the heart of the city sits on what it suppressed."
+
+rewards:
+  playermessage: >-
+    "Three records, three hands, sixty years apart, and they agree on the one
+    thing the official account denies. There was a fourth. Someone unmade it --
+    not the water, the memory of it." Quist folds a clean sheet and presses it
+    into your hands. "A fair copy, with the fourth channel drawn back where it
+    belongs. Take it. And if you mean to follow this further, the answer is not
+    in any archive of ours -- it is under the temple, in the stone the founders
+    built upon and would not explain. Go carefully. Some questions are settled
+    by people who would prefer they stay that way."
+  roommessage: "Quist presses a folded sheet into the visitor's hands, talking
+    low and urgent."
+  gold: 30
+  itemid: 40138
+  rep_faction: margin
+  rep_amount: 15
+
+triggers:
+  # ── SOURCE 1: the bookseller's damaged chart (6226, Scholars' Quarter) ──
+  - event: room_interact
+    room: 6226
+    noun: damaged-chart
+    conditions:
+      has: ["73-start"]
+      missing: ["73-chart"]
+    actions:
+      - grant: "73-chart"
+      - send_text: >-
+          You study the damaged chart past its water-stain. At the junction,
+          plain under the ruined ink, a fourth channel is drawn -- narrow,
+          distinct, running off to the southwest, no mere smear of current.
+          One of the three records Quist sent you to find.
+      - room_text: "studies the bookseller's water-damaged old chart with new attention."
+  - event: room_interact
+    room: 6226
+    noun: damaged-chart
+    conditions:
+      missing: ["73-start"]
+    actions:
+      - send_text: >-
+          A water-damaged old harbor chart on the bookseller's wall, half its
+          detail lost to a stain. Old, and odd at the junction, but you have no
+          particular reason to study it closely.
+  # ── SOURCE 2: Tallis's old charts (6131, Long Quay) ──
+  - event: room_interact
+    room: 6131
+    noun: old-charts
+    conditions:
+      has: ["73-chart"]
+      missing: ["73-scrivener"]
+    actions:
+      - grant: "73-scrivener"
+      - send_text: >-
+          Tallis's oldest charts show the same fourth channel -- struck out in
+          some copies, re-marked in others, across sixty years of hands that
+          could not agree whether it belonged. The disagreement is consistent.
+          Two records now, and they were never copied from each other.
+      - room_text: "pores over the oldest charts in Tallis's stall."
+  - event: room_interact
+    room: 6131
+    noun: old-charts
+    conditions:
+      missing: ["73-chart"]
+    actions:
+      - send_text: >-
+          The oldest charts in the stall, a few showing the river-junction with
+          more channels than the current maps carry. A curiosity of the copying
+          trade -- nothing you have a reason to pursue.
+  # ── SOURCE 3: the Municipal Hall marginal note (6143, Tri-Cross Square) ──
+  - event: room_interact
+    room: 6143
+    noun: marginal-note
+    conditions:
+      has: ["73-scrivener"]
+      missing: ["73-map"]
+    actions:
+      - grant: "73-map"
+      - send_text: >-
+          The hall's own map carries it too -- a fourth channel pencilled into
+          the margin in an older hand, half-struck-through, the note beside it
+          admitting that the surveyors could not agree. The city's own record,
+          hung in public, says the count was once in dispute. Three independent
+          records. Time to report back to Quist.
+      - room_text: "examines the marginal note on the great hall map closely."
+  - event: room_interact
+    room: 6143
+    noun: marginal-note
+    conditions:
+      missing: ["73-scrivener"]
+    actions:
+      - send_text: >-
+          An old marginal annotation on the civic map -- a fourth channel,
+          struck through, with a note that the surveyors could not agree. The
+          staff have stopped seeing it.

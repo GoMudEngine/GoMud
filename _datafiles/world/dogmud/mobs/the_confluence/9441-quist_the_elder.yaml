@@ -1,0 +1,44 @@
+mobid: 9441
+zone: The Confluence
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - margin
+idlecommands:
+  - 'emote holds an old survey a hand''s breadth from his face, tilting
+    it to the lamp, reading it more by memory than by sight.'
+  - ''
+  - 'say Three rivers. Everyone agrees there are three. That is exactly
+    the kind of thing that ought to make a scholar suspicious.'
+  - ''
+  - 'emote sets one chart atop another against the light, lining up the
+    river-courses to see where the two hands disagree.'
+  - ''
+activitylevel: 10
+character:
+  name: Quist the Elder
+  description: |
+    Quist the Elder is the nearest thing the Margin has to a head, which
+    is to say the others defer to him and he pretends not to notice. He
+    is old and stooped, with the squint of a man who has spent fifty
+    years reading faded ink by lamplight and is now paying for it — he
+    holds everything close to his face and reads the rest from a memory
+    that has not failed him yet. His Chrysalis-change is in the eyes:
+    the irises have gone a pale silver-grey, and in the right light he
+    can still pick out the ghost of an erased line on a palimpsest where
+    a younger scholar sees only blank vellum. He has spent the back half
+    of his life on a single question that everyone else considers
+    settled, and he is too old now to pretend it does not matter.
+  speciesid: 1
+  level: 1
+  gold: 20
+  stats:
+    perception:
+      training: 8
+    willpower:
+      training: 6

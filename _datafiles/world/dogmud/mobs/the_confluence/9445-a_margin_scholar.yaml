@@ -1,0 +1,49 @@
+mobid: 9445
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - margin
+idlecommands:
+  - 'emote reads from a folio propped on one knee, occasionally marking
+    a line with a small wax pencil without removing it from the text.'
+  - ''
+  - 'say The temple''s official account is consistent. I am not arguing
+    with it. I am asking whether the consistency predates the
+    correction or follows from it.'
+  - ''
+  - 'emote sets the folio aside, stands, stretches carefully, then
+    picks it back up and resumes reading from the same line.'
+  - ''
+activitylevel: 10
+character:
+  name: A Margin Scholar
+  description: |
+    A Margin Scholar is one of the Confluence's researchers, a member
+    of the Margin currently engaged in the kind of careful incremental
+    inquiry that does not produce quick results and does not aim to.
+    He is lodging in the Scholars' Quarter during the current phase
+    of his research into the fourth-water question, working through
+    secondary accounts and cross-referencing them against the survey
+    record in the archive. He is respectful of the temple's official
+    account of the junction and does not consider his own research an
+    argument against it -- if the official account is right, the
+    surveys contain a persistent and peculiar error whose propagation
+    history is itself worth documenting. His Chrysalis-change is
+    olfactory and peculiar: he can determine the approximate age of
+    a document by its ink smell alone, to within a decade or two,
+    which is occasionally useful in a research context and otherwise
+    just a thing that happens to him.
+  speciesid: 1
+  level: 1
+  gold: 4
+  stats:
+    willpower:
+      training: 7
+    perception:
+      training: 5

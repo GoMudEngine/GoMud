@@ -1,0 +1,52 @@
+roomid: 6218
+zone: The Confluence
+title: The Scholars' Gate
+description: >
+  The propped door from the Hall of Records opens here,
+  letting in a thin draught of archive air and the
+  occasional sound of a folio replaced on a shelf. The
+  civic noise of the Municipal Hall falls away the
+  moment the door swings to. What replaces it is the
+  quieter atmosphere of the Quarter: ink, old paper,
+  the specific stillness of rooms where people are
+  thinking rather than talking. A short vestibule of
+  pale dressed stone opens west into Inkwell Court; a
+  porter's bench stands to one side of the entry, its
+  occupant managing the easy traffic of scholars coming
+  and going between the archive and the Quarter's halls.
+  A wooden
+  <ansi fg="itemname">notice-board</ansi>
+  is pegged with rosters and duty schedules.
+biome: city
+coord:
+  x: -8
+  y: -67
+  z: 0
+exits:
+  east:
+    roomid: 6149
+  west:
+    roomid: 6219
+  north:
+    roomid: 6222
+  south:
+    roomid: 6226
+spawninfo:
+  - mobid: 9447
+    respawnrate: "20 real minutes"
+nouns:
+  the notice-board: >
+    A worn wooden board covered in overlapping pegged
+    notices: duty rosters for porter shifts, a schedule
+    of Margin reading sessions in the Great Archive, a
+    handwritten reminder about borrowed dividers, and a
+    short list of names headed Loans — Overdue. The
+    notices have accumulated without being cleared; the
+    oldest are legible only at their visible edges.
+idlemessages:
+- The Gate-Porter glances toward the eastern door and
+  returns to the duty roster without comment.
+- From the west, the faint scratch of a quill working
+  on parchment — someone is writing something down.
+- The vestibule holds the specific quiet of a threshold
+  between the city's business and its scholarship.

@@ -1,0 +1,95 @@
+mobid: 9441
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Come in, come in. Mind the charts on the floor -- they are in an
+      order, even if it does not look it. You have the air of someone who
+      asks questions. Good. I have one I cannot stop asking."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "old man"]
+    responses:
+      - "Hm. A visitor who is not one of my own students. Sit, if you can
+        find a chair not buried in paper."
+  - keywords: ["margin", "scholars", "who"]
+    responses:
+      - "We are the Margin -- scholars who read the notes in the margins, the
+        things the main text was sure it had settled. Mostly we are harmless."
+  - keywords: [""]
+    responses:
+      - "Ask me plainly. My eyes are slow but my hearing is fine."
+tree:
+  root:
+    text: "I am Quist -- the others call me the elder, which only means I have
+      been wrong the longest. I have spent the back half of my life on one
+      question, and I am too old now to pretend it is a small one: how many
+      rivers meet at the Confluence? You will say three. Everyone says three.
+      But the oldest surveys do not agree with everyone, and I have never been
+      able to make the city look at why."
+    hints: "You could ask Quist about the Margin and what they study, about
+      the question he has spent his life on, or offer to help him with the
+      work."
+  nodes:
+    - id: commission
+      questExcluded: ["73-start", "73-end"]
+      triggers: ["quest", "task", "help", "work", "offer", "fourth", "waters",
+        "count", "question", "notation", "records", "examine", "prove", "rivers"]
+      text: "You mean it? Then here is the work, and it is reading, not
+        adventuring. Three records survive that disagree on the count of the
+        waters at the junction -- three, made by different hands, generations
+        apart, and each one shows a fourth channel that the official maps do
+        not. I want you to see all three with your own eyes, so you cannot be
+        told later that you imagined it. Examine the damaged chart in the
+        bookseller's shop here in the quarter. Then go to the Long Quay and
+        examine Tallis the scrivener's old charts. Then to the Municipal Hall
+        at Tri-Cross Square -- look at the marginal note on the great map.
+        Three records. Then come back to me."
+      hints: "You could go and examine the three records: the bookseller's
+        damaged chart here, Tallis's old charts on the Long Quay, and the
+        marginal note on the Municipal Hall map at Tri-Cross Square. Then
+        return to Quist."
+      grantsQuest: "73-start"
+    - id: report
+      questRequired: ["73-map"]
+      questExcluded: ["73-end"]
+      triggers: ["report", "return", "found", "done", "back", "finished",
+        "examined", "seen", "evidence", "results"]
+      text: "You have seen all three, then? The bookseller's damaged chart,
+        Tallis's old copies, the hall's own map in its margin? Then you have
+        seen what I have seen, and what a dozen scholars before me saw and
+        could not make the world look at. Lay them side by side in your mind.
+        Three hands, three generations, no chance to copy from one another --
+        and all three draw the same fourth channel, struck out by later hands
+        that wanted it gone."
+      hints: "You could hear Quist's conclusion -- ask him what it means."
+      grantsQuest: "73-end"
+    - id: progress
+      questRequired: ["73-start"]
+      questExcluded: ["73-map"]
+      triggers: ["progress", "remind", "which", "where", "again", "still",
+        "lost", "what", "charts", "map", "doing"]
+      text: "Three records, remember. The damaged chart in the bookseller's
+        shop here in the quarter. Tallis the scrivener's old charts down on
+        the Long Quay. And the marginal note on the great map in the Municipal
+        Hall at Tri-Cross Square. See all three, then come back to me."
+      hints: "You could examine the three records, then return to Quist."
+    - id: margin
+      triggers: ["who are", "study", "antiquarian", "purpose", "danger",
+        "temple", "official", "suppress"]
+      text: "We keep the source records and we ask the questions the temple
+        considers answered. The official account says three rivers, a founding,
+        a tidy beginning. We have a great many old documents that do not quite
+        fit that account. We do not shout about it. Scholars who shout tend to
+        find their archives reorganized. We simply keep the records, and wait
+        for someone to ask the right question."
+      hints: "You could ask Quist about the question he has spent his life on,
+        or offer to help with the work."
+    - id: life
+      triggers: ["life", "eyes", "old", "blind", "why you", "spent", "fifty"]
+      text: "Fifty years squinting at faded ink will take your eyes. Mine have
+        gone silver -- a Blooming, the valley would call it, and a useful one:
+        I can still read an erased line where a young scholar sees blank
+        vellum. I have read a great many things that were meant to stay erased.
+        That is rather the whole trouble with me."
+      hints: "You could ask Quist about the Margin, or about the four-waters
+        question."

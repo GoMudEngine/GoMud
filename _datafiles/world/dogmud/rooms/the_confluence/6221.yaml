@@ -1,0 +1,65 @@
+roomid: 6221
+zone: The Confluence
+title: The Great Archive
+description: >
+  The Margin's library — a long, high-ceilinged room
+  lined with shelving from floor to a gallery that
+  runs along the upper walls, accessible by two rolling
+  ladders on brass rails. The shelves hold the scholars'
+  primary source materials: original surveys and field
+  notes rolled and boxed and catalogued, old civic
+  documents on loan from the Hall of Records, and the
+  accumulated purchases of several decades of
+  scholarship. The smell here is different from the
+  meeting hall — older, dustier, the specific dry scent
+  of old vellum stored correctly. The Archivist works
+  the upper gallery with a lamp and a catalogue,
+  pulling boxes and checking contents with the
+  methodical efficiency of long practice. To the west,
+  the shelving continues into the Deep Stacks, where
+  the oldest materials are kept.
+biome: city
+coord:
+  x: -11
+  y: -67
+  z: 0
+exits:
+  east:
+    roomid: 6220
+  west:
+    roomid: 6230
+  north:
+    roomid: 6225
+  south:
+    roomid: 6229
+spawninfo:
+  - mobid: 9442
+    respawnrate: "20 real minutes"
+nouns:
+  the shelves: >
+    Rows of shelving in old dark-stained wood, their
+    contents catalogued with a system of notched tags
+    on each box or roll. The arrangement is densest
+    near the top of the stacks — the Archivist's
+    domain, accessible only by ladder — and more
+    orderly at eye level, where materials in regular
+    use live. A few shelves near the east door hold
+    items flagged for return to the Hall of Records;
+    the loans have been running for some years.
+  the ladders: >
+    Two rolling ladders on brass rails, allowing
+    access to the upper gallery and the highest
+    shelves. One is currently positioned below the
+    Archivist; the other has been left at the south
+    end of the room and not moved since. The rails
+    show the particular wear of long use — smooth
+    at the points where the ladders most often stop,
+    lighter elsewhere. The brass has not been polished
+    in some time and has taken on a warm brownish cast.
+idlemessages:
+- Above, the Archivist pulls a document box and
+  checks the catalogue entry against its contents.
+- The ladders make a faint metallic sound as they
+  settle on the rails — no one has moved them recently.
+- The archive holds a quiet denser than the court
+  outside — the shelves themselves seem to absorb it.

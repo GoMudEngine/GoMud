@@ -1,0 +1,45 @@
+mobid: 9448
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote drags a heavy stack of bound folios from one end of the
+    court bench to the other, reshuffles them into a new order, and
+    begins reading from the top of the stack.'
+  - ''
+  - 'say No, I was not sleeping. I was thinking with my eyes closed.
+    There is a difference.'
+  - ''
+  - 'emote argues a point at considerable length to no one in
+    particular, gesturing with a pen, before stopping abruptly and
+    writing something down.'
+  - ''
+activitylevel: 10
+character:
+  name: A Student
+  description: |
+    A Student is in the Inkwell Court with a stack of folios, a pen,
+    and a cup of something cold that was warm when the study session
+    began. They are one of several students working with the Margin
+    this season -- young, earnest, and at the stage of research
+    where every secondary source contradicts the previous one and
+    this feels like a crisis rather than a condition of scholarship.
+    Their Chrysalis-change is unhelpful in their current work but
+    will presumably matter later: they do not need much sleep. Four
+    hours suffices, leaving them with more study hours than their
+    peers and a tendency to argue points at length because they have
+    had more time to develop them.
+  speciesid: 1
+  level: 1
+  gold: 1
+  stats:
+    willpower:
+      training: 4
+    perception:
+      training: 3

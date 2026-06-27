@@ -1,0 +1,50 @@
+roomid: 6230
+zone: The Confluence
+title: The Deep Stacks
+description: >
+  The western end of the archive, where the shelves
+  grow closer together and the materials older. The
+  lamp-light from the main room does not reach here
+  without effort; the Archivist keeps a small oil lamp
+  on the end-cap of the last row, its wick trimmed low
+  between uses. The shelving here holds the oldest
+  acquisitions: surveys that predate the current city's
+  founding, field notes in hands no one living trained
+  under, correspondence in at least one dialect no
+  longer spoken at the junction. The floor is
+  undisturbed; dust settles slowly and evenly between
+  visits. Against the end wall stands a heavy
+  <ansi fg="itemname">locked case</ansi>
+  of iron and glass, its contents the most fragile
+  holdings of the entire collection.
+biome: city
+coord:
+  x: -12
+  y: -67
+  z: 0
+exits:
+  east:
+    roomid: 6221
+nouns:
+  the locked case: >
+    A heavy case of iron-banded glass set into the end
+    wall of the Deep Stacks — its double doors secured
+    by a lock whose key is not kept in this room or in
+    the archive proper. Inside: pre-Founding survey
+    fragments, the most fragile pieces the Margin
+    holds, some of them on material that would not
+    survive being unrolled without careful preparation.
+    The glass is thick enough to muffle the room's
+    sounds. One fragment, pressed flat against the near
+    panel, shows a portion of the river junction. The
+    channel lines are difficult to make out through the
+    glass without better light than the end-cap lamp
+    provides. Access goes through the senior Margin.
+    The key is not here.
+idlemessages:
+- The end-cap lamp burns low, its wick trimmed for
+  waiting between uses.
+- Dust settles undisturbed across the oldest shelves —
+  the collection in here is consulted rarely.
+- Through the glass of the locked case, the oldest
+  survey fragments hold their shape without moving.

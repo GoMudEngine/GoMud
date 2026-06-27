@@ -1,0 +1,48 @@
+roomid: 6227
+zone: The Confluence
+title: Scholars' Lodgings
+description: >
+  The residential wing of the Scholars' Quarter: a
+  short corridor lined with narrow doors opening into
+  cells barely large enough for a cot and a desk. Most
+  cells are occupied in the sense that their occupants'
+  belongings have claimed them, even when the scholars
+  themselves are elsewhere at work. Books are stacked
+  as furniture in the corridor — as footstools, as
+  doorstops, as the base of an ad hoc side table. A
+  scholar from the Margin sits on a cot in the nearest
+  open cell, reading a pamphlet with the focused
+  intensity of someone who expects to disagree with
+  most of it. The lodgings smell of old paper, lamp
+  oil, and the staleness of rooms where people live
+  close together and read late.
+biome: city
+coord:
+  x: -9
+  y: -68
+  z: 0
+exits:
+  north:
+    roomid: 6219
+spawninfo:
+  - mobid: 9445
+    respawnrate: "20 real minutes"
+nouns:
+  the books: >
+    The volumes stacked in the corridor as impromptu
+    furniture: three form the base of a side table, two
+    serve as a doorstop, one large atlas has been
+    pressed into service as a footstool for so long
+    that its cover has shaped itself to the purpose.
+    The titles are mixed — survey texts, a language
+    reference, a volume on instrument calibration, and
+    at least two works of popular history that a scholar
+    has not thought to return to wherever they came
+    from. The corridor makes do with what it has.
+idlemessages:
+- The scholar in the near cell turns a page of the
+  pamphlet and exhales softly in mild disagreement.
+- Somewhere further down the corridor, a cot creaks
+  as its occupant shifts without waking.
+- The improvised side table of stacked books holds
+  a cup and a lamp with equal confidence.

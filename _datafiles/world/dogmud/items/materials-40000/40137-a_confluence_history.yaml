@@ -1,0 +1,18 @@
+itemid: 40137
+name: A Confluence History
+namesimple: history
+description: >
+  A plainly-bound volume, its cover faded at the corners from years on
+  a bookseller's shelf. The pages trace the Confluence's three rivers,
+  the founding of the temple city, and the slow accumulation of its
+  history — readable, unremarkable, the kind every scholar owns a copy
+  of.
+type: object
+subtype: mundane
+component_tag: history-book
+weight: 0.5
+value: 6
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- tailoring
