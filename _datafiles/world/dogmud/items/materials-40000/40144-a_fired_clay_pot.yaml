@@ -1,0 +1,16 @@
+itemid: 40144
+name: A Fired Clay Pot
+namesimple: pot
+description: >
+  A plain glazed pot off the potter's wheel in the Craftsmen's
+  Row, sound and watertight. The sort of honest vessel that ends
+  up in every kitchen and storeroom in the city.
+type: object
+subtype: mundane
+component_tag: clay-vessel
+weight: 0.8
+value: 6
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- alchemy

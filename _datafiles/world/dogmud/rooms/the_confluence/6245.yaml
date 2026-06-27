@@ -1,0 +1,43 @@
+roomid: 6245
+zone: The Confluence
+title: The Well-Court
+description: >
+  The lane ends at a small court built around a covered
+  <ansi fg="itemname">well</ansi>
+  — older than the houses on any side, the stonework of
+  the well-coping a different grade of cut from the
+  tenement walls. The well still draws, though fewer
+  people use it since the pump was added in the court
+  above. An old man sits on the bench at the well's
+  base in the particular way of someone who has sat
+  there enough that the bench has come to mean him.
+  Children bring water from the pump these days; the
+  old man still draws from the well, and has his reasons.
+  The court is to the north.
+biome: city
+coord:
+  x: -14
+  y: -74
+  z: 0
+exits:
+  north:
+    roomid: 6242
+spawninfo:
+  - mobid: 9481
+    respawnrate: "20 real minutes"
+nouns:
+  the well: >
+    A stone-coped well under a low wooden cover, the
+    rope worn to a softness that suggests regular use
+    spanning generations. The coping-stones are cut in
+    an older style than the surrounding buildings —
+    tighter joints, a harder stone. The water is still
+    good; the old man will tell you this if you ask and
+    sometimes if you do not.
+idlemessages:
+- The old man on the bench watches the lane without
+  urgency; he has watched it for many years.
+- The well rope hangs loose over the coping; whoever
+  last drew water did not wind it back.
+- A puddle of spilled water from the morning's drawing
+  is drying slowly in the shade of the well-house.

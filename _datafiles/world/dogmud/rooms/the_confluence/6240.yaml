@@ -1,0 +1,58 @@
+roomid: 6240
+zone: The Confluence
+title: The Craft-Supply Stall
+description: >
+  More a permanent stall than a shop — its front wall
+  folds up entirely to reveal the shelving behind it,
+  and the stock is arranged in the logic of whoever
+  laid it in rather than any system a stranger might
+  guess at. Bags of raw
+  <ansi fg="itemname">clay</ansi>
+  are stacked beside sacks of
+  <ansi fg="itemname">dye-powder</ansi>
+  in undyed cloth; nails sold by the handful from iron
+  bins; bolts of undyed
+  <ansi fg="itemname">thread</ansi>
+  in various weights wound on card. The stall serves
+  all of the trades in the quarter and knows it — the
+  stock covers enough range that there is rarely a need
+  to go further for basic materials. The smithy is to
+  the west.
+biome: city
+coord:
+  x: -13
+  y: -71
+  z: 0
+exits:
+  west:
+    roomid: 6239
+spawninfo:
+  - mobid: 9477
+    respawnrate: "20 real minutes"
+nouns:
+  the clay: >
+    Raw grey clay in rough-sewn sacks, sold by the
+    pound. The sacks are open at the top; anyone can
+    test the texture before buying. Good for wheel-work
+    or general ceramic use; the potter down the street
+    uses the same stock.
+  the dye-powder: >
+    Dye powders in undyed cloth sacks labeled in the
+    stall-keeper's cramped hand — weld yellow, woad
+    blue, madder red, oak-gall black. The sacks sit
+    in a row on the second shelf, each tied off with
+    a different color of cord to speed identification.
+  the thread: >
+    Thread on card-wrapped bolts — linen thread in two
+    weights, a wool thread in three, and one bolt of
+    something finer that the label calls silk-weight
+    cotton, which it almost certainly is not, but which
+    the weaver up the street buys for finishing work
+    and has not complained about.
+idlemessages:
+- The stall-keeper makes a note in a small ledger and
+  tucks it back under the counter without comment.
+- A craftsman from the row comes in and knows exactly
+  which bin holds what without reading the labels.
+- The clay sacks at the base of the shelf are worn
+  smooth where hands have tested the weight.

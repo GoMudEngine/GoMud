@@ -1,0 +1,47 @@
+mobid: 9474
+zone: The Confluence
+craft_support: alchemy
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote smooths the rim of a wet clay vessel with two
+    fingers, checks the symmetry, and sets it on the
+    drying shelf without a word.'
+  - ''
+  - 'say Fired clay holds anything you put to it. Better
+    than glass for most purposes and cheaper to replace.'
+  - ''
+  - 'emote turns a pot slowly in both hands, examining the
+    glaze for even coverage, and nods with quiet
+    satisfaction.'
+  - ''
+activitylevel: 10
+character:
+  name: The Potter
+  description: |
+    The Potter works a corner of the Row between the
+    weaver and the cooper, turning out fired clay vessels
+    for the city's domestic and craft markets. Her pots
+    are plain, well-proportioned, and correctly fired --
+    exactly what an alchemist needs in a ceramic vessel.
+    Her Chrysalis-change is subtle: she knows by feel
+    whether a clay mix will crack in the kiln, and her
+    reject rate has been exactly zero since the change.
+    She finds this a moderate improvement and has not
+    made much of it.
+  speciesid: 1
+  level: 1
+  gold: 45
+  stats:
+    perception:
+      training: 4
+    dexterity:
+      training: 4
+  shop:
+    - itemid: 40144

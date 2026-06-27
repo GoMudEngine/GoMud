@@ -1,0 +1,36 @@
+mobid: 9482
+zone: The Confluence
+defaultMood: neutral
+greetings:
+  - text: "Sorry -- late -- what is it?"
+    moods: ["neutral", "friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Genuinely busy -- what do you need?"
+  - keywords: ["late", "hurry", "where", "going", "run",
+      "why", "what", "errand", "for", "carry", "have"]
+    responses:
+      - "Potter's order should have been to the Scholars'
+        Quarter an hour ago. I'll get there."
+  - keywords: [""]
+    responses:
+      - "No time -- sorry."
+tree:
+  root:
+    text: "Potter's order for the Scholars' Quarter -- should
+      have left an hour ago, which is my fault and also
+      partly the pot cooler's fault but mostly mine.
+      Was there something quick?"
+    hints: "He is in a hurry. A very quick question might
+      get a brief answer."
+  nodes:
+    - id: errand
+      triggers: ["potter", "order", "scholars", "quarter",
+        "where", "going", "errand", "late", "fault", "why",
+        "what", "carry", "bring", "heavy", "load", "how far",
+        "next time", "earlier", "pot", "clay"]
+      text: "Pottery order for one of the scholars up the hill.
+        Heavy enough to be awkward. I'll get there. Next
+        time I'll leave earlier."
+      hints: "That is all he has time for."

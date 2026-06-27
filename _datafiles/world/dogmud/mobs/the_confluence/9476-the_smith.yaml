@@ -1,0 +1,43 @@
+mobid: 9476
+zone: The Confluence
+schedule_id: cf_smith
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote strikes a piece of iron on the anvil, turns it,
+    strikes again, and holds it up to judge the shape.'
+  - ''
+  - 'say Tools and fittings. I don''t do weapons -- go up
+    the Aldren arm for that.'
+  - ''
+  - 'emote plunges a heated piece into the quench barrel
+    and the hiss of steam rises in a brief white cloud.'
+  - ''
+activitylevel: 10
+character:
+  name: The Smith
+  description: |
+    The Smith runs the Row's forge with the steady rhythm
+    of a man who has spent decades at the anvil and sees
+    no reason to be hurried about it. He makes domestic
+    ironwork -- hinges, latches, pot hooks, barrel hoops,
+    the hardware a city runs through without noticing --
+    and sends customers looking for weapons or armor up
+    the Aldren arm. His Chrysalis-change has given his
+    arms a faint metallic sheen that he mostly ignores,
+    and has made his grip on the hammer somewhat more
+    than ordinary.
+  speciesid: 1
+  level: 1
+  gold: 20
+  stats:
+    strength:
+      training: 7
+    vitality:
+      training: 4

@@ -1,0 +1,44 @@
+mobid: 9483
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Hello. Are you a traveler? You look like a traveler."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "good", "day"]
+    responses:
+      - "Hi! Do you know any good games?"
+  - keywords: ["game", "play", "stone", "paving", "hop",
+      "what", "doing", "how", "win"]
+    responses:
+      - "You have to hop from one stone to the next without
+        touching the lines. I'm very good at it."
+  - keywords: ["errand", "baker", "where", "going", "what",
+      "supposed", "should", "do"]
+    responses:
+      - "I'm going. I just have to finish the third section
+        first or it doesn't count."
+  - keywords: [""]
+    responses:
+      - "I'm on an errand. Almost."
+tree:
+  root:
+    text: "I'm supposed to be taking something to the baker
+      but I'm doing the paving-stone game first. You have
+      to hop from stone to stone without touching the lines.
+      I've almost got to the end. Do you want to watch?"
+    hints: "You could ask the child about the game, or about
+      the errand she is almost doing."
+  nodes:
+    - id: game_errand
+      triggers: ["game", "stone", "paving", "hop", "play",
+        "line", "watch", "yes", "sure", "errand", "baker",
+        "what", "doing", "why", "how", "good", "win", "end",
+        "section", "count", "almost", "done", "finish"]
+      text: "If you step on a line the whole thing doesn't
+        count and you have to start over. I've been to the
+        third section twice today. The baker's not going
+        anywhere -- she's always there. The game has to be
+        finished properly or it doesn't work."
+      hints: "The child's priorities are clear and will not
+        be rearranged."

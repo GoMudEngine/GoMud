@@ -1,0 +1,47 @@
+roomid: 6242
+zone: The Confluence
+title: A Tenement Court
+description: >
+  Four houses face each other across a shared court no
+  wider than two arm-spans at its narrowest, the paving
+  worn to a rut in the center where feet have passed and
+  passed again over the years. A communal
+  <ansi fg="itemname">pump</ansi>
+  stands at one end, its handle dark from use, a rusted
+  tin cup hung from it on a hook that long predates
+  anyone who lives here now. Washing hangs between the
+  upper windows on ropes strung corner to corner — this
+  court sees less sun than the lane and the cloth takes
+  longer to dry. Voices carry easily from house to
+  house; there is no privacy here that is not maintained
+  entirely by consent. The lane is north; a functionary's
+  door is east; the well-court is south.
+biome: city
+coord:
+  x: -14
+  y: -73
+  z: 0
+exits:
+  north:
+    roomid: 6241
+  east:
+    roomid: 6244
+  south:
+    roomid: 6245
+spawninfo:
+  - mobid: 9480
+    respawnrate: "20 real minutes"
+nouns:
+  the pump: >
+    An iron hand-pump on a stone plinth, its spout
+    aimed at a shallow drain that runs to the court's
+    edge. The handle is dark and smooth from years of
+    morning use; a tin cup hangs from the hook beside
+    the spout, communal and no one's in particular.
+idlemessages:
+- A woman leans from a window to collect a half-dry
+  shirt from the rope and takes in a neighbor's as well.
+- The pump in the court is worked with a rhythmic squeak
+  and then released; water sounds, then silence.
+- Two conversations are audible at once from separate
+  windows, neither requiring the other to stop.

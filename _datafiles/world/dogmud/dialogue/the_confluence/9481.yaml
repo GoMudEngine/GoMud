@@ -1,0 +1,49 @@
+mobid: 9481
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "You're new to the lane. I notice things."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Afternoon. Come to hear something useful?"
+  - keywords: ["lane", "street", "paving", "city", "well",
+      "old", "years", "remember", "how long", "what", "history",
+      "changed", "different"]
+    responses:
+      - "I've been at this well since the second Registrar's
+        time. Not much about this lane I don't remember,
+        and a great deal I've watched get worse."
+  - keywords: [""]
+    responses:
+      - "I have opinions if you want them. Most people don't.
+        I have them regardless."
+tree:
+  root:
+    text: "I've sat at this well for thirty-odd years, which is
+      enough to know everything worth knowing about this
+      lane. The paving was laid in the old Registrar's time
+      and not touched since. The lane used to have a fountain
+      at the far end -- guild money, back when the guild had
+      money. What do you want to know?"
+    hints: "You could ask the old man about the lane and its
+      history, about the city and how things have changed,
+      or simply let him talk."
+  nodes:
+    - id: lane_history
+      triggers: ["lane", "street", "paving", "stone", "city",
+        "well", "old", "years", "remember", "history", "fountain",
+        "guild", "registrar", "how long", "what", "changed",
+        "different", "before", "used to", "tell", "know",
+        "cooper", "father", "time", "back", "when", "worse"]
+      text: "The lane is half what it was, and half better. The
+        paving stones have gone in front of the potter's shop
+        -- someone needs to say something, but nobody does.
+        The guild had real money when I was young; they put
+        in a fountain at the far end. Fountain's gone. The
+        cooper three shops down is the second son of the man
+        who had it before him. That is the sort of thing I
+        keep track of. Nobody asks, but I keep it."
+      hints: "He will continue on this subject at some length
+        if given the opportunity."

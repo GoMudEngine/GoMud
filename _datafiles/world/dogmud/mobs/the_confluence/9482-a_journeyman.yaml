@@ -1,0 +1,40 @@
+mobid: 9482
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote checks a list against a bundle of materials
+    under one arm, nods, and walks on with slightly
+    more urgency than before.'
+  - ''
+  - 'say Late -- sorry, not talking, late.'
+  - ''
+  - 'emote slows just long enough to adjust the bundle
+    under his arm, then picks up the pace again.'
+  - ''
+activitylevel: 10
+character:
+  name: A Journeyman
+  description: |
+    A Journeyman is always on his way somewhere specific
+    and already somewhat late. He carries materials for
+    one of the Row's workshops -- which workshop varies
+    by the day -- and navigates the lane at the brisk
+    trot of someone who has not yet been given permission
+    to walk. He will be an expert craftsman in a few
+    years if he survives the apprenticeship. Right now
+    he is mostly surviving the errands.
+  speciesid: 1
+  level: 1
+  gold: 4
+  stats:
+    dexterity:
+      training: 4
+    perception:
+      training: 2

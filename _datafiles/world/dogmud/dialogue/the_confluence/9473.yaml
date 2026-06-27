@@ -1,0 +1,41 @@
+mobid: 9473
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Storage and cooperage. What do you need?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Afternoon. After a barrel, a bucket, or something
+        smaller?"
+  - keywords: ["barrel", "cask", "bucket", "vessel", "pot",
+      "clay", "storage", "container", "buy", "what", "have"]
+    responses:
+      - "Barrels and casks are the main trade. Clay pots
+        for dry storage or sealed work."
+  - keywords: [""]
+    responses:
+      - "I do barrels, casks, and clay storage. What do
+        you need?"
+tree:
+  root:
+    text: "Wood cooperage is the main line -- barrels, casks,
+      buckets. I stock clay vessels for buyers who need
+      a sealed pot quick. What is it you're after?"
+    hints: "You could ask the cooper about barrels and storage
+      vessels, or use the counter to buy."
+  nodes:
+    - id: vessels
+      triggers: ["barrel", "cask", "bucket", "pot", "clay",
+        "vessel", "storage", "what", "have", "buy", "price",
+        "cost", "much", "wood", "sealed", "container", "stock",
+        "how", "long", "order", "make", "work"]
+      text: "Barrels and casks I make to order mostly -- takes
+        a few days for a proper one. Clay pots are on the
+        shelf ready to go, good for dry goods and sealed
+        storage. Ask if you need a specific size. A good
+        cask keeps anything you put in it. A bad one
+        costs you more than you saved on the price."
+      hints: "You could use the counter to browse and buy, or
+        ask the cooper about other goods."

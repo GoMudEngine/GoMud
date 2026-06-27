@@ -1,0 +1,42 @@
+mobid: 9477
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Craft supplies and materials. What do you need?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. What are you working on?"
+  - keywords: ["pot", "clay", "cloth", "homespun", "bolt",
+      "vessel", "material", "supply", "buy", "what", "have",
+      "stock", "carry"]
+    responses:
+      - "Clay pots and bolts of homespun cloth. General
+        craft materials. What do you need?"
+  - keywords: [""]
+    responses:
+      - "Clay, cloth, and general supplies. Take a look
+        at the counter."
+tree:
+  root:
+    text: "I keep a general stock: clay vessels and cloth bolts
+      for the craft market. If you need something in
+      depth, the specialists down the Row have more. If
+      you need it quickly, I probably have it. What is it?"
+    hints: "You could ask about the goods or use the counter
+      to browse and buy."
+  nodes:
+    - id: goods
+      triggers: ["pot", "clay", "cloth", "homespun", "bolt",
+        "what", "have", "buy", "price", "cost", "much",
+        "supply", "material", "stock", "carry", "get",
+        "vessel", "storage", "weave", "fabric", "all"]
+      text: "Clay pots -- fired, ready to use, good for alchemy
+        or storage. Bolts of homespun cloth -- plain weight,
+        right for most work. Both in stock. If you need
+        the finer river cloth or specialty ceramic, the
+        weaver and the potter are further down the Row.
+        I'm the quick stop."
+      hints: "You could use the counter to browse and buy, or
+        ask about other goods."

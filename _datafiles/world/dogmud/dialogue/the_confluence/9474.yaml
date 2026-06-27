@@ -1,0 +1,40 @@
+mobid: 9474
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "Fired clay vessels. What size?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Looking for something in particular?"
+  - keywords: ["pot", "clay", "vessel", "fired", "buy",
+      "what", "have", "price", "cost", "alchemy", "use",
+      "mixing", "storage"]
+    responses:
+      - "Fired clay, plain glaze. Good for alchemy work or
+        storage. Won't crack if you treat it right."
+  - keywords: [""]
+    responses:
+      - "Clay pots, fired and glazed. What do you need?"
+tree:
+  root:
+    text: "Plain fired clay, properly glazed. Good for alchemy
+      work, dry storage, anything that needs a heat-stable
+      vessel. What are you working on?"
+    hints: "You could ask the potter about the clay pots or
+      her work, or use the counter to buy."
+  nodes:
+    - id: pots
+      triggers: ["pot", "clay", "vessel", "alchemy", "fired",
+        "glaze", "buy", "price", "cost", "much", "what",
+        "have", "mixing", "storage", "heat", "stable", "work",
+        "good", "for", "use", "kind"]
+      text: "Fired at the right temperature and glazed to seal.
+        Good for mixing reagents, storing dry materials,
+        and anything that sees heat or moisture. My reject
+        rate is low -- I check every one before it goes
+        out. Better than glass for most purposes, and
+        cheaper to replace if you break it."
+      hints: "You could use the counter to buy, or ask the
+        potter about her other work."

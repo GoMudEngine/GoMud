@@ -1,0 +1,47 @@
+mobid: 9475
+zone: The Confluence
+craft_support: tailoring
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote holds a length of cloth toward the light, checking
+    the weave, then lays it flat on the counter and smooths
+    it with one palm.'
+  - ''
+  - 'say River cloth wears well. Homespun is cheaper and
+    softer -- depends what you are making.'
+  - ''
+  - 'emote threads a shuttle through the loom with practiced
+    ease and watches the beater swing without looking.'
+  - ''
+activitylevel: 10
+character:
+  name: The Weaver
+  description: |
+    The Weaver keeps her loom going most of the day and
+    sells the output across the counter: homespun cloth
+    for everyday use and the river-cloth bolt that the
+    Confluence is known for -- tighter woven, with the
+    slight sheen of linen blended in. She can identify
+    a structural flaw in a fabric by feel alone, a
+    Chrysalis-change she considers professionally useful
+    and otherwise unremarkable. She is brisk in the way
+    of someone with a full order book and not much to
+    say to people who are not buying.
+  speciesid: 1
+  level: 1
+  gold: 50
+  stats:
+    dexterity:
+      training: 5
+    perception:
+      training: 3
+  shop:
+    - itemid: 40145
+    - itemid: 40132

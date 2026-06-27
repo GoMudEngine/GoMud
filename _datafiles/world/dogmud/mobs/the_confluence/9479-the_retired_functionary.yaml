@@ -1,0 +1,48 @@
+mobid: 9479
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote taps the rim of his empty cup twice, appears to
+    consider refilling it, and decides against it for
+    the third time.'
+  - ''
+  - 'say The bridge toll schedule for the Brenn arm has not
+    been revised since the Wren Commission, and I am
+    the only person who remembers this.'
+  - ''
+  - 'emote smooths the front of his jacket with both palms,
+    adjusts the lapel by a precise margin, and settles
+    back in his chair with the air of a man who has
+    prepared for a long wait.'
+  - ''
+activitylevel: 10
+character:
+  name: The Retired Functionary
+  description: |
+    The Retired Functionary was the Third Clerk of Tolls
+    for the Brenn arm for twelve years, then the Senior
+    Assessment Clerk for four more, then briefly Acting
+    Head of the Quarterly Review before the position was
+    abolished and he was retired with a small pension and
+    a handshake from the Deputy Registrar. He carries
+    this history with the careful precision of a man who
+    recorded it all and still has the figures. His
+    Chrysalis-change is perfect: he can recall any number
+    he has ever written in an official document. This
+    would have been enormously useful during his career.
+    It is of limited comfort now.
+  speciesid: 1
+  level: 1
+  gold: 20
+  stats:
+    perception:
+      training: 6
+    charisma:
+      training: 4

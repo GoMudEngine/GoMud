@@ -1,0 +1,16 @@
+itemid: 40145
+name: A Bolt of Homespun
+namesimple: homespun
+description: >
+  A bolt of plain undyed cloth from the weaver's loom in the
+  Craftsmen's Row -- coarse, durable, cheap. What ordinary people
+  wear when the dyed river-cloth of the quay is for someone else.
+type: object
+subtype: mundane
+component_tag: cloth
+weight: 0.6
+value: 5
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- tailoring

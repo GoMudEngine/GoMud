@@ -1,0 +1,45 @@
+mobid: 9473
+zone: The Confluence
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote runs a thumb along the lip of a finished stave,
+    nods once, and sets it with the others.'
+  - ''
+  - 'say Good casks keep whatever you put in them. Bad ones
+    cost you more than you saved on the price.'
+  - ''
+  - 'emote taps a finished barrel to check the sound, tilts
+    his head, and taps it again in a different spot.'
+  - ''
+activitylevel: 10
+character:
+  name: The Cooper
+  description: |
+    The Cooper works the Row's cooperage with the settled
+    authority of a man who has made more barrels than he
+    can count and has opinions about every one. He makes
+    casks, buckets, and general storage vessels -- wood
+    for most things, ceramic for what wood won't suit --
+    and keeps a stock of clay pots on the shelf for buyers
+    who need a sealed container quickly. He has no
+    Chrysalis-change that he will admit to, though his
+    finished barrels are said to last considerably longer
+    than they have any right to.
+  speciesid: 1
+  level: 1
+  gold: 50
+  stats:
+    strength:
+      training: 5
+    perception:
+      training: 3
+  shop:
+    - itemid: 40144

@@ -1,0 +1,99 @@
+mobid: 9479
+zone: The Confluence
+defaultMood: friendly
+greetings:
+  - text: "I was the Third Clerk of Tolls for twelve years.
+      You wouldn't know it to look at me. What is it?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Sit down if you like. The chair is probably fine.
+        What brings you to this end of the lane?"
+  - keywords: ["toll", "tax", "bridge", "roll", "assessment",
+      "clerk", "what", "did", "work", "old", "job", "career"]
+    responses:
+      - "Tolls and assessments -- Brenn arm, twelve years as
+        Third Clerk, four as Senior Assessment. Exacting
+        work. Nobody remembers exacting work."
+  - keywords: ["number", "recall", "remember", "memory",
+      "change", "blooming", "chrysalis", "gift", "figure"]
+    responses:
+      - "I can tell you every figure I ever wrote in an
+        official document. Every one, to the penny. It
+        was an extremely useful gift to receive after
+        my retirement."
+  - keywords: [""]
+    responses:
+      - "I have opinions, if you have a moment. Most people
+        don't, but I have them regardless."
+tree:
+  root:
+    text: "I was the Third Clerk of Tolls for the Brenn arm for
+      twelve years -- not the head clerk, that was Veran,
+      who I will not characterize -- and before that I kept
+      quarterly assessments for four years, and for a brief
+      period I was Acting Head of the Quarterly Review before
+      the position was abolished. They gave me a handshake.
+      From the Deputy Registrar. I have retired to this lane
+      and I drink cold tea and I have many opinions. What
+      would you like to know?"
+    hints: "You could ask him about his work and the city's
+      administration, about how he ended up in the quarter,
+      or about the remarkable memory the Blooming gave him."
+  nodes:
+    - id: old_work
+      triggers: ["toll", "tax", "bridge", "roll", "assessment",
+        "clerk", "what", "did", "work", "old", "job", "career",
+        "brenn", "arm", "administration", "hall", "registry",
+        "guild", "register", "quarterly", "record", "document",
+        "tell", "explain", "how", "year", "third", "senior",
+        "twelve", "four", "history", "fee", "schedule", "wren"]
+      text: "The Brenn arm bridge toll schedule has not been
+        revised since the Wren Commission, which convened
+        the year I began my tenure as Third Clerk. I am the
+        only person who knows this. I raised it twice in
+        committee. The committee wrote it down and lost the
+        paper. The guild registration fees are also outdated
+        -- cooperage and potters' fees haven't been adjusted
+        in a decade -- and there is a discrepancy in the
+        residential lane assessments that would take an
+        afternoon to correct and has been outstanding for
+        seven years. Nobody has asked me. I am here. I am
+        findable."
+      hints: "You could ask him about how he ended up in
+        the quarter, or about his remarkable memory."
+    - id: quarter
+      triggers: ["quarter", "here", "lane", "why", "how",
+        "come", "live", "settle", "end up", "retired",
+        "retire", "pension", "where", "home", "street",
+        "row", "residential", "move", "came", "chose",
+        "choice", "baker", "loaf"]
+      text: "When the position was abolished I had two choices:
+        the Aldren arm, where a former colleague had an
+        offer, or this lane, where the rent was reasonable
+        and the baker does a proper loaf. I chose the loaf.
+        It has been, on balance, the correct choice. The
+        lane is quiet. The neighbors are decent. I sit at
+        the well most mornings and I am largely unbothered,
+        which is either a comfort or an indignity depending
+        on my mood."
+      hints: "You could ask him about his work in the city, or
+        about what the Blooming did to his memory."
+    - id: numbers
+      triggers: ["number", "recall", "remember", "memory",
+        "change", "blooming", "chrysalis", "gift", "ability",
+        "figure", "document", "wrote", "can you", "remarkable",
+        "strange", "useful", "what", "how", "talent", "since"]
+      text: "The Blooming arrived, as these things seem to, at
+        an inconvenient time. I can now recall any figure I
+        have ever committed to an official document. Every
+        toll tallied, every quarterly sum, every assessment
+        carried forward. Perfect, immediate, without effort.
+        I could not do this during twelve years of active
+        tenure, when it would have been of considerable
+        value. I can do it now, sitting at a well, talking
+        to strangers. The Blooming has a sense of humor.
+        That is the conclusion I have reached."
+      hints: "You could ask him about the work he did, or about
+        why he ended up in this particular lane."

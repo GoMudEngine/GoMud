@@ -1,0 +1,45 @@
+roomid: 6233
+zone: The Confluence
+title: Upper Craft Row
+description: >
+  The street opens into the head of the craft row, a
+  broader stretch than the lanes below it, paved in
+  rough setts worn down by years of handcart traffic.
+  Shopfronts to either side carry painted
+  <ansi fg="itemname">signboards</ansi>
+  — a hoop and stave for the cooperage, a shuttle for
+  the weaver, a wheel for the potter — the trades
+  announced in the shorthand of a street where everyone
+  knows everyone and the boards exist more for strangers
+  than for neighbors. The sound of work comes from every
+  door: wood knocked, a loom's shuttle, someone calling
+  through a yard. The gate is east; the cooperage is
+  west; the row runs south.
+biome: city
+coord:
+  x: -14
+  y: -68
+  z: 0
+exits:
+  east:
+    roomid: 6232
+  west:
+    roomid: 6234
+  south:
+    roomid: 6236
+nouns:
+  the signboards: >
+    Trade boards hung above the shopfronts: hoop and
+    stave for the cooperage, a shuttle for the weaver,
+    a clay wheel for the potter. Painted in the same
+    basic scheme — dark ground, lighter image — by the
+    same hand, years apart. Effective enough that a
+    newcomer could find any shop on the row without
+    asking.
+idlemessages:
+- A delivery man pulls up short outside the cooperage
+  and checks a wax tablet before going in.
+- The clatter of the cooperage mallet beats a steady
+  rhythm down the row.
+- Two women stop at the corner to talk, neither in any
+  visible hurry to be somewhere else.
