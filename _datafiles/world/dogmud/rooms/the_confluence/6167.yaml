@@ -13,10 +13,11 @@ description: >
   is older than the portico around it — a four-ring
   mark, one ring enclosing the next, worn to near-
   smoothness at its edges while the stone on either
-  side shows far less weathering. Beside the doors
-  a keeper attends to pilgrims who arrive and wish
-  to know more of the temple's history and practice.
-  The stair descends to the north.
+  side shows far less weathering. At the foot of one
+  column a Margin scholar sits with a board on her
+  knee, copying the lines of the symbol stroke by
+  stroke; a keeper passes now and then and lets her
+  be. The stair descends to the north.
 biome: city
 coord:
   x: 3
@@ -51,8 +52,8 @@ spawninfo:
   - mobid: 9454
     respawnrate: "20 real minutes"
 idlemessages:
-- The keeper at the portico answers a question about
-  the symbol above the doors with practiced composure.
+- The scholar at the column glances up at the symbol,
+  then down at her board, and makes another careful line.
 - The overhang holds the smell of old incense and
   candle-wax, the residue of many previous arrivals.
 - 'The great doors do not open: they have been shut
