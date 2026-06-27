@@ -25,13 +25,13 @@ patterns:
       - "Meal, a drink, or a room. What do you need?"
 tree:
   root:
-    text: "Brennside Arms -- been here as long as the east gate.
+    text: "The Travelers' Inn -- been here as long as the east gate.
       Road travelers mostly: merchants bound to or from Greenford,
       pilgrims arriving at the Confluence, the odd road warden on
       a cold patrol. Sit down. What can I get you?"
     hints: "You could ask the innkeeper about the food she serves,
       about rooms for the night, or about who passes through the
-      Brennside Arms."
+      the Travelers' Inn."
   nodes:
     - id: food
       triggers: ["food", "eat", "meal", "stew", "bread", "broth",

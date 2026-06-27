@@ -31,7 +31,7 @@ tree:
       The Confluence. It's real, which is more than I can say
       for most of the things people talk about."
     hints: "You could ask the wayfarer about Greenford and the
-      road east, about what she makes of the Confluence, or
+      road east, about what a traveler makes of the Confluence, or
       about what lies beyond the gate."
   nodes:
     - id: greenford
@@ -48,7 +48,7 @@ tree:
         quieter than here. I've passed through twice before.
         Both times it felt like stepping into a slightly older
         world. Not a criticism. Just a thing you notice."
-      hints: "You could ask about what she makes of the
+      hints: "You could ask about what a traveler makes of the
         Confluence, or about what lies beyond the gate east."
     - id: confluence
       triggers: ["confluence", "here", "city", "what", "think",
@@ -80,4 +80,4 @@ tree:
         about it. The road to Greenford alone is worth the boot
         leather."
       hints: "You could ask about Greenford and the road, or
-        about what she makes of the Confluence."
+        about what a traveler makes of the Confluence."
