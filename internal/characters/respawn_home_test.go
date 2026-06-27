@@ -48,3 +48,11 @@ func TestResolveRespawnRoom_NewPlymouthHome(t *testing.T) {
 		t.Errorf("newplymouth home respawn = %d, want 5901 (the Grand Temple sanctuary)", got)
 	}
 }
+
+func TestResolveRespawnRoom_ConfluenceHome(t *testing.T) {
+	c := New()
+	c.SetSetting("home", "confluence")
+	if got := c.ResolveRespawnRoom(); got != 6173 {
+		t.Errorf("confluence home respawn = %d, want 6173 (the Temple Sanctuary)", got)
+	}
+}
