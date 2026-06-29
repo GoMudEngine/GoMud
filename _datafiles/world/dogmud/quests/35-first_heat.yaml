@@ -55,7 +55,9 @@ triggers:
       - send_text: "The iron takes shape under the hammer and the
           leather wraps the grip cleanly. There is a particular
           satisfaction to the moment a thing becomes a thing --
-          raw stock in, finished blade out. Report to Rusk."
+          raw stock in, finished blade out. You hold a real weapon
+          now -- type wield dagger to ready it in your hand, and inv
+          to see what you are carrying. Then report to Rusk."
 
   # ── TURN IN BY GIVING THE BLADE ──────────────────────────
   # Alternate completion path to the `ask rusk done` dialogue node:

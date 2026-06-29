@@ -92,9 +92,12 @@ tree:
         - type: action
           do: say
           text: >-
-            Now -- two roads from here, and both are good ones. If
-            Gaius is new to you, go south to the square and tell
-            Crier Toke you need your footing:
+            Now -- two roads from here, and both are good ones. Check
+            what you carry first with <ansi fg="command">inv</ansi> --
+            little enough, I'd wager, and that is the point: the folk
+            down each road will arm you and teach you their trade. If
+            Gaius is new to you, go south to the square and tell Crier
+            Toke you need your footing:
             <ansi fg="command">ask toke footing</ansi>. He will walk
             you through the town properly.
           delay: 33.0
