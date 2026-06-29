@@ -26,6 +26,19 @@ tree:
     hints: "You could ask Verrold about a quest or task, the tithe, or the granary."
 
   nodes:
+    - id: verroldhandoff
+      triggers: ["waybill", "parcel", "delivery", "package", "road", "deliver",
+                 "hand", "give", "turn", "done", "report", "quest", "task"]
+      questRequired: ["60-waybill"]
+      questExcluded: ["60-manifest"]
+      requiresItem: 40072
+      grantsQuest: "60-manifest"
+      text: "Verrold takes the waybill, checks the counter-sign, and makes his
+        entry in the ledger without looking up. \"Pell's work.\" He stamps the
+        packet and seals it. \"One leg left -- the East Gate guard at New
+        Plymouth. Hand it over at the wall.\""
+      hints: "You hand the waybill to Tithe-Clerk Verrold."
+
     - id: quest_active
       triggers: ["quest", "task", "manifest", "ledger", "tithe", "deliver", "stamp", "relay", "post"]
       questRequired: ["60-waybill"]

@@ -34,6 +34,22 @@ tree:
       the mark itself, or about the Margin and the Scholars'
       Quarter upriver."
   nodes:
+    - id: marginhandoff
+      triggers: ["rubbing", "undercroft", "reveal", "margin", "truth",
+        "deliver", "hand", "give", "turn", "done", "quest", "task"]
+      questRequired: ["74-reveal"]
+      questExcluded: ["74-end"]
+      requiresItem: 40142
+      grantsQuest: "74-end"
+      setsQuestFlag: {key: "74-allegiance", value: "margin"}
+      givesGold: 40
+      bumpsRep:
+        - {faction: "margin", delta: 20}
+        - {faction: "keepers", delta: -10}
+      text: "Is that -- it is. From below. The Margin will keep it where
+        the temple cannot reorganize it. Thank you. You have no idea what
+        this is worth -- or perhaps you do."
+      hints: "You hand the rubbing to the Margin scholar."
     - id: q73_aside
       questRequired: ["73-end"]
       triggers: ["fourth", "water", "waters", "count", "records",

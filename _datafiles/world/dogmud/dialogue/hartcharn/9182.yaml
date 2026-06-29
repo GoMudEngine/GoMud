@@ -29,6 +29,19 @@ tree:
     hints: "You could ask Pell about a quest or task, the ferry, or his goods."
 
   nodes:
+    - id: pellhandoff
+      triggers: ["dispatch", "parcel", "delivery", "package", "road", "deliver",
+                 "hand", "give", "turn", "done", "report", "quest", "task"]
+      questRequired: ["60-start"]
+      questExcluded: ["60-waybill"]
+      requiresItem: 40071
+      grantsQuest: "60-waybill"
+      text: "Pell checks the seal-mark and counter-signs in one motion. \"Garrick's
+        courier -- the relay is well-served.\" He draws out a fresh waybill and
+        holds it out. \"Kingsbarrow Vale, Tithe-Clerk Verrold. He stamps it for
+        the capital and sends you on.\""
+      hints: "You hand the sealed dispatch to Severin Pell."
+
     - id: quest_active
       triggers: ["quest", "task", "dispatch", "deliver", "sign", "relay", "post"]
       questRequired: ["60-start"]

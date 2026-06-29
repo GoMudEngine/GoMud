@@ -60,6 +60,20 @@ tree:
         text: "The fields are quieter since you thinned those vermin. Will not last forever, but it buys us time. You are welcome here anytime."
 
   nodes:
+    - id: dornhandoff
+      triggers: ["sample", "pest", "crop", "field", "deliver",
+        "hand", "give", "turn", "done", "finished", "report",
+        "quest", "task"]
+      questRequired: ["7-start"]
+      questExcluded: ["7-end"]
+      requiresItem: 24
+      grantsQuest: "7-end"
+      text: "Look at the size of this. That is not natural growth --
+        something in the fallow soil is feeding them. You have done
+        what you can. The rest is a fight with the city."
+      hints: "You hand the pest sample to Dorn."
+      moodChange: grateful
+
     - id: pest_problem
       triggers: ["pest", "pests", "vermin", "rodent", "field", "fallow", "breeding"]
       text: "The fallow field has become a nest. Crop pests -- big ones, bigger than I have ever seen. They have tunneled under the south fields and are eating the roots out from under the crops. I have tried poison, smoke, traps. Nothing works when the source is right next door, breeding unchecked. The worst of it is in the pest fields to the south. Mounds everywhere."

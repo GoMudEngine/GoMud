@@ -44,6 +44,25 @@ tree:
           safe enough. Here is your pay -- what is left of it."
 
   nodes:
+    - id: pinhandoff
+      triggers: ["pin", "insignia", "bandit", "proof", "deliver",
+        "hand", "give", "turn", "done", "finished", "report",
+        "quest", "task"]
+      questRequired: ["17-start"]
+      questExcluded: ["17-end"]
+      requiresItem: 54
+      grantsQuest: "17-end"
+      setsQuestFlag:
+        key: "17-resolution"
+        value: "combat"
+      givesItem: 51
+      text: "Crossed swords -- that is Soren's mark. You did the
+        work and here is your pay. The road is clear, my schedule
+        is salvageable. Worth more than I let on."
+      hints: "You hand the bandit leader's iron pin to the
+        caravan master."
+      moodChange: friendly
+
     - id: bandits
       triggers: ["bandit", "danger", "road", "attack", "problem"]
       questExcluded: ["17-start", "17-end"]

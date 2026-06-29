@@ -11,12 +11,22 @@ type PlayerState struct {
 	GiveItem     func(itemId int)
 	GetQuestFlag func(key string) string
 	SetQuestFlag func(key, value string)
+	BumpRep      func(faction string, delta int)
+	GiveGold     func(amount int)
 }
 
 // QuestFlagSet describes a single key/value flag to write on the player's character.
 type QuestFlagSet struct {
 	Key   string `yaml:"key"`
 	Value string `yaml:"value"`
+}
+
+// RepBump describes a single faction-reputation change applied when a dialogue
+// node matches. Lets an ask-path delivery node replicate a give-path's
+// item_give bump_rep actions so both paths are equivalent.
+type RepBump struct {
+	Faction string `yaml:"faction"`
+	Delta   int    `yaml:"delta"`
 }
 
 // Mood represents the current emotional state of an NPC instance.
@@ -44,6 +54,8 @@ type Pattern struct {
 	QuestFlagRequired map[string]string `yaml:"questFlagRequired,omitempty"`
 	QuestFlagExcluded map[string]string `yaml:"questFlagExcluded,omitempty"`
 	SetsQuestFlag     *QuestFlagSet     `yaml:"setsQuestFlag,omitempty"`
+	BumpsRep          []RepBump         `yaml:"bumpsRep,omitempty"`
+	GivesGold         int               `yaml:"givesGold,omitempty"`
 }
 
 // TreeNode is a stateful conversation node gated by triggers and unlock requirements.
@@ -63,6 +75,8 @@ type TreeNode struct {
 	QuestFlagRequired map[string]string `yaml:"questFlagRequired,omitempty"`
 	QuestFlagExcluded map[string]string `yaml:"questFlagExcluded,omitempty"`
 	SetsQuestFlag     *QuestFlagSet     `yaml:"setsQuestFlag,omitempty"`
+	BumpsRep          []RepBump         `yaml:"bumpsRep,omitempty"`
+	GivesGold         int               `yaml:"givesGold,omitempty"`
 }
 
 // QuestGreeting is an alternative greeting shown when the player matches quest conditions.
@@ -77,6 +91,8 @@ type QuestGreeting struct {
 	GivesItem         int               `yaml:"givesItem,omitempty"`
 	RequiresItem      int               `yaml:"requiresItem,omitempty"`
 	SetsQuestFlag     *QuestFlagSet     `yaml:"setsQuestFlag,omitempty"`
+	BumpsRep          []RepBump         `yaml:"bumpsRep,omitempty"`
+	GivesGold         int               `yaml:"givesGold,omitempty"`
 }
 
 // TreeRoot holds the greeting delivered when a player first uses 'talk'.

@@ -59,6 +59,19 @@ tree:
         text: "Thanks to you, the magistrate will have that ledger before the month is out. This settlement owes you one. Sit down -- stew is on the house."
 
   nodes:
+    - id: tolvahandoff
+      triggers: ["ledger", "complaint", "book", "deliver", "hand",
+        "give", "turn", "done", "finished", "report", "quest", "task"]
+      questRequired: ["5-start"]
+      questExcluded: ["5-end"]
+      requiresItem: 21
+      grantsQuest: "5-end"
+      text: "This is it -- Harn's own hand, no commission number,
+        no writ. I have what the magistrate needs. You have done
+        this settlement a real service."
+      hints: "You hand the crossing ledger to Tolva."
+      moodChange: grateful
+
     - id: toll_problem
       triggers: ["toll", "bridge", "harn", "tax", "five gold", "crossing"]
       text: "Harn set up that toll two years ago. Says the bridge needs repairs, and maybe it does, but he has no charter from Thornwall, no writ of authority. He just started charging people and nobody stopped him. Merchants are rerouting to avoid the fee, and every one that does is a customer I lose. This settlement is withering."

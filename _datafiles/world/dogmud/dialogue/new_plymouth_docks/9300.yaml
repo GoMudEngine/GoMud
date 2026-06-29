@@ -26,6 +26,21 @@ tree:
       the theft that's been pinned on his dockhand Teo."
 
   nodes:
+    - id: tallyhandoff
+      triggers: ["tally", "book", "evidence", "smuggling", "rat",
+                 "deliver", "hand", "give", "turn", "done",
+                 "report", "quest", "task"]
+      questRequired: ["63-evidence"]
+      questExcluded: ["63-end"]
+      requiresItem: 40100
+      grantsQuest: "63-end"
+      text: "Jesset takes the tally-book and holds it open to the
+        light, scanning the entries without comment. \"There it
+        is. The hand changes halfway down the column.\" He closes
+        it, jaw set. \"Teo carries nothing for this. I'll see it
+        to the constable myself.\""
+      hints: "You hand the tally-book to Jesset."
+
     - id: work
       triggers: ["work", "hire", "board", "job", "labor", "dock", "hiring",
                  "employ", "pay"]

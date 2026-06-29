@@ -87,6 +87,23 @@ tree:
 
   nodes:
     # ============================================================
+    # ASK-PATH HANDOFF: player holds kingfisher, asks to hand it over
+    # ============================================================
+    - id: vellahandoff
+      triggers: ["kingfisher", "carving", "token", "vella", "deliver", "hand",
+        "give", "turn", "done", "finished", "report", "quest", "task"]
+      questRequired: ["20-kingfisher_found"]
+      questExcluded: ["20-vella_journal"]
+      requiresItem: 40060
+      grantsQuest: "20-vella_journal"
+      givesItem: 40061
+      text: "He carried this in his pocket for years... Take this. It is
+        the page he wrote the morning he went down. He left it with me
+        to give to Ulla. I have not had the strength."
+      hints: "You hand the carved kingfisher to Vella."
+      moodChange: friendly
+
+    # ============================================================
     # REDIRECT: no quest, asking about Elgar/quest
     # ============================================================
     - id: redirect_no_quest

@@ -30,6 +30,21 @@ tree:
       what kind of illness she sees most in the quarter."
 
   nodes:
+    - id: wrapperhandoff
+      triggers: ["wrapper", "wax", "bloom", "addict", "help",
+                 "deliver", "hand", "give", "turn", "done",
+                 "report", "quest", "task"]
+      questRequired: ["66-start"]
+      questExcluded: ["66-escort"]
+      requiresItem: 40110
+      grantsQuest: "66-escort"
+      text: "Ysolde takes the wax wrapper and holds it close,
+        pressing the fold open with one thumb. \"Copper-flower
+        note — that is the one. This is not old stock.\" She
+        looks up. \"Bring the one who had this to me. Whatever
+        state they are in.\""
+      hints: "You hand the wax wrapper to Ysolde."
+
     - id: q67_grant
       triggers: ["quest", "task", "source", "bloom", "trail", "marn",
                  "draper", "docks", "follow", "trade", "stop", "next",
@@ -132,5 +147,4 @@ tree:
       hints: "Ysolde has handed you a sealed clay cup. The choice of when to
         drink it is yours. She treats what walks through the door -- no
         records, no questions."
-      moodChange: neutral
       moodChange: cautious
