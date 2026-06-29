@@ -1,5 +1,24 @@
 # DOGMud Patch Notes
 
+## 2026-06-29 — Choose your way in: a start tailored to how much you already know
+
+Make a new character and Gaius now asks one question — how much of this kind of
+game you already know — and shapes your opening around the answer.
+
+- **New to text MUDs?** A short, private tutorial walks you through the basics
+  one at a time before anything else is asked of you: looking around, moving,
+  reading your stats, using the help system, checking what you carry, and
+  talking to someone. Each step waits for you to try it. Then you step into the
+  world proper for the Awakening — and once the pool wakes your first mutation,
+  the cleric explains what mutations are and the one rule that surprises
+  everyone: there are no levels and no experience here. You grow by *doing* —
+  use a skill and it sharpens. Out in town, the crier shows you how to talk to
+  other real players.
+- **New to DOGMud but not to MUDs?** Straight to the glowing pool and the
+  Awakening, same as before — no hand-holding you don't need.
+- **A veteran?** Skip all of it. You arrive in the city already Awakened, mutation
+  and all. (Change your mind? Type `tutorial` to visit the newcomers' pool.)
+
 ## 2026-06-29 — Smoother first hours: turn-ins, the way out, and guides who keep their posts
 
 A pass over the new-player experience, driven by playtest feedback — fewer dead
