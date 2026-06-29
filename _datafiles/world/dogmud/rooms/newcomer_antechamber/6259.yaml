@@ -10,5 +10,3 @@ biome: default
 exits:
   north:
     roomid: 6260
-    lock:
-      difficulty: 255

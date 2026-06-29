@@ -1,0 +1,26 @@
+# 6262 — final lesson: talk/ask the guide, then vortex to Awakening Pool (5200).
+#
+# No intercept here: the talk/ask/say commands also run normally, so the
+# player sees the guide's dialogue AND gets the farewell + move. move_player
+# auto-looks at the destination, so the player arrives seeing the pool.
+# No gate state needed: this is the terminus — the player cannot leave any
+# other way, so the only path forward is typing the lesson command.
+
+tree:
+  type: selector
+  children:
+
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [talk, ask, say]
+        - type: action
+          do: send_user_text
+          text: >-
+            The guide inclines its head. 'That is the last of it. Step
+            through -- and welcome to Gaius.' The grey dissolves...
+        - type: action
+          do: move_player
+          room_id: 5200

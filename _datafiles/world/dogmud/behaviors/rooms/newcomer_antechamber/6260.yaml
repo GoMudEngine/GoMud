@@ -1,0 +1,42 @@
+# 6260 — gate: must help before leaving north.
+#
+# Branch 1: player types help → mark lesson done + praise.
+# Branch 2: movement attempt while lesson not done → nudge + intercept.
+
+tree:
+  type: selector
+  children:
+
+    # ── Lesson performed: mark done, praise ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [help]
+        - type: action
+          do: set_state
+          key: lesson_done
+          value: "1"
+        - type: action
+          do: send_user_text
+          text: >-
+            The game will always answer. North is open -- type  north.
+
+    # ── Movement before lesson: block with a nudge ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [north, n, go, south, s, east, e, west, w, up, u, down, d]
+        - type: condition
+          check: state_equals
+          key: lesson_done
+          value: ""
+        - type: action
+          do: send_user_text
+          text: >-
+            Try the game's memory first. Type  help  (or  help look ), then go north.
+        - type: action
+          do: intercept
