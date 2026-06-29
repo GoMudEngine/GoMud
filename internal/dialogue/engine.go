@@ -80,7 +80,19 @@ func applyQuestEffects(grantsQuest string, requiresItem int, givesItem int, flag
 // Returns (responseText, moodChange, matched).
 // An empty-keyword pattern acts as the fallback when no specific keyword fires.
 // When ps is nil, quest/item checks are skipped.
+// Match returns (response, moodChange, ok) for a topic against the mob's
+// patterns. Thin wrapper over MatchWithFallbackInfo for callers that don't
+// care whether the catch-all pattern was used.
 func Match(df *DialogueFile, mobInstanceId int, topic string, ps *PlayerState) (string, string, bool) {
+	resp, mood, ok, _ := MatchWithFallbackInfo(df, mobInstanceId, topic, ps)
+	return resp, mood, ok
+}
+
+// MatchWithFallbackInfo is Match plus a usedFallback flag: true when the
+// response came from the empty-keyword catch-all pattern rather than a specific
+// keyword match. Callers can use it to give a clearer answer to a pointed
+// question (e.g. "ask <npc> quest") instead of generic filler.
+func MatchWithFallbackInfo(df *DialogueFile, mobInstanceId int, topic string, ps *PlayerState) (string, string, bool, bool) {
 	topic = strings.ToLower(topic)
 	currentMood := GetMood(mobInstanceId, df.DefaultMood)
 
@@ -134,13 +146,15 @@ func Match(df *DialogueFile, mobInstanceId int, topic string, ps *PlayerState) (
 	}
 
 	if matched == nil || len(matched.Responses) == 0 {
-		return "", "", false
+		return "", "", false, false
 	}
+
+	usedFallback := matched == defaultPattern
 
 	applyQuestEffects(matched.GrantsQuest, matched.RequiresItem, matched.GivesItem, matched.SetsQuestFlag, matched.BumpsRep, matched.GivesGold, ps)
 
 	response := matched.Responses[util.Rand(len(matched.Responses))]
-	return response, matched.MoodChange, true
+	return response, matched.MoodChange, true, usedFallback
 }
 
 // TreeAdvance attempts to advance a player's position in the mob's conversation tree.
