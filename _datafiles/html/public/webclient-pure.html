@@ -2247,6 +2247,11 @@
             payloadsSent++;
             totalBytesSent += dataToSend.length;
             socket.send(dataToSend);
+            // Snap the view back to the newest output whenever the player acts.
+            // Without this, scrolling up to re-read and then moving (or any
+            // command) leaves you stranded in the backlog instead of showing
+            // the room you just walked into.
+            if (term) { term.scrollToBottom(); }
             return true;
         }
 
