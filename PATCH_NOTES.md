@@ -1,5 +1,18 @@
 # DOGMud Patch Notes
 
+## 2026-06-29 — Login & web-client polish
+
+- **The login screen reads more clearly.** The word **"new"** on the username
+  prompt is highlighted in green so first-timers see how to begin, and every
+  yes/no prompt now shows **y in green and n in red**.
+- **The email step explains itself.** Signing up, the optional email prompt now
+  says it's used only to recover your account if you forget your password —
+  never shared, never spammed — and that you can press Enter to skip it.
+- **Web client snaps back to the newest text when you act.** If you scrolled up
+  to re-read something and then moved (or typed any command), the view now jumps
+  back down to show the room you just entered instead of leaving you in the
+  backlog.
+
 ## 2026-06-29 — Newcomer guidance: gear, and a clear "no task" answer
 
 - **You learn to check and ready your gear when it first matters.** After the

@@ -143,6 +143,33 @@ root cause of several later complaints.
   forged) now tells the player to `wield dagger` and check `inv` before
   reporting back to Rusk.
 
+## E-batch outcomes (2026-06-29, web client / login)
+- **E1 — FIXED (earlier).** Volume panel now has an × close, closes on
+  outside-click, fits small laptops.
+- **E2 — FIXED.** Login `y/n` prompts render `y` green / `n` red
+  (`generic/prompt.yn.template`, both trees), and the username prompt
+  highlights "new" in green (`login/username.prompt.template`, both trees).
+  Verified over a live TCP login (green = 38;5;10, red = 38;5;9).
+- **E4 — FIXED.** `SendData` in `webclient-pure.html` calls
+  `term.scrollToBottom()` after each send, so moving/acting after scrolling up
+  snaps the view back to the newest room. (Client-only; not harness-testable.)
+- **E6 — FIXED (verbiage) / already wired.** `EmailOnJoin: optional` was
+  already set and email is stored on the user record (`EmailAddress`). The
+  prompt now reassures ("Used only to recover your account… never shared,
+  never spammed.") and notes "press Enter to skip"
+  (`login/email-new.prompt.template`, both trees).
+- **E3 — DEFERRED (needs design).** "Split skills/command list into
+  Beginner/Experienced/Advanced tabs." No tier metadata exists today —
+  commands are grouped topically (combat/shops/etc.) in `keywords.yaml`; skills
+  are flat. This is a real feature (server-side tier field + `help`/`skills`
+  re-grouping, optionally a web side-panel), not a quick fix. Needs a scope
+  decision before building.
+- **E5 — DEFERRED (needs the mockups).** "ASCII art / iconography readability —
+  Original/Better/Best mockups." The terminal is IBM Plex Mono 20px /
+  lineHeight 1.2 / no letterSpacing, with dynamic font resizing to keep 80
+  cols. The concrete change depends on Malia's Better/Best mockups (in the
+  feedback PDF) — pull those before tweaking font/spacing/glyphs.
+
 ## Triage notes
 - **Biggest lever: A5 + C1 together.** The silent early-exit means several
   "newbie area" complaints (D7, A3, Craftsmen/Market-Square-West confusion) are
