@@ -1,0 +1,14 @@
+itemid: 2
+name: Smooth Grey Token
+namesimple: token
+description: >-
+  A disc of grey stone the size of a coin, edges worn smooth by some
+  long process you cannot name. It is warm to the touch, and lighter
+  than it looks. It does not seem to be worth anything in particular
+  -- but somehow you do not want to put it down.
+type: object
+subtype: holdable
+uses: 0
+weight: 0.1
+value: 0
+not_salable: true

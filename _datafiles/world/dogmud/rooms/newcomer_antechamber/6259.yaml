@@ -1,0 +1,14 @@
+roomid: 6259
+zone: Newcomer Antechamber
+title: A First Step
+description: >
+  The grey brightens a little. 'Good. This is you -- type  status
+  to read your stats. Six of them, all centered on 100, with three
+  pools beneath: health, stamina, and conviction. Knowing yourself
+  is the first armor.'
+biome: default
+exits:
+  north:
+    roomid: 6260
+    lock:
+      difficulty: 255

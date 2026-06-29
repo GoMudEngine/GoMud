@@ -1,0 +1,59 @@
+mobid: 9491
+zone: Newcomer Antechamber
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "hail", "talk", "speak"]
+    responses:
+      - "Welcome. Ask me about the world, your pools, how to find
+          help -- or just say you are ready and I will send you
+          through."
+
+  - keywords: ["world", "ready", "go", "leave", "through", "step"]
+    responses:
+      - "I am only a door, friend. Everything real is on the far
+          side of me. When you are ready, step through -- and
+          welcome to Gaius."
+      - "Beyond me is a city, a road, a whole world that changes
+          and breathes. When you feel ready, I will see you out."
+
+  - keywords: ["help", "command", "commands", "forget", "index"]
+    responses:
+      - "Type  help  from anywhere in the world to see the full
+          index. Type  help topic  to read about one specific
+          thing. The list is always there."
+
+  - keywords: ["look", "see", "sight", "eyes"]
+    responses:
+      - "Look is the first word. Type it in any room and the world
+          will tell you what it sees fit to share. Some things only
+          appear when you look at them directly."
+
+  - keywords: ["pool", "health", "stamina", "conviction", "stat", "status"]
+    responses:
+      - "You have three pools beneath your six stats: health,
+          stamina, and conviction. Type  status  to read all of
+          them. They restore over time -- rest if you need to."
+
+  - keywords: ["who", "players", "others", "people", "alone"]
+    responses:
+      - "Type  who  to see who else walks the world right now. You
+          are not the first through here, and you will not be
+          the last."
+
+  - keywords: [""]
+    responses:
+      - "Ask me about the world, your pools, how to find help --
+          or tell me you are ready and I will send you through."
+      - "I am not much, but I am patient. Ask what you need."
+
+tree:
+  root:
+    text: "Welcome. I am the last threshold before the world. Ask
+      me anything, or tell me you are ready and I will send you
+      on your way."
+    hints: "You could ask the guide about the world, your pools, or
+      how to find help. When ready, tell the guide and step through."
+
+memory:
+  expiryPeriod: ""

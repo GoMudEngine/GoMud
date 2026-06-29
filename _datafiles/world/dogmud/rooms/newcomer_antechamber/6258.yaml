@@ -1,0 +1,14 @@
+roomid: 6258
+zone: Newcomer Antechamber
+title: A Place Between
+description: >
+  You are not quite awake -- grey light with no source, a floor you
+  cannot feel, and a calm voice that seems to come from the walls.
+  'Before the world, the words,' it says. 'Type  look  to take in
+  where you are.'
+biome: default
+exits:
+  north:
+    roomid: 6259
+    lock:
+      difficulty: 255

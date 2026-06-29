@@ -1,0 +1,18 @@
+mobid: 9491
+zone: Newcomer Antechamber
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+character:
+  name: The Guide
+  description: |
+    A figure woven of the same grey light as this place, patient and
+    faceless. It is here for one purpose: to set your feet on the path
+    and then send you on to the world that waits beyond.
+  speciesid: 1
+  level: 1

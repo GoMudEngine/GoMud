@@ -1,0 +1,14 @@
+roomid: 6261
+zone: Newcomer Antechamber
+title: What You Carry
+description: >
+  'You are not empty-handed. Type  inventory  -- or just  inv  --
+  to see what you hold, then  look  at a thing to study it.'
+biome: default
+exits:
+  north:
+    roomid: 6262
+    lock:
+      difficulty: 255
+items:
+  - itemid: 2
