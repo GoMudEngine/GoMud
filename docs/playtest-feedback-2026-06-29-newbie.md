@@ -72,6 +72,21 @@ root cause of several later complaints.
 
 ---
 
+## Bug-batch outcomes (2026-06-29, A2/A3/C5/B3)
+- **A2 — NOT A BUG (working as intended).** The `quests` command already filters
+  completed quests (`if !showComplete && completion >= 1 { continue }`); the
+  default `quests` hides them, `quests all` shows them by design. Malia saw the
+  100% Awakening via `quest all`. No change.
+- **A3 — FIXED.** `sell` now strips a leading merchant name ("sell Kerra steel
+  buckler" works). `resolveSellItem` in `internal/usercommands/sell.go`; test
+  `TestSell_StripsMerchantNamePrefix`.
+- **C5 — FIXED (discoverability).** There is no separate "foraging" skill —
+  `forage` trains **Search**. The `skills` list now shows a one-line blurb per
+  skill (`skills.SkillBlurb`); Search's blurb names foraging. So foraging is
+  visible under Search instead of seeming absent.
+- **B3 — FIXED (clarity).** Market Row's "stalls" noun now states it's an
+  unattended display and points to a tended stall (Smith Rusk) for real trade.
+
 ## Triage notes
 - **Biggest lever: A5 + C1 together.** The silent early-exit means several
   "newbie area" complaints (D7, A3, Craftsmen/Market-Square-West confusion) are

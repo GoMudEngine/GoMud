@@ -1,5 +1,17 @@
 # DOGMud Patch Notes
 
+## 2026-06-29 — Small fixes: selling, the skills list, and the market stalls
+
+- **Selling is more forgiving.** `sell <merchant> <item>` now works — if you
+  include the shopkeeper's name out of habit (the way you do with `give`), it's
+  no longer mistaken for part of the item name.
+- **The `skills` list now says what each skill does.** A short line under each
+  skill spells out its use — and Search's line notes that **foraging** trains it,
+  so it's clear there's no separate "foraging" skill to look for.
+- **Market Row stalls** now make clear they're an unattended honor-system
+  display, and point you to a tended stall (Smith Rusk at the forge) for actual
+  buying and selling.
+
 ## 2026-06-29 — Web client: the sound menu now closes
 
 The Volume Controls panel (the 🔊 icon) could be opened but not obviously
