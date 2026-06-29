@@ -249,6 +249,24 @@ func GetOriginalRoom(roomId int) int {
 	return originalRoomIdLookups[roomId]
 }
 
+// OriginalRoomId returns the template room id an ephemeral room was copied
+// from, and true, if roomId is an ephemeral instance. Returns (roomId, false)
+// for non-ephemeral rooms.
+//
+// NOTE: originalRoomIdLookups is accessed lock-free throughout this package
+// (CreateEphemeralRoomIds, TryEphemeralCleanup, FindEphemeralRoomIds, and
+// GetOriginalRoom all operate without a mutex). This function matches that
+// convention. Callers that write to the map (CreateEphemeralRoomIds,
+// TryEphemeralCleanup) run from the main game loop on a single goroutine, so
+// there is no concurrent write hazard today; if that changes a read lock
+// should be added here and in all other readers.
+func OriginalRoomId(roomId int) (int, bool) {
+	if orig, ok := originalRoomIdLookups[roomId]; ok {
+		return orig, true
+	}
+	return roomId, false
+}
+
 func init() {
 	if math.MaxInt > ephemeralRoomIdMinimum*1000 {
 		ephemeralRoomIdMinimum = ephemeralRoomIdMinimum * 1000 // 1,000,000 => 1,000,000,000 on 64-bit systems

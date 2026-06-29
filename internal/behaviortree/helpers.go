@@ -98,22 +98,31 @@ func TryRoomBehavior(roomId int, event EventContext) bool {
 		return false
 	}
 
+	// Ephemeral room instances inherit their template's behavior file (which
+	// is named by the template id). Resolve the tree by the original id; keep
+	// per-instance STATE keyed by the instance roomId so each player's copy
+	// gates independently.
+	behaviorRoomId := roomId
+	if orig, ok := rooms.OriginalRoomId(roomId); ok {
+		behaviorRoomId = orig
+	}
+
 	// Lazy-load tree if not cached.
-	tree := GetEngine().GetRoomTree(roomId)
+	tree := GetEngine().GetRoomTree(behaviorRoomId)
 	if tree == nil {
-		if GetEngine().HasNoRoomTree(roomId) {
+		if GetEngine().HasNoRoomTree(behaviorRoomId) {
 			return false
 		}
-		path := GetRoomBehaviorPath(roomId, room.Zone)
+		path := GetRoomBehaviorPath(behaviorRoomId, room.Zone)
 		if _, err := os.Stat(path); err != nil {
-			GetEngine().SetNoRoomTree(roomId)
+			GetEngine().SetNoRoomTree(behaviorRoomId)
 			return false
 		}
-		if err := GetEngine().LoadRoomTree(roomId, path); err != nil {
-			mudlog.Error("TryRoomBehavior", "error", fmt.Sprintf("failed to load behavior tree for room %d: %v", roomId, err))
+		if err := GetEngine().LoadRoomTree(behaviorRoomId, path); err != nil {
+			mudlog.Error("TryRoomBehavior", "error", fmt.Sprintf("failed to load behavior tree for room %d: %v", behaviorRoomId, err))
 			return false
 		}
-		tree = GetEngine().GetRoomTree(roomId)
+		tree = GetEngine().GetRoomTree(behaviorRoomId)
 		if tree == nil {
 			return false
 		}
