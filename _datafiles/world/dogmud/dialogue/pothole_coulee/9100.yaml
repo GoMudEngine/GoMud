@@ -33,7 +33,7 @@ tree:
           The pool is ready when you are. There is no hurry in it --
           but there is also nothing left to wait for.
         hints: >-
-          When you are ready, type ask hadwen begin.
+          When you are ready, type <ansi fg="command">ask hadwen begin</ansi>.
       - questRequired: ["30-end"]
         text: >-
           How does it sit, the new thing under your skin? Settling, I
@@ -42,9 +42,10 @@ tree:
           you through the town -- or Warden Esk opens the way out, at
           the Threshold House south through the market.
         hints: >-
-          Type ask toke footing in Hub Square to learn the town, or
-          ask esk passage at the Threshold House to leave. You could
-          also ask Hadwen about mutations, the glow, or your name.
+          Type <ansi fg="command">ask toke footing</ansi> in Hub Square to
+          learn the town, or <ansi fg="command">ask esk passage</ansi> at the
+          Threshold House to leave. You could also ask Hadwen about
+          mutations, the glow, or your name.
 
   nodes:
     - id: newcomer_mutations
@@ -63,9 +64,10 @@ tree:
         and status to see your stats -- both climb as you use them. Go
         and use them.
       hints: >-
-        You are newly Opened. Type mutations to see what the pool woke,
-        skills to see your skills, and status for your stats -- all of
-        which grow through use, not levels or XP.
+        You are newly Opened. Type <ansi fg="command">mutations</ansi> to see
+        what the pool woke, <ansi fg="command">skills</ansi> to see your skills,
+        and <ansi fg="command">status</ansi> for your stats -- all of which
+        grow through use, not levels or XP.
       moodChange: friendly
 
     - id: rite_offer
@@ -79,7 +81,7 @@ tree:
         part I do, and the pool does the rest. It does not hurt. It
         has never once hurt. Tell me when you are ready to begin.
       hints: >-
-        When you are ready, type ask hadwen begin. There is no hurry.
+        When you are ready, type <ansi fg="command">ask hadwen begin</ansi>. There is no hurry.
       moodChange: friendly
 
     - id: rite_waiting
@@ -94,7 +96,7 @@ tree:
         has never once hurt. Say the word when you are ready and we
         will begin.
       hints: >-
-        Type ask hadwen begin when you are ready. There is no hurry.
+        Type <ansi fg="command">ask hadwen begin</ansi> when you are ready. There is no hurry.
 
     - id: rite_done
       triggers: ["rite", "awakening", "again", "another", "quest", "task"]
