@@ -1,5 +1,17 @@
 # DOGMud Patch Notes
 
+## 2026-06-29 — Newcomer guidance: gear, and a clear "no task" answer
+
+- **You learn to check and ready your gear when it first matters.** After the
+  Awakening Rite, Hadwen now prompts you to look at what you carry (`inv`)
+  before sending you down the two roads, and the first time you forge a dagger
+  for Smith Rusk the game tells you to `wield` it and check your pack before
+  reporting back.
+- **Asking an NPC for work gives a straight answer.** `ask <someone> quest`
+  (or task / job / work) on a townsperson with nothing for you now replies "I
+  have no task for you right now." instead of an unrelated line, so you're not
+  left wondering whether you missed a hidden quest.
+
 ## 2026-06-29 — Newcomer wording polish
 
 Cleric Hadwen now greets newcomers with "new to Gaius?" and names Pothole Coulee

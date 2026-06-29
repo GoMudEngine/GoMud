@@ -105,6 +105,19 @@ root cause of several later complaints.
   Thornwall text no longer exists. (If a general grey-on-grey *rendering*
   readability issue resurfaces, that's a separate client-styling investigation.)
 
+## B2/C3/C4 outcomes (2026-06-29, newbie UX trio)
+- **B2 — FIXED.** `ask <npc> quest` (also task/job/work) on an NPC whose
+  dialogue only has a generic catch-all now answers "I have no task for you
+  right now." instead of unrelated filler. New `dialogue.MatchWithFallbackInfo`
+  exposes whether the catch-all fired; `deliverDialogue` + `isQuestInquiry`
+  consume it. Unit tests added (`match_fallback_test.go`, `ask_test.go`).
+- **C3 — FIXED.** Hadwen's post-rite send-off now prompts `inv` before naming
+  the two roads, framing the empty pack as the point ("the folk down each road
+  will arm you and teach you their trade").
+- **C4 — FIXED.** First Heat's craft trigger (fired the instant the dagger is
+  forged) now tells the player to `wield dagger` and check `inv` before
+  reporting back to Rusk.
+
 ## Triage notes
 - **Biggest lever: A5 + C1 together.** The silent early-exit means several
   "newbie area" complaints (D7, A3, Craftsmen/Market-Square-West confusion) are
