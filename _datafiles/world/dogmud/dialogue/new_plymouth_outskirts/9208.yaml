@@ -26,6 +26,19 @@ tree:
     hints: "You could ask the guard about a quest or task, the gate, or the city."
 
   nodes:
+    - id: guardhandoff
+      triggers: ["manifest", "packet", "delivery", "parcel", "gate", "deliver",
+                 "hand", "give", "turn", "done", "report", "quest", "task"]
+      questRequired: ["60-manifest"]
+      questExcluded: ["60-end"]
+      requiresItem: 40073
+      grantsQuest: "60-end"
+      text: "The guard takes the packet, checks the seal against the gate ledger,
+        and makes his mark without ceremony. \"Relay dispatch -- done, and done
+        right.\" He notes your name against the entry. \"The post-house will have
+        your payment. The relay holds another week on your run.\""
+      hints: "You hand the manifest packet to the East Gate guard."
+
     - id: quest_active
       triggers: ["quest", "task", "packet", "deliver", "dispatch", "gate", "relay", "post"]
       questRequired: ["60-manifest"]

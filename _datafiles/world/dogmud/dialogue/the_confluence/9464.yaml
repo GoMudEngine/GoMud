@@ -32,6 +32,22 @@ tree:
       the temple and what it was raised on, or about whether
       he will permit a look at what lies below."
   nodes:
+    - id: aldrichandoff
+      triggers: ["rubbing", "undercroft", "reveal", "keepers", "confidence",
+        "deliver", "hand", "give", "turn", "done", "quest", "task"]
+      questRequired: ["74-reveal"]
+      questExcluded: ["74-end"]
+      requiresItem: 40142
+      grantsQuest: "74-end"
+      setsQuestFlag: {key: "74-allegiance", value: "keepers"}
+      givesGold: 80
+      bumpsRep:
+        - {faction: "keepers", delta: 20}
+        - {faction: "margin", delta: -10}
+      text: "You took a rubbing. Of course you did. I will keep this with
+        the others -- the order will hold it. And you, I think, will keep
+        our confidence."
+      hints: "You hand the rubbing to Aldric."
     - id: aldric_q74_permission
       questRequired: ["74-survey"]
       triggers: ["permission", "allow", "descent", "below",

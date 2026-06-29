@@ -53,6 +53,20 @@ tree:
         text: "The tunnel operation is shut down and the arrests are underway. That ledger you brought me is going to shake this city to its foundations. Good work."
 
   nodes:
+    - id: velkhandoff
+      triggers: ["ledger", "bribe", "evidence", "smuggling",
+        "deliver", "hand", "give", "turn", "done", "finished",
+        "report", "quest", "task"]
+      questRequired: ["14-evidence"]
+      questExcluded: ["14-end"]
+      requiresItem: 40036
+      grantsQuest: "14-end"
+      text: "Names. Dates. Amounts. Gate captains, customs clerks,
+        a warehouse inspector -- all in here. This changes
+        everything. I am ordering arrests tonight."
+      hints: "You hand the bribe ledger to Velk."
+      moodChange: friendly
+
     - id: missing_case
       triggers: ["missing", "person", "elara", "case", "help", "quest", "task"]
       questExcluded: ["8-start", "8-end"]

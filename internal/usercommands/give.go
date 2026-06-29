@@ -28,9 +28,13 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	var giveWho string = args[len(args)-1]
-	args = args[:len(args)-1]
-	var giveWhat string = strings.Join(args, " ")
+	// Split args into "<object>" and "<recipient>". The recipient may be a
+	// multi-word name (e.g. "smith rusk"), so we try progressively longer
+	// recipient phrases from the right and pick the first split where BOTH
+	// the object (an item in the backpack, or a gold amount) AND the
+	// recipient resolve. Falls back to the last single token as recipient
+	// (legacy behavior) so existing error messages still fire for typos.
+	giveWhat, giveWho := splitGiveArgs(args, user, room)
 
 	var giveItem items.Item = items.Item{}
 	var giveGoldAmount int = 0
@@ -304,4 +308,49 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	user.SendText(messaging.CategorySystem, `Who??? (<ansi fg="command">give {object-name} {receiver-name}</ansi>)`)
 
 	return true, nil
+}
+
+// splitGiveArgs separates the give command's arguments into an object phrase
+// ("iron sword", "50 gold") and a recipient phrase ("rusk", "smith rusk").
+// It tries recipient phrases of increasing length from the right and returns
+// the first split where the object resolves (item in backpack or a valid gold
+// amount) AND the recipient resolves (player, mob, or pet in the room). If no
+// split fully resolves, it falls back to treating the last single token as the
+// recipient — preserving legacy behavior and the downstream not-found errors.
+func splitGiveArgs(args []string, user *users.UserRecord, room *rooms.Room) (giveWhat, giveWho string) {
+	for k := 1; k < len(args); k++ {
+		who := strings.Join(args[len(args)-k:], " ")
+		what := strings.Join(args[:len(args)-k], " ")
+		if giveObjectResolves(what, user) && giveTargetResolves(who, user, room) {
+			return what, who
+		}
+	}
+	return strings.Join(args[:len(args)-1], " "), args[len(args)-1]
+}
+
+// giveObjectResolves reports whether the object phrase names something the
+// player can give: a valid (non-negative) gold amount, or an item in their
+// backpack. Mirrors the gold-detection used in Give.
+func giveObjectResolves(what string, user *users.UserRecord) bool {
+	if len(what) > 4 && what[len(what)-4:] == "gold" {
+		amt, err := strconv.ParseInt(strings.TrimSpace(what[:len(what)-4]), 10, 32)
+		return err == nil && amt >= 0
+	}
+	_, found := user.Character.FindInBackpack(what)
+	return found
+}
+
+// giveTargetResolves reports whether the recipient phrase names a player, mob,
+// or pet present in the room (or the player's own pet via the literal "pet").
+func giveTargetResolves(who string, user *users.UserRecord, room *rooms.Room) bool {
+	if playerId, mobInstanceId := room.FindByName(who); playerId > 0 || mobInstanceId > 0 {
+		return true
+	}
+	if room.FindByPetName(who) > 0 {
+		return true
+	}
+	if who == "pet" && user.Character.Pet.Exists() {
+		return true
+	}
+	return false
 }

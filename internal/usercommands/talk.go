@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dialogue"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/llm"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
@@ -177,6 +178,17 @@ func buildPlayerState(user *users.UserRecord) *dialogue.PlayerState {
 		},
 		SetQuestFlag: func(key, value string) {
 			user.Character.SetQuestFlag(key, value)
+		},
+		BumpRep: func(faction string, delta int) {
+			factions.BumpRep(faction, user.UserId, delta)
+		},
+		GiveGold: func(amount int) {
+			user.Character.Gold += amount
+			user.SendText(messaging.CategoryLoot, fmt.Sprintf(`You receive <ansi fg="gold">%d gold</ansi>.`, amount))
+			events.AddToQueue(events.EquipmentChange{
+				UserId:     user.UserId,
+				GoldChange: amount,
+			})
 		},
 	}
 }

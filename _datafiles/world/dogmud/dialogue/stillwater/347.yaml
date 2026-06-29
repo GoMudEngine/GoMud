@@ -130,6 +130,24 @@ tree:
 
   nodes:
     # ============================================================
+    # ASK-PATH HANDOFF: player holds journal page, asks to hand it over
+    # ============================================================
+    - id: ullahandoff
+      triggers: ["journal", "page", "husband", "truth", "deliver", "hand",
+        "give", "turn", "done", "finished", "report", "quest", "task"]
+      questRequired: ["20-vella_journal"]
+      questExcluded: ["20-end"]
+      requiresItem: 40061
+      grantsQuest: "20-end"
+      setsQuestFlag:
+        key: "20-truth"
+        value: "partial"
+      text: "The journal. I have not seen Elgar's hand in twelve years.
+        Thank you for bringing it home."
+      hints: "You hand the journal page to Ulla."
+      moodChange: friendly
+
+    # ============================================================
     # QUEST GRANT: accept the inquiry
     # ============================================================
     - id: accept_inquiry

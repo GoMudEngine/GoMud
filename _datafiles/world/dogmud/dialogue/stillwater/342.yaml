@@ -81,6 +81,25 @@ tree:
 
   nodes:
     # ============================================================
+    # ASK-PATH HANDOFF: player holds tooth, asks to turn it in
+    # ============================================================
+    - id: arnhandoff
+      triggers: ["tooth", "leviathan", "bounty", "lake", "deliver", "hand",
+        "give", "turn", "done", "finished", "report", "quest", "task"]
+      questRequired: ["19-signed"]
+      questExcluded: ["19-end"]
+      requiresItem: 40054
+      grantsQuest: "19-end"
+      setsQuestFlag:
+        key: "19-completion"
+        value: "full"
+      givesGold: 350
+      text: "I will be damned. There really WAS one... the dockmen keep a
+        fund for things like this. Take it. And thank you."
+      hints: "You hand the leviathan tooth to Arn."
+      moodChange: grateful
+
+    # ============================================================
     # REDIRECT TO DRUNN (no grant, just points at the constabulary)
     # ============================================================
     - id: redirect_to_drunn

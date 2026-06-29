@@ -1,5 +1,30 @@
 # DOGMud Patch Notes
 
+## 2026-06-29 — Smoother first hours: turn-ins, the way out, and guides who keep their posts
+
+A pass over the new-player experience, driven by playtest feedback — fewer dead
+ends, more ways to do the obvious thing.
+
+- **Hand it over and it counts.** When a quest asks you to bring something to
+  someone, you can now simply *give* the item to them to complete the step — you
+  no longer have to hunt for the exact thing to *say*. (Both work: give the item,
+  or ask about it while holding it.) This was missing on the very first forge
+  quest, where handing the finished dagger to the smith left the task stuck; that
+  and delivery quests across the world now resolve either way.
+- **The give command understands full names.** `give dagger to Smith Rusk` now
+  works just as well as `give dagger Rusk` — multi-word names no longer trip it
+  up.
+- **No more silent doorways.** Leaving the starting coulee for the wider world no
+  longer drops you into the city with a blank screen — you arrive to a full view
+  of where you've landed. And the gate-warden now keeps his post at the arch
+  around the clock, so the way out is never closed or unattended.
+- **Guides who are actually there.** The town crier now works the square at every
+  hour, so newcomers who arrive in the evening or at night always have someone to
+  set them on their footing — and he'll point you toward the smithy when you're
+  ready for it. The square's notice-post can now be examined by name, too.
+- **One completion notice.** Finishing a quest now shows a single "completed"
+  banner instead of a doubled one.
+
 ## 2026-06-27 — The Confluence complete: the temple, the undercroft, and the road on
 
 The tri-city is finished. Where four districts opened last time, the whole of the

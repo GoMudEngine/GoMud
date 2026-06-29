@@ -181,6 +181,77 @@ func TestGive_QuestEngineInterceptsBeforeBtreePlayerGive(t *testing.T) {
 	})
 }
 
+// TestGive_MultiWordRecipientName locks the fix for the newbie-area give
+// friction (Malia playtest, 2026-06-29): "give dagger to smith rusk" failed
+// because give.go greedily treated only the LAST whitespace token as the
+// recipient, lumping "smith" into the item name ("dagger smith" → not found).
+// The fix tries progressively longer recipient phrases from the right and
+// picks the split where BOTH the object and the recipient resolve.
+//
+// Each subtest renames the seeded mob to a two-word name and verifies the
+// item leaves the player's backpack — proof the recipient + item both
+// resolved and the give went through. (We assert on the player's backpack,
+// not the mob's, because the no-btree default path may `gearup` the item.)
+func TestGive_MultiWordRecipientName(t *testing.T) {
+	const ironSwordId = 10001
+
+	t.Run("multiword_with_preposition", func(t *testing.T) {
+		cleanup := seedAllRegistries()
+		defer cleanup()
+		user, room := getTestUserAndRoom(t)
+
+		_, mobInstanceId := room.FindByName("skeleton")
+		require.NotZero(t, mobInstanceId)
+		mob := mobs.GetInstance(mobInstanceId)
+		mob.Character.Name = "Smith Rusk"
+
+		require.True(t, user.Character.StoreItem(items.New(ironSwordId)))
+		require.Equal(t, 1, countItemsById(user.Character.Items, ironSwordId))
+
+		handled, err := Give("iron sword to smith rusk", user, room, 0)
+		assert.True(t, handled)
+		assert.NoError(t, err)
+		assert.Equal(t, 0, countItemsById(user.Character.Items, ironSwordId),
+			"item must leave the player's backpack: 'smith rusk' should resolve "+
+				"as the recipient and 'iron sword' as the object")
+	})
+
+	t.Run("multiword_no_preposition", func(t *testing.T) {
+		cleanup := seedAllRegistries()
+		defer cleanup()
+		user, room := getTestUserAndRoom(t)
+
+		_, mobInstanceId := room.FindByName("skeleton")
+		require.NotZero(t, mobInstanceId)
+		mob := mobs.GetInstance(mobInstanceId)
+		mob.Character.Name = "Smith Rusk"
+
+		require.True(t, user.Character.StoreItem(items.New(ironSwordId)))
+
+		handled, err := Give("iron sword smith rusk", user, room, 0)
+		assert.True(t, handled)
+		assert.NoError(t, err)
+		assert.Equal(t, 0, countItemsById(user.Character.Items, ironSwordId),
+			"item must leave the player's backpack with a multi-word recipient "+
+				"and no preposition")
+	})
+
+	t.Run("singleword_recipient_still_works", func(t *testing.T) {
+		// Regression: the common single-word-recipient case must be unaffected.
+		cleanup := seedAllRegistries()
+		defer cleanup()
+		user, room := getTestUserAndRoom(t)
+
+		require.True(t, user.Character.StoreItem(items.New(ironSwordId)))
+
+		handled, err := Give("iron sword skeleton", user, room, 0)
+		assert.True(t, handled)
+		assert.NoError(t, err)
+		assert.Equal(t, 0, countItemsById(user.Character.Items, ironSwordId),
+			"single-word recipient give must still transfer the item")
+	})
+}
+
 // countItemsById returns the number of items in the slice whose ItemId
 // matches the given id. Used to verify presence/absence of a known item
 // without coupling to slice ordering.

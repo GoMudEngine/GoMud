@@ -47,6 +47,20 @@ tree:
         text: "The audit is underway. Both sides are unhappy, which means we are probably close to the truth. Thank you for bringing it to light."
 
   nodes:
+    - id: olenhandoff
+      triggers: ["ledger", "tithe", "audit", "book", "deliver",
+        "hand", "give", "turn", "done", "finished", "report",
+        "quest", "task"]
+      questRequired: ["9-start"]
+      questExcluded: ["9-end"]
+      requiresItem: 29
+      grantsQuest: "9-end"
+      text: "Both sides wrong -- I can see it from the first
+        column. This is not comfortable reading, but it is the
+        truth I asked for. Thank you for bringing it to light."
+      hints: "You hand the tithe ledger to Olen."
+      moodChange: grateful
+
     - id: tithe_problem
       triggers: ["tithe", "problem", "help", "quest", "task", "ledger", "matter"]
       questExcluded: ["9-start", "9-end"]

@@ -32,6 +32,23 @@ tree:
       plainly wants to be rid of."
 
   nodes:
+    - id: ledgerhandoff
+      triggers: ["ledger", "page", "tribute", "scrap", "paper",
+                 "deliver", "hand", "give", "turn", "done",
+                 "report", "quest", "task"]
+      questRequired: ["71-ledger"]
+      questExcluded: ["71-end"]
+      requiresItem: 40119
+      grantsQuest: "71-end"
+      bumpsRep:
+        - {faction: "cooperage_circle", delta: 5}
+      text: "Ostry takes the ledger page and reads it twice before
+        she speaks. \"There it is in the original hand — the
+        tribute amount, the date, and Horst's counter-notation.\"
+        She folds it carefully and sets it on the counter. \"This
+        is what an appeal actually needs. I will not forget this.\""
+      hints: "You hand the ledger page to Dame Ostry."
+
     - id: q71_start
       triggers: ["quest", "task", "tribute", "audit", "permit", "deposit",
                  "vell", "squeeze", "help", "tax", "do"]

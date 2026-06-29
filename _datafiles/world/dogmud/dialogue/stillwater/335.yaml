@@ -104,6 +104,26 @@ tree:
 
   nodes:
     # ============================================================
+    # ASK-PATH HANDOFF: player holds tooth, asks to turn it in
+    # ============================================================
+    - id: drunnhandoff
+      triggers: ["tooth", "leviathan", "bounty", "lake", "deliver", "hand",
+        "give", "turn", "done", "finished", "report", "quest", "task"]
+      questRequired: ["19-signed"]
+      questExcluded: ["19-end"]
+      requiresItem: 40054
+      grantsQuest: "19-end"
+      setsQuestFlag:
+        key: "19-completion"
+        value: "full"
+      givesGold: 350
+      text: "By the lake. So there really WAS something down there...
+        Stillwater owes you. Drinks at the Pike & Lantern are on the
+        constabulary tonight."
+      hints: "You hand the leviathan tooth to Drunn."
+      moodChange: grateful
+
+    # ============================================================
     # QUEST GRANT: accept the bounty (no quest yet)
     # ============================================================
     - id: accept_bounty

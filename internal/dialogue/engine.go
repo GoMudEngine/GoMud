@@ -47,7 +47,7 @@ func checkQuestGate(questRequired, questExcluded []string, requiresItem int, fla
 }
 
 // applyQuestEffects fires quest grants, item consumption, item giving, and flag sets after a node/pattern matches.
-func applyQuestEffects(grantsQuest string, requiresItem int, givesItem int, flagSet *QuestFlagSet, ps *PlayerState) {
+func applyQuestEffects(grantsQuest string, requiresItem int, givesItem int, flagSet *QuestFlagSet, bumpsRep []RepBump, givesGold int, ps *PlayerState) {
 	if ps == nil {
 		return
 	}
@@ -62,6 +62,16 @@ func applyQuestEffects(grantsQuest string, requiresItem int, givesItem int, flag
 	}
 	if flagSet != nil && ps.SetQuestFlag != nil {
 		ps.SetQuestFlag(flagSet.Key, flagSet.Value)
+	}
+	if ps.BumpRep != nil {
+		for _, rb := range bumpsRep {
+			if rb.Faction != "" && rb.Delta != 0 {
+				ps.BumpRep(rb.Faction, rb.Delta)
+			}
+		}
+	}
+	if givesGold > 0 && ps.GiveGold != nil {
+		ps.GiveGold(givesGold)
 	}
 }
 
@@ -127,7 +137,7 @@ func Match(df *DialogueFile, mobInstanceId int, topic string, ps *PlayerState) (
 		return "", "", false
 	}
 
-	applyQuestEffects(matched.GrantsQuest, matched.RequiresItem, matched.GivesItem, matched.SetsQuestFlag, ps)
+	applyQuestEffects(matched.GrantsQuest, matched.RequiresItem, matched.GivesItem, matched.SetsQuestFlag, matched.BumpsRep, matched.GivesGold, ps)
 
 	response := matched.Responses[util.Rand(len(matched.Responses))]
 	return response, matched.MoodChange, true
@@ -184,7 +194,7 @@ func TreeAdvance(df *DialogueFile, mobInstanceId, userId int, topic string, ps *
 		}
 
 		// Node matched — fire quest effects and update memory
-		applyQuestEffects(node.GrantsQuest, node.RequiresItem, node.GivesItem, node.SetsQuestFlag, ps)
+		applyQuestEffects(node.GrantsQuest, node.RequiresItem, node.GivesItem, node.SetsQuestFlag, node.BumpsRep, node.GivesGold, ps)
 		UpdateMemory(mobInstanceId, userId, node.Id, node.Unlocks, topic)
 
 		return node.Text, node.Hints, node.MoodChange, true
@@ -220,7 +230,7 @@ func Greet(df *DialogueFile, mobInstanceId, userId int, ps *PlayerState) (string
 	if ps != nil {
 		for _, v := range df.Tree.Root.Variants {
 			if checkQuestGate(v.QuestRequired, v.QuestExcluded, 0, v.QuestFlagRequired, v.QuestFlagExcluded, ps) {
-				applyQuestEffects(v.GrantsQuest, v.RequiresItem, v.GivesItem, v.SetsQuestFlag, ps)
+				applyQuestEffects(v.GrantsQuest, v.RequiresItem, v.GivesItem, v.SetsQuestFlag, v.BumpsRep, v.GivesGold, ps)
 				return v.Text, v.Hints, true
 			}
 		}

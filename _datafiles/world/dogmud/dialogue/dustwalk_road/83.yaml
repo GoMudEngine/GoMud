@@ -98,6 +98,27 @@ tree:
       text: "I have been walking roads for longer than I care to count. Started as a caravan guard, moved to the wardens when I got tired of protecting someone else's profits. Out here, you protect the road itself -- and everyone on it. It suits me."
       moodChange: friendly
 
+    # ── DELIVERY BY ASK (completion) ──────────────────────────
+    # Mirrors the give-path: a player who turns in the purse by asking
+    # Tessara about it (rather than `give purse tessara`) completes the
+    # quest too. requiresItem gates this node to fire ONLY when the
+    # player actually holds the purse and consumes it on match, so the
+    # broad trigger list is safe. Placed before evidence_return so it
+    # wins when the item is in hand; evidence_return still guides a
+    # player who is asking but has not found the purse yet.
+    - id: evidence_handoff
+      triggers: ["evidence", "purse", "letter", "found", "proof", "report",
+        "documents", "hand", "deliver", "give", "turn", "turnin", "done",
+        "finished", "complete", "quest", "task"]
+      questRequired: ["4-investigate"]
+      questExcluded: ["4-end"]
+      requiresItem: 16
+      grantsQuest: "4-end"
+      text: "Tessara takes the purse the moment you offer it, tips the\
+        \ contents into her palm, and her jaw sets. \"Schedules. Names.\
+        \ This is exactly what the Watchers need to move.\""
+      hints: "You hand the bandit's purse to Tessara."
+
     - id: evidence_return
       triggers: ["evidence", "purse", "letter", "found", "proof", "report", "documents"]
       questRequired: ["4-investigate"]

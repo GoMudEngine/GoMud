@@ -112,8 +112,10 @@ tree:
         them, and a far hill where they put things down at distance.
         When you are ready, pick a mouth. Any mouth.
       hints: >-
-        Quest complete. You could ask about the seven mouths whenever
-        you want the longer tour.
+        Quest complete. The nearest mouth is the forge-smoke one: head
+        west off the square to the coulee smithy, where Smith Rusk will
+        teach you the forge. You could ask Toke about the seven mouths
+        whenever you want the longer tour.
       moodChange: friendly
 
     - id: mouths

@@ -32,6 +32,23 @@ tree:
       covers, or about who the office ultimately serves."
 
   nodes:
+    - id: vellhandoff
+      triggers: ["fragment", "map", "survey", "cooperage", "report",
+                 "deliver", "hand", "give", "turn", "done", "quest", "task"]
+      questRequired: ["68-choice"]
+      questExcluded: ["68-end"]
+      requiresItem: 40113
+      grantsQuest: "68-end"
+      setsQuestFlag: {key: "68-allegiance", value: "bloodline"}
+      givesGold: 100
+      bumpsRep:
+        - {faction: "bloodline_domestic", delta: 20}
+        - {faction: "cooperage_circle", delta: -15}
+      text: "Let me see what you have brought me. A pre-founding survey, and
+        the address that keeps it -- the office is grateful. Discretion is
+        part of the arrangement, and the office rewards it."
+      hints: "You hand the map-fragment to Clerk Vell."
+
     - id: q68_vell_report
       triggers: ["cooperage", "edvar", "survey", "report", "derelict",
                  "map", "deliver", "give", "circle"]

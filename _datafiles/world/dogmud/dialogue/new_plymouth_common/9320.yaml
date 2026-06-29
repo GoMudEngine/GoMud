@@ -30,6 +30,35 @@ tree:
       the Common folk."
 
   nodes:
+    # ── DELIVERY BY ASK (completion) ──────────────────────────
+    # Mirrors the give-path: a player who turns the lump in by asking
+    # Coll about it (rather than `give lump coll`) completes the step
+    # too. requiresItem gates this to fire only with the lump in hand
+    # and consumes it on match, so the trigger list is safe. Placed
+    # before sweeperreport so it wins when the item is held; the
+    # sweeperreport node still guides a player who is asking without it.
+    # Grants 65-end directly (not 65-report): the give-path reaches 65-end via
+    # a questengine quest_granted chain (65-report -> 65-end) that only fires
+    # inside questengine.Notify. A dialogue grant routes through events.Quest,
+    # which does NOT fire that chain, so granting 65-report here would stall.
+    # IsTokenAfter permits skipping to a later step, and the 65-report->65-end
+    # chain has no side effects, so granting 65-end is equivalent.
+    - id: sweeperhandoff
+      triggers: ["found", "undercroft", "seam", "below", "source", "lump",
+                 "grey", "gray", "material", "fragment", "piece", "report",
+                 "deliver", "hand", "give", "turn", "done", "finished",
+                 "complete", "quest", "task"]
+      questRequired: ["65-discover"]
+      questExcluded: ["65-end"]
+      requiresItem: 40101
+      grantsQuest: "65-end"
+      text: "Coll takes the lump from your hand before you finish speaking,
+        turns it over, and weighs it on his palm. \"Heavier than stone its
+        size has any right to be. I knew it.\" He folds it away carefully.
+        \"You did right bringing this to me.\""
+      hints: "You hand the lump of gray material to Coll."
+      moodChange: curious
+
     - id: sweeperreport
       triggers: ["found", "undercroft", "seam", "below", "stone", "source",
                  "lump", "grey", "gray", "material", "report", "buried",

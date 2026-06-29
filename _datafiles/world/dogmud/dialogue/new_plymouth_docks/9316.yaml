@@ -27,6 +27,39 @@ tree:
       or about what evidence would change the case."
 
   nodes:
+    - id: tallyhandoff
+      triggers: ["tally", "book", "evidence", "smuggling", "rat",
+                 "deliver", "hand", "give", "turn", "done",
+                 "report", "quest", "task"]
+      questRequired: ["63-evidence"]
+      questExcluded: ["63-end"]
+      requiresItem: 40100
+      grantsQuest: "63-end"
+      text: "The constable takes the tally-book and goes through it
+        without speaking. \"Original notation, then a correction —
+        and whoever made it thought they were careful.\" He closes
+        the ledger and sets it flat on the post desk. \"Teo is
+        clear. I will have the foreman in before the end of the
+        watch.\""
+      hints: "You hand the tally-book to the constable."
+
+    - id: casefilehandoff
+      triggers: ["casefile", "case", "file", "bloom", "report",
+                 "evidence", "deliver", "hand", "give", "turn",
+                 "done", "quest", "task"]
+      questRequired: ["67-witness"]
+      questExcluded: ["67-end"]
+      requiresItem: 40111
+      grantsQuest: "67-end"
+      bumpsRep:
+        - {faction: "bloom_trade", delta: -15}
+      text: "The constable opens the case-file and reads without
+        looking up. \"The wrapper. The address. The timing.\" A
+        long pause. \"This is enough to move on the trade. The
+        supply stops.\" He closes the file. \"Deren is another
+        matter. That sits with the magistrate now, not me.\""
+      hints: "You hand the case-file to the constable."
+
     - id: teo
       triggers: ["teo", "accusation", "charge", "theft",
                  "dockhand", "him", "case", "arrest", "guilty",

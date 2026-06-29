@@ -74,25 +74,32 @@ func (b *GameBridge) GrantQuest(token string) {
 	}
 
 	// Look up quest name for the banner
-	questId, stepName := quests.TokenToParts(token)
+	_, stepName := quests.TokenToParts(token)
 	questInfo := quests.GetQuest(token)
 	questName := ""
 	if questInfo != nil {
 		questName = questInfo.Name
 	}
 
-	var bannerMsg string
-	switch stepName {
-	case "start":
-		bannerMsg = fmt.Sprintf("You have been given a new quest: <ansi fg=\"questname\">%s</ansi>!", questName)
-	case "end":
-		bannerMsg = fmt.Sprintf("You have completed the quest: <ansi fg=\"questname\">%s</ansi>!", questName)
-		// Fire quest completion rewards via the old event system
+	// Completion is handled entirely by HandleQuestUpdate via the events.Quest
+	// event below: it sends the completion banner, writes the event log, and
+	// applies all rewards. Emitting a banner here too would double it (the
+	// "First Heat completed" duplicate seen in the 2026-06-29 newbie smoke and
+	// the prior quest-60 report). So for "end" we ONLY queue the event and
+	// return — do not also send a banner. "start"/"progress" do not queue an
+	// event, so they emit their banner directly here (single, no duplicate).
+	if stepName == "end" {
 		events.AddToQueue(events.Quest{
 			UserId:     b.user.UserId,
 			QuestToken: token,
 		})
-	default:
+		return
+	}
+
+	var bannerMsg string
+	if stepName == "start" {
+		bannerMsg = fmt.Sprintf("You have been given a new quest: <ansi fg=\"questname\">%s</ansi>!", questName)
+	} else {
 		bannerMsg = fmt.Sprintf("You've made progress on the quest: <ansi fg=\"questname\">%s</ansi>!", questName)
 	}
 
@@ -101,8 +108,6 @@ func (b *GameBridge) GrantQuest(token string) {
 		b.user.SendText(messaging.CategorySystem, questUpTxt)
 		b.user.EventLog.Add("quest", bannerMsg)
 	}
-
-	_ = questId // suppress unused warning
 }
 
 // ConsumeItem removes the first matching item from the player's inventory.

@@ -33,6 +33,21 @@ tree:
       though weighing whether to trust you with it."
 
   nodes:
+    - id: orinhandoff
+      triggers: ["rubbing", "lintel", "symbol", "founding", "web",
+                 "deliver", "hand", "give", "turn", "done", "quest", "task"]
+      questRequired: ["70-witness"]
+      questExcluded: ["70-end"]
+      requiresItem: 40118
+      grantsQuest: "70-end"
+      bumpsRep:
+        - {faction: "cooperage_circle", delta: 5}
+      text: "A rubbing from the lintel -- I did not ask for it, but I am
+        glad of it. This confirms what the survey implied: the mark predates
+        the city's own account of itself. The web is wider than I let
+        myself believe."
+      hints: "You hand the lintel rubbing to Orin."
+
     - id: q68_start
       triggers: ["quest", "task", "cooperage", "circle", "help", "join",
                  "do"]
