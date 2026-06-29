@@ -92,6 +92,10 @@
             top: 40px; /* just below the session strip */
             right: 10px;
             width: 450px;
+            max-width: 90vw;   /* don't run off small laptop screens */
+            max-height: 80vh;  /* stay on-screen; scroll if taller */
+            overflow-y: auto;
+            box-sizing: border-box;
             padding: 10px;
             background-color: #2e2e2e;
             border: 1px solid #444;
@@ -99,10 +103,32 @@
             display: none; /* hidden by default */
             z-index: 9999;
         }
+        /* Header row: title + close button */
+        #menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
         #floating-menu h3 {
             color: #fff;
             margin-bottom: 10px;
         }
+        #menu-close {
+            flex: 0 0 auto;
+            width: 28px;
+            height: 28px;
+            line-height: 24px;
+            font-size: 20px;
+            text-align: center;
+            cursor: pointer;
+            color: #fff;
+            background: #444;
+            border: 1px solid #666;
+            border-radius: 4px;
+        }
+        #menu-close:hover { background: #5a5a5a; }
+        #menu-close:active { background: #3a3a3a; }
 
         .slider-container {
             margin-bottom: 15px;
@@ -202,7 +228,10 @@
 
     <!-- FLOATING MENU - MULTIPLE SLIDERS -->
     <div id="floating-menu">
-        <h3>Volume Controls</h3>
+        <div id="menu-header">
+            <h3>Volume Controls</h3>
+            <button id="menu-close" onclick="toggleMenu()" title="Close" aria-label="Close">&times;</button>
+        </div>
 
         <div id="mute-container">
             <input type="checkbox" id="mute-checkbox" onchange="toggleMuteAll()">
@@ -2399,6 +2428,18 @@
                 menu.style.display = "none";
             }
         }
+
+        // Click anywhere outside the open volume menu (and not on the sound
+        // icon) to dismiss it, so it never blocks the screen with no way out.
+        // Icon clicks are handled by toggleMenu above; this listener runs after
+        // and ignores them (the icon's onclick has already set the state).
+        document.addEventListener('click', function (e) {
+            const menu = document.getElementById('floating-menu');
+            if (!menu || menu.style.display !== "block") return;
+            const icon = document.getElementById('menu-icon');
+            if (menu.contains(e.target) || (icon && icon.contains(e.target))) return;
+            menu.style.display = "none";
+        });
 
         /////////////////////////////////////////////
         //
