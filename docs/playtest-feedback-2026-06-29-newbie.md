@@ -87,6 +87,31 @@ root cause of several later complaints.
 - **B3 — FIXED (clarity).** Market Row's "stalls" noun now states it's an
   unattended display and points to a tended stall (Smith Rusk) for real trade.
 
+## A4/C6/C7 verification pass (2026-06-29)
+- **A4 — RESOLVED (verified, no new code).** All three quest-grant paths now
+  emit the "You have been given a new quest: <name>!" banner for non-secret
+  quests: (1) dialogue `grantsQuest` → `talk.go` GiveQuest closure → `events.Quest`
+  → `HandleQuestUpdate` banner (start step); (2) questengine `GrantQuest`
+  (`bridge.go`) emits the start/progress banner directly; (3) behavior-tree
+  `actGrantQuest` → `events.Quest` (the S6 fix). The Awakening (quest 30) is
+  `secret: false`, so it banners. The Esk anecdote ("asked Esk, no confirmation")
+  is *correct* behavior — Esk grants no quest, and B2 now answers that pointed
+  ask with "I have no task for you right now." instead of silence/filler.
+- **C6 — COVERED for newbies (verified, no new code).** The onboarding
+  antechamber's final room (6262, "The Threshold") explicitly teaches NPC
+  interaction: "you are not alone... type `talk guide`... or `ask guide world`."
+  The 5-room arc teaches look→status→help→inv→talk/ask. In the wider world,
+  quest givers advertise their quests in their root `hints` (the 489bf902
+  discoverability pass) and B2 makes non-quest NPCs answer a quest ask clearly.
+  Remaining "every NPC should signpost its purpose" is a broader design item,
+  not a newbie blocker.
+- **C7 — ADEQUATE, enhanceable (verified, no new code).** `quests` renders each
+  quest's name + a green/grey progress bar + completion % + the **current step's
+  description** (i.e. the next action). It does not print a per-step checklist of
+  done/remaining steps — a deliberate choice (avoids spoilering later steps); the
+  current-step description already tells the player what to do next. A
+  step-checklist view remains a possible future enhancement if desired.
+
 ## D-group outcomes (2026-06-29, verbiage/clarity)
 - **D1 — FIXED.** Hadwen's first-contact greetings now say "new to Gaius" and
   gloss "Pothole Coulee" rather than assuming the word "coulee."
