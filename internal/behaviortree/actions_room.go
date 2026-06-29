@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -100,6 +101,13 @@ func actMovePlayer(params map[string]any, ctx *EvalContext) Result {
 	}
 	if err := rooms.MoveToRoom(ctx.Event.UserId, roomId); err != nil {
 		return Failure
+	}
+	// Show the destination room. MoveToRoom does not auto-describe, so a
+	// portal teleport (e.g. Warden Esk's arch out of the tutorial) otherwise
+	// drops the player into the new room with NO output until they manually
+	// look (2026-06-29 veteran smoke). Queue a look so arrival is never silent.
+	if u := users.GetByUserId(ctx.Event.UserId); u != nil {
+		u.Command("look")
 	}
 	return Success
 }
