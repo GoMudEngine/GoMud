@@ -68,6 +68,26 @@ tree:
           You could ask about the seven mouths, or the day's news.
 
   nodes:
+    - id: newcomer_players
+      triggers: ["people", "players", "player", "others", "talk", "say", "who",
+        "tell", "whisper", "chat", "speak", "everyone", "quest", "task"]
+      questRequired: ["21-start"]
+      questExcluded: ["21-end"]
+      grantsQuest: "21-end"
+      text: >-
+        You will not walk Gaius alone -- real folk fill these roads,
+        same as you. A few words to carry: type say followed by your
+        words to speak to everyone in the room; who to see who is
+        about; tell someone's-name then your words to speak just to
+        them; and try an emote like wave or grin. That is the whole of
+        getting on with people. The rest you will pick up by doing. Off
+        you go.
+      hints: >-
+        Type say <words> to speak to the room, who to see who's online,
+        tell <name> <words> to speak privately, and emotes like wave.
+        You've found your footing in Gaius.
+      moodChange: friendly
+
     - id: footing_offer
       triggers: ["footing", "task", "quest", "town", "around", "work"]
       questRequired: ["30-end"]

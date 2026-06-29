@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -97,73 +96,145 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	events.AddToQueue(events.CharacterCreated{UserId: user.UserId, CharacterName: user.Character.Name})
 
-	duration := time.Now().Sub(user.Joined)
-	if duration.Hours() > 1 {
-
-		question := cmdPrompt.Ask(`Skip tutorial?`, []string{`yes`, `no`}, `yes`)
-		if !question.Done {
-			return true, nil
-		}
-
-		if question.Response != `no` {
-
-			user.ClearPrompt()
-
-			user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="magenta">Suddenly, a vortex appears before you, drawing you in before you have any chance to react!</ansi>%s`, term.CRLFStr))
-
-			if destRoom := rooms.LoadRoom(rooms.StartRoomIdAlias); destRoom != nil {
-
-				rooms.MoveToRoom(user.UserId, destRoom.RoomId)
-
-				// Tell the new room they have arrived
-
-				destRoom.SendText(messaging.CategorySystem, 
-					fmt.Sprintf(configs.GetTextFormatsConfig().EnterRoomMessageWrapper.String(),
-						fmt.Sprintf(`<ansi fg="username">%s</ansi> enters from <ansi fg="exit">somewhere</ansi>.`, user.Character.Name),
-					),
-					user.UserId,
-				)
-
-				Look(``, user, destRoom, events.CmdSecretly) // Do a secret look.
-
-				room.PlaySound(`room-exit`, `movement`, user.UserId)
-				destRoom.PlaySound(`room-enter`, `movement`, user.UserId)
-
-				return true, nil
-			}
-
-		}
-
-	}
-
-	user.ClearPrompt()
-
-	tutorialRoomIds := []int{}
-	startRoom := 0
-	for i, roomIdStr := range configs.GetSpecialRoomsConfig().TutorialRooms {
-		roomId, _ := strconv.ParseInt(roomIdStr, 10, 64)
-		tutorialRoomIds = append(tutorialRoomIds, int(roomId))
-
-		if i == 0 {
-			startRoom = int(roomId)
-		}
-	}
-
-	createdRoomIds, err := rooms.CreateEphemeralRoomIds(tutorialRoomIds...)
-	if err != nil {
-		user.SendText(messaging.CategorySystem, `The Tutorial zone is fully occupied right now. Please try again in a few minutes`)
+	question := cmdPrompt.Ask(
+		"How much of Gaius do you already know?\n"+
+			"  1) New to text MUDs       -- I'll teach you the basics first.\n"+
+			"  2) New to DOGMud          -- I know MUDs; show me what's different.\n"+
+			"  3) Veteran                -- skip all tutorials; drop me into the city.",
+		[]string{"1", "2", "3"}, "2")
+	if !question.Done {
 		return true, nil
 	}
 
-	ephemeralStartRoomId := createdRoomIds[startRoom]
-
-	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="magenta">Suddenly, a vortex appears before you, drawing you in before you have any chance to react!</ansi>%s`, term.CRLFStr))
-
-	rooms.MoveToRoom(user.UserId, ephemeralStartRoomId)
-
-	if lookRoom := rooms.LoadRoom(ephemeralStartRoomId); lookRoom != nil {
-		Look(``, user, lookRoom, events.CmdSecretly)
+	switch onboardingRoute(question.Response) {
+	case routeVeteran:
+		confirm := cmdPrompt.Ask("Skip everything and start in the city, already Awakened? (y/n)", []string{"y", "n"}, "n")
+		if !confirm.Done {
+			return true, nil
+		}
+		if confirm.Response != "y" {
+			// Re-ask from the top. RejectResponse alone would re-show the
+			// confirm (GetNextQuestion returns the last question), so clear
+			// the prompt and re-enter Start — same pattern as the name decline.
+			user.ClearPrompt()
+			return Start(rest, user, room, flags)
+		}
+		user.ClearPrompt()
+		autoAwaken(user)
+		startVeteranInThornwall(user)
+		return true, nil
+	case routeNewbie:
+		user.ClearPrompt()
+		grantNewcomerMarker(user)
+		if !startInAntechamber(user) {
+			startInCoulee(user)
+		}
+		return true, nil
+	default: // routeMudVet
+		user.ClearPrompt()
+		startInCoulee(user)
+		return true, nil
 	}
+}
 
-	return true, nil
+// ─── Onboarding route ────────────────────────────────────────────────────────
+
+type onboardingRouteKind int
+
+const (
+	routeMudVet  onboardingRouteKind = iota // tier B (default): today's Coulee
+	routeNewbie                             // tier A: tutorial antechamber
+	routeVeteran                            // tier C: skip to Thornwall, Awakened
+)
+
+// onboardingRoute maps the poll answer to a route. Anything unrecognized
+// (incl. the empty default) maps to the safe mud-vet path.
+func onboardingRoute(answer string) onboardingRouteKind {
+	switch strings.TrimSpace(answer) {
+	case "1":
+		return routeNewbie
+	case "3":
+		return routeVeteran
+	default:
+		return routeMudVet
+	}
+}
+
+// ─── Routing helpers ─────────────────────────────────────────────────────────
+
+// startInCoulee drops the character at the Awakening Pool (StartRoom 5200) —
+// the standard new-player path (mud-vet, and the newbie fallback if the
+// antechamber instance can't be created).
+func startInCoulee(user *users.UserRecord) {
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="magenta">Suddenly, a vortex appears before you, drawing you in before you have any chance to react!</ansi>%s`, term.CRLFStr))
+	if destRoom := rooms.LoadRoom(rooms.StartRoomIdAlias); destRoom != nil {
+		rooms.MoveToRoom(user.UserId, destRoom.RoomId)
+		Look(``, user, destRoom, events.CmdSecretly)
+	}
+}
+
+// startInAntechamber drops a new-to-MUDs player into a private, instanced copy
+// of the tutorial antechamber (the TutorialRooms). Returns false if the
+// instance could not be created (caller falls back to startInCoulee).
+func startInAntechamber(user *users.UserRecord) bool {
+	cfg := configs.GetSpecialRoomsConfig()
+	ids := []int{}
+	first := 0
+	for i, s := range cfg.TutorialRooms {
+		id, err := strconv.Atoi(s)
+		if err != nil {
+			continue
+		}
+		ids = append(ids, id)
+		if i == 0 {
+			first = id
+		}
+	}
+	if len(ids) == 0 || first == 0 {
+		return false
+	}
+	created, err := rooms.CreateEphemeralRoomIds(ids...)
+	if err != nil {
+		return false
+	}
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="magenta">The grey takes you, gentle as sleep...</ansi>%s`, term.CRLFStr))
+	rooms.MoveToRoom(user.UserId, created[first])
+	if r := rooms.LoadRoom(created[first]); r != nil {
+		Look("", user, r, events.CmdSecretly)
+	}
+	return true
+}
+
+// startVeteranInThornwall vortexes an already-Awakened veteran to Thornwall
+// (468) and prints the back-door hint.
+func startVeteranInThornwall(user *users.UserRecord) {
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="magenta">The pool is behind you before you ever saw it. You step out already changed, into a city that does not know your name.</ansi>%s`, term.CRLFStr))
+	if destRoom := rooms.LoadRoom(468); destRoom != nil { // 468 = Thornwall Temple Interior (the coulee exit destination)
+		rooms.MoveToRoom(user.UserId, destRoom.RoomId)
+		Look(``, user, destRoom, events.CmdSecretly)
+	}
+	user.SendText(messaging.CategorySystem, `New to Gaius after all? Type <ansi fg="command">tutorial</ansi> to be taken to the newcomers' pool.`)
+}
+
+// grantNewcomerMarker flags a total-newbie character with the hidden
+// Newcomer's Path token, which gates the newbie-only teaching beats (Cleric
+// Hadwen's mutations/progression talk; Crier Toke's player-interaction talk).
+func grantNewcomerMarker(user *users.UserRecord) {
+	events.AddToQueue(events.Quest{
+		UserId:     user.UserId,
+		QuestToken: "21-start",
+	})
+}
+
+// ─── Veteran auto-awaken ─────────────────────────────────────────────────────
+
+// autoAwaken gives a veteran-tier character the two effects of the Awakening
+// Rite without making them perform it: the 30-end "Opened" token (clears the
+// 5200 movement block and Warden Esk's gate) and a starting mutation.
+func autoAwaken(user *users.UserRecord) {
+	user.Character.GrantRandomMutation()
+	events.AddToQueue(events.Quest{
+		UserId:     user.UserId,
+		QuestToken: "30-end",
+	})
 }

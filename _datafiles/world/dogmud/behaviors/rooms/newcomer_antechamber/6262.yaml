@@ -1,0 +1,30 @@
+# 6262 — final lesson: talk/ask the guide, then vortex to Awakening Pool (5200).
+#
+# We INTERCEPT the talk/ask/say command. Room behaviors fire BEFORE the command
+# runs, so move_player relocates the player to 5200 first; without intercept the
+# original talk/ask would then execute in 5200 (where the guide isn't) and emit
+# a spurious "not here". Intercept consumes it. The lesson (type talk -> a thing
+# happens) is satisfied and the player arrives at the pool via the auto-look.
+# No gate state needed: this is the terminus — the only path forward is the
+# lesson command.
+
+tree:
+  type: selector
+  children:
+
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [talk, ask, say]
+        - type: action
+          do: send_user_text
+          text: >-
+            The guide inclines its head. 'That is the last of it. Step
+            through -- and welcome to Gaius.' The grey dissolves...
+        - type: action
+          do: move_player
+          room_id: 5200
+        - type: action
+          do: intercept

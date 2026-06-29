@@ -1,0 +1,46 @@
+# 6258 — gate: must look before leaving north.
+#
+# Branch 1: player types look/l → mark lesson done + praise.
+#   (Does NOT intercept, so the look command also runs normally.)
+# Branch 2: movement attempt while lesson not done → nudge + intercept.
+#   state_equals key:lesson_done value:"" is TRUE when the key is unset,
+#   FALSE once set_state sets it to "1". Per-instance state so each
+#   ephemeral copy tracks its own player's progress.
+
+tree:
+  type: selector
+  children:
+
+    # ── Lesson performed: mark done, praise ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [look, l]
+        - type: action
+          do: set_state
+          key: lesson_done
+          value: "1"
+        - type: action
+          do: send_user_text
+          text: >-
+            Good. The way north is open now. Type  north  to move on.
+
+    # ── Movement before lesson: block with a nudge ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [north, n, go, south, s, east, e, west, w, up, u, down, d]
+        - type: condition
+          check: state_equals
+          key: lesson_done
+          value: ""
+        - type: action
+          do: send_user_text
+          text: >-
+            Not yet. Type  look  to take in where you are, then go north.
+        - type: action
+          do: intercept

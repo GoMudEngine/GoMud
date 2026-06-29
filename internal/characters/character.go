@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/pets"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
@@ -28,7 +29,12 @@ import (
 var (
 	startingRace   = 0
 	startingHealth = 10
-	StartingRoomId = 0
+	// New characters begin in the void (RoomId -1), not directly at the start
+	// room. The void prompts "type start", which runs the start command — where
+	// the character is named and the experience-tier onboarding poll is asked
+	// (see internal/usercommands/start.go). Without this, new characters spawn
+	// straight into the world (StartRoom) and never reach the poll.
+	StartingRoomId = -1
 	startingZone   = `Nowhere`
 	defaultName    = `nameless`
 )
@@ -776,4 +782,26 @@ func (c *Character) IsRespawning() bool {
 		return false
 	}
 	return c.Life.IsRespawning()
+}
+
+// GrantRandomMutation rolls one mutation from the weighted acquisition pool
+// for this character's species and adds it at level 1. Returns the granted
+// mutation id, or "" if none were available. Shared by the Awakening Rite
+// (behaviortree actGrantMutation) and the veteran character-creation skip.
+func (c *Character) GrantRandomMutation() string {
+	sp := species.GetSpecies(c.SpeciesId)
+	pool := mutations.GetWeightedPool(c.Mutations, sp)
+	if len(pool) == 0 {
+		return ""
+	}
+	mutId := mutations.RollAcquisition(pool)
+	if mutId == "" {
+		return ""
+	}
+	if c.Mutations == nil {
+		c.Mutations = make(map[string]int)
+	}
+	c.Mutations[mutId] = 1
+	c.Validate()
+	return mutId
 }

@@ -1,0 +1,13 @@
+questid: 21
+name: Newcomer's Path
+description: A quiet marker for players new to Gaius, so their guides know to teach the basics.
+secret: true
+linear: true
+
+steps:
+  - id: start
+    description: "You are finding your way in Gaius."
+  - id: end
+    description: "You have found your footing in Gaius."
+
+triggers: []

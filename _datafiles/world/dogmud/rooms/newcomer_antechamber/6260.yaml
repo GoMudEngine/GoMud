@@ -1,0 +1,11 @@
+roomid: 6260
+zone: Newcomer Antechamber
+title: The Open Hand
+description: >
+  'You will forget commands. That is fine -- the game remembers
+  them for you. Type  help  to see the index, or  help topic  to
+  read about one thing. Try it now.'
+biome: default
+exits:
+  north:
+    roomid: 6261

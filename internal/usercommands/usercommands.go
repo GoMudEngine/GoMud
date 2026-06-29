@@ -213,6 +213,7 @@ var (
 		`throw`:           {Throw, false, true, false},
 		`track`:           {Track, false, true, false},
 		`taunt`:           {Taunt, false, true, false},
+		`tutorial`:        {Tutorial, true, true, false},
 		`trip`:            {Trip, false, true, false},
 		`warcry`:          {Warcry, false, true, false},
 		`rally`:           {Rally, false, true, false},
