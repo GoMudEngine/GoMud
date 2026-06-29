@@ -113,8 +113,11 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			return true, nil
 		}
 		if confirm.Response != "y" {
-			question.RejectResponse()
-			return true, nil
+			// Re-ask from the top. RejectResponse alone would re-show the
+			// confirm (GetNextQuestion returns the last question), so clear
+			// the prompt and re-enter Start — same pattern as the name decline.
+			user.ClearPrompt()
+			return Start(rest, user, room, flags)
 		}
 		user.ClearPrompt()
 		autoAwaken(user)
@@ -124,12 +127,12 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		user.ClearPrompt()
 		grantNewcomerMarker(user)
 		if !startInAntechamber(user) {
-			startInCoulee(user, room)
+			startInCoulee(user)
 		}
 		return true, nil
 	default: // routeMudVet
 		user.ClearPrompt()
-		startInCoulee(user, room)
+		startInCoulee(user)
 		return true, nil
 	}
 }
@@ -160,9 +163,9 @@ func onboardingRoute(answer string) onboardingRouteKind {
 // ─── Routing helpers ─────────────────────────────────────────────────────────
 
 // startInCoulee drops the character at the Awakening Pool (StartRoom 5200) —
-// the standard new-player path (mud-vet, and newbie until the antechamber
-// route lands in a later phase).
-func startInCoulee(user *users.UserRecord, room *rooms.Room) {
+// the standard new-player path (mud-vet, and the newbie fallback if the
+// antechamber instance can't be created).
+func startInCoulee(user *users.UserRecord) {
 	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="magenta">Suddenly, a vortex appears before you, drawing you in before you have any chance to react!</ansi>%s`, term.CRLFStr))
 	if destRoom := rooms.LoadRoom(rooms.StartRoomIdAlias); destRoom != nil {
 		rooms.MoveToRoom(user.UserId, destRoom.RoomId)
@@ -206,7 +209,7 @@ func startInAntechamber(user *users.UserRecord) bool {
 // (468) and prints the back-door hint.
 func startVeteranInThornwall(user *users.UserRecord) {
 	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="magenta">The pool is behind you before you ever saw it. You step out already changed, into a city that does not know your name.</ansi>%s`, term.CRLFStr))
-	if destRoom := rooms.LoadRoom(468); destRoom != nil {
+	if destRoom := rooms.LoadRoom(468); destRoom != nil { // 468 = Thornwall Temple Interior (the coulee exit destination)
 		rooms.MoveToRoom(user.UserId, destRoom.RoomId)
 		Look(``, user, destRoom, events.CmdSecretly)
 	}
