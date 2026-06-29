@@ -3,9 +3,11 @@ package usercommands
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -121,9 +123,9 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	case routeNewbie:
 		user.ClearPrompt()
 		grantNewcomerMarker(user)
-		// Antechamber route lands in a later phase; for now the newbie tier
-		// uses the same pool entry as mud-vet.
-		startInCoulee(user, room)
+		if !startInAntechamber(user) {
+			startInCoulee(user, room)
+		}
 		return true, nil
 	default: // routeMudVet
 		user.ClearPrompt()
@@ -166,6 +168,38 @@ func startInCoulee(user *users.UserRecord, room *rooms.Room) {
 		rooms.MoveToRoom(user.UserId, destRoom.RoomId)
 		Look(``, user, destRoom, events.CmdSecretly)
 	}
+}
+
+// startInAntechamber drops a new-to-MUDs player into a private, instanced copy
+// of the tutorial antechamber (the TutorialRooms). Returns false if the
+// instance could not be created (caller falls back to startInCoulee).
+func startInAntechamber(user *users.UserRecord) bool {
+	cfg := configs.GetSpecialRoomsConfig()
+	ids := []int{}
+	first := 0
+	for i, s := range cfg.TutorialRooms {
+		id, err := strconv.Atoi(s)
+		if err != nil {
+			continue
+		}
+		ids = append(ids, id)
+		if i == 0 {
+			first = id
+		}
+	}
+	if len(ids) == 0 || first == 0 {
+		return false
+	}
+	created, err := rooms.CreateEphemeralRoomIds(ids...)
+	if err != nil {
+		return false
+	}
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="magenta">The grey takes you, gentle as sleep...</ansi>%s`, term.CRLFStr))
+	rooms.MoveToRoom(user.UserId, created[first])
+	if r := rooms.LoadRoom(created[first]); r != nil {
+		Look("", user, r, events.CmdSecretly)
+	}
+	return true
 }
 
 // startVeteranInThornwall vortexes an already-Awakened veteran to Thornwall

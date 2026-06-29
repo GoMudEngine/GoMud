@@ -1228,7 +1228,7 @@ SpecialRooms:
   #   Rooms 900-999 are a special range of RoomId's that tell GoMud the user is
   #   in a tutorial.
   #   Sanctum Basin replaces the old tutorial zone; TutorialRooms is intentionally empty.
-  TutorialRooms: []
+  TutorialRooms: ["6258", "6259", "6260", "6261", "6262"]
 
 ################################################################################
 #
