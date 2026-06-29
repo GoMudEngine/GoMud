@@ -1,5 +1,12 @@
 # DOGMud Patch Notes
 
+## 2026-06-29 — Web client: the sound menu now closes
+
+The Volume Controls panel (the 🔊 icon) could be opened but not obviously
+dismissed, so it sat there blocking the screen. It now has an **× close button**,
+**closes when you click anywhere outside it**, and is sized to fit smaller laptop
+screens (clicking the 🔊 icon again still toggles it too).
+
 ## 2026-06-29 — Clearer feedback: completion banners and mutation effects
 
 - **Quests handled by NPCs now announce themselves.** A few quests that were
