@@ -56,3 +56,27 @@ triggers:
           leather wraps the grip cleanly. There is a particular
           satisfaction to the moment a thing becomes a thing --
           raw stock in, finished blade out. Report to Rusk."
+
+  # ── TURN IN BY GIVING THE BLADE ──────────────────────────
+  # Alternate completion path to the `ask rusk done` dialogue node:
+  # a player who does the intuitive thing and physically hands the
+  # finished dagger to Rusk completes the quest too. We consume the
+  # crafted blade and hand back a clean one so the newbie keeps a
+  # weapon to wield (Equals compares UUID, so the returned dagger is
+  # a distinct instance and give.go's post-consume RemoveItem is a
+  # no-op). consume_item makes give.go take its consume branch, which
+  # returns before the generic archetype "hands it back" emote — so
+  # the turn-in reads cleanly.
+  - event: item_give
+    mob: 9116
+    item: 10009
+    conditions:
+      has: ["35-craft"]
+      missing: ["35-end"]
+    actions:
+      - send_text: "Rusk takes the blade, turns it once, checks the
+          edge with a thumbnail, and presses it straight back into
+          your hand. \"Yours. You made it.\""
+      - consume_item: 10009
+      - give_item: 10009
+      - grant: "35-end"

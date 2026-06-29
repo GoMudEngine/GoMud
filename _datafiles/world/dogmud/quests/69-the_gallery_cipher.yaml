@@ -89,6 +89,30 @@ triggers:
           plaque that names them. Their hands are oddly placed. Without a
           reason to study them you move on.
 
+  # ── GIVE THE RUBBING TO DROSS ────────────────────────────
+  # Alternate path to the q69_gallery dialogue node ("ask dross
+  # rubbing"). The quest log says "Take the rubbing to Dross", so a
+  # player who physically hands it over must advance too. The rubbing
+  # is needed later (Lysha reads it; Dross lays it beside the reading
+  # at the end), so we consume the given copy and hand back a clean
+  # one — same pattern as quest 35 (give.go's consume branch returns
+  # before the generic "hands it back" emote, so it reads cleanly).
+  - event: item_give
+    mob: 9360
+    item: 40115
+    conditions:
+      has: ["69-rubbing"]
+      missing: ["69-gallery"]
+    actions:
+      - send_text: >-
+          Dross takes the rubbing and unrolls it across his knee,
+          tracing the figures' hands. "Yes -- yes, this is the
+          sequence." He rolls it carefully and hands it back. "Keep
+          it. You will need it where I am sending you."
+      - consume_item: 40115
+      - give_item: 40115
+      - grant: "69-gallery"
+
   - event: item_give
     mob: 9360
     item: 40116
