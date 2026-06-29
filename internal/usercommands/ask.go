@@ -21,24 +21,50 @@ import (
 // deliverDialogue executes the YAML dialogue lookup and has the mob respond.
 // It is called both by the normal (non-LLM) path and the LLM-unavailable fallback.
 func deliverDialogue(df *dialogue.DialogueFile, mob *mobs.Mob, mobInstanceId int, userId int, topic string, ps *dialogue.PlayerState) {
-	if df != nil {
-		if nodeText, hints, moodChange, ok := dialogue.TreeAdvance(df, mobInstanceId, userId, topic, ps); ok {
-			mob.Command(`say ` + nodeText)
-			if hints != `` {
-				if u := users.GetByUserId(userId); u != nil {
-					u.SendText(messaging.CategoryDialogueHint, fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
-				}
-			}
-			dialogue.ShiftMood(mobInstanceId, moodChange, df.DefaultMood)
-		} else if response, moodChange, ok := dialogue.Match(df, mobInstanceId, topic, ps); ok {
-			mob.Command(`say ` + response)
-			dialogue.ShiftMood(mobInstanceId, moodChange, df.DefaultMood)
-		} else {
-			mob.Command(`emote shakes their head.`)
-		}
-	} else {
+	if df == nil {
 		mob.Command(`emote shakes their head.`)
+		return
 	}
+
+	// Tree nodes first — quest offers, quest progress, and gated content live
+	// here.
+	if nodeText, hints, moodChange, ok := dialogue.TreeAdvance(df, mobInstanceId, userId, topic, ps); ok {
+		mob.Command(`say ` + nodeText)
+		if hints != `` {
+			if u := users.GetByUserId(userId); u != nil {
+				u.SendText(messaging.CategoryDialogueHint, fmt.Sprintf(`<ansi fg="181">  [%s]</ansi>`, hints))
+			}
+		}
+		dialogue.ShiftMood(mobInstanceId, moodChange, df.DefaultMood)
+		return
+	}
+
+	response, moodChange, ok, usedFallback := dialogue.MatchWithFallbackInfo(df, mobInstanceId, topic, ps)
+
+	// A pointed "do you have a quest?" that only reaches the generic catch-all
+	// (or nothing) deserves a clear answer, not unrelated filler.
+	if isQuestInquiry(topic) && (!ok || usedFallback) {
+		mob.Command(`say I have no task for you right now.`)
+		return
+	}
+
+	if ok {
+		mob.Command(`say ` + response)
+		dialogue.ShiftMood(mobInstanceId, moodChange, df.DefaultMood)
+		return
+	}
+
+	mob.Command(`emote shakes their head.`)
+}
+
+// isQuestInquiry reports whether the player is asking an NPC specifically about
+// quests/work, so a non-quest NPC can answer clearly instead of with filler.
+func isQuestInquiry(topic string) bool {
+	switch strings.ToLower(strings.TrimSpace(topic)) {
+	case "quest", "quests", "task", "tasks", "job", "jobs", "work":
+		return true
+	}
+	return false
 }
 
 func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
