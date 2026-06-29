@@ -29,7 +29,12 @@ import (
 var (
 	startingRace   = 0
 	startingHealth = 10
-	StartingRoomId = 0
+	// New characters begin in the void (RoomId -1), not directly at the start
+	// room. The void prompts "type start", which runs the start command — where
+	// the character is named and the experience-tier onboarding poll is asked
+	// (see internal/usercommands/start.go). Without this, new characters spawn
+	// straight into the world (StartRoom) and never reach the poll.
+	StartingRoomId = -1
 	startingZone   = `Nowhere`
 	defaultName    = `nameless`
 )
