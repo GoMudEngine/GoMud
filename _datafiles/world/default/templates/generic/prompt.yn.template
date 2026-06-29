@@ -3,7 +3,11 @@
 {{- $length := len .options -}}
 {{- $lastIndex := sub $length 1 -}}
 {{- range $index, $element := .options -}}
-    {{- if eq $element $default -}}
+    {{- if or (eq $element "y") (eq $element "yes") -}}
+        <ansi fg="green-bold">{{$element}}</ansi>
+    {{- else if or (eq $element "n") (eq $element "no") -}}
+        <ansi fg="red-bold">{{$element}}</ansi>
+    {{- else if eq $element $default -}}
         <ansi fg="white">{{$element}}</ansi>
     {{- else -}}
         <ansi fg="black-bold">{{$element}}</ansi>
