@@ -7,6 +7,7 @@ package behaviortree
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -21,7 +22,17 @@ func actGrantQuest(params map[string]any, ctx *EvalContext) Result {
 	if quest == "" {
 		return Failure
 	}
+	// Set the token synchronously (for any in-tree follow-up), then fire the
+	// quest event so the player gets the progress/completion banner and any
+	// rewards — the same pipeline the dialogue and questengine grant paths use.
+	// Without this, behavior-tree grants (e.g. Hadwen granting 30-end at the
+	// close of the Awakening Rite) advanced the quest silently, with no banner
+	// and no rewards.
 	user.Character.GiveQuestToken(quest)
+	events.AddToQueue(events.Quest{
+		UserId:     user.UserId,
+		QuestToken: quest,
+	})
 	return Success
 }
 

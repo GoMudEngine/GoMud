@@ -1,5 +1,17 @@
 # DOGMud Patch Notes
 
+## 2026-06-29 — Clearer feedback: completion banners and mutation effects
+
+- **Quests handled by NPCs now announce themselves.** A few quests that were
+  completed for you by an NPC at the end of a scene — most notably the Awakening
+  Rite — finished silently, with no "quest complete" banner and (in some cases)
+  rewards applied quietly. They now show the same completion banner as every
+  other quest.
+- **The `mutations` command tells you what your mutations do.** Alongside each
+  mutation's description, you'll now see plain-language lines for its actual
+  effects — what it grants and what it costs (e.g. "You see clearly in the
+  dark.", "Dulls your Charisma.") — so you're not left guessing at the mechanics.
+
 ## 2026-06-29 — Choose your way in: a start tailored to how much you already know
 
 Make a new character and Gaius now asks one question — how much of this kind of
