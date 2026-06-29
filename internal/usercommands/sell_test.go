@@ -299,6 +299,32 @@ func TestSell_MerchantRunsOutOfGold(t *testing.T) {
 	assert.Greater(t, user.Character.Gold, startGold, "player gained some gold before merchant ran dry")
 }
 
+// TestSell_StripsMerchantNamePrefix verifies that a player who includes the
+// merchant's name in the sell command (intuitive, mirroring `give <item> <npc>`)
+// still sells the item. "sell merchant iron sword" should drop the leading
+// merchant name and sell the iron sword. (Malia playtest: "sell Kerra steel
+// buckler" failed because "Kerra" got lumped into the item name.)
+func TestSell_StripsMerchantNamePrefix(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+
+	user, room := getTestUserAndRoom(t)
+	_, merchantCleanup := seedMerchantInRoom(t, user, 1000)
+	defer merchantCleanup()
+
+	require.True(t, user.Character.StoreItem(items.New(testSellItemId)))
+	startGold := user.Character.Gold
+	require.Equal(t, 1, countSellItems(user.Character, testSellItemId))
+
+	handled, err := Sell("merchant iron sword", user, room, 0)
+
+	assert.True(t, handled)
+	assert.NoError(t, err)
+	assert.Equal(t, 0, countSellItems(user.Character, testSellItemId),
+		"item should sell even with the merchant name in front")
+	assert.Greater(t, user.Character.Gold, startGold, "gold must increase")
+}
+
 // TestSell_NoMerchant verifies that sell exits cleanly when no merchant is
 // present in the room: item stays, gold unchanged.
 func TestSell_NoMerchant(t *testing.T) {

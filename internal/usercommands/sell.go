@@ -67,6 +67,11 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		}
 	}
 
+	// Drop an extraneous leading merchant name (e.g. "sell merchant steel
+	// buckler"). sell has no target argument — the merchant is whoever runs the
+	// shop in this room — so a leading NPC name otherwise breaks item lookup.
+	itemName = resolveSellItem(itemName, user, room)
+
 	// ── Delegate the sale to the shared actions.Sell ──────────────────────
 	actor := &actions.UserActor{User: user, Room: room}
 	res := actions.Sell(actor, actions.SellOptions{ItemName: itemName, Quantity: quantity})
@@ -100,4 +105,24 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	return true, nil
+}
+
+// resolveSellItem strips a leading merchant name from the item phrase if the
+// player included one (e.g. "merchant steel buckler" -> "steel buckler"). It
+// only strips when the full phrase isn't a backpack item, the first word names
+// a mob in the room, and the remainder IS a backpack item — so legitimate
+// item names are never altered.
+func resolveSellItem(itemName string, user *users.UserRecord, room *rooms.Room) string {
+	if _, found := user.Character.FindInBackpack(itemName); found {
+		return itemName
+	}
+	parts := strings.SplitN(strings.TrimSpace(itemName), " ", 2)
+	if len(parts) == 2 {
+		if playerId, mobId := room.FindByName(parts[0]); playerId == 0 && mobId > 0 {
+			if _, found := user.Character.FindInBackpack(parts[1]); found {
+				return parts[1]
+			}
+		}
+	}
+	return itemName
 }
