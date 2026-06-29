@@ -1,5 +1,13 @@
 # DOGMud Patch Notes
 
+## 2026-06-29 — Newcomer wording polish
+
+Cleric Hadwen now greets newcomers with "new to Gaius?" and names Pothole Coulee
+rather than assuming you know the word "coulee", and the commands he points you
+to (ask hadwen begin, ask toke footing, ask esk passage, mutations, skills,
+status) are highlighted consistently. The Pacifism Aura mutation's description
+reads more clearly, too.
+
 ## 2026-06-29 — Small fixes: selling, the skills list, and the market stalls
 
 - **Selling is more forgiving.** `sell <merchant> <item>` now works — if you

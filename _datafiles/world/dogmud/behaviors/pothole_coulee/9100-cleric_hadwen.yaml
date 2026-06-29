@@ -127,8 +127,8 @@ tree:
         - type: action
           do: say
           text: >-
-            New to the coulee? Welcome. I keep the pool, and the pool
-            is waiting for you. Ask me about the
+            New to Gaius? Welcome. This is Pothole Coulee, and I keep
+            its pool -- which is waiting for you. Ask me about the
             <ansi fg="command">rite</ansi> if you want the why of it --
             or simply tell me you are ready:
             <ansi fg="command">ask hadwen begin</ansi> starts it.
@@ -151,7 +151,7 @@ tree:
         - type: action
           do: say
           text: >-
-            If you are new to the coulee and not yet Opened, ask me
+            If you are new to Gaius and not yet Opened, ask me
             about the <ansi fg="command">rite</ansi> -- or say
             <ansi fg="command">ask hadwen begin</ansi> when you are
             ready. The pool is patient.
