@@ -46,6 +46,34 @@ const (
 	Manifestation SkillTag = `manifestation` // Companion summoning, charming, necromancy
 )
 
+// skillBlurbs gives a short, player-facing "what it does" line for each skill,
+// shown in the skills list so players know what a skill covers. Notably,
+// foraging (the `forage` command) trains Search, so Search's blurb says so —
+// players who forage were confused that there was no separate "foraging" skill.
+var skillBlurbs = map[SkillTag]string{
+	WeaponCombat:  "Melee with weapons -- attack and defense.",
+	UnarmedCombat: "Fists, grappling, and unarmed defense.",
+	RangedCombat:  "Bows, crossbows, and firearms (aimed with Perception).",
+	Spellcasting:  "All magic, offense and defense.",
+	Rhetoric:      "Conviction attacks -- taunt and demoralize.",
+	Skullduggery:  "Sneaking, stealing, lockpicking, and ambush.",
+	Search:        "Finding hidden things -- and foraging the wild for resources.",
+	Bartering:     "Better prices and appraisal when you trade.",
+	Blacksmithing: "Forging metal weapons, armor, and tools.",
+	Alchemy:       "Brewing potions, salves, and medicines.",
+	Tailoring:     "Crafting cloth and leather goods.",
+	Cooking:       "Preparing food and the buffs good meals give.",
+	Jewelcrafting: "Rings, pendants, and gemwork.",
+	Enchanting:    "Imbuing items with magic.",
+	Salvage:       "Breaking items down into materials.",
+	Manifestation: "Summoning companions, charming, and necromancy.",
+}
+
+// SkillBlurb returns the short description for a skill name, or "" if unknown.
+func SkillBlurb(name string) string {
+	return skillBlurbs[SkillTag(name)]
+}
+
 var (
 	allSkillNames = []SkillTag{}
 
