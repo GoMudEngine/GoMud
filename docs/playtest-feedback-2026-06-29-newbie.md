@@ -87,6 +87,24 @@ root cause of several later complaints.
 - **B3 — FIXED (clarity).** Market Row's "stalls" noun now states it's an
   unattended display and points to a tended stall (Smith Rusk) for real trade.
 
+## D-group outcomes (2026-06-29, verbiage/clarity)
+- **D1 — FIXED.** Hadwen's first-contact greetings now say "new to Gaius" and
+  gloss "Pothole Coulee" rather than assuming the word "coulee."
+- **D2 — already resolved.** No "come to the water" line exists; the rite says
+  "Look into the water" (an in-rite action) and prompts use "ask hadwen begin."
+- **D3 — FIXED.** Command words are `<ansi fg="command">`-colored in Hadwen's
+  dialogue hints (the behavior tree already colored them) — consistent now.
+- **D4 — already resolved.** The "come to the water" line is gone and the
+  un-Opened greeting is gated to un-Opened players, so nothing repeats it
+  post-Opening.
+- **D5 — FIXED.** Pacifism Aura description reworded for clarity (and S7 now
+  shows its mechanical effect line too).
+- **D6 — MOOT.** The "peace older than the stones… wounds close more easily"
+  text no longer exists anywhere in the world (changed since Malia's run).
+- **D7 — MOOT / not reproducible.** The "flat gray ceiling… dulling every color"
+  Thornwall text no longer exists. (If a general grey-on-grey *rendering*
+  readability issue resurfaces, that's a separate client-styling investigation.)
+
 ## Triage notes
 - **Biggest lever: A5 + C1 together.** The silent early-exit means several
   "newbie area" complaints (D7, A3, Craftsmen/Market-Square-West confusion) are
