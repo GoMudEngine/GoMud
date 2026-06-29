@@ -47,6 +47,27 @@ tree:
           also ask Hadwen about mutations, the glow, or your name.
 
   nodes:
+    - id: newcomer_mutations
+      triggers: ["mutation", "mutations", "change", "changed", "grow", "growth",
+        "skill", "skills", "progress", "progression", "level", "levels", "xp",
+        "experience", "learn", "improve", "stronger", "quest", "task"]
+      questRequired: ["30-end", "21-start"]
+      questExcluded: ["21-end"]
+      text: >-
+        The pool woke something in you -- a mutation, your first. Type
+        mutations to look at it; more will come, with time and hard use.
+        And hear this, for it is the law of Gaius and it surprises
+        newcomers: there are no levels here, and no experience to grind.
+        You grow by DOING. Swing a blade and your blade-arm sharpens;
+        study and your mind does. Type skills to see what you can do,
+        and status to see your stats -- both climb as you use them. Go
+        and use them.
+      hints: >-
+        You are newly Opened. Type mutations to see what the pool woke,
+        skills to see your skills, and status for your stats -- all of
+        which grow through use, not levels or XP.
+      moodChange: friendly
+
     - id: rite_offer
       triggers: ["rite", "awakening", "pool", "opened", "quest", "task"]
       questExcluded: ["30-start", "30-end"]
