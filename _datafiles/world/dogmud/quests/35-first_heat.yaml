@@ -52,12 +52,14 @@ triggers:
       missing: ["35-craft"]
     actions:
       - grant: "35-craft"
-      - send_text: "The iron takes shape under the hammer and the
-          leather wraps the grip cleanly. There is a particular
-          satisfaction to the moment a thing becomes a thing --
-          raw stock in, finished blade out. You hold a real weapon
-          now -- type wield dagger to ready it in your hand, and inv
-          to see what you are carrying. Then report to Rusk."
+      # Fires when crafting BEGINS (the craft command), so it must NOT
+      # claim the blade is already in hand -- the forge takes a few rounds
+      # (time_rounds: 3) to finish. The wield/inv teaching lives on the
+      # recipe's success_message, which fires when the dagger actually
+      # appears (recipes/blacksmithing/iron-dagger.yaml).
+      - send_text: "You set to work at the forge. Give it a few moments --
+          the iron has to take the heat and the shape both. When the
+          finished blade is in your hands, bring it back to Rusk."
 
   # ── TURN IN BY GIVING THE BLADE ──────────────────────────
   # Alternate completion path to the `ask rusk done` dialogue node:

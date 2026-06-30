@@ -12,19 +12,23 @@ func DescribeEffect(e MutationEffect) string {
 	case "stat_flat":
 		return statPhrase(e.Target, e.Value > 0)
 	case "stat_multiplier":
-		return statPhrase(e.Target, e.Value > 1.0)
+		// Additive delta: engine applies stat * (1.0 + value), so >0 raises.
+		return statPhrase(e.Target, e.Value > 0)
 	case "health_multiplier":
-		if e.Value >= 1.0 {
+		// Additive delta (hpMax * (1.0 + value)); >0 is a bonus, <0 a penalty.
+		if e.Value > 0 {
 			return "Toughens your body, deepening your reserves of health."
 		}
 		return "Thins your body's reserves of health."
 	case "stamina_regen_multiplier":
-		if e.Value >= 1.0 {
+		// Additive delta (regen * (1.0 + value)); >0 quickens regen.
+		if e.Value > 0 {
 			return "Quickens how fast your stamina returns."
 		}
 		return "Slows how fast your stamina returns."
 	case "conviction_cost_multiplier":
-		if e.Value <= 1.0 {
+		// Additive delta (cost * (1.0 + value)); <0 is cheaper, >0 dearer.
+		if e.Value < 0 {
 			return "Lessens the conviction your abilities cost."
 		}
 		return "Raises the conviction your abilities cost."

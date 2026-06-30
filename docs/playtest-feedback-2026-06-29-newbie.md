@@ -202,6 +202,27 @@ root cause of several later complaints.
   after a design call on whether the panel goes full-graphics or stays
   stylized-ASCII. Lowest-value item on the entire list.
 
+## Final playtest trio (2026-06-29) — 3 new bugs found + fixed
+Drove all three onboarding tracks end-to-end (total-newbie / new-to-DOGMud /
+veteran) via scripted raw-TCP feel-test. Full report:
+`tools/playtest/reports/2026-06-29-local-feel-tester-newbie-trio.md`. All tracks
+pass. Surfaced and fixed three latent bugs:
+- **Rite completed before it played** — Hadwen's grant_mutation/grant_quest had
+  no `delay`, firing at t=0 while the ceremony narrated to 36.5s. Now mutation
+  at 21s, completion at 37s. (`2e24ddd1`)
+- **First Heat taught wield/inv before the dagger existed** — craft is a 3-round
+  activity; nudge fired at craft start. Moved the wield/inv teaching to the
+  recipe success_message (fires on completion); quest start-text just sets
+  expectation. (`a96e2a31`)
+- **Mutation effects described backwards** — DescribeEffect used a 1.0 threshold
+  for additive deltas, so positive bonuses (e.g. `large` +20% health,
+  rapid-metabolism +stamina-regen) read as penalties. Now sign-based. (`d841d00d`)
+
+Also re-confirmed live: A4 banners, B2 ("I have no task for you right now."),
+C3/C4 nudges, S7 mutation display, veteran landing in Thornwall awakened.
+Low-pri logged: antechamber 6262 "step through" wording vs. the real `talk
+guide` exit.
+
 ## Triage notes
 - **Biggest lever: A5 + C1 together.** The silent early-exit means several
   "newbie area" complaints (D7, A3, Craftsmen/Market-Square-West confusion) are
