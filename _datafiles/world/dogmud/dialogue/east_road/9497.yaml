@@ -56,7 +56,7 @@ tree:
       hints: "You could ask about the well and how she tends it, or
         about the dry season and what it means for the water table."
     - id: dry
-      triggers: ["dry", "drought", "season", "rain", "hot", "water",
+      triggers: ["dry", "drought", "season", "rain", "hot",
         "level", "table", "low", "weather"]
       text: "The level is down but not alarming -- yet. This plateau
         has old deep water under it, the kind that does not react fast

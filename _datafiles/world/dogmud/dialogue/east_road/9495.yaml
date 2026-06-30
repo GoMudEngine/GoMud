@@ -27,7 +27,7 @@ tree:
       study, or about what she is hoping to learn when she arrives."
   nodes:
     - id: university
-      triggers: ["university", "greenford", "school", "college", "what",
+      triggers: ["university", "greenford", "school", "college",
         "tell", "describe", "like", "place", "there"]
       text: "The University at Greenford has been there for -- the
         records say two hundred years, perhaps more. It is on a hill
@@ -41,7 +41,7 @@ tree:
       hints: "You could ask why people choose to study at Greenford,
         or about what she is hoping to learn when she gets there."
     - id: why
-      triggers: ["why", "study", "people", "scholars", "learn", "go",
+      triggers: ["why", "study", "people", "scholars", "learn",
         "reason", "choose", "students", "who goes"]
       text: "Greenford is a good distance from the capital, which is
         either a flaw or a feature depending on what you are trying to
@@ -56,7 +56,7 @@ tree:
         it studies, or about what she is hoping to learn when she
         arrives."
     - id: learning
-      triggers: ["learn", "hope", "study", "work", "goal", "what for",
+      triggers: ["hope", "work", "goal", "what for",
         "doing", "plan", "project", "maps", "cartography"]
       text: "Cartography, specifically the eastern river country --
         the maps of the basin between here and the coast are about

@@ -30,7 +30,7 @@ tree:
   nodes:
     - id: harvest
       triggers: ["harvest", "crop", "wheat", "field", "season", "yield",
-        "short", "thin", "grow", "how", "doing"]
+        "short", "thin", "grow", "doing"]
       text: "The ears are lighter than they should be for this point
         in the season. Stalks are good -- the root goes deep on plateau
         wheat, you cannot take that away from it -- but the heads are
@@ -42,7 +42,7 @@ tree:
         field, or about how long her family has farmed this land."
     - id: waystone
       triggers: ["waystone", "stone", "old", "marker", "east", "edge",
-        "what", "field", "wall"]
+        "what", "wall"]
       text: "The waystone? It has been there longer than the field
         walls. Longer than any farm on this plateau, as far as I know.
         We work around it -- it is too big to move and too old to take

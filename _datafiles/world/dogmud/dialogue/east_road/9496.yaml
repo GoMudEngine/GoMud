@@ -42,7 +42,7 @@ tree:
         and what makes it a good resting stop."
     - id: cargo
       triggers: ["cargo", "carry", "haul", "goods", "what", "trade",
-        "load", "deliver", "route", "carry"]
+        "load", "deliver", "route"]
       text: "Grain going west to the Confluence basin, dry goods --
         manufactured things, cloth, tools -- coming back east to
         Greenford. The university there buys a good deal of that kind
