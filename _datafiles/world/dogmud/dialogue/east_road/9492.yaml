@@ -1,0 +1,69 @@
+mobid: 9492
+zone: East Road to Greenford
+defaultMood: friendly
+greetings:
+  - text: "Loaf, cheese, or plums -- all of it made or dried right
+      here. Have a look and tell me what the road is asking for
+      today."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Day to you. Mind your step on the cobble edge -- it has
+        been loose since the last dry spell heaved it."
+  - keywords: ["sell", "buy", "food", "wares", "stock", "provisions"]
+    responses:
+      - "The loaf keeps three days in this heat. The cheese keeps
+        a week. The plums keep until you eat them."
+  - keywords: [""]
+    responses:
+      - "Ask away, friend. I am not going anywhere until the road
+        decides to."
+tree:
+  root:
+    text: "I have been provisioning this hamlet for eleven years --
+      longer than the road has been properly graded east. Half my
+      customers are heading for Greenford, the other half are coming
+      back from it. Both lots buy cheese, which tells you something."
+    hints: "You could ask Mistress Odell about what she sells and
+      her provisions, about the folk heading east toward Greenford,
+      or about the dry weather and how it has affected the harvest."
+  nodes:
+    - id: wares
+      triggers: ["loaf", "bread", "cheese", "plum", "sell", "buy",
+        "food", "wares", "stock", "provisions", "what"]
+      text: "The barley loaf I bake myself -- plateau wheat from the
+        fields just west of here, dense and dark, keeps better than
+        the soft southern stuff. The hard cheese comes from Kael farm
+        across the south ridge, rind-sealed and sharp the way it
+        should be. The plums I dry on the roof through the long days.
+        Between those three you can walk from here to Greenford and
+        not go hungry, which is the whole point of what I sell."
+      hints: "You could ask about the Greenford-bound travelers she
+        sees, or about the dry year and how the harvest is going."
+    - id: greenford
+      triggers: ["greenford", "east", "travellers", "traveler",
+        "bound", "heading", "scholars", "university", "who", "people",
+        "traffic"]
+      text: "A good mix. Scholars mostly -- young ones with too many
+        bags and no idea how far east it actually is. Some traders.
+        A few pilgrims who missed their turn at the Confluence and
+        kept walking. They all want the same thing: food that
+        travels, something they can eat without stopping. The scholars
+        come back through looking thinner and more certain of
+        themselves. I do not know if that is the university doing it
+        or just the walking."
+      hints: "You could ask about the provisions she sells for the
+        road, or about the dry weather and the harvest this season."
+    - id: weather
+      triggers: ["weather", "dry", "hot", "rain", "harvest", "season",
+        "drought", "year", "heat", "crops"]
+      text: "Three dry months and the wheat is showing it -- shorter
+        stalks, thin ears. The farmers have not said panic yet but I
+        can read faces. The plums came in light this year, which is
+        why I am rationing them. If it rains before the end of the
+        month we will be fine. If it does not -- well, that is what
+        next year's planting is for. I have been here long enough to
+        know it always rains eventually. Just not always conveniently."
+      hints: "You could ask about the food she sells for the road, or
+        about the travelers heading east toward Greenford."

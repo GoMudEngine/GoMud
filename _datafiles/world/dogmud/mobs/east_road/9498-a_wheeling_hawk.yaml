@@ -1,0 +1,43 @@
+mobid: 9498
+zone: East Road to Greenford
+archetype: fighting
+hostile: false
+statpool: 20
+itemdropchance: 10
+maxwander: 2
+groups:
+  - animal
+idlecommands:
+  - 'emote banks low over the wheat rows on set wings, riding the
+    thermal off warm plateau stone, eyes fixed on something below.'
+  - ''
+  - 'emote drops into a half-stoop and pulls up at the last instant,
+    empty-taloned, resuming its wide unhurried circuit overhead.'
+  - ''
+  - 'emote settles briefly on a fence post at the field edge, mantles
+    once, and lifts away before anyone can approach.'
+  - ''
+activitylevel: 10
+character:
+  name: A Wheeling Hawk
+  description: |
+    A broad-winged hawk drifting in wide circles above the plateau
+    wheat, riding the heat thermals that rise off bare stone at the
+    field edges without apparent effort. Its underside is pale tawny
+    barred with brown, and when it banks against the sun the light
+    catches a faint iridescent shimmer along its primary feathers --
+    a Chrysalis-mark common to the hawks of this plateau, giving
+    each feather tip a metallic edge like hammered copper. It watches
+    the rows below with absolute concentration that the wheat farmer
+    finds flattering until she remembers it is not interested in
+    the wheat.
+  speciesid: 8
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 3
+    dexterity:
+      training: 9
+    vitality:
+      training: 2

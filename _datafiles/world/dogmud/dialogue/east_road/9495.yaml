@@ -1,0 +1,72 @@
+mobid: 9495
+zone: East Road to Greenford
+defaultMood: friendly
+greetings:
+  - text: "Oh -- hello. I am fine. Just resting the bag. It is
+      heavier than it was in New Plymouth, somehow."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Are you going east too? I could use a sense of how
+        far 'not that far' actually means."
+  - keywords: ["greenford", "university", "far", "east", "distance"]
+    responses:
+      - "Another two days, they tell me. Which probably means three."
+  - keywords: [""]
+    responses:
+      - "Ask me anything. I am stopped anyway."
+tree:
+  root:
+    text: "I am travelling to Greenford to start at the university.
+      I have an acceptance letter and a great many scrolls I should
+      probably have shipped ahead and did not. I am learning things
+      already and I have not arrived yet."
+    hints: "You could ask the scholar about the university at Greenford
+      and what it is known for, about why people choose to go there to
+      study, or about what she is hoping to learn when she arrives."
+  nodes:
+    - id: university
+      triggers: ["university", "greenford", "school", "college", "what",
+        "tell", "describe", "like", "place", "there"]
+      text: "The University at Greenford has been there for -- the
+        records say two hundred years, perhaps more. It is on a hill
+        above the river crossing, which is apparently where someone
+        decided to put things that needed to last. They study natural
+        history, cartography, river engineering, some philosophy. They
+        have the largest collection of regional maps I have heard of
+        outside New Plymouth, and considerably more of them are current.
+        I am going for the cartography. I want to make maps of places
+        that do not have good ones yet."
+      hints: "You could ask why people choose to study at Greenford,
+        or about what she is hoping to learn when she gets there."
+    - id: why
+      triggers: ["why", "study", "people", "scholars", "learn", "go",
+        "reason", "choose", "students", "who goes"]
+      text: "Greenford is a good distance from the capital, which is
+        either a flaw or a feature depending on what you are trying to
+        do. The people who go there tend to want to work without
+        interruption. Less politics than New Plymouth, better library
+        than anywhere I know of between here and the coast. And the
+        town itself is apparently very pleasant -- river views, good
+        bread, a market that does not close in the rain. I am told that
+        last part matters more than you would think in the long winter
+        months."
+      hints: "You could ask about the university at Greenford and what
+        it studies, or about what she is hoping to learn when she
+        arrives."
+    - id: learning
+      triggers: ["learn", "hope", "study", "work", "goal", "what for",
+        "doing", "plan", "project", "maps", "cartography"]
+      text: "Cartography, specifically the eastern river country --
+        the maps of the basin between here and the coast are about
+        forty years out of date and the river courses shift faster than
+        people think. Someone needs to re-walk the region and draw what
+        is actually there. The university has the archive to compare
+        against and the instruments I do not own yet. It seemed like
+        the right place to do it properly. Also I am twenty-two and
+        this is the first time I have been more than a week from home,
+        so I may be overestimating my ambitions somewhat. We will see."
+      hints: "You could ask about the university and what it is known
+        for, or about why scholars and students choose to go to
+        Greenford to study."

@@ -1,0 +1,43 @@
+mobid: 9499
+zone: East Road to Greenford
+archetype: fighting
+hostile: false
+statpool: 14
+itemdropchance: 15
+maxwander: 3
+groups:
+  - animal
+idlecommands:
+  - 'emote sits bolt upright in the verge grass with ears raised to
+    their full improbable height, rotating them independently toward
+    the road.'
+  - ''
+  - 'emote makes three fast sideways hops for no visible reason, then
+    stops and sits bolt upright again as if nothing happened.'
+  - ''
+  - 'emote drops its nose to the ground, sniffs in a rapid stuttering
+    series, and flattens both ears flat as if whatever it found was
+    worse than expected.'
+  - ''
+activitylevel: 10
+character:
+  name: A Jackrabbit
+  description: |
+    An improbably large-eared rabbit of the plateau verge, built
+    for speed over flat open ground in a way that makes it look
+    slightly wrong -- the ears too long, the hind legs too big,
+    the whole animal coiled as if always about to leave. Its fur
+    is pale dust-grey on top and white underneath, good camouflage
+    in the dry season stubble. Its Chrysalis-mark is a narrow stripe
+    of vivid rust-orange along each ear's inner edge, visible only
+    when the ears are raised -- which is most of the time.
+  speciesid: 8
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 1
+    dexterity:
+      training: 10
+    vitality:
+      training: 2

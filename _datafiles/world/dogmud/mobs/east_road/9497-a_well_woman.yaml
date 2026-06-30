@@ -1,0 +1,44 @@
+mobid: 9497
+zone: East Road to Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 25
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote lowers a bucket down the well by the rope in long smooth
+    pulls and hauls it back up without spilling a drop.'
+  - ''
+  - 'say The water is cold this morning even with the heat. A good
+    sign -- it means the level is still up.'
+  - ''
+  - 'emote sets the bucket on the stone lip and rests both hands on
+    the edge, looking down into the well for a moment before she
+    straightens and returns to work.'
+  - ''
+activitylevel: 10
+character:
+  name: A Well-Woman
+  description: |
+    A narrow woman with capable arms and a long braid tied back
+    from work, managing the hamlet well with the brisk efficiency
+    of someone who has been keeping water moving since before most
+    of the hamlet was built. She checks the rope daily, knows the
+    water table by the sound the bucket makes when it hits, and
+    has strong opinions on who uses the well properly and who
+    does not. Her Chrysalis-change is in her fingertips: the whorls
+    there press a faint blue-grey pigment into anything she touches,
+    like charcoal-stained fingerprints that appear and fade over
+    the course of a day. She has made her peace with always leaving
+    traces of herself behind.
+  speciesid: 1
+  level: 1
+  gold: 4
+  stats:
+    perception:
+      training: 5
+    charisma:
+      training: 3

@@ -1,0 +1,48 @@
+mobid: 9492
+zone: East Road to Greenford
+craft_support: cooking
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote breaks a heel of loaf from the tray and taps it on the counter
+    to check the crust, then wraps it back in its cloth with a small
+    approving nod.'
+  - ''
+  - 'say Loaf, cheese, and plums -- exactly what you need on a long road.
+    I know because I ask the folk who come back through.'
+  - ''
+  - 'emote wipes down the worn counter with a damp cloth, straightens
+    the small row of cheeses, and settles her hands on her hips to
+    watch the road.'
+  - ''
+activitylevel: 10
+character:
+  name: Mistress Odell the Victualler
+  description: |
+    Mistress Odell the Victualler runs the hamlet's only provision
+    stall from a low table beneath a canvas awning she re-patches
+    each spring. She is compact and deliberate, with flour-browned
+    wrists from baking before the rest of the hamlet wakes, and a
+    habit of watching the road east as if tallying something. Her
+    Chrysalis-change settled in her irises: they carry a warm amber
+    glow, faint in daylight and unmistakable at dusk, giving her a
+    look of quiet unhurried attention even when she is simply
+    counting change.
+  speciesid: 1
+  level: 1
+  gold: 40
+  stats:
+    perception:
+      training: 6
+    charisma:
+      training: 6
+  shop:
+    - itemid: 40147
+    - itemid: 40148
+    - itemid: 40149
