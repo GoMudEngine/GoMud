@@ -12,5 +12,5 @@ ingredients:
 output:
   item_id: 10009
   quantity: 1
-success_message: "You hammer the iron into shape and wrap the grip tightly. An iron dagger!"
+success_message: "You hammer the iron into shape and wrap the grip tightly. An iron dagger! Type wield dagger to ready it in your hand, and inv to see what you are carrying."
 failure_message: "The iron cracks from uneven heating. The materials are ruined."
