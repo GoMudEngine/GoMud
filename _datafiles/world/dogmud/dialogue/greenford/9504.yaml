@@ -1,0 +1,70 @@
+mobid: 9504
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Landing's busy this morning -- barge in from the Confluence last
+      night. Mind the grain sacks on the south stack, they're not settled
+      yet."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Day to you. Step back from the quay edge -- the flags are slick
+        where the water's been."
+  - keywords: ["barge", "boat", "ship"]
+    responses:
+      - "Flat-bottomed river craft, good for grain and timber. Not built
+        for the coast. Doesn't need to be."
+  - keywords: [""]
+    responses:
+      - "I'm working, but I can talk. Ask what you want."
+tree:
+  root:
+    text: "I work the Greenford landing -- unload what comes up from the
+      Confluence, load what goes back down. Timber, grain, finished goods,
+      whatever the barge runs. We get a boat every few days this time of
+      year. River's running well. What do you want to know?"
+    hints: "You could ask about the cargo and what the barge runs, about
+      the Confluence and the river trade west of here, or about the current
+      and what the river does this season."
+  nodes:
+    - id: cargo
+      triggers: ["cargo", "load", "timber", "grain", "sack", "carry", "haul",
+        "barge"]
+      text: "This load's mostly grain and sawn timber -- common run. The grain
+        goes to the mill, Maret grinds it, flour goes back downriver on the
+        same barge or the next one. The timber's for the university building
+        works up the hill; they've been expanding the east wing for two
+        years now and the end is not yet in sight. I've moved more lumber
+        up that hill in my working life than I care to count. The barge also
+        runs iron fittings, rope, lamp oil -- the things a town needs that
+        the river country doesn't produce on its own."
+      hints: "You could ask about the Confluence and the trade downriver, or
+        about the current and how the river's running."
+    - id: confluence
+      triggers: ["confluence", "west", "downriver", "city", "south", "market",
+        "below"]
+      text: "The Confluence is downriver to the west -- three rivers meet there,
+        big market town, the temple. That's where most of the cargo starts
+        its journey east. The barge masters base themselves there and run
+        circuits up the tributaries, this river being one. It's maybe a
+        day's run from here to the Confluence in good current, two days
+        coming back up against it. The market there is bigger than anything
+        Greenford runs -- this town trades in books and ideas more than
+        goods. But the river keeps the two connected, and that's what
+        matters."
+      hints: "You could ask about the cargo and what the barge carries, or
+        about the current and the river conditions."
+    - id: current
+      triggers: ["current", "river", "water", "flow", "fast", "level", "flood",
+        "season"]
+      text: "Good current right now -- fast enough to make the downriver run
+        quick, slow enough that coming back up doesn't need a second crew.
+        The spring flood season is when we earn our pay: the river doubles
+        in speed and the barges have to be rope-walked up the worst of the
+        fast water, which is hard work and nobody's idea of a good time.
+        But flood season brings high water, and high water means we can
+        run a deeper-draft barge and carry more cargo in one trip. There
+        is always a trade. The river teaches you that."
+      hints: "You could ask about the cargo and what the barge runs, or
+        about the Confluence and the trade west of here."

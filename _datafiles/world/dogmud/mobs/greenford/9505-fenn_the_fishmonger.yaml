@@ -1,0 +1,49 @@
+mobid: 9505
+zone: Greenford
+craft_support: cooking
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote lifts the damp cloth on the counter, checks the fish
+    beneath with a single appraising sniff, and replaces it with
+    a small satisfied sound.'
+  - ''
+  - 'say Fresh this morning. River was good last night -- you can
+    tell by the weight of them.'
+  - ''
+  - 'emote writes a new price in chalk on the slate board, stands
+    back, decides it is correct, and leaves it.'
+  - ''
+activitylevel: 10
+character:
+  name: Fenn the Fishmonger
+  description: |
+    Fenn the Fishmonger runs the river-row counter with a
+    showman's patter and a professional's precision -- the fish
+    are always laid gill-side up, the chalk prices always legible,
+    and the damp cloth always just damp enough. He is round-faced
+    and broad, with a voice built for a market lane. His Chrysalis-
+    change is in his nose: the nostrils are distinctly wider than
+    ordinary, with a sensitivity that lets him assess a fish's
+    freshness from across the counter without touching it. He does
+    not advertise this. He simply never sells a fish that has
+    turned, and his regular customers have noticed that his
+    guarantee holds even for stock that looks fine.
+  speciesid: 1
+  level: 1
+  gold: 40
+  stats:
+    perception:
+      training: 6
+    charisma:
+      training: 6
+  shop:
+    - itemid: 40152
+    - itemid: 40125
+    - itemid: 40126

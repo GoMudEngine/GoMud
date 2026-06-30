@@ -1,0 +1,65 @@
+mobid: 9501
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "You're through -- welcome to Greenford. Town's up the hill if
+      that's where you're headed. The gate's open."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Day to you. Greenford's open to travelers. I just keep the ledger."
+  - keywords: ["toll", "pay", "fee", "coin"]
+    responses:
+      - "Settled already. You're through. Move along when you're ready."
+  - keywords: [""]
+    responses:
+      - "Gate's open. Ask me straight if you need something."
+tree:
+  root:
+    text: "Eleven years at this gate and I still check the ledger every morning.
+      You're through, welcome. River landing's south, the town slopes up
+      the hill from there. Quiet place -- scholars mostly, the university's
+      at the crown. Good food, decent inns. Anything you need to know before
+      you go through?"
+    hints: "You could ask Oswin about the bridge and the crossing, about the
+      river and the trade at the landing, or about Greenford and the
+      university uphill."
+  nodes:
+    - id: bridge
+      triggers: ["bridge", "toll", "gate", "cross", "crossing", "span"]
+      text: "Three arches, dressed stone, been here longer than anyone can say
+        for certain. The toll covers the upkeep -- a bridge like this doesn't
+        stay sound without someone watching the mortar and walking the spans
+        after every flood season. That's my other job, besides the ledger.
+        I've closed this crossing twice in eleven years, once for ice-damage
+        on the east pier, once when the central span went soft. Both times
+        we had it right again inside a season. The toll's modest; the bridge
+        is worth it."
+      hints: "You could ask about the river trade at the landing, or about
+        Greenford and the university town uphill."
+    - id: river
+      triggers: ["river", "water", "current", "trade", "barge", "traffic"]
+      text: "Good river trade through here -- barges up from the Confluence
+        mostly, running grain and timber east to Greenford and coming back
+        with flour and finished goods. The landing's just south of the gate,
+        a stone quay, well-kept. The mill's at the landing too, which is why
+        the barges bother making the run upriver. River's fast here in the
+        spring flood season, slow and green in summer. Cross when it's green
+        if you have a choice. The ford below's not worth trusting at any
+        other time."
+      hints: "You could ask about the bridge and the crossing, or about
+        Greenford and what's uphill."
+    - id: town
+      triggers: ["town", "greenford", "uphill", "hill", "university", "scholar",
+        "scholars"]
+      text: "Greenford's a quiet place -- the university's at the crown of the
+        hill, been there three hundred years give or take. Scholars, mostly,
+        and the tradespeople who live off them: booksellers, copyists, a
+        couple of good inns that know how to keep scholars happy, which means
+        quiet and well-fed. The riverfolk down here are their own sort --
+        practical people, less interested in books than in what the river
+        does next. Both kinds get along well enough. Town's worth the walk
+        uphill if you have the time."
+      hints: "You could ask about the bridge and the crossing, or about the
+        river trade at the landing."

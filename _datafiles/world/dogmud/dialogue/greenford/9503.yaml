@@ -1,0 +1,66 @@
+mobid: 9503
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Three lines in. River's been moving well this morning. Sit if you
+      like -- it won't disturb the fish."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Day to you. Keep your shadow off the water if you can."
+  - keywords: ["fish", "catch", "trout"]
+    responses:
+      - "Trout mostly, some perch. Crab pots had something heavy in them
+        this morning -- I haven't checked yet."
+  - keywords: [""]
+    responses:
+      - "Ask me. I've got nothing but time while the lines are in."
+tree:
+  root:
+    text: "I fish these steps every morning this time of year. The river gives
+      what it gives. Some days it's generous. Some days you go home with
+      wet boots and a story about the one that didn't bite. Today looks
+      like a generous day. Ask me what you want to know."
+    hints: "You could ask about the catch and what the river's running, about
+      the river itself and how the current reads, or about the bridge and
+      the crossing above."
+  nodes:
+    - id: catch
+      triggers: ["catch", "fish", "trout", "perch", "crab", "pot", "line",
+        "bait"]
+      text: "Trout and perch mainly on the lines -- this reach runs deep and
+        cold, good water for both. The crab pots I check at midday; they've
+        been decent this week, nothing spectacular. Bait's salted perch
+        offcuts, which works well enough that I've stopped experimenting
+        with anything else. The thing about fishing is that you find what
+        works and you keep doing it. The river doesn't reward cleverness
+        half as much as it rewards showing up at the same time every day
+        and being patient."
+      hints: "You could ask about the river and how the current reads here,
+        or about the bridge and the crossing above."
+    - id: river
+      triggers: ["river", "water", "current", "reach", "deep", "season",
+        "aldren"]
+      text: "The Aldren runs deep here below the bridge, green and steady
+        most of the year. Fast in the spring -- you wouldn't put a line in
+        during flood season, the current takes everything sideways. Summer
+        it drops and goes green and clear; that's when the trout are easiest
+        to read, you can see them holding in the current below the steps.
+        Autumn brings the perch up from the south channel in numbers. I've
+        fished this stretch twenty years. You learn its moods. It has them."
+      hints: "You could ask about the catch and what's running today, or
+        about the bridge and the crossing."
+    - id: bridge
+      triggers: ["bridge", "toll", "warden", "crossing", "built", "span",
+        "stone"]
+      text: "Three arches, old work. The warden -- Oswin, good man -- keeps
+        it properly. I've watched the morning light come under those arches
+        since I was young enough to carry my own bucket and not complain
+        about it. The stone piers go deep into the riverbed, which is why
+        the bridge has outlasted several floods that should have worried it.
+        It fishes well from below, too, on the downstream side of the
+        center pier where the current pools. I keep that spot for myself
+        on quiet mornings. No offense."
+      hints: "You could ask about the catch and what the river's running,
+        or about the river itself and the current below."

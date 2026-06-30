@@ -1,0 +1,40 @@
+mobid: 9501
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote flips to a fresh page in the toll-ledger and marks something
+    down with a stub of chalk, then tucks it back under his arm.'
+  - ''
+  - 'say Greenford gate. Open from first light. You are through, welcome.'
+  - ''
+  - 'emote checks the draw-bar fitting with two fingers, testing the
+    pivot, then straightens with a small approving nod.'
+  - ''
+activitylevel: 10
+character:
+  name: Oswin the Bridge-Warden
+  description: |
+    Oswin the Bridge-Warden has held the Greenford gate for eleven
+    years, a fact he mentions with the quiet satisfaction of someone
+    who found the right job early and stayed in it. He is lean and
+    weathered, with a leather coat worn smooth at the elbows and a
+    toll-ledger perpetually tucked under one arm. His Chrysalis-change
+    is subtle: his pupils are split -- a vertical slit overlays the
+    natural round so his eyes catch lamplight from two angles at once.
+    He works the gate in any weather, day or night, and has not needed
+    a torch where the lantern bracket reaches.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    perception:
+      training: 5
+    charisma:
+      training: 4

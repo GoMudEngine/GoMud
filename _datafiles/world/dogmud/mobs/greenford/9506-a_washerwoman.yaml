@@ -1,0 +1,44 @@
+mobid: 9506
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote wrings a length of wet linen with both hands, a clean
+    efficient twist, then flaps it out and drapes it over the
+    elder branch to dry.'
+  - ''
+  - 'emote glances at the old stone at the green''s corner, then
+    goes back to scrubbing without any particular expression.'
+  - ''
+  - 'say This river water is cold enough to raise the dead. And it
+    gets the linen clean, so I will not complain about the cold.'
+  - ''
+activitylevel: 10
+character:
+  name: A Washerwoman
+  description: |
+    A capable woman of middle years, working the riverside green
+    with a washboard and two large tubs of river water, her
+    sleeves rolled above the elbow and her apron soaked to the
+    hem. She does not hurry and she does not stop. Her Chrysalis-
+    change is in the skin of her hands and forearms: a fine
+    smooth texture like river-stone has replaced the ordinary
+    surface, entirely water-resistant, never pruning or softening
+    no matter how long she works in the cold water. She has
+    been washing linen for twenty-two years and considers this
+    the most useful thing the Chrysalis has produced in the whole
+    of Greenford, herself included.
+  speciesid: 1
+  level: 1
+  gold: 3
+  stats:
+    vitality:
+      training: 5
+    strength:
+      training: 4

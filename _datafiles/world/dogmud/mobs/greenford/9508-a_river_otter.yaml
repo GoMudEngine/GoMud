@@ -1,0 +1,44 @@
+mobid: 9508
+zone: Greenford
+archetype: fighting
+hostile: false
+statpool: 24
+itemdropchance: 10
+maxwander: 2
+groups:
+  - animal
+idlecommands:
+  - 'emote rolls onto its back in the slow water of the boathouse
+    slip, balancing something on its chest, cracking it open
+    against a stone it was apparently already carrying.'
+  - ''
+  - 'emote slides down the ramp at the boathouse river-end on its
+    belly, enters the water in a barely-there splash, and bobs
+    up a moment later looking pleased.'
+  - ''
+  - 'emote dives below the brown water and vanishes, leaving only
+    a ring of ripples and a string of rising bubbles to mark
+    where it went.'
+  - ''
+activitylevel: 10
+character:
+  name: A River Otter
+  description: |
+    A sleek brown creature the length of a man's arm, working
+    the boathouse slip with the ease of something that has
+    decided this stretch of the river belongs to it. Its eyes
+    are dark and quick; it watches the ramp and the gear-
+    shelves with apparent interest before losing interest and
+    diving in a smooth arc. It resurfaces somewhere downstream
+    and shakes itself dry on a coil of rope with an air of
+    complete indifference to having been watched.
+  speciesid: 8
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 3
+    dexterity:
+      training: 7
+    vitality:
+      training: 3

@@ -1,0 +1,42 @@
+mobid: 9503
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote trails one hand in the shallows beside the ledge, fingers
+    spread, reading the current without looking at the water.'
+  - ''
+  - 'emote checks the tension on the nearest fishing line with two
+    fingers, feels nothing, and goes back to waiting without comment.'
+  - ''
+  - 'say River does what the river does. You wait, or you go home.'
+  - ''
+activitylevel: 10
+character:
+  name: A Fisherman
+  description: |
+    A stocky man in river-worn clothes sitting at the top of the
+    fishing steps with his boots off, heels on the stone above
+    the damp line. He has three lines in the water and is watching
+    none of them -- the patient indirection of someone who has
+    fished this reach long enough to let the lines do the watching
+    for him. His Chrysalis-change is the fine webbing between his
+    fingers, a thin translucent skin linking the joints that has
+    never interfered with his work and has made him, he will tell
+    you if you ask, considerably better at feeling where the
+    current runs beneath the surface. He does not consider this
+    a gift so much as a tool.
+  speciesid: 1
+  level: 1
+  gold: 4
+  stats:
+    perception:
+      training: 5
+    dexterity:
+      training: 4

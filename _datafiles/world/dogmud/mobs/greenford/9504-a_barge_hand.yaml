@@ -1,0 +1,44 @@
+mobid: 9504
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote hoists a grain sack to the dock lip in one motion, tilts
+    it upright, and marks the chalk tally on the end face with a
+    thumb-strike.'
+  - ''
+  - 'say Last three sacks and we are done here. Then the timber.
+    Always the timber last.'
+  - ''
+  - 'emote leans out over the barge-side to check the mooring rope,
+    long arms making the reach look easy, then straightens and
+    dusts his hands together.'
+  - ''
+activitylevel: 10
+character:
+  name: A Barge-Hand
+  description: |
+    A broad man in river-damp canvas, working the cargo transfer
+    from barge to dock with the mechanical efficiency of someone
+    paid by the load and not the hour. His arms are unusual: from
+    the elbow down they run noticeably long, a Chrysalis-change
+    that has made him extraordinarily useful on barge work, where
+    the extra reach across the gunwale saves a step and a pivot
+    every time. He does not think about this any more than a
+    tall man thinks about his height. He thinks about the cargo
+    count and whether the timber goes on the south stack or the
+    north.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    strength:
+      training: 6
+    vitality:
+      training: 4

@@ -1,0 +1,65 @@
+mobid: 9502
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Stone-ground this morning. What do you need -- flour, bread, or
+      both?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Day to you. Mill's running -- I have flour if you need it."
+  - keywords: ["buy", "sell", "price", "cost"]
+    responses:
+      - "Counter's open. Prices are what they are -- the stone doesn't
+        negotiate and neither do I."
+  - keywords: [""]
+    responses:
+      - "Ask me what you need. If I have it, I'll tell you. If I don't,
+        I'll tell you that too."
+tree:
+  root:
+    text: "Maret's Mill, east bank landing. I do the grinding and the selling --
+      the wheel does the hard part. Flour, loaves, and fresh trout from the
+      landing this morning. What brings you in?"
+    hints: "You could ask Maret about the flour and the mill, about the river
+      and the flooding, or about the grain trade and the local supply."
+  nodes:
+    - id: flour
+      triggers: ["flour", "mill", "stone", "wheel", "grind", "grain", "loaf",
+        "bread"]
+      text: "I grind for three farms and the university kitchens. The stone is
+        set for fine flour -- I can run it coarser for meal but it takes
+        time to reset. The loaves I bake in the mornings before the grinding
+        starts, so they're ready by the time the flour is. River trout I buy
+        from the fishers at the steps, dress them myself, sell them same
+        day. I don't keep stock overnight. If it's not fresh, I don't sell it.
+        That's the policy, it has been the policy, and it will continue to
+        be the policy."
+      hints: "You could ask Maret about the river and the flood season, or
+        about the grain trade and what the barges bring."
+    - id: river
+      triggers: ["river", "water", "flood", "season", "level", "flow"]
+      text: "The river runs the wheel, so I pay attention to it more than most.
+        Spring is the anxious season -- if the channel jumps its bank the
+        sluice gate goes underwater and I lose a week at minimum. I've had
+        the floor flood twice. The wheel's been running this stretch for
+        sixty years and the sluicework is sound, but sound doesn't mean
+        immune. I watch the water level. There's a gauge post in the landing
+        wall. If it goes past the third mark, I'm pulling the gate and
+        closing the wheel until it drops."
+      hints: "You could ask about the flour and the mill, or about the grain
+        trade and what the barges bring in."
+    - id: trade
+      triggers: ["trade", "barge", "delivery", "supply", "stock", "locals",
+        "greenford"]
+      text: "Barges from the Confluence bring raw grain -- three farms' worth,
+        sometimes four when the harvest is good. I grind it and it goes back
+        out as flour to the university kitchens, the town bakeries, and the
+        river-row stalls. It's a short loop. The Greenford economy runs on
+        the mill; the mill runs on the river; the river runs on whatever the
+        uplands send down each year. When the harvest is poor upriver you
+        know about it here inside a season. I've learned not to read into
+        it unless it happens two years running."
+      hints: "You could ask about the flour and the milling, or about the
+        river and the flood season."
