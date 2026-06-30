@@ -7,8 +7,8 @@ description: >
   arrange themselves before the crossing. The bridge is
   ahead, its stone spans visible crossing the Greenford
   river, the piers squared and broad, the roadway worn
-  smooth. A toll-booth stands on the far bank, a pipe-brazier
-  burning at the guard post. The staging area's earth is cut
+  smooth. A toll-booth stands on the far bank, its pipe-brazier
+  unlit at the empty guard post. The staging area's earth is cut
   with deep cart tracks from the traffic of many seasons.
 biome: farmland
 coord: {x: 21, y: -69, z: 0}
@@ -17,9 +17,11 @@ exits:
   south: {roomid: 6277}
 nouns:
   the bridge: >
-    Three stone arches spanning the Greenford river, the
-    piers set on a gravel bar that holds them out of the
-    main current. The bridge is old and well-maintained —
+    From the staging area the bridge reads as a single
+    object — its three arches carrying the road low over
+    the water, the far abutment landing on the opposite
+    bank just below the climb into Greenford.
+    The bridge is old and well-maintained —
     the paving on the roadway worn to a smooth curve from
     traffic, the arch stones tight and close-fitted at the
     joints. It is the kind of bridge that has been repaired
