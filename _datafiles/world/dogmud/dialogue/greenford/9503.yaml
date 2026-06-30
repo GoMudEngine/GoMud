@@ -40,9 +40,8 @@ tree:
       hints: "You could ask about the river and how the current reads here,
         or about the bridge and the crossing above."
     - id: river
-      triggers: ["river", "water", "current", "reach", "deep", "season",
-        "aldren"]
-      text: "The Aldren runs deep here below the bridge, green and steady
+      triggers: ["river", "water", "current", "reach", "deep", "season"]
+      text: "The Greenford river runs deep here below the bridge, green and steady
         most of the year. Fast in the spring -- you wouldn't put a line in
         during flood season, the current takes everything sideways. Summer
         it drops and goes green and clear; that's when the trout are easiest

@@ -43,7 +43,7 @@ tree:
         about the current and how the river's running."
     - id: confluence
       triggers: ["confluence", "west", "downriver", "city", "south", "market",
-        "below"]
+        "below", "trade"]
       text: "The Confluence is downriver to the west -- three rivers meet there,
         big market town, the temple. That's where most of the cargo starts
         its journey east. The barge masters base themselves there and run

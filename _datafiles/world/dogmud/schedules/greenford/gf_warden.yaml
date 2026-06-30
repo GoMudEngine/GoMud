@@ -33,7 +33,12 @@ segments:
   - start: 23
     end: 6
     target_room: 6278
-    activity: sleeping
+    activity: ""
     idlecommands:
-      - emote sleeps in the gatehouse alcove, the toll-ledger on the shelf above
-        his head and the draw-bar set across the gate-frame for the night.
+      - emote stands in the gatehouse doorway and watches the empty road, the
+        lantern behind him casting long light across the bridge stones.
+      - say Night crossing is quiet. As it should be.
+      - emote turns a slow circuit of the gate -- draw-bar, lantern bracket,
+        ledger on the shelf -- then returns to the post and settles in to wait.
+      - emote pulls the cloak closer and studies the far end of the bridge
+        until satisfied nothing stirs there, then relaxes against the gate-post.

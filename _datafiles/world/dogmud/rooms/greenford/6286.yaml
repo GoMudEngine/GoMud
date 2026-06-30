@@ -14,7 +14,7 @@ description: >
   damp and particular to still river-margins. The town
   noise is a little quieter up here. The water does most
   of the talking.
-biome: city
+biome: water
 coord: {x: 21, y: -76, z: 0}
 exits:
   north: {roomid: 6285}

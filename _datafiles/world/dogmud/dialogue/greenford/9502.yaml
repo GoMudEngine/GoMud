@@ -22,8 +22,8 @@ tree:
     text: "Maret's Mill, east bank landing. I do the grinding and the selling --
       the wheel does the hard part. Flour, loaves, and fresh trout from the
       landing this morning. What brings you in?"
-    hints: "You could ask Maret about the flour and the mill, about the river
-      and the flooding, or about the grain trade and the local supply."
+    hints: "You could ask Maret about the flour and the mill, about the
+      river and the flooding, or about the barges and the local supply."
   nodes:
     - id: flour
       triggers: ["flour", "mill", "stone", "wheel", "grind", "grain", "loaf",
@@ -37,7 +37,7 @@ tree:
         That's the policy, it has been the policy, and it will continue to
         be the policy."
       hints: "You could ask Maret about the river and the flood season, or
-        about the grain trade and what the barges bring."
+        about the barge deliveries and what they bring."
     - id: river
       triggers: ["river", "water", "flood", "season", "level", "flow"]
       text: "The river runs the wheel, so I pay attention to it more than most.
@@ -48,8 +48,8 @@ tree:
         immune. I watch the water level. There's a gauge post in the landing
         wall. If it goes past the third mark, I'm pulling the gate and
         closing the wheel until it drops."
-      hints: "You could ask about the flour and the mill, or about the grain
-        trade and what the barges bring in."
+      hints: "You could ask about the flour and the mill, or about the
+        barge deliveries and what they bring in."
     - id: trade
       triggers: ["trade", "barge", "delivery", "supply", "stock", "locals",
         "greenford"]

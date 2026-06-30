@@ -43,7 +43,7 @@ tree:
       hints: "You could ask about the river and the water she works in, or
         about the folk in town and the riverfront life."
     - id: river
-      triggers: ["river", "water", "bank", "cold", "current", "stone", "level"]
+      triggers: ["river", "water", "bank", "cold", "current", "level"]
       text: "Cold. Even in summer this river runs cold -- comes down from the
         uplands and doesn't warm up enough by the time it reaches here to
         make any difference to the washing. My hands have been in this water
@@ -58,14 +58,16 @@ tree:
     - id: town
       triggers: ["town", "folk", "people", "local", "greenford", "life",
         "who", "live"]
-      text: "River district's its own sort -- fishers, mill workers, barge
-        crews, the chandler and Fenn with his fish. We're not the university
-        people; they're uphill and we're down here, and that's fine. They
-        come down for fish and flour and we go up for the market days, and
-        the two halves of the town rub along without much trouble. The
-        riverfolk know the river and the scholars know their books, and
-        there's enough traffic between them to keep everybody fed and
-        reasonably informed. It's a decent life. I've lived worse
-        elsewhere and I stay here because it suits me."
-      hints: "You could ask about the laundry and the work, or about the
-        river and the cold water."
+      text: |
+        River district's its own sort -- fishers, mill workers, barge
+        crews, the chandler and Fenn with his fish. We're not the
+        university people; they're uphill and we're down here, and
+        that's fine. They come down for fish and flour and we go up
+        for the market days, and the two halves of the town rub along
+        without much trouble. The riverfolk know the river and the
+        scholars know their books, and there's enough traffic between
+        them to keep everybody fed and reasonably informed. It's a
+        decent life. I've lived worse elsewhere and I stay here
+        because it suits me.
+      hints: "You could ask about the laundry and the washing, or about
+        the river and the cold water."
