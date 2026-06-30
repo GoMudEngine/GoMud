@@ -20,10 +20,11 @@ patterns:
         where it is."
 tree:
   root:
-    text: "General Store, twelve years. I carry lamp oil, candles,
+    text: |
+      General Store, twelve years. I carry lamp oil, candles,
       rope, salt, dry goods, and whatever else the market
       doesn't cover. Three tiers on each wall. The balance
-      scale is on the counter. What do you need?"
+      scale is on the counter. What do you need?
     hints: "You could ask Prue about the stock and the shelves,
       about trade and prices, or about Greenford and the
       market."
@@ -63,8 +64,8 @@ tree:
       hints: "You could ask about the stock and the shelves, or
         about the town and the market square."
     - id: town
-      triggers: ["town", "greenford", "square", "neighbors",
-        "university", "uphill", "neighbours"]
+      triggers: ["town", "greenford", "market", "square",
+        "neighbors", "university", "uphill", "neighbours"]
       text: |
         Good town to keep a store in -- the university keeps
         the demand steady and the town doesn't overgrow itself.

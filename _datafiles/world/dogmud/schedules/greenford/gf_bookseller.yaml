@@ -35,5 +35,5 @@ segments:
     target_room: 6290
     activity: sleeping
     idlecommands:
-      - emote sleeps in the room above the shop, the smell of paper and old
-        leather faint through the boards, the shelves quiet in the dark below.
+      - emote sleeps in the shop's back corner, the shelves dark around her
+        and the smell of paper and old leather faint in the still air.

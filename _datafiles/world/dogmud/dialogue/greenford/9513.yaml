@@ -19,10 +19,11 @@ patterns:
       - "Ask me what you want to know. That's the job."
 tree:
   root:
-    text: "Town crier, Market Cross, Greenford -- the notices, the
+    text: |
+      Town crier, Market Cross, Greenford -- the notices, the
       announcements, the bridge repair timetable if you want
       that again. Bell goes on the hour. Board's up to date.
-      What do you want to know?"
+      What do you want to know?
     hints: "You could ask about the notices and the news, about
       the market square, or about Greenford uphill."
   nodes:
@@ -61,12 +62,13 @@ tree:
     - id: greenford
       triggers: ["greenford", "upper", "uphill", "university",
         "scholars"]
-      text: "University town, three hundred years old give or take
+      text: |
+        University town, three hundred years old give or take
         -- the scholars know the exact figure and correct you
         if you get it wrong, which tells you something about
         the place. The upper town's the market and the inn and
-        the bookshop. The university's at the crown of the hill
-        above that. The town runs itself quietly and the
-        scholars keep to their books. It works."
+        the bookshop. The university's at the crown of the
+        hill above that. The town runs itself quietly and the
+        scholars keep to their books. It works.
       hints: "You could ask about the notices and the board, or
         about the market square and the cross."

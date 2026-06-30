@@ -18,9 +18,10 @@ patterns:
         temper for slow questions."
 tree:
   root:
-    text: "Market Cross stall. Greens from the valley farms --
+    text: |
+      Market Cross stall. Greens from the valley farms --
       cut this morning, here by first light. I know they're
-      fresh. Ask me what you want."
+      fresh. Ask me what you want.
     hints: "You could ask about the produce and the stall, about
       the season and the harvest, or about the town square."
   nodes:
@@ -54,11 +55,12 @@ tree:
     - id: town
       triggers: ["town", "square", "greenford", "crier",
         "notice", "cross"]
-      text: "Good square for a stall -- the cross brings people
+      text: |
+        Good square for a stall -- the cross brings people
         past whether they mean to stop or not, and the notice
         board keeps them standing long enough to look at what's
         on offer. The crier's useful for the same reason. I
         don't mind the bell. It means people are paying
-        attention."
+        attention.
       hints: "You could ask about the produce for sale, or
         about the season and the harvest."

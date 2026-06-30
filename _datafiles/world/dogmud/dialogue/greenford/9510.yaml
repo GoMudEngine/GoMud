@@ -51,7 +51,7 @@ tree:
     - id: travelers
       triggers: ["travelers", "traveler", "road", "south",
         "guest", "guests", "visitor", "visitors", "passage",
-        "journey", "arriving", "arriving"]
+        "journey", "arriving"]
       text: |
         We get a fair bit of through-traffic -- the road south
         is the main route from the river crossing, so anyone

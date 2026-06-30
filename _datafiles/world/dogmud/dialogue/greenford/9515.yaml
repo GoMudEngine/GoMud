@@ -19,10 +19,11 @@ patterns:
       - "Ask me. I know this lane."
 tree:
   root:
-    text: "I'm on the lane most mornings. Scribe's on the west
+    text: |
+      I'm on the lane most mornings. Scribe's on the west
       side, chandler's on the east, pigeonhole board's at the
       scribe's door. The lane's quiet most days, which is why
-      I like it. What do you want to know?"
+      I like it. What do you want to know?
     hints: "You could ask about the lane and the shops, about
       daily work and errands, or about Greenford and the
       town."
@@ -48,7 +49,8 @@ tree:
     - id: work
       triggers: ["work", "daily", "errands", "business",
         "morning", "tasks", "day"]
-      text: "I'm a factor for two of the counting-houses on the
+      text: |
+        I'm a factor for two of the counting-houses on the
         upper lane -- courier work mostly, letters and
         contracts between the guild offices and the university
         administration. It's not glamorous but it's steady
@@ -56,7 +58,7 @@ tree:
         upper town by now. The lane's a good base for it --
         scribe's here when I need a clean copy, chandler's
         here when I need a seal. Between them I barely need
-        to go anywhere else."
+        to go anywhere else.
       hints: "You could ask about the lane and the scribe's
         shop, or about Greenford and the market."
     - id: town

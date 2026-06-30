@@ -35,5 +35,5 @@ segments:
     target_room: 6291
     activity: sleeping
     idlecommands:
-      - emote sleeps in the back room off the bar, one ear still angled toward
-        the staircase from twenty years of innkeeping habit.
+      - emote sleeps behind the bar, folded into the corner settle with one
+        ear angled toward the stair.
