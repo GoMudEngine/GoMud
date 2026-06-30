@@ -21,8 +21,8 @@ tree:
         - type: action
           do: send_user_text
           text: >-
-            The guide inclines its head. 'That is the last of it. Step
-            through -- and welcome to Gaius.' The grey dissolves...
+            The guide inclines its head. 'That is the last of it --
+            and welcome to Gaius.' The grey dissolves around you...
         - type: action
           do: move_player
           room_id: 5200
