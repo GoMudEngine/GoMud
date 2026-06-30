@@ -9,7 +9,9 @@ description: >
   court opens to the south, broader than it looked
   from below: the quadrangle, the tower above it,
   the ranges on three sides. The porter's board
-  beside the lodge tracks visitors and hours.
+  beside the lodge tracks visitors and hours. From
+  the south the open quad carries faint voices —
+  a lecture in progress, its words just out of reach.
   Examine the lodge or the board.
 biome: city
 coord: {x: 22, y: -80, z: 2}
@@ -52,9 +54,11 @@ nouns:
     broad and old, the upper courses lighter in
     colour from a later phase of building. The
     arched openings at the crown let the sky through
-    on all sides. Jackdaws on the parapet. The tower
-    is the tallest structure in Greenford and
-    probably the oldest. Both things are true in
+    on all sides. At this distance the tool-marks
+    on the base stones are visible — dressed by hand,
+    long before the university was built around it.
+    The tower is the tallest structure in Greenford
+    and probably the oldest. Both things are true in
     the way that requires no comment from anyone
     who lives here.
 spawninfo:
