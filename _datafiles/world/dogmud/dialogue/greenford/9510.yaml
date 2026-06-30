@@ -1,0 +1,81 @@
+mobid: 9510
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Come in, sit down. The fire's up and there's broth on
+      if you want it. What do you need?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Day to you. Bar's open, kitchen's warm. Sit wherever
+        suits you."
+  - keywords: ["buy", "sell", "price", "cost", "food", "meal"]
+    responses:
+      - "Broth and bread are what I'm running today. Prices are
+        on the slate. Nothing on the slate isn't in the kitchen."
+  - keywords: [""]
+    responses:
+      - "Ask me what you need. The Rest has been here a long
+        time and so have I."
+tree:
+  root:
+    text: |
+      Cartographer's Rest, Greenford -- the square's inn, for
+      those who like the short version. I do room and board,
+      broth most days, bread every morning. The common room's
+      the one you're in. The fire's kept up from first light.
+      Stair to the lodging floor's at the south corner. What
+      brings you through?
+    hints: "You could ask Daven about the inn and the lodgings,
+      about travelers and the road, or about Greenford and
+      the market."
+  nodes:
+    - id: inn
+      triggers: ["inn", "rest", "cartographer", "lodging",
+        "lodgings", "room", "rooms", "bed", "stair", "bar",
+        "common", "settle", "hearth", "fire"]
+      text: |
+        Three floors: common room at the bottom, lodging floor
+        above that, storage at the top. Rooms on the quiet side
+        face the lane -- I put scholars there because they
+        complain about noise more than anyone else, and they're
+        right to. The settle by the hearth is for regulars and
+        anyone tired enough to claim it. The bar runs two ales
+        and a cider most days; the slate behind the counter
+        has what's on. The broth is in the pot from morning;
+        the bread I put out at first light. No elaborate menu.
+        Good food, good fire, sound sleep -- that's the Rest.
+      hints: "You could ask about travelers and the road, or
+        about Greenford and the market square."
+    - id: travelers
+      triggers: ["travelers", "traveler", "road", "south",
+        "guest", "guests", "visitor", "visitors", "passage",
+        "journey", "arriving", "arriving"]
+      text: |
+        We get a fair bit of through-traffic -- the road south
+        is the main route from the river crossing, so anyone
+        coming up from the Confluence or heading further east
+        tends to pass through here. Scholars are the backbone
+        of the trade: they arrive at the start of term with
+        too much luggage and stay the night before finding
+        their quarters at the university. The rest are
+        merchants, surveyors, the occasional party of
+        travelers who just want somewhere warm. I don't
+        distinguish. The Rest is the Rest for everyone.
+      hints: "You could ask about the inn and the lodgings, or
+        about Greenford and what's uphill."
+    - id: town
+      triggers: ["town", "greenford", "market", "square",
+        "university", "scholars", "uphill"]
+      text: |
+        Good town for an inn -- the university keeps the trade
+        steady year-round, even when the road traffic's thin.
+        Market square's just outside the door: produce most
+        mornings, the general store, Aldith's bookshop on the
+        west side. The university's at the crown of the hill,
+        which you can see from the square. Town's quiet by
+        most measures, which suits me and suits the scholars.
+        If you want busy you want the Confluence.
+      hints: "You could ask about the inn and the common room,
+        or about travelers and the road south."

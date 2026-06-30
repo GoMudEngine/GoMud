@@ -1,0 +1,52 @@
+mobid: 9511
+zone: Greenford
+craft_support: general
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote lifts a clay lamp-oil bottle from the shelf, checks
+    the seal with a thumb, and replaces it in precisely the
+    space it came from.'
+  - ''
+  - 'say Everything''s in its place. If you can''t find
+    something, ask -- I can reach it in the dark.'
+  - ''
+  - 'emote steps onto the kick-step, lifts the lid of a grain
+    jar on the top tier, and replaces it with the same motion
+    in reverse.'
+  - ''
+activitylevel: 10
+character:
+  name: Prue the Store-Keeper
+  description: |
+    Prue the Store-Keeper has run the General Store for twelve
+    years with a precision that borders on the affronting --
+    everything is in its place, the place has not changed,
+    and the suggestion that any of this could be otherwise
+    she does not entertain. She is short and neat, with hands
+    that move with an economy of motion suggesting every path
+    to every shelf has been memorized until it requires no
+    thought. Her Chrysalis-change is exactly that: a
+    proprioceptive sense of space, a flawless awareness of
+    where every item in the store sits in three dimensions.
+    She can reach for anything in the dark without error. The
+    shelving system is for her customers. She does not need
+    it herself.
+  speciesid: 1
+  level: 1
+  gold: 45
+  stats:
+    perception:
+      training: 7
+    charisma:
+      training: 3
+  shop:
+    - itemid: 40157
+    - itemid: 40077
+    - itemid: 40158

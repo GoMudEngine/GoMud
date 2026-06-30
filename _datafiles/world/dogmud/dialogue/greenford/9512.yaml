@@ -1,0 +1,64 @@
+mobid: 9512
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Valley greens, this morning. Fresh. Have a look."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Day to you. Stall's open, prices are marked."
+  - keywords: ["buy", "sell", "price", "cost", "purchase"]
+    responses:
+      - "Greens are a penny the basket. Fresh this morning and
+        not here tomorrow, so."
+  - keywords: [""]
+    responses:
+      - "Ask me what you need. I've got greens and a short
+        temper for slow questions."
+tree:
+  root:
+    text: "Market Cross stall. Greens from the valley farms --
+      cut this morning, here by first light. I know they're
+      fresh. Ask me what you want."
+    hints: "You could ask about the produce and the stall, about
+      the season and the harvest, or about the town square."
+  nodes:
+    - id: produce
+      triggers: ["produce", "greens", "vegetables", "basket",
+        "fresh", "stall", "roots", "herbs", "selling", "wares"]
+      text: |
+        Broad leaf greens and roots from three valley farms --
+        I've dealt with the same farms for eight years and I
+        know the difference between a good cut and one that's
+        been sitting. These are a good cut. I take them this
+        morning, I sell them today, what's left at close goes
+        back for the animals. Nothing sits overnight. If I say
+        it's fresh, it's fresh. That's worth something at a
+        market stall, and my regulars know it.
+      hints: "You could ask about the season and the harvest,
+        or about the town square and the cross."
+    - id: season
+      triggers: ["season", "harvest", "weather", "crops",
+        "valley", "farms", "morning"]
+      text: |
+        Good season so far -- the valley farms have been
+        getting the rain they need without the flooding they
+        don't. The greens are coming in well, the roots are
+        fat. The cheese-seller's had a good run too, though
+        that's her business. I've been at this stall long
+        enough to know when a season's kind and when it isn't.
+        This one's kind. Ask me again in a month.
+      hints: "You could ask about the produce and the stall, or
+        about the square and the cross."
+    - id: town
+      triggers: ["town", "square", "greenford", "crier",
+        "notice", "cross"]
+      text: "Good square for a stall -- the cross brings people
+        past whether they mean to stop or not, and the notice
+        board keeps them standing long enough to look at what's
+        on offer. The crier's useful for the same reason. I
+        don't mind the bell. It means people are paying
+        attention."
+      hints: "You could ask about the produce for sale, or
+        about the season and the harvest."

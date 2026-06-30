@@ -1,0 +1,46 @@
+mobid: 9515
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote checks the pigeonhole board without slowing, finds
+    nothing in his slot, and continues down the lane at the
+    same pace.'
+  - ''
+  - 'say The chandler keeps his own hours. You learn to work
+    around it or you go without candles. I work around it.'
+  - ''
+  - 'emote pauses to press a palm flat on the scribe''s closed
+    shutter -- not cold today -- then moves on without
+    comment.'
+  - ''
+activitylevel: 10
+character:
+  name: A Townsperson
+  description: |
+    A quiet man of the Guild Lane going about the middle
+    business of a weekday with the settled ease of someone
+    who likes where he lives. He is unassuming and unhurried,
+    with a coat worn smooth at the elbows and a scarf that
+    has been in service since before the cold technically
+    started. His Chrysalis-change is in his hands and feet:
+    the skin there has become thermally inert -- he registers
+    neither cold nor heat in either set of extremities. He
+    presses letters closed on candle-sealing wax without
+    flinching and works the lane in winter without gloves.
+    His children regard this as the single interesting thing
+    about him, and he is not certain they are wrong.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    vitality:
+      training: 4
+    charisma:
+      training: 3

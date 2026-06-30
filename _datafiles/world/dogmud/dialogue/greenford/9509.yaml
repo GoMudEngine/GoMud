@@ -1,0 +1,84 @@
+mobid: 9509
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Stock's organized. If you know what you want, say so --
+      if you're browsing, browse."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Good day to you. Mind the step-ladder if it's where I
+        left it."
+  - keywords: ["buy", "sell", "price", "cost"]
+    responses:
+      - "Prices are on the labels. Old stock in the crate by the
+        door is marked down twice."
+  - keywords: [""]
+    responses:
+      - "Ask me directly. I either have it or I know where to
+        find it."
+tree:
+  root:
+    text: |
+      Bookshop on the square, eighteen years. I stock what the
+      university wants and a good deal of what it doesn't know
+      it wants yet -- natural philosophy on the north wall,
+      cartography and survey along the east, history up top
+      where the step-ladder earns its keep. The crate by the
+      door is old stock, marked down twice. What do you need?
+    hints: "You could ask Aldith about the books and the stock,
+      about maps and surveyors, or about the university uphill."
+  nodes:
+    - id: books
+      triggers: ["books", "book", "shelf", "shelves", "stock",
+        "title", "titles", "volume", "crate", "copy", "copies",
+        "philosophy", "history", "text"]
+      text: |
+        Natural philosophy and mathematics on the north wall --
+        the university buys heavily from that run each term.
+        Survey and cartography along the east; I keep that
+        section deep because the older editions move slow but
+        steady. History dominates the top tier, mostly in
+        rebindings -- the originals have gone to the library
+        and what I carry are working copies, well-used and
+        honest. The crate by the door is miscellany: whatever
+        has been here long enough to be marked down twice.
+        Worth a look if you have patience for it.
+      hints: "You could ask about maps and surveyors, or about
+        the university and the scholars uphill."
+    - id: surveyors
+      triggers: ["surveyor", "surveyors", "map", "maps",
+        "cartograph", "eastern", "reth", "brennan", "retire",
+        "retired"]
+      text: |
+        I get a lot of questions about the eastern survey work
+        -- the university runs expeditions every few years and
+        the accounts come back to me eventually, bound or in
+        pamphlet. There was a surveyor who retired early --
+        Reth, bought a quieter life outside town, never quite
+        explained why. He came in more than once asking about
+        the eastern country. Specific questions, the kind that
+        want a map with something particular marked on it.
+        Brennan up at the university asks the same sorts of
+        things now. If you want someone who knows the subject,
+        he's your man. I have the maps; I don't always have
+        the answers to what people are really asking.
+      hints: "You could ask about the books and the stock, or
+        about the university and the scholars."
+    - id: university
+      triggers: ["university", "scholar", "scholars", "academic",
+        "uphill", "climb", "students", "faculty"]
+      text: |
+        Three hundred years and still expanding -- they're on
+        the east wing now, timber going up the hill by barge
+        every other week. Good customers: they buy in runs,
+        they know exactly what they want, and they pay without
+        haggling, which is more than I can say for the general
+        public. This town is half its size without the
+        university. Students come in at the start of term with
+        lists; I work through the lists. The rest of the year
+        they come in with questions, which is harder work and
+        more interesting.
+      hints: "You could ask about the books and the stock in
+        the crate, or about maps and surveyors."

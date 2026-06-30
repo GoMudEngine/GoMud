@@ -1,0 +1,49 @@
+mobid: 9512
+zone: Greenford
+craft_support: cooking
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote straightens the greens in the basket with quick
+    sure hands, pulling the outer leaves to the top where
+    they show best.'
+  - ''
+  - 'say Valley farms, this morning. You can tell by the smell
+    of them -- if you know what to smell for.'
+  - ''
+  - 'emote lifts her face to the air for a moment, nostrils
+    wide, then goes back to the stall without comment.'
+  - ''
+activitylevel: 10
+character:
+  name: A Produce-Seller
+  description: |
+    A broad-shouldered woman with a market-stall manner --
+    brisk, confident, done with unnecessary conversation
+    before it starts. She works the Market Cross stall each
+    morning with greens and roots from the valley farms,
+    laid out in the order that catches the most light and
+    fewest flies. Her Chrysalis-change is in her nose: the
+    nostrils have widened by a perceptible degree and
+    developed an acuity that covers soil health, ripeness,
+    and weather at range. She smells rain two hours before
+    it falls and assesses freshness in a single breath. She
+    does not explain this. The greens are always good;
+    customers have learned to trust the fact without asking
+    after the reason.
+  speciesid: 1
+  level: 1
+  gold: 15
+  stats:
+    perception:
+      training: 5
+    vitality:
+      training: 4
+  shop:
+    - itemid: 40158

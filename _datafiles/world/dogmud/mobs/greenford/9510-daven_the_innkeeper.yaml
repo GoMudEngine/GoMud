@@ -1,0 +1,50 @@
+mobid: 9510
+zone: Greenford
+craft_support: cooking
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote polishes the bar with a worn cloth, turning it end
+    over end at an unhurried pace, then folds it and sets it
+    behind the counter.'
+  - ''
+  - 'say Room and board, meals twice a day, the fire kept up.
+    That''s the Rest. Sit down when you''re ready.'
+  - ''
+  - 'emote stands at the near end of the bar and listens toward
+    the stair for a moment, then relaxes and goes back to
+    setting out cups.'
+  - ''
+activitylevel: 10
+character:
+  name: Daven the Innkeeper
+  description: |
+    Daven the Innkeeper has run the Cartographer's Rest for
+    twenty years and regards this as the correct length of
+    time to know what a traveler needs before they ask: the
+    corner settle by the fire, a hot meal, the room on the
+    quiet side. He is broad and unhurried, with a warmth
+    that comes from professional ease rather than any
+    particular sentiment about strangers. His Chrysalis-
+    change is in his ears: the outer edge of each has curved
+    upward and inward by a fraction, cupping sound the way
+    a hand cups water. He hears guests on the stair two
+    treads before they arrive at the bar. He has stopped
+    being surprised by late arrivals entirely.
+  speciesid: 1
+  level: 1
+  gold: 50
+  stats:
+    charisma:
+      training: 6
+    perception:
+      training: 5
+  shop:
+    - itemid: 40155
+    - itemid: 40154

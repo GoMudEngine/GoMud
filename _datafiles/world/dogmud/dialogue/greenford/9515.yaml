@@ -1,0 +1,75 @@
+mobid: 9515
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "You looking for the scribe or the chandler? I can
+      tell you which one's open."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Day to you. Lane's quiet today, which is how I prefer
+        it."
+  - keywords: ["busy", "hurry", "errand", "quick"]
+    responses:
+      - "I've got the morning off, more or less. Ask me what
+        you want."
+  - keywords: [""]
+    responses:
+      - "Ask me. I know this lane."
+tree:
+  root:
+    text: "I'm on the lane most mornings. Scribe's on the west
+      side, chandler's on the east, pigeonhole board's at the
+      scribe's door. The lane's quiet most days, which is why
+      I like it. What do you want to know?"
+    hints: "You could ask about the lane and the shops, about
+      daily work and errands, or about Greenford and the
+      town."
+  nodes:
+    - id: lane
+      triggers: ["lane", "scribe", "chandler", "guild",
+        "correspondence", "letter", "letters", "pigeonhole",
+        "wax", "ink", "shop", "board"]
+      text: |
+        Scribe's on the left as you come in from the square --
+        copying, fair-hand, legal drafts, the usual. He's
+        good and he doesn't overcharge, which you can't say
+        for all of them. The chandler on the right does
+        candles and sealing wax; if you need a wax seal for
+        a letter that has to travel without cracking in the
+        cold, that's who you want. The pigeonhole board at
+        the scribe's door is the lane's informal post: half
+        the correspondence in the upper town comes through
+        those slots before it goes anywhere else. Has worked
+        this way for longer than anyone can say.
+      hints: "You could ask about daily work and errands, or
+        about Greenford and the town."
+    - id: work
+      triggers: ["work", "daily", "errands", "business",
+        "morning", "tasks", "day"]
+      text: "I'm a factor for two of the counting-houses on the
+        upper lane -- courier work mostly, letters and
+        contracts between the guild offices and the university
+        administration. It's not glamorous but it's steady
+        and I know every office and every shortcut in the
+        upper town by now. The lane's a good base for it --
+        scribe's here when I need a clean copy, chandler's
+        here when I need a seal. Between them I barely need
+        to go anywhere else."
+      hints: "You could ask about the lane and the scribe's
+        shop, or about Greenford and the market."
+    - id: town
+      triggers: ["town", "greenford", "market", "square",
+        "street", "neighbors", "neighbours"]
+      text: |
+        I've been in Greenford eight years, which is long
+        enough to know it doesn't change much. Market square's
+        the centre of the upper town; the river district's its
+        own thing below. University keeps the place running:
+        the scholars need copyists, factors, chandlers, good
+        inns -- and the town obliges. It's not an exciting
+        arrangement but it's a reliable one. I've lived in
+        more exciting places. I prefer this.
+      hints: "You could ask about the lane and the guild shops,
+        or about work and daily errands."
