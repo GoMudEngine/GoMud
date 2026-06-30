@@ -12,13 +12,15 @@ description: >
   cast as a closed fist. A board to the left of the door
   carries civic notices in a formal hand: meeting records,
   rate schedules, public announcements. The lane continues
-  south, climbing toward the university. Examine the
-  board or the knocker.
+  south toward the university; west, a quiet lane leads
+  out to the edge of town. Examine the board or the
+  knocker.
 biome: city
 coord: {x: 22, y: -78, z: 1}
 exits:
   north: {roomid: 6289}
   south: {roomid: 6296}
+  west: {roomid: 6317}
 nouns:
   the town hall: >
     A plain stone building — three storeys, narrow
