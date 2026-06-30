@@ -1,0 +1,15 @@
+itemid: 40160
+name: A Surveyor's Marked Map
+namesimple: marked map
+not_salable: true
+description: >
+  A folded survey map in Reth's own hand, creased from long use. A
+  route is inked in red along the eastern highland tracks, with a
+  waymark circled where the ridge-line drops toward a dry creek
+  bed -- a path east into country few bother to walk.
+type: object
+subtype: mundane
+weight: 0.1
+value: 0
+rarity_tier: 40
+is_component: false

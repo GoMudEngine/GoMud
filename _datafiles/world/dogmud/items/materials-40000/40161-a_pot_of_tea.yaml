@@ -1,0 +1,15 @@
+itemid: 40161
+name: A Pot of Tea
+namesimple: tea
+description: A small clay pot of steeped highland tea, still warm. The brew
+  is pale gold and faintly bitter, the kind kept simmering all morning
+  in a tea house that means it.
+type: object
+subtype: mundane
+component_tag: pot-of-tea
+weight: 0.4
+value: 6
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking
