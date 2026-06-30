@@ -110,11 +110,19 @@ tree:
             <ansi fg="command">ask esk passage</ansi>. The coulee will
             still be here either way.
           delay: 36.5
+        # The mutation lands at the moment of transformation (just after the
+        # "newly, quietly awake" line at 20.0, and before the 26.0 line that
+        # tells the player to type `mutations` to see it). The quest completion
+        # is the FINAL beat, after the last send-off line at 36.5 -- otherwise
+        # the "quest complete" banner fires at t=0 and spoils the whole rite.
+        # Both actions honor the static `delay` param (behaviortree/actions.go).
         - type: action
           do: grant_mutation
+          delay: 21.0
         - type: action
           do: grant_quest
           quest: "30-end"
+          delay: 37.0
 
     # ── GREETING: an un-Opened player arrives (incl. FIRST SPAWN —
     #    HandleJoin emits player_enter once per brand-new character).
