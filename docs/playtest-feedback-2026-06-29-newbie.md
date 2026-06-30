@@ -4,6 +4,14 @@ Source: Malia's playtest (`User Feedback Dogmud.pdf`, project root). Parsed and
 grouped by Claude. Star ratings she gave: Login/Main Interface ⭐⭐⭐;
 Tutorial/Newbie First Area ⭐⭐⭐ (flagged "R" = needs review).
 
+> **STATUS (2026-06-29): entire list dispositioned.** Done/fixed: A1, A3, B2,
+> B3, C3, C4, C5, D1, D3, D5, E1, E2, E4, E6 (+ the 3-tier onboarding/antechamber
+> for C1/C2). Verified-no-change-needed: A2, A4, C6, C7, D2, D4, D6, D7. Won't-do:
+> **E3** (command tiers — see rationale below). Deferred (low-value polish):
+> **E5** (celestial art panel). The big structural fix A5 (silent early-exit)
+> is folded into the onboarding/transition work. Outcome details in the
+> per-batch "outcomes" sections below.
+
 ## Key finding — zone boundary / silent early-exit
 
 Malia's exit point is **Warden Esk → The Threshold House (room 5215)**. "The
@@ -173,11 +181,26 @@ root cause of several later complaints.
   fix is a curated "essential commands" short-list surfaced to flagged-newbie
   characters + a one-line "new here? start with these" pointer atop `help` —
   not a tier system.
-- **E5 — DEFERRED (needs the mockups).** "ASCII art / iconography readability —
-  Original/Better/Best mockups." The terminal is IBM Plex Mono 20px /
-  lineHeight 1.2 / no letterSpacing, with dynamic font resizing to keep 80
-  cols. The concrete change depends on Malia's Better/Best mockups (in the
-  feedback PDF) — pull those before tweaking font/spacing/glyphs.
+- **E5 — DEFERRED (low-value polish, 2026-06-29).** Mockups reviewed (pulled
+  from `User Feedback Dogmud.pdf`, repo root — untracked; 5 embedded images).
+  E5 is specifically the **celestial + weather "art" side-panel**, not terminal
+  fonts. The mockups:
+  - *Original* — the current moon renders as a crude blocky white blob
+    ("Swiftmoon blazes full overhead").
+  - *Better/Best #1* — a fully **rendered** gradient "Quarter Moon" graphic
+    (soft shadow, star-field) — a raster/SVG asset, NOT ASCII.
+  - *Best #2* — a glowing multi-color "SUNSET" ASCII banner (sun glyph + `)))`
+    waves), which **Malia herself flagged as "looks like the Title of the
+    Game"** (i.e. overdone).
+  Source today: server-side `internal/gametime/moonphase.go` + moon-phase hooks,
+  pushed to the web `art` panel (`dashboard.js`).
+  **Why deferred:** purely cosmetic flavor in a side panel — gates nothing,
+  blocks no newbie, no comprehension impact. Matching the "Better" mockup means
+  a new client rendering path + art assets for *every* moon-phase × weather
+  state, and there's no crisp target (the "Best" reference is disavowed by its
+  own author). Revisit only after the larger content/systems work, and only
+  after a design call on whether the panel goes full-graphics or stays
+  stylized-ASCII. Lowest-value item on the entire list.
 
 ## Triage notes
 - **Biggest lever: A5 + C1 together.** The silent early-exit means several
