@@ -1,0 +1,42 @@
+id: gf_ostler
+description: "Wren works the coaching yard through the daylight hours, tending horses
+  and serving travelers. Winds down the stable in the evening and sleeps in the
+  tack room at night."
+segments:
+  - start: 6
+    end: 18
+    target_room: 6319
+    activity: ""
+    idlecommands:
+      - emote runs a hand along the near horse's neck, checking the coat for
+        damp with a quick, practiced press.
+      - say Coaches west depart on the hour. If you need provisions or a hired
+        mount, you have come to the right yard.
+      - emote lifts a harness from the rack, works the buckle back and forth
+        twice, then hangs it at a slightly better angle.
+      - emote carries a water bucket to the near stall and sets it down without
+        spilling a drop.
+      - say The horses go out well-rested or they do not go out at all -- that
+        is how I keep the coaches on schedule.
+      - emote stands in the stable doorway and looks west along the road,
+        measuring something in the sky with a flat, unhurried glance.
+  - start: 18
+    end: 23
+    target_room: 6319
+    activity: ""
+    idlecommands:
+      - emote sweeps a slow line of chaff and straw toward the stable door,
+        working corner-to-corner without rushing.
+      - say Long day. Last coach cleared the west road before the rain came --
+        exactly how it should go.
+      - emote checks the water bucket in each stall in turn, topping off two
+        and leaving the rest.
+      - emote folds a horse blanket in three neat lengths and drapes it over the
+        stall rail for the morning.
+  - start: 23
+    end: 6
+    target_room: 6319
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the tack room at the back of the stable, wrapped in a
+        spare horse blanket with one ear turned toward the yard.

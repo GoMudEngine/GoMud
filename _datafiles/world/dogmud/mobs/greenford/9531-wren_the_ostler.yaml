@@ -1,5 +1,6 @@
 mobid: 9531
 zone: Greenford
+schedule_id: gf_ostler
 craft_support: cooking
 behavior_archetype: noncombat_shopkeeper
 non_combatant: true
