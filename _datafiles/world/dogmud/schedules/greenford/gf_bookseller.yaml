@@ -1,0 +1,39 @@
+id: gf_bookseller
+description: "Aldith opens the bookshop at first light and works through the afternoon
+  re-shelving and assessing new stock, closes up quietly at evening, then sleeps
+  in the room above the shop with the shelves dark below."
+segments:
+  - start: 7
+    end: 19
+    target_room: 6290
+    activity: ""
+    idlecommands:
+      - emote draws a fingertip along a spine on the lower shelf, pauses, then
+        tilts the volume out a half-inch and reads the title without raising her head.
+      - say If you are looking for something, say so. The system is mine -- it
+        will not be obvious to anyone else.
+      - emote lifts a new arrival from the table, holds it flat, and runs her
+        fingers across the boards without opening it.
+      - say Most people who browse leave without buying. That is fine. People who
+        know what they want come back.
+      - emote carries a small stack of volumes from the table to a gap on the
+        upper shelf, sliding each one into place with a soft click.
+  - start: 19
+    end: 22
+    target_room: 6290
+    activity: ""
+    idlecommands:
+      - emote sets a cloth marker at her page, closes the book, and adds it to
+        the returns pile with the deliberate care of someone who catalogues as
+        she works.
+      - say The shop closes at the second bell. People who come after that are
+        either urgent or interesting. Neither is common.
+      - emote begins straightening the shelf ends with a small wooden block,
+        nudging each row flush and checking the result with two fingers.
+  - start: 22
+    end: 7
+    target_room: 6290
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the room above the shop, the smell of paper and old
+        leather faint through the boards, the shelves quiet in the dark below.

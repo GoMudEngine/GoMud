@@ -1,5 +1,6 @@
 mobid: 9510
 zone: Greenford
+schedule_id: gf_innkeeper
 craft_support: cooking
 behavior_archetype: noncombat_shopkeeper
 non_combatant: true
