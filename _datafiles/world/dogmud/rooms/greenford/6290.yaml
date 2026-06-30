@@ -13,7 +13,6 @@ description: >
   near the door holds recent arrivals still to be
   shelved. A crate below the table holds titles
   that have been here long enough to become local.
-  The proprietor knows exactly where everything is.
   Examine the shelves or the crate.
 biome: city
 coord: {x: 21, y: -76, z: 1}
