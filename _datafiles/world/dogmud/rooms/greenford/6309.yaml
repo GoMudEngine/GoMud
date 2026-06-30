@@ -2,17 +2,20 @@ roomid: 6309
 zone: Greenford
 title: Back Gate Lane
 description: >
-  Beyond the college's back gate, the lane drops
-  a short step to cobbled ground — the beginning
-  of the residential quarter, where the flagging
-  of the college precinct gives way to the quieter
-  paving of the upper town. Faculty houses stand
-  close on either side: narrow terraces of dressed
-  stone, their front walls flush with the lane,
-  their gardens small and damp with morning. Smoke
-  from the first chimneys is already rising. The
-  college gate is north; College Row opens to the
-  south. Examine the lane or the houses.
+  A breath of cooler air comes through the
+  college's back gate -- beyond it, the lane
+  drops a short step to cobbled ground, the
+  beginning of the residential quarter, where
+  the flagging of the precinct gives way to
+  the quieter paving of the upper town.
+  Faculty houses stand close on either side:
+  narrow terraces of dressed stone, their
+  front walls flush with the lane, their
+  gardens small and damp with morning. Smoke
+  from the first chimneys is already rising.
+  The college gate is north; College Row
+  opens to the south. Examine the lane or
+  the houses.
 biome: city
 coord: {x: 22, y: -84, z: 2}
 exits:
