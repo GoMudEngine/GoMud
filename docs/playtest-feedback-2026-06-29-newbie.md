@@ -158,12 +158,21 @@ root cause of several later complaints.
   prompt now reassures ("Used only to recover your account… never shared,
   never spammed.") and notes "press Enter to skip"
   (`login/email-new.prompt.template`, both trees).
-- **E3 — DEFERRED (needs design).** "Split skills/command list into
-  Beginner/Experienced/Advanced tabs." No tier metadata exists today —
-  commands are grouped topically (combat/shops/etc.) in `keywords.yaml`; skills
-  are flat. This is a real feature (server-side tier field + `help`/`skills`
-  re-grouping, optionally a web side-panel), not a quick fix. Needs a scope
-  decision before building.
+- **E3 — ABANDONED (won't do, 2026-06-29).** "Split skills/command list into
+  Beginner/Experienced/Advanced tabs." Decided against after a devil's-advocate
+  review. Reasons: (1) the overwhelm it targets is already handled by the 3-tier
+  onboarding/antechamber, which never dumps the full list on a newbie; (2) tier
+  boundaries are subjective and need perpetual re-arbitration as commands are
+  added; (3) it competes with the existing, more useful *topical* grouping
+  (combat/shops/etc.) and forces players to choose between two taxonomies;
+  (4) overwhelm is a goal-directed-lookup problem (`help attack`), which tiers
+  don't help; (5) real "tabs" are web-only (fragments telnet/Mudlet), and the
+  portable version is just more sections in the same wall of text; (6) hiding
+  "advanced" commands risks walling newbies off from a command they need.
+  **If the long-`help` concern resurfaces post-antechamber**, the proportionate
+  fix is a curated "essential commands" short-list surfaced to flagged-newbie
+  characters + a one-line "new here? start with these" pointer atop `help` —
+  not a tier system.
 - **E5 — DEFERRED (needs the mockups).** "ASCII art / iconography readability —
   Original/Better/Best mockups." The terminal is IBM Plex Mono 20px /
   lineHeight 1.2 / no letterSpacing, with dynamic font resizing to keep 80
