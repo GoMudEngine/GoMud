@@ -32,7 +32,7 @@ tree:
     - id: wares
       triggers: ["loaf", "bread", "cheese", "plum", "sell", "buy",
         "food", "wares", "stock", "provisions", "what"]
-      text: "The barley loaf I bake myself -- plateau wheat from the
+      text: "The wheat loaf I bake myself -- plateau wheat from the
         fields just west of here, dense and dark, keeps better than
         the soft southern stuff. The hard cheese comes from Kael farm
         across the south ridge, rind-sealed and sharp the way it

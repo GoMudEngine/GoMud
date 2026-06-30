@@ -8,9 +8,9 @@ maxwander: 1
 groups:
   - animal
 idlecommands:
-  - 'emote lies stretched along the top of the milepost stone in a
-    loose coil, absorbing its warmth with the deliberate patience
-    of something that does this professionally.'
+  - 'emote lies stretched across the flat road-stone in a loose
+    coil, absorbing its warmth with the deliberate patience of
+    something that does this professionally.'
   - ''
   - 'emote raises its head an inch and tastes the air with a slow
     flicker of its tongue before lowering it again.'
@@ -23,8 +23,8 @@ character:
   name: A Basking Snake
   description: |
     A thick-bodied serpent of the plateau dry-country, a metre
-    and a half in length, coiled on the warm capstone of the
-    milepost in full afternoon heat with an air of complete
+    and a half in length, coiled on a warm flat stone at the
+    road's edge in full afternoon heat with an air of complete
     contentment. Its scales are warm umber mottled with darker
     bands that break up its outline against the stone almost
     perfectly. Its Chrysalis-mark is a double row of pale scales
