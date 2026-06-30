@@ -7,9 +7,10 @@ description: >
   arrange themselves before the crossing. The bridge is
   ahead, its stone spans visible crossing the Greenford
   river, the piers squared and broad, the roadway worn
-  smooth. A toll-booth stands on the far bank, its pipe-brazier
-  unlit at the empty guard post. The staging area's earth is cut
-  with deep cart tracks from the traffic of many seasons.
+  smooth. A toll-booth stands on the far bank, its
+  pipe-brazier smoking — the warden is at the post.
+  The staging area's earth is cut with deep cart tracks
+  from the traffic of many seasons.
 biome: farmland
 coord: {x: 21, y: -69, z: 0}
 exits:
@@ -37,12 +38,13 @@ nouns:
     a long time.
   toll-booth: >
     A small stone structure on the far bank — a guard post
-    with a pipe-brazier mounted outside, the brazier cold
-    and unlit. The booth is built for occupancy: shuttered
-    windows, a door, a bracket for a lantern. Whoever
-    should be sitting in it is not here right now. The
-    post itself is well-made, which suggests the toll
-    collection is not an afterthought.
+    with a pipe-brazier mounted outside, the brazier lit
+    and sending a thin line of smoke into the air above
+    the span. The warden is visible through the near
+    window — a figure in a weathered coat, settled in
+    for the shift. The booth is built for occupancy and
+    it is occupied. The toll collection is clearly not
+    an afterthought.
 idlemessages:
 - The bridge piers stand in the current with total indifference.
 - Cart tracks in the staging area are deep from many seasons.

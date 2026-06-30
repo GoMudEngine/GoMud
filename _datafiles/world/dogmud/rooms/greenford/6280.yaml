@@ -11,7 +11,9 @@ description: >
   horizontal surface in a fine pale layer. The smell is
   warm grain and wet wood. The grain sacks stacked by the
   door carry the marks of three different farms. The mill
-  is busy; it is always busy this time of year.
+  is busy; it is always busy this time of year. The
+  millstone and the grain sacks tell different parts of
+  the same story.
 biome: water
 coord: {x: 21, y: -73, z: 0}
 exits:
@@ -41,9 +43,9 @@ nouns:
     in a different farmer's mark. Three farms' grain at
     minimum, waiting their turn at the stone. The sacks
     are heavy — proper grain weight, not air and dust.
-    Someone has stacked them in order of arrival: oldest
-    nearest the chute, newest farthest from it. The
-    miller's accounting is physical and spatial.
+    The order here is physical: oldest grain nearest the
+    chute, newest farthest from it. The miller's
+    accounting is spatial.
   the flour-dust: >
     A fine pale layer on every shelf, beam, and flat
     surface inside the mill — the kind that accumulates

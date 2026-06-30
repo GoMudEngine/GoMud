@@ -8,11 +8,11 @@ description: >
   oars shipped on the thwarts — rigged and ready, waiting
   on a tide or a purpose. Nets hang from the rafters in
   dark swags, some mended with pale new cord, some still
-  stiff with salt and river-silt. The smell is tar, rope,
-  and old water. A vent in the far gable lets light in
-  and the worst of the river-damp out. The nets overhead
-  and the gear along the walls are worth examining — the
-  boathouse runs a working trade.
+  stiff with salt and river-silt. The smell is pine tar,
+  linseed oil, and old water. A vent in the far gable
+  lets light in and the worst of the river-damp out.
+  The nets overhead and the gear along the walls are
+  worth examining — the boathouse runs a working trade.
 biome: water
 coord: {x: 22, y: -74, z: 0}
 exits:
@@ -46,8 +46,8 @@ nouns:
     spare oar blanks, a tar-pot with a brush dried stiff
     across the lid, a block-and-tackle for lifting loaded
     cargo from barge to dock. Everything has a place and
-    most things are in it. Someone runs this boathouse
-    carefully. The gear is in working order.
+    most things are in it — this boathouse is run carefully.
+    The gear is in working order.
   the river end: >
     The open end of the boathouse faces the river directly,
     the building's floor ending in a sloped ramp into the

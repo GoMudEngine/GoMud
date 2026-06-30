@@ -1,17 +1,19 @@
 roomid: 6286
 zone: Greenford
-title: The Upper Bank
+title: The Still Reach
 description: >
-  The river curves here above the town's main quay, the
-  bank rising slightly before leveling to a gravel shelf
-  wide enough to walk along. Willows line the upper
-  edge, their roots in the bank and their canopy leaning
-  out over the water. The current is slower here — the
-  inside of the river's bend collecting quiet water and
-  fine silt. Reed stands have taken the shallows at the
-  bank's foot; the smell is green and damp and particular
-  to still river-margins. The town noise is a little
-  quieter up here. The water does most of the talking.
+  Reed-stir reaches you first — the sound of slow water
+  and something unseen moving in the shallows below.
+  The river bends south below the landing, its inside
+  edge slow and broad in the bend's shelter. Willows
+  line the upper edge, their roots in the bank and their
+  canopy leaning out over the water. The current is
+  slower here — the inside of the river's bend collecting
+  quiet water and fine silt. Reed stands have taken the
+  shallows at the bank's foot; the smell is green and
+  damp and particular to still river-margins. The town
+  noise is a little quieter up here. The water does most
+  of the talking.
 biome: city
 coord: {x: 21, y: -76, z: 0}
 exits:
