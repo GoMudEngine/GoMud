@@ -1,0 +1,14 @@
+itemid: 40152
+name: A River Trout
+namesimple: trout
+description: A fat river trout caught fresh from the current, silver-flanked
+  and cool to the touch -- dressed and ready for the pan or the fire.
+type: object
+subtype: mundane
+component_tag: river-trout
+weight: 0.4
+value: 6
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking

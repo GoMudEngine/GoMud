@@ -1,0 +1,14 @@
+itemid: 40153
+name: A Sack of Milled Flour
+namesimple: flour
+description: Stone-ground at Greenford's watermill, this pale flour sifts
+  fine between the fingers -- good for bread, dumplings, or a winter stew.
+type: object
+subtype: mundane
+component_tag: milled-flour
+weight: 1.0
+value: 5
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking

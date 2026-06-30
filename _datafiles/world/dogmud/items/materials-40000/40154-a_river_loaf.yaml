@@ -1,0 +1,14 @@
+itemid: 40154
+name: A River Loaf
+namesimple: river-loaf
+description: A round loaf baked from freshly milled flour, with a crackling
+  crust and a soft crumb that holds butter well.
+type: object
+subtype: mundane
+component_tag: river-loaf
+weight: 0.3
+value: 5
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking
