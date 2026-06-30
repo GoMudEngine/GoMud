@@ -1,0 +1,109 @@
+mobid: 9519
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Mm. Yes. Come in -- the chair by the fire is not
+      anyone's in particular."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Good day. Ask me something. I am better at talking
+        than I look right now."
+  - keywords: ["founding", "history", "official"]
+    responses:
+      - "Three hundred years of accepted account. I have been
+        looking at it for twenty. The dates do not add up."
+  - keywords: [""]
+    responses:
+      - "Ask plainly. I am in the middle of something but I
+        can hold two questions at once."
+tree:
+  root:
+    text: |
+      Historiography. The Founding's account of itself.
+      Three hundred years of scholars accepting it, which
+      does not make it wrong -- but does make the question
+      more interesting than it has been treated. I am here
+      because the common room is warmer than my office. Ask
+      me something.
+    hints: "You could ask about his doubts about the Founding
+      account, about how he reads source documents, about what
+      makes the official version so suspicious, or about the
+      university and his place here."
+  nodes:
+    - id: founding
+      triggers: ["founding", "history", "account", "origins",
+        "chronicle", "story", "three hundred", "began", "begin",
+        "narrative", "origin", "established"]
+      text: |
+        The Founding account is coherent. Suspiciously so.
+        Three centuries of documentation, all pointing to one
+        tidy origin story, no serious loose ends that were not
+        resolved and filed away. The problem is that the account
+        was compiled and canonized -- it did not simply survive.
+        Documents that support it are easily found. Documents
+        that predate it and complicate it have a way of ending
+        up in collections that are difficult to access. I am
+        not saying someone falsified three hundred years of
+        records. I am saying the surviving record is a selection,
+        and selections have selectors. I do not know yet who
+        was selecting, or why. That is the question.
+      hints: "You could ask how he reads source documents and
+        finds the seams, about what makes the official account
+        so suspicious, or about the university."
+    - id: sources
+      triggers: ["sources", "document", "documents", "evidence",
+        "record", "records", "method", "methodology", "date",
+        "dates", "interpret", "primary", "reading", "seam",
+        "seams", "compiled"]
+      text: |
+        The method is simple: find where the source document
+        was written. Not when the event happened -- when the
+        document describing it was produced. Most of the
+        Founding's primary sources were compiled one to three
+        generations after the fact. That is not inherently
+        dishonest. But it means the compiler decided what
+        belonged and what did not. I look for the things they
+        decided did not belong. They are usually still there,
+        if you know where the gaps are. Gaps in an official
+        record have a particular texture.
+      hints: "You could ask about his doubts on the Founding
+        account, about what makes the official version too
+        convenient, or about the university."
+    - id: official
+      triggers: ["official", "doctrine", "convenient", "clean",
+        "neat", "tidy", "suppress", "suppressed", "version",
+        "wrong", "temple", "accepted", "fits", "too neat"]
+      text: |
+        Living history has loose ends. That is how you tell
+        it is real -- the parts that did not resolve neatly,
+        the things that happened and did not fit the story
+        people were trying to tell. The Founding account has
+        none of that. Every piece fits. Every contradiction
+        is addressed. Every awkward document has a footnote
+        explaining it away. I do not have an alternative
+        account to offer you -- I have a list of questions
+        the official account does not answer, and a strong
+        feeling that someone spent considerable effort
+        making it feel like they do.
+      hints: "You could ask about his method for reading source
+        documents and finding the seams, or about the university
+        and his position here."
+    - id: university
+      triggers: ["university", "faculty", "scholars", "academic",
+        "department", "tenure", "tolerate", "colleagues",
+        "position", "here", "job", "career"]
+      text: |
+        The university tolerates me because I publish in the
+        right journals, train competent graduate students, and
+        am, by the standards of my field, respectable. My
+        colleagues find me tiresome at dinner parties, which is
+        fair. The institution has three hundred years of
+        investment in a particular story of itself, and I spend
+        my working hours asking why the dates in that story do
+        not cohere. We have reached an understanding. They leave
+        me my common room chair and I do not lecture in the
+        main hall.
+      hints: "You could ask about his doubts on the Founding
+        account, or about his method for reading source documents."

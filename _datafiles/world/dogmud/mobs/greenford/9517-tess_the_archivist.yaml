@@ -1,0 +1,45 @@
+mobid: 9517
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - margin
+idlecommands:
+  - 'emote moves along the top shelf, checking file labels
+    without pulling any of them out.'
+  - ''
+  - 'say The eastern portfolios are in date order, far right.
+    If you need something specific, say so.'
+  - ''
+  - 'emote adjusts the lamp on the reading-stand a quarter-
+    inch and studies the result.'
+  - ''
+activitylevel: 10
+character:
+  name: Tess the Archivist
+  description: |
+    Tess the Archivist has run the university archive for
+    fourteen years, which by her accounting is exactly long
+    enough to know where everything is and not long enough
+    to have stopped minding when things are misplaced. She is
+    precise and unhurried, with a card-index system she updates
+    in a notational shorthand no one else has fully learned.
+    Her Chrysalis-change is in her vision: in low light her
+    eyes shift to a near-monochrome, high-contrast mode, the
+    faded ink on old paper as legible to her as fresh text in
+    daylight. She works the archive by lamplight without
+    difficulty. She finds it faintly irritating when visitors
+    remark on it.
+  speciesid: 1
+  level: 1
+  gold: 14
+  stats:
+    perception:
+      training: 7
+    willpower:
+      training: 4

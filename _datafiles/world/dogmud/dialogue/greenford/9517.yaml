@@ -1,0 +1,103 @@
+mobid: 9517
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "The Archive. I know where everything is -- say what
+      you want and I will tell you if we have it."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Tess. What do you need?"
+  - keywords: ["survey", "eastern", "reth", "brennan"]
+    responses:
+      - "Eastern surveys are on the upper tier. Reth's filed
+        report is on the reading-stand."
+  - keywords: [""]
+    responses:
+      - "Ask plainly. I know this archive and I do not need
+        to guess at what you are looking for."
+tree:
+  root:
+    text: |
+      The Archive. I know where everything is -- say what
+      you want and I will tell you if we have it. The eastern
+      surveys are on the upper tier if that is what you are
+      looking for. The restricted collection is east; that
+      requires the provost's written leave.
+    hints: "You could ask Tess about the eastern surveys and
+      Reth's filed survey, about the mark in the survey margins,
+      about how the archive is organized, or about the
+      restricted collection to the east."
+  nodes:
+    - id: eastern_surveys
+      triggers: ["quest", "task", "eastern", "survey", "surveys",
+        "reth", "thin", "expedition", "filed", "report",
+        "reading-stand", "find", "looking", "show", "brennan"]
+      text: |
+        The eastern surveys are on the upper tier, far right --
+        organized by year of expedition. Reth's filed report is
+        the thin one, three expeditions back. I have left it on
+        the reading-stand; someone has been asking after it for
+        some time now. That is all it is: a filed survey. Read
+        it yourself -- examine the filed-survey on the stand.
+      hints: "You could examine the filed-survey on the reading-
+        stand, then return to Brennan. You could also ask about
+        the mark in the survey margins, or the archive holdings."
+    - id: symbol
+      triggers: ["symbol", "mark", "ring", "rings", "nested",
+        "notation", "margins", "recurring", "cartograph",
+        "annotation", "old-maps"]
+      text: |
+        I have catalogued the instances I can find -- a
+        recurring mark in the margins of the oldest surveys,
+        different hands, different years of fieldwork. Several
+        scholars have asked me about it over the years. No one
+        has reached an agreement on what it marks. I note it
+        and file it. Interpretation is not my function here.
+      hints: "You could ask about the eastern surveys and Reth's
+        filed report, about the archive holdings, or about the
+        restricted collection."
+    - id: archive
+      triggers: ["archive", "organized", "organize", "holdings",
+        "catalogue", "card", "files", "box", "portfolio",
+        "how", "where", "what is", "what"]
+      text: |
+        Box-files by region and date, portfolios in the same
+        sequence. The card-index on the reading-stand bracket
+        covers everything in the open holdings. Oldest tier is
+        the top tier; recent work is below. If you know the
+        region and approximate date I can find what you need
+        in a moment. If you do not, tell me what you are
+        looking for and I will find the right section.
+      hints: "You could ask about the eastern surveys and Reth's
+        filed survey, about the mark in the survey margins, or
+        about the restricted collection."
+    - id: restricted
+      triggers: ["restricted", "collection", "provost",
+        "dispensation", "access", "permit", "forbidden",
+        "east", "locked", "special"]
+      text: |
+        East of here -- by special dispensation only, the
+        provost's written leave. It holds materials the
+        university considers sensitive: donor records,
+        contested attributions, a few survey portfolios
+        currently under review. The review has been ongoing
+        for some time. I do not ask about the pace of it.
+        You would need to apply to the provost's office in
+        writing. Most people decide it is not worth the wait.
+      hints: "You could ask about the eastern surveys and Reth's
+        filed report, about the archive holdings, or about the
+        mark in the survey margins."
+    - id: margin
+      triggers: ["margin", "scholars", "who", "group",
+        "member", "belong", "society"]
+      text: |
+        We keep the source records and ask the questions that
+        the official accounts consider settled. I keep the
+        archive; what I find and what I catalogue is the work.
+        The Margin does not shout about what it finds. We file
+        carefully and we wait. That is most of what keeping
+        an archive amounts to, in the end.
+      hints: "You could ask about the eastern surveys, about the
+        archive holdings, or about the restricted collection."
