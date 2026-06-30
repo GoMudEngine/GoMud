@@ -31,7 +31,7 @@ tree:
   nodes:
     - id: well
       triggers: ["well", "water", "rope", "crank", "tend", "work",
-        "how", "maintain", "keep", "what do you"]
+        "maintain", "keep", "what do you"]
       text: "The rope I replace every second season -- you can tell
         it is going before it goes, if you know what to feel for. The
         crank was rebuilt five years back, good ironwork from Kilnreach.
