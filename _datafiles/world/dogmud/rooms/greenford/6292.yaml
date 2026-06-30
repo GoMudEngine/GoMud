@@ -1,0 +1,63 @@
+roomid: 6292
+zone: Greenford
+title: "The Cartographer's Rest, Upstairs"
+description: >
+  The lodging floor is quieter than the common room
+  below — a short corridor with four numbered doors,
+  the boards underfoot muffled by a strip of old
+  woven rug worn to its backing. The doors are solid
+  timber, latched from inside; at least two rooms are
+  occupied, judging by the boots set out in the hall.
+  A window at the corridor's east end looks out over
+  the lane and the square's edge below, the river a
+  dark line visible between the far buildings. A shelf
+  beside the window holds a small collection of things
+  guests have left behind and no one has claimed.
+  Examine the shelf or the window.
+biome: city
+coord: {x: 23, y: -76, z: 2}
+exits:
+  down: {roomid: 6291}
+nouns:
+  the lost-and-found shelf: >
+    A shallow shelf beside the corridor window,
+    holding a row of unclaimed items: a leather glove
+    missing its pair, a small compass in a cracked
+    case, a handkerchief knotted around something
+    small, a pocket almanac with the year's cover
+    worn through. The innkeeper has kept them all
+    against the chance of return. Most are probably
+    not coming back for. The shelf is a quiet record
+    of passing through.
+  the window: >
+    A window at the corridor's east end, the glass
+    slightly wavy in the old pane. Below: the lane
+    running east from the square, and beyond the
+    near rooftops a clear view toward the river
+    valley. In clear weather the far bank is visible
+    and sometimes further — the hills above the
+    ford, the road north. From here the town looks
+    small and well-ordered. It probably is.
+  the doors: >
+    Four numbered doors along the corridor, solid
+    timber on iron hinges, each latched from inside.
+    Boots have been set out before two of them in
+    the way of guests who intend to be seen as
+    civilized. One pair is large; the other is a
+    scholar's walking boot, the sole re-stitched at
+    the toe. The corridor is otherwise quiet. The
+    rooms are doing what lodging rooms do at this
+    hour.
+  the rug: >
+    A strip of woven rug running the corridor's
+    length, its pattern long since blurred to a
+    general warmth of color. The backing shows at
+    the center where the pile is gone. It is soft
+    underfoot in the way of things worn to their
+    final useful state. The inn has not replaced
+    it, which is either economy or sentiment.
+    Both are possible.
+idlemessages:
+- A floorboard creaks in the room behind the nearest door.
+- Morning light shifts along the corridor floor from the east window.
+- From below, the muffled sound of the common room carries on.

@@ -1,0 +1,65 @@
+roomid: 6288
+zone: Greenford
+title: The Market Square
+description: >
+  The Town Stair gives out here onto the Market
+  Square — the upper town spreading from the top
+  of the climb. It is not large, the kind of square
+  a market fills comfortably on a weekday morning
+  with room to cross between the stalls. The
+  Bookshop opens to the west; the Cartographer's
+  Rest inn holds the east side, smoke already at
+  the chimney. South, the Market Cross stands at
+  the square's far end. Above the roofline the
+  university tower is plainly visible now, squared
+  against the sky, at its full height at last.
+  Examine the stalls or the inn sign.
+biome: city
+coord: {x: 22, y: -76, z: 1}
+exits:
+  down: {roomid: 6287}
+  south: {roomid: 6289}
+  west: {roomid: 6290}
+  east: {roomid: 6291}
+nouns:
+  the square: >
+    The Market Square is the upper town's centre —
+    not grand, but solid and well-used. The cobbles
+    are of two generations: an older set worn smooth
+    in the crossing-paths, and a newer section at
+    the east end re-laid a decade back and not yet
+    broken in. The stone trough at the north-west
+    corner holds flowers now; it held running water
+    once. The town keeps its square functional
+    rather than beautiful, and has done so for a
+    long time.
+  the stalls: >
+    The morning stalls claim the square's south and
+    east edges — canvas awnings, trestle tables,
+    the smell of produce fresh from the overnight
+    road in. Vegetables, small goods, a handful of
+    cut flowers. Nothing elaborate. The serious
+    shopping is on the cross-lane; these stalls are
+    the morning's first business, quick and ordinary.
+  the university tower: >
+    From the square the tower stands in full view
+    above the southern roofline, squared and plain,
+    the arched openings at the top open to the sky.
+    At this distance the mason's work shows clearly:
+    two phases of building, the lower courses older
+    and darker, the upper lighter and more precise.
+    The university has been here long enough to be
+    rebuilt once and still look as if it always was.
+  the inn sign: >
+    Hung above the Cartographer's Rest door to the
+    east: a painted board showing a folded map spread
+    open, a compass rose in the lower corner. The
+    paint is recent; the sign before it was here
+    long enough that the inn has had the same image
+    twice. In plain letters below: THE CARTOGRAPHER'S
+    REST. The name is practical, the way inn names in
+    university towns tend to be.
+idlemessages:
+- The morning stalls are setting up; earth-smell on the still air.
+- A scholar crosses the square without looking up from a page.
+- Pigeons pace the cobbles between the stalls, entirely at ease.

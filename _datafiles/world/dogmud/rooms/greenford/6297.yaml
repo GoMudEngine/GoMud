@@ -1,0 +1,67 @@
+roomid: 6297
+zone: Greenford
+title: The University Stair
+description: >
+  The lane runs out here where the town's buildings
+  give way to the university grounds — a low wall of
+  dressed ashlar and an iron gate standing open onto
+  a graveled path that rises toward the main court.
+  The gate has been open since before anyone on the
+  staff can remember. Beyond it the path runs between
+  planted borders to a paved forecourt, and from
+  there the lecture halls, the library's long arched
+  windows, and the tower at the hill's crown are all
+  plainly visible in the clear air. The university is
+  just there now — the grounds through the open gate,
+  the buildings a short climb above. Examine the gate
+  or the grounds for a nearer look.
+biome: city
+coord: {x: 22, y: -80, z: 1}
+exits:
+  north: {roomid: 6296}
+nouns:
+  the gate: >
+    An iron gate in the ashlar wall, two leaves
+    standing open and hooked back on iron rings
+    set in the stone face. The iron is old and
+    pitted, the hinges heavy castings of a type
+    not made now. The latch plate carries the
+    university's device in relief — a book and a
+    measuring rod crossed, which is a legible
+    statement of the institution's sense of itself.
+    The gate is open. It usually is during the day.
+    The grounds are not closed to visitors.
+  the grounds: >
+    Beyond the gate: a graveled path between planted
+    borders of low shrub and ground-cover, kept trim.
+    The path leads to the main forecourt — a broad
+    paved space in front of the lecture-hall range.
+    From the gate you can see the forecourt clearly
+    and the figures crossing it: students, a lecturer
+    in a dark gown, two groundskeepers with a cart.
+    The university is an ongoing place. Walking in
+    through the gate is unremarkable. People do it
+    all day.
+  the university tower: >
+    From here the tower is close enough to feel
+    large — the base stones as broad as a man's
+    arm-span, the upper arches open to the sky.
+    A flag at the very top, too faded to make out.
+    Jackdaws on the parapet ledge, unconcerned.
+    The tower is old and permanent and not
+    especially interested in being looked at.
+    It was here before the town reached up to
+    meet it and will be here after.
+  the forecourt: >
+    The main forecourt is visible from the gate:
+    a wide paved space fronting the lecture-hall
+    range, with a sundial on a plinth at the center
+    and benches along the east wall. Students cross
+    it in the way people cross a space they cross
+    every day — without looking at it. The sundial
+    is accurate. The benches are occupied in good
+    weather. The forecourt does its job.
+idlemessages:
+- A scholar passes through the gate without slowing, eyes on a page.
+- The tower bell sounds from the university above, clear in the still air.
+- The graveled path beyond the gate is recently raked, smooth and even.

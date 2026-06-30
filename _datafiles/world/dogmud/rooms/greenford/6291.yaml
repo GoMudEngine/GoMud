@@ -1,0 +1,68 @@
+roomid: 6291
+zone: Greenford
+title: The Cartographer's Rest
+description: >
+  The Cartographer's Rest is the kind of inn that
+  has made no concessions to fashion in a long time.
+  Woodsmoke and last night's cooking have settled
+  into the ceiling beams; the tables are heavy oak
+  and have been here since before the current
+  innkeeper. A long settle along the north wall holds
+  the regulars; the bar occupies the east end with its
+  row of tapped barrels and a chalk-slate listing what
+  is available. A stair from the south corner climbs
+  to the lodging floor; a door beside it opens to the
+  Guild Lane. Examine the hearth or the stair.
+biome: city
+coord: {x: 23, y: -76, z: 1}
+exits:
+  west: {roomid: 6288}
+  up: {roomid: 6292}
+  south: {roomid: 6294}
+nouns:
+  the hearth: >
+    A stone hearth in the north wall, wide enough to
+    take a full round of wood, its lintel smoke-
+    blackened to a particular shade that takes years
+    to achieve. The settle nearest it is worn to
+    the shape of habitual occupation — a cushion
+    depressed in the center, the back-rail polished
+    by shoulders. The fire is banked low this
+    morning; it will be built up as the day goes on
+    and the custom comes in.
+  the bar: >
+    A heavy oak counter across the east end of the
+    room, a row of barrels on taps above the back
+    shelf. The chalk-slate above the bar lists what
+    is running today in a round, unhurried hand:
+    two ales, a cider, and a service wine. Prices
+    are clear and not disputed. A pottery cup sits
+    where the innkeeper left it when something
+    required attention. The cup is clean. The ale
+    is good.
+  the stair: >
+    A solid stair of wide oak treads from the south
+    corner of the common room to the lodging floor
+    above. The banister rail is worn bright from
+    ascending hands. A small chalk board on the
+    newel-post marks room availability in the
+    innkeeper's hand. The stair is wide enough
+    that two guests with baggage can pass on it,
+    which is remarked on approvingly by travelers
+    accustomed to narrower stairs.
+  the settle: >
+    The long bench along the north wall — heavy oak,
+    its back worn smooth and its seat polished by
+    long use. This is where the regulars sit in the
+    order they have always sat, which would be
+    legible to no one arriving for the first time.
+    The cushions are thick and old. The settle is
+    comfortable. It has been here long enough to be
+    impossible to imagine removing.
+spawninfo:
+  - mobid: 9510
+    respawnrate: "20 real minutes"
+idlemessages:
+- The fire shifts in the grate and the settle-boards creak.
+- Someone at the bar asks about the south road. Nobody is certain.
+- The innkeeper polishes a cup with the sleeve of a worn apron.
