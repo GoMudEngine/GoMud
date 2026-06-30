@@ -1,0 +1,50 @@
+mobid: 9525
+zone: Greenford
+craft_support: cooking
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote sets a fresh pot on the counter with a single careful
+    movement and hooks a cup beside it without looking.'
+  - ''
+  - 'say First pot of the morning''s always the best. Sit wherever
+    suits you.'
+  - ''
+  - 'emote turns toward the door before it opens, already reaching
+    for a clean cup.'
+  - ''
+activitylevel: 10
+character:
+  name: Ness the Tea-Keeper
+  description: |
+    Ness the Tea-Keeper has run the tea house at the
+    end of College Row for eleven years, and she knows
+    her regulars by the time they reach the front step.
+    Her Chrysalis-change is in her nose: a scent-
+    signature recognition that lets her distinguish
+    individuals by their personal scent as precisely
+    as most people distinguish faces. She knows before
+    she looks up who has come in and whether they want
+    their usual. She has learned to be easy about this,
+    as most people find it unsettling if she greets
+    them before the door fully opens. She is warm,
+    unhurried, and efficient in the way of someone who
+    has done the same good work in the same good place
+    for a long time.
+  speciesid: 1
+  level: 1
+  gold: 40
+  stats:
+    charisma:
+      training: 6
+    perception:
+      training: 5
+  shop:
+    - itemid: 40161
+    - itemid: 40154

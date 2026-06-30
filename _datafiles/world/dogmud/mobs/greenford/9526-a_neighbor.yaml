@@ -1,0 +1,45 @@
+mobid: 9526
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote leans over the front gate and presses a hand flat
+    against the stone post, holding it there a moment.'
+  - ''
+  - 'say Mortar''s still holding. Had a wet autumn last year.
+    Worried about it, but it held.'
+  - ''
+  - 'emote straightens and looks along the row, noting the
+    doors and the state of each step in turn.'
+  - ''
+activitylevel: 10
+character:
+  name: A Neighbor
+  description: |
+    A long-standing resident of College Row, a man in
+    his fifties who keeps the terrace on the west side
+    and takes an orderly interest in the state of it.
+    He is easy company on a street corner, the kind of
+    neighbour who knows who lives where and how long
+    they have been there. His Chrysalis-change is in
+    his fingertips: they read moisture levels in stone
+    and wood and mortar with the accuracy of an
+    instrument, giving him an unusually reliable sense
+    of where damp is working in and where walls are
+    holding sound. He maintains his terrace in excellent
+    repair. He has opinions about other people's mortar.
+    He keeps these largely to himself.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    perception:
+      training: 5
+    charisma:
+      training: 4

@@ -1,0 +1,43 @@
+mobid: 9524
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote stands at the cottage window, looking out toward
+    the lane without apparent focus.'
+  - ''
+  - 'say I keep my own hours. That''s all.'
+  - ''
+  - 'emote moves the top sheet of the field-notes a careful
+    half-inch, aligns it with the others, and stops.'
+  - ''
+activitylevel: 10
+character:
+  name: Reth
+  description: |
+    Reth is a retired surveyor in his middle sixties,
+    lean and deliberate, with the unhurried economy of
+    someone who spent twenty years working in open
+    country. He keeps the cottage spare and the field-
+    notes in order. He does not invite company. His
+    Chrysalis-change is in his eyes: a close-horizon
+    sight that judges distances and proportions at
+    range with a precision no instrument matches. He
+    could tell you the length of a ridge at two miles
+    and be right within a yard. He keeps the curtains
+    drawn to a careful gap, not closed. He is watching
+    the lane without appearing to.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    perception:
+      training: 7
+    willpower:
+      training: 4

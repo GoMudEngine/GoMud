@@ -1,0 +1,76 @@
+mobid: 9526
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "You look like you're finding your way. Can I point
+      you somewhere?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Day to you. I know this row well enough."
+  - keywords: ["reth", "yew", "surveyor", "third"]
+    responses:
+      - "Third house on the west lane, the one with the big
+        yew over the path. Can't miss it."
+  - keywords: [""]
+    responses:
+      - "Ask me. I've been on this row for sixteen years."
+tree:
+  root:
+    text: |
+      Sixteen years on this row. I know the lane and
+      the college backgate and who lives behind which
+      door. What do you want to know?
+    hints: "You could ask about the streets and the row,
+      about who lives nearby and where to find them,
+      or about daily life on College Row."
+  nodes:
+    - id: directions
+      triggers: ["reth", "surveyor", "yew", "third",
+        "house", "who", "lives", "live", "find",
+        "where", "end", "last", "west", "lane",
+        "neighbor", "neighbours", "neighbors",
+        "neighbour", "quiet", "man"]
+      text: |
+        The west lane's the left fork off College Row --
+        go south and bear left. The blue door at the
+        corner is Brennan the scholar. Third house down
+        is Reth -- you'll know it by the yew overhanging
+        the path, big old tree, branches right out into
+        the lane. Quiet man since he came back from
+        wherever he was. Before that I'd see him on the
+        row most mornings. The cottage is easy to find
+        once you know to look for the yew.
+      hints: "You could ask about the row and the streets,
+        or about daily life on College Row."
+    - id: row
+      triggers: ["row", "street", "lane", "cobbles",
+        "houses", "terrace", "gardens", "gate",
+        "college", "backgate", "back"]
+      text: |
+        College Row is the main residential street --
+        the wider cobbled one with the front gardens
+        behind iron railings. The tea house is east
+        at the corner. The west lane branches off at
+        the far end toward the quieter houses. College
+        backgate is north at the top. The row is tidy
+        -- people here take some care of it, which I
+        consider the correct attitude to a shared street.
+      hints: "You could ask about who lives nearby and
+        where to find them, or about daily life."
+    - id: daily
+      triggers: ["morning", "daily", "weather", "day",
+        "work", "errand", "life", "routine",
+        "people", "residents"]
+      text: |
+        Quiet mornings, mostly. The scholars go up the
+        hill early. The rest of us take the row at our
+        own pace. The tea house opens before anyone
+        else is moving; Ness knows when you're coming
+        before you're halfway down the lane. The market
+        square is a few minutes north if you need it.
+        It's a settled sort of neighbourhood. People
+        know each other's habits. I like that.
+      hints: "You could ask about the streets and the
+        row, or about who lives where."

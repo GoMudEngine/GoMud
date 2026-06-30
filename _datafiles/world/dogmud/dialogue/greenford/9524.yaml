@@ -1,0 +1,135 @@
+mobid: 9524
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "I'm not looking for company. What do you need?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "I'm here. What is it?"
+  - keywords: ["survey", "east", "notes", "map"]
+    responses:
+      - "I don't discuss the old surveys. Good day."
+  - keywords: [""]
+    responses:
+      - "Ask me what you want. I may not answer."
+tree:
+  root:
+    text: "I'm not much for visitors. What is it you need?"
+    hints: "You could ask Reth about his retirement and
+      career, about the cottage and the yew, about
+      Greenford, or bring Brennan's introduction
+      if you have it."
+  nodes:
+    - id: testimony
+      questRequired: ["75-intro"]
+      questExcluded: ["75-end"]
+      triggers: ["brennan", "introduction", "intro",
+        "east", "eastern", "survey", "surveys",
+        "notes", "field-notes", "map", "maps",
+        "directions", "route", "cairn", "quest",
+        "task", "sent", "letter", "work", "asked",
+        "told", "know", "expedition", "expeditions",
+        "fieldwork", "field"]
+      text: |
+        Brennan's word, then. Sit down.
+        I surveyed the eastern country for twenty
+        years. There is a place about three days'
+        walk east of Hartcharn -- the maps have it
+        wrong because I filed the wrong elevation
+        numbers when I came back. Deliberately.
+        I had reasons.
+        Take the Cairn Road east out of Hartcharn.
+        At the fork with the lightning-split cairn
+        -- you will know it, the stone has been
+        struck twice and the marks are deep -- bear
+        left. Walk the old ridgeline east for four
+        hours or thereabouts, where the ground
+        shifts under you from limestone to something
+        darker. When the vegetation stops -- and
+        it will stop, hard, mid-step, as though
+        someone drew a clean line across the ground
+        -- you are there.
+        What is there is a surface. Not stone. No
+        seam I could find, no join, no tool-mark
+        I recognise. Metal, of a kind -- too clean
+        and too large for anything I can classify.
+        Nothing grows near it. The ground around
+        it is bare in a way ground does not go bare
+        naturally. I did not stay. I do not know
+        what it is. I have thought about that more
+        than I find comfortable. It is not natural.
+        I came home and filed three lines and
+        stopped talking about it. I still believe
+        that was the right thing to do.
+        The field-notes are on the table -- the
+        route is marked. Take them. I am not going
+        back, and I would rather they were somewhere
+        useful than sat here.
+      hints: "You could take the field-notes from the
+        table, or ask Reth about the cottage and
+        the yew."
+    - id: after_quest
+      questRequired: ["75-end"]
+      triggers: ["brennan", "introduction", "intro",
+        "east", "eastern", "survey", "surveys",
+        "notes", "field-notes", "map", "maps",
+        "directions", "route", "cairn", "quest",
+        "task", "sent", "letter", "work", "asked",
+        "told", "know", "expedition", "expeditions",
+        "fieldwork", "field"]
+      text: |
+        You found what you went to find. I hope
+        Brennan makes something of it. I've said
+        what I had to say.
+      hints: "You could ask about the cottage and the
+        yew, or about Greenford."
+    - id: closed
+      triggers: ["brennan", "introduction", "intro",
+        "east", "eastern", "survey", "surveys",
+        "notes", "field-notes", "map", "maps",
+        "directions", "route", "cairn", "quest",
+        "task", "sent", "letter", "work", "asked",
+        "told", "know", "expedition", "expeditions",
+        "fieldwork", "field"]
+      text: "I'm retired. I don't discuss the old surveys.
+        Good day."
+      hints: "You could ask about the cottage and the
+        yew, or about Greenford."
+    - id: retirement
+      triggers: ["retire", "retired", "retirement",
+        "career", "life", "before", "years",
+        "past", "history"]
+      text: |
+        Thirty years of survey work. Retired four
+        years ago. I live quietly here and it suits
+        me. I keep the notes in order more out of
+        habit than anything else. I don't miss
+        the field. That is all.
+      hints: "You could ask about the cottage and
+        the yew, or about Greenford."
+    - id: yew
+      triggers: ["yew", "tree", "cottage", "house",
+        "home", "front", "garden", "overgrown"]
+      text: |
+        The yew was here when I moved in. I left
+        it to itself -- the only sensible policy
+        with a yew. It has had the front garden
+        for twelve years now. I have adapted.
+        The cottage is spare and orderly. The
+        yew keeps most people from stopping.
+      hints: "You could ask about retirement and
+        past career, or about Greenford."
+    - id: town
+      triggers: ["town", "greenford", "neighbourhood",
+        "neighbors", "neighbours", "row", "street",
+        "quarter", "area", "residential", "college"]
+      text: |
+        Greenford is quiet enough. The university
+        keeps the town running without making it
+        busy. I do not need much from it, which
+        is convenient, as it does not offer a great
+        deal to people who want to be left alone.
+      hints: "You could ask about the cottage and
+        the yew, or about retirement and career."

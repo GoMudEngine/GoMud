@@ -1,0 +1,85 @@
+mobid: 9528
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Good morning. You're not lost -- this lane just goes
+      quiet at the end. Can I help?"
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Quiet end of the lane, but I'm here most
+        of the day."
+  - keywords: ["reth", "surveyor", "yew"]
+    responses:
+      - "Last house, the one with the yew. Knock if you
+        need to. He'll answer if he feels like it."
+  - keywords: [""]
+    responses:
+      - "Ask me. Twelve years retired and I have time
+        for it."
+tree:
+  root:
+    text: |
+      Twelve years at this gate since I retired. The
+      lane goes quiet at the south end -- that's the
+      point of it, really. I've been a resident here
+      long enough to know everything that goes on
+      and most of what doesn't. What do you want?
+    hints: "You could ask about the quiet end and the
+      lane, about the neighbors and who lives here,
+      or about the university and his career there."
+  nodes:
+    - id: reth
+      triggers: ["reth", "surveyor", "yew", "who",
+        "lives", "live", "neighbor", "neighbors",
+        "neighbours", "neighbour", "changed",
+        "before", "east", "surveys", "returned",
+        "retired", "quiet_man", "last", "third"]
+      text: |
+        Reth's the last house -- can't miss it, the yew
+        overhangs the path. I knew him before he went
+        quiet. Surveyor, twenty years in the eastern
+        country. He'd come past the gate on his way
+        into town most mornings. Sociable enough --
+        not the chatty sort, but not closed either.
+        Then he came back from the last survey and
+        closed the gate, and that was that. I don't
+        press. A man has the right to his quiet. I
+        just hope he's all right in there. He looks
+        well enough when I do see him.
+      hints: "You could knock on Reth's door yourself --
+        last house, the one with the yew."
+    - id: lane
+      triggers: ["lane", "end", "quiet", "house",
+        "street", "road", "here", "terrace",
+        "gate", "open", "gardens", "path"]
+      text: |
+        The west lane at its quietest end -- longer
+        front gardens, older houses, nobody hurrying.
+        My gate's the one that hangs open; I've had
+        it open for twelve years and I see no reason
+        to change. The lane's private enough at this
+        end that nobody minds. It's a good place for
+        someone who wants to be left mostly alone and
+        still have neighbours a short walk away.
+      hints: "You could ask about who lives nearby,
+        or about the university and past career."
+    - id: career
+      triggers: ["university", "registry", "career",
+        "work", "administration", "clerk",
+        "functionary", "job", "years", "records",
+        "retired", "forty"]
+      text: |
+        Forty years in the university registry -- land
+        records, agreements, the historical archive of
+        property and appointments. Not exciting work,
+        but exact work, and I was good at it. I left
+        at sixty and I have not looked back. I have
+        enough opinions about my former colleagues to
+        fill a volume I will never write, which is
+        the appropriate resolution for that kind of
+        material. The lane suits me better than the
+        registry ever did.
+      hints: "You could ask about the lane and this end
+        of the street, or about the neighbors."
