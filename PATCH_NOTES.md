@@ -1,5 +1,20 @@
 # DOGMud Patch Notes
 
+## 2026-06-29 — Newbie-area fixes (from a final playtest pass)
+
+- **The Awakening rite plays out before it finishes.** Previously the "quest
+  complete" message appeared the instant you began the rite, with the whole
+  ceremony playing afterward. Now the ceremony runs first — your mutation
+  settles in at the moment of change, and the completion lands as the closing
+  beat.
+- **Your first forged dagger teaches you at the right moment.** The "type
+  wield dagger" prompt now appears when the blade is actually finished and in
+  your hands, not while it's still on the anvil.
+- **Mutations describe their effects correctly.** A few mutations showed their
+  upsides backwards (e.g. a stamina-recovery boost reading as "slows your
+  stamina", or a health bonus reading as "thins your reserves"). They now read
+  in the right direction.
+
 ## 2026-06-29 — Login & web-client polish
 
 - **The login screen reads more clearly.** The word **"new"** on the username
