@@ -1,0 +1,61 @@
+roomid: 6284
+zone: Greenford
+title: The Climbing Lane
+description: >
+  The lane begins its rise here, the packed-earth surface
+  giving way to old cobble as the grade steepens away from
+  the river. The buildings on either side press closer as
+  the lane climbs — timber-framed fronts, shuttered windows,
+  a carved lintel here and there that dates the street's
+  age. The river smell fades behind you and something drier
+  takes over: sun-warmed stone, beeswax from a candlemaker's
+  uphill, a hint of library dust that must be coming from
+  further above. Looking up, the square tower of the
+  university is now fully visible above the rooflines,
+  its upper stonework clear against the sky. The town
+  is above you, and the lane goes up into it.
+biome: city
+coord: {x: 22, y: -75, z: 0}
+exits:
+  north: {roomid: 6283}
+  west: {roomid: 6285}
+  south: {roomid: 6287}
+nouns:
+  the cobbles: >
+    Old round-stone cobbling, each stone fitted tight
+    against its neighbors and worn to a smooth dome from
+    foot-traffic. The lane's center is lower than its
+    edges — a shallow drain-channel cut when the street
+    was first laid, still doing its work after many years.
+    The cobbles grip well on dry days; in rain or frost
+    they are treacherous. The town built them to last and
+    they have.
+  the university tower: >
+    Square stone, rising above the rooflines of the climbing
+    street — the top story pierced by arched openings that
+    catch the afternoon light on their interior faces. From
+    the lane it is bigger than it appeared from the bridge:
+    the base is broader than the upper courses, and the
+    stonework at the base is older and darker. The tower
+    has been added to over time. The additions are more
+    careful than the original, which was merely ambitious.
+  the carved lintels: >
+    Several of the buildings on the climbing lane have
+    carved stonework above their doors — dates, trade
+    marks, a few short mottos in an older form of the
+    common tongue. The oldest legible date is more than
+    two hundred years back. The town has been here at
+    least that long, and probably longer before the
+    townspeople started marking it in stone.
+  the candlemaker: >
+    A small shop on the uphill side, its shutters open
+    to the morning air, the smell of beeswax coming out
+    in warm waves. Rows of pale candles in the window,
+    in sizes from finger-length to full altar. A card
+    in the lower pane: UNIVERSITY COLOURS — MEASURED
+    TO DESK HEIGHT. Someone here has thought about the
+    scholars' needs specifically, and at some length.
+idlemessages:
+- The cobbles ring underfoot as the lane begins to climb.
+- The university tower shows its full height above the roofline here.
+- Beeswax-smell drifts down the lane from somewhere higher up.

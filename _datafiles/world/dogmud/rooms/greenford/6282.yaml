@@ -1,0 +1,62 @@
+roomid: 6282
+zone: Greenford
+title: Riverside Row
+description: >
+  A short row of low-fronted buildings running along the
+  bank above the quay, their awnings pitched over the
+  packed-earth lane. The smell varies by stall: fresh
+  fish sharp and cold, then tar and oakum from a
+  ship-chandler's open door, then the yeast-and-smoke
+  of a bakehouse at the far end. A fishmonger's counter
+  runs the full front of one building — the catch laid
+  on river-cooled boards under a chalk-lettered price
+  list. The lane connects the landing to the rest of the
+  riverfront. Examine the stalls or the counter for what
+  the row sells today.
+biome: city
+coord: {x: 23, y: -73, z: 0}
+exits:
+  west: {roomid: 6279}
+  south: {roomid: 6281}
+nouns:
+  the stalls: >
+    Three buildings with their fronts open to the lane,
+    each doing a different trade. The chandler's sells
+    rope, tar, oakum, and the small hardware of river-
+    work. The middle stall is the fishmonger's — counter
+    all along the front, the catch laid under damp cloth.
+    At the far end the bakehouse sells rounds of bread
+    and a flat griddle-cake the locals eat with river
+    fish. All three have been in the same buildings for
+    a long time. The lane is well-worn between them.
+  the counter: >
+    A wide board counter running the full front of the
+    fishmonger's building, the boards cooled by the
+    river-water poured over them each morning. Today's
+    catch: bream, roach, a few larger fish chalked as
+    pike on the price board. The prices are in a round
+    clear hand. The counter is clean and wet. The
+    fishmonger has done this a long time and does it
+    well.
+  the price board: >
+    Chalk on a slate board, hung at eye level above the
+    fishmonger's counter. Today's catch and prices in
+    large clear figures. At the bottom, in smaller
+    letters: SCALES ON REQUEST — WE DO NOT ROUND DOWN.
+    Someone has rubbed out and rewritten the bream price
+    twice this morning. The river was good today.
+  the bakehouse: >
+    The last building on the row, its door open and the
+    bread-smell thick outside it. Round loaves cool on
+    a board in the window; griddle-cakes stack on a
+    plate beside them, dark at the edges. Greenford
+    eats well — the bread is good, the flour local. A
+    hand-lettered card in the window: SCHOLAR'S LOAF
+    HALF-PRICE FRIDAY. Someone specified the day.
+spawninfo:
+  - mobid: 9505
+    respawnrate: "20 real minutes"
+idlemessages:
+- The fishmonger's chalk squeaks on the slate as a price changes.
+- Bread-smell from the bakehouse end crosses the lane on the breeze.
+- The tar-and-oakum smell from the chandler's cuts through everything else.

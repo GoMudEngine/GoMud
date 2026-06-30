@@ -1,0 +1,63 @@
+roomid: 6285
+zone: Greenford
+title: The Riverside Green
+description: >
+  A small square of open ground kept clear between the
+  river buildings — grass worn thin in the center from
+  use, but green enough at the edges. A gnarled elm
+  stands at the far corner, its lower branches lopped
+  flat where they would have blocked the river-light.
+  Beneath the elm, a low stone set upright in the ground
+  carries weather-worn carvings and a fresh bunch of
+  something green laid at its base. This is an old
+  marker, older than the surrounding buildings. The
+  riverfolk still leave things at it. Examine the stone
+  to read whatever the carving preserves.
+biome: city
+coord: {x: 21, y: -75, z: 0}
+exits:
+  east: {roomid: 6284}
+  south: {roomid: 6286}
+nouns:
+  the elm: >
+    An old elm, its trunk broader than two arms reaching,
+    its lower branches removed long ago to keep the lane
+    clear. The bark is deeply furrowed and grey. High
+    in the crown the leaves are full and green, catching
+    the river-breeze. The tree is older than the buildings
+    around it. There was a green here before the town
+    came down to meet it, and the elm was already here
+    then.
+  the stone: >
+    A flat-faced river stone set upright in the green,
+    its base sunk deep and surrounded by the root-work
+    of the elm. The face carries shallow carvings worn
+    nearly flat by weather — concentric lines, a few
+    marks that might be lettering in an older hand, a
+    circular device at the center. A bunch of river-mint
+    has been laid at the base recently; the stems are
+    still fresh. Whatever the stone marks, the riverfolk
+    here have not stopped marking it.
+  the river-mint: >
+    A fresh bunch of river-mint, stems still supple,
+    laid at the base of the upright stone. Someone
+    placed it this morning — the dew is still on it.
+    It is not the first offering. Older stems, dry and
+    grey, are pressed into the soil around the stone's
+    base, left from earlier visits. The practice is
+    clearly ongoing. No one seems to have organized it.
+    It simply continues.
+  the green: >
+    A worn square of ground between the buildings, the
+    grass thin and much-trodden in the center but
+    persisting at the edges. Children play here in the
+    mornings; the afternoon belongs to anyone who wants
+    a moment out of the river noise. The elm makes the
+    shade. The stone makes the focus. The rest is open.
+spawninfo:
+  - mobid: 9506
+    respawnrate: "20 real minutes"
+idlemessages:
+- The elm's upper branches catch the river-breeze and hold it a moment.
+- River-mint smell rises from the base of the old stone, clean and sharp.
+- Sparrows work the thin grass at the green's edges, unhurried.

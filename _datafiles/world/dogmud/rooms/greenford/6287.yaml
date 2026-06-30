@@ -1,0 +1,64 @@
+roomid: 6287
+zone: Greenford
+title: The Town Stair
+description: >
+  The riverfront ends here at a broad stone stair rising
+  from the lane into the town above. The stair is old —
+  the treads hollowed by foot-traffic, the stone balustrade
+  on the upper side worn smooth where hands have steadied
+  themselves on the climb. From the foot of the stair the
+  town is visible: a bookshop sign above a door on the
+  right, a covered market at the stair's top where voices
+  carry down on the still air, and beyond the market's
+  edge the university tower clear against the sky, its
+  full height finally apparent from this close. The stair
+  goes up into it all. The town is open and unhurried.
+  Climb when you are ready.
+biome: city
+coord: {x: 22, y: -76, z: 0}
+exits:
+  north: {roomid: 6284}
+  west: {roomid: 6286}
+nouns:
+  the stair: >
+    Broad stone treads rising from the lane into the
+    town above — a dozen steps, then a turn, then more.
+    The treads are hollowed in the center from foot-
+    traffic, the stone worn to a slight concavity that
+    is itself a record of the number of people who have
+    climbed here. The balustrade on the upper side is
+    worn smooth at hand-height from the same traffic.
+    The stair is well-kept; someone sweeps it. The
+    town above is worth the climb.
+  the bookshop: >
+    A small shop on the right side of the stair's foot,
+    its sign showing an open book above the door. The
+    window is full of titles. From here you can read
+    a few of the spines; most are texts you would only
+    know by name if you had spent time at a university.
+    The shop is the kind that has been in the same spot
+    for so long it is part of the architecture. The
+    door is open. The proprietor expects you to browse.
+  the market above: >
+    Voices carry down from the covered market at the
+    stair's top — not loud, just the ongoing sound of
+    a market doing its morning work. Canvas-covered
+    stalls, from the sound of it, with goods being
+    examined and prices discussed. From the foot of
+    the stair it is all sound and suggestion. The
+    town has a proper market and it runs daily. You
+    will see it when you reach the top.
+  the university tower: >
+    From the foot of the stair the tower is close enough
+    to show detail: the squared stone of the lower courses,
+    the lighter replacement work higher up, the arched
+    openings at the top catching and releasing the light
+    as cloud crosses the sun. The tower is the tallest
+    thing in Greenford and from here you are almost at its
+    level. The university is at the crown of the hill,
+    a short walk from the market above. The town between
+    is worth taking slowly.
+idlemessages:
+- Market voices carry down the stair in the still morning air.
+- The bookshop sign swings once in a draft from the lane below.
+- The tower catches the sun above the rooflines, steady and very old.

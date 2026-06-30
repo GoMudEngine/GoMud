@@ -7,24 +7,28 @@ description: >
   the pier-shadows below. Halfway across, the paving is
   notched where a cart-wheel has struck it at the same spot
   a thousand times — the mark of a working crossing. At the
-  far end, a toll-gate stands closed across the roadway,
-  a sign nailed below the arch reading NO PASSAGE WITHOUT
-  THE WARDEN'S LEAVE. The gatehouse beyond it is dark and
-  the gate is solid. Greenford rises up the hill past the
-  gate, impossibly close and completely barred.
+  far end, the toll-gate stands open, its timber bar raised
+  and hooked back clear of the road. The warden's booth is
+  occupied — smoke from the brazier, the window unshuttered.
+  Past the gate, the first streets of Greenford's riverfront
+  open up: low buildings against the bank, the smell of
+  fish and rope, and behind it all the long slope of the
+  hill rising to the university tower at the crown.
 biome: farmland
 coord: {x: 21, y: -70, z: 0}
 exits:
   north: {roomid: 6276}
+  south: {roomid: 6278, zone: Greenford}
 nouns:
   the gate: >
-    A bar of squared timber set across the road at the
-    bridge's far end, its fittings iron and its position
-    deliberate. A sign below the arch: NO PASSAGE WITHOUT
-    THE WARDEN'S LEAVE. The gatehouse to one side is dark,
-    the window unlit, but the gate itself is sound and
-    properly fitted. This is not a broken gate or a
-    forgotten one. It is closed, and closed on purpose.
+    A bar of squared timber at the bridge's far end, its
+    iron fittings worn bright from use. The bar is raised
+    now — hooked back clear of the road on its pivot post,
+    the crossing open to travelers. The warden's booth
+    stands occupied beside it, smoke from the brazier,
+    the window unshuttered. The gate has not always been
+    open. This season it is. The sign above the arch
+    carries the current toll-road notice.
   the bridge: >
     Standing mid-span, the stone rail is at your hand and
     the Greenford passes below in full — wide and swift
@@ -37,20 +41,23 @@ nouns:
     From here Greenford is plainly visible: a real town,
     built on a real hill, not going anywhere.
   the far shore: >
-    Past the toll-gate, the road runs up into Greenford —
-    the waterfront first, then the streets climbing the
-    hill, then the university at the top with its tower
-    catching whatever light is going. The town is
-    inhabited and established. The gate between you and
-    it is the only thing that is not open.
+    Past the open gate, the road runs into Greenford —
+    the riverfront first, low buildings close on either
+    side, the smell of fish and rope and wet stone. Then
+    the streets climbing the hill, then the university
+    at the crown with its tower catching whatever light
+    is going. The town is inhabited and the gate is
+    open. Both things are now true at once.
   sign: >
-    Nailed below the arch of the toll-gate: NO PASSAGE
-    WITHOUT THE WARDEN'S LEAVE. The lettering is painted
-    black on a pale board and has been repainted more than
-    once — the edges of older letters are visible under
-    the current ones. This sign has been here a long time
-    and has always said the same thing.
+    Nailed below the arch: GREENFORD — ALL TRAVELERS
+    SUBJECT TO TOLL AND WARDEN'S INSPECTION. Painted
+    black on pale board, the lettering repainted over
+    faint edges of older text that said something else.
+    A smaller addition in a different hand reads SCHOLARS
+    AND UNIVERSITY STAFF EXEMPT. Someone added that later.
+    No one has taken it down. The sign has been here a
+    long time. The wording has changed more than once.
 idlemessages:
-- The river moves fast under the bridge, indifferent to the gate.
-- Greenford is visible past the gate. The gate is not open.
+- The river moves fast under the bridge, indifferent to the crossing.
+- Greenford is visible past the open gate, the hill rising behind it.
 - The notch in the paving marks where every cart turned the same way.

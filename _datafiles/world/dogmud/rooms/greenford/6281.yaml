@@ -1,0 +1,63 @@
+roomid: 6281
+zone: Greenford
+title: The Fishing Steps
+description: >
+  Stone steps cut directly into the riverbank, descending
+  to a narrow ledge of gravel just above the current. The
+  steps are dark and slick where the river-splash reaches
+  them, dry and pale above. A line of crab pots rests on
+  the ledge below, their willow-weave swollen from long
+  use in the water; beside them, a pair of rod-holders
+  cut into the bank hold two lines running out into the
+  steady current. The river here is wide and deep-green.
+  Good water. The crab pots will tell you what the river
+  runs this season, if you examine them.
+biome: water
+coord: {x: 23, y: -74, z: 0}
+exits:
+  north: {roomid: 6282}
+  west: {roomid: 6283}
+nouns:
+  the steps: >
+    Stone cut into the bank in broad flat treads, old
+    work, each step tilted slightly back so rain and
+    river-splash drain away from the surface. The lower
+    three steps go dark-green below the water-line in
+    the wet season; right now they are damp and careful
+    footing only. At the bottom, a narrow ledge of
+    river gravel where the fishers work — enough room
+    to set a line and wait, no more.
+  the crab pots: >
+    Willow-weave pots, each about the size of a saddlebag,
+    their weave swollen dark from long river-use. The
+    entrance tunnels are inward-tapered — simple and
+    reliable. A piece of salted fish is tied inside the
+    nearest pot as bait. They have been in the water
+    recently; the grass-rope lashing each pot to a stake
+    is still wet. Whatever this reach runs, the pots are
+    the way to find it.
+  the fishing lines: >
+    Two lines running out into the current from rod-
+    holders cut in the bank — simple notched stakes, the
+    lines weighted with river-stone sinkers. The bait
+    is below the surface and out of sight; the lines move
+    slightly in the current, almost still. Someone has
+    set them this morning and gone back to other work.
+    The river's patience is longer than anyone's.
+  the river: >
+    Wide and deep-green here, the current steady and
+    visible as a slight surface-pull toward the south.
+    The bottom is out of sight below the colour of the
+    water. The far bank is low — a line of willows and
+    grey mud. This reach has good fish. The pots and
+    the lines are the evidence. The water keeps its
+    own count.
+spawninfo:
+  - mobid: 9503
+    respawnrate: "20 real minutes"
+  - mobid: 9507
+    respawnrate: "20 real minutes"
+idlemessages:
+- One of the fishing lines twitches once and goes still.
+- The river slides dark-green past the gravel ledge below the steps.
+- A crab pot rocks gently as the current takes it sideways and back.

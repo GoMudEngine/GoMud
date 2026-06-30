@@ -1,0 +1,59 @@
+roomid: 6280
+zone: Greenford
+title: The Watermill
+description: >
+  The mill wheel turns outside the east wall — a broad
+  wooden wheel fed by a sluiced channel from the river,
+  its paddles dripping and dark, pulling with steady
+  weight. The sound is constant: the knock and rush of
+  water, the deep groan of the millstone, the rattle of
+  grain through the chute. Inside, flour-dust coats every
+  horizontal surface in a fine pale layer. The smell is
+  warm grain and wet wood. The grain sacks stacked by the
+  door carry the marks of three different farms. The mill
+  is busy; it is always busy this time of year.
+biome: water
+coord: {x: 21, y: -73, z: 0}
+exits:
+  east: {roomid: 6279}
+nouns:
+  the millwheel: >
+    A broad wooden wheel, its paddles cut from oak, turning
+    in the sluiced race below the mill's east wall. Each
+    paddle enters the water and takes the current's weight,
+    pulling the wheel around with a knock and a rush. The
+    paddles are dark from years of river-running; the iron
+    axle stub at the hub is polished where the housing
+    bears on it. The wheel has been turning here through
+    many seasons and shows every one of them.
+  the millstone: >
+    Paired stones, the upper runner turning on the lower
+    bedstone, the gap between them set fine for flour and
+    coarser for meal. Grain drops through the eye and
+    comes out changed — the process is simple and it has
+    been simple for a very long time. The runner stone
+    is dressed in a radial furrow-pattern, the edges
+    picked sharp at the last dressing. When the stone is
+    worn even the flour will tell you before the miller
+    does.
+  the grain sacks: >
+    Rough-woven sacks, each stamped or tied with a tag
+    in a different farmer's mark. Three farms' grain at
+    minimum, waiting their turn at the stone. The sacks
+    are heavy — proper grain weight, not air and dust.
+    Someone has stacked them in order of arrival: oldest
+    nearest the chute, newest farthest from it. The
+    miller's accounting is physical and spatial.
+  the flour-dust: >
+    A fine pale layer on every shelf, beam, and flat
+    surface inside the mill — the kind that accumulates
+    in hours, not days. It tastes of grain when it
+    catches the back of your throat. The miller does not
+    try to fight it. The dust is the mill working.
+spawninfo:
+  - mobid: 9502
+    respawnrate: "20 real minutes"
+idlemessages:
+- The millwheel knocks and rushes, steady as the river itself.
+- Flour-dust drifts from the chute in a pale thread, settling slow.
+- The deep groan of the millstone runs through the floor underfoot.
