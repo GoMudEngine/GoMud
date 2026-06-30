@@ -34,5 +34,5 @@ segments:
     target_room: 6303
     activity: sleeping
     idlecommands:
-      - emote sleeps in the reading room chair with the lamp fully out and the
+      - emote sleeps in the archive chair with the lamp fully out and the
         cabinet keys on the table beside her.

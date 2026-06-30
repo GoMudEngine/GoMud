@@ -67,6 +67,9 @@ nouns:
     about bench choice in a cloister walk follows
     from light and warmth, which are not much of
     either here.
+spawninfo:
+  - mobid: 9523
+    respawnrate: "20 real minutes"
 idlemessages:
 - Cold air settles in the cloister walk; someone crosses it quickly southward.
 - The quince tree in the garden court is motionless in the still precinct air.

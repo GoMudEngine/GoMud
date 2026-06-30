@@ -67,8 +67,6 @@ nouns:
 spawninfo:
   - mobid: 9521
     respawnrate: "20 real minutes"
-  - mobid: 9523
-    respawnrate: "20 real minutes"
 idlemessages:
 - A student stops at the sundial, checks it, and continues south without urgency.
 - Voices from the lecture hall carry across the quad, indistinct but formal.

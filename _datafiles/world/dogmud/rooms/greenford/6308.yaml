@@ -11,8 +11,9 @@ description: >
   college's back gate, and beyond it the residential
   streets of the upper town — faculty houses, quiet,
   morning fires already at the chimneys. The gate
-  is not locked. The residential streets are a short
-  walk from here. Examine the back gate or the lane.
+  stands unbolted, the streets visible through it;
+  that is a walk for another errand. Examine the
+  back gate or the lane.
 biome: city
 coord: {x: 22, y: -83, z: 2}
 exits:

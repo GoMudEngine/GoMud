@@ -35,7 +35,7 @@ tree:
     - id: founding
       triggers: ["founding", "history", "account", "origins",
         "chronicle", "story", "three hundred", "began", "begin",
-        "narrative", "origin", "established"]
+        "narrative", "origin", "established", "doubt", "doubts"]
       text: |
         The Founding account is coherent. Suspiciously so.
         Three centuries of documentation, all pointing to one
