@@ -1,0 +1,48 @@
+roomid: 6274
+zone: East Road to Greenford
+title: The River Valley
+description: >
+  The descent steepens and the smell changes all at once —
+  wet ground, water-weed, the cool moving air that rises off
+  a river in full run. After the open plateau the change is
+  immediate and physical: the dust is gone, the air softer,
+  the road surface darkening with moisture drawn up from the
+  bank below. Willows line the lower verge and their shade
+  falls across the road. In the hillside cut above the road
+  a stone
+  <ansi fg="itemname">niche</ansi>
+  has been worked into the rock face — old road-craft,
+  a waymark for travelers.
+biome: farmland
+coord: {x: 21, y: -67, z: 0}
+exits:
+  west: {roomid: 6273}
+  south: {roomid: 6275}
+nouns:
+  the hillside: >
+    A cut face of compacted earth and pale stone above the
+    road, the work that let the road run at this grade
+    without sliding into the river valley. The cut is old —
+    the exposed stone face has weathered to the same grey as
+    the surrounding rock, and the planted toe of the slope
+    below has grown into solid ground. Someone built this
+    section carefully and it has lasted.
+  the niche: >
+    A cut in the hillside rock above the road, shaped by
+    hand into a small alcove. Old road-caches like this
+    were left for foot travelers — a mark, a shared
+    resource, a place to leave something for the next
+    person. This one holds a few smooth river pebbles and
+    the shadow they sit in. Whoever left them here is
+    long gone.
+  the willows: >
+    Trees on the lower verge, their roots in the bank-soil
+    where the river keeps it damp. The trailing branches
+    hang down into the road's shadow and move slowly in
+    the air off the water. The shade under them is deep
+    and damp. After the plateau, it is the first real
+    shade since the hamlet.
+idlemessages:
+- The river smell comes up cool off the bank below the road.
+- The willows move in the air off the water, slow and heavy.
+- The road surface here is darker, the soil holding moisture.

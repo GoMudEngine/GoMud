@@ -1,0 +1,49 @@
+roomid: 6277
+zone: East Road to Greenford
+title: The Greenford Bridge
+description: >
+  The bridge spans the Greenford river in three long arches
+  of dressed stone, the water running fast and cold through
+  the pier-shadows below. Halfway across, the paving is
+  notched where a cart-wheel has struck it at the same spot
+  a thousand times — the mark of a working crossing. At the
+  far end, a toll-gate stands closed across the roadway,
+  a sign nailed below the arch reading NO PASSAGE WITHOUT
+  THE WARDEN'S LEAVE. The gatehouse beyond it is dark and
+  the gate is solid. Greenford rises up the hill past the
+  gate, impossibly close and completely barred.
+biome: farmland
+coord: {x: 21, y: -70, z: 0}
+exits:
+  north: {roomid: 6276}
+nouns:
+  the gate: >
+    A bar of squared timber set across the road at the
+    bridge's far end, its fittings iron and its position
+    deliberate. A sign below the arch: NO PASSAGE WITHOUT
+    THE WARDEN'S LEAVE. The gatehouse to one side is dark,
+    the window unlit, but the gate itself is sound and
+    properly fitted. This is not a broken gate or a
+    forgotten one. It is closed, and closed on purpose.
+  the bridge: >
+    Standing mid-span, the stone rail is at your hand and
+    the Greenford passes below in full — wide and swift
+    through the pier-channels, the bottom briefly visible
+    near the gravel bars. The roadway paving
+    is worn to a smooth shallow curve from traffic —
+    generations of carts and foot-travelers have used this
+    crossing and left their mark in it. The water below
+    the arches moves fast and dark between the piers.
+    From here Greenford is plainly visible: a real town,
+    built on a real hill, not going anywhere.
+  the far shore: >
+    Past the toll-gate, the road runs up into Greenford —
+    the waterfront first, then the streets climbing the
+    hill, then the university at the top with its tower
+    catching whatever light is going. The town is
+    inhabited and established. The gate between you and
+    it is the only thing that is not open.
+idlemessages:
+- The river moves fast under the bridge, indifferent to the gate.
+- Greenford is visible past the gate. The gate is not open.
+- The notch in the paving marks where every cart turned the same way.

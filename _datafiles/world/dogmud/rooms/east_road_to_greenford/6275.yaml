@@ -1,0 +1,38 @@
+roomid: 6275
+zone: East Road to Greenford
+title: The Riverside Road
+description: >
+  The road follows the river here with only a low earth berm
+  between the track and the water. The river is wide and
+  steady at this stretch, a continuous low sound under the
+  banks where the current quickens at the stones. Willows
+  on the far bank trail their branches in the current in slow
+  arcs. To the south the road continues along the river
+  toward the bridge approach, following the river's curve.
+  The silhouette of Greenford on its hill is visible from
+  here, the university tower prominent above the roofline.
+biome: farmland
+coord: {x: 21, y: -68, z: 0}
+exits:
+  north: {roomid: 6274}
+  south: {roomid: 6276}
+nouns:
+  the berm: >
+    A low mound of packed earth between the road and the
+    river, built up to keep the track clear of flood-water
+    and to give travelers a dry footing when the river
+    runs high. The top of the berm is worn flat from the
+    feet of people who walk up to see the river from it.
+    The river on the other side is close enough to touch
+    from the berm's lip.
+  the river: >
+    Wide and cold, the Greenford river runs past at a pace
+    that makes the surface-ripple constant and the sound
+    below it continuous. The water is clear enough to see
+    the channel bottom in the shallows at the bank. In the
+    main current the flow deepens to a dark grey-green.
+    Fish hold in the still water behind the bank stones.
+idlemessages:
+- The river beside the road is cold and fast at the bank.
+- The silhouette of Greenford on its hill sharpens as you go south.
+- A heron fishes in the shallows, standing in its own patience.

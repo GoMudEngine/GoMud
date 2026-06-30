@@ -1,0 +1,16 @@
+itemid: 40149
+name: A Handful of Dried Plums
+namesimple: plums
+description: >
+  Sun-dried plums from the valley orchards, shriveled to a
+  concentrated sweetness and light enough to tuck in a pocket
+  for a long day's walk.
+type: object
+subtype: mundane
+component_tag: dried-plums
+weight: 0.1
+value: 5
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking

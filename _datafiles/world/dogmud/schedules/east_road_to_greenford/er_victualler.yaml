@@ -1,0 +1,47 @@
+id: er_victualler
+description: "Mistress Odell tends the hamlet provision stall from before first
+  light through the long road-hours, winds down at dusk, then sleeps in the
+  narrow room behind the awning until baking time comes again."
+segments:
+  - start: 5
+    end: 20
+    target_room: 6268
+    activity: ""
+    idlecommands:
+      - emote sets out a fresh row of loaves on the counter cloth,
+        spacing them the way she always does -- equal gaps, heels
+        outward -- and steps back to appraise the arrangement.
+      - say I bake before the hamlet wakes. Everything on this counter
+        this morning was dough before dawn. Road folk can tell the
+        difference and so can I.
+      - emote wipes down the worn counter with a damp cloth, lifts the
+        corner of the cheese cloth to check the rind, and tucks it back
+        with a small approving nod.
+      - say Loaf, hard cheese, a plum from the valley -- that is exactly
+        what you want on a long road. I know because I ask the folk who
+        come back through.
+      - emote shades her eyes and watches the road east for a moment,
+        counts something silently, then turns back to the counter with
+        the expression of someone who found the sum acceptable.
+  - start: 20
+    end: 23
+    target_room: 6268
+    activity: ""
+    idlecommands:
+      - emote wraps the remaining half-loaf in its cloth and sets it at
+        the back of the counter for the morning, then begins stacking the
+        cheese trays for the night.
+      - say That is the end of the day's baking. Come back at first light
+        if you want the fresh loaf -- I do not hold yesterday's bread at
+        yesterday's price.
+      - emote banks the small brazier beneath the stall, tucks the day's
+        takings into the belt-purse, and straightens the counter one last
+        time with the satisfaction of a job properly finished.
+  - start: 23
+    end: 5
+    target_room: 6268
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the narrow room behind the provision stall, the
+        canvas awning tied down and the shutters latched until the first
+        gray light before dawn.

@@ -1,0 +1,43 @@
+mobid: 9495
+zone: East Road to Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 25
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote stops to open a satchel, counts the rolls of parchment
+    inside, and recloses it with the look of someone who has done
+    this many times and is still not satisfied.'
+  - ''
+  - 'say The road is longer than the map suggested. In my experience
+    that is always true but I keep hoping.'
+  - ''
+  - 'emote steps to the roadside and makes a brief note on a strip
+    of parchment, frowning at it, before tucking it back inside the
+    satchel and lifting it onto her shoulder.'
+  - ''
+activitylevel: 10
+character:
+  name: A Greenford-Bound Scholar
+  description: |
+    A young woman in travelling clothes that were well-made before
+    the road got to them, carrying a satchel visibly heavier than
+    she planned for and wearing the expression of someone who
+    expected the east road to be more scenic and has revised her
+    opinion. She is headed for Greenford and the university there.
+    Her Chrysalis-change manifests as faintly luminous freckles
+    across both forearms -- tiny cold sparks, visible in shadow and
+    invisible in direct sun, that she uses as a reading light on
+    late evenings rather than burn a candle.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    perception:
+      training: 6
+    charisma:
+      training: 4

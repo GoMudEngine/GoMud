@@ -1,0 +1,70 @@
+mobid: 9496
+zone: East Road to Greenford
+defaultMood: friendly
+greetings:
+  - text: "Resting the wheel at the milepost. It is as good a place
+      to stop as any and better than most."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Day. If you are asking about the road east, I have been on
+        it six times this year alone."
+  - keywords: ["how far", "distance", "milepost", "greenford", "far"]
+    responses:
+      - "Two days on foot. One long day with a cart if the axle
+        agrees. This one has been disagreeing."
+  - keywords: [""]
+    responses:
+      - "Ask. I am not going anywhere for another hour."
+tree:
+  root:
+    text: "I run cargo between the Confluence basin and Greenford --
+      grain west, dry goods east. Done it long enough to know every
+      pothole and every good resting spot on the route. This milepost
+      is a good resting spot."
+    hints: "You could ask the carter about the road east and how far
+      Greenford is, about the cargo he hauls and the route he travels,
+      or about this milepost and what makes it a good place to stop."
+  nodes:
+    - id: distance
+      triggers: ["how far", "far", "distance", "long", "greenford",
+        "east", "arrive", "get there", "take", "days"]
+      text: "From here? Two days walking if the road stays dry and
+        you keep a good pace. On a cart in good repair it is one long
+        day. The last leg before Greenford gets rougher -- the road
+        dips toward the river crossing and the surface breaks up where
+        water works under it in the wet season. In this dry spell it
+        is fine, just dusty. The crossing itself is a good stone bridge.
+        Someone built it properly."
+      hints: "You could ask about the cargo he carries and the route
+        between the Confluence and Greenford, or about this milepost
+        and what makes it a good resting stop."
+    - id: cargo
+      triggers: ["cargo", "carry", "haul", "goods", "what", "trade",
+        "load", "deliver", "route"]
+      text: "Grain going west to the Confluence basin, dry goods --
+        manufactured things, cloth, tools -- coming back east to
+        Greenford. The university there buys a good deal of that kind
+        of thing: parchment, lamp oil, specialty cord for the
+        instrument makers. Small loads, decent price. I have found it
+        is better to haul the smaller valuable things than the large
+        cheap ones. Less weight on the axle. My axle is a strong
+        argument for that position right now."
+      hints: "You could ask about the distance east to Greenford and
+        what the road is like, or about this milepost as a resting
+        place."
+    - id: milepost
+      triggers: ["milepost", "post", "stop", "rest", "here", "place",
+        "mark", "marker", "stone", "why here"]
+      text: "The mileposts on this road were cut before I was born --
+        good local stone, set deep. Some have shifted over the years
+        but this one is still plumb. I stop here because it is exactly
+        the right distance for an axle to need inspection: halfway
+        through the longest day's haul, close enough to the hamlet to
+        walk back if something breaks. My grandfather used this same
+        post for the same reason. He told me where to stop and I
+        believed him, which is maybe the most useful thing I learned
+        from him."
+      hints: "You could ask about the distance east to Greenford, or
+        about the cargo he hauls on this route."

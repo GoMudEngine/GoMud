@@ -1,0 +1,66 @@
+mobid: 9494
+zone: East Road to Greenford
+defaultMood: friendly
+greetings:
+  - text: "Mind the wheat rows. I do not care about the road edge
+      but the rows took six months."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "You are the third person through today who is not a farmer.
+        Step on the road, not the stubble."
+  - keywords: ["wheat", "harvest", "field", "crop"]
+    responses:
+      - "Short year. You can see it in the stems if you know what
+        to look for."
+  - keywords: [""]
+    responses:
+      - "I am working. Ask fast."
+tree:
+  root:
+    text: "Second generation on this field. My mother planted the
+      first windbreak along the south edge. I am watching this season
+      carefully -- the ears are thin and the stalks are short. Could
+      be fine. Could be a poor harvest. Rain will decide it."
+    hints: "You could ask the farmer about the harvest this season and
+      what the dry weather is doing to the crop, about the old waystone
+      at the field's east edge, or about how long her family has worked
+      this land."
+  nodes:
+    - id: harvest
+      triggers: ["harvest", "crop", "wheat", "field", "season", "yield",
+        "short", "thin", "grow", "doing"]
+      text: "The ears are lighter than they should be for this point
+        in the season. Stalks are good -- the root goes deep on plateau
+        wheat, you cannot take that away from it -- but the heads are
+        not filling the way I want. Three dry months is three months
+        too many for late-season grain. We need one long soaking rain.
+        One. Then it might come back. Wheat is stubborn when it has
+        to be. So am I."
+      hints: "You could ask about the waystone on the east edge of the
+        field, or about how long her family has farmed this land."
+    - id: waystone
+      triggers: ["waystone", "stone", "old", "marker", "east", "edge",
+        "what", "wall"]
+      text: "The waystone? It has been there longer than the field
+        walls. Longer than any farm on this plateau, as far as I know.
+        We work around it -- it is too big to move and too old to take
+        a chisel to without feeling like you are doing something wrong.
+        Nobody minds it being there. It is just there. Some things are
+        just old and present, and that is the end of it."
+      hints: "You could ask about the harvest and the dry weather, or
+        about how long her family has farmed this land."
+    - id: family
+      triggers: ["family", "long", "mother", "father", "generation",
+        "history", "always", "how long", "land"]
+      text: "My mother's mother broke this field from plateau scrub.
+        That was fifty years back, before the road was cut east. In
+        those days you could not drive stock through here -- no road,
+        no hamlet. Just the fields and the wind. The hamlet came after
+        the road. The road came after someone decided Greenford needed
+        a western route that did not go through Thornwall. That is
+        apparently how everything in this part of the world gets built:
+        someone decides it ought to exist, and then slowly it does."
+      hints: "You could ask about the harvest and the dry weather, or
+        about the old waystone at the field's east edge."

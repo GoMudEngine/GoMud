@@ -1,0 +1,42 @@
+mobid: 9493
+zone: East Road to Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote shades his eyes and watches the road east, turning his head
+    slowly as if counting something that has already moved past.'
+  - ''
+  - 'say This road gets worse the drier it gets. Dust kicks up and the
+    stock do not like it. They do not like anything, to be honest.'
+  - ''
+  - 'emote rolls his right shoulder back and cracks something in it,
+    winces, then spits to the side of the road and returns to watching
+    the horizon.'
+  - ''
+activitylevel: 10
+character:
+  name: A Drover
+  description: |
+    A broad-backed man in a leather hat, road-dusty to the elbows,
+    with the patient squint of someone who has spent years walking
+    behind animals slower than he is. He is resting his stock on
+    the verge before the next push east toward Greenford, and he
+    has the look of a man who disapproves of everything, mildly and
+    without malice. His Chrysalis-change added an extra knuckle to
+    each finger of his right hand, giving those digits an odd jointed
+    length that he uses, apparently without thinking, to grip a lead
+    rope with unusual steadiness.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    strength:
+      training: 6
+    vitality:
+      training: 4

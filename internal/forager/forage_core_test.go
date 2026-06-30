@@ -75,6 +75,28 @@ func TestForageYields_WaterHasRiverForageables(t *testing.T) {
 	}
 }
 
+func TestForageYields_FarmlandHasWheatCountryForageables(t *testing.T) {
+	has := func(list []int, id int) bool {
+		for _, x := range list {
+			if x == id {
+				return true
+			}
+		}
+		return false
+	}
+	farmland := ForageYields["farmland"]
+	if !has(farmland, 40150) {
+		t.Error("farmland forage should include wild plums (40150)")
+	}
+	if !has(farmland, 40151) {
+		t.Error("farmland forage should include gleaned grain (40151)")
+	}
+	land := ForageYields["land"]
+	if !has(land, 40151) {
+		t.Error("dry land forage should include gleaned grain (40151)")
+	}
+}
+
 func TestForageCore_NightYieldsAppendedForForestAtNight(t *testing.T) {
 	// At night, moonpetal (40046) is added to forest yields.
 	// We can't deterministically force a moonpetal, but we can confirm

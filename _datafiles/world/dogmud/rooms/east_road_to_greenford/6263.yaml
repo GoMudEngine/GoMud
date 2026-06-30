@@ -1,0 +1,36 @@
+roomid: 6263
+zone: East Road to Greenford
+title: The Road Out of the River Country
+description: >
+  The river smell falls away as the road moves east, the
+  Confluence city receding into a haze of chimney smoke and
+  distance. The paving ends and packed gravel begins within
+  the first quarter-mile — still well-kept, but no longer
+  city work. Dry fieldgrass comes in at the verge, and the
+  smell with it: warm dust and something green and sun-dried.
+  Fitted stone field-walls appear on both sides, marking the
+  farm country that starts here and does not end for a long
+  way east. The road goes straight ahead into it.
+biome: farmland
+coord: {x: 11, y: -67, z: 0}
+exits:
+  west: {roomid: 6250, zone: The Confluence}
+  east: {roomid: 6264}
+nouns:
+  the field walls: >
+    Stone-course walls at the road's edge, fitted without
+    mortar, the work of a farmer laying boundary in the
+    driest days of a dead season. The stone is local —
+    grey-brown, flat, the kind that splits clean from field
+    outcroppings. You could lean on these walls all day and
+    they would not move. They have not moved in a long time.
+  the verge: >
+    Dry fieldgrass at the road's edge, bleached by the
+    season into something between gold and grey. A few
+    thistles stand among it, heads gone to seed, their
+    floss catching nothing in the still air. No river
+    plants here — the land has already changed character.
+idlemessages:
+- The road surface goes from paving to gravel in a single step.
+- A dry fieldgrass smell replaces the river as you move east.
+- The city is behind you. The road goes the other direction.

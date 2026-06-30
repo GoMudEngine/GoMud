@@ -1,0 +1,45 @@
+mobid: 9496
+zone: East Road to Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote leans against the milepost with both arms folded and stares
+    at the road east with the expression of someone who is done
+    staring at it but has not left yet.'
+  - ''
+  - 'say The axle repair is fresh and I am resting the wheel before
+    the next leg. I tested it first -- it is sound.'
+  - ''
+  - 'emote rubs the back of his neck, looks south at the sky, and
+    then looks back at the road with no visible change in his
+    outlook.'
+  - ''
+activitylevel: 10
+character:
+  name: A Carter
+  description: |
+    A stocky man with a cart parked across the verge, one wheel
+    recently repaired and newly grease-packed, taking a rest at
+    the milepost before the next push east. He has the settled
+    quality of someone who has been making this route long enough
+    that it stopped being interesting and became simply what he
+    does. His Chrysalis-change is in his eyes: a secondary
+    translucent eyelid, thin as membrane, that slides across each
+    eye when he blinks into the road dust -- he uses it without
+    thinking, and it gives each blink a faint double-shutter
+    quality that strangers find unsettling until they realize what
+    it is.
+  speciesid: 1
+  level: 1
+  gold: 15
+  stats:
+    strength:
+      training: 6
+    vitality:
+      training: 4

@@ -1,0 +1,46 @@
+roomid: 6268
+zone: East Road to Greenford
+title: The Wheatside Hamlet
+description: >
+  A small knot of buildings at the road's shoulder — a
+  victualler's stall with a striped awning, a storage shed,
+  two dwellings set back behind it. The shade between the
+  buildings is welcome after the open wheat. A wooden
+  <ansi fg="itemname">crate</ansi>
+  outside the stall has its lid set flat to serve as a
+  counter. To the north a side-lane leads toward the hamlet
+  well. To the east the road continues out of the settlement
+  and onto open plateau.
+biome: farmland
+coord: {x: 16, y: -67, z: 0}
+exits:
+  west: {roomid: 6267}
+  east: {roomid: 6270}
+  north: {roomid: 6269}
+spawninfo:
+  - mobid: 9492
+    respawnrate: "20 real minutes"
+nouns:
+  the stall: >
+    A victualler's setup under a striped canvas awning —
+    baskets of provisions, a string of dried goods hanging
+    from the awning frame, a clay jug sealed with wax sitting
+    at one end of the counter. The stock is practical: road
+    food for travelers who know a long day ahead of them.
+    The awning strains in the hot breeze, canvas popping.
+  the crate: >
+    A wooden crate with its lid set flat to serve as a
+    counter surface. The wood is old and dry, the lid worn
+    smooth from use as a workspace. Inside: a few wrapped
+    provisions and a folded length of oilcloth. The
+    victualler's overflow stock, close at hand.
+  the lane: >
+    A packed-earth lane running north between two of the
+    hamlet buildings, leading toward the sound of a
+    well-rope working. The lane is narrow and shaded, the
+    buildings close on both sides. The yard at the end is
+    cooler than the road.
+idlemessages:
+- The awning of the stall flexes in a small, hot breeze.
+- From the north, the creak of the well-rope lifting water.
+- A child looks out from behind one of the dwellings, then goes.

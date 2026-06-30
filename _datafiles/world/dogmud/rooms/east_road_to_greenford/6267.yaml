@@ -1,0 +1,39 @@
+roomid: 6267
+zone: East Road to Greenford
+title: The Village Approach
+description: >
+  The sound arrives before you do: voices, the complaint of
+  a cart-wheel in need of grease, the busy clucking of a yard
+  bird somewhere among the buildings. The road bends here and
+  the first rooftops of a small hamlet come into view above the
+  wheat line — thatched, close together, a smear of hearth smoke
+  rising from one chimney. The dust on the road thickens where
+  foot traffic has been working the approach. Ahead, the hamlet
+  offers its shade between the close-set houses.
+biome: farmland
+coord: {x: 15, y: -67, z: 0}
+exits:
+  west: {roomid: 6266}
+  east: {roomid: 6268}
+spawninfo:
+  - mobid: 9495
+    respawnrate: "20 real minutes"
+nouns:
+  the rooftops: >
+    Low thatched roofs just clearing the top of the standing
+    wheat, the thatch old and dark in places but still sound.
+    A handful of buildings, no more. The smoke rising from one
+    chimney is cooking-fire smoke — flat and grey in the still
+    air, not the rolling column of a forge or kiln. Someone
+    is preparing a meal in there.
+  the road ahead: >
+    The ruts here are deep and recent — a loaded cart went
+    through not long before, the wheel-marks sharp-edged in
+    the dust. Something with hooves came the other way, the
+    prints heading west. The hamlet's mouth is visible from
+    here, the lane narrowing between the close-set buildings
+    into shadow.
+idlemessages:
+- The sound of the hamlet carries ahead of the sight of it.
+- Hearth smoke rises straight and flat from a chimney ahead.
+- The dust on the approach is thick, stirred by recent feet.

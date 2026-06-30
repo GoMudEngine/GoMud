@@ -1,0 +1,15 @@
+itemid: 40147
+name: A Wheat Loaf
+namesimple: loaf
+description: >
+  A dense, dark loaf baked from plateau wheat -- heavy enough to
+  sit for a day's ride and dry enough to keep for three.
+type: object
+subtype: mundane
+component_tag: wheat-loaf
+weight: 0.3
+value: 4
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking

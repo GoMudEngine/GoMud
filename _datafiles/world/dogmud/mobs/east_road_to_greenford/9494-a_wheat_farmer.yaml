@@ -1,0 +1,43 @@
+mobid: 9494
+zone: East Road to Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote reaches out and runs a thumb along a wheat head, checking
+    the weight of it, and whatever she finds there does not please
+    her.'
+  - ''
+  - 'say We need rain before the end of the month. Not a prayer for
+    it -- actual rain. The kind that lasts the night.'
+  - ''
+  - 'emote straightens slowly, shades her eyes, and scans the flat
+    horizon to the south as if the weather might be visible coming
+    that way.'
+  - ''
+activitylevel: 10
+character:
+  name: A Wheat Farmer
+  description: |
+    A weathered woman in a wide-brimmed hat, standing in the wheat
+    row with the patient stillness of someone who has been reading
+    the same field for twenty years and does not like what it is
+    saying this season. Her boots are cracked at the toe seam and
+    she has either not noticed or does not mind. Her Chrysalis-change
+    settled across her left shoulder and the side of her neck: a
+    patch of bark-textured skin, smooth as birch rind, cool to the
+    touch where field-bare skin meets it. She wears her collar open
+    and does not hide it.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    perception:
+      training: 4
+    vitality:
+      training: 6

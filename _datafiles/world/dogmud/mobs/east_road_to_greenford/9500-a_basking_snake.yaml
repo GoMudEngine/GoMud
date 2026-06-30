@@ -1,0 +1,43 @@
+mobid: 9500
+zone: East Road to Greenford
+archetype: fighting
+hostile: false
+statpool: 22
+itemdropchance: 10
+maxwander: 1
+groups:
+  - animal
+idlecommands:
+  - 'emote lies stretched across the flat road-stone in a loose
+    coil, absorbing its warmth with the deliberate patience of
+    something that does this professionally.'
+  - ''
+  - 'emote raises its head an inch and tastes the air with a slow
+    flicker of its tongue before lowering it again.'
+  - ''
+  - 'emote shifts one slow loop of its body to a warmer patch of
+    stone with an air of complete preoccupation.'
+  - ''
+activitylevel: 10
+character:
+  name: A Basking Snake
+  description: |
+    A thick-bodied serpent of the plateau dry-country, a metre
+    and a half in length, coiled on a warm flat stone at the
+    road's edge in full afternoon heat with an air of complete
+    contentment. Its scales are warm umber mottled with darker
+    bands that break up its outline against the stone almost
+    perfectly. Its Chrysalis-mark is a double row of pale scales
+    along its spine, each faintly iridescent in shifting blue-green,
+    like a seam of inlaid turquoise running from neck to tail-tip.
+    It is not aggressive if left alone and extremely fast if not.
+  speciesid: 8
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 4
+    dexterity:
+      training: 7
+    vitality:
+      training: 4

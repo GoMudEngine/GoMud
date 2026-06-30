@@ -1,0 +1,15 @@
+itemid: 40148
+name: A Wheel of Hard Cheese
+namesimple: cheese
+description: >
+  A compact wheel of farmhouse cheese, rind-sealed for travel --
+  sharp, crumbling, and well-salted to keep through the road's heat.
+type: object
+subtype: mundane
+component_tag: hard-cheese
+weight: 0.4
+value: 6
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking

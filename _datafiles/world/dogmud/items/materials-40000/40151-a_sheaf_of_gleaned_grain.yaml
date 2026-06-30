@@ -1,0 +1,14 @@
+itemid: 40151
+name: A Sheaf of Gleaned Grain
+namesimple: grain
+description: A bound handful of wheat heads gleaned from a harvested
+  field, still heavy with grain and smelling of cut straw.
+type: object
+subtype: mundane
+component_tag: gleaned-grain
+weight: 0.4
+value: 3
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking

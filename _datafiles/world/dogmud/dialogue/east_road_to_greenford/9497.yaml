@@ -1,0 +1,70 @@
+mobid: 9497
+zone: East Road to Greenford
+defaultMood: friendly
+greetings:
+  - text: "The well is open. Wait your turn if there is a turn to
+      wait. Rope is on the left."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Do not let the bucket drag -- you will fray the rope
+        and then it is everyone's problem."
+  - keywords: ["water", "drink", "well", "fill", "bucket"]
+    responses:
+      - "Lower it slow. Bring it up smooth. That is all there is to
+        a well."
+  - keywords: [""]
+    responses:
+      - "I am working. But ask."
+tree:
+  root:
+    text: "I keep the well, which means I keep the hamlet, more or
+      less. No water, no hamlet. The rope, the crank, the drainage
+      channel -- all of it needs watching, and mostly it does not
+      get watched until something goes wrong, which is why I watch
+      it."
+    hints: "You could ask the well-woman about the well and how she
+      tends it, about the hamlet and the folk who live and travel
+      through here, or about the dry season and what it is doing to
+      the water table."
+  nodes:
+    - id: well
+      triggers: ["well", "water", "rope", "crank", "tend", "work",
+        "maintain", "keep", "what do you"]
+      text: "The rope I replace every second season -- you can tell
+        it is going before it goes, if you know what to feel for. The
+        crank was rebuilt five years back, good ironwork from Kilnreach.
+        The stone lip has been here since the hamlet was sunk, which
+        is before my time. The water is clean -- we have never had a
+        fouling in twelve years since I have been keeping it, and I
+        do not intend to start. I am particular about the drainage.
+        People think drainage is boring and then they get a fouled
+        well and change their minds quickly."
+      hints: "You could ask about the hamlet and the folk here, or
+        about the dry season and how it affects the water level."
+    - id: hamlet
+      triggers: ["hamlet", "village", "people", "folk", "here", "live",
+        "local", "who", "neighbors", "town"]
+      text: "Small lot. The farmer families on the plateau, the
+        victualler, a few carters who stop regular, the smithy family
+        east of the square. We get a fair bit of through-traffic on
+        the east road -- scholars heading for Greenford mostly, the
+        odd drover, travelers who stop for bread, water, and a rest
+        before the long stretch east. We are not a destination, we
+        are a waypoint. That suits us fine. Waypoints do not get
+        pillaged."
+      hints: "You could ask about the well and how she tends it, or
+        about the dry season and what it means for the water table."
+    - id: dry
+      triggers: ["dry", "drought", "season", "rain", "hot",
+        "level", "table", "low", "weather"]
+      text: "The level is down but not alarming -- yet. This plateau
+        has old deep water under it, the kind that does not react fast
+        to one dry season. What worries me is two dry seasons in a row.
+        That I would feel in the bucket sound. Right now it sounds
+        fine. I check it every morning and I will keep checking it.
+        If it starts to sound different I will tell the hamlet council
+        before anyone else does, because I will know first."
+      hints: "You could ask about the well and how she maintains it,
+        or about the hamlet and the people who live and stop here."

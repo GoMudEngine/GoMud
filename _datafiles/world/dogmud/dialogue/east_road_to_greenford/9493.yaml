@@ -1,0 +1,60 @@
+mobid: 9493
+zone: East Road to Greenford
+defaultMood: friendly
+greetings:
+  - text: "Road is hard on the hooves in this heat. I am resting
+      them whether the schedule likes it or not."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Day. Mind the stock -- they are tired and they bite when
+        they are tired."
+  - keywords: ["road", "east", "greenford", "far", "distance"]
+    responses:
+      - "Further than it looks. Always further than it looks going
+        east."
+  - keywords: [""]
+    responses:
+      - "I am busy being still. Ask quickly."
+tree:
+  root:
+    text: "Moving a small herd east to the Greenford market. I have
+      done this route six times and it does not get shorter. The road
+      is dry this season -- hard on feet and not great for the stock."
+    hints: "You could ask the drover about his route east and what
+      the road is like, about the dry year and how it affects the
+      drive, or about the Greenford market where he is headed."
+  nodes:
+    - id: route
+      triggers: ["route", "road", "east", "drive", "how far", "journey",
+        "travel", "distance", "long", "walk"]
+      text: "Two more days to Greenford in good weather. This weather
+        is not good, it is just dry. Dust hangs on the road in the
+        heat of the day so I move early and late, rest them through
+        the midday. You add a half-day to any drive every time you
+        have to rest them twice. Still, better a slow herd that
+        arrives than a fast one that does not."
+      hints: "You could ask about the dry year and how it has changed
+        the drive, or about the Greenford market where he is headed."
+    - id: dry
+      triggers: ["dry", "heat", "weather", "hot", "season", "drought",
+        "year", "rain", "water"]
+      text: "Worst dry stretch in three seasons. The verge grass is
+        burnt off east of here and the stock have to graze less and
+        drink more, which means I stop at every trough I can find.
+        The farmers along the road look worried -- when the wheat
+        farmers look worried, I look worried. They know this land
+        better than I do."
+      hints: "You could ask about the road east and the distance to
+        Greenford, or about the market there."
+    - id: market
+      triggers: ["market", "greenford", "sell", "trade", "destination",
+        "town", "arrive", "city"]
+      text: "Greenford is a real market town -- not as big as New
+        Plymouth but it has the university, which means people with
+        coin and a habit of wanting things. Good place to sell stock.
+        They also pay more for anything the road brought through from
+        the west, which I suppose includes me."
+      hints: "You could ask about the road east and what the drive is
+        like, or about the dry year and the heat on the route."

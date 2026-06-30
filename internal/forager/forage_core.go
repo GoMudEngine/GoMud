@@ -28,8 +28,8 @@ var ForageDifficulty = map[string]float64{
 // Duplicate entries increase the probability of that item appearing.
 var ForageYields = map[string][]int{
 	"forest":    {40004, 40004, 40005, 40005, 40049, 40049, 40067, 40063, 40066}, // 40067 pine pitch (tapped from forest pines, e.g. Fernway South); +40063 shadowcap, +40066 blood-moss (cooking chunk)
-	"land":      {40004, 40005, 40049, 40047, 40121, 40122},                 // +40121 wild grapes, +40122 windfall fruit (warm-country produce, e.g. Amber Valley)
-	"farmland":  {40004, 40004, 40005, 40007, 40121, 40121, 40122, 40122},   // cultivated land yields more orchard/vine produce
+	"land":      {40004, 40005, 40049, 40047, 40121, 40122, 40151},                       // +40121 wild grapes, +40122 windfall fruit (warm-country produce, e.g. Amber Valley); +40151 gleaned grain (dry wheat plateau, e.g. East Road)
+	"farmland":  {40004, 40004, 40005, 40007, 40121, 40121, 40122, 40122, 40150, 40151}, // cultivated land yields more orchard/vine produce; +40150 wild plums, +40151 gleaned grain (East Road wheat country)
 	"swamp":     {40005, 40005, 40004, 40055, 40055, 40056, 40057, 40057},
 	"shore":     {40004, 40058},
 	"water":     {40058, 40058, 40058, 40058, 40058, 40059, 40123, 40124}, // +40123 watercress, +40124 freshwater mussels (river country, e.g. River Road)
