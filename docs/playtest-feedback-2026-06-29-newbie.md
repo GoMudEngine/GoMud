@@ -220,8 +220,10 @@ pass. Surfaced and fixed three latent bugs:
 
 Also re-confirmed live: A4 banners, B2 ("I have no task for you right now."),
 C3/C4 nudges, S7 mutation display, veteran landing in Thornwall awakened.
-Low-pri logged: antechamber 6262 "step through" wording vs. the real `talk
-guide` exit.
+Antechamber 6262 "step through" wording vs. the real `talk guide` exit —
+**FIXED** (`b3737810`): reworded so speaking to the guide is plainly the exit
+("that same breath will carry you through... Either one sends you on"), and the
+farewell narration no longer reads as a "step through" command. Verified live.
 
 ## Triage notes
 - **Biggest lever: A5 + C1 together.** The silent early-exit means several
