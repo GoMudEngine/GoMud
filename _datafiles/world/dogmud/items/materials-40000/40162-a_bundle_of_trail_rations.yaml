@@ -1,0 +1,16 @@
+itemid: 40162
+name: A Bundle of Trail Rations
+namesimple: rations
+description: >
+  Waxed cloth wrapped tight around a day's worth of hard biscuit, dried
+  meat, and pressed fruit. Dense enough to last the week and small enough
+  to tuck into a saddlebag without a second thought.
+type: object
+subtype: mundane
+component_tag: trail-rations
+weight: 0.4
+value: 6
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking
