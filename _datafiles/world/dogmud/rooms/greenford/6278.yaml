@@ -1,0 +1,62 @@
+roomid: 6278
+zone: Greenford
+title: The Greenford Gate
+description: >
+  The toll-gate stands open at the river end of the bridge,
+  the timber bar raised and hooked back clear of the road.
+  The warden's booth is occupied — smoke from the brazier,
+  the window unshuttered, a lantern bracket polished to a
+  working shine. The gate has always been here; it has not
+  always been staffed. Past it, the riverfront opens: low
+  buildings close on the bank, the smell of fish and rope
+  and wet stone, and behind it all the long slope of
+  Greenford's hill rising toward the university tower at
+  its crown. The sign above the arch carries the current
+  toll-road notice.
+biome: city
+coord: {x: 22, y: -72, z: 0}
+exits:
+  north: {roomid: 6277, zone: East Road to Greenford}
+  south: {roomid: 6279}
+nouns:
+  the gate: >
+    A bar of squared oak, iron-shod at both ends, riding a
+    pivot post and hooked back clear of the road. It has been
+    raised and set here more times than anyone has counted.
+    When the bar is set, the crossing is closed; hooked back
+    as it is now, the gate is open and the road is yours.
+    The pivot fittings are well-oiled. This gate is used
+    regularly and maintained accordingly.
+  the gatehouse: >
+    A stone booth built for occupation: brazier outside,
+    stool inside, a sliding shutter on the window currently
+    standing open. A lantern bracket mounts outside for
+    night duty, the bracket bright where the warden has
+    kept it clean. Everything around the booth is worn to
+    familiar use — a post that has been sat at through
+    many seasons, in several kinds of weather.
+  the sign: >
+    Nailed below the arch: GREENFORD — ALL TRAVELERS
+    SUBJECT TO TOLL AND WARDEN'S INSPECTION. Painted
+    black on pale board, repainted more than once — faint
+    edges of older lettering show beneath. A smaller
+    addition in a different hand reads SCHOLARS AND
+    UNIVERSITY STAFF EXEMPT. Someone added that later.
+    No one has taken it down.
+  the bridge: >
+    The three arches crossing behind you carry the road
+    over the Greenford river in long flat spans of dressed
+    stone, the water fast and dark in the pier-shadows
+    below. Standing at the gate you can look back across
+    the whole crossing — the worn central notch where cart-
+    wheels have struck the paving a thousand times, the
+    stone rail at either side, the far bank where the East
+    Road continues north. From here the crossing looks
+    short. It is longer than it looks.
+spawninfo:
+  - mobid: 9501
+    respawnrate: "20 real minutes"
+idlemessages:
+- The river runs steady under the bridge, indifferent to the gate.
+- The warden's brazier sends a thin thread of smoke over the road.
+- A cart passes through with a nod and the clink of a toll coin.

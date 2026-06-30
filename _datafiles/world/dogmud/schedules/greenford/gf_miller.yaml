@@ -1,0 +1,40 @@
+id: gf_miller
+description: "Maret works the watermill from before first light through the long
+  mill-hours, winds down at dusk tallying the day's grinding, then sleeps in the
+  room off the mill floor until the wheel is ready to turn again."
+segments:
+  - start: 5
+    end: 19
+    target_room: 6280
+    activity: ""
+    idlecommands:
+      - emote presses both palms flat against a sack of grain, feeling the texture
+        through the weave without opening it, then nods once.
+      - say Stone-ground this morning. Flour does not keep its quality if you
+        leave it sitting -- ask me if you need it fresh.
+      - emote tips a measure of flour from the scoop into a cloth bag, folds
+        the top with three precise creases, and sets it on the counter.
+      - say The wheel sets the pace and everything else follows. People who
+        understand that make good customers. People who do not make long queues.
+      - emote steps to the mill-room door, checks the wheel-sound for a moment
+        with an expression of quiet calculation, and returns satisfied.
+  - start: 19
+    end: 22
+    target_room: 6280
+    activity: ""
+    idlecommands:
+      - emote lifts the corner of the flour cloth, checks the settle on the top
+        sacks, and begins stacking the day's remaining bags at the back of the
+        counter in order of weight.
+      - say That is the last grinding of the day. The wheel runs again at
+        first light -- come back then if you want the morning batch.
+      - emote folds the flour tallies with two careful creases, tucks them into
+        the mill ledger, and sets the ledger on its shelf with a small sound of
+        finality.
+  - start: 22
+    end: 5
+    target_room: 6280
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the low room off the mill floor, the wheel turning slowly
+        in the dark outside and the flour-smell thick in the rafters.

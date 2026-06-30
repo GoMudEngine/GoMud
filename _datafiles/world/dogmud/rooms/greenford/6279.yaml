@@ -1,0 +1,59 @@
+roomid: 6279
+zone: Greenford
+title: The River Landing
+description: >
+  The quay is built of stone flags sloped toward the water,
+  worn to a mirror-smoothness at the river's edge where
+  barge hands have walked the same line for a generation.
+  A flat-bottomed barge sits tied at the lower ring, its
+  cargo of sawn timber and grain sacks half-unloaded onto
+  the dock. The smell is river-mud and resin and wet hemp.
+  West, the mill wheel turns behind its timber housing; the
+  lane east carries into Riverside Row. Examine the mooring
+  rings or the cargo to see what the river trade runs here.
+biome: water
+coord: {x: 22, y: -73, z: 0}
+exits:
+  north: {roomid: 6278}
+  west: {roomid: 6280}
+  east: {roomid: 6282}
+  south: {roomid: 6283}
+nouns:
+  the quay: >
+    Stone-flag paving sloped down to the waterline, the
+    flags polished glassy-smooth by decades of foot traffic
+    at the river's edge. Mooring rings are set at intervals
+    along the lip — iron, old, worn bright where ropes have
+    run against them. The lower courses are green with river-
+    moss where the water level rises and falls with the
+    season. The quay is working stone; every part of it
+    has been used.
+  the barge: >
+    A flat-bottomed river craft, broad in the beam and low
+    in the water under its load. The planking is stained
+    dark from river-traffic, the hull patched in two places
+    with timber that hasn't yet weathered to match. A rope
+    as thick as your wrist runs from the bow to the lower
+    mooring ring. The cargo — sawn timber, rope, sacked
+    grain — is stacked amidships under a stretched canvas.
+  the cargo: >
+    Sawn timber in arm-lengths, grain sacks doubled for
+    the crossing, a crate of iron fittings. Each piece is
+    marked with chalk tallies on the end face — a count
+    that matches what was loaded upriver. Unloading here
+    means moving every piece up the bank and sorting it
+    by consignee. Someone has begun. The rest waits.
+  the mooring rings: >
+    Iron rings set flush in the quay lip, each one anchored
+    into the stone with a collar of lead. They are old and
+    pitted but completely solid — you could pull a barge
+    against them all day. The rope burns on the near rings
+    are bright from recent use. The river trade passes
+    through here regularly.
+spawninfo:
+  - mobid: 9504
+    respawnrate: "20 real minutes"
+idlemessages:
+- The barge rocks gently on the mooring rope, wood and water.
+- River-smell rises off the quay — cold mud and wet hemp.
+- A rope slaps the mooring ring as the barge shifts in the current.

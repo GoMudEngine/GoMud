@@ -1,0 +1,66 @@
+roomid: 6283
+zone: Greenford
+title: The Boathouse
+description: >
+  A long timber building open at the river end, the
+  interior divided between moored craft and stored gear.
+  A skiff sits in the near slip, its hull tarred and its
+  oars shipped on the thwarts — rigged and ready, waiting
+  on a tide or a purpose. Nets hang from the rafters in
+  dark swags, some mended with pale new cord, some still
+  stiff with salt and river-silt. The smell is pine tar,
+  linseed oil, and old water. A vent in the far gable
+  lets light in and the worst of the river-damp out.
+  The nets overhead and the gear along the walls are
+  worth examining — the boathouse runs a working trade.
+biome: water
+coord: {x: 22, y: -74, z: 0}
+exits:
+  north: {roomid: 6279}
+  east: {roomid: 6281}
+  south: {roomid: 6284}
+nouns:
+  the skiff: >
+    A river skiff, narrow and flat-bottomed, its hull
+    built for river work — quick to turn, low in the
+    water, designed to pass through shallow reaches without
+    grounding. The tar on the hull is recent; the wood
+    beneath is old. Two oars shipped on the thwarts, a
+    bailing cup wedged under the stern seat, a coil of
+    bow-rope on the fore thwart. The skiff is rigged
+    and could be on the water inside a minute. It is
+    waiting for its next run.
+  the nets: >
+    Hanging nets in dark swags from the boathouse rafters,
+    some salt-stiffened and awaiting repair, some already
+    mended with bright new cord where the river tore them.
+    The repair work is close and even — small stitches,
+    good tension, the kind done by someone who has replaced
+    the same mesh a hundred times. Between the hanging
+    nets, the light is broken into a shifting pattern on
+    the floor below. The smell of salt and river-silt
+    comes off them in waves.
+  the gear: >
+    Along the boathouse walls, a working inventory: coils
+    of rope in various weights, iron hooks, a stack of
+    spare oar blanks, a tar-pot with a brush dried stiff
+    across the lid, a block-and-tackle for lifting loaded
+    cargo from barge to dock. Everything has a place and
+    most things are in it — this boathouse is run carefully.
+    The gear is in working order.
+  the river end: >
+    The open end of the boathouse faces the river directly,
+    the building's floor ending in a sloped ramp into the
+    water. The slip is cut so a skiff can be run in or
+    out with two people and no drama. At high water the
+    river laps the ramp; right now the waterline is a
+    meter below the sill. A rusted ring in the ramp stone
+    marks where the gate used to close. The gate is gone.
+    The river comes and goes without asking.
+spawninfo:
+  - mobid: 9508
+    respawnrate: "20 real minutes"
+idlemessages:
+- The skiff shifts in its slip as the river-current pushes the hull.
+- Tar-and-rope smell rises off the boathouse floor in the warmth.
+- A net sways in the river-draft from the open end, slow and dark.

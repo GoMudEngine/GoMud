@@ -1,0 +1,42 @@
+mobid: 9507
+zone: Greenford
+archetype: fighting
+hostile: false
+statpool: 24
+itemdropchance: 10
+maxwander: 2
+groups:
+  - animal
+idlecommands:
+  - 'emote stands motionless on the gravel ledge below the steps,
+    one amber eye fixed on the water, patient as carved stone.'
+  - ''
+  - 'emote strikes without warning -- a blur of neck and yellow
+    beak -- then lifts its head with something silver wriggling
+    in its grip.'
+  - ''
+  - 'emote spreads enormous grey wings and climbs away from the
+    water on slow, heavy wingbeats, long legs trailing behind.'
+  - ''
+activitylevel: 10
+character:
+  name: A Grey Heron
+  description: |
+    A tall grey-blue bird standing stone-still at the river's
+    edge, neck coiled back against its breast, one amber eye
+    on the shallows below. It could be a carving -- until it
+    strikes, a blur of beak and neck so fast the motion barely
+    registers, and lifts something silver from the current.
+    Disturbed, it opens wings that seem too large for the space
+    it was occupying and climbs away on deep, slow wingbeats,
+    legs trailing behind it like a bent afterthought.
+  speciesid: 8
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 3
+    dexterity:
+      training: 8
+    vitality:
+      training: 3

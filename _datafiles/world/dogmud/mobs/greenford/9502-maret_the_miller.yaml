@@ -1,0 +1,50 @@
+mobid: 9502
+zone: Greenford
+schedule_id: gf_miller
+craft_support: cooking
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote presses both palms flat against a sack of grain, feeling
+    the texture through the weave without opening it, then nods once.'
+  - ''
+  - 'say Stone-ground this morning. Flour does not keep its
+    quality if you leave it sitting -- ask me if you need it.'
+  - ''
+  - 'emote tips a measure of flour from a scoop into a cloth bag,
+    folds the top with three precise creases, and sets it on the
+    counter.'
+  - ''
+activitylevel: 10
+character:
+  name: Maret the Miller
+  description: |
+    Maret the Miller runs the watermill at the landing with a
+    methodical precision that extends to everything she touches --
+    the sacks are stacked by farm, the flour graded by stone-setting,
+    and the millwheel schedule posted on the door in her own clear
+    hand. She is square-shouldered and flour-dusted, with a
+    permanent fine pallor to her hair from working inside the mill.
+    Her Chrysalis-change is in her palms: the skin there has
+    hardened to a fine-grained surface like millstone grit, grain-
+    sensitive in a way no ordinary hand could manage. She can tell
+    flour quality through a sack by touch, and does, routinely,
+    to the mild unease of anyone watching.
+  speciesid: 1
+  level: 1
+  gold: 45
+  stats:
+    perception:
+      training: 6
+    charisma:
+      training: 5
+  shop:
+    - itemid: 40153
+    - itemid: 40154
+    - itemid: 40152

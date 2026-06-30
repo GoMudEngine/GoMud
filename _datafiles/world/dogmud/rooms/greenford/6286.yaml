@@ -1,0 +1,62 @@
+roomid: 6286
+zone: Greenford
+title: The Still Reach
+description: >
+  Reed-stir reaches you first — the sound of slow water
+  and something unseen moving in the shallows below.
+  The river bends south below the landing, its inside
+  edge slow and broad in the bend's shelter. Willows
+  line the upper edge, their roots in the bank and their
+  canopy leaning out over the water. The current is
+  slower here — the inside of the river's bend collecting
+  quiet water and fine silt. Reed stands have taken the
+  shallows at the bank's foot; the smell is green and
+  damp and particular to still river-margins. The town
+  noise is a little quieter up here. The water does most
+  of the talking.
+biome: water
+coord: {x: 21, y: -76, z: 0}
+exits:
+  north: {roomid: 6285}
+  east: {roomid: 6287}
+nouns:
+  the willows: >
+    Old willows along the bank's edge, their trunks
+    leaning out over the river at angles that look wrong
+    but have been holding that way for many years. The
+    canopy is dense and pale-green, the long leaves
+    trailing into the current at the tips of the lowest
+    branches. Under the canopy the air is cool and the
+    light is filtered green. A carved notch on the
+    nearest trunk marks the high-water line from a
+    flood long past. The mark is high. The river has
+    been higher than it is now.
+  the reeds: >
+    A dense stand of common reed in the shallows, the
+    stalks thick and grey-green, moving all together
+    when the current shifts. Something lives in the
+    reeds — you can hear it but not see it. The mud
+    between the reed-roots is dark and soft. Wading
+    in would mean mud to the knee within a step. The
+    reeds do not encourage it.
+  the river bend: >
+    The inside of the bend is where the slow water
+    gathers — you can see it in the surface: a slight
+    stillness against the main current's pull. The
+    silt collects here too, building the gravel shelf
+    under your feet one season at a time. Where the
+    river slows it deposits; where it quickens it
+    takes. The upper bank is a deposit. One day it
+    will be a different shape.
+  the high-water mark: >
+    A carved notch on the nearest willow trunk, at
+    roughly shoulder height. Below it, the bark is
+    paler where the river reached in the flood year —
+    the tree remembers what the town would rather
+    forget. No date carved beside the mark. People
+    who were there did not need to write it down.
+    People who were not there have been told.
+idlemessages:
+- The willows lean out over the river, still and green in the quiet.
+- Something stirs in the reed stand below the bank, unseen.
+- The water here is slower and darker, held in the river's curve.

@@ -1,0 +1,67 @@
+mobid: 9505
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Fresh off the river this morning -- trout, smoked river-fish,
+      river catch still cold from the night. Have a look."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Day to you! Counter's open, prices are on the board."
+  - keywords: ["smell", "fresh", "quality", "good"]
+    responses:
+      - "Fresh. I don't sell anything that isn't and never have. Eleven years,
+        no complaints. You can check the board."
+  - keywords: [""]
+    responses:
+      - "Ask me anything. I've an opinion on most of what's on the counter."
+tree:
+  root:
+    text: "Fenn's fish, river-row, Greenford landing. Trout this morning, smoked
+      river-fish from yesterday's run, fresh river catch under the cloth.
+      The price board's up to date. What can I do for you?"
+    hints: "You could ask Fenn about the fish and what's fresh today, about
+      the market row and the trade here, or about the river and this
+      season's run."
+  nodes:
+    - id: fish
+      triggers: ["fish", "trout", "fresh", "smoked", "sell", "buy", "wares",
+        "stock", "perch", "catch"]
+      text: "Trout from the steps fishers this morning -- fat ones, good current
+        this week which puts the fish in the right humor. Smoked river-fish
+        from yesterday, still in prime condition; I'll have it off the counter
+        by this afternoon whether it's sold or not. The river catch under
+        the cloth is mixed -- bream, roach, whatever else the nets brought
+        up last night. All of it off the river, all of it same-day or
+        smoked by my own hand. I know what's fresh because I know what
+        fresh smells like, and that's not a skill you can fake for long
+        before people stop coming back."
+      hints: "You could ask about the market row and who trades here, or
+        about the river and what's running this season."
+    - id: market
+      triggers: ["market", "row", "stall", "town", "price", "trade",
+        "customers"]
+      text: "The row's been here as long as the landing. Fish stall, chandler's,
+        bakehouse -- we each do our own trade and we don't step on each
+        other's. My customers are the riverfolk, the barge crews, the
+        scholars who can be convinced that fresh fish is worth the walk
+        downhill. The scholars are good customers when they remember to
+        eat, which isn't always. I've had one buy three trout on a Monday
+        and come back on a Thursday looking surprised that the counter had
+        changed. They're elsewhere in their heads, most of them. I like
+        them fine."
+      hints: "You could ask about the fish and what's fresh today, or about
+        the river and what the river is running."
+    - id: river
+      triggers: ["river", "water", "upstream", "season", "level"]
+      text: "Good season so far -- water's at a good level, the trout are
+        moving well, and the upstream fishers have been bringing in solid
+        catches. The river runs fat and green here in the summer, which
+        suits the fish and suits me. Flood season in spring is when things
+        get interesting: the steps go underwater, the fishers move upbank,
+        and I end up buying what comes from the nets instead of the rod-
+        fishers. Different fish, different prices, same river. You learn
+        to work with what it sends."
+      hints: "You could ask about the fish and today's catch, or about the
+        market row and the trade here."
