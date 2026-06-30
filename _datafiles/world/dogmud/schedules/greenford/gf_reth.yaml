@@ -1,0 +1,38 @@
+id: gf_reth
+description: "Reth keeps to the cottage through the working hours, tending his field-
+  notes and watching the lane; quieter after dusk; sleeps at the back of the house
+  while the lamp burns out."
+segments:
+  - start: 7
+    end: 20
+    target_room: 6315
+    activity: ""
+    idlecommands:
+      - emote stands at the cottage window, looking out toward the lane with the
+        still attention of someone who has spent years reading open ground.
+      - emote lifts the top sheet from the field-notes stack, reads the margin
+        annotation, and sets it back without changing anything.
+      - emote moves to the window and holds a survey sheet up to the light,
+        tracing a boundary line with one finger.
+      - say I keep my own hours. That is all.
+      - emote straightens a small row of corked ink-tubes on the writing shelf,
+        lining them by size without apparent thought.
+      - emote steps outside the cottage door for a moment, checks the lane in
+        both directions, and comes back in.
+  - start: 20
+    end: 23
+    target_room: 6315
+    activity: ""
+    idlecommands:
+      - emote sits at the table with a lamp turned low, rereading a page of
+        field-notes without marking anything.
+      - emote closes the notes, stacks them square, and sits back with his
+        hands flat on the table.
+      - say Quiet evenings suit me well enough.
+  - start: 23
+    end: 7
+    target_room: 6315
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the back of the cottage with the lamp out and the
+        field-notes stacked and covered on the table.

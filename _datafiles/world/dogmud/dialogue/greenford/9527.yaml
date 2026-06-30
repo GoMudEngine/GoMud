@@ -1,0 +1,76 @@
+mobid: 9527
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Morning. Mind the beds -- I've just turned the edges."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. Wipe your boots on the step if you're going
+        in, this soil sticks."
+  - keywords: ["plant", "garden", "herb", "grow"]
+    responses:
+      - "Ask me directly. I know what's in these beds."
+  - keywords: [""]
+    responses:
+      - "I'm mid-task. Ask me quick if you need something."
+tree:
+  root:
+    text: |
+      Tending the walled garden behind the tea house --
+      herbs on the south beds, chard and greens on the
+      east. Early morning is the right time for this
+      work. What do you need?
+    hints: "You could ask about the garden beds and what
+      grows here, about the season and what comes next,
+      or about the tea house and the garden's use."
+  nodes:
+    - id: garden
+      triggers: ["garden", "beds", "herb", "herbs",
+        "chard", "greens", "plants", "growing",
+        "grow", "soil", "tending", "tend",
+        "what", "beds"]
+      text: |
+        South beds are herbs -- thyme, sage, and a
+        grey-leaved thing I've had here for six years
+        that I still don't have a good name for. Good
+        for the tea house either way -- Ness knows what
+        to do with it. East beds are chard and late
+        greens -- they'll go another four weeks if the
+        temperature holds. The wall keeps the wind off
+        and holds enough warmth that I get a longer
+        season than I would otherwise. Good old walls.
+      hints: "You could ask about the season and what
+        comes next in the garden."
+    - id: season
+      triggers: ["season", "autumn", "fall", "winter",
+        "spring", "summer", "weather", "cold",
+        "warm", "next", "coming", "late"]
+      text: |
+        We're at the end of the growing season here.
+        Chard will go when the first hard frost comes,
+        which I expect in the next few weeks. After
+        that I'll turn the beds and put them down for
+        winter -- manure from the stable on the lower
+        lane, nothing fancy. Spring planting starts
+        earlier than most people think. I'll be in
+        here in early frost with seeds. The wall
+        helps with that too.
+      hints: "You could ask about the garden beds and
+        what grows here, or about the tea house."
+    - id: teahouse
+      triggers: ["tea", "teahouse", "tea-house", "ness",
+        "counter", "shop", "keeper", "supply",
+        "use", "herbs", "supply"]
+      text: |
+        The garden backs onto the tea house -- I tend
+        it and Ness gets first use of whatever's here.
+        The arrangement suits us both. She doesn't
+        have to order dried herbs from the market --
+        I have a walled garden with good soil and a
+        south wall that I wouldn't have otherwise.
+        Eleven years that's held. I don't see any
+        reason it should change.
+      hints: "You could ask about the garden beds and
+        what grows here, or about the season."

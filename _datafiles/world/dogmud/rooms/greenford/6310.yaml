@@ -1,0 +1,56 @@
+roomid: 6310
+zone: Greenford
+title: College Row
+description: >
+  The principal residential street of the upper
+  town opens here — a wider cobbled way lined
+  with terrace houses on both sides, their front
+  gardens bounded by low stone walls and wrought-
+  iron railings. A distinctive blue door at the
+  near corner of the west terrace marks the first
+  house on that side; through its front window,
+  maps and folios are visible in mid-stack. To
+  the east, the tea house has already opened, its
+  window fogged with morning steam. The street
+  continues south toward the quieter end. Examine
+  the street or the gardens.
+biome: city
+coord: {x: 22, y: -85, z: 2}
+exits:
+  north: {roomid: 6309}
+  west: {roomid: 6311}
+  east: {roomid: 6312}
+  south: {roomid: 6316}
+nouns:
+  the street: >
+    College Row runs east to west as well as north
+    and south here — the main artery of the
+    residential quarter, where the faculty actually
+    live rather than work. The cobbles are swept
+    more carefully than the back lane; the residents
+    take some pride in the row's appearance, and the
+    narrowness of it means neighbours are aware of
+    each other's choices. The tea house to the east
+    and the quieter terrace to the west mark the
+    character of the row: respectable, habituated,
+    unhurried.
+  the gardens: >
+    Front gardens behind low walls and iron railings
+    along both sides of the row — each modest enough
+    that a serious gardener would call them
+    forecourts, but tended with a care that says they
+    matter to their owners. One has a clipped hedge;
+    one has herbs in pots along the sill; several
+    have a single large stone urn planted with
+    something seasonal. The gardening here is the
+    kind that happens in the margins of a working
+    life, and shows it.
+spawninfo:
+  - mobid: 9526
+    respawnrate: "20 real minutes"
+  - mobid: 9529
+    respawnrate: "20 real minutes"
+idlemessages:
+- A neighbour nods from behind a front garden wall, clipping something back.
+- 'Morning quiet holds on the row: a door somewhere, the scrape of a step being swept.'
+- The tea house window is warm and fogged; two figures are visible at the tables inside.

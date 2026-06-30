@@ -1,0 +1,44 @@
+mobid: 9527
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote presses both hands flat into the soil at the edge
+    of the nearest bed and holds them there a long moment.'
+  - ''
+  - 'say The chard wants water tomorrow. I can feel the
+    roots reaching.'
+  - ''
+  - 'emote rises and brushes her palms clean on her apron,
+    already moving to the next bed.'
+  - ''
+activitylevel: 10
+character:
+  name: A Gardener
+  description: |
+    A compact woman in her late forties who tends the
+    walled garden behind the tea house with a skill that
+    has produced, over several seasons, the best herb
+    beds in the residential quarter. She works in the
+    early morning before the light is full and considers
+    this the correct time. Her Chrysalis-change is a
+    soil-pulse sense: when her hands are in contact with
+    worked soil, she feels moisture levels, root
+    structures, and the health of what is growing there
+    as a quality she describes only as a tone. She has
+    not needed to test soil by any other method in eight
+    years. She trusts the tone.
+  speciesid: 1
+  level: 1
+  gold: 6
+  stats:
+    vitality:
+      training: 5
+    perception:
+      training: 4

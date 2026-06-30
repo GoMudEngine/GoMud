@@ -1,0 +1,53 @@
+roomid: 6315
+zone: Greenford
+title: Reth's Cottage
+description: >
+  The overgrown yew fills the front of the cottage
+  — its branches spread out over the path, its
+  roots lifting the flagging in two places, the
+  whole tree having been left to itself for more
+  years than anyone has corrected. Behind it, the
+  cottage is orderly and spare: swept step, plain
+  door, curtains drawn to a deliberate gap.
+  Through the window,
+  <ansi fg="itemname">field-notes</ansi> and
+  survey charts lie spread across the table — old
+  paper in a precise, faded hand, the work of a
+  man who came back from the eastern country and
+  went quiet. The lane is north. Examine the
+  field-notes or the yew.
+biome: city
+coord: {x: 21, y: -87, z: 2}
+exits:
+  north: {roomid: 6314}
+nouns:
+  field-notes: >
+    A retired surveyor's field papers spread across
+    the table — terrain charts and route sketches
+    in a close, careful hand, the ink faded but
+    the underlying work still readable. Eastern
+    surveys: elevation marks, resource classifications,
+    seasonal access notes. The kind of documentation
+    a careful man builds over years of fieldwork. To
+    a stranger at the window, they are an old man's
+    private papers, laid out as though being
+    consulted, not stored. They are not yours
+    to take.
+  the yew: >
+    An overgrown yew that has taken the front garden
+    entirely — trunk as thick as a person's waist,
+    the bark deeply ridged and dark, the branches
+    spreading out over the path and well past the
+    low front wall into the lane. No one has pruned
+    it in years, perhaps more than a decade. The
+    tree has been given the garden, and it has taken
+    it, and the cottage has learned to live behind
+    it. The yew is the most recognisable thing about
+    this house — it is why Brennan mentioned it.
+spawninfo:
+  - mobid: 9524
+    respawnrate: "20 real minutes"
+idlemessages:
+- The yew moves in no wind you can feel — thick branches, slow.
+- Stillness at the cottage; the curtains are drawn to a careful gap, nothing stirring behind them.
+- The front step is swept clean; the path through the yew root is clear, and nothing more.

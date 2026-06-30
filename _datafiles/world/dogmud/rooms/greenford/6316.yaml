@@ -1,0 +1,48 @@
+roomid: 6316
+zone: Greenford
+title: The Garden Wall
+description: >
+  College Row ends here at a broad stone wall —
+  the boundary of a private garden behind one
+  of the terrace houses, its top course capped
+  flat and carrying a fringe of moss along the
+  joints. The wall stretches east and west as
+  far as the terrace backs allow, with no gate,
+  no gap, and no continuation beyond it. The
+  residential streets open north to College Row,
+  east toward the walled garden, and west toward
+  the quieter lane. Examine the wall or the
+  lane-end.
+biome: city
+coord: {x: 22, y: -86, z: 2}
+exits:
+  north: {roomid: 6310}
+  west: {roomid: 6314}
+  east: {roomid: 6313}
+nouns:
+  the wall: >
+    A boundary wall of old stone, its mortar
+    joints gone soft at the surface and taken
+    moss. The top course is flat stone laid
+    without mortar, the kind of capping that
+    stays because the weight is right. The wall
+    is high enough that whatever garden is behind
+    it is not visible from the lane end. Nothing
+    about the wall invites climbing; it does not
+    need to. The garden behind it is private
+    and has always been private, and the wall
+    makes this clear without effort.
+  the lane-end: >
+    The point where the cobbled lane runs out
+    against the garden wall — the street simply
+    ends here, giving no further passage. Looking
+    back north along College Row, the row opens
+    up toward the tea house and the blue-doored
+    corner. Looking west, the quieter lane
+    branches toward the last houses. This end
+    of the street is where people turn back,
+    not where they find a way through.
+idlemessages:
+- A sparrow picks at the moss on the top course of the wall, unconcerned.
+- Nothing stirs on the other side of the wall; the private garden is quiet.
+- A wren calls once from behind the garden wall, then is quiet again.

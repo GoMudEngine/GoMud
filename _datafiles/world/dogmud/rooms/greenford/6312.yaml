@@ -1,0 +1,51 @@
+roomid: 6312
+zone: Greenford
+title: The Tea House
+description: >
+  The tea house occupies a converted terrace at
+  the eastern end of College Row — its front step
+  worn to a comfortable smoothness, its window
+  fogged with morning steam. Inside: low tables
+  with mismatched chairs, a small hearth at the
+  back wall keeping the room warm before the
+  trade heats it naturally, the smell of warming
+  tea and something baked already setting. It
+  opens before the rest of the row is moving.
+  The walled garden is south; College Row is
+  west. Examine the tables or the counter.
+biome: city
+coord: {x: 23, y: -85, z: 2}
+exits:
+  west: {roomid: 6310}
+  south: {roomid: 6313}
+nouns:
+  the tables: >
+    Low tables with an assortment of chairs —
+    some matched to a table, some not, all of
+    them worn to different degrees of smoothness.
+    The tables carry the marks of years of cups
+    set down without a mat, rings in the wood
+    lightened by use to an even tone. Three
+    tables are occupied: a student with a book,
+    two colleagues with a shared pot and a quiet
+    conversation, a third person sitting without
+    visible purpose. The morning is early yet.
+  the counter: >
+    A narrow counter at the back wall, its
+    surface given over entirely to the business
+    of tea: a range of small pots in use, cups
+    on hooks, a rack of implements whose purpose
+    is not all immediately obvious. Behind the
+    counter, the keeper moves with the economy
+    of someone who knows exactly where everything
+    is and has no reason to hurry. The hearth is
+    built into the wall at the counter's back
+    and has been in use since before the tea
+    house opened this morning.
+spawninfo:
+  - mobid: 9525
+    respawnrate: "20 real minutes"
+idlemessages:
+- 'Steam rises from a row of cups on the counter: the first morning service set out.'
+- A student at the corner table has not looked up from her book in some time.
+- The keeper sets a pot on the counter with the quiet of someone not waking anyone.

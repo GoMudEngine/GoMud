@@ -1,0 +1,55 @@
+roomid: 6313
+zone: Greenford
+title: The Walled Garden
+description: >
+  A walled garden behind the tea house — its
+  stone walls old enough to carry a green tinge
+  along the mortar lines, the planting inside
+  them running to herbs and autumn vegetables
+  in well-kept beds. A stone bench against the
+  south wall, worn to a comfortable lean over
+  many years. The space is small: street sounds
+  carry over the walls, but the walls change
+  them, and the garden holds a quality of quiet
+  the row itself does not have. The tea house
+  is north; the lane end is west. Examine the
+  garden beds or the wall.
+biome: city
+coord: {x: 23, y: -86, z: 2}
+exits:
+  north: {roomid: 6312}
+  west: {roomid: 6316}
+nouns:
+  the garden beds: >
+    Raised beds along the east and south walls,
+    their borders dressed with flat stone and
+    their soil dark and well-worked. Herbs in
+    the south beds — thyme, sage, something
+    aromatic with small leaves — and taller
+    plantings of chard and late greens along
+    the east. The beds are tended: edges clear,
+    no volunteers left to run. Someone works
+    here regularly and knows what they are doing.
+    Several of the herb plants have grown woody
+    at the base from long seasons in the same
+    ground.
+  the wall: >
+    Old stone walls on all four sides, their top
+    courses capped with flat stone laid without
+    mortar — the kind of capping that stays
+    because it is done right. The walls are high
+    enough to shelter the planting from the
+    street wind and old enough to have developed
+    their own small ecology: mosses in the
+    joints, wall-plants at the base, the
+    particular damp that comes from stone holding
+    moisture. The south bench is positioned where
+    the afternoon light will fall when the season
+    is right for sitting out.
+spawninfo:
+  - mobid: 9527
+    respawnrate: "20 real minutes"
+idlemessages:
+- A robin works the edge of the nearest bed, systematic and unhurried.
+- Morning light comes over the east wall and crosses the garden beds at a low angle.
+- The stone bench holds the night's cold; no one is sitting on it yet.
