@@ -1,5 +1,6 @@
 mobid: 9524
 zone: Greenford
+schedule_id: gf_reth
 behavior_archetype: noncombat_passive
 non_combatant: true
 charm_immune: true
