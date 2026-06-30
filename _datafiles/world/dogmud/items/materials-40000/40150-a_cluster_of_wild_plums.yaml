@@ -1,0 +1,14 @@
+itemid: 40150
+name: A Cluster of Wild Plums
+namesimple: plums
+description: A loose cluster of small wild plums gleaned from hedgerow
+  scrub along the road -- tart-skinned and ripe at the pit.
+type: object
+subtype: mundane
+component_tag: wild-plums
+weight: 0.2
+value: 4
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking
