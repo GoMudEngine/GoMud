@@ -41,7 +41,7 @@ tree:
       hints: "You could ask why people choose to study at Greenford,
         or about what she is hoping to learn when she gets there."
     - id: why
-      triggers: ["why", "study", "people", "scholars", "learn",
+      triggers: ["why", "study", "people", "scholars",
         "reason", "choose", "students", "who goes"]
       text: "Greenford is a good distance from the capital, which is
         either a flaw or a feature depending on what you are trying to
@@ -57,7 +57,7 @@ tree:
         arrives."
     - id: learning
       triggers: ["hope", "work", "goal", "what for",
-        "doing", "plan", "project", "maps", "cartography"]
+        "doing", "plan", "project", "maps", "cartography", "learn"]
       text: "Cartography, specifically the eastern river country --
         the maps of the basin between here and the coast are about
         forty years out of date and the river courses shift faster than

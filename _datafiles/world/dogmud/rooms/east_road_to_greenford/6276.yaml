@@ -35,6 +35,14 @@ nouns:
     A log seat is set into the bank at the side for
     travelers who wait. This crossing has been in use for
     a long time.
+  toll-booth: >
+    A small stone structure on the far bank — a guard post
+    with a pipe-brazier mounted outside, the brazier cold
+    and unlit. The booth is built for occupancy: shuttered
+    windows, a door, a bracket for a lantern. Whoever
+    should be sitting in it is not here right now. The
+    post itself is well-made, which suggests the toll
+    collection is not an afterthought.
 idlemessages:
 - The bridge piers stand in the current with total indifference.
 - Cart tracks in the staging area are deep from many seasons.

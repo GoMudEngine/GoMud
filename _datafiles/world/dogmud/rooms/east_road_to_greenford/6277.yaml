@@ -43,6 +43,13 @@ nouns:
     catching whatever light is going. The town is
     inhabited and established. The gate between you and
     it is the only thing that is not open.
+  sign: >
+    Nailed below the arch of the toll-gate: NO PASSAGE
+    WITHOUT THE WARDEN'S LEAVE. The lettering is painted
+    black on a pale board and has been repainted more than
+    once — the edges of older letters are visible under
+    the current ones. This sign has been here a long time
+    and has always said the same thing.
 idlemessages:
 - The river moves fast under the bridge, indifferent to the gate.
 - Greenford is visible past the gate. The gate is not open.

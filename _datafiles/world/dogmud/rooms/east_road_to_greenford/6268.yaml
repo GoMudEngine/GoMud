@@ -40,6 +40,12 @@ nouns:
     well-rope working. The lane is narrow and shaded, the
     buildings close on both sides. The yard at the end is
     cooler than the road.
+  awning: >
+    A striped canvas awning stretched over the victualler's
+    stall on a frame of poles lashed tight. The canvas has
+    been patched in two places and the stripes have faded
+    to softer colors, but it still does its job: the shade
+    under it is noticeably cooler than the open road.
 idlemessages:
 - The awning of the stall flexes in a small, hot breeze.
 - From the north, the creak of the well-rope lifting water.

@@ -42,7 +42,7 @@ tree:
         field, or about how long her family has farmed this land."
     - id: waystone
       triggers: ["waystone", "stone", "old", "marker", "east", "edge",
-        "what", "wall"]
+        "wall"]
       text: "The waystone? It has been there longer than the field
         walls. Longer than any farm on this plateau, as far as I know.
         We work around it -- it is too big to move and too old to take

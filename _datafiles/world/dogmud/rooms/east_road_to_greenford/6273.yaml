@@ -35,6 +35,22 @@ nouns:
     narrowing below the ridge, its stone piers spaced across
     the channel. The water moves past the piers and does
     not stop for them.
+  university: >
+    The University at Greenford occupies the crown of the
+    hill — a cluster of stone buildings around a central
+    hall, the square tower rising above the rest. From this
+    distance the stonework is too fine to read but the
+    proportions are clear: this is a building that was
+    built to last, by people who expected it to be used
+    for a long time.
+  tower: >
+    The square tower above the university's main hall is
+    the tallest thing on the hill, its upper story pierced
+    by arched openings that catch the afternoon light on
+    their interior faces. The tower is old — the stone
+    darkened at the base, lighter where courses were added
+    or repaired in later years. From here it looks steady
+    and entirely indifferent to the distance between you.
 idlemessages:
 - The university tower catches the afternoon light on its upper face.
 - The bridge is there below. The town is past it and across.

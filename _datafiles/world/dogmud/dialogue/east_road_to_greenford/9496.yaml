@@ -29,19 +29,19 @@ tree:
   nodes:
     - id: distance
       triggers: ["how far", "far", "distance", "long", "greenford",
-        "east", "arrive", "get there", "take", "days"]
-      text: "From here? Two days walking if the road stays dry and
-        you keep a good pace. On a cart in good repair it is one long
-        day. The last leg before Greenford gets rougher -- the road
-        dips toward the river crossing and the surface breaks up where
-        water works under it in the wet season. In this dry spell it
-        is fine, just dusty. The crossing itself is a good stone bridge.
-        Someone built it properly."
+        "east", "arrive", "get there", "take", "days", "road"]
+      text: "From here? The better part of two days with a loaded
+        cart, if the road stays dry. On foot you can do it in a day
+        if you keep a good pace. The last leg before Greenford gets
+        rougher -- the road dips toward the river crossing and the
+        surface breaks up where water works under it in the wet season.
+        In this dry spell it is fine, just dusty. The crossing itself
+        is a good stone bridge. Someone built it properly."
       hints: "You could ask about the cargo he carries and the route
         between the Confluence and Greenford, or about this milepost
         and what makes it a good resting stop."
     - id: cargo
-      triggers: ["cargo", "carry", "haul", "goods", "what", "trade",
+      triggers: ["cargo", "carry", "haul", "goods", "trade",
         "load", "deliver", "route"]
       text: "Grain going west to the Confluence basin, dry goods --
         manufactured things, cloth, tools -- coming back east to
