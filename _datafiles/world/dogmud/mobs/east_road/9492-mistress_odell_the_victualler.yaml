@@ -1,5 +1,6 @@
 mobid: 9492
 zone: East Road to Greenford
+schedule_id: er_victualler
 craft_support: cooking
 behavior_archetype: noncombat_shopkeeper
 non_combatant: true
