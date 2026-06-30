@@ -1,0 +1,70 @@
+roomid: 6298
+zone: Greenford
+title: The University Gate
+description: >
+  The graveled path levels here at the inner gate —
+  the porter's lodge is set into the boundary wall
+  to the east, a low stone building with a window
+  onto the path and a door standing open. The main
+  court opens to the south, broader than it looked
+  from below: the quadrangle, the tower above it,
+  the ranges on three sides. The porter's board
+  beside the lodge tracks visitors and hours. From
+  the south the open quad carries faint voices —
+  a lecture in progress, its words just out of reach.
+  Examine the lodge or the board.
+biome: city
+coord: {x: 22, y: -80, z: 2}
+exits:
+  down: {roomid: 6297}
+  south: {roomid: 6299}
+nouns:
+  the porter's lodge: >
+    A low stone building set into the boundary wall,
+    older than the fittings inside it: a deal table,
+    a ledger, a wooden chair worn at the joints, a
+    hook-board for keys. The window onto the path
+    has a shutter that can be drawn from inside. In
+    cold weather the porter watches from here; in
+    mild weather the door stands open. The lodge has
+    been doing its job for a very long time.
+  the board: >
+    A painted board beside the lodge door, its
+    surface lined for daily entries: visitors in
+    and out, hours of the main buildings, any
+    temporary closures. Today's column is already
+    filling. The porter maintains it in a neat,
+    unhurried hand. Visiting hours for the library
+    and the lecture hall are marked in bolder
+    script; the archive's hours are amended in
+    pencil below.
+  the quadrangle: >
+    The main court opens to the south from the gate:
+    a wide paved quadrangle with the tower at its
+    north end, the lecture-hall range to the west,
+    the library to the east, and the cloister walk
+    south. The gravel paths across it are raked to
+    clean lines. In the center a sundial on a
+    sandstone plinth. The quad is the university's
+    public face; the rest of the grounds work
+    behind and around it.
+  the tower: >
+    Visible from the gate at close range: the tower
+    stands at the quad's north end, its base stones
+    broad and old, the upper courses lighter in
+    colour from a later phase of building. The
+    arched openings at the crown let the sky through
+    on all sides. At this distance the tool-marks
+    on the base stones are visible — dressed by hand,
+    long before the university was built around it.
+    The tower is the tallest structure in Greenford
+    and probably the oldest. Both things are true in
+    the way that requires no comment from anyone
+    who lives here.
+spawninfo:
+  - mobid: 9522
+    respawnrate: "20 real minutes"
+idlemessages:
+- The porter leans from the lodge to note a visitor's name and hour.
+- A student hurries through the gate, gown untied, late for something.
+- Rooks call from the tower parapet above, entirely unhurried.

@@ -1,0 +1,38 @@
+id: gf_archivist
+description: "Tess tends the archive through the full working day, shelving and
+  cataloguing; closes quietly at the second bell; sleeps in the reading room
+  when the lamps are out."
+segments:
+  - start: 7
+    end: 19
+    target_room: 6303
+    activity: ""
+    idlecommands:
+      - emote moves along the shelving row with a file in hand, checking
+        labels until she finds the right gap and slides it in.
+      - say The eastern portfolios are in date order, far right. If you need
+        something specific, say so.
+      - emote lifts a portfolio from the returns tray, opens it flat, and
+        checks the index card against the contents before reshelving it.
+      - emote adjusts the reading-stand lamp by a quarter-inch and checks the
+        result with both eyes.
+      - say Misfiled material costs time I do not have. Return things to the
+        tray and I will put them back correctly.
+  - start: 19
+    end: 22
+    target_room: 6303
+    activity: ""
+    idlecommands:
+      - emote begins the close-of-day count, moving row by row and touching
+        each portfolio spine without pulling it.
+      - say The archive closes at the second bell. Anything outstanding goes
+        in the tray. I review it in the morning.
+      - emote turns down the far lamp, checks that the cabinet locks are
+        seated, and marks something in the register.
+  - start: 22
+    end: 7
+    target_room: 6303
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the archive chair with the lamp fully out and the
+        cabinet keys on the table beside her.

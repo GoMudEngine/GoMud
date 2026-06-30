@@ -1,0 +1,38 @@
+id: gf_brennan
+description: "Brennan works from his office through the working day, receiving
+  callers and annotating surveys; quieter in the evening; sleeps at his desk
+  when the work runs long."
+segments:
+  - start: 7
+    end: 19
+    target_room: 6305
+    activity: ""
+    idlecommands:
+      - emote draws a finger along the eastern margin of the wall map, tracing
+        a route without marking it.
+      - say Thirty years of eastern surveys. Someone saw something out there and
+        filed three lines. That is not an accident.
+      - emote opens a chart-tube, unrolls the survey inside just far enough to
+        read the margin annotation, then rolls it closed again.
+      - emote makes a small mark in the corner of his current sheet, sets the
+        pen down, and reads the result.
+      - say If you have business with the survey office, this is the place and
+        I am the person. What is it?
+  - start: 19
+    end: 23
+    target_room: 6305
+    activity: ""
+    idlecommands:
+      - emote sits back in the chair and holds a survey sheet up to the lamp,
+        turning it to read the far margin.
+      - say The quiet hours are for the work that requires thinking rather than
+        filing. I prefer them to the morning.
+      - emote uncaps the ink-well, makes a careful correction in the margin,
+        and blots it without looking up.
+  - start: 23
+    end: 7
+    target_room: 6305
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the office chair with a survey sheet still spread on
+        the desk and the lamp turned down to its lowest point.

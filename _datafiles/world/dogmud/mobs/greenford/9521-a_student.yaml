@@ -1,0 +1,42 @@
+mobid: 9521
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote reads something in a small notebook, lips moving
+    slightly, then snaps it shut and keeps walking.'
+  - ''
+  - 'say Examinations at end of term. I have six weeks and
+    approximately twice that amount of material.'
+  - ''
+  - 'emote sits on the edge of the sundial plinth for a
+    moment, thinks better of it, and stands again.'
+  - ''
+activitylevel: 10
+character:
+  name: A Student
+  description: |
+    A second-year student in his early twenties, pausing in
+    the quadrangle for longer than his timetable allows. He
+    carries more books than are strictly necessary for the
+    day, a habit left from his first term when he was unsure
+    what would be needed. His Chrysalis-change is in his
+    palms: the skin there does not retain pressure-marks.
+    After hours at a desk with a quill his hands carry no
+    impression of the work. His classmates have begun to find
+    this either enviable or faintly unsettling, depending on
+    how often they work through the night.
+  speciesid: 1
+  level: 1
+  gold: 6
+  stats:
+    perception:
+      training: 4
+    willpower:
+      training: 5

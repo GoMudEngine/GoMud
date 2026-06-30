@@ -1,0 +1,73 @@
+roomid: 6299
+zone: Greenford
+title: The Quadrangle
+description: >
+  The university's central court: a wide paved
+  quadrangle with a sundial on a sandstone plinth
+  at its centre, gravel paths crossing it at right
+  angles. The tower rises at the north end, the
+  lecture-hall range runs west, the library east,
+  the cloister walk opens south to the college's
+  quieter precincts. Students cross the quad in
+  the way people cross a space they cross every
+  day — without looking at it. The air carries
+  chalk, old stone, and the faint sweetness of
+  the planted borders. Examine the sundial or
+  the tower.
+biome: city
+coord: {x: 22, y: -81, z: 2}
+exits:
+  north: {roomid: 6298}
+  west: {roomid: 6300}
+  east: {roomid: 6301}
+  south: {roomid: 6307}
+nouns:
+  the sundial: >
+    A sandstone plinth at the quad's centre, the
+    bronze gnomon dark with age. The hour-lines
+    are finely cut and still accurate. A small
+    bronze plate on the plinth's south face carries
+    a motto in the academic Latin most students
+    here can read: Time counts what we choose not
+    to. The plate is more recent than the sundial,
+    added by some provost who felt the motto
+    appropriate. The sundial was here before the
+    motto. It keeps the time it was set to, and
+    leaves the rest alone.
+  the tower: >
+    The tower stands at the north end of the quad
+    and makes the rest of the university look
+    smaller than it is. Its base stones are broad
+    and old; the upper courses are lighter — two
+    phases of building that have spent enough time
+    together to look intended. The arched openings
+    at the crown let the sky through on all sides.
+    In weather the tower catches wind first; the
+    jackdaws up there have long since stopped
+    being bothered.
+  the planted borders: >
+    Low border planting along the quad's inner
+    edges — clipped box and a running ground-cover
+    that has been here long enough to have its own
+    formal shape. In the east border a single rose,
+    very old, its canes thick as a thumb, currently
+    not in flower. The gardener attends to it more
+    carefully than to the rest. Some things are
+    maintained out of respect for how long they
+    have been there.
+  the gravel paths: >
+    The paths cross the quadrangle at right angles,
+    raked to clean lines each morning. The crossing
+    at the centre is where student traffic naturally
+    converges; the gravel there is worn deeper and
+    re-raked more often. Along the edges the borders
+    are kept from the paths by thin stone kerbs, laid
+    in the old way — slightly proud of the surface,
+    to stop the gravel spreading.
+spawninfo:
+  - mobid: 9521
+    respawnrate: "20 real minutes"
+idlemessages:
+- A student stops at the sundial, checks it, and continues south without urgency.
+- Voices from the lecture hall carry across the quad, indistinct but formal.
+- Two scholars stand near the plinth, debating. Neither appears to be listening.

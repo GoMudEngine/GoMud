@@ -1,0 +1,163 @@
+mobid: 9516
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Brennan. If Aldith sent you uphill, or you found the
+      office yourself -- sit. I have a question that needs
+      someone else to ask it."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Brennan. Sit down if you have something to ask."
+  - keywords: ["margin", "scholars", "who"]
+    responses:
+      - "We keep the source records and ask the questions that
+        official accounts consider settled. Mostly harmless,
+        as far as the university is concerned."
+  - keywords: [""]
+    responses:
+      - "Ask me directly. I am working and would rather not
+        guess at what you need."
+tree:
+  root:
+    text: |
+      Thirty years of eastern surveys on that wall and one
+      question I cannot answer from them. I am Brennan. If
+      Aldith sent you up the hill, or if you found the office
+      yourself -- sit. I have something I need done that I
+      cannot do myself.
+    hints: "You could ask Brennan about his work in the eastern
+      surveys and about the surveyor Reth, about the mark on
+      the old maps, or about the university and the department."
+  nodes:
+    - id: grant
+      questExcluded: ["75-start", "75-end"]
+      grantsQuest: "75-start"
+      triggers: ["quest", "task", "surveyor", "reth", "east",
+        "survey", "help", "work", "aldith", "bookseller",
+        "archive", "report", "asks"]
+      text: |
+        I have been looking at the eastern surveys for three
+        years on one question: Reth retired early, and his
+        field report on the eastern site reads like a careful
+        man saying as little as possible. Three lines for a
+        site that should have warranted a page. I have not
+        been able to get him to explain it. You might manage
+        better -- but before you go to Reth, I want you to
+        read the filed survey yourself. Tess the Archivist
+        has it; she will point you to the right one. Read it.
+        Then come back to me. I want to know what you see
+        in it before you go any further.
+      hints: "You could go to the Archive and ask Tess to
+        point you to Reth's filed eastern survey, then return
+        to Brennan with what you found."
+    - id: turnin
+      questRequired: ["75-survey"]
+      questExcluded: ["75-intro", "75-end"]
+      grantsQuest: "75-intro"
+      triggers: ["quest", "task", "report", "return", "found",
+        "done", "back", "survey", "archive", "read", "reth",
+        "filed", "silence", "silent", "entry"]
+      text: |
+        You read it. And you saw what is not there -- the
+        three lines where there ought to be a page, the site
+        classified as a mineral deposit with no elevation
+        notes, no material samples, no seasonal access. A
+        surveyor who did his job that well everywhere else.
+        That silence is what I have been looking at. Reth
+        will not speak to me -- we have history, and it is
+        not collegial. But I will give you my word to take
+        to him. He lives in the north end of the residential
+        streets -- back gate of the college, first left,
+        third house with the overgrown yew. Tell him I sent
+        you, and that I am not asking him to explain anything.
+        I am asking him to let you read the original notes.
+      hints: "You could take Brennan's introduction to Reth --
+        he lives at the north end of the residential streets,
+        through the back gate of the college."
+    - id: progress
+      questRequired: ["75-start"]
+      questExcluded: ["75-survey"]
+      triggers: ["quest", "task", "progress", "remind", "where",
+        "again", "still", "report", "archive", "reth", "help",
+        "work", "east", "survey", "lost"]
+      text: |
+        The Archive -- south of the reading room. Tess the
+        Archivist will point you to the right one. The eastern
+        surveys are on the upper tier; Reth's report is the
+        thin one, filed under the date of the last expedition.
+        Read it, then come back to me.
+      hints: "You could go to the Archive and find Reth's filed
+        eastern survey, then return to Brennan."
+    - id: symbol
+      triggers: ["symbol", "mark", "ring", "rings", "nested",
+        "notation", "maps", "recurring", "cartograph", "margins",
+        "annotation", "old-maps", "examples"]
+      text: |
+        It appears in the margins of the oldest surveys -- a
+        mark of nested rings, small and precise, drawn by
+        different hands over decades of fieldwork by people
+        who did not know each other. No notation explains it.
+        No legend. It has been appearing in the surveys for
+        about a hundred and fifty years, coming and going
+        without anyone agreeing on what it marks or why
+        different surveyors drew the same thing. I have three
+        examples on that wall -- different hands, forty years
+        apart. I find them the most interesting problem I
+        have, and I have no answer to offer you. I have asked
+        the Archive; I have written to colleagues at two other
+        institutions. The honest summary: it recurs, and no
+        one knows why.
+      hints: "You could ask about Brennan's survey work and
+        the eastern expeditions, or about the university."
+    - id: work
+      triggers: ["expedition", "fieldwork", "field", "method",
+        "methods", "research", "country", "region", "career",
+        "thirty", "survey"]
+      text: |
+        Thirty years of field survey in the eastern country --
+        the terrain, the routes, the resource classifications.
+        Most of it is exactly what it looks like: methodical
+        documentation of a country that has been documented
+        before. The interesting work is in the discrepancies:
+        where the current surveys differ from the old ones,
+        and where the old ones differ from each other. That
+        is usually where the genuine question lives. Most of
+        my colleagues find the fieldwork repetitive. I find
+        it the part that does not lie.
+      hints: "You could ask about the mark on the old maps, or
+        about the university and the department."
+    - id: reth_after
+      questRequired: ["75-intro"]
+      triggers: ["reth", "introduction", "letter", "retired",
+        "residential", "north", "introduce", "surveyor"]
+      text: |
+        Reth was good at the work -- better than good. Twenty
+        years in the field, thorough, reliable, the kind of
+        surveyor whose reports you could build on without
+        checking. He retired early and did not explain it, and
+        I made the mistake of pressing him, which is why we
+        no longer speak easily. He lives quietly in the
+        residential streets -- north end, house with the yew
+        -- and I respect his quiet even when it costs me
+        something. If you have his confidence, keep it
+        carefully. He has earned the right to his silence.
+      hints: "You could ask about the survey work and the
+        eastern expeditions, or about the university."
+    - id: university
+      triggers: ["university", "department", "faculty",
+        "scholars", "academic", "college", "chair",
+        "colleagues", "institution", "campus"]
+      text: |
+        Survey chair, twenty-two years. The university has
+        three departments you could place the work in and has
+        never quite decided which one -- which means I have
+        some independence and a smaller budget than I would
+        like. The department suits me: the library is good,
+        the archive is well-kept, and there are students who
+        find the eastern fieldwork genuinely interesting. I
+        could have gone to the capital. I have not regretted
+        staying.
+      hints: "You could ask about the mark on the old maps,
+        or about the survey work and the eastern country."

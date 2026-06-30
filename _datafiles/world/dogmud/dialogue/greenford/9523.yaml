@@ -1,0 +1,84 @@
+mobid: 9523
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Hm? Oh -- yes. I am here. I am not gone; I am just
+      between one thought and the next. Ask me."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Good morning. Or afternoon. I have lost track a little."
+  - keywords: ["research", "work", "history", "stuck"]
+    responses:
+      - "Comparative history. Two founding accounts, one
+        inconsistency I have been circling for six months.
+        Not stuck -- patient."
+  - keywords: [""]
+    responses:
+      - "Ask me. I may be more present than I look."
+tree:
+  root:
+    text: |
+      Comparative history -- two institutional founding
+      accounts and the inconsistency that keeps not
+      resolving. I have been circling it for six months.
+      I am not stuck; I am between one way of seeing it
+      and the next. The cloister walk is good for this.
+      Ask me something.
+    hints: "You could ask about the cloister walk and the
+      garden court, about his research and what he is
+      working through, or about the university."
+  nodes:
+    - id: cloister
+      triggers: ["cloister", "walk", "garden", "quince",
+        "tree", "bench", "arches", "cold", "court",
+        "pillar", "quiet", "paved", "here", "sitting",
+        "why here"]
+      text: |
+        Good light through the arches in the morning and
+        it is quiet -- the quad carries noise; the cloister
+        does not. The cold from the stone becomes a factor
+        after about an hour, which is usually long enough.
+        The quince tree has been there since before anyone
+        now at the university was born, which I find
+        reassuring for reasons I cannot entirely articulate.
+        Something about problems that outlast the people
+        who plant the question.
+      hints: "You could ask about the research he is working
+        through, or about the university."
+    - id: work
+      triggers: ["work", "research", "folio", "history",
+        "comparative", "study", "reading", "ideas", "stuck",
+        "thinking", "problem", "inconsistency", "circling",
+        "what", "about", "account", "founding", "question"]
+      text: |
+        Two institutions -- both with founding accounts
+        written by the third generation of successors, not
+        the founders. Both accounts say their institution
+        was the first of its kind in the region. Both use
+        similar language in the founding documents. The
+        interesting question is whether that similarity is
+        a source relationship, a common original, or a
+        coincidence of circumstance. I am leaning toward
+        a source relationship. The problem is I cannot find
+        the source. Six months. It is still interesting.
+        I am simply doing the patient version of looking.
+      hints: "You could ask about the cloister walk and why
+        it is good for thinking, or about the university."
+    - id: university
+      triggers: ["university", "college", "institution",
+        "faculty", "scholars", "colleagues", "campus",
+        "greenford", "years", "career", "came", "stay"]
+      text: |
+        I came for the archive -- Greenford has materials
+        the capital institutions do not, and Tess the
+        Archivist is the best keeper of comparative
+        institutional records I have encountered. I expected
+        to stay a year. That was four years ago. The cloister
+        walk is good for thinking, the library is well-kept,
+        and the archive has not run out of surprises yet.
+        There are worse reasons to stay somewhere.
+      hints: "You could ask about the cloister walk and the
+        garden court, or about the research he is working
+        through."

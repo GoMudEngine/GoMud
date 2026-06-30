@@ -1,0 +1,44 @@
+mobid: 9520
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote draws a new figure on the board, steps back, and
+    considers it with her head tilted.'
+  - ''
+  - 'say We will continue this after the bell. Think about
+    where the assumption breaks down.'
+  - ''
+  - 'emote crosses out two lines on the board and rewrites
+    them slightly to the left, in smaller figures.'
+  - ''
+activitylevel: 10
+character:
+  name: A Lecturer
+  description: |
+    A natural philosophy lecturer in her middle years, with
+    the chalk-dusty hands and precise diction of someone who
+    has explained the same fundamentals many times without
+    losing interest in them. She runs a working lecture hall
+    the way some people run a kitchen: ordered, efficient,
+    and with a clear sense of what is done and what is not.
+    Her Chrysalis-change is directional: she feels north as
+    a faint persistent pull in her sternum. She gestures
+    toward compass points without thinking and is always
+    right. Her colleagues discovered this in her second year.
+    She has used it in every lecture on spatial reasoning
+    since without advertising it directly.
+  speciesid: 1
+  level: 1
+  gold: 14
+  stats:
+    willpower:
+      training: 6
+    charisma:
+      training: 3

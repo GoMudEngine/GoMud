@@ -1,0 +1,55 @@
+roomid: 6304
+zone: Greenford
+title: The Restricted Collection
+description: >
+  The anteroom of the restricted collection — a
+  small square room of bare stone, lit by a single
+  lamp. The holdings are behind the iron-bound door
+  in the far wall, closed and locked. A notice on
+  the door states the terms in plain language:
+  access by written application to the Keeper of
+  the Archive, for approved scholarly purposes,
+  supervised. The room itself is empty except for
+  a reading table and two chairs, placed for the
+  supervised use that the notice presupposes. The
+  only way back is west. Examine the door or the
+  notice.
+biome: city
+coord: {x: 24, y: -83, z: 2}
+exits:
+  west: {roomid: 6303}
+nouns:
+  the door: >
+    An iron-bound oak door in the far wall, its
+    construction heavier than anything else in the
+    archive wing — wide iron straps, a lock-plate
+    of cast iron with a keyhole that takes a long
+    key. The door has been here since the collection
+    was established. The lock shows no sign of
+    recent use and a great deal of sign of being
+    well maintained. It opens. The key is with the
+    Keeper of the Archive, who has been very
+    selective about lending it.
+  the notice: >
+    A framed card pinned beside the door in a
+    careful clerical hand: ACCESS TO THE RESTRICTED
+    COLLECTION — by written application to the
+    Keeper of the Archive only. Purposes must be
+    stated in full. Supervised use. No materials
+    to leave this room. The Keeper's decision is
+    final. Below the frame, in a different hand
+    added later: Please do not ask the archivist.
+    She will refer you to the Keeper.
+  the reading table: >
+    A plain deal table and two chairs placed in the
+    centre of the room for supervised consultation.
+    The table is clean and exactly large enough for
+    a folio and a set of notes. The chairs are not
+    comfortable. This appears to be a considered
+    choice. The supervised-use arrangement was
+    designed to be sufficient rather than pleasant,
+    and has been both, in that order.
+idlemessages:
+- The lamp in the anteroom burns without a flicker; no draft reaches this far.
+- 'The iron door is solid and quiet: nothing from behind it carries through.'
+- The table and chairs wait in their arrangement, patient and unoccupied.

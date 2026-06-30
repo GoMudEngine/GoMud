@@ -1,0 +1,43 @@
+mobid: 9518
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote moves along the returns cart, checking titles
+    against the catalogue without a sound.'
+  - ''
+  - 'say Quiet in the stacks, please. The reading room is
+    south if you need a desk.'
+  - ''
+  - 'emote draws a volume from the cart and carries it into
+    the nearest bay without noise.'
+  - ''
+activitylevel: 10
+character:
+  name: Vance the Librarian
+  description: |
+    Vance the Librarian has managed the public stacks for nine
+    years, an occupation suited to his temperament and his
+    particular mutation in ways he has never found it necessary
+    to articulate. He is even-mannered and soft-spoken, with
+    an exact memory for shelf positions and a civil
+    disinclination to idle conversation in the stacks. His
+    Chrysalis-change is in his tread: his footsteps make no
+    sound on stone. He moves through the library without echo
+    -- arriving at a shelf, turning a corner, descending the
+    step to the lower bay -- without any warning sound at all.
+    Regular borrowers have learned to notice the displaced air.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    perception:
+      training: 5
+    charisma:
+      training: 4

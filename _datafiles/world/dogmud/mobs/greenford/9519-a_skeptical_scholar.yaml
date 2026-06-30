@@ -1,0 +1,43 @@
+mobid: 9519
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote turns a page back and reads the previous paragraph
+    again with a slight frown.'
+  - ''
+  - 'say The dates do not add up. They have not added up for
+    three hundred years and no one has made them add up yet.'
+  - ''
+  - 'emote sets down his cup, picks up his pen, and draws a
+    line under something on the page.'
+  - ''
+activitylevel: 10
+character:
+  name: A Skeptical Scholar
+  description: |
+    A senior lecturer in historiography who has spent the
+    better part of his career asking why the official account
+    of the Founding does not cohere with the source documents,
+    a question the university tolerates because he asks it
+    with rigour rather than heat. He is sharp-featured and
+    long-fingered, with the restlessness of someone who has
+    found a problem he cannot let go of. His Chrysalis-change
+    is in his fingernails: they grow in a slow spiral, curling
+    inward at the tips. He has filed them flat more times than
+    he has counted; they return to the spiral within a
+    fortnight. He has ceased to explain it to anyone.
+  speciesid: 1
+  level: 1
+  gold: 10
+  stats:
+    perception:
+      training: 6
+    willpower:
+      training: 6

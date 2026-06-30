@@ -1,0 +1,80 @@
+mobid: 9522
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "University gate. Sign in at the lodge window if you
+      are visiting, then I'll point you where you need to go."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "good"]
+    responses:
+      - "Morning. Sign in and I'll get you sorted."
+  - keywords: ["library", "archive", "brennan", "where"]
+    responses:
+      - "Library east across the quad, archive south of the
+        reading room, Brennan's office west in the lecture-
+        hall range. Board has the hours."
+  - keywords: [""]
+    responses:
+      - "Ask me. I know this campus and the board is current."
+tree:
+  root:
+    text: |
+      University gate -- I am Kern, the porter. Sign in at
+      the lodge window if you are visiting; name and purpose,
+      nothing more. Library is east across the quad. Archive
+      is south of the reading room. Brennan's office is west
+      in the lecture-hall range. Visiting hours are on the
+      board. What do you need?
+    hints: "You could ask Kern for directions to the library,
+      the archive, or Brennan's office, about the university
+      and its colleges, or about the gate and visiting hours."
+  nodes:
+    - id: directions
+      triggers: ["library", "archive", "brennan", "office",
+        "find", "looking", "lost", "directions", "direction",
+        "east", "west", "south", "reading room", "reading",
+        "go", "map", "how do"]
+      text: |
+        Library is east across the quad -- public stacks,
+        reference, and lending; reading room is south of
+        that. Archive is further south again, past the
+        reading room; if it is the eastern surveys you want,
+        Tess the Archivist has them. Brennan's office is
+        west, in the lecture-hall range -- first door on the
+        south side. The board here has visiting hours for
+        all three. Anything not listed, ask me.
+      hints: "You could ask about the university and its
+        colleges, or about the gate and visiting hours."
+    - id: university
+      triggers: ["university", "college", "colleges", "campus",
+        "scholars", "students", "faculty", "institution",
+        "history", "building", "tower", "three hundred",
+        "old", "founded"]
+      text: |
+        Three hundred years and still building -- east wing
+        is being extended right now, timber going up past
+        the tower every other week. Seven years I have been
+        at this gate and the campus has not stopped changing.
+        The colleges each have their own hours and their own
+        particulars; the board covers the main buildings.
+        The university is the town's main industry and its
+        main personality, in about equal measure.
+      hints: "You could ask for directions to the library,
+        archive, or Brennan's office, or about the gate and
+        the lodge."
+    - id: gate
+      triggers: ["porter", "gate", "lodge", "ledger", "board",
+        "hours", "visitor", "visitors", "visiting", "log",
+        "record", "entrance", "entry", "sign", "signing"]
+      text: |
+        I keep the log and the board -- visitors in and out,
+        hours of the main buildings, any closures or changes
+        to the day's schedule. The ledger is mine and I keep
+        it exact. If someone has been here, their name is in
+        it. If they left, that is in it too. Seven years of
+        that record is in the lodge behind me. Some of it is
+        interesting in hindsight; most of it is just names
+        and hours, which is what it is supposed to be.
+      hints: "You could ask for directions across the campus,
+        or about the university and its history."

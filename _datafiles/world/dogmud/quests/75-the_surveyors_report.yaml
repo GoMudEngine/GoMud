@@ -1,0 +1,78 @@
+questid: 75
+name: The Surveyor's Report
+description: >-
+  Brennan, the university's old field man, is certain that the surveyor
+  Reth saw something in the eastern country and filed a report designed
+  to say nothing. He has sent you to read that survey in the university
+  Archive -- the one that classifies a site as a mineral deposit in three
+  lines, where a careful surveyor would write pages -- and then to bring
+  back whatever you find to earn an introduction to Reth himself, who
+  lives retired in the north end of town.
+secret: false
+
+steps:
+  - id: start
+    description: "Brennan has set you to read the survey Reth filed on the
+      eastern country -- the one that says nothing."
+    hint: "Examine the filed-survey in the university Archive, then return
+      to Brennan."
+  - id: survey
+    description: "You found Reth's filed survey: a mineral deposit entry,
+      conspicuously empty -- a man who saw something out there and chose
+      not to write it down."
+    hint: "Return to Brennan with what you found."
+  - id: intro
+    description: "Brennan, convinced, has given you his introduction to
+      Reth, who lives retired in the north end of town."
+    hint: "Seek out Reth in the residential streets."
+  - id: testimony
+    description: "You found Reth, and with Brennan's word he told you
+      what he saw in the east: directions and landmarks toward the hill --
+      and that whatever is out there is not natural. He marked it for you."
+    hint: "You have Reth's account and his marked directions. The thread
+      runs east."
+  - id: end
+    description: "You have Reth's directions. The thread runs east, into
+      the broken highland country, to the thing he would not name."
+
+rewards:
+  playermessage: >-
+    You carry a retired surveyor's directions to a place he would not name.
+    The road runs east into the highland country, older and stranger than
+    the university's quiet maps. Whatever Reth saw out there and chose not
+    to write down is still out there -- waiting in the broken hills. That
+    climb is for another day.
+  roommessage: ""
+  gold: 0
+
+triggers:
+  # ── The filed survey (6303, the Archive) -- gated: has 75-start, missing 75-survey ──
+  - event: room_interact
+    room: 6303
+    noun: filed-survey
+    conditions:
+      has: ["75-start"]
+      missing: ["75-survey"]
+    actions:
+      - grant: "75-survey"
+      - send_text: >-
+          You read the survey the way someone looking for what is not said
+          would read it. The site is classified as a mineral deposit in
+          three lines. A survey of that site -- elevations, material
+          samples, seasonal access -- would ordinarily run to a page or
+          more. This one does not. The entry is formal and correct and
+          stops exactly where the detail should get louder. Reth saw
+          something out there, and he filed a paper that buries it.
+          Time to take this back to Brennan.
+      - room_text: "reads the thin filed survey with sudden, careful attention."
+  # ── Ungated fallback: no 75-start ──
+  - event: room_interact
+    room: 6303
+    noun: filed-survey
+    conditions:
+      missing: ["75-start"]
+    actions:
+      - send_text: >-
+          An old survey filed under the eastern country, dry and
+          technical. Without a reason to read it closely, it is only
+          a brief, dull entry.

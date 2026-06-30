@@ -1,0 +1,80 @@
+roomid: 6303
+zone: Greenford
+title: The Archive
+description: >
+  The archive is dim and deliberate — shelves
+  deeper than those in the reading room, materials
+  older, the air holding the mustiness of paper
+  long undisturbed. Box-files and survey portfolios
+  line the walls by region and date. The oldest
+  runs carry a mark in their margins recurring
+  across many decades of fieldwork: nested rings,
+  drawn by different hands over different years,
+  which the archive has never explained and not
+  quite agreed to ignore. A
+  <ansi fg="itemname">filed-survey</ansi>
+  lies open on the reading-stand. The restricted
+  collection is east. Examine the filed-survey or
+  the shelves.
+biome: city
+coord: {x: 23, y: -83, z: 2}
+exits:
+  north: {roomid: 6302}
+  east: {roomid: 6304}
+nouns:
+  filed-survey: >
+    A survey of the eastern country filed under
+    the standard field-report conventions: surveyor's
+    route, terrain notes, resource classification.
+    The eastern section carries one entry for a site
+    classified as a mineral deposit. The entry is
+    formal and correct and occupies three lines. A
+    survey of that site would ordinarily run to a
+    page or more — elevations, material samples,
+    seasonal access. This one does not. The entry
+    says what it must and stops. A reader with a
+    reason to look would find the silence where the
+    detail should be louder than anything written.
+  the shelves: >
+    Survey portfolios and box-files in runs along
+    the north and east walls, organized by region
+    and date — older to the top, recent to the
+    bottom. The oldest runs, along the top tier,
+    carry a mark in the margins of several maps: a
+    set of concentric nested rings, small and
+    precise, drawn by different hands over many
+    years of work. No note in the archive explains
+    it. The archivist, asked, says it comes and
+    goes in the old surveys, and that several
+    scholars have looked without reaching an
+    agreement about what it marks.
+  the reading-stand: >
+    A heavy wood reading-stand before the south
+    wall, its surface angled for a folio. The lamp
+    above it is the best-placed in the archive —
+    the archivist's concession to the work done
+    here. The stand holds whatever the archivist
+    or a researcher has most recently been
+    consulting. The card-index to the archive's
+    holdings is clipped to the stand's side
+    bracket, in a hand consistent for twenty years.
+  the box-files: >
+    Stiff card box-files in a uniform size and a
+    faded brown, their labels in the archive's
+    standard notation: zone, year, type. They hold
+    the classified materials — surveys, assessments,
+    correspondence relating to specific sites. The
+    files are heavier than they look; each contains
+    the documentation of what someone thought worth
+    preserving. Most have not been opened in years.
+    The ones that have are not hard to identify:
+    their spines are a different shade of faded,
+    from the handling.
+spawninfo:
+  - mobid: 9517
+    respawnrate: "20 real minutes"
+idlemessages:
+- The archivist moves along the top tier, checking file labels without pulling
+  any of them out.
+- 'Dust hangs on the still air: the archive keeps its own quiet weather.'
+- The lamp on the reading-stand holds steady, not a flicker.

@@ -1,0 +1,92 @@
+mobid: 9518
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Public stacks -- lending below, reference above.
+      Reading room is south if you need a table."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Vance. Quietly, if you can manage it."
+  - keywords: ["borrow", "lend", "take", "return"]
+    responses:
+      - "Lending section is the lower shelves. Returns go on
+        the cart by the entrance."
+  - keywords: [""]
+    responses:
+      - "Ask me. I will answer, and quietly."
+tree:
+  root:
+    text: |
+      Public stacks -- lending and reference, open until the
+      afternoon bell. Reading room is south if you need a
+      table and a lamp. Card catalogue is beside this desk;
+      the system is straightforward once you have used it
+      once. What do you need?
+    hints: "You could ask Vance about the library holdings and
+      sections, about borrowing and the lending rules, about
+      the quiet of the stacks, or about the university."
+  nodes:
+    - id: library
+      triggers: ["library", "stacks", "shelves", "sections",
+        "books", "holdings", "periodicals", "reference",
+        "volumes", "titles", "what is here", "stock"]
+      text: |
+        The lower shelves are lending -- periodicals in bound
+        runs, geography and natural philosophy, a good run of
+        the university's own published papers. The upper tiers
+        are reference only, not to leave the room. The card
+        catalogue covers everything in the public stacks; it
+        does not cover the archive, which is a separate set
+        of holdings south of the reading room. If you know
+        what you want, the catalogue will tell you where to
+        find it. If you do not, tell me the subject.
+      hints: "You could ask about borrowing and the lending
+        rules, about the quiet in the stacks, or about the
+        university."
+    - id: borrowing
+      triggers: ["borrow", "lending", "lend", "take",
+        "return", "returns", "card", "catalogue", "rules",
+        "hours", "how", "loan", "check out"]
+      text: |
+        Lending items go out on a standard card -- the card
+        stays here, you take the book. Two weeks, renewable
+        once. Returns go on the cart by the entrance; I re-
+        shelve on a daily cycle. Reference items do not leave
+        the room. Hours are the morning bell to the afternoon
+        bell, six days. The reading room south has the same
+        hours and its own lamp-stands. If something is not
+        on the shelf it is either out on loan, in the reading
+        room, or on the returns cart.
+      hints: "You could ask about the library holdings and
+        sections, about the quiet of the stacks, or about
+        the university."
+    - id: quiet
+      triggers: ["quiet", "noise", "loud", "hush", "hushed",
+        "silent", "rule", "shh", "why", "convention"]
+      text: |
+        The rule is old and does not need a sign. People who
+        use the stacks regularly already know it; people who
+        do not learn it from the people who do. The reading
+        room south is the same. I find most visitors respect
+        it without being told, which is the best version of
+        any rule -- the kind that works because people
+        already want to work.
+      hints: "You could ask about the library holdings and
+        sections, or about borrowing and the lending system."
+    - id: university
+      triggers: ["university", "scholars", "faculty", "campus",
+        "academic", "college", "uphill", "institution",
+        "students", "department"]
+      text: |
+        Three hundred years of additions to the building and
+        the library has expanded every time, which suggests
+        the institution knows what it is for. I came here
+        nine years ago and have found the work suits me. The
+        scholars are careful users of the collection and the
+        students learn to be. The catalogue is mine and I
+        intend to keep it exact for as long as I am in this
+        room. That is enough of a purpose.
+      hints: "You could ask about the library holdings and
+        sections, or about borrowing and the lending rules."

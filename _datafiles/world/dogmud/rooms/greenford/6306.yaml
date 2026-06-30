@@ -1,0 +1,74 @@
+roomid: 6306
+zone: Greenford
+title: The Senior Common Room
+description: >
+  The faculty common room keeps its own pace —
+  chairs with worn arms, a fire grate lit in all
+  but the warmest months, a sideboard with a
+  coffee service in daily use. Shelved between
+  the chair-backs are books that arrived here by
+  gradual drift: half-works, duplicates, the odd
+  gift from a grateful former student. The room
+  smells of wood-smoke and old upholstery and
+  coffee grown cold in the cups on the side table.
+  Faculty come here to be not-working. Examine
+  the fire or the sideboard.
+biome: city
+coord: {x: 21, y: -83, z: 2}
+exits:
+  north: {roomid: 6305}
+  east: {roomid: 6308}
+nouns:
+  the fire: >
+    A stone grate in the east wall, lit to a low
+    working fire that takes the edge off the morning
+    chill. The mantel is plain dressed stone; a
+    small clock on it, wound to approximate accuracy.
+    The logs in the basket to the left are cut to a
+    particular length that fits the grate, which has
+    been its fixed dimension since it was built. The
+    fire-tongs and poker are both worn to a shine at
+    their grips from long use. Nothing about this
+    fireplace has changed in twenty years.
+  the sideboard: >
+    A wide sideboard along the north wall, its
+    surface given over to the coffee service: a
+    large pot with a flame underneath to keep it
+    warm, an array of cups in varying states of
+    use, a small jug of cream and a bowl of rough
+    sugar. The service is old and mismatched,
+    accumulated over many years of ordinary use.
+    No one is responsible for it; everyone uses
+    it. The cups are cleaned when there are no
+    clean ones left.
+  the chairs: >
+    A circle of upholstered chairs around the grate,
+    their arms worn to a lighter shade at the most-
+    used spots. Each chair has shaped itself to one
+    person's long habit — identifiable by department
+    to those who know the room well. The
+    draught near the window has been the subject of
+    complaint for years; the chair nearest it is the
+    one no one has claimed as a habitual seat. The
+    upholstery is due for replacement. This has been
+    true for some time.
+  the books: >
+    Books shelved between the chair-backs at
+    irregular intervals — accumulated rather than
+    collected. Half-works with the interesting parts
+    already read, duplicates from office overstock,
+    a bound run of a periodical nobody has requested
+    back, a novel that has not been where it was
+    placed for the past year. Some have been here
+    long enough that their owners are no longer on
+    the faculty. The books stay. The faculty change.
+    The room keeps what it keeps.
+spawninfo:
+  - mobid: 9519
+    respawnrate: "20 real minutes"
+idlemessages:
+- A cup is set down on the sideboard with the precise quiet of someone not wanting
+  to disturb the room.
+- 'The fire settles and the room contracts a degree: warmth and old wood.'
+- A faculty member reads in the far chair with the particular stillness of someone
+  ignoring something.

@@ -1,0 +1,43 @@
+mobid: 9522
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote notes something in the lodge ledger before the
+    visitor has quite reached the window.'
+  - ''
+  - 'say University gate. Library east across the quad, archive
+    south of that. Brennan''s office is west, lecture-hall range.'
+  - ''
+  - 'emote checks the board beside the lodge door, straightens
+    one entry with a thumbnail, and steps back.'
+  - ''
+activitylevel: 10
+character:
+  name: Kern the Porter
+  description: |
+    Kern the Porter has worked the university gate for seven
+    years, a tenure that has left him with a complete working
+    knowledge of the campus, its personalities, and its
+    visiting hours. He is solid and unhurried, with a lodge
+    ledger kept in a meticulous hand and the manner of someone
+    who has answered the same questions long enough to have
+    made them interesting again. His Chrysalis-change is in
+    pattern recognition: he identifies visitors by gait before
+    their faces are close enough to read. His lodge log names
+    visitors before they speak, which has startled a number of
+    returning faculty and delighted precisely none of them.
+  speciesid: 1
+  level: 1
+  gold: 10
+  stats:
+    perception:
+      training: 6
+    charisma:
+      training: 4

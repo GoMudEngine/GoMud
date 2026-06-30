@@ -1,0 +1,45 @@
+mobid: 9516
+zone: Greenford
+schedule_id: gf_brennan
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - margin
+idlecommands:
+  - 'emote traces a route on the wall map with one finger, not
+    quite touching the surface.'
+  - ''
+  - 'say Thirty years of eastern surveys. Someone saw something
+    out there and filed three lines. That is not an accident.'
+  - ''
+  - 'emote picks up a chart-tube, checks the label in his hand,
+    sets it back with the others.'
+  - ''
+activitylevel: 10
+character:
+  name: Brennan the Surveyor
+  description: |
+    Brennan the Surveyor has held the university's survey chair
+    for twenty-two years, which means he has outlasted three
+    provosts and any number of colleagues who found the eastern
+    fieldwork too repetitive to sustain a career. He is spare
+    and deliberate, with ink-stained cuffs and the particular
+    squint of someone who reads maps in good light and bad.
+    His Chrysalis-change is in the soles of his feet: he feels
+    the gradient of any surface he walks with a precision no
+    instrument he owns can match. He has not carried an
+    inclinometer in fifteen years. He walks a slope once and
+    knows it.
+  speciesid: 1
+  level: 1
+  gold: 18
+  stats:
+    perception:
+      training: 6
+    willpower:
+      training: 5

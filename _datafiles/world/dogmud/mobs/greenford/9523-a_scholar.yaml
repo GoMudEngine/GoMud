@@ -1,0 +1,43 @@
+mobid: 9523
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote sits on the cloister bench with a folio open,
+    not currently reading it.'
+  - ''
+  - 'say The archive has the first edition. The reading room
+    has the second. I am here because neither is quite right.'
+  - ''
+  - 'emote closes the folio, regards the quince tree for a
+    moment, then opens the folio again.'
+  - ''
+activitylevel: 10
+character:
+  name: A Scholar
+  description: |
+    A mid-career scholar in comparative history who has been
+    at Greenford long enough to know which bench in the cloister
+    walk gets the best of the garden-court light and how long
+    to sit there before the cold from the stone makes itself
+    felt. He carries a folio and a distracted air, the
+    combination of someone who is between ideas and is not
+    pretending otherwise. His Chrysalis-change is subtle: in
+    full darkness his fingertips emit a very faint luminescence
+    -- barely visible, not enough to read by. He found it
+    useful once, in the archive during a lamp failure. He has
+    not mentioned it to anyone since.
+  speciesid: 1
+  level: 1
+  gold: 10
+  stats:
+    perception:
+      training: 5
+    willpower:
+      training: 5
