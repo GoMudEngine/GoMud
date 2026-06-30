@@ -1,0 +1,87 @@
+mobid: 9531
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Morning. Heading west? I can have you provisioned
+      and out before the hour."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Wren. Horse, coach, or provisions -- what
+        do you need?"
+  - keywords: ["buy", "sell", "price", "cost", "food", "rations"]
+    responses:
+      - "Counter along the east wall -- trail rations and
+        river loaf. Come have a look."
+  - keywords: [""]
+    responses:
+      - "Ask me. I'm here from first light and I don't
+        mind questions."
+tree:
+  root:
+    text: |
+      Coaching stable, west gate. I'm Wren -- four
+      horses, two coaches, and this yard to keep
+      together. Heading west, I can provision you in
+      ten minutes. Got a horse that needs settling or
+      a coach to berth for the night, say so. What
+      is it?
+    hints: "You could ask Wren about the stable and the
+      horses, about provisions for the road, or about
+      the travelers who pass through."
+  nodes:
+    - id: stable
+      triggers: ["stable", "horse", "horses", "coach",
+        "coaches", "yard", "harness", "ostler", "stall",
+        "feed", "oats", "hay", "care", "trunk",
+        "leather", "tack", "harness-rack"]
+      text: |
+        Four horses -- two light coach horses and two
+        for hire by the day. I've had this yard nine
+        years and I can tell you the name and temperament
+        of every horse that's come through. The coaches
+        are mine: a light post-chaise for the Plymouth
+        run and a heavier wagon for goods. Harness is on
+        the wall rack, maintained weekly -- I don't wait
+        for something to fail before I check it. The
+        trunk in the yard's waiting collection. Stall at
+        the north end if you're bringing a horse in:
+        hay and water, no extras, fair rate.
+      hints: "You could ask about provisions for the
+        road, or about the travelers and the trade."
+    - id: provisions
+      triggers: ["buy", "sell", "rations", "food",
+        "provision", "provisions", "trail", "bread",
+        "loaf", "price", "cost", "pack", "supply",
+        "supplies", "stock", "counter"]
+      text: |
+        Counter's along the east wall. I keep trail
+        rations -- waxed cloth, a day's worth each bundle,
+        fits a saddlebag without thinking about it. River
+        loaf most mornings while the mill's running.
+        Nothing elaborate -- this is a stable, not a
+        bakehouse. But a traveler needs to eat, and I'd
+        rather you have what you need here than turn back
+        to town for it. Prices are the market rate. I
+        don't mark up for the convenience.
+      hints: "You could ask about the stable and the
+        horses, or about the travelers and the road."
+    - id: trade
+      triggers: ["travelers", "traveler", "trade",
+        "traffic", "through", "passing", "west",
+        "plymouth", "journey", "road", "direction",
+        "hire", "pass", "who", "business", "coming"]
+      text: |
+        Steady trade -- the Plymouth road's in use year-
+        round, whatever the weather, so the west gate sees
+        through-traffic when other roads go quiet. I get
+        merchants, scholars heading to the capital, the
+        occasional party with goods and real urgency.
+        The pleasant ones ask how the road is -- I tell
+        them the surface is good to the county mark and
+        the rest is someone else's responsibility. The
+        ones who don't ask find out for themselves. The
+        road is fine. It's a good road west.
+      hints: "You could ask about the stable and the
+        horses, or about provisions for the journey."

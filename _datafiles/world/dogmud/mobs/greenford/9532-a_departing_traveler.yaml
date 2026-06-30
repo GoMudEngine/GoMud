@@ -1,0 +1,48 @@
+mobid: 9532
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote adjusts the pack on her back with both hands,
+    settling the straps, then looks west along the road.'
+  - ''
+  - 'say New Plymouth -- first time out there. Everyone
+    says three days but everyone means if the road holds.'
+  - ''
+  - 'emote turns to look back at Greenford''s treeline,
+    holds it for a moment, then faces west again.'
+  - ''
+activitylevel: 10
+character:
+  name: A Departing Traveler
+  description: |
+    A woman in her early thirties with a full pack and
+    the settled bearing of someone who has made up her
+    mind and is now simply executing the decision. She
+    is bound west -- New Plymouth, she says, for the
+    first time -- and her manner has the careful calm
+    of someone who has been planning this long enough
+    to stop being nervous about it. Her Chrysalis-
+    change is visible on cold mornings: the knuckles
+    of both hands glow a very faint amber when the
+    temperature drops, barely perceptible in daylight
+    but present. She wears her gloves more often than
+    the weather requires. The glow has never bothered
+    her -- she grew up with it -- but she has learned
+    it startles people who notice it unexpectedly, so
+    she wraps her hands out of courtesy rather than
+    embarrassment.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    strength:
+      training: 5
+    willpower:
+      training: 4

@@ -1,0 +1,84 @@
+mobid: 9532
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Morning. West road, if you're wondering. First
+      time out this way."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. What do you need to know? I've got time
+        before the hour."
+  - keywords: ["new_plymouth", "plymouth", "west", "capital"]
+    responses:
+      - "Three days, if the road holds. I intend to find
+        out for myself."
+  - keywords: [""]
+    responses:
+      - "Ask me. I don't mind -- I've been standing here
+        long enough to be glad of the company."
+tree:
+  root:
+    text: |
+      Headed west -- New Plymouth, first time. I've had
+      the route described to me by half of Greenford,
+      so I feel reasonably prepared. Pack's right,
+      provisions are bought. What I'm waiting for now
+      is just the hour. What do you need?
+    hints: "You could ask her about her destination and
+      New Plymouth, about the road and the journey, or
+      about leaving and why she is going."
+  nodes:
+    - id: destination
+      triggers: ["new_plymouth", "plymouth", "west",
+        "going", "destination", "where", "heading",
+        "capital", "city", "harbour", "arrive",
+        "arriving", "there", "why"]
+      text: |
+        New Plymouth. Family there who have been after me
+        for three years to come, and I've finally run out
+        of good reasons not to. The city is supposed to
+        be everything Greenford isn't -- the harbour, the
+        river district, the real trade. I don't doubt it.
+        I expect I'll spend a week getting turned around
+        before I find my feet, and then I expect I'll
+        find them. The world is bigger than this town and
+        I've been wanting to see it long enough to have
+        earned the trip.
+      hints: "You could ask about the road and the
+        journey, or about leaving Greenford."
+    - id: road
+      triggers: ["road", "journey", "travel", "days",
+        "distance", "walking", "long", "far",
+        "milepost", "condition", "walk", "miles",
+        "how", "route", "way", "surface"]
+      text: |
+        Three days, all roads good -- that's what the
+        warden at the gate told me, and the ostler at the
+        stable confirmed it. The milepost a mile out names
+        the distance and I intend to read it on the move
+        rather than stop and stare at it. I've packed for
+        four days to have a margin. Everyone says the
+        highland crossing takes longer than you expect --
+        so I've expected it to take longer and allowed
+        for it. That seems the sensible approach.
+      hints: "You could ask about her destination and
+        New Plymouth, or about leaving Greenford."
+    - id: leaving
+      triggers: ["leaving", "home", "greenford", "here",
+        "stay", "life", "decision", "before", "when",
+        "first", "time", "nervous", "ready", "feel",
+        "twenty", "years", "lived", "long", "back"]
+      text: |
+        I've lived here twenty years and I like it well
+        enough. But New Plymouth's been there the whole
+        time -- three days west -- and I've never gone.
+        Family there, people I know, the wider world.
+        There's no drama to it. I'm going because the
+        road is there and I'm ready and I stopped finding
+        reasons not to. That's usually how the good
+        decisions happen: not a crisis -- just running
+        out of excuses.
+      hints: "You could ask about her destination and
+        New Plymouth, or about the road ahead."

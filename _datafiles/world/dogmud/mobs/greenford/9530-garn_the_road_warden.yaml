@@ -1,0 +1,48 @@
+mobid: 9530
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote turns his head to check the road west without
+    shifting from the bench -- his neck rotating further
+    than anyone might expect.'
+  - ''
+  - 'say Three days to New Plymouth on a clear road. I
+    have sent more travelers west than I can count.'
+  - ''
+  - 'emote marks something on the tally post beside the
+    lean-to, sets the chalk down, and looks west again.'
+  - ''
+activitylevel: 10
+character:
+  name: Garn the Road-Warden
+  description: |
+    Garn the Road-Warden has kept the west gate for
+    sixteen years, watching what goes out and what
+    comes in. He is a settled man in his mid-forties,
+    unhurried and observant, the kind of person who
+    knows how to wait without looking like he is
+    waiting. His Chrysalis-change is in his neck: an
+    extra joint between the second and third cervical
+    vertebrae that lets him rotate his head a full
+    third further than anyone around him -- well past
+    the shoulder, past the usual limit, all the way
+    to the road behind without shifting his feet. He
+    stopped noticing this years ago. Other people
+    sometimes do. He stopped explaining it when he
+    realized the explanation unsettled people more
+    than the thing itself.
+  speciesid: 1
+  level: 1
+  gold: 14
+  stats:
+    perception:
+      training: 6
+    vitality:
+      training: 4

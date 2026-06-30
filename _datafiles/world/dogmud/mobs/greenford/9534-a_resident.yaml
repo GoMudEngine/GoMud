@@ -1,0 +1,47 @@
+mobid: 9534
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote pauses at the lane end and tilts her face into
+    the breeze, reading something in it before moving on.'
+  - ''
+  - 'say Rain before noon, I think. You can feel it in the
+    air before the sky catches up with it.'
+  - ''
+  - 'emote watches a cart pass west through the gate, then
+    continues on her way toward the market.'
+  - ''
+activitylevel: 10
+character:
+  name: A Resident
+  description: |
+    A woman in her forties who lives on the west lane of
+    Greenford -- the houses closest to the gate -- and
+    has developed the particular attentiveness that comes
+    from watching the road every morning for years. She
+    has an easy manner and no great urgency about most
+    things. Her Chrysalis-change is barely visible: a
+    row of faint raised bumps along her jaw and cheek-
+    line, vestigial sensory pads that let her feel subtle
+    air movement near her face with more precision than
+    most people manage. She can sense the wind direction
+    before a leaf moves and read a shift in humidity
+    before the sky shows it. She uses this mostly to
+    predict rain and to decide whether to bring a coat.
+    She is right about the rain rather more often than
+    coincidence would explain.
+  speciesid: 1
+  level: 1
+  gold: 7
+  stats:
+    perception:
+      training: 5
+    vitality:
+      training: 3
