@@ -1,0 +1,41 @@
+roomid: 6273
+zone: East Road to Greenford
+title: The Greenford Overlook
+description: >
+  The ground drops away and the full view opens — a river,
+  wide and silver in the afternoon light, and beyond it the
+  town of Greenford climbing its hill. Rooftops layer on
+  rooftops, and at the crown of the hill a tall building
+  with a square tower catches the light on its upper face:
+  the university. It is farther than it looks, the air
+  between you clear and still, the distance compressing
+  everything into a composed view. The road below this
+  ridge descends to the riverbank and the bridge. You can
+  see both from here. The way is not yet open.
+biome: land
+coord: {x: 20, y: -67, z: 0}
+exits:
+  west: {roomid: 6272}
+  east: {roomid: 6274}
+nouns:
+  greenford: >
+    The town sits on its hill across the river, buildings
+    rising in tiers from the waterfront up to the university
+    at the crown. The tower above the main hall is the
+    tallest feature — square stone, with arched openings
+    near the top. The town below is densely built, the
+    rooftops close and varied. From here it looks complete
+    and self-contained, like something that has been
+    happening for a very long time without you.
+  the river: >
+    Wide and silver below the ridge, the Greenford river
+    runs with a speed that is visible even from here — you
+    can see the current-shear where the main channel meets
+    the slower water near the bank. The bridge sits at the
+    narrowing below the ridge, its stone piers spaced across
+    the channel. The water moves past the piers and does
+    not stop for them.
+idlemessages:
+- The university tower catches the afternoon light on its upper face.
+- The bridge is there below. The town is past it and across.
+- From the ridge the descent to the river looks shorter than it is.

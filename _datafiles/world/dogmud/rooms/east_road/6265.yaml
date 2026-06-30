@@ -1,0 +1,47 @@
+roomid: 6265
+zone: East Road to Greenford
+title: The Drovers' Stretch
+description: >
+  The road here has been worked over by hooves and cart-wheels
+  until the gravel is ground away and only baked earth remains,
+  the ruts cut deep and iron-hard in the dry season. The smell
+  is animal — dung and road-dust and the oily residue of
+  cart-grease on the tethering post at the roadside. The post
+  carries a rope-ring worn smooth from use. Propped beside it
+  in the shade, a
+  <ansi fg="itemname">canvas sack</ansi>
+  leans against the post, tied at the neck, left by someone
+  who may not be coming back for it.
+biome: farmland
+coord: {x: 13, y: -67, z: 0}
+exits:
+  west: {roomid: 6264}
+  east: {roomid: 6266}
+spawninfo:
+  - mobid: 9493
+    respawnrate: "20 real minutes"
+nouns:
+  the rope-ring: >
+    A heavy iron ring driven into the tethering post at an
+    angle, the iron dark with age and the post-wood around
+    it polished from years of rope-friction. The ring is
+    sized for livestock, not horses — the height is wrong
+    for a horse — and the ground at the post-base is churned
+    from hooves and impatient shifting.
+  the canvas sack: >
+    A road-travel sack, canvas, tied at the neck with a
+    drover's knot. Someone left it here and did not come
+    back. Inside: a folded cloth, a small bone buckle, a
+    handful of dried grass pressed into a tight bundle the
+    way you pack a fire-start. Nothing of practical value
+    to a traveler who did not pack it.
+  the tethering post: >
+    A squared post set deep into the verge at the roadside,
+    the wood darkened by years of weather and animal contact.
+    The rope-ring at its face, the worn ground at its base,
+    and the cart-grease stain down one side tell the full
+    story of a place where drovers stop, rest, and move on.
+idlemessages:
+- The ruts in the road run east and west, deep and even.
+- The animal smell here hangs thick in the still afternoon air.
+- Somewhere ahead, the faint tonk of a bell-wether bell.

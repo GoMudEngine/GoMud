@@ -1,0 +1,42 @@
+roomid: 6266
+zone: East Road to Greenford
+title: The Old Waystone
+description: >
+  The field wall opens here at a gap that was not made for a
+  gate — the stone courses simply end on either side of a squat
+  stone post standing a little back from the road in the wheat.
+  The
+  <ansi fg="itemname">waystone</ansi>
+  is old. The farm wall was built around it rather than through
+  it; the wheat is thinned in a circle at the base where the
+  stone's shadow falls. The road and the farms and the walls
+  around it all postdate it. The waystone was here before any
+  of this was.
+biome: farmland
+coord: {x: 14, y: -67, z: 0}
+exits:
+  west: {roomid: 6265}
+  east: {roomid: 6267}
+nouns:
+  waystone: >
+    A squat column of grey stone, waist-high, set in the
+    field behind the road without any obvious purpose. The
+    face has been dressed flat at some point and worked:
+    shallow rings cut into the surface, concentric, the
+    lines worn almost level with the stone now. Weathering
+    has softened everything. There is no inscription that
+    anyone can make out — no name, no distance, no sign
+    of what road this marked or what it was placed to say.
+    It is old enough that the question may no longer have
+    an answer.
+  the field wall: >
+    Fitted fieldstone, built dry without mortar, the courses
+    even and close. On both sides of the waystone the wall
+    simply ends — no framing, no arch, no hinge for a gate.
+    The builders stopped where the stone was and picked up on
+    the other side of it. The wall is younger than the stone
+    it works around.
+idlemessages:
+- The wheat grows close to the waystone on all sides.
+- The stone is grey and still, worn to a soft weathered finish.
+- A small bird perches on the waystone's top, looks around, goes.

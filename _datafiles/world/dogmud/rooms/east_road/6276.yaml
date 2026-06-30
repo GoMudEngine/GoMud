@@ -1,0 +1,39 @@
+roomid: 6276
+zone: East Road to Greenford
+title: The Bridge Approach
+description: >
+  The road widens here into a small staging area at the
+  riverbank — a flattened space where carts and travelers
+  arrange themselves before the crossing. The bridge is
+  ahead, its stone spans visible crossing the Greenford
+  river, the piers squared and broad, the roadway worn
+  smooth. A toll-booth stands on the far bank, a pipe-brazier
+  burning at the guard post. The staging area's earth is cut
+  with deep cart tracks from the traffic of many seasons.
+biome: farmland
+coord: {x: 21, y: -69, z: 0}
+exits:
+  north: {roomid: 6275}
+  south: {roomid: 6277}
+nouns:
+  the bridge: >
+    Three stone arches spanning the Greenford river, the
+    piers set on a gravel bar that holds them out of the
+    main current. The bridge is old and well-maintained —
+    the paving on the roadway worn to a smooth curve from
+    traffic, the arch stones tight and close-fitted at the
+    joints. It is the kind of bridge that has been repaired
+    in the same way for two hundred years and will be
+    repaired for two hundred more.
+  the staging area: >
+    A widened section of road at the bridge's approach, the
+    earth leveled and the verge pushed back to give carts
+    room to maneuver before the crossing. The cart tracks
+    here are deep and varied — heavy loads going both ways.
+    A log seat is set into the bank at the side for
+    travelers who wait. This crossing has been in use for
+    a long time.
+idlemessages:
+- The bridge piers stand in the current with total indifference.
+- Cart tracks in the staging area are deep from many seasons.
+- The sound of the river narrows and quickens under the bridge.

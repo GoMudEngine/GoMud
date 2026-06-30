@@ -10,10 +10,10 @@ description: >
   tends the city's other arteries. A stone
   <ansi fg="itemname">milestone</ansi>
   stands at the road's edge, marking distance and
-  direction. The road continues east into open country,
+  direction. The road continues east from here into open country,
   toward the town of Greenford a full day's travel
   away. The world is larger than the city, and the
-  road goes there.
+  east road goes there.
 biome: city
 coord:
   x: 10
@@ -22,6 +22,9 @@ coord:
 exits:
   west:
     roomid: 6249
+  east:
+    roomid: 6263
+    zone: East Road to Greenford
 nouns:
   milestone: >
     A dressed stone cylinder at the road's edge, its

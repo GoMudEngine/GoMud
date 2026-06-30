@@ -1,0 +1,40 @@
+roomid: 6264
+zone: East Road to Greenford
+title: The Wheat Country
+description: >
+  Wheat stands on both sides of the road, the crop at full
+  height, the heads heavy and gold in the dry season. It has
+  the density of a field tended for many years on the same
+  land — the rows close, the stalks even. The road runs
+  straight between them into the heat. High above, a hawk
+  makes slow circles over the field, its shadow crossing the
+  road at long intervals. The air smells of warm grain and
+  dry dust even though nothing here has been cut. The crop
+  waits. A figure moves in the rows to the north.
+biome: farmland
+coord: {x: 12, y: -67, z: 0}
+exits:
+  west: {roomid: 6263}
+  east: {roomid: 6265}
+spawninfo:
+  - mobid: 9494
+    respawnrate: "20 real minutes"
+  - mobid: 9498
+    respawnrate: "20 real minutes"
+nouns:
+  the crop: >
+    Wheat at full ripeness, the heads bent slightly forward
+    under their own weight. The color is deep gold with green
+    still in the lower stalk. Where the rows are thickest the
+    wind cannot reach them and they stand perfectly still in
+    their own heat. When the harvest comes this will all be
+    gone in a week.
+  the hawk: >
+    A broad-winged shape working a thermal above the field,
+    too high to make out clearly. It moves in slow banking
+    circles without urgency, the loops wide and even. Whatever
+    it watches below, it has time. It is not watching you.
+idlemessages:
+- The wheat moves in a long rolling wave when the wind takes it.
+- The hawk's shadow crosses the road and slides into the crop.
+- Heat shimmers off the road between the standing rows.

@@ -1,0 +1,48 @@
+roomid: 6271
+zone: East Road to Greenford
+title: The Lonely Milepost
+description: >
+  A carved stone post stands at the road's center, sunk deep
+  and left when the road improvements moved on past it. The
+  distance marks are worn but readable. Around the post the
+  plateau is featureless — no cover, no walls, no shade of
+  any kind. A carter's rig has stopped in the verge on the
+  east side of the post, the draft horse standing with its
+  head low in the heat. At the road's edge a fat snake has
+  found a warm flat stone and settled onto it, absorbing the
+  afternoon without any urgency.
+biome: land
+coord: {x: 18, y: -67, z: 0}
+exits:
+  west: {roomid: 6270}
+  east: {roomid: 6272}
+spawninfo:
+  - mobid: 9496
+    respawnrate: "20 real minutes"
+  - mobid: 9500
+    respawnrate: "20 real minutes"
+nouns:
+  the milepost: >
+    A dressed stone post, waist-high, planted in the center
+    of the road and not moved when the surface was regraded
+    around it. Two lines of text are cut into its east face:
+    GREENFORD, and below it a number of league-marks that,
+    calculated by foot, comes to about two hours of walking
+    in good weather. The lettering is worn but legible.
+  the carter's rig: >
+    A two-wheel cart stopped in the verge, its load sheeted
+    under canvas. The horse stands with its head very low,
+    not eating, just waiting in the heat for something to
+    change. The carter is presumably nearby. The cart has
+    not been abandoned — the harness is properly adjusted
+    and the load is tied down correctly. Someone just stopped.
+  the flat stone: >
+    A slab of pale rock at the road's edge, radiating the
+    heat it has collected from the afternoon sun. The snake
+    found it first and has no intention of giving it up.
+    It lies across the stone in a single loose coil, scales
+    warm, eyes open.
+idlemessages:
+- The horse at the stopped cart shifts its weight and blows.
+- The snake on the road-stone does not acknowledge you.
+- The milepost casts a thin shadow east. Two hours to Greenford.

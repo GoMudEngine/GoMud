@@ -1,0 +1,39 @@
+roomid: 6269
+zone: East Road to Greenford
+title: The Well-Yard
+description: >
+  A compact yard behind the hamlet's main lane, kept mostly in
+  the shadow of a storage wall. The well here is stone-ringed
+  and old — the mortar around the top course repointed within
+  living memory — and the windlass timber above it is newer,
+  installed when the old one wore through. The earth around the
+  well is tamped smooth and dark from daily use, a clay pot
+  sitting on the lip ready for the next draw. This is a working
+  yard, nothing ornamental about it.
+biome: farmland
+coord: {x: 16, y: -66, z: 0}
+exits:
+  south: {roomid: 6268}
+spawninfo:
+  - mobid: 9497
+    respawnrate: "20 real minutes"
+nouns:
+  the well: >
+    A stone-ringed well, old enough that the top courses have
+    sunk slightly out of level, the mortar in the joints soft
+    and re-worked. The windlass above is newer — pine, with
+    a rope of good new hemp — set to replace whatever wore
+    out before. The water below is deep. When you look down
+    into it the cold comes up first, then the smell of old
+    stone, then, very faintly, the shimmer of black water.
+  the windlass: >
+    A horizontal timber with a rope wound around it, the
+    crank handle worn smooth at the grip. The rope is new
+    enough that the hemp has not yet stiffened, and it plays
+    smooth through the iron guide above the shaft. Whoever
+    replaced the old one knew what they were doing. The
+    mechanism is reliable.
+idlemessages:
+- The rope runs through the windlass with a low, even creak.
+- The shadow in the well-shaft is cold and very deep.
+- The clay pot on the lip waits for the next hand that needs it.

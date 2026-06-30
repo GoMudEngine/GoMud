@@ -1,0 +1,40 @@
+roomid: 6270
+zone: East Road to Greenford
+title: The Open Plateau
+description: >
+  The hamlet falls away and the plateau opens all at once —
+  the wheat still running on either side but the field-walls
+  gone, no buildings, no shade of any kind. The heat is
+  different out here: heavier, more direct, with nothing to
+  interrupt it. A dry wind moves across the crop in long
+  travelling ripples, the wheat bending and recovering in slow
+  sequence. The sky above is enormous and very blue. At the
+  road's edge, a jackrabbit sits motionless in the verge,
+  watching the road.
+biome: land
+coord: {x: 17, y: -67, z: 0}
+exits:
+  west: {roomid: 6268}
+  east: {roomid: 6271}
+spawninfo:
+  - mobid: 9499
+    respawnrate: "20 real minutes"
+nouns:
+  the plateau: >
+    Open land running to every horizon with no interruption
+    but the crop and the sky above it. The flatness is
+    almost disorienting after the confined road through the
+    hamlet. No trees, no rises, no shade for a long way.
+    The road is the only fixed thing in the middle of all
+    that level wheat.
+  the crop: >
+    Wheat running on both sides of the road without the
+    field-walls that defined it closer to the hamlet —
+    open crop to the horizon in every direction, the heads
+    heavy and gold, the stalks dry. On the plateau the
+    wind that crosses it is unimpeded and the whole field
+    moves at once.
+idlemessages:
+- The dry wind crosses the wheat with a papery, rustling sound.
+- No shade anywhere. The heat presses down on the open road.
+- The jackrabbit at the verge has not moved since you arrived.
