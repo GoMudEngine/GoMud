@@ -7,7 +7,7 @@ description: >-
   Archive -- the one that classifies a site as a mineral deposit in three
   lines, where a careful surveyor would write pages -- and then to bring
   back whatever you find to earn an introduction to Reth himself, who
-  lives retired in the north end of town.
+  lives retired in the quiet end of the residential streets.
 secret: false
 
 steps:
@@ -23,7 +23,7 @@ steps:
     hint: "Return to Brennan with what you found."
   - id: intro
     description: "Brennan, convinced, has given you his introduction to
-      Reth, who lives retired in the north end of town."
+      Reth, who lives retired in the quiet end of the residential streets."
     hint: "Seek out Reth in the residential streets."
   - id: testimony
     description: "You found Reth, and with Brennan's word he told you
@@ -76,3 +76,38 @@ triggers:
           An old survey filed under the eastern country, dry and
           technical. Without a reason to read it closely, it is only
           a brief, dull entry.
+
+  # ── Reth's field-notes (6315, Reth's Cottage) -- gated: has 75-intro, missing 75-end ──
+  - event: room_interact
+    room: 6315
+    noun: field-notes
+    conditions:
+      has: ["75-intro"]
+      missing: ["75-end"]
+    actions:
+      - grant: "75-testimony"
+      - grant: "75-end"
+      - give_item: 40160
+      - bump_rep: {faction: margin, delta: 20}
+      - send_text: >-
+          You take the marked map from the table — Reth's hand, annotated
+          in the close careful script of a man who does not waste ink.
+          A route east into the highland country, a circled waymark,
+          elevation ticks that tell you what kind of ground you are going
+          into. No name for what is at the end of it. Whatever Reth saw
+          out there he would not write down, and he has not written it
+          down now — but the route is exact, and the final mark is
+          deliberate, and it is enough. The thread runs east.
+      - room_text: "takes the surveyor's marked map from the table."
+  # ── Ungated fallback: no 75-intro ──
+  - event: room_interact
+    room: 6315
+    noun: field-notes
+    conditions:
+      missing: ["75-intro"]
+    actions:
+      - send_text: >-
+          A retired surveyor's old papers spread across the table —
+          terrain charts and route sketches in a close, careful hand.
+          Without his leave they are not yours to take, and they say
+          little to a stranger at the window.

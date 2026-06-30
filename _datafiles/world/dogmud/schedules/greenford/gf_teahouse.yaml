@@ -1,0 +1,37 @@
+id: gf_teahouse
+description: "Ness opens the tea house before the scholars arrive, tends it through
+  the afternoon, winds down in the evening, and sleeps behind the counter once the
+  last customer has gone."
+segments:
+  - start: 6
+    end: 19
+    target_room: 6312
+    activity: ""
+    idlecommands:
+      - emote sets a fresh pot on the counter with a single careful movement and
+        hooks a cup beside it without looking.
+      - say First pot of the morning is always the best. Sit wherever suits you.
+      - emote turns toward the door before it opens, already reaching for a
+        clean cup.
+      - emote wipes down the counter in one long smooth pass and resets the
+        small clay dish of dried herbs at the near end.
+      - say The College blend or the valley blend. Most people find out which one
+        they want by the third visit.
+  - start: 19
+    end: 23
+    target_room: 6312
+    activity: ""
+    idlecommands:
+      - emote rinses the afternoon pots in the basin behind the counter and
+        lines them upside-down on the drying rack.
+      - say Evenings are slower. I do not mind. It gives me time to sort the
+        next day's leaves.
+      - emote measures out a small portion of dried leaves into a cloth pouch,
+        ties it off, and sets it on the shelf for morning.
+  - start: 23
+    end: 6
+    target_room: 6312
+    activity: sleeping
+    idlecommands:
+      - emote sleeps behind the counter on the narrow cot, with the morning
+        leaves already measured and waiting on the shelf above her.

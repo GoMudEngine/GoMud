@@ -1,0 +1,94 @@
+mobid: 9525
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Come in. The pot's on and there's bread if you want
+      it. Sit wherever suits you."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Counter's open."
+  - keywords: ["buy", "sell", "price", "cost", "tea", "food"]
+    responses:
+      - "Come to the counter -- pot of tea or a loaf, either
+        or both. I'll sort you."
+  - keywords: [""]
+    responses:
+      - "Ask me. I know everyone who comes through here."
+tree:
+  root:
+    text: |
+      Tea house at the end of College Row -- I'm Ness.
+      Pot of tea, fresh loaf most mornings. Counter's
+      at the back. The hearth's been going since before
+      anyone else on the row was up. What do you need?
+    hints: "You could ask Ness about the tea and what she
+      serves, about the neighbors and who lives on the
+      row, or about the row itself."
+  nodes:
+    - id: tea
+      triggers: ["tea", "pot", "cup", "cups", "brew",
+        "shop", "counter", "bread", "loaf", "baked",
+        "serve", "serves", "menu", "buy", "sell",
+        "price", "cost"]
+      text: |
+        Pot of tea's the staple -- I keep the pot going
+        from first light. The bread's fresh most mornings,
+        river loaf from the mill. Nothing elaborate. The
+        tables at the window are for anyone who wants to
+        sit a while -- the corner table is the one the
+        scholars end up at when they want to think
+        without being interrupted. I don't interrupt
+        anyone. It's a tea house, not a lecture hall.
+      hints: "You could ask about the neighbors and who
+        lives on the row, or about the hours and
+        when she opens."
+    - id: neighbors
+      triggers: ["neighbour", "neighbor", "neighbors",
+        "neighbours", "reth", "surveyor", "brennan",
+        "scholar", "blue", "yew", "third", "house",
+        "who", "lives", "live", "quiet", "knows",
+        "row", "residents"]
+      text: |
+        The row? I know everyone on it. The blue door
+        at the corner is the scholar from the university
+        -- Brennan, surveys, always with something on
+        his mind. He's in here some mornings when he
+        wants to think away from his maps. Doesn't
+        say much, which suits me.
+        The third house down the west lane -- the one
+        with the yew hanging over the path -- that's
+        the old surveyor, Reth. He was in most mornings,
+        years ago. He came back from a long survey and
+        he's been quiet since. Keeps to himself. I
+        don't press.
+      hints: "You could ask Reth directly -- he is in
+        the third house at the quiet end of the west
+        lane, the one with the overgrown yew."
+    - id: hours
+      triggers: ["open", "early", "hours", "close",
+        "morning", "when", "time", "schedule",
+        "late", "first"]
+      text: |
+        Before the row is moving -- that's when I open.
+        First light, usually. The scholars need somewhere
+        to be before the library opens, and I find early
+        is when I do my best work anyway. I close when
+        the afternoon trade drops off. The hearth stays
+        in until last thing.
+      hints: "You could ask about the tea and what's
+        on the counter, or about the neighbors."
+    - id: town
+      triggers: ["town", "greenford", "college",
+        "university", "market", "street", "lane",
+        "quarter", "area", "residential"]
+      text: |
+        Good town for a tea house. The university keeps
+        a steady trade year-round, and the residential
+        quarter is the quieter end of it -- not the
+        market bustle, just the row and the college
+        backgate. People who live here like their
+        mornings unhurried. I like that too.
+      hints: "You could ask about the tea and what she
+        serves, or about the neighbors on the row."

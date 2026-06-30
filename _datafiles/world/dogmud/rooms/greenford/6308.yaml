@@ -8,17 +8,18 @@ description: >
   paved with the same flagging as the cloister walk
   but rougher-maintained: a service lane as much as
   a passage. The lane opens at its south end to the
-  college's back gate, and beyond it the residential
-  streets of the upper town — faculty houses, quiet,
-  morning fires already at the chimneys. The gate
-  stands unbolted, the streets visible through it;
-  that is a walk for another errand. Examine the
-  back gate or the lane.
+  college's back gate, its timber planks standing
+  open onto Back Gate Lane and the residential
+  quarter beyond — faculty houses, quiet, morning
+  fires already at the chimneys. The gate is
+  unbolted; the streets begin on the other side.
+  Examine the back gate or the lane.
 biome: city
 coord: {x: 22, y: -83, z: 2}
 exits:
   north: {roomid: 6307}
   west: {roomid: 6306}
+  south: {roomid: 6309}
 nouns:
   the back gate: >
     A timber gate in the college's rear wall, its
@@ -49,7 +50,7 @@ nouns:
     already beginning to smoke with the morning.
     These streets are where the university actually
     lives, beyond the official precinct. The back
-    gate is the way to them. The streets await.
+    gate is the way to them, and it stands open.
 idlemessages:
 - A groundskeeper's cart rattles through the lane, coming from the kitchen.
 - The back gate stands ajar; a delivered package sits against the wall beside it.

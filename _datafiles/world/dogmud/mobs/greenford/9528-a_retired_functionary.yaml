@@ -1,0 +1,47 @@
+mobid: 9528
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote stands at the open gate, tilting his face briefly
+    toward the angle of light over the lane rooflines,
+    then settling again.'
+  - ''
+  - 'say Forty years in the registry and I still come to the
+    gate at the same hour. Some habits don''t shift.'
+  - ''
+  - 'emote glances at the sky without checking any instrument,
+    nods once, and turns back to the lane.'
+  - ''
+activitylevel: 10
+character:
+  name: A Retired Functionary
+  description: |
+    A former registry clerk of the university administra-
+    tion, in his early seventies, who retired twelve years
+    ago and has spent the time since at the quiet end of
+    the west lane tending his opinions about his former
+    colleagues. He is pleasant company in small doses and
+    has an excellent memory for who has lived where and
+    for how long. His Chrysalis-change is an internal chronometer:
+    he knows what hour it is within a few minutes
+    without looking, and has since the change took hold.
+    After forty years of arriving at the registry at
+    the same time each morning, he finds this less
+    remarkable than it probably ought to be. He does
+    not find the ability useful in retirement. He has
+    not yet decided how he feels about that.
+  speciesid: 1
+  level: 1
+  gold: 15
+  stats:
+    perception:
+      training: 5
+    willpower:
+      training: 5

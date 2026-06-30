@@ -1,0 +1,52 @@
+roomid: 6314
+zone: Greenford
+title: The Quiet End
+description: >
+  The west lane narrows here toward its quieter
+  end — the terraces more spare, their front
+  gardens longer and left more to themselves.
+  An older house sits close on the right, its
+  front gate hanging open; the occupant is just
+  visible at the window without appearing to
+  watch. Ahead to the south, the lane closes
+  on its last house, marked plainly by the
+  spread of a large overgrown yew above the
+  front wall. The lane runs east and north,
+  and ahead to the south toward the yew.
+  Examine the gardens or the lane.
+biome: city
+coord: {x: 21, y: -86, z: 2}
+exits:
+  north: {roomid: 6311}
+  east: {roomid: 6316}
+  south: {roomid: 6315}
+nouns:
+  the gardens: >
+    Front gardens behind the quieter terraces —
+    longer than those on College Row, their
+    planting less deliberate: grass between
+    stepping stones, a climber that has not been
+    directed in some years, a kitchen garden at
+    the far end of one that looks genuinely used
+    rather than decorative. These are the gardens
+    of people with enough space to let things
+    grow at their own pace. The one with the
+    open gate has a lilac coming into its last
+    week of flower.
+  the lane: >
+    The lane at its narrowest, the older terraces
+    closing in on either side. Looking south:
+    the lane ends in a clear stop, a large yew
+    overhanging the last front wall, its branches
+    spread well out into the lane. Looking north:
+    the way back toward College Row. The lane is
+    quiet enough here that birdsong from the
+    gardens carries easily. Nothing moves quickly
+    at this end of the residential quarter.
+spawninfo:
+  - mobid: 9528
+    respawnrate: "20 real minutes"
+idlemessages:
+- The open gate at the near house moves a fraction in a breath of air and settles.
+- Sparrows work the front hedges along the lane, indifferent to the morning.
+- The overgrown yew at the lane's end catches a breeze; it moves slow and heavy.

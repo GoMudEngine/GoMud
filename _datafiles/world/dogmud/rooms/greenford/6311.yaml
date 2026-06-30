@@ -1,0 +1,47 @@
+roomid: 6311
+zone: Greenford
+title: The Blue Door
+description: >
+  A narrow terraced house at the corner of the
+  west lane — its front door painted a deep
+  blue-grey, the paint fresh enough to mark a
+  deliberate choice. No nameplate, no number.
+  Through the narrow front window, maps and
+  folios are visible in mid-stack: a scholar's
+  working disorder, the kind that has a system
+  beneath it that the owner alone could explain.
+  The house is quiet this morning — its occupant
+  elsewhere. The row opens east; the lane
+  continues south. Examine the blue door or
+  the window.
+biome: city
+coord: {x: 21, y: -85, z: 2}
+exits:
+  east: {roomid: 6310}
+  south: {roomid: 6314}
+nouns:
+  the blue door: >
+    The door is painted a particular shade of
+    blue-grey — not quite slate, not quite the
+    sky, a colour someone chose with some
+    conviction. The paint is recent: no cracks
+    at the grain, no flaking at the hinges. The
+    knocker is plain iron, well-polished. No
+    name, no number on the door or the lintel.
+    The house has no need to announce itself
+    to anyone who knows where to look.
+  the window: >
+    A narrow sash window beside the door: the
+    glass clean, the inner sill crowded with
+    rolled and folded maps, stacked survey folios,
+    a compass case left open. The stack has the
+    particular depth of material accumulated over
+    years of work in one subject. The maps visible
+    at the top carry annotations in a close,
+    precise hand. The room beyond the window is
+    dim; the work is where the light is, and the
+    light is on the maps.
+idlemessages:
+- A cat is asleep on the inner sill, arranged among the stacked folios.
+- Light crosses the window and the maps inside catch it for a moment and then lose it.
+- The blue door is closed; the house is quiet in the way of someone out for the morning.

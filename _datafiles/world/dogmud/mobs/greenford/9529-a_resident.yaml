@@ -1,0 +1,45 @@
+mobid: 9529
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote pauses outside the front gate, face turned toward
+    where the sun will come once it clears the college roof.'
+  - ''
+  - 'say It''ll be a dry morning. You can feel it in the air
+    before it arrives.'
+  - ''
+  - 'emote shifts the basket to the other arm and continues
+    along the row at an unhurried pace.'
+  - ''
+activitylevel: 10
+character:
+  name: A Resident
+  description: |
+    A young woman of the residential quarter, up early
+    with a basket and no particular urgency. She has
+    lived on College Row for three years, which is long
+    enough to know the row's habits but not long enough
+    to have strong opinions about them yet. Her
+    Chrysalis-change is in her skin: it absorbs early
+    morning light with a heightened sensitivity, warming
+    her from the first diffuse light before the sun
+    clears the horizon. She wakes at dawn without
+    prompting. She has come to regard early morning as
+    her best time and arranged her life accordingly.
+    The basket is for the market; she will be back before
+    most of her neighbours are moving.
+  speciesid: 1
+  level: 1
+  gold: 6
+  stats:
+    vitality:
+      training: 4
+    charisma:
+      training: 3

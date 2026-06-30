@@ -1,0 +1,45 @@
+mobid: 9526
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote stands at the front gate watching the row, eyes
+    moving steadily without looking directly at anything.'
+  - ''
+  - 'say You catch more from a gate than a window. The row
+    doesn''t change much, but I notice when it does.'
+  - ''
+  - 'emote catches a flicker of motion at the lane corner
+    without turning his head and watches it settle.'
+  - ''
+activitylevel: 10
+character:
+  name: A Neighbor
+  description: |
+    A long-standing resident of College Row, a man in
+    his fifties who keeps the terrace on the west side
+    and takes an orderly interest in the state of it.
+    He is easy company on a street corner, the kind of
+    neighbour who knows who lives where and how long
+    they have been there. His Chrysalis-change is in
+    his peripheral vision: it extends a few degrees
+    further than it should, catching movement at the
+    edge of sight without the need to turn his head.
+    He notices things at the corners of his field of
+    view that most people miss entirely, which is
+    partly why he knows the row as well as he does.
+    He keeps his observations largely to himself.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    perception:
+      training: 5
+    charisma:
+      training: 4

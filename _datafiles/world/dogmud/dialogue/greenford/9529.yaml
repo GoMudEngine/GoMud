@@ -1,0 +1,74 @@
+mobid: 9529
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Morning. Market's just opening if you're heading down."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. I'm on my way to the market -- ask quick."
+  - keywords: ["market", "square", "buy", "sell"]
+    responses:
+      - "South on the main street, five minutes. Produce
+        stalls open at first light, general store after."
+  - keywords: [""]
+    responses:
+      - "I'm in a mild hurry but not a rude one. Ask me."
+tree:
+  root:
+    text: |
+      Up before the row most mornings -- it's just how
+      I'm made. Basket's for the market square. The
+      row's quiet now but it'll wake up in an hour.
+      What do you need to know?
+    hints: "You could ask about the morning and daily
+      life on the row, about the market square and
+      what's there, or about College Row itself."
+  nodes:
+    - id: morning
+      triggers: ["morning", "early", "dawn", "wake",
+        "up", "daily", "routine", "day", "habit",
+        "wakes", "light", "before"]
+      text: |
+        I've always been up at first light -- long
+        before I moved here, long before the basket
+        and the market run. I used to fight it -- now
+        I use it. The row at dawn is a different
+        place than it is at midmorning: quieter, the
+        air different, the light coming across the
+        rooflines at an angle. I don't mind being the
+        only one awake. I actually prefer it.
+      hints: "You could ask about the market square,
+        or about College Row and the neighborhood."
+    - id: market
+      triggers: ["market", "square", "shops", "stalls",
+        "produce", "bread", "food", "buy",
+        "sell", "basket", "errand"]
+      text: |
+        Market square's a few minutes' walk -- north
+        on the main street, just past the inn. Produce
+        stalls open at first light on the good days,
+        which is why I go early. General store opens
+        a bit later. Fishmonger's further down toward
+        the river. I usually have what I need and
+        I'm back before the row is properly awake.
+        It's a decent market for a town this size.
+      hints: "You could ask about the morning routine,
+        or about College Row and the neighborhood."
+    - id: row
+      triggers: ["row", "street", "lane", "college",
+        "neighborhood", "neighbours", "neighbors",
+        "neighbour", "neighbor", "residents",
+        "here", "live", "lived"]
+      text: |
+        I've been here three years, which is enough
+        to know the row's habits but not long enough
+        to have opinions about them. The tea house at
+        the east corner opens early -- Ness keeps her
+        own hours, which are good hours. The scholars
+        come through in the mornings on their way up
+        to the university. It's a settled row, quiet
+        without being dull. I like living here.
+      hints: "You could ask about the morning and daily
+        life, or about the market and what's there."
