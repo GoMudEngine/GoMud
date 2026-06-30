@@ -1,0 +1,74 @@
+roomid: 6294
+zone: Greenford
+title: The Guild Lane
+description: >
+  The Guild Lane is a short, quiet street that does
+  its business without calling attention to itself.
+  A scribe's shop on the west side has its shutters
+  open; the sound of a pen on paper carries into the
+  lane, along with the smell of fresh ink and drying
+  sand. On the east side a chandler displays wax
+  lengths in the window, from finger-thin tapers to
+  full altar rounds, with sealing wax and lamp oil
+  advertised on a card in the lower pane. The lane
+  is narrow and well-swept. A pigeonhole board beside the scribe's
+  door holds correspondence awaiting collection — a
+  dozen slots, half of them full. Examine the scribe's
+  shop or the board.
+biome: city
+coord: {x: 23, y: -77, z: 1}
+exits:
+  west: {roomid: 6289}
+  north: {roomid: 6291}
+nouns:
+  the scribe's shop: >
+    A narrow shopfront, shutters thrown open to the
+    lane. Inside: a tall copying desk by the window,
+    a second desk behind it for dictation, and
+    shelves of vellum in various weights along the
+    wall. The scribe works steadily at the front
+    desk, pen moving without pause. A price card
+    in the window lists services: copying, fair-hand,
+    legal draft, witnessed signature. The rates are
+    posted clearly. The scribe does not overcharge;
+    there is too much competition from the university
+    scripting hall up the hill.
+  the pigeonhole board: >
+    A frame of forty-eight square slots mounted
+    beside the scribe's door, each labelled in a
+    small hand with a name or initial. Half of them
+    hold correspondence — folded letters, small
+    parcels, one sealed document with a wax mark.
+    This is the lane's informal post arrangement,
+    older than the proper post office in the town
+    hall. People collect from it on their way past.
+    It mostly works.
+  the chandler: >
+    The east-side shop with wax lengths racked in
+    the window. Candles in ten sizes, from ink-
+    finger tapers to altar rounds a forearm thick,
+    but the specialty here is sealing wax and lamp
+    oil for the counting-houses on the upper lane.
+    A window card shows three grades of seal:
+    document, contract, and a beeswax blend for
+    letters that need to travel without cracking in
+    cold weather. The chandler down on the Climbing
+    Lane handles the university colours trade; this
+    one handles the commerce the university runs on.
+  the lane: >
+    A lane of close-fitted cobbles between the
+    scribe and the chandler, clean and narrow enough
+    that a cart would scrape the walls on both sides.
+    No carts come down this lane. Its business is
+    paper and wax and ink and correspondence — small
+    things, carefully made. The guild marks on the
+    two buildings are old and have been painted over
+    with newer ones; both layers are still legible
+    at the right angle.
+spawninfo:
+  - mobid: 9515
+    respawnrate: "20 real minutes"
+idlemessages:
+- The scratch of a pen in the scribe's shop pauses, then resumes.
+- Wax-smell from the chandler reaches the lane in warm waves.
+- A student lifts a letter from the pigeonhole board, reads it walking off.

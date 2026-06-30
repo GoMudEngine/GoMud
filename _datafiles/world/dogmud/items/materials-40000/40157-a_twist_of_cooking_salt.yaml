@@ -1,0 +1,15 @@
+itemid: 40157
+name: A Twist of Cooking Salt
+namesimple: salt
+description: A small paper twist of coarse white salt, the kind sold by
+  the pinch at market stalls and by the twist at every general store.
+  Good for seasoning a pot or finishing a loaf.
+type: object
+subtype: mundane
+component_tag: cooking-salt
+weight: 0.1
+value: 3
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking

@@ -1,0 +1,46 @@
+mobid: 9514
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote pauses on the step with her head down, lips moving
+    over something she is working through, then continues
+    uphill.'
+  - ''
+  - 'say Third-year survey methods. Field work starts end of
+    term. That cannot come too soon, honestly.'
+  - ''
+  - 'emote looks up, eyes pale and still for a moment as
+    something resolves, then nods once and continues up
+    the steps.'
+  - ''
+activitylevel: 10
+character:
+  name: A Student
+  description: |
+    A third-year student in her late twenties, taking the
+    Upper Street at a pace that suggests she is late and
+    has accepted it. She carries a satchel of considerable
+    weight without appearing to notice and a reading-case
+    tucked under one arm. Her Chrysalis-change is in her
+    eyes: the irises shift from their ordinary brown to a
+    pale grey, then to near-silver at the center, when she
+    is recalling something precisely -- a passage, a
+    diagram, a proof. She does not always notice when it
+    happens. Her fellows have learned to give her a moment
+    when she goes quiet with that silver look. She is
+    usually right about what she is remembering.
+  speciesid: 1
+  level: 1
+  gold: 8
+  stats:
+    perception:
+      training: 5
+    willpower:
+      training: 5

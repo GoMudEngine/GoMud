@@ -1,0 +1,70 @@
+roomid: 6295
+zone: Greenford
+title: The Town Hall Steps
+description: >
+  The Town Hall is the upper street's largest building —
+  a plain stone front with three narrow windows above
+  the door and a flight of broad steps from the lane.
+  The steps have settled unevenly over the years so that
+  the third from the bottom rocks underfoot, which
+  everyone in town knows and strangers invariably
+  comment on. The door is heavy and has a brass knocker
+  cast as a closed fist. A board to the left of the door
+  carries civic notices in a formal hand: meeting records,
+  rate schedules, public announcements. The lane continues
+  south, climbing toward the university. Examine the
+  board or the knocker.
+biome: city
+coord: {x: 22, y: -78, z: 1}
+exits:
+  north: {roomid: 6289}
+  south: {roomid: 6296}
+nouns:
+  the town hall: >
+    A plain stone building — three storeys, narrow
+    windows, a cornice at the roofline that is the
+    only decorative element anyone bothered with.
+    The stone is the same grey as the road cobbles,
+    which gives the building the look of something
+    grown from the street rather than built on it.
+    Inside: the council chamber, the clerk's office,
+    the rate-rolls going back two centuries. A
+    building that exists to hold civic process,
+    and is honest about it.
+  the civic board: >
+    A sizeable board to the left of the door, its
+    surface covered in the layered archaeology of
+    official notices. Current: the quarter-rate
+    schedule, a road-repair notice about the
+    mill-race bridge, minutes of last month's
+    council meeting, and a water-rights dispute in
+    progress — two notices side by side, one from
+    each party.
+    The minutes are signed by the clerk in a careful
+    hand. The dispute notices are not signed. The
+    board always has a dispute notice on it. This
+    is normal.
+  the steps: >
+    A broad flight of dressed stone steps rising
+    from the lane to the door — eight steps, the
+    third from the bottom rocking on its bed. It
+    has been rocking for at least thirty years; the
+    town has decided it is character rather than
+    neglect. The top step has a worn patch in the
+    center from daily traffic through the door.
+    The edges are still sharp. Only the middle
+    matters.
+  the brass knocker: >
+    A brass knocker cast as a closed fist gripping
+    a ring — the fist stylized enough to be civic
+    without being threatening, which is a narrow
+    aim and this achieves it. The brass is old and
+    polished unevenly: bright on the ring where
+    knuckles strike, dull on the back of the fist.
+    The knocker is heavy and makes a satisfying
+    sound when used. Most people do not knock;
+    they simply open the door.
+idlemessages:
+- An official emerges from the town hall door and checks the civic board.
+- Pigeons have claimed the top step and hold it without contest.
+- The loose third step rocks as a passerby crosses without slowing.

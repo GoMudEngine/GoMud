@@ -1,0 +1,15 @@
+itemid: 40158
+name: A Basket of Market Greens
+namesimple: greens
+description: A woven rush basket heaped with freshly cut market greens --
+  broad leaves, pale stems, and a few bitter herbs bundled at the
+  side. Sold at the morning market and best used by evening.
+type: object
+subtype: mundane
+component_tag: market-greens
+weight: 0.4
+value: 6
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking

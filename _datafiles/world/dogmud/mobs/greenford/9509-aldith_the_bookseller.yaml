@@ -1,0 +1,46 @@
+mobid: 9509
+zone: Greenford
+schedule_id: gf_bookseller
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote draws a fingertip along a spine on the lower shelf,
+    pauses, then tilts the volume out a half-inch and reads
+    the title without raising her head.'
+  - ''
+  - 'say If you''re looking for something, say so. The system
+    is mine -- it won''t be obvious to anyone else.'
+  - ''
+  - 'emote lifts a new arrival from the table, holds it flat,
+    and runs her fingers across the boards without opening it.'
+  - ''
+activitylevel: 10
+character:
+  name: Aldith the Bookseller
+  description: |
+    Aldith the Bookseller has run the square's bookshop for
+    eighteen years, which means she has shelved, re-shelved,
+    and twice rebuilt the stock into a system legible to her
+    and only slowly to anyone else. She is slight and ink-
+    stained, with reading-glass marks at her temples and a
+    permanent lean of the left shoulder from the step-ladder.
+    Her Chrysalis-change is in the pads of her fingers: the
+    skin there has thinned to a near-translucent quality
+    through which she can feel the impressed grain of vellum
+    or the depth of a stamped title. She reads bindings in
+    the dark by running a fingertip along the spine. She does
+    not mention this and expects visitors not to notice.
+  speciesid: 1
+  level: 1
+  gold: 22
+  stats:
+    perception:
+      training: 6
+    charisma:
+      training: 4

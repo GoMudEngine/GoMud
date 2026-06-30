@@ -1,0 +1,80 @@
+mobid: 9514
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Sorry -- I'm heading up. Ask me quick if you need
+      something."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Hello. I've got a lecture in -- actually, I'm already
+        late. Ask me something."
+  - keywords: ["study", "school", "lecture", "learn"]
+    responses:
+      - "Third-year survey methods. Field component starts end
+        of term. Can't come soon enough."
+  - keywords: [""]
+    responses:
+      - "Ask me. If I know it I'll tell you -- if I'm late for
+        a lecture I'll tell you that too."
+tree:
+  root:
+    text: "Third year at the university -- survey methods and
+      applied cartography, which sounds dry until you're
+      actually in the field. The university's at the top of
+      the hill; I'm on my way up now. Ask me something while
+      I'm still here."
+    hints: "You could ask about studies and what's taught at
+      the university, about the university itself and the
+      hill, or about Greenford and the town."
+  nodes:
+    - id: study
+      triggers: ["study", "studies", "lecture", "lectures",
+        "course", "lessons", "reading", "books", "scholar",
+        "texts", "learn", "learning", "taught", "teaching"]
+      text: |
+        Survey methods is the core of it this year --
+        measurement, triangulation, how to read and make a
+        useful map rather than a decorative one. Last year was
+        natural philosophy and mathematics; the year before
+        was history and legal texts, which I liked less. The
+        university covers a lot of ground across three years
+        before you specialize. Most people find something they
+        want to keep going with. I found the field work. The
+        indoor study is fine; the outdoor study is why I came.
+      hints: "You could ask about the university and the hill,
+        or about Greenford and the town."
+    - id: university
+      triggers: ["university", "uphill", "climb", "tower",
+        "hill", "campus", "library", "hall", "faculty",
+        "building"]
+      text: |
+        Three hundred years of additions, which means the
+        building is a puzzle -- old stone at the base, newer
+        work on the upper courses, a library wing that went
+        up two generations ago and is still the best bit. The
+        tower you can see from the square is the original
+        structure; there are students who've been here three
+        years without going up it. I went up in my first week.
+        Worth it. The lecture halls are in the low building
+        beside the tower -- you can hear the lecturers from
+        the lane when the windows are open, which they mostly
+        are.
+      hints: "You could ask about studies and the lectures, or
+        about Greenford and the town."
+    - id: greenford
+      triggers: ["greenford", "town", "market", "square",
+        "visitors", "travel", "arrive", "students"]
+      text: |
+        People come here for the university, mostly -- it's
+        the reason the town is the size it is. Three years'
+        study draws students from a long way out, and some of
+        them stay after, which is why there are so many
+        copyists and booksellers and good inns for a town
+        this size. The market's decent, the inn on the square
+        is comfortable, and the lower town by the river has
+        its own life entirely. It's a good place if you like
+        books and don't mind a hill.
+      hints: "You could ask about studies and the lectures, or
+        about the university and the hill."

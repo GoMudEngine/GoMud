@@ -12,12 +12,14 @@ description: >
   carry down on the still air, and beyond the market's
   edge the university tower clear against the sky, its
   full height finally apparent from this close. The stair
-  goes up into it all. The town waits at the top of the stair.
+  goes up into all of it; the Market Square opens at
+  the top.
 biome: city
 coord: {x: 22, y: -76, z: 0}
 exits:
   north: {roomid: 6284}
   west: {roomid: 6286}
+  up: {roomid: 6288}
 nouns:
   the stair: >
     Broad stone treads rising from the lane into the
@@ -28,7 +30,7 @@ nouns:
     climbed here. The balustrade on the upper side is
     worn smooth at hand-height from the same traffic.
     The stair is well-kept; someone sweeps it. The
-    town above is worth the climb.
+    Market Square waits at the top.
   the bookshop: >
     A small shop on the right side of the stair's foot,
     its sign showing an open book above the door. The
@@ -45,8 +47,8 @@ nouns:
     stalls, from the sound of it, with goods being
     examined and prices discussed. From the foot of
     the stair it is all sound and suggestion. The
-    town has a proper market and it runs daily. You
-    will see it when you reach the top.
+    town has a proper market and it runs daily. Go
+    up and the Market Square opens around you.
   the university tower: >
     From the foot of the stair the tower is close enough
     to show detail: the squared stone of the lower courses,

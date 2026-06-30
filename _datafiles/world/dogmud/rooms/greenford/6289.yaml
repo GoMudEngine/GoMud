@@ -1,0 +1,73 @@
+roomid: 6289
+zone: Greenford
+title: The Market Cross
+description: >
+  The Market Cross is the square's south end and its
+  formal centre — a carved stone shaft on a worn
+  plinth, the stone pale and smooth at hand-height
+  where it has been touched in passing. The produce
+  stalls ring it on three sides: greens and roots
+  to the west, eggs and preserves to the east, salted
+  cheese between. The smell is vegetables first, then
+  cheese, then the sweet overlay of preserves. A
+  notice board nailed to the cross's plinth carries
+  this week's announcements in several hands. The
+  town crier works the stalls on most mornings.
+  Examine the cross or the board.
+biome: city
+coord: {x: 22, y: -77, z: 1}
+exits:
+  north: {roomid: 6288}
+  west: {roomid: 6293}
+  east: {roomid: 6294}
+  south: {roomid: 6295}
+nouns:
+  the market cross: >
+    A plain stone shaft rising from a square plinth —
+    no figure at the top, just a carved cap with a
+    simple moulding at the neck. The cross is old:
+    the stone is a paler grey than the surrounding
+    cobbles, and the base has settled so that it
+    leans a degree to the east. The plinth carries
+    worn lettering around its face — a founding year
+    and a civic formula too faded to read fully. The
+    cross has been marking the market's centre for a
+    very long time.
+  the notice board: >
+    A plank board nailed to the cross's plinth at
+    reading height, its surface cross-hatched with
+    nail-holes from previous notices. This week's
+    announcements are pinned in a loose column: a
+    weavers' circle meeting on the Thursday, a lost
+    dog described in some detail, two rooms to let
+    on Mill Lane, a civic notice about the bridge
+    repair timetable. The bridge notice is official;
+    the rest are whoever got here first with a nail.
+  the stalls: >
+    The produce stalls ring the cross on three sides,
+    their canvas awnings overlapping in the morning
+    press. Greens from the valley farms; eggs from
+    a woman who sells them from a wooden crate,
+    careful-packed in straw; salted cheese in rounds
+    on a cloth. The prices are chalked in large clear
+    numbers. Everything here was moved at first light
+    this morning. By midday the stalls will be lighter
+    and the sellers will be calculating.
+  the town crier: >
+    The town crier works the cross end of the market
+    on most mornings — a stocky man with a good bell
+    arm and a carrying voice, though the voice is
+    quiet for the moment. His satchel holds the day's
+    announcements. He reads them once with the bell
+    at the hour, then again on request for anyone who
+    missed it. The rest of the time he keeps an ear
+    on the square.
+spawninfo:
+  - mobid: 9512
+    respawnrate: "20 real minutes"
+  - mobid: 9513
+    respawnrate: "20 real minutes"
+idlemessages:
+- The town crier's bell rings once, sharp, above the market noise.
+- A child weaves through the stalls at a trot, sent on an errand.
+- The cheese-seller lifts a cloth and a customer leans in to look.

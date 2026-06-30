@@ -1,0 +1,69 @@
+roomid: 6293
+zone: Greenford
+title: The General Store
+description: >
+  The shelves run the full length of the room in
+  three tiers: lamp oil and candles at eye-level,
+  rope and leather-working supplies below, dry goods
+  and small hardware at the top. The general store
+  covers everything the market stalls and the
+  specialist shops between them do not. A counter
+  runs the front with a balance scale and a glass jar
+  of boiled sweets that has occupied the same spot
+  since before anyone now working here can remember.
+  Resin and tallow and the dry-sweet smell of grain
+  sacks — the smell of the place — follows you in.
+  The store-keeper has the stock committed to memory.
+  Examine the shelves or the counter.
+biome: city
+coord: {x: 21, y: -77, z: 1}
+exits:
+  east: {roomid: 6289}
+  north: {roomid: 6290}
+nouns:
+  the shelves: >
+    Three tiers running the room's full length: the
+    eye-level tier holds lamp oil in sealed clay
+    bottles, beeswax and tallow candles in paper
+    sleeves, and a row of tinned matches. Below that:
+    rope in three grades, waxed cord, awls, needles,
+    a card of brass rings. The top tier, reached by
+    a short kick-step, holds dry goods — flour, oats,
+    dried beans — and small hardware in labelled
+    jars. The system is strict and has been strict
+    for a long time.
+  the counter: >
+    A long oak counter with a balance scale at the
+    near end and a glass jar of boiled sweets at
+    the far end. The scale's weights are in a worn
+    leather roll beside it. The sweets are for
+    customers who look like they have been told to
+    wait while the adults finish their business.
+    The counter has a groove worn into it on the
+    store-keeper's side from decades of the same
+    elbow-rest. Otherwise completely clean.
+  the lamp oil: >
+    A row of sealed clay bottles on the eye-level
+    shelf, each labelled in a steady hand: LAMP,
+    RUSH, WAXED WICK. Three grades for three
+    different purposes; the store-keeper will
+    explain the difference unprompted if given any
+    opening at all. The lamp grade is the most
+    popular. The university buys it in quantity
+    each term for the reading rooms.
+  the penny sweets: >
+    A glass jar of boiled sweets on the counter's
+    far end — the jar is old, the glass slightly
+    green with age. The sweets are wrapped in paper
+    twists and have been here long enough to be
+    part of the counter's identity. Children in
+    Greenford regard them as the store's most
+    important product. The store-keeper charges
+    one penny each and does not negotiate.
+spawninfo:
+  - mobid: 9511
+    respawnrate: "20 real minutes"
+idlemessages:
+- The balance scale's chains clink as someone leans on the counter.
+- A customer debates two grades of lamp oil for an uncomfortable time.
+- The store-keeper lifts the sweet jar lid and settles it back again.

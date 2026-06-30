@@ -1,0 +1,69 @@
+roomid: 6290
+zone: Greenford
+title: The Bookshop
+description: >
+  Paper and dry board and the particular compound
+  of old ink — the bookshop is narrow and deep,
+  its shelves running floor to ceiling on both
+  walls with a step-ladder on a brass rail for the
+  upper tiers. The stock runs heavy on university
+  texts: natural philosophy, survey and measurement,
+  cartography in several traditions, a long run of
+  history in various states of rebinding. A table
+  near the door holds recent arrivals still to be
+  shelved. A crate below the table holds titles
+  that have been here long enough to become local.
+  Examine the shelves or the crate.
+biome: city
+coord: {x: 21, y: -76, z: 1}
+exits:
+  east: {roomid: 6288}
+  south: {roomid: 6293}
+nouns:
+  the shelves: >
+    Floor-to-ceiling shelves in two runs along each
+    wall, the upper tiers reached only by the rolling
+    step-ladder. The stock is grouped by discipline
+    in a system legible to the proprietor and, over
+    time, to regulars. Natural philosophy and
+    mathematics share the north wall. Survey,
+    cartography, and travel accounts hold the east
+    wall. History dominates the top tier, spine-out,
+    as far back as the ladder allows.
+  the crate: >
+    A shallow wooden crate under the arrivals table,
+    holding a mixed stack of titles that have been
+    in the shop long enough to be re-priced downward
+    twice. Miscellany: an outdated surveyor's manual,
+    a bound run of an academic gazette, a novel in
+    three volumes with the second missing, a pamphlet
+    on the management of water-mills. A fair indicator
+    of what the shop is not in a hurry to move. Good
+    browsing, patient buying.
+  the step-ladder: >
+    A four-tread wooden step-ladder riding a brass
+    rail set high on the east wall, the base-wheel
+    rolling freely on the floor track. The treads
+    are worn smooth at their centers from the
+    proprietor's daily use. A hook at the top holds
+    a tin candle-sleeve for the upper tiers in
+    winter. The ladder is solid and gets used every
+    day. The top shelves are worth the climb.
+  the window: >
+    A single shopfront window facing the square,
+    dressed with a selection of titles spine-out:
+    the university's recent survey of the river
+    valley, a well-bound grammar, two works in
+    cartography. From the outside the window reads
+    as the shop's best stock and its advertisement.
+    From inside you can see it is also the
+    proprietor's current reading — a marked page
+    in the grammar, an annotation visible on the
+    survey.
+spawninfo:
+  - mobid: 9509
+    respawnrate: "20 real minutes"
+idlemessages:
+- A page turns somewhere deeper in the shop. The proprietor is reading.
+- Dust motes drift in a shaft of window-light over the arrivals table.
+- The step-ladder rolls a foot along its rail as the shop settles.

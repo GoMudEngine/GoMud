@@ -1,0 +1,16 @@
+itemid: 40155
+name: A Bowl of Barley Broth
+namesimple: broth
+description: A deep bowl of slow-cooked barley broth, the surface bright with
+  rendered fat and flecked with dried herbs. It is hearty enough to be
+  a meal on its own -- the sort of thing the inn ladles out when the
+  kitchen is running thin.
+type: object
+subtype: mundane
+component_tag: barley-broth
+weight: 0.5
+value: 8
+rarity_tier: 40
+is_component: true
+vendor_categories:
+- cooking

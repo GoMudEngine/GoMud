@@ -1,0 +1,69 @@
+roomid: 6296
+zone: Greenford
+title: The Upper Street
+description: >
+  The street steepens here, the cobbles giving way
+  to shallow cut steps at the grade's worst. The
+  buildings on either side are smaller and quieter —
+  faculty houses and a few tradespeople catering to
+  the university: a laundress with sheets on a line,
+  a coal merchant with the hatch standing open, a
+  bookbinder in a narrow shop on the far side. The
+  university fills the top of the view now: the tower
+  squared against the sky, the lecture-hall roof below
+  it, the library's long run of arched windows across
+  the upper face. The air smells of old stone and
+  chalk-dust from the windows above. The university
+  stair is just ahead. Examine the tower or the lane.
+biome: city
+coord: {x: 22, y: -79, z: 1}
+exits:
+  north: {roomid: 6295}
+  south: {roomid: 6297}
+nouns:
+  the university tower: >
+    This close, the tower stops being a view and
+    becomes a thing with surfaces — individual
+    stones, each broader than a man's reach, the
+    mortar between them pointed more than once. The
+    arched openings at the top are wide enough for
+    a person to stand in; wind moves through them
+    audibly from here. The base of the tower is
+    worn smooth by shoulders passing its gateway
+    for two centuries. There are figures at the
+    foot of it now — students, a groundskeeper —
+    who look small next to it without noticing.
+  the lecture hall: >
+    A long low building beside the tower, its roof
+    just visible from the lane — dark tile, a short
+    stack, a gutter run repaired in several styles.
+    The sound of a voice comes through a high window
+    on the near face, the words indistinct from here
+    but the rhythm of formal address unmistakable.
+    The hall is in use. It usually is.
+  the library windows: >
+    A run of arched windows along the upper face of
+    the building east of the tower — tall arches in
+    pairs, the glass clear and new-looking against
+    the older stonework. Inside: the dark suggestion
+    of shelves, a lamp on a reading stand, the pale
+    rectangle of an open folio. Someone is already
+    in there at this hour. The library opens early.
+    The students who get there first are the ones
+    who need it most.
+  the cut steps: >
+    Where the grade exceeds what cobbles can safely
+    take, the paving gives way to shallow cut steps —
+    each tread wide, the stone worn to a safe grip
+    from foot-traffic. The lane's center channel
+    runs between them, still doing its drainage
+    work. These steps are the town's acknowledgment
+    that the hill continues to be steep regardless
+    of what is built on it.
+spawninfo:
+  - mobid: 9514
+    respawnrate: "20 real minutes"
+idlemessages:
+- A student passes uphill with a heavy satchel, head down against the grade.
+- The lecture-hall bell sounds once from the building above, clear and flat.
+- Chalk-dust drifts from an open window in the terrace, pale in the light.

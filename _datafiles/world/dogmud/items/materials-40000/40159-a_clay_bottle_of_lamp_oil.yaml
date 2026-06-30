@@ -1,0 +1,13 @@
+itemid: 40159
+name: A Clay Bottle of Lamp Oil
+namesimple: lamp oil
+description: A clay bottle stoppered with wax, the kind kept on the
+  shelf at every general store. The oil inside is rendered clean and
+  burns without much smoke -- good for lamps and lanterns alike. The
+  wax seal leaves a faint mark at the neck when you open it.
+type: object
+subtype: mundane
+weight: 0.6
+value: 8
+vendor_categories:
+- blacksmithing

@@ -1,0 +1,49 @@
+mobid: 9512
+zone: Greenford
+craft_support: cooking
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote straightens the greens in the basket with quick
+    sure hands, pulling the outer leaves to the top where
+    they show best.'
+  - ''
+  - 'say Valley farms, this morning. You can tell by the
+    feel of them -- if you know what you''re pressing for.'
+  - ''
+  - 'emote runs her thumb across the side of a root, slow and
+    deliberate, then sets it back in the basket without comment.'
+  - ''
+activitylevel: 10
+character:
+  name: A Produce-Seller
+  description: |
+    A broad-shouldered woman with a market-stall manner --
+    brisk, confident, done with unnecessary conversation
+    before it starts. She works the Market Cross stall each
+    morning with greens and roots from the valley farms,
+    laid out in the order that catches the most light and
+    fewest flies. Her Chrysalis-change is in her fingertips:
+    they read firmness, moisture, and ripeness through
+    pressure alone -- a slow press tells her everything a
+    produce buyer spends a minute checking by eye. She
+    assesses a root in two seconds and is never wrong. She
+    does not explain this. The greens are always good;
+    customers have learned to trust the fact without asking
+    after the reason.
+  speciesid: 1
+  level: 1
+  gold: 15
+  stats:
+    perception:
+      training: 5
+    vitality:
+      training: 4
+  shop:
+    - itemid: 40158

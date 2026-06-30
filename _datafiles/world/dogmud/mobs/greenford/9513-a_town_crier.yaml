@@ -1,0 +1,46 @@
+mobid: 9513
+zone: Greenford
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote rings the handbell once, sharp and clear, then
+    tucks it back under his arm and rereads a notice from
+    his satchel to confirm the detail.'
+  - ''
+  - 'say Bridge repair schedule. Weavers'' circle Thursday.
+    Room to let on Mill Lane. That''s the main of it today.'
+  - ''
+  - 'emote clears his throat -- a deep, practised note that
+    carries to the far end of the square without quite
+    rising to a shout.'
+  - ''
+activitylevel: 10
+character:
+  name: A Town Crier
+  description: |
+    A stocky man with a handbell and a satchel, working the
+    Market Cross end of the square most mornings with the
+    ease of someone whose job has become invisible through
+    long habit. He is comfortable with crowds and comfortable
+    without them, which is the correct disposition for civic
+    work. His Chrysalis-change is in his voice and chest: a
+    resonance that places his words clearly in the air
+    further than they have any right to carry -- not loud
+    so much as penetrating. He has been heard from the far
+    end of the square in a fog thick enough to hide him. The
+    handbell announces him. The voice is the actual
+    instrument.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    charisma:
+      training: 7
+    perception:
+      training: 3

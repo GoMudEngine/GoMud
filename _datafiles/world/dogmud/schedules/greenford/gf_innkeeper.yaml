@@ -1,0 +1,39 @@
+id: gf_innkeeper
+description: "Daven tends the Cartographer's Rest from early morning through the
+  busy evening hours, then sleeps in the back room while the fire burns low."
+segments:
+  - start: 6
+    end: 18
+    target_room: 6291
+    activity: ""
+    idlecommands:
+      - emote polishes the bar with a worn cloth, turning it end over end at an
+        unhurried pace, then folds it and sets it behind the counter.
+      - say Room and board, meals twice a day, the fire kept up. That is the Rest.
+        Sit down when you are ready.
+      - emote stands at the near end of the bar and listens toward the stair for
+        a moment, then relaxes and goes back to setting out cups.
+      - say Breakfast is the same every morning -- bread, soft cheese, whatever
+        fruit came in with the last trade cart. Simple but honest.
+      - emote carries a stack of clean cups from under the counter to the shelf
+        above the bar, lining them rim-down in a row without looking.
+  - start: 18
+    end: 23
+    target_room: 6291
+    activity: ""
+    idlecommands:
+      - emote wipes down the bar again, more slowly this time, watching the common
+        room with the patient attention of someone keeping count of occupied tables.
+      - say Evening trade is the best trade. People who have walked all day are
+        grateful for a fire and a seat. I like grateful customers.
+      - emote refills the clay jug on the end of the bar and sets it within reach
+        of the nearest table without being asked.
+      - say The corner settle by the fire is taken every night by the same man.
+        I stopped putting a reserved sign on it three years ago.
+  - start: 23
+    end: 6
+    target_room: 6291
+    activity: sleeping
+    idlecommands:
+      - emote sleeps behind the bar, folded into the corner settle with one
+        ear angled toward the stair.
