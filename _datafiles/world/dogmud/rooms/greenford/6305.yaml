@@ -1,0 +1,81 @@
+roomid: 6305
+zone: Greenford
+title: Brennan's Office
+description: >
+  A working office in the lecture-hall range —
+  close enough to the hall to hear the bell and
+  cramped enough to suggest the university does
+  not value its surveyors' administrative comfort.
+  A broad desk occupies most of the room, its
+  surface productive-disordered: field journals,
+  indexed correspondence, rolled charts in their
+  tubes. The wall behind the desk holds
+  <ansi fg="itemname">old-maps</ansi>
+  — survey sheets covering the region and its
+  margins, pinned and overlapping, annotated in
+  several hands. Examine the old-maps or the desk.
+biome: city
+coord: {x: 21, y: -82, z: 2}
+exits:
+  north: {roomid: 6300}
+  east: {roomid: 6307}
+  south: {roomid: 6306}
+nouns:
+  old-maps: >
+    A wall of survey sheets covering the region and
+    its margins, pinned in overlapping layers and
+    annotated in Brennan's hand and in others'.
+    The maps span several decades of fieldwork —
+    the older ones on heavier paper, their edges
+    brown, their ink faded to a warm sepia. In the
+    margins of several of the oldest maps, drawn by
+    different surveyors in different hands across
+    different years, the same mark recurs: a set of
+    nested rings, small and precise. No legend
+    explains it. A note in Brennan's hand, pinned
+    beside one example, reads only: recurring — see
+    archive. What it marks, or whether the different
+    surveyors who drew it shared a reason, the maps
+    do not say.
+  the desk: >
+    A broad, heavy desk of old oak, its surface
+    occupied by the active work: two field journals
+    open and cross-referenced, a run of indexed
+    correspondence clipped in order, three rolled
+    charts in their tubes labeled in the field
+    notation. An inkwell at the corner, near-full.
+    A magnifying glass for map-reading. A half-
+    written letter to a colleague at another
+    institution, paused at a sentence that seems
+    to have required some thought. The desk does
+    not look disorganised to someone who understands
+    the work.
+  the field journals: >
+    Two journals open on the desk, their pages
+    cross-referenced by a system of marginal
+    numbers. Field notes from survey work in the
+    eastern country: terrain, access, water sources.
+    The notation is standard; the observations are
+    careful and particular. One entry is circled in
+    red ink and the number beside it appears on the
+    margin of a map on the wall. The circle does
+    not have an explanation attached.
+  the correspondence: >
+    A run of letters clipped in chronological order,
+    the most recent on top: correspondence with
+    colleagues at the Survey Office in the capital,
+    with a factor in a town to the east, with two
+    other university departments. The tone is careful
+    and collegial. Several letters ask questions;
+    the replies, where they appear, give answers
+    that prompt further questions. The correspondence
+    has the character of an ongoing inquiry rather
+    than a concluded one.
+spawninfo:
+  - mobid: 9516
+    respawnrate: "20 real minutes"
+idlemessages:
+- Brennan traces a route on one of the wall maps with a finger, not touching
+  the surface.
+- 'A chart-tube rolls from the desk-edge: Brennan catches it without looking up.'
+- Ink scratches from the desk as Brennan adds something to a letter's margin.

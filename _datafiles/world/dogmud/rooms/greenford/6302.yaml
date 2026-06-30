@@ -1,0 +1,70 @@
+roomid: 6302
+zone: Greenford
+title: The Reading Room
+description: >
+  A quieter room than the main stacks: the reading
+  room is fitted with long oak tables and fixed
+  reading-stands, lamp-brackets along the walls
+  supplementing the natural light. The hush here
+  is a studied thing — kept by convention and by
+  walls thick enough to take most of the noise
+  from the quad. Readers work at the tables: one
+  at a spread folio, one with a stack of pamphlets,
+  one doing nothing visible but thinking. The
+  cloister walk is west; the archive south. Examine
+  the reading-stands or the tables.
+biome: city
+coord: {x: 23, y: -82, z: 2}
+exits:
+  north: {roomid: 6301}
+  south: {roomid: 6303}
+  west: {roomid: 6307}
+nouns:
+  the reading-stands: >
+    Fixed stands along the south wall, each angled
+    for a folio at comfortable height. The stands
+    are old and well-made — the joinery tight even
+    after long use, the surface padded in a faded
+    green baize replaced more than once. A chain
+    bracket on each stand's side holds a lamp-
+    fitting. Three of the stands are in use; two
+    hold reference volumes propped open with a
+    ribbon marker rather than a reader currently
+    present.
+  the tables: >
+    Two long oak tables running the room's length,
+    chairs along both sides, the surface clear of
+    everything not currently in use. The rule is
+    simple: working space for what you are using
+    now, nothing left when you go. The polish on
+    the tables is deep from long use and attentive
+    care. At the far end of the south table a
+    reader has laid out a surveying chart and is
+    going through it methodically, a pencil behind
+    one ear.
+  the lamp-brackets: >
+    Iron brackets at regular intervals along both
+    walls, each fitted with a glass-shaded oil
+    lamp. The shades are smoked at the tops from
+    long use and cleaned at the bottoms to keep
+    the light useful. In winter the reading room
+    is lamp-lit for most of the working day; now
+    the lamps supplement rather than replace the
+    window-light. The brackets are positioned so
+    the light falls onto the table-surface without
+    glare.
+  the quiet: >
+    The reading room keeps its hush in the way
+    institutional rooms do when the rule is long-
+    established enough that people remember it
+    before they arrive. Page-turns, a chair shifted,
+    the occasional low exchange between readers at
+    the far table — nothing more. The walls are
+    thick. The sound of the quad does not carry.
+    What carries is paper, lamplight, and the
+    particular silence of people thinking in the
+    same room.
+idlemessages:
+- A page turns at the south table; the sound carries no further than three feet.
+- Someone sets a volume down with careful quiet, spine first, and opens another.
+- The lamp nearest the door flickers once and steadies in the still air.

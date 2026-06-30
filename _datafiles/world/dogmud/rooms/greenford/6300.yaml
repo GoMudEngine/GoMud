@@ -1,0 +1,69 @@
+roomid: 6300
+zone: Greenford
+title: The Lecture Hall
+description: >
+  The hall is tiered and long, its bench-rows
+  rising from the demonstration floor in a shallow
+  arc. A broad blackboard at the front carries the
+  morning's working in chalk — natural philosophy,
+  the figures dense and precise in the lecturer's
+  hand. High windows along the south wall admit
+  flat morning light without glare. The smell is
+  chalk and old timber and the particular dust of
+  textbooks stacked in the same room year after
+  year. The quadrangle is east; Brennan's office
+  is south. Examine the blackboard or the benches.
+biome: city
+coord: {x: 21, y: -81, z: 2}
+exits:
+  east: {roomid: 6299}
+  south: {roomid: 6305}
+nouns:
+  the blackboard: >
+    A broad board of slated wood across the front
+    wall, the morning's lecture in chalk: equations
+    in natural philosophy, the steps of a derivation
+    working left to right across three-quarters of
+    the board's surface. The lecturer's hand is
+    precise and small; the logic is dense. The final
+    step is either very elegant or wrong — not
+    immediately clear from the back rows. The board
+    carries the ghosts of previous lectures in chalk
+    haze below the current working.
+  the benches: >
+    Tiered bench-rows in a shallow arc rising from
+    the demonstration floor — the kind of seating
+    that assumes the audience will be attentive and
+    gives them no particular comfort to encourage
+    otherwise. The wood is worn smooth. At the ends
+    of each row a small inkwell socket, most empty.
+    Near the front, the benches carry more chalk-
+    dust than further back, which is either because
+    the attentive students sit there or because the
+    lecturer gestures broadly.
+  the demonstration floor: >
+    The flat-floored front of the hall, where the
+    lecturer stands: a deal table with an inkwell,
+    a small bench of equipment — a pendulum bob,
+    a set of weights, a glass prism — arranged for
+    the morning's work. The chalk-tray is full.
+    The floor is worn in a path between the table
+    and the board, the particular wear of someone
+    who thinks while moving.
+  the windows: >
+    A run of high windows along the south wall,
+    their sills deep and their glass clear — a
+    recent improvement that has made the hall
+    markedly more useful. The light falls across
+    the benches without throwing shadows at
+    inconvenient angles. Before the windows were
+    replaced the south rows were difficult after
+    midday. The current students have no memory
+    of that problem and are therefore not grateful.
+spawninfo:
+  - mobid: 9520
+    respawnrate: "20 real minutes"
+idlemessages:
+- 'The lecturer pauses, redraws a figure on the board: chalk clicks on the slate.'
+- Students scratch notes in the bench-rows, heads down, not looking up.
+- A beam of morning light crosses the board and obscures two lines of the working.

@@ -1,0 +1,72 @@
+roomid: 6301
+zone: Greenford
+title: The Library
+description: >
+  The public stacks: a long room of shelved
+  periodicals and reference works, the shelves
+  running at right angles to the south wall in
+  deep bays. The air is dry and cool and carries
+  the compound of old paper and linen binding.
+  Tall arched windows along the east face fill
+  the room with good working light without heat.
+  A returns-cart near the entrance holds volumes
+  to be re-shelved; a card catalogue in oak cases
+  stands beside the desk where the librarian
+  works. The reading room is south. Examine the
+  catalogue or the shelves.
+biome: city
+coord: {x: 23, y: -81, z: 2}
+exits:
+  west: {roomid: 6299}
+  south: {roomid: 6302}
+nouns:
+  the card catalogue: >
+    A run of oak cases against the north wall, the
+    drawer-fronts labeled in a clear hand: author,
+    title, and subject, cross-referenced through
+    three separate sequences. The system is precise
+    and learned — the librarian's work, maintained
+    over many years. Each drawer holds cards in a
+    particular order that is not immediately evident
+    to a new user but becomes legible with use. The
+    catalogue covers everything in the public stacks.
+    It does not cover the archive.
+  the shelves: >
+    The shelves run in deep bays at right angles to
+    the south wall — older sections in dark wood,
+    newer additions in a lighter pine not yet aged
+    to match. The public stacks run heavy on
+    periodicals in bound runs, reference works in
+    geography and natural philosophy, and a long
+    back-set of the university's own published
+    papers. Everything is labeled at the bay end.
+    The lower shelves are lending; the upper tiers
+    are reference only.
+  the returns-cart: >
+    A low wooden trolley near the entrance, its
+    platform loaded with volumes awaiting re-
+    shelving: thick periodicals, a geography in
+    two volumes, a pamphlet bound into a stiffened
+    cover. The cart gets emptied and refilled on
+    a daily cycle the librarian manages with
+    visible efficiency. Today's returns suggest
+    someone has been working in natural philosophy
+    and the river survey literature.
+  the windows: >
+    Tall arched windows along the east face, their
+    sills dressed in cut stone. The glass is clear
+    and recently cleaned; the light is good and
+    falls across the bay ends without casting shelf-
+    shadows at the worst angles. On a clear morning
+    the windows let in enough light that no lamp is
+    needed at the desk until mid-afternoon. This
+    was apparently a deliberate choice of the
+    architect and is considered the building's best
+    quality by the people who work in it daily.
+spawninfo:
+  - mobid: 9518
+    respawnrate: "20 real minutes"
+idlemessages:
+- Paper turns in the stacks; the dry air barely stirs.
+- 'The librarian moves along the cart, checking titles against the catalogue.'
+- A student works in a window bay, head close to the page in the good light.

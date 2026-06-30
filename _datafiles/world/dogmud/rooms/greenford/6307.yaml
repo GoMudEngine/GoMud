@@ -1,0 +1,73 @@
+roomid: 6307
+zone: Greenford
+title: The Cloister Walk
+description: >
+  A covered walk of dressed stone running between
+  the quadrangle to the north and the back college
+  to the south — a narrow corridor of pillared
+  arches opening onto a small garden court to the
+  east, its stone-paved centre planted with a
+  single old quince tree. The walk is cold even
+  in mild weather, the stone drawing warmth from
+  the air. Students and faculty cross it without
+  lingering. Brennan's office is west; the reading
+  room east; the college lane south. Examine the
+  arches or the old quince.
+biome: city
+coord: {x: 22, y: -82, z: 2}
+exits:
+  north: {roomid: 6299}
+  west: {roomid: 6305}
+  east: {roomid: 6302}
+  south: {roomid: 6308}
+nouns:
+  the arches: >
+    A run of stone arches along the garden side of
+    the cloister walk, each a simple round-headed
+    form on plain pillars — old work, older than
+    most of the university buildings around it, the
+    stone weathered to a particular grey that has
+    stopped changing. The arches were put here
+    because the walk needed a roof and this was the
+    way it was done when it was built. The space
+    between each arch looks into the garden court.
+    In winter the arches are fitted with temporary
+    shutters; in summer they are left open.
+  the old quince: >
+    The quince tree in the centre of the garden
+    court — its trunk as thick as a person's waist,
+    the bark rough and deeply furrowed, the lower
+    branches trained flat by pruning over many
+    decades. In season it bears fruit; the fruit is
+    not edible without preparation and is generally
+    left for the birds. The tree is here because
+    someone planted it. Whatever the occasion was,
+    the university has long since forgotten it and
+    now keeps the tree out of a combination of
+    habit and affection.
+  the garden court: >
+    A small paved court visible through the arches:
+    stone-flagged, its centre given to the single
+    quince tree of considerable age. The court is
+    quiet and not especially used. On fine days a
+    bench just inside the arches holds a reader or
+    two until the cold from the stone makes itself
+    felt. The court gives no shelter from the wind;
+    it gives light and a tree and a certain quality
+    of quiet that the quadrangle does not have.
+  the benches: >
+    Stone benches along the inner wall of the
+    cloister walk — four of them, each cut from a
+    single piece of stone, their seats flat and
+    very cold in all but the warmest months. Two
+    have worn surfaces where people have sat long
+    enough to leave a mark; the other two have not.
+    The occupied benches are the two receiving the
+    most garden-light through the arches. Everything
+    about bench choice in a cloister walk follows
+    from light and warmth, which are not much of
+    either here.
+idlemessages:
+- Cold air settles in the cloister walk; someone crosses it quickly southward.
+- The quince tree in the garden court is motionless in the still precinct air.
+- Footsteps on the flagged walk echo once and then stop; someone has turned aside.

@@ -1,0 +1,55 @@
+roomid: 6308
+zone: Greenford
+title: The College Lane
+description: >
+  The back lane of the college precinct — a narrow
+  passage between the common-room range to the west
+  and the rear wall of the library to the east,
+  paved with the same flagging as the cloister walk
+  but rougher-maintained: a service lane as much as
+  a passage. The lane opens at its south end to the
+  college's back gate, and beyond it the residential
+  streets of the upper town — faculty houses, quiet,
+  morning fires already at the chimneys. The gate
+  is not locked. The residential streets are a short
+  walk from here. Examine the back gate or the lane.
+biome: city
+coord: {x: 22, y: -83, z: 2}
+exits:
+  north: {roomid: 6307}
+  west: {roomid: 6306}
+nouns:
+  the back gate: >
+    A timber gate in the college's rear wall, its
+    planks weathered to silver-grey, the iron
+    fittings solid but plain — no device, no
+    inscription, just a working gate that opens
+    and closes. A latch on the inside and a bolt
+    above it. The gate is not locked. Beyond it:
+    a short lane, then the first of the residential
+    streets. The back gate is how the faculty
+    mostly come and go. Unremarkable, much used,
+    and not watched.
+  the lane: >
+    The back lane runs between the common-room range
+    to the west and the library's east face, the
+    paving cracked in places where tree-roots have
+    shifted it, patched in a different stone. A
+    drain runs down the centre. The lane serves
+    deliveries to the college kitchen, the
+    groundskeeper's cart, and the occasional student
+    avoiding the quad. It is not picturesque and
+    has never tried to be.
+  the residential streets: >
+    Visible beyond the back gate: a short lane
+    opening onto the residential streets of the
+    upper town — quiet terraces of faculty houses,
+    their front gardens modest, their chimneys
+    already beginning to smoke with the morning.
+    These streets are where the university actually
+    lives, beyond the official precinct. The back
+    gate is the way to them. The streets await.
+idlemessages:
+- A groundskeeper's cart rattles through the lane, coming from the kitchen.
+- The back gate stands ajar; a delivered package sits against the wall beside it.
+- Morning light reaches the lane for an hour in summer and not at all in winter.

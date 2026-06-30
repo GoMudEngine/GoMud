@@ -2,42 +2,42 @@ roomid: 6297
 zone: Greenford
 title: The University Stair
 description: >
-  The lane ends here at the university boundary --
-  a low wall of dressed ashlar with an iron gate in
-  it, the graveled path beyond rising toward the
+  The lane meets the university boundary here —
+  a low wall of dressed ashlar with an iron gate
+  in it, both leaves hooked back on heavy iron
+  rings. The graveled path beyond rises toward the
   main court. The tower is close now, squared above
-  the wall, its arched openings at the crown open to
-  the sky. You can see all of it from here --
-  forecourt, halls, the long library windows. Today
-  the lane ends at this wall; the way into the
-  grounds lies further up the hill. Examine the gate
-  or the grounds.
+  the wall, its arched openings at the crown open
+  to the sky. Forecourt, halls, the long library
+  windows — all plainly visible from the gate.
+  The grounds are open. Go up to enter. Examine
+  the gate or the grounds.
 biome: city
 coord: {x: 22, y: -80, z: 1}
 exits:
   north: {roomid: 6296}
+  up: {roomid: 6298}
 nouns:
   the gate: >
     An iron gate in the ashlar wall, its leaves
     hooked back on iron rings set in the stone face.
     The iron is old and pitted, the hinges heavy
     castings of a type not made now. The latch plate
-    carries the university's device in relief -- a
+    carries the university's device in relief — a
     book and a measuring rod crossed, a legible
     statement of the institution's sense of itself.
     The gate is old and set in a wall that has been
-    here longer than the town around it. The grounds
-    lie beyond it, reachable from the hill above.
+    here longer than the town around it. Both leaves
+    are hooked back. Go up to enter the grounds.
   the grounds: >
     Beyond the gate: a graveled path between planted
     borders of low shrub and ground-cover, kept trim.
-    The path rises to the main forecourt -- a broad
+    The path rises to the main forecourt — a broad
     paved space fronting the lecture-hall range.
     From the wall you can see the forecourt clearly
     and the figures crossing it: students, a lecturer
     in a dark gown, two groundskeepers with a cart.
-    The grounds are visible from here; the way in
-    lies further up the hill.
+    The grounds are open. Go up to walk in.
   the university tower: >
     From here the tower is close enough to feel
     large — the base stones as broad as a man's
