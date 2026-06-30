@@ -1,0 +1,45 @@
+roomid: 6309
+zone: Greenford
+title: Back Gate Lane
+description: >
+  Beyond the college's back gate, the lane drops
+  a short step to cobbled ground — the beginning
+  of the residential quarter, where the flagging
+  of the college precinct gives way to the quieter
+  paving of the upper town. Faculty houses stand
+  close on either side: narrow terraces of dressed
+  stone, their front walls flush with the lane,
+  their gardens small and damp with morning. Smoke
+  from the first chimneys is already rising. The
+  college gate is north; College Row opens to the
+  south. Examine the lane or the houses.
+biome: city
+coord: {x: 22, y: -84, z: 2}
+exits:
+  north: {roomid: 6308}
+  south: {roomid: 6310}
+nouns:
+  the lane: >
+    The short lane between the college's back gate
+    and the first of the residential streets —
+    cobbled here in a smaller stone than the college
+    precinct uses, the surface well-maintained but
+    not dressed for show. Tree-roots have worked at
+    one edge of the cobbling without quite lifting
+    it. The lane is narrow enough that two people
+    with bags would need to turn sideways, and wide
+    enough that they generally don't have to.
+  the houses: >
+    Narrow terraced houses on either side of the
+    lane, their fronts flush with the cobbles: no
+    forecourt, no front garden here at the gate
+    end, just the stone face and the door. Faculty
+    housing, built in an era when the university
+    owned more of this quarter than it does now.
+    The houses are well-kept, their paintwork
+    maintained and their windows clean. Smoke begins
+    at the nearer chimneys: someone is up.
+idlemessages:
+- Morning smoke rises straight from the chimney nearest the gate.
+- A door opens in one of the terrace houses and closes again without anyone appearing.
+- The cobbles in the lane are damp from the night; the morning will dry them out.
