@@ -9,15 +9,15 @@ maxwander: 0
 groups:
   - humanoid
 idlecommands:
-  - 'emote stands at the open gate of the near house, working
-    a folded piece of paper between his fingers without
-    looking at it.'
+  - 'emote stands at the open gate, tilting his face briefly
+    toward the angle of light over the lane rooflines,
+    then settling again.'
   - ''
   - 'say Forty years in the registry and I still come to the
     gate at the same hour. Some habits don''t shift.'
   - ''
-  - 'emote turns the paper over, runs a thumb across one edge,
-    and puts it back in his coat pocket.'
+  - 'emote glances at the sky without checking any instrument,
+    nods once, and turns back to the lane.'
   - ''
 activitylevel: 10
 character:
@@ -29,12 +29,14 @@ character:
     the west lane tending his opinions about his former
     colleagues. He is pleasant company in small doses and
     has an excellent memory for who has lived where and
-    for how long. His Chrysalis-change is in his fingers:
-    they retain the exact tactile impression of any
-    document he has handled, allowing him to recognise a
-    specific piece of paper by touch -- the grain, the
-    weight of the ink, the texture of a seal. He no
-    longer handles documents. He has not explained why.
+    for how long. His Chrysalis-change is an internal chronometer:
+    he knows what hour it is within a few minutes
+    without looking, and has since the change took hold.
+    After forty years of arriving at the registry at
+    the same time each morning, he finds this less
+    remarkable than it probably ought to be. He does
+    not find the ability useful in retirement. He has
+    not yet decided how he feels about that.
   speciesid: 1
   level: 1
   gold: 15

@@ -7,7 +7,7 @@ description: >-
   Archive -- the one that classifies a site as a mineral deposit in three
   lines, where a careful surveyor would write pages -- and then to bring
   back whatever you find to earn an introduction to Reth himself, who
-  lives retired in the north end of town.
+  lives retired in the quiet end of the residential streets.
 secret: false
 
 steps:
@@ -23,7 +23,7 @@ steps:
     hint: "Return to Brennan with what you found."
   - id: intro
     description: "Brennan, convinced, has given you his introduction to
-      Reth, who lives retired in the north end of town."
+      Reth, who lives retired in the quiet end of the residential streets."
     hint: "Seek out Reth in the residential streets."
   - id: testimony
     description: "You found Reth, and with Brennan's word he told you

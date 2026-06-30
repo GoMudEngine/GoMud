@@ -9,14 +9,14 @@ maxwander: 0
 groups:
   - humanoid
 idlecommands:
-  - 'emote leans over the front gate and presses a hand flat
-    against the stone post, holding it there a moment.'
+  - 'emote stands at the front gate watching the row, eyes
+    moving steadily without looking directly at anything.'
   - ''
-  - 'say Mortar''s still holding. Had a wet autumn last year.
-    Worried about it, but it held.'
+  - 'say You catch more from a gate than a window. The row
+    doesn''t change much, but I notice when it does.'
   - ''
-  - 'emote straightens and looks along the row, noting the
-    doors and the state of each step in turn.'
+  - 'emote catches a flicker of motion at the lane corner
+    without turning his head and watches it settle.'
   - ''
 activitylevel: 10
 character:
@@ -28,13 +28,13 @@ character:
     He is easy company on a street corner, the kind of
     neighbour who knows who lives where and how long
     they have been there. His Chrysalis-change is in
-    his fingertips: they read moisture levels in stone
-    and wood and mortar with the accuracy of an
-    instrument, giving him an unusually reliable sense
-    of where damp is working in and where walls are
-    holding sound. He maintains his terrace in excellent
-    repair. He has opinions about other people's mortar.
-    He keeps these largely to himself.
+    his peripheral vision: it extends a few degrees
+    further than it should, catching movement at the
+    edge of sight without the need to turn his head.
+    He notices things at the corners of his field of
+    view that most people miss entirely, which is
+    partly why he knows the row as well as he does.
+    He keeps his observations largely to himself.
   speciesid: 1
   level: 1
   gold: 8

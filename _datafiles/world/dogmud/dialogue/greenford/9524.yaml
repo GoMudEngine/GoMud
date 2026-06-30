@@ -67,7 +67,7 @@ tree:
         route is marked. Take them. I am not going
         back, and I would rather they were somewhere
         useful than sat here.
-      hints: "You could take the field-notes from the
+      hints: "You could examine the field-notes on the
         table, or ask Reth about the cottage and
         the yew."
     - id: after_quest

@@ -68,13 +68,13 @@ tree:
         That silence is what I have been looking at. Reth
         will not speak to me -- we have history, and it is
         not collegial. But I will give you my word to take
-        to him. He lives in the north end of the residential
+        to him. He lives in the quiet end of the residential
         streets -- back gate of the college, first right,
         third house with the overgrown yew. Tell him I sent
         you, and that I am not asking him to explain anything.
         I am asking him to let you read the original notes.
       hints: "You could take Brennan's introduction to Reth --
-        he lives at the north end of the residential streets,
+        he lives at the quiet end of the residential streets,
         through the back gate of the college."
     - id: progress
       questRequired: ["75-start"]
@@ -139,7 +139,7 @@ tree:
         checking. He retired early and did not explain it, and
         I made the mistake of pressing him, which is why we
         no longer speak easily. He lives quietly in the
-        residential streets -- north end, house with the yew
+        residential streets -- quiet end, house with the yew
         -- and I respect his quiet even when it costs me
         something. If you have his confidence, keep it
         carefully. He has earned the right to his silence.
