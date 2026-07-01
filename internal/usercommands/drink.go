@@ -31,6 +31,13 @@ const bloomWaferItemId = 40108
 // the mechanism, not a mistake.
 const ysoldesPurgeItemId = 40109
 
+// catalystOfUnmakingItemId is #22 crash-site: drinking it scours ALL mutations
+// back to species intrinsics and biases re-acquisition hard toward rare.
+const catalystOfUnmakingItemId = 30067
+
+// scourRerollCharges is how many rare-biased reroll charges the Catalyst grants.
+const scourRerollCharges = 3
+
 func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
 	// Chunk 4e: can't drink while grappled — both hands committed.
@@ -254,6 +261,19 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		user.SendText(messaging.CategoryWarning,
 			`The wafer dissolves to nothing on your tongue and the world goes `+
 				`warm and wide — communion.`)
+	}
+
+	// ── Catalyst of Unmaking special-case ─────────────────────────────────────
+	// #22 crash-site "remort": scour every acquired mutation back to species
+	// intrinsics and grant rare-biased reroll charges. The potion was already
+	// consumed by the normal path above; here we only apply the effect and
+	// send the onset message (mirrors the Bloom Wafer block's shape).
+	if itemSpec.ItemId == catalystOfUnmakingItemId {
+		user.Character.ScourMutations(scourRerollCharges)
+		user.SendText(messaging.CategoryWarning,
+			`<ansi fg="magenta">You drink the Catalyst. For one breath you are only what you `+
+				`were born as — every woken thing in your blood goes still and gone. Then the `+
+				`cold lets go, and the hunger comes back stronger than before.</ansi>`)
 	}
 
 	return true, nil
