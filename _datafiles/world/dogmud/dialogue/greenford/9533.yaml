@@ -56,7 +56,7 @@ tree:
         "coins", "ribbon", "paper", "tokens", "leave",
         "left", "collect", "box", "slot", "things",
         "bring", "gave", "give", "item", "items",
-        "ribbon", "stone"]
+        "stone"]
       text: |
         People leave what they have or what they want
         to be rid of before the road. Coins are the
@@ -94,7 +94,7 @@ tree:
         it is, about the offerings travelers leave, or
         about how she came to tend it."
     - id: keeper
-      triggers: ["keeper", "you", "your", "tending",
+      triggers: ["keeper", "work", "you", "your", "tending",
         "tend", "nine", "years", "long", "faith",
         "believe", "belief", "meaning", "purpose",
         "came", "who", "personally", "yourself",

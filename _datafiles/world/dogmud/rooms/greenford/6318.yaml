@@ -12,7 +12,7 @@ description: >
   in the hedgerow; a traveler's shrine-post rises at
   the field's margin to the south, half in the long
   grass. The road bends on west toward the milepost.
-  Examine the stable gate or the verge.
+  Examine the <ansi fg="itemname">stable-gate</ansi> or the verge.
 biome: land
 coord: {x: 20, y: -78, z: 1}
 exits:
@@ -21,7 +21,7 @@ exits:
   south: {roomid: 6320}
   west: {roomid: 6321}
 nouns:
-  the stable gate: >
+  stable-gate: >
     A wide timber gate in the hedgerow north of the road,
     its bar lifted and swung back flat against the hedge —
     standing open for the morning traffic. Beyond it the

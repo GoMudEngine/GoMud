@@ -28,7 +28,7 @@ tree:
       know?
     hints: "You could ask her about life at the edge
       of town, about her morning and daily routine,
-      or about who passes through the gate."
+      or about the travelers who pass through."
   nodes:
     - id: edge
       triggers: ["gate", "end", "town", "here",

@@ -12,15 +12,15 @@ description: >
   the south post in a steady hand. The warden's lean-to
   shelters against the north post, a log bench beside it
   worn flat with use. East, the lane returns to the hall
-  steps and the square. Examine the distance board or
-  the gateposts.
+  steps and the square. Examine the
+  <ansi fg="itemname">distance-board</ansi> or the gateposts.
 biome: city
 coord: {x: 21, y: -78, z: 1}
 exits:
   east: {roomid: 6295}
   west: {roomid: 6318}
 nouns:
-  the distance board: >
+  distance-board: >
     A board of seasoned pine nailed to the south gatepost
     at eye height, the lettering painted in the road-
     warden's careful hand: COACHING STABLE, NORTH;

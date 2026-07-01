@@ -6,19 +6,20 @@ description: >
   maps call the Plymouth Turn. Beyond the bend the
   surface is maintained and clear: drainage cut, verge
   trimmed, the way marked at intervals by the county's
-  half-buried stones. Nothing blocks it. Three days west
-  and north, New Plymouth waits — the capital, the
-  harbour, the river district and its trade. Greenford is
-  behind now; the university tower is barely above the
-  treeline in the east. This is where the town becomes
-  a destination rather than where you stand. The road
-  goes on. Examine the road ahead or the treeline.
+  half-buried stones. Three days west and north, New
+  Plymouth waits — the capital, the harbour, the river
+  district and its trade. Greenford is behind now; the
+  university tower is barely above the treeline in the
+  east. This is a place you come back to with a pack and
+  a reason — the road to New Plymouth is another journey
+  for another day. Examine the
+  <ansi fg="itemname">road-ahead</ansi> or the treeline.
 biome: land
 coord: {x: 18, y: -78, z: 1}
 exits:
   east: {roomid: 6321}
 nouns:
-  the road ahead: >
+  road-ahead: >
     The road continues clearly west from the bend — the
     surface maintained, the drainage good, the verge-posts
     marking the county's responsibility at regular
