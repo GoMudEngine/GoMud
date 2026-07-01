@@ -1,0 +1,46 @@
+id: cpr_foreman
+description: "Camp-Foreman Bertt runs the western cut from first light through
+  the working day, tallies and banks the camp at dusk, and sleeps in the lean-to
+  against the north edge of the clearing until the crews stir again."
+segments:
+  - start: 5
+    end: 19
+    target_room: 6327
+    activity: ""
+    idlecommands:
+      - emote moves along the timber-stack with his chalk, marking
+        board-faces in a quick angular hand that is plainly a system
+        no one else here can read.
+      - say We take from the western slope. Good wood, and enough of
+        it, if the crews keep their pace. That is all a camp is -- pace
+        and dry timber.
+      - emote sights down a squared trunk for true, grunts, and chalks
+        a short line on the end-grain to mark where the next cut falls.
+      - emote glances once toward the eastern trees -- the better
+        timber, close and untaken -- then turns his back on it and
+        returns to the stack without a word.
+      - say Ask me about the cut, the crews, the season. Those I will
+        talk about all day. There are things I will not, and you will
+        find the edge of that soon enough.
+  - start: 19
+    end: 22
+    target_room: 6327
+    activity: ""
+    idlecommands:
+      - emote walks the day's felled timber counting under his breath,
+        checks the tally against the chalk marks on his forearm, and
+        nods once when the two agree.
+      - say That is the day. The saws are down and the light is going.
+        Sit at the fire if you like -- it is warmer than the road and
+        better company than what is up the pass.
+      - emote banks the cook-fire down to a slow burn, sets the frame-saws
+        under the lean-to out of the dew, and rolls the tension out of
+        his shoulders.
+  - start: 22
+    end: 5
+    target_room: 6327
+    activity: sleeping
+    idlecommands:
+      - emote sleeps in the lean-to at the north edge of the clearing,
+        rolled in a blanket with the banked fire throwing a low red
+        light across the stacked timber.

@@ -1,0 +1,51 @@
+mobid: 9535
+zone: Cascade Pass Road
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+spawnmutations: [sixth-sense]
+idlecommands:
+  - 'emote sits with his back to the rock, watching the east road with
+    the patience of a man who has looked at it a very long time.'
+  - ''
+  - 'emote leans forward and feeds a stick into the small fire. He does
+    not look at the flame. His eyes stay on the road.'
+  - ''
+  - 'emote goes very still. The remaining hand closes slowly on his
+    knee. After a long moment, whatever it was passes, and he
+    breathes again.'
+  - ''
+  - 'emote opens his mouth as if to say something, stops, and turns
+    back to the fire instead.'
+  - ''
+activitylevel: 10
+character:
+  name: The One Who Came Back
+  description: |
+    A gaunt man who keeps a small fire burning under the rock
+    overhang, though he does not sleep near it. The right sleeve
+    of his coat is folded and tied above the wrist -- the hand
+    has been gone for years, the wound closed smooth and old. He
+    watches the east with the measuring attention of a man who has
+    spent a long time watching it and learned to do so from a
+    certain distance. He flinches sometimes at sounds that are not
+    there. He catches himself and goes very still, the way a man
+    goes still when he has already decided something and is waiting
+    to see if he is right. His Chrysalis-change lives behind the
+    eyes -- an awareness that swings toward a doorway a full breath
+    before anyone steps through it, a knowing that runs slightly
+    ahead of the moment. He does not talk about what he saw in the
+    east. He does not seem to need to.
+  speciesid: 1
+  level: 1
+  gold: 5
+  stats:
+    perception:
+      training: 6
+    vitality:
+      training: 3

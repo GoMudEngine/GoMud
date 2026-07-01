@@ -1,0 +1,90 @@
+mobid: 9536
+zone: Cascade Pass Road
+defaultMood: gruff
+greetings:
+  - text: "You are a fair way up for a traveler. Mind the sawpits --
+      they are cut deeper than they look."
+    moods: ["gruff"]
+  - text: "If you are after work, I have a full crew. If you are just
+      passing, keep clear of the falling side."
+    moods: ["gruff"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Foreman here. I have got a crew to keep moving, so make it
+        quick if you can."
+  - keywords: ["timber", "work", "wood", "cut", "lumber"]
+    responses:
+      - "Good wood, honest work, steady crew. Not much more to say
+        about it than that."
+  - keywords: [""]
+    responses:
+      - "I am not much for standing about talking. Ask me something
+        plain and I will give you a plain answer."
+tree:
+  root:
+    text: |
+      Camp-foreman, aye. I run the western cut -- fell it, square
+      it, stack it to season, haul it down to Greenford before the
+      passes ice. Honest work and it pays. We are a good camp, so
+      long as a man does not ask me the one thing every traveler
+      seems to want to ask, which is why we do not take the closer
+      timber. I take from the west. I have my reasons and they are
+      mine. Ask me the rest and I will talk your ear off.
+    hints: |
+      You could ask about the camp and the work here, about the
+      eastern timber and why the crews leave it standing, or about
+      the hermit who keeps to the top of the pass.
+  nodes:
+    - id: eastern
+      triggers: ["eastern", "east", "beyond"]
+      text: |
+        The eastern stand. Aye. Better grade than what we cut,
+        closer haul, any fool with an eye can see it standing there.
+        We take from the west. The ground is bad over east -- soft
+        in the wrong places, roots that do not hold a man's weight.
+        The crews will not go, and I do not press them to. A faller
+        got hurt up that way, years back, and it put a mood on the
+        whole business that never once lifted. That is reason enough
+        for me. You want the long timber, you cut the west slope
+        twice as far and you carry it twice as far, and you do not
+        ask me again about the east. I have given you all the
+        reasons I have.
+      hints: |
+        You could ask about the camp itself and the season's cut,
+        or about the survivor up the pass who went east once and
+        came back the worse for it. The stand beyond this camp is
+        more his story than mine.
+    - id: camp
+      triggers: ["camp", "work", "timber", "cut", "wood", "crew", "saw", "season"]
+      text: |
+        Straightforward enough. I run the western cut -- fell,
+        square, stack, and season the timber until it is fit to haul
+        down. Six good hands in the crew and they know the saw
+        without me telling them twice. We are up here through the
+        season and down before the passes close. It is honest labor
+        and it pays a man fair. I have run bigger camps and I have
+        run worse ones. This one I have got no complaint about, the
+        wood being what it is and the crew being steady. You after
+        work, or just asking.
+      hints: |
+        You could ask why the crews leave the eastern timber
+        standing, or about the hermit who lives up the pass.
+    - id: hermit
+      triggers: ["hermit", "survivor"]
+      text: |
+        Him. There is a fellow lives up at the top of the pass, past
+        where our cut ends. Came back out of the east some years ago
+        short a hand and short most of his talking, and he has kept
+        to that overhang ever since. I leave him be. He has never
+        done a soul any harm -- keeps a fire, watches that road like
+        it owes him money. If you are set on going east, and you
+        have the look of it, same as he must have had once, you
+        could do a good deal worse than sit at his fire first and
+        hear him out. I will not tell you to go up there. I will not
+        tell you not to. That is his business and yours, not mine.
+      hints: |
+        You could ask about the camp and the western cut, or about
+        the eastern timber the crews will not touch. The survivor up
+        the pass is the one to ask about what lies further east, not
+        me.

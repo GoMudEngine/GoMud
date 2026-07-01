@@ -1,0 +1,63 @@
+roomid: 6332
+zone: Cascade Pass Road
+title: The Foot of the Climb
+description: >
+  The trees thin here — not gradually but with an
+  abruptness, as if the forest has an edge it will not
+  cross. Ahead the <ansi fg="itemname">treeline</ansi>
+  is visible, a ragged boundary where the great trunks
+  give out and the sky reappears, wide and grey. Below
+  the treeline the soil begins to fail —
+  <ansi fg="itemname">bare rock</ansi> pushes up in
+  sheets and ridges, pale stone breaking the roothold
+  the trees need. The road ends here without
+  announcement, its last stones buried under a slide of
+  scree and thin soil. Beyond it a faint line continues
+  upward — not a path, exactly, but the remembered shape
+  of one — steep enough to need both hands in places.
+  Wind comes off the heights carrying cold stone and
+  altitude. The forest is below. The climb is ahead.
+  There is nothing in between.
+biome: forest
+coord:
+  x: -9
+  y: 61
+  z: 0
+exits:
+  west:
+    roomid: 6331
+  up:
+    roomid: 6333
+nouns:
+  treeline: >
+    The boundary where the timber gives out is ragged and
+    irregular — individual trees standing ahead of the
+    main canopy line, then gaps, then nothing but low
+    scrub and bare rock above. From here the transition
+    looks sudden, dense green below and grey-brown above
+    with only a narrow band of struggling growth between
+    them. The air coming down from above the treeline is
+    noticeably colder and tastes of altitude and
+    rain-washed stone.
+  bare rock: >
+    Old pale stone, fine-grained, weathering to a chalky
+    surface. It has pushed up through the soil in long
+    ridges and flat sheets — the kind of exposure that
+    happens when thin mountain earth simply washes away
+    over centuries. The surface is mostly clean, a little
+    lichen on the north-facing edges, the cracks filled
+    with wind-blown grit and almost no plant life. The
+    rock is solid underfoot where you test it. Cold, and
+    very old, and indifferent to the distinction.
+idlemessages:
+- Wind comes off the heights in a long cold pulse, moves
+  through the scrub at the treeline, and passes.
+- Somewhere above, a stone shifts loose and falls. The
+  sound is small and clear and then gone.
+- The sky above the treeline is flat grey, giving
+  nothing away about what the weather is doing up there.
+- The last trees creak once in the wind from above
+  and are still.
+- Looking back, the deep timber is already dark. Looking
+  forward, the bare rock holds what light there is and
+  gives back less.

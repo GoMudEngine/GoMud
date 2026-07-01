@@ -1,0 +1,57 @@
+mobid: 9539
+zone: Cascade Pass Road
+behavior_archetype: generic_fighter
+aiprofile: brute
+archetype: fighting
+hostile: true
+statpool: 275
+maxwander: 3
+groups:
+  - animal
+spawnmutations: [thick-hide]
+idlecommands:
+  - 'emote roots through the leaf litter with its broad snout,
+    grunting, turning over ground that does not have much left
+    in it.'
+  - ''
+  - 'emote shakes its bristled hide and stamps once, scattering
+    damp bark.'
+  - ''
+  - 'wander'
+  - ''
+  - 'emote swings its head up and holds still for a moment, small
+    eyes watching the tree line from inside a massive skull.'
+  - ''
+combatcommands:
+  - 'emote lowers its head until the tusks nearly scrape the ground,
+    weight settling back onto its haunches.'
+  - charge
+  - ''
+  - 'emote drives forward with the full slab of its shoulders,
+    not slowing.'
+  - bash
+  - ''
+activitylevel: 25
+character:
+  name: A Tusked Forest-Boar
+  description: |
+    A massive animal, slab-shouldered and low to the ground, with
+    a ridge of coarse black bristles running the length of its
+    spine. The tusks are long -- not the neat ivory of something
+    young but the old, yellowed, asymmetric things that grow from
+    decades of use. Its hide is scarred and thick with old wounds,
+    none of which slowed it down. It has the look of an animal
+    that has never needed to flee from anything and has not learned
+    the motion. When it turns to face you, it does not hurry.
+    It has not had to.
+  speciesid: 6
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 10
+    vitality:
+      training: 8
+itemdropchance: 65
+loot_pool:
+  - 40163

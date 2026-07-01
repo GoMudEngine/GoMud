@@ -1,0 +1,46 @@
+mobid: 9537
+zone: Cascade Pass Road
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+spawnmutations: [dense-muscles]
+idlecommands:
+  - 'emote draws the saw back in a long, steady pull, setting the
+    rhythm and keeping it, the cut moving with the grain.'
+  - ''
+  - 'emote stops, lifts the back of a hand across his forehead, and
+    holds still for a moment before he picks the saw back up.'
+  - ''
+  - 'emote pulls a flask from his belt, drinks once without looking
+    at anything, puts it away, and goes back to the saw.'
+  - ''
+  - 'emote rests the saw across his knee, stares at the ground for
+    one breath, then lifts it and starts again.'
+  - ''
+activitylevel: 10
+character:
+  name: A Weary Woodcutter
+  description: |
+    A big man, broad through the shoulders, with the look of
+    someone whose strength is a byproduct of years of work rather
+    than anything he set out to build. His hands are saw-roughened
+    and his shirt is dark with old sawdust and sweat. He works the
+    pit with the steady, contained economy of a man who knows how
+    long the day is and does not hurry it. He does not look up
+    often. He does not look east at all. His Chrysalis-change
+    packed something extra into the muscle -- a density through
+    the tissue that makes him harder to push over, harder to wear
+    down, harder to slow than a man that size has any right to be.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    strength:
+      training: 7
+    vitality:
+      training: 5

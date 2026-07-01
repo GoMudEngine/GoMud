@@ -29,6 +29,10 @@ exits:
     roomid: 5440
   north:
     roomid: 5442
+  east:
+    roomid: 6323
+    secret: true
+    zone: Cascade Pass Road
 nouns:
   grain wagons: Three wagons in a loose train, each a
     heavy timber-sided farm-cart with iron-banded wheels
@@ -64,3 +68,17 @@ idlemessages:
   tool — then the wagon moves on without pausing.
 - A merlin cuts north above the field line, low and
   direct, then tilts and drops into the crop out of sight.
+hidden_nouns:
+  old ruts:
+    description: |
+      Past the farm-gate the ground carries a set of ruts that
+      have no business here — they run east, away from the road
+      and the fields, worn deeper than a season of cart traffic
+      could account for and older than any of it. Nothing to the
+      east needs a cart. Whatever wore these went that way many
+      times, and stopped coming a long while ago. A narrow track
+      leads off through the gap in the hedge, into the rising
+      ground and the tree-line beyond.
+    hidden_description: |
+      Beyond the farm-gate, a set of old ruts runs east through
+      the hedge-gap — a track leading away from the fields.

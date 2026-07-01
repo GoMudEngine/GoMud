@@ -1,0 +1,19 @@
+itemid: 40163
+name: Thick Predator-Pelt
+namesimple: pelt
+description: >
+  A heavy pelt stripped from one of the hunters that hold the high
+  forest above the vale — the fur long and coarse and dark, layered
+  deep against a cold the low country never feels. Worked and cured
+  it makes a hide that turns a fang or a thorn and sheds weather
+  besides. The high-country trappers who might once have wanted it
+  stopped coming this way a long while ago.
+type: object
+subtype: mundane
+component_tag: cascade-hide
+weight: 0.6
+value: 24
+rarity_tier: 60
+is_component: true
+vendor_categories:
+- tailoring

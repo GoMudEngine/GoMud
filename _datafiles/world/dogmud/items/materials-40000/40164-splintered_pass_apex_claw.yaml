@@ -1,0 +1,19 @@
+itemid: 40164
+name: Splintered Pass-Apex Claw
+namesimple: claw
+description: >
+  A single claw taken from the apex hunter of the pass — long as a
+  dagger and curved like one, the horn of it dark and dense and
+  strangely heavy in the hand. Along the inner edge the material has
+  splintered rather than chipped, in long fibrous slivers that catch
+  the light wrong. It does not feel quite like bone, and it does not
+  feel quite like horn, and a careful person stops turning it over
+  after a while and simply puts it away. It is worth good coin to
+  anyone who trades in the strange.
+type: object
+subtype: mundane
+weight: 0.5
+value: 210
+rarity_tier: 80
+vendor_categories:
+- jewelcrafting

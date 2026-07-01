@@ -1,0 +1,66 @@
+roomid: 6325
+zone: Cascade Pass Road
+title: The Climbing Road
+description: >
+  The road narrows as it climbs, the verge-grass giving way
+  to bare earth on both sides. To the west the cutters have
+  been busy — <ansi fg="itemname">sawn stumps</ansi> cut
+  flat and clean at knee height, bark-shreds scattered
+  across the ground, and long
+  <ansi fg="itemname">drag-marks</ansi> in the softened
+  earth where heavy timber was hauled back down the slope.
+  The taking has been recent and methodical. But the eastern
+  side of the road is untouched. The
+  <ansi fg="itemname">eastern trees</ansi> there are larger
+  than anything the cutters have taken — the bark darker,
+  the trunks heavier, the crowns closing over the road and
+  reaching no further east. The wood is better. No one has
+  laid an axe to it.
+biome: forest
+coord:
+  x: -15
+  y: 61
+  z: 0
+exits:
+  west:
+    roomid: 6324
+  east:
+    roomid: 6326
+nouns:
+  sawn stumps: >
+    Cut flat at knee height, the exposed heartwood pale
+    and still faintly sticky with pitch. The work is clean
+    — a good saw, level cuts, the grain exposed without
+    tearing. Recent enough that the heartwood has not
+    silvered yet. Some are still bleeding a thin line of
+    pitch at the cut. The cutters have taken everything
+    workable on the western slope and left nothing they
+    could use.
+  drag-marks: >
+    Long parallel gouges in the softened earth at the
+    roadside, where timber was hauled downhill and west
+    toward the camp. The marks are fresh enough to hold
+    their shape — the soil lifted in ridges at the sides,
+    the base compressed to a smooth track. The drag-lines
+    all run west. None of them run east.
+  eastern trees: >
+    The trees on the eastern side of the road are visibly
+    larger than what the cutters have taken on the west —
+    the trunks broader, the bark more deeply channelled,
+    the wood heavier and darker at the exposed root-collar.
+    They have not been marked for cutting, not blazed,
+    not ringed. There is no indication of why.
+idlemessages:
+- A wood-chip lies pale-side-up in the verge grass, still
+  fresh enough to smell of pitch when you pass it.
+- The drag-marks in the earth all run downhill and west.
+  Nothing on the eastern side of the road has been moved.
+- A branch somewhere above and to the west cracks under
+  its own weight and settles. The eastern side of the road
+  is still.
+- The road surface is firmer underfoot here — the slope
+  is drawing the loose earth together, pressing it down
+  by the gradient.
+- The cutters have worked methodically on the west verge,
+  back to where the grade flattens. The east side they
+  have not touched.

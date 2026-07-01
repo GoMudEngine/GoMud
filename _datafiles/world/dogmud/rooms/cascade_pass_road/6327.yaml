@@ -1,0 +1,82 @@
+roomid: 6327
+zone: Cascade Pass Road
+title: The Lumber Camp
+description: >
+  The clearing is a working camp — rough and functional,
+  organized the way men organize a place they expect to
+  spend weeks in, not live in. Sawpits are cut into the
+  level ground, the soil piled back from the edges. To one
+  side, cut timber stands in ranked rows to season — all of
+  it carried in from the western slope. A lean-to has been
+  built against a standing tree at the clearing's north
+  edge, and at its foot a
+  <ansi fg="itemname">cook-fire</ansi> is banked and smoking
+  over old coals. The <ansi fg="itemname">woodcutter</ansi>
+  works at the nearest <ansi fg="itemname">sawpit</ansi>,
+  pulling a frame-saw through a squared trunk with the
+  movement of a man who has been at it since first light.
+  The <ansi fg="itemname">foreman</ansi> stands at the
+  timber-stack with a piece of chalk, marking board-faces
+  in a shorthand of his own. The eastern slope is visible
+  from here through the trees — good timber, close. No
+  trail leads into it from this camp.
+biome: forest
+coord:
+  x: -14
+  y: 60
+  z: 0
+exits:
+  north:
+    roomid: 6326
+nouns:
+  cook-fire: >
+    Banked to a slow burn over a flat stone hearth — a
+    working camp fire, not a comfort one. A tin pot sits
+    near the coals, its contents long finished, left in
+    place because no one has troubled to move it. The fire
+    has been burning since morning and will be burning at
+    dusk. The men come back to it at intervals, fill a cup,
+    and return to work.
+  woodcutter: >
+    A large man, the hands and forearms roped with the
+    tendons of years at the saw, working a long frame-saw
+    through a squared timber in the near pit. His movement
+    is not fast but it is very regular — the back-stroke
+    and push-stroke metered out by long habit. He does not
+    look up, and he does not look east — the saw keeps its
+    rhythm whether a man speaks to him or not, and he has
+    plainly said all he means to say about the eastern slope
+    by never once turning toward it.
+  sawpit: >
+    Dug wide enough for two men at the saw and deep enough
+    that the bottom-sawyer can stand with the timber at
+    shoulder height. The nearest pit is active — the
+    squared trunk bridged across the top guides, sawdust
+    falling in a fine stream to the pit floor. The cut is
+    clean and the timber is a good tree. It came from the
+    western slope.
+  foreman: >
+    A lean man, chalk-dusted, moving along the timber-stack
+    with a piece of chalk marking board-faces in a quick
+    angular hand that is clearly a system. If asked about
+    the eastern timber — closer than what they have been
+    taking, better grain by eye — he looks that direction
+    without much expression. Says they take from the west.
+    He turns back to his chalk. He does not explain.
+idlemessages:
+- The woodcutter's frame-saw pauses and he lifts a hand
+  to wipe his face, then resumes without looking up.
+- From somewhere in the canopy to the east, nothing. From
+  the west, the distant sound of more cutting.
+- The foreman makes a mark on a board-face, moves to the
+  next board, and marks that one without pausing.
+- The cook-fire settles with a small hiss as the coals
+  shift. The tin pot does not move.
+- Through the trees to the east the old timber stands —
+  close, better grade by eye — and the clearing's edge
+  turns away from it.
+spawninfo:
+  - mobid: 9536
+    respawnrate: "15 real minutes"
+  - mobid: 9537
+    respawnrate: "15 real minutes"

@@ -1,0 +1,64 @@
+roomid: 6338
+zone: Cascade Pass Road
+title: The First Survey Marker
+description: >
+  The road levels on a flat of cleared stone. Off to one
+  side a dressed post stands in the ground — a boundary
+  <ansi fg="itemname">survey marker</ansi>,
+  waist-high, one face cut with a surveyor's notations
+  that rain has had long enough to soften near to nothing.
+  Someone's territory began at this stone. Beside it, a
+  small
+  <ansi fg="itemname">cairn</ansi>
+  of stacked fieldstone stands at the road's edge —
+  older than the post, its stones matched to the
+  mountain's own rock, the pile patient and without
+  obvious purpose. On the topmost stone a set of rings
+  has been cut — concentric, evenly spaced, worn to a
+  shallow groove by rain but still distinct. Beyond the
+  marker the road continues east into country the same
+  surveyor mapped and did not return from.
+biome: mountains
+coord: {x: -6, y: 61, z: 3}
+exits:
+  west:
+    roomid: 6337
+  east:
+    roomid: 6340
+nouns:
+  survey marker: >
+    A dressed post of pale stone, set into the ground
+    and packed with smaller stones to hold it upright.
+    One face was dressed flat and cut with a surveyor's
+    marks — a numbered reference point, bearing lines,
+    notation in a careful hand. The weather has had it
+    for some years and taken most of the detail. The
+    numbers and bearings are mostly gone. The name of
+    whoever set it is gone entirely. The post is still
+    standing.
+  cairn: >
+    Stacked fieldstone, waist-high, built without
+    mortar. The stones are mountain rock — the same
+    grey as the surrounding outcrops, rounded by old
+    water, fitted together with more care than they
+    appear to need. The topmost stone is the flattest.
+    On its upper face, rings have been cut into the
+    surface — concentric circles, the lines even, worn
+    to a shallow groove by rain but still distinct.
+    There is nothing else. No text, no direction, no
+    indication of what the rings are for. The cairn is
+    older than the survey marker beside it. How much
+    older is not apparent.
+idlemessages:
+- The wind crosses the flat and moves on without
+  stopping here.
+- The survey marker stands at a slight angle, packed
+  upright by whoever set it, holding still.
+- Nothing moves on the road east of the marker. The
+  country beyond is quiet in a way that has no
+  obvious cause.
+- A thin cloud crosses the sun. The cut rings on the
+  cairn's topmost stone catch shadow for a moment,
+  and then the cloud passes.
+- The cold here is constant — not weather, just
+  altitude.

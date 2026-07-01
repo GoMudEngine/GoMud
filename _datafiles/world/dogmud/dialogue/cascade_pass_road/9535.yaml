@@ -1,0 +1,133 @@
+mobid: 9535
+zone: Cascade Pass Road
+defaultMood: haunted
+greetings:
+  - text: "You are going east. I can see it on you. Don't."
+    moods: ["haunted"]
+  - text: "Sit if you like. But you came up this road meaning to go
+      further, and I would talk you out of that if I could."
+    moods: ["haunted"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "You climbed all this way to talk to a one-handed man at a
+        fire. Talk, then. It is better than the alternative you had
+        in mind."
+  - keywords: ["east", "danger", "ahead", "up there"]
+    responses:
+      - "East is the one direction I have nothing good to tell you
+        about. Ask, if you must. Do not expect it to make you feel
+        better."
+  - keywords: ["help", "please", "guide"]
+    responses:
+      - "I cannot help you go up there. I can only help you not. That
+        is the only help I have left."
+  - keywords: [""]
+    responses:
+      - "I do not talk much, and I talk least about the things you
+        most want to hear. Ask plainer."
+tree:
+  root:
+    text: |
+      You have the look. I knew it before you cleared the last
+      rise -- the walk of a person who has decided to go on and
+      is only looking for a reason to feel brave about it. I will
+      not give you one. I went east once, whole and certain, and
+      I came back down this road with one hand and a head full of
+      things I cannot set in order. I stay at this fire now so
+      that someone is here to say to you what nobody said to me.
+      Do not go up. That is the whole of it. Everything else I can
+      tell you is only me proving I mean it.
+    hints: |
+      You could ask him about his hand and what it cost him, about
+      what lies east in the highland reaches, about the warning he
+      would give a traveler set on going, about why he stays up
+      here so close to it, or whether others went before you.
+  nodes:
+    - id: hand
+      triggers: ["hand", "wound", "lost", "cost", "wrist"]
+      text: |
+        The ground took it. That is all I will say about the how.
+        A man loses a hand to a saw, to a horse, to a bad fall --
+        there is a story in that and he tells it in the tavern for
+        the rest of his life. I do not tell mine. Not because it
+        pains me. Because there are no words that would sit right
+        in your head, and the wrong ones would only make you
+        curious. Curious is exactly how I lost it. I went up
+        wanting to know. Learn from the shape of me -- what is out
+        there does not answer questions. It collects the people who
+        ask them.
+      hints: |
+        You could ask about the wound another way, though he will
+        not give it -- or ask what lies east in the highland, or
+        why he stays this near the thing that maimed him.
+    - id: east
+      triggers: ["east", "highland", "reach", "ground", "cold"]
+      text: |
+        You want me to describe it. I cannot, not the way you mean.
+        I can only tell you what it does to a body. The ground up
+        there looks solid and is not -- it opens where you put your
+        weight, in the very places that looked safest to stand.
+        There is a cold that has nothing to do with the weather. It
+        comes up through the boots and settles behind the
+        breastbone and it does not leave you, not down here, not
+        years later. And the whole time there is a feeling that the
+        place does not want to be walked on. That you are standing
+        on top of something, and that it knows you are there. I am
+        not a fanciful man. I have spent years deciding I felt that
+        true, and I have not talked myself out of it yet.
+      hints: |
+        You could ask what warning he would give a traveler still
+        set on going, or why he stays up here at all.
+    - id: warning
+      triggers: ["warning", "advice", "danger"]
+      text: |
+        Here is my warning, and it is the only one worth the
+        breath it takes. Up there are walls that are not walls.
+        They look like stone and they are not, and they move --
+        slow, when you have your back to them, never quite where
+        you left them. There are ways in. That is the trouble of
+        it. It does not want to be opened, and it opens anyway, for
+        the wrong sort of person, and then it closes, and the way
+        in is not a way out any longer. I found the way into it by
+        accident and I have spent every year since grateful the
+        accident let me back through. Do not go looking for what
+        let me through. It does not happen twice.
+      hints: |
+        You could ask why he stays this close to such danger
+        instead of taking his own advice and leaving, or whether
+        others went before you.
+    - id: stays
+      triggers: ["stay", "why", "leave", "remain"]
+      text: |
+        Why do I stay, this near the thing that took my hand, when
+        I could be warm somewhere with two good ones. I have turned
+        that over a long time. The honest answer is that someone
+        should be here. When the next one comes up this road with
+        the look you are wearing, someone should be sitting at this
+        fire to say the words I am saying to you now. Nobody said
+        them to me. I went up green and sure of myself and I came
+        back like this, and I have never once stopped wishing a
+        gaunt fool had been at a fire to tell me not to. So I am the
+        fool at the fire. I tell them not to. And they go anyway --
+        you will go anyway, I can see that too -- but I tell them.
+        It is the only useful thing left in me.
+      hints: |
+        You could ask about his hand, or whether others went up
+        this road alone before you and never came down.
+    - id: others
+      triggers: ["others", "before", "alone"]
+      text: |
+        Others went. Before me, after me. I do not know the number
+        and I would not give it to you if I did. Some of them I
+        watched start up this road. I did not watch a single one of
+        them come back down it. I am the one who came back. That is
+        the whole of what I am now -- not a name, not a trade, just
+        the one who came back. If that does not turn you around then
+        nothing I own will. Ask yourself this, and then go or stay
+        as you please. A road with that many people gone from it --
+        why are there no graves along it. Where do you suppose they
+        all went. Then do not ask me anything more.
+      hints: |
+        You could ask about the warning he would give, or about his
+        hand and what the east cost him.

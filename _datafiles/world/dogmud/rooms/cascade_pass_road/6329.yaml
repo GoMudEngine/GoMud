@@ -1,0 +1,77 @@
+roomid: 6329
+zone: Cascade Pass Road
+title: The Ruined Waypoint
+description: >
+  A travellers' shelter once stood here — you can read
+  its shape in what remains. The
+  <ansi fg="itemname">collapsed roof</ansi> has fallen
+  inward, the timber rafters rotted through at the eaves
+  and lying now in a moss-covered tangle across the
+  floor. Against the back wall a
+  <ansi fg="itemname">cold hearth</ansi> survives mostly
+  intact, its fieldstone courses still mortared, the
+  firebox choked with years of old bird-nesting and bark
+  fall. Beside the entrance a
+  <ansi fg="itemname">name board</ansi> leans against the
+  stonework — the kind once posted at road stations to
+  list the settlements ahead with their distances. The
+  western entries are still legible under fading paint.
+  The eastern entries have been gouged out — not worn,
+  not faded, but worked over deliberately with something
+  sharp until the wood below the paint is nothing but
+  raw, unreadable grooves. East of the shelter the road
+  narrows to a thread and the forest closes in on both
+  sides.
+biome: forest
+coord:
+  x: -12
+  y: 61
+  z: 0
+exits:
+  west:
+    roomid: 6328
+  east:
+    roomid: 6330
+nouns:
+  collapsed roof: >
+    The shelter was built of timber posts under a shallow
+    pitch roof — field construction, the kind that lasts
+    a generation or two with maintenance. It received
+    none. The eave-plates gave first and then the
+    ridge-beam followed, and the whole thing came down
+    in stages over years. The rafters are deep in moss
+    and soft enough to crumble at a touch. Under the
+    tangle a handful of stone slates lie unbroken, grey
+    and intact, outlasting the wood that held them.
+  cold hearth: >
+    Fieldstone carefully laid, the mortar still gripping
+    between the courses. The firebox is packed with
+    collapsed bird-nests and dry bark-fall, the nests
+    built and abandoned across what must be many seasons.
+    The hearthstone is cracked across its width, the
+    crack old and grass-filled. No ash remains. Whatever
+    warmth was made here is long gone and the stone has
+    forgotten the shape of it.
+  name board: >
+    A thick plank of weathered oak, the destination
+    entries carved in and then repainted across what
+    looks like many seasons of use. The western entries
+    are readable under the fading paint — distances and
+    names of places you have already passed through. The
+    eastern entries have been obliterated. The gouges
+    are thorough and deliberate, each entry worked over
+    more than once until nothing but raw wood remains.
+    Whoever did this was not in a hurry, and they made
+    certain nothing could be read there.
+idlemessages:
+- Wind passes through the gap where the roof fell and
+  lifts old leaf-litter across the hearthstone.
+- A beam in the ruin settles with a low creak and does
+  not move again.
+- The name board leans at the same angle it has leaned
+  for years, the stain of old rain dark on the wall
+  behind it.
+- The road east of the shelter is visible as a thread
+  between the roots, barely enough to follow.
+- No sound comes from the trees to the east of here.
+  The names on that side of the board are gone as well.

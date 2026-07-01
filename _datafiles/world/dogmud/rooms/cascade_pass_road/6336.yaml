@@ -1,0 +1,88 @@
+roomid: 6336
+zone: Cascade Pass Road
+title: The Crumbling Watchtower
+description: >
+  A <ansi fg="itemname">watchtower</ansi> stands
+  here — or the remains of one. The far wall has
+  fallen outward in a low spread of
+  <ansi fg="itemname">drystone</ansi>, the courses
+  long since separated and scattered, the individual
+  stones sitting where they landed and having been
+  there long enough to have lichen on them now. What
+  remains upright is half a cylinder of old masonry,
+  enough to enclose a space barely wide enough to
+  stand in.
+
+  The one intact feature is a narrow
+  <ansi fg="itemname">window</ansi> in the east wall
+  — a single vertical slot cut clean through the
+  stone, facing east. Not toward the road behind you,
+  not toward the settled country below — east, onto
+  the grey highland ahead. The slot is deliberate and
+  precise, the stonework around it better-finished
+  than the rest, as though whoever built this knew
+  exactly what they were watching and wanted nothing
+  to interrupt that line of sight.
+
+  No one remembers who built it. No one remembers
+  when.
+biome: mountains
+coord:
+  x: -8
+  y: 61
+  z: 3
+exits:
+  west:
+    roomid: 6335
+  east:
+    roomid: 6337
+nouns:
+  watchtower: >
+    Old drystone construction, circular, now largely
+    collapsed. The standing section is roughly half
+    the original circuit, the fallen section spread
+    in a low arc to the west — stones displaced
+    outward, settled long enough to have lichen thick
+    on their north-facing surfaces. The masonry is
+    functional but careful — no mortar, the courses
+    fitted close enough to have stood for an immense
+    span of time before the fall. No carving, no
+    symbol, no inscription on any surviving face.
+    The tower predates any record of this road.
+  drystone: >
+    The collapsed section has spread its stones
+    outward in a low arc, each course now separate
+    — the top courses farthest out, the bottom
+    courses still roughly in place. The stones are
+    pale and fine-grained, the same rock as the
+    surrounding mountain, quarried close and fitted
+    without mortar. They have been lying here long
+    enough that lichen has established itself on
+    every north-facing surface. The fall was not
+    recent.
+  window: >
+    A narrow vertical slot cut through the east wall
+    — a single opening, precise and deliberate, the
+    edges well-finished where the surrounding
+    stonework is rougher. Standing at it you look
+    directly east across the grey highland, the
+    broken plateau running to the hard horizon. The
+    slot gives no view to the west, none to the
+    north or south — only east. Whoever chose this
+    orientation chose it with intention. What they
+    were watching for, from this height, looking east
+    — that question has no answer anyone living can
+    supply.
+idlemessages:
+- The wind finds the narrow window and passes through
+  it in a low sound that does not quite become a note.
+- The collapsed stones of the fallen wall have lichen
+  thick on them. They have been lying here a long
+  time.
+- The window faces east. It has always faced east.
+  The settled country behind is not visible through
+  it.
+- A stone in the fallen section shifts slightly —
+  frost working at it, or the wind, or nothing at all.
+- From inside the standing section, looking through
+  the window, only the grey highland ahead is visible.
