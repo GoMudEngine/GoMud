@@ -1,0 +1,66 @@
+roomid: 6366
+zone: Eastern Highlands
+title: The Warded Recesses
+description: >
+  Set into the buried face along this stretch are
+  <ansi fg="itemname">recesses</ansi>
+  — shallow even hollows in the grey, too regular to be anything the
+  ground shaped, spaced along the surface with a sameness that makes
+  the skin crawl. And something over them is awake. The
+  <ansi fg="itemname">air</ansi>
+  above the recesses bites — a thin sharp charge to it, a prickle
+  along the arms and the back of the neck, the particular animal
+  certainty of being looked at by a thing you cannot see. It is not
+  weather. It does not come and go with the wind. It sits over the
+  hollows steady and cold and attentive, an
+  <ansi fg="itemname">attention</ansi>
+  that has not switched off in all the long dark it has been down
+  here, and it does not like you near. The made thing all around is
+  the same seamless grey it has been the whole way — indifferent,
+  buried, vast — but here, over these particular hollows, the
+  indifference thins, and something behind the grey is watching, and
+  the body knows it long before the mind will say the word, and every
+  instinct in you wants to be past this place and not touching it.
+biome: cliffs
+coord: {x: 13, y: 54, z: 3}
+exits:
+  west:
+    roomid: 6365
+  east:
+    roomid: 6367
+nouns:
+  recesses: >
+    Shallow hollows set into the grey, even and regular, spaced along
+    the surface too alike to be natural — the ground does not make the
+    same hollow twice, and here the same hollow repeats and repeats.
+    They are not deep. Nothing is inside them the eye can name. But
+    the air stands charged over each one, and the closer you lean the
+    worse the prickle gets, until leaning closer is the last thing the
+    body will let you do.
+  air: >
+    The air over the recesses is wrong the way a held breath is wrong.
+    It bites — a fine sharp charge that lifts the hair on the arms and
+    sets the teeth a little on edge, colder than the cold and separate
+    from it. Step back and it eases. Step near and it sharpens, quick
+    and certain, the way a thing sharpens its regard when you come too
+    close to what it is guarding.
+  attention: >
+    There is no eye to find, no shape to point at, but the sense of
+    being watched is total and specific and does not waver. Something
+    behind the grey has been attending to these hollows without pause
+    for longer than you can let yourself think about, and it has
+    noticed you, and its noticing has a temperature, and the
+    temperature is cold. Every animal part of you agrees on one thing
+    only, which is to be elsewhere.
+idlemessages:
+- The air over the nearest recess prickles sharp against your skin
+  and does not ease while you stand within reach of it.
+- Something you cannot see holds its regard steady on the hollows,
+  and on you for standing near them, and does not blink.
+- The charge in the air sharpens when you drift toward the grey and
+  slackens the moment you draw back, quick and deliberate as a warning.
+- The made face is indifferent everywhere but here. Over these hollows
+  the indifference thins, and what is under it is awake.
+- A cold that is not weather sits over the recesses, watchful and
+  patient, and every instinct you own wants you gone from in front
+  of it.
