@@ -1,0 +1,48 @@
+roomid: 6390
+zone: Crash Site Interior
+title: The Silent Vault
+biome: cave
+description: >
+  Past the nest the grey draws in around a vault — a small sealed
+  strongroom worked deep into the deck, its walls thicker here, its cold
+  light dimmer and stiller, as though the place kept its quietest quiet
+  for whatever it locked away last. Set into the far wall is a cache: a
+  fitted bank of shut recesses, some cracked at last along their hairline
+  seams, lipped open just enough to show the worked and precious things
+  ranked inside — the finished wonders of the place, kept back, kept safe,
+  kept forgotten. And it is not unkept. One shape stands over the cache,
+  taller and stiller than any warden above, and it does not turn to the
+  light the way the others do. It was already facing the way in. It has
+  been facing the way in a very long time. The only way out is back west.
+exits:
+  west:
+    roomid: 6389
+nouns:
+  vault: >
+    A small sealed strongroom worked deep into the grey, its walls
+    thickened, its light dimmed and stilled — the place's quietest quiet,
+    kept for whatever it locked away last and never came back for. It has
+    the hush of a thing that was meant never to be opened, and the sole
+    guard on it has kept that meaning perfectly.
+  cache: >
+    A fitted bank of shut recesses set into the far wall, a few cracked
+    open at last along their hairline seams. Inside, ranked and gleaming
+    cold, stand the finished wonders of the place — worked and precious
+    and forgotten. It is a hoard. It is worth the reaching. The thing that
+    stands over it is why the reaching has a price.
+  guard: >
+    A grey shape taller and stiller than the wardens above, standing over
+    the cache and already facing the way in. It does not track the light
+    the way the others do; it does not need to be woken. It has kept this
+    vault silent for ten thousand years, and it will keep it silent over
+    your body if you let it.
+idlemessages:
+- The dimmed cold light lies still over the cache and the shape that keeps it.
+- A cracked recess shows the cold gleam of worked and precious things within.
+- The silent guard does not turn to you. It was already turned. It waits.
+- The vault's quiet is deeper than any silence above, and it does not break.
+mutators:
+- mutatorid: hull_suppression
+spawninfo:
+  - mobid: 9559
+    statpool: 1

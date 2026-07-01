@@ -1,0 +1,37 @@
+roomid: 6385
+zone: Crash Site Interior
+title: Specimen Recess
+biome: cave
+description: >
+  A narrow recess opens off the tending-room, a dead-end lined floor to
+  ceiling with shelves worked into the grey, and on the shelves stand
+  ranks of small sealed vials. Most are clouded, their contents long gone
+  to sediment and stillness; a few still hold a clear cold measure of
+  something, catching the light and giving it back changed. Whatever was
+  drawn out of the things studied next door was kept here, labelled in
+  the unreadable marks, filed and forgotten when the place fell quiet.
+  Some of it has kept. Some of it might still be worth the carrying, to a
+  hand that knows the working of reagents. The recess goes no further.
+  The only way out is back the way you came.
+exits:
+  west:
+    roomid: 6384
+nouns:
+  vials: >
+    The small sealed vessels ranked on the shelves, worked of a grey
+    glass that does not quite look like glass. Most are clouded to
+    sediment. A few hold a clear cold draught still, catching the light
+    and turning it, kept sealed and sound past every reason they should
+    have failed. To a knowing hand they are reagents. To any other they
+    are only the leavings of a long patience.
+  shelves: >
+    Ranks worked straight into the grey wall, floor to ceiling, fitted to
+    hold the small vessels and nothing else. They were a store, an
+    archive of drawn-off things, kept in order against a need that never
+    came again. The order holds yet. Only the keepers are gone.
+idlemessages:
+- A clear vial catches the cold light and gives it back a shade wrong.
+- The clouded vessels stand ranked and settled and give back nothing.
+- Dust lies undisturbed on the shelves, older than any dust should be.
+mutators:
+- mutatorid: hull_suppression

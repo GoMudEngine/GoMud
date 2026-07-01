@@ -1,0 +1,50 @@
+roomid: 6384
+zone: Crash Site Interior
+title: The Medical Bay
+biome: cave
+description: >
+  The room the sagging corridor opens into was made for tending things
+  that lived. You know it the way you would know a slaughterhouse or a
+  birthing-room, before you know anything else about it — by the shape of
+  the fittings and the cold white patience of them. Slabs of the grey
+  stand ranked and waiting, each worked with fine grooves that run to
+  small dark drains, each fitted at wrist and ankle and throat with
+  restraints that were never meant for the willing. Along one wall a face
+  of the grey holds ranks of small even marks, cataloguing something in a
+  reckoning you cannot read. Whatever was studied here was studied a long
+  time, and carefully, and not once was it asked whether it wished to be.
+  A Cold-Light Sentinel keeps the place still. The way on lies east.
+exits:
+  south:
+    roomid: 6383
+  east:
+    roomid: 6385
+nouns:
+  slab: >
+    A worked table of the grey, ranked among its fellows, its surface run
+    through with fine grooves that carry down to small dark drains. It was
+    made to hold a living thing still and to carry away what ran out of
+    it. The grooves are clean. Whatever they carried, they carried a very
+    long time ago, and the cleanness after is its own cold answer.
+  restraints: >
+    Fittings of the grey at the head and foot and middle of each slab,
+    sized for a wrist, an ankle, a throat — for holding, not for helping.
+    They open and close still, smooth and willing, and they were made for
+    a thing that did not want to be held. You do not let yourself think
+    long about the shapes they were sized to fit.
+  records: >
+    A face of the grey along one wall, close-worked with ranks of small
+    even marks — a catalogue, a reckoning, a tally kept of whatever was
+    brought here and whatever was done. You cannot read it. You are not
+    sure you would want the reading. It has the calm of a ledger that
+    balanced every column and closed.
+idlemessages:
+- The cold white light lies even over the ranked slabs and their fittings.
+- A restraint sits open on the nearest slab, sized for a throat, and waiting.
+- The unread catalogue runs along the wall, patient, and does not explain.
+- Somewhere a drain gives back the faintest echo of the deep hum.
+mutators:
+- mutatorid: hull_suppression
+spawninfo:
+  - mobid: 9557
+    statpool: 1

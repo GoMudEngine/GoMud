@@ -1,0 +1,50 @@
+roomid: 6388
+zone: Crash Site Interior
+title: Collapsed Junction
+biome: cave
+description: >
+  Here the deeper place has come apart. What was once a clean crossing of
+  ways has collapsed inward, the grey folded and split into a low maze of
+  half-passages, and the charge that runs the ruined machinery in the
+  walls crawls loose across the breaks — thin blue-white threads jumping
+  the gaps, silent and quick, biting at anything that stands where they
+  want to go. Four ways still open off the wreck: west to the landing,
+  north up a corridor that runs straight and grim, east where the grey
+  folds down to a single sealed conduit, and south into a nest of the
+  broken passages. Grey shapes hold the junction, more than one, moving
+  through the arcing light with the flat certainty of things that were
+  set here and have not left. Nothing about this crossing is easy now.
+exits:
+  west:
+    roomid: 6382
+  north:
+    roomid: 6391
+  east:
+    roomid: 6386
+  south:
+    roomid: 6389
+nouns:
+  maze: >
+    The collapsed crossing, folded and split into a low tangle of
+    half-passages where the grey came down on itself. It was a clean
+    junction once; now it is a wreck you pick through stooped, and the
+    loose charge crawls the breaks, and the grey shapes that keep it know
+    the tangle better than you ever will.
+  charge: >
+    Thin blue-white threads jump the folds and breaks of the ruin,
+    silent and fast, gone the instant they arc. Where one passes near the
+    air draws tight and the skin prickles. It does not aim at you. In a
+    place this broken it does not have to.
+idlemessages:
+- A thread of blue-white jumps a fold in the wreck and is gone, and the air stings.
+- Grey shapes move through the arcing light, unhurried, keeping the collapse.
+- The four ways run off the ruin, and only the sealed east conduit hums back.
+- The loose charge crawls the breaks and will not settle in the folded grey.
+mutators:
+- mutatorid: hull_suppression
+- mutatorid: hull_discharge_deep
+spawninfo:
+  - mobid: 9555
+    statpool: 1
+  - mobid: 9555
+    statpool: 2

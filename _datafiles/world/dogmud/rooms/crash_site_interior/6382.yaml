@@ -1,0 +1,43 @@
+roomid: 6382
+zone: Crash Site Interior
+title: Lower Landing
+biome: cave
+description: >
+  The shaft lets you out onto a wide landing where the grey has come
+  down in the world. The seamless perfection of the corridors above does
+  not hold here — the floor is canted, buckled along a slow ridge as
+  though the whole deck below had settled and never risen, and the cold
+  light comes uneven now, pooling and thinning across the tilt. Ways run
+  off it in three directions: back up the shaft, north into a corridor
+  that sags out of true, and east where the grey folds down into a
+  broken junction of passages. Something waits on the landing, unbothered
+  by the tilt, turning toward the light that finds you. The heart of the
+  place is down here somewhere, and it is still kept.
+exits:
+  up:
+    roomid: 6381
+  north:
+    roomid: 6383
+  east:
+    roomid: 6388
+nouns:
+  landing: >
+    A wide platform where the shaft delivers you, worked once flat and
+    now gone slightly wrong — canted along a ridge where the deck settled
+    under a weight or a wound long ago. The cold light lies uneven across
+    it, and the ways off it lead only deeper. Nothing here climbs back
+    toward the light of its own accord.
+  ridge: >
+    A slow buckle in the floor where the grey gave and set again, running
+    the width of the landing. It is the first honest damage you have seen
+    in the place — proof that even a made thing made to last forever can
+    be moved, if the thing that moves it is large enough.
+idlemessages:
+- The cold light pools in the low side of the tilt and thins across the ridge.
+- A grey shape holds its footing on the canted floor and tracks the light to you.
+- The deep hum comes up stronger here, close under the buckled deck.
+mutators:
+- mutatorid: hull_suppression
+spawninfo:
+  - mobid: 9554
+    statpool: 1

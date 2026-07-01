@@ -1,0 +1,54 @@
+roomid: 6392
+zone: Crash Site Interior
+title: The Warden-Prime's Hold
+biome: cave
+description: >
+  The gauntlet lets you out into a hold made broad and high, and after the
+  narrow scorching way the space of it is its own kind of dread. This was
+  the keepers' keep — the room the whole broken deck was built around, its
+  grey unbuckled and whole, its cold light standing steady and bright as
+  nowhere else below. In the middle of it, on a worked dais, stands the
+  thing the place set over all the rest: a warden built to the pattern of
+  the others and then built past it, taller, heavier, jointed in more
+  places than seems needful, wearing the fittings of the fabricator that
+  made it like a crown it never took off. It does not stir as you come. It
+  has held this hold ten thousand years and it can hold it ten thousand
+  more, and it turns to you now only because the light has, and because
+  keeping is the whole of what it is. Behind it, a shaft climbs into the
+  grey, up toward the deepest heart of the buried place. It will not open
+  the way up while it stands.
+exits:
+  south:
+    roomid: 6391
+  up:
+    roomid: 6393
+nouns:
+  dais: >
+    A worked platform of the grey at the centre of the hold, raised a
+    little, made to set one thing above all the room around it. What
+    stands on it was set there deliberately, the deepest keeper over the
+    deepest keeping, and it has not stepped down from it in ten thousand
+    years.
+  warden-prime: >
+    The keeper the place set over its keepers — built to the wardens'
+    pattern and then built past it, taller and heavier and jointed past
+    need, hung with the fittings of the maker that shaped it. It moves
+    only when the light moves, and it moves without hurry and without
+    doubt. It was made to hold the way up, and it holds it, and it will go
+    on holding it against you until one of you stops.
+  shaft: >
+    Behind the dais the grey opens into a shaft climbing up toward the
+    deepest heart of the place, the cold light running clean up into it.
+    It is the last way on, and the last way up, and the thing on the dais
+    stands between you and it. The way does not open while the keeper
+    keeps it.
+idlemessages:
+- The cold light stands steady and bright over the dais and the shape upon it.
+- The keeper turns a slow fraction as the light finds you, and otherwise holds.
+- Behind the dais the shaft climbs into the grey, toward the deepest heart below.
+- The whole broken deck was built around this hold, and this hold around one thing.
+mutators:
+- mutatorid: hull_suppression
+spawninfo:
+  - mobid: 9561
+    statpool: 4

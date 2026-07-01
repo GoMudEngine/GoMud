@@ -1,0 +1,53 @@
+roomid: 6389
+zone: Crash Site Interior
+title: Warden Nest
+biome: cave
+description: >
+  South of the wreck the broken passages open into a chamber that the
+  keepers have made their own. It was some kind of muster-room once —
+  recesses ranked along every wall at standing height, a place for things
+  to wait until they were wanted — but too many of them are open now, and
+  what stood in them does not wait any longer. The grey shapes are thick
+  here, jointed and cold and patient, more than one kind of them: the tall
+  wardens that turn to face the light, and a heavier frame among them,
+  slower, made for holding rather than hunting. They were left to keep the
+  deeper ways, and they have gathered where the keeping is easiest. A
+  narrow way runs east, past the nest, to something the keepers guard
+  close. To go on is to go through them.
+exits:
+  north:
+    roomid: 6388
+  east:
+    roomid: 6390
+nouns:
+  nest: >
+    The keepers' muster-room, ranked with standing recesses gone mostly
+    open, where the grey shapes have gathered thick. It has the flat order
+    of a barracks and none of the life — no smell, no warmth, only cold
+    jointed things holding a place they were set to hold and drawn close
+    to it out of some worn instinct too old to name.
+  recesses: >
+    Set-in places ranked along the walls at standing height, sized to hold
+    something upright and waiting. Most stand open now, their keepers
+    loosed and gathered. The few still sealed give back only the cold
+    light and the sense of something behind them not yet asked to wake.
+  frame: >
+    A heavier grey shape among the wardens, low and broad and slow, built
+    to a different pattern — for holding, for barring, for the weight of
+    keeping rather than the reach of it. It does not hurry. It does not
+    need to. It was made to be in the way, and it is very good at being in
+    the way.
+idlemessages:
+- The cold light lies over the ranked recesses and the shapes gathered under them.
+- A tall warden turns a fraction toward the sound of you and holds, and waits.
+- The heavy frame shifts its footing, slow, and settles across the way east.
+- Something jointed clicks in the nest, once, and the cold silence closes over it.
+mutators:
+- mutatorid: hull_suppression
+spawninfo:
+  - mobid: 9554
+    statpool: 1
+  - mobid: 9554
+    statpool: 2
+  - mobid: 9556
+    statpool: 1

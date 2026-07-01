@@ -1,0 +1,48 @@
+roomid: 6386
+zone: Crash Site Interior
+title: Trapped Conduit
+biome: cave
+description: >
+  A short branch off the wreck, and at the end of it the grey draws
+  together around a sealed way east — not collapsed, not ajar like the
+  others, but shut deliberately, a fitted door worked flush into the wall
+  and closed on whatever lies past it. It hums. Under the palm the grey
+  around the seam carries a faint live thrum, and the fittings of the lock
+  are threaded through with the same dead machinery that crawls the rest
+  of the place, waiting behind the mechanism the way a held breath waits.
+  Whatever is kept beyond was worth the keeping, once. The lock can be
+  worked by a knowing and careful hand — but a hand that slips will wake
+  the charge coiled in the fittings, and the charge does not forgive. The
+  way back west is open and safe. The way east is a wager.
+exits:
+  west:
+    roomid: 6388
+  east:
+    roomid: 6387
+    lock:
+      difficulty: 12
+      trapbuffids: [97]
+nouns:
+  door: >
+    A fitted way worked flush into the grey and shut deliberately —
+    unlike the collapsed and ajar ways elsewhere, this one was closed on
+    purpose and has stayed closed. It hums faintly under the hand, live
+    where nothing else here is live, and it does not mean to be opened by
+    the careless.
+  conduit: >
+    The lock's fittings run back into the wall through threads of the dead
+    machinery, the charge coiled patient behind them. Work the mechanism
+    cleanly and the door gives; slip, and the coiled charge finds the
+    slip. It is an old and simple bargain, and the place has kept its half
+    of it for ten thousand years.
+  lock: >
+    A worked mechanism set into the humming door, fine and deliberate,
+    threaded through with the live machinery of the place. A careful hand
+    can read its working. A careless one wakes what waits in the fittings.
+    The choice, and the risk, are yours alone.
+idlemessages:
+- The sealed door hums faintly east, live where the rest of the grey lies dead.
+- Under the palm the grey around the lock carries a patient, waiting thrum.
+- The way west stands open and quiet; the way east keeps its coiled bargain.
+mutators:
+- mutatorid: hull_suppression
