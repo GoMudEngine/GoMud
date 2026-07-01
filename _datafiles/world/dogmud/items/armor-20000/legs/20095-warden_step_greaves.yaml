@@ -1,0 +1,24 @@
+itemid: 20095
+name: Warden-Step Greaves
+namesimple: greaves
+vendor_categories:
+- blacksmithing
+description: >-
+  Leg-guards folded from the grey material and jointed so cleanly that
+  they move with the wearer instead of against, silent where iron would
+  clatter. They are cold to the touch and lighter than they look, and
+  they carry a sure-footed steadiness down into the stride, as if the
+  legs knew the ground a half-step before it arrived. They were kept in
+  the vault of the buried place with the rest of what it took from
+  those who reached its door.
+type: legs
+subtype: wearable
+physical_mitigation: 12
+magical_mitigation: 6
+conviction_mitigation: 4
+statmods:
+  dexterity: 6
+  vitality: 5
+weight: 6.0
+rarity_tier: 78
+value: 1700

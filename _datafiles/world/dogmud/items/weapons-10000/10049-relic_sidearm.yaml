@@ -1,0 +1,27 @@
+itemid: 10049
+name: Relic Sidearm
+namesimple: sidearm
+vendor_categories:
+- blacksmithing
+description: >-
+  A compact grey device that fits the hand as if measured for it, with
+  a short throat and a grip worn smooth by some earlier bearer. Feed it
+  a charge and press the small sunken stud and it spits a hard mote
+  faster than the eye can follow, with a cough of cold air and no
+  flame at all. It was pried from the vault where the buried place kept
+  the tools of those who came before -- a killing thing, patient and
+  precise, that has forgotten nothing of its work.
+type: weapon
+hands: 1
+subtype: shooting
+ammo_tag: shot
+damage:
+  basedamage: 7
+  variance: 3
+damage_multiplier: 6.00
+speedmultiplier: 0.7
+grapplemodifier: 0.2
+parryrating: 2
+weight: 2.5
+rarity_tier: 78
+value: 1900
