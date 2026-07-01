@@ -1,0 +1,34 @@
+roomid: 6377
+zone: Crash Site Interior
+title: Storage Recess
+biome: cave
+description: >
+  The eastern way ends almost at once in a narrow recess, walled on three
+  sides, made plainly for keeping and not for passing through. Grey crates
+  stand racked along the walls in ranks — shut, seamless, stacked with a
+  care that has held them square through every year since — and here and
+  there one has split along a hairline, its edge lipped open where the
+  long stillness finally strained the seam. The cold light lies flat and
+  even over all of it. Nothing has been taken. Nothing has been added.
+  Whoever stocked this place meant to come back for it.
+exits:
+  west:
+    roomid: 6376
+nouns:
+  crates: >
+    Grey crates racked in square ranks, each one shut and seamless and
+    exactly the size of its neighbour, stacked by hands that trusted they
+    would return before it mattered. A few have cracked along a hairline
+    seam, lipped open a finger's width by nothing but the weight of years.
+    What they hold has waited in the dark the whole long while.
+  racks: >
+    The crates stand in fitted racks worked from the same grey as the
+    walls, holding their burden square and level as the day it was set
+    down. No rust, no sag, no dust. Only the patience of a made thing that
+    does not know how to fall apart.
+idlemessages:
+- The cold light lies flat and even over the racked grey crates.
+- A hairline seam gapes in one crate, its dark giving nothing back.
+- Nothing has been taken from here. Nothing has been added. It waits.
+mutators:
+- mutatorid: hull_suppression

@@ -1,0 +1,37 @@
+roomid: 6381
+zone: Crash Site Interior
+title: The Descent
+biome: cave
+description: >
+  Past the post the grey draws in around a shaft that drops straight down
+  out of the light. It was made to carry things lower — the walls of it
+  are grooved and fitted for some carriage that is not here now, and the
+  cold glow thins as it falls, so that a little way down the dark begins
+  and does not end where the eye can follow it. Cool air rises out of the
+  shaft, older and stiller even than the air behind you, carrying up the
+  faint sourceless hum of the place, deeper here, patient here, the sound
+  of a made thing that goes down further than it should. The way on is
+  down. Whatever holds the heart of this place is below.
+exits:
+  west:
+    roomid: 6380
+  down:
+    roomid: 6382
+nouns:
+  shaft: >
+    A straight drop worked into the grey, its walls grooved and fitted for
+    a carriage long gone, falling past the reach of the cold light into a
+    dark the eye cannot bottom. It was made to carry things down into the
+    heart of the place. It will carry you, if you go, and the going is
+    only one way that matters.
+  carriage: >
+    There is none — only the grooves and fittings where one belonged, worn
+    smooth by a use that stopped ten thousand years ago. Whatever rode this
+    shaft up and down through the buried place is gone, and its absence
+    leaves the way open, and the open way leads only down.
+idlemessages:
+- Cool old air rises out of the shaft, carrying the deep hum up with it.
+- The cold light thins into the shaft and gives out before the dark does.
+- The hum sits lower here, patient, coming up from further down than seems right.
+mutators:
+- mutatorid: hull_suppression
