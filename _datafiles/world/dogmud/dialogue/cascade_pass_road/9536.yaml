@@ -32,9 +32,9 @@ tree:
       timber. I take from the west. I have my reasons and they are
       mine. Ask me the rest and I will talk your ear off.
     hints: |
-      You could ask him about the camp and the work he runs, about
-      the eastern timber and why the crews leave it standing, or
-      about the hermit who keeps to the top of the pass.
+      You could ask about the camp and the work here, about the
+      eastern timber and why the crews leave it standing, or about
+      the hermit who keeps to the top of the pass.
   nodes:
     - id: eastern
       triggers: ["eastern", "east", "beyond"]
@@ -52,9 +52,9 @@ tree:
         reasons I have.
       hints: |
         You could ask about the camp itself and the season's cut,
-        or about the man up the pass who went east once and came
-        back the worse for it. The stand beyond this camp is more
-        his story than mine.
+        or about the survivor up the pass who went east once and
+        came back the worse for it. The stand beyond this camp is
+        more his story than mine.
     - id: camp
       triggers: ["camp", "work", "timber", "cut", "wood", "crew", "saw", "season"]
       text: |
@@ -71,7 +71,7 @@ tree:
         You could ask why the crews leave the eastern timber
         standing, or about the hermit who lives up the pass.
     - id: hermit
-      triggers: ["hermit", "man", "survivor", "pass", "who"]
+      triggers: ["hermit", "survivor"]
       text: |
         Him. There is a fellow lives up at the top of the pass, past
         where our cut ends. Came back out of the east some years ago
