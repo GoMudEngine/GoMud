@@ -101,12 +101,32 @@ shuttle bay are seeded here as the on-ramp.
 
 ## 5. The trap-dungeon + party combat (true party endgame)
 
-Instanced, gold-scaled, 20 rooms / 2 stages. **7.3a the breached section**
-(entry corridors of the grey material, sealed compartments, cold blue-white
-emergency lighting, storage rooms with sealed containers, a navigation
-alcove with the orbital display — four shapes, one damaged). **7.3b the deep
-interior** (command section, the records archive, the signal array + a
-sealed shuttle bay).
+Instanced, gold-scaled, **30 rooms / 3 stages**, paced by **two boss-tier
+warden fights** so a coordinated party spends 2–3 hours on a full run.
+
+- **7.3a — The Breached Section (~9 rooms) — the on-ramp.** The torn entry
+  seam (6373), grey branching corridors of the made material, sealed storage
+  compartments (loot), cold blue-white emergency lighting, and the
+  **navigation alcove with the orbital display** (the first "four shapes, one
+  damaged" beat). **This is where the Chrysalis-suppression aura is
+  introduced** — mutations/spell power visibly fail as you descend, teaching
+  the twist early. One **lone warden construct** + one **hazard corridor**
+  teach the two threat types. Ends at a lift/bulkhead down.
+- **7.3b — The Ruined Decks (~11 rooms) — the trap heart.** The maze: warden
+  packs, defusable trapped passages, peak hazard-room density, plus **2–3
+  optional risk/reward side rooms** off the path. Two thematic anchor rooms
+  live here: the **medical bay** (home of the **mutation-scour chamber** —
+  "where the change was studied") and the **fabrication bay** (the
+  legendary-reagent-rich loot room). Guarded at its far end by a **mid-boss:
+  a Warden-Prime** blocking the way to command.
+- **7.3c — The Command Section (~10 rooms) — the climax.** Heaviest defenses;
+  the **final boss (the Core Guardian)**; then the **records archive — THE
+  REVELATION** (oracle-stones, the wall of light "sky-before," the
+  `truth-known` flag), the command deck, the **signal array** (the deferred
+  moons hook), and the **sealed shuttle bay** stub.
+
+Net 9 + 11 + 10 = **30 rooms**. Room IDs continue from B1's stubs (6373–6375
+already built as 7.3a's opening); allocate a contiguous block for the rest.
 
 Threat = the ship's **degraded automated defenses** — a whole facility of
 them, built on #21's now-working machinery, scaled up:
@@ -180,8 +200,10 @@ build phases, each verified before the next:
    mechanic.
 4. **The revelation delivery** (records/oracle-stones + the scripted beat +
    the seeded consequence) — content + light scripting.
-5. **The 20-room trap-dungeon** (rooms + scaled hazards/traps + construct
-   wardens; construct-species `damage_multiplier` fix) — content.
+5. **The 30-room / 3-stage trap-dungeon** (rooms + scaled hazards/traps +
+   construct warden packs + two boss-tier wardens [Warden-Prime mid,
+   Core Guardian final]; construct-species `damage_multiplier` fix) —
+   content.
 
 ## What #22 deliberately is NOT
 
