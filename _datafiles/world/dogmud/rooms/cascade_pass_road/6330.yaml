@@ -1,0 +1,65 @@
+roomid: 6330
+zone: Cascade Pass Road
+title: The Reclaimed Road
+description: >
+  The forest is taking the road back. The old
+  <ansi fg="itemname">paving stones</ansi> are still
+  visible between the tree-roots — pale grey, squared
+  and laid by someone who expected this road to matter —
+  but root-pressure has buckled them across their full
+  width, heaving some vertical and sinking others below
+  the surface until the roadbed is more rubble than
+  pavement. Moss covers most of what remains. Ahead a
+  <ansi fg="itemname">game trail</ansi> crosses the old
+  road at a right angle — fresh, well-used, hoof-prints
+  clear in the soft ground on both sides. The trail comes
+  out of the western forest without hesitation. On the
+  eastern side it bends sharply north within a few paces
+  of the road's edge, curving away from the slope ahead.
+  The deer that made it came this far east and no further.
+biome: forest
+coord:
+  x: -11
+  y: 61
+  z: 0
+exits:
+  west:
+    roomid: 6329
+  east:
+    roomid: 6331
+nouns:
+  paving stones: >
+    The road was properly built once — squared stone on
+    a prepared bed, the joints tight enough to bear heavy
+    traffic. The roots have undone most of that. Some
+    stones stand nearly vertical where pressure came up
+    from below. Others have sunk until only a corner
+    shows. A few remain flat and interlocked as laid,
+    the mason's work outlasting all other evidence of
+    use. Running a hand along one of the flat ones, the
+    stone is cold and slightly damp, moss thick in the
+    joint-gaps and pulling away in clumps.
+  game trail: >
+    A well-used deer trail, the hoof-prints layered —
+    many animals, many crossings. On the western side
+    the trail runs straight out of the undergrowth
+    without deviation. On the eastern side, within a
+    few paces of the road's edge, it bends sharply north
+    and does not resume east. The bend is abrupt, not
+    gradual — the kind that forms when the animals that
+    made it encountered something that turned them back
+    without exception, season after season, until the
+    turning became the trail itself.
+idlemessages:
+- A root has worked under one of the paving stones and
+  lifted it from its neighbors. The gap left behind
+  is black and damp.
+- The game trail crosses the road in silence. No deer
+  are present. The trail is only evidence they were.
+- Wind moves in the upper canopy. None of it reaches
+  the road surface.
+- The moss over the old pavement is thick and unbroken
+  where the stones remain flat. Nothing has walked on
+  them in a long time.
+- The trail bends north just past the road's edge. East
+  of that point the undergrowth is untouched.

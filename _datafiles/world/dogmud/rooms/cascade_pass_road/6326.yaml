@@ -1,0 +1,58 @@
+roomid: 6326
+zone: Cascade Pass Road
+title: The Lumber-Camp Track
+description: >
+  The path arrives at a junction, and the two branches that
+  open from it are not equal. The
+  <ansi fg="itemname">camp track</ansi> runs south — churned
+  by boots and hooves and timber-cart wheels, the
+  verge-brush beaten back by constant use, the ruts deep
+  from heavy loads hauled uphill to the road. From below
+  comes the irregular thud of axes and the creak of a weight
+  shifting in the trees. The
+  <ansi fg="itemname">eastern road</ansi> continues ahead —
+  narrower, the centre-grass partly recovered, the surface
+  less-traveled but not accidental. It does not look like a
+  game trail. Someone made it and someone still uses it,
+  though not often.
+biome: forest
+coord:
+  x: -14
+  y: 61
+  z: 0
+exits:
+  west:
+    roomid: 6325
+  east:
+    roomid: 6328
+  south:
+    roomid: 6327
+nouns:
+  camp track: >
+    A well-used route running south from the junction into
+    the timber camp — the surface churned to mud in the wet
+    and baked hard in dry weather, the earth on both sides
+    beaten clear of underbrush by constant passage. The
+    ruts from the timber-carts are deep and regular, pressed
+    into the slope by repeated heavy loads. Everything that
+    moves through this junction moves south on this track.
+  eastern road: >
+    Narrower than the camp track and less-traveled, but
+    not a deer path or a drainage line — the gradient is
+    deliberate, the edges worked, the centre-grass growing
+    back only in the middle where foot-traffic has thinned.
+    A road that sees use but not recent or regular use.
+    The trees close tighter over it the further east it
+    goes. It runs uphill and does not show you where it
+    ends.
+idlemessages:
+- From the south, through the trees, the sound of an axe
+  at work carries up the slope — steady, methodical.
+- A timber-cart has left a fresh rut in the south track,
+  the tread-marks still crisp at their edges.
+- The eastern road is quiet. No sound comes from that
+  direction — not wind in the branches, not movement.
+- A crow works the junction-ground, picking at something
+  small in the disturbed earth where the tracks meet.
+- The smell of fresh-cut wood drifts up from the south on
+  the cool air under the canopy.

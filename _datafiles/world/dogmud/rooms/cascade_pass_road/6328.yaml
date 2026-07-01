@@ -1,0 +1,66 @@
+roomid: 6328
+zone: Cascade Pass Road
+title: The Deep Timber
+description: >
+  The last axe-mark is somewhere behind you. The trees
+  here have never been worked — old-growth trunks too
+  broad to reach around, the canopy fused overhead into
+  a vault that dims the light to a sourceless green. No
+  wheel-ruts in the road. No verge-cuts. The bare earth
+  between the root-buttresses underfoot is the only
+  evidence of prior passage, and even that looks old.
+  Against one of the great trees a set of
+  <ansi fg="itemname">claw marks</ansi> rake the bark
+  from above head-height to the base of the trunk —
+  four parallel gouges, the exposed wood still pale and
+  not yet hardened. Nearby a
+  <ansi fg="itemname">picked-clean bone</ansi> rests in
+  the leaf-litter, its joints cracked open and emptied.
+  Whatever ate here was in no hurry to leave. The forest
+  around it is quiet in the way that has nothing to do
+  with peace.
+biome: forest
+coord:
+  x: -13
+  y: 61
+  z: 0
+exits:
+  west:
+    roomid: 6326
+  east:
+    roomid: 6329
+nouns:
+  claw marks: >
+    Four parallel gouges score the bark from well above
+    your reach to the root-flare at the base of the
+    trunk. Each gouge is as wide as a finger, cut clean
+    through the bark into the pale wood beneath. The
+    edges are not torn but drawn — something braced
+    against the trunk and dragged downward with real
+    force. The exposed wood has not yet greyed. The moss
+    around the base of the tree is disturbed in a wide
+    arc, pressed flat in places, as if something large
+    circled the trunk before or after.
+  picked-clean bone: >
+    A large leg-bone, probably deer, stripped of every
+    scrap of hide and tissue. The joint-ends have been
+    cracked open — not shattered but split with
+    something that understood the geometry — and the
+    marrow cavities are empty and clean. The bone is
+    not old. The exposed surfaces are still pale, barely
+    weathered. It was dropped here, in this spot, and
+    nothing moved it afterward. The leaf-litter around
+    it carries the faint sweet-rank smell of recent
+    feeding.
+idlemessages:
+- The canopy overhead is absolutely still. No wind
+  reaches the ground here.
+- Something moves through the undergrowth at the far
+  edge of sight — a slow rustle, unhurried — and stops
+  before it resolves into a shape.
+- A branch pops deep in the timber to the east. Nothing
+  follows it.
+- The leaf-litter where you are standing does not shift.
+  Even your breathing seems briefly too loud.
+- The light filtering through the canopy is even and
+  green and absent of movement.

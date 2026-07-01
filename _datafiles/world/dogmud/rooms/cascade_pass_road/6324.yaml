@@ -1,0 +1,66 @@
+roomid: 6324
+zone: Cascade Pass Road
+title: The Forest Edge
+description: >
+  The <ansi fg="itemname">treeline</ansi> begins here with
+  an abruptness that field-country never has. The open sky
+  closes off within a few paces — the
+  <ansi fg="itemname">canopy</ansi> is old and high and
+  dense, the light beneath it different in kind, not merely
+  in degree. The <ansi fg="itemname">old trees</ansi>
+  flanking the road have not been young second-growth in
+  living memory — the trunks too wide for a man to span,
+  the bark furrowed deep and grey-black, roots lifting the
+  road-edge in slow lobes. Behind you the sounds of the
+  vale cut off as cleanly as a door closing. The road
+  continues east into the shade. Nothing moves in the
+  canopy. There are no birds.
+biome: forest
+coord:
+  x: -16
+  y: 61
+  z: 0
+exits:
+  west:
+    roomid: 6323
+  east:
+    roomid: 6325
+nouns:
+  treeline: >
+    The transition from open farmland to old forest is
+    abrupt — not a gradual thickening of scrub but a clean
+    line where the trees begin. The first trees on the
+    eastern side are the oldest ones you will see here.
+    The field-country and the forest seem to have agreed on
+    the exact point of division a long time ago, and neither
+    side has moved since.
+  canopy: >
+    High and interlocked above the road, the branches of
+    the old trees have closed the sky off almost entirely.
+    Patches of light fall through where a branch has come
+    down or a gap has opened, but they are small and widely
+    spaced. The canopy is quiet — no movement between the
+    branches, no bird-call from the interior. The forest
+    directly ahead makes no sound.
+  old trees: >
+    The trunks are furrowed in the way that only very
+    long-lived timber is — the bark not merely rough but
+    deeply channelled, the channels darker than the ridges
+    and soft with old moss. The roots at the road-edge have
+    lifted the verge stones in long slow curves, growing
+    over and around them without hurry. These trees were
+    old when this road was new.
+idlemessages:
+- From somewhere in the vale behind you, a cart-wheel
+  creaks over a stone. The sound carries clearly. Ahead,
+  nothing answers it.
+- A wood-pigeon calls once from the trees to the west of
+  the road, and falls silent without a reply.
+- The light through the canopy above you is thin and
+  spotted. Ahead the canopy closes — the gaps narrow where
+  the road bends east.
+- The air inside the treeline is cooler than the open
+  farmland, and smells of old bark and leaf-mould.
+- The vale's sounds have stopped entirely. Here there is
+  only the faint creak of the canopy moving in wind you
+  cannot feel at ground level.

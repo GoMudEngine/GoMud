@@ -1,0 +1,68 @@
+roomid: 6323
+zone: Cascade Pass Road
+title: The Hedge-Gap Trail
+description: >
+  The hedge-gap here is old — the thorn-cut pressed back on
+  both sides and healed over along new lines, the passage
+  wide enough for something large to pass without turning.
+  A <ansi fg="itemname">farm-gate</ansi> hangs on its post
+  but is never latched — the latch-hasp worn bright from
+  handling, the habit of closing long gone. The
+  <ansi fg="itemname">trail</ansi> that comes through it
+  runs east and does not look like a farm track — no wagon
+  ruts, no churned verge where teams back and turn. What has
+  worn it is repetition — a path made by something that
+  crosses here at the same angle, every time. The fields
+  fall away behind and the grain-smell thins. At the far
+  end of the gap, where the verge-grass gives out, there
+  are <ansi fg="itemname">prints</ansi> in the soft earth —
+  wide-spaced, the stride longer than a man's, the weight
+  heavy at the fore.
+biome: farmland
+coord:
+  x: -17
+  y: 61
+  z: 0
+exits:
+  west:
+    roomid: 5441
+    secret: true
+    zone: Kingsbarrow Vale
+  east:
+    roomid: 6324
+nouns:
+  farm-gate: >
+    The gate hangs on good ironwork — well-made, the post
+    set deep and true — but the latch-hasp has not been
+    seated in a long time. The striker plate is worn bright
+    on its inner face. The latch bar is not. Someone, or
+    something, passes through this gate often enough to
+    keep the hardware bright but does not latch it behind.
+  trail: >
+    No wagon ruts. No churned mud where a team backs and
+    turns. The trail is worn by something that moves east on
+    foot each time — the grass pressed down on both sides
+    of a central line, the verge earth packed at the
+    crossing. Farm tracks are busy and irregular. This one
+    is deliberate, and entirely the wrong shape for farm
+    traffic.
+  prints: >
+    Wide-spaced in the soft earth at the gap's eastern
+    margin, where the verge-grass gives out and the clay
+    holds a print. The stride is longer than a man's by
+    a clear measure, the fore-print heavier than the heel —
+    something large, moving at a walk, pointing east. The
+    most recent are not fresh, but they are not old either.
+idlemessages:
+- From the vale behind, a farm bell carries easily on the
+  open air — and then the gap swallows the sound.
+- A crow lights on the hedge-top above the gate, watches
+  east for a moment, and lifts off without cause.
+- The grass on the vale side of the gap is thick and green.
+  On the east side it grows sparse, pressed flat through
+  the crossing.
+- Wind moves across the open fields and reaches the gap
+  with less force than it should — the hedge-wall blocks
+  it, and the trail ahead is still.
+- There is no bird noise from the eastern scrub. The hedge
+  beside you is busy with movement. Ahead it is not.
