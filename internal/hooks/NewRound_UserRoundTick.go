@@ -174,29 +174,46 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 							textutil.SendPhaseText(trigBuffSpec.TriggerUserText, trigBuffSpec.TriggerRoomText, tCtx, "cyan", cfg)
 						}
 
-						// Apply config-driven tick amount (if set)
-						if buff.TickAmount != 0 {
-							if trigBuffSpec == nil {
-								trigBuffSpec = buffs.GetBuffSpec(buff.BuffId)
-							}
-							if trigBuffSpec != nil {
+						// Apply config-driven tick amount. TickAmount is
+						// normally snapshot at apply time (spell/drink
+						// paths), but area/mutator-applied buffs go through
+						// the async AddBuff event and never snapshot it —
+						// so for a tick_pool buff with TickAmount still 0,
+						// compute and cache it here (e.g. hazard-room DoTs).
+						if trigBuffSpec == nil {
+							trigBuffSpec = buffs.GetBuffSpec(buff.BuffId)
+						}
+						if trigBuffSpec != nil && trigBuffSpec.TickPool != "" {
+							tickAmt := buff.TickAmount
+							if tickAmt == 0 {
+								var maxPool int
 								switch trigBuffSpec.TickPool {
 								case "health":
-									user.Character.Heal(buff.TickAmount)
+									maxPool = user.Character.HealthMax.Value
 								case "stamina":
-									user.Character.Stamina += buff.TickAmount
-									if user.Character.Stamina > user.Character.StaminaMax.Value {
-										user.Character.Stamina = user.Character.StaminaMax.Value
-									} else if user.Character.Stamina < 0 {
-										user.Character.Stamina = 0
-									}
+									maxPool = user.Character.StaminaMax.Value
 								case "conviction":
-									user.Character.Conviction += buff.TickAmount
-									if user.Character.Conviction > user.Character.ConvictionMax.Value {
-										user.Character.Conviction = user.Character.ConvictionMax.Value
-									} else if user.Character.Conviction < 0 {
-										user.Character.Conviction = 0
-									}
+									maxPool = user.Character.ConvictionMax.Value
+								}
+								tickAmt = buffs.ComputeTickAmount(maxPool, trigBuffSpec.TickPercent, trigBuffSpec.TickVariance, trigBuffSpec.TickMin, 1.0)
+								user.Character.Buffs.SetTickAmount(buff.BuffId, tickAmt)
+							}
+							switch trigBuffSpec.TickPool {
+							case "health":
+								user.Character.Heal(tickAmt)
+							case "stamina":
+								user.Character.Stamina += tickAmt
+								if user.Character.Stamina > user.Character.StaminaMax.Value {
+									user.Character.Stamina = user.Character.StaminaMax.Value
+								} else if user.Character.Stamina < 0 {
+									user.Character.Stamina = 0
+								}
+							case "conviction":
+								user.Character.Conviction += tickAmt
+								if user.Character.Conviction > user.Character.ConvictionMax.Value {
+									user.Character.Conviction = user.Character.ConvictionMax.Value
+								} else if user.Character.Conviction < 0 {
+									user.Character.Conviction = 0
 								}
 							}
 						}
