@@ -1,0 +1,38 @@
+mobid: 9555
+zone: Crash Site Interior
+behavior_archetype: generic_fighter
+aiprofile: brute
+archetype: fighting
+hostile: true
+statpool: 300
+maxwander: 0
+groups:
+  - construct
+idlecommands:
+  - 'emote coasts a slow half-circle through the dead air, a mote of cold
+    light with no eyes and no rest.'
+  - ''
+  - 'emote pauses, pulses once, and hangs there as if listening to a voice
+    that stopped speaking an age ago.'
+  - ''
+combatcommands:
+  - 'emote wheels in close and lashes at you with a hard needle of light.'
+  - ''
+  - 'emote flares white-cold and drives the blow home without a sound.'
+  - ''
+character:
+  name: Sentry Drift
+  description: |
+    A knot of the grey material no larger than a fist, wrapped in a cold
+    and colourless light, that patrols the buried place on an errand no
+    one living gave it. It drifts where the corridors are darkest and it
+    turns toward warmth the way a blind thing turns toward heat.
+  speciesid: 37
+  level: 1
+  gold: 0
+  items:
+    - itemid: 40172
+      dropchance: 20
+loot_pool:
+  - 10047
+itemdropchance: 60

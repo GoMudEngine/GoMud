@@ -1,0 +1,40 @@
+mobid: 9560
+zone: Crash Site Interior
+behavior_archetype: generic_fighter
+aiprofile: brute
+archetype: fighting
+hostile: true
+statpool: 300
+maxwander: 0
+groups:
+  - construct
+idlecommands:
+  - 'emote drifts up out of the lower dark on a thin thread of cold light,
+    trailing a silence that feels older than the walls.'
+  - ''
+  - 'emote hangs in the black, faceless and slow, as if it has forgotten
+    which way is up and no longer cares.'
+  - ''
+combatcommands:
+  - 'emote surges forward on a flare of cold light and strikes from the
+    dark before you can set your feet.'
+  - ''
+  - 'emote wraps you in a cold grey grip and bears down.'
+  - ''
+character:
+  name: Deep Drifter
+  description: |
+    A ragged shape of the grey material that keeps to the lowest, oldest
+    reaches of the buried place, where the light has been dead longest. It
+    moves without hurry and without sound, rising out of the black only
+    when something living strays too far down. It has been alone in that
+    dark a very long time, and it does not welcome company.
+  speciesid: 37
+  level: 1
+  gold: 0
+  items:
+    - itemid: 40171
+      dropchance: 20
+loot_pool:
+  - 10048
+itemdropchance: 60

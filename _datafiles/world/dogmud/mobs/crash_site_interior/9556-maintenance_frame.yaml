@@ -1,0 +1,40 @@
+mobid: 9556
+zone: Crash Site Interior
+behavior_archetype: generic_fighter
+aiprofile: brute
+archetype: fighting
+hostile: true
+statpool: 300
+maxwander: 0
+groups:
+  - construct
+idlecommands:
+  - 'emote scrapes a grey limb along a seam in the wall, mending nothing,
+    tending a wound in the buried place that will never close.'
+  - ''
+  - 'emote folds its many arms in against its body and stills, waiting on
+    a task that was finished long before you were born.'
+  - ''
+combatcommands:
+  - 'emote unfolds every limb at once and closes on you like a shutting
+    hand.'
+  - ''
+  - 'emote grips and wrenches with the patient strength of a made thing.'
+  - ''
+character:
+  name: Maintenance Frame
+  description: |
+    A many-limbed frame of the grey material, built once to tend the
+    buried place and keep its wounds from spreading. The work it was made
+    for ended long ago, but no one told it so. It goes on mending the
+    dead corridors, and it treats a living intruder as one more breach to
+    be closed.
+  speciesid: 37
+  level: 1
+  gold: 0
+  items:
+    - itemid: 40171
+      dropchance: 25
+loot_pool:
+  - 20092
+itemdropchance: 60
