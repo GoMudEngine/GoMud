@@ -30,11 +30,11 @@ combatcommands:
 character:
   items:
     - itemid: 20090
-      dropchance: 100
+      dropchance: 60
     - itemid: 10046
-      dropchance: 100
+      dropchance: 60
     - itemid: 40165
-      dropchance: 100
+      dropchance: 25
     - itemid: 40166
       dropchance: 3
   name: The Sentinel
@@ -46,7 +46,7 @@ character:
     and it has never slept. It has only waited -- waited for something
     to come to the door -- and now you are here. The light in the
     socket is beginning to wake.
-  speciesid: 20
+  speciesid: 37
   level: 1
   gold: 0
   stats:

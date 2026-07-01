@@ -4,7 +4,7 @@ behavior_archetype: ambusher
 aiprofile: ambush_predator
 archetype: fighting
 hostile: true
-statpool: 650
+statpool: 550
 maxwander: 2
 groups:
   - animal

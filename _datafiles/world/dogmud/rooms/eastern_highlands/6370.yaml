@@ -25,9 +25,6 @@ exits:
     roomid: 6368
   east:
     roomid: 6372
-    lock:
-      difficulty: 55
-      trapbuffids: [94]
 nouns:
   door: >
     From here it is only a shape — a shut, deliberate thing set into the
@@ -40,10 +37,10 @@ nouns:
     The charge that filled the field behind you is gathered here into one
     narrow, singing line drawn across the approach — you can find its edges
     if you are still and patient, a seam in the air that hums against the
-    teeth. It is not a wall and it is not a lock. It is a set thing, a trap
-    laid to hold and to punish, and it would answer a careless step in
-    full. A steady hand that could find where it is anchored might ease it
-    apart. A hurried one would not get the chance to regret it.
+    teeth. It is not a wall and it is not a lock — nothing to pick, nothing
+    to lift, nothing to still. It is the field itself drawn to an edge, and
+    it bites at whatever crosses, worst of all here where it guards the
+    door. You can cross it. You will feel it do its work as you go.
 idlemessages:
 - The narrow line of the ward sings faintly across the approach, low and
   steady, and does not falter.
@@ -53,3 +50,5 @@ idlemessages:
   you own agrees on one thing, which is not yet.
 - Something in the gathered charge shifts and settles, the way a set trap
   settles, patient, still armed.
+mutators:
+- mutatorid: hull_discharge

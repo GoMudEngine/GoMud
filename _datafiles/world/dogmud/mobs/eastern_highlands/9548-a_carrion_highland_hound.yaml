@@ -4,7 +4,7 @@ behavior_archetype: predator
 aiprofile: predator
 archetype: fighting
 hostile: true
-statpool: 650
+statpool: 550
 maxwander: 3
 groups:
   - animal

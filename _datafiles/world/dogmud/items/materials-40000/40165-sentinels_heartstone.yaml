@@ -14,5 +14,5 @@ description: >-
 type: object
 subtype: mundane
 weight: 0.6
-value: 350
+value: 150
 rarity_tier: 80

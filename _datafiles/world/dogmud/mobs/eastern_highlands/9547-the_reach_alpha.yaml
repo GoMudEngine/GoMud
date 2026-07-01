@@ -6,7 +6,7 @@ archetype: fighting
 submission_policy: lethal
 surrender_policy: never
 hostile: true
-statpool: 700
+statpool: 560
 maxwander: 1
 groups:
   - animal
@@ -39,8 +39,6 @@ character:
   items:
     - itemid: 40163
       dropchance: 70
-    - itemid: 40166
-      dropchance: 3
   name: The Reach-Alpha
   description: |
     A bear -- or the scale of one -- that holds the highest

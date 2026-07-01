@@ -26,9 +26,6 @@ exits:
     roomid: 6359
   south:
     roomid: 6361
-    lock:
-      difficulty: 40
-      trapbuffids: [94]
 nouns:
   recess:
     >

@@ -24,7 +24,7 @@ ammo_tag: arrows
 damage:
   basedamage: 9
   variance: 3
-damage_multiplier: 8.50
+damage_multiplier: 7.50
 parryrating: 4
 rarity_tier: 82
 value: 2500

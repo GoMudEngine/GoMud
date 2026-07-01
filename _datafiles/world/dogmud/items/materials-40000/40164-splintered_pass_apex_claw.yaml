@@ -15,5 +15,7 @@ subtype: mundane
 weight: 0.5
 value: 210
 rarity_tier: 80
+is_component: true
+component_tag: apex-claw
 vendor_categories:
 - jewelcrafting
