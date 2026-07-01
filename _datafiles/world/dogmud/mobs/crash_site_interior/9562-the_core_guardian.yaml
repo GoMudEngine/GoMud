@@ -1,0 +1,67 @@
+mobid: 9562
+zone: Crash Site Interior
+behavior_archetype: leader
+aiprofile: brute
+archetype: fighting
+submission_policy: lethal
+surrender_policy: never
+hostile: true
+statpool: 500
+maxwander: 0
+groups:
+  - construct
+  - guardian
+spawnmutations: [large]
+idlecommands:
+  - 'emote coils close about the heart of the buried place, a vast grey
+    shape lit from within by a cold and steady fire, keeping the records
+    of a dead people as it has kept them past all counting.'
+  - ''
+  - 'emote lets a slow tide of light move through the whole of its body and
+    settle again, and the dark presses in behind it, patient and total.'
+  - ''
+combatcommands:
+  - 'emote unfolds to its full and terrible size, the cold fire in its core
+    blazing white, and closes on you like the buried place itself waking to
+    swallow you whole.'
+  - ''
+  - 'emote drives a lash of hard cold light through the dark and brings a
+    grey weight down to follow it.'
+  - bash
+  - ''
+character:
+  items:
+    - itemid: 40175
+      dropchance: 100
+    - itemid: 40169
+      dropchance: 100
+    - itemid: 30067
+      dropchance: 100
+    - itemid: 40170
+      dropchance: 60
+  name: The Core Guardian
+  description: |
+    The last and worst of the dead guardians, wound about the innermost
+    heart of the buried place -- the sealed chamber where the makers kept
+    their voices and their records against the ending of all things. It is
+    built of the grey material like the rest, but denser, older, lit by a
+    cold fire that has never once gone out. It has kept this place through
+    an age of dark and silence, and it will spend the whole of that terrible
+    patience to keep it from you now. Behind it lies the truth. It is the
+    only thing left standing between you and the answer.
+  speciesid: 37
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 30
+    vitality:
+      training: 30
+loot_pool:
+  - 10047
+  - 10048
+  - 10049
+  - 20091
+  - 20094
+  - 20095
+itemdropchance: 100
