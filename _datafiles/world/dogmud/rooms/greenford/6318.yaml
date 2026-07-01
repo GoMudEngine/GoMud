@@ -13,7 +13,7 @@ description: >
   the field's margin to the south, half in the long
   grass. The road bends on west toward the milepost.
   Examine the stable gate or the verge.
-biome: wilderness
+biome: land
 coord: {x: 20, y: -78, z: 1}
 exits:
   east: {roomid: 6317}

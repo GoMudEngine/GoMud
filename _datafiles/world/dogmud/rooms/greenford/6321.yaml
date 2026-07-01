@@ -12,7 +12,7 @@ description: >
   the letters are still clear. Carts pass at intervals,
   traveling both ways — the road is in use, the Plymouth
   trade still running. Examine the milepost or the verge.
-biome: wilderness
+biome: land
 coord: {x: 19, y: -78, z: 1}
 exits:
   east: {roomid: 6318}

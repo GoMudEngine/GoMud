@@ -13,7 +13,7 @@ description: >
   treeline in the east. This is where the town becomes
   a destination rather than where you stand. The road
   goes on. Examine the road ahead or the treeline.
-biome: wilderness
+biome: land
 coord: {x: 18, y: -78, z: 1}
 exits:
   east: {roomid: 6321}

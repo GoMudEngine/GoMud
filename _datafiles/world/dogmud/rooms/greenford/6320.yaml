@@ -14,7 +14,7 @@ description: >
   colors, three dried flower stems, a folded paper. The
   road traffic continues on the verge above; down here it
   is quiet. Examine the shrine-post or the offering-box.
-biome: wilderness
+biome: land
 coord: {x: 20, y: -79, z: 1}
 exits:
   north: {roomid: 6318}
