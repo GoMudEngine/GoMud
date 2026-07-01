@@ -1,0 +1,18 @@
+itemid: 40165
+name: Sentinel's Heartstone
+namesimple: heartstone
+vendor_categories:
+- jewelcrafting
+description: >-
+  A stone the size of a clenched fist, dense and smooth and the
+  colour of deep ash. It holds a warmth that no stone should hold
+  -- a steady, even heat that does not fade when carried into the
+  cold. Set in a dim room it casts no visible light, but in total
+  darkness a faint pulse can be sensed against the fingertips.
+  What the Sentinel kept stored inside it, and why, is not
+  immediately clear. The warmth does not diminish.
+type: object
+subtype: mundane
+weight: 0.6
+value: 350
+rarity_tier: 80
