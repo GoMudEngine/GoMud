@@ -1,0 +1,72 @@
+roomid: 6354
+zone: Eastern Highlands
+title: The First Surface
+description: >
+  Here the earth has fallen away — or been shrugged off — and
+  something that was under it stands open to the air. A
+  <ansi fg="itemname">surface</ansi>.
+  It comes up out of the ground smooth, a smoothness the world
+  does not offer anywhere you have been, without grain, without
+  seam, without the joint or fracture or bedding that every stone
+  in every country carries somewhere on its face. It holds the
+  <ansi fg="itemname">light</ansi> —
+  not the way wet rock holds light and not the way ice does, but
+  as though the light belonged to it, an even grey sheen that
+  never catches on a flaw because there is no flaw for it to catch
+  on. The eye keeps trying to make it stone. It reaches for grain
+  and finds none. It reaches for a crack and finds none, and each
+  time it fails it fails a little worse, and slides off the
+  <ansi fg="itemname">sheen</ansi>
+  with nothing to hold. The body understands first, the way it has
+  understood things all through this country, and what the body
+  understands is simple and complete. This was MADE. Not weathered
+  into shape. Not chanced into smoothness. Made. The mind does not
+  want to hold the word. The word does not need it to.
+biome: cliffs
+coord: {x: 6, y: 59, z: 3}
+exits:
+  west:
+    roomid: 6353
+  east:
+    roomid: 6355
+nouns:
+  surface: >
+    Close enough to touch, it refuses every test the eye has for
+    telling one thing from another thing. There is no near texture
+    that resolves into grain. There is no fine crack that becomes,
+    on looking, a network of cracks. It is one continuous thing —
+    the same at the reach of your arm as it is a long way off,
+    grey and even and whole. Nothing in the country you crossed to
+    get here is like it. Nothing you have ever set a hand to is
+    like it. It is not a shape the ground can make and it is not a
+    shape the ground can be worn into, and that leaves only the
+    one thing the mind keeps trying not to arrive at.
+  light: >
+    The light on the surface does not behave. On stone the light
+    breaks up — catches on grain, scatters off grit, throws small
+    shadows into small hollows. Here it does none of that. It
+    lies on the grey in one unbroken sheet and returns even,
+    sourceless, as if the surface were lit from no direction and
+    every direction at once. Standing before it you cannot tell
+    where the light comes from or where it goes. It is simply
+    held, and given back, and wrong.
+  sheen: >
+    The even grey of it has a faint depth, the way a still pool
+    has depth, except there is nothing under the surface to give
+    it one — no water, no ice, no clouded stone. The look of depth
+    with nothing beneath it to be deep. The eye falls into it and
+    finds no bottom and no flaw and no edge, and comes back with
+    the same report every time, which is that there is nothing
+    here it knows how to see.
+idlemessages:
+- The surface holds the light without a flicker. Nothing moves on
+  it because there is nothing on it that can move.
+- Your reflection is in the grey, faint and grey-washed and slow,
+  and you look away from it before you mean to.
+- The eye slides across the sheen looking for one seam to rest on
+  and comes back each time with nothing, a little more unsettled
+  than before.
+- The cold coming off the surface is even and constant and does
+  not vary with the wind. It is not weather. It never was.
+- The silence here is total, and in the total silence the fact of
+  the thing presses in without a single word to soften it.

@@ -1,0 +1,67 @@
+roomid: 6355
+zone: Eastern Highlands
+title: Along the Flank
+description: >
+  The
+  <ansi fg="itemname">surface</ansi>
+  runs on. It goes under the soil to your left and rises out of it
+  again ahead, the same seamless grey, curving so faintly that at
+  a glance it looks flat and only the following of it with the eye
+  gives away the bend. You are walking along the exposed shoulder
+  of a thing that does not stop where the earth resumes — it only
+  goes under, and comes up, and goes under. Close to the grey the
+  <ansi fg="itemname">air</ansi>
+  is wrong in a way the earlier wrongness only warned of. It
+  crawls. It stings. It gets into the teeth and sets them on edge,
+  gets into the blood and hums there, a menace you feel along the
+  arms and in the back of the jaw and cannot point a finger at.
+  It is worst where the ground lies barest and the
+  <ansi fg="itemname">flank</ansi>
+  stands nearest the open air. The body wants distance from it.
+  The body is right to want it. And there is no distance to be had
+  out here that the surface does not still run under.
+biome: cliffs
+coord: {x: 7, y: 59, z: 3}
+exits:
+  west:
+    roomid: 6354
+  east:
+    roomid: 6356
+nouns:
+  surface: >
+    Followed with the eye, it runs unbroken in both directions —
+    into the soil one way and out of it the other, and always the
+    same. No seam interrupts it. No joint marks where one part
+    might meet another part, because there do not seem to be
+    parts. It is one thing, continuing, and the continuing is
+    steady and patient and does not care that you are here to
+    watch it.
+  air: >
+    The air within a pace or two of the grey does not feel like
+    air. It has a charge in it, a crawling prickle that finds the
+    fine hairs on the arms and the wet of the eyes and the roots
+    of the teeth. Stand in it and the blood seems to hum a note
+    just under hearing. It does you no visible harm in a moment
+    and yet everything in the body reads it as harm coming, harm
+    that is only waiting on time. Step back and it eases. Step in
+    and it returns at once.
+  flank: >
+    The near shoulder of the surface rises from the swept ground
+    at a shallow lean, neither wall nor floor but the long curved
+    side of something too large to be either. It is where the
+    crawling in the air is strongest. It is also, somehow, the
+    place the eye keeps going back to, as if looking might at last
+    turn up the seam that would let the mind file the thing away
+    and be done. There is no seam. There is only more of the
+    flank, leaning on into the soil.
+idlemessages:
+- The crawling in the air lifts the fine hairs on your arms and
+  holds them up, and does not let them down.
+- Your teeth ache faintly, a low even ache with no cause you can
+  bite down on and find.
+- The surface runs on to either side without a mark on it, into
+  the ground and out of it, the same every span of the way.
+- The blood hums in the ears, one flat note under hearing, and
+  stops the moment you step back from the grey.
+- The silence over the flank is pressed flat, and into that
+  flatness the stinging in the air is the only thing that moves.

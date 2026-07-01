@@ -1,0 +1,61 @@
+roomid: 6360
+zone: Eastern Highlands
+title: The First Recess
+description: >
+  Set into the buried surface here is a
+  <ansi fg="itemname">recess</ansi>
+  — a hollow shaped into the greyness, smooth-walled and
+  deliberate, going in a short way before the light gives out.
+  It is not a crack and not a wear-mark. Nothing weathers into
+  a shape this exact. Something meant it to be here, in this
+  form, for a purpose, and the purpose is closed to you — the
+  eye reads the intention plainly and reads nothing of what the
+  intention was. That not-knowing has a taste, and the taste is
+  fear. The
+  <ansi fg="itemname">air</ansi>
+  standing over the hollow is colder than the air a pace back,
+  and stiller, and it bites at the skin in a thin steady way
+  that feels less like weather than like attention. Something
+  about the recess watches. The way on drops away to the south,
+  down past the shaped hollow, and the ground that direction
+  does not feel like ground that wants you on it.
+biome: cliffs
+coord: {x: 9, y: 56, z: 3}
+exits:
+  west:
+    roomid: 6359
+  south:
+    roomid: 6361
+nouns:
+  recess:
+    >
+    The recess is a hollow worked into the surface, its walls as
+    smooth and seamless as the rest of the made thing, curving
+    inward to a dark the eye cannot follow to any back. Every
+    line of it is deliberate — no chip, no fracture, no accident
+    of stone. It was shaped to be exactly this, and it holds the
+    shape without a mark of age on it. What it was shaped for is
+    not written anywhere on it and does not offer itself to any
+    amount of looking. The longer you look, the less you want to
+    be looking, and the harder it is to say why.
+  air:
+    >
+    The air over the hollow is wrong in the way cold water is
+    wrong to a hand that expected warm. It stands a degree too
+    still and a degree too cold, and it carries a thin biting
+    edge that settles on the skin and does not move on. It is
+    not the wind. The wind is elsewhere. This is a quality that
+    belongs to the recess and stays close to it, and every
+    animal instinct you have reads it as a place to keep back
+    from.
+idlemessages:
+- The cold over the recess bites and does not let up. It is not
+  the highland cold. It keeps to the hollow.
+- The hollow holds its dark without giving any of it up. The eye
+  goes in a short way and stops.
+- Nothing moves in the recess. The stillness over it is the
+  stillness of a held breath, and it does not release.
+- The way south drops past the shaped hollow. The body leans
+  back from it before the mind has said a word.
+- Something about the recess feels like attention. There is
+  nothing here to attend. The feeling does not care.

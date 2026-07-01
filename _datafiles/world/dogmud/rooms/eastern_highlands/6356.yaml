@@ -1,0 +1,68 @@
+roomid: 6356
+zone: Eastern Highlands
+title: The Curve
+description: >
+  The
+  <ansi fg="itemname">surface</ansi>
+  bends away to the south and keeps bending, and in the bending
+  the mind is finally made to do the thing it has been refusing.
+  It grasps the
+  <ansi fg="itemname">scale</ansi>.
+  Not a boulder shrugged half out of the hillside. Not an outcrop
+  worn round. The curve is too shallow, too even, too patient — it
+  is the curve of something so large that this near stretch reads
+  as very nearly straight, and to see it bend at all you have to
+  accept how far off the far side of that bend must lie. It goes
+  on. It goes on under the soil to the south past any point the
+  eye can carry it, and the not-seeing of the end is not a matter
+  of distance but of amount — there is simply that much of it,
+  more than the country was shaped to hold. To keep with the grey
+  you must turn south now and take the
+  <ansi fg="itemname">bend</ansi>,
+  keeping the surface off your right hand, and the walking will
+  not shorten what you are walking beside.
+biome: cliffs
+coord: {x: 8, y: 59, z: 3}
+exits:
+  west:
+    roomid: 6355
+  south:
+    roomid: 6357
+nouns:
+  surface: >
+    From here the grey is a long curved wall of itself, leaning
+    into the soil and out of it and away to the south. Nothing on
+    it changes as it goes. The same even sheen, the same absence
+    of grain or seam, carried around a bend so gradual that only
+    patience reveals it as a bend at all. It is one thing. It has
+    always, apparently, been one thing, and the one thing is
+    larger than the mind was shaped to file.
+  scale: >
+    Try to take its measure and the ordinary tools fail. There is
+    nothing on the surface to judge distance by — no near detail
+    that shrinks to a far detail, no landmark to pace off. So the
+    eye reaches for the curve instead, and reads in the shallowness
+    of it a size that has no number the body cares to name. It is
+    beyond judging. Not far, exactly. Vast. The kind of vast that
+    stops being a distance and becomes a fact you must simply
+    stand next to.
+  bend: >
+    The turn south is gentle, so gentle it hardly feels like a
+    turn — you keep the grey to your right and let it lead, and it
+    leads without hurry, curving off toward a south you cannot see
+    the end of. To follow the bend is to admit how much there is
+    to follow. Most who reach a thing like this would already be
+    walking the other way. The bend goes on regardless of which
+    way anyone walks.
+idlemessages:
+- The curve leans away to the south, so shallow it barely reads,
+  and the shallowness is the whole of the horror — a bend that
+  faint belongs to a thing that large.
+- You try, without meaning to, to guess how far the grey runs, and
+  the guess comes back with no number attached to it at all.
+- The surface catches the flat light around the bend and gives it
+  back even and grey, farther than the eye can hold and farther
+  still past that.
+- Nothing about the country prepared anyone to stand next to
+  something of this size. The silence does not help. The silence
+  only lets it in.
