@@ -1,0 +1,59 @@
+roomid: 6350
+zone: Eastern Highlands
+title: The Scoured Flat
+description: >
+  Bare rock stretches in all directions without interruption
+  — no soil in the cracks, no scrub, no moss, nothing that
+  would anchor or soften the surface. Whatever the
+  <ansi fg="itemname">wind</ansi>
+  has been doing to this shelf, it has been doing it long
+  enough that nothing holds. The wind does not stop. It is
+  not gusty or variable. It is a continuous pressure from
+  the east, and nested inside it, beneath it, is a
+  <ansi fg="itemname">silence</ansi>
+  that should not be there — a held stillness under the
+  moving air, as though the wind is travelling over something
+  that does not participate in the sound. The rock underfoot
+  is fractured into close-fitting plates, each one scrubbed
+  pale. There is no colour here except grey.
+biome: mountains
+coord: {x: 3, y: 60, z: 3}
+exits:
+  west:
+    roomid: 6349
+  south:
+    roomid: 6351
+nouns:
+  wind: >
+    The wind here is not cold in the ordinary sense. It is
+    constant — a single sustained pressure from the east that
+    the body leans into and then adjusts to and then cannot
+    stop adjusting to, because the adjustment never resolves.
+    It carries nothing. No smell, no moisture, no warmth,
+    no chill that varies. It is simply present and continuous
+    and it has been at this long enough to strip the plateau
+    bare. There is no explanation in that fact that makes
+    the flat feel less wrong.
+  silence: >
+    Under the sound of the wind there is a quality of
+    stillness that the wind does not account for. It is
+    not the silence of shelter — the flat is entirely
+    exposed. It is more like a dampening, as though the
+    sound of the wind is allowed in but the sound of
+    anything else is not. A voice here feels closer than
+    it should. The sound of a boot on the stone arrives
+    too sharp, too complete. The flat does not echo. It
+    absorbs and returns nothing in kind.
+idlemessages:
+- The wind is constant here. Absolutely constant. It does
+  not gust or ease or shift direction. This is not what
+  wind does.
+- The rock surface underfoot has no loose grit. Whatever
+  was loose has long since been taken.
+- Nothing grows in the cracks. The cracks are clean.
+- The sound of a footstep on the flat stone arrives too
+  precisely — no softening, no scatter, nothing carried
+  away. The flat offers everything back at once.
+- To the south the ground holds the shape of something.
+  Not quite scrub. Not quite nothing. Closer inspection
+  will be required.

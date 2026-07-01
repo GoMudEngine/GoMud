@@ -1,0 +1,61 @@
+roomid: 6348
+zone: Eastern Highlands
+title: The Basalt Colonnade
+description: >
+  Columns of dark rock rise from the ridge in rough rows —
+  close enough in height and spacing that the eye, approaching,
+  arranges them into something deliberate. The mind goes there
+  first. Then the bases come into view, each one splayed and
+  uneven where the stone fractured up through the earth, and
+  the spacing that looked even is not even, and what the mind
+  assembled disassembles. The
+  <ansi fg="itemname">columns</ansi>
+  are what they are — cooled basalt, cracked along planes no
+  hand directed, the heights irregular, the gaps between them
+  almost but not quite consistent. Standing among them, they
+  are entirely natural. Whatever shaped this
+  <ansi fg="itemname">highland</ansi>
+  also shaped these, by the same geological process along the
+  same grain. The regularity is a coincidence. The wind moves
+  between them without the change in pitch that wind makes when
+  it moves between things, which is not a coincidence.
+biome: mountains
+coord: {x: 2, y: 61, z: 3}
+exits:
+  west:
+    roomid: 6347
+  south:
+    roomid: 6349
+nouns:
+  columns: >
+    Each column is dark grey basalt, cracked along vertical
+    planes into irregular facets. The bases are wide and
+    uneven, splaying where the stone came through the substrate.
+    No two are the same height. The spacing between them is
+    almost regular — almost, but not quite, which is the thing
+    the eye caught from a distance and the mind kept misreading.
+    Standing among them, they are entirely natural. The
+    regularity is the kind of coincidence that happens in
+    country where something slow and enormous shaped the rock
+    into patterns it was not trying to make. The columns did
+    not choose to stand in rows. They simply do.
+  highland: >
+    The reach continues east and south from the colonnade —
+    grey rock, low scrub, the same flat cold light that has
+    been present since the pass. The columns are the one
+    vertical thing on this part of the ridge. Beyond them
+    the ground falls away south toward other, stranger
+    country. Nothing moves at any distance the eye can
+    account for. The highland does not encourage accounting.
+idlemessages:
+- The wind passes between the columns in complete silence.
+  This is not a sheltered space. There is no reason for
+  the silence.
+- Light falls on the dark stone at a flat angle — not dim,
+  but flat, as though the surface absorbs the direction
+  rather than reflecting it.
+- A stone loosens somewhere above and strikes twice on its
+  way down. The sound arrives sharp and then is entirely
+  gone.
+- From the right angle, standing still, the rows almost
+  align into a passage. Move a few steps and they don't.

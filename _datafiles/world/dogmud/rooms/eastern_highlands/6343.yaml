@@ -1,0 +1,64 @@
+roomid: 6343
+zone: Eastern Highlands
+title: The Edge of the Reach
+description: >
+  The pass is behind. This is the highland —
+  the same grey the threshold promised, but here
+  the grey has no edge within sight and the scrub
+  extends on every side without interruption or
+  reduction. The
+  <ansi fg="itemname">highland floor</ansi>
+  is scoured to what the weather could not take —
+  basalt and grit and thin root-work pressed into
+  every crack, the whole surface low and old and
+  indifferent to what passes over it. The
+  <ansi fg="itemname">sky</ansi>
+  is very large and completely empty. Nothing moves
+  in it. Nothing moves anywhere the eye reaches.
+  The cold from the threshold has not increased
+  crossing into this, but it has changed — at the
+  threshold it was the cold at the edge of a thing.
+  Here it is the interior of that thing, and it
+  does not vary in any direction.
+biome: mountains
+coord: {x: -2, y: 61, z: 3}
+exits:
+  west:
+    roomid: 6342
+    zone: Cascade Pass Road
+  east:
+    roomid: 6344
+nouns:
+  highland floor: >
+    Grit and fractured basalt and scrub-root pressed
+    into every crack — the surface here is what
+    remains after everything yielding has been taken
+    by weather. It looks stable enough. It is cold to
+    the touch even when the air above it is not
+    especially cold. The scrub that grows in the
+    cracks does not look as though it was planted
+    or encouraged. It looks as though it survived.
+  sky: >
+    The sky over the eastern reach is broad and
+    flat-grey without feature — not the sky of a
+    storm approaching but of a sky that has simply
+    always been this colour. Nothing circles in it.
+    No bird, no shape, nothing that moves. The eye
+    goes looking for a point of reference and finds
+    none. At the horizon the sky and the ground
+    resolve into the same texture and become
+    indistinguishable.
+idlemessages:
+- The wind crosses the open ground without obstruction
+  and without warmth. It arrives and it continues.
+- Nothing moves in the scrub. Not the wind, not
+  anything else. The stillness is the kind that
+  has been maintained rather than arrived at.
+- The cold at the floor of the reach is constant and
+  sourceless — it rises from the ground as readily
+  as it descends from the air.
+- The horizon to the east is grey and uniform and
+  gives no indication of where the highland ends,
+  or whether it does.
+- A stone shifts somewhere nearby in the grit without
+  visible cause. The sound does not repeat.

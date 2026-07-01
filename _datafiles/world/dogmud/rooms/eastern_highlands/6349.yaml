@@ -1,0 +1,58 @@
+roomid: 6349
+zone: Eastern Highlands
+title: The Lightning-Split Cairn
+description: >
+  A cairn stands on a cleared shelf of stone — fieldstone,
+  stacked with care, the kind of fixed marker a methodical
+  surveyor builds to anchor a position. Something reached it
+  at some point and clove it from cap to base, the stones
+  on either side of the split tumbled outward and left where
+  they fell. What remains of the
+  <ansi fg="itemname">cairn</ansi>
+  still stands, divided but not fully collapsed — old enough
+  that the
+  <ansi fg="itemname">lightning scar</ansi>
+  has weathered smooth, the break face darkened to the same
+  grey as the surrounding rock. Anyone following written
+  directions into this country would recognise this landmark.
+  Whoever wrote those directions did not come back.
+biome: mountains
+coord: {x: 2, y: 60, z: 3}
+exits:
+  north:
+    roomid: 6348
+  east:
+    roomid: 6350
+nouns:
+  cairn: >
+    The cairn is fieldstone, each piece chosen for flatness
+    and stacked with evident care. The split divided it cleanly
+    — the two halves lean slightly away from each other now,
+    a finger's width of gap along the full height of the break.
+    The stones that tumbled outward lie where they landed. No
+    one has touched them since. The remaining structure is solid
+    in the way of things that have had long enough to settle
+    into their damaged state. The care in the original stacking
+    is still legible in the courses. Someone built this to
+    last. It has.
+  lightning scar: >
+    The break face is not raw stone. Time has worked it to
+    the same smooth weathered finish as the exterior, the
+    same grey-brown patina, the same faint lichen in the
+    cracks. The bolt that struck it was not recent. The
+    dividing line runs true from the topmost course to the
+    base — a single clean cleft, as though the cairn was
+    designed to demonstrate what was inside it. The inside
+    is just stone. Solid all the way through.
+idlemessages:
+- The wind off the scoured flat to the east arrives without
+  warmth. It has been coming from that direction for a
+  long time.
+- The two halves of the cairn are still close enough that
+  you could touch both without stepping between them.
+- Nothing has disturbed the fallen stones around the base.
+  They lie where they landed.
+- The lichen on the break face has been there long enough
+  to forget there was a break.
+- A fixed point. A surveyor's mark. Whatever it was fixed
+  to or for is less clear now.
