@@ -281,6 +281,13 @@ func (b *Balance) validateMisc() {
 		b.InstanceStatPoolCap = 50000
 	}
 
+	// ── CRASH SITE (#22) ─────────────────────────────────────────────────────
+	// inside the buried hull (#22), spell power and mutation combat bonuses are
+	// scaled to this fraction; 0=fully suppressed, 1=no effect.
+	if b.CrashSiteSuppressionFactor <= 0 || b.CrashSiteSuppressionFactor > 1.0 {
+		b.CrashSiteSuppressionFactor = 0.35
+	}
+
 	// ── SKILL WEIGHT ─────────────────────────────────────────────────────────
 	if b.SkillWeight <= 0 {
 		b.SkillWeight = 2.0
