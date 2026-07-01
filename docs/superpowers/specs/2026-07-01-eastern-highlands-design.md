@@ -136,13 +136,26 @@ skill** (disarm rather than destroy) so it gates without hard-walling solo;
 killing it is the group path and the one that yields the full loot.
 
 **Loot (drops from the Sentinel / the set-piece):**
-- **1–2 pieces of gear competitive head-to-head with ~300g Oasis BIS.**
+- **2 pieces of gear competitive head-to-head with ~300g Oasis BIS, in
+  slots currently UNSERVED by instance BIS.** Slot sanity-check (2026-07-01):
+  Oasis covers weapon/body/head/shoulders/ring/neck/wrist; Arena covers
+  weapon/offhand/gloves/legs. **Feet and ranged weapon have NO BIS.** So the
+  two drops are:
+  - **Endgame boots (feet slot)** — BIS-competitive defensive boots;
+    optionally a small hazard/discharge-resist flavor tying to the zone's
+    degraded defenses (thematically apt — footing on the biting ground).
+  - **Endgame ranged weapon (`subtype: shooting`)** — the first BIS-tier
+    ranged weapon in the game (a masterwork heavy bow/arbalest). **Frame it
+    as mundane masterwork (dark horn/steel, ancient make), NOT an energy
+    weapon** — the lore boundary forbids overt tech; ambiguous-origin
+    masterwork is fine.
   Authored as FIXED items (overworld has no gold buy-in) whose stats are
   matched to the ~300g-affixed Oasis templates (Volcanic Plate 20072,
   Earthshaker Warhammer 10027, etc. + their affix scaling). **Build task:
   read the instance affix-scaling to compute the 300g-equivalent stat
   target, then author the fixed items to match.** These are real BIS-tier
-  rewards, justified by a real BIS-tier fight.
+  rewards, justified by a real BIS-tier fight, and they fill genuine slot
+  gaps rather than duplicating existing instance BIS.
 - **A tech-relic trophy** — the Sentinel's "core" (a still-warm heartstone
   / oracle-shard), high-value sellable + a lore/quest hook, non-techie
   description.
