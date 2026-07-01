@@ -52,3 +52,6 @@ idlemessages:
   close against the skin like attention.
 mutators:
 - mutatorid: hull_discharge
+spawninfo:
+  - mobid: 9550
+    respawnrate: "20 real minutes"

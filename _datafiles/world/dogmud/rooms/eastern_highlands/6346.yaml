@@ -70,3 +70,6 @@ idlemessages:
   The smell continues out of it steadily.
 - The gully bottom holds a particular quiet — the kind
   that belongs to a place that is not always this quiet.
+spawninfo:
+  - mobid: 9543
+    respawnrate: "12 real minutes"

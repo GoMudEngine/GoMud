@@ -66,3 +66,6 @@ idlemessages:
   of it.
 mutators:
 - mutatorid: hull_discharge
+spawninfo:
+  - mobid: 9548
+    respawnrate: "20 real minutes"

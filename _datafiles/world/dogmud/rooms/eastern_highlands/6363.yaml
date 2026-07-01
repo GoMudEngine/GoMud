@@ -60,3 +60,6 @@ idlemessages:
   and does not answer to the wind above it.
 - The silence at the lip is total, and in it the fact of the thing
   presses down without a single word to soften it.
+spawninfo:
+  - mobid: 9547
+    respawnrate: "20 real minutes"

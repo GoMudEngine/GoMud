@@ -1,0 +1,57 @@
+mobid: 9545
+zone: Eastern Highlands
+behavior_archetype: generic_fighter
+aiprofile: brute
+archetype: fighting
+hostile: true
+statpool: 400
+maxwander: 3
+groups:
+  - animal
+spawnmutations: [thick-hide]
+idlecommands:
+  - 'emote roots through the scoured earth with its broad snout,
+    grunting, turning up ground that does not have much left in it.'
+  - ''
+  - 'emote shakes its heavy hide once, rattling loose the dust of
+    the plain.'
+  - ''
+  - 'wander'
+  - ''
+  - 'emote swings its head up and holds still, small eyes moving
+    across the open ground without hurry.'
+  - ''
+combatcommands:
+  - 'emote lowers its head until the tusks nearly scrape the ground,
+    weight settling back onto its haunches.'
+  - charge
+  - ''
+  - 'emote drives forward with the full slab of its shoulders,
+    not slowing.'
+  - bash
+  - ''
+activitylevel: 25
+character:
+  items:
+    - itemid: 40163
+      dropchance: 60
+  name: A Scoured-Plain Boar
+  description: |
+    A massive animal, slab-shouldered and low, with a hide so
+    thick and scarred it has taken on the texture of old bark.
+    The bristles along its spine are sparse now -- worn off by
+    years of highland wind rather than by any fight. The tusks
+    are long and uneven, the asymmetry of things that have been
+    used for a long time and do not care about geometry. It roots
+    with an unhurried authority, as if the exposed plain belongs
+    to it and always has. It has not learned to hurry. It has
+    not needed to.
+  speciesid: 6
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 14
+    vitality:
+      training: 10
+itemdropchance: 60

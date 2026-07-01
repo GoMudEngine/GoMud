@@ -59,3 +59,6 @@ idlemessages:
   pinching narrow between them. Each step takes you further in.
 - The cold off the surface leans against you the whole length
   of the walk. Steady. Patient. Wrong.
+spawninfo:
+  - mobid: 9546
+    respawnrate: "12 real minutes"

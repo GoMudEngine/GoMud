@@ -63,3 +63,6 @@ idlemessages:
 - Nothing has crossed the line and left remains on the
   other side. The ground ahead is clean and bare and
   very quiet.
+spawninfo:
+  - mobid: 9545
+    respawnrate: "12 real minutes"

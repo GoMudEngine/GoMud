@@ -55,3 +55,6 @@ idlemessages:
   out of the space by something that keeps leaning.
 - Nothing has crossed the edge and left remains on the far side.
   The ground beyond is clean and open and very quiet.
+spawninfo:
+  - mobid: 9547
+    respawnrate: "20 real minutes"

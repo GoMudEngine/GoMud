@@ -1,0 +1,34 @@
+mobid: 9551
+zone: Eastern Highlands
+behavior_archetype: generic_fighter
+aiprofile: skirmisher
+archetype: fighting
+hostile: true
+statpool: 300
+maxwander: 0
+groups:
+  - construct
+spawnmutations: [psychic-resistance]
+idlecommands:
+  - 'emote hangs in the air at the vault''s edge, a splinter of grey
+    light that does not quite hold still.'
+  - ''
+  - 'emote flickers, as if reading the dark, and steadies again.'
+  - ''
+combatcommands:
+  - 'emote darts in fast and rakes a thin, cold edge of light across
+    you.'
+  - ''
+  - 'emote circles wide and flings a shard of hard light like a
+    thrown blade.'
+  - ''
+character:
+  name: A Watcher-Shard
+  description: |
+    A splinter broken from the great watcher''s guard -- quick where
+    it is slow, a shard of the same cold grey light that darts and
+    circles and will not let you pass the vault unopposed.
+  speciesid: 20
+  level: 1
+  gold: 0
+itemdropchance: 0

@@ -1,0 +1,64 @@
+mobid: 9548
+zone: Eastern Highlands
+behavior_archetype: predator
+aiprofile: predator
+archetype: fighting
+hostile: true
+statpool: 650
+maxwander: 3
+groups:
+  - animal
+  - canine
+spawnmutations: [rapid-metabolism]
+idlecommands:
+  - 'emote circles the ground in a wide, restless arc, nose low,
+    covering ground without apparent purpose.'
+  - ''
+  - 'emote stops and holds, skull lifted, scenting something on the
+    wind. Then continues.'
+  - ''
+  - 'wander'
+  - ''
+  - 'emote watches you with the flat attention of something that has
+    already started tracking.'
+  - ''
+combatcommands:
+  - 'emote closes the distance in a long, ground-eating run that
+    does not slow on the way in.'
+  - hamstring
+  - ''
+  - 'emote breaks away and circles back, burning off the damage and
+    coming in again from a different angle.'
+  - howl
+  - ''
+  - 'emote snaps in fast and pulls back, testing where the opening
+    is before committing.'
+  - ''
+activitylevel: 25
+character:
+  items:
+    - itemid: 40163
+      dropchance: 65
+  name: A Carrion Highland-Hound
+  description: |
+    Lean in the way of things that burn through everything they
+    eat and are always hungry. The legs are too long for a wolf
+    and the skull is wider -- shaped more for running down prey
+    across open ground than for timber-country work. The coat
+    is rough and patchy, not from sickness but from the speed
+    at which this animal moves through conditions -- wet, cold,
+    wounded, and on regardless. It has the look of something
+    that heals as fast as it is hurt and has never learned to
+    stop because of it. It circles you with a dogged, purposeful
+    patience that is not patience at all.
+  speciesid: 2
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 12
+    dexterity:
+      training: 12
+    perception:
+      training: 8
+itemdropchance: 65

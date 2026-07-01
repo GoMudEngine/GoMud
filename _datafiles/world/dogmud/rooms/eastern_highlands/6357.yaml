@@ -66,3 +66,6 @@ idlemessages:
   walking, because the thing that causes it does not lessen either.
 mutators:
 - mutatorid: hull_discharge
+spawninfo:
+  - mobid: 9548
+    respawnrate: "20 real minutes"

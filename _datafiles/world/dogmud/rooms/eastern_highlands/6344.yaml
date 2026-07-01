@@ -62,3 +62,6 @@ idlemessages:
 - Between the basalt plates the thin soil lies
   unmarked. There have been no tracks in it for
   a very long time.
+spawninfo:
+  - mobid: 9545
+    respawnrate: "12 real minutes"

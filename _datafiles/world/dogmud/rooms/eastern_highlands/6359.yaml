@@ -60,3 +60,6 @@ idlemessages:
   go away now. It changes how the whole country looks.
 - The eye slides off the sheen and finds no purchase. The body
   already knew. The body is ahead of the eye out here.
+spawninfo:
+  - mobid: 9544
+    respawnrate: "12 real minutes"

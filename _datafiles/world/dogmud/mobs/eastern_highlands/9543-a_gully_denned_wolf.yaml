@@ -1,0 +1,58 @@
+mobid: 9543
+zone: Eastern Highlands
+behavior_archetype: predator
+aiprofile: predator
+archetype: fighting
+hostile: true
+statpool: 350
+maxwander: 3
+groups:
+  - animal
+  - canine
+spawnmutations: [night-vision]
+idlecommands:
+  - 'emote lifts its muzzle to the gully dark and holds there,
+    reading the air in a long, patient pull.'
+  - ''
+  - 'emote moves along the ravine wall in a low circuit, barely
+    separable from the black rock behind it.'
+  - ''
+  - 'wander'
+  - ''
+  - 'emote fixes you with eyes that catch light from no visible source
+    and holds the stare without moving.'
+  - ''
+combatcommands:
+  - 'emote drops into a low, flat run and closes the ground between
+    you without announcement.'
+  - hamstring
+  - ''
+  - 'emote breaks off and circles to your flank, unhurried, patient,
+    looking for the angle it wants.'
+  - howl
+  - ''
+activitylevel: 25
+character:
+  items:
+    - itemid: 40163
+      dropchance: 60
+  name: A Gully-Denned Wolf
+  description: |
+    A black wolf, heavy through the chest and wide across the
+    muzzle -- built more for the ravines than the open country
+    above. The coat is so dark it reads as shadow in daylight and
+    vanishes entirely at night. The eyes catch light from no
+    visible source -- a quality that comes from living too long in
+    lightless places. It has been in those gullies long enough
+    that the dark now belongs to it. It watches you from inside
+    that belonging, and it has already made up its mind about
+    what you are.
+  speciesid: 2
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 10
+    perception:
+      training: 8
+itemdropchance: 60

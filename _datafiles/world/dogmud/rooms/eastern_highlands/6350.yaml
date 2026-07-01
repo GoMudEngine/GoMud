@@ -57,3 +57,6 @@ idlemessages:
 - To the south the ground holds the shape of something.
   Not quite scrub. Not quite nothing. Closer inspection
   will be required.
+spawninfo:
+  - mobid: 9543
+    respawnrate: "12 real minutes"

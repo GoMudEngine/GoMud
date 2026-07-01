@@ -50,3 +50,6 @@ idlemessages:
   shut thing set into it. It does not want you closer.
 mutators:
 - mutatorid: hull_discharge
+spawninfo:
+  - mobid: 9549
+    respawnrate: "20 real minutes"

@@ -66,3 +66,6 @@ idlemessages:
 - Nothing about the country prepared anyone to stand next to
   something of this size. The silence does not help. The silence
   only lets it in.
+spawninfo:
+  - mobid: 9546
+    respawnrate: "12 real minutes"

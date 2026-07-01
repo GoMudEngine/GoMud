@@ -1,0 +1,57 @@
+mobid: 9552
+zone: Eastern Highlands
+behavior_archetype: leader
+aiprofile: brute
+archetype: fighting
+submission_policy: lethal
+surrender_policy: never
+hostile: true
+statpool: 1200
+maxwander: 0
+groups:
+  - construct
+  - guardian
+spawnmutations: [large]
+idlecommands:
+  - 'emote turns its single socketed eye across the dark of the vault,
+    slow and unblinking, and settles it on nothing.'
+  - ''
+  - 'emote holds utterly still, a cold light banked deep in its core,
+    waiting on a thing that has not come for an age.'
+  - ''
+combatcommands:
+  - 'emote wakes fully, the light in its core flaring hard, and brings
+    a crushing weight down where you stand.'
+  - ''
+  - 'emote sweeps a lash of cold light across the vault in a flat,
+    merciless arc.'
+  - bash
+  - ''
+character:
+  items:
+    - itemid: 20090
+      dropchance: 100
+    - itemid: 10046
+      dropchance: 100
+    - itemid: 40165
+      dropchance: 100
+    - itemid: 40166
+      dropchance: 3
+  name: The Sentinel
+  description: |
+    A great watching shape kept in the dark of the vault for an age
+    past reckoning -- a body of the same seamless grey as the buried
+    thing it guards, and set in the centre of it a single deep socket
+    where a cold light waits, banked and patient. It does not breathe
+    and it has never slept. It has only waited -- waited for something
+    to come to the door -- and now you are here. The light in the
+    socket is beginning to wake.
+  speciesid: 20
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 30
+    vitality:
+      training: 30
+itemdropchance: 100

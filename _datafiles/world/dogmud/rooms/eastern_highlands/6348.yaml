@@ -59,3 +59,6 @@ idlemessages:
   gone.
 - From the right angle, standing still, the rows almost
   align into a passage. Move a few steps and they don't.
+spawninfo:
+  - mobid: 9544
+    respawnrate: "12 real minutes"

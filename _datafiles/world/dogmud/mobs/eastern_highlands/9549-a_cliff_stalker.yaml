@@ -1,0 +1,61 @@
+mobid: 9549
+zone: Eastern Highlands
+behavior_archetype: ambusher
+aiprofile: ambush_predator
+archetype: fighting
+hostile: true
+statpool: 650
+maxwander: 2
+groups:
+  - animal
+  - predator
+spawnmutations: [fast-reflexes]
+idlecommands:
+  - 'emote moves along the cliff face, picking ledges with an
+    unhurried familiarity with the route.'
+  - ''
+  - 'emote crouches on a ledge above and holds, watching the
+    approach below without blinking.'
+  - ''
+  - 'wander'
+  - ''
+  - 'emote shifts its weight and drops to a lower ledge without
+    sound, selecting a new vantage.'
+  - ''
+combatcommands:
+  - 'emote drops from the ledge in a single fast surge, all of its
+    weight fully committed before it lands.'
+  - hamstring
+  - ''
+  - 'emote pivots and closes the angle faster than anything that
+    size should be able to manage.'
+  - ''
+  - 'emote breaks contact and repositions along the rock face,
+    very fast, choosing the next angle.'
+  - ''
+activitylevel: 25
+character:
+  items:
+    - itemid: 40163
+      dropchance: 65
+  name: A Cliff-Stalker
+  description: |
+    A large cat built for vertical country -- longer-limbed than
+    most of its kind, with broad, splayed feet shaped for the
+    fractured cliff faces of the high reach. The coat is grey-
+    black to match the volcanic stone, the same problem the
+    ridge-cat solved for the open ridgeline and this animal
+    solved for the vertical. At rest on a ledge it could pass
+    for a shadow. Moving, it is very fast -- faster than
+    anything that size has a right to be, the reflex of
+    something that has climbed and dropped and pivoted on sheer
+    rock long enough that reaction now lives ahead of intention.
+  speciesid: 11
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 16
+    perception:
+      training: 12
+itemdropchance: 65

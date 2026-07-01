@@ -64,3 +64,6 @@ idlemessages:
   nothing here to attend. The feeling does not care.
 mutators:
 - mutatorid: hull_discharge
+spawninfo:
+  - mobid: 9549
+    respawnrate: "20 real minutes"

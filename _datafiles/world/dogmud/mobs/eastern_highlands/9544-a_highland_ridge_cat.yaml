@@ -1,0 +1,60 @@
+mobid: 9544
+zone: Eastern Highlands
+behavior_archetype: ambusher
+aiprofile: ambush_predator
+archetype: fighting
+hostile: true
+statpool: 350
+maxwander: 3
+groups:
+  - animal
+  - predator
+spawnmutations: [camo-skin]
+idlecommands:
+  - 'emote settles flat against the ridge face, its banded flanks
+    going still, reading as stone.'
+  - ''
+  - 'emote tracks something below with pale, fixed eyes. Its tail
+    moves once at the tip and stops.'
+  - ''
+  - 'wander'
+  - ''
+  - 'emote shifts position without sound, selecting a new angle on
+    the approach below.'
+  - ''
+combatcommands:
+  - 'emote drops from the ridge in a single low surge, all the
+    weight of it going forward at once.'
+  - hamstring
+  - ''
+  - 'emote pivots and closes the distance faster than the stride
+    should allow.'
+  - ''
+  - 'emote breaks off and circles low, patient, looking for the
+    next opening.'
+  - ''
+activitylevel: 25
+character:
+  items:
+    - itemid: 40163
+      dropchance: 60
+  name: A Highland Ridge-Cat
+  description: |
+    A long-bodied cat, grey-black with darker banding across the
+    flanks -- a pattern so close to the basalt ridgeline that at
+    rest the animal simply is not there. Moving, it gives you
+    almost nothing to hear. The blending is not a trick of light
+    but something deeper, a quality in the hide itself, the way
+    the colors shift slightly as it settles against the stone.
+    It has been up here long enough that the ridgeline and the
+    animal have reached an arrangement. You are looking at your
+    side of that arrangement now.
+  speciesid: 11
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 12
+    perception:
+      training: 8
+itemdropchance: 60
