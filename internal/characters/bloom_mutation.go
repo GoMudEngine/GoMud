@@ -100,10 +100,20 @@ func (c *Character) BloomSeedNewMutation(rng *rand.Rand) (string, int) {
 		if w < 1 {
 			w = 1
 		}
+		if c.MutationRerollBonus > 0 {
+			w = w * w // post-scour: square the Rarity weight, biasing hard toward rare
+		}
 		candidates = append(candidates, candidate{id, w})
 	}
 	if len(candidates) == 0 {
 		return "", 0
+	}
+
+	// Past this point a grant is guaranteed (totalWeight > 0 → one of the
+	// success returns fires). Consume a post-scour reroll charge here so the
+	// biased weighting above tapers off as the Chrysalis re-forms.
+	if c.MutationRerollBonus > 0 {
+		c.MutationRerollBonus--
 	}
 
 	// Sort by id so the pool layout is deterministic before random selection.

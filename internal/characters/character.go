@@ -257,6 +257,7 @@ type Character struct {
 	Skills                  map[string]int                 `yaml:"skills,omitempty"`           // The skills the character has, and what level they are at
 	Mutations               map[string]int                 `yaml:"mutations,omitempty"`        // mutationId → level (Stage 12.1)
 	MutationProgress        float64                        `yaml:"mutationprogress,omitempty"` // accumulates toward next mutation (Stage 12.1)
+	MutationRerollBonus     int                            `yaml:"mutationrerollbonus,omitempty"` // post-scour charges: while >0, re-acquired mutations bias hard toward rare, one charge consumed per new mutation
 	Cooldowns               Cooldowns                      `yaml:"cooldowns,omitempty"`        // How many rounds until it is cooled down
 	Settings                map[string]string              `yaml:"settings,omitempty"`         // custom setting tracking, used for anything.
 	QuestProgress           map[int]string                 `yaml:"questprogress,omitempty"`    // quest progress tracking
