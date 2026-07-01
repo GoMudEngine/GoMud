@@ -1,5 +1,30 @@
 # DOGMud Patch Notes
 
+## 2026-06-30 — The road east: Greenford opens
+
+- **A new road runs east from the Confluence.** Past the temple city's east
+  gate, the East Road climbs onto dry wheat plateau, through a waypoint village,
+  and down to a river crossing — an open, unhurried leg with its own travelers
+  and drovers, wild plums and gleaned grain to forage, and an old waystone at
+  the field's edge that no one can quite explain.
+- **Greenford — a quiet university town — is now open.** Across the bridge on
+  the east bank lies a whole small city to wander: a working riverfront with a
+  bridge-warden and a mill, a modest town center with a bookshop and the
+  Cartographer's Rest inn, the university and its library up the hill, the
+  residential streets behind the college, and the road running on west toward
+  New Plymouth. Dozens of townsfolk with their own trades, talk, and small
+  lives.
+- **New questline — The Surveyor's Report.** A scholar at the university is
+  certain a retired surveyor saw something out in the eastern country and buried
+  it in a report that says nothing at all. Read the filed survey in the archive,
+  earn the scholar's introduction, and seek the surveyor out at the quiet end of
+  the residential streets. What he finally tells you points east — into the
+  broken highland country, toward a thing he will not name.
+- **The world is bigger, and older.** Careful travelers will notice the same
+  faint mark recurring on the university's oldest maps, unexplained; and the
+  road at the town's western edge gestures on toward the capital, a journey for
+  another day.
+
 ## 2026-06-29 — Newbie-area fixes (from a final playtest pass)
 
 - **The Awakening rite plays out before it finishes.** Previously the "quest
