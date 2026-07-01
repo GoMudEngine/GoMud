@@ -1,0 +1,20 @@
+itemid: 40170
+name: Oracle Shard
+namesimple: shard
+vendor_categories:
+- enchanting
+description: >-
+  A sliver broken from one of the tall speaking-stones that murmur
+  in the deep galleries. Held to the ear it gives back a faint
+  patient hum, the tail-end of a voice reciting something in an
+  order it has never once forgotten. The surface is smooth as still
+  water and holds no scratch. Whatever record it keeps, it keeps
+  gladly -- and a careful maker can coax a little of that certainty
+  into a finished piece.
+type: object
+subtype: mundane
+component_tag: oracle-shard
+weight: 0.3
+value: 1150
+rarity_tier: 82
+is_component: true

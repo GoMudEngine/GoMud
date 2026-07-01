@@ -1,0 +1,20 @@
+itemid: 40172
+name: Coldlight Cell
+namesimple: cell
+vendor_categories:
+- enchanting
+description: >-
+  A palm-sized grey pod that holds a steady bluish glow with no flame
+  and no heat -- the same tireless cold light that lines the deep
+  corridors. It does not dim when you cover it and does not warm when
+  you cup it close. Somewhere inside, a small captive brightness has
+  been burning far longer than any lamp has a right to, and asks for
+  nothing to keep burning. A skilled hand can set it to work in
+  something worth the carrying.
+type: object
+subtype: mundane
+component_tag: coldlight-cell
+weight: 0.4
+value: 1100
+rarity_tier: 82
+is_component: true

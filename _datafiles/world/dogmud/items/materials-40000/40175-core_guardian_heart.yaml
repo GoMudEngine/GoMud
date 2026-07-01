@@ -1,0 +1,21 @@
+itemid: 40175
+name: Core Guardian Heart
+namesimple: heart
+vendor_categories:
+- blacksmithing
+description: >-
+  Drawn from the deepest of the guardians, the one that stood over the
+  place where all the buried quiet gathers. It is a fist of grey
+  material folded around a single mote of trapped brightness, and it
+  is never wholly still -- the light within drifts and settles like
+  something breathing in its sleep. Hold it and you feel a slow pulse
+  answer in your own wrist, patient and enormous. Whatever it once
+  guarded, it guards its last warmth now. A relic beyond price, fit
+  only for work that will outlast the one who makes it.
+type: object
+subtype: mundane
+component_tag: grey-relic
+weight: 1.0
+value: 2500
+rarity_tier: 90
+is_component: true

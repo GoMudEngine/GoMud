@@ -1,0 +1,19 @@
+itemid: 40171
+name: Hull Filament
+namesimple: filament
+vendor_categories:
+- tailoring
+description: >-
+  A single thread of the grey material, drawn out fine as spider-silk
+  and impossibly long, coiled around itself in a loose grey nest. It
+  weighs almost nothing and will not part no matter how you pull it,
+  yet it lies soft and cool across the palm. Woven through cloth or
+  hide it lends a strength the eye cannot account for, and it drinks
+  a strange chill from the air around it.
+type: object
+subtype: mundane
+component_tag: hull-filament
+weight: 0.1
+value: 950
+rarity_tier: 80
+is_component: true

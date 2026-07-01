@@ -1,0 +1,20 @@
+itemid: 40173
+name: Sealed Medical Relic
+namesimple: relic
+vendor_categories:
+- alchemy
+description: >-
+  A slim grey case, still sealed, recovered from the white room where
+  the dead machines once tended to the hurt. A cool liquid shifts
+  behind its clouded window, pale and clean and faintly luminous. The
+  seam is seamless; it was closed by no hand and by nothing this world
+  taught. Whatever mending it was meant to carry has waited, patient
+  and unspoiled, for a very long time -- and an alchemist of rare skill
+  might yet unlock what it was made to give.
+type: object
+subtype: mundane
+component_tag: medical-relic
+weight: 0.5
+value: 1200
+rarity_tier: 83
+is_component: true

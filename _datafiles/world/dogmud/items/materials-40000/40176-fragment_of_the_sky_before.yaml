@@ -1,0 +1,18 @@
+itemid: 40176
+name: Fragment of the Sky-Before
+namesimple: fragment
+description: >-
+  A thin curved shard of something clear and colourless, no larger
+  than your palm, that was never glass. Look through it and the light
+  bends strangely, and for a breath the dim around you opens out into
+  a vastness that has no walls -- a deep and endless dark scattered
+  with a thousand steady points of cold fire, and a sense of falling
+  that is somehow also coming home. Then it is only a shard again,
+  cool in your hand. You keep it. You will not be able to say why, or
+  to anyone who was not here.
+type: object
+subtype: mundane
+not_salable: true
+weight: 0.2
+value: 0
+rarity_tier: 88
