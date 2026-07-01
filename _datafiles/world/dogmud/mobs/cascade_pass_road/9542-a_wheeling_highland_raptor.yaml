@@ -1,0 +1,53 @@
+mobid: 9542
+zone: Cascade Pass Road
+behavior_archetype: generic_fighter
+aiprofile: ambush_predator
+archetype: fighting
+hostile: true
+statpool: 220
+maxwander: 3
+groups:
+  - animal
+  - avian
+spawnmutations: [keen-eyes]
+idlecommands:
+  - 'emote wheels overhead in a long, patient circle, riding the
+    thermal off the pass face without a wingbeat.'
+  - ''
+  - 'emote tilts into a banking turn and loses a notch of altitude,
+    crossing the road in a wide arc.'
+  - ''
+  - 'wander'
+  - ''
+  - 'emote fixes the ground below with a sharp, calculating stare
+    before lifting away on the wind.'
+  - ''
+combatcommands:
+  - 'emote folds its wings and drops into a steep, fast stoop,
+    talons forward.'
+  - ''
+  - 'emote strikes and climbs without landing, beating for height
+    to circle and come again.'
+  - ''
+activitylevel: 25
+character:
+  name: A Wheeling Highland-Raptor
+  description: |
+    A large bird of prey that rides the thermal columns off the
+    pass face -- wide-winged, unhurried, moving in long circles
+    hundreds of feet up. It rarely lands and rarely needs to.
+    The talons are built for gripping and the beak for tearing,
+    and it has the keen, unhurried patience of something that can
+    afford to wait for exactly the right moment. When it stoops,
+    there is almost no warning -- the shape drops out of the sky
+    fast and without sound, and by the time you register it, it
+    has already committed.
+  speciesid: 9
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 8
+    perception:
+      training: 10
+itemdropchance: 0

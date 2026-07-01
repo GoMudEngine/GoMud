@@ -1,0 +1,66 @@
+mobid: 9541
+zone: Cascade Pass Road
+behavior_archetype: leader
+aiprofile: predator
+archetype: fighting
+submission_policy: lethal
+surrender_policy: never
+hostile: true
+statpool: 550
+maxwander: 1
+groups:
+  - animal
+  - predator
+spawnmutations: [large]
+idlecommands:
+  - 'emote stands at the center of the pass, motionless, its back
+    broad against the sky.'
+  - ''
+  - 'emote swings its scarred head slowly to regard whatever moved
+    below, then goes still again.'
+  - ''
+  - 'emote scents the air in a long, deliberate pull, then returns
+    to watching the road below.'
+  - ''
+combatcommands:
+  - 'emote rises to its full height and comes down with both
+    forepaws, driving from the shoulder.'
+  - bash
+  - ''
+  - 'emote drops its head and drives forward with the full mass of
+    it, not slowing at the point of impact.'
+  - charge
+  - ''
+  - 'emote swings one heavy forearm in a wide arc, more than
+    enough to move whatever is in its way.'
+  - ''
+activitylevel: 30
+character:
+  name: The Pass-Apex
+  description: |
+    A bear -- or the shape of one -- that holds the top of the
+    pass. It is too large. Not in the way of big animals, which
+    have proportions that still make sense -- but wrongly large,
+    as if the frame was built for something heavier than what
+    walks on it, and the body filled in regardless. It moves
+    without sound for what it weighs. The scars on its shoulders
+    and across its muzzle are old and layered, which means many
+    things tested it once and did not do so again. Everything
+    else on this road gives it the pass. There is something in
+    the way it stands -- something in the stillness -- that
+    suggests it came down out of the deep highland not because
+    it was pushed out, but because it decided to.
+  speciesid: 3
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 15
+    vitality:
+      training: 12
+    perception:
+      training: 6
+itemdropchance: 75
+loot_pool:
+  - 40163
+  - 40164

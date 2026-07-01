@@ -56,3 +56,6 @@ idlemessages:
 - The folded bedroll, the stacked timber, the line
   of threshold stones — all of it worn to use, none
   of it recent.
+spawninfo:
+  - mobid: 9535
+    respawnrate: "15 real minutes"

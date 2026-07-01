@@ -61,3 +61,6 @@ idlemessages:
   reconsidering.
 - The highest branches shift once — slow, without
   noise — and are still.
+spawninfo:
+  - mobid: 9539
+    respawnrate: "12 real minutes"

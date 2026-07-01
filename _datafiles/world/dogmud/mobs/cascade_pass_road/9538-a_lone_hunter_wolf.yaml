@@ -1,0 +1,56 @@
+mobid: 9538
+zone: Cascade Pass Road
+behavior_archetype: predator
+aiprofile: predator
+archetype: fighting
+hostile: true
+statpool: 275
+maxwander: 3
+groups:
+  - animal
+  - canine
+spawnmutations: [fast-reflexes]
+idlecommands:
+  - 'emote raises its muzzle and tests the air in a slow, deliberate
+    sweep, reading something you cannot.'
+  - ''
+  - 'emote paces a long circuit through the timber, moving without
+    sound, then stops and looks back the way it came.'
+  - ''
+  - 'wander'
+  - ''
+  - 'emote watches you from the edge of the tree line, motionless,
+    unhurried, in no particular hurry to decide.'
+  - ''
+combatcommands:
+  - 'emote drops low and drives in close, finding the angle before it
+    commits.'
+  - ''
+  - 'emote breaks off and circles, looking for the opening.'
+  - howl
+  - ''
+  - hamstring
+activitylevel: 25
+character:
+  name: A Lone Hunter-Wolf
+  description: |
+    Grey-black through the shoulders, lighter at the flanks -- a
+    wolf built for weight rather than speed, though it has both.
+    It is large for its kind and lean in the way predators go lean
+    when they work alone, all the extra burned off and none of it
+    missed. It holds its stretch of deep timber with the quiet
+    certainty of something that does not need to explain itself to
+    the country it lives in. Its eyes are the color of old ice.
+    It watches you without moving, assessing, unbothered by your
+    size, in no hurry at all.
+  speciesid: 2
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 8
+    perception:
+      training: 6
+itemdropchance: 65
+loot_pool:
+  - 40163

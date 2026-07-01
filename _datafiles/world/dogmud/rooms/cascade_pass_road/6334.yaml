@@ -64,3 +64,6 @@ idlemessages:
   something older than the road below.
 - A gust hits the ledge sideways, brief and sharp,
   then passes. The raptor above does not react to it.
+spawninfo:
+  - mobid: 9542
+    respawnrate: "15 real minutes"

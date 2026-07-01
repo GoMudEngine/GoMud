@@ -1,0 +1,58 @@
+mobid: 9540
+zone: Cascade Pass Road
+behavior_archetype: ambusher
+aiprofile: ambush_predator
+archetype: fighting
+hostile: true
+statpool: 275
+maxwander: 3
+groups:
+  - animal
+  - predator
+spawnmutations: [chameleon-skin]
+idlecommands:
+  - 'emote settles lower against the rock face, its grey-dun flanks
+    going still, becoming part of the scree.'
+  - ''
+  - 'emote tracks something with pale eyes that you cannot locate.
+    Its tail moves once, very slightly, then stops.'
+  - ''
+  - 'wander'
+  - ''
+  - 'emote draws itself flat and holds. The rock behind it could
+    be the same color. It almost is.'
+  - ''
+combatcommands:
+  - 'emote drops flat and drives forward in a single low surge, all
+    its weight going forward at once.'
+  - ''
+  - 'emote pivots and closes the angle faster than the stride should
+    allow.'
+  - hamstring
+  - ''
+  - 'emote breaks contact and circles, very low, patient, looking for
+    the next opening.'
+  - ''
+activitylevel: 25
+character:
+  name: A Highland Stalker-Cat
+  description: |
+    Long and low, grey-dun with darker banding across the flanks
+    -- a coat built for rock and winter shadow rather than earth
+    and leaf. At rest against the scree it is nearly invisible.
+    Moving, it is nearly silent. The tail is long and held low
+    and almost still. The eyes are pale and very steady. Most
+    prey never see it make the choice. The choosing happens
+    before the cat moves, and by the time it moves, everything
+    after that is already decided.
+  speciesid: 11
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 10
+    perception:
+      training: 8
+itemdropchance: 65
+loot_pool:
+  - 40163

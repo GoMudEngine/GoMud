@@ -57,3 +57,6 @@ idlemessages:
 - Below and behind, the pass descends to country with
   trees and shelter and sound. That direction is west.
   This direction is east.
+spawninfo:
+  - mobid: 9542
+    respawnrate: "15 real minutes"

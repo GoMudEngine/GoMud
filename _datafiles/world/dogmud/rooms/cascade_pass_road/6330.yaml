@@ -63,3 +63,8 @@ idlemessages:
   them in a long time.
 - The trail bends north just past the road's edge. East
   of that point the undergrowth is untouched.
+spawninfo:
+  - mobid: 9538
+    respawnrate: "12 real minutes"
+  - mobid: 9539
+    respawnrate: "12 real minutes"

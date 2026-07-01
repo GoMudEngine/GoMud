@@ -64,3 +64,6 @@ idlemessages:
   Even your breathing seems briefly too loud.
 - The light filtering through the canopy is even and
   green and absent of movement.
+spawninfo:
+  - mobid: 9538
+    respawnrate: "12 real minutes"

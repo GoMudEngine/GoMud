@@ -60,3 +60,8 @@ idlemessages:
 - The cold coming off the exposed stone here is
   different from the wind's cold. It rises from
   below, from the rock itself.
+spawninfo:
+  - mobid: 9540
+    respawnrate: "12 real minutes"
+  - mobid: 9541
+    respawnrate: "30 real minutes"

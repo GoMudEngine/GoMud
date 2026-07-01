@@ -75,3 +75,8 @@ idlemessages:
 - Through the trees to the east the old timber stands —
   close, better grade by eye — and the clearing's edge
   turns away from it.
+spawninfo:
+  - mobid: 9536
+    respawnrate: "15 real minutes"
+  - mobid: 9537
+    respawnrate: "15 real minutes"

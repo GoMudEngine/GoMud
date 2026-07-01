@@ -66,3 +66,6 @@ idlemessages:
   it plain enough in the flat light.
 - The overhang to the north is the only shelter
   visible from the gap in any direction.
+spawninfo:
+  - mobid: 9540
+    respawnrate: "12 real minutes"
