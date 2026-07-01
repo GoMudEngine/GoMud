@@ -33,6 +33,9 @@ combatcommands:
   - ''
 activitylevel: 25
 character:
+  items:
+    - itemid: 40163
+      dropchance: 65
   name: A Tusked Forest-Boar
   description: |
     A massive animal, slab-shouldered and low to the ground, with
@@ -53,5 +56,3 @@ character:
     vitality:
       training: 8
 itemdropchance: 65
-loot_pool:
-  - 40163
