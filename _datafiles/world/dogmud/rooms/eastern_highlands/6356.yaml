@@ -19,7 +19,7 @@ description: >
   more than the country was shaped to hold. To keep with the grey
   you must turn south now and take the
   <ansi fg="itemname">bend</ansi>,
-  keeping the surface off your right hand, and the walking will
+  keeping the surface off your left hand, and the walking will
   not shorten what you are walking beside.
 biome: cliffs
 coord: {x: 8, y: 59, z: 3}
