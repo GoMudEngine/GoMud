@@ -1,0 +1,14 @@
+itemid: 40168
+name: an attuned disc
+namesimple: disc
+description: >
+  The same pale grey disc — but the raised lines hold a faint steady
+  warmth now, and the mark at its centre catches the light and keeps it,
+  a ring struck through with a line, patient and awake. It answers
+  something. It is a key, and it knows the shape of its lock.
+type: object
+subtype: mundane
+not_salable: true
+weight: 0.3
+value: 0
+rarity_tier: 85

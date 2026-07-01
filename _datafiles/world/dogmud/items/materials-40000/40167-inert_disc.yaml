@@ -1,0 +1,16 @@
+itemid: 40167
+name: an inert disc
+namesimple: disc
+description: >
+  A disc of pale grey metal the size of a spread hand, too smooth and too
+  regular to be anything the folk made — fine raised lines threading
+  inward to a single mark at its centre, a ring struck through with a
+  line. It stays cool in the hand and holds the light a half-instant
+  longer than it should. It does nothing. Whatever it is for, it is not
+  awake.
+type: object
+subtype: mundane
+not_salable: true
+weight: 0.3
+value: 0
+rarity_tier: 70
