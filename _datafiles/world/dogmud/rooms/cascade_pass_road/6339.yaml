@@ -1,0 +1,58 @@
+roomid: 6339
+zone: Cascade Pass Road
+title: The Survivor's Shelter
+description: >
+  A rock overhang opens to the south at the head of a
+  short scramble from the road below — low-ceilinged,
+  dry, deep enough to shelter against the wind that
+  runs through the gap at night. Under the
+  <ansi fg="itemname">overhang</ansi>
+  a
+  <ansi fg="itemname">fire</ansi>
+  is banked low in a ring of blackened stones, the ash
+  grey and old around a small live core. Someone has
+  been here a long time. The signs are everywhere —
+  stacked dry timber in one corner, a folded bedroll
+  worn through at the edges, a line of smaller stones
+  marking a threshold more by habit than by design.
+  A gaunt figure sits near the fire, one sleeve pinned
+  back where the right arm ends at the wrist. The eyes
+  come up when you arrive and stay on you a moment,
+  reading something, then go back to the fire. The
+  figure does not speak first.
+biome: cliffs
+coord: {x: -7, y: 62, z: 3}
+exits:
+  south:
+    roomid: 6337
+nouns:
+  overhang: >
+    The rock projects out from the cliff face in a
+    natural lean, low enough to duck under, wide enough
+    for a person to sleep at full length with room
+    beside them. The underside is smoked black in one
+    long stain from years of fire. The back wall is
+    dry — the overhang sheds rain completely — and the
+    stone there has been leaned against so many times
+    that the surface is worn smooth at shoulder height.
+    This has been someone's shelter for a long time.
+  fire: >
+    A low ring of blackened stones, the ash inside deep
+    and packed from many seasons of use. The fire is
+    banked rather than spent — a few coals at the
+    center hold live heat, and the driest wood has
+    been laid nearby where it can be reached without
+    moving far. The warmth it gives is modest. The
+    care taken to keep it is not.
+idlemessages:
+- The fire breathes once, softly, and settles.
+- Wind crosses the gap below but does not reach into
+  the overhang. The shelter holds its quiet.
+- The figure near the fire does not look up, but you
+  have the sense of being tracked anyway.
+- Outside the low entrance, the heights are grey and
+  open. In here the ceiling and the stone on three
+  sides make something close to warm.
+- The folded bedroll, the stacked timber, the line
+  of threshold stones — all of it worn to use, none
+  of it recent.

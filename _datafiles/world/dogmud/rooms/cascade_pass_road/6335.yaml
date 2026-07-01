@@ -1,0 +1,70 @@
+roomid: 6335
+zone: Cascade Pass Road
+title: The High Shoulder
+description: >
+  The climb ends here. The ground levels on a broad
+  shoulder of exposed rock and the pass opens in both
+  directions at once.
+
+  Behind and below, the way you came —
+  <ansi fg="itemname">settled country</ansi> spread
+  out in its greens, the fields and forest small and
+  warm under a sky that looked softer when you were
+  in it. Distance makes it orderly. You can see the
+  farms and the roads and the smokes of habitation,
+  and none of it reaches this height. It is already
+  somewhere else.
+
+  Ahead, to the east, the
+  <ansi fg="itemname">grey highland</ansi> runs
+  broken and flat toward a hard horizon. The colour
+  is gone from it — ash and slate and pale stone,
+  the shapes on it too far to read clearly. The
+  ground out there has a character the body notices
+  before the mind names it. Old. The word arrives
+  without a source.
+biome: mountains
+coord:
+  x: -9
+  y: 61
+  z: 3
+exits:
+  down:
+    roomid: 6334
+  east:
+    roomid: 6336
+nouns:
+  settled country: >
+    From the top of the pass the settled country is
+    laid out below like a map of itself — green
+    fields divided by hedgerows and stone walls,
+    patches of dark timber, the threads of roads,
+    the grey-brown of ploughed ground, the silver
+    glint of water where a stream catches the light.
+    Smoke from hearths rises thin and straight where
+    no wind reaches it. The light on it is warm in a
+    way the light at the top of the pass is not.
+    It is already far and will be farther.
+  grey highland: >
+    The country to the east is broken ground — rock
+    and thin soil and no visible cultivation. The
+    colours are muted to grey and brown and something
+    almost white where old stone surfaces. Dark shapes
+    interrupt the plateau at intervals, regular enough
+    to notice and too far to resolve. The horizon is
+    hard and flat and gives nothing away. The ground
+    reads as old — not abandoned, not ruined, but old
+    in a way that predates both. Something in it
+    settles in the chest and does not lift.
+idlemessages:
+- The wind runs unobstructed from east to west here,
+  loud in the open, carrying nothing familiar.
+- To the west, the settled country is small and still.
+  To the east, the grey highland runs to a horizon
+  that gives nothing back.
+- The light on the eastern plateau is flat and even —
+  it reveals the ground without warmth.
+- The pass carries sound oddly. A gust arrives without
+  a source and moves through clean.
+- Standing between the two views, the eye goes east
+  before the mind has chosen a direction.

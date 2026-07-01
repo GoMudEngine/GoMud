@@ -1,0 +1,66 @@
+roomid: 6334
+zone: Cascade Pass Road
+title: The Exposed Switchback
+description: >
+  The path narrows to a ledge of bare rock, the
+  mountain face rising close on one side and falling
+  away sharply on the other. The drop is long and
+  the bottom of it is not visible from where you
+  stand. The <ansi fg="itemname">handholds</ansi>
+  cut into the rock face are worn smooth and shallow
+  — not by recent use, but by something older. The
+  stone where hands have gone is polished to a
+  different colour than the weathered rock to either
+  side. This path was used before the farms were
+  fields, before anyone thought to call it a road.
+
+  Above, a <ansi fg="itemname">raptor</ansi> turns
+  slow circles on a thermal, very high, dark against
+  the flat sky. It has been there as long as you
+  have been climbing. It has not descended and shows
+  no sign of doing so. The wind here has an edge.
+biome: cliffs
+coord:
+  x: -9
+  y: 61
+  z: 2
+exits:
+  down:
+    roomid: 6333
+  up:
+    roomid: 6335
+nouns:
+  handholds: >
+    Carved into the rock face at intervals along the
+    narrowest section of the ledge — each one a
+    flat palm-width depression, angled for grip.
+    They are worn smooth and shallow with use, the
+    stone polished to a different texture than the
+    rough weathered surface to either side. Someone
+    cut these a very long time ago, and many hands
+    have used them since. The work is plain and
+    functional. There is no mark on them to say who
+    made them or when.
+  raptor: >
+    A large bird turning slow circles on a thermal
+    high above the pass — dark against the grey sky,
+    wings angled in the stillness of soaring. It
+    drifts wide and comes back. It has been there for
+    as long as you have been on the switchback. It
+    has not descended to a perch, has not stooped,
+    has not moved toward the high rocks where birds
+    roost. It is simply present, turning, attending
+    to the ground below with a patience you cannot
+    read from here.
+idlemessages:
+- The raptor turns another long circuit above the
+  pass, unhurried, and does not descend.
+- Wind comes up the rock face from below, cold and
+  direct, and presses flat against the stone beside
+  you.
+- The drop on the open side of the ledge is longer
+  than is comfortable to look at straight down.
+- The handholds are smooth under the hand — worn by
+  something older than the road below.
+- A gust hits the ledge sideways, brief and sharp,
+  then passes. The raptor above does not react to it.

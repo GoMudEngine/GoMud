@@ -1,0 +1,64 @@
+roomid: 6342
+zone: Cascade Pass Road
+title: The Threshold of the Reach
+description: >
+  The ground here is the last of it — the furthest
+  point the road reaches, where the highland swallows
+  what remains of any human intention in the terrain.
+  To the west the pass descends back toward the world.
+  To the east the
+  <ansi fg="itemname">highland</ansi>
+  runs on — grey rock and low scrub and nothing else,
+  no road, no shelter, no visible water in any
+  direction. The cold off it is not the cold of
+  weather. There is a quality in the air at this edge
+  that the body registers before the mind finds a name
+  for it. The silence is the wrong kind of silence —
+  not the absence of sound, but sound pressed out of
+  the space by something that continues to press. The
+  <ansi fg="itemname">eastern ground</ansi>
+  is not passable country. Not from here. Not without
+  something the road has not prepared anyone to carry.
+biome: mountains
+coord: {x: -3, y: 61, z: 3}
+exits:
+  west:
+    roomid: 6341
+nouns:
+  highland: >
+    Grey and immense, the reach continues east from
+    the threshold without interruption. The scrub is
+    low and the stone is exposed in long flat outcrops
+    between patches of grit and thin soil. There is
+    no path — only open ground that becomes other
+    open ground. At a certain distance the detail
+    resolves into texture and the texture into a
+    single uniform grey, and at that point it becomes
+    impossible to judge how far it goes. Far enough
+    that the question stops feeling useful.
+  eastern ground: >
+    The ground at the threshold edge is undistinguished —
+    the same mountain rock as behind you, the same
+    scrub, the same grey grit in the cracks. There
+    is no wall, no barrier, no visible reason the
+    passage east should be what it is. And yet
+    standing here and looking at it, the body does
+    not volunteer to go. Something about the scale,
+    or the silence, or the quality of the air. The
+    mind catches up eventually. By then you are
+    usually already looking west.
+idlemessages:
+- The wind off the eastern reach arrives without
+  warning and passes without diminishing.
+- Nothing moves out there. The highland holds
+  whatever it holds at a distance the eye cannot
+  close.
+- The cold at this edge is constant and sourceless.
+  It does not vary. It does not let up. It is
+  simply present.
+- Standing at the threshold, the sounds of the pass
+  behind you feel very distant. They are not distant.
+  This is the wrong kind of quiet.
+- The eastern ground catches light in a way that
+  makes distance hard to read. What looks close
+  is not close.

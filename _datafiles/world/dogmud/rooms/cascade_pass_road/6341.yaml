@@ -1,0 +1,59 @@
+roomid: 6341
+zone: Cascade Pass Road
+title: The Plateau Edge
+description: >
+  The pass gives out here. The ground stops climbing
+  and the view opens without warning — grey highland
+  running east past the limit of sight, flat-topped
+  ridgelines beyond that, and beyond those, more of
+  the same. The
+  <ansi fg="itemname">eastern reach</ansi>
+  is vast in a way that is difficult to hold in the
+  eye at once. The scale is wrong — too large, too
+  open, too still. The sky presses down on it without
+  feature. Wind comes off the plateau from somewhere
+  further east, steady and cold, without the variable
+  gusts of the pass below. It does not carry anything
+  recognizable. The
+  <ansi fg="itemname">road</ansi>
+  ends where the pass does — the last cut stone buried
+  under highland drift a few paces back. East of here
+  is not road. East of here is ground.
+biome: mountains
+coord: {x: -4, y: 61, z: 3}
+exits:
+  west:
+    roomid: 6340
+  east:
+    roomid: 6342
+nouns:
+  eastern reach: >
+    Grey and scoured, the reach runs east until
+    distance reduces it to a series of flat ridgelines
+    that are identical to each other at this range.
+    There is no obvious landmark, no break in the
+    terrain that marks a destination or a boundary.
+    It goes on. The country has a quality of having
+    been looked at once — surveyed, named, notated —
+    and still being entirely indifferent to that
+    attention.
+  road: >
+    The road from the lower pass ends here — its last
+    cut stones buried under highland drift, the line
+    it followed disappearing into the scrub. What
+    continues east is not a path exactly — more the
+    absence of scrub where something has passed often
+    enough to keep it clear. That trace fades within
+    a short distance and does not resume.
+idlemessages:
+- The wind off the plateau is steady and carries no
+  variation. It has come a long way to get here.
+- Nothing moves on the eastern reach as far as the
+  eye can follow. The stillness is not peaceful.
+  It is simply complete.
+- The sky over the highland is the same flat grey in
+  all directions. It gives nothing away about what
+  lies beyond the ridgelines.
+- Below and behind, the pass descends to country with
+  trees and shelter and sound. That direction is west.
+  This direction is east.

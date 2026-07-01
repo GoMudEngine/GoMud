@@ -1,0 +1,62 @@
+roomid: 6333
+zone: Cascade Pass Road
+title: The Tree Line
+description: >
+  The last trees stand here — stunted, leaning,
+  their trunks torqued by decades of wind that has
+  not relented. They thin quickly and then stop, the
+  transition abrupt — a handful of
+  <ansi fg="itemname">bent pines</ansi> marking the
+  boundary, then bare rock and open sky running upward
+  without cover. The wind that the forest held back
+  arrives here in full — steady, cold, carrying
+  altitude and nothing else.
+
+  Behind and below, the
+  <ansi fg="itemname">settled valley</ansi> opens
+  out — fields, dark timber, the pale threads of
+  roads diminishing to the scale of something seen
+  from a height. The light on it is softer than the
+  light up here, and the warmth of it already belongs
+  somewhere else. The air is noticeably thinner. The
+  climb continues above.
+biome: mountains
+coord:
+  x: -9
+  y: 61
+  z: 1
+exits:
+  down:
+    roomid: 6332
+  up:
+    roomid: 6334
+nouns:
+  bent pines: >
+    Small, gnarled trees, their trunks leaning under
+    decades of unbroken wind. The branches grow long
+    and ragged to leeward and are stripped almost bare
+    on the windward face. The bark is tight and pale,
+    the needles a dark grey-green. The trees look like
+    arguments the wind has been winning for a very
+    long time. They end here. Nothing grows above them
+    on the bare rock.
+  settled valley: >
+    From this height the valley below is compressed to
+    something complete and composed — greens of field
+    and pasture, the darker mass of managed timber,
+    pale roads running between them. Smoke from
+    distant hearths rises thin and straight where there
+    is no wind to push it. The light on it is softer
+    than the light up here. It is already smaller than
+    it was an hour ago, and it will be smaller still.
+idlemessages:
+- The wind arrives off the bare rock above in long
+  cold pulses, carrying nothing but altitude.
+- Looking back down through the last trees, the valley
+  is a green distance, quiet and already small.
+- The bent pines creak once together and go still.
+  Nothing above them moves.
+- The air up here is thinner. The body notices it
+  before the mind catches up.
+- A pebble comes loose somewhere above, clatters twice
+  on bare rock, and stops.

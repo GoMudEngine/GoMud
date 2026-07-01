@@ -1,0 +1,68 @@
+roomid: 6337
+zone: Cascade Pass Road
+title: The Wind-Gap
+description: >
+  The pass cuts through at its narrowest here — a
+  gap in the mountain spine where the terrain funnels
+  the wind into something continuous and loud. It
+  does not gust here. It runs. The sound of it is
+  constant and absorbs smaller sounds entirely.
+
+  There is no shelter at the gap itself. A faint
+  <ansi fg="itemname">side path</ansi> runs north
+  among frost-split boulders toward the shape of a
+  <ansi fg="itemname">rock overhang</ansi> set back
+  from the main pass — the kind of place a traveller
+  caught by weather would be glad of. The main way
+  continues east, where the ground opens onto the
+  grey plateau beyond the pass.
+
+  The wind does not stop for the gap. It treats it
+  as what it is — a hole in the mountain that belongs
+  to the wind.
+biome: mountains
+coord:
+  x: -7
+  y: 61
+  z: 3
+exits:
+  west:
+    roomid: 6336
+  east:
+    roomid: 6338
+  north:
+    roomid: 6339
+nouns:
+  side path: >
+    A narrow track threading north among the
+    frost-split boulders below the ridge — not made
+    by design but by repeated use, the stone worn
+    faint with the passage of feet over a long
+    period. It leads toward the low overhang visible
+    to the north, where the rock cuts back far enough
+    to offer some protection from the weather. The
+    path is not wide. It is not marked. It goes where
+    it goes and ends at the overhang.
+  rock overhang: >
+    A low shelf of old stone projecting from the
+    north face of the ridge, far enough back from
+    the open pass to break the wind. The ground
+    underneath is dry where the surrounding stone is
+    damp, and there is old ash there — grey and fine,
+    from a fire laid long enough ago that the rain
+    has had its way with what remained. Someone has
+    sheltered here before. Possibly many someones,
+    over a long span. The ash gives the space a used
+    feeling, neither welcoming nor unwelcoming.
+idlemessages:
+- The wind runs through the gap steady and loud,
+  absorbing everything smaller than itself.
+- The side path to the north is faint but worn —
+  more feet than you can easily count have used it.
+- A gust hits the gap harder than the baseline wind
+  and passes through in a note too low to hear
+  cleanly.
+- The eastern plateau opens from here, the way onto
+  it plain enough in the flat light.
+- The overhang to the north is the only shelter
+  visible from the gap in any direction.
