@@ -14,6 +14,7 @@ var HomeLocations = map[string]int{
 	"coulee":      5209,
 	"newplymouth": 5901,
 	"confluence":  6173,
+	"greenford":   6291,
 }
 
 // HomeLocationNames is the display-string companion to HomeLocations.
@@ -24,6 +25,7 @@ var HomeLocationNames = map[string]string{
 	"coulee":      "Pothole Coulee (The Mending Hut)",
 	"newplymouth": "New Plymouth (The Grand Temple)",
 	"confluence":  "The Confluence (Temple Sanctuary)",
+	"greenford":   "Greenford (The Cartographer's Rest)",
 }
 
 // ResolveRespawnRoom returns the destination room ID for a

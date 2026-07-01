@@ -5,11 +5,16 @@ Your home is where you return when you die.
 
 <ansi fg="yellow">Usage: </ansi>
 
-  <ansi fg="command">sethome</ansi>              Show current home and options
-  <ansi fg="command">sethome default</ansi>      Sanctum Basin (starting area)
+  <ansi fg="command">sethome</ansi>              Show your current home and all options
+  <ansi fg="command">sethome coulee</ansi>       Pothole Coulee (The Mending Hut)
   <ansi fg="command">sethome thornwall</ansi>    Thornwall City (Temple Interior)
+  <ansi fg="command">sethome stillwater</ansi>   Stillwater (Temple of Stillwater)
+  <ansi fg="command">sethome confluence</ansi>   The Confluence (Temple Sanctuary)
+  <ansi fg="command">sethome newplymouth</ansi>  New Plymouth (The Grand Temple)
+  <ansi fg="command">sethome greenford</ansi>    Greenford (The Cartographer's Rest)
 
-New characters start with Sanctum Basin as their home.
-More locations will be added as you discover new cities.
+New characters start at Pothole Coulee (The Mending Hut) as their
+home. More locations become available as new cities are added to
+the world.
 
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help death</ansi>
