@@ -1,0 +1,14 @@
+buffid: 97
+name: Arc Trap
+description: A dormant ward, tripped — a lash of stored violence from the dead machinery.
+triggerrate: 1 round
+triggercount: 2
+start_user_text: Something you crossed was still armed. A ward discharges in a white lash and the pain arrives a half-beat later.
+start_room_text: "{source} trips a dormant ward and the corridor flares white."
+end_user_text: The seared feeling dulls.
+trigger_user_text: The ward's charge crawls through you again.
+trigger_room_text: "{source} spasms as the ward's charge finds them."
+tick_pool: health
+tick_percent: -0.11
+tick_variance: 0.04
+tick_min: 10

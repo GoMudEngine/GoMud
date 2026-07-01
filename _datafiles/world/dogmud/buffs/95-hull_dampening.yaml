@@ -1,0 +1,13 @@
+buffid: 95
+name: Hull Dampening
+description: The buried place presses the change in your blood back down. Your gifts feel distant, your certainty thin.
+triggerrate: 1 round
+triggercount: 5
+flags:
+  - dampened
+statmods:
+  willpower: -30
+  charisma: -30
+start_user_text: The air here is wrong in a way you feel in your blood — the change in you goes quiet, and your gifts pull away like a tide going out.
+start_room_text: "{source} falters, as if something in them had briefly forgotten itself."
+end_user_text: The pressure eases and the change stirs back to life in your blood.
