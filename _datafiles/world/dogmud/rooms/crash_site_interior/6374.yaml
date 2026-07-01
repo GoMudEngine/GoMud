@@ -1,0 +1,25 @@
+roomid: 6374
+zone: Crash Site Interior
+title: The Grey Corridor
+biome: cave
+description: >
+  The corridor runs on, seamless and curving, the same cold light lying
+  even along its length. There are shapes set into the walls — recesses,
+  sealed panels, a shallow alcove where the grey has been worked into a
+  face of small even marks that mean nothing to you and were plainly
+  meant to mean something to someone. Everything is intact. Everything is
+  waiting. Nothing here has decayed the way ten thousand years should
+  decay a thing, and the not-decaying is its own kind of wrong.
+exits:
+  west:
+    roomid: 6373
+  east:
+    roomid: 6375
+nouns:
+  alcove: >
+    A shallow set-in place in the grey wall, its back worked into rows of
+    small even marks — a language, or a reckoning, or a record. You cannot
+    read it. It has waited a very long time for someone who can.
+idlemessages:
+- The cold light runs even along the seamless grey and does not change.
+- A sealed panel in the wall gives back your reflection, faint and slow.

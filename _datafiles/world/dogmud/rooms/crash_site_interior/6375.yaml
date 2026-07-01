@@ -1,0 +1,23 @@
+roomid: 6375
+zone: Crash Site Interior
+title: The Sealed Chamber
+biome: cave
+description: >
+  The corridor ends at a chamber sealed on every side but the one you
+  entered by — a round room of the seamless grey, its ceiling lost in the
+  cold glow above. Set into the far wall is a shape that is plainly a way
+  onward, shut, and beside it the small even marks again, and a recess the
+  size and shape of nothing you carry. Deeper the place goes, and it does
+  not mean to be easy. This is as far as the way is open. For now.
+exits:
+  west:
+    roomid: 6374
+nouns:
+  way onward: >
+    A shut shape in the far wall — a door, or the idea of one, seamless
+    with the grey around it and giving no purchase. It does not open. Not
+    from here. Not yet. The deeper the place goes, the less it means to
+    yield.
+idlemessages:
+- The sealed way stands shut in the far wall, patient and complete.
+- The cold light pools in the round chamber and holds without a flicker.

@@ -1,0 +1,27 @@
+roomid: 6373
+zone: Crash Site Interior
+title: The Breach
+biome: cave
+description: >
+  You are inside the made thing. The way in is a torn seam in the grey —
+  the only wound in a surface that has none anywhere else — and beyond it
+  the walls close into a corridor of the same seamless material, curving
+  gently, lit from nowhere by a cold blue-white glow that does not
+  flicker and casts no shadow you can find the source of. The air is
+  still and dry and old, and it does not move the way air moves. It is
+  very quiet. Whatever you expected, it was not this — a made place,
+  waiting, ten thousand years patient, and not as dead as it should be.
+mapsymbol: "*"
+exits:
+  east:
+    roomid: 6374
+nouns:
+  seam: >
+    The torn edge you came through — the single flaw in an otherwise
+    perfect surface, and even it is clean, as though the grey gave way
+    all at once rather than tearing. Beyond it, the highland light. Ahead,
+    only the cold glow and the curving corridor.
+idlemessages:
+- The cold light holds steady, sourceless, and does not waver.
+- The air lies utterly still, dry and old, untouched by the wind outside.
+- Somewhere deeper in the grey, a sound almost happens, and does not.
