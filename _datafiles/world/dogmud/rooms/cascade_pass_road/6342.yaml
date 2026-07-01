@@ -17,13 +17,18 @@ description: >
   not the absence of sound, but sound pressed out of
   the space by something that continues to press. The
   <ansi fg="itemname">eastern ground</ansi>
-  is not passable country. Not from here. Not without
-  something the road has not prepared anyone to carry.
+  lies open — you can walk out into it, if you have the
+  will. This is the last edge of any road. What lies
+  beyond is the surveyor's country, and worse, and it
+  does not want to be crossed. But it can be.
 biome: mountains
 coord: {x: -3, y: 61, z: 3}
 exits:
   west:
     roomid: 6341
+  east:
+    roomid: 6343
+    zone: Eastern Highlands
 nouns:
   highland: >
     Grey and immense, the reach continues east from
