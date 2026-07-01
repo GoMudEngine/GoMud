@@ -21,13 +21,28 @@ description: >
   hands to the door and the door does not care. You put your weight against
   it and there is nothing to push against, only the vast shut patience of a
   made thing that has been shut a very long time and was never going to
-  open for hands. It opens for the disc. Only the disc.
+  open for hands. It opens for the disc. Only the disc. And at the foot of
+  it, tending a small banked fire as though this were any hearth in the
+  world, sits a lone
+  <ansi fg="itemname">keeper</ansi> —
+  who watches you the way the door will not, and who knows, it seems, how
+  the thing is done.
 biome: cliffs
 coord: {x: 17, y: 54, z: 3}
 exits:
   west:
     roomid: 6370
+spawninfo:
+  - mobid: 9553
+    respawnrate: "30 real minutes"
 nouns:
+  keeper: >
+    A gaunt weathered figure at the foot of the door, keeping a small fire
+    in a place nothing living should want to be. Where you feel the wrong
+    of it in your teeth, the keeper feels nothing at all — long past
+    frightened, settled here like a spider at the one thread the whole
+    country runs to. She looks at you and weighs you, and does not get up.
+    Ask her about the way, and about the key, if you mean to go in.
   door: >
     Seamless, jointless, immense — a single made shape set into the grey
     face and closed so completely that it might be part of the face and not

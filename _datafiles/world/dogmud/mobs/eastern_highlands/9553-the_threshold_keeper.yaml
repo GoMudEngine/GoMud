@@ -1,0 +1,39 @@
+mobid: 9553
+zone: Eastern Highlands
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 40
+maxwander: 0
+groups:
+  - humanoid
+spawnmutations: [iron-constitution]
+idlecommands:
+  - 'emote feeds a scrap of something to a small banked fire at the foot
+    of the door and watches the flame take it.'
+  - ''
+  - 'emote turns a coin over in scarred fingers, weighing it against
+    nothing, and looks up at the buried face as if listening.'
+  - ''
+  - 'emote sits very still at the threshold, unbothered by the cold and
+    the wrongness, a person long past being afraid of this place.'
+  - ''
+character:
+  name: The Threshold-Keeper
+  description: |
+    A gaunt, weathered figure who keeps a fire at the foot of the buried
+    door — the one person greedy or cursed or broken enough to live off
+    the forbidden place, and to have learned how it works. Others come to
+    look at the door and go home; she stayed, and stayed, until the dead
+    country stopped frightening her and started paying. She has watched
+    more than one hopeful soul carry a key up this road and walk in
+    through the way she opened. She does not remember all their faces. She
+    remembers one -- a driven man, years ago, who went in alone and did
+    not come out, and whose daughter she never met. She will open the way
+    as deep as your coin buys. She will not tell you to go in. She will
+    not tell you not to.
+  speciesid: 1
+  level: 1
+  gold: 0
+itemdropchance: 0

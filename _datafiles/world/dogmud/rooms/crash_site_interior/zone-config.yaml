@@ -1,0 +1,9 @@
+name: Crash Site Interior
+instanced: true
+non_cartesian: true
+death_policy: rejoin
+portal_duration: "30 real minutes"
+entry_room: 6373
+allow_recall: false
+region: The Eastern Reach
+defaultbiome: cave
