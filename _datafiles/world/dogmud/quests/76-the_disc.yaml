@@ -127,6 +127,7 @@ triggers:
     noun: hearth-marks
     conditions:
       has: ["76-journal"]
+      missing: ["76-end"]
       missing_item: 40167
     actions:
       - send_text: "The marks are cut for a thing you do not have in hand. Without the disc, they are only scratches in old stone. The disc lies in the old Reliquary at Pothole Coulee."
