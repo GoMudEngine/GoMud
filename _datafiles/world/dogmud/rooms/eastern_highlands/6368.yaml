@@ -1,0 +1,55 @@
+roomid: 6368
+zone: Eastern Highlands
+title: The Ward-Field
+description: >
+  The last open stretch before the buried face narrows to a corridor of
+  charged air, and the air is not empty. It is loaded. Something in it
+  stands drawn taut and waiting — a held
+  <ansi fg="itemname">charge</ansi>
+  laid across the ground the way a held breath is laid across a room
+  before a blow, and you do not so much walk through it as walk into it.
+  The hair lifts on the arm. The teeth ache faintly at their roots. The
+  <ansi fg="itemname">air</ansi>
+  bites, dry and metallic, and every step forward deepens the sense of a
+  pressure that has been building against the skin without ever breaking.
+  Nothing here has moved in an age and everything here is ready to. This
+  is not weather, and it is not natural, and it is not safe. It is the
+  made thing keeping its distance kept, and the closer the door the harder
+  it presses, and the body knows — the way it has known all through this
+  country — that the field would answer if it were crossed the wrong way.
+biome: cliffs
+coord: {x: 15, y: 54, z: 3}
+exits:
+  west:
+    roomid: 6367
+  east:
+    roomid: 6370
+nouns:
+  charge: >
+    It has no colour and no glow and throws no light, and still you can
+    feel exactly where it lies — a taut, waiting weight strung through the
+    air ahead like a wire pulled to the edge of snapping. It is not stone
+    and it is not weather. It was set here, and set to hold, and it has
+    held a very long time. Stepping into it is like stepping into the
+    moment before something breaks, drawn out and drawn out and never
+    allowed to break.
+  air: >
+    Dry, metallic, faintly bitter on the back of the tongue. It hums at a
+    pitch too low to hear and only the teeth catch it, an ache at the
+    roots that comes and goes with each step. The nearer the buried face
+    the thicker it grows, until breathing it feels like breathing
+    something that is aware of you and does not mean you well.
+idlemessages:
+- The charge in the air tightens for a moment against the skin and then
+  eases, without cause, without sound.
+- The hair stands on your arm and will not lie flat. Nothing here is
+  touching you. Something here is very close to it.
+- A dry metallic taste rises at the back of the tongue and sits there.
+  The air has weight in this place, and the weight is waiting.
+- The pressure deepens the further east you look, toward the face and the
+  shut thing set into it. It does not want you closer.
+mutators:
+- mutatorid: hull_discharge
+spawninfo:
+  - mobid: 9549
+    respawnrate: "20 real minutes"

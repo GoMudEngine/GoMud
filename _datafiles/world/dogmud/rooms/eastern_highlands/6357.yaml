@@ -1,0 +1,71 @@
+roomid: 6357
+zone: Eastern Highlands
+title: The Long Flank
+description: >
+  South of the curve the
+  <ansi fg="itemname">surface</ansi>
+  simply continues. It is the same here as it was behind you — the
+  same seamless grey, the same even sheen, the same absence of any
+  grain or joint or seam to rest the eye on — and it is the
+  sameness that undoes you. There is no landmark on it, nothing to
+  mark passage by, so that walking its
+  <ansi fg="itemname">flank</ansi>
+  feels like standing still against a thing that refuses to be got
+  past. It does not end. It gives no sign of ending, no thinning,
+  no far edge coming up. The horror is not in any one stretch of
+  it but in the not-ending — in the quiet arithmetic of one more
+  identical span and then one more, on and on, for as long as
+  there is south to walk. And near the grey the
+  <ansi fg="itemname">air</ansi>
+  crawls and bites as it did before, into the teeth, into the
+  blood, a stinging wrongness that runs south exactly as far as
+  the surface does, which is to say past any end a person could
+  walk to.
+biome: cliffs
+coord: {x: 8, y: 58, z: 3}
+exits:
+  north:
+    roomid: 6356
+  south:
+    roomid: 6358
+nouns:
+  surface: >
+    Span after span it is identical. The grey does not lighten. It
+    does not darken. It does not show a single mark by which one
+    length of it could be told from the length before. Looking
+    ahead is looking at what is already behind you, and looking
+    behind is looking at what is ahead, and between the two there
+    is only the same continuing grey, patient and whole and
+    without any feature to hang a hope of an ending on.
+  flank: >
+    The long side of the surface leans from the swept ground and
+    runs south beside you, level and unbroken, a companion that
+    never changes and never tires and never arrives anywhere. To
+    walk it is to make no progress you can feel, because there is
+    nothing to make progress against — only more of the same, kept
+    always at the same lean, off the same shoulder, for as long as
+    the legs will go.
+  air: >
+    Close to the grey the air keeps its charge, that crawling
+    prickle that finds the arms and the eyes and the roots of the
+    teeth and the humming note it lays under the blood. It does
+    not fade with familiarity. If anything the longer you walk in
+    it the more the body insists on the harm it reads there, harm
+    without a wound, a warning that only ever waits and never
+    quite comes and never quite lets up.
+idlemessages:
+- One more span of grey, and then one more, each the same as the
+  last, and the sameness is worse than any change could be.
+- The crawling in the air walks south with you, into the teeth and
+  the blood, keeping pace exactly and never falling behind.
+- You look ahead for an ending and the surface answers with more
+  of itself, level and even and going on.
+- The silence lies flat over the long flank, and the only thing
+  that stirs in it is the stinging in the air near the grey.
+- Your teeth ache, low and even, and the ache does not lessen for
+  walking, because the thing that causes it does not lessen either.
+mutators:
+- mutatorid: hull_discharge
+spawninfo:
+  - mobid: 9548
+    respawnrate: "20 real minutes"

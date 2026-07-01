@@ -1,0 +1,55 @@
+roomid: 6370
+zone: Eastern Highlands
+title: The Disc-Face Approach
+description: >
+  The ground rises the last short way and the buried face rises with it,
+  filling the east — the vast grey flank of the made thing sheer and close
+  now, and set into it, still a stone's throw ahead, the shape the whole
+  road has been climbing toward. A
+  <ansi fg="itemname">door</ansi>.
+  You cannot make out its detail yet, only that the face carries something
+  deliberate there, a great shut shape with a mark at its heart. But the
+  last step east is not free. Strung across the final approach, between you
+  and the door, lies a
+  <ansi fg="itemname">ward</ansi> —
+  the charged air gathered and narrowed here into a single taut line, the
+  last defence of the threshold, and this one is not content to press and
+  warn. This one would kill. It can be read, if the nerve holds. It can be
+  found where it lies and eased apart by a careful hand. But it cannot be
+  walked through, and the body knows it, and stops at the edge of it on its
+  own.
+biome: cliffs
+coord: {x: 16, y: 54, z: 3}
+exits:
+  west:
+    roomid: 6368
+  east:
+    roomid: 6372
+    lock:
+      difficulty: 55
+      trapbuffids: [94]
+nouns:
+  door: >
+    From here it is only a shape — a shut, deliberate thing set into the
+    grey face ahead, too far yet to read in full. What carries across the
+    gap is that it was meant, placed, made to be there, and that at its
+    centre sits a mark the eye has met before on Reth's markers. The rest
+    waits behind the ward. There is no reading it from here, and no
+    reaching it without crossing the taut and lethal air between.
+  ward: >
+    The charge that filled the field behind you is gathered here into one
+    narrow, singing line drawn across the approach — you can find its edges
+    if you are still and patient, a seam in the air that hums against the
+    teeth. It is not a wall and it is not a lock. It is a set thing, a trap
+    laid to hold and to punish, and it would answer a careless step in
+    full. A steady hand that could find where it is anchored might ease it
+    apart. A hurried one would not get the chance to regret it.
+idlemessages:
+- The narrow line of the ward sings faintly across the approach, low and
+  steady, and does not falter.
+- The door waits in the grey face ahead, shut and deliberate, its one mark
+  too far to read and close enough to pull at you.
+- The air along the final step stands taut as a drawn wire. Every instinct
+  you own agrees on one thing, which is not yet.
+- Something in the gathered charge shifts and settles, the way a set trap
+  settles, patient, still armed.

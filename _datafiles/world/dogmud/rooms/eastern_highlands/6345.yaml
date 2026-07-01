@@ -1,0 +1,63 @@
+roomid: 6345
+zone: Eastern Highlands
+title: The Gully Head
+description: >
+  The ground opens here — an erosion cut running
+  south from this point, steep-sided and deeper
+  than it first reads from the rim. The
+  <ansi fg="itemname">gully</ansi>
+  is not large by the standards of gorges, but
+  the walls are sheer at the top and the floor
+  is shadow and loose material that would shift
+  badly under any weight. The smell that comes
+  up from it is old and sourced in what water
+  left behind when it stopped running — not rot
+  exactly, not damp exactly, but the residue of
+  both after a long drying. The
+  <ansi fg="itemname">gully rim</ansi>
+  east holds firmer stone, and the way on runs
+  there — along the edge where the ground is more
+  continuous and the drop stays visible on one
+  side. South descends into the cut. East continues
+  along the rim toward country that offers nothing
+  better than this.
+biome: mountains
+coord: {x: 0, y: 61, z: 3}
+exits:
+  west:
+    roomid: 6344
+  east:
+    roomid: 6347
+  south:
+    roomid: 6346
+nouns:
+  gully: >
+    An erosion cut running south from this point,
+    carved by water that no longer runs anywhere
+    in these highlands. The walls expose horizontal
+    bands of different stone where the erosion worked
+    through the surface material into what lies
+    beneath — older, darker, denser. The floor is
+    shadow and loose scree. The smell from it is old
+    and sourced in stone that was wet for a long
+    time and has been dry for longer.
+  gully rim: >
+    A stretch of more continuous rock along the
+    gully's eastern edge, where the ground is firm
+    enough to walk without testing each step. The
+    drop to the gully floor stays visible on the
+    south side. The highland continues on the north.
+    The rim is not comfortable, but it is passable —
+    which is the best the eastern reach has offered.
+idlemessages:
+- Wind finds the gully from somewhere below and rises
+  from it carrying the smell of old stone.
+- A loose piece of gully wall drops somewhere in the
+  cut below. The sound travels up and then stops.
+- The rim here is narrow enough that the gully drop
+  stays present at the edge of vision going east.
+- The sky above the gully is the same flat grey as
+  the highland floor. The cut opens a slot in it
+  from below.
+- The far wall of the gully is shadow at every hour.
+  Whatever the floor holds does not show from the rim.

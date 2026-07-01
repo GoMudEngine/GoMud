@@ -1,0 +1,67 @@
+roomid: 6344
+zone: Eastern Highlands
+title: The Broken Plateau
+description: >
+  The ground here presents as solid and is not.
+  The
+  <ansi fg="itemname">cracked basalt</ansi>
+  sheets the surface in broad flat pieces that
+  look like floor, but each one shifts slightly
+  at the heel — the stone is underlaid by nothing
+  reliable, sitting over an absence rather than a
+  foundation. Between the basalt plates the
+  <ansi fg="itemname">thin soil</ansi>
+  shows where erosion has won small patches, and
+  those patches do not hold weight any better.
+  The plateau is nearly flat, which means the
+  horizon is identical in every direction — the
+  same grey scrub and exposed stone repeating
+  until distance reduces it to uniform texture.
+  Nothing grows tall here. The plants root in
+  cracks rather than ground, as though whatever
+  lies beneath the surface has long discouraged
+  anything from pressing deeper.
+biome: mountains
+coord: {x: -1, y: 61, z: 3}
+exits:
+  west:
+    roomid: 6343
+  east:
+    roomid: 6345
+nouns:
+  cracked basalt: >
+    Broad flat sheets of dark stone worked loose
+    from the bedrock by freeze and melt across
+    more seasons than anything else out here.
+    The surface looks sound. The sound it makes
+    underfoot does not agree — each step carries
+    a hollow quality that suggests the rock is
+    resting on nothing. The edges give slightly
+    at pressure. Not enough to fall through.
+    Enough to know the question is open.
+  thin soil: >
+    Grey and fine, little more than weathered
+    grit pressed into the gaps between the basalt
+    plates. Nothing visibly grows in it, though
+    the cracks in the stone beside it show
+    root-work. The soil is dry to a depth that
+    suggests it has not been wet for a long time.
+    Between the basalt sheets, no tracks mark it.
+    Whatever does not come here, does not come
+    to these patches first.
+idlemessages:
+- A section of basalt shifts at the edge of a step
+  and does not shift back to where it was.
+- The wind here is low and steady and does not move
+  the scrub much. The scrub is too old to respond.
+- Light falls on the plateau without warmth. The
+  stone absorbs it and returns nothing.
+- The horizon is the same in every direction. There
+  is no way to tell from here whether the highland
+  narrows, ends, or simply continues as it is.
+- Between the basalt plates the thin soil lies
+  unmarked. There have been no tracks in it for
+  a very long time.
+spawninfo:
+  - mobid: 9545
+    respawnrate: "12 real minutes"

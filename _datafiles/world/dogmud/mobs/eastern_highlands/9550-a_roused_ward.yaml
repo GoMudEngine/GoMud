@@ -1,0 +1,33 @@
+mobid: 9550
+zone: Eastern Highlands
+behavior_archetype: generic_fighter
+aiprofile: aggressive
+archetype: fighting
+hostile: true
+statpool: 300
+maxwander: 0
+groups:
+  - construct
+spawnmutations: [magical-resistance]
+idlecommands:
+  - 'emote drifts a slow circuit of the chamber, a mote of cold light
+    with no face.'
+  - ''
+  - 'emote pulses once, dim and wary, and holds its place in the dark.'
+  - ''
+combatcommands:
+  - 'emote flares and strikes with a hard needle of cold light.'
+  - ''
+  - 'emote wheels close and lashes at you with a whip of force.'
+  - ''
+character:
+  name: A Roused Ward
+  description: |
+    A small hard mote of the same cold light as the great watcher --
+    one of its lesser defenses, roused now from a long stillness and
+    moving with a blind, single purpose, which is to keep you from
+    the door.
+  speciesid: 20
+  level: 1
+  gold: 0
+itemdropchance: 0

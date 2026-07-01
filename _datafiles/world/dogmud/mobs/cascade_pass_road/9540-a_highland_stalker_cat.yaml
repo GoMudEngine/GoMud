@@ -35,6 +35,9 @@ combatcommands:
   - ''
 activitylevel: 25
 character:
+  items:
+    - itemid: 40163
+      dropchance: 65
   name: A Highland Stalker-Cat
   description: |
     Long and low, grey-dun with darker banding across the flanks
@@ -54,5 +57,3 @@ character:
     perception:
       training: 8
 itemdropchance: 65
-loot_pool:
-  - 40163

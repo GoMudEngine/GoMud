@@ -1,0 +1,26 @@
+itemid: 20090
+name: Greyfield Striders
+namesimple: boots
+vendor_categories:
+- tailoring
+description: >-
+  A pair of high-laced boots in a military cut, the hide tanned
+  grey-green and worked until the grain is barely visible. The
+  soles are triple-layered and set with cross-cut grooves that
+  grip loose stone without catching on debris. The outer leather
+  shows long wear and no failure at any seam. A faint oil smell
+  clings to the inner lining -- pleasant if peculiar. They fit
+  with unsettling precision, as if made for the wearer alone.
+  The watcher kept them in its vault, among the leavings of
+  those who reached this place and went no farther.
+type: feet
+subtype: wearable
+physical_mitigation: 12
+magical_mitigation: 6
+conviction_mitigation: 3
+statmods:
+  dexterity: 8
+  vitality: 6
+rarity_tier: 82
+value: 1800
+weight: 2.0

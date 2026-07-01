@@ -1,0 +1,57 @@
+roomid: 6369
+zone: Eastern Highlands
+title: The Sealed Recess
+description: >
+  The buried face opens here into a shallow made hollow — a recess cut
+  square and clean into the vast grey flank, its
+  <ansi fg="itemname">walls</ansi>
+  going back smooth and seamless into shadow. This is a threshold of its
+  own, an outer chamber to something sealed deeper in, and the charged air
+  that has followed you is worse here, closer, turned inward and watchful
+  in a way the open field was not. Cold pours out of the
+  <ansi fg="itemname">dark</ansi>
+  at the back of the recess in a slow steady breath, and the dark does not
+  end where the eye loses it. It goes on. Past the reach of any light you
+  carry, something is set into that deeper black — something large,
+  something still, something that has not woken and has kept from waking
+  for an age — and the certainty of it presses on the skin before the mind
+  can argue. You are being kept out of somewhere. And you are, very
+  faintly, being watched from inside it.
+biome: cliffs
+coord: {x: 14, y: 53, z: 3}
+exits:
+  north:
+    roomid: 6367
+  east:
+    roomid: 6371
+nouns:
+  walls: >
+    Cut square and true into the buried face, the walls of the recess are
+    the same smooth jointless grey as everything the made thing shows the
+    world — no tool-mark, no seam, no mortar-line, no sign of the labour
+    that any wall the eye has ever known was raised by. They simply are,
+    cut clean and cold, and they go back into a dark they were plainly
+    made to guard.
+  dark: >
+    The black at the back of the recess is not the ordinary dark of a cave
+    or a cellar. Light entering it does not travel — it stops, a little
+    way in, against nothing, as though the dark were a surface and not an
+    absence. The cold comes out of it in an even breath. Whatever the
+    recess was made to seal is back there, past where the eye can follow,
+    and it has the patience of a thing that has never once needed to
+    hurry.
+idlemessages:
+- The cold breathes out of the dark in a slow even pull and draws back,
+  and something about the rhythm of it is not the wind.
+- The walls give back no sound. Your own breath falls into the recess and
+  does not echo, as though the place swallowed it whole.
+- Far back in the black something has not moved, and the stillness of it
+  is not rest. It is the stillness of a thing that has not yet been given
+  a reason.
+- The charged air turns tighter in the enclosed space, watchful, pressed
+  close against the skin like attention.
+mutators:
+- mutatorid: hull_discharge
+spawninfo:
+  - mobid: 9550
+    respawnrate: "20 real minutes"

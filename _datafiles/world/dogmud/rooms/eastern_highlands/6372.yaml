@@ -1,0 +1,71 @@
+roomid: 6372
+zone: Eastern Highlands
+title: The Disc-Door
+description: >
+  This is the end of the road. There is no further east. The buried face
+  stands sheer across the whole of the way ahead, and set into it, close
+  enough now to touch, is a
+  <ansi fg="itemname">door</ansi> —
+  a great made shape, taller than a standing man and wider than the road,
+  shut so perfectly into the grey that the line of its closing is less a
+  seam than the memory of one. It does not open. There is no handle on it,
+  no hinge the eye can find, no bar to lift and no lock to pick. At its
+  centre, waist-high and plain, the smooth face is cut with a shallow
+  <ansi fg="itemname">depression</ansi> —
+  a round, dished hollow, shaped with the same seamless certainty as
+  everything here, and pressed deep into the heart of it is a
+  <ansi fg="itemname">symbol</ansi>
+  you have seen before, on Reth's markers, all the long way here. The
+  hollow is a shape meant to be filled. It is the shape of a disc, and it
+  is empty, and it is waiting, and it will go on waiting. You press your
+  hands to the door and the door does not care. You put your weight against
+  it and there is nothing to push against, only the vast shut patience of a
+  made thing that has been shut a very long time and was never going to
+  open for hands. It opens for the disc. Only the disc.
+biome: cliffs
+coord: {x: 17, y: 54, z: 3}
+exits:
+  west:
+    roomid: 6370
+nouns:
+  door: >
+    Seamless, jointless, immense — a single made shape set into the grey
+    face and closed so completely that it might be part of the face and not
+    a door at all, but for the shallow dished hollow at its heart and the
+    certainty, pressing in without a word, that behind it is the inside of
+    the thing and the answer to every mile you walked to reach it. It gives
+    back no sound when struck. It gives back nothing. It is shut, and it is
+    not going to be talked out of being shut, and standing before it you
+    feel the whole weight of how far you have come stop against it and go
+    nowhere.
+  depression: >
+    A round hollow dished shallow into the centre of the door, smooth as
+    the rest and cut with the same impossible care. Run a hand across it
+    and the shape declares itself at once — it is made to receive
+    something, a thing round and flat and sized to sit exactly here. A
+    disc. Nothing you carry fits it. Nothing you have found in all this
+    country fits it. The hollow does not close over its emptiness or
+    forgive it. It simply holds the shape of what is missing, and waits for
+    the one thing that was ever going to fill it.
+  symbol: >
+    Pressed deep into the floor of the hollow is the mark that has walked
+    with you since the first of Reth's markers — a ring struck through, and
+    within it rings nested inside rings, plain and exact and old. Here at
+    the door it is not a wayfinder any more. It is a seal. Whatever it
+    means, it means it fully here, and it says the same thing the door says
+    and the hollow says, which is that a way in exists, and that it is not
+    open to you, and that the shape of the key is the shape of the
+    emptiness before your eyes.
+idlemessages:
+- The door stands shut across the end of the road, seamless and patient,
+  and gives no sign that it knows you are there.
+- The empty hollow at its heart holds the shape of the missing disc and
+  waits, and the waiting has the quality of centuries.
+- You touch the cold grey face and it takes the warmth from your hand and
+  returns nothing, no give, no sound, no answer.
+- The symbol sits deep in the dished hollow, ringed and struck through,
+  saying the one thing it has said all along, arrived now at where it
+  always pointed.
+- The silence at the door is total. Behind it lies the answer, close enough
+  to lean against, and it does not open, and you stand at the edge of
+  everything the road was for.

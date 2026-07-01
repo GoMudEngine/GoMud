@@ -1,0 +1,64 @@
+roomid: 6361
+zone: Eastern Highlands
+title: The Sunken Course
+description: >
+  The way follows the made thing as it goes down, and you go
+  down with it. Whether the ground is rising to meet the
+  <ansi fg="itemname">surface</ansi>
+  or the surface is sinking to meet the ground is a question the
+  eye cannot settle — both look true and neither feels right.
+  Either way the plateau line climbs above you as you walk,
+  until you are moving in the
+  <ansi fg="itemname">shadow</ansi>
+  the buried flank throws, below the level of the open highland,
+  close in against the seamless grey. Close, it is worse. Close,
+  the smoothness has no scale to it at all, no feature to hang a
+  size on, only the cool unbroken face rising past what the neck
+  can crane to follow. The walls of rock and the wall of the
+  surface pinch the way narrow, and the air comes thick and
+  pressing, and every step takes you further under and further
+  in. Nothing about it is comfortable. The wrongness is a
+  weight here, and it leans.
+biome: cliffs
+coord: {x: 9, y: 55, z: 3}
+exits:
+  north:
+    roomid: 6360
+  east:
+    roomid: 6362
+nouns:
+  surface:
+    >
+    This close, the surface fills the side of the world. It goes
+    up past the plateau line and down into the ground and gives
+    no edge to either, seamless and grey and cool, so smooth that
+    the eye finds nothing to measure it against and gives up on
+    the size entirely. A hand held near it feels the same still
+    cold that hangs over the recess, thinner here but present the
+    whole length of the walk. It is buried and it is ancient and
+    it was made, and being pressed up against it makes all three
+    of those facts heavier than they were at a distance.
+  shadow:
+    >
+    The shadow the buried flank throws is not a cold shadow so
+    much as a low one — the plateau line stands above you now and
+    the open daylight narrows to a strip overhead. Down in it the light goes
+    flat and grey and the walk feels enclosed, hemmed between the
+    living rock on one side and the made thing on the other. It
+    is the first place on the highland that has felt like being
+    indoors, and it is not a building, and that is its own kind
+    of wrong.
+idlemessages:
+- The plateau line stands higher with every step. You are
+  walking down under the level of the country now.
+- The surface rises past what the eye can follow and does not
+  narrow with height the way a cliff would. It just goes up.
+- The air down here comes thick and close and presses on the
+  ears. It is the pressure of a small space, in the open.
+- Rock on one side, the made thing on the other, and the way
+  pinching narrow between them. Each step takes you further in.
+- The cold off the surface leans against you the whole length
+  of the walk. Steady. Patient. Wrong.
+spawninfo:
+  - mobid: 9546
+    respawnrate: "12 real minutes"

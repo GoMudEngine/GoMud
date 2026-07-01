@@ -1,0 +1,65 @@
+roomid: 6363
+zone: Eastern Highlands
+title: Where the Hull Enters the Ground
+description: >
+  Here is the place the whole approach has been bending toward. The
+  <ansi fg="itemname">made thing</ansi>
+  makes its last curve — the southeastern turn where the long grey
+  flank stops running through the highland and goes down, in, under
+  the rock, into the dark below the country. This is where it enters
+  the earth. The ground has been heaved up around the
+  <ansi fg="itemname">buried face</ansi>
+  where it plunges, thrown into ridges and folds the way soil banks
+  against a thing driven into it, and the surface itself does not
+  care — it goes down smooth and seamless and sure, grey and
+  jointless, the same at the lip of the earth as it was a long day's
+  walk behind you. There is no mouth here, no opening, no way in that
+  the eye can find. Only the vast made curve leaning down and the
+  earth closing over the top of it, and the certainty, pressing in
+  without a word, that it goes down a great deal further than you can
+  follow and was down there long before anything alive came to look.
+biome: cliffs
+coord: {x: 11, y: 55, z: 3}
+exits:
+  west:
+    roomid: 6362
+  east:
+    roomid: 6364
+nouns:
+  made thing: >
+    Close up, at the place it goes down, it refuses every test the
+    eye has for one thing against another. There is no grain, no
+    seam, no joint at the turning — the immense greyness simply
+    leans into the earth as though it always meant to. It is not a
+    shape the ground can make. It is not a shape the ground can be
+    worn into. It was made, and it goes down, and it goes down
+    smooth, and that is all it will tell you.
+  buried face: >
+    The surface where it enters the ground is banked all around with
+    heaved earth — ridges and broken folds, soil thrown up the way
+    it banks against anything driven deep into it. But the driving
+    was not recent. The ridges are old, weathered, grassed over at
+    their crowns. Whatever set this here did it long ago, and the
+    country has had all the time there is to grow a skin over the
+    scar and has not managed to hide it.
+  earth: >
+    The heaped ground here has been worked once by weather and once,
+    higher up nearer the turning, by something with hands — you can
+    see it if you look, a section where the banking is cut back
+    cleaner than water ever leaves it. But that is off south and
+    ahead. Here at the lip there is only the raw fold of the earth
+    and the grey going down through it without a sound.
+idlemessages:
+- The made curve goes down into the earth and the ground closes over
+  it, and there is no seam and no mouth and no way the eye can find.
+- The heaped soil banks against the buried face the way earth banks
+  against anything driven deep. It was driven deep a long time ago.
+- Somewhere far below your feet the surface is still going down, grey
+  and smooth and sure, and the thought of how far is not a good one.
+- The cold coming up out of the disturbed ground is even and constant
+  and does not answer to the wind above it.
+- The silence at the lip is total, and in it the fact of the thing
+  presses down without a single word to soften it.
+spawninfo:
+  - mobid: 9547
+    respawnrate: "20 real minutes"

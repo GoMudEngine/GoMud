@@ -1,0 +1,60 @@
+roomid: 6353
+zone: Eastern Highlands
+title: The Vegetation Line
+description: >
+  You are standing on the edge of it now. Behind you the last of
+  the scrub holds to the rock the way it has held since the pass —
+  low, grey-green, stubborn. Ahead the growth is simply gone, cut
+  off along a
+  <ansi fg="itemname">line</ansi>
+  so clean and so straight that no weather made it and no soil
+  refused it. Nothing crosses. There are no dead runners past the
+  edge, no seeds that tried and failed — only the sharp end of the
+  living and then nothing. Beyond it the
+  <ansi fg="itemname">swept ground</ansi>
+  runs bare and open, the grit lifted off it and the stone left
+  clean, as though something had passed a flat hand across the
+  whole reach and left it wanting nothing. The wrongness that has
+  followed you since the pass has an edge here — a definite one, a
+  place you can set your feet on either side of. West is the
+  world. East is whatever keeps this ground so clean.
+biome: mountains
+coord: {x: 5, y: 59, z: 3}
+exits:
+  west:
+    roomid: 6352
+  east:
+    roomid: 6354
+nouns:
+  line: >
+    Seen close, the line is not a taper and not a fading. It is a
+    boundary. On the near side the scrub is as alive as anything
+    gets out here, which is to say durable and low and sparse. On
+    the far side there is nothing, and the nothing begins in the
+    span of a single step. No slope of dying growth marks the
+    change. No band of the recently dead. The edge holds the way a
+    thing holds when it has been holding for longer than anyone
+    has been here to measure it.
+  swept ground: >
+    East of the line the stone is bare in a way that is not
+    natural bareness. Ordinary poor ground still keeps its grit in
+    the cracks and its dust in the hollows. This ground keeps
+    none. It is swept — not scoured by wind, which leaves streaks
+    and drifts, but swept even and clean and total, as if the
+    small loose matter of the world had been asked to leave and
+    had left. Nothing about the rock explains it. The rock is the
+    same rock. The cleanness is the thing that is wrong.
+idlemessages:
+- The line runs off to the north and to the south as far as the
+  eye follows it, and it does not waver. Weather does not draw a
+  straight edge. Something did.
+- The light on the swept ground lies too flat. There is nothing on
+  it to throw a shadow, and so there are no shadows, and the
+  absence reads as a kind of glare that is not bright.
+- The silence east of the line is the pressed kind — sound leaned
+  out of the space by something that keeps leaning.
+- Nothing has crossed the edge and left remains on the far side.
+  The ground beyond is clean and open and very quiet.
+spawninfo:
+  - mobid: 9547
+    respawnrate: "20 real minutes"

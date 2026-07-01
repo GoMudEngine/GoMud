@@ -1,0 +1,66 @@
+mobid: 9547
+zone: Eastern Highlands
+behavior_archetype: leader
+aiprofile: predator
+archetype: fighting
+submission_policy: lethal
+surrender_policy: never
+hostile: true
+statpool: 700
+maxwander: 1
+groups:
+  - animal
+  - predator
+spawnmutations: [dense-muscles]
+idlecommands:
+  - 'emote stands at the highest point of the reach, motionless,
+    its back broad against the pale sky.'
+  - ''
+  - 'emote swings its scarred head slowly to regard the country
+    below, then goes still again.'
+  - ''
+  - 'emote scents the air in a long deliberate pull, then returns
+    to its watch over the high ground.'
+  - ''
+combatcommands:
+  - 'emote rises to its full height and brings both forepaws down
+    from the shoulder, very fast for the mass of it.'
+  - bash
+  - ''
+  - 'emote drops its head and drives forward with everything behind
+    it, not adjusting at the point of impact.'
+  - charge
+  - ''
+  - 'emote swings one heavy forearm in a wide arc that does not
+    slow on the way through.'
+  - ''
+activitylevel: 30
+character:
+  items:
+    - itemid: 40163
+      dropchance: 70
+    - itemid: 40166
+      dropchance: 3
+  name: The Reach-Alpha
+  description: |
+    A bear -- or the scale of one -- that holds the highest
+    ground of the reach. It is wrong in the way very large
+    animals can be wrong -- too much mass without the slack of
+    it, dense through the chest and shoulders in a way that does
+    not suggest growth so much as compression. The scars layered
+    across its back and muzzle are old, which means many things
+    tested it across many seasons and none of them are here to
+    describe the outcome. There is a quality to how it stands
+    that makes the highland around it read as a room it owns.
+    You are standing in that room now.
+  speciesid: 3
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 20
+    vitality:
+      training: 16
+    perception:
+      training: 8
+itemdropchance: 70

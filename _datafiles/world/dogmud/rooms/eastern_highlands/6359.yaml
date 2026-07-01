@@ -1,0 +1,65 @@
+roomid: 6359
+zone: Eastern Highlands
+title: Where the Light Catches
+description: >
+  Here the ground turns and the
+  <ansi fg="itemname">surface</ansi>
+  turns with it, and at this one angle the light comes off it
+  wrong. Not a glare — the highland has no strong sun to give
+  one. It is the way the greyness takes the light and holds it,
+  a depthless sheen with no bottom to it, a shine that belongs
+  to no stone and no water and no living thing you have a name
+  for. Rock scatters light. Water throws it back. This drinks
+  it and returns something that is neither, a
+  <ansi fg="itemname">sheen</ansi>
+  the eye slides off and cannot fix. For the whole walk until
+  now some part of you kept the thing filed as landscape — a
+  strange scarp, a buried ridge, a trick of the country. The
+  light ends that. Standing in it, watching the wrongness sit
+  on the surface and not move, you cannot go on calling it
+  landscape. It is not landscape. It never was. The knowing
+  arrives and does not leave again.
+biome: cliffs
+coord: {x: 8, y: 56, z: 3}
+exits:
+  north:
+    roomid: 6358
+  east:
+    roomid: 6360
+nouns:
+  surface:
+    >
+    At the angle the ground gives here, the surface presents a
+    long smooth face to the light and gives back a shine that
+    has no texture in it — no scatter, no sparkle, no grain to
+    catch. Seamless and grey and cool, it looks the way still
+    deep water looks except that water moves and this does not,
+    and water has a color and this has only the absence of one.
+    The eye keeps hunting for the flaw that would make it
+    natural. There is no flaw. That is the flaw.
+  sheen:
+    >
+    The sheen is the thing that will not let the mind rest. It
+    lies on the surface without depth, a wrongness in how the
+    light behaves that the body reads faster than the eye can
+    argue with. Look straight at it and it seems almost
+    ordinary. Look away and it stays, a cold shine at the edge
+    of sight that no stone in this world was ever known to give.
+    It does not flicker. It does not fade with the light. It is
+    simply how the made thing meets the day.
+idlemessages:
+- The light shifts a little and the sheen shifts with it,
+  always wrong, never resolving into anything the eye can call
+  natural.
+- For a moment it looks like stone. Only for a moment. The
+  moment does not come back.
+- The shine holds steady on the surface. Nothing in the
+  highland shines like this. Nothing you have seen anywhere
+  shines like this.
+- It is not landscape. The thought has arrived and it will not
+  go away now. It changes how the whole country looks.
+- The eye slides off the sheen and finds no purchase. The body
+  already knew. The body is ahead of the eye out here.
+spawninfo:
+  - mobid: 9544
+    respawnrate: "12 real minutes"

@@ -1,0 +1,20 @@
+itemid: 40166
+name: Pale-Grey Casting
+namesimple: casting
+vendor_categories:
+- blacksmithing
+description: >-
+  A fragment torn from something larger -- pale grey and heavier
+  than it looks, the surface smooth in a way stone never quite is
+  and cold in a way iron seldom stays. The edges show a break, not
+  a cut, as if the thing it came from had never been worked by any
+  hammer this world knows. No smith in the lowlands knows what to
+  do with it, but every smith who has held it has held it longer
+  than intended.
+type: object
+subtype: mundane
+component_tag: grey-relic
+weight: 0.4
+value: 1200
+rarity_tier: 85
+is_component: true

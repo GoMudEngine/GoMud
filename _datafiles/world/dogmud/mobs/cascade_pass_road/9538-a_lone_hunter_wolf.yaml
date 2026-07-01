@@ -32,6 +32,9 @@ combatcommands:
   - hamstring
 activitylevel: 25
 character:
+  items:
+    - itemid: 40163
+      dropchance: 65
   name: A Lone Hunter-Wolf
   description: |
     Grey-black through the shoulders, lighter at the flanks -- a
@@ -52,5 +55,3 @@ character:
     perception:
       training: 6
 itemdropchance: 65
-loot_pool:
-  - 40163

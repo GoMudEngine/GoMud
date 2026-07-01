@@ -1,0 +1,65 @@
+roomid: 6371
+zone: Eastern Highlands
+title: The Sentinel's Watch
+description: >
+  Past the sealed recess the made hollow opens into a chamber — the
+  <ansi fg="itemname">vault</ansi>
+  itself, deep and square and cold, its smooth grey walls going up past
+  the reach of any light into a dark that holds its ceiling out of sight.
+  The air is old here in a way that has nothing to do with dust. Nothing
+  rots in this place. Nothing has been let in to rot. And the chamber is
+  not empty. Set against the far wall, huge and unmoving, is a
+  <ansi fg="itemname">watcher</ansi> —
+  a shape that keeps. It has the stillness of stone and it is not stone,
+  and high in the mass of it a single socketed
+  <ansi fg="itemname">eye</ansi>
+  sits lidless and dark and turned outward, dormant, unlit, aimed at the
+  door of the vault by which you came. It has kept this dark for an age. It
+  is keeping something now, something back in the deeper black behind it,
+  gathered and hoarded and guarded close. It has not woken. Every part of
+  you understands, without a word, that it wakes for those who come in, and
+  that you are standing exactly where its eye is aimed.
+biome: cliffs
+coord: {x: 15, y: 53, z: 3}
+exits:
+  west:
+    roomid: 6369
+nouns:
+  vault: >
+    Square, deep, and jointless, cut into the heart of the buried thing
+    and sealed against the world. The walls give back no sound and no
+    warmth. Whatever this chamber was made to hold, it was made to hold it
+    forever, and the making has not failed. The cold in it is the even,
+    sourceless cold of everything the grey thing owns, and under the cold
+    is the plain fact that this place has a purpose and you are not it.
+  watcher: >
+    Vast, still, set against the far wall like a thing carved there and
+    then left to wait. It is not carved. Nothing worked it into that shape.
+    It has the patience of a mountain and none of a mountain's innocence,
+    and looking at it too long the certainty grows that the stillness is
+    not sleep but restraint — a held thing, dormant by choice and not by
+    ruin, ready under the dust to answer whatever wakes it.
+  eye: >
+    High in the dark mass of the watcher, a single round socket holds what
+    can only be an eye — lidless, unlit, deep as a well and dry of any
+    light. It is turned toward the way you came in. Dormant as it is, the
+    aim of it is exact, and standing in its line you feel seen by a thing
+    that is not yet looking, which is somehow worse than being seen by one
+    that is.
+idlemessages:
+- The watcher does not move. The not-moving has a quality of choice to it,
+  the way a still hand chooses to be still.
+- The dark eye holds the doorway without blinking, because it cannot blink,
+  because it has no need to have ever blinked.
+- Somewhere in the black behind the shape, the thing it guards sits cold
+  and close and undisturbed, and the guarding has not once lapsed.
+- The cold in the vault presses even and old against the skin, and in it
+  the certainty settles that you are being permitted, for now, to stand
+  here.
+spawninfo:
+  - mobid: 9552
+    respawnrate: "45 real minutes"
+  - mobid: 9550
+    respawnrate: "25 real minutes"
+  - mobid: 9551
+    respawnrate: "25 real minutes"

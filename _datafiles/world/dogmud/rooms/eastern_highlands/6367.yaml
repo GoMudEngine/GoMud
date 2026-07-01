@@ -1,0 +1,70 @@
+roomid: 6367
+zone: Eastern Highlands
+title: The Fork Before the Door
+description: >
+  Here the way splits, and both ways lead to the made thing, and
+  neither is a way back. To the east the buried face opens onto a
+  great
+  <ansi fg="itemname">disc-marked face</ansi>
+  — a broad expanse of the grey set apart from all the rest by a
+  vast ringed mark worked into it, the only marking the surface has
+  shown in all these leagues, and everything about it says
+  threshold, says door, says the way in is that way if there is a way
+  in at all. To the south the grey folds down into a
+  <ansi fg="itemname">sealed recess</ansi>,
+  a deep-set hollow closed over and dark, and out of that dark comes
+  the same cold watchfulness as the warded stretch behind you but
+  heavier, older, concentrated — something still guards what is down
+  there, and has never once stopped. This is the last
+  <ansi fg="itemname">choice</ansi>
+  before the threshold. East to the great ringed mark and whatever it
+  is a door to. South to the sealed dark and the thing that keeps it.
+  The made thing waits either way, seamless and vast and buried, and
+  it has waited a very long time for someone to stand exactly here and
+  have to decide.
+biome: cliffs
+coord: {x: 14, y: 54, z: 3}
+exits:
+  west:
+    roomid: 6366
+  east:
+    roomid: 6368
+  south:
+    roomid: 6369
+nouns:
+  disc-marked face: >
+    East, the grey carries the one mark it has ever shown — a vast
+    ring worked into the surface, a great circle set off from
+    everything around it, smooth-edged and seamless as the rest yet
+    plainly meant, plainly apart. It reads as a threshold the way a
+    shut door reads as a door even to someone who has never seen its
+    like. That is the way in, if in is a thing that can be done. The
+    eye keeps going back to the ring and coming away no wiser and no
+    calmer.
+  sealed recess: >
+    South, the surface folds down and inward into a deep-set hollow
+    closed over and black, and the cold that pours out of it is the
+    warded cold of the stretch behind you grown heavier and more sure
+    of itself. Something is down there, and something keeps it, and
+    the keeping has not lapsed in all the dark it has kept in. Every
+    part of you that the recesses set on edge is set worse by this. It
+    is guarded. It means to stay guarded.
+  choice: >
+    Two ways, both into the made thing, neither back. East to the
+    ringed mark and the threshold it promises. South to the sealed
+    dark and the watch that holds it. Standing between them you feel
+    the whole long walk narrow to this single point, and you feel,
+    too, that the thing has been waiting for exactly this — for
+    someone to come this far and stand here and have to choose which
+    of its silences to break.
+idlemessages:
+- East the great ringed mark holds the grey light without a flicker,
+  patient as a shut door that has never once been opened.
+- Out of the sealed recess to the south the cold comes heavy and
+  watchful, and whatever keeps that dark has not stopped keeping it.
+- The way splits and both halves lead in, and standing at the fork you
+  feel how little of the choosing was ever going to be yours.
+- The made thing waits east and waits south, seamless and vast, and
+  gives no sign which silence is the worse one to break.
+- This is the last place a person can still turn around, and the made
+  thing knows it, and waits to see whether you will.

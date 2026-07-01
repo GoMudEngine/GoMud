@@ -36,6 +36,11 @@ combatcommands:
   - ''
 activitylevel: 30
 character:
+  items:
+    - itemid: 40163
+      dropchance: 65
+    - itemid: 40164
+      dropchance: 50
   name: The Pass-Apex
   description: |
     A bear -- or the shape of one -- that holds the top of the
@@ -61,6 +66,3 @@ character:
     perception:
       training: 6
 itemdropchance: 75
-loot_pool:
-  - 40163
-  - 40164

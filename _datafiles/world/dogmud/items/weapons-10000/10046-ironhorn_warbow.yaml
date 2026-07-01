@@ -1,0 +1,30 @@
+itemid: 10046
+name: Ironhorn Warbow
+namesimple: bow
+vendor_categories:
+- blacksmithing
+description: >-
+  A composite longbow strung with twisted sinew, its limbs built
+  from black horn laminated over a core of worked wood and backed
+  with strips of dense cured hide. The horn has aged to near-ebony
+  and holds a curve no living bowyer has managed to replicate.
+  Steel nocks cap each tip and the riser is wrapped in something
+  darker than leather. The draw is punishing and the release is
+  clean, and the arrows it throws go farther and harder than the
+  bow has any right to manage. It lay in the watcher's
+  keeping with the rest of what the place has taken from
+  those who came to the door before you.
+type: weapon
+hands: 2
+subtype: shooting
+weight: 3.0
+speedmultiplier: 0.55
+grapplemodifier: 0.2
+ammo_tag: arrows
+damage:
+  basedamage: 9
+  variance: 3
+damage_multiplier: 8.50
+parryrating: 4
+rarity_tier: 82
+value: 2500

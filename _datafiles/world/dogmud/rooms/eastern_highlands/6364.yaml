@@ -1,0 +1,63 @@
+roomid: 6364
+zone: Eastern Highlands
+title: The Approach Hollow
+description: >
+  The way opens into a worn
+  <ansi fg="itemname">hollow</ansi>
+  in the banked earth before the buried face, and the wrongness of
+  the place is that it is not natural. The ground here has been
+  disturbed — dug, shifted, cleared and cleared again — not by water
+  and not by the slow hand of weather but by someone, patiently, a
+  long time ago. There is a
+  <ansi fg="itemname">worked ground</ansi>
+  underfoot, packed flat where feet went back and forth, and the
+  banks to either side have been cut and thrown up in a way no flood
+  leaves. Someone stood here. Someone came back to this spot enough
+  times to wear it smooth, and worked at the great grey surface that
+  rises jointless out of the highland ahead, and the evidence of that
+  working is everywhere and old. The
+  <ansi fg="itemname">made thing</ansi>
+  itself takes no notice — it is the same as it has been the whole
+  way, vast and seamless and buried and unbothered — but the ground
+  before it remembers a person, and the way bends south into their
+  old ground where the labor was done.
+biome: cliffs
+coord: {x: 12, y: 55, z: 3}
+exits:
+  west:
+    roomid: 6363
+  south:
+    roomid: 6365
+nouns:
+  hollow: >
+    A shallow bowl worn into the banked earth, sheltered a little
+    from the highland wind by the folds around it. It did not come
+    to be by chance. The floor of it is packed and level, the sides
+    cut back by hand, and the whole of it has the shape a place
+    takes when one person uses it over and over for a long stretch
+    of time and then stops.
+  worked ground: >
+    Underfoot the earth is packed hard and flat, beaten smooth by
+    feet that went the same short ways again and again — from here to
+    the surface, from the surface back to here, a small worn round of
+    ground that someone lived inside for a while. Grass has come back
+    at the edges of it but not the middle. The middle was walked too
+    long and too hard, once, to forget the walking.
+  made thing: >
+    Ahead the great grey flank rises jointless out of the highland
+    the same as it has the whole approach — no grain, no seam, no
+    flaw for the eye to hold. Someone cleared the earth from a
+    section of it, off to the south. The surface neither helped nor
+    hindered. It simply was, and let itself be uncovered, and gives
+    back nothing for all that labor.
+idlemessages:
+- The worn hollow is empty and has been empty a long time, but the
+  shape of it still keeps the memory of the one who wore it.
+- The ground here was dug and cleared by a hand, not a flood. The
+  hand is not here. The clearing stayed.
+- Wind moves through the banked earth and finds nothing to move.
+  Whatever was set up in this hollow was taken down or left long ago.
+- The way south leads into ground worked smoother still, where the
+  real labor was done, one person's, alone.
+- The made thing pays the hollow no mind at all, and somehow that is
+  the coldest thing about it.

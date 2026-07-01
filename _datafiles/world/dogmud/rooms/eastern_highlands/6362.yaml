@@ -1,0 +1,62 @@
+roomid: 6362
+zone: Eastern Highlands
+title: The Descending Curve
+description: >
+  Ahead the made thing begins to
+  <ansi fg="itemname">curve</ansi>
+  — the long seamless flank that ran level for so much walking
+  bending down at last, angling into the highland, going where
+  the ground will take it. You can see, not far east now, the
+  place the eye has refused to think about for the whole of the
+  approach — the
+  <ansi fg="itemname">descent</ansi>
+  where the surface stops running alongside and starts running
+  in, down under the rock, into the earth. This is the end of
+  walking beside it. Somewhere just past here it enters the
+  ground, and whatever the entering means, you will be at it
+  soon. The curve is smooth as all the rest, grey and jointless
+  and vast and buried, and it goes down with a slow certainty
+  that is worse than any drop — the certainty of a thing that
+  knows exactly where it is going and has known for longer than
+  anything alive. The way east follows it down.
+biome: cliffs
+coord: {x: 10, y: 55, z: 3}
+exits:
+  west:
+    roomid: 6361
+  east:
+    roomid: 6363
+nouns:
+  curve:
+    >
+    The curve is where the level flank gives up being level. It
+    bends downward in a long smooth arc, seamless as ever, no
+    joint or fold to mark the turning — the whole immense
+    greyness simply leaning into the earth as though it always
+    meant to. There is nothing sudden in it. It curves the way
+    something enormous curves, slowly, so that up close you would
+    swear it was straight, and only the far reach of it gives the
+    bend away. It is going down. It is going in.
+  descent:
+    >
+    East and a little below, the surface angles into the
+    highland and the rock closes over the top of it, and past a
+    certain point you cannot follow it with the eye any further
+    — it goes under, into the ground, into the dark below the
+    country. That is the place the whole walk has been pointing
+    at. The mind has kept it at arm's length the entire way.
+    From here it is no longer at arm's length. It is just ahead,
+    and the way leads to it, and there is no other way to go but
+    down and in after it.
+idlemessages:
+- The made thing bends down toward the east and the ground rises
+  to close over it. Just past here it goes in.
+- This is the end of walking beside it. Ahead there is only
+  walking after it, down into where it goes.
+- The curve descends with a slow certainty. It has been going
+  exactly this way for longer than anything alive could remember.
+- The place where it enters the ground is close now. The eye has
+  avoided it the whole walk. It cannot avoid it from here.
+- The surface goes down smooth and grey and sure, and the way
+  east goes down with it, and the body knows, before the mind,
+  there is no turning back from what is ahead.

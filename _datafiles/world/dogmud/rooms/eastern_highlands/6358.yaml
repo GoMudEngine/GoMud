@@ -1,0 +1,62 @@
+roomid: 6358
+zone: Eastern Highlands
+title: The Impossible Length
+description: >
+  You have walked a long way with the
+  <ansi fg="itemname">surface</ansi>
+  at your side, and it has not ended. That is the fact the
+  mind keeps arriving at and keeps refusing. Somewhere behind
+  you it ran on grey and seamless and buried in the rock, and
+  it runs on ahead the same, and it does not stop, and the
+  refusal itself is the dread — because a thing this long
+  cannot be, and it is. The scale will not resolve into
+  anything the eye is built to hold. There is no grain in it,
+  no joint, no place where one part was set against another.
+  Only the one continuous
+  <ansi fg="itemname">flank</ansi>
+  sunk into the highland, immense past the point where immense
+  means anything, ancient the way the rock is ancient except
+  that the rock was never made and this was. The mind offers
+  words for it and takes them all back. Nothing this world
+  knows how to make is this long.
+biome: cliffs
+coord: {x: 8, y: 57, z: 3}
+exits:
+  north:
+    roomid: 6357
+  south:
+    roomid: 6359
+nouns:
+  surface:
+    >
+    Smooth and grey and without feature, the surface holds the
+    same everywhere the eye lands on it — no seam, no joint, no
+    place where the making shows itself as a making. It could
+    be a single unbroken piece and probably is, though the mind
+    balks at the size that would require. Running a hand near it
+    the air feels different, cooler and stiller, as though the
+    surface keeps its own weather. It has been buried here long
+    enough to become part of the country. It has not become
+    part of the country.
+  flank:
+    >
+    The buried flank runs north and south from where you stand
+    and gives no sign of ending in either direction. Following
+    it with the eye toward the north, it diminishes and does not
+    stop. Following it south, the same. The length refuses to
+    be measured. At a certain distance the mind quietly declines
+    to keep counting and the eye lets the whole of it blur into
+    one grey line that has no end that anyone here could walk to.
+idlemessages:
+- The surface runs on north and it runs on south. Neither
+  direction offers an end. The mind keeps reaching for one
+  anyway.
+- Something in the length of it presses on the chest. Not the
+  cold. The fact of it. A made thing does not go on this far.
+- The eye tries to take the surface as a cliff face and fails.
+  Cliffs have grain. This has none.
+- You have walked a long way. The surface has not changed. It
+  will not, ahead or behind. The knowledge sits wrong.
+- The wind comes down the length of it and carries no sound
+  back, as if there were nothing along all that distance to
+  make one.

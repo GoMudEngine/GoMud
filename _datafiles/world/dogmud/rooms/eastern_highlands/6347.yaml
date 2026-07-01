@@ -1,0 +1,68 @@
+roomid: 6347
+zone: Eastern Highlands
+title: Reth's First Marker
+description: >
+  A column of dressed stone stands on a low rise —
+  worked flat on one face, the other sides rough
+  from the original quarry cut. The
+  <ansi fg="itemname">survey marker</ansi>
+  is old enough that the notation the surveyor cut
+  into the flat face has worn to shadow, legible
+  at low angles and barely at others. What remains
+  reads as distances and bearings — a territory
+  claimed in numbers, the furthest reach of
+  someone who did not apparently come back from it.
+  Under the survey notation, cut earlier and
+  deeper and still present where the notation has
+  nearly worn away, there are
+  <ansi fg="itemname">nested rings</ansi>
+  worked into the stone — concentric, the spacing
+  even, the lines clean enough that the tool and
+  the hand behind it both knew what they were doing.
+  The stone was dressed flat to receive the survey
+  marks over whatever these are. The surveyor saw
+  them and worked around them rather than through.
+biome: mountains
+coord: {x: 1, y: 61, z: 3}
+exits:
+  west:
+    roomid: 6345
+  east:
+    roomid: 6348
+nouns:
+  survey marker: >
+    A standing column of dressed stone, set here
+    to mark the boundary of a survey territory that
+    extended east into country the surveyor did not
+    return from. The lettering is still readable in
+    the right light — distances and bearings, a
+    naming of features in country that has since
+    shed those names entirely. The column has stood
+    here long enough that the ground has settled
+    around its base and lichen covers the rough
+    sides completely.
+  nested rings: >
+    Concentric rings cut into the flat face of the
+    stone, under the survey lettering and older than
+    it. The lines are clean and the spacing is
+    deliberate — this was not decoration done quickly
+    or casually. The stone was prepared flat to
+    receive something, and these rings are what it
+    received. There is no inscription alongside them,
+    no label, no indication of what they mark or
+    where the hand that cut them came from. The
+    surveyor cut the territory notation directly over
+    them rather than choosing a different face.
+idlemessages:
+- The wind crosses the marker and continues east.
+  The column does not move. Nothing out here moves.
+- The rings catch low light differently from the rest
+  of the flat face — the cut lines hold shadow where
+  the worn survey notation does not.
+- The highland beyond the marker runs east without
+  feature. The surveyor went that direction. The
+  ground gives no account of what followed.
+- The column stands where it can be seen from some
+  distance to the west. It was set where it would
+  be seen. Whatever that was meant to communicate,
+  the highland has kept to itself.

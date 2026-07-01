@@ -1,0 +1,68 @@
+roomid: 6352
+zone: Eastern Highlands
+title: Where the Green Fails
+description: >
+  The scrub that has persisted since the pass — low,
+  grey-green, holding to the rock in sparse clumps — thins
+  here and stops. The
+  <ansi fg="itemname">line</ansi>
+  where it ends is too clean. Not the ragged taper of ordinary
+  poor soil, where growth gives out gradually and leaves its
+  sparse dead remains before nothing — this is an edge, a
+  definite one, the kind of edge that implies a reason on the
+  other side of it. East of the line the
+  <ansi fg="itemname">bare ground</ansi>
+  is the same rock as everywhere else on the highland. There
+  is no difference in the stone. There is no visible reason.
+  The scrub simply stops at this point and has been stopping
+  here long enough that no runner or seed has crossed it.
+  Whatever is ahead does not permit growth. Whatever is ahead
+  is east.
+biome: mountains
+coord: {x: 4, y: 59, z: 3}
+exits:
+  west:
+    roomid: 6351
+  east:
+    roomid: 6353
+nouns:
+  line: >
+    The transition from scrub to bare rock takes a short span
+    of ground. The last plants are not dying — the closest
+    growth is as alive as anything else on the highland,
+    which is to say durable and low and not thriving, but
+    present. It simply does not cross. The edge holds with
+    the consistency of something that has been tested and
+    held for a very long time. There are no dead runners
+    past the line. Whatever attempts the crossing does not
+    survive long enough to leave remains.
+  bare ground: >
+    East of the line, the rock is identical to the rock on
+    this side — the same grey basalt, the same fracture
+    pattern, the same shallow channels where water runs
+    when water comes. Nothing distinguishes it from ground
+    where things grow. The absence is not in the stone.
+    The stone does not explain it. Standing at the edge
+    and looking east, the body registers the difference
+    before the eye finds it. The eye never does find it.
+    The body has been right about things in this country
+    before.
+idlemessages:
+- The last clump of scrub is directly behind. There is
+  nothing like it ahead. The transition happens in a
+  short span of ground.
+- The wind east of the line sounds different. Not louder.
+  Not different in direction. Different in the way a room
+  sounds different when it is empty.
+- The cold on the far side of the line is identical to
+  the cold on this side. The body reports otherwise.
+  The body has been right about this country before.
+- Standing at the edge, the ground to the east looks
+  very close and ordinary. It is close. It is not
+  ordinary.
+- Nothing has crossed the line and left remains on the
+  other side. The ground ahead is clean and bare and
+  very quiet.
+spawninfo:
+  - mobid: 9545
+    respawnrate: "12 real minutes"

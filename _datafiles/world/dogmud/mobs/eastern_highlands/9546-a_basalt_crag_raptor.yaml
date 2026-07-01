@@ -1,0 +1,56 @@
+mobid: 9546
+zone: Eastern Highlands
+behavior_archetype: generic_fighter
+aiprofile: ambush_predator
+archetype: fighting
+hostile: true
+statpool: 300
+maxwander: 3
+groups:
+  - animal
+  - avian
+spawnmutations: [keen-eyes]
+idlecommands:
+  - 'emote wheels above the crags in a long, banking arc, neither
+    gaining nor losing height.'
+  - ''
+  - 'emote tilts into a brief, steep drop before leveling and climbing
+    back to the crag face.'
+  - ''
+  - 'wander'
+  - ''
+  - 'emote fixes the ground below with pale, unblinking eyes, then
+    lifts away on the updraft.'
+  - ''
+combatcommands:
+  - 'emote folds its wings and drops into a fast, steep stoop from
+    the crag face, talons leading.'
+  - ''
+  - 'emote strikes and climbs without landing, beating hard for
+    height to circle and come again.'
+  - ''
+  - 'emote banks in tight and drives forward with the full force
+    of the stoop behind it.'
+  - ''
+activitylevel: 25
+character:
+  name: A Basalt-Crag Raptor
+  description: |
+    A large bird of prey, coal-dark from beak to tail-fan, with
+    a wingspan that catches the highland updrafts and rides them
+    without effort. It nests in the highest basalt crags and
+    almost never needs to come down from them. The eyes are
+    remarkable -- pale and nearly colorless, fixed with the kind
+    of attention that does not miss motion at any distance. When
+    it drops from the crags it folds into a near-vertical stoop
+    and arrives at the bottom faster than the eye tracks. It
+    almost never misses.
+  speciesid: 9
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 10
+    perception:
+      training: 12
+itemdropchance: 0
