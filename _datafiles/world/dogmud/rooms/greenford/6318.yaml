@@ -1,0 +1,49 @@
+roomid: 6318
+zone: Greenford
+title: The West Road
+description: >
+  Beyond the gate the road has freed itself from town —
+  the last garden walls behind, the country opening on
+  either side: rough verge, a hedged meadow north, the
+  river valley distant in the east. The surface is well-
+  maintained here, drainage channels cut on each side,
+  the crowning slight and deliberate. The coaching
+  stable opens to the north, its gate standing wide
+  in the hedgerow; a traveler's shrine-post rises at
+  the field's margin to the south, half in the long
+  grass. The road bends on west toward the milepost.
+  Examine the <ansi fg="itemname">stable-gate</ansi> or the verge.
+biome: land
+coord: {x: 20, y: -78, z: 1}
+exits:
+  east: {roomid: 6317}
+  north: {roomid: 6319}
+  south: {roomid: 6320}
+  west: {roomid: 6321}
+nouns:
+  stable-gate: >
+    A wide timber gate in the hedgerow north of the road,
+    its bar lifted and swung back flat against the hedge —
+    standing open for the morning traffic. Beyond it the
+    coaching stable yard is visible: the hard-packed
+    surface, the lean-to roof of the coach-house, the
+    ostler's bench along the east wall. The smell of
+    horse and hay carries through even from the road.
+    The stable is north; the gate stands open.
+  the verge: >
+    The road's margins here are long grass and rough meadow
+    growth — knapweed, yellow rattle, the coarse stems of
+    cow parsley gone to seed. The field to the south is
+    meadow hay, not yet cut; to the north, pasture with
+    the hedgerow marking the stable yard's edge. Standing
+    at the verge the town is already behind: no roof-line
+    visible, just the university tower above the treeline
+    east. West the country flattens out toward the wooded
+    highlands on the horizon.
+spawninfo:
+  - mobid: 9532
+    respawnrate: "20 real minutes"
+idlemessages:
+- A rider passes heading west without slowing, the horse at a good trot.
+- Hay-smell from the stable gate carries across the road on the morning air.
+- The shrine-post stands quiet in the field-grass, south of the road.

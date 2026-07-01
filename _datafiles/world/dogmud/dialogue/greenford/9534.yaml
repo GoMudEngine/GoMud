@@ -1,0 +1,89 @@
+mobid: 9534
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Morning. Rain before noon, I think -- you can
+      feel it coming in off the road."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. I'm on my way to market but I've got
+        a minute."
+  - keywords: ["rain", "weather", "air", "feel"]
+    responses:
+      - "I feel the change in the air before the sky
+        shows it. Comes with the jaw thing."
+  - keywords: [""]
+    responses:
+      - "Ask me quick -- market won't wait forever."
+tree:
+  root:
+    text: |
+      West lane, last stretch before the gate. I come
+      past here every morning -- live on the far end
+      of the lane, closest to the road. You get used
+      to the traffic. Some of it you stop noticing and
+      some of it you never do. What do you want to
+      know?
+    hints: "You could ask her about life at the edge
+      of town, about her morning and daily routine,
+      or about the travelers who pass through."
+  nodes:
+    - id: edge
+      triggers: ["gate", "end", "town", "here",
+        "outskirts", "lane", "gateposts", "last",
+        "houses", "boundary", "live", "lived",
+        "close", "far", "west-lane", "neighbors",
+        "neighbour", "neighborhood"]
+      text: |
+        Last stretch before the open country -- the
+        houses on the west lane are older than most of
+        the town and the front gardens run wider than
+        anywhere else in Greenford. It's quiet, by which
+        I mean there's road noise but no market noise:
+        carts, horses, the occasional coach. The gateposts
+        are a landmark. I walked past them a thousand
+        times before I started paying attention to them.
+        Now I notice when the road-warden's at his bench
+        and when he isn't.
+      hints: "You could ask about her morning and daily
+        routine, or about who passes through on the road."
+    - id: daily
+      triggers: ["morning", "daily", "day", "routine",
+        "rain", "weather", "feel", "air", "early",
+        "life", "work", "usual", "habit", "bump",
+        "jaw", "cheek", "sense", "skin", "change",
+        "mutation"]
+      text: |
+        Up with the light, down to the market, back
+        before the lane is properly moving. I feel weather
+        in the air -- literally, because of my Chrysalis-
+        change. Faint raised bumps along my jaw and
+        cheekline pick up air movement the way a hand held
+        out a window picks up wind. I can tell wind
+        direction before a leaf moves. It means I'm right
+        about the rain more often than not, which is a
+        strange thing to be known for in a lane this
+        quiet. But there are worse things to be known for.
+      hints: "You could ask about life at the edge of
+        town and the gate, or about travelers and coaches
+        on the road."
+    - id: travelers
+      triggers: ["travelers", "traveler", "passes",
+        "passing", "coaches", "coach", "going",
+        "through", "road", "traffic", "who",
+        "pass", "goes", "heading", "west", "plymouth"]
+      text: |
+        Mostly heading west -- the Plymouth road draws
+        most of the through-traffic. Merchants, scholars
+        from the university, the occasional large party.
+        The coaches are the loudest. The ones on foot
+        tend to stop at the shrine before the milepost.
+        I've watched a lot of people leave and I've
+        watched some of them come back. Most of them
+        don't -- but that's the road. Once you've gone
+        west that far, New Plymouth tends to keep you.
+        That's what people say, anyway. I've never been.
+      hints: "You could ask about life at the edge of
+        town, or about mornings and daily routine."

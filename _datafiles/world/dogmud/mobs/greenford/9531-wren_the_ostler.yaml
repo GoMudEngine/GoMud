@@ -1,0 +1,51 @@
+mobid: 9531
+zone: Greenford
+schedule_id: gf_ostler
+craft_support: cooking
+behavior_archetype: noncombat_shopkeeper
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote runs a thumb along the near harness strap,
+    checking the stitching at each stud without pausing.'
+  - ''
+  - 'say Morning coaches are in. If you''re heading west,
+    I can have you provisioned in ten minutes flat.'
+  - ''
+  - 'emote straightens a set of traces on the wall-rack,
+    her freckles shifting gold in the yard''s early light.'
+  - ''
+activitylevel: 10
+character:
+  name: Wren the Ostler
+  description: |
+    Wren the Ostler runs the coaching stable at the
+    west edge of Greenford -- four horses, two coaches,
+    and a yard she keeps in better order than most
+    people keep their kitchens. She is compact and
+    quick, with the particular efficiency of someone
+    who has learned that slow work costs more than
+    fast work in a stable yard. Her Chrysalis-change
+    is in her freckles: they shift subtly in hue with
+    the ambient light -- gold in direct sun, a flatter
+    grey in cloud -- reading the sky the way a good
+    barometer reads pressure. She uses this to judge
+    the afternoon weather before committing a horse to
+    a long ride west. The horses ignore it entirely,
+    which she considers the most useful thing about it.
+  speciesid: 1
+  level: 1
+  gold: 40
+  stats:
+    dexterity:
+      training: 6
+    perception:
+      training: 5
+  shop:
+    - itemid: 40162
+    - itemid: 40154

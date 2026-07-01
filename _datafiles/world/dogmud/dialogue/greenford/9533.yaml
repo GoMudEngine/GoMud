@@ -1,0 +1,115 @@
+mobid: 9533
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Morning. The shrine's open to anyone -- you don't
+      need to explain yourself to stop here."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Morning. Come in off the road if you like."
+  - keywords: ["bless", "blessing", "safe", "road", "wish"]
+    responses:
+      - "Safe roads -- that's the wish. The box takes what
+        you want to give, or nothing at all."
+  - keywords: [""]
+    responses:
+      - "Ask me anything. I'm here most days and I don't
+        mind being asked."
+tree:
+  root:
+    text: |
+      Wayfarer's Shrine, west road. I'm Mette -- I keep
+      this shrine and have for nine years. The post has
+      been here a great deal longer than me. The offering-
+      box takes coin or whatever you want to leave -- or
+      nothing -- the blessing doesn't require payment. Are
+      you heading west, or just stopping?
+    hints: "You could ask Mette about the shrine and the
+      carving, about what travelers leave as offerings,
+      about the blessing and the rite, or about her work
+      as keeper."
+  nodes:
+    - id: shrine
+      triggers: ["shrine", "post", "carving", "figure",
+        "oak", "what", "this", "cloaked", "carved",
+        "old", "here", "stands", "lamp", "face",
+        "staff", "traveler-figure", "weathered"]
+      text: |
+        The post has been here as long as anyone in
+        Greenford can remember -- longer than the gate,
+        longer than the distance board. The carving at
+        the top is a cloaked figure with a staff, facing
+        west, the hand raised in a road-blessing gesture.
+        It's worn smooth by weather -- you can read the
+        shape of it but not the details anymore. No one
+        knows who carved it or why they set it here. The
+        oil lamp at the base is for the wet months -- a
+        light by the road when it goes dark. In summer
+        it stays empty. The post manages without it.
+      hints: "You could ask about the offerings travelers
+        leave, about the blessing itself, or about her
+        work as keeper."
+    - id: offerings
+      triggers: ["offering", "offerings", "coin",
+        "coins", "ribbon", "paper", "tokens", "leave",
+        "left", "collect", "box", "slot", "things",
+        "bring", "gave", "give", "item", "items",
+        "stone"]
+      text: |
+        People leave what they have or what they want
+        to be rid of before the road. Coins are the
+        common thing -- I collect them monthly and they
+        go toward the post's upkeep and a small share to
+        the town's road fund. But the other things
+        interest me more. A ribbon wound around a stone,
+        which is someone's private symbol. Dried stems
+        from a roadside plant. A folded paper with a name
+        on the outside. I don't open the papers. Whatever
+        they mean to the person who left them is theirs
+        to keep. I clear the box monthly. Travelers
+        always bring more.
+      hints: "You could ask about the shrine and the
+        carving, about the blessing itself, or about
+        her work as keeper."
+    - id: blessing
+      triggers: ["blessing", "rite", "bless", "safe",
+        "roads", "travel", "road", "journey", "pray",
+        "prayer", "ceremony", "ritual", "wish",
+        "words", "traditional", "how", "say"]
+      text: |
+        The rite is simple -- I say it for anyone who
+        asks before they head west. Safe roads, dry
+        weather, and arrival. That's the whole of it.
+        I don't think of it as sacred in any elaborate
+        sense -- it's a wish, said aloud, by someone
+        who has watched travelers leave this road for
+        nine years and means it genuinely. The carving
+        is old and the rite probably is too, but the
+        meaning is plain: safe roads. You don't need
+        to believe anything particular for it to be a
+        good thing to say.
+      hints: "You could ask about the shrine and what
+        it is, about the offerings travelers leave, or
+        about how she came to tend it."
+    - id: keeper
+      triggers: ["keeper", "work", "you", "your", "tending",
+        "tend", "nine", "years", "long", "faith",
+        "believe", "belief", "meaning", "purpose",
+        "came", "who", "personally", "yourself",
+        "mind", "why"]
+      text: |
+        I came to it by accident. The keeper before me
+        was a man who lived in the last house on the
+        west lane and tended this post for thirty years.
+        When he died he left a note with the town registry
+        saying I was the next keeper. I'd spoken to him
+        twice. I don't know what he saw. But I've been
+        here nine years and I haven't wanted to leave.
+        Travelers are interesting company, even briefly --
+        maybe especially briefly. I like the moment just
+        before departure. Something honest happens in it.
+      hints: "You could ask about the shrine and the
+        carving, about offerings, or about the road
+        blessing itself."

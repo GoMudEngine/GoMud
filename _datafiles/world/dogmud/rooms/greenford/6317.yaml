@@ -1,0 +1,52 @@
+roomid: 6317
+zone: Greenford
+title: The West Gate
+description: >
+  The lane meets its western end at two dressed stone
+  gateposts set square in the verge — no gate between
+  them now, the pintles empty, the posts serving as a
+  threshold rather than a barrier. The cobbles give out
+  here; beyond the gateposts the surface shifts to packed
+  earth and gravel, the road running clear and level west
+  into the open country. A distance board is nailed to
+  the south post in a steady hand. The warden's lean-to
+  shelters against the north post, a log bench beside it
+  worn flat with use. East, the lane returns to the hall
+  steps and the square. Examine the
+  <ansi fg="itemname">distance-board</ansi> or the gateposts.
+biome: city
+coord: {x: 21, y: -78, z: 1}
+exits:
+  east: {roomid: 6295}
+  west: {roomid: 6318}
+nouns:
+  distance-board: >
+    A board of seasoned pine nailed to the south gatepost
+    at eye height, the lettering painted in the road-
+    warden's careful hand: COACHING STABLE, NORTH;
+    WAYFARER'S SHRINE, SOUTH; NEW PLYMOUTH, THREE DAYS.
+    Below, in smaller letters added later: ROAD MAINTAINED
+    TO THE COUNTY MARK. The information is correct and
+    periodically repainted. The board has been here long
+    enough to have a wasp's nest in its upper right
+    corner that the road-warden tolerates.
+  the gateposts: >
+    Two posts of dressed limestone, square-cut and set
+    plumb in the verge on either side of the road —
+    solid work, old enough that the mortar between the
+    courses has weathered out and been repointed more
+    than once. The pintles on the inner faces are empty:
+    the gate was removed generations back, the posts
+    kept as a boundary marker and a habit. Each post
+    stands taller than a man by a handspan. The road-
+    warden has carved a tally mark into the north post's
+    base, its meaning private.
+spawninfo:
+  - mobid: 9530
+    respawnrate: "20 real minutes"
+  - mobid: 9534
+    respawnrate: "20 real minutes"
+idlemessages:
+- The warden checks the road west, then settles back to the bench.
+- 'Cart wheels mark the road beyond the gateposts: packed earth, no cobbles.'
+- The last house chimney in Greenford smokes behind the gate.

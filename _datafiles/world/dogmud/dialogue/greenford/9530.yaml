@@ -1,0 +1,86 @@
+mobid: 9530
+zone: Greenford
+defaultMood: friendly
+greetings:
+  - text: "Road-warden. Heading west or just passing through?
+      Either way, you're in the right place."
+    moods: ["friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Day to you. Gate's open and the road's clear."
+  - keywords: ["new_plymouth", "plymouth", "west", "distance"]
+    responses:
+      - "Three days on a good road. Milepost a mile out
+        gives you the measure of it."
+  - keywords: [""]
+    responses:
+      - "Ask me what you need. Sixteen years at this gate
+        and I know what I know."
+tree:
+  root:
+    text: |
+      West gate, Greenford. I'm Garn -- road-warden
+      sixteen years. Distance board on the south post
+      has what you need if you're heading out: stable's
+      north of here, shrine's south, New Plymouth's
+      three days west on a clear road. If you're
+      arriving -- the town's east. What do you need?
+    hints: "You could ask Garn about the gate and his
+      work here, about the road west toward New Plymouth,
+      or about Greenford and the town."
+  nodes:
+    - id: gate
+      triggers: ["gate", "gateposts", "posts", "warden",
+        "duty", "job", "work", "here", "boundary",
+        "end", "lane", "tally", "lean-to", "bench",
+        "distance", "board"]
+      text: |
+        The gateposts have been here longer than me --
+        the pintles are empty, the gate's been gone for
+        generations, but the posts still mark the edge
+        of the town and that's what matters. My job is
+        the road: who's using it, whether the surface
+        wants repair, whether the drainage channels are
+        clear after rain. I keep the distance board
+        current and I log the through-traffic. Town pays
+        me to notice things, which suits me because I
+        notice things anyway. That's the whole of the
+        work, and it turns out to be enough.
+      hints: "You could ask about the road west toward
+        New Plymouth, or about Greenford and the town."
+    - id: road
+      triggers: ["road", "west", "plymouth", "miles",
+        "days", "far", "milepost", "direction", "travel",
+        "journey", "going", "heading", "long", "way",
+        "route", "surface", "how"]
+      text: |
+        New Plymouth is three days west on a clear road --
+        two by horse if you push it and the surface holds.
+        The road's maintained to the county mark, which is
+        four miles out -- after that it's the next county's
+        responsibility, and they're good about it. The
+        milepost a mile out names Greenford behind you and
+        Plymouth ahead. I have sent more travelers west than
+        I can count, and every one of them made it. I find
+        that a reliable record. The road is good. Go when
+        you're ready.
+      hints: "You could ask about the gate and the warden's
+        work, or about Greenford and the town."
+    - id: town
+      triggers: ["greenford", "town", "home", "settled",
+        "arrive", "arriving", "east", "return",
+        "inside", "market", "square", "back"]
+      text: |
+        Good town to come back to. Market square is ten
+        minutes east -- inn's on the square if you need a
+        bed, general store for provisions if you're
+        resupplying. The stable north of here for a horse.
+        I've been at this gate so long I think of myself
+        as part of the edge of the town: not quite inside
+        it, not quite on the road -- just the place where
+        one becomes the other. Most people walk past me
+        without stopping. The ones who stop tend to be
+        worth the conversation.
+      hints: "You could ask about the gate and his work
+        here, or about the road west."

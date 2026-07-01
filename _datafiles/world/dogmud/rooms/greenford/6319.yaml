@@ -1,0 +1,58 @@
+roomid: 6319
+zone: Greenford
+title: The Coaching Stable
+description: >
+  Horse-smell and fresh hay — the coaching stable's yard
+  is open to the road, a timber-framed structure on three
+  sides enclosing a hard-packed surface swept clean this
+  morning. Two coaches are berthed under the south lean-to,
+  their traces stowed on wall-hooks. The ostler's bench
+  runs along the east wall beside the harness rack and a
+  lamp on a bracket. Feed-bins against the north wall hold
+  oats and coarse chaff; a heavy coach-trunk strapped with
+  iron banding sits at the yard's center, waiting a claim.
+  The smell is layered: fresh straw, sweat-salt on leather,
+  the dry-dust of summer oats. Examine the coach-trunk or
+  the feed-bin.
+biome: city
+coord: {x: 20, y: -77, z: 1}
+exits:
+  south: {roomid: 6318}
+nouns:
+  the coach-trunk: >
+    A heavy iron-banded trunk in the yard's center — dark
+    wood, the iron straps riveted at each corner and buckled
+    across the lid. The lock is a good one. The trunk bears
+    the marks of extended travel: scuff-lines at the lower
+    corners, a repair where one strap pulled free and was
+    re-riveted with newer iron. The name chalked on the
+    side has been rained on and is no longer legible. The
+    trunk is waiting collection or forwarding; the ostler
+    does not speculate on its contents.
+  the feed-bin: >
+    Three low wooden bins against the north wall, their
+    lids raised on pegs: the first holds oats, heaped and
+    dry, smelling of summer; the second coarse chaff for
+    working horses; the third a compressed block of linseed
+    cake for finishing stock. The bins are well-seasoned
+    hardwood with iron hinges, made to last and showing it.
+    A measure-scoop hangs from a peg between the first and
+    second. The oats-bin is more than half full. The stable
+    expects business.
+  the harness: >
+    A long rack of pegs along the east wall holds the
+    stable's working harness in organized rows: breast
+    collar, hames, traces, breeching — each set belonging
+    to a specific horse and marked with a painted strip of
+    color on the headstall. The leather is well-oiled and
+    supple, the brass fittings clean. The ostler works the
+    rack from right to left each morning, checking each
+    set methodically. Some of the harness has been
+    repaired; none of it has been neglected.
+spawninfo:
+  - mobid: 9531
+    respawnrate: "20 real minutes"
+idlemessages:
+- The ostler checks a harness buckle, working it through careful fingers.
+- One of the horses shifts in the lean-to; leather and straw creak together.
+- Hay-dust drifts down from the eaves in the morning draft.

@@ -1,0 +1,60 @@
+roomid: 6320
+zone: Greenford
+title: The Wayfarer's Shrine
+description: >
+  The shrine-post stands a few yards from the road's edge,
+  in the long grass at the field margin — a carved oak
+  post with a figure at the top: a cloaked traveler,
+  weathered to the generalized smoothness that old
+  carvings find. The ground around it is well-trodden
+  despite the grass: people stop here. A fitted wooden
+  offering-box is mounted at the post's base, its slot
+  worn smooth by generations of coin-edges. Small things
+  have been left on the box's flat top — a ribbon in road-
+  colors, three dried flower stems, a folded paper. The
+  road traffic continues on the verge above; down here it
+  is quiet. Examine the shrine-post or the offering-box.
+biome: land
+coord: {x: 20, y: -79, z: 1}
+exits:
+  north: {roomid: 6318}
+nouns:
+  the shrine-post: >
+    A squared oak post, its surface weathered to a grey-
+    silver with the grain standing proud, the carved figure
+    at the top worn down to broad forms — a cloaked figure
+    with a staff, facing west, a road-blessing gesture
+    visible in the raised hand. The carving is old; no one
+    now working the road knows who first set it here, only
+    that it has always been here, and that travelers stop.
+    A small iron ring driven into the post's base holds an
+    oil lamp in the wet months. The lamp is empty; summer
+    needs no lamp.
+  the offering-box: >
+    A fitted wooden box mounted at the post's base — a
+    proper piece of cabinetry, with a curved lid, a slot
+    worn smooth by coin-edges, and a small lock. The slot
+    is on top; the front opens on a hinge for the shrine-
+    keeper's collection. The outside of the lid carries a
+    row of small travel symbols pressed into the wood:
+    a boot, a road, a roof — the primer vocabulary of a
+    traveler's wish. The box is old and well-used and
+    clearly maintained.
+  the offerings: >
+    On the flat top of the offering-box and tucked against
+    the post's base: a ribbon of faded blue cloth wound
+    around a small stone, a bundle of dried stems of some
+    roadside plant, and a folded square of paper with a
+    name written on the outside in a hand that has tried
+    to be clear. Travelers leave things here — small tokens
+    for safe passage, for return, for arrival. The offerings
+    vary with the season and the direction of travel. The
+    shrine-keeper clears the box monthly; the offerings
+    always return.
+spawninfo:
+  - mobid: 9533
+    respawnrate: "20 real minutes"
+idlemessages:
+- Wind moves the long grass around the shrine-post, settling it again.
+- A traveler turns from the road toward the shrine-post, brief and quiet.
+- The offering-box slot catches the light; a coin was placed there recently.

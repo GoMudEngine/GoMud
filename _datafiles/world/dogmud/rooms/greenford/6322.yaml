@@ -1,0 +1,48 @@
+roomid: 6322
+zone: Greenford
+title: The Plymouth Road
+description: >
+  The road bends here — a long westward arc the carter's
+  maps call the Plymouth Turn. Beyond the bend the
+  surface is maintained and clear: drainage cut, verge
+  trimmed, the way marked at intervals by the county's
+  half-buried stones. Three days west and north, New
+  Plymouth waits — the capital, the harbour, the river
+  district and its trade. Greenford is behind now; the
+  university tower is barely above the treeline in the
+  east. This is a place you come back to with a pack and
+  a reason — the road to New Plymouth is another journey
+  for another day. Examine the
+  <ansi fg="itemname">road-ahead</ansi> or the treeline.
+biome: land
+coord: {x: 18, y: -78, z: 1}
+exits:
+  east: {roomid: 6321}
+nouns:
+  road-ahead: >
+    The road continues clearly west from the bend — the
+    surface maintained, the drainage good, the verge-posts
+    marking the county's responsibility at regular
+    intervals. At the limit of clear sight the road curves
+    north around a wooded rise and is gone from view.
+    Beyond that: the highland plateau, the river crossings
+    in the upland valleys, and three full days of travel
+    to New Plymouth at a walking pace, two by horse. The
+    road is there and open. It does not require anything
+    further of you today. Come back with a pack and a
+    reason.
+  the treeline: >
+    Looking east from the Plymouth Turn: the road running
+    back toward Greenford, and above the treeline that
+    marks the town's eastern edge, the university tower
+    clear against the sky — the highest point of everything
+    visible. Greenford from here is smaller than you might
+    expect, tucked into its river valley. The tower gives
+    it away; without the tower it would be invisible. You
+    can see why travelers coming from the west miss the
+    turn: the town hides. The road in is obvious, but the
+    town itself is modest from distance.
+idlemessages:
+- The road bends away west, its surface clear and well-marked from here.
+- A lone rider appears around the bend heading east, dusty from the road.
+- Wind comes off the open country, steady and uninterrupted.
