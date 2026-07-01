@@ -65,3 +65,5 @@ idlemessages:
   stops the moment you step back from the grey.
 - The silence over the flank is pressed flat, and into that
   flatness the stinging in the air is the only thing that moves.
+mutators:
+- mutatorid: hull_discharge

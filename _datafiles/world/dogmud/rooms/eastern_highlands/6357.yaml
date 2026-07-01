@@ -64,3 +64,5 @@ idlemessages:
   that stirs in it is the stinging in the air near the grey.
 - Your teeth ache, low and even, and the ache does not lessen for
   walking, because the thing that causes it does not lessen either.
+mutators:
+- mutatorid: hull_discharge

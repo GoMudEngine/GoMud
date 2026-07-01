@@ -50,3 +50,5 @@ idlemessages:
   a reason.
 - The charged air turns tighter in the enclosed space, watchful, pressed
   close against the skin like attention.
+mutators:
+- mutatorid: hull_discharge

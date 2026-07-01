@@ -64,3 +64,5 @@ idlemessages:
 - A cold that is not weather sits over the recesses, watchful and
   patient, and every instinct you own wants you gone from in front
   of it.
+mutators:
+- mutatorid: hull_discharge

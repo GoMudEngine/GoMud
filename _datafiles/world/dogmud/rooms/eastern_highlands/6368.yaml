@@ -48,3 +48,5 @@ idlemessages:
   The air has weight in this place, and the weight is waiting.
 - The pressure deepens the further east you look, toward the face and the
   shut thing set into it. It does not want you closer.
+mutators:
+- mutatorid: hull_discharge

@@ -25,6 +25,9 @@ exits:
     roomid: 6368
   east:
     roomid: 6372
+    lock:
+      difficulty: 55
+      trapbuffids: [94]
 nouns:
   door: >
     From here it is only a shape — a shut, deliberate thing set into the

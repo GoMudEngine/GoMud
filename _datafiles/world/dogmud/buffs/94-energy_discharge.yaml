@@ -1,0 +1,14 @@
+buffid: 94
+name: Energy Discharge
+description: Something under the ground bites up through you in cold arcs.
+triggerrate: 1 round
+triggercount: 3
+start_user_text: The air over the buried surface crawls, and a cold shock jolts up through you.
+start_room_text: "{source} jerks as the ground arcs against them."
+end_user_text: The stinging in your bones fades — for now.
+trigger_user_text: A cold arc bites up through you.
+trigger_room_text: "{source} shudders as the ground arcs against them."
+tick_pool: health
+tick_percent: -0.06
+tick_variance: 0.03
+tick_min: 4

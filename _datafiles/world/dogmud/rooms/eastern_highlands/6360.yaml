@@ -26,6 +26,9 @@ exits:
     roomid: 6359
   south:
     roomid: 6361
+    lock:
+      difficulty: 40
+      trapbuffids: [94]
 nouns:
   recess:
     >
@@ -59,3 +62,5 @@ idlemessages:
   back from it before the mind has said a word.
 - Something about the recess feels like attention. There is
   nothing here to attend. The feeling does not care.
+mutators:
+- mutatorid: hull_discharge
