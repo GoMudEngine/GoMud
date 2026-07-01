@@ -1,0 +1,139 @@
+questid: 76
+name: The Disc
+description: >-
+  The inert disc is a key that has never been woken. Brennan named the
+  man who studied how — a scholar who went east from Ashwick years ago
+  and did not come back. His research waits in the cottage he left
+  behind.
+secret: false
+steps:
+  - id: start
+    description: "Brennan believes the disc is a key that must be woken, and
+      that the man who knew how left his work in an Ashwick cottage."
+    hint: "You will need the disc itself — it lies in the old Reliquary at
+      Pothole Coulee, worked into the floor. Then seek the abandoned
+      cottage in Ashwick."
+  - id: journal
+    description: "You read the father's journal — a life spent chasing a
+      buried thing in the east, and the method he worked out for waking
+      the disc."
+    hint: "Follow his method at the marked hearth in the cottage, with the
+      disc in hand."
+  - id: attune
+    description: "You followed his method at the hearth, and the disc woke
+      — the lines hold warmth now, and the mark keeps the light."
+    hint: "The disc is a key now. It knows the shape of its lock, east."
+  - id: end
+    description: "You carry the woken disc — a key for the door in the east,
+      and the last of a lost man's work, done at last."
+rewards:
+  playermessage: >-
+    The disc is awake in your hand, warm along its lines, and it answers
+    a shape you have not yet reached. A father's work, finished by a
+    stranger, in the cottage he left to chase it. What it opens waits
+    east, in the broken country, behind a door in the buried face.
+  roommessage: ""
+  gold: 0
+triggers:
+  - event: room_interact
+    room: 5343
+    noun: disc
+    conditions:
+      missing_item: 40167
+    actions:
+      - give_item: 40167
+      - send_text: >-
+          You work your fingers into the crack and lift the disc free of
+          the floor — cool, too smooth, heavier than its size. Fine raised
+          lines thread across its face to a ring struck through with a
+          line. You do not understand it. You are fairly certain no one
+          here does. You put it away.
+      - room_text: "works something free of the cracked floor and pockets it."
+  - event: room_interact
+    room: 5343
+    noun: disc
+    conditions:
+      has_item: 40167
+    actions:
+      - send_text: "The crack in the floor is empty now. You already carry what lay beneath it."
+  - event: room_interact
+    room: 4023
+    noun: journal
+    conditions:
+      has: ["76-start"]
+      missing: ["76-journal"]
+    actions:
+      - grant: "76-journal"
+      - send_text: |
+          You sit at the cold table and read the man's life backward.
+          Years of it — a hand that starts careful and turns driven, the
+          same questions put a hundred ways to one buried thing far to
+          the east. Something made, he is certain, and old past any
+          reckoning, and wrong in a way he never quite sets down in
+          words. He calls it only the thing. The ring struck through with
+          a line is inked in every margin, worried at like a sore tooth.
+          Then, near the end, the part you came for without knowing it —
+          a method, worked out slow and sure across many pages, for
+          waking the grey disc that is its key, and the marked hearth for
+          the place to do it. The last line is not about the thing at
+          all. It is a name, set down once and gently, as if to keep one
+          soft thing safe. Maren. He went east to finish this. He did not
+          come back to her.
+      - room_text: "reads a long while at the cottage table."
+  - event: room_interact
+    room: 4023
+    noun: journal
+    conditions:
+      missing: ["76-start"]
+    actions:
+      - send_text: >-
+          A field journal lies open on the table, its pages dense with a
+          careful obsessive hand and sketches of a mark you have half-seen
+          elsewhere. Without knowing what you are looking for, it is only
+          a lonely man's long notes.
+  - event: room_interact
+    room: 4023
+    noun: hearth-marks
+    conditions:
+      has: ["76-journal"]
+      has_item: 40167
+      missing: ["76-end"]
+    actions:
+      - grant: "76-attune"
+      - grant: "76-end"
+      - consume_item: 40167
+      - give_item: 40168
+      - send_text: |
+          You do as the journal says. You set the disc into the cut
+          center of the hearthstone, where the marks draw inward to a
+          single point, and you follow his method through — the order of
+          it, the patience of it, the small exact things a driven man
+          learned alone and wrote down so a stranger might one day do
+          this right. For a long moment, nothing. Then the grey face
+          warms under your fingers — not with your warmth but its own.
+          The fine raised lines take the thin light from the shutter gap
+          and keep it, holding a glow a half-breath past when it should
+          fade, and the ring-struck mark at the center wakes and steadies,
+          sure of itself now, sure of where it belongs. The disc is a key,
+          and it knows its door — east, in the broken country, in the
+          buried face he gave his years to. His work, done at last, by a
+          stranger's hand in the cottage he left to chase it. And a name
+          comes to you off the last page, unbidden. Maren. He kept her,
+          all the way to the end of himself. You hope, wherever she is,
+          she never learns how far he went.
+      - room_text: "does something careful at the marked hearth, and the air goes briefly strange."
+  - event: room_interact
+    room: 4023
+    noun: hearth-marks
+    conditions:
+      has: ["76-journal"]
+      missing_item: 40167
+    actions:
+      - send_text: "The marks are cut for a thing you do not have in hand. Without the disc, they are only scratches in old stone. The disc lies in the old Reliquary at Pothole Coulee."
+  - event: room_interact
+    room: 4023
+    noun: hearth-marks
+    conditions:
+      missing: ["76-journal"]
+    actions:
+      - send_text: "Marks are cut into the hearthstone in a deliberate pattern — a method for something, though you cannot read it yet."

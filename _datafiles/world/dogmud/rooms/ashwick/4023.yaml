@@ -10,9 +10,13 @@ description: >
   vacated, the particular quiet of a place someone left on
   purpose. Inside, bare shelves line the walls with dust
   outlines where books once stood. A cold hearth sits against
-  the far wall. A loose stone near the hearth base looks
-  slightly displaced. A small <ansi fg="itemname">bedside table</ansi>
-  sits against the wall, its single drawer swollen with damp.
+  the far wall, its stone cut with a deliberate pattern of
+  <ansi fg="itemname">hearth-marks</ansi> that no fire ever made.
+  A loose stone near the hearth base looks slightly displaced.
+  A small <ansi fg="itemname">bedside table</ansi> sits against the
+  wall, its single drawer swollen with damp, and on its surface a
+  field <ansi fg="itemname">journal</ansi> lies open, thick with the
+  years of one careful hand.
 biome: farmland
 coord:
   x: -3
@@ -59,6 +63,26 @@ nouns:
     with damp and stiff to open. The wood protests as it
     slides. Inside, a folded page of careful handwriting
     rests against the drawer bottom.
+  journal: The field journal of the man who lived here -- page
+    after page in a small, driven hand, ink of years laid down
+    over years, and all of it one subject. A made thing, ancient
+    and wrong, buried in the broken country to the east. He calls
+    it only the thing, as though naming it further would give it
+    more purchase on him than it already has. One mark recurs in
+    his margins until the paper wears thin -- a ring struck through
+    with a single line. Near the back, set apart and gone over many
+    times, is a worked-out method -- what to do, and where, to wake
+    the grey disc that is its key. In the very last entry, once and
+    softly, a woman's name. Maren. Nothing of her but that he kept
+    her.
+  hearth-marks: A pattern cut deliberately into the face of the
+    hearthstone -- not decoration, not a mason's device, but
+    something nearer a diagram, its edges worn where a thumb has
+    traced them again and again. It answers the last pages of the
+    journal exactly. This is the focus of his method, and the place
+    it is meant to be done -- the still center where the waking
+    happens, if ever a hand brought the right thing to it. Cold now,
+    and patient, and waiting to be used.
 spawninfo:
 - mobid: 267
 idlemessages:

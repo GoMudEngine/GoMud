@@ -31,6 +31,26 @@ tree:
       surveys and about the surveyor Reth, about the mark on
       the old maps, or about the university and the department."
   nodes:
+    - id: disc-quest
+      triggers: ["disc", "symbol", "ring", "mark", "key", "quest", "task"]
+      questRequired: ["75-end"]
+      questExcluded: ["76-start", "76-end"]
+      grantsQuest: "76-start"
+      text: |
+        So the eastern site gave up more than a silence. Let me see it
+        -- no, keep it in your hand, I only want to look. A ring struck
+        through with a line, raised in the metal itself. I have chased
+        that mark across a hundred and fifty years of margins and here
+        it is, made solid. This is a key. Inert, though -- dead in the
+        hand, and it will stay dead until someone wakes it, and I do not
+        know how. But a man did. He kept a cottage in Ashwick and he
+        gave his whole life to that thing in the east -- studied how to
+        rouse the key, then went east himself and never came back. His
+        work should still be in the house he left. Go to Ashwick, find
+        the abandoned cottage, and read what he left behind. And bring
+        the disc -- you will need the thing itself.
+      hints: "You could ask Brennan where the disc is, or about the man who
+        went east to wake it."
     - id: grant
       questExcluded: ["75-start", "75-end"]
       grantsQuest: "75-start"
