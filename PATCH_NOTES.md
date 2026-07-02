@@ -1,5 +1,37 @@
 # DOGMud Patch Notes
 
+## 2026-07-01 — The Eastern Arc: the road to the end of the world
+
+- **A hidden road climbs east into the mountains.** Somewhere past the vale
+  south of New Plymouth, a searching eye can find a branch off the known way
+  that the maps do not mark — the Cascade Pass Road, a lonely high road for a
+  seasoned adventurer, with a lone survivor at its foot who will tell you, if
+  you ask, that you should turn back.
+- **Beyond the pass lies the Eastern Highlands** — a dead, wrong country where
+  something vast and old and *made* has broken up through the ground, and the
+  air itself bites at anyone who lingers. Its creatures are no joke, its warden
+  is worse, and at the very end of the road stands a sealed door that opens for
+  one thing only.
+- **The Disc.** A short trail of clues — an old reliquary, a scholar's cottage,
+  a marked map — lets you turn a dead relic into the key that door was waiting
+  for. Anyone can walk this trail; the disc is yours to earn and yours to keep.
+- **The Crash Site — the hardest thing we have ever built.** Past the door lies
+  a buried place that was never meant for hands like yours: a true endgame
+  dungeon for a coordinated party of fully-realized masters and their
+  companions. Pay a scavenger at the threshold to wake it as deep as your coin
+  dares; the more you rouse, the deadlier it gets and the richer it keeps. Trap
+  corridors, degraded machines that still bite, tanks and wardens of grey metal,
+  and two guardians that will end an unready party. And at its heart, an answer
+  — to a question the whole world has been asking without knowing it. Come back
+  changed. Some do not come back at all.
+- **New this arc:** inside the buried place, the gifts of the Chrysalis fall
+  quiet — your mutations and your belief-driven power are pressed flat, and you
+  fight with your own two hands. Somewhere in the deep, a rare catalyst can
+  *unmake* every mutation you carry, back to nothing — and what grows back
+  afterward comes back hungrier, with a far better chance at the rarest gifts. A
+  true remort for those who chase the perfect loadout. The place also yields the
+  first of a new tier of legendary crafting reagents, and relic gear to match.
+
 ## 2026-06-30 — The road east: Greenford opens
 
 - **A new road runs east from the Confluence.** Past the temple city's east
