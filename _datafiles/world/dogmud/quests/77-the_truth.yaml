@@ -77,20 +77,10 @@ triggers:
           told you everything. You do not feel wiser. You feel like someone
           who has been handed a weight and told it is theirs now, forever.
       - room_text: "{source} stands motionless before the wall of moving light, and for a long moment does not seem to breathe."
-  - event: room_interact
-    room: 6397
-    noun: records
-    conditions:
-      has: ["77-end"]
-    actions:
-      - send_text: |
-          You wake the stones again and read again what you cannot unknow —
-          the crossing, the fever that was called a blessing, the immunity
-          that was only luck, and the three ships hung waiting overhead.
-          It has not changed. It will not change. You knew it would not.
-          You look anyway, the way a tongue finds a broken tooth. Then you
-          let the light go dark and stand a while in the quiet.
-      - room_text: "{source} stands a long moment before the silent stones, reading what is already read."
+  # Re-read is on the `oracle-stones` noun only. A second `records` trigger
+  # gated has:["77-end"] would double-fire on the FIRST examine (the grant
+  # above sets the token mid-event, so a same-event has-trigger also matches
+  # — the Q76 same-event lesson). Keeping re-reads on a distinct noun avoids it.
   - event: room_interact
     room: 6397
     noun: oracle-stones
