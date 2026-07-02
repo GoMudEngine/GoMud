@@ -1,0 +1,51 @@
+roomid: 6402
+zone: Crash Site Interior
+title: The Long Dark
+biome: cave
+description: >
+  East off the command approach a lower way runs out where the cold light
+  does not follow, and a few steps in the dark closes over you complete.
+  This is a hall the place let fall — the grey here is buckled and split,
+  the seams torn wide and weeping the same bright stinging discharge as
+  the approach behind, so that the only light is that hurt flicker snapping
+  along the broken walls, and the air prickles and stings with every
+  breath. Something lives in the fall. It does not keep, the way the
+  wardens keep — it drifts the dark places the light abandoned, grown
+  strange and patient in the long black, and it comes toward the sound of
+  you without hurry and without any purpose you could name but the meeting.
+  There is nothing kept down here and nothing worth the keeping, only the
+  dark and the discharge and the thing that drifts in it. West the light
+  and the approach. There is no other way on.
+exits:
+  west:
+    roomid: 6393
+nouns:
+  discharge: >
+    The torn seams down here weep the same bright stinging light as the
+    approach, worse for the dark around it — a hurt flicker snapping along
+    the broken grey, the only light in the hall, and a hurt in the air that
+    prickles and stings with every breath drawn under it. It grows no
+    kinder the longer you stay.
+  drifter: >
+    A thing grown strange in the long black, drifting the dark the light
+    gave up on — no keeper, with no post and no charge, only a patient
+    wrongness that has learned this fallen hall the way water learns a low
+    place. It comes toward the sound of you unhurried, wanting nothing you
+    could name but the meeting, and it is between you and nothing worth
+    having.
+  dark: >
+    Complete a few steps in, past where the approach light gives out, held
+    down by the buckled grey and lit only by the snapping discharge. It is
+    older and stiller than the guarded dark above, a place the made thing
+    let fall and forgot, and something has made it home.
+idlemessages:
+- The torn seams snap and weep their stinging discharge along the broken grey.
+- The dark closes complete a few steps in, lit only by the flicker of the seams.
+- Something drifts toward the sound of you, unhurried, wanting only the meeting.
+- The air prickles and stings with every breath drawn down here.
+mutators:
+- mutatorid: hull_suppression
+- mutatorid: hull_discharge_deep
+spawninfo:
+  - mobid: 9560
+    statpool: 1

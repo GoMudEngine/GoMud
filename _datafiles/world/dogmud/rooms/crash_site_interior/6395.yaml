@@ -1,0 +1,56 @@
+roomid: 6395
+zone: Crash Site Interior
+title: The Core Guardian's Vault
+biome: cave
+description: >
+  The threshold opens and the room does not end. It goes up and it goes
+  out past where the cold light can carry, a vault hollowed at the very
+  heart of the buried thing, and the light here does not lie flat over
+  grey walls but hangs in the great dark like something the room breathes.
+  At the centre of all that space, where every line of the place has been
+  bending you since the breach, stands the thing it was all built to
+  keep. It is a keeper as the wardens are keepers, but it is to them what
+  the sea is to a cup — vast, and slow, and terribly whole, wrought in the
+  same grey and past all the patterns you have fought, so old and so
+  wholly itself that the air seems to bend around the fact of it. It has
+  stood here ten thousand years with nothing to guard against and it has
+  not once faltered in the standing. It knows you are here. It has known
+  since the breach. It turns toward you now with the unhurried certainty
+  of the last thing between the world and the answer, and it will not step
+  aside, and it cannot be gone around. Beyond it, faint, the grey opens
+  north onto a deck where the light is different, and the truth waits.
+exits:
+  south:
+    roomid: 6394
+  north:
+    roomid: 6396
+nouns:
+  guardian: >
+    The core's own keeper, built past every warden below it as a fortress
+    is built past a wall — vast, jointed past counting, wrought in the
+    grey and grown terrible with age, moving with the slow whole certainty
+    of a thing that has never yet needed to hurry. It was set at the heart
+    of the buried place to keep the answer from anyone who came for it, and
+    it has kept it, and it is the last keeping between you and the truth.
+    It does not threaten. It simply will not let you past while it stands.
+  vault: >
+    A hollow at the very heart of the made thing, too vast for the cold
+    light to floor or ceiling, so that the glow hangs in the dark like
+    breath. Every corridor since the breach has been bending you here.
+    This is the centre. This is what the whole broken deck was built
+    around, and around this, the thing that keeps it.
+  light: >
+    Not the flat steady glow of the halls but something that hangs and
+    stirs in the great dark, pooling and thinning as though the vault
+    itself drew slow breath. It gathers thickest around the shape at the
+    centre, as if the place kept its last light for its last keeper.
+idlemessages:
+- The hung light stirs slowly in the dark, gathering thick around the shape.
+- The vast keeper turns a fraction toward you, unhurried, terribly whole.
+- The vault goes up and out past where the cold light can carry.
+- Ten thousand years it has stood here, and it does not falter in the standing.
+mutators:
+- mutatorid: hull_suppression
+spawninfo:
+  - mobid: 9562
+    statpool: 6

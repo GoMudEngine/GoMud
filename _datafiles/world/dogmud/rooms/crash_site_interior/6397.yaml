@@ -1,0 +1,49 @@
+roomid: 6397
+zone: Crash Site Interior
+title: The Records Archive
+biome: cave
+description: >
+  East of the deck the grey settles into a still, close room that feels
+  older than old — not ruined, not guarded, only kept, the way a thing is
+  kept that was meant to outlast everyone who made it. Ranked along the
+  walls and set in low tiers across the floor are the records: smooth
+  oracle-stones of the pale grey, each one dark and quiet until the light
+  finds it, and then waking with a slow inner glow and a drift of moving
+  marks and shapes across its face — a tongue you cannot read and yet feel
+  you almost could, the whole memory of the buried thing laid down here to
+  be found. This is where the place kept what it knew of itself: where it
+  came from, and what befell it, and what became of the ones it carried.
+  The stones do not hide it. They only wait to be asked. Stand among them,
+  and examine the records, and let the buried place tell you at last what
+  it is — the pieces are all here, set out plainly for anyone with the
+  will to gather them. West lies the command deck and the way back.
+exits:
+  west:
+    roomid: 6396
+nouns:
+  records: >
+    The whole kept memory of the buried thing, laid down in the waking
+    oracle-stones — where it came from, what befell it, what became of the
+    ones it bore. It is not hidden and it is not sealed; it waits only to
+    be read. Examine the records and the place will tell you, plainly and
+    without mercy, exactly what it is and what it means for the world above.
+  oracle-stones: >
+    Smooth tiers and ranks of the pale grey, dark until the cold light
+    finds them and then waking with a slow inner glow, their faces
+    drifting with moving marks in a tongue you cannot read and yet feel
+    you nearly could. Each holds a piece of the answer. Together they hold
+    all of it, set out for anyone with the will to gather the pieces into
+    one truth.
+  tongue: >
+    The moving marks that drift across each waking stone — a written
+    speech, ordered and deliberate, wholly unlike any hand of the world
+    you know. You cannot read it outright, and still something in it sits
+    just past the edge of understanding, as though the shapes were meant
+    for eyes like yours after all, only long ago.
+idlemessages:
+- An oracle-stone wakes as the light crosses it, its face drifting with marks.
+- The room is close and still and kept, older than old, guarding nothing now.
+- The records wait along the walls and across the floor, asking only to be read.
+- The drifting marks sit just past understanding, and will not quite come.
+mutators:
+- mutatorid: hull_suppression

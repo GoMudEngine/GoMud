@@ -1,0 +1,54 @@
+roomid: 6398
+zone: Crash Site Interior
+title: The Oracle Gallery
+biome: cave
+description: >
+  West of the deck the grey opens into a long gallery, and the whole far
+  wall of it is light. Not the cold sourceless glow of the halls — a wall
+  of moving light, deep and wide as a night sky, and it is a sky: black
+  shot through with a thousand thousand steady fires, wheeling slow and
+  patient across the grey as though the room looked out through the hull
+  and the world and out the other side into somewhere else entirely. And
+  it is somewhere else. Among the wheeling fires hangs a single blue world
+  turning, ringed in white cloud, small with distance and dwindling as you
+  watch — a world being left behind, held here in light so that whoever
+  came after would see what those inside had seen: the sky-before, the
+  home that shrank to a star. There is no reading it wrong. This was never
+  of the world above. It fell out of that patient dark, carrying its
+  people away from that blue turning place, and it came down here, and it
+  never rose again. The gallery is very quiet. It is a hard thing to stand
+  before. North the grey narrows toward a room of tall shapes and silent
+  reaching arrays. East lies the deck.
+exits:
+  east:
+    roomid: 6396
+  north:
+    roomid: 6399
+nouns:
+  wall: >
+    The whole far side of the gallery, made all of moving light — a window
+    that does not look on the highland or the dark of the hull but out
+    into a vast patient blackness strewn with steady fires, wheeling slow.
+    It is a sky, and it is not this world's sky. It was set here to be
+    remembered by, and it remembers still, ten thousand years after the
+    eyes it was made for closed.
+  fires: >
+    A thousand thousand points of steady light strewn across the moving
+    black, each one held and true, not the few faint stars of a highland
+    night but a depth of them past counting. They wheel slow across the
+    wall, and among them hangs one small blue turning thing that is not a
+    star at all.
+  blue-world: >
+    A single small orb turning among the fires, wrapped in white cloud over
+    deep blue, and dwindling — held in the light at the moment of its
+    leaving, the way you would hold the last sight of a shore. It was home
+    to whoever rode this thing down into the buried dark. They watched it
+    grow small. They kept the watching here, so it would not be lost when
+    they were.
+idlemessages:
+- The wall of light wheels its thousand steady fires slow across the grey.
+- Among the fires a small blue world turns and dwindles, held at its leaving.
+- The gallery is very quiet; it is a hard thing to stand before.
+- This was never of the world above — it fell out of that patient dark.
+mutators:
+- mutatorid: hull_suppression
