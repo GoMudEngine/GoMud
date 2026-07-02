@@ -13,8 +13,7 @@ description: >
   nights. Against the wall rests a <ansi fg="itemname">cask</ansi>
   with a fresh chalk-tally on its head. Someone meets here, in the
   old deep, well below the notice of the city — meets, keeps
-  count, and tidies up after. They are not here now. The way out
-  is the door south.
+  count, and tidies up after. The way out is the door south.
 biome: city
 coord:
   x: -21

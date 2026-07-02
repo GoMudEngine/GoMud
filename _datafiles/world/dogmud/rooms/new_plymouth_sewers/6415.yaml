@@ -11,9 +11,9 @@ description: >
   <ansi fg="itemname">Bones</ansi> — cracked open, sorted by no
   current, carried here and left. Fresh kills over old ones, old
   ones over older. The drag-marks from the junction all run down
-  into the water and end there. Nothing is in this room with you
-  just now, and every detail of it insists that this is a temporary
-  arrangement. A doorway continues south.
+  into the water and end there. This is a kept room — kept the way
+  a den is kept — and nothing about it suggests its keeper ranges
+  far. A doorway continues south.
 biome: city
 coord:
   x: -19
@@ -27,10 +27,8 @@ exits:
 nouns:
   wallow: The pool fills the low center of the chamber, dark and
     quiet, its rim worn to a polish by the passage of a body far
-    heavier than yours. The water gives no account of its depth.
-    Whatever keeps this room is not in it at the moment, and the
-    room in its absence has the held quality of a chair pushed
-    back from a table.
+    heavier than yours. The water gives no account of its depth,
+    and no account of what may be under it.
   silt-shelf: A raised bank of packed silt above the waterline,
     dry, broad, and flattened at its center into a long hollow the
     shape of something at rest. The bones are densest at its
@@ -42,8 +40,8 @@ nouns:
     shelf to wash them. They were carried, eaten, and dropped,
     in layers going down.
 idlemessages:
-- Somewhere beyond the south wall, or under it, a slow heavy sound
-  moves once and stops.
+- Somewhere under the water, a slow heavy sound moves once and
+  stops.
 - The still surface of the wallow holds a slow drip from the
   ceiling, ring after ring widening and gone.
 - The smell off the silt-shelf thickens when the air turns.

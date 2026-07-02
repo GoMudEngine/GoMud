@@ -4,16 +4,15 @@ title: The Sealed Chamber
 description: >
   The passage ends at a doorway that is not a doorway any longer,
   if it ever was one. The opening is filled, jamb to jamb, by a
-  single fitted <ansi fg="itemname">sealed-slab</ansi> — one stone,
+  single fitted <ansi fg="itemname">sealed slab</ansi> — one stone,
   without seam, hinge, or keyhole, dressed flush to the wall around
   it and closed with the same completeness as everything else the
   old builders finished. Low on its face, worn nearly away, a
-  figure of <ansi fg="itemname">nested-rings</ansi> is cut into the
+  figure of <ansi fg="itemname">nested rings</ansi> is cut into the
   stone — faint circles, one inside another, the incision almost
   gone. The chamber holds nothing else. Whatever lies behind the
-  slab, if anything does, has been behind it a very long time, and
-  the slab offers no opinion on the matter. The only way out is
-  back north.
+  slab, if anything does, has been behind it a very long time. The
+  only way out is back north.
 biome: city
 coord:
   x: -19
@@ -23,13 +22,13 @@ exits:
   north:
     roomid: 6415
 nouns:
-  sealed-slab: A single stone filling the doorway entire, its face
+  sealed slab: A single stone filling the doorway entire, its face
     dressed to the same finish as the wall that holds it. No seam
     runs around it that a knife-edge could find. There is no
     hinge, no pull, no keyhole, no gap for a bar — no sign that it
     was ever meant to move. Struck, it barely sounds
     at all. It was made to be closed, and it is closed.
-  nested-rings: Faint concentric circles, one within another, cut
+  nested rings: Faint concentric circles, one within another, cut
     low on the slab and worn almost to nothing. It is a figure,
     not an accident of the stone — the spacing is too even for
     that — but nothing about it says what it is, or was, or meant.
@@ -38,7 +37,7 @@ nouns:
 idlemessages:
 - The slab carries no sound through it. The passage behind you is
   the loudest thing in the room.
-- At the edge of your light the nested-rings figure comes and goes
-  with the angle.
+- At the edge of your light the figure of nested rings comes and
+  goes with the angle.
 - The moving air of the deep ways does not enter this chamber. The
   stillness here is complete.
