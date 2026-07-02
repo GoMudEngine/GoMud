@@ -1,0 +1,19 @@
+itemid: 40179
+name: The Old White's Fang
+namesimple: fang
+vendor_categories:
+- jewelcrafting
+description: >-
+  A tooth the length of a forearm, curved and ivory-pale, pulled from
+  something that grew far too large in the dark under the city. The
+  root end is thick as a wrist and hairlined with old cracks; the tip
+  still holds an edge sharp enough to nick a careless thumb. Sewer
+  workers speak in low voices of a vast pale thing that lairs in the
+  deepest pool-chambers below New Plymouth, and this is proof enough
+  for any taxidermist or collector willing to pay for the telling of
+  it.
+type: object
+subtype: mundane
+weight: 1.2
+value: 120
+rarity_tier: 65
