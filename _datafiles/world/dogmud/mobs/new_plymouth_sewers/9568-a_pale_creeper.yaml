@@ -1,0 +1,59 @@
+mobid: 9568
+zone: New Plymouth Sewers
+behavior_archetype: generic_fighter
+aiprofile: skirmisher
+archetype: fighting
+hostile: true
+statpool: 400
+maxwander: 2
+groups:
+  - aberration
+idlecommands:
+  - 'emote crosses the silt at the edge of the light, its uneven
+    limbs finding a rhythm that should not work and does.'
+  - ''
+  - 'emote stops mid-stride and holds the pose, three limbs
+    raised, the way a sound holds its breath.'
+  - ''
+  - 'wander'
+  - ''
+  - 'emote runs one long limb across the old stonework, reading
+    the joints the way a blind man reads a face.'
+  - ''
+combatcommands:
+  - 'emote comes off the wall in a scramble of mismatched limbs,
+    faster than anything that shape should be.'
+  - ''
+  - 'emote hooks a long forelimb around behind your knee while
+    two shorter ones batter from the front.'
+  - ''
+  - 'emote skitters out of reach along the wall itself, clings a
+    moment, and drops back in at a new angle.'
+  - ''
+activitylevel: 25
+character:
+  items:
+    - itemid: 40050
+      dropchance: 30
+  name: A Pale Creeper
+  description: |
+    Something that may once have had a proper animal to be. It is
+    long and low and the bloodless white of a thing born in
+    absolute dark, skin over its eye-sockets like drumheads, and
+    it hunts the old galleries by touch and by the taste of the
+    air. It goes on seven limbs -- seven, no two of them the same
+    length, jointed where its uneven stride requires rather than
+    where any parent shape intended. The stride should stumble
+    and never does. It has been down here long enough to make the
+    wrongness work.
+  speciesid: 23
+  level: 1
+  gold: 0
+  stats:
+    dexterity:
+      training: 8
+    strength:
+      training: 5
+    perception:
+      training: 5
+itemdropchance: 30

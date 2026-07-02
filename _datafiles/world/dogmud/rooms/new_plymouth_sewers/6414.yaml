@@ -44,3 +44,6 @@ idlemessages:
   from a different quarter.
 - From somewhere down the south passage comes a single low sound,
   not repeated.
+spawninfo:
+  - mobid: 9568
+    respawnrate: "20 real minutes"

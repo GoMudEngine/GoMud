@@ -42,3 +42,6 @@ idlemessages:
   wall, where nothing shows.
 - Water drips from the ceiling out over the pool, each drop
   landing with a sound too small for the room.
+spawninfo:
+  - mobid: 9567
+    respawnrate: "20 real minutes"

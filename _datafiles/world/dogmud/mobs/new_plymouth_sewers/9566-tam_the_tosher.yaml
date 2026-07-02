@@ -1,0 +1,47 @@
+mobid: 9566
+zone: New Plymouth Sewers
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 40
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote works a long-handled sieve through the channel with a
+    slow figure-eight motion, eyes elsewhere, hands certain.'
+  - ''
+  - 'emote reaches into a lamp-niche in the brickwork without
+    looking, checks what his fingers find there, and puts it back.'
+  - ''
+  - 'emote picks something small out of the sieve, turns it once
+    against the lamplight, and pockets it in a single motion that
+    is over before you are sure you saw it.'
+  - ''
+  - 'emote tilts his head at the vault overhead, listening to the
+    three waters the way other men read a newspaper.'
+  - ''
+activitylevel: 15
+character:
+  name: Tam the Tosher
+  description: |
+    A small, dry, weathered man in oilskin and waders, a sieve
+    over one shoulder and a dozen pockets that all hold something.
+    He has worked these tunnels longer than most of the quarter
+    above has owned its own floors, and he moves through them the
+    way a man moves through his own house in the dark. When he
+    turns your way the lamplight catches in his eyes and stays
+    there -- they gather the glow and give it back in two flat
+    green coins, the way a cat's do. Down here that is not a
+    curse. He looks at you the way he looks at everything the
+    water brings him, deciding without hurry whether you are
+    worth picking up.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    perception:
+      training: 8
+    dexterity:
+      training: 4

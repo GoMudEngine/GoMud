@@ -43,3 +43,6 @@ idlemessages:
   eddy or pause.
 - Light passing across one of the pale fragments returns nothing —
   no glint, no grain, only the flat, even grey.
+spawninfo:
+  - mobid: 9563
+    respawnrate: "10 real minutes"

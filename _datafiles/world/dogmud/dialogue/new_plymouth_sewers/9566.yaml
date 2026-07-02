@@ -1,0 +1,121 @@
+mobid: 9566
+zone: New Plymouth Sewers
+defaultMood: neutral
+greetings:
+  - text: "Mind the edge there. The channel is deeper than it looks."
+    moods: ["neutral", "friendly"]
+  - text: "Another visitor. The tunnels are getting fashionable."
+    moods: ["neutral", "friendly"]
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Well met, if that is what we are doing. I am Tam. Watch
+        where you put your boots and we will get along."
+      - "Good day to you -- and it is day up there, whatever it
+        looks like down here. I keep the almanac in my knees."
+  - keywords: ["rat", "rats"]
+    responses:
+      - "The rats were here before me and they will be here after.
+        Good neighbors, mostly. They eat what I cannot sell."
+  - keywords: [""]
+    responses:
+      - "Speak up, the water talks over everybody down here. Ask
+        me plainer and I will answer plainer."
+tree:
+  root:
+    text: |
+      Mind the edge, there. The channel is deeper than it looks
+      and colder than it needs to be. I am Tam -- a tosher, which
+      is a word you will not hear much daylight use -- and these
+      tunnels have been my rounds for longer than you have been
+      anything at all. You are standing in my parlor, so wipe
+      your feet. Ask what you like. Words are the one thing down
+      here that costs nothing.
+    hints: |
+      You could ask what a tosher does, about the tunnels and the
+      ways back up, about what he finds down here, about the deep
+      past the old stair, or about the traffic that passes through
+      in the dark hours.
+  nodes:
+    - id: tosher
+      triggers: ["hello", "hi", "tam", "tosher", "who", "greet"]
+      text: |
+        A tosher is a man who walks the sewers for what the city
+        drops. Coins out of pockets, rings off fingers, buckles,
+        buttons, the odd tooth of gold. The quarter above loses a
+        small fortune down its drains every year, and I am the
+        fellow who finds it again. Decades now. I know every brick
+        between here and the harbor, and half of them know me.
+        Visitors are rare but you are no bother -- the tunnels are
+        big enough for the both of us, so long as you keep off my
+        stretch of channel.
+      hints: |
+        You could ask about the tunnels and the ways back up,
+        about what he finds down here, or about the deep past the
+        old stair.
+    - id: ways
+      triggers: ["tunnels", "tunnel", "sewers", "sewer", "way",
+        "ways", "up", "out", "exit", "route", "routes"]
+      text: |
+        Lost already, or planning ahead. Sensible either way.
+        There are three ways back up to the daylight that a body
+        can use. The tannery drain, up at the north end of the
+        trunk -- follow the stink of the vats and you cannot miss
+        it. The sweeper's grate, midway along, which comes up in
+        an alley the street-sweepers keep. And the docks grate,
+        south past the outfall, the one with the knotted rope that
+        nobody official hung there. I use all three, according to
+        which part of the city I feel like surfacing in.
+      hints: |
+        You could ask what the sewers give him to find, about the
+        deep below the old stair, or about the traffic that passes
+        in the dark hours.
+    - id: finds
+      triggers: ["finds", "find", "scavenge", "scavenging",
+        "treasure", "coin", "coins", "valuables"]
+      text: |
+        What do the sewers give a patient man. Everything the city
+        was careless with, given time. Coppers, mostly. Buttons
+        and bones and boot-nails. Now and again a wedding ring,
+        and once -- I will say it since you ask so nicely -- a
+        silver soup ladle, entire, not a dent in it. Nothing
+        valuable, you understand. Nothing worth following a man
+        home over. Just the small steady wages of looking where
+        nobody else cares to look. The water sorts, the silt
+        keeps, and I collect.
+      hints: |
+        You could ask about the tunnels and the ways back up, or
+        about the deep past the old stair's foot.
+    - id: deep
+      triggers: ["deep", "stair", "below", "down", "dark", "water"]
+      text: |
+        No. Not past the stair's foot. You are asking, so I will
+        say it plain the once, and then we will speak of other
+        things. There is a stair, old work, older than any brick
+        in this city, and it goes down. I have stood at the foot
+        of it exactly twice in all my years. Both times, the water
+        down there moved when nothing had moved it. I heard what
+        lives in the deep water once. Once was enough. I am a
+        curious man about everything above that stair, and a man
+        with no questions at all below it. The coins down there
+        can stay where they lie.
+      hints: |
+        You could ask about the tunnels and the ways back up, or
+        about what he finds in the channels. He plainly wants the
+        subject changed.
+    - id: traffic
+      triggers: ["traffic", "smuggler", "smugglers", "crates",
+        "crate", "landing", "cargo", "goods"]
+      text: |
+        Now that is a question, and here is what I know about
+        questions like it. A tosher lasts down here by having
+        sharp eyes for the channel and no eyes at all for the Old
+        Landing. Things pass through in the dark hours. Crates do
+        not walk, so I suppose men carry them. I have never seen a
+        face, and if I ever had, I would have never seen it twice
+        as hard as I could manage. That is all the answer I own,
+        and more of one than I usually give. Ask me about rats
+        instead. I am very good on rats.
+      hints: |
+        You could ask about the tunnels, about his finds, or about
+        the deep. He will say nothing more of the Old Landing.

@@ -45,3 +45,6 @@ idlemessages:
 - The still surface of the wallow holds a slow drip from the
   ceiling, ring after ring widening and gone.
 - The smell off the silt-shelf thickens when the air turns.
+spawninfo:
+  - mobid: 9570
+    respawnrate: "120 real minutes"

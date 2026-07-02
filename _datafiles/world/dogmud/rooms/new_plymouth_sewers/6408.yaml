@@ -49,3 +49,8 @@ idlemessages:
   and from the wrong direction.
 - The waterline rises a finger's width, covers the old stonework,
   and withdraws.
+spawninfo:
+  - mobid: 9564
+    respawnrate: "15 real minutes"
+  - mobid: 9566
+    respawnrate: "30 real minutes"

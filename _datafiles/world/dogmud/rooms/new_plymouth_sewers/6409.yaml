@@ -47,3 +47,6 @@ idlemessages:
   quite dries.
 - One of the hauling-rings gives a single soft clink, as though
   remembering a rope.
+spawninfo:
+  - mobid: 9563
+    respawnrate: "10 real minutes"

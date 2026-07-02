@@ -37,3 +37,6 @@ idlemessages:
   of it gathers.
 - Something small and waterlogged turns over in the flow, is
   carried past, and is gone.
+spawninfo:
+  - mobid: 9569
+    respawnrate: "25 real minutes"

@@ -48,3 +48,6 @@ idlemessages:
   past the outfall, the tide is changing its mind.
 - The knotted rope swings gently, touched by the harbor draught
   coming down through the grate.
+spawninfo:
+  - mobid: 9565
+    respawnrate: "15 real minutes"

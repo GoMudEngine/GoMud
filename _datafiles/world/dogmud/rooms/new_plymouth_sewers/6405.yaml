@@ -42,3 +42,6 @@ idlemessages:
   a moment, and stops.
 - The channel carries something past — a rind, a rag — and a moment
   later, farther downstream, the water answers with a soft plop.
+spawninfo:
+  - mobid: 9563
+    respawnrate: "10 real minutes"
