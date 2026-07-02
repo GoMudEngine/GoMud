@@ -51,4 +51,4 @@ mutators:
 - mutatorid: hull_suppression
 spawninfo:
   - mobid: 9561
-    statpool: 4
+    statpool: 5
