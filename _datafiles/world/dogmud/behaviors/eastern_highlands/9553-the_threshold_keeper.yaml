@@ -5,6 +5,26 @@ tree:
   type: selector
   children:
 
+    # ── the ones who came back knowing (77-end) ──
+    # Must sit ABOVE the generic greeting so a returning knower gets this
+    # instead. Gated on the revelation token; only intercepts greeting-
+    # style keywords, so the way/key/crash branches below are untouched.
+    - type: sequence
+      event: player_ask
+      children:
+        - type: condition
+          check: player_has_quest
+          quest: "77-end"
+        - type: condition
+          check: keyword_match
+          keywords: [hello, hi, help, who, what, keeper, back, again]
+        - type: action
+          do: say
+          text: You went in. And you came back out -- most do, in body. Fewer come back with their face changed like yours. I keep the threshold; I do not go through it, and now I think I never will.
+        - type: action
+          do: say
+          text: I watched a hundred of you go down into it certain, and climb back up quiet. I never asked what you found. I do not ask you either. But mind the road home, and mind your mouth on it. The door I keep is not the only threshold you cross now.
+
     # ── greetings / help ──
     - type: sequence
       event: player_ask
