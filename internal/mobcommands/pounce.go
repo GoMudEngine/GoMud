@@ -54,9 +54,9 @@ func Pounce(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			// Hit + knockdown: predator bears prey to the ground.
 			if targetUser != nil {
 				if canSee {
-					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> leaps at you and slams you to the ground! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> leaps at you and slams you to the ground! (<ansi fg="damage">%s</ansi>)`, mobName, dmgDesc))
 				} else {
-					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something leaps at you and slams you to the ground! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something leaps at you and slams you to the ground! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 				}
 			}
 			sendRoomText(room, messaging.CategoryHitNaturalSharp,
@@ -66,9 +66,9 @@ func Pounce(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			// Hit but no knockdown: landed but target kept their feet.
 			if targetUser != nil {
 				if canSee {
-					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> springs at you and crashes into your body! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> springs at you and crashes into your body! (<ansi fg="damage">%s</ansi>)`, mobName, dmgDesc))
 				} else {
-					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something springs at you and crashes into your body! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something springs at you and crashes into your body! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 				}
 			}
 			sendRoomText(room, messaging.CategoryHitNaturalSharp,

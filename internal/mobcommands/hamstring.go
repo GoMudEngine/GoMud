@@ -42,9 +42,9 @@ func Hamstring(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		dmgDesc := combat.GetDamageDescription(result.Damage, result.TargetMaxHP)
 		if targetChar != nil {
 			if canSee {
-				targetChar.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> rakes its fangs across your legs, opening deep wounds! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+				targetChar.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> rakes its fangs across your legs, opening deep wounds! (<ansi fg="damage">%s</ansi>)`, mobName, dmgDesc))
 			} else {
-				targetChar.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something rakes its fangs across your legs, opening deep wounds! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+				targetChar.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something rakes its fangs across your legs, opening deep wounds! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 			}
 		}
 		sendRoomText(room, messaging.CategoryHitNaturalSharp,
