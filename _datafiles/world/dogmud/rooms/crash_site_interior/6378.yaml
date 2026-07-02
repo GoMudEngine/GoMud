@@ -1,0 +1,50 @@
+roomid: 6378
+zone: Crash Site Interior
+title: The Navigation Alcove
+biome: cave
+description: >
+  The passage widens into a low alcove built around a single thing: a
+  display set into the grey, still lit, still moving, after everything.
+  Above a shallow basin of dark the cold light gathers itself into shapes
+  — four pale rounds turning in slow order about a center, tracing paths
+  worn smooth by ten thousand years of the same patient wheeling. Three
+  turn clean and bright. The fourth is broken — dark down one side, its
+  arc stuttering where the others run true, dragging a little at each pass
+  as though it hurt the whole figure to carry it. You do not know what the
+  shapes are. You know, watching them, that something went wrong, and that
+  the place has been turning the wrong of it over and over ever since,
+  unable to stop, unable to mend it.
+exits:
+  north:
+    roomid: 6376
+  east:
+    roomid: 6379
+nouns:
+  orbital display: >
+    Four pale rounds wheel in slow order above the basin, held in the cold
+    light, each on its worn path about the center. Three are whole and
+    bright. The fourth is dark down one side and stutters as it comes
+    round, dragging at the figure it belongs to. The display shows it
+    faithfully, again and again, and does not explain it, and cannot fix
+    it. Whatever it is a picture of, the picture has been broken a very
+    long time.
+  display: >
+    Four pale rounds wheel in slow order above the basin, held in the cold
+    light, each on its worn path about the center. Three are whole and
+    bright. The fourth is dark down one side and stutters as it comes
+    round, dragging at the figure it belongs to. The display shows it
+    faithfully, again and again, and does not explain it, and cannot fix
+    it. Whatever it is a picture of, the picture has been broken a very
+    long time.
+  basin: >
+    A shallow bowl of dark set into the grey, out of which the cold light
+    lifts the turning shapes. Looking down into it is like looking into a
+    well with no water and no bottom, only the slow pale rounds hanging in
+    it, wheeling, wheeling, and the one that is broken coming round again.
+idlemessages:
+- The four pale shapes wheel on in slow order, and the broken one drags.
+- The dark fourth round stutters as it comes about, and the figure holds.
+- The cold light gathers, turns the shapes once more, and does not tire.
+- Something went wrong here, long ago. The display has never stopped saying so.
+mutators:
+- mutatorid: hull_suppression

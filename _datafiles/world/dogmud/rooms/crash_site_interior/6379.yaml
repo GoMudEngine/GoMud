@@ -1,0 +1,44 @@
+roomid: 6379
+zone: Crash Site Interior
+title: Arced Passage
+biome: cave
+description: >
+  Here the grey is no longer whole. The walls of the passage are opened
+  along their length into channels of dead machinery — ranks of fine grey
+  filament and dulled metal, laid in with the same terrible care as
+  everything else, and no longer sleeping. A charge crawls in them. It
+  arcs from wall to wall in thin blue-white threads, silent, quick,
+  jumping the gap and gone before the eye can hold it, and where it passes
+  the air tightens and the hair lifts and the skin remembers a warning
+  older than words. Whatever this machinery was for, it is broken now, and
+  broken things this old do not fail quietly. To cross is to be bitten.
+  There is no other way east.
+exits:
+  west:
+    roomid: 6378
+  east:
+    roomid: 6380
+nouns:
+  machinery: >
+    The opened walls show their insides: ranks of hair-fine grey filament
+    and dulled unnameable metal, packed close and laid with care, running
+    the length of the passage. It was made to do something and it no
+    longer knows how. The charge that crawls through it now is not work.
+    It is the twitch of a thing too long dead to lie still.
+  charge: >
+    Thin blue-white threads of it jump wall to wall, silent and fast, gone
+    the instant they arc. Where one passes near, the air draws tight and
+    the skin prickles and every animal part of you says away. It does not
+    strike at you on purpose. It does not need to. It is enough to be
+    standing where it wants to go.
+idlemessages:
+- A thread of blue-white arcs the passage and is gone, and the air tightens.
+- The dead machinery in the walls crawls and stings and will not settle.
+- The charge jumps wall to wall, silent, quick, and bites at anyone near.
+- Your hair lifts a heartbeat before the next arc snaps across the grey.
+mutators:
+- mutatorid: hull_suppression
+- mutatorid: hull_discharge_deep
+spawninfo:
+  - mobid: 9555
+    statpool: 1

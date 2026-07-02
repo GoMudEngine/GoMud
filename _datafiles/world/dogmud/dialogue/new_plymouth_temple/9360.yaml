@@ -37,6 +37,29 @@ tree:
       no one in authority seems willing to listen to him."
 
   nodes:
+    - id: knower
+      questRequired: ["77-end"]
+      triggers: ["quest", "task", "truth", "east", "site", "crash",
+                 "records", "moons", "sky", "ships", "blessing",
+                 "bloodline", "found", "knew"]
+      text: "Stop. Stand still and let me look at you. I have spent my
+        whole life being the only man in the room who could see the
+        crack in the wall, and being told I was mad for it -- and I know
+        that look, because I have worn it. You have been somewhere. You
+        have seen the thing under the thing. Do not tell me what. No --
+        I am not being modest, I am being careful, which is new for me
+        and does not suit me. My little forgery is a founding date off by
+        a century. Yours is bigger. I can smell it. Whatever you found
+        out east, it makes my inscriptions look like a spelling error,
+        and if you say it in this hall they will not merely change the
+        subject the way the Canon changes it with me. Guard it. I have
+        wanted an ally who could see for twenty years. Now that one is
+        standing in front of me, I find I am afraid of what you see."
+      hints: "Scholar Dross has recognized something in you and will not
+        let you say it aloud here. You could still ask him about his
+        inscriptions, the cipher in the old artwork, or why no one in
+        authority will listen."
+      moodChange: cautious
     - id: q69_start
       triggers: ["quest", "task", "cipher", "rubbing", "reliefs", "help",
                  "prove", "do"]

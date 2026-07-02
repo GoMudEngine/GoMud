@@ -1,0 +1,15 @@
+itemid: 30067
+name: Catalyst of Unmaking
+namesimple: catalyst
+description: |
+  A heavy phial of something the buried place made -- clear, and colder than
+  cold, and utterly still. Where every other draught you have carried tugs
+  faintly at the change in your blood, this one is silent, a held breath. To
+  drink it is to be, for one moment, only what you were born as: nothing added,
+  nothing woken. What comes back afterward comes back hungrier.
+type: potion
+subtype: drinkable
+uses: 1
+not_salable: true
+value: 10
+weight: 0.4

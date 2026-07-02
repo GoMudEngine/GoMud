@@ -39,6 +39,15 @@ func calcSpellDamageForCharacter(spellData *spells.SpellData, caster *characters
 		skillLevel := caster.GetSkillLevel(skills.Spellcasting)
 		rawDmg := combat.CalcRawDamage(caster.Stats.Willpower.ValueAdj, skillLevel, spellData.DamageMultiplier, combat.ChannelMagical)
 
+		// #22 crash-site: inside the buried hull, belief-driven power is suppressed.
+		if caster != nil && caster.HasBuffFlag(buffs.Dampened) {
+			factor := float64(configs.GetBalanceConfig().CrashSiteSuppressionFactor)
+			rawDmg *= factor
+			if rawDmg < 1 {
+				rawDmg = 1
+			}
+		}
+
 		// Apply weapon spell damage multiplier (caster weapons), scaled
 		// by gear-effectiveness for incorporeal casters.
 		if caster.Equipment.Weapon.ItemId > 0 {

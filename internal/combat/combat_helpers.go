@@ -354,6 +354,14 @@ func buildDamageParams(sourceChar *characters.Character, targetChar *characters.
 
 	// Phase 24.2: Apply mutation damage multiplier
 	if mutDmgMult := mutations.GetDamageMultiplier(sourceChar.Mutations); mutDmgMult != 0 {
+		// #22 crash-site: inside the buried hull, mutation-driven power is
+		// suppressed. GetDamageMultiplier returns the bonus fraction (applied
+		// as 1.0+bonus), so dampen the full multiplier and re-extract the bonus
+		// (penalties, i.e. multiplier <= 1.0, are left untouched by DampenBonus).
+		if sourceChar.HasBuffFlag(buffs.Dampened) {
+			factor := float64(configs.GetBalanceConfig().CrashSiteSuppressionFactor)
+			mutDmgMult = mutations.DampenBonus(1.0+mutDmgMult, factor) - 1.0
+		}
 		dmgMean *= (1.0 + mutDmgMult)
 		rawDmgForCrit *= (1.0 + mutDmgMult)
 	}

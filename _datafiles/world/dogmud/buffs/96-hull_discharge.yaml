@@ -1,0 +1,14 @@
+buffid: 96
+name: Hull Discharge
+description: Deep in the buried place the dead machines still bite, harder than they did above.
+triggerrate: 1 round
+triggercount: 3
+start_user_text: The dead metal wakes just enough to hate you, and a hard arc slams up through your bones.
+start_room_text: "{source} convulses as the dead metal arcs against them."
+end_user_text: The arcing fades — for now.
+trigger_user_text: A savage arc bites up through you.
+trigger_room_text: "{source} shudders as the dead metal arcs against them."
+tick_pool: health
+tick_percent: -0.09
+tick_variance: 0.03
+tick_min: 8

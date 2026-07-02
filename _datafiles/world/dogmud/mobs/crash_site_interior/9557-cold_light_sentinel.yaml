@@ -1,0 +1,40 @@
+mobid: 9557
+zone: Crash Site Interior
+behavior_archetype: generic_fighter
+aiprofile: brute
+archetype: fighting
+hostile: true
+statpool: 300
+maxwander: 0
+groups:
+  - construct
+idlecommands:
+  - 'emote holds a tall grey stillness at the edge of the dark, a cold
+    light banked low behind the blank plane of its face.'
+  - ''
+  - 'emote sweeps its light once across the empty floor, finds nothing,
+    and dims again to a waiting ember.'
+  - ''
+combatcommands:
+  - 'emote lets its banked light flare hard and brings the whole cold
+    weight of it down on you.'
+  - ''
+  - 'emote lashes a flat arc of cold light across the space between you.'
+  - ''
+character:
+  name: Cold-Light Sentinel
+  description: |
+    A tall watching shape of the grey material, faceless but for a single
+    banked glow set deep where a face should be. It stands where the dark
+    is thickest and it wakes only when something warm comes near. There is
+    no anger in it and no mercy either -- only the cold light, and the long
+    habit of keeping.
+  speciesid: 37
+  level: 1
+  gold: 0
+  items:
+    - itemid: 40172
+      dropchance: 25
+loot_pool:
+  - 20093
+itemdropchance: 60

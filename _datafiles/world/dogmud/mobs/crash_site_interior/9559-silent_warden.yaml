@@ -1,0 +1,41 @@
+mobid: 9559
+zone: Crash Site Interior
+behavior_archetype: generic_fighter
+aiprofile: brute
+archetype: fighting
+hostile: true
+statpool: 400
+maxwander: 0
+groups:
+  - construct
+idlecommands:
+  - 'emote stands a massive grey vigil before the sealed dark, so still
+    that the dust has settled on its shoulders like snow.'
+  - ''
+  - 'emote lets a slow pulse of cold light travel the length of its body
+    and go out, and does not otherwise move.'
+  - ''
+combatcommands:
+  - 'emote wakes with terrible unhurried force and brings a grey fist down
+    like a falling lintel.'
+  - ''
+  - 'emote closes both hands and crushes inward with the patience of
+    stone.'
+  - ''
+character:
+  name: Silent Warden
+  description: |
+    A great heavy shape of the grey material, denser and slower than the
+    lesser guardians, set to keep the deepest sealed places of the buried
+    thing. It has never spoken and it never will. Whatever lies behind it
+    was worth making a thing this strong to keep, and it has kept it,
+    faithfully, through every age since.
+  speciesid: 35
+  level: 1
+  gold: 0
+  items:
+    - itemid: 40172
+      dropchance: 25
+loot_pool:
+  - 20095
+itemdropchance: 60

@@ -1,0 +1,49 @@
+roomid: 6400
+zone: Crash Site Interior
+title: The Sealed Shuttle Bay
+biome: cave
+description: >
+  East of the array the grey draws back into a great shut bay, and the
+  cold light gives out early in it, so that most of the room is dark. What
+  the dark holds is a craft. It sits cradled in folded grey arms at the
+  centre of the bay, smaller than the buried thing that carries it but made
+  in the same seamless material, sleek and blunt-nosed and utterly still —
+  a lesser vessel, a boat for the greater ship, made to cross the dark
+  between this made thing and the three that wait above the sky. It could
+  go up. That is the whole shape of it: a way off the world and out to the
+  moons that are not moons, folded here in the dark, waiting. But the bay
+  is sealed and the craft is dead. No light runs in it, no seam gives, and
+  the great doors overhead are shut fast with ten thousand years of the
+  world settled against them. There is a way up in this room, and it does
+  not open. Not now. Not by any hand you have. Perhaps not yet. West lies
+  the array and the way back.
+exits:
+  west:
+    roomid: 6399
+nouns:
+  craft: >
+    A lesser vessel cradled in folded grey arms at the heart of the bay,
+    blunt-nosed and sleek and made in the same seamless material as the
+    buried thing around it — a boat for the greater ship, made to cross
+    the dark to the three that wait above the sky. It is dark and dead and
+    cold. It could carry someone up, if it woke. It does not wake, and
+    nothing you have will wake it.
+  doors: >
+    Great shut faces of the grey set high in the ceiling of the bay, made
+    to open on the dark above so the craft could rise. They are closed
+    fast, and ten thousand years of the world has settled its weight
+    against them from the far side. They will not open now, not by any
+    hand you carry. Whether they open ever is not a thing this day answers.
+  bay: >
+    A vast shut room where the cold light gives out early and the dark
+    keeps most of what is here — the folded cradle-arms, the sealed doors
+    overhead, and the dead craft between them. It was the way off the
+    world once. It is only a held breath now, waiting for something that
+    has not come.
+idlemessages:
+- The cold light gives out early here, and the dark keeps most of the bay.
+- The dead craft sits cradled and cold, a way up that does not open.
+- The great doors overhead are shut fast, the weight of ages against them.
+- There is a way off the world in this room, and it does not open. Not yet.
+mutators:
+- mutatorid: hull_suppression

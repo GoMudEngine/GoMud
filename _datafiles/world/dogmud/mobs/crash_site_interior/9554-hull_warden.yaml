@@ -1,0 +1,39 @@
+mobid: 9554
+zone: Crash Site Interior
+behavior_archetype: generic_fighter
+aiprofile: brute
+archetype: fighting
+hostile: true
+statpool: 300
+maxwander: 0
+groups:
+  - construct
+idlecommands:
+  - 'emote drifts on a column of cold light, its blank face turning as if
+    it half-remembers what a face is for.'
+  - ''
+  - 'emote sets itself squarely across the passage and holds, patient as
+    the grey walls it was made to keep.'
+  - ''
+combatcommands:
+  - 'emote strikes with the flat certainty of a thing that has never once
+    doubted.'
+  - ''
+  - 'emote brings a grey limb down in a heavy, unhurried arc.'
+  - ''
+character:
+  name: Hull Warden
+  description: |
+    A drifting shape of the grey material, limbed and eyeless, that keeps
+    the dead corridors as it has kept them since before there were people
+    to keep them from. It is patient. It is not cruel. It simply will not
+    let you pass.
+  speciesid: 37
+  level: 1
+  gold: 0
+  items:
+    - itemid: 40171
+      dropchance: 20
+loot_pool:
+  - 20091
+itemdropchance: 60

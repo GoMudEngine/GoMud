@@ -1,0 +1,57 @@
+roomid: 6399
+zone: Crash Site Interior
+title: The Signal Array
+biome: cave
+description: >
+  North of the gallery the grey rises into a tall narrow room full of
+  reaching shapes — slender arms of the pale material folded up against
+  the ceiling, ranked dishes and fine bright filaments gathered toward a
+  single seat at the room's heart, all of it aimed, or made to aim, at
+  something far past the hull. This was the voice of the buried thing: the
+  place from which it could call out and be heard across the patient dark,
+  across the gulf the gallery showed you, all the way to whatever else is
+  out there. And there is something else out there. The array knows it —
+  the one panel still faintly lit holds three steady marks high above the
+  world, three shapes waiting in the dark where the fires wheel, three more
+  of these made things riding the black above the sky, patient as this one
+  was patient, near enough to call if the call could be made. What the
+  world above names its moons are not moons. But the array is broken. The
+  filaments hang dark and the seat is cold and the reach is folded and
+  still, and press what you will, nothing wakes; the voice was silenced in
+  the fall and what would raise it is not here, not yet. East the grey
+  gives onto a sealed bay. South lies the gallery.
+exits:
+  south:
+    roomid: 6398
+  east:
+    roomid: 6400
+nouns:
+  array: >
+    Ranked dishes and slender folded arms and fine bright filaments,
+    gathered toward one cold seat and aimed at something far past the hull
+    — the buried thing's voice, made to call across the dark to whatever
+    shared it. It is broken now. The reach hangs folded, the filaments dark,
+    and nothing you do wakes it; what would raise the voice is not here.
+  panel: >
+    The one face in the room still faintly lit, holding three steady marks
+    set high above the small turning world — three shapes waiting in the
+    wheeling dark, patient, near enough to be called if the call could be
+    made. They are not stars. They hold their places too well for stars.
+  marks: >
+    Three steady points held high above the world on the lit panel, apart
+    from the wheeling fires, keeping station in the dark. Three more made
+    things, riding the black above the sky the world below calls its own —
+    what that world names among its moons, waiting, as this one waited, to
+    be reached. The array could reach them. The array is broken.
+  seat: >
+    A single cold place at the array's heart, made for whoever once spoke
+    for the buried thing across the dark. It is empty and dead, its
+    filaments unlit, and it does not warm or wake for you. The voice that
+    sat here fell silent in the crash and has not spoken since.
+idlemessages:
+- The folded arms hang dark against the ceiling, the reach silent and still.
+- On the one lit panel, three steady marks keep station high above the world.
+- Press what you will; the cold seat does not warm and the voice does not wake.
+- What the world above calls its moons are not moons, and the array knows it.
+mutators:
+- mutatorid: hull_suppression

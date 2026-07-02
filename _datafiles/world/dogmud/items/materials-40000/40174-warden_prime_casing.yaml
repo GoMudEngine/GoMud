@@ -1,0 +1,20 @@
+itemid: 40174
+name: Warden-Prime Casing
+namesimple: casing
+vendor_categories:
+- blacksmithing
+description: >-
+  The outer shell of the great warden that guarded the inner ways --
+  a curved plate of the grey material as broad as a shield, scored
+  by whatever finally brought the thing down and yet unbroken through.
+  It rings, low and long, when struck, a note that hangs in the air
+  after it should have died. Heavier than iron and colder, it carries
+  the memory of every blow it turned. Only the finest work is worthy
+  of it, and only a master could hope to shape it.
+type: object
+subtype: mundane
+component_tag: grey-relic
+weight: 2.5
+value: 1600
+rarity_tier: 86
+is_component: true

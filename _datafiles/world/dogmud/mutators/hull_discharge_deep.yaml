@@ -1,0 +1,5 @@
+mutatorid: hull_discharge_deep
+descriptionmodifier:
+  behavior: append
+  text: The dead machinery in the walls crawls and stings, and something bites up through anyone who lingers.
+playerbuffids: [96]

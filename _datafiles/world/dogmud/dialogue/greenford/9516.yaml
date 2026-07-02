@@ -31,6 +31,24 @@ tree:
       surveys and about the surveyor Reth, about the mark on
       the old maps, or about the university and the department."
   nodes:
+    - id: knower
+      questRequired: ["77-end"]
+      triggers: ["quest", "task", "truth", "east", "site", "crash",
+        "records", "disc", "moons", "back", "returned", "found"]
+      text: |
+        You went all the way in, didn't you. Sit -- no. Don't tell me.
+        I can see it on you well enough. I sent you east chasing a mark
+        in a margin, a puzzle for a quiet department, and you came back
+        carrying something the rest of us get to not know. I have spent
+        thirty years wanting the answer to that mark. I am no longer
+        certain I want it. Look at me -- I am not going to ask. Whatever
+        the site gave you, keep it close, and be careful who you tell.
+        Some of what people believe up here, they need. And some of what
+        they'd do to a person who unbelieves it out loud, they'd do
+        gladly. You have a look about you now. Mind who sees it.
+      hints: "You could ask Brennan about his eastern work, the mark on
+        the old maps, or the university -- but he does not seem to want
+        to hear what you learned."
     - id: disc-quest
       triggers: ["disc", "symbol", "ring", "mark", "key", "quest", "task"]
       questRequired: ["75-end"]

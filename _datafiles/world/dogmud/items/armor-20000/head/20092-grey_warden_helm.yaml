@@ -1,0 +1,24 @@
+itemid: 20092
+name: Grey Warden Helm
+namesimple: helm
+vendor_categories:
+- blacksmithing
+description: >-
+  A smooth grey helm with no crest and no plume, its narrow eye-slit
+  set into a face that shows nothing back. Worn, the world outside
+  seems to arrive a fraction clearer and quieter, as though the helm
+  itself were listening on the wearer's behalf. It was taken from one
+  of the fallen guardians of the deep ways and sits with an unsettling
+  lightness, cold at the brow long after the wearer has warmed the
+  rest.
+type: head
+subtype: wearable
+physical_mitigation: 10
+magical_mitigation: 6
+conviction_mitigation: 4
+statmods:
+  perception: 6
+  willpower: 4
+weight: 3.0
+rarity_tier: 78
+value: 1600

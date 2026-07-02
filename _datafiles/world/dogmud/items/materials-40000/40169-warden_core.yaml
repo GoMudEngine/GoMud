@@ -1,0 +1,20 @@
+itemid: 40169
+name: Warden Core
+namesimple: core
+vendor_categories:
+- blacksmithing
+description: >-
+  A dense grey nodule prised from the chest of one of the guardians
+  after it finally went still. It is warm at the centre long after
+  the rest of the thing has gone cold, and when you turn it, a slow
+  weight seems to turn a half-beat behind your hand, as if something
+  inside it were still deciding whether to wake. No forge in the
+  lowlands made it, and none can unmake it -- but a master's hand
+  might bind its stubborn spark into work of the very highest order.
+type: object
+subtype: mundane
+component_tag: warden-core
+weight: 0.6
+value: 1400
+rarity_tier: 84
+is_component: true

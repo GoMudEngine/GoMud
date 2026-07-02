@@ -1,0 +1,94 @@
+questid: 77
+name: The Truth
+description: >-
+  Deep in the buried thing, in a still room older than old, the
+  oracle-stones keep the whole memory of what this place was. Read them,
+  and the world you knew comes apart and reassembles into something
+  truer and far more terrible.
+secret: false
+steps:
+  - id: end
+    description: "You stood among the oracle-stones and let the buried place
+      tell you what it is. You carry the truth now — of where the people
+      came from, of what the blessing really was, of the immunity that was
+      only luck, and of the three lights still waiting overhead. You cannot
+      give it back."
+rewards:
+  playermessage: >-
+    You know now. It sits in you like a swallowed stone. The sky will
+    never look the same, and neither will the blessed, and neither will
+    you. Be careful who you tell.
+  roommessage: ""
+  gold: 0
+triggers:
+  - event: room_interact
+    room: 6397
+    noun: records
+    conditions:
+      missing: ["77-end"]
+    actions:
+      - grant: "77-end"
+      - give_item: 40176
+      - send_text: |
+          You stand among the stones and let the light find them, and one
+          by one they wake — a slow inner glow, a drift of moving marks —
+          and though you cannot read the tongue, the stones do not need you
+          to. They show. They lay it out plainly, the whole of it, in
+          light and in shape, and you understand it the way you understand
+          a face, all at once and without wanting to.
+
+          They show a dark with no floor and no walls, and points of cold
+          fire strewn across it past all counting, and — falling through
+          that dark on a long spear of fire — this. This place, whole once,
+          a vessel. Not built by any hand of the world. Built to cross the
+          impossible black, and full of people. People who chose to come.
+          Who left somewhere behind and set out across a distance the mind
+          slides off of, meaning to make a home on the green world below.
+          Gaius. Here. This ground you were born to. They came to it. On
+          purpose. From somewhere else.
+
+          The stones show the landing, and the sickness after. A fine thing
+          in the soil and the water and the air of this world, waiting,
+          native to it — and the strangers had no armour against it. It
+          took them. It changed them, root and blood, into something the
+          world would learn to call blessed. But there was nothing chosen
+          in it, and nothing holy. The Chrysalis was here before them. The
+          blessing is a catching thing. It is the world's own fever, and
+          they were only the first to burn with it.
+
+          The stones show the few it could not touch. Not favoured. Not
+          spared by any will above. Only made, by the blind luck of how
+          they were built inside, so that the fever found no purchase in
+          them — and their children after, and theirs, carrying that dumb
+          accident down the long years until it wore the shape of divine
+          right. The bloodline. Their immunity was never grace. It was the
+          cruelest kind of chance, and a whole world knelt to it.
+
+          And the stones show one thing more, and hold it, so you cannot
+          look away. The vessel was not alone. It came in company. The
+          stones show three more, still whole, still waiting, hung in the
+          high dark above the green world and turning there, patient, for a
+          very long time. You have looked up at them all your life. Everyone
+          has. On clear nights you counted them and called them by the old
+          names and never once knew you were looking at ships. The moons.
+          The moons are ships. And they are still full.
+
+          The light drifts and settles, and the stones go quiet, having
+          told you everything. You do not feel wiser. You feel like someone
+          who has been handed a weight and told it is theirs now, forever.
+      - room_text: "{source} stands motionless before the wall of moving light, and for a long moment does not seem to breathe."
+  # Re-read is on the `oracle-stones` noun only. A second `records` trigger
+  # gated has:["77-end"] would double-fire on the FIRST examine (the grant
+  # above sets the token mid-event, so a same-event has-trigger also matches
+  # — the Q76 same-event lesson). Keeping re-reads on a distinct noun avoids it.
+  - event: room_interact
+    room: 6397
+    noun: oracle-stones
+    conditions:
+      has: ["77-end"]
+    actions:
+      - send_text: >-
+          They are only stones again now, dark until the light finds them —
+          but you know what they hold, and you know it holds you. The
+          crossing, the fever, the luck, the waiting lights. You have read
+          it. You will always have read it.

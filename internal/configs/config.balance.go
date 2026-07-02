@@ -506,6 +506,9 @@ type Balance struct {
 	// ── INSTANCES ────────────────────────────────────────────────────────────
 	InstanceStatPoolCap ConfigInt `yaml:"InstanceStatPoolCap"` // Max stat pool per mob in instances (default 50000, 0=uncapped)
 
+	// ── CRASH SITE (#22) ─────────────────────────────────────────────────────
+	CrashSiteSuppressionFactor ConfigFloat `yaml:"CrashSiteSuppressionFactor"` // inside the buried hull (#22), spell power and mutation combat bonuses are scaled to this fraction; 0=fully suppressed, 1=no effect (default 0.35)
+
 	// ── CARAVAN SYSTEM ───────────────────────────────────────────────────────
 	// CaravanServedZones lists zone display names whose vendor mobs do NOT
 	// auto-restock — they restock only on caravan visit. Mobs in zones not

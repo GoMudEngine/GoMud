@@ -1,0 +1,41 @@
+roomid: 6391
+zone: Crash Site Interior
+title: The Prime's Approach
+biome: cave
+description: >
+  North of the wreck the grey pulls itself back into order, and the order
+  is worse than the ruin was. The corridor runs straight and grim and
+  narrow, a gauntlet with no branch and no cover, its walls opened along
+  their whole length into the dead machinery — and here the machinery is
+  awake in a way it has not been anywhere else. The charge does not crawl
+  loose; it runs the walls in ranked threads, thickening as you go, arcing
+  across the narrow way in silent blue-white sheets that leave the air
+  scorched and tight. This is a made approach to a made thing that matters,
+  and everything about it says turn back. Ahead, past the last of the arcs,
+  the corridor opens into a broad and waiting hold, and something very
+  large is patient in it. The only ways are forward and back.
+exits:
+  south:
+    roomid: 6388
+  north:
+    roomid: 6392
+nouns:
+  gauntlet: >
+    The straight grim run north, narrow and coverless, walled its whole
+    length with the opened machinery. It was made as an approach — a last
+    hard mile before whatever the place set its deepest keeper to guard —
+    and the charge that runs it now makes the making plain. Nothing built
+    this to be walked lightly.
+  charge: >
+    Here it does not crawl. It runs the ranked threads of the walls and
+    arcs the narrow way in silent sheets, thickening toward the hold ahead,
+    leaving the air scorched and drawn tight. Where the corridors behind
+    only bit at the careless, this bites at everyone, and it means to.
+idlemessages:
+- A sheet of blue-white arcs the narrow way and is gone, and the air comes up scorched.
+- The ranked charge runs the walls and thickens toward the waiting hold ahead.
+- Your skin draws tight the length of the gauntlet and will not settle.
+- From the broad hold north, something very large keeps its patient silence.
+mutators:
+- mutatorid: hull_suppression
+- mutatorid: hull_discharge_deep

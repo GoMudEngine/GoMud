@@ -343,6 +343,17 @@ func GetAdrenalSurgeBonus(owned map[string]int) float64 {
 	return sumEffects(owned, "conditional_damage_low_hp", "")
 }
 
+// DampenBonus pulls a mutation MULTIPLIER's bonus toward the 1.0 baseline by
+// `factor` (0 = remove the bonus entirely, 1 = untouched). Values at or below
+// 1.0 (no bonus / a penalty) are returned unchanged. Used by the #22 crash-site
+// suppression aura at the mutation call sites where the bearer is Dampened.
+func DampenBonus(raw, factor float64) float64 {
+	if raw <= 1.0 {
+		return raw
+	}
+	return 1.0 + (raw-1.0)*factor
+}
+
 // sumEffects totals all matching pro and con effects across owned mutations,
 // scaling each value by LevelMultiplier for the mutation's current level.
 // If target is "" it matches effects regardless of their Target field.

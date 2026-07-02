@@ -25,3 +25,5 @@ idlemessages:
 - The cold light holds steady, sourceless, and does not waver.
 - The air lies utterly still, dry and old, untouched by the wind outside.
 - Somewhere deeper in the grey, a sound almost happens, and does not.
+mutators:
+- mutatorid: hull_suppression

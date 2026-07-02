@@ -1,0 +1,24 @@
+itemid: 20094
+name: Coldlight Mantle
+namesimple: mantle
+vendor_categories:
+- tailoring
+description: >-
+  A long mantle of grey weave shot through with threads that hold a
+  faint bluish glow, the same tireless cold light that lines the deep
+  ways. It sheds no warmth and casts no shadow of its own, and across
+  the shoulders it lends a strange steadiness of will, as though some
+  patient certainty in the cloth had bled a little into the wearer. It
+  hangs cool and weightless, and turns aside more than its thinness
+  would suggest.
+type: back
+subtype: wearable
+physical_mitigation: 6
+magical_mitigation: 9
+conviction_mitigation: 6
+statmods:
+  willpower: 8
+  charisma: 4
+weight: 2.0
+rarity_tier: 78
+value: 1800

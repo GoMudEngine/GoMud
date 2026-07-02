@@ -3,21 +3,35 @@ zone: Crash Site Interior
 title: The Sealed Chamber
 biome: cave
 description: >
-  The corridor ends at a chamber sealed on every side but the one you
-  entered by — a round room of the seamless grey, its ceiling lost in the
-  cold glow above. Set into the far wall is a shape that is plainly a way
-  onward, shut, and beside it the small even marks again, and a recess the
-  size and shape of nothing you carry. Deeper the place goes, and it does
-  not mean to be easy. This is as far as the way is open. For now.
+  A round room of the seamless grey opens off the corridor, its ceiling
+  lost in the cold glow above. Set into the walls are containers — smooth
+  shut vessels flush with the grey, some cracked along a hairline seam
+  where the long patience of the place has finally given a little, their
+  edges lipped open just enough for a hand. Whatever they were made to
+  keep, they have kept it a very long time. Across the chamber a shape
+  that is plainly a way onward stands ajar at last, the grey drawn back
+  from it, and the cold light runs on through into more of the buried
+  place. Deeper it goes. It does not mean to be easy.
 exits:
   west:
     roomid: 6374
+  east:
+    roomid: 6376
 nouns:
+  containers: >
+    Smooth shut vessels set flush into the grey, seamless as everything
+    here and just as intact — save that a few have cracked along a
+    hairline where ten thousand years of stillness finally told, lipped
+    open a finger's width. They were made to hold something and made to
+    hold it forever. Forever has begun, very slightly, to fail.
   way onward: >
-    A shut shape in the far wall — a door, or the idea of one, seamless
-    with the grey around it and giving no purchase. It does not open. Not
-    from here. Not yet. The deeper the place goes, the less it means to
-    yield.
+    A shape in the far wall that is plainly a door, or the idea of one,
+    and it stands drawn back now — the grey parted, the cold light running
+    on through it into the deeper grey beyond. The way east is open. It
+    was not always. The place seems to open only when it is ready to.
 idlemessages:
-- The sealed way stands shut in the far wall, patient and complete.
+- A hairline seam in one of the shut vessels catches the cold light.
 - The cold light pools in the round chamber and holds without a flicker.
+- Through the open way east, the grey runs on, lit and silent and patient.
+mutators:
+- mutatorid: hull_suppression

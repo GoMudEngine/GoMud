@@ -1,0 +1,40 @@
+mobid: 9558
+zone: Crash Site Interior
+behavior_archetype: generic_fighter
+aiprofile: brute
+archetype: fighting
+hostile: true
+statpool: 300
+maxwander: 0
+groups:
+  - construct
+idlecommands:
+  - 'emote plods a slow beat in place, grey and heavy, as if walking a
+    patrol whose ends have long since crumbled away.'
+  - ''
+  - 'emote turns its blank head by slow degrees, sweeping the dark for a
+    shape it has been told to find.'
+  - ''
+combatcommands:
+  - 'emote lifts both grey fists and hammers down with the weight of the
+    buried place behind it.'
+  - ''
+  - 'emote drives a shoulder into you like a shifting wall.'
+  - ''
+character:
+  name: Grey Automaton
+  description: |
+    A walking figure of the grey material, heavy through the shoulders and
+    blank through the face, made once to answer to a hand that is long
+    gone. It keeps the shape of a person the way a shadow keeps the shape
+    of a tree -- an echo, and nothing behind it but the old command to
+    guard.
+  speciesid: 37
+  level: 1
+  gold: 0
+  items:
+    - itemid: 40171
+      dropchance: 20
+loot_pool:
+  - 20094
+itemdropchance: 60

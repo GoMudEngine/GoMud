@@ -1,0 +1,47 @@
+roomid: 6387
+zone: Crash Site Interior
+title: The Fabrication Bay
+biome: cave
+description: >
+  Past the guarded door the grey opens into a bay that was made for
+  making. The heart of it is a great fitted apparatus of the grey — a
+  fabricator, you would call it if you had to call it anything, a worked
+  cradle of arms and nozzles and fine grooved channels, hung now silent
+  over a bed where things were once shaped out of raw stuff and finished.
+  Around it stand racks of that raw stuff still: measures of pale worked
+  material, sealed reagents, the fine drawn filament and dulled metal the
+  place used to build its keepers and its wonders. Little of it was ever
+  spent. The making stopped mid-stride, ten thousand years ago, and left
+  the stores full and the cradle waiting, and a Grey Automaton standing
+  guard over a bounty no one ever came back to claim. The door is the only
+  way out.
+exits:
+  west:
+    roomid: 6386
+nouns:
+  fabricator: >
+    A great fitted apparatus of the grey, hung over a shaping-bed on a
+    cradle of jointed arms and fine nozzles and grooved channels. It was
+    made to make — to draw raw stuff up out of the racks and finish it
+    into whatever the place required. It hangs silent now, mid-reach,
+    stopped in the middle of a task it will never complete.
+  racks: >
+    Ranks of stores flanking the cradle, still near full: measures of
+    pale worked material, sealed reagents kept sound past all reason, the
+    drawn filament and dulled metal the place built its keepers from.
+    Little was ever spent. To a hand that knows the working of such
+    things, the racks are a fortune the buried place forgot it was owed.
+  apparatus: >
+    Arms and nozzles and channels, all of the grey, cradling the empty
+    shaping-bed. The care in the making of it is the same terrible care
+    that runs through everything here — a thing built to build, built to
+    last, and left holding its breath in the dark.
+idlemessages:
+- The silent fabricator hangs mid-reach over its empty bed and does not move.
+- The full racks stand ranked around the cradle, a fortune ten thousand years unspent.
+- The Grey Automaton keeps its station over the stores and tracks you without a face.
+mutators:
+- mutatorid: hull_suppression
+spawninfo:
+  - mobid: 9558
+    statpool: 1

@@ -23,3 +23,8 @@ nouns:
 idlemessages:
 - The cold light runs even along the seamless grey and does not change.
 - A sealed panel in the wall gives back your reflection, faint and slow.
+mutators:
+- mutatorid: hull_suppression
+spawninfo:
+  - mobid: 9554
+    statpool: 1

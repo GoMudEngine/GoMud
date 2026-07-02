@@ -1,0 +1,40 @@
+roomid: 6383
+zone: Crash Site Interior
+title: Buckled Deck
+biome: cave
+description: >
+  The corridor north sags out of true, its floor and ceiling drawn
+  toward each other where the deck failed, so that you go stooped through
+  a grey that has lost its calm. Here the machinery in the walls has been
+  laid open by the buckling — ranks of fine filament and dulled metal
+  torn from their fitted channels and hanging, and no longer sleeping. A
+  charge crawls in the ruin of them, arcing wall to wall in thin
+  blue-white threads, silent and quick, jumping the narrowed gap and gone
+  before the eye can hold it. Where it passes the air tightens and the
+  skin remembers an old warning. To go north is to go through it. Beyond,
+  the grey opens into a wider room, and the light there is a colder white.
+exits:
+  south:
+    roomid: 6382
+  north:
+    roomid: 6384
+nouns:
+  machinery: >
+    Torn from the buckled walls and left hanging — ranks of hair-fine
+    grey filament and dulled unnameable metal, spilled from channels that
+    held them fitted for ten thousand years. The charge that crawls
+    through the ruin now is not work. It is the twitch of a thing too long
+    dead and too badly broken to lie still.
+  charge: >
+    Thin blue-white threads jump the narrowed gap of the sag, silent and
+    fast, gone the instant they arc. Where one passes near, the air draws
+    tight and every animal part of you says away. It does not strike at
+    you on purpose. It is enough to be standing where it wants to go.
+idlemessages:
+- A thread of blue-white arcs the sag and is gone, and the air draws tight.
+- The torn machinery crawls and stings in the buckled grey and will not settle.
+- Your hair lifts a heartbeat before the next arc snaps across the narrowed way.
+- Colder white light waits north, past the reach of the crawling charge.
+mutators:
+- mutatorid: hull_suppression
+- mutatorid: hull_discharge_deep

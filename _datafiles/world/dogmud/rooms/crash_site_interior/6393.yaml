@@ -1,0 +1,58 @@
+roomid: 6393
+zone: Crash Site Interior
+title: The Command Approach
+biome: cave
+description: >
+  The shaft lets you up into the last approach, and the place has spent
+  everything it kept to hold this ground. Where the lower halls set one
+  keeper or two, here the grey is ranked with them — recesses to either
+  hand, most of them open now, their occupants already turning, and the
+  cold light lies over more jointed shapes than you have met anywhere
+  below at once. This is the throat of the deepest place, the narrow
+  before the heart, and it was warded past all reason because whatever
+  lies beyond it was worth warding past all reason. The seams overhead
+  run cracked and weeping a thin bright discharge that stings the air, so
+  that the whole approach hums and prickles against your skin. North the
+  grey draws to a sealed threshold and the hush beyond it. East a lower
+  way runs off into a dark the light does not enter. Behind you the shaft
+  drops back the way you climbed.
+exits:
+  down:
+    roomid: 6392
+  north:
+    roomid: 6394
+  east:
+    roomid: 6402
+nouns:
+  recesses: >
+    Set-in places ranked close along both walls, more of them here than
+    anywhere below, each made to hold a keeper upright and waiting. Most
+    stand open and empty now, their wardens loosed against you. The place
+    emptied its whole guard into this one approach, and that alone tells
+    you what it thought was worth the cost.
+  discharge: >
+    The cracked seams overhead weep a thin bright light that is not the
+    steady cold glow — it snaps and stings, a hurt in the very air, the
+    made thing's old wound bleeding power it can no longer hold. It
+    prickles across your skin and sets your teeth on edge, and it grows
+    worse the longer you stand under it.
+  threshold: >
+    North the ranked grey gathers to a single sealed face, smooth and
+    shut, and beyond it the humming approach gives way to a hush you can
+    feel from here. Whatever the place set its whole guard to keep, it
+    kept it past that door.
+idlemessages:
+- The cracked seams overhead spit a thin bright discharge that stings the air.
+- Cold light lies over more jointed keepers than you have met at once below.
+- Something ranked along the wall turns, and then another, and then another.
+- North the grey draws to a sealed face, and past it lies a waiting hush.
+mutators:
+- mutatorid: hull_suppression
+- mutatorid: hull_discharge_deep
+spawninfo:
+  - mobid: 9555
+    statpool: 1
+  - mobid: 9555
+    statpool: 1
+  - mobid: 9556
+    statpool: 1

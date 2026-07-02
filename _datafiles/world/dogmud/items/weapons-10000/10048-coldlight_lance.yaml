@@ -1,0 +1,26 @@
+itemid: 10048
+name: Coldlight Lance
+namesimple: lance
+vendor_categories:
+- enchanting
+description: >-
+  A slender grey rod as tall as its bearer, crowned with a captive
+  mote of the tireless cold light that lines the deep corridors. The
+  glow never dims and never warms, and when a working is drawn through
+  the shaft the light leans toward the caster's hand as though eager
+  to be spent. Heavy enough to turn a blow and long enough to keep
+  trouble at arm's length, it was made to carry a power far older than
+  any spellcraft this world remembers.
+type: weapon
+hands: 2
+subtype: staff
+damage:
+  basedamage: 7
+  variance: 2
+damage_multiplier: 0.80
+spell_damage_multiplier: 1.60
+speedmultiplier: 0.7
+parryrating: 12
+weight: 5.0
+rarity_tier: 78
+value: 1900

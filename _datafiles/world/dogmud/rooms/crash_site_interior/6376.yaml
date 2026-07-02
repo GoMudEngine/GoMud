@@ -1,0 +1,43 @@
+roomid: 6376
+zone: Crash Site Interior
+title: Cold-Light Junction
+biome: cave
+description: >
+  The corridor opens into a place where the grey divides. Three ways run
+  off from here — the one you came by, and two more, one east and one
+  dropping south — and where they meet the ceiling lifts into a well of
+  the cold light, brighter here than anywhere behind you, though no
+  brighter for having any source. The seamless walls carry the same worked
+  marks in bands, running off down each passage like signage for a traffic
+  that stopped ten thousand years ago. Something crosses one of the far
+  passages, low and unhurried, and is gone before the eye can fix it. The
+  place is tended. You do not think it is tended for you.
+exits:
+  west:
+    roomid: 6375
+  east:
+    roomid: 6377
+  south:
+    roomid: 6378
+nouns:
+  marks: >
+    Bands of small even marks run along the grey at the height of a
+    reaching hand, branching where the passages branch — a language, or a
+    numbering, or a warning, laid down for whoever moved through here when
+    the place still moved. You cannot read them. They have the calm of
+    instructions that were never meant to need reading twice.
+  well: >
+    Overhead the ceiling opens into a shaft of the cold light, deeper and
+    brighter than the corridors that feed it, and no more explicable — no
+    lamp, no opening to any sky, only the grey giving off its steady glow
+    as though light were a property it had rather than a thing it made.
+idlemessages:
+- The cold light stands brightest here, pooled in the well overhead.
+- Something crosses a far passage, low and unhurried, and does not return.
+- The banded marks run off down each way and do not explain themselves.
+- A faint sourceless hum sits under the silence, felt more than heard.
+mutators:
+- mutatorid: hull_suppression
+spawninfo:
+  - mobid: 9554
+    statpool: 1

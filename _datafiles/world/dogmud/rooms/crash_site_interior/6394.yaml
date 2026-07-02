@@ -1,0 +1,41 @@
+roomid: 6394
+zone: Crash Site Interior
+title: The Sealed Threshold
+biome: cave
+description: >
+  Past the ranked approach the grey closes to a single narrow room, and
+  the noise of the place stops at the door of it as though cut. There are
+  no recesses here and no keepers — nothing waits in this room but the
+  room itself, kept clean and shut and reverent, a held breath worked
+  into the very walls. The cold light stands unbroken. The old hum, which
+  has run under everything since the breach, falls here almost to
+  silence, and the silence has a weight to it, the particular hush that
+  gathers only at the door of something that matters. Ahead the grey
+  opens once more into a vault too large for the light to fill, and
+  something in it holds the whole hush toward itself. Behind you the
+  ranked approach and its discharge. The way on is north, and the way on
+  is the last.
+exits:
+  south:
+    roomid: 6393
+  north:
+    roomid: 6395
+nouns:
+  hush: >
+    Not the mere absence of sound but a made stillness, kept in this room
+    the way the lower halls keep their keepers — deliberate, guarded,
+    reverent. It is the quiet that sits at the threshold of something the
+    makers set above everything else, and it draws your breath shallow
+    without your leave.
+  vault: >
+    North the narrow room gives onto a space the cold light cannot reach
+    the far side of, vast and dim, and the whole hush of the threshold
+    leans into it toward some single shape at its heart. Whatever the
+    place was built to hold, it is held in there, and it is awake.
+idlemessages:
+- The noise of the approach stops at the door, cut clean, and does not follow.
+- The old hum falls here almost to silence, and the silence has a weight.
+- Cold light stands unbroken over a room kept clean and shut and reverent.
+- North the grey opens on a vault too large for the light to fill.
+mutators:
+- mutatorid: hull_suppression

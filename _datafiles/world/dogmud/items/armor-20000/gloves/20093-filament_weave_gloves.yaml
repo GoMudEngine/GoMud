@@ -1,0 +1,23 @@
+itemid: 20093
+name: Filament Weave Gloves
+namesimple: gloves
+vendor_categories:
+- tailoring
+description: >-
+  Close-fitting gloves woven through with the long grey thread of the
+  buried place, so fine the grey shows only as a faint sheen across the
+  knuckles. They weigh almost nothing and drink a cool stillness from
+  the air, yet they turn an edge like a mailed gauntlet and leave the
+  fingers quick and sure. Whoever wove them worked a strength into the
+  cloth that the hand can feel but the eye cannot find.
+type: gloves
+subtype: wearable
+physical_mitigation: 8
+magical_mitigation: 5
+conviction_mitigation: 3
+statmods:
+  dexterity: 6
+  strength: 3
+weight: 1.0
+rarity_tier: 78
+value: 1500

@@ -1,0 +1,15 @@
+buffid: 95
+name: Hull Dampening
+description: The buried place presses the change in your blood back down. Your gifts feel distant, your certainty thin.
+triggerrate: 1 round
+triggercount: 3
+flags:
+  - dampened
+statmods:
+  willpower: -30
+  charisma: -30
+# Silent by design: the hull_suppression mutator re-applies this every round
+# while the player is in the zone, so any start/end text would flicker every
+# few rounds. The mutator's descriptionmodifier ("your gifts go quiet here...")
+# carries the standing feedback on room look/entry instead. triggercount 3
+# keeps it present in-zone and lets it lapse a few rounds after leaving.

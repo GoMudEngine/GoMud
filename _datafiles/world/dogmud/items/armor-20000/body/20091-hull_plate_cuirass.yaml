@@ -1,0 +1,24 @@
+itemid: 20091
+name: Hull-Plate Cuirass
+namesimple: cuirass
+vendor_categories:
+- blacksmithing
+description: >-
+  A breastplate cut and folded from a curved section of the grey
+  material, shaped somehow to the wearer without a rivet or a seam in
+  sight. It is lighter than plate that size has any right to be and
+  colder against the body, and it turns a blow with a low ringing note
+  that hangs in the air. Long scores mar its face where something once
+  tested it and failed. It was lifted from the leavings the buried
+  place kept of those who came before.
+type: body
+subtype: wearable
+physical_mitigation: 16
+magical_mitigation: 8
+conviction_mitigation: 5
+statmods:
+  vitality: 8
+  strength: 4
+weight: 10.0
+rarity_tier: 78
+value: 2400

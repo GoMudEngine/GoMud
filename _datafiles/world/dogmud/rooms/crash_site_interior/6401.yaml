@@ -1,0 +1,50 @@
+roomid: 6401
+zone: Crash Site Interior
+title: The Drift Vault
+biome: cave
+description: >
+  North of the command deck a shut side-hold breaks off the clean grey,
+  and here the light runs wrong — dimmed and drifting, guttering low as
+  though something in the room drank it. It was a store of some kind, its
+  walls set with sealed cells, and unlike the emptied posts below most of
+  these are still shut, still holding whatever the place thought worth
+  sealing away this deep. One keeper yet stands its watch among them,
+  taller and stiller than the wardens you have broken, wrought without the
+  cracked seams that marred the others — a silent thing that has drifted
+  here in the dim ten thousand years and kept these cells against all
+  comers, and it turns its whole patient attention on you the moment the
+  failing light finds you. What it guards is worth the guarding. Whether
+  it is worth the taking is yours to weigh. South lies the command deck
+  and the safer way.
+exits:
+  south:
+    roomid: 6396
+nouns:
+  cells: >
+    Sealed set-in stores ranked along the walls of the hold, most still
+    shut fast — unlike the emptied recesses below, these kept their
+    contents, whatever the place thought worth sealing this deep and
+    setting a silent keeper over. The keeper stands between you and them.
+    What is behind them, only the breaking of them will show.
+  warden: >
+    A keeper taller and stiller than any you have broken, wrought clean
+    without the cracked and weeping seams that marred the others, drifting
+    silent in the failing light. It has kept this hold ten thousand years
+    against no one, and it will keep it against you now with the same flat
+    patience. It does not spend itself in threat. It only waits, and turns,
+    and holds.
+  light: >
+    Dimmed and drifting here, guttering low, nothing like the clean even
+    glow of the deck outside — as though the sealed hold or the thing that
+    keeps it drank the light down to this failing gloom. It makes the cells
+    hard to number and the keeper harder to watch.
+idlemessages:
+- The light gutters low and drifting, as though something in the room drank it.
+- The silent keeper turns its whole patient attention on you, and waits.
+- Most of the cells are still shut, holding whatever the place sealed this deep.
+- Something taller and stiller than the broken wardens watches among the cells.
+mutators:
+- mutatorid: hull_suppression
+spawninfo:
+  - mobid: 9559
+    statpool: 1

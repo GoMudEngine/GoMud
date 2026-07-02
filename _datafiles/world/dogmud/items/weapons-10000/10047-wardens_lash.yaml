@@ -1,0 +1,27 @@
+itemid: 10047
+name: Warden's Lash
+namesimple: lash
+vendor_categories:
+- blacksmithing
+description: >-
+  A haft of the grey material as long as a forearm, ending in three
+  jointed grey cords that hang heavy and never quite go still. Swung,
+  they move a half-beat late, as if reluctant, and land with a weight
+  far past their size. It was taken from one of the guardians that
+  once kept the deep ways -- an arm made to strike and strike and
+  never tire. It answers a strong hand well, though it never seems to
+  answer gladly.
+type: weapon
+hands: 1
+subtype: bludgeoning
+damage:
+  basedamage: 8
+  variance: 3
+damage_multiplier: 1.20
+speedmultiplier: 1.1
+grapplemodifier: 0.3
+parryrating: 2
+staminacost: 6
+weight: 3.5
+rarity_tier: 78
+value: 1800

@@ -1,0 +1,45 @@
+roomid: 6380
+zone: Crash Site Interior
+title: Warden Post
+biome: cave
+description: >
+  The passage opens into a squared chamber that was plainly a post of some
+  kind — a place set aside for keeping watch, its walls lined with shut
+  recesses at the height where things might once have stood waiting to be
+  needed. They did not all stay shut. What comes out of them now moves
+  with the flat certainty of things doing exactly what they were made to
+  do and nothing else: grey shapes, jointed and patient and cold, turning
+  toward you the moment the light finds you here. There is no bluff in
+  them and no fury. They were left to hold this place, and they have held
+  it, and they will go on holding it against you until one of you stops.
+exits:
+  west:
+    roomid: 6379
+  east:
+    roomid: 6381
+nouns:
+  recesses: >
+    Shut set-in places ranked along the walls at standing height, each
+    sized to hold something upright and waiting. Most are open now, their
+    keepers loosed. The few still sealed give back only the cold light and
+    the sense of something behind them that has not yet been asked to
+    wake.
+  wardens: >
+    Grey jointed shapes, cold and unhurried, made in a form that answers
+    no animal you know — too even, too patient, moving only when there is
+    a reason to move. They do not threaten. They do not need to. They were
+    set here to keep the deeper place from anyone who came, and the keeping
+    is the whole of what they are.
+idlemessages:
+- A grey shape shifts in its recess, tracking you with no face to track by.
+- The cold light lies over the ranked recesses and the things that hold them.
+- Something jointed turns a fraction toward the sound of you, and waits.
+mutators:
+- mutatorid: hull_suppression
+spawninfo:
+  - mobid: 9554
+    statpool: 1
+  - mobid: 9554
+    statpool: 1
+  - mobid: 9556
+    statpool: 1

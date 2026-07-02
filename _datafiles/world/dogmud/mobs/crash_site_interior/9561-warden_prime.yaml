@@ -1,0 +1,58 @@
+mobid: 9561
+zone: Crash Site Interior
+behavior_archetype: leader
+aiprofile: brute
+archetype: fighting
+submission_policy: lethal
+surrender_policy: never
+hostile: true
+statpool: 500
+maxwander: 0
+groups:
+  - construct
+  - guardian
+spawnmutations: [large]
+idlecommands:
+  - 'emote holds the whole passage in the sweep of its single cold eye,
+    slow and unhurried, and lets nothing pass unweighed.'
+  - ''
+  - 'emote stands vast and grey in the dark, the light in its core banked
+    low, waiting on a breach it has waited an age to answer.'
+  - ''
+combatcommands:
+  - 'emote wakes to its full height, the light in its core flaring hard,
+    and brings a crushing grey weight down where you stand.'
+  - ''
+  - 'emote sweeps a heavy arc of cold light across the corridor in one
+    flat, merciless stroke.'
+  - bash
+  - ''
+character:
+  items:
+    - itemid: 40174
+      dropchance: 45
+    - itemid: 40169
+      dropchance: 100
+    - itemid: 40171
+      dropchance: 60
+  name: Warden-Prime
+  description: |
+    The greatest of the drifting guardians, a towering shape of the grey
+    material set to hold the inner threshold of the buried place. Where the
+    lesser wardens are eyeless, this one keeps a single deep socket of cold
+    light, and it turns that light on you with the slow certainty of a
+    thing that has judged every intruder for an age and found each of them
+    wanting. It does not hurry. It has never needed to.
+  speciesid: 37
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 30
+    vitality:
+      training: 30
+loot_pool:
+  - 10047
+  - 20092
+  - 20093
+itemdropchance: 100
