@@ -45,8 +45,8 @@ nouns:
 idlemessages:
 - The cold light stands steady and bright over the dais and the shape upon it.
 - The keeper turns a slow fraction as the light finds you, and otherwise holds.
-- Behind the dais the shaft climbs into the grey, toward the deepest heart below.
-- The whole broken deck was built around this hold, and this hold around one thing.
+- Behind the dais the shaft climbs the grey, toward the deepest heart below.
+- The broken deck was built around this hold, and the hold around one thing.
 mutators:
 - mutatorid: hull_suppression
 spawninfo:

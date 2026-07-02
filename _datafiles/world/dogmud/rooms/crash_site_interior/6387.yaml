@@ -38,8 +38,8 @@ nouns:
     last, and left holding its breath in the dark.
 idlemessages:
 - The silent fabricator hangs mid-reach over its empty bed and does not move.
-- The full racks stand ranked around the cradle, a fortune ten thousand years unspent.
-- The Grey Automaton keeps its station over the stores and tracks you without a face.
+- The full racks ring the cradle, a fortune ten thousand years unspent.
+- The Grey Automaton keeps station over the stores, tracking you facelessly.
 mutators:
 - mutatorid: hull_suppression
 spawninfo:

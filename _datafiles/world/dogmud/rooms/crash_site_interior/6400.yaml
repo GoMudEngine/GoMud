@@ -8,11 +8,12 @@ description: >
   the dark holds is a craft. It sits cradled in folded grey arms at the
   centre of the bay, smaller than the buried thing that carries it but made
   in the same seamless material, sleek and blunt-nosed and utterly still —
-  a lesser vessel, a boat for the greater ship, made to cross the dark
-  between this made thing and the three that wait above the sky. It could
-  go up. That is the whole shape of it: a way off the world and out to the
-  moons that are not moons, folded here in the dark, waiting. But the bay
-  is sealed and the craft is dead. No light runs in it, no seam gives, and
+  a lesser thing than the great buried shape that cradles it, but made for
+  the same impossible purpose, made to go out and up and across. It could
+  go up. That is the whole shape of it, plain in every line: a way off the
+  world, folded here in the dark, waiting. Where it was meant to go you
+  cannot yet say. But the bay is sealed and the craft is dead. No light
+  runs in it, no seam gives, and
   the great doors overhead are shut fast with ten thousand years of the
   world settled against them. There is a way up in this room, and it does
   not open. Not now. Not by any hand you have. Perhaps not yet. West lies
@@ -22,12 +23,12 @@ exits:
     roomid: 6399
 nouns:
   craft: >
-    A lesser vessel cradled in folded grey arms at the heart of the bay,
+    A lesser shape cradled in folded grey arms at the heart of the bay,
     blunt-nosed and sleek and made in the same seamless material as the
-    buried thing around it — a boat for the greater ship, made to cross
-    the dark to the three that wait above the sky. It is dark and dead and
-    cold. It could carry someone up, if it woke. It does not wake, and
-    nothing you have will wake it.
+    buried thing around it — made, plainly, to go out and up, though where
+    it does not tell you. It is dark and dead and cold. It could carry
+    someone up, if it woke. It does not wake, and nothing you have will
+    wake it.
   doors: >
     Great shut faces of the grey set high in the ceiling of the bay, made
     to open on the dark above so the craft could rise. They are closed

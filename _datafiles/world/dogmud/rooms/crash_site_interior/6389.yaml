@@ -38,10 +38,10 @@ nouns:
     need to. It was made to be in the way, and it is very good at being in
     the way.
 idlemessages:
-- The cold light lies over the ranked recesses and the shapes gathered under them.
+- The cold light lies over the ranked recesses and the shapes beneath them.
 - A tall warden turns a fraction toward the sound of you and holds, and waits.
 - The heavy frame shifts its footing, slow, and settles across the way east.
-- Something jointed clicks in the nest, once, and the cold silence closes over it.
+- Something jointed clicks in the nest, once, and the silence closes over it.
 mutators:
 - mutatorid: hull_suppression
 spawninfo:

@@ -32,6 +32,6 @@ nouns:
 idlemessages:
 - Cool old air rises out of the shaft, carrying the deep hum up with it.
 - The cold light thins into the shaft and gives out before the dark does.
-- The hum sits lower here, patient, coming up from further down than seems right.
+- The hum sits lower here, patient, rising from further down than seems right.
 mutators:
 - mutatorid: hull_suppression
