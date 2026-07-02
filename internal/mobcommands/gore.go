@@ -50,9 +50,9 @@ func Gore(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			// Hit + knockdown: horned charge tosses target off their feet.
 			if targetUser != nil {
 				if canSee {
-					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> lowers its head and charges into you, driving you to the ground! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> lowers its head and charges into you, driving you to the ground! (<ansi fg="damage">%s</ansi>)`, mobName, dmgDesc))
 				} else {
-					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something charges into you with bone-jarring force, hurling you to the ground! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something charges into you with bone-jarring force, hurling you to the ground! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 				}
 			}
 			sendRoomText(room, messaging.CategoryHitNaturalSharp,
@@ -62,9 +62,9 @@ func Gore(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			// Hit but no knockdown: the charge connects but target stays up.
 			if targetUser != nil {
 				if canSee {
-					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> drives its horns into you with a powerful charge! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> drives its horns into you with a powerful charge! (<ansi fg="damage">%s</ansi>)`, mobName, dmgDesc))
 				} else {
-					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something drives into you with a powerful charge! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something drives into you with a powerful charge! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 				}
 			}
 			sendRoomText(room, messaging.CategoryHitNaturalSharp,

@@ -47,9 +47,9 @@ func Rake(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if result.Hit {
 		if targetUser != nil {
 			if canSee {
-				targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> rakes its claws across you, opening bleeding wounds! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+				targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> rakes its claws across you, opening bleeding wounds! (<ansi fg="damage">%s</ansi>)`, mobName, dmgDesc))
 			} else {
-				targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something rakes its claws across you, opening bleeding wounds! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+				targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something rakes its claws across you, opening bleeding wounds! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 			}
 		}
 		sendRoomText(room, messaging.CategoryHitNaturalSharp,

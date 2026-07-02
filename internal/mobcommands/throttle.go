@@ -48,10 +48,10 @@ func Throttle(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		if targetUser != nil {
 			if canSee {
 				targetUser.SendText(messaging.CategoryHitNaturalSharp,
-					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> clamps crushing fangs around your throat, cutting off your air! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> clamps crushing fangs around your throat, cutting off your air! (<ansi fg="damage">%s</ansi>)`, mobName, dmgDesc))
 			} else {
 				targetUser.SendText(messaging.CategoryHitNaturalSharp,
-					fmt.Sprintf(`Something crushes your throat with savage fangs! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+					fmt.Sprintf(`Something crushes your throat with savage fangs! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 			}
 
 			// Cast-interrupt message.

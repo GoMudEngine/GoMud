@@ -11,14 +11,16 @@ description: >
   and the world and out the other side into somewhere else entirely. And
   it is somewhere else. Among the wheeling fires hangs a single blue world
   turning, ringed in white cloud, small with distance and dwindling as you
-  watch — a world being left behind, held here in light so that whoever
-  came after would see what those inside had seen: the sky-before, the
-  home that shrank to a star. There is no reading it wrong. This was never
-  of the world above. It fell out of that patient dark, carrying its
-  people away from that blue turning place, and it came down here, and it
-  never rose again. The gallery is very quiet. It is a hard thing to stand
-  before. North the grey narrows toward a room of tall shapes and silent
-  reaching arrays. East lies the deck.
+  watch — a shore receding, held here in light so that whoever came after
+  would see what those inside had seen: a sky that is not this world's sky,
+  and a small blue turning place shrinking away to a star. You do not have
+  the words for it. You have only the certainty that it is real, and that
+  it is not of here, and that someone made it to be remembered by — and the
+  cold sense, standing before it, that the whole of what this place is lies
+  just past the edge of understanding, waiting somewhere close to be read.
+  The gallery is very quiet. It is a hard thing to stand before. North the
+  grey narrows toward a room of tall shapes and silent reaching arrays.
+  East lies the deck.
 exits:
   east:
     roomid: 6396
@@ -49,6 +51,6 @@ idlemessages:
 - The wall of light wheels its thousand steady fires slow across the grey.
 - Among the fires a small blue world turns and dwindles, held at its leaving.
 - The gallery is very quiet; it is a hard thing to stand before.
-- This was never of the world above — it fell out of that patient dark.
+- It is not this world's sky, and you cannot yet say what that means.
 mutators:
 - mutatorid: hull_suppression

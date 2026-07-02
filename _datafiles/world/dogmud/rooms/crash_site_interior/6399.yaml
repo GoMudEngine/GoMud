@@ -12,14 +12,16 @@ description: >
   across the gulf the gallery showed you, all the way to whatever else is
   out there. And there is something else out there. The array knows it —
   the one panel still faintly lit holds three steady marks high above the
-  world, three shapes waiting in the dark where the fires wheel, three more
-  of these made things riding the black above the sky, patient as this one
-  was patient, near enough to call if the call could be made. What the
-  world above names its moons are not moons. But the array is broken. The
-  filaments hang dark and the seat is cold and the reach is folded and
-  still, and press what you will, nothing wakes; the voice was silenced in
-  the fall and what would raise it is not here, not yet. East the grey
-  gives onto a sealed bay. South lies the gallery.
+  world, three points that keep their places in the wheeling dark far too
+  well and too still to be stars, waiting, patient, near enough to call if
+  the call could be made. You cannot say what they are. You can only feel
+  the weight of them, and the plain wrongness of three fixed things where
+  nothing should be fixed, and the certainty that this room was built to
+  speak to them. But the array is broken. The filaments hang dark and the
+  seat is cold and the reach is folded and still, and press what you will,
+  nothing wakes; the voice was silenced in the fall and what would raise it
+  is not here, not yet. East the grey gives onto a sealed bay. South lies
+  the gallery.
 exits:
   south:
     roomid: 6398
@@ -39,10 +41,11 @@ nouns:
     made. They are not stars. They hold their places too well for stars.
   marks: >
     Three steady points held high above the world on the lit panel, apart
-    from the wheeling fires, keeping station in the dark. Three more made
-    things, riding the black above the sky the world below calls its own —
-    what that world names among its moons, waiting, as this one waited, to
-    be reached. The array could reach them. The array is broken.
+    from the wheeling fires, keeping station in the dark where nothing
+    ought to keep it. They do not drift and they do not wheel. They wait,
+    patient, the way this place waited — and the array was built to reach
+    them, though what they are it does not say. The array is broken. It
+    could not tell you now even if it knew.
   seat: >
     A single cold place at the array's heart, made for whoever once spoke
     for the buried thing across the dark. It is empty and dead, its
@@ -52,6 +55,6 @@ idlemessages:
 - The folded arms hang dark against the ceiling, the reach silent and still.
 - On the one lit panel, three steady marks keep station high above the world.
 - Press what you will; the cold seat does not warm and the voice does not wake.
-- What the world above calls its moons are not moons, and the array knows it.
+- Three fixed marks keep station where nothing should; the array knew what.
 mutators:
 - mutatorid: hull_suppression

@@ -47,9 +47,9 @@ func Maul(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	if result.Hit {
 		if targetUser != nil {
 			if canSee {
-				targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> savages you with vicious fangs, tearing bleeding wounds! (<ansi fg="damage">%s</ansi> damage)`, mobName, dmgDesc))
+				targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> savages you with vicious fangs, tearing bleeding wounds! (<ansi fg="damage">%s</ansi>)`, mobName, dmgDesc))
 			} else {
-				targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something savages you with vicious fangs, tearing bleeding wounds! (<ansi fg="damage">%s</ansi> damage)`, dmgDesc))
+				targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something savages you with vicious fangs, tearing bleeding wounds! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 			}
 		}
 		sendRoomText(room, messaging.CategoryHitNaturalSharp,

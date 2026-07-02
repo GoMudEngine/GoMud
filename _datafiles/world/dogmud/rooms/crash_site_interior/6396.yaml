@@ -26,7 +26,7 @@ exits:
   north:
     roomid: 6401
 nouns:
-  stations:
+  stations: >
     A ring of worked posts and dark-glass panels set at standing height
     around the deck, each plainly made for a watcher who is not here. They
     are cold and dark now, their purpose stopped, but their shape is the

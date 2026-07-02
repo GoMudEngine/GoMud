@@ -34,7 +34,7 @@ nouns:
     be moved, if the thing that moves it is large enough.
 idlemessages:
 - The cold light pools in the low side of the tilt and thins across the ridge.
-- A grey shape holds its footing on the canted floor and tracks the light to you.
+- A grey shape holds the canted floor and tracks the light to you.
 - The deep hum comes up stronger here, close under the buckled deck.
 mutators:
 - mutatorid: hull_suppression
