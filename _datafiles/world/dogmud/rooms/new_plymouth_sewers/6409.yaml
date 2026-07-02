@@ -1,0 +1,48 @@
+roomid: 6409
+zone: New Plymouth Sewers
+title: The Outfall Channel
+description: >
+  The gathered water of the junction runs fast and deep here, headed
+  for the harbor with real intent. The <ansi
+  fg="itemname">channel</ansi> has cut itself a voice — a hard,
+  hurrying rush that fills the tunnel and leaves no room for other
+  sounds. The <ansi fg="itemname">walkway</ansi> narrows to a
+  boot-width shelf along the east wall, forcing you to face the brick
+  and mind your feet, and at intervals along it iron <ansi
+  fg="itemname">hauling-rings</ansi> are set into the wall, their
+  inner curves worn bright as new silver by rope. Cargo has come up
+  this channel against that current, and more than once — enough
+  times to polish iron.
+biome: city
+coord:
+  x: -17
+  y: 85
+  z: -1
+exits:
+  northeast:
+    roomid: 6408
+  south:
+    roomid: 6410
+nouns:
+  channel: Deep enough that the lamplight finds no bottom, fast
+    enough that anything dropped in it is already somebody else's
+    problem. The surface runs in long muscled swells, and the sound
+    it makes is the sound of water that has stopped being drainage
+    and become a current.
+  walkway: A shelf of brick a single boot wide, slick with spray,
+    hugging the east wall. Whoever uses this stretch regularly has
+    learned to do it sideways, with a hand on the wall and no
+    opinions about hurry.
+  hauling-rings: Iron rings the size of a spread hand, leaded into
+    the wall at rope-height intervals. Rust owns their outer faces,
+    but the inner curve of each one is worn to a bright polish —
+    the signature of rope under load, repeated for years. Somebody
+    hauls freight up this channel against the current, and does it
+    often enough to keep the iron shining.
+idlemessages:
+- The channel's rush deepens for a moment as some greater volume
+  comes through from the junction and hurries past.
+- Spray finds the walkway and lays a fresh gloss on brick that never
+  quite dries.
+- One of the hauling-rings gives a single soft clink, as though
+  remembering a rope.

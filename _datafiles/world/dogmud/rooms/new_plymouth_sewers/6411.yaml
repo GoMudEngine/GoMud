@@ -1,0 +1,50 @@
+roomid: 6411
+zone: New Plymouth Sewers
+title: Beneath Cutter's Lane
+description: >
+  The harbor announces itself before you see any way to reach it —
+  salt and tar and fish-gut on the air, cut through the sewer's own
+  smells like a knife through tallow. Overhead, a <ansi
+  fg="itemname">loose grate</ansi> lets down a square of dockside
+  light, and a <ansi fg="itemname">knotted rope</ansi> hangs from its
+  bars, dark with the grip of many hands — an arrangement nobody
+  official installed and nobody official has removed. Along the brick
+  at chest height runs a crisp <ansi fg="itemname">barnacle
+  line</ansi>, white and sharp as a chalk mark, showing exactly how
+  far the tide reaches into the tunnel and how regularly it keeps the
+  appointment. The trunk continues north; everything south of here
+  belongs to the sea twice a day.
+biome: city
+coord:
+  x: -17
+  y: 83
+  z: -1
+exits:
+  up:
+    roomid: 5515
+    zone: New Plymouth Docks
+  north:
+    roomid: 6410
+nouns:
+  loose grate: A dock grate that sits in its collar without being
+    fastened to it, lifting aside with a practiced shove. Its
+    underside is worn smooth where hands have pushed it a thousand
+    times. Through the gap comes gull-noise, rigging-creak, and the
+    particular light of open water.
+  knotted rope: Hemp gone grey-black with handling, knotted at
+    forearm intervals for climbing, made fast to the grate's bars
+    above. It is a tool in daily use — supple, sound, and not
+    fraying — maintained by the same community of nobody that keeps
+    the grate loose.
+  barnacle line: A band of small white shells cemented to the brick
+    in a line level as a mason's string. Below it the wall is
+    sea-scoured and dark; above it, ordinary sewer brick. The tide
+    comes exactly this far, every day, twice, and has done so long
+    enough to grow its own boundary marker.
+idlemessages:
+- A gull's cry drops through the loose grate, absurdly bright
+  against the tunnel's gloom.
+- The water below stirs and rises a finger's width — somewhere out
+  past the outfall, the tide is changing its mind.
+- The knotted rope swings gently, touched by the harbor draught
+  coming down through the grate.

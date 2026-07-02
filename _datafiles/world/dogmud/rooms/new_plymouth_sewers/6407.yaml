@@ -1,0 +1,50 @@
+roomid: 6407
+zone: New Plymouth Sewers
+title: Beneath Sweeper's Corner
+description: >
+  The tunnel floor dips here and the water has taken advantage —
+  <ansi fg="itemname">standing water</ansi> spreads wall to wall,
+  shin-deep and reluctant, going nowhere in particular. Above it, grey
+  daylight seeps through the clogged <ansi
+  fg="itemname">gutter-grate</ansi> of Sweeper's Corner, strained
+  through the quarter's compacted leavings until what arrives is less
+  light than the rumor of light. The street comes down with it — cart
+  wheels on flagstone, a voice hailing another voice, the ordinary
+  traffic of the Common overhead. The surface feels very close and
+  very far at once, the way a shore feels from under water. The trunk
+  continues north, and a lower passage angles away southwest.
+biome: city
+coord:
+  x: -15
+  y: 87
+  z: -1
+exits:
+  up:
+    roomid: 5618
+    zone: New Plymouth Common
+  north:
+    roomid: 6406
+  southwest:
+    roomid: 6408
+nouns:
+  standing water: Shin-deep and still, skinned with a grey film that
+    the falling drips punctuate without disturbing. The dip in the
+    floor holds it the way a saucer holds spilled tea. Somewhere
+    beneath your boots the drain that should carry it away is making
+    its slow, losing argument with the quarter's debris.
+  gutter-grate: Seen from below, the grate is a dark lattice packed
+    with the street's castoffs — leaf-mash, grit, rag-ends — through
+    which daylight arrives already exhausted. Now and then the mass
+    shifts a fraction as the sweeper above rearranges his territory,
+    and a fresh drip finds its way down.
+  daylight: What passes for it — a grey suggestion filtering through
+    the packed grate, enough to silver the water's surface and no
+    more. It is the closest thing to open air this tunnel is offered,
+    and the tunnel does not seem grateful.
+idlemessages:
+- Cart wheels cross the grate overhead with a sound like slow thunder,
+  and grit sifts down onto the water.
+- A voice in the street above says something brief and cheerful, and
+  another voice answers it, and both move on.
+- A single drip falls from the grate, rings once across the standing
+  water, and the stillness closes over it.

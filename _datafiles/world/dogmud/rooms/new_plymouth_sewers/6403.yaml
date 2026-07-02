@@ -1,0 +1,50 @@
+roomid: 6403
+zone: New Plymouth Sewers
+title: Beneath the Tanning Yard
+description: >
+  A brick barrel-vault runs north and south beneath the tanning yard,
+  its curve close enough overhead that you walk stooped without deciding
+  to. Grey light falls in a single column through the pried
+  <ansi fg="itemname">drain-cap</ansi> above, catching motes and the
+  slow steam of the water below. The <ansi fg="itemname">channel</ansi>
+  itself is stained in bands of ochre and rust where the tannery
+  <ansi fg="itemname">run-off</ansi> comes down — the smell of the
+  yards has followed you into the dark, lime and hide and something
+  sourer underneath, and it shows no sign of giving up the pursuit.
+  The vault carries on north and south into a darkness the drain-light
+  does not negotiate with.
+biome: city
+coord:
+  x: -15
+  y: 90
+  z: -1
+exits:
+  up:
+    roomid: 5718
+    zone: New Plymouth Crafting
+  north:
+    roomid: 6404
+  south:
+    roomid: 6405
+nouns:
+  drain-cap: An iron cap made to sit flush in the yard above, pried up
+    at some point and never seated properly again. It admits a column
+    of grey daylight and, with it, the working noise of the tannery —
+    the slop of vats, a dragged hide, a voice raised and answered.
+    The rungs below it are slick with the same ochre film that stains
+    everything else down here.
+  channel: The water moves at a walking pace, opaque and faintly warm,
+    carrying whatever the yards above have finished with. Bands of
+    color mark the brick at its edge — ochre, rust, a chemical white —
+    each one the record of a different day's work overhead.
+  run-off: A steady dribble enters through a clay pipe high in the
+    east wall, tinted the exact brown of the tanning vats. Where it
+    strikes the channel it raises a thin steam that smells of lime
+    and old hide. The brick beneath the pipe has been eaten soft.
+idlemessages:
+- The column of drain-light shifts as something passes over the cap
+  in the yard above.
+- A fresh gout of run-off enters from the pipe, and the smell of the
+  tannery renews its claim on the air.
+- The channel gives a low, continuous murmur, the sound of water that
+  has somewhere to be.
