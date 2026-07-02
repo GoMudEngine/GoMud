@@ -5,7 +5,7 @@ aiprofile: predator
 archetype: fighting
 hostile: true
 statpool: 250
-maxwander: 2
+maxwander: 0
 groups:
   - animal
   - canine
@@ -15,8 +15,6 @@ idlecommands:
   - ''
   - 'emote paces the barnacle line at the wall, back and forth,
     the way a thing paces when it has decided this is its ground.'
-  - ''
-  - 'wander'
   - ''
   - 'emote worries at something wedged behind the knotted rope,
     growling low and constant to itself.'

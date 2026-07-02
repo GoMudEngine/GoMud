@@ -24,13 +24,12 @@ patterns:
 tree:
   root:
     text: |
-      Mind the edge, there. The channel is deeper than it looks
-      and colder than it needs to be. I am Tam -- a tosher, which
-      is a word you will not hear much daylight use -- and these
-      tunnels have been my rounds for longer than you have been
-      anything at all. You are standing in my parlor, so wipe
-      your feet. Ask what you like. Words are the one thing down
-      here that costs nothing.
+      I am Tam -- a tosher, which is a word you will not hear
+      much daylight use -- and these tunnels have been my rounds
+      for longer than you have been anything at all. You are
+      standing in my parlor, so wipe your feet and keep your
+      boots off my channel. Ask what you like. Words are the one
+      thing down here that costs nothing.
     hints: |
       You could ask what a tosher does, about the tunnels and the
       ways back up, about what he finds down here, about the deep

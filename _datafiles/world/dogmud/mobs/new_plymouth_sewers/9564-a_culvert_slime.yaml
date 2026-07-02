@@ -5,7 +5,7 @@ aiprofile: brute
 archetype: fighting
 hostile: true
 statpool: 200
-maxwander: 1
+maxwander: 0
 groups:
   - slime
 idlecommands:
@@ -38,12 +38,11 @@ character:
     A slow tonnage of translucent jelly the grey-brown of the
     channel it feeds from, spread along the waterline where three
     flows meet and everything the quarter loses comes past. It has
-    no face and needs none -- it is a stomach with patience. What
-    marks it is the vein. A single thread of vivid, wrong green
-    runs through its dun mass, branching and re-joining like
-    lightning held under glass, a color nothing in these tunnels
-    has any business making. The vein brightens when something
-    living comes near.
+    no face and needs none -- it is a stomach with patience. A
+    single thread of vivid, wrong green runs through its dun
+    mass, branching and re-joining like lightning held under
+    glass, a color nothing in these tunnels has any business
+    making. The vein brightens when something living comes near.
   speciesid: 16
   level: 1
   gold: 0

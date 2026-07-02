@@ -11,15 +11,15 @@ groups:
   - animal
   - rodent
 idlecommands:
-  - 'emote noses along the walkway edge, whiskers reading the brick
-    ahead of its feet.'
+  - 'emote noses along the walkway edge, whiskers reading the
+    stonework ahead of its feet.'
   - ''
   - 'emote sits up on its haunches, both tail-tips curling in
     opposite directions, and listens to the dark.'
   - ''
   - 'wander'
   - ''
-  - 'emote gnaws at something wedged in a joint of the brickwork,
+  - 'emote gnaws at something wedged in a joint of the masonry,
     patient and unhurried.'
   - ''
 combatcommands:
