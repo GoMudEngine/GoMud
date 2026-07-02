@@ -5,7 +5,7 @@ aiprofile: brute
 archetype: fighting
 hostile: true
 statpool: 500
-maxwander: 1
+maxwander: 0
 groups:
   - slime
 idlecommands:

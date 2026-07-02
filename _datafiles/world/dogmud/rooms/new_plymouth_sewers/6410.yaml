@@ -11,11 +11,11 @@ description: >
   Somebody stages goods here between tides, and the whole arrangement
   says, politely, that it is none of your business. The second feature
   is harder to be polite about. In the south corner an <ansi
-  fg="itemname">old stair</ansi> descends — steps of a grey stone the
-  sewers have no other example of, each tread worn hollow in
-  the middle, plainly older than the brick, the landing, and the city
-  that arranged itself on top of them. The tunnel itself continues
-  north and south.
+  fg="itemname">old stair</ansi> descends — steps of the same grey
+  stone that shows at the junction's waterline, and nowhere else in
+  the brick country, each tread worn hollow in the middle, plainly
+  older than the brick, the landing, and the city that arranged
+  itself on top of them. The tunnel itself continues north and south.
 biome: city
 coord:
   x: -17
@@ -45,8 +45,11 @@ nouns:
     each one worn to a shallow hollow down its center line — the
     erosion of feet, in numbers and across a span of years that the
     sewers above cannot account for. The stone matches nothing in
-    the vault, the brick, or the city. The stair was here first.
-    It goes down.
+    the brick or the city above — only the grey course at the
+    junction's waterline claims kin with it. On the edge of the
+    third tread down lies a single long white scale, dry and
+    horn-hard, big as a thumbnail three times over. Something shed
+    it on the way up. The stair was here first. It goes down.
 idlemessages:
 - Water laps at the tide-marks in the alcove, checking its old
   measurements.

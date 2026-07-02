@@ -61,7 +61,7 @@ tree:
         can use. The tannery drain, up at the north end of the
         trunk -- follow the stink of the vats and you cannot miss
         it. The sweeper's grate, midway along, which comes up in
-        an alley the street-sweepers keep. And the docks grate,
+        an alley a street-sweeper keeps. And the docks grate,
         south past the outfall, the one with the knotted rope that
         nobody official hung there. I use all three, according to
         which part of the city I feel like surfacing in.
@@ -88,7 +88,8 @@ tree:
     - id: deep
       triggers: ["deep", "stair", "below", "down", "dark", "water"]
       text: |
-        No. Not past the stair's foot. You are asking, so I will
+        No. No tosher goes past the stair's foot, and I am the only
+        one fool enough to have tried it. You are asking, so I will
         say it plain the once, and then we will speak of other
         things. There is a stair, old work, older than any brick
         in this city, and it goes down. I have stood at the foot
@@ -104,7 +105,8 @@ tree:
         subject changed.
     - id: traffic
       triggers: ["traffic", "smuggler", "smugglers", "crates",
-        "crate", "landing", "cargo", "goods"]
+        "crate", "landing", "cargo", "goods", "cooper", "coopers",
+        "chalk"]
       text: |
         Now that is a question, and here is what I know about
         questions like it. A tosher lasts down here by having
@@ -112,9 +114,13 @@ tree:
         Landing. Things pass through in the dark hours. Crates do
         not walk, so I suppose men carry them. I have never seen a
         face, and if I ever had, I would have never seen it twice
-        as hard as I could manage. That is all the answer I own,
-        and more of one than I usually give. Ask me about rats
-        instead. I am very good on rats.
+        as hard as I could manage. I will give you one thing more,
+        since you have the look of somebody who pokes regardless.
+        I have seen cooper's chalk down here, in a place no cooper
+        has any business chalking. I did not stop to admire it.
+        That is all the answer I own, and more of one than I
+        usually give. Ask me about rats instead. I am very good
+        on rats.
       hints: |
         You could ask about the tunnels, about his finds, or about
         the deep. He will say nothing more of the Old Landing.

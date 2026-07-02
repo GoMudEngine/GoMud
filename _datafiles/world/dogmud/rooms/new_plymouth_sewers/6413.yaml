@@ -39,10 +39,10 @@ nouns:
 idlemessages:
 - Your footsteps run ahead of you down the gallery and come back a
   long moment later, thinner.
-- The moving air draws steadily westward along the wall, without
-  eddy or pause.
+- The moving air draws steadily out of the west along the wall,
+  without eddy or pause.
 - Light passing across one of the pale fragments returns nothing —
   no glint, no grain, only the flat, even grey.
 spawninfo:
-  - mobid: 9563
-    respawnrate: "10 real minutes"
+  - mobid: 9568
+    respawnrate: "30 real minutes"

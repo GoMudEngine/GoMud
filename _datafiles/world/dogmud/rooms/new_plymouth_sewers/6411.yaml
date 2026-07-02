@@ -5,7 +5,7 @@ description: >
   The harbor announces itself before you see any way to reach it —
   salt and tar and fish-gut on the air, cut through the sewer's own
   smells like a knife through tallow. Overhead, a <ansi
-  fg="itemname">loose grate</ansi> lets down a square of dockside
+  fg="itemname">loose grate</ansi> lets down a grey slot of alley
   light, and a <ansi fg="itemname">knotted rope</ansi> hangs from its
   bars, dark with the grip of many hands — an arrangement nobody
   official installed and nobody official has removed. Along the brick
@@ -29,8 +29,9 @@ nouns:
   loose grate: A dock grate that sits in its collar without being
     fastened to it, lifting aside with a practiced shove. Its
     underside is worn smooth where hands have pushed it a thousand
-    times. Through the gap comes gull-noise, rigging-creak, and the
-    particular light of open water.
+    times. Through the gap come gull-noise and rigging-creak, carried
+    in off the harbor close by, and a thin grey light with an alley's
+    shadow already in it.
   knotted rope: Hemp gone grey-black with handling, knotted at
     forearm intervals for climbing, made fast to the grate's bars
     above. It is a tool in daily use — supple, sound, and not

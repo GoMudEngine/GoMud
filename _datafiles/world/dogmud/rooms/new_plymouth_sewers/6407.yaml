@@ -5,10 +5,10 @@ description: >
   The tunnel floor dips here and the water has taken advantage —
   <ansi fg="itemname">standing water</ansi> spreads wall to wall,
   shin-deep and reluctant, going nowhere in particular. Above it, grey
-  daylight seeps through the clogged <ansi
-  fg="itemname">gutter-grate</ansi> of Sweeper's Corner, strained
-  through the quarter's compacted leavings until what arrives is less
-  light than the rumor of light. The street comes down with it — cart
+  daylight finds its way down through one clear corner of the <ansi
+  fg="itemname">gutter-grate</ansi> of Sweeper's Corner, the rest of
+  the lattice packed with the quarter's compacted leavings, and what
+  arrives is less light than the rumor of light. The street comes down with it — cart
   wheels on flagstone, a voice hailing another voice, the ordinary
   traffic of the Common overhead. The surface feels very close and
   very far at once, the way a shore feels from under water. The trunk
@@ -33,8 +33,9 @@ nouns:
     beneath your boots the drain that should carry it away is making
     its slow, losing argument with the quarter's debris.
   gutter-grate: Seen from below, the grate is a dark lattice packed
-    with the street's castoffs — leaf-mash, grit, rag-ends — through
-    which daylight arrives already exhausted. Now and then the mass
+    with the street's castoffs — leaf-mash, grit, rag-ends — save
+    for one corner that stands clear, through which daylight arrives
+    already exhausted. Now and then the mass
     shifts a fraction as the sweeper above rearranges his territory,
     and a fresh drip finds its way down.
   daylight: What passes for it — a grey suggestion filtering through
