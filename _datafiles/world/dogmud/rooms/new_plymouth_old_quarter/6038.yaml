@@ -6,7 +6,11 @@ description: >
   wall of dressed stone and goes no further west. Flood
   water fills the space to waist-height and deeper in
   the channel center, black and cold enough that the
-  air above it carries a bitter chill. Along the base
+  air above it carries a bitter chill. In the east
+  wall a wide arch of older brick opens at the
+  waterline, and a slow outfall pours through it,
+  sliding down the courses to join the flood. Along
+  the base
   of the far wall, where the old courses meet the flood
   line, a seam of <ansi fg="itemname">gray material</ansi>
   is exposed — wider here than in the gallery to the
@@ -33,6 +37,9 @@ exits:
     roomid: 6036
   west:
     roomid: 6039
+  east:
+    roomid: 6422
+    zone: New Plymouth Sewers
 nouns:
   gray material: The seam is wider here than in the
     gallery to the south — not a thin vein but a band
@@ -71,9 +78,9 @@ idlemessages:
 - The gray material at the flood line does not move
   when touched — it is fixed in the courses as
   though it is part of the original pour.
-- The cold in this room is the cold of a dead end —
-  the same water, going nowhere, for a very long
-  time.
+- The cold in this room is the cold of deep standing
+  water — fed slowly through the arch in the east,
+  held here, for a very long time.
 - The carved mark at the upper corner is visible
   when light is brought close; at general lamp
   distance it is easy to miss.

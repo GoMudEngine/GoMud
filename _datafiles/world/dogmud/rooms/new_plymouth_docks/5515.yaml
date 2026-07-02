@@ -27,6 +27,9 @@ coord:
 exits:
   south:
     roomid: 5514
+  down:
+    roomid: 6411
+    zone: New Plymouth Sewers
 nouns:
   refuse heap: Everything a working street discards that is
     too large or too wrong for the gutter — broken barrel

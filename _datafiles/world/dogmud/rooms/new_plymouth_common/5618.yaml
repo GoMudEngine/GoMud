@@ -30,6 +30,9 @@ exits:
     roomid: 5616
   east:
     roomid: 5619
+  down:
+    roomid: 6407
+    zone: New Plymouth Sewers
 nouns:
   gutter-grate: An iron grate set into the corner
     flag, meant to admit the street drainage and
@@ -40,6 +43,8 @@ nouns:
     Beneath the compaction the grate bars are visible,
     dark with the residue of years, and below them
     the drain descends into its undisclosed purpose.
+    The grate itself lifts free of its seat, and a
+    line of iron rungs goes down the shaft beneath.
     Something about the corner's standing water troubles
     the light in a way you cannot account for simply
     by its depth.
