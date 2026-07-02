@@ -8,9 +8,9 @@ description: >
   a stranger of your own footsteps. Water enters from the northeast
   and from somewhere behind the west wall, folds together in a slow
   <ansi fg="itemname">confluence</ansi> at the chamber's center, and
-  leaves southwest with its argument settled. It is at the waterline
-  that the room earns a second look. Below the familiar colonial brick
-  runs a course of <ansi fg="itemname">old stonework</ansi> — grey
+  leaves southwest with its argument settled. Below the familiar
+  colonial brick, at the waterline, runs a course of <ansi
+  fg="itemname">old stonework</ansi> — grey
   blocks fitted without mortar, tight as a held breath, in a style
   that matches nothing above them. The brick was built on top of it,
   the way a thing is built on whatever was already there.
@@ -48,4 +48,4 @@ idlemessages:
 - A sound crosses the dome overhead — your own step, returned late
   and from the wrong direction.
 - The waterline rises a finger's width, covers the old stonework,
-  and thinks better of it.
+  and withdraws.
