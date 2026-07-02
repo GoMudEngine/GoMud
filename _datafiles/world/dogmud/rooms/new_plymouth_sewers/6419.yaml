@@ -1,0 +1,48 @@
+roomid: 6419
+zone: New Plymouth Sewers
+title: The Coopers' Room
+description: >
+  The door in the seam gives onto a small square room that has no
+  business being this clean. The floor is swept — genuinely swept,
+  down here, below the whole weight of the city — and everything in
+  the room is sound and looked after. A heavy
+  <ansi fg="itemname">table</ansi> stands square in the center with
+  benches drawn up along both sides.
+  <ansi fg="itemname">Candle-stubs</ansi> sit in clay dishes along
+  the table's edge, burned to different heights on different
+  nights. Against the wall rests a <ansi fg="itemname">cask</ansi>
+  with a fresh chalk-tally on its head. Someone meets here, in the
+  old deep, well below the notice of the city — meets, keeps
+  count, and tidies up after. They are not here now. The way out
+  is the door south.
+biome: city
+coord:
+  x: -21
+  y: 84
+  z: -2
+exits:
+  south:
+    roomid: 6418
+nouns:
+  table: Heavy planks on trestle legs, scrubbed pale, standing
+    dead level on a floor that was made level long before tables.
+    The benches are drawn up neatly on both sides, seating for a
+    small and orderly company. No papers, no carving, no initials
+    — whoever meets here leaves the table exactly as they found
+    it, every time.
+  candle-stubs: A row of tallow stubs set in clay dishes, the wax
+    pooled and cold, each burned down to a different height. The
+    meetings run long some nights and short on others, and nobody
+    wastes a fresh candle on a short one.
+  cask: A small cask, tightly hooped, proper cooper's work and
+    recently maintained. A chalk-tally on its head has been rubbed
+    out and remade, the newest marks still sharp — an honest count
+    kept of what gets drunk down here, by people who mean to go on
+    trusting each other.
+idlemessages:
+- The quiet in this room is a different quality from the deep
+  outside — a kept quiet, swept in with the floor.
+- The candle dishes hold their small pools of cold wax, waiting
+  on the next meeting.
+- Chalk dust shows faint on the cask head where the tally was
+  rubbed out and begun again.

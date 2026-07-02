@@ -1,0 +1,44 @@
+roomid: 6417
+zone: New Plymouth Sewers
+title: The Flooded Passage
+description: >
+  The passage widens, and the whole north half of it is gone under
+  a black <ansi fg="itemname">pool</ansi> — deep past telling,
+  still as poured glass, its far edge lost against the north wall.
+  The walkable way keeps to the south side, a
+  <ansi fg="itemname">shelf</ansi> of dry stone wide enough to pass
+  along if you stay against the wall. Now and again, on no pattern
+  you can find, the surface of the pool breaks — a swell, a gleam
+  of something large moving just beneath, gone before it becomes
+  a shape. The pool offers no bank, no shallow end, no bottom the
+  light reaches — only the black water and whatever uses it. The
+  dry stone carries the passage on, east and west.
+biome: city
+coord:
+  x: -20
+  y: 83
+  z: -2
+exits:
+  east:
+    roomid: 6414
+  west:
+    roomid: 6418
+nouns:
+  pool: Black past the first inch, and still in the way only deep
+    water is still. The surface gives back your light as a flat
+    sheen and gives back nothing else. Every so often it moves —
+    a long swell rising from beneath and subsiding — and the
+    movement settles any question of wading in before the question
+    is fully formed.
+  shelf: A ledge of the old grey stone running along the south
+    wall, dry and sound underfoot, a comfortable width so long as
+    you are not looking at the water. It is the only footing in
+    the room, and it stays well back from the pool's edge the
+    whole way along.
+idlemessages:
+- The surface of the pool swells once, without a sound, and
+  settles.
+- A ripple crosses the black water from somewhere along the north
+  wall, where nothing shows.
+- Water drips from the ceiling out over the pool, each drop
+  landing with a sound too small for the room.

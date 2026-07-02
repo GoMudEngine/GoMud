@@ -1,0 +1,48 @@
+roomid: 6422
+zone: New Plymouth Sewers
+title: The Canal Outfall
+description: >
+  The gathered water of the deep pours away through a wide
+  <ansi fg="itemname">arch</ansi> in the west wall — canal-brick
+  above, old grey stone below — and falls, quietly, into open
+  black water beyond. Through the arch lies drowned country. A
+  flooded <ansi fg="itemname">canal</ansi> runs off into the dark,
+  cold air standing over it, the buried remains of another quarter
+  of the city sunk along its banks. Stand a moment at the lip and
+  the shape of the thing arrives on its own — the sewers, the deep
+  ways, the drowned canals, all one connected dark under the
+  city's floor, and anything that cared to move through it unseen
+  could go very nearly anywhere at all. The bend of the waters
+  lies back east. The arch opens west.
+biome: city
+coord:
+  x: -24
+  y: 82
+  z: -2
+exits:
+  east:
+    roomid: 6421
+  west:
+    roomid: 6038
+    zone: New Plymouth Old Quarter
+nouns:
+  arch: Wide and low, sprung in old grey stone with colonial
+    canal-brick packed in above it — the two ages of the city
+    sharing the load of everything overhead. The water passes
+    through it in a smooth, even sheet and drops away into the
+    canal with hardly a sound, as though it has made this exact
+    exit so many times there is nothing left to remark on.
+  canal: Beyond the arch the water opens out into a drowned
+    channel running away westward into the dark — straight-sided,
+    deliberate, built work, flooded to the height of a wading man
+    and cold enough that the air above it bites. Somewhere out
+    along it stand the sunken streets of the Old Quarter's deep
+    level, and this outfall has been feeding their flood for
+    longer than anyone above knows.
+idlemessages:
+- The sheet of water through the arch thins, thickens, and evens
+  out again as the flows behind it shift.
+- Cold air moves in off the drowned canal, carrying the flat
+  mineral smell of deep standing water.
+- Far out along the canal, something drips from a height into the
+  flood, evenly, like slow footsteps.

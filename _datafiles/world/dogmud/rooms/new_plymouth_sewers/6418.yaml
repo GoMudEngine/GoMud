@@ -1,0 +1,60 @@
+roomid: 6418
+zone: New Plymouth Sewers
+title: The Old Watercourse
+description: >
+  A dry channel runs through this reach of the deep — a watercourse
+  that has not carried water in a long age, its
+  <ansi fg="itemname">bed</ansi> floored in hard silt gone over to
+  cracked plates. On the south wall the stone has failed. A
+  <ansi fg="itemname">collapse</ansi> chokes what was once an
+  opening there, the rubble part-cleared and then let alone, and
+  through the gaps between the fallen blocks you can make out
+  worked stone of a different character beyond — and feel a faint
+  current of dry air moving through, from somewhere you cannot
+  follow it to. The fall itself is total; no gap admits more than
+  a hand. The channel bed carries on east and west.
+biome: city
+coord:
+  x: -21
+  y: 83
+  z: -2
+exits:
+  east:
+    roomid: 6417
+  west:
+    roomid: 6420
+  north:
+    roomid: 6419
+    secret: true
+nouns:
+  bed: Hard-packed silt dried and shrunk into a floor of cracked
+    plates that shift and knock faintly underfoot. Water shaped
+    every inch of this channel and then, at some point the deep
+    kept no record of, stopped coming.
+  collapse: Fallen blocks jammed and settled into one another,
+    past any moving. Someone worked at clearing this once — the
+    smaller rubble stands stacked aside in a tidy line — and gave
+    it up as a bad job. Through the gaps, the stone beyond shows a
+    different dressing and a different age from the courses on
+    this side, and the thin dry air threading out of it smells of
+    nothing at all.
+idlemessages:
+- The dry air out of the collapse keeps up its faint, steady
+  draw.
+- A silt plate cracks somewhere down the channel bed, sharp in
+  the quiet.
+- Fine dust sifts from between the fallen blocks and settles.
+hidden_nouns:
+  coopers mark:
+    description: |
+      Scratched at knee height beside a hairline seam in the north
+      wall — a small sigil of curved strokes, a barrel stave in
+      profile, the sort of mark a cooper chalks on finished work.
+      It is cut shallow and recent, and it has been renewed more
+      than once. The seam beside it runs too straight and too
+      clean for the old stonework, and the stone within it stands
+      a hair proud of the wall — a door, fitted to pass for wall,
+      for whoever knows to look this low.
+    hidden_description: |
+      At knee height on the north wall, a scratched coopers mark
+      sits beside a straight seam in the stone — a hidden door.
