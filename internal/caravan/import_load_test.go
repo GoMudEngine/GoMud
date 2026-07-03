@@ -3,7 +3,9 @@ package caravan
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/exit"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/warehouse"
 )
@@ -69,11 +71,27 @@ func TestLoadRunnerFromImport_ToggleOffDoesNotTouchWarehouse(t *testing.T) {
 // on (the ConfigBool toggle is unreachable as true in the unit-test
 // process, so this test hook is the only way to exercise the warehouse-
 // first pass without booting the full config/data-file stack — mirrors
-// the warehouse package's itemCapFn override pattern).
+// the warehouse package's itemCapFn override pattern). The item spec is
+// seeded via items.SeedItemsForTest so items.New mints valid items and
+// the assertions genuinely execute (the skip guard is a defensive
+// fallback only — it must not trigger). LoadCap (3) < warehouse stock
+// (5) guarantees every loaded unit came from the warehouse: the manifest
+// round-robin gets no remaining capacity, so DrawnCount must equal the
+// full load.
 func TestLoadRunnerFromImport_DrawsFromWarehouseFirst(t *testing.T) {
 	orig := drawdownEnabledFn
 	drawdownEnabledFn = func() bool { return true }
 	defer func() { drawdownEnabledFn = orig }()
+
+	cleanupItems := items.SeedItemsForTest(map[int]*items.ItemSpec{
+		40001: {
+			ItemId:  40001,
+			Name:    "iron ingot",
+			Type:    items.Object,
+			Subtype: items.Mundane,
+		},
+	})
+	defer cleanupItems()
 
 	warehouse.ResetForTest()
 	warehouse.Deposit("New Plymouth Docks", 40001, 5)
@@ -87,11 +105,16 @@ func TestLoadRunnerFromImport_DrawsFromWarehouseFirst(t *testing.T) {
 
 	runner := newCargoTestMob(80907, 9304, "Dobb")
 	runner.Character.RoomId = roomId
+	characters.ApplyMobOverrides(&runner.Character, 0, 0, 5000)
 
 	loaded := LoadRunnerFromImport(runner, ImportCircuit{ImportItems: []int{40001}, LoadCap: 3})
 	if loaded == 0 {
-		// Item registry not loaded in unit context — acceptable; smoke covers it.
-		t.Skip("items.New returned invalid (registry not loaded); integrated smoke covers this")
+		// Defensive fallback only — the seeded spec above means items.New
+		// must succeed; reaching this skip indicates fixture breakage.
+		t.Skip("items.New returned invalid despite seeded spec; investigate fixture")
+	}
+	if loaded != 3 {
+		t.Errorf("loaded = %d, want 3 (LoadCap bounds the draw below the 5 in stock)", loaded)
 	}
 	if got := warehouse.WarehouseFor("New Plymouth Docks").StockOf(40001); got != 5-loaded {
 		t.Errorf("warehouse stock = %d, want %d (5 - %d drawn)", got, 5-loaded, loaded)

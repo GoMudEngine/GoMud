@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/warehouse"
 )
@@ -183,14 +185,28 @@ func TestPrioritizeByDemand_SortsDescStable(t *testing.T) {
 // mechanism without needing to fake config state. PortStops is left empty
 // so exportDemand contributes no demand (clean fallback to manifest
 // order, per the "cold boot" contract) — priority ordering itself is
-// pinned separately by TestPrioritizeByDemand_SortsDescStable.
+// pinned separately by TestPrioritizeByDemand_SortsDescStable. The item
+// spec is seeded via items.SeedItemsForTest so items.New mints a valid
+// item and the assertions genuinely execute (the skip guard below is a
+// defensive fallback only — it must not trigger).
 func TestLoadFromWarehouse_DrawsWarehouseStockFirst(t *testing.T) {
+	cleanupItems := items.SeedItemsForTest(map[int]*items.ItemSpec{
+		40123: {
+			ItemId:  40123,
+			Name:    "river reed bundle",
+			Type:    items.Object,
+			Subtype: items.Mundane,
+		},
+	})
+	defer cleanupItems()
+
 	warehouse.ResetForTest()
 	warehouse.Deposit("The Confluence", 40123, 5)
 
 	factor := &mobs.Mob{MobId: 9577, InstanceId: 80950}
 	factor.Character.Name = "Test Factor"
 	factor.Character.Buffs = buffs.New()
+	characters.ApplyMobOverrides(&factor.Character, 0, 0, 5000)
 
 	c := TradeCircuit{
 		RouteId:         "test_route",
@@ -202,9 +218,12 @@ func TestLoadFromWarehouse_DrawsWarehouseStockFirst(t *testing.T) {
 
 	loaded := loadFromWarehouse(factor, c, 0, "The Confluence")
 	if loaded == 0 {
-		// Item registry not loaded in unit context — acceptable; smoke
-		// covers it (mirrors caravan.TestLoadRunnerFromImport_RespectsCapAndSkipsWhenRegistryAbsent).
-		t.Skip("items.New returned invalid (registry not loaded); integrated smoke covers this")
+		// Defensive fallback only — the seeded spec above means items.New
+		// must succeed; reaching this skip indicates fixture breakage.
+		t.Skip("items.New returned invalid despite seeded spec; investigate fixture")
+	}
+	if loaded != 3 {
+		t.Errorf("loaded = %d, want 3 (LoadCap bounds the draw below the 5 in stock)", loaded)
 	}
 	if got := warehouse.WarehouseFor("The Confluence").StockOf(40123); got != 5-loaded {
 		t.Errorf("warehouse stock = %d, want %d (5 - %d loaded)", got, 5-loaded, loaded)
