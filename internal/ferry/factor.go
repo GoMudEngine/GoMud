@@ -4,11 +4,13 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/caravan"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/warehouse"
 )
 
 // FactorPhase is the trade factor's lifecycle state.
@@ -184,6 +186,10 @@ func tickFactors(rpd int, now uint64) {
 			st.walkIssued = false
 			st.lastRoom = factor.Character.RoomId
 			st.lastProgressRound = now
+			// Stuck-reset ends the circuit here too (the factor never makes
+			// it back to a normal Returning→Waiting arrival) — bank leftover
+			// cargo symmetrically with that path before reloading.
+			bankLeftoverCargo(factor, dock)
 			ensureFactorLoaded(factor, c, st.PortIdx)
 			continue // state resolved for this round
 		}
@@ -205,6 +211,9 @@ func tickFactors(rpd int, now uint64) {
 			if pos.AtPortIdx == st.PortIdx {
 				st.Phase = FactorWaiting
 				st.walkIssued = false
+				// End-of-circuit overflow capture (Stage 3): bank whatever
+				// the factor is still carrying before topping it back up.
+				bankLeftoverCargo(factor, r.Ports[st.PortIdx].DockRoom)
 				ensureFactorLoaded(factor, c, st.PortIdx)
 			} else {
 				issueWalkIfDue(factor, st, r.Ports[st.PortIdx].DockRoom, now)
@@ -380,6 +389,40 @@ func SetFactorStateForTest(instanceId int, phase FactorPhase) {
 // the package-level factorStates map between runs.
 func ClearFactorStateForTest(instanceId int) {
 	delete(factorStates, instanceId)
+}
+
+// bankLeftoverCargo consigns a factor's undelivered bucketed cargo to the
+// dock city's warehouse (Stage 3 overflow capture). Called ONLY at the
+// end of a circuit (Returning→Waiting, or the stuck-reset path that ends
+// a circuit early), never mid-circuit — later stops still need mid-circuit
+// cargo. Non-warehouse cities (Stillwater): no-op, leftovers stay aboard
+// and count against the reload cap as before. Gated on WarehousesEnabled
+// so the whole feature is a no-op with the master toggle off (warehouse.
+// Deposit itself doesn't check the toggle, and with it off SaveDirty never
+// runs — so silently accumulating stock here would just leak memory).
+func bankLeftoverCargo(factor *mobs.Mob, dockRoomId int) {
+	if !bool(configs.GetGamePlayConfig().WarehousesEnabled) {
+		return
+	}
+	dock := rooms.LoadRoom(dockRoomId)
+	if dock == nil {
+		return
+	}
+	if _, ok := warehouse.CityFor(dock.Zone); !ok {
+		return
+	}
+	banked := 0
+	for i := len(factor.Character.Items) - 1; i >= 0; i-- {
+		it := factor.Character.Items[i]
+		if warehouse.Deposit(dock.Zone, it.ItemId, 1) {
+			factor.Character.RemoveItem(it)
+			banked++
+		}
+	}
+	if banked > 0 {
+		dock.SendTextVisual(messaging.CategoryMobEmote,
+			fmt.Sprintf(`%s consigns the unsold remainder of the cargo to the warehouse.`, factor.Character.Name))
+	}
 }
 
 // ensureFactorLoaded tops the factor's inventory up to c.LoadCap with fresh

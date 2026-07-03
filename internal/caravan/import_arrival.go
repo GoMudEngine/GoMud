@@ -1,9 +1,11 @@
 package caravan
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/warehouse"
 )
 
 type importAction int
@@ -35,6 +37,24 @@ func handleImportArrival(c ImportCircuit, arrival events.PatrolWaypointArrival) 
 	}
 	switch classifyImportArrival(c, arrival.ArrivalEvent) {
 	case importLoad:
+		// Stage 3 overflow capture: leftovers surviving a full vendor loop
+		// mean the city's vendors were full — bank them rather than letting
+		// them ride forever. No-op outside warehouse cities, and gated on
+		// the master toggle (warehouse.Deposit itself doesn't check it, and
+		// with it off SaveDirty never runs, so banked stock would never
+		// persist).
+		if bool(configs.GetGamePlayConfig().WarehousesEnabled) {
+			if room := rooms.LoadRoom(arrival.RoomId); room != nil {
+				if _, ok := warehouse.CityFor(room.Zone); ok {
+					for i := len(runner.Character.Items) - 1; i >= 0; i-- {
+						it := runner.Character.Items[i]
+						if warehouse.Deposit(room.Zone, it.ItemId, 1) {
+							runner.Character.RemoveItem(it)
+						}
+					}
+				}
+			}
+		}
 		LoadRunnerFromImport(runner, c)
 	case importDeliver:
 		delivered, _ := VisitVendorsInRoom(arrival.RoomId, runner, c.DeliveryBuckets, nil)
