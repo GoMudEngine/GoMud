@@ -24,6 +24,8 @@ type GamePlay struct {
 	FerriesEnabled ConfigBool `yaml:"FerriesEnabled"` // Master toggle for the ferry vessel controller + boarding (Stage 1 ferry system)
 
 	WarehousesEnabled ConfigBool `yaml:"WarehousesEnabled"` // Master toggle for warehouse buffer pools (Stage 3 ferry system)
+
+	WarehouseDrawdownEnabled ConfigBool `yaml:"WarehouseDrawdownEnabled"` // Stage 4 kill switch: warehouse-first loading + local vendor release
 }
 
 type GameplayDeath struct {
