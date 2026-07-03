@@ -1,0 +1,10 @@
+routeid: stillwater_confluence_barge
+name: the Grey Heron
+deck_room: 6424
+ports:
+  - dock_room: 4118   # Stillwater — Boat Rental Pier
+  - dock_room: 6109   # The Confluence — The Barge Dock
+crossing_hours: 2
+layover_hours: 1
+phase_offset_rounds: 75
+fare: 50

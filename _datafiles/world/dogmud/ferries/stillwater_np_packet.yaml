@@ -1,0 +1,10 @@
+routeid: stillwater_np_packet
+name: the Lakewind Packet
+deck_room: 6423
+ports:
+  - dock_room: 4118   # Stillwater — Boat Rental Pier
+  - dock_room: 5502   # New Plymouth — The North Quay
+crossing_hours: 2
+layover_hours: 1
+phase_offset_rounds: 0
+fare: 75
