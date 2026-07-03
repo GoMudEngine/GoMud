@@ -32,6 +32,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/ferry"
 	"github.com/GoMudEngine/GoMud/internal/flags"
 	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/goals"
@@ -1419,6 +1420,7 @@ func loadAllDataFiles(isReload bool) {
 	mudlog.Info("shop cache prewarmed (spawninfo)", "count", prewarmedFromSpawn)
 	pets.LoadDataFiles()
 	quests.LoadDataFiles()
+	ferry.LoadDataFiles()
 	questengine.LoadDataFiles()
 	templates.LoadAliases(plugins.GetPluginRegistry())
 	keywords.LoadAliases(plugins.GetPluginRegistry())
