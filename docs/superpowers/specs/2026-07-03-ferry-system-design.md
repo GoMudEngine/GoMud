@@ -1,7 +1,7 @@
 # Ferry System — Scheduled Water Travel + Economy Interconnection
 
-**Date:** 2026-07-03
-**Status:** Approved (Approach A, two stages)
+**Date:** 2026-07-03 (warehouse-buffer scope expansion approved same day)
+**Status:** Approved (Approach A + warehouse buffers, four stages)
 **Prior art:** `docs/ZONE_EXPANSION.md` § "Water Routes & Ferries" (routes
 reserved 2026-06-19); caravan import circuits (`internal/caravan/`); the
 Threshold-Keeper paid-transport pattern (`open_instance_portal`).
@@ -22,6 +22,13 @@ mechanism so regional goods cross cities, stabilizing prices (damping
 the 0.25x–5x dynamic-pricing extremes) and opening player cargo-running
 as an emergent activity. Fares are a recurring gold sink.
 
+On top of the flows, **warehouse buffer pools** in New Plymouth and The
+Confluence soak up surplus stock over time (like caravan wagons, at a
+much bigger scale) and release it when shortages hit: a player buying
+out Thornwall's crafting mats gets backfilled over the following ferry
+and caravan runs from reserves that have been piling up for ages —
+each hop following purely local rules.
+
 **Design constraints carried over from ZONE_EXPANSION.md:** paid and
 faster than walking; overland corridors stay relevant (low-coin players,
 exploration, leveling); a short in-transit experience; never strictly
@@ -32,16 +39,30 @@ fare is the gate.
 
 - Coastal/seaboard routes (NP harbormaster stub stays a stub).
 - Combat, fishing, or events aboard vessels (flavor only for now).
-- Unifying the legacy Thornwall caravan onto ferries.
+- Unifying the legacy Thornwall caravan onto ferries (Stage 4 gives it
+  a warehouse-aware load step at the NP end, nothing more).
 - Player-owned boats; the existing Stillwater Boat Rental Pier prop is
   untouched.
+- **Player access to warehouse stock — backend forever.** The
+  warehouse interacts only with caravans, runners, ferry factors, and
+  the delivery machinery. Enterable warehouse interiors, theft
+  content, and bonded-goods quests remain a future seam (Warehouse
+  Row's padlocked doors are the hook).
+- Warehouse UI on the admin economy dashboard (logged as a follow-up;
+  snapshot *capture* is in scope so history accumulates from day one).
 
 ## Staging
 
-- **Stage 1 — vessels + passenger travel.** Ferries zone, state
-  machine, gangplanks, dock agents, fares, ambiance. Shippable alone.
-- **Stage 2 — trade-factor circuits + cross-region stock.** NPC cargo
-  riders, vendor stock slots, dashboard visibility. Builds on Stage 1.
+| Stage | Scope | Ships alone? |
+|-------|-------|--------------|
+| 1 | Ferry vessels + schedule + paid passenger travel | Yes |
+| 2 | Riding trade factors + cross-region `RestockQty: 0` stock slots | Yes |
+| 3 | Warehouses: persistent pools, overflow capture, ambient accrual, snapshot capture | Yes (reserves just build) |
+| 4 | Drawdown: warehouse-first loading at depots, shortage-prioritized | Yes (completes the loop) |
+| FU | Warehouse panel on the admin economy web dashboard | Follow-up |
+
+Each stage is its own plan → build → playtest cycle. Stages 3–4 don't
+touch vessel code, so they can land while Stages 1–2 soak on prod.
 
 If the riding-factor seam proves flaky in Stage 2, the approved
 fallback is direct port-call delivery (fire a delivery event at
@@ -192,6 +213,58 @@ Ferry factors appear in the economy dashboard via the existing
 caravan snapshot plumbing (`CaravanSnapshot`), so deliveries-by-tier
 and lbs-delivered trend like Dobb's circuit does today.
 
+### Warehouse buffer pools (Stage 3)
+
+A **warehouse** is a persistent, backend-only inventory pool per city
+— New Plymouth and The Confluence to start. Storage mirrors shop
+economic state: `_datafiles/world/dogmud/warehouses/<zone>.yaml`,
+**living-economy state** — never wiped by the instance-save SOP,
+never deployed over (same policy as `shops/`). Structurally a
+`ShopInventory`-like ledger: per-item current + cap, with **very high
+per-item caps** (config default, e.g. 50–100× a vendor MaxStock).
+Physical presence is the existing Warehouse Row rooms (NP 5505,
+Confluence 6113) — prose anchors only; no interiors, no player
+interaction, ever.
+
+Two fill feeds:
+
+1. **Overflow capture.** Today, when a forager/caravan/ferry delivery
+   finds vendors at `MaxStock`, the excess stays on the carrier. New
+   rule: the undeliverable remainder at any delivery stop in a
+   warehouse city banks into that city's warehouse (bucket-gated,
+   capped). Real surplus is captured instead of circling on carriers.
+2. **Ambient accrual.** A slow per-bucket trickle (config-knobbed
+   rate, only for items already present in the warehouse's ledger or
+   a seeded accrual list) representing off-screen trade, so reserves
+   build through quiet stretches. Bounded by the caps.
+
+Snapshot capture: a `WarehouseSnapshot` joins shops/caravans/foragers
+in the hourly economy health snapshot from day one (stock by item +
+bucket, capture/accrual/drawdown counters), so the follow-up
+dashboard panel has history waiting for it.
+
+### Warehouse drawdown (Stage 4)
+
+Purely **local rules — no global demand solver**. When a registered
+load event fires at a depot in a warehouse city (Dobb's circuit load
+at 5506, a ferry factor loading exports, the legacy Thornwall-bound
+caravan loading at the NP end), the loader:
+
+1. Computes what's depleted downstream on *its own circuit* (missing
+   stock across its delivery vendors — same visibility
+   `VisitVendorsInRoom` already needs).
+2. **Pulls from warehouse stock first**, decrementing the pool,
+   prioritized by that shortage list, up to its `LoadCap`.
+3. Tops up from its normal infinite-trickle import manifest, as
+   today.
+
+Multi-hop backfill emerges without coordination: *Confluence
+warehouse → ferry factor → NP vendors (+ overflow into NP warehouse)
+→ Thornwall-bound caravan load → Thornwall shops*. Backfill is
+deliberately slow — one carrier-load per departure, no teleporting
+stock. When warehouses are empty, behavior degrades exactly to
+today's system.
+
 ## Content Inventory (built in plan phase, IDs via `id_inventory.py`)
 
 - **Zone `ferries`** (`zone-config.yaml` required): 2 rooms × 3
@@ -220,6 +293,12 @@ rollout. Defaults: crossing 6 game-hours, layover 2 game-hours
 (≈ several round trips per game day), fares 40–75g by route length
 (exact values tuned in plan/playtest).
 
+Warehouse knobs (Stages 3–4): `WarehousesEnabled`,
+`WarehouseItemCapMultiplier` (very high — default order of 50–100×
+vendor MaxStock), `WarehouseAccrualPct`/interval (the ambient
+trickle), and `WarehouseDrawdownEnabled` (Stage 4 kill switch,
+separate from Stage 3 accumulation).
+
 ## Testing
 
 - **Unit:** phase-from-clock math (boundaries, offsets, restart
@@ -232,6 +311,16 @@ rollout. Defaults: crossing 6 game-hours, layover 2 game-hours
   verify destination vendor stock rose (admin `questtoken`-style
   direct checks preferred over flaky adapter observation); economy
   dashboard shows the factor.
+- **Unit (Stage 3):** overflow banks the exact undeliverable
+  remainder; accrual respects caps; persistence round-trips;
+  snapshot fields populate.
+- **Unit (Stage 4):** shortage prioritization; warehouse decrement +
+  manifest top-up ordering; empty-warehouse degrades to today's
+  load behavior.
+- **Harness (Stages 3–4, the headline scenario):** buy out a
+  Thornwall vendor's mats; verify over subsequent ferry + caravan
+  runs that stock recovers faster than base restock alone, and that
+  warehouse counters drew down in the snapshots.
 - **Boot test:** full pre-push SOP; validator runs at startup.
 
 ## Risks
@@ -248,15 +337,29 @@ rollout. Defaults: crossing 6 game-hours, layover 2 game-hours
 - **Economy skew:** cross-region slots start small (`MaxStock` low)
   so ferries season markets rather than flooding them; dashboard
   deltas make skew visible before it hurts.
+- **Warehouse inflation:** very high caps + ambient accrual could
+  make shortages too painless if the trickle outpaces demand. The
+  accrual rate is the tuning lever; snapshot counters (accrued vs
+  captured vs drawn) make the ratio observable. Drawdown ships
+  behind its own kill switch.
+- **Save-file growth:** one YAML per warehouse city, ledger-sized —
+  negligible next to `shops/`.
 
 ## Open Items for the Plan Phase
 
 - Confirm exact dock rooms (candidates: Stillwater 4118 Boat Rental
   Pier or 4116 Fishing Docks; NP 5502 North Quay or 5503 Long Quay;
   Confluence 6109 The Barge Dock).
+- Designate load depots per port: NP has The Caravan Depot (5506);
+  Stillwater and the Confluence need a designated dockside depot
+  room (existing room double-duty vs a small new room — plan call).
 - Reserve room/mob IDs via `python tools/id_inventory.py`.
 - Pick exact fares + phase offsets; pick Stage 2 item lists from the
   bucket map; decide 1-route-first vs all-3 for factors.
 - Verify `TemporaryRoomExit` visibility in the web mapper snapshot
   (should render as a portal/named exit; confirm no fog-of-war
   weirdness on vessel rooms).
+- Stage 3: decide the seeded accrual list per warehouse (which items
+  trickle when the ledger is empty) and initial cap values.
+- Log the dashboard warehouse panel as a follow-up memory/backlog
+  entry when Stage 3 ships.
