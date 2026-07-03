@@ -289,9 +289,10 @@ today's system.
 
 Per-route YAML carries schedule + fare. Global knobs: ambiance
 message chance, and a master `FerriesEnabled` bool for safe prod
-rollout. Defaults: crossing 6 game-hours, layover 2 game-hours
-(≈ several round trips per game day), fares 40–75g by route length
-(exact values tuned in plan/playtest).
+rollout. Defaults (revised at plan time against RoundsPerDay=900, where
+1 game-hour = 2.5 real minutes): crossing 2 game-hours (≈5 real min),
+layover 1 game-hour (≈2.5 real min) — several round trips per game day;
+fares 40–75g by route length. Tuned further in playtest.
 
 Warehouse knobs (Stages 3–4): `WarehousesEnabled`,
 `WarehouseItemCapMultiplier` (very high — default order of 50–100×
