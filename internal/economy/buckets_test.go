@@ -17,6 +17,7 @@ func TestBucketFor_KnownItems(t *testing.T) {
 		{40010, "thornwall"},   // chrysalis core
 		{40004, "overlap"},     // healer's root
 		{40062, "fernway"},     // oak bark (3.0b)
+		{40123, "confluence"},  // watercress
 		{99999, ""},            // unknown
 	}
 	for _, c := range cases {
@@ -27,7 +28,7 @@ func TestBucketFor_KnownItems(t *testing.T) {
 }
 
 func TestAllBuckets_StableOrder(t *testing.T) {
-	want := []string{"base", "stillwater", "thornwall", "fernway", "overlap"}
+	want := []string{"base", "stillwater", "thornwall", "fernway", "confluence", "overlap"}
 	got := AllBuckets()
 	if len(got) != len(want) {
 		t.Fatalf("AllBuckets() len = %d, want %d", len(got), len(want))
