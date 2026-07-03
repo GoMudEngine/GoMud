@@ -43,7 +43,8 @@ func RegisterListeners() {
 	events.RegisterListener(events.NewRound{}, BroadcastHints)
 	events.RegisterListener(events.NewRound{}, IdleMobs)
 	events.RegisterListener(events.MobIdle{}, HandleIdleMobs)
-	events.RegisterListener(events.NewRound{}, FerryTick) // Ferry vessels: schedule reconcile
+	events.RegisterListener(events.NewRound{}, FerryTick)     // Ferry vessels: schedule reconcile
+	events.RegisterListener(events.NewRound{}, WarehouseTick) // Warehouse pools: accrual + dirty save
 
 	// Turn Hooks
 	events.RegisterListener(events.NewTurn{}, CleanupZombies)

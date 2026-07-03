@@ -7,6 +7,7 @@ _datafiles/**/plugin-data/*
 **/rooms.instances
 **/mobs.instances
 _datafiles/**/shops
+_datafiles/**/warehouses
 # Runtime faction rep state — not committed
 _datafiles/**/factions.rep
 # Runtime crime log state — not committed

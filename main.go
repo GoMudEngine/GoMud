@@ -77,6 +77,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/GoMudEngine/GoMud/internal/warehouse"
 	"github.com/GoMudEngine/GoMud/internal/web"
 	_ "github.com/GoMudEngine/GoMud/modules"
 	textLang "golang.org/x/text/language"
@@ -517,6 +518,7 @@ func main() {
 	// Final throughput saves before shutting down
 	forager.SaveAllThroughputs()
 	caravan.SaveAllThroughputs()
+	warehouse.SaveAll()
 
 	// Just a goroutine that spins its wheels until the program shuts down")
 	go func() {
@@ -1423,6 +1425,7 @@ func loadAllDataFiles(isReload bool) {
 	pets.LoadDataFiles()
 	quests.LoadDataFiles()
 	ferry.LoadDataFiles()
+	warehouse.LoadAll()
 	questengine.LoadDataFiles()
 	templates.LoadAliases(plugins.GetPluginRegistry())
 	keywords.LoadAliases(plugins.GetPluginRegistry())

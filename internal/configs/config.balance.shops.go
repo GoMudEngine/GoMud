@@ -50,6 +50,14 @@ func (b *Balance) validateShops() {
 		b.StorageFeePerItem = 1
 	}
 
+	// ── WAREHOUSES (Stage 3 ferry system) ────────────────────────────────────
+	if b.WarehouseItemCap <= 0 {
+		b.WarehouseItemCap = 400
+	}
+	if b.WarehouseAccrualHours <= 0 {
+		b.WarehouseAccrualHours = 2
+	}
+
 	// ── CRAFTER MOBS ─────────────────────────────────────────────────────────
 	if b.CrafterMaterialRestockRate < 1 {
 		b.CrafterMaterialRestockRate = 200

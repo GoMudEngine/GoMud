@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/util"
+	"github.com/GoMudEngine/GoMud/internal/warehouse"
 )
 
 // CaptureSnapshot walks every live shop, caravan leader, and forager
@@ -32,6 +33,7 @@ func CaptureSnapshot() Snapshot {
 	snap.Caravans = captureCaravans()
 	snap.Caravans = append(snap.Caravans, captureFerryFactors()...)
 	snap.Foragers = captureForagers()
+	snap.Warehouses = captureWarehouses()
 	return snap
 }
 
@@ -285,6 +287,33 @@ func captureFerryFactors() []CaravanSnapshot {
 			}
 		}
 		out = append(out, cs)
+	}
+	return out
+}
+
+// captureWarehouses walks warehouse.AllWarehouses() (one row per
+// registered warehouse city, Stage 3) and emits a WarehouseSnapshot per
+// city with its stock rows bucketed via economy.BucketFor — same
+// convention as captureShops' StockSnapshot.
+func captureWarehouses() []WarehouseSnapshot {
+	all := warehouse.AllWarehouses()
+	out := make([]WarehouseSnapshot, 0, len(all))
+	for _, w := range all {
+		ws := WarehouseSnapshot{
+			Zone:          w.Zone,
+			Stock:         make([]WarehouseStockSnapshot, 0, len(w.Stock)),
+			CapturedCount: w.CapturedCount,
+			AccruedCount:  w.AccruedCount,
+			DrawnCount:    w.DrawnCount,
+		}
+		for _, e := range w.Stock {
+			ws.Stock = append(ws.Stock, WarehouseStockSnapshot{
+				ItemId:  e.ItemId,
+				Bucket:  economy.BucketFor(e.ItemId),
+				Current: e.Current,
+			})
+		}
+		out = append(out, ws)
 	}
 	return out
 }

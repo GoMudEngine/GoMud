@@ -13,9 +13,30 @@ type Snapshot struct {
 	Manual      bool   `yaml:"manual"                    json:"manual"`
 	ManualLabel string `yaml:"manual_label,omitempty"    json:"manual_label,omitempty"`
 
-	Shops    []ShopSnapshot    `yaml:"shops"    json:"shops"`
-	Caravans []CaravanSnapshot `yaml:"caravans" json:"caravans"`
-	Foragers []ForagerSnapshot `yaml:"foragers" json:"foragers"`
+	Shops      []ShopSnapshot      `yaml:"shops"      json:"shops"`
+	Caravans   []CaravanSnapshot   `yaml:"caravans"   json:"caravans"`
+	Foragers   []ForagerSnapshot   `yaml:"foragers"   json:"foragers"`
+	Warehouses []WarehouseSnapshot `yaml:"warehouses" json:"warehouses"`
+}
+
+// WarehouseSnapshot captures one city warehouse pool (Stage 3 ferry
+// overflow capture + ambient accrual). Backend-only state — no player
+// access — but tracked here so Stage 4 drawdown has a historical trend
+// to draw against.
+type WarehouseSnapshot struct {
+	Zone          string                   `yaml:"zone"           json:"zone"`
+	Stock         []WarehouseStockSnapshot `yaml:"stock"          json:"stock"`
+	CapturedCount int                      `yaml:"captured_count" json:"captured_count"`
+	AccruedCount  int                      `yaml:"accrued_count"  json:"accrued_count"`
+	DrawnCount    int                      `yaml:"drawn_count"    json:"drawn_count"`
+}
+
+// WarehouseStockSnapshot is a per-item entry. Bucket comes from
+// economy.BucketFor(), same convention as StockSnapshot.
+type WarehouseStockSnapshot struct {
+	ItemId  int    `yaml:"item_id" json:"item_id"`
+	Bucket  string `yaml:"bucket"  json:"bucket"`
+	Current int    `yaml:"current" json:"current"`
 }
 
 // StockEvent mirrors shops.StockEvent for snapshot serialization.
