@@ -19,6 +19,20 @@ type ItemMove struct {
 	ItemName string
 }
 
+// VisitOpts controls a vendor-visit pass.
+type VisitOpts struct {
+	DeliveryBuckets []string
+	PickupBuckets   []string
+	// CreateMissingSlots lets a delivery CREATE a StockEntry the vendor
+	// never stocked (RestockQty stays 0: the slot is carrier-fed only —
+	// the restock ticker never touches RestockQty<=0 entries). Used by
+	// ferry trade factors to seed cross-region goods. Legacy caravan and
+	// forager deliveries keep this off so random cargo can't invent
+	// shelf space.
+	CreateMissingSlots bool
+	NewSlotMaxStock    int // MaxStock for created slots (required when CreateMissingSlots)
+}
+
 // VisitVendorsInRoom performs a bidirectional vendor-stop for the
 // caravan: deliver wagon items whose bucket is in deliveryBuckets,
 // and pick up vendor items whose bucket is in pickupBuckets.
@@ -39,12 +53,31 @@ type ItemMove struct {
 //
 // Empty/nil buckets means "skip that pass" — pass nil for both to
 // no-op cleanly.
+//
+// VisitVendorsInRoom preserves the legacy behavior (no slot creation).
+// New callers that need opt-in missing-slot creation (the ferry trade
+// factors) should call VisitVendorsInRoomOpts directly.
 func VisitVendorsInRoom(
 	roomId int,
 	wagon *mobs.Mob,
 	deliveryBuckets []string,
 	pickupBuckets []string,
 ) (delivered, pickedUp []ItemMove) {
+	return VisitVendorsInRoomOpts(roomId, wagon, VisitOpts{
+		DeliveryBuckets: deliveryBuckets,
+		PickupBuckets:   pickupBuckets,
+	})
+}
+
+// VisitVendorsInRoomOpts is the options-driven form of VisitVendorsInRoom.
+// See VisitOpts for the CreateMissingSlots contract.
+func VisitVendorsInRoomOpts(
+	roomId int,
+	wagon *mobs.Mob,
+	opts VisitOpts,
+) (delivered, pickedUp []ItemMove) {
+	deliveryBuckets := opts.DeliveryBuckets
+	pickupBuckets := opts.PickupBuckets
 	if wagon == nil {
 		return nil, nil
 	}
@@ -83,7 +116,20 @@ func VisitVendorsInRoom(
 					continue
 				}
 				entry := shop.GetStock(item.ItemId)
-				if entry == nil || entry.Current >= entry.MaxStock {
+				if entry == nil {
+					if !opts.CreateMissingSlots || opts.NewSlotMaxStock <= 0 {
+						continue
+					}
+					shop.Stock = append(shop.Stock, shops.StockEntry{
+						ItemId:   item.ItemId,
+						MaxStock: opts.NewSlotMaxStock,
+						// RestockQty deliberately 0: ferry-fed only —
+						// the restock ticker skips RestockQty<=0
+						// entries (see ShopInventory.Restock).
+					})
+					entry = shop.GetStock(item.ItemId)
+				}
+				if entry.Current >= entry.MaxStock {
 					continue
 				}
 				wagon.Character.RemoveItem(item)
