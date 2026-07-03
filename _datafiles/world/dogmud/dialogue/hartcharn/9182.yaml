@@ -5,7 +5,9 @@ defaultMood: neutral
 patterns:
   - keywords: ["hello", "hi", "greet", "hey"]
     responses:
-      - "Ferry's not running till the water drops. You'll want the road."
+      - "The river crossing here still waits on the water dropping. But
+        the Lakewind Packet runs out of Stillwater now -- sail the lake
+        to Plymouth if you'd rather not walk it."
       - "Pell, ferry agent. What's your business?"
   - keywords: ["quest", "task", "work", "job"]
     responses:
@@ -15,7 +17,10 @@ patterns:
       - "I keep a few provisions for travellers -- have a look at what's on the board."
   - keywords: ["ferry", "boat", "crossing", "water"]
     responses:
-      - "The ferry's mine to run when the river allows, which lately it does not. Overland for you."
+      - "This crossing's mine to run when the river allows, which
+        lately it does not. But the packet office at the Stillwater
+        pier books passage now -- the Lakewind Packet runs the lake
+        straight across to Plymouth, no waiting on my river."
   - keywords: ["gossip", "news", "rumor", "rumors"]
     responses:
       - "Post comes through here for the capital. I counter-sign and send it on. That's all the news that's mine to tell."
