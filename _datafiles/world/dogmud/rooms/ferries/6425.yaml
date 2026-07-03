@@ -1,0 +1,27 @@
+roomid: 6425
+zone: Ferries
+title: The Deck of the Broadbeam
+description: >
+  The Broadbeam is older and plainer than any boat has any right to be
+  and still float. Her deck is a patchwork of replaced planks, none
+  quite matching, and her cargo rides in loose heaps under patched
+  tarps rather than neat stacks. A steering oar, older than the crew
+  that mans it, hangs off the stern on a rope-wrapped pin. She smells
+  of tar, river mud, and years of hauling whatever needed hauling, and
+  passengers wedge themselves wherever the cargo leaves room.
+biome: water
+coord:
+  x: 20
+  y: 0
+  z: 0
+nouns:
+  patched tarps: Canvas mended with canvas, stitched and re-stitched
+    until the original cloth is hard to find under all the patches.
+  rope-wrapped pin: A stern pin gone smooth and dark, wound about with
+    rope so old it has stiffened into the shape of its own coils.
+idlemessages:
+- The old hull groans and settles as the Broadbeam takes on a wake.
+- A patched tarp flaps loose at one corner until someone reties it.
+spawninfo:
+  - mobid: 9576
+    respawnrate: "15 real minutes"

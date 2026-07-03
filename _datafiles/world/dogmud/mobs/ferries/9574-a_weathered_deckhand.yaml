@@ -1,0 +1,37 @@
+mobid: 9574
+zone: Ferries
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote checks a coil of line on its pin, finds it to his liking,
+    and moves on down the rail.'
+  - ''
+  - 'say She rides better with a full hold. Light days she slaps the
+    chop like a skipping stone.'
+  - ''
+  - 'emote squints at the water ahead, then at the sky, and appears
+    satisfied with both.'
+  - ''
+activitylevel: 10
+character:
+  name: A Weathered Deckhand
+  description: |
+    A Weathered Deckhand works the packet's lines with the unhurried
+    economy of someone who has done every task aboard a thousand
+    times. His hands are rope-burned smooth and his squint is
+    permanent. He answers questions in the shortest form that is not
+    rude, and some that are.
+  speciesid: 1
+  level: 1
+  gold: 2
+  stats:
+    strength:
+      training: 5
+    vitality:
+      training: 4

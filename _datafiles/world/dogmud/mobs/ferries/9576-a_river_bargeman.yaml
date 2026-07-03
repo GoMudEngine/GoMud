@@ -1,0 +1,38 @@
+mobid: 9576
+zone: Ferries
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote tugs at a loose tarp corner, retties it in a practiced
+    knot, and moves on to check the next lashing.'
+  - ''
+  - 'say This old girl has outlasted three crews and she is not
+    done yet. Neither am I, come to that.'
+  - ''
+  - 'emote sits on an upturned crate, works a splice into a frayed
+    rope end, and does not look up from the work.'
+  - ''
+activitylevel: 10
+character:
+  name: A River Bargeman
+  description: |
+    A River Bargeman has ridden the Broadbeam long enough to know
+    every groan of her hull by name. He is patient with the boat in
+    a way he is not always patient with passengers, checking lines
+    and lashings with the constant low-grade attention of someone
+    who has seen a bad knot cost a cargo before. He is plainspoken
+    and does not linger over conversation.
+  speciesid: 1
+  level: 1
+  gold: 2
+  stats:
+    strength:
+      training: 5
+    vitality:
+      training: 5

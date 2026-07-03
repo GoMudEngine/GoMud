@@ -1,0 +1,38 @@
+mobid: 9575
+zone: Ferries
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote leans hard into the pole, walks it down the deck, and
+    hauls it dripping back to the bow for another push.'
+  - ''
+  - 'say Current is lazy today. Good day for it. Bad day is when
+    the river fights you the whole way down.'
+  - ''
+  - 'emote wipes river mud from his hands onto an already-filthy
+    rag and tucks it back through his belt.'
+  - ''
+activitylevel: 10
+character:
+  name: A Barge Poleman
+  description: |
+    A Barge Poleman spends the crossing in a slow, repeating labor,
+    setting his pole against the riverbed and walking the deck to
+    drive the Heron along. His forearms are corded from the work and
+    his boots are permanently damp. He talks in short bursts between
+    pushes and falls silent the moment the pole goes back in the
+    water.
+  speciesid: 1
+  level: 1
+  gold: 2
+  stats:
+    strength:
+      training: 6
+    vitality:
+      training: 4

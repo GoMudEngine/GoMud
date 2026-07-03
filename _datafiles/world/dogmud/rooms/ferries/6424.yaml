@@ -1,0 +1,28 @@
+roomid: 6424
+zone: Ferries
+title: The Deck of the Grey Heron
+description: >
+  The Grey Heron's deck is given over almost entirely to cargo — tarped
+  mounds lashed down with crossed ropes, leaving a narrow walk along
+  each rail. A long steering oar juts from the stern, worked by whoever
+  draws the watch. The tar-and-wet-rope smell of a working barge sits
+  thick in the air, and passengers find what perch they can among the
+  crates, sharing the deck with the freight rather than the other way
+  around.
+biome: water
+coord:
+  x: 10
+  y: 0
+  z: 0
+nouns:
+  steering oar: A long sweep of gray wood, its handle worn to a shine
+    where hands have gripped it through every kind of weather.
+  cargo mounds: Canvas-tarped stacks lashed down with crossed rope.
+    Rain has darkened the canvas in patches; nobody has bothered to
+    ask what is underneath.
+idlemessages:
+- The steering oar groans in its lock as the Heron corrects course.
+- Somewhere under the tarps, a lashed crate shifts and settles.
+spawninfo:
+  - mobid: 9575
+    respawnrate: "15 real minutes"
