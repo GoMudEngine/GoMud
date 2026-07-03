@@ -1,5 +1,26 @@
 # DOGMud Patch Notes
 
+## 2026-07-02 — Beneath the capital: the New Plymouth Sewers
+
+- **Every city has a second city below it.** Three ways down have opened
+  around New Plymouth — a pried drain-cap in a tanning yard, a gutter-grate
+  on a swept street corner, a loose grate in a dockside alley — for those
+  who look closely at the things a city walks over.
+- **The working tunnels.** Brick vaults, lamp-niches, a junction where three
+  flows meet — and the vermin you would expect, plus a few things the
+  Chrysalis has made stranger. A tosher named Tam works these channels and
+  will talk to a polite visitor. Ask him about his tunnels. Ask him what he
+  has found. Ask him, if you must, about what is below — and notice what he
+  will not say.
+- **The deep ways.** Past an old stair, the brick stops and something much
+  older begins — stonework no colonial hand laid, and things living in the
+  dark that have never seen a lamp. The deep is not the tunnels; go carefully,
+  and mind anything that sheds scales the length of your hand. Somewhere down
+  there, patient explorers may find more than one thing the city above has
+  forgotten it was standing on.
+- The sewers connect to places you already know in ways you may not expect.
+  Water goes somewhere. So does everything else that moves unseen.
+
 ## 2026-07-01 — The Eastern Arc: the road to the end of the world
 
 - **A hidden road climbs east into the mountains.** Somewhere past the vale
