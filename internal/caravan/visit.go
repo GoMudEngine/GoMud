@@ -86,6 +86,11 @@ func VisitVendorsInRoomOpts(
 		return nil, nil
 	}
 
+	// Warn once per call (not once per item) when the caller asked for
+	// slot creation but didn't give it a usable cap — every missing-slot
+	// item will silently fall back to legacy skip behavior below.
+	warnedMisconfiguredCreate := false
+
 	for _, instId := range room.GetMobs(rooms.FindAll) {
 		vendor := mobs.GetInstance(instId)
 		if vendor == nil || !vendor.HasShop() {
@@ -117,6 +122,12 @@ func VisitVendorsInRoomOpts(
 				}
 				entry := shop.GetStock(item.ItemId)
 				if entry == nil {
+					if opts.CreateMissingSlots && opts.NewSlotMaxStock <= 0 && !warnedMisconfiguredCreate {
+						mudlog.Warn("caravan.VisitVendorsInRoomOpts", "warn",
+							"CreateMissingSlots set but NewSlotMaxStock <= 0 — skipping slot creation",
+							"roomId", roomId, "wagon", wagon.Character.Name)
+						warnedMisconfiguredCreate = true
+					}
 					if !opts.CreateMissingSlots || opts.NewSlotMaxStock <= 0 {
 						continue
 					}

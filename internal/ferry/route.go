@@ -104,6 +104,7 @@ func LoadDataFiles() {
 		mudlog.Info(`ferry.LoadDataFiles()`, `loadedCount`, 0,
 			`note`, `ferries directory does not exist — skipping`,
 			`Time Taken`, time.Since(start))
+		validateTradeCircuits()
 		return
 	}
 
@@ -135,4 +136,5 @@ func LoadDataFiles() {
 
 	routes = loaded
 	mudlog.Info(`ferry.LoadDataFiles()`, `loadedCount`, len(routes), `Time Taken`, time.Since(start))
+	validateTradeCircuits()
 }

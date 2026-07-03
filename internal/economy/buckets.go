@@ -79,7 +79,7 @@ var itemBucket = map[int]string{
 
 	// Confluence bucket (river goods — ferry Stage 2)
 	40123: "confluence", // watercress
-	40124: "confluence", // river mussels
+	40124: "confluence", // freshwater mussels
 	40125: "confluence", // smoked river-fish
 	40126: "confluence", // fresh river catch
 }
