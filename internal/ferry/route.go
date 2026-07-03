@@ -60,6 +60,9 @@ func (r Route) Validate() error {
 	if r.CrossingHours <= 0 || r.LayoverHours <= 0 {
 		return fmt.Errorf(`ferry route %s needs positive crossing_hours and layover_hours`, r.RouteId)
 	}
+	if r.LayoverHours >= 24 {
+		return fmt.Errorf(`ferry route %s layover_hours must be < 24 (gangplank exit lifetime)`, r.RouteId)
+	}
 	if r.PhaseOffsetRounds < 0 {
 		return fmt.Errorf(`ferry route %s has negative phase_offset_rounds`, r.RouteId)
 	}

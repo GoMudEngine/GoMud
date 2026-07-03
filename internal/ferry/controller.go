@@ -45,8 +45,9 @@ func Tick() {
 			}
 		}
 		reconcileGangplank(r, cur)
-		if !cur.Docked && now%ambianceEveryNRounds == 0 {
-			emitAmbiance(r, now)
+		phase := now + uint64(r.PhaseOffsetRounds)
+		if !cur.Docked && phase%ambianceEveryNRounds == 0 {
+			emitAmbiance(r, phase)
 		}
 	}
 }
@@ -98,15 +99,15 @@ func emitArrival(r Route, atPortIdx int) {
 	}
 	if deck := rooms.LoadRoom(r.DeckRoom); deck != nil {
 		deck.SendText(messaging.CategoryRoomDescription,
-			`Fenders squeal against timber as she comes alongside. The gangplank goes down -- you can walk ashore.`)
+			`Fenders squeal against timber as she comes alongside. The gangplank goes down — you can walk ashore.`)
 	}
 }
 
-func emitAmbiance(r Route, now uint64) {
+func emitAmbiance(r Route, phase uint64) {
 	deck := rooms.LoadRoom(r.DeckRoom)
 	if deck == nil {
 		return
 	}
-	line := atSeaAmbiance[int(now/ambianceEveryNRounds)%len(atSeaAmbiance)]
+	line := atSeaAmbiance[int(phase/ambianceEveryNRounds)%len(atSeaAmbiance)]
 	deck.SendText(messaging.CategoryRoomDescription, line)
 }
