@@ -1,0 +1,23 @@
+# The River Bargeman — mob 9576 — crews the Broadbeam.
+# Plainspoken, does not linger over conversation; does not book
+# passage himself.
+tree:
+  type: selector
+  children:
+
+    # ── info / greetings ──
+    - type: sequence
+      event: player_ask
+      children:
+        - type: condition
+          check: keyword_match
+          keywords: [hello, hi, help, who, what, where, boat, ferry,
+            packet, barge, crossing, long, far, when]
+        - type: action
+          do: say
+          text: This old girl is the Broadbeam. Passage gets settled
+            with the agent at the dock.
+        - type: action
+          do: say
+          text: Crossing is short, as these things go. Sit tight and
+            let her ride.

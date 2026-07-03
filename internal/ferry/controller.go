@@ -95,7 +95,7 @@ func emitDeparture(r Route, fromPortIdx int) {
 func emitArrival(r Route, atPortIdx int) {
 	if dock := rooms.LoadRoom(r.Ports[atPortIdx].DockRoom); dock != nil {
 		dock.SendText(messaging.CategoryRoomDescription,
-			fmt.Sprintf(`%s noses up to the berth and makes fast. The gangplank rattles down.`, r.Name))
+			fmt.Sprintf(`%s noses up to the berth and makes fast. The gangplank rattles down.`, capitalizeFirst(r.Name)))
 	}
 	if deck := rooms.LoadRoom(r.DeckRoom); deck != nil {
 		deck.SendText(messaging.CategoryRoomDescription,

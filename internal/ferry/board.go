@@ -2,6 +2,7 @@ package ferry
 
 import (
 	"fmt"
+	"unicode"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
@@ -95,5 +96,16 @@ func Board(user *users.UserRecord, mob *mobs.Mob, roomId int, routeId string) Bo
 // formatNotDockedQuote is pure so it can be unit tested without the
 // gametime/config globals.
 func formatNotDockedQuote(vesselName string, hour int, amPm string) string {
-	return fmt.Sprintf(`%s is out on the water. She ties up here again around %d %s.`, vesselName, hour, amPm)
+	return fmt.Sprintf(`%s is out on the water. She ties up here again around %d %s.`, capitalizeFirst(vesselName), hour, amPm)
+}
+
+// capitalizeFirst upper-cases the first rune for sentence-initial use of
+// lowercase-article vessel names ("the Lakewind Packet" → "The Lakewind Packet").
+func capitalizeFirst(s string) string {
+	if s == `` {
+		return s
+	}
+	r := []rune(s)
+	r[0] = unicode.ToUpper(r[0])
+	return string(r)
 }

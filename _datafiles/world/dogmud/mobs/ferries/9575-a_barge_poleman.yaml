@@ -18,6 +18,15 @@ idlecommands:
   - 'emote wipes river mud from his hands onto an already-filthy
     rag and tucks it back through his belt.'
   - ''
+  - 'emote checks the pole for cracks along the grain, finds none,
+    and sets it back against the rail.'
+  - ''
+  - 'say Current shifts by the hour. You learn to read it or you
+    do not last out here.'
+  - ''
+  - 'emote spits over the side, watches the ripple spread, and
+    goes back to work.'
+  - ''
 activitylevel: 10
 character:
   name: A Barge Poleman

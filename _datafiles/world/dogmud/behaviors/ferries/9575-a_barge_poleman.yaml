@@ -1,0 +1,21 @@
+# The Barge Poleman — mob 9575 — crews the Grey Heron.
+# Talks in short bursts between pushes; does not book passage himself.
+tree:
+  type: selector
+  children:
+
+    # ── info / greetings ──
+    - type: sequence
+      event: player_ask
+      children:
+        - type: condition
+          check: keyword_match
+          keywords: [hello, hi, help, who, what, where, boat, ferry,
+            packet, barge, crossing, long, far, when]
+        - type: action
+          do: say
+          text: This is the Grey Heron. Book your fare with the agent
+            on the dock, not with me.
+        - type: action
+          do: say
+          text: River crossing is a short one. Keep clear of the pole.

@@ -9,7 +9,7 @@ maxwander: 0
 groups:
   - humanoid
 idlecommands:
-  - 'emote tugs at a loose tarp corner, retties it in a practiced
+  - 'emote tugs at a loose tarp corner, re-ties it in a practiced
     knot, and moves on to check the next lashing.'
   - ''
   - 'say This old girl has outlasted three crews and she is not
@@ -17,6 +17,15 @@ idlecommands:
   - ''
   - 'emote sits on an upturned crate, works a splice into a frayed
     rope end, and does not look up from the work.'
+  - ''
+  - 'emote runs a hand along a weathered plank, remembers when it
+    was new, and says nothing about it.'
+  - ''
+  - 'say Seen worse boats sink for less than a loose lashing. I
+    do not intend to find out.'
+  - ''
+  - 'emote checks the steering oar''s pin, gives it a shove to be
+    sure, and nods once.'
   - ''
 activitylevel: 10
 character:

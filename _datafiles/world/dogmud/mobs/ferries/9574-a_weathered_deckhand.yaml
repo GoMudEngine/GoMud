@@ -18,6 +18,14 @@ idlecommands:
   - 'emote squints at the water ahead, then at the sky, and appears
     satisfied with both.'
   - ''
+  - 'emote runs a thumb along the rail checking for splinters, and
+    finds none worth mentioning.'
+  - ''
+  - 'say Lake is flat today. Suits me fine.'
+  - ''
+  - 'emote leans on the rail a moment, eyes half shut, then straightens
+    and goes back to work.'
+  - ''
 activitylevel: 10
 character:
   name: A Weathered Deckhand
