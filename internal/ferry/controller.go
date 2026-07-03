@@ -50,6 +50,8 @@ func Tick() {
 			emitAmbiance(r, phase)
 		}
 	}
+
+	tickFactors(rpd, now)
 }
 
 // reconcileGangplank ensures the deck's gangplank temp exit matches the

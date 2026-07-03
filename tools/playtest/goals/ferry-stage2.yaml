@@ -1,0 +1,87 @@
+name: Ferry Stage 2 — trade factors + cross-region stock
+summary: >-
+  Watch a trade factor complete a full ferry circuit and verify the
+  cross-region economy effects. Timing you know as tester: vessels cycle
+  ~15 real minutes (2.5 docked, 5 at sea); a full factor round trip spans
+  about one cycle. Factors are driven by the same clock as the vessels,
+  so patience beats spam — poll events between beacons while waiting.
+goals:
+  - id: factors-present
+    do: >-
+      goto 4118 (Stillwater pier). Confirm BOTH factors are present (A
+      Lakeway Factor, A Riverway Factor) exactly once each — no
+      duplicates. Read their descriptions and idle flavor. Then goto 6109
+      (Confluence Barge Dock) and confirm A Broadwater Factor, once.
+    verify: >-
+      Exactly one instance of each factor at its home dock; prose reads
+      in-register; no duplicate-spawn flapping (re-check 4118 after a few
+      minutes — still exactly one of each).
+  - id: factor-boards
+    do: >-
+      Wait at 4118 for the Lakewind Packet to dock. Watch the boarding:
+      the Lakeway Factor should cross onto the deck with an emote during
+      the layover, and NOT walk back off before departure.
+    verify: >-
+      Boarding emote fires once; the factor stays aboard through the
+      whole layover (no board/disembark churn); it departs with the
+      vessel.
+  - id: factor-delivers
+    do: >-
+      Ride along (pay the agent, board the same sailing) or goto 5502
+      ahead of the arrival. When the packet docks at New Plymouth, watch
+      the factor come ashore and follow it to Warehouse Row (5505) and
+      the chandlery (5508). Observe delivery emotes.
+    verify: >-
+      The factor walks ashore after the vessel docks, visits 5505 and
+      5508, and a delivery message fires (goods handed to the vendor) at
+      one or both stops.
+  - id: stock-rose
+    do: >-
+      Before or as the factor arrives, `list` at Dunmar Wells (5505) and
+      note the stock. After the factor's visit, `list` again.
+    verify: >-
+      Stillwater goods (lake mint / freshwater clam / lake-iron nodule /
+      marsh willow bark) appear in the listing after the visit with small
+      quantities, priced; they were absent (or lower) before.
+  - id: factor-returns
+    do: >-
+      Watch the factor after its last stop: it should walk back to the
+      North Quay (5502), wait, and board the next packet home.
+    verify: >-
+      The factor returns to the dock unprompted, waits without wandering,
+      and boards the next docking of ITS vessel (not the Broadbeam, which
+      also calls at 5502).
+  - id: displacement-probe
+    do: >-
+      OPTIONAL admin probe near the end: while a factor is WAITING at its
+      dock, do not attack it (non_combatant) — instead just observe for
+      several minutes that it never wanders off the dock room.
+    verify: >-
+      Waiting factor stays put (maxwander 0); note anything that moves it.
+  - id: cross-goods-both-ways
+    do: >-
+      If time allows, goto 4105 (Storekeeper Wulf) or 4106 (Smith
+      Brindle) in Stillwater late in the session and `list`.
+    verify: >-
+      NP goods (steel ingot / chain link / glass vial / copper wire)
+      appear in a Stillwater vendor's stock after the factor's return
+      leg, small quantities.
+notes:
+  - You are a FEATURE tester. Mechanics first; note feel (do the factor
+    emotes read well, does the delivery moment land) second.
+  - Use admin goto freely for POSITIONING ONLY. Play all economy actions
+    (list, buy) as a normal player. Do not grant gold or items.
+  - Factors should NEVER respond to passage asks like agents do —
+    `ask factor passage plymouth` producing a boarding would be a bug.
+  - Record exact emote texts for the boarding/delivery moments.
+  - WATCH ITEMS from code review — treat as findings if seen: (a) a
+    factor boarding and immediately disembarking at the SAME port; (b)
+    two copies of the same factor; (c) a factor frozen mid-street for
+    more than ~4 minutes (stuck-teleport should self-heal at ~4 min).
+pass_criteria:
+  - One full outbound leg observed end-to-end (board → sail → deliver)
+    with a verified vendor stock increase at the destination.
+  - No duplicate factors, no same-port disembark churn, no permanent
+    stuck state.
+exit_after: ~2 vessel cycles (about 30 minutes) or all goals, whichever
+  first.

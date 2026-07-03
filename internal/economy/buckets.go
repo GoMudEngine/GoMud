@@ -76,6 +76,12 @@ var itemBucket = map[int]string{
 	40048: "overlap", // serpent venom sac
 	40050: "overlap", // putrid residue
 	40068: "overlap", // sinew (3.0e)
+
+	// Confluence bucket (river goods — ferry Stage 2)
+	40123: "confluence", // watercress
+	40124: "confluence", // freshwater mussels
+	40125: "confluence", // smoked river-fish
+	40126: "confluence", // fresh river catch
 }
 
 // BucketFor returns the supply bucket for an item ID, or "" if the
@@ -88,5 +94,5 @@ func BucketFor(itemId int) string {
 // the bucket-aware restock system. Stable order for callers that
 // need determinism (tests, CLI output).
 func AllBuckets() []string {
-	return []string{"base", "stillwater", "thornwall", "fernway", "overlap"}
+	return []string{"base", "stillwater", "thornwall", "fernway", "confluence", "overlap"}
 }

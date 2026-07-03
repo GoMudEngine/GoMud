@@ -1,0 +1,37 @@
+mobid: 9578
+zone: Stillwater
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - caravan   # IsEssential: rooms holding factors are never unloaded
+idlecommands:
+  - 'emote runs a thumb down a tally-slip of river goods, muttering
+    prices under her breath.'
+  - ''
+  - 'say Downriver to the Confluence and back before the mint wilts.
+    That is the whole trade.'
+  - ''
+activitylevel: 10
+character:
+  name: A Riverway Factor
+  description: |
+    A Riverway Factor keeps her handcart lashed and ready at the
+    pier's edge, waiting on the Grey Heron the way a farmer waits on
+    weather. She rides downriver to the Confluence with lake mint and
+    freshwater clam packed in damp cloth, and comes back with
+    watercress and river mussels before either can spoil. Her ledger
+    is a single grease-stained slip she reads by feel more than
+    sight, and she has never once missed a sailing.
+  speciesid: 1
+  level: 1
+  gold: 10
+  stats:
+    strength:
+      training: 5
+    charisma:
+      training: 5

@@ -17,6 +17,7 @@ func TestBucketFor_KnownItems(t *testing.T) {
 		{40010, "thornwall"},   // chrysalis core
 		{40004, "overlap"},     // healer's root
 		{40062, "fernway"},     // oak bark (3.0b)
+		{40123, "confluence"},  // watercress
 		{99999, ""},            // unknown
 	}
 	for _, c := range cases {
@@ -27,7 +28,7 @@ func TestBucketFor_KnownItems(t *testing.T) {
 }
 
 func TestAllBuckets_StableOrder(t *testing.T) {
-	want := []string{"base", "stillwater", "thornwall", "fernway", "overlap"}
+	want := []string{"base", "stillwater", "thornwall", "fernway", "confluence", "overlap"}
 	got := AllBuckets()
 	if len(got) != len(want) {
 		t.Fatalf("AllBuckets() len = %d, want %d", len(got), len(want))
@@ -64,6 +65,38 @@ func TestBucketMap_AuditMatrixCoverage(t *testing.T) {
 		if knownExceptions[id] {
 			continue
 		}
+		spec := items.GetItemSpec(id)
+		if spec == nil {
+			// Item id unused — skip (not all 40000s exist)
+			continue
+		}
+		if spec.ComponentTag == "" && !spec.IsComponent {
+			continue // not a crafting component, skip
+		}
+		if got := BucketFor(id); got == "" {
+			t.Errorf("item %d (%s) is a component but has no bucket", id, spec.Name)
+		}
+	}
+
+	// Confluence bucket ids (ferry Stage 2). The main loop above is
+	// deliberately bounded to 40001-40068 — extending it would sweep in
+	// dozens of unrelated Confluence-zone quest/lore props (40069-40122)
+	// needing exception entries. Pin exactly the four confluence goods
+	// here instead so bucket↔matrix drift on 40123-40126 is still caught.
+	//
+	// Specs are seeded because this package's tests never call
+	// items.LoadDataFiles() — without seeding, GetItemSpec returns nil
+	// and the component gate skips every id, making the loop vacuous.
+	// The seeded IsComponent flags mirror the YAML (all four are
+	// is_component: true cooking goods — verified 2026-07-03).
+	cleanupSeed := items.SeedItemsForTest(map[int]*items.ItemSpec{
+		40123: {ItemId: 40123, Name: "Watercress", IsComponent: true},
+		40124: {ItemId: 40124, Name: "Freshwater Mussels", IsComponent: true},
+		40125: {ItemId: 40125, Name: "Smoked River-Fish", IsComponent: true},
+		40126: {ItemId: 40126, Name: "Fresh River Catch", IsComponent: true},
+	})
+	defer cleanupSeed()
+	for id := 40123; id <= 40126; id++ {
 		spec := items.GetItemSpec(id)
 		if spec == nil {
 			// Item id unused — skip (not all 40000s exist)

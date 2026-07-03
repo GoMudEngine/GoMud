@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/facts"
+	"github.com/GoMudEngine/GoMud/internal/ferry"
 	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
@@ -313,11 +314,24 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 // which used to make the legacy guard ping-pong scheduled NPCs between
 // their current segment target and their original placement room
 // (Kerra in/out of tavern; Dal main↔back).
+//
+// Ferry trade factors also opt out: the ferry controller (internal/ferry)
+// owns factor movement end-to-end (board/disembark/deliver/return), and
+// factors spend part of every circuit standing on a vessel deck room,
+// which has no static exits. A factor there is not "displaced" — but
+// mapper.GetPath(deck→home) can never succeed, so this guard used to flag
+// it home-impossible/lost every idle tick, and the stuck-mob cleanup in
+// mobcommands.Pathto drains 10% max HP per tick until the factor dies
+// aboard, dropping all cargo + gold (2026-07-03 playtest, BUG-1: no
+// delivery had ever completed).
 func shouldRecoverDisplacedHome(mob *mobs.Mob) bool {
 	if mob == nil {
 		return false
 	}
 	if mob.ScheduleId != "" || mob.PatrolId != "" {
+		return false
+	}
+	if ferry.IsFactorMobId(int(mob.MobId)) {
 		return false
 	}
 	return mob.MaxWander == 0 && mob.Character.RoomId != mob.HomeRoomId

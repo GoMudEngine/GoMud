@@ -271,6 +271,189 @@ func TestVisitVendorsInRoom_SkipsNonComponentNonBucketItems(t *testing.T) {
 	}
 }
 
+// ─── VisitVendorsInRoomOpts — opt-in missing-slot creation ──────────────────
+
+const (
+	createSlotTestRoomId       = 7790
+	createSlotTestVendorMobId  = 9005
+	createSlotTestVendorInstId = 99005
+	createSlotTestZone         = "CreateSlotTestZone"
+	createSlotTestItemId       = 40059 // lake-iron nodule; real bucket = "stillwater"
+)
+
+// TestVisitVendorsInRoomOpts_CreatesMissingSlot verifies the ferry-trade
+// contract: when CreateMissingSlots is enabled and the vendor has NO
+// StockEntry for the delivered item, VisitVendorsInRoomOpts creates one
+// (MaxStock = NewSlotMaxStock, RestockQty left at 0 — ferry-fed only) and
+// delivers into it in the same pass.
+func TestVisitVendorsInRoomOpts_CreatesMissingSlot(t *testing.T) {
+	cleanup := setupCreateSlotTestFixtures(t, nil, map[int]*items.ItemSpec{
+		createSlotTestItemId: {
+			ItemId:      createSlotTestItemId,
+			Name:        "lake-iron nodule",
+			Type:        items.Object,
+			Subtype:     items.Mundane,
+			IsComponent: true,
+			Weight:      0.5,
+			RarityTier:  30,
+		},
+	})
+	defer cleanup()
+
+	carrier := buildCreateSlotTestCarrier(t)
+	item := items.New(createSlotTestItemId)
+	if !carrier.Character.StoreItem(item) {
+		t.Fatal("failed to store test item on carrier before delivery")
+	}
+
+	delivered, _ := VisitVendorsInRoomOpts(createSlotTestRoomId, carrier, VisitOpts{
+		DeliveryBuckets:    []string{"stillwater"},
+		CreateMissingSlots: true,
+		NewSlotMaxStock:    6,
+	})
+
+	if got := len(delivered); got != 1 {
+		t.Fatalf("expected 1 item delivered, got %d (delivered=%v)", got, delivered)
+	}
+
+	shop := shops.GetShopInventory(createSlotTestZone, createSlotTestVendorMobId, createSlotTestRoomId)
+	if shop == nil {
+		t.Fatal("expected vendor shop inventory to still be registered")
+	}
+	entry := shop.GetStock(createSlotTestItemId)
+	if entry == nil {
+		t.Fatal("expected a created StockEntry for the delivered item, got nil")
+	}
+	if entry.Current != 1 {
+		t.Errorf("created entry Current = %d, want 1", entry.Current)
+	}
+	if entry.MaxStock != 6 {
+		t.Errorf("created entry MaxStock = %d, want 6 (NewSlotMaxStock)", entry.MaxStock)
+	}
+	if entry.RestockQty != 0 {
+		t.Errorf("created entry RestockQty = %d, want 0 (ferry-fed only, never ticker-refilled)", entry.RestockQty)
+	}
+}
+
+// TestVisitVendorsInRoomOpts_NoCreateWhenDisabled verifies legacy behavior is
+// preserved when CreateMissingSlots is false: a vendor with no StockEntry
+// for the item is skipped entirely, exactly like the pre-Opts
+// VisitVendorsInRoom behavior.
+func TestVisitVendorsInRoomOpts_NoCreateWhenDisabled(t *testing.T) {
+	cleanup := setupCreateSlotTestFixtures(t, nil, map[int]*items.ItemSpec{
+		createSlotTestItemId: {
+			ItemId:      createSlotTestItemId,
+			Name:        "lake-iron nodule",
+			Type:        items.Object,
+			Subtype:     items.Mundane,
+			IsComponent: true,
+			Weight:      0.5,
+			RarityTier:  30,
+		},
+	})
+	defer cleanup()
+
+	carrier := buildCreateSlotTestCarrier(t)
+	item := items.New(createSlotTestItemId)
+	if !carrier.Character.StoreItem(item) {
+		t.Fatal("failed to store test item on carrier before delivery")
+	}
+
+	delivered, _ := VisitVendorsInRoomOpts(createSlotTestRoomId, carrier, VisitOpts{
+		DeliveryBuckets:    []string{"stillwater"},
+		CreateMissingSlots: false,
+	})
+
+	if got := len(delivered); got != 0 {
+		t.Fatalf("expected 0 items delivered (no slot creation), got %d (delivered=%v)", got, delivered)
+	}
+
+	shop := shops.GetShopInventory(createSlotTestZone, createSlotTestVendorMobId, createSlotTestRoomId)
+	if shop == nil {
+		t.Fatal("expected vendor shop inventory to still be registered")
+	}
+	if entry := shop.GetStock(createSlotTestItemId); entry != nil {
+		t.Errorf("expected no StockEntry to be created, got %+v", entry)
+	}
+}
+
+// setupCreateSlotTestFixtures wires a room + shop-bearing vendor (with the
+// given initial stock, deliberately NOT including createSlotTestItemId) for
+// the missing-slot-creation tests. Mirrors setupPickupTestFixtures's
+// isolation approach (temp shop file, cleared cache) so tests don't leak
+// state across runs.
+func setupCreateSlotTestFixtures(
+	t *testing.T,
+	stock []shops.StockEntry,
+	specs map[int]*items.ItemSpec,
+) func() {
+	t.Helper()
+
+	cleanupItems := items.SeedItemsForTest(specs)
+
+	shops.ClearCache()
+	wipeCreateSlotTestShopFile(t)
+
+	tmpl := shops.ShopInventory{
+		Gold:         500,
+		StartingGold: 500,
+		CraftSupport: shops.CraftSupportGeneral,
+		Stock:        stock,
+	}
+	shops.RegisterShop(createSlotTestZone, createSlotTestVendorMobId, createSlotTestRoomId, tmpl)
+
+	vendor := &mobs.Mob{
+		MobId:      mobs.MobId(createSlotTestVendorMobId),
+		InstanceId: createSlotTestVendorInstId,
+		HomeRoomId: createSlotTestRoomId,
+		Zone:       createSlotTestZone,
+	}
+	vendor.Character.Name = "TestCreateSlotVendor"
+	vendor.Character.Buffs = buffs.New()
+	vendor.Character.Shop = characters.Shop{
+		{ItemId: 1, QuantityMax: 5, Quantity: 5},
+	}
+	cleanupRoom := seedTestRoomWithExistingMobs(
+		t, createSlotTestRoomId, createSlotTestZone, []*mobs.Mob{vendor})
+
+	return func() {
+		cleanupRoom()
+		shops.ClearCache()
+		wipeCreateSlotTestShopFile(t)
+		cleanupItems()
+	}
+}
+
+// wipeCreateSlotTestShopFile removes the on-disk shop YAML for the
+// create-slot test zone. See wipePickupTestShopFile for why the zone
+// directory must be sanitized with util.ConvertForFilename.
+func wipeCreateSlotTestShopFile(t *testing.T) {
+	t.Helper()
+	zoneDir := filepath.Join(
+		configs.GetFilePathsConfig().DataFiles.String(),
+		"shops",
+		util.ConvertForFilename(createSlotTestZone),
+	)
+	_ = os.RemoveAll(zoneDir)
+}
+
+// buildCreateSlotTestCarrier builds a carrier mob with enough carry
+// capacity to hold the single delivered test item.
+func buildCreateSlotTestCarrier(t *testing.T) *mobs.Mob {
+	t.Helper()
+	carrier := &mobs.Mob{
+		MobId:      mobs.MobId(9006),
+		InstanceId: 99006,
+		HomeRoomId: createSlotTestRoomId,
+		Zone:       createSlotTestZone,
+	}
+	carrier.Character.Name = "TestCreateSlotCarrier"
+	carrier.Character.Buffs = buffs.New()
+	carrier.Character.RoomId = createSlotTestRoomId
+	characters.ApplyMobOverrides(&carrier.Character, 0, 0, 5000)
+	return carrier
+}
+
 // ─── Test helpers ────────────────────────────────────────────────────────────
 
 // seedTestRoomWithMobs creates a fresh rooms.Room at roomId, seeds one

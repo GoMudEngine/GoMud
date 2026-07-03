@@ -7,6 +7,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/economy"
+	"github.com/GoMudEngine/GoMud/internal/ferry"
 	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -29,6 +30,7 @@ func CaptureSnapshot() Snapshot {
 	}
 	snap.Shops = captureShops()
 	snap.Caravans = captureCaravans()
+	snap.Caravans = append(snap.Caravans, captureFerryFactors()...)
 	snap.Foragers = captureForagers()
 	return snap
 }
@@ -230,6 +232,58 @@ func captureCaravans() []CaravanSnapshot {
 			}
 		}
 
+		out = append(out, cs)
+	}
+	return out
+}
+
+// captureFerryFactors walks every live mob instance and emits one
+// CaravanSnapshot per ferry Stage-2 trade factor — identified by
+// ferry.FactorPhaseName reporting ok=true for the instance id. Unlike
+// caravan leaders (captureCaravans), factors carry their own cargo
+// directly (no separate wagon mob), so CargoWeight/CargoCapacity/
+// CargoByBucket are read straight off the factor's own Character.
+// Throughput accrues under (m.Zone, m.MobId) — the same keys
+// caravan.VisitVendorsInRoomOpts writes via IncrementDelivery when a
+// factor delivers at a vendor stop.
+func captureFerryFactors() []CaravanSnapshot {
+	out := []CaravanSnapshot{}
+	for _, instId := range mobs.GetAllMobInstanceIds() {
+		m := mobs.GetInstance(instId)
+		if m == nil {
+			continue
+		}
+		stateName, ok := ferry.FactorPhaseName(instId)
+		if !ok {
+			continue
+		}
+		cs := CaravanSnapshot{
+			InstId:        instId,
+			Name:          m.Character.Name,
+			State:         stateName,
+			RoomId:        m.Character.RoomId,
+			CargoWeight:   int(m.Character.GetCarriedWeight()),
+			CargoCapacity: int(m.Character.CarryCapacity()),
+			CargoByBucket: map[string]int{},
+		}
+		for _, it := range m.Character.Items {
+			bucket := economy.BucketFor(it.ItemId)
+			if bucket == "" {
+				continue
+			}
+			if w := int(it.GetSpec().GetWeight()); w > 0 {
+				cs.CargoByBucket[bucket] += w
+			}
+		}
+		if tp := caravan.GetThroughput(m.Zone, int(m.MobId)); tp != nil {
+			cs.LbsDelivered = tp.LbsDelivered
+			if tp.DeliveriesByTier != nil {
+				cs.DeliveriesByTier = map[int]int{}
+				for tier, count := range tp.DeliveriesByTier {
+					cs.DeliveriesByTier[tier] = count
+				}
+			}
+		}
 		out = append(out, cs)
 	}
 	return out
