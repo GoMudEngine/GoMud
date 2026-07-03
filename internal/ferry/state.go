@@ -36,8 +36,11 @@ func StateAt(r Route, round uint64, roundsPerDay int) VesselState {
 }
 
 // NextDockedRound returns the earliest round >= fromRound at which the
-// vessel is docked at portIdx. Linear scan bounded by one cycle (<= a few
-// hundred iterations) — called only on player asks, simplicity wins.
+// vessel is docked at portIdx. Precondition: portIdx must be 0 or 1 —
+// the "unreachable" fallback below only holds for real ports, since a
+// 2-port cycle always docks at both. Linear scan bounded by one cycle
+// (<= a few hundred iterations) — called only on player asks,
+// simplicity wins.
 func NextDockedRound(r Route, portIdx int, fromRound uint64, roundsPerDay int) uint64 {
 	cycle := uint64(2 * (hoursToRounds(r.LayoverHours, roundsPerDay) + hoursToRounds(r.CrossingHours, roundsPerDay)))
 	for i := uint64(0); i <= cycle; i++ {

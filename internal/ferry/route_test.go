@@ -33,6 +33,7 @@ func TestRouteValidate_Rejects(t *testing.T) {
 		{"same dock twice", func(r *Route) { r.Ports[1].DockRoom = r.Ports[0].DockRoom }},
 		{"zero crossing", func(r *Route) { r.CrossingHours = 0 }},
 		{"zero layover", func(r *Route) { r.LayoverHours = 0 }},
+		{"negative phase offset", func(r *Route) { r.PhaseOffsetRounds = -1 }},
 		{"negative fare", func(r *Route) { r.Fare = -1 }},
 	}
 	for _, tc := range cases {

@@ -5,6 +5,7 @@ package ferry
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -59,6 +60,9 @@ func (r Route) Validate() error {
 	if r.CrossingHours <= 0 || r.LayoverHours <= 0 {
 		return fmt.Errorf(`ferry route %s needs positive crossing_hours and layover_hours`, r.RouteId)
 	}
+	if r.PhaseOffsetRounds < 0 {
+		return fmt.Errorf(`ferry route %s has negative phase_offset_rounds`, r.RouteId)
+	}
 	if r.Fare < 0 {
 		return fmt.Errorf(`ferry route %s has negative fare`, r.RouteId)
 	}
@@ -83,19 +87,35 @@ func AllRoutes() []Route {
 }
 
 // LoadDataFiles loads + validates every route. Panics on world-integrity
-// failures (missing rooms, shared deck rooms) — same startup rigor as the
+// failures (missing rooms, shared deck rooms, hours that truncate to zero
+// rounds at the live RoundsPerDay) — same startup rigor as the
 // schedule/patrol validators. Must be called AFTER rooms.LoadDataFiles().
+// If the ferries directory does not exist, logs and returns — ferry
+// routes are optional content.
 func LoadDataFiles() {
 	start := time.Now()
 
 	dataPath := configs.GetFilePathsConfig().DataFiles.String() + `/ferries`
+
+	if _, err := os.Stat(dataPath); os.IsNotExist(err) {
+		mudlog.Info(`ferry.LoadDataFiles()`, `loadedCount`, 0,
+			`note`, `ferries directory does not exist — skipping`,
+			`Time Taken`, time.Since(start))
+		return
+	}
+
 	loaded, err := fileloader.LoadAllFlatFiles[string, Route](dataPath)
 	if err != nil {
 		panic(fmt.Sprintf(`ferry.LoadDataFiles: %v`, err))
 	}
 
+	rpd := int(configs.GetTimingConfig().RoundsPerDay)
+
 	decksSeen := map[int]string{}
 	for id, r := range loaded {
+		if hoursToRounds(r.LayoverHours, rpd) == 0 || hoursToRounds(r.CrossingHours, rpd) == 0 {
+			panic(fmt.Sprintf(`ferry route %s: crossing/layover hours truncate to 0 rounds at RoundsPerDay=%d`, id, rpd))
+		}
 		if rooms.LoadRoom(r.DeckRoom) == nil {
 			panic(fmt.Sprintf(`ferry route %s: deck_room %d does not exist`, id, r.DeckRoom))
 		}
