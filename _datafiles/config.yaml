@@ -301,6 +301,9 @@ GamePlay:
   #   Toroidal/maze zones must set `non_cartesian: true` in their zone-config.yaml
   #   to be exempt; one-way exits use `oneway: true` on the exit.
   MapConsistencyEnforce: panic
+  # - FerriesEnabled -
+  # Master toggle for the scheduled ferry vessels (Stage 1 ferry system).
+  FerriesEnabled: true
 
 ################################################################################
 #
