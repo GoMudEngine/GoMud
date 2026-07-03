@@ -93,8 +93,8 @@ ports:
     agent_mob: <id>
     gangplank_name: gangplank
 schedule:
-  crossing_hours: 6      # game-hours at sea (per leg)
-  layover_hours: 2       # game-hours docked (per port)
+  crossing_hours: 2      # game-hours at sea (per leg)
+  layover_hours: 1       # game-hours docked (per port)
   phase_offset_hours: 0  # stagger vessels so departures interleave
 fare: 50                 # gold, charged at boarding
 ```
