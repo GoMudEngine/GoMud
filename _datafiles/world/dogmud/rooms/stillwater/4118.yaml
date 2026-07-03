@@ -12,7 +12,13 @@ description: >
   from a wooden frame near the pier's landward end — the
   way travelers summon the boatman from his cottage when he
   is not at the pier himself. The water here is calm and
-  clear enough to count the gravel on the bottom.
+  clear enough to count the gravel on the bottom. A stubby
+  berth at the pier's end serves the passage boats — the
+  Lakewind Packet and the Grey Heron take their turns tying
+  up here — where a painted <ansi fg="itemname">sailings
+  board</ansi> lists their comings and goings and the
+  <ansi fg="mobname">ferry agent</ansi> keeps a locked
+  strongbox close at hand.
 biome: water
 coord:
   x: -15
@@ -54,9 +60,17 @@ nouns:
     down — small darting fish, a pale crayfish-shadow,
     the occasional larger shape that resolves into a
     pike if it holds still long enough to identify.
+  sailings board: A painted board nailed near the ferry
+    agent's stool, chalked with departures for the
+    Lakewind Packet to New Plymouth and the Grey Heron
+    to the Confluence, rubbed clean and rewritten every
+    time the wind changes its mind.
 idlemessages:
 - A skiff bumps gently against the pier with a hollow timber knock.
 - The bronze bell trembles in a stronger gust but does not ring.
 - A <ansi fg="mobname">heron</ansi> stands one-legged a stone's throw out, focused on the water.
 - The wind shifts and a longer wave runs down the pier with a soft slap.
 - One of the skiff's furled sails ripples briefly in a stronger gust.
+spawninfo:
+  - mobid: 9571
+    respawnrate: "15 real minutes"
