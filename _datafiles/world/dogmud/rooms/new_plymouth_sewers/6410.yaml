@@ -29,11 +29,13 @@ exits:
   down:
     roomid: 6412
 nouns:
-  alcove: A dry pocket cut off the main tunnel, floored above the
-    tide-marks with someone's care. The bands of high water climb
-    its brick like rings in a bathtub, and everything stored here
-    has been placed with reference to them. It is swept. Smugglers
-    who sweep are smugglers with a long lease.
+  alcove: |-
+    A dry pocket cut off the main tunnel, floored above the
+    tide-marks with someone's care. The bands of high water
+    climb its brick like rings in a bathtub, and everything
+    stored here has been placed with reference to them. It
+    is swept. Smugglers who sweep are smugglers with a long
+    lease.
   crates: Empty, but honestly empty — lids set back square, straw
     packing shaken out and piled to one side for reuse. No shipping
     marks, no owner's brand, nothing burned or stenciled anywhere on

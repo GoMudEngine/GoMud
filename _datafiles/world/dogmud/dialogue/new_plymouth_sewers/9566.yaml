@@ -88,16 +88,18 @@ tree:
     - id: deep
       triggers: ["deep", "stair", "below", "down", "dark", "water"]
       text: |
-        No. No tosher goes past the stair's foot, and I am the only
-        one fool enough to have tried it. You are asking, so I will
-        say it plain the once, and then we will speak of other
-        things. There is a stair, old work, older than any brick
-        in this city, and it goes down. I have stood at the foot
-        of it exactly twice in all my years. Both times, the water
-        down there moved when nothing had moved it. I heard what
-        lives in the deep water once. Once was enough. I am a
-        curious man about everything above that stair, and a man
-        with no questions at all below it. The coins down there
+        No. No tosher goes past the stair's foot, and I
+        am the only one fool enough to have tried it. You
+        are asking, so I will say it plain the once, and
+        then we will speak of other things. There is a
+        stair, old work, older than any brick in this
+        city, and it goes down. I have stood at the foot
+        of it exactly twice in all my years. Both times,
+        the water down there moved when nothing had moved
+        it. I heard what lives in the deep water once.
+        Once was enough. I am a curious man about
+        everything above that stair, and a man with no
+        questions at all below it. The coins down there
         can stay where they lie.
       hints: |
         You could ask about the tunnels and the ways back up, or
