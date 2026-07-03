@@ -314,6 +314,20 @@ func moveFactorSilently(factor *mobs.Mob, oldRoomId, newRoomId int) {
 	}
 	destRoom.AddMob(factor.InstanceId)
 	factor.Character.RoomId = newRoomId
+
+	// Self-heal: clear any stuck/lost flags mobcommands.Pathto may have set
+	// on this factor. Before the idle-hook exemption (shouldRecoverDisplacedHome,
+	// internal/hooks/MobIdle_HandleIdleMobs.go), a factor standing on an
+	// exitless vessel deck would get "pathto home" issued every idle tick,
+	// which can never resolve there — Pathto flags `home-impossible` in
+	// TempData and sets the `lost` adjective, then drains 10% max HP per
+	// tick forever (2026-07-03 playtest, BUG-1). This is the single choke
+	// point every factor move passes through (board/disembark/deliver/
+	// return/stuck-teleport), so clearing here guarantees any factor that
+	// was ever flagged — by this bug or any future edge case — recovers on
+	// its very next transport instead of staying flagged and bleeding HP.
+	factor.SetTempData(`home-impossible`, nil)
+	factor.Character.SetAdjective(`lost`, false)
 }
 
 // transportFactor is moveFactorSilently plus a departure emote in the old

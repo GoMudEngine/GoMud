@@ -24,6 +24,29 @@ func TestTradeCircuitValidate_Valid(t *testing.T) {
 	}
 }
 
+// TestIsFactorMobId pins the membership check the idle hook uses to exempt
+// trade factors from the displaced-home recovery pull (2026-07-03 playtest,
+// BUG-1: factors were dying aboard exitless vessel decks because pathto-home
+// can never resolve from there).
+func TestIsFactorMobId(t *testing.T) {
+	cases := []struct {
+		name  string
+		mobId int
+		want  bool
+	}{
+		{"lakeway factor", 9577, true},
+		{"riverway factor", 9578, true},
+		{"broadwater factor", 9579, true},
+		{"non-factor mob id", 9576, false},
+		{"zero", 0, false},
+	}
+	for _, tc := range cases {
+		if got := IsFactorMobId(tc.mobId); got != tc.want {
+			t.Errorf("%s: IsFactorMobId(%d) = %v, want %v", tc.name, tc.mobId, got, tc.want)
+		}
+	}
+}
+
 func TestTradeCircuitValidate_Rejects(t *testing.T) {
 	cases := []struct {
 		name   string

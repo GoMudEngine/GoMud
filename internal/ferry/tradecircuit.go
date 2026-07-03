@@ -119,6 +119,21 @@ func TradeCircuitFor(routeId string) (TradeCircuit, bool) {
 	return c, ok
 }
 
+// IsFactorMobId reports whether a mob TEMPLATE id belongs to a registered
+// trade circuit. Used by the idle hook to exempt factors from the
+// displaced-home recovery pull — the ferry controller owns factor
+// movement, and a factor standing on an exitless vessel deck is not
+// lost; pathto-home from there flags it stuck and the stuck-mob
+// cleanup kills it (2026-07-03 playtest, BUG-1).
+func IsFactorMobId(mobId int) bool {
+	for _, c := range tradeCircuits {
+		if c.FactorMobId == mobId {
+			return true
+		}
+	}
+	return false
+}
+
 // validateTradeCircuits runs boot-time integrity checks. Called from
 // LoadDataFiles AFTER routes are loaded. Panics on failures (startup
 // validator doctrine). Circuits referencing unloaded routes are an error;
