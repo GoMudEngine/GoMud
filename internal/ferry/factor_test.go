@@ -83,6 +83,35 @@ func TestFactorDecide_MissedBoatKeepsWaiting(t *testing.T) {
 	}
 }
 
+// TestFactorDecide_WaitingGuard_NotAtDockKeepsWaiting pins the THIRD clause
+// of the FactorWaiting guard (vs.Docked && vs.PortIdx == st.PortIdx &&
+// pos.AtPortIdx == st.PortIdx): the vessel is docked at the factor's own
+// port, but the factor itself isn't standing in that dock room (AtPortIdx
+// == -1, e.g. mid-recovery-walk). Without this clause a factor elsewhere
+// in the world would spuriously "board" the vessel.
+func TestFactorDecide_WaitingGuard_NotAtDockKeepsWaiting(t *testing.T) {
+	c := validCircuit()
+	d := factorDecide(c, VesselState{Docked: true, PortIdx: 0}, factorPos{AtPortIdx: -1},
+		factorState{Phase: FactorWaiting, PortIdx: 0})
+	if d.Kind != ActNone {
+		t.Fatalf("expected ActNone when docked at the factor's port but the factor isn't there, got %+v", d)
+	}
+}
+
+// TestFactorDecide_Delivering_WalksToCurrentStopWhenNotThereYet pins the
+// ActWalkTo branch of FactorDelivering: when pos.InRoom is NOT the current
+// stop (StopIdx's room), the action is ActWalkTo targeting the CURRENT
+// stop (not the next one) — the factor hasn't arrived yet, so it must
+// finish walking to stop 1 (5508) before delivery there can fire.
+func TestFactorDecide_Delivering_WalksToCurrentStopWhenNotThereYet(t *testing.T) {
+	c := validCircuit()
+	d := factorDecide(c, VesselState{Docked: false, PortIdx: 0},
+		factorPos{InRoom: 9999}, factorState{Phase: FactorDelivering, PortIdx: 1, StopIdx: 1})
+	if d.Kind != ActWalkTo || d.NextStop != 5508 {
+		t.Fatalf("expected ActWalkTo NextStop=5508 (current stop, not next), got %+v", d)
+	}
+}
+
 // TestFactorPhaseName_MapsAllPhases pins the FactorPhase → dashboard
 // string mapping used by economy/health.captureFerryFactors, using the
 // _test.go hooks so this stays a pure unit test of the mapping (the

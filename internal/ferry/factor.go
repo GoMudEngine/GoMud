@@ -135,6 +135,7 @@ func portIdxOfRoom(r Route, roomId int) int {
 // tickFactors drives every registered trade circuit's factor one step.
 // Called once per round from Tick(), after the vessel/gangplank loop.
 func tickFactors(rpd int, now uint64) {
+	seen := make(map[int]bool, len(tradeCircuits))
 	for routeId, c := range tradeCircuits {
 		r, ok := RouteFor(routeId)
 		if !ok {
@@ -145,6 +146,7 @@ func tickFactors(rpd int, now uint64) {
 		if factor == nil {
 			continue // not spawned (yet); anchored spawninfo will bring it back
 		}
+		seen[factor.InstanceId] = true
 
 		st, ok := factorStates[factor.InstanceId]
 		if !ok {
@@ -212,6 +214,16 @@ func tickFactors(rpd int, now uint64) {
 
 		act := factorDecide(c, vs, pos, *st)
 		applyFactorAction(factor, r, c, st, act, now)
+	}
+
+	// Evict stale entries: factorStates is keyed by mob instance id, and
+	// instance ids churn on despawn/respawn (room unload, server restart
+	// recovery, admin recall). Without this, a despawned factor's old
+	// instance id lingers forever as dead weight in the map.
+	for instId := range factorStates {
+		if !seen[instId] {
+			delete(factorStates, instId)
+		}
 	}
 }
 
