@@ -116,6 +116,12 @@ func factorDecide(c TradeCircuit, vs VesselState, pos factorPos, st factorState)
 // spamming the mob's command queue every round.
 const factorWalkReissueRounds = 5
 
+// warehouseReleaseMaxPerItem bounds Stage 4's delivery-time local release
+// (see ReleaseToVendorsInRoom below) — deliberately slow per the spec, so a
+// warehouse-adjacent vendor gap closes gradually across several factor
+// visits rather than refilling in one pass.
+const warehouseReleaseMaxPerItem = 2
+
 // factorStuckRounds is how long a factor's room can go unchanged while
 // Delivering/Returning before the stuck-safety reset kicks in.
 const factorStuckRounds = 60
@@ -279,6 +285,16 @@ func applyFactorAction(factor *mobs.Mob, r Route, c TradeCircuit, st *factorStat
 		if msg := caravan.FormatVisitMessage(factor.Character.Name, delivered, nil); msg != `` {
 			if room := rooms.LoadRoom(factor.Character.RoomId); room != nil {
 				room.SendText(messaging.CategoryRoomDescription, msg)
+			}
+		}
+		// Stage 4: delivery-time local release. After the factor's own
+		// cargo lands, top up any REMAINING vendor gaps in this room from
+		// the local warehouse (bounded, slow — no emote for the invisible
+		// backend top-up; the delivery message above already narrates the
+		// stop).
+		if bool(configs.GetGamePlayConfig().WarehousesEnabled) && bool(configs.GetGamePlayConfig().WarehouseDrawdownEnabled) {
+			if room := rooms.LoadRoom(factor.Character.RoomId); room != nil {
+				warehouse.ReleaseToVendorsInRoom(room.Zone, factor.Character.RoomId, warehouseReleaseMaxPerItem)
 			}
 		}
 		st.StopIdx++

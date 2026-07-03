@@ -63,5 +63,18 @@ func handleImportArrival(c ImportCircuit, arrival events.PatrolWaypointArrival) 
 				r.SendText(messaging.CategoryMobEmote, msg)
 			}
 		}
+		// Stage 4: delivery-time local release. After Dobb's own cargo
+		// lands, top up any REMAINING vendor gaps in this NP room from the
+		// local warehouse (bounded, slow — inline 2 rather than a shared
+		// exported constant across packages; mirrors ferry's
+		// warehouseReleaseMaxPerItem). No emote for the invisible backend
+		// top-up (future polish).
+		if bool(configs.GetGamePlayConfig().WarehousesEnabled) && bool(configs.GetGamePlayConfig().WarehouseDrawdownEnabled) {
+			if r := rooms.LoadRoom(arrival.RoomId); r != nil {
+				if _, ok := warehouse.CityFor(r.Zone); ok {
+					warehouse.ReleaseToVendorsInRoom(r.Zone, arrival.RoomId, 2)
+				}
+			}
+		}
 	}
 }
