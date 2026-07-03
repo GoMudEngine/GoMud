@@ -1,0 +1,43 @@
+mobid: 9573
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'say Passage up to Stillwater or down to Plymouth -- I keep the
+    crossing, not the cargo.'
+  - ''
+  - 'emote chalks a fresh line on the sailings board, steps back, and
+    studies it like a man reading water.'
+  - ''
+  - 'emote pats the dockside crate, checks the lid latch, and settles
+    back onto the stool.'
+  - ''
+activitylevel: 10
+character:
+  name: The Passage Agent
+  description: |
+    The Passage Agent keeps a low camp stool and a dockside crate near
+    the passage mooring, apart from the freight barge's own crew. He
+    came up through the river trade the slow way -- poling, then
+    crewing, then finally minding the passenger side of the business,
+    which he claims suits his knees better than his back. He reads the
+    current the way river folk do, by the color of it and the pitch of
+    the water against the pilings, and he never quotes a crossing time
+    he isn't willing to be proven right about. He gets on well enough
+    with the crews working the freight side of the dock, though he is
+    quick to remind anyone who asks that he answers for the
+    passengers, not the cargo.
+  speciesid: 1
+  level: 1
+  gold: 10
+  stats:
+    perception:
+      training: 5
+    charisma:
+      training: 4

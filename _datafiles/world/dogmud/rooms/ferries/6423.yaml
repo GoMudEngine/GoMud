@@ -1,0 +1,27 @@
+roomid: 6423
+zone: Ferries
+title: The Deck of the Lakewind Packet
+description: >
+  The packet's deck is scrubbed pale by years of weather and boots. A
+  low deckhouse amidships shelters the wheel; coils of line hang from
+  the rail pins in tidy loops, and the boards underfoot carry the
+  constant small motion of open water. Benches along the gunwale seat
+  a handful of passengers out of the spray. Whether the shore is near
+  or far depends entirely on when you look.
+biome: water
+coord:
+  x: 0
+  y: 0
+  z: 0
+nouns:
+  deckhouse: Low and weatherboarded, just tall enough to stand at the
+    wheel inside. The glass is crazed with old salt.
+  benches: Plank benches worn smooth, bolted to the deck. Initials
+    have been knifed into the undersides where the crew does not
+    bother to sand.
+idlemessages:
+- The rigging creaks as the packet takes a swell at a shallow angle.
+- A line snaps taut, thrums, and goes slack again.
+spawninfo:
+  - mobid: 9574
+    respawnrate: "15 real minutes"

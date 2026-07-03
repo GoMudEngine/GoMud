@@ -1,0 +1,88 @@
+name: Ferry Stage 1 — scheduled vessels + paid passenger travel
+summary: >-
+  Verify the new ferry system end-to-end from a player's seat — discover the
+  service at the Stillwater pier, get schedule quotes, board the Lakewind
+  Packet, ride a full crossing to New Plymouth, walk ashore — and grade how
+  it all feels. Timing context you know but the character doesn't: a full
+  crossing is about 5 real minutes, a layover about 2.5, so a whole cycle
+  fits inside one session.
+goals:
+  - id: discover-service
+    do: >-
+      Travel to (or start near) the Boat Rental Pier in Stillwater (room
+      4118). Read the room, examine the sailings board noun, and identify
+      the ferry agent from prose alone — as if you didn't know the feature
+      existed.
+    verify: >-
+      The room prose makes the passage service discoverable without OOC
+      knowledge; the sailings board describes destinations; the agent NPC is
+      present and visibly connected to the service.
+  - id: agent-info
+    do: >-
+      Talk to the agent (ask agent ferry / ask agent help). Then ask for
+      passage WITHOUT naming a destination (ask agent passage).
+    verify: >-
+      Info responses name both vessels and destinations in-voice. The bare
+      passage ask returns the destination list (confluence and plymouth),
+      not silence or an error.
+  - id: schedule-quote
+    do: >-
+      If the packet is NOT currently docked (no arrival emote / not
+      mentioned as berthed), ask for passage to plymouth anyway and note the
+      refusal quote. If she IS docked, wait for her to depart first (watch
+      for the cast-off emote), then ask.
+    verify: >-
+      The agent quotes a plausible next-docking time in clock terms ("around
+      4 PM"), no gold is charged, and the quote reads in-fiction.
+  - id: board-and-ride
+    do: >-
+      When the packet docks (arrival emote at the pier), note your gold,
+      then: ask agent passage plymouth. You should be moved aboard with the
+      deck room rendered. Stay aboard through cast-off and the whole
+      crossing. Observe the deckhand, at-sea ambiance lines, and whether the
+      deck feels alive.
+    verify: >-
+      Gold decreased by exactly the fare (75); the deck room rendered on
+      arrival (no silent teleport); departure emote fired; at least one
+      ambiance line appeared during the crossing; the deckhand is present.
+  - id: arrive-and-disembark
+    do: >-
+      On the arrival emote at New Plymouth, look at the exits and walk
+      ashore via the gangplank exit. Confirm you're at The North Quay
+      (5502).
+    verify: >-
+      The gangplank exit appears only after docking; walking it lands you at
+      the North Quay; the berth prose there matches the vessel being in.
+  - id: broke-refusal
+    do: >-
+      If you can shed gold safely (deposit at a bank or note your gold is
+      already below 50), test a fare refusal at the NP quay: ask agent
+      passage confluence with insufficient gold. If you cannot get below
+      the fare safely, skip and note it.
+    verify: >-
+      Polite in-voice refusal naming the price; zero gold charged; no error
+      text.
+  - id: sleeper-rides
+    do: >-
+      Board any vessel again if time allows (the Broadbeam to the Confluence
+      from NP is fine), then sleep on deck through the departure. Wake
+      (stand) after arrival.
+    verify: >-
+      Sleeping through cast-off neither ejects you nor errors; you arrive at
+      the far port still aboard.
+notes:
+  - You are a FEATURE tester with feel duties — mechanics first, but note
+    crossing-length feel, deck aliveness, and message quality throughout.
+  - Fares are the ONLY numbers that should ever appear in ferry text. Flag
+    any other leaked numbers (round counts, room ids, multipliers).
+  - Flag any message weirdness (double emotes, wrong-room emotes, missing
+    arrival render, "the the" articles).
+  - If an ask hits the WRONG NPC (someone other than the agent answers about
+    passage), that is a finding — record exactly what you typed and who
+    answered.
+pass_criteria:
+  - Boarded, rode a full crossing, and disembarked via the gangplank with
+    correct fare charging.
+  - Schedule quote received when the vessel was away, with no charge.
+  - No crash, silent teleport, stuck state, or wrong-NPC ask resolution.
+exit_after: ~2 full crossings or 20 minutes, whichever first.

@@ -20,6 +20,8 @@ type GamePlay struct {
 
 	// Cartesian map consistency enforcement
 	MapConsistencyEnforce ConfigString `yaml:"MapConsistencyEnforce"` // "off" | "warn" (default) | "panic" — startup Cartesian-consistency enforcement level
+
+	FerriesEnabled ConfigBool `yaml:"FerriesEnabled"` // Master toggle for the ferry vessel controller + boarding (Stage 1 ferry system)
 }
 
 type GameplayDeath struct {

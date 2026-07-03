@@ -1,0 +1,23 @@
+# The Weathered Deckhand — mob 9574 — crews the Lakewind Packet.
+# Answers questions in the shortest form that is not rude (per his
+# character description); does not book passage himself.
+tree:
+  type: selector
+  children:
+
+    # ── info / greetings ──
+    - type: sequence
+      event: player_ask
+      children:
+        - type: condition
+          check: keyword_match
+          keywords: [hello, hi, help, who, what, where, boat, ferry,
+            packet, barge, crossing, long, far, when]
+        - type: action
+          do: say
+          text: This is the Lakewind Packet. I only work the lines --
+            passage is booked with the agent ashore.
+        - type: action
+          do: say
+          text: Crossing does not take long. Mind the rail and you
+            will be fine.

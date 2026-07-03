@@ -8,7 +8,12 @@ description: >
   its deck. This is the regular run between the Confluence and New
   Plymouth — the barge works the river channel south, takes freight
   and passengers both, and knows the way by long habit. The smell
-  of river mud is strong here, and tar, and old wet rope.
+  of river mud is strong here, and tar, and old wet rope. A second
+  mooring closer to the quay road serves passage only — the Grey
+  Heron bound upriver for Stillwater, the Broadbeam down to New
+  Plymouth — where a chalked <ansi fg="itemname">sailings
+  board</ansi> is kept beside the <ansi fg="mobname">passage
+  agent</ansi>'s crate.
 biome: water
 coord: {x: -4, y: -54, z: 0}
 exits:
@@ -24,9 +29,16 @@ nouns:
     near bollard. The run south takes two days on a favoring
     current and three against one; the Barge Master knows every
     bend.
+  sailings board: A weathered board propped against a piling near
+    the passage agent's crate, its chalk columns marking passage
+    upriver aboard the Grey Heron to Stillwater and downriver aboard
+    the Broadbeam to New Plymouth, rewritten each time the current
+    has its say.
 spawninfo:
   - mobid: 9420
     respawnrate: "20 real minutes"
+  - mobid: 9573
+    respawnrate: "15 real minutes"
 idlemessages:
 - The barge shifts on its lines as the current nudges beneath the dock.
 - Gulls circle the dock end, riding the river wind without moving their wings.

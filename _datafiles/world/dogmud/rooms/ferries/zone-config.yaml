@@ -1,0 +1,5 @@
+name: Ferries
+roomid: 6423
+defaultbiome: water
+region: Windward Marches
+non_cartesian: true

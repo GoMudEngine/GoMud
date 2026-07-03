@@ -1,0 +1,43 @@
+mobid: 9572
+zone: New Plymouth Docks
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'say Passage to Stillwater or the Confluence -- ledger''s open,
+    stamp''s ready, boat''s on time.'
+  - ''
+  - 'emote presses the brass stamp to a fresh manifest, blows on the
+    ink, and squares it atop the stack.'
+  - ''
+  - 'emote runs a thumbnail down the ledger column, taps an entry, and
+    makes a small correcting note.'
+  - ''
+activitylevel: 10
+character:
+  name: The Quay Agent
+  description: |
+    The Quay Agent works from a narrow booth near the passage berth,
+    ledger open, a brass stamp within easy reach of his right hand. He
+    dresses plainer than the tally-clerks up at the main landing but
+    keeps the same close accounting -- every fare entered, every
+    sailing initialed, the harbormaster's seal renewed each season
+    without being asked twice. He has little patience for haggling and
+    less for lateness -- the boats keep the capital's schedule now, not
+    the old lake custom, and he intends to see that habit stick. His
+    Chrysalis-change left his handwriting untouched but sharpened his
+    memory for names -- he rarely asks a returning traveler's business
+    twice.
+  speciesid: 1
+  level: 1
+  gold: 15
+  stats:
+    charisma:
+      training: 6
+    perception:
+      training: 4

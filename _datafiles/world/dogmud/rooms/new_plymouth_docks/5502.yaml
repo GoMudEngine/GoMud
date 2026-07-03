@@ -16,7 +16,12 @@ description: >
   against a cleat near the quay's midpoint, and at the far western
   end the dock terminates at a <ansi fg="itemname">chained
   shipyard</ansi> gate, padlocked shut and clear about its
-  intentions.
+  intentions. Past the gulls, a stubby passage berth is kept
+  for the boats — the Lakewind Packet inbound from
+  Stillwater, the Broadbeam upriver from the Confluence —
+  where a varnished <ansi fg="itemname">sailings board</ansi>
+  is kept current and the <ansi fg="mobname">quay agent</ansi>
+  minds a strongbox at his elbow.
 biome: city
 coord:
   x: -19
@@ -44,6 +49,11 @@ nouns:
     BUSINESS. Beyond the gate, through the planking gaps, you can
     make out a dry-dock frame and the shadow of a hull in scaffold.
     The chain is not for you.
+  sailings board: A varnished board mounted beside the quay agent's
+    post, its columns stamped and initialed for each sailing. The
+    Lakewind Packet is entered for Stillwater and the Broadbeam for
+    the Confluence, both crossed off and re-inked as the tallies come
+    in from the harbormaster's office.
 idlemessages:
 - A gull drops from a piling-top into the water and rises again
   with nothing.
@@ -57,4 +67,6 @@ idlemessages:
   not yours, not here.
 spawninfo:
   - mobid: 9310
+    respawnrate: "15 real minutes"
+  - mobid: 9572
     respawnrate: "15 real minutes"

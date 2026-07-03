@@ -1,0 +1,36 @@
+# The Ferry Agent — mob 9571 — books passage at the Stillwater pier.
+# Serves BOTH Stillwater routes -- destination word picks the route.
+tree:
+  type: selector
+  children:
+
+    # ── PURCHASE: boarding intent → board_ferry resolves destination,
+    # schedule, fare, and movement. Sits FIRST (grant-node-first SOP). ──
+    - type: sequence
+      event: player_ask
+      children:
+        - type: condition
+          check: keyword_match
+          keywords: [passage, board, boarding, ticket, fare, ride, sail, plymouth, confluence]
+        - type: action
+          do: board_ferry
+          routes:
+            plymouth: stillwater_np_packet
+            confluence: stillwater_confluence_barge
+
+    # ── info / greetings ──
+    - type: sequence
+      event: player_ask
+      children:
+        - type: condition
+          check: keyword_match
+          keywords: [hello, hi, help, who, what, ferry, boat, packet, barge, agent]
+        - type: action
+          do: say
+          text: I book passage on the water. The Lakewind Packet runs to Plymouth and the Grey Heron runs down to the Confluence -- paid at the plank, off again at the far pier.
+        - type: action
+          do: say
+          text: Ask me for passage and name your landing -- Plymouth, or the Confluence. If the boat is out, I will tell you when she ties up next.
+        - type: action
+          do: send_user_text
+          text: '<ansi fg="181">  [Try: ask agent passage plymouth]</ansi>'

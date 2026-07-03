@@ -1,0 +1,10 @@
+routeid: confluence_np_barge
+name: the Broadbeam
+deck_room: 6425
+ports:
+  - dock_room: 6109   # The Confluence — The Barge Dock
+  - dock_room: 5502   # New Plymouth — The North Quay
+crossing_hours: 2
+layover_hours: 1
+phase_offset_rounds: 150
+fare: 50

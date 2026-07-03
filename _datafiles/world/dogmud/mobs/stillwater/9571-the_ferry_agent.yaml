@@ -1,0 +1,42 @@
+mobid: 9571
+zone: Stillwater
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'say Passage to Plymouth or the Confluence -- fair rates, dry
+    benches, no walking.'
+  - ''
+  - 'emote chalks a departure time onto a slate, frowns at the light,
+    and rubs an hour off it.'
+  - ''
+  - 'emote hefts the strongbox, checks the lock with a thumb, and
+    squares it against the post.'
+  - ''
+activitylevel: 10
+character:
+  name: The Ferry Agent
+  description: |
+    The Ferry Agent keeps a low stool and a locked strongbox at the
+    landward end of the pier, where the passage boats tie up between
+    the fishing skiffs. He reads the lake the way other men read a
+    clock -- a squint at the water, a glance at the clouds banked over
+    the far shore, and he knows within the hour when the Lakewind
+    Packet or the Grey Heron will show her bow around the point. His
+    slate hangs from a nail at his elbow, chalked and rechalked so many
+    times the wood beneath has gone soft and grey. He does not hurry
+    travelers and he does not tolerate being hurried himself -- the
+    boats keep their own time, not his, and certainly not yours.
+  speciesid: 1
+  level: 1
+  gold: 12
+  stats:
+    charisma:
+      training: 5
+    perception:
+      training: 4
