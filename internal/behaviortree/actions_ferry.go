@@ -59,25 +59,30 @@ func actBoardFerry(params map[string]any, ctx *EvalContext) Result {
 		return Failure
 	}
 
+	// Sorted keyword order makes the pick deterministic when the ask text
+	// contains more than one destination ("plymouth or confluence?").
+	dests := make([]string, 0, len(routesMap))
+	for k := range routesMap {
+		dests = append(dests, k)
+	}
+	sort.Strings(dests)
+
 	text := strings.ToLower(ctx.Event.Text)
 	routeId := ``
-	for keyword, id := range routesMap {
+	for _, keyword := range dests {
 		if strings.Contains(text, keyword) {
-			routeId = id
+			routeId = routesMap[keyword]
 			break
 		}
 	}
 
 	if routeId == `` {
-		dests := make([]string, 0, len(routesMap))
-		for k := range routesMap {
-			dests = append(dests, k)
-		}
-		sort.Strings(dests)
 		mob.Command(`say Passage where? I book for ` + strings.Join(dests, ` and `) + `.`)
 		return Success
 	}
 
-	ferry.Board(user, mob, ctx.RoomId, routeId)
+	if ferry.Board(user, mob, ctx.RoomId, routeId) == ferry.BoardNotAtPort {
+		return Failure // fall through to other tree branches
+	}
 	return Success
 }

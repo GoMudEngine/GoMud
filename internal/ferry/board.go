@@ -45,6 +45,8 @@ func Board(user *users.UserRecord, mob *mobs.Mob, roomId int, routeId string) Bo
 
 	if !bool(configs.GetGamePlayConfig().FerriesEnabled) {
 		mob.Command(`say No sailings today. The line is suspended.`)
+		// BoardNotDocked is deliberately overloaded for the disabled case —
+		// keeps the result enum small.
 		return BoardNotDocked
 	}
 
@@ -75,12 +77,17 @@ func Board(user *users.UserRecord, mob *mobs.Mob, roomId int, routeId string) Bo
 	}
 
 	if dockRoom != nil {
-		dockRoom.SendTextVisual(messaging.CategoryRoomDescription,
+		dockRoom.SendTextVisual(messaging.CategoryRoomExit,
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> pays the fare and crosses the gangplank aboard %s.`, user.Character.Name, r.Name),
 			user.UserId)
 	}
 	user.SendText(messaging.CategoryRoomDescription,
 		fmt.Sprintf(`You pay %d gold and cross the gangplank aboard %s.`, r.Fare, r.Name))
+
+	// Show the destination room. MoveToRoom does not auto-describe (same
+	// engine trap actMovePlayer documents) — queue a look so arrival on
+	// deck is never silent.
+	user.Command("look")
 
 	return BoardOk
 }
