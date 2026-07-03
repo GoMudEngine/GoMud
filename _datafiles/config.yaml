@@ -305,6 +305,10 @@ GamePlay:
   # Master toggle for the scheduled ferry vessels (Stage 1 ferry system).
   FerriesEnabled: true
 
+  # - WarehousesEnabled -
+  # Master toggle for the city warehouse buffer pools (Stage 3 ferry system).
+  WarehousesEnabled: true
+
 ################################################################################
 #
 #   BALANCE
@@ -736,6 +740,10 @@ Balance:
 
   # ── STORAGE FEES ───────────────────────────────────────────────────────────
   StorageFeePerItem: 1               # Gold charged per stored item per game month
+
+  # ── WAREHOUSES (Stage 3 ferry system) ─────────────────────────────────────
+  WarehouseItemCap: 400         # Per-item stock cap in city warehouses
+  WarehouseAccrualHours: 2      # Game-hours between ambient accrual ticks
 
   # ── CRAFTER MOBS ─────────────────────────────────────────────────────────
   # Per-rarity-tier restock cadences (game-time). Replaces the single
