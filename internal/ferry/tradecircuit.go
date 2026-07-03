@@ -2,6 +2,7 @@ package ferry
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/GoMudEngine/GoMud/internal/economy"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -78,7 +79,7 @@ var tradeCircuits = map[string]TradeCircuit{
 		HomePortIdx: 0,    // Stillwater pier 4118
 		PortExports: [2][]int{
 			{40057, 40058, 40059, 40056}, // Stillwater exports
-			{40123, 40124},               // Confluence exports (confluence bucket)
+			{40123, 40124, 40125, 40126}, // Confluence exports (confluence bucket)
 		},
 		PortStops: [2][]int{
 			{4105, 4106, 4125}, // Stillwater
@@ -96,7 +97,7 @@ var tradeCircuits = map[string]TradeCircuit{
 		FactorMobId: 9579, // A Broadwater Factor
 		HomePortIdx: 0,    // Confluence Barge Dock 6109
 		PortExports: [2][]int{
-			{40123, 40124},               // Confluence exports
+			{40123, 40124, 40125, 40126}, // Confluence exports
 			{40018, 40019, 40006, 40021}, // NP exports
 		},
 		PortStops: [2][]int{
@@ -148,6 +149,19 @@ func validateTradeCircuits() {
 			for _, stop := range c.PortStops[i] {
 				if rooms.LoadRoom(stop) == nil {
 					panic(fmt.Sprintf(`ferry trade circuit %s: stop room %d does not exist`, id, stop))
+				}
+			}
+			// Cross-check: everything exported FROM the other port must be
+			// deliverable AT this port, i.e. its bucket must appear in
+			// PortDeliveryBuckets[i]. A transposed bucket cell would boot
+			// clean and then silently no-op every delivery (VisitVendors
+			// skips off-bucket items) — catch it here instead.
+			for _, itemId := range c.PortExports[1-i] {
+				bucket := economy.BucketFor(itemId)
+				if !slices.Contains(c.PortDeliveryBuckets[i], bucket) {
+					panic(fmt.Sprintf(
+						`ferry trade circuit %s: port %d cannot deliver export item %d (bucket %q not in PortDeliveryBuckets[%d] %v) — deliveries would silently no-op`,
+						id, i, itemId, bucket, i, c.PortDeliveryBuckets[i]))
 				}
 			}
 		}

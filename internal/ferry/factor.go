@@ -73,7 +73,13 @@ func factorDecide(c TradeCircuit, vs VesselState, pos factorPos, st factorState)
 			return factorAction{Kind: ActBoard, PortIdx: st.PortIdx}
 		}
 	case FactorAboard:
-		if vs.Docked && pos.OnDeck {
+		// vs.PortIdx != st.PortIdx guards against disembarking back at the
+		// boarding port: the vessel stays docked for the whole layover after
+		// the factor boards, so without this the factor would step ashore
+		// the very next round and never sail anywhere. st.PortIdx still
+		// holds the boarding port while Aboard (set when Waiting; only
+		// overwritten by the ActDisembark handling).
+		if vs.Docked && pos.OnDeck && vs.PortIdx != st.PortIdx {
 			return factorAction{Kind: ActDisembark, PortIdx: vs.PortIdx}
 		}
 	case FactorDelivering:
@@ -188,13 +194,19 @@ func tickFactors(rpd int, now uint64) {
 		}
 
 		// FactorReturning: factorDecide only reports the arrival edge (see
-		// its ActNone default) — the walk-there command was already issued
-		// once, at the moment the shell entered Returning. Check arrival
-		// directly here so we can transition to Waiting + reload.
-		if st.Phase == FactorReturning && pos.AtPortIdx == st.PortIdx {
-			st.Phase = FactorWaiting
-			st.walkIssued = false
-			ensureFactorLoaded(factor, c, st.PortIdx)
+		// its ActNone default) — the shell owns this phase. On arrival,
+		// transition to Waiting + reload. While still en route, keep the
+		// walk alive with the same throttled reissue Delivering gets, so a
+		// dropped path recovers within factorWalkReissueRounds instead of
+		// waiting out the 60-round stuck teleport.
+		if st.Phase == FactorReturning {
+			if pos.AtPortIdx == st.PortIdx {
+				st.Phase = FactorWaiting
+				st.walkIssued = false
+				ensureFactorLoaded(factor, c, st.PortIdx)
+			} else {
+				issueWalkIfDue(factor, st, r.Ports[st.PortIdx].DockRoom, now)
+			}
 			continue
 		}
 

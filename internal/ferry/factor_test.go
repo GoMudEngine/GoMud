@@ -24,6 +24,30 @@ func TestFactorDecide_DisembarksOnArrival(t *testing.T) {
 	}
 }
 
+// TestFactorDecide_StaysAboardAtBoardingPort pins the disembark guard:
+// after boarding, the vessel is still docked at the boarding port for the
+// rest of the layover. The factor must NOT step back ashore there — it
+// waits aboard until the vessel reaches the OTHER port.
+func TestFactorDecide_StaysAboardAtBoardingPort(t *testing.T) {
+	c := validCircuit()
+	d := factorDecide(c, VesselState{Docked: true, PortIdx: 0}, factorPos{AtPortIdx: -1, OnDeck: true},
+		factorState{Phase: FactorAboard, PortIdx: 0})
+	if d.Kind != ActNone {
+		t.Fatalf("expected ActNone while docked at the boarding port, got %+v", d)
+	}
+}
+
+// TestFactorDecide_DisembarksOnlyAtOtherPort is the positive twin: docked
+// at the port OPPOSITE the boarding port → disembark there.
+func TestFactorDecide_DisembarksOnlyAtOtherPort(t *testing.T) {
+	c := validCircuit()
+	d := factorDecide(c, VesselState{Docked: true, PortIdx: 1}, factorPos{AtPortIdx: -1, OnDeck: true},
+		factorState{Phase: FactorAboard, PortIdx: 0})
+	if d.Kind != ActDisembark || d.PortIdx != 1 {
+		t.Fatalf("expected ActDisembark at port 1, got %+v", d)
+	}
+}
+
 func TestFactorDecide_StaysAboardAtSea(t *testing.T) {
 	c := validCircuit()
 	d := factorDecide(c, VesselState{Docked: false, PortIdx: 1}, factorPos{AtPortIdx: -1, OnDeck: true},
