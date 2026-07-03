@@ -12,8 +12,8 @@ description: >
   mooring closer to the quay road serves passage only — the Grey
   Heron bound upriver for Stillwater, the Broadbeam down to New
   Plymouth — where a chalked <ansi fg="itemname">sailings
-  board</ansi> is kept beside the <ansi fg="mobname">barge
-  master</ansi>'s crate.
+  board</ansi> is kept beside the <ansi fg="mobname">passage
+  agent</ansi>'s crate.
 biome: water
 coord: {x: -4, y: -54, z: 0}
 exits:
@@ -30,7 +30,7 @@ nouns:
     current and three against one; the Barge Master knows every
     bend.
   sailings board: A weathered board propped against a piling near
-    the barge master's crate, its chalk columns marking passage
+    the passage agent's crate, its chalk columns marking passage
     upriver aboard the Grey Heron to Stillwater and downriver aboard
     the Broadbeam to New Plymouth, rewritten each time the current
     has its say.
