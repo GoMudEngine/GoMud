@@ -320,6 +320,42 @@ func transportFactor(factor *mobs.Mob, oldRoomId, newRoomId int, departEmote, ar
 	}
 }
 
+// FactorPhaseName returns a human-readable state string for the economy
+// dashboard, and ok=false when instanceId isn't a currently-registered
+// trade factor (e.g. despawned, or never a factor at all).
+func FactorPhaseName(instanceId int) (string, bool) {
+	st, ok := factorStates[instanceId]
+	if !ok {
+		return ``, false
+	}
+	switch st.Phase {
+	case FactorWaiting:
+		return `waiting_at_dock`, true
+	case FactorAboard:
+		return `aboard`, true
+	case FactorDelivering:
+		return `delivering`, true
+	case FactorReturning:
+		return `returning_to_dock`, true
+	}
+	return `unknown`, true
+}
+
+// SetFactorStateForTest registers a minimal factorStates entry for
+// instanceId with the given phase (PortIdx/StopIdx default to zero).
+// Test-only: lets economy/health capture tests exercise FactorPhaseName /
+// captureFerryFactors without driving the full tickFactors machinery.
+func SetFactorStateForTest(instanceId int, phase FactorPhase) {
+	factorStates[instanceId] = &factorState{Phase: phase}
+}
+
+// ClearFactorStateForTest removes a test-registered factor state. Pair
+// with SetFactorStateForTest via t.Cleanup so tests don't leak state into
+// the package-level factorStates map between runs.
+func ClearFactorStateForTest(instanceId int) {
+	delete(factorStates, instanceId)
+}
+
 // ensureFactorLoaded tops the factor's inventory up to c.LoadCap with fresh
 // items drawn round-robin from c.PortExports[portIdx] — mirrors
 // caravan.LoadRunnerFromImport's bounded-retry pattern. Returns the number

@@ -82,3 +82,40 @@ func TestFactorDecide_MissedBoatKeepsWaiting(t *testing.T) {
 		t.Fatalf("expected ActNone, got %+v", d)
 	}
 }
+
+// TestFactorPhaseName_MapsAllPhases pins the FactorPhase → dashboard
+// string mapping used by economy/health.captureFerryFactors, using the
+// _test.go hooks so this stays a pure unit test of the mapping (the
+// capture-side integration is covered separately in
+// internal/economy/health/capture_ferry_test.go).
+func TestFactorPhaseName_MapsAllPhases(t *testing.T) {
+	cases := []struct {
+		phase FactorPhase
+		want  string
+	}{
+		{FactorWaiting, "waiting_at_dock"},
+		{FactorAboard, "aboard"},
+		{FactorDelivering, "delivering"},
+		{FactorReturning, "returning_to_dock"},
+	}
+	for _, tc := range cases {
+		const instId = 999001
+		SetFactorStateForTest(instId, tc.phase)
+		got, ok := FactorPhaseName(instId)
+		ClearFactorStateForTest(instId)
+		if !ok {
+			t.Fatalf("phase %d: FactorPhaseName reported ok=false", tc.phase)
+		}
+		if got != tc.want {
+			t.Errorf("phase %d: got %q, want %q", tc.phase, got, tc.want)
+		}
+	}
+}
+
+// TestFactorPhaseName_UnknownInstanceNotOk verifies the ok=false path for
+// an instance id that was never registered as a trade factor.
+func TestFactorPhaseName_UnknownInstanceNotOk(t *testing.T) {
+	if _, ok := FactorPhaseName(-1); ok {
+		t.Fatalf("expected ok=false for an unregistered instance id")
+	}
+}
