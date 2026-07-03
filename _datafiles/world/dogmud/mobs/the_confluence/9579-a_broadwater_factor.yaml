@@ -1,0 +1,38 @@
+mobid: 9579
+zone: The Confluence
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+  - caravan   # IsEssential: rooms holding factors are never unloaded
+idlecommands:
+  - 'emote counts crates of watercress and river mussels twice, then
+    a third time for good measure.'
+  - ''
+  - 'say The Broadbeam runs the river trade to Plymouth. I keep the
+    manifest honest, that is all.'
+  - ''
+activitylevel: 10
+character:
+  name: A Broadwater Factor
+  description: |
+    A Broadwater Factor stands beside the barge dock with a handcart
+    of river goods bundled against the damp, watching the current for
+    the first sign of the Broadbeam's hull. He rides downriver to New
+    Plymouth with watercress and river mussels packed fresh off the
+    confluence flats, and returns with steel ingot and glass vial and
+    copper wire bought cheap off the warehouse row. He has crewed
+    enough river trade to know a fair price from a bad one at a
+    glance, and rarely needs the slip in his pocket to prove it.
+  speciesid: 1
+  level: 1
+  gold: 10
+  stats:
+    strength:
+      training: 5
+    charisma:
+      training: 5

@@ -39,6 +39,8 @@ spawninfo:
     respawnrate: "20 real minutes"
   - mobid: 9573
     respawnrate: "15 real minutes"
+  - mobid: 9579
+    respawnrate: "15 real minutes"
 idlemessages:
 - The barge shifts on its lines as the current nudges beneath the dock.
 - Gulls circle the dock end, riding the river wind without moving their wings.

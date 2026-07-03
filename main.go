@@ -110,6 +110,8 @@ var systemNPCAnchorRooms = []int{
 	4198, // Reedwoven Hut, Stillwater Marsh — Tova, Marsh forager 371 (moved 4123→4198 in commit 0ef0d3fe; this anchor list missed the update until 2026-05-26)
 	3040, // Ironwind Steppe sanctuary — Halix, Steppe forager 372
 	4197, // Forager's Camp, Fernway South — Kessa, Fernway forager 373
+	4118, // Stillwater Boat Rental Pier — ferry factors 9577 (packet) + 9578 (heron)
+	6109, // Confluence Barge Dock — ferry factor 9579 (broadbeam)
 }
 
 func main() {
