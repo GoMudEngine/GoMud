@@ -1,0 +1,41 @@
+roomid: 6404
+zone: New Plymouth Sewers
+title: The Welded Grate
+description: >
+  The tunnel ends at a round <ansi fg="itemname">shaft</ansi> rising
+  toward the grand quarter above. Iron rungs climb its wall to a
+  <ansi fg="itemname">grate</ansi> at the top — and there the way
+  stops, permanently. Heavy <ansi fg="itemname">weld-seams</ansi> run
+  across every bar, laid down from the other side, the work of someone
+  above who paid good coin to make certain this door would never again
+  be a door. Sound still comes down where light barely does — a
+  snatch of voices, measured footsteps on stone, once in a while the
+  thin ghost of music from some high room. Whatever goes on up there,
+  it goes on without reference to you. The only way out is back south.
+biome: city
+coord:
+  x: -15
+  y: 91
+  z: -1
+exits:
+  south:
+    roomid: 6403
+nouns:
+  shaft: A brick-lined vertical bore, wider than a chimney, its rungs
+    still sound despite the damp. Climbing it would gain you nothing —
+    the top is sealed with finality, and the rungs end at a barrier
+    that was built to outlast the person who ordered it.
+  grate: Stout iron bars in a stone collar, and every gap between them
+    closed by weld. The metal ran in thick beads and hardened — no
+    hinge, no lock, no seam left to work at. It was done from above,
+    which tells you whose decision it was and how much they meant it.
+  weld-seams: Ropes of once-molten iron laid bar to bar and bar to
+    collar, rusted now to the color of dried blood. The work is crude
+    but absolutely thorough. Someone stood in a fine district and made
+    sure the sewer stayed on its own side of the floor.
+idlemessages:
+- Footsteps cross somewhere above the grate, unhurried, and fade.
+- A thread of faint music drifts down the shaft, too thin to name
+  the instrument, and is gone.
+- Voices pass overhead — a word, a laugh — muffled to nothing by
+  stone and welded iron.

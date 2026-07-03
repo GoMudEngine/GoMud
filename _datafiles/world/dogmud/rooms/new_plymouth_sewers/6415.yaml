@@ -1,0 +1,50 @@
+roomid: 6415
+zone: New Plymouth Sewers
+title: The Wallow
+description: >
+  The passage drops into a sunken chamber, and the chamber is a
+  <ansi fg="itemname">wallow</ansi> — a wide pool of dark water
+  worn smooth at its rim where something hauls itself out, and in,
+  and out again. A broad <ansi fg="itemname">silt-shelf</ansi>
+  stands above the waterline along the east wall, and what lies on
+  the shelf tells you whose room this is.
+  <ansi fg="itemname">Bones</ansi> — cracked open, sorted by no
+  current, carried here and left. Fresh kills over old ones, old
+  ones over older. The drag-marks from the junction all run down
+  into the water and end there. This is a kept room — kept the way
+  a den is kept — and nothing about it suggests its keeper ranges
+  far. A doorway continues south.
+biome: city
+coord:
+  x: -19
+  y: 82
+  z: -2
+exits:
+  north:
+    roomid: 6414
+  south:
+    roomid: 6416
+nouns:
+  wallow: The pool fills the low center of the chamber, dark and
+    quiet, its rim worn to a polish by the passage of a body far
+    heavier than yours. The water gives no account of its depth,
+    and no account of what may be under it.
+  silt-shelf: A raised bank of packed silt above the waterline,
+    dry, broad, and flattened at its center into a long hollow the
+    shape of something at rest. The bones are densest at its
+    edges, as though pushed aside to keep the sleeping place
+    clear.
+  bones: Cracked for the marrow, every one. Rat, dog, gull, and
+    larger — some of the larger ones you decide not to examine
+    closely. None were washed here; there is no current on the
+    shelf to wash them. They were carried, eaten, and dropped,
+    in layers going down.
+idlemessages:
+- Somewhere under the water, a slow heavy sound moves once and
+  stops.
+- The still surface of the wallow holds a slow drip from the
+  ceiling, ring after ring widening and gone.
+- The smell off the silt-shelf thickens when the air turns.
+spawninfo:
+  - mobid: 9570
+    respawnrate: "120 real minutes"

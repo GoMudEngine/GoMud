@@ -1,0 +1,56 @@
+roomid: 6408
+zone: New Plymouth Sewers
+title: The Junction Vault
+description: >
+  Three flows meet beneath a brick <ansi fg="itemname">dome</ansi>
+  here, and the vault gives their meeting a voice — a layered,
+  continuous rush that arrives from every direction at once and makes
+  a stranger of your own footsteps. Water enters from the northeast
+  and from somewhere behind the west wall, folds together in a slow
+  <ansi fg="itemname">confluence</ansi> at the chamber's center, and
+  leaves southwest with its argument settled. Below the familiar
+  colonial brick, at the waterline, runs a course of <ansi
+  fg="itemname">old stonework</ansi> — grey
+  blocks fitted without mortar, tight as a held breath, in a style
+  that matches nothing above them. The brick was built on top of it,
+  the way a thing is built on whatever was already there.
+biome: city
+coord:
+  x: -16
+  y: 86
+  z: -1
+exits:
+  northeast:
+    roomid: 6407
+  southwest:
+    roomid: 6409
+nouns:
+  dome: Brick laid in rings, climbing to a keystone lost in the dark
+    overhead. The masons who raised it built for load, not beauty,
+    and it has repaid them — the quarter has stood on this ceiling
+    for as long as there has been a quarter. Every sound in the
+    chamber goes up into it and comes back changed.
+  confluence: The flows meet without violence, braiding into one
+    current at the chamber's center. Each arrives a slightly
+    different color and temperature, and for a few feet you can
+    still tell them apart before the vault's slow stir makes them
+    one water with one destination.
+  old stonework: A course of grey blocks running at the waterline,
+    fitted joint to joint without a fingernail's width of mortar
+    anywhere in it. The stone is harder and darker than anything the
+    colony quarries, dressed in a style the brick above it does not
+    share or continue. It is plainly older than the vault, older than
+    the quarter, and the water has been failing to wear it down for
+    all that time.
+idlemessages:
+- The three flows shift their balance and the vault's voice changes
+  pitch, settling into a new agreement.
+- A sound crosses the dome overhead — your own step, returned late
+  and from the wrong direction.
+- The waterline rises a finger's width, covers the old stonework,
+  and withdraws.
+spawninfo:
+  - mobid: 9564
+    respawnrate: "15 real minutes"
+  - mobid: 9566
+    respawnrate: "30 real minutes"

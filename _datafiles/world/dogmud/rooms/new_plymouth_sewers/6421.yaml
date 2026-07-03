@@ -1,0 +1,43 @@
+roomid: 6421
+zone: New Plymouth Sewers
+title: Where the Waters Turn
+description: >
+  The flows of the deep gather in this wide bend and turn west
+  together, braiding into one <ansi fg="itemname">current</ansi>
+  with one direction, running quick and dark and low. And here,
+  for the first time since the stair foot, the walls begin to
+  change. Runs of <ansi fg="itemname">canal-brick</ansi> appear in
+  the old grey courses — patched in, toothed in, filling gaps and
+  shoring corners — two ages of the city meeting in the same wall,
+  neither one giving way entirely. The brick is rough and hasty
+  beside the old work, and the old work makes no comment. The silt
+  run lies back northeast. The current, and the passage with it,
+  goes west.
+biome: city
+coord:
+  x: -23
+  y: 82
+  z: -2
+exits:
+  northeast:
+    roomid: 6420
+  west:
+    roomid: 6422
+nouns:
+  current: The gathered water of the deep, running west in one
+    body now, quick and dark and shallow enough to wade. Every
+    flow of the deep ways ends up in this bend, and the bend
+    hands all of it on in a single direction.
+  canal-brick: Colonial brick, fired and mortared, worked into the
+    old grey stonework in runs and wedges wherever the older
+    courses had failed or fallen short. The bricklayers matched
+    nothing — not the coursing, not the module, not the stone —
+    they simply filled what needed filling and moved on. The
+    joins between the two ages are plain as a scar.
+idlemessages:
+- The braided current parts around a fallen block and closes over
+  again on the far side.
+- Mortar grit trickles from a seam of the canal-brick and is
+  taken west by the water.
+- The sound of the current changes at the bend, deepening as the
+  water finds its one direction.

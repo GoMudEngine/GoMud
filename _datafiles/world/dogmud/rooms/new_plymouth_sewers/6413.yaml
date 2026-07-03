@@ -1,0 +1,48 @@
+roomid: 6413
+zone: New Plymouth Sewers
+title: The Long Gallery
+description: >
+  The passage runs out into a gallery — high, straight, and long,
+  its walls carried upward in the grey dry-fitted
+  <ansi fg="itemname">courses</ansi> until they pass out of the
+  light. The line of it does not waver. Set into the stonework at
+  intervals, flush with the wall face, are
+  <ansi fg="itemname">fragments</ansi> of a paler grey material —
+  not stone, not metal, cold under the hand where the wall around
+  them is merely cool. They sit within the courses rather than
+  between them; they pass through no joint and interrupt none. They
+  were laid in when the wall was laid. The gallery continues
+  southwest. The stair foot lies back east.
+biome: city
+coord:
+  x: -18
+  y: 84
+  z: -2
+exits:
+  east:
+    roomid: 6412
+  southwest:
+    roomid: 6414
+nouns:
+  courses: Grey blocks in level runs, dressed smooth and fitted
+    dry, each joint closed to a hairline that holds no damp and
+    grows no moss. The work is exact for as far as the light
+    carries and gives every sign of being exact beyond it. Nothing
+    in the city above is built to this standard, or in this stone.
+  fragments: Flush with the wall face, smooth, a grey paler and
+    colder than the stone that holds them. No tool mark shows on
+    them or near them. A fingernail does not scratch them and the
+    damp does not stain them, and each one ends cleanly at the
+    stone, the two materials fitted to one another with the same
+    care as block to block. What they are for is not apparent from
+    looking, and looking is all they permit.
+idlemessages:
+- Your footsteps run ahead of you down the gallery and come back a
+  long moment later, thinner.
+- The moving air draws steadily out of the west along the wall,
+  without eddy or pause.
+- Light passing across one of the pale fragments returns nothing —
+  no glint, no grain, only the flat, even grey.
+spawninfo:
+  - mobid: 9568
+    respawnrate: "30 real minutes"

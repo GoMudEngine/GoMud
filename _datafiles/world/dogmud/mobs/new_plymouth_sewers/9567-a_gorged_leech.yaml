@@ -1,0 +1,56 @@
+mobid: 9567
+zone: New Plymouth Sewers
+behavior_archetype: ambusher
+aiprofile: ambush_predator
+archetype: fighting
+hostile: true
+statpool: 350
+maxwander: 0
+groups:
+  - vermin
+  - deepwater
+idlecommands:
+  - 'emote hangs just under the black surface, a paler smudge in
+    the dark water, utterly still.'
+  - ''
+  - 'emote rolls once in the pool -- a slow, heavy turn -- and the
+    surface closes over it without a sound.'
+  - ''
+  - 'emote lies half out on the stone shelf, its blind forequarter
+    swaying slowly, tasting the air it cannot see.'
+  - ''
+combatcommands:
+  - 'emote surges up out of the black water and clamps on, its
+    rasp-mouth working in a slow circle.'
+  - ''
+  - 'emote tightens its coil of wet muscle and pulls, patient as a
+    tide, toward the pool.'
+  - ''
+  - 'emote grinds deeper, and the shadows inside its body shift
+    and settle.'
+  - ''
+activitylevel: 20
+character:
+  items: []
+  name: A Gorged Leech
+  description: |
+    A leech the size of a rolled carpet, grown vast on whatever
+    the deep water sends it and pale as everything down here is
+    pale -- it has never once seen light and has no eyes to see
+    it with. Its skin has gone translucent as wet paper, and
+    inside the slack grey body its last meals hang as dark
+    suspended shadows, some of them still recognizable in
+    outline, none of them worth studying long.
+    When it moves, the shadows move a half-beat after it, like
+    cargo shifting in a hold.
+  speciesid: 18
+  level: 1
+  gold: 8
+  stats:
+    strength:
+      training: 8
+    vitality:
+      training: 8
+    perception:
+      training: 4
+itemdropchance: 0

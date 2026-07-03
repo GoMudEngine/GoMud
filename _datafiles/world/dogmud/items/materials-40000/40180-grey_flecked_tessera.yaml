@@ -1,0 +1,18 @@
+itemid: 40180
+name: Grey-Flecked Tessera
+namesimple: tessera
+not_salable: true
+description: >-
+  A thumb-sized tile, cut true and once fitted into stonework far
+  older than the sewers built around it. Pried loose long ago, it was
+  lost to the silt of a deep pool-chamber and lay there until
+  something with a taste for buried things stirred it back to the
+  surface. One face carries a fleck of a gray material that is
+  neither stone nor metal -- cold to the touch, and without a single
+  tool mark anywhere on it.
+type: object
+subtype: mundane
+weight: 0.1
+value: 0
+rarity_tier: 40
+is_component: false

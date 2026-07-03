@@ -7,11 +7,12 @@ description: >
   and the man who sweeps the street has made it his own.
   A dead pocket behind the tannery's north wall, it
   catches everything the morning current brings. The
+  gutter run beside the seat of the
   <ansi fg="itemname">gutter-grate</ansi> at the
-  corner's low point is thick with the quarter's
-  leavings, packed dense enough that it has ceased to
-  drain properly and the water stands in a shallow pool
-  above it. The sweeper keeps his findings arranged along
+  corner's low point is packed thick with the
+  quarter's leavings, dense enough that it has ceased
+  to drain properly and the water stands in a shallow
+  pool over run and grate alike. The sweeper keeps his findings arranged along
   the base of the wall — a
   <ansi fg="itemname">hoard</ansi> of salvaged things,
   sorted in a logic only he understands: lengths of good
@@ -30,19 +31,29 @@ exits:
     roomid: 5616
   east:
     roomid: 5619
+  down:
+    roomid: 6407
+    zone: New Plymouth Sewers
 nouns:
   gutter-grate: An iron grate set into the corner
     flag, meant to admit the street drainage and
-    prevent clogging. It is clogging. Compacted below
-    the standing water — leaf-mash, grit, rags too
-    small to have value, a pebble that should never
-    have been interesting to anyone and yet is here.
-    Beneath the compaction the grate bars are visible,
-    dark with the residue of years, and below them
-    the drain descends into its undisclosed purpose.
+    prevent clogging. The clog has happened anyway —
+    packed solid into the gutter run beside the
+    grate's seat, leaf-mash, grit, rags too small to
+    have value, a pebble that should never have been
+    interesting to anyone and yet is here. The grate
+    bars themselves stand clear of the muck, dark
+    with the residue of years, and below them the
+    drain descends into its undisclosed purpose. The
+    grate lifts free of its seat, and a line of iron
+    rungs goes down the shaft beneath.
     Something about the corner's standing water troubles
     the light in a way you cannot account for simply
     by its depth.
+  grate: |-
+    An iron grate set into the corner flag, its bars dark
+    with the residue of years. It lifts free of its seat,
+    and a line of iron rungs goes down the shaft beneath.
   hoard: Arranged along the base of the wall with the
     care of someone who takes their finds seriously —
     a coil of string of varying thickness, a copper

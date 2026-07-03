@@ -1,0 +1,54 @@
+mobid: 9564
+zone: New Plymouth Sewers
+behavior_archetype: generic_fighter
+aiprofile: brute
+archetype: fighting
+hostile: true
+statpool: 200
+maxwander: 0
+groups:
+  - slime
+idlecommands:
+  - 'emote lies against the waterline like a fold of wet mortar,
+    distinguishable from the wall only when it breathes.'
+  - ''
+  - 'emote pours itself a hand-width along the stonework, pauses,
+    and settles as though it had never moved.'
+  - ''
+  - 'emote draws something small out of the confluence and closes
+    over it without hurry.'
+  - ''
+combatcommands:
+  - 'emote heaves its whole mass forward in a slow, committed
+    surge.'
+  - ''
+  - 'emote folds around what it touches, gripping with a cold,
+    even, mindless pressure.'
+  - ''
+  - 'emote pulls back into itself and comes on again, heavier than
+    before.'
+  - ''
+activitylevel: 20
+character:
+  items:
+    - itemid: 40050
+      dropchance: 40
+  name: A Culvert Slime
+  description: |
+    A slow tonnage of translucent jelly the grey-brown of the
+    channel it feeds from, spread along the waterline where three
+    flows meet and everything the quarter loses comes past. It has
+    no face and needs none -- it is a stomach with patience. A
+    single thread of vivid, wrong green runs through its dun
+    mass, branching and re-joining like lightning held under
+    glass, a color nothing in these tunnels has any business
+    making. The vein brightens when something living comes near.
+  speciesid: 16
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 6
+    vitality:
+      training: 6
+itemdropchance: 40

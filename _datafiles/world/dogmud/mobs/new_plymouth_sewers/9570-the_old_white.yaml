@@ -1,0 +1,74 @@
+mobid: 9570
+zone: New Plymouth Sewers
+behavior_archetype: leader
+aiprofile: predator
+archetype: fighting
+submission_policy: lethal
+surrender_policy: never
+hostile: true
+statpool: 700
+maxwander: 0
+groups:
+  - animal
+  - serpent
+  - predator
+spawnmutations: [large]
+idlecommands:
+  - 'emote lies coiled on the silt-shelf in a pale hill of itself,
+    utterly still, the milk-blind head resting on the topmost
+    coil.'
+  - ''
+  - 'emote pours a portion of its length into the wallow without
+    a sound, and the dark water accepts it.'
+  - ''
+  - 'emote lifts its head and holds it swaying in the dark, jaw
+    slightly parted around fangs it can no longer fully sheathe,
+    tasting the air for what the tunnels have sent it.'
+  - ''
+combatcommands:
+  - 'emote strikes -- a pale blur out of the dark, faster than
+    anything that size has any right to be.'
+  - ''
+  - 'emote throws a coil the width of a barrel across the floor,
+    sweeping everything before it toward the water.'
+  - ''
+  - 'emote draws its head back in a long, patient curve, blind
+    eyes fixed on nothing, every other sense fixed on you.'
+  - ''
+  - 'emote hisses -- a sound like the whole wallow exhaling --
+    and the bones on the shelf shiver with it.'
+  - ''
+activitylevel: 30
+character:
+  items:
+    - itemid: 40179
+      dropchance: 100
+    - itemid: 40180
+      dropchance: 100
+  name: The Old White
+  description: |
+    A serpent, if the word can stretch that far. It is white the
+    way the deep is dark -- absolutely, from blunt scarred snout
+    to the last of a length you cannot see the end of, scales
+    gone thick and pale as worn ivory. Its eyes are smooth blind
+    domes the color of milk, and it has not missed them in a very
+    long time. The mouth is the part that keeps growing. Its
+    fangs have run on past any serpent's measure, curved ivory
+    the length of a forearm, too long now for the jaw to close
+    over completely -- so it rests with them showing, patient,
+    the way old kings rest wearing their crowns. It was here
+    before the city had a name for down. Everything on the shelf
+    around it arrived as food.
+  speciesid: 8
+  level: 1
+  gold: 60
+  stats:
+    strength:
+      training: 14
+    vitality:
+      training: 12
+    dexterity:
+      training: 8
+    perception:
+      training: 6
+itemdropchance: 100

@@ -1,0 +1,57 @@
+mobid: 9563
+zone: New Plymouth Sewers
+behavior_archetype: generic_fighter
+aiprofile: skirmisher
+archetype: fighting
+hostile: true
+statpool: 150
+maxwander: 2
+groups:
+  - vermin
+  - animal
+  - rodent
+idlecommands:
+  - 'emote noses along the walkway edge, whiskers reading the
+    stonework ahead of its feet.'
+  - ''
+  - 'emote sits up on its haunches, both tail-tips curling in
+    opposite directions, and listens to the dark.'
+  - ''
+  - 'wander'
+  - ''
+  - 'emote gnaws at something wedged in a joint of the masonry,
+    patient and unhurried.'
+  - ''
+combatcommands:
+  - 'emote darts in low, snaps once at an ankle, and is somewhere
+    else before the kick lands.'
+  - ''
+  - 'emote skitters up the curve of the wall and comes off it teeth
+    first.'
+  - ''
+  - 'emote feints left along the channel edge and comes in from the
+    right instead.'
+  - ''
+activitylevel: 25
+character:
+  items: []
+  name: A Sewer Rat
+  description: |
+    Big for a rat, sleek with good living, the color of the water
+    it works beside. The quarter above feeds a whole nation of
+    these, and this one has the unbothered confidence of a citizen
+    in its own country. Its tail is the wrong part -- a hand's
+    width from the end it forks into two working tips, and both
+    halves move on their own, curling and testing the air behind
+    it like a second set of whiskers. The Chrysalis reaches even
+    here, and the rats wear it as casually as everything else they
+    have taken from the city.
+  speciesid: 10
+  level: 1
+  gold: 5
+  stats:
+    dexterity:
+      training: 6
+    perception:
+      training: 4
+itemdropchance: 0

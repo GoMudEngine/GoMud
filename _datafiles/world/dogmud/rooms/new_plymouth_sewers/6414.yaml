@@ -1,0 +1,48 @@
+roomid: 6414
+zone: New Plymouth Sewers
+title: The Junction of the Deep Ways
+description: |
+  Three ways meet in a broad chamber of the old stonework — a
+  junction that appears on no map the city keeps, marked by no
+  survey pin, numbered by no engineer. It was here before there
+  was anything above to map it. A current of air moves through
+  the chamber with no source you can put a direction to,
+  arriving and leaving on its own schedule. From the west comes
+  the sound of water, low and continuous. The way south is
+  different. The <ansi fg="itemname">silt</ansi> across its threshold is scored with
+  long <ansi fg="itemname">drag-marks</ansi>, broad and repeated, and the air out of
+  that passage carries a smell the other two do not. The
+  gallery lies back to the northeast.
+biome: city
+coord:
+  x: -19
+  y: 83
+  z: -2
+exits:
+  northeast:
+    roomid: 6413
+  south:
+    roomid: 6415
+  west:
+    roomid: 6417
+nouns:
+  silt: A fine dark sediment laid evenly across the chamber floor,
+    deep enough to hold a print. It records everything that
+    crosses it, and what it records most is the traffic through
+    the south passage — the same broad track, laid down over
+    itself, again and again.
+  drag-marks: Broad furrows pressed into the silt, deeper at the
+    center than any boot or barrow could account for, all of them
+    running through the south passage and none of them anywhere
+    else. Something heavy goes that way, and comes back, and has
+    been doing both for long enough to wear its road smooth.
+idlemessages:
+- The water sound carried in from somewhere far to the west rises
+  a little, then settles back to its steady register.
+- The current of air crosses the junction, pauses, and resumes
+  from a different quarter.
+- From somewhere down the south passage comes a single low sound,
+  not repeated.
+spawninfo:
+  - mobid: 9568
+    respawnrate: "20 real minutes"

@@ -1,0 +1,45 @@
+roomid: 6406
+zone: New Plymouth Sewers
+title: Lamp-Niche Passage
+description: >
+  At regular intervals along this stretch, someone has cut small
+  <ansi fg="itemname">lamp-niches</ansi> into the brick at shoulder
+  height — neat, deliberate work, each one just deep enough to shelter
+  a flame from the tunnel's breath. Most hold <ansi
+  fg="itemname">candle stubs</ansi> burned down to puddled heels, and
+  above every niche a dark <ansi fg="itemname">soot fan</ansi> spreads
+  up the wall, the accumulated breath of years of small fires. The
+  smell of tallow hangs under the sewer's other smells like a signature.
+  People use these tunnels. People have used them for a long time,
+  carefully, and by the spacing of the niches they knew exactly how
+  far one candle's light would carry to the next.
+biome: city
+coord:
+  x: -15
+  y: 88
+  z: -1
+exits:
+  north:
+    roomid: 6405
+  south:
+    roomid: 6407
+nouns:
+  lamp-niches: Cut square and true into the brick, each a hand deep,
+    spaced so that a light in one is just visible from the next.
+    This was not idle work — someone measured, someone planned, and
+    generations of toshers have kept the system in use ever since.
+  candle stubs: Heels of tallow puddled into the niche floors, some
+    fresh enough to give under a thumbnail, some fossilized to the
+    brick. One still carries a lean of wick. Whoever burned it last
+    intended to come back, or knew that somebody else would.
+  soot fan: A dark bloom spread up the wall above each niche, layered
+    like the growth rings of a tree. The oldest layers have gone into
+    the brick itself and will not scrub out. Years of small fires,
+    every one of them belonging to someone with business down here.
+idlemessages:
+- A draught moves down the passage and every niche answers it with a
+  faint whistle, each in a slightly different voice.
+- The tallow smell strengthens for a moment, as though a candle had
+  just been snuffed somewhere out of sight.
+- Far down the tunnel, something that might be a light shows itself
+  for a heartbeat and thinks better of it.

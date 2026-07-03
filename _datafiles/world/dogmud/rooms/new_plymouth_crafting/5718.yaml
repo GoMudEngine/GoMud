@@ -15,8 +15,10 @@ description: >
   below. The yard floor is worn smooth from years of
   foot-traffic between door and vat and rack, the path
   worn as clearly as any road. A drain at the center
-  has been capped in fresh mortar, cleaner than the
-  surrounding stone — the tannery's effluent routes
+  was capped in fresh mortar, cleaner than the
+  surrounding stone, but the cap has been levered
+  aside — an open shaft drops below, iron rungs set
+  into its wall. The tannery's effluent routes
   elsewhere now, toward the guild-approved channel.
 biome: city
 coord:
@@ -26,6 +28,9 @@ coord:
 exits:
   west:
     roomid: 5717
+  down:
+    roomid: 6403
+    zone: New Plymouth Sewers
 nouns:
   bark-vats: Six stone-lined tanning vats in a row,
     each holding a liquor of varying concentration.
@@ -55,5 +60,6 @@ idlemessages:
   from the rack and the occasional creak of its joints.
 - Light comes over the south wall and catches the near
   vat's surface — clear enough to see the hide beneath.
-- The capped drain sits in slightly cleaner mortar
-  than the surrounding stone — a recent improvement.
+- The opened drain sits in slightly cleaner mortar
+  than the surrounding stone, its cap levered aside
+  and left leaning against the near vat.

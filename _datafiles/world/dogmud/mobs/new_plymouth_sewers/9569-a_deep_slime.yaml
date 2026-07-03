@@ -1,0 +1,55 @@
+mobid: 9569
+zone: New Plymouth Sewers
+behavior_archetype: generic_fighter
+aiprofile: brute
+archetype: fighting
+hostile: true
+statpool: 500
+maxwander: 0
+groups:
+  - slime
+idlecommands:
+  - 'emote lies across the silt like a drift of the current
+    itself, colorless, betrayed only by the slow light turning
+    over in its depths.'
+  - ''
+  - 'emote works its way a span against the flow, combing the
+    silt beneath it clean of everything living.'
+  - ''
+  - 'emote pulses once, deep in its mass -- a soft glow that
+    swells, crests, and dies like a heartbeat made of light.'
+  - ''
+combatcommands:
+  - 'emote rises off the silt-bed in a single glassy wall and
+    comes down.'
+  - ''
+  - 'emote closes around a limb with the slow certainty of a
+    tide, and the light in its depths beats faster.'
+  - ''
+  - 'emote spreads itself wider across the passage, patient,
+    leaving less and less of anywhere to stand.'
+  - ''
+activitylevel: 20
+character:
+  items:
+    - itemid: 40050
+      dropchance: 60
+  name: A Deep Slime
+  description: |
+    Where its cousins above wear the color of the channels that
+    feed them, this one has none at all -- a clear, heavy mass
+    the size of a cart, invisible in the dark water until you are
+    standing in it. It has never needed color down here. What it
+    has instead is the pulse. Deep at its center a soft glow
+    beats, swells and fades, swells and fades, slow as a sleeping
+    heart, the only light this passage has ever made for itself.
+    The old deep grew this thing, and the old deep is patient.
+  speciesid: 16
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 10
+    vitality:
+      training: 10
+itemdropchance: 60

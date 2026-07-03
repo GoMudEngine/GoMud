@@ -1,0 +1,44 @@
+roomid: 6412
+zone: New Plymouth Sewers
+title: The Stair Foot
+description: >
+  At the foot of the old stair, the brick city ends. The last course
+  of colonial masonry stops in a ragged line partway up the stair
+  shaft, and everything below that line is other work entirely —
+  grey <ansi fg="itemname">stonework</ansi> fitted dry, block against
+  block, the joints so close the wall reads as one continuous
+  surface. Nothing about it continues anything from above. The air
+  is cooler here, and quieter, and it moves — a slow, even travel
+  out of the west, as steady as a pulse. The <ansi
+  fg="itemname">stair</ansi> climbs back up toward the sewers you
+  know. A passage opens west, into the dark that the moving air
+  comes from.
+biome: city
+coord:
+  x: -17
+  y: 84
+  z: -2
+exits:
+  up:
+    roomid: 6410
+  west:
+    roomid: 6413
+nouns:
+  stonework: Grey blocks, dense and dark, dressed to a smooth face
+    and set without mortar — the joints tight enough that your
+    fingernail finds them before your eye does. There is no tool
+    mark anywhere on the surface, no chisel line, no dressing
+    scar. The brick above was laid by hands you could name the
+    trade of. This was not.
+  stair: The grey steps end here, each tread worn to a shallow
+    hollow down its center line. Seen from below, the wear tells
+    its story plainly — the traffic came up and down this stair
+    long before the brick arrived to meet it, and the brick, when
+    it came, simply stopped where the older work began.
+idlemessages:
+- The air draws out of the west along the passage, even and
+  unhurried, never varying its pace.
+- A drop of water falls somewhere up the stair shaft, in the brick
+  country above, and arrives here as a very small sound.
+- The cold coming off the grey stone deepens a fraction, then
+  holds.

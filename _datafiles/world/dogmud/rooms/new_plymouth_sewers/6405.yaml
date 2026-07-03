@@ -1,0 +1,47 @@
+roomid: 6405
+zone: New Plymouth Sewers
+title: The Northern Trunk
+description: >
+  The trunk tunnel runs broad and straight here, the main artery of
+  the quarter's underside. A raised <ansi fg="itemname">walkway</ansi>
+  of worn brick keeps you a hand's width above the channel, which
+  slides past dark and businesslike on its way south. The rats own
+  this stretch and have not troubled to hide it — <ansi
+  fg="itemname">droppings</ansi> line the walkway's edge in drifts,
+  the <ansi fg="itemname">gnawed timber</ansi> of an old shoring post
+  has been chiseled nearly through by generations of teeth, and at
+  the far edge of your lamplight the shadows along the walkway's
+  edge are never quite empty.
+biome: city
+coord:
+  x: -15
+  y: 89
+  z: -1
+exits:
+  north:
+    roomid: 6403
+  south:
+    roomid: 6406
+nouns:
+  walkway: A raised brick shelf running the tunnel's length, wide
+    enough for one person walking carefully or two people who trust
+    each other. Its surface is worn smooth down the center — feet
+    have used this route for a long time, and not only rat feet.
+  droppings: Drifted along the wall's base in quantities that suggest
+    a population rather than a visitor. Some are old and grey, some
+    are not old at all. The colony is large, established, and by all
+    evidence thriving on the quarter's leavings.
+  gnawed timber: A shoring post set by some past generation of sewer
+    men, now chiseled to an hourglass waist by patient teeth. The
+    tooth-marks overlap in layers, oldest darkened, newest pale.
+    It still holds. It will not hold forever.
+idlemessages:
+- A skitter of small claws crosses the brick somewhere beyond the
+  lamplight, hurried and then abruptly silent.
+- A chorus of small scratching starts up inside the wall, runs for
+  a moment, and stops.
+- The channel carries something past — a rind, a rag — and a moment
+  later, farther downstream, the water answers with a soft plop.
+spawninfo:
+  - mobid: 9563
+    respawnrate: "10 real minutes"

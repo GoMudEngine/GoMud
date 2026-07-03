@@ -1,0 +1,58 @@
+mobid: 9565
+zone: New Plymouth Sewers
+behavior_archetype: predator
+aiprofile: predator
+archetype: fighting
+hostile: true
+statpool: 250
+maxwander: 0
+groups:
+  - animal
+  - canine
+idlecommands:
+  - 'emote lifts its head toward the grey slot of light from the
+    grate and tracks something moving up there, unblinking.'
+  - ''
+  - 'emote paces the barnacle line at the wall, back and forth,
+    the way a thing paces when it has decided this is its ground.'
+  - ''
+  - 'emote worries at something wedged behind the knotted rope,
+    growling low and constant to itself.'
+  - ''
+combatcommands:
+  - 'emote drops its head, and the jaw swings open past the point
+    where any dog''s jaw should stop.'
+  - ''
+  - 'emote lunges in and takes hold, whipping its whole weight
+    side to side.'
+  - ''
+  - 'emote circles for the back of the leg, patient about it, in
+    no hurry to waste the spring.'
+  - ''
+activitylevel: 25
+character:
+  items:
+    - itemid: 40070
+      dropchance: 50
+  name: A Feral Mongrel
+  description: |
+    Dock stock gone wrong -- a rangy, scar-hided dog that came
+    down the loose grate after the rats one season and never went
+    back up. Hunger has burned it down to wire and appetite, and
+    the tunnels have finished whatever the hunger started. Its
+    jaw is the part you notice. The hinge of it sits too far back,
+    and when it yawns the mouth swings open past any honest dog's
+    limit, wide enough to take a forearm whole. It watches you
+    with a working dog's attention and none of a working dog's
+    loyalties left in it.
+  speciesid: 2
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 6
+    dexterity:
+      training: 5
+    perception:
+      training: 4
+itemdropchance: 50
