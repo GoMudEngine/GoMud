@@ -34,7 +34,15 @@ func SetBaseDirForTest(dir string) {
 }
 
 // saveOne writes the given city's warehouse to disk. Takes a snapshot of
-// the in-memory pool under the package mutex before marshaling.
+// the in-memory pool under the package mutex before marshaling, and clears
+// the dirty flag in that SAME locked section — the flag must correspond to
+// "no changes since this snapshot," not "no changes since the write
+// finished." Clearing it after the (unlocked) marshal/write would open a
+// window where a Deposit landing mid-write re-dirties the zone and then
+// gets silently un-dirtied by this function's own post-write clear, losing
+// track of state that was never actually persisted. On any write failure,
+// the flag is re-marked so a later SaveDirty/SaveAll retries instead of
+// treating the zone as clean.
 func saveOne(zone string) error {
 	mu.Lock()
 	w, ok := warehouses[zone]
@@ -43,6 +51,7 @@ func saveOne(zone string) error {
 		snapshot = *w
 		snapshot.Stock = append([]Entry(nil), w.Stock...)
 	}
+	delete(dirty, zone)
 	mu.Unlock()
 
 	if !ok {
@@ -51,21 +60,28 @@ func saveOne(zone string) error {
 
 	path := warehousePath(zone)
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		markDirty(zone)
 		return fmt.Errorf("warehouse.saveOne: mkdir: %w", err)
 	}
 	data, err := yaml.Marshal(&snapshot)
 	if err != nil {
+		markDirty(zone)
 		return fmt.Errorf("warehouse.saveOne: marshal: %w", err)
 	}
 	if err := os.WriteFile(path, data, 0644); err != nil {
+		markDirty(zone)
 		return fmt.Errorf("warehouse.saveOne: write %s: %w", path, err)
 	}
 
-	mu.Lock()
-	delete(dirty, zone)
-	mu.Unlock()
-
 	return nil
+}
+
+// markDirty re-marks a zone dirty. Used to restore the dirty flag after a
+// failed save so the next SaveDirty/SaveAll pass retries it.
+func markDirty(zone string) {
+	mu.Lock()
+	dirty[zone] = true
+	mu.Unlock()
 }
 
 // SaveAll persists every registered city's warehouse to disk, regardless
