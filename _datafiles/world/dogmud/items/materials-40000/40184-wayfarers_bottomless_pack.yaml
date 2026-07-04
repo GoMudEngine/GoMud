@@ -1,0 +1,19 @@
+itemid: 40184
+name: Wayfarer's Bottomless Pack
+namesimple: pack
+description: >-
+  A pack of silk folded so finely it seems stitched from more space
+  than it has surface for, framed on something too clean-jointed and
+  patient to have come off any living loom. Load it past all reason
+  and it only settles lighter on the shoulders, as if amused by the
+  attempt. Travelers used to swap tall tales about a pack that never
+  filled and never weighed a thing -- turns out the old tale
+  undersold it. Sling it on and forget you are carrying anything
+  at all.
+type: back
+subtype: wearable
+weight_reduction: 0.99
+weight: 1.0
+rarity_tier: 82
+value: 5000
+not_salable: true
