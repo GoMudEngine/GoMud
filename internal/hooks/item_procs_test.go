@@ -289,6 +289,88 @@ func TestDispatchOnGrappleProcs_Bleed(t *testing.T) {
 	}
 }
 
+func TestProcStealPool_Conviction(t *testing.T) {
+	defer seedAllRegistries()()
+	caster := characters.New()
+	caster.ConvictionMax.Value = 100
+	caster.Conviction = 40
+	target := characters.New()
+	target.ConvictionMax.Value = 100
+	target.Conviction = 50
+
+	ok := procStealPool(caster, target, map[string]float64{"pool": 3, "amount_pct": 0.10})
+	if !ok {
+		t.Fatal("steal_pool should execute")
+	}
+	if target.Conviction != 40 { // 10% of target's max = 10 stolen
+		t.Fatalf("target conviction expected 40, got %d", target.Conviction)
+	}
+	if caster.Conviction != 50 {
+		t.Fatalf("caster conviction expected 50, got %d", caster.Conviction)
+	}
+
+	// clamps: target at 0, caster at max
+	target.Conviction = 3
+	caster.Conviction = 95
+	procStealPool(caster, target, map[string]float64{"pool": 3, "amount_pct": 0.10})
+	if target.Conviction != 0 || caster.Conviction != 98 {
+		t.Fatalf("clamps wrong: target=%d caster=%d", target.Conviction, caster.Conviction)
+	}
+}
+
+func TestProcStealPool_Guards(t *testing.T) {
+	defer seedAllRegistries()()
+	caster := characters.New()
+	target := characters.New()
+	if procStealPool(nil, target, map[string]float64{"pool": 3, "amount_pct": 0.1}) {
+		t.Fatal("nil owner must not execute")
+	}
+	if procStealPool(caster, nil, map[string]float64{"pool": 3, "amount_pct": 0.1}) {
+		t.Fatal("nil target must not execute")
+	}
+	if procStealPool(caster, target, map[string]float64{"pool": 3}) {
+		t.Fatal("missing amount_pct must not execute")
+	}
+	target.Conviction = 0
+	target.ConvictionMax.Value = 100
+	if procStealPool(caster, target, map[string]float64{"pool": 3, "amount_pct": 0.1}) {
+		t.Fatal("empty target pool must not execute (no cooldown burn)")
+	}
+	if procStealPool(caster, target, map[string]float64{"pool": 2, "amount_pct": 0.1}) {
+		t.Fatal("unimplemented pool ids must not execute")
+	}
+}
+
+// TestDispatchOnSpellHitProcs_StealPool proves the on_spell_hit dispatch reads
+// the caster's WEAPON slot (per procBearingItems) and drains the target's
+// conviction into the caster — the Staff of the Hollow Choir's sustain loop.
+func TestDispatchOnSpellHitProcs_StealPool(t *testing.T) {
+	defer seedAllRegistries()()
+	enableItemProcs(t)
+	defer items.SeedItemsForTest(map[int]*items.ItemSpec{
+		999922: {ItemId: 999922, Name: "hollow staff", Type: items.Weapon, Hands: 2,
+			Procs: []items.ItemProc{{Trigger: "on_spell_hit", Chance: 100, Effect: "steal_pool",
+				Params: map[string]float64{"pool": 3, "amount_pct": 0.10}}}},
+	})()
+
+	caster := characters.New()
+	caster.ConvictionMax.Value = 100
+	caster.Conviction = 40
+	caster.Equipment.Weapon = items.New(999922)
+	target := characters.New()
+	target.ConvictionMax.Value = 100
+	target.Conviction = 50
+
+	dispatchItemProcs("on_spell_hit", caster, target, nil, 25)
+
+	if target.Conviction != 40 {
+		t.Fatalf("on_spell_hit steal_pool expected target conviction 40, got %d", target.Conviction)
+	}
+	if caster.Conviction != 50 {
+		t.Fatalf("on_spell_hit steal_pool expected caster conviction 50, got %d", caster.Conviction)
+	}
+}
+
 func TestMobDeathItemProcs_RecordsLastKill(t *testing.T) {
 	defer seedAllRegistries()()
 	enableItemProcs(t)

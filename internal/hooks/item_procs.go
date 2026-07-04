@@ -152,9 +152,40 @@ func procBearingItems(c *characters.Character, trigger string) []items.Item {
 	return nil
 }
 
-// Stub — implemented by Task 7; returning false means "did not execute"
-// (so the cooldown isn't marked).
-func procStealPool(owner, other *characters.Character, params map[string]float64) bool { return false }
+// procStealPool drains a pool from the target into the owner. Params:
+// pool (3=conviction; 1=health/2=stamina reserved, unimplemented — YAGNI
+// until an item needs them), amount_pct (fraction of the TARGET's pool
+// max, capped by what they actually have). Executes only when something
+// was actually stolen (so an empty-pool target does not burn the cooldown).
+func procStealPool(owner, other *characters.Character, params map[string]float64) bool {
+	if owner == nil || other == nil {
+		return false
+	}
+	pct := params["amount_pct"]
+	if pct <= 0 {
+		return false
+	}
+	switch int(params["pool"]) {
+	case 3: // conviction
+		amt := int(float64(other.ConvictionMax.Value) * pct)
+		if amt < 1 {
+			amt = 1
+		}
+		if amt > other.Conviction {
+			amt = other.Conviction
+		}
+		if amt <= 0 {
+			return false
+		}
+		other.Conviction -= amt
+		owner.Conviction += amt
+		if owner.Conviction > owner.ConvictionMax.Value {
+			owner.Conviction = owner.ConvictionMax.Value
+		}
+		return true
+	}
+	return false
+}
 
 // procApplyCondition applies a combat condition to the target. Params:
 // condition (1=bleeding — the switch is the extension point for future
