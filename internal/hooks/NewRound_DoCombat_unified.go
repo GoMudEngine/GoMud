@@ -133,6 +133,14 @@ func handleCombatRound(
 	// Phase 3: damage-layer bonuses (Conviction / Adrenaline / Return / Lifesteal).
 	applyCombatDamageBonuses(atk, def, &res)
 
+	// Pinnacle item procs: attacker's weapon on_hit. Fires for all four
+	// quadrants (player and mob attackers) — the point of hooking the unified
+	// orchestrator. Gated internally by ItemProcsEnabled + the per-proc
+	// chance/cooldown; a no-op when the attacker carries no proc weapon.
+	if res.Hit {
+		dispatchItemProcs("on_hit", atk.GetCharacter(), def.GetCharacter(), atk.GetRoom(), res.DamageToTarget)
+	}
+
 	// Combat analytics (shared across all four quadrants).
 	recordCombatAnalytics(atk, def, res, evt.RoundNumber)
 
