@@ -83,6 +83,10 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">You are missing: %s.</ansi>`, result.MissingTag))
 		return true, nil
 
+	case result.ForeignComponent:
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">%s</ansi>`, result.ForeignReason))
+		return true, nil
+
 	case result.ImmediateComplete:
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="green">%s</ansi>`, result.SuccessMsg))
 		return true, nil
@@ -141,6 +145,12 @@ func craftEnchanting(rest string, recipe *crafting.RecipeSpec, user *users.UserR
 	ok, missing := crafting.HasIngredients(user.Character.Items, user.Character.ComponentItems, recipe)
 	if !ok {
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">You are missing: %s.</ansi>`, missing))
+		return true, nil
+	}
+
+	// Self-crafted-component check (require_own_components)
+	if err := crafting.CheckOwnComponents(recipe, user.Character.Items, user.Character.ComponentItems, user.Character.Name); err != nil {
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">%s</ansi>`, err.Error()))
 		return true, nil
 	}
 

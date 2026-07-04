@@ -418,9 +418,21 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 										if bottleAgingMult > 0 {
 											newItem.BottleMultiplier = bottleAgingMult
 										}
-										// Maker's mark for skilled crafters on non-material items
+										// Maker's mark for skilled crafters. Components are now
+										// stamped too (needed for require_own_components pinnacle-
+										// assembly gating; see internal/crafting.CheckOwnComponents).
+										// CAVEAT: the Type != items.Object gate below still excludes
+										// every item authored with the standard `type: object` —
+										// which is 100% of existing is_component:true materials in
+										// the data files, including bulk ingredients AND crafted
+										// sub-components alike (auto-routing to the component bag
+										// only checks IsComponent, not Type, so this is safe to
+										// change). Any pinnacle sub-component recipe output that
+										// needs a MakerName stamp (for require_own_components to be
+										// enforceable) MUST use a Type other than Object, or this
+										// gate will silently keep it maker-less.
 										newSpec := newItem.GetSpec()
-										if newItem.CraftSkill >= 30 && !newSpec.IsComponent && newSpec.Type != items.Object {
+										if newItem.CraftSkill >= 30 && newSpec.Type != items.Object {
 											newItem.MakerName = user.Character.Name
 										}
 										user.Character.StoreItem(newItem)

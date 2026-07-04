@@ -32,6 +32,10 @@ type CraftResult struct {
 	WrongStation bool
 	// MissingIngredients is true when the actor lacks one or more ingredients.
 	MissingIngredients bool
+	// ForeignComponent is true when the recipe requires self-crafted
+	// components (RequireOwnComponents) and a matching ingredient in the
+	// actor's pools was made by someone else (or has no maker at all).
+	ForeignComponent bool
 	// AlreadyCrafting is true when the character already has an active
 	// CraftingState.
 	AlreadyCrafting bool
@@ -44,6 +48,7 @@ type CraftResult struct {
 	TimeRounds    int    // recipe.TimeRounds — for duration-description messaging
 	StationNeeded string
 	MissingTag    string
+	ForeignReason string // player-presentable reason for ForeignComponent
 	OutputName    string // display name of the produced item (immediate-complete only)
 	SuccessMsg    string // recipe.SuccessMessage
 }
@@ -107,6 +112,13 @@ func InitiateCraft(actor Actor, recipeName string) CraftResult {
 	if !ok {
 		res.MissingTag = missingTag
 		res.MissingIngredients = true
+		return res
+	}
+
+	// ── Self-crafted-component gate (require_own_components) ─────────────────
+	if err := crafting.CheckOwnComponents(recipe, char.Items, char.ComponentItems, char.Name); err != nil {
+		res.ForeignReason = err.Error()
+		res.ForeignComponent = true
 		return res
 	}
 
