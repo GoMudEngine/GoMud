@@ -111,6 +111,9 @@ func RegisterListeners() {
 	// Mob death: clear tracking/shadow state pointing at the dead mob
 	events.RegisterListener(events.MobDeath{}, MobDeathTrackingCleanup)
 
+	// Mob death: pinnacle on_kill procs + last-kill round (hunger anchor)
+	events.RegisterListener(events.MobDeath{}, MobDeathItemProcs)
+
 	// Caravan: patrol-waypoint arrival drives vendor restocks + Fernway pickup
 	events.RegisterListener(events.PatrolWaypointArrival{}, caravan.CaravanArrivalListener)
 	// Caravan: runner-circuit completion returns residual cargo from Lars to wagon

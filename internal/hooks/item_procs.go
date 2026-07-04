@@ -1,0 +1,159 @@
+package hooks
+
+import (
+	"fmt"
+
+	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/util"
+)
+
+// item_procs.go — the pinnacle item proc engine (Stage 1, Task 4).
+//
+// Procs are authored on ItemSpec (items.ItemProc: Trigger/Chance/
+// CooldownRounds/Effect/Params, validated at load). This file gates them
+// (chance roll + per-item-slot cooldown via MiscData) and dispatches the
+// concrete effects. Effects live in Go — this is the combat hot path, so no
+// scripting — and per-swing overhead is held to 1-2 spec lookups by
+// procBearingItems narrowing which slots each trigger consults.
+//
+// Tasks 5-7 replace the three effect stubs (steal_pool / aoe_stun /
+// apply_condition) and wire the remaining triggers (on_block / on_grapple /
+// on_spell_hit) at their chokepoints. on_hit + on_kill are wired here.
+
+// procCooldownKey identifies one proc slot on one item for MiscData
+// bookkeeping. Cooldowns persist per (itemId, procIdx) so multiple procs on
+// the same weapon track independently.
+func procCooldownKey(itemId, procIdx int) string {
+	return fmt.Sprintf("pinnacle_proc_cd_%d_%d", itemId, procIdx)
+}
+
+// readMiscRound tolerates int/uint64/float64 from yaml round-tripping —
+// MiscData persists to player YAML and numeric types are not stable across a
+// save/load cycle.
+func readMiscRound(v any) (uint64, bool) {
+	switch n := v.(type) {
+	case uint64:
+		return n, true
+	case int:
+		return uint64(n), true
+	case int64:
+		return uint64(n), true
+	case float64:
+		return uint64(n), true
+	}
+	return 0, false
+}
+
+// procGateOpen rolls chance and checks the cooldown. It does NOT mark the
+// cooldown — callers mark only when the effect actually executed, so a proc
+// that rolled but no-op'd (e.g. lifesteal on a 0-damage hit) doesn't burn its
+// cooldown.
+func procGateOpen(c *characters.Character, itemId, procIdx int, p items.ItemProc) bool {
+	if c == nil {
+		return false
+	}
+	if !bool(configs.GetConfig().GamePlay.ItemProcsEnabled) {
+		return false
+	}
+	if p.CooldownRounds > 0 {
+		if until, ok := readMiscRound(c.GetMiscData(procCooldownKey(itemId, procIdx))); ok {
+			if util.GetRoundCount() < until {
+				return false
+			}
+		}
+	}
+	if p.Chance < 100 && util.Rand(100) >= p.Chance {
+		return false
+	}
+	return true
+}
+
+// markProcCooldown records the round at which this proc slot may fire again.
+func markProcCooldown(c *characters.Character, itemId, procIdx int, p items.ItemProc) {
+	if c == nil || p.CooldownRounds <= 0 {
+		return
+	}
+	c.SetMiscData(procCooldownKey(itemId, procIdx), util.GetRoundCount()+uint64(p.CooldownRounds))
+}
+
+// procLifesteal heals the attacker for ratio*damage, clamped to HealthMax.
+// Returns the amount actually healed.
+func procLifesteal(attacker *characters.Character, damage int, params map[string]float64) int {
+	if attacker == nil {
+		return 0
+	}
+	ratio := params["ratio"]
+	if ratio <= 0 || damage <= 0 {
+		return 0
+	}
+	amt := int(float64(damage) * ratio)
+	if amt < 1 {
+		amt = 1
+	}
+	return attacker.Heal(amt)
+}
+
+// dispatchItemProcs fires all procs on the OWNER's relevant equipment for a
+// trigger. owner = whoever the trigger belongs to (attacker for on_hit/
+// on_kill/on_spell_hit, defender for on_block, either for on_grapple).
+// other may be nil (on_kill after despawn). room may be nil where unknown.
+func dispatchItemProcs(trigger string, owner, other *characters.Character, room *rooms.Room, damage int) {
+	if owner == nil {
+		return
+	}
+	for _, itm := range procBearingItems(owner, trigger) {
+		if itm.ItemId <= 0 {
+			continue
+		}
+		spec := itm.GetSpec()
+		procs := spec.ProcsFor(trigger)
+		if len(procs) == 0 {
+			continue
+		}
+		for idx, p := range procs {
+			if !procGateOpen(owner, itm.ItemId, idx, p) {
+				continue
+			}
+			executed := false
+			switch p.Effect {
+			case "lifesteal":
+				executed = procLifesteal(owner, damage, p.Params) > 0
+			case "steal_pool":
+				executed = procStealPool(owner, other, p.Params)
+			case "aoe_stun":
+				executed = procAoeStun(owner, room, p.Params)
+			case "apply_condition":
+				executed = procApplyCondition(other, p.Params)
+			}
+			if executed {
+				markProcCooldown(owner, itm.ItemId, idx, p)
+			}
+		}
+	}
+}
+
+// procBearingItems narrows which equipment slots a trigger consults: weapon
+// triggers read the weapon; on_block reads the offhand; on_grapple reads body
+// armor. Keeps the per-swing cost to 1-2 spec lookups.
+func procBearingItems(c *characters.Character, trigger string) []items.Item {
+	switch trigger {
+	case "on_hit", "on_kill", "on_spell_hit":
+		return []items.Item{c.Equipment.Weapon}
+	case "on_block":
+		return []items.Item{c.Equipment.Offhand}
+	case "on_grapple":
+		return []items.Item{c.Equipment.Body}
+	}
+	return nil
+}
+
+// Stubs — implemented by Tasks 5-7; returning false means "did not execute"
+// (so the cooldown isn't marked).
+func procStealPool(owner, other *characters.Character, params map[string]float64) bool { return false }
+func procAoeStun(owner *characters.Character, room *rooms.Room, params map[string]float64) bool {
+	return false
+}
+func procApplyCondition(target *characters.Character, params map[string]float64) bool { return false }
