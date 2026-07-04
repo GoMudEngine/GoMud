@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -37,6 +38,15 @@ const catalystOfUnmakingItemId = 30067
 
 // scourRerollCharges is how many rare-biased reroll charges the Catalyst grants.
 const scourRerollCharges = 3
+
+// phialOfSecondBirthItemId is the pinnacle remort potion (Stage 2 authors the
+// item YAML with this ID). Scours ALL mutations to species base, then grants
+// exactly one mutation from a rarity-floored pool -- a repeatable gold sink.
+const phialOfSecondBirthItemId = 40181
+
+// phialRarityFloor is the minimum Rarity a mutation must have to be eligible
+// for the phial's grant.
+const phialRarityFloor = 5
 
 func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
@@ -274,6 +284,24 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			`<ansi fg="magenta">You drink the Catalyst. For one breath you are only what you `+
 				`were born as — every woken thing in your blood goes still and gone. Then the `+
 				`cold lets go, and the hunger comes back stronger than before.</ansi>`)
+	}
+
+	// ── Phial of Second Birth special-case ────────────────────────────────────
+	// Pinnacle remort potion: scour every acquired mutation back to species
+	// intrinsics (no reroll charges -- the grant below is immediate), then
+	// grant exactly one mutation from the rarity-floored pool.
+	if itemSpec.ItemId == phialOfSecondBirthItemId {
+		user.Character.ScourMutations(0)
+		granted := user.Character.GrantRandomMutationRare(phialRarityFloor)
+		if granted != "" {
+			if spec := mutations.GetMutation(granted); spec != nil {
+				user.SendText(messaging.CategoryWarning, fmt.Sprintf(
+					`<ansi fg="magenta">Your flesh unwrites itself — every change the Chrysalis ever made dissolves. Then, from the stillness, something singular takes root: <ansi fg="yellow">%s</ansi>.</ansi>`, spec.Name))
+			}
+		} else {
+			user.SendText(messaging.CategoryWarning,
+				`<ansi fg="magenta">Your flesh unwrites itself — every change dissolves. The stillness holds; nothing new takes root.</ansi>`)
+		}
 	}
 
 	return true, nil

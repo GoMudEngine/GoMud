@@ -790,8 +790,14 @@ func (c *Character) IsRespawning() bool {
 // mutation id, or "" if none were available. Shared by the Awakening Rite
 // (behaviortree actGrantMutation) and the veteran character-creation skip.
 func (c *Character) GrantRandomMutation() string {
+	return c.GrantRandomMutationRare(0)
+}
+
+// GrantRandomMutationRare grants one mutation from the rarity-floored
+// weighted pool. Returns the granted id, or "" if none qualify.
+func (c *Character) GrantRandomMutationRare(minRarity int) string {
 	sp := species.GetSpecies(c.SpeciesId)
-	pool := mutations.GetWeightedPool(c.Mutations, sp)
+	pool := mutations.GetWeightedPoolWithFloor(c.Mutations, sp, minRarity)
 	if len(pool) == 0 {
 		return ""
 	}
