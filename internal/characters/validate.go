@@ -223,16 +223,32 @@ func (c *Character) RecalculateStats() {
 
 }
 
-// GetPoolReservation returns the total pool max reduction from Chrysalis enchantments
-// on all equipped items that reserve the given pool ("health", "stamina", "conviction").
+// GetPoolReservation returns the total pool max reduction from Chrysalis
+// enchantments and pinnacle-item ItemSpec reserve percentages (ReserveHealthPct/
+// ReserveStaminaPct/ReserveConvictionPct) on all equipped items that reserve
+// the given pool ("health", "stamina", "conviction").
 func (c *Character) GetPoolReservation(pool string, poolMax int) int {
 	total := 0
 	for _, itm := range c.Equipment.GetAllItems() {
-		if !itm.HasChrysalisEnchantment() || itm.ReservePool != pool {
-			continue
+		spec := itm.GetSpec()
+
+		if itm.HasChrysalisEnchantment() && itm.ReservePool == pool {
+			pct := enchantments.GetTierReservePct(itm.EnchantType, itm.EnchantTier, spec.Hands)
+			total += int(math.Floor(float64(poolMax) * pct))
 		}
-		pct := enchantments.GetTierReservePct(itm.EnchantType, itm.EnchantTier, itm.GetSpec().Hands)
-		total += int(math.Floor(float64(poolMax) * pct))
+
+		var itemPct float64
+		switch pool {
+		case "health":
+			itemPct = spec.ReserveHealthPct
+		case "stamina":
+			itemPct = spec.ReserveStaminaPct
+		case "conviction":
+			itemPct = spec.ReserveConvictionPct
+		}
+		if itemPct > 0 {
+			total += int(math.Floor(float64(poolMax) * itemPct))
+		}
 	}
 	return total
 }
