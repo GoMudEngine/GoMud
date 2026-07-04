@@ -1,0 +1,24 @@
+itemid: 40187
+name: Seething Prism
+namesimple: prism
+description: >-
+  A living crystal rides a containment-lattice chain against the
+  collarbone, wet-looking and faintly warm, feeding on the wearer
+  with a patient hunger no wound ever manages. Chrysalis matter
+  answers to it the way tinder answers to a spark -- under the skin
+  around the setting, small things shift and settle into shapes
+  they were not born with. Deeply quasi-legal; Veyra will forge the
+  lattice but won't say where she learned the technique, and asking
+  twice is generally the last time she'll see you.
+type: neck
+subtype: wearable
+reserve_health_pct: 0.15
+reserve_stamina_pct: 0.15
+reserve_conviction_pct: 0.15
+mutation_tick_interval: 300
+mutation_tick_chance: 10
+mutation_rarity_floor: 5
+weight: 0.5
+rarity_tier: 82
+value: 7000
+not_salable: true
