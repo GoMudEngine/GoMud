@@ -21,6 +21,14 @@ func MobDeathItemProcs(e events.Event) events.ListenerReturn {
 		}
 		user.Character.SetMiscData("pinnacle_last_kill_round", util.GetRoundCount())
 		dispatchItemProcs("on_kill", user.Character, nil, nil, 0)
+
+		// Sentient weapons savor the kill (paced by the shared chatter cooldown,
+		// so this doesn't spam on multi-kill rounds).
+		if user.Character.Equipment.Weapon.ItemId > 0 {
+			if wspec := user.Character.Equipment.Weapon.GetSpec(); wspec.VoiceId != "" {
+				tryEmitVoice(user, nil, wspec, "on_kill")
+			}
+		}
 	}
 	return events.Continue
 }

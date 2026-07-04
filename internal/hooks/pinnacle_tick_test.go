@@ -1,6 +1,7 @@
 package hooks
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
@@ -359,6 +360,113 @@ func TestPinnacleEmitVoiceLine(t *testing.T) {
 	if msgs := events.DrainQueuedMessagesForTest(706); len(msgs) != 0 {
 		t.Fatalf("silent emit should queue nothing, got %v", msgs)
 	}
+}
+
+// ─── Taunt pull (Aegis) ─────────────────────────────────────────────────────
+
+// TestApplyTauntPull covers the on_taunt aggro-pull: the happy path (mob fighting
+// a different player is yanked onto the bearer) plus the three no-op guards
+// (bearer not fighting a mob, mob already on the bearer, non-combatant mob).
+func TestApplyTauntPull(t *testing.T) {
+	defer seedAllRegistries()()
+	defer items.SeedItemsForTest(map[int]*items.ItemSpec{
+		999960: {ItemId: 999960, Name: "aegis of mockery", Type: items.Offhand, TauntPull: true},
+	})()
+	spec := *items.GetItemSpec(999960)
+
+	// Happy path: bearer is fighting a hostile mob that is currently fighting a
+	// DIFFERENT player (id 2). The pull forces the mob onto the bearer.
+	u := users.NewTestUser(710, "aegis", "Aegisbearer", 7710)
+	mob := addTestMob(210, false)
+	u.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
+	mob.Character.Aggro = &characters.Aggro{UserId: 2, Type: characters.DefaultAttack}
+	applyTauntPull(u, spec)
+	if mob.Character.Aggro == nil || mob.Character.Aggro.UserId != u.UserId {
+		t.Fatalf("taunt pull should force the mob onto the bearer (%d), got %+v", u.UserId, mob.Character.Aggro)
+	}
+
+	// No-op 1: bearer has no aggro at all → nothing to pull.
+	u2 := users.NewTestUser(711, "idle", "Idler", 7711)
+	mob2 := addTestMob(211, false)
+	sentinel := &characters.Aggro{UserId: 2, Type: characters.DefaultAttack}
+	mob2.Character.Aggro = sentinel
+	applyTauntPull(u2, spec) // u2.Character.Aggro is nil
+	if mob2.Character.Aggro != sentinel {
+		t.Fatalf("no bearer aggro must not touch any mob, got %+v", mob2.Character.Aggro)
+	}
+
+	// No-op 2: the mob is ALREADY fighting the bearer → no re-force (the Aggro
+	// pointer is left untouched, proving ForceTauntAggro never fired).
+	u3 := users.NewTestUser(712, "tank", "Tanker", 7712)
+	mob3 := addTestMob(212, false)
+	u3.Character.SetAggro(0, mob3.InstanceId, characters.DefaultAttack)
+	already := &characters.Aggro{UserId: u3.UserId, Type: characters.DefaultAttack}
+	mob3.Character.Aggro = already
+	applyTauntPull(u3, spec)
+	if mob3.Character.Aggro != already {
+		t.Fatalf("a mob already on the bearer must not be re-forced, got %+v", mob3.Character.Aggro)
+	}
+
+	// No-op 3: a non-combatant mob is never pulled.
+	u4 := users.NewTestUser(713, "peace", "Peacer", 7713)
+	nonCombatant := addTestMob(213, true)
+	u4.Character.SetAggro(0, nonCombatant.InstanceId, characters.DefaultAttack)
+	applyTauntPull(u4, spec)
+	if nonCombatant.Character.Aggro != nil {
+		t.Fatalf("non-combatant mob must not be pulled, got %+v", nonCombatant.Character.Aggro)
+	}
+}
+
+// ─── on_kill voice ──────────────────────────────────────────────────────────
+
+// TestMobDeathItemProcs_OnKillVoice proves a sentient weapon speaks its on_kill
+// line on a kill, and that a second immediate kill is silenced by the shared
+// chatter cooldown.
+func TestMobDeathItemProcs_OnKillVoice(t *testing.T) {
+	defer seedAllRegistries()()
+	enableItemProcs(t)
+	defer items.SeedItemsForTest(map[int]*items.ItemSpec{
+		999961: {ItemId: 999961, Name: "the blackrazor", Type: items.Weapon, Hands: 1,
+			VoiceId: "kill-voice"},
+	})()
+	defer itemvoices.SeedVoicesForTest(map[string]*itemvoices.VoiceSpec{
+		"kill-voice": {VoiceId: "kill-voice", Lines: map[string][]string{
+			"on_kill": {"Another soul for the blade."},
+		}},
+	})()
+
+	const killLine = "Another soul for the blade."
+	u := users.GetByUserId(1)
+	u.Character.Equipment.Weapon = items.New(999961)
+	// Clear any chatter cooldown a sibling test may have left on this shared user.
+	u.Character.SetMiscData("pinnacle_voice_next_round", nil)
+
+	_ = events.DrainQueuedMessagesForTest(1)
+	evt := events.MobDeath{MobId: 1, PlayerDamage: map[int]int{1: 50}}
+	if ret := MobDeathItemProcs(evt); ret != events.Continue {
+		t.Fatalf("expected events.Continue, got %v", ret)
+	}
+	if !containsLine(events.DrainQueuedMessagesForTest(1), killLine) {
+		t.Fatal("on_kill should emit the weapon's kill line")
+	}
+
+	// A second immediate kill is inside the chatter cooldown → silent.
+	if ret := MobDeathItemProcs(evt); ret != events.Continue {
+		t.Fatalf("expected events.Continue, got %v", ret)
+	}
+	if containsLine(events.DrainQueuedMessagesForTest(1), killLine) {
+		t.Fatal("second immediate kill must be chatter-cooldown silent")
+	}
+}
+
+// containsLine reports whether any queued message contains substr.
+func containsLine(msgs []string, substr string) bool {
+	for _, m := range msgs {
+		if strings.Contains(m, substr) {
+			return true
+		}
+	}
+	return false
 }
 
 // ─── Master gate ────────────────────────────────────────────────────────────

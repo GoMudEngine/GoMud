@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/itemvoices"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -356,10 +357,61 @@ func tickVoices(user *users.UserRecord, room *rooms.Room, worn []items.Item, now
 			return
 		}
 		if emitVoiceLine(user, room, spec, event, "") {
+			// The Aegis's tank loop: a taunt line also yanks the bearer's
+			// current target's aggro onto them (paced by the same cooldown
+			// that just fired the line).
+			if event == "on_taunt" && spec.TauntPull {
+				applyTauntPull(user, spec)
+			}
 			c.SetMiscData("pinnacle_voice_next_round", now+cool)
 		}
 		return // one line per round across all sentient items
 	}
+}
+
+// applyTauntPull forces the bearer's current combat target (a mob) to aggro
+// the bearer, if it isn't already fighting them. The Aegis's tank loop: taunt
+// the mob off your ally. Uses the taunt-hold plumbing (ForceTauntAggro) so
+// reactive per-round re-aggro can't immediately flip the target back. No-ops
+// when the bearer isn't fighting a mob, the mob is gone/non-combatant, or the
+// mob is already fighting the bearer. spec is accepted for call-site symmetry
+// with the other voice helpers (the TauntPull gate lives at the call site).
+func applyTauntPull(user *users.UserRecord, spec items.ItemSpec) {
+	_ = spec
+	c := user.Character
+	if c.Aggro == nil || c.Aggro.MobInstanceId <= 0 {
+		return
+	}
+	mob := mobs.GetInstance(c.Aggro.MobInstanceId)
+	if mob == nil || mob.IsNonCombatant() {
+		return
+	}
+	if mob.Character.Aggro != nil && mob.Character.Aggro.UserId == user.UserId {
+		return // already fighting the bearer — nothing to force
+	}
+	holdRounds := int(configs.GetBalanceConfig().TauntHoldRounds)
+	mob.Character.ForceTauntAggro(user.UserId, 0, holdRounds)
+}
+
+// tryEmitVoice emits an authored voice line for `event` from `spec` when the
+// item has a voice with an authored line and the chatter cooldown is open.
+// Silent (returns false) otherwise — no fallback. Arms the chatter cooldown on
+// a real emit. This is the cooldown-paced entry point for event-driven voice
+// lines fired OUTSIDE the per-round tick (e.g. on_kill from MobDeath); it
+// shares emitVoiceLine's formatting with tickVoices but keeps its own
+// GetRoundCount-based cooldown bookkeeping so callers don't need a round arg.
+func tryEmitVoice(user *users.UserRecord, room *rooms.Room, spec items.ItemSpec, event string) bool {
+	c := user.Character
+	now := util.GetRoundCount()
+	if next, ok := readMiscRound(c.GetMiscData("pinnacle_voice_next_round")); ok && now < next {
+		return false
+	}
+	if !emitVoiceLine(user, room, spec, event, "") {
+		return false
+	}
+	c.SetMiscData("pinnacle_voice_next_round",
+		now+uint64(configs.GetBalanceConfig().SentientChatterCooldownRounds))
+	return true
 }
 
 // emitVoiceLine sends an authored voice line for `event` from `spec` to the

@@ -270,6 +270,7 @@ type ItemSpec struct {
 	VoiceId               string     `yaml:"voice_id,omitempty"`                // sentient item voice file id (itemvoices/)
 	HungerRounds          int        `yaml:"hunger_rounds,omitempty"`           // rounds without a kill before the item feeds on the wielder (0 = never)
 	HungerDrainPct        float64    `yaml:"hunger_drain_pct,omitempty"`        // fraction of HealthMax drained per hungry round
+	TauntPull             bool       `yaml:"taunt_pull,omitempty"`              // sentient chatter on_taunt also pulls the bearer's target's aggro (Aegis)
 	DamageReduction       int        `yaml:"damagereduction,omitempty"`         // Legacy: % of damage it reduces when it blocks attacks
 	PhysicalMitigation    int        `yaml:"physical_mitigation,omitempty"`     // % physical damage reduction (Stage 34)
 	MagicalMitigation     int        `yaml:"magical_mitigation,omitempty"`      // % magical damage reduction (Stage 34)
