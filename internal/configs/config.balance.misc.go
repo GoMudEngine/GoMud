@@ -431,4 +431,7 @@ func (b *Balance) validateMisc() {
 	if b.SentientChatterCooldownRounds <= 0 {
 		b.SentientChatterCooldownRounds = 20
 	}
+	if b.SentientChatterChancePct < 1 || b.SentientChatterChancePct > 100 {
+		b.SentientChatterChancePct = 15
+	}
 }

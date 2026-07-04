@@ -137,10 +137,20 @@ func tickHunger(c *characters.Character, user *users.UserRecord, now uint64) {
 	if drain <= 0 {
 		return
 	}
+	// Deliberate design decision: the drain is non-combat attrition applied
+	// directly to Health, bypassing the damage hooks entirely (no sleep-wake,
+	// no aggro, no mitigation) — the blade's toll, not an attack.
 	c.Health -= drain
+	// The drain repeats every overdue round, but the feeding LINE is paced by
+	// its own cooldown (reusing the chatter knob) so an ignored hunger debt
+	// doesn't spam the player every round.
 	if user != nil {
-		emitVoiceLine(user, nil, spec, "on_hunger_feeding",
-			`<ansi fg="red">The blade feeds on you — a cold pull beneath your grip.</ansi>`)
+		if next, ok := readMiscRound(c.GetMiscData("pinnacle_hunger_msg_next_round")); !ok || now >= next {
+			emitVoiceLine(user, nil, spec, "on_hunger_feeding",
+				`<ansi fg="red">The blade feeds on you — a cold pull beneath your grip.</ansi>`)
+			c.SetMiscData("pinnacle_hunger_msg_next_round",
+				now+uint64(configs.GetBalanceConfig().SentientChatterCooldownRounds))
+		}
 	}
 }
 
@@ -191,8 +201,14 @@ func tickMutationItems(user *users.UserRecord, worn []items.Item, now uint64) {
 //
 // Deferred (Stage 2): the item card's "slotted potions can't be drunk" rule is
 // item-level behavior for a later stage; the attunement cooldown is the Stage-1
-// mechanical cost. We do NOT touch the toxicity path — ambient buffs are pure
-// buff refreshes at Peak potency, zero toxicity by construction.
+// mechanical cost. We do NOT touch the toxicity path — ambient buffs never
+// apply toxicity by construction.
+//
+// "Always-on" semantics, precisely: the !HasBuff guard RE-ADDS a buff after it
+// expires (and is pruned); it does not refresh duration while active. Because
+// prune runs on the turn tick, an ambient buff can lapse for up to one round
+// between expiry and re-application. Accepted — matches WornBuffIds semantics;
+// a per-tick unconditional refresh would cost a Validate() per player per round.
 
 // bandolierFingerprint is a stable string of belt itemId + sorted potion
 // itemIds. Changes iff the player-visible bandolier contents change.
@@ -304,11 +320,17 @@ func pickVoiceEvent(c *characters.Character, spec items.ItemSpec, now uint64) st
 // tickVoices lets sentient items speak, paced by SentientChatterCooldownRounds
 // and limited to one line per round across all worn sentient items.
 //
-// The 15% fire chance is rolled ONCE per round (a single roll gating the whole
-// voice tick), only after we confirm a speakable line exists — so quiet gear
-// pays no RNG. This is the simpler of the two options in the spec and it
-// inherently enforces the one-line-per-round rule. worn is the caller's single
-// GetAllWornItems() pass.
+// The fire chance (SentientChatterChancePct) is rolled ONCE per round (a single
+// roll gating the whole voice tick), only after we confirm a speakable line
+// exists — so quiet gear pays no RNG. This is the simpler of the two options in
+// the spec and it inherently enforces the one-line-per-round rule. worn is the
+// caller's single GetAllWornItems() pass.
+//
+// First-slot precedence is intentional: when a player wears MULTIPLE sentient
+// items, the first one in slot order with a speakable line always wins the
+// round (the later ones never roll). Dual-sentient loadouts are rare enough
+// that round-robin fairness isn't worth the bookkeeping — revisit if a second
+// wearable voice item ships.
 func tickVoices(user *users.UserRecord, room *rooms.Room, worn []items.Item, now uint64) {
 	c := user.Character
 	if next, ok := readMiscRound(c.GetMiscData("pinnacle_voice_next_round")); ok && now < next {
@@ -330,7 +352,7 @@ func tickVoices(user *users.UserRecord, room *rooms.Room, worn []items.Item, now
 			continue
 		}
 		// Occasional chatter: one roll for the whole tick.
-		if util.Rand(100) >= 15 {
+		if util.Rand(100) >= int(configs.GetBalanceConfig().SentientChatterChancePct) {
 			return
 		}
 		if emitVoiceLine(user, room, spec, event, "") {

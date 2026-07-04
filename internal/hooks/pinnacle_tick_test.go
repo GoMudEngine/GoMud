@@ -100,6 +100,48 @@ func TestPinnacleHunger_NeverLethalAndKillReset(t *testing.T) {
 	}
 }
 
+// TestPinnacleHunger_FeedingLineCooldown proves the drain repeats every overdue
+// round but the feeding LINE is paced by pinnacle_hunger_msg_next_round
+// (SentientChatterCooldownRounds): two consecutive overdue ticks both drain,
+// only the first messages.
+func TestPinnacleHunger_FeedingLineCooldown(t *testing.T) {
+	defer items.SeedItemsForTest(map[int]*items.ItemSpec{
+		999950: {ItemId: 999950, Name: "blackrazor", Type: items.Weapon, Hands: 1,
+			HungerRounds: 10, HungerDrainPct: 0.1},
+	})()
+
+	u := users.NewTestUser(708, "hungry3", "Hungerer3", 7708)
+	c := u.Character
+	c.HealthMax.Value = 1000
+	c.Health = 1000
+	c.Equipment.Weapon = items.New(999950)
+	c.SetMiscData("pinnacle_hunger_anchor", uint64(0))
+
+	// First overdue tick: drains AND messages (and arms the message cooldown).
+	_ = events.DrainQueuedMessagesForTest(708)
+	tickHunger(c, u, 20)
+	healthAfterFirst := c.Health
+	if healthAfterFirst >= 1000 {
+		t.Fatal("first overdue tick should drain")
+	}
+	if msgs := events.DrainQueuedMessagesForTest(708); len(msgs) == 0 {
+		t.Fatal("first overdue tick should emit the feeding line")
+	}
+	if _, ok := readMiscRound(c.GetMiscData("pinnacle_hunger_msg_next_round")); !ok {
+		t.Fatal("feeding line should arm pinnacle_hunger_msg_next_round")
+	}
+
+	// Second consecutive overdue tick (well inside the 20-round chatter
+	// cooldown): drains again, but stays silent.
+	tickHunger(c, u, 21)
+	if c.Health >= healthAfterFirst {
+		t.Fatal("second overdue tick should drain again")
+	}
+	if msgs := events.DrainQueuedMessagesForTest(708); len(msgs) != 0 {
+		t.Fatalf("second overdue tick within the message cooldown must be silent, got %v", msgs)
+	}
+}
+
 // ─── Aging freeze ───────────────────────────────────────────────────────────
 
 func TestPinnacleAgingFreeze(t *testing.T) {
