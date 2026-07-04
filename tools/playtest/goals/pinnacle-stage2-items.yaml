@@ -1,0 +1,90 @@
+# Pinnacle Stage 2 — live item verification goals
+#
+# All nine pinnacle items (40181-40189) are admin-spawn-only at this stage.
+# The tester should be (or create) an admin-capable character and use
+# `item spawn <id>` to materialize each, then wear/wield/use it and observe
+# the Stage 1/2 mechanics firing. These items are NOT obtainable by normal
+# play yet (Stage 4 wires acquisition) — spawning is the intended path.
+#
+# Success = the described behavior is OBSERVED in game output, or clearly
+# explained as not-yet-observable (e.g. a low-chance proc). Report magnitudes
+# that feel wrong (too strong / too weak) as feedback, not failures.
+
+session:
+  name: pinnacle-stage2-items
+  max_rounds: 220
+
+goals:
+  - id: treads-haste-sp
+    desc: >-
+      Spawn Zephyr Treads (item spawn 40188), wear them. Confirm the haste
+      buff start text ("the world slows around your stride") appears, and
+      that `status` shows a larger stamina pool than before wearing them
+      (the +90 staminamax). Note whether swings feel faster in a fight.
+
+  - id: blackrazor-reservation-lifesteal-hunger
+    desc: >-
+      Spawn The Blackrazor (item spawn 40183), wield it. Confirm `status`
+      shows a reduced current health (25% reservation). Attack something and
+      confirm the lifesteal heals you on hit. Then STOP killing and idle ~50+
+      rounds while wielding it — confirm a hunger-warning voice line appears,
+      then the blade begins draining your health with a feeding line. Confirm
+      it never drops you below 1 HP.
+
+  - id: blackrazor-voice
+    desc: >-
+      While wielding The Blackrazor, kill a mob and watch for an on-kill voice
+      line ("The Blackrazor says, ..."). Confirm idle chatter appears between
+      fights. The voice should read as a vain, hungry, ancient blade.
+
+  - id: aegis-taunt-pull-stun
+    desc: >-
+      Spawn Aegis of Mockery (item spawn 40185), equip it in the offhand.
+      Enter combat with a mob. Confirm the shield emits insult lines
+      ("says, Your mother smells of elderberries..."). If the mob was
+      fighting someone else, confirm its aggro pulls onto you. Block for a
+      while and watch for the occasional force-burst stun (10% on block, may
+      take many rounds — don't grind excessively; note if seen).
+
+  - id: bandolier-storage
+    desc: >-
+      Spawn Vitalis Bandolier (item spawn 40182), wear it. Spawn/obtain 2
+      potions and confirm they route into the bandolier (inventory Potions
+      section / 4-slot capacity). The ambient-buff effect takes an attunement
+      window (~100 rounds) so may not show immediately — confirm storage
+      routing works; note if ambient buffs eventually appear.
+
+  - id: pack-weight-reduction
+    desc: >-
+      Spawn Wayfarer's Bottomless Pack (item spawn 40184), wear it. Load up
+      heavy items and confirm the encumbrance tier drops dramatically (99%
+      weight reduction on contents) — compare the carry/encumbrance display
+      before and after.
+
+  - id: harness-grapple-bleed
+    desc: >-
+      Spawn Thornwall Harness (item spawn 40186), wear it (body slot). Get
+      into a grapple with a mob (grapple/wrestle). Confirm the spikes apply a
+      bleed to the opponent during the grapple.
+
+  - id: prism-triple-reservation
+    desc: >-
+      Spawn Seething Prism (item spawn 40187), wear it (neck). Confirm
+      `status` shows reduced current health, stamina, AND conviction (15%
+      each reserved). The mutation drip is very slow/low-chance (every 300
+      rounds, 10%) — don't wait for it; just confirm the triple reservation.
+
+  - id: staff-cp-steal
+    desc: >-
+      Spawn Staff of the Hollow Choir (item spawn 40189), wield it. Cast a
+      damaging spell at a mob and confirm your conviction pool rises as the
+      target's falls (CP steal on spell hit). Note the spell damage feels
+      much higher than a normal staff.
+
+  - id: phial-remort
+    desc: >-
+      REQUIRES mutations. First acquire 2-3 mutations (via the Chrysalis /
+      admin mutation tooling / a scour+bloom cycle). Then spawn the Phial of
+      Second Birth (item spawn 40181), drink it. Confirm: all prior mutations
+      are cleared, and EXACTLY ONE new mutation is granted (check `mutations`
+      before and after). The new mutation should be a rare one (floor 5).
