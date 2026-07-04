@@ -33,19 +33,6 @@ import (
 // Player Round Tick
 //
 
-// ShouldStampMakerName decides whether a freshly crafted output item gets the
-// crafter's MakerName. Skilled crafters (skill 30+) stamp everything except
-// ordinary Object-type outputs — but component outputs (IsComponent) stamp
-// REGARDLESS of Type, since components are conventionally authored
-// `type: object` and require_own_components pinnacle-assembly gating needs
-// their provenance (see internal/crafting.CheckOwnComponents).
-func ShouldStampMakerName(craftSkill int, spec items.ItemSpec) bool {
-	if craftSkill < 30 {
-		return false
-	}
-	return spec.Type != items.Object || spec.IsComponent
-}
-
 func UserRoundTick(e events.Event) events.ListenerReturn {
 
 	roomsWithPlayers := rooms.GetRoomsWithPlayers()
@@ -431,15 +418,11 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 										if bottleAgingMult > 0 {
 											newItem.BottleMultiplier = bottleAgingMult
 										}
-										// Maker's mark for skilled crafters. Component outputs
-										// stamp REGARDLESS of Type — components are conventionally
-										// authored `type: object`, and require_own_components
-										// pinnacle-assembly gating needs their provenance (see
-										// internal/crafting.CheckOwnComponents). Ordinary
-										// (non-component) Object outputs stay unstamped.
-										// Extracted predicate: hooks.ShouldStampMakerName.
+										// Maker's mark for skilled crafters — see
+										// crafting.ShouldStampMakerName for the policy (components
+										// stamp regardless of Type; plain Objects don't).
 										newSpec := newItem.GetSpec()
-										if ShouldStampMakerName(newItem.CraftSkill, newSpec) {
+										if crafting.ShouldStampMakerName(newItem.CraftSkill, newSpec) {
 											newItem.MakerName = user.Character.Name
 										}
 										user.Character.StoreItem(newItem)

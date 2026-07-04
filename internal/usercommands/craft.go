@@ -84,7 +84,9 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 
 	case result.ForeignComponent:
-		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">%s</ansi>`, result.ForeignReason))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
+			`<ansi fg="red">The %s must be your own work — it bears another maker's mark.</ansi>`,
+			result.ForeignComponentName))
 		return true, nil
 
 	case result.ImmediateComplete:
@@ -149,8 +151,10 @@ func craftEnchanting(rest string, recipe *crafting.RecipeSpec, user *users.UserR
 	}
 
 	// Self-crafted-component check (require_own_components)
-	if err := crafting.CheckOwnComponents(recipe, user.Character.Items, user.Character.ComponentItems, user.Character.Name); err != nil {
-		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">%s</ansi>`, err.Error()))
+	if ownOk, offendingName := crafting.CheckOwnComponents(recipe, user.Character.Items, user.Character.ComponentItems, user.Character.Name); !ownOk {
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
+			`<ansi fg="red">The %s must be your own work — it bears another maker's mark.</ansi>`,
+			offendingName))
 		return true, nil
 	}
 

@@ -228,15 +228,17 @@ func ConsumeIngredients(inv []items.Item, componentInv []items.Item, recipe *Rec
 // is itself a crafted component (IsComponent) must have been made by the
 // crafter. Bulk materials are exempt. Tag-matching mirrors HasIngredients /
 // ConsumeIngredients via componentTagOf.
+// Returns (true, "") on success; (false, offendingComponentName) on failure.
+// Callers own all player-facing text (same convention as HasIngredients).
 //
 // NOTE: strict-any-match — if ANY matching-tag component in the pools is
 // foreign, the craft refuses even if the crafter also carries their own
 // copy of that component. This is deliberate: HasIngredients/ConsumeIngredients
 // don't guarantee which matching item gets consumed first, so we can't
 // safely assume the crafter's own copy is the one that would be used.
-func CheckOwnComponents(recipe *RecipeSpec, inv, componentInv []items.Item, crafterName string) error {
+func CheckOwnComponents(recipe *RecipeSpec, inv, componentInv []items.Item, crafterName string) (bool, string) {
 	if !recipe.RequireOwnComponents {
-		return nil
+		return true, ""
 	}
 
 	pools := [][]items.Item{componentInv, inv}
@@ -251,12 +253,26 @@ func CheckOwnComponents(recipe *RecipeSpec, inv, componentInv []items.Item, craf
 					continue // bulk material, not a crafted component — exempt
 				}
 				if item.MakerName != crafterName {
-					return fmt.Errorf("the %s must be your own work — this one bears another maker's mark", spec.Name)
+					return false, spec.Name
 				}
 			}
 		}
 	}
-	return nil
+	return true, ""
+}
+
+// ShouldStampMakerName decides whether a freshly crafted output item gets the
+// crafter's MakerName. Skilled crafters (skill 30+) stamp everything except
+// ordinary Object-type outputs — but component outputs (IsComponent) stamp
+// REGARDLESS of Type, since components are conventionally authored
+// `type: object` and require_own_components pinnacle-assembly gating needs
+// their provenance (see CheckOwnComponents). Shared by every craft-completion
+// path (async round tick and immediate-complete).
+func ShouldStampMakerName(craftSkill int, spec items.ItemSpec) bool {
+	if craftSkill < 30 {
+		return false
+	}
+	return spec.Type != items.Object || spec.IsComponent
 }
 
 // GetStarterRecipes returns a map of all recipes with SkillMinimum == 0,

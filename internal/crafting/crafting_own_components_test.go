@@ -32,18 +32,20 @@ func TestRequireOwnComponents(t *testing.T) {
 	bulkForeign := items.New(777702)
 	bulkForeign.MakerName = "SomeoneElse"
 
-	if err := CheckOwnComponents(recipe, []items.Item{mine, bulkForeign}, nil, "Megalomania"); err != nil {
-		t.Fatalf("own component rejected: %v", err)
+	if ok, name := CheckOwnComponents(recipe, []items.Item{mine, bulkForeign}, nil, "Megalomania"); !ok {
+		t.Fatalf("own component rejected: offending=%q", name)
 	}
-	if err := CheckOwnComponents(recipe, []items.Item{theirs, bulkForeign}, nil, "Megalomania"); err == nil {
+	if ok, name := CheckOwnComponents(recipe, []items.Item{theirs, bulkForeign}, nil, "Megalomania"); ok {
 		t.Fatal("foreign component accepted")
+	} else if name != "hungering guard" {
+		t.Errorf("offending component name = %q, want %q", name, "hungering guard")
 	}
-	if err := CheckOwnComponents(recipe, []items.Item{unmade, bulkForeign}, nil, "Megalomania"); err == nil {
+	if ok, _ := CheckOwnComponents(recipe, []items.Item{unmade, bulkForeign}, nil, "Megalomania"); ok {
 		t.Fatal("maker-less component accepted")
 	}
 
 	recipe.RequireOwnComponents = false
-	if err := CheckOwnComponents(recipe, []items.Item{theirs, bulkForeign}, nil, "Megalomania"); err != nil {
-		t.Fatalf("flag off should not restrict: %v", err)
+	if ok, name := CheckOwnComponents(recipe, []items.Item{theirs, bulkForeign}, nil, "Megalomania"); !ok {
+		t.Fatalf("flag off should not restrict: offending=%q", name)
 	}
 }

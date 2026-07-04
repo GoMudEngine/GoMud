@@ -41,16 +41,16 @@ type CraftResult struct {
 	AlreadyCrafting bool
 
 	// Descriptive data filled in on all non-error paths (for messaging).
-	RecipeName    string
-	SkillName     string
-	SkillLevel    int
-	SkillMinimum  int
-	TimeRounds    int    // recipe.TimeRounds — for duration-description messaging
-	StationNeeded string
-	MissingTag    string
-	ForeignReason string // player-presentable reason for ForeignComponent
-	OutputName    string // display name of the produced item (immediate-complete only)
-	SuccessMsg    string // recipe.SuccessMessage
+	RecipeName           string
+	SkillName            string
+	SkillLevel           int
+	SkillMinimum         int
+	TimeRounds           int // recipe.TimeRounds — for duration-description messaging
+	StationNeeded        string
+	MissingTag           string
+	ForeignComponentName string // name of the offending component (ForeignComponent only)
+	OutputName           string // display name of the produced item (immediate-complete only)
+	SuccessMsg           string // recipe.SuccessMessage
 }
 
 // InitiateCraft attempts to begin (or immediately complete) a crafting
@@ -116,8 +116,8 @@ func InitiateCraft(actor Actor, recipeName string) CraftResult {
 	}
 
 	// ── Self-crafted-component gate (require_own_components) ─────────────────
-	if err := crafting.CheckOwnComponents(recipe, char.Items, char.ComponentItems, char.Name); err != nil {
-		res.ForeignReason = err.Error()
+	if ownOk, offendingName := crafting.CheckOwnComponents(recipe, char.Items, char.ComponentItems, char.Name); !ownOk {
+		res.ForeignComponentName = offendingName
 		res.ForeignComponent = true
 		return res
 	}
@@ -135,6 +135,14 @@ func InitiateCraft(actor Actor, recipeName string) CraftResult {
 		char.Items, char.ComponentItems = crafting.ConsumeIngredients(
 			char.Items, char.ComponentItems, recipe)
 		newItem := items.New(recipe.Output.ItemId)
+		newItem.CraftSkill = skillLevel
+		// Maker's mark — same policy as the async completion path
+		// (crafting.ShouldStampMakerName): components stamp regardless of
+		// Type so require_own_components provenance works for
+		// TimeRounds<=0 sub-recipes too.
+		if crafting.ShouldStampMakerName(newItem.CraftSkill, newItem.GetSpec()) {
+			newItem.MakerName = char.Name
+		}
 		char.StoreItem(newItem)
 		res.OutputName = newItem.DisplayName()
 		res.ImmediateComplete = true

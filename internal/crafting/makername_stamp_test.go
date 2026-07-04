@@ -1,4 +1,4 @@
-package hooks
+package crafting
 
 import (
 	"testing"
@@ -6,11 +6,12 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 )
 
-// ShouldStampMakerName is the extracted predicate for the craft-completion
-// MakerName stamping in UserRoundTick. The full async completion path sits
-// behind a non-deterministic success roll (util.Rand vs CalcSuccessChance,
-// capped below 100%), so the condition is tested here as a pure function;
-// the call site is trivial wiring.
+// ShouldStampMakerName is the shared predicate for MakerName stamping on
+// craft-completion (async round tick in hooks.UserRoundTick + the
+// immediate-complete branch of actions.InitiateCraft). The async completion
+// path sits behind a non-deterministic success roll (util.Rand vs
+// CalcSuccessChance, capped below 100%), so the condition is tested here as
+// a pure function; the call sites are trivial wiring.
 func TestShouldStampMakerName(t *testing.T) {
 	tests := []struct {
 		name       string
