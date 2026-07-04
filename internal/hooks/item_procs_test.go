@@ -232,6 +232,63 @@ func TestDispatchOnHitProcs_Lifesteal(t *testing.T) {
 // hunger-anchor MiscData key for every player with damage attribution. User 1
 // is seeded by seedAllRegistries; a synthetic MobDeath drives the listener
 // directly (constructing a full death flow is unnecessary here).
+func TestProcApplyCondition_Bleed(t *testing.T) {
+	defer seedAllRegistries()()
+	target := characters.New()
+
+	ok := procApplyCondition(target, map[string]float64{
+		"condition": 1, // 1 = bleeding
+		"duration":  6,
+		"magnitude": 12,
+	})
+	if !ok {
+		t.Fatal("apply_condition should execute")
+	}
+	if !target.HasCondition(characters.ConditionBleeding) {
+		t.Fatal("target should be bleeding")
+	}
+	if got := target.GetConditionDuration(characters.ConditionBleeding); got != 6 {
+		t.Fatalf("expected duration 6, got %d", got)
+	}
+	if got := target.GetConditionMagnitude(characters.ConditionBleeding); got != 12 {
+		t.Fatalf("expected magnitude 12, got %v", got)
+	}
+}
+
+func TestProcApplyCondition_NilAndUnknown(t *testing.T) {
+	defer seedAllRegistries()()
+	if procApplyCondition(nil, map[string]float64{"condition": 1}) {
+		t.Fatal("nil target must not execute")
+	}
+	target := characters.New()
+	if procApplyCondition(target, map[string]float64{"condition": 99}) {
+		t.Fatal("unknown condition id must not execute (cooldown must not burn)")
+	}
+}
+
+// TestDispatchOnGrappleProcs_Bleed proves the on_grapple dispatch reads the
+// OTHER party's body armor (per procBearingItems' slot narrowing) and applies
+// bleed to the opponent — mirrors TestDispatchOnHitProcs_Lifesteal.
+func TestDispatchOnGrappleProcs_Bleed(t *testing.T) {
+	defer seedAllRegistries()()
+	enableItemProcs(t)
+	defer items.SeedItemsForTest(map[int]*items.ItemSpec{
+		999921: {ItemId: 999921, Name: "spiked harness", Type: items.Body,
+			Procs: []items.ItemProc{{Trigger: "on_grapple", Chance: 100, Effect: "apply_condition",
+				Params: map[string]float64{"condition": 1, "duration": 6, "magnitude": 12}}}},
+	})()
+
+	wearer := characters.New()
+	wearer.Equipment.Body = items.New(999921)
+	opponent := characters.New()
+
+	dispatchItemProcs("on_grapple", wearer, opponent, nil, 0)
+
+	if !opponent.HasCondition(characters.ConditionBleeding) {
+		t.Fatal("on_grapple apply_condition expected the opponent to be bleeding")
+	}
+}
+
 func TestMobDeathItemProcs_RecordsLastKill(t *testing.T) {
 	defer seedAllRegistries()()
 	enableItemProcs(t)

@@ -152,10 +152,35 @@ func procBearingItems(c *characters.Character, trigger string) []items.Item {
 	return nil
 }
 
-// Stubs — implemented by Tasks 6-7; returning false means "did not execute"
+// Stub — implemented by Task 7; returning false means "did not execute"
 // (so the cooldown isn't marked).
 func procStealPool(owner, other *characters.Character, params map[string]float64) bool { return false }
-func procApplyCondition(target *characters.Character, params map[string]float64) bool { return false }
+
+// procApplyCondition applies a combat condition to the target. Params:
+// condition (1=bleeding — the switch is the extension point for future
+// condition ids; only bleeding is wired here, YAGNI), duration (rounds,
+// default 4 if unset/<1), magnitude (per-tick, default 2 if unset/<1).
+// Unknown condition ids do not execute (so the caller's cooldown isn't
+// marked — see dispatchItemProcs).
+func procApplyCondition(target *characters.Character, params map[string]float64) bool {
+	if target == nil {
+		return false
+	}
+	dur := int(params["duration"])
+	if dur < 1 {
+		dur = 4
+	}
+	mag := params["magnitude"]
+	if mag < 1 {
+		mag = 2
+	}
+	switch int(params["condition"]) {
+	case 1:
+		target.AddCondition(characters.ConditionBleeding, dur, mag, "itemproc")
+		return true
+	}
+	return false
+}
 
 // procAoeStun applies the stagger-stun buff (84 — a 1-round Stunned) to every
 // hostile, stun-eligible mob in the owner's room. Non-combatants,
