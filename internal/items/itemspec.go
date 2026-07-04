@@ -108,21 +108,21 @@ const (
 	Unknown ItemType = ""
 
 	// Equipment
-	Weapon  ItemType = "weapon"
-	Offhand ItemType = "offhand"
-	Head    ItemType = "head"
-	Neck    ItemType = "neck"
-	Body    ItemType = "body"
-	Belt    ItemType = "belt"
-	Gloves  ItemType = "gloves"
-	Ring    ItemType = "ring"
-	Wrist   ItemType = "wrist"        // Bracelets, bracers
-	Back    ItemType = "back"         // Cloaks, backpacks
-	Shoulders ItemType = "shoulders"    // Pauldrons, mantles
+	Weapon       ItemType = "weapon"
+	Offhand      ItemType = "offhand"
+	Head         ItemType = "head"
+	Neck         ItemType = "neck"
+	Body         ItemType = "body"
+	Belt         ItemType = "belt"
+	Gloves       ItemType = "gloves"
+	Ring         ItemType = "ring"
+	Wrist        ItemType = "wrist"        // Bracelets, bracers
+	Back         ItemType = "back"         // Cloaks, backpacks
+	Shoulders    ItemType = "shoulders"    // Pauldrons, mantles
 	ComponentBag ItemType = "componentbag" // Crafting material bags
-	Legs    ItemType = "legs"
-	Feet    ItemType = "feet"
-	Tail    ItemType = "tail"             // Tail attachments (tail mutation slot)
+	Legs         ItemType = "legs"
+	Feet         ItemType = "feet"
+	Tail         ItemType = "tail" // Tail attachments (tail mutation slot)
 	// Consumables
 	Potion  ItemType = "potion"
 	Food    ItemType = "food"
@@ -215,8 +215,8 @@ const (
 )
 
 type Damage struct {
-	Attacks     int    `yaml:"attacks,omitempty"` // How many attacks this weapon gets (usually 1)
-	DiceRoll    string `yaml:"diceroll,omitempty"` // legacy: 1d6, etc.
+	Attacks     int    `yaml:"attacks,omitempty"`     // How many attacks this weapon gets (usually 1)
+	DiceRoll    string `yaml:"diceroll,omitempty"`    // legacy: 1d6, etc.
 	CritBuffIds []int  `yaml:"critbuffids,omitempty"` // If this damage is a crit, what buffs does it apply?
 	DiceCount   int    `yaml:"dicecount,omitempty"`   // how many dice to roll for this weapons damage
 	SideCount   int    `yaml:"sidecount,omitempty"`   // how many sides per dice roll
@@ -232,29 +232,59 @@ type AttackMessageOptions []ItemMessage
 type AttackEffects map[Intensity]AttackMessageOptions
 type AttackMessages map[ItemSubType]AttackEffects
 
+// ItemProc is a data-driven proc an item fires from a combat/round trigger.
+// Dispatch lives in internal/hooks (import direction: hooks → items).
+type ItemProc struct {
+	Trigger        string             `yaml:"trigger"`                   // on_hit | on_kill | on_block | on_grapple | on_spell_hit
+	Chance         int                `yaml:"chance"`                    // percent per trigger event (1-100)
+	CooldownRounds int                `yaml:"cooldown_rounds,omitempty"` // internal cooldown, 0 = none
+	Effect         string             `yaml:"effect"`                    // lifesteal | steal_pool | aoe_stun | apply_condition
+	Params         map[string]float64 `yaml:"params,omitempty"`
+}
+
+var validProcTriggers = map[string]bool{
+	"on_hit": true, "on_kill": true, "on_block": true, "on_grapple": true, "on_spell_hit": true,
+}
+
+var validProcEffects = map[string]bool{
+	"lifesteal": true, "steal_pool": true, "aoe_stun": true, "apply_condition": true,
+}
+
 // The blueprint for an item
 type ItemSpec struct {
-	ItemId          int
-	Value           int
-	Uses            int         `yaml:"uses,omitempty"`            // How many uses it starts with
-	BuffIds         []int       `yaml:"buffids,omitempty"`         // What buffs it can apply (if used)
-	WornBuffIds     []int       `yaml:"wornbuffids,omitempty"`     // BuffId's that are applied while worn, and expired when removed.
-	DamageReduction      int     `yaml:"damagereduction,omitempty"`      // Legacy: % of damage it reduces when it blocks attacks
-	PhysicalMitigation   int     `yaml:"physical_mitigation,omitempty"` // % physical damage reduction (Stage 34)
-	MagicalMitigation    int     `yaml:"magical_mitigation,omitempty"`  // % magical damage reduction (Stage 34)
-	ConvictionMitigation int     `yaml:"conviction_mitigation,omitempty"` // % conviction damage reduction (Stage 34)
-	DamageMultiplier     float64 `yaml:"damage_multiplier,omitempty"`   // Weapon damage multiplier for new pipeline (Stage 34)
-	SpellDamageMultiplier float64 `yaml:"spell_damage_multiplier,omitempty"` // Spell damage multiplier for caster weapons (wand/sceptre/staff)
-	ParryRating          int     `yaml:"parryrating,omitempty"`         // Weapon parry bonus (Stage 7.1)
-	BlockRating     int         `yaml:"blockrating,omitempty"`     // Shield block bonus (Stage 7.1)
-	AmmoTag         string      `yaml:"ammo_tag,omitempty"`        // Ranged weapons: ammo type required (arrows/bolts/shot). Ammo items: type provided.
-	MinStrength     int         `yaml:"min_strength,omitempty"`    // Minimum Strength to wield (heavy bows/arbalest)
-	WaitRounds      int         `yaml:"waitrounds,omitempty"`      // How many extra rounds each combat requires
-	StaminaCost     int         `yaml:"staminacost,omitempty"`     // Stamina cost per attack with this weapon
-	SpeedMultiplier float64     `yaml:"speedmultiplier,omitempty"` // Attack speed modifier (1.0 = unarmed baseline, <1.0 slower, >1.0 faster)
-	Weight          float64     `yaml:"weight,omitempty"`          // Weight in pounds (affects encumbrance)
-	GrappleModifier float64     `yaml:"grapplemodifier,omitempty"` // Grapple bonus/penalty (Stage 8.2)
-	EscapeModifier  float64     `yaml:"escapemodifier,omitempty"`  // Armor escape modifier for Grounded position (Stage 8.7)
+	ItemId                int
+	Value                 int
+	Uses                  int        `yaml:"uses,omitempty"`                    // How many uses it starts with
+	BuffIds               []int      `yaml:"buffids,omitempty"`                 // What buffs it can apply (if used)
+	WornBuffIds           []int      `yaml:"wornbuffids,omitempty"`             // BuffId's that are applied while worn, and expired when removed.
+	Procs                 []ItemProc `yaml:"procs,omitempty"`                   // data-driven combat procs
+	ReserveHealthPct      float64    `yaml:"reserve_health_pct,omitempty"`      // 0-1 fraction of HealthMax reserved while equipped
+	ReserveStaminaPct     float64    `yaml:"reserve_stamina_pct,omitempty"`     // 0-1 fraction of StaminaMax reserved while equipped
+	ReserveConvictionPct  float64    `yaml:"reserve_conviction_pct,omitempty"`  // 0-1 fraction of ConvictionMax reserved while equipped
+	PreservesContents     bool       `yaml:"preserves_contents,omitempty"`      // bandolier: contents never age
+	AmbientPotions        bool       `yaml:"ambient_potions,omitempty"`         // bandolier: slotted potion buffs always-on at Peak
+	MutationTickInterval  int        `yaml:"mutation_tick_interval,omitempty"`  // rounds between mutation rolls while worn (0 = never)
+	MutationTickChance    int        `yaml:"mutation_tick_chance,omitempty"`    // percent chance per roll
+	MutationRarityFloor   int        `yaml:"mutation_rarity_floor,omitempty"`   // min mutation rarity in the pool (0 = no floor)
+	VoiceId               string     `yaml:"voice_id,omitempty"`                // sentient item voice file id (itemvoices/)
+	HungerRounds          int        `yaml:"hunger_rounds,omitempty"`           // rounds without a kill before the item feeds on the wielder (0 = never)
+	HungerDrainPct        float64    `yaml:"hunger_drain_pct,omitempty"`        // fraction of HealthMax drained per hungry round
+	DamageReduction       int        `yaml:"damagereduction,omitempty"`         // Legacy: % of damage it reduces when it blocks attacks
+	PhysicalMitigation    int        `yaml:"physical_mitigation,omitempty"`     // % physical damage reduction (Stage 34)
+	MagicalMitigation     int        `yaml:"magical_mitigation,omitempty"`      // % magical damage reduction (Stage 34)
+	ConvictionMitigation  int        `yaml:"conviction_mitigation,omitempty"`   // % conviction damage reduction (Stage 34)
+	DamageMultiplier      float64    `yaml:"damage_multiplier,omitempty"`       // Weapon damage multiplier for new pipeline (Stage 34)
+	SpellDamageMultiplier float64    `yaml:"spell_damage_multiplier,omitempty"` // Spell damage multiplier for caster weapons (wand/sceptre/staff)
+	ParryRating           int        `yaml:"parryrating,omitempty"`             // Weapon parry bonus (Stage 7.1)
+	BlockRating           int        `yaml:"blockrating,omitempty"`             // Shield block bonus (Stage 7.1)
+	AmmoTag               string     `yaml:"ammo_tag,omitempty"`                // Ranged weapons: ammo type required (arrows/bolts/shot). Ammo items: type provided.
+	MinStrength           int        `yaml:"min_strength,omitempty"`            // Minimum Strength to wield (heavy bows/arbalest)
+	WaitRounds            int        `yaml:"waitrounds,omitempty"`              // How many extra rounds each combat requires
+	StaminaCost           int        `yaml:"staminacost,omitempty"`             // Stamina cost per attack with this weapon
+	SpeedMultiplier       float64    `yaml:"speedmultiplier,omitempty"`         // Attack speed modifier (1.0 = unarmed baseline, <1.0 slower, >1.0 faster)
+	Weight                float64    `yaml:"weight,omitempty"`                  // Weight in pounds (affects encumbrance)
+	GrappleModifier       float64    `yaml:"grapplemodifier,omitempty"`         // Grapple bonus/penalty (Stage 8.2)
+	EscapeModifier        float64    `yaml:"escapemodifier,omitempty"`          // Armor escape modifier for Grounded position (Stage 8.7)
 	// Reach is the weapon's operational reach in meters. Combat
 	// consults reach in grapple positions: weapons whose reach
 	// exceeds the position's effective radius are penalized (see
@@ -265,22 +295,22 @@ type ItemSpec struct {
 	//
 	// Reach is weapon-only — arm length / species reach is
 	// intentionally out of scope for chunk 4c per the design spec.
-	Reach float64 `yaml:"reach,omitempty"`
-	Hands           WeaponHands `yaml:"hands"`                     // How many hands it takes to wield
-	Name            string
-	DisplayName     string `yaml:"displayname,omitempty"` // Name that is typically displayed to the user
-	NameSimple      string // A simpler name for the item, for example "Golden Battleaxe" should be "Battleaxe" or "Axe" for simple
-	Description     string
-	QuestToken      string `yaml:"questtoken,omitempty"` // Grants this quest if given/picked up
-	Type            ItemType
-	Subtype         ItemSubType
-	Damage          Damage
-	Element         Element           `yaml:"element,omitempty"`
-	StatMods        statmods.StatMods `yaml:"statmods,omitempty"`    // What stats it modifies when equipped
-	BreakChance     uint8             `yaml:"breakchance,omitempty"` // Chance in 100 that the item will break when used, or when the character is hit with it equipped, or if it is in the characters inventory during an explosion, etc.
-	Cursed          bool              `yaml:"cursed,omitempty"`      // Can't be removed once equipped
-	KeyLockId       string            `yaml:"keylockid,omitempty"`   // Example: `778-north` - If it's a key, what lock does it open? roomid-exitname etc.
-	ComponentTag    string            `yaml:"component_tag,omitempty"` // Spell component tag (e.g. "stone" for throw-stone)
+	Reach                 float64     `yaml:"reach,omitempty"`
+	Hands                 WeaponHands `yaml:"hands"` // How many hands it takes to wield
+	Name                  string
+	DisplayName           string `yaml:"displayname,omitempty"` // Name that is typically displayed to the user
+	NameSimple            string // A simpler name for the item, for example "Golden Battleaxe" should be "Battleaxe" or "Axe" for simple
+	Description           string
+	QuestToken            string `yaml:"questtoken,omitempty"` // Grants this quest if given/picked up
+	Type                  ItemType
+	Subtype               ItemSubType
+	Damage                Damage
+	Element               Element           `yaml:"element,omitempty"`
+	StatMods              statmods.StatMods `yaml:"statmods,omitempty"`                // What stats it modifies when equipped
+	BreakChance           uint8             `yaml:"breakchance,omitempty"`             // Chance in 100 that the item will break when used, or when the character is hit with it equipped, or if it is in the characters inventory during an explosion, etc.
+	Cursed                bool              `yaml:"cursed,omitempty"`                  // Can't be removed once equipped
+	KeyLockId             string            `yaml:"keylockid,omitempty"`               // Example: `778-north` - If it's a key, what lock does it open? roomid-exitname etc.
+	ComponentTag          string            `yaml:"component_tag,omitempty"`           // Spell component tag (e.g. "stone" for throw-stone)
 	IsComponent           bool              `yaml:"is_component,omitempty"`            // Auto-routes to component bag on pickup
 	WeightReduction       float64           `yaml:"weight_reduction,omitempty"`        // 0.0-1.0, fraction of contents weight reduced
 	BagCapacity           int               `yaml:"bag_capacity,omitempty"`            // Max items storable in component bag
@@ -568,7 +598,40 @@ func (i *ItemSpec) Validate() error {
 		i.AutoCalculateValue()
 	}
 
+	for idx, p := range i.Procs {
+		if !validProcTriggers[p.Trigger] {
+			return fmt.Errorf("item %d proc %d: invalid trigger %q", i.ItemId, idx, p.Trigger)
+		}
+		if !validProcEffects[p.Effect] {
+			return fmt.Errorf("item %d proc %d: invalid effect %q", i.ItemId, idx, p.Effect)
+		}
+		if p.Chance < 1 || p.Chance > 100 {
+			return fmt.Errorf("item %d proc %d: chance must be 1-100", i.ItemId, idx)
+		}
+	}
+	for name, v := range map[string]float64{
+		"reserve_health_pct": i.ReserveHealthPct, "reserve_stamina_pct": i.ReserveStaminaPct, "reserve_conviction_pct": i.ReserveConvictionPct,
+	} {
+		if v != 0 && (v < 0 || v >= 1) {
+			return fmt.Errorf("item %d: %s must be in [0,1), got %v", i.ItemId, name, v)
+		}
+	}
+
 	return nil
+}
+
+// ProcsFor returns the procs matching a trigger. Cheap; no allocation when empty.
+func (i *ItemSpec) ProcsFor(trigger string) []ItemProc {
+	if len(i.Procs) == 0 {
+		return nil
+	}
+	var out []ItemProc
+	for _, p := range i.Procs {
+		if p.Trigger == trigger {
+			out = append(out, p)
+		}
+	}
+	return out
 }
 
 func (i *ItemSpec) Filename() string {
