@@ -52,7 +52,7 @@ func (b *Balance) validateShops() {
 
 	// ── WAREHOUSES (Stage 3 ferry system) ────────────────────────────────────
 	if b.WarehouseItemCap <= 0 {
-		b.WarehouseItemCap = 400
+		b.WarehouseItemCap = 4000000
 	}
 	if b.WarehouseAccrualHours <= 0 {
 		b.WarehouseAccrualHours = 2

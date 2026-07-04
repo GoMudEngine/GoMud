@@ -224,14 +224,25 @@
         return html + ' <span class="text-muted">(' + total + ' items)</span>';
     }
 
-    // warehouseFillBar renders a single-item fill bar (current/cap),
-    // colored by economy bucket — same BUCKET_COLORS palette used by
-    // bucketBar, just applied to one row instead of a stacked sum.
-    function warehouseFillBar(current, cap, bucket) {
-        var pct = cap > 0 ? Math.min(100, (current / cap) * 100) : 0;
+    // warehouseFillBar renders a single-item bar colored by economy
+    // bucket — same BUCKET_COLORS palette as bucketBar. Scaled against
+    // the LARGEST row in the same warehouse (relative composition), not
+    // the per-item cap: the cap is effectively unbounded (4M), so a
+    // cap-relative bar would render 0% forever.
+    function warehouseFillBar(current, scaleMax, bucket) {
+        var pct = scaleMax > 0 ? Math.min(100, (current / scaleMax) * 100) : 0;
         var color = BUCKET_COLORS[bucket] || "#999";
         return '<div style="display:flex;height:14px;width:100px;background:#e9ecef;">' +
             '<div style="width:' + pct.toFixed(0) + '%;background:' + color + '"></div></div>';
+    }
+
+    // fmtCap compacts the effectively-unbounded per-item cap for the
+    // card header (4000000 → "4.0M").
+    function fmtCap(cap) {
+        if (!cap) return '?';
+        if (cap >= 1000000) return (cap / 1000000).toFixed(1) + 'M';
+        if (cap >= 1000) return (cap / 1000).toFixed(1) + 'k';
+        return '' + cap;
     }
 
     function shopKey(s) { return s.zone + '/' + s.mob_id + '/' + s.room_id; }
@@ -436,22 +447,27 @@
             } else {
                 var rows = '';
                 var sortedStock = stockRows.slice().sort(function(a, b) {
-                    return (a.item_name || '').localeCompare(b.item_name || '');
+                    return (b.current || 0) - (a.current || 0) ||
+                        (a.item_name || '').localeCompare(b.item_name || '');
                 });
+                var scaleMax = sortedStock[0].current || 1;
                 for (var j = 0; j < sortedStock.length; j++) {
                     var s = sortedStock[j];
                     var name = s.item_name || ('item ' + s.item_id);
                     rows += '<tr><td>' + name + '</td>' +
                             '<td>' + (s.bucket || '&mdash;') + '</td>' +
-                            '<td>' + warehouseFillBar(s.current, s.cap, s.bucket) +
-                            ' ' + s.current + '/' + s.cap + '</td></tr>';
+                            '<td>' + warehouseFillBar(s.current, scaleMax, s.bucket) +
+                            ' ' + s.current + '</td></tr>';
                 }
                 bodyHtml = '<table class="table table-sm table-striped mb-0">' +
-                    '<thead><tr><th>Item</th><th>Bucket</th><th>Current/Cap</th></tr></thead>' +
+                    '<thead><tr><th>Item</th><th>Bucket</th><th>Stock</th></tr></thead>' +
                     '<tbody>' + rows + '</tbody></table>';
             }
+            var capNote = (stockRows.length > 0 && stockRows[0].cap)
+                ? ' <span class="text-muted small">cap ' + fmtCap(stockRows[0].cap) + '/item</span>'
+                : '';
             whHtml += '<div class="col-md-6 mb-3"><div class="card">' +
-                '<div class="card-header"><strong>' + wh.zone + '</strong></div>' +
+                '<div class="card-header"><strong>' + wh.zone + '</strong>' + capNote + '</div>' +
                 '<div class="card-body p-2">' +
                 '<div class="row text-center mb-2">' +
                     '<div class="col-4"><div class="text-muted small">captured surplus</div><div>' + (wh.captured_count || 0) + '</div></div>' +
