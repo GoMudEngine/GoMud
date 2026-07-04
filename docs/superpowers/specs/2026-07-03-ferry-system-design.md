@@ -258,6 +258,11 @@ caravan loading at the NP end), the loader:
 3. Tops up from its normal infinite-trickle import manifest, as
    today.
 
+(2026-07-03 build note: the "legacy Thornwall-bound caravan at the NP
+end" hook does not exist in the world graph — Lars's circuits never
+enter NP; Dobb's depot load carries the NP role, and Thornwall
+backfill flows via Lars's Stillwater pickups.)
+
 Multi-hop backfill emerges without coordination: *Confluence
 warehouse → ferry factor → NP vendors (+ overflow into NP warehouse)
 → Thornwall-bound caravan load → Thornwall shops*. Backfill is

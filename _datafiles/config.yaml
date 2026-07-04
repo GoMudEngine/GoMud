@@ -309,6 +309,13 @@ GamePlay:
   # Master toggle for the city warehouse buffer pools (Stage 3 ferry system).
   WarehousesEnabled: true
 
+  # - WarehouseDrawdownEnabled -
+  # Stage 4 kill switch: warehouse-first loading (ferry factors + Dobb's
+  # depot) plus local vendor-gap release. Requires WarehousesEnabled also
+  # true; with either off, behavior degrades exactly to Stage 3 (or
+  # earlier if both are off).
+  WarehouseDrawdownEnabled: true
+
 ################################################################################
 #
 #   BALANCE

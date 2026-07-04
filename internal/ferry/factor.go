@@ -2,6 +2,7 @@ package ferry
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -10,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/warehouse"
 )
 
@@ -113,6 +115,12 @@ func factorDecide(c TradeCircuit, vs VesselState, pos factorPos, st factorState)
 // already mid-path, so a stalled path retries periodically instead of
 // spamming the mob's command queue every round.
 const factorWalkReissueRounds = 5
+
+// warehouseReleaseMaxPerItem bounds Stage 4's delivery-time local release
+// (see ReleaseToVendorsInRoom below) — deliberately slow per the spec, so a
+// warehouse-adjacent vendor gap closes gradually across several factor
+// visits rather than refilling in one pass.
+const warehouseReleaseMaxPerItem = 2
 
 // factorStuckRounds is how long a factor's room can go unchanged while
 // Delivering/Returning before the stuck-safety reset kicks in.
@@ -279,6 +287,16 @@ func applyFactorAction(factor *mobs.Mob, r Route, c TradeCircuit, st *factorStat
 				room.SendText(messaging.CategoryRoomDescription, msg)
 			}
 		}
+		// Stage 4: delivery-time local release. After the factor's own
+		// cargo lands, top up any REMAINING vendor gaps in this room from
+		// the local warehouse (bounded, slow — no emote for the invisible
+		// backend top-up; the delivery message above already narrates the
+		// stop).
+		if bool(configs.GetGamePlayConfig().WarehousesEnabled) && bool(configs.GetGamePlayConfig().WarehouseDrawdownEnabled) {
+			if room := rooms.LoadRoom(factor.Character.RoomId); room != nil {
+				warehouse.ReleaseToVendorsInRoom(room.Zone, factor.Character.RoomId, warehouseReleaseMaxPerItem)
+			}
+		}
 		st.StopIdx++
 		st.walkIssued = false
 		if act.LastStop {
@@ -425,10 +443,13 @@ func bankLeftoverCargo(factor *mobs.Mob, dockRoomId int) {
 	}
 }
 
-// ensureFactorLoaded tops the factor's inventory up to c.LoadCap with fresh
-// items drawn round-robin from c.PortExports[portIdx] — mirrors
-// caravan.LoadRunnerFromImport's bounded-retry pattern. Returns the number
-// of items loaded.
+// ensureFactorLoaded tops the factor's inventory up to c.LoadCap. Stage 4:
+// when warehouse drawdown is enabled and the loading port's dock city has a
+// warehouse, a first pass (loadFromWarehouse) draws manifest items from the
+// local warehouse — prioritized by downstream vendor demand — before the
+// unchanged manifest round-robin (mirrors caravan.LoadRunnerFromImport's
+// bounded-retry pattern) tops up any remaining capacity from the infinite
+// trickle. Returns the total number of items loaded.
 func ensureFactorLoaded(factor *mobs.Mob, c TradeCircuit, portIdx int) int {
 	if factor == nil || portIdx < 0 || portIdx > 1 {
 		return 0
@@ -437,7 +458,16 @@ func ensureFactorLoaded(factor *mobs.Mob, c TradeCircuit, portIdx int) int {
 	if len(manifest) == 0 || c.LoadCap <= 0 {
 		return 0
 	}
+
 	loaded := 0
+	if bool(configs.GetGamePlayConfig().WarehousesEnabled) && bool(configs.GetGamePlayConfig().WarehouseDrawdownEnabled) {
+		if dock := portDockRoom(c, portIdx); dock != nil {
+			if _, ok := warehouse.CityFor(dock.Zone); ok {
+				loaded += loadFromWarehouse(factor, c, portIdx, dock.Zone)
+			}
+		}
+	}
+
 	maxTries := c.LoadCap*2 + len(manifest) // bound: avoids spin on invalid ids
 	for tries := 0; tries < maxTries && len(factor.Character.Items) < c.LoadCap; tries++ {
 		it := items.New(manifest[tries%len(manifest)])
@@ -450,4 +480,95 @@ func ensureFactorLoaded(factor *mobs.Mob, c TradeCircuit, portIdx int) int {
 		loaded++
 	}
 	return loaded
+}
+
+// loadFromWarehouse draws manifest items (c.PortExports[portIdx]) from
+// dockZone's warehouse, prioritized by downstream vendor demand, minting
+// the physical item for each unit successfully withdrawn and storing it on
+// the factor. On a StoreItem failure (factor at carry capacity), the
+// withdrawn unit is re-deposited rather than destroyed — Stage 4 never
+// loses stock to a full cart. Draws round-robin over the priority order,
+// bounded like the sibling loaders, until capacity or warehouse stock (for
+// every manifest item) is exhausted. Returns the number of items loaded.
+func loadFromWarehouse(factor *mobs.Mob, c TradeCircuit, portIdx int, dockZone string) int {
+	manifest := c.PortExports[portIdx]
+	priority := prioritizeByDemand(manifest, exportDemand(c, portIdx))
+	loaded := 0
+	maxTries := c.LoadCap*2 + len(priority)
+	for tries := 0; tries < maxTries && len(factor.Character.Items) < c.LoadCap; tries++ {
+		itemId := priority[tries%len(priority)]
+		n := warehouse.Withdraw(dockZone, itemId, 1)
+		if n <= 0 {
+			continue
+		}
+		it := items.New(itemId)
+		if !it.IsValid() {
+			// Can't mint the physical item — re-deposit so the unit isn't
+			// silently lost (Deposit re-counts it as captured, acceptable).
+			warehouse.Deposit(dockZone, itemId, 1)
+			continue
+		}
+		if !factor.Character.StoreItem(it) {
+			warehouse.Deposit(dockZone, itemId, 1)
+			break // factor at carry capacity
+		}
+		loaded++
+	}
+	return loaded
+}
+
+// portDockRoom resolves the dock room for c's port at portIdx, via the
+// registered Route. Returns nil if the route isn't loaded or the room
+// doesn't exist (data-optional content, mirrors the tickFactors nil-guard).
+func portDockRoom(c TradeCircuit, portIdx int) *rooms.Room {
+	r, ok := RouteFor(c.RouteId)
+	if !ok {
+		return nil
+	}
+	return rooms.LoadRoom(r.Ports[portIdx].DockRoom)
+}
+
+// prioritizeByDemand returns manifest items sorted by downstream demand
+// (desc), ties keeping manifest order. Pure.
+func prioritizeByDemand(manifest []int, demand map[int]int) []int {
+	out := append([]int(nil), manifest...)
+	sort.SliceStable(out, func(a, b int) bool {
+		return demand[out[a]] > demand[out[b]]
+	})
+	return out
+}
+
+// exportDemand sums downstream vendor gaps for each export item of the
+// given port: existing entries contribute MaxStock-Current; a vendor
+// missing the entry contributes NewSlotMaxStock (CreateMissingSlots will
+// open one on delivery). Unspawned vendors / unloaded rooms contribute 0
+// — clean fallback to manifest order at cold boot.
+func exportDemand(c TradeCircuit, portIdx int) map[int]int {
+	demand := map[int]int{}
+	for _, stop := range c.PortStops[1-portIdx] {
+		room := rooms.LoadRoom(stop)
+		if room == nil {
+			continue
+		}
+		for _, instId := range room.GetMobs(rooms.FindMerchant) {
+			vendor := mobs.GetInstance(instId)
+			if vendor == nil || !vendor.HasShop() {
+				continue
+			}
+			shop := shops.GetShopInventory(vendor.Zone, int(vendor.MobId), vendor.HomeRoomId)
+			if shop == nil {
+				continue
+			}
+			for _, itemId := range c.PortExports[portIdx] {
+				if e := shop.GetStock(itemId); e != nil {
+					if gap := e.MaxStock - e.Current; gap > 0 {
+						demand[itemId] += gap
+					}
+				} else {
+					demand[itemId] += c.NewSlotMaxStock
+				}
+			}
+		}
+	}
+	return demand
 }
