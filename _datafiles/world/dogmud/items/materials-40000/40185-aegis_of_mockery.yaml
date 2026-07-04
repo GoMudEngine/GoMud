@@ -1,0 +1,30 @@
+itemid: 40185
+name: Aegis of Mockery
+namesimple: aegis
+description: >-
+  A tall wall of a shield, broad enough to lose a man behind and
+  battered enough to prove that many have tried. Set into the boss is
+  a knob of clouded amber, wound about with fine wire, and it seems
+  always on the point of clearing its throat. A resonance lacquer
+  sheets the face in a dull, humming gloss that catches every jeer
+  and flings it clear across a field, so that no foe goes long
+  without an audience for his failings. Its dents are legion, each
+  one a story it will happily tell you, and none of them a story of
+  the shield giving ground.
+type: offhand
+subtype: wearable
+blockrating: 30
+physical_mitigation: 14
+magical_mitigation: 10
+conviction_mitigation: 8
+procs:
+  - trigger: on_block
+    chance: 10
+    cooldown_rounds: 20
+    effect: aoe_stun
+voice_id: aegis
+taunt_pull: true
+weight: 8.0
+rarity_tier: 82
+value: 7000
+not_salable: true

@@ -287,3 +287,45 @@ bounded (per item id x proc index) and a stale cooldown is harmless
 (it just means that exact item, if re-equipped, resumes mid-cooldown
 rather than fresh). This is a deliberate simplicity trade-off, not an
 oversight.
+
+## Stage 2 shipped items
+
+The nine legendary-BIS items that consume the Stage 1 primitives,
+shipped on branch `feature/pinnacle-stage2-items`. All boot-verified
+(`itemLoadedCount=386`, `itemvoices loadedCount=2`, buff 98 present,
+`ValidateZoneConsistency errors=0 mode=panic`, 0 panics). Numbers are
+starting values; combat/economy tuning is a later stage.
+
+> **Folder gotcha — do NOT create a `pinnacle/` directory.**
+> `ItemSpec.ItemFolder()` (`internal/items/itemspec.go`) buckets items
+> **purely by ID range**: any `ItemId >= 40000` is loaded flat from
+> `_datafiles/world/dogmud/items/materials-40000/` — no subtype
+> subdirectory (unlike `armor-20000/<type>/`). Because these nine were
+> allocated in the 40000 block, they live alongside crafting materials
+> regardless of being weapons/armor/accessories. A file placed in any
+> other directory (e.g. a hand-made `pinnacle-items/`) is never loaded.
+
+| ID | Name | Slot / type | File (under `items/materials-40000/`) | Primitives used |
+|----|------|-------------|----------------------------------------|-----------------|
+| 40181 | Phial of Second Birth | consumable (potion) | `40181-phial_of_second_birth.yaml` | remort (`drink.go` hardcodes id 40181 → `ScourMutations` + rarity-floored grant) |
+| 40182 | Vitalis Bandolier | belt | `40182-vitalis_bandolier.yaml` | `preserves_contents`, `ambient_potions`, `is_bandolier`/`bandolier_capacity` |
+| 40183 | The Blackrazor | weapon (2H slashing) | `40183-the_blackrazor.yaml` | `reserve_health_pct`, `hunger_rounds`/`hunger_drain_pct`, `procs` (on_hit lifesteal), `voice_id: blackrazor` |
+| 40184 | Wayfarer's Bottomless Pack | back | `40184-wayfarers_bottomless_pack.yaml` | `weight_reduction` (0.99) |
+| 40185 | Aegis of Mockery | offhand (shield) | `40185-aegis_of_mockery.yaml` | `procs` (on_block aoe_stun), `taunt_pull`, `voice_id: aegis` |
+| 40186 | Thornwall Harness | body | `40186-thornwall_harness.yaml` | `procs` (on_grapple apply_condition bleed) |
+| 40187 | Seething Prism | neck | `40187-seething_prism.yaml` | `reserve_*_pct` (all three pools), `mutation_tick_interval`/`_chance`/`_rarity_floor` |
+| 40188 | Zephyr Treads | feet | `40188-zephyr_treads.yaml` | `wornbuffids: [98]`, `staminamax` statmod |
+| 40189 | Staff of the Hollow Choir | weapon (2H staff) | `40189-staff_of_the_hollow_choir.yaml` | `spell_damage_multiplier`, `procs` (on_spell_hit steal_pool), `casting`/`manifestation` statmods |
+
+**Buff (worn):**
+
+| ID | Name | File | Consumed by |
+|----|------|------|-------------|
+| 98 | Zephyr's Alacrity | `buffs/98-zephyrs_alacrity.yaml` | Zephyr Treads `wornbuffids` (permanent-haste-while-worn) |
+
+**Sentient item voices** (`itemvoices/<voice_id>.yaml`):
+
+| voice_id | File | Item | Character |
+|----------|------|------|-----------|
+| blackrazor | `itemvoices/blackrazor.yaml` | The Blackrazor (40183) | Ancient, vain, starving aristocrat |
+| aegis | `itemvoices/aegis.yaml` | Aegis of Mockery (40185) | Period insult-comic |

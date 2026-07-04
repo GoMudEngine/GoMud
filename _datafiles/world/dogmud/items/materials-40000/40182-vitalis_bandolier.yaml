@@ -1,0 +1,22 @@
+itemid: 40182
+name: Vitalis Bandolier
+namesimple: bandolier
+description: >-
+  A bandolier of supple chrysalis membrane, night-dark and faintly
+  warm, strung with rosettes of still-glass that never stop their
+  slow turning. Four cradles ring the wearer's chest, each holding
+  a potion suspended at the single held breath of its perfection --
+  never souring, never dimming, kept as if time itself lost interest
+  in it. Wear it long enough and the potions' quiet shimmer begins
+  to answer the wearer's own pulse, until the two rhythms fold into
+  one and it grows hard to say which is keeping the other's time.
+type: belt
+subtype: wearable
+is_bandolier: true
+bandolier_capacity: 4
+preserves_contents: true
+ambient_potions: true
+weight: 1.5
+rarity_tier: 82
+value: 7000
+not_salable: true

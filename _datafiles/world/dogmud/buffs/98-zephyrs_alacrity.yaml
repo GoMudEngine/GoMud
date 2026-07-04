@@ -1,0 +1,11 @@
+buffid: 98
+name: Zephyr's Alacrity
+description: The world drags half a beat behind your feet.
+triggerrate: 5 real minutes
+triggercount: 1
+flags:
+  - haste
+statmods:
+  dexterity: 8
+start_user_text: "The treads pulse — the world slows around your stride."
+end_user_text: "Your stride settles back to mortal pace."

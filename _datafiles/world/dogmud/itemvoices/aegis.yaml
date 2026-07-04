@@ -1,0 +1,36 @@
+voiceid: aegis
+lines:
+  on_equip:
+    - "Ah, a proper arm at last! Yes, flex it, let them see. Grand."
+    - "There you are, hero. Now stand still and let me do the talking."
+    - "Up we go! Together we are unbearable, and I mean that kindly."
+    - "Good hand, good shoulder, splendid glower. We shall be a menace."
+    - "At last, someone with a face worth hiding behind. Onward!"
+  on_unequip:
+    - "Off already? But I was just warming to my material!"
+    - "Fine, set me down. Deprive the world of its finest heckler."
+    - "You wound me, sir. And I so rarely take a hit sitting down."
+    - "Go on, abandon me. I shall insult the wall until you return."
+    - "Retreat, is it? I shall pretend it was my idea, and loudly."
+  on_kill:
+    - "Ha! Down he goes, and it was my finest line that did it!"
+    - "Note that, everyone: I talked him into the ground. Applause."
+    - "One fewer critic. A shame, he was warming to my act."
+    - "You struck the blow, I struck the mood. We split the credit."
+    - "Timber! Another one who could not take a joke, poor soul."
+  on_idle:
+    - "That fellow yonder walks like a duck apologizing to a puddle."
+    - "Do you see this one's stance? A scarecrow would be ashamed."
+    - "I could do things with that man's nose. Given a moment. And time."
+    - "Ahem. Testing. Is this thing pointed at anyone I may abuse?"
+    - "Dull crowd. Not one of them worth a good insult. Tragic."
+  on_taunt:
+    - "Your mother smells of elderberries; your footwork shames her further!"
+    - "Call that a guard? My bearer's grandmother threw a stouter one!"
+    - "You swing like a man beating dust from a very old rug, sir!"
+    - "I have met chair legs with a keener sense of where to stand!"
+    - "Your father was a turnip and your posture confirms the union!"
+    - "Come closer, coward, so the whole field may see you tremble!"
+    - "You reek of defeat and, I regret to add, of yesterday's fish!"
+    - "That footwork! Do you fight me or apologize to the ground?"
+    - "A whole clan of you, and not one taught the boy to duck!"

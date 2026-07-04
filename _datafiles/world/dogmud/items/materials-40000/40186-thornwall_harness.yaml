@@ -1,0 +1,33 @@
+itemid: 40186
+name: Thornwall Harness
+namesimple: harness
+description: >-
+  Riveted spike-plates run the length of cured hide, every barb
+  angled inward toward the wearer's own ribs -- a promise, not an
+  accident. Deep gouges score the leather where something already
+  tried its luck against it and came away worse for the trying.
+  Wearing it reads less like armor than a threat display: a warning
+  laid out in iron and hide for anything that thinks about closing
+  the distance. Whatever wraps around this wearer regrets it before
+  the second breath.
+type: body
+subtype: wearable
+physical_mitigation: 20
+magical_mitigation: 8
+conviction_mitigation: 6
+statmods:
+  strength: 6
+  vitality: 6
+procs:
+  - trigger: on_grapple
+    chance: 50
+    cooldown_rounds: 5
+    effect: apply_condition
+    params:
+      condition: 1
+      duration: 6
+      magnitude: 14
+weight: 11.0
+rarity_tier: 82
+value: 6000
+not_salable: true
