@@ -225,6 +225,9 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 					events.AddToQueue(events.BuffsTriggered{UserId: user.UserId, BuffIds: triggeredBuffIds})
 				}
 
+				// Pinnacle item upkeep (procs are event-driven; this is the always-on layer).
+				pinnacleUserTick(user, room)
+
 				// Stage 9.8: Tick all combat conditions (decrements Duration, removes expired)
 				user.Character.TickConditions()
 
