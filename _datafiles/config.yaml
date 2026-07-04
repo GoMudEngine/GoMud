@@ -1064,6 +1064,10 @@ Balance:
   ScoreWeightThroughput: 0.20
   ScoreWeightShopGold:   0.10
 
+  # ── PINNACLE ITEMS ──────────────────────────────────────────────────────────
+  BandolierAttuneRounds: 100          # Rounds of re-attunement after bandolier contents change
+  SentientChatterCooldownRounds: 20   # Min rounds between sentient item lines
+
 ################################################################################
 #
 #   LLM
