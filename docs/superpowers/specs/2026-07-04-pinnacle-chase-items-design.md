@@ -123,7 +123,7 @@ Effect registry (Go, not scripts — these fire in per-round hot paths):
 `lifesteal` (heal % of damage dealt), `steal_pool` (drain target pool →
 refill wielder), `aoe_stun` (room force burst applying the existing Stunned
 buff; excludes party members and non-combatants), `apply_condition` (via
-existing `AddCondition`), `apply_buff`. Fired from the four existing
+existing `AddCondition`). Fired from the four existing
 chokepoints: damage pipeline (on_hit / on_kill), defense resolution
 (on_block), grapple resolution (on_grapple), spell resolution
 (on_spell_hit). All proc messaging descriptive — no raw numbers. Global
