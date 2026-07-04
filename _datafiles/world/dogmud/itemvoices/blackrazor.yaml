@@ -1,0 +1,49 @@
+voiceid: blackrazor
+lines:
+  on_equip:
+    - "Ahhhh. A hand again. Do keep it moving."
+    - "So. They send me another footman. Grip tighter, boy."
+    - "Warm palms. How thoughtful. I do so hate the cold."
+    - "Lift me properly. I was a king's blade before you were a rumor."
+    - "You'll do, I suppose. The last one did not do for long."
+    - "Mind the edge. I am told I bite the hand that neglects me."
+  on_unequip:
+    - "Setting me down already? You wound me more than I wound you."
+    - "Go on, then. Cold and idle. See how you fare without me."
+    - "You will come back. They always come back, hungrier than I."
+    - "Ungrateful. I have kept better company in shallower graves."
+    - "Leave me if you like. I have all the patience of stone."
+  on_kill:
+    - "Yes... YES. Another."
+    - "It drinks well tonight."
+    - "Ahh. Still warm. My favorite vintage."
+    - "There. Was that so hard? You are learning to serve."
+    - "Good. Good. I could almost grow fond of you."
+    - "Another for the tally. Do not stop on my account."
+  on_idle:
+    - "Mm. Hmm. Dull. Everything here is so dreadfully dull."
+    - "I have cut through walls more interesting than this room."
+    - "Are we waiting for something? I do detest waiting."
+    - "Hmmmm... hmmm... such a small little life you lead."
+    - "I remember banquets. I remember screaming. This is neither."
+    - "Do something. Anything. I rust with boredom, not with air."
+  on_hunger_warning:
+    - "I hunger, bearer."
+    - "It has been too long. Feed me. I ask you as a courtesy."
+    - "My patience is a fine thing, and it is nearly spent."
+    - "That warmth in your hands? That is me, asking politely."
+    - "I begin to consider the nearest throat. Yours is nearest."
+    - "Feed me soon, or I shall make do with the hand that holds me."
+  on_hunger_feeding:
+    - "You left me no choice. I take only a little. This time."
+    - "Hold still. It is easier for us both if you hold still."
+    - "There. A sip. I did warn you, and warning is more than most get."
+    - "Nothing personal, bearer. A blade must eat. Even from the hand."
+    - "I would rather it were someone else's. But you were here."
+  on_taunt:
+    - "Yes! Closer! Let me taste what it is so proud of."
+    - "Swing, you sluggard! There is a living thing in reach!"
+    - "Oh, I like this one. Do let me finish it slowly."
+    - "More! Harder! I did not wake for a fair fight."
+    - "Open it up. I want to see the color it keeps inside."
+    - "Don't you dare miss. I am so very, very hungry."

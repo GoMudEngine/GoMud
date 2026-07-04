@@ -1,0 +1,38 @@
+itemid: 40183
+name: The Blackrazor
+namesimple: blackrazor
+description: >-
+  A greatsword longer than a tall man, its edge a black glass that
+  takes in the light and returns none of it. The blade is knapped
+  from volcanic obsidian and laid over a darker core, quenched in a
+  cold the smiths will not name. It is a masterwork, and the papers
+  that came with it were very nearly in order. Held in both hands it
+  weighs more than its make allows, and the grip stays warm at any
+  hour -- warm, and faintly working, the way a throat is warm. It
+  has been fed before. It means to be fed again.
+type: weapon
+hands: 2
+subtype: slashing
+damage:
+  basedamage: 10
+  variance: 4
+damage_multiplier: 3.75
+speedmultiplier: 0.9
+parryrating: 6
+staminacost: 9
+reserve_health_pct: 0.25
+hunger_rounds: 50
+hunger_drain_pct: 0.01
+procs:
+  - trigger: on_hit
+    chance: 100
+    effect: lifesteal
+    params:
+      ratio: 0.25
+voice_id: blackrazor
+statmods:
+  strength: 6
+weight: 6.0
+rarity_tier: 82
+value: 8000
+not_salable: true
