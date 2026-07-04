@@ -32,11 +32,20 @@ type WarehouseSnapshot struct {
 }
 
 // WarehouseStockSnapshot is a per-item entry. Bucket comes from
-// economy.BucketFor(), same convention as StockSnapshot.
+// economy.BucketFor(), same convention as StockSnapshot. ItemName is
+// resolved at capture time (items.GetItemSpec) since the dashboard has
+// no other id->name lookup available for warehouse rows (unlike the
+// shop/caravan/forager tables, which never render individual item
+// names — only tier/bucket rollups). Cap mirrors the live
+// WarehouseItemCap balance config; it's the same value for every row
+// today, but is captured per-row so the schema stays honest if caps
+// ever vary by item.
 type WarehouseStockSnapshot struct {
-	ItemId  int    `yaml:"item_id" json:"item_id"`
-	Bucket  string `yaml:"bucket"  json:"bucket"`
-	Current int    `yaml:"current" json:"current"`
+	ItemId   int    `yaml:"item_id"             json:"item_id"`
+	ItemName string `yaml:"item_name,omitempty"  json:"item_name"`
+	Bucket   string `yaml:"bucket"               json:"bucket"`
+	Current  int    `yaml:"current"              json:"current"`
+	Cap      int    `yaml:"cap"                  json:"cap"`
 }
 
 // StockEvent mirrors shops.StockEvent for snapshot serialization.

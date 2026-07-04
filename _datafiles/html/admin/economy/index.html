@@ -121,7 +121,11 @@
         <tbody id="tbl-caravans"></tbody>
     </table>
 
-    <!-- Section C: Foragers -->
+    <!-- Section C: Warehouses -->
+    <h3 class="mt-3">Warehouses</h3>
+    <div class="row mb-3" id="warehouses-row"></div>
+
+    <!-- Section D: Foragers -->
     <h3 class="mt-3">Foragers</h3>
     <table class="table table-sm table-striped">
         <thead><tr>
@@ -218,6 +222,16 @@
         });
         html += '</div>';
         return html + ' <span class="text-muted">(' + total + ' items)</span>';
+    }
+
+    // warehouseFillBar renders a single-item fill bar (current/cap),
+    // colored by economy bucket — same BUCKET_COLORS palette used by
+    // bucketBar, just applied to one row instead of a stacked sum.
+    function warehouseFillBar(current, cap, bucket) {
+        var pct = cap > 0 ? Math.min(100, (current / cap) * 100) : 0;
+        var color = BUCKET_COLORS[bucket] || "#999";
+        return '<div style="display:flex;height:14px;width:100px;background:#e9ecef;">' +
+            '<div style="width:' + pct.toFixed(0) + '%;background:' + color + '"></div></div>';
     }
 
     function shopKey(s) { return s.zone + '/' + s.mob_id + '/' + s.room_id; }
@@ -405,6 +419,50 @@
                            '<td colspan="5">' + tierBarFromDelta(cd ? cd.DeliveriesByTierDelta : null) + '</td></tr>';
         }
         document.getElementById('tbl-caravans').innerHTML = caravanHtml || '<tr><td colspan="13" class="text-muted">No caravans active.</td></tr>';
+
+        // Warehouses — one card per city, alphabetical by zone. Field is
+        // absent entirely on pre-Stage-3 snapshots (undefined), so guard
+        // with || [] like the caravans/foragers arrays above.
+        var warehouses = (d.snapshot.warehouses || []).slice().sort(function(a, b) {
+            return (a.zone || '').localeCompare(b.zone || '');
+        });
+        var whHtml = '';
+        for (var i = 0; i < warehouses.length; i++) {
+            var wh = warehouses[i];
+            var stockRows = wh.stock || [];
+            var bodyHtml;
+            if (stockRows.length === 0) {
+                bodyHtml = '<div class="text-muted">&mdash;</div>';
+            } else {
+                var rows = '';
+                var sortedStock = stockRows.slice().sort(function(a, b) {
+                    return (a.item_name || '').localeCompare(b.item_name || '');
+                });
+                for (var j = 0; j < sortedStock.length; j++) {
+                    var s = sortedStock[j];
+                    var name = s.item_name || ('item ' + s.item_id);
+                    rows += '<tr><td>' + name + '</td>' +
+                            '<td>' + (s.bucket || '&mdash;') + '</td>' +
+                            '<td>' + warehouseFillBar(s.current, s.cap, s.bucket) +
+                            ' ' + s.current + '/' + s.cap + '</td></tr>';
+                }
+                bodyHtml = '<table class="table table-sm table-striped mb-0">' +
+                    '<thead><tr><th>Item</th><th>Bucket</th><th>Current/Cap</th></tr></thead>' +
+                    '<tbody>' + rows + '</tbody></table>';
+            }
+            whHtml += '<div class="col-md-6 mb-3"><div class="card">' +
+                '<div class="card-header"><strong>' + wh.zone + '</strong></div>' +
+                '<div class="card-body p-2">' +
+                '<div class="row text-center mb-2">' +
+                    '<div class="col-4"><div class="text-muted small">captured surplus</div><div>' + (wh.captured_count || 0) + '</div></div>' +
+                    '<div class="col-4"><div class="text-muted small">ambient accrual</div><div>' + (wh.accrued_count || 0) + '</div></div>' +
+                    '<div class="col-4"><div class="text-muted small">drawn down</div><div>' + (wh.drawn_count || 0) + '</div></div>' +
+                '</div>' +
+                bodyHtml +
+                '</div></div></div>';
+        }
+        document.getElementById('warehouses-row').innerHTML =
+            whHtml || '<div class="col-12 text-muted">No warehouses registered.</div>';
 
         // Foragers, alphabetical by name.
         var foragerPairs = (d.snapshot.foragers || []).map(function(f, i) {

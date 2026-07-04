@@ -1,11 +1,13 @@
 package health
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/caravan"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/economy"
 	"github.com/GoMudEngine/GoMud/internal/ferry"
 	"github.com/GoMudEngine/GoMud/internal/forager"
@@ -297,6 +299,7 @@ func captureFerryFactors() []CaravanSnapshot {
 // convention as captureShops' StockSnapshot.
 func captureWarehouses() []WarehouseSnapshot {
 	all := warehouse.AllWarehouses()
+	itemCap := int(configs.GetBalanceConfig().WarehouseItemCap)
 	out := make([]WarehouseSnapshot, 0, len(all))
 	for _, w := range all {
 		ws := WarehouseSnapshot{
@@ -308,14 +311,27 @@ func captureWarehouses() []WarehouseSnapshot {
 		}
 		for _, e := range w.Stock {
 			ws.Stock = append(ws.Stock, WarehouseStockSnapshot{
-				ItemId:  e.ItemId,
-				Bucket:  economy.BucketFor(e.ItemId),
-				Current: e.Current,
+				ItemId:   e.ItemId,
+				ItemName: itemNameFor(e.ItemId),
+				Bucket:   economy.BucketFor(e.ItemId),
+				Current:  e.Current,
+				Cap:      itemCap,
 			})
 		}
 		out = append(out, ws)
 	}
 	return out
+}
+
+// itemNameFor resolves an item's display name via items.GetItemSpec,
+// falling back to a synthetic "item {id}" label when the spec is
+// missing (nil-safe — should not normally happen for live warehouse
+// stock, but a stale/renumbered item id shouldn't panic the dashboard).
+func itemNameFor(itemId int) string {
+	if spec := items.GetItemSpec(itemId); spec != nil {
+		return spec.Name
+	}
+	return fmt.Sprintf("item %d", itemId)
 }
 
 // captureForagers walks forager.AllProfiles() and, for each profile,

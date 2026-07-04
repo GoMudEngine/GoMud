@@ -3,6 +3,7 @@ package health_test
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/economy/health"
 	"github.com/GoMudEngine/GoMud/internal/warehouse"
 )
@@ -41,5 +42,11 @@ func TestCaptureSnapshot_Warehouses(t *testing.T) {
 	}
 	if stock == nil || stock.Current != 7 || stock.Bucket != "confluence" {
 		t.Fatalf("bad stock row: %+v", stock)
+	}
+	if stock.Cap != int(configs.GetBalanceConfig().WarehouseItemCap) {
+		t.Fatalf("Cap = %d, want live WarehouseItemCap %d", stock.Cap, configs.GetBalanceConfig().WarehouseItemCap)
+	}
+	if stock.ItemName == "" {
+		t.Fatalf("ItemName is empty, want a resolved name or item-id fallback: %+v", stock)
 	}
 }
