@@ -1,5 +1,29 @@
 # DOGMud Patch Notes
 
+## 2026-07-03 — Boats on the water: ferries, factors, and the living trade
+
+- **The boats are running.** Three vessels now work the waters on regular
+  sailings: the *Lakewind Packet* between the Stillwater pier and the New
+  Plymouth quays, the *Grey Heron* down the river to the Confluence, and
+  the old *Broadbeam* between the Confluence and the capital. Find the
+  agent at any of the three docks, ask for passage, and name your landing
+  — fair rates, dry benches, no walking. Miss the boat and the agent will
+  tell you when she ties up next; the water keeps its own schedule.
+- **You will not ride alone.** Trade factors work the same sailings —
+  laden handcarts up the gangplank, tally-slips, and vendor rounds at the
+  far end. Watch one work a port and you will understand where the goods
+  in the market stalls come from.
+- **The markets have opened to each other.** Lake goods now turn up on
+  capital shelves, river catch travels north, and city steel and glass
+  reach the lake town — in honest small quantities, priced by the same
+  supply and demand as everything else. Buy where a thing is cheap, sail
+  it to where it is dear, and the margin is yours; the factors are
+  already doing exactly that.
+- **The cities have learned to keep stores.** When shelves fill, surplus
+  goes into the warehouses; when someone buys a market bare, the next
+  boat and the warehouse between them quietly put it right. Make a run
+  on a town's stock and watch how the town answers.
+
 ## 2026-07-02 — Beneath the capital: the New Plymouth Sewers
 
 - **Every city has a second city below it.** Three ways down have opened
