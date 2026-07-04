@@ -88,6 +88,7 @@ func (c *Character) RecalculateStats() {
 		c.Stats.Vitality.ValueAdj*int(rb.HealthPerVitality)
 
 	c.StaminaMax.Mods = int(rb.StaminaBase) +
+		c.StatMod(string(statmods.StaminaMax)) +
 		c.Stats.Strength.ValueAdj*int(rb.StaminaPerStrength) +
 		c.Stats.Willpower.ValueAdj*int(rb.StaminaPerWillpower) +
 		c.Stats.Vitality.ValueAdj*int(rb.StaminaPerVitality)

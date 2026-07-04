@@ -29,7 +29,8 @@ var (
 	Vitality   StatName = `vitality`
 	Willpower  StatName = `willpower`
 	Charisma   StatName = `charisma`
-	HealthMax StatName = `healthmax`
+	HealthMax  StatName = `healthmax`
+	StaminaMax StatName = `staminamax`
 )
 
 func (s StatMods) Get(statName ...string) int {
