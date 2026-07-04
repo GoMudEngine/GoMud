@@ -361,7 +361,7 @@ func tickVoices(user *users.UserRecord, room *rooms.Room, worn []items.Item, now
 			// current target's aggro onto them (paced by the same cooldown
 			// that just fired the line).
 			if event == "on_taunt" && spec.TauntPull {
-				applyTauntPull(user, spec)
+				applyTauntPull(user)
 			}
 			c.SetMiscData("pinnacle_voice_next_round", now+cool)
 		}
@@ -374,10 +374,9 @@ func tickVoices(user *users.UserRecord, room *rooms.Room, worn []items.Item, now
 // the mob off your ally. Uses the taunt-hold plumbing (ForceTauntAggro) so
 // reactive per-round re-aggro can't immediately flip the target back. No-ops
 // when the bearer isn't fighting a mob, the mob is gone/non-combatant, or the
-// mob is already fighting the bearer. spec is accepted for call-site symmetry
-// with the other voice helpers (the TauntPull gate lives at the call site).
-func applyTauntPull(user *users.UserRecord, spec items.ItemSpec) {
-	_ = spec
+// mob is already fighting the bearer. The TauntPull gate lives at the call
+// site — this helper only performs the pull.
+func applyTauntPull(user *users.UserRecord) {
 	c := user.Character
 	if c.Aggro == nil || c.Aggro.MobInstanceId <= 0 {
 		return

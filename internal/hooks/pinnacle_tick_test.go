@@ -369,10 +369,6 @@ func TestPinnacleEmitVoiceLine(t *testing.T) {
 // (bearer not fighting a mob, mob already on the bearer, non-combatant mob).
 func TestApplyTauntPull(t *testing.T) {
 	defer seedAllRegistries()()
-	defer items.SeedItemsForTest(map[int]*items.ItemSpec{
-		999960: {ItemId: 999960, Name: "aegis of mockery", Type: items.Offhand, TauntPull: true},
-	})()
-	spec := *items.GetItemSpec(999960)
 
 	// Happy path: bearer is fighting a hostile mob that is currently fighting a
 	// DIFFERENT player (id 2). The pull forces the mob onto the bearer.
@@ -380,7 +376,7 @@ func TestApplyTauntPull(t *testing.T) {
 	mob := addTestMob(210, false)
 	u.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
 	mob.Character.Aggro = &characters.Aggro{UserId: 2, Type: characters.DefaultAttack}
-	applyTauntPull(u, spec)
+	applyTauntPull(u)
 	if mob.Character.Aggro == nil || mob.Character.Aggro.UserId != u.UserId {
 		t.Fatalf("taunt pull should force the mob onto the bearer (%d), got %+v", u.UserId, mob.Character.Aggro)
 	}
@@ -390,7 +386,7 @@ func TestApplyTauntPull(t *testing.T) {
 	mob2 := addTestMob(211, false)
 	sentinel := &characters.Aggro{UserId: 2, Type: characters.DefaultAttack}
 	mob2.Character.Aggro = sentinel
-	applyTauntPull(u2, spec) // u2.Character.Aggro is nil
+	applyTauntPull(u2) // u2.Character.Aggro is nil
 	if mob2.Character.Aggro != sentinel {
 		t.Fatalf("no bearer aggro must not touch any mob, got %+v", mob2.Character.Aggro)
 	}
@@ -402,7 +398,7 @@ func TestApplyTauntPull(t *testing.T) {
 	u3.Character.SetAggro(0, mob3.InstanceId, characters.DefaultAttack)
 	already := &characters.Aggro{UserId: u3.UserId, Type: characters.DefaultAttack}
 	mob3.Character.Aggro = already
-	applyTauntPull(u3, spec)
+	applyTauntPull(u3)
 	if mob3.Character.Aggro != already {
 		t.Fatalf("a mob already on the bearer must not be re-forced, got %+v", mob3.Character.Aggro)
 	}
@@ -411,7 +407,7 @@ func TestApplyTauntPull(t *testing.T) {
 	u4 := users.NewTestUser(713, "peace", "Peacer", 7713)
 	nonCombatant := addTestMob(213, true)
 	u4.Character.SetAggro(0, nonCombatant.InstanceId, characters.DefaultAttack)
-	applyTauntPull(u4, spec)
+	applyTauntPull(u4)
 	if nonCombatant.Character.Aggro != nil {
 		t.Fatalf("non-combatant mob must not be pulled, got %+v", nonCombatant.Character.Aggro)
 	}
@@ -420,8 +416,12 @@ func TestApplyTauntPull(t *testing.T) {
 // ─── on_kill voice ──────────────────────────────────────────────────────────
 
 // TestMobDeathItemProcs_OnKillVoice proves a sentient weapon speaks its on_kill
-// line on a kill, and that a second immediate kill is silenced by the shared
-// chatter cooldown.
+// line on a kill, that the whole voice block honors the PinnacleItemsEnabled
+// master toggle, and that a second immediate kill is silenced by the shared
+// chatter cooldown. Overlay note: AddOverlayOverrides overwrites the same key
+// on repeat calls (TestPinnacleUserTick_MasterGate relies on the same false→
+// true flip); this test deliberately ends with the toggle ON — the same
+// terminal state the master-gate test leaves.
 func TestMobDeathItemProcs_OnKillVoice(t *testing.T) {
 	defer seedAllRegistries()()
 	enableItemProcs(t)
@@ -441,8 +441,21 @@ func TestMobDeathItemProcs_OnKillVoice(t *testing.T) {
 	// Clear any chatter cooldown a sibling test may have left on this shared user.
 	u.Character.SetMiscData("pinnacle_voice_next_round", nil)
 
-	_ = events.DrainQueuedMessagesForTest(1)
 	evt := events.MobDeath{MobId: 1, PlayerDamage: map[int]int{1: 50}}
+
+	// Feature flag OFF → the voice block is gated; a kill emits NO line (and
+	// arms no cooldown — the block never runs).
+	setPinnacleEnabled(t, false)
+	_ = events.DrainQueuedMessagesForTest(1)
+	if ret := MobDeathItemProcs(evt); ret != events.Continue {
+		t.Fatalf("expected events.Continue, got %v", ret)
+	}
+	if containsLine(events.DrainQueuedMessagesForTest(1), killLine) {
+		t.Fatal("PinnacleItemsEnabled=false must silence the on_kill voice")
+	}
+
+	// Feature flag ON → the kill line fires.
+	setPinnacleEnabled(t, true)
 	if ret := MobDeathItemProcs(evt); ret != events.Continue {
 		t.Fatalf("expected events.Continue, got %v", ret)
 	}
