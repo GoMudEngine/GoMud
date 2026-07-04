@@ -217,11 +217,21 @@ func calcRarityBonus(owned map[string]int) int {
 // Returns mutation IDs rather than spec pointers to preserve
 // RollAcquisition compatibility.
 func GetWeightedPool(owned map[string]int, sp *species.Species) []string {
+	return GetWeightedPoolWithFloor(owned, sp, 0)
+}
+
+// GetWeightedPoolWithFloor is GetWeightedPool restricted to mutations at or
+// above minRarity (0 = no floor). Used by the pinnacle remort potion and
+// the Seething Prism's worn mutation tick.
+func GetWeightedPoolWithFloor(owned map[string]int, sp *species.Species, minRarity int) []string {
 	// Rarity uplift: reduce common mutation weights for advanced players
 	rarityBonus := calcRarityBonus(owned)
 
 	pool := make([]string, 0, len(allMutations)*5)
 	for id, spec := range allMutations {
+		if spec.Rarity < minRarity {
+			continue
+		}
 		if _, has := owned[id]; has {
 			continue
 		}

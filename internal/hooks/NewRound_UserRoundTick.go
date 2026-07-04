@@ -225,6 +225,9 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 					events.AddToQueue(events.BuffsTriggered{UserId: user.UserId, BuffIds: triggeredBuffIds})
 				}
 
+				// Pinnacle item upkeep (procs are event-driven; this is the always-on layer).
+				pinnacleUserTick(user, room)
+
 				// Stage 9.8: Tick all combat conditions (decrements Duration, removes expired)
 				user.Character.TickConditions()
 
@@ -418,9 +421,11 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 										if bottleAgingMult > 0 {
 											newItem.BottleMultiplier = bottleAgingMult
 										}
-										// Maker's mark for skilled crafters on non-material items
+										// Maker's mark for skilled crafters — see
+										// crafting.ShouldStampMakerName for the policy (components
+										// stamp regardless of Type; plain Objects don't).
 										newSpec := newItem.GetSpec()
-										if newItem.CraftSkill >= 30 && !newSpec.IsComponent && newSpec.Type != items.Object {
+										if crafting.ShouldStampMakerName(newItem.CraftSkill, newSpec) {
 											newItem.MakerName = user.Character.Name
 										}
 										user.Character.StoreItem(newItem)

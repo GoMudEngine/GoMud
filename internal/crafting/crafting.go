@@ -30,18 +30,19 @@ type RecipeOutput struct {
 
 // RecipeSpec is the data-driven definition of a crafting recipe loaded from YAML.
 type RecipeSpec struct {
-	RecipeId       string             `yaml:"id"`
-	Name           string             `yaml:"name"`
-	Skill          string             `yaml:"skill"`
-	SkillMinimum   int                `yaml:"skill_minimum"`
-	Station        string             `yaml:"station"`        // "" = no station required
-	TimeRounds     int                `yaml:"time_rounds"`
-	Ingredients    []RecipeIngredient `yaml:"ingredients"`
-	Output         RecipeOutput       `yaml:"output"`
-	TargetType     string             `yaml:"target_type,omitempty"`  // equipment type consumed as enchanting input
-	EnchantType    string             `yaml:"enchant_type,omitempty"` // enchantment ID to apply to target
-	SuccessMessage string             `yaml:"success_message"`
-	FailureMessage string             `yaml:"failure_message"`
+	RecipeId             string             `yaml:"id"`
+	Name                 string             `yaml:"name"`
+	Skill                string             `yaml:"skill"`
+	SkillMinimum         int                `yaml:"skill_minimum"`
+	RequireOwnComponents bool               `yaml:"require_own_components,omitempty"` // crafted-component ingredients must carry the crafter's MakerName
+	Station              string             `yaml:"station"`                          // "" = no station required
+	TimeRounds           int                `yaml:"time_rounds"`
+	Ingredients          []RecipeIngredient `yaml:"ingredients"`
+	Output               RecipeOutput       `yaml:"output"`
+	TargetType           string             `yaml:"target_type,omitempty"`  // equipment type consumed as enchanting input
+	EnchantType          string             `yaml:"enchant_type,omitempty"` // enchantment ID to apply to target
+	SuccessMessage       string             `yaml:"success_message"`
+	FailureMessage       string             `yaml:"failure_message"`
 }
 
 // Id implements fileloader.Loadable.
@@ -154,6 +155,14 @@ func GetAllForSkill(skill string) []*RecipeSpec {
 	return result
 }
 
+// componentTagOf returns the ComponentTag of item's spec, or "" if the item
+// isn't tagged as a crafting component/material. Shared matcher used by
+// HasIngredients, ConsumeIngredients, and CheckOwnComponents so tag-matching
+// behavior stays consistent across all three.
+func componentTagOf(item items.Item) string {
+	return item.GetSpec().ComponentTag
+}
+
 // HasIngredients checks whether inv and componentInv together contain all
 // required ingredients for recipe.
 // Returns (true, "") on success; (false, firstMissingTag) on failure.
@@ -161,16 +170,14 @@ func HasIngredients(inv []items.Item, componentInv []items.Item, recipe *RecipeS
 	counts := make(map[string]int)
 	// Count from component bag first
 	for _, item := range componentInv {
-		spec := item.GetSpec()
-		if spec.ComponentTag != "" {
-			counts[spec.ComponentTag]++
+		if tag := componentTagOf(item); tag != "" {
+			counts[tag]++
 		}
 	}
 	// Then from backpack
 	for _, item := range inv {
-		spec := item.GetSpec()
-		if spec.ComponentTag != "" {
-			counts[spec.ComponentTag]++
+		if tag := componentTagOf(item); tag != "" {
+			counts[tag]++
 		}
 	}
 	for _, ing := range recipe.Ingredients {
@@ -193,10 +200,9 @@ func ConsumeIngredients(inv []items.Item, componentInv []items.Item, recipe *Rec
 	// Consume from component bag first
 	newComponent := make([]items.Item, 0, len(componentInv))
 	for _, item := range componentInv {
-		spec := item.GetSpec()
-		if spec.ComponentTag != "" {
-			if remaining := needed[spec.ComponentTag]; remaining > 0 {
-				needed[spec.ComponentTag]--
+		if tag := componentTagOf(item); tag != "" {
+			if remaining := needed[tag]; remaining > 0 {
+				needed[tag]--
 				continue // consume this item
 			}
 		}
@@ -206,10 +212,9 @@ func ConsumeIngredients(inv []items.Item, componentInv []items.Item, recipe *Rec
 	// Then from backpack
 	newInv := make([]items.Item, 0, len(inv))
 	for _, item := range inv {
-		spec := item.GetSpec()
-		if spec.ComponentTag != "" {
-			if remaining := needed[spec.ComponentTag]; remaining > 0 {
-				needed[spec.ComponentTag]--
+		if tag := componentTagOf(item); tag != "" {
+			if remaining := needed[tag]; remaining > 0 {
+				needed[tag]--
 				continue // consume this item
 			}
 		}
@@ -217,6 +222,57 @@ func ConsumeIngredients(inv []items.Item, componentInv []items.Item, recipe *Rec
 	}
 
 	return newInv, newComponent
+}
+
+// CheckOwnComponents enforces require_own_components: every ingredient that
+// is itself a crafted component (IsComponent) must have been made by the
+// crafter. Bulk materials are exempt. Tag-matching mirrors HasIngredients /
+// ConsumeIngredients via componentTagOf.
+// Returns (true, "") on success; (false, offendingComponentName) on failure.
+// Callers own all player-facing text (same convention as HasIngredients).
+//
+// NOTE: strict-any-match — if ANY matching-tag component in the pools is
+// foreign, the craft refuses even if the crafter also carries their own
+// copy of that component. This is deliberate: HasIngredients/ConsumeIngredients
+// don't guarantee which matching item gets consumed first, so we can't
+// safely assume the crafter's own copy is the one that would be used.
+func CheckOwnComponents(recipe *RecipeSpec, inv, componentInv []items.Item, crafterName string) (bool, string) {
+	if !recipe.RequireOwnComponents {
+		return true, ""
+	}
+
+	pools := [][]items.Item{componentInv, inv}
+	for _, ing := range recipe.Ingredients {
+		for _, pool := range pools {
+			for _, item := range pool {
+				if componentTagOf(item) != ing.ItemTag {
+					continue
+				}
+				spec := item.GetSpec()
+				if !spec.IsComponent {
+					continue // bulk material, not a crafted component — exempt
+				}
+				if item.MakerName != crafterName {
+					return false, spec.Name
+				}
+			}
+		}
+	}
+	return true, ""
+}
+
+// ShouldStampMakerName decides whether a freshly crafted output item gets the
+// crafter's MakerName. Skilled crafters (skill 30+) stamp everything except
+// ordinary Object-type outputs — but component outputs (IsComponent) stamp
+// REGARDLESS of Type, since components are conventionally authored
+// `type: object` and require_own_components pinnacle-assembly gating needs
+// their provenance (see CheckOwnComponents). Shared by every craft-completion
+// path (async round tick and immediate-complete).
+func ShouldStampMakerName(craftSkill int, spec items.ItemSpec) bool {
+	if craftSkill < 30 {
+		return false
+	}
+	return spec.Type != items.Object || spec.IsComponent
 }
 
 // GetStarterRecipes returns a map of all recipes with SkillMinimum == 0,

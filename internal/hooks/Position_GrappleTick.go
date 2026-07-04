@@ -310,6 +310,22 @@ func processGrapplePair(controller, controlled *characters.Character) {
 		// No transition. Stamina drains; flavor handled below.
 	}
 
+	// Pinnacle item procs: spiked armor while grappling (both directions).
+	// Fires once per resolved round for every outcome that keeps the pair
+	// grappling — Hold/Advance/Degrade (no role change) and Reversal (roles
+	// swap but position.Target keeps them grappling, per ResolveOutcome's own
+	// doc comment: "Defender wins big; roles swap, position is Target").
+	// OutcomeEscape is the one outcome where the pair separates this round
+	// (both -> Standing) — skipped, since a wearer who broke free shouldn't
+	// still eat a bleed proc from armor that's no longer touching them. Placed
+	// after the outcome switch (rather than before) so the decision reads
+	// directly off outcome.Kind instead of re-deriving "did they stay
+	// grappling" from the pre-roll state.
+	if outcome.Kind != position.OutcomeEscape {
+		dispatchItemProcs("on_grapple", controller, controlled, nil, 0)
+		dispatchItemProcs("on_grapple", controlled, controller, nil, 0)
+	}
+
 	// Stamina cost unchanged.
 	applyGrappleStaminaCost(controller, controlled, cfg)
 	fireStaminaWarningIfLow(controller)

@@ -423,4 +423,15 @@ func (b *Balance) validateMisc() {
 	if b.FactsHeardEventsMax <= 0 {
 		b.FactsHeardEventsMax = 32
 	}
+
+	// ── PINNACLE ITEMS ───────────────────────────────────────────────────
+	if b.BandolierAttuneRounds <= 0 {
+		b.BandolierAttuneRounds = 100
+	}
+	if b.SentientChatterCooldownRounds <= 0 {
+		b.SentientChatterCooldownRounds = 20
+	}
+	if b.SentientChatterChancePct < 1 || b.SentientChatterChancePct > 100 {
+		b.SentientChatterChancePct = 15
+	}
 }

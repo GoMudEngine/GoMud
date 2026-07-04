@@ -356,6 +356,15 @@ func applyMobEffect_damage(
 	}
 	mob.Character.Health -= dmg
 	cancelDamageBuffs(&mob.Character)
+	// on_spell_hit item procs (e.g. Staff of the Hollow Choir CP-steal) fire
+	// only on a landing harm hit that dealt damage. This applier is shared by
+	// the player-caster→mob and mob-caster→mob paths, so wiring it here covers
+	// both. For AoE/multi-target casts the dispatch runs once per damaged
+	// target; the proc's own chance+cooldown pace it, so one cast steals from
+	// at most a few targets before the cooldown gate closes — intended.
+	if dmg > 0 {
+		dispatchItemProcs("on_spell_hit", casterChar, &mob.Character, nil, dmg)
+	}
 	setMobSpellAggro(user, mob)
 	if user != nil {
 		if critDeflect {
@@ -446,6 +455,9 @@ func applyMobEffect_knockdown(
 	}
 	mob.Character.Health -= dmg
 	cancelDamageBuffs(&mob.Character)
+	if dmg > 0 {
+		dispatchItemProcs("on_spell_hit", casterChar, &mob.Character, nil, dmg)
+	}
 	// Chunk 4b W5 cutover: spell knockdowns default to Supine (the
 	// "slams to the ground" wording fits backward force). Skip the
 	// legacy parallel-write if the FSM transition fails so the two
@@ -670,6 +682,9 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 		}
 		target.Character.Health -= dmg
 		cancelDamageBuffs(target.Character)
+		if dmg > 0 {
+			dispatchItemProcs("on_spell_hit", user.Character, target.Character, nil, dmg)
+		}
 		dmgDesc := combat.GetDamageDescription(dmg, target.Character.HealthMax.Value)
 		if deflected {
 			target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
@@ -1107,6 +1122,9 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 		mobSpellDmg = dmg
 		target.Character.Health -= dmg
 		cancelDamageBuffs(target.Character)
+		if dmg > 0 {
+			dispatchItemProcs("on_spell_hit", &caster.Character, target.Character, nil, dmg)
+		}
 		if deflected {
 			target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="green">You partially deflect `+
@@ -1168,6 +1186,9 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 		}
 		mobSpellDmg = dmg
 		target.Character.Health -= dmg
+		if dmg > 0 {
+			dispatchItemProcs("on_spell_hit", &caster.Character, target.Character, nil, dmg)
+		}
 		// Chunk 4b W5 cutover: mob-cast knockdown on player. Same
 		// Supine choice as the player-cast branch above.
 		if err := target.Character.Position.TransitionToSupine(

@@ -316,6 +316,15 @@ GamePlay:
   # earlier if both are off).
   WarehouseDrawdownEnabled: true
 
+  # - PinnacleItemsEnabled -
+  # Master toggle for pinnacle item ticks (sentient chatter, ambient effects,
+  # hunger, mutation growth).
+  PinnacleItemsEnabled: true
+
+  # - ItemProcsEnabled -
+  # Master toggle for item proc firing (on_hit/on_block/on_kill/etc.).
+  ItemProcsEnabled: true
+
 ################################################################################
 #
 #   BALANCE
@@ -1054,6 +1063,11 @@ Balance:
   ScoreWeightInput:      0.30
   ScoreWeightThroughput: 0.20
   ScoreWeightShopGold:   0.10
+
+  # ── PINNACLE ITEMS ──────────────────────────────────────────────────────────
+  BandolierAttuneRounds: 100          # Rounds of re-attunement after bandolier contents change
+  SentientChatterCooldownRounds: 20   # Min rounds between sentient item lines
+  SentientChatterChancePct: 15        # Percent chance per eligible round that a sentient item speaks
 
 ################################################################################
 #

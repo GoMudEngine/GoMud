@@ -26,6 +26,9 @@ type GamePlay struct {
 	WarehousesEnabled ConfigBool `yaml:"WarehousesEnabled"` // Master toggle for warehouse buffer pools (Stage 3 ferry system)
 
 	WarehouseDrawdownEnabled ConfigBool `yaml:"WarehouseDrawdownEnabled"` // Stage 4 kill switch: warehouse-first loading + local vendor release
+
+	PinnacleItemsEnabled ConfigBool `yaml:"PinnacleItemsEnabled"` // Master toggle: sentient/ambient/hunger/mutation item ticks
+	ItemProcsEnabled     ConfigBool `yaml:"ItemProcsEnabled"`     // Toggle: item proc firing (on_hit/on_block/etc.)
 }
 
 type GameplayDeath struct {

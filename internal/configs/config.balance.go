@@ -654,6 +654,11 @@ type Balance struct {
 
 	// ── FACTS & EVENTS ──────────────────────────────────────────────────────
 	FactsHeardEventsMax ConfigInt `yaml:"FactsHeardEventsMax"` // Max facts_heard events per mobs instance (default 32)
+
+	// ── PINNACLE ITEMS ───────────────────────────────────────────────────
+	BandolierAttuneRounds         ConfigInt `yaml:"BandolierAttuneRounds"`         // Rounds of re-attunement after bandolier contents change (default 100)
+	SentientChatterCooldownRounds ConfigInt `yaml:"SentientChatterCooldownRounds"` // Min rounds between sentient item lines (default 20)
+	SentientChatterChancePct      ConfigInt `yaml:"SentientChatterChancePct"`      // Percent chance per eligible round that a sentient item speaks (default 15)
 }
 
 func (b *Balance) Validate() {

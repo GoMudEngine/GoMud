@@ -299,6 +299,9 @@ rotation, not infinite free casting).
 
 ### 5.9 The Phial of Second Birth — consumable · alchemy 65 · 30,000g per phial
 
+**Item ID: 40181** (allocated in Stage 1; `drink.go` hardcodes it — the
+Stage 2 item YAML MUST use this ID).
+
 The remort potion. Drinking it scours **all** mutations to species base,
 then immediately grants **one** mutation from a pool pruned of everything
 below rarity ~5. The mutation min-maxer's dice — and the system's only

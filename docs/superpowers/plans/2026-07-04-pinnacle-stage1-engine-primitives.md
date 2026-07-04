@@ -1223,13 +1223,13 @@ git commit -m "feat(pinnacle): require_own_components recipe flag + MakerName on
 - Modify: `internal/usercommands/drink.go` (remort case)
 - Test: `internal/mutations/mutations_floor_test.go`, `internal/characters/character_mutation_rare_test.go`, extend `internal/usercommands/drink_scour_test.go`
 
-- [ ] **Step 0: Allocate the phial item ID**
+- [x] **Step 0: Allocate the phial item ID**
 
 Run: `python tools/id_inventory.py --alloc items 1`
 Record the returned ID; it is used for `phialOfSecondBirthItemId` below
 and MUST be the ID Stage 2 uses for the item YAML. Write it into this
 plan file (replace `<PHIAL_ID>` everywhere) and into the spec's section
-5.9 as a note.
+5.9 as a note. **ALLOCATED: 40181.**
 
 - [ ] **Step 1: Write failing tests**
 
