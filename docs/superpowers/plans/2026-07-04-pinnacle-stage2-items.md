@@ -8,7 +8,7 @@ primitives — live-verifiable via admin `item spawn` and a harness playtest.
 
 **Architecture:** Two small engine additions first (a `staminamax` statmod
 key; item-driven aggro-pull + on_kill voice emission), then pure content:
-item YAMLs in a new `items/pinnacle-40000/` directory, one buff YAML, two
+item YAMLs in a new `items/materials-40000/` directory, one buff YAML, two
 voice YAMLs. Mechanical fields are fully specified below; descriptions are
 authored creative work written to a brief, in world.md voice.
 
@@ -28,7 +28,7 @@ git checkout master && git checkout -b feature/pinnacle-stage2-items
 
 ## Locked IDs (allocated via id_inventory 2026-07-04 — do NOT reassign)
 
-| ID | Item | File (in `_datafiles/world/dogmud/items/pinnacle-40000/`) |
+| ID | Item | File (in `_datafiles/world/dogmud/items/materials-40000/`) |
 |---|---|---|
 | 40181 | Phial of Second Birth | `40181-phial_of_second_birth.yaml` (**hardcoded in drink.go**) |
 | 40182 | Vitalis Bandolier | `40182-vitalis_bandolier.yaml` |
@@ -287,7 +287,7 @@ git commit -m "feat(pinnacle): taunt_pull item flag + on_kill voice emission"
 
 **Files:**
 - Create: `_datafiles/world/dogmud/buffs/98-zephyrs_alacrity.yaml`
-- Create: `_datafiles/world/dogmud/items/pinnacle-40000/40188-zephyr_treads.yaml`
+- Create: `_datafiles/world/dogmud/items/materials-40000/40188-zephyr_treads.yaml`
 
 - [ ] **Step 1: Buff YAML** (worn-buff pattern per the lantern precedent —
 buffs.go re-applies worn buffs on Validate when missing):
@@ -339,7 +339,7 @@ rm -rf _datafiles/world/dogmud/mobs.instances/* _datafiles/world/dogmud/rooms.in
 go build -o gomud_smoke.exe . && ./gomud_smoke.exe
 ```
 Confirm clean load (buff + item counts up by 1 each, no panic — this also
-proves the new `pinnacle-40000/` directory is walked by the loader), then
+proves the new `materials-40000/` directory is walked by the loader), then
 kill the server and delete the exe. In-game (optional but preferred if the
 harness admin account is handy): `item spawn 40188`, `get treads`, `wear
 treads`, confirm the haste start text + `status` shows the SP boost.
@@ -347,7 +347,7 @@ treads`, confirm the haste start text + `status` shows the SP boost.
 - [ ] **Step 4: Commit**
 
 ```bash
-git add _datafiles/world/dogmud/buffs/98-zephyrs_alacrity.yaml "_datafiles/world/dogmud/items/pinnacle-40000/"
+git add _datafiles/world/dogmud/buffs/98-zephyrs_alacrity.yaml "_datafiles/world/dogmud/items/materials-40000/"
 git commit -m "content(pinnacle): Zephyr Treads + permanent haste worn buff"
 ```
 
@@ -356,7 +356,7 @@ git commit -m "content(pinnacle): Zephyr Treads + permanent haste worn buff"
 ### Task 4: The Blackrazor (40183) + blackrazor voice
 
 **Files:**
-- Create: `_datafiles/world/dogmud/items/pinnacle-40000/40183-the_blackrazor.yaml`
+- Create: `_datafiles/world/dogmud/items/materials-40000/40183-the_blackrazor.yaml`
 - Create: `_datafiles/world/dogmud/itemvoices/blackrazor.yaml`
 
 - [ ] **Step 1: Item YAML**
@@ -426,7 +426,7 @@ pool (status), kill something, watch for a kill line.
 - [ ] **Step 4: Commit**
 
 ```bash
-git add "_datafiles/world/dogmud/items/pinnacle-40000/40183-the_blackrazor.yaml" _datafiles/world/dogmud/itemvoices/blackrazor.yaml
+git add "_datafiles/world/dogmud/items/materials-40000/40183-the_blackrazor.yaml" _datafiles/world/dogmud/itemvoices/blackrazor.yaml
 git commit -m "content(pinnacle): The Blackrazor + its voice"
 ```
 
@@ -435,7 +435,7 @@ git commit -m "content(pinnacle): The Blackrazor + its voice"
 ### Task 5: Aegis of Mockery (40185) + aegis voice
 
 **Files:**
-- Create: `_datafiles/world/dogmud/items/pinnacle-40000/40185-aegis_of_mockery.yaml`
+- Create: `_datafiles/world/dogmud/items/materials-40000/40185-aegis_of_mockery.yaml`
 - Create: `_datafiles/world/dogmud/itemvoices/aegis.yaml`
 
 - [ ] **Step 1: Item YAML**
@@ -482,7 +482,7 @@ already prove it, don't grind).
 - [ ] **Step 4: Commit**
 
 ```bash
-git add "_datafiles/world/dogmud/items/pinnacle-40000/40185-aegis_of_mockery.yaml" _datafiles/world/dogmud/itemvoices/aegis.yaml
+git add "_datafiles/world/dogmud/items/materials-40000/40185-aegis_of_mockery.yaml" _datafiles/world/dogmud/itemvoices/aegis.yaml
 git commit -m "content(pinnacle): Aegis of Mockery + its voice"
 ```
 
@@ -491,8 +491,8 @@ git commit -m "content(pinnacle): Aegis of Mockery + its voice"
 ### Task 6: Vitalis Bandolier (40182) + Wayfarer's Bottomless Pack (40184)
 
 **Files:**
-- Create: `_datafiles/world/dogmud/items/pinnacle-40000/40182-vitalis_bandolier.yaml`
-- Create: `_datafiles/world/dogmud/items/pinnacle-40000/40184-wayfarers_bottomless_pack.yaml`
+- Create: `_datafiles/world/dogmud/items/materials-40000/40182-vitalis_bandolier.yaml`
+- Create: `_datafiles/world/dogmud/items/materials-40000/40184-wayfarers_bottomless_pack.yaml`
 
 - [ ] **Step 1: Bandolier YAML**
 
@@ -544,7 +544,7 @@ tests own this; just confirm storage routing works).
 - [ ] **Step 4: Commit**
 
 ```bash
-git add "_datafiles/world/dogmud/items/pinnacle-40000/40182-vitalis_bandolier.yaml" "_datafiles/world/dogmud/items/pinnacle-40000/40184-wayfarers_bottomless_pack.yaml"
+git add "_datafiles/world/dogmud/items/materials-40000/40182-vitalis_bandolier.yaml" "_datafiles/world/dogmud/items/materials-40000/40184-wayfarers_bottomless_pack.yaml"
 git commit -m "content(pinnacle): Vitalis Bandolier + Wayfarer's Bottomless Pack"
 ```
 
@@ -553,8 +553,8 @@ git commit -m "content(pinnacle): Vitalis Bandolier + Wayfarer's Bottomless Pack
 ### Task 7: Thornwall Harness (40186) + Seething Prism (40187)
 
 **Files:**
-- Create: `_datafiles/world/dogmud/items/pinnacle-40000/40186-thornwall_harness.yaml`
-- Create: `_datafiles/world/dogmud/items/pinnacle-40000/40187-seething_prism.yaml`
+- Create: `_datafiles/world/dogmud/items/materials-40000/40186-thornwall_harness.yaml`
+- Create: `_datafiles/world/dogmud/items/materials-40000/40187-seething_prism.yaml`
 
 - [ ] **Step 1: Harness YAML** (note: apply_condition magnitude is a flat
 param, not Strength-scaled — documented deviation from spec 5.5, tuned
@@ -622,7 +622,7 @@ confirm all three pools clamp (status).
 - [ ] **Step 4: Commit**
 
 ```bash
-git add "_datafiles/world/dogmud/items/pinnacle-40000/40186-thornwall_harness.yaml" "_datafiles/world/dogmud/items/pinnacle-40000/40187-seething_prism.yaml"
+git add "_datafiles/world/dogmud/items/materials-40000/40186-thornwall_harness.yaml" "_datafiles/world/dogmud/items/materials-40000/40187-seething_prism.yaml"
 git commit -m "content(pinnacle): Thornwall Harness + Seething Prism"
 ```
 
@@ -631,8 +631,8 @@ git commit -m "content(pinnacle): Thornwall Harness + Seething Prism"
 ### Task 8: Staff of the Hollow Choir (40189) + Phial of Second Birth (40181)
 
 **Files:**
-- Create: `_datafiles/world/dogmud/items/pinnacle-40000/40189-staff_of_the_hollow_choir.yaml`
-- Create: `_datafiles/world/dogmud/items/pinnacle-40000/40181-phial_of_second_birth.yaml`
+- Create: `_datafiles/world/dogmud/items/materials-40000/40189-staff_of_the_hollow_choir.yaml`
+- Create: `_datafiles/world/dogmud/items/materials-40000/40181-phial_of_second_birth.yaml`
 
 - [ ] **Step 1: Staff YAML**
 
@@ -711,7 +711,7 @@ new mutation, `mutations` shows it, rarity feels rare-tier.
 - [ ] **Step 4: Commit**
 
 ```bash
-git add "_datafiles/world/dogmud/items/pinnacle-40000/40189-staff_of_the_hollow_choir.yaml" "_datafiles/world/dogmud/items/pinnacle-40000/40181-phial_of_second_birth.yaml"
+git add "_datafiles/world/dogmud/items/materials-40000/40189-staff_of_the_hollow_choir.yaml" "_datafiles/world/dogmud/items/materials-40000/40181-phial_of_second_birth.yaml"
 git commit -m "content(pinnacle): Staff of the Hollow Choir + Phial of Second Birth"
 ```
 
