@@ -1,0 +1,39 @@
+itemid: 40189
+name: Staff of the Hollow Choir
+namesimple: staff
+description: >-
+  A conductor-core stave crowned with a ring of choir-focus gems,
+  hollowed straight through so a voice-box of resonant chrysalis-
+  glass can hum a chord pitched just below hearing. Casting through
+  it does not feel like drawing power so much as being sung through
+  -- the wood carries the note, and you are only where it passes.
+  When another's conviction falters nearby, the hollow throat drinks
+  the failing note and hands it to you as your own, warm and
+  borrowed. It never feeds from the same throat twice in close
+  succession, as though it remembers exactly whom it drank from last.
+type: weapon
+hands: 2
+subtype: staff
+damage:
+  basedamage: 6
+  variance: 2
+damage_multiplier: 0.80
+spell_damage_multiplier: 3.75
+parryrating: 12
+staminacost: 6
+statmods:
+  casting: 10
+  spellcasting: 5
+  manifestation: 5
+procs:
+  - trigger: on_spell_hit
+    chance: 100
+    cooldown_rounds: 3
+    effect: steal_pool
+    params:
+      pool: 3
+      amount_pct: 0.08
+weight: 4.0
+rarity_tier: 82
+value: 8000
+not_salable: true

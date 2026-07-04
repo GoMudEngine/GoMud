@@ -1,0 +1,19 @@
+itemid: 40181
+name: Phial of Second Birth
+namesimple: phial
+description: >-
+  A crystalline decanter of unmaking distillate, threaded through
+  with a hair-fine ribbon of first-bloom nectar so pale it could be
+  mistaken for light. It smells like rain falling on absolutely
+  nothing. To drink it is to feel every change the Chrysalis ever
+  wrote into you unravel at once, thread by thread, until what is
+  left of you is bare and unfamiliar -- and then, before the
+  emptiness can settle, something new begins to grow in its place.
+  It tastes like being born twice in the same breath.
+type: potion
+subtype: drinkable
+uses: 1
+weight: 0.3
+rarity_tier: 82
+value: 6000
+not_salable: true
