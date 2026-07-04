@@ -25,7 +25,10 @@ import (
 // Per-round cost discipline: the whole thing is gated by PinnacleItemsEnabled,
 // and each sub-tick reads only the belt/weapon/worn slots it needs (GetSpec on
 // an empty slot returns a zero ItemSpec, so the flag checks short-circuit for
-// players wearing nothing pinnacle-flagged). No allocations on the common path.
+// players wearing nothing pinnacle-flagged). Real cost on the common path: one
+// GetAllWornItems() slice allocation (built once here, shared by the mutation
+// and voice sub-ticks) plus a few MiscData map lookups. The bandolier
+// fingerprint build only runs for players wearing an ambient_potions belt.
 //
 // NOTE (GetSpec semantics): items.Item.GetSpec() returns an ItemSpec *value*,
 // never nil (an unknown/empty item yields a zero ItemSpec). So every guard here
@@ -40,12 +43,13 @@ func pinnacleUserTick(user *users.UserRecord, room *rooms.Room) {
 	}
 	c := user.Character
 	now := util.GetRoundCount()
+	worn := c.GetAllWornItems() // one pass, shared by the sub-ticks below
 
 	tickPreserveContents(c)
 	tickAmbientPotions(user, now)
 	tickHunger(c, user, now)
-	tickMutationItems(user, now)
-	tickVoices(user, room, now)
+	tickMutationItems(user, worn, now)
+	tickVoices(user, room, worn, now)
 }
 
 // readMiscIntSlice tolerantly reads a []int from MiscData. Like readMiscRound,
@@ -142,10 +146,10 @@ func tickHunger(c *characters.Character, user *users.UserRecord, now uint64) {
 
 // tickMutationItems rolls each worn mutation-tick item (the Seething Prism).
 // The roll only happens on interval-aligned rounds, then a percent gate, then
-// a rarity-floored grant.
-func tickMutationItems(user *users.UserRecord, now uint64) {
+// a rarity-floored grant. worn is the caller's single GetAllWornItems() pass.
+func tickMutationItems(user *users.UserRecord, worn []items.Item, now uint64) {
 	c := user.Character
-	for _, itm := range c.GetAllWornItems() {
+	for _, itm := range worn {
 		spec := itm.GetSpec()
 		if spec.MutationTickInterval <= 0 {
 			continue
@@ -177,9 +181,13 @@ func tickMutationItems(user *users.UserRecord, now uint64) {
 // potion, added/removed one, or swapped the belt — we stamp the attunement
 // cooldown and revoke the ambience. This catches ALL mutation paths with zero
 // edits to drink/get/remove/equip commands and is robust to future code, at
-// the cost of one MiscData key + a cheap per-round fingerprint. First-ever
+// the cost of one MiscData key + a fingerprint build — paid ONLY while an
+// ambient_potions belt is worn (the flag-off path never builds it). First-ever
 // equip trips attunement too (fp goes ""→something) — acceptable, arguably
-// correct flavor.
+// correct flavor. One leniency from flag-off-skips-fingerprint: unequipping the
+// belt DURING the attunement window (no buffs applied yet) and re-equipping it
+// with identical contents resumes the same attunement clock rather than
+// resetting it — fine, the contents never changed.
 //
 // Deferred (Stage 2): the item card's "slotted potions can't be drunk" rule is
 // item-level behavior for a later stage; the attunement cooldown is the Stage-1
@@ -210,6 +218,17 @@ func tickAmbientPotions(user *users.UserRecord, now uint64) {
 	belt := c.Equipment.Belt
 	spec := belt.GetSpec()
 
+	if !spec.AmbientPotions {
+		// Flag-off common path: no fingerprint work at all. Revoke any
+		// lingering ambience from a previously-worn ambient bandolier and
+		// clear the stored fingerprint so re-equipping one re-attunes.
+		if applied := readMiscIntSlice(c.GetMiscData("pinnacle_bandolier_buffs")); len(applied) > 0 {
+			revokeAmbient(c, applied)
+			c.SetMiscData("pinnacle_bandolier_fingerprint", nil)
+		}
+		return
+	}
+
 	applied := readMiscIntSlice(c.GetMiscData("pinnacle_bandolier_buffs"))
 
 	// Content-change detection (see mechanism note above).
@@ -217,18 +236,8 @@ func tickAmbientPotions(user *users.UserRecord, now uint64) {
 	prevFp, _ := c.GetMiscData("pinnacle_bandolier_fingerprint").(string)
 	if fp != prevFp {
 		c.SetMiscData("pinnacle_bandolier_fingerprint", fp)
-		// Only stamp re-attunement when there is an ambient bandolier to
-		// attune to; a plain belt just needs its fingerprint tracked and any
-		// lingering ambience revoked.
-		if spec.AmbientPotions {
-			c.SetMiscData("pinnacle_bandolier_attune_round",
-				now+uint64(configs.GetBalanceConfig().BandolierAttuneRounds))
-		}
-		revokeAmbient(c, applied)
-		return
-	}
-
-	if !spec.AmbientPotions {
+		c.SetMiscData("pinnacle_bandolier_attune_round",
+			now+uint64(configs.GetBalanceConfig().BandolierAttuneRounds))
 		revokeAmbient(c, applied)
 		return
 	}
@@ -298,14 +307,15 @@ func pickVoiceEvent(c *characters.Character, spec items.ItemSpec, now uint64) st
 // The 15% fire chance is rolled ONCE per round (a single roll gating the whole
 // voice tick), only after we confirm a speakable line exists — so quiet gear
 // pays no RNG. This is the simpler of the two options in the spec and it
-// inherently enforces the one-line-per-round rule.
-func tickVoices(user *users.UserRecord, room *rooms.Room, now uint64) {
+// inherently enforces the one-line-per-round rule. worn is the caller's single
+// GetAllWornItems() pass.
+func tickVoices(user *users.UserRecord, room *rooms.Room, worn []items.Item, now uint64) {
 	c := user.Character
 	if next, ok := readMiscRound(c.GetMiscData("pinnacle_voice_next_round")); ok && now < next {
 		return
 	}
 	cool := uint64(configs.GetBalanceConfig().SentientChatterCooldownRounds)
-	for _, itm := range c.GetAllWornItems() {
+	for _, itm := range worn {
 		spec := itm.GetSpec()
 		if spec.VoiceId == "" {
 			continue

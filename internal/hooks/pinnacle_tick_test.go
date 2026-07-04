@@ -202,13 +202,13 @@ func TestPinnacleMutationTick(t *testing.T) {
 	c.Equipment.Neck = items.New(999956)
 
 	// Off-interval round (11 % 5 != 0) grants nothing.
-	tickMutationItems(u, 11)
+	tickMutationItems(u, c.GetAllWornItems(), 11)
 	if len(c.Mutations) != 0 {
 		t.Fatalf("off-interval tick must not grant, got %d mutations", len(c.Mutations))
 	}
 
 	// Interval-aligned round with chance 100 grants the rarity-8 mutation.
-	tickMutationItems(u, 10)
+	tickMutationItems(u, c.GetAllWornItems(), 10)
 	if _, ok := c.Mutations["third_eye"]; !ok {
 		t.Fatalf("interval-aligned tick should grant the rarity-floored mutation, got %v", c.Mutations)
 	}
@@ -274,7 +274,7 @@ func TestPinnacleVoiceCooldownGates(t *testing.T) {
 	// Cooldown active (next round far in the future).
 	c.SetMiscData("pinnacle_voice_next_round", uint64(1000))
 	_ = events.DrainQueuedMessagesForTest(705) // clear the queue
-	tickVoices(u, room, 100)
+	tickVoices(u, room, c.GetAllWornItems(), 100)
 	if msgs := events.DrainQueuedMessagesForTest(705); len(msgs) != 0 {
 		t.Fatalf("active chatter cooldown must gate all output, got %v", msgs)
 	}
