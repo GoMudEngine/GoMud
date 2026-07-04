@@ -3,6 +3,7 @@ package characters
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/enchantments"
 	"github.com/GoMudEngine/GoMud/internal/items"
 )
 
@@ -83,6 +84,48 @@ func TestItemSpecPoolReservation_StaminaAndConviction(t *testing.T) {
 	}
 	if c.Conviction != 170 {
 		t.Fatalf("expected current conviction clamped to 170, got %d", c.Conviction)
+	}
+}
+
+// TestItemSpecPoolReservation_StacksWithChrysalisEnchant proves that a single
+// equipped item carrying BOTH a Chrysalis reserve enchantment AND an ItemSpec
+// reserve_*_pct contributes through both mechanisms, and the contributions
+// ADD. The pre-pinnacle early-continue structure made dual contribution
+// impossible; this test locks in the intentional stacking behavior.
+func TestItemSpecPoolReservation_StacksWithChrysalisEnchant(t *testing.T) {
+	defer items.SeedItemsForTest(map[int]*items.ItemSpec{
+		999913: {ItemId: 999913, Name: "hungry razor", Type: items.Weapon, Hands: 1, ReserveHealthPct: 0.25},
+	})()
+	defer enchantments.SeedEnchantmentsForTest(map[string]*enchantments.EnchantmentDef{
+		"test-hunger": {
+			EnchantId:   "test-hunger",
+			Name:        "Test Hunger",
+			ReservePool: "health",
+			Tiers:       []enchantments.TierDef{{Tier: 0, ReservePct: 0.10}},
+		},
+	})()
+
+	c := New()
+	c.HealthMax.Base = 400
+	blade := items.New(999913)
+	blade.EnchantType = "test-hunger"
+	blade.EnchantTier = 0
+	blade.ReservePool = "health"
+	c.Equipment.Weapon = blade
+	c.Health = 999999
+
+	c.Validate()
+
+	if c.HealthMax.Value != 400 {
+		t.Fatalf("test setup invariant broken: expected HealthMax.Value 400, got %d", c.HealthMax.Value)
+	}
+	// Spec: floor(400 * 0.25) = 100. Enchant tier 0: floor(400 * 0.10) = 40
+	// (1-handed, so no two-hand doubling). Total = 140.
+	if res := c.GetPoolReservation("health", c.HealthMax.Value); res != 140 {
+		t.Fatalf("expected 140 reserved (100 spec + 40 enchant), got %d", res)
+	}
+	if c.Health != 260 {
+		t.Fatalf("expected current health clamped to 260 (400 - 140), got %d", c.Health)
 	}
 }
 
