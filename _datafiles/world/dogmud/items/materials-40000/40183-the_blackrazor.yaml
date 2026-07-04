@@ -1,5 +1,10 @@
 itemid: 40183
 name: The Blackrazor
+# Display name drops the leading article so prepended-article contexts read
+# "the Blackrazor" / "your Blackrazor" instead of doubling ("the The
+# Blackrazor"). The sentient voice still uses the full spec.Name ("The
+# Blackrazor says, ...").
+displayname: Blackrazor
 namesimple: blackrazor
 description: >-
   A greatsword longer than a tall man, its edge a black glass that
