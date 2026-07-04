@@ -10,6 +10,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/pkg/errors"
@@ -90,28 +91,16 @@ func SeedVoicesForTest(m map[string]*VoiceSpec) func() {
 	return func() { allVoices = old }
 }
 
-// ItemSpecEnumerator is the cross-validation dependency injected from
-// boot: it must return every loaded ItemSpec's VoiceId field value (or ""
-// if unset), keyed by item id, so LoadDataFiles can confirm every
-// referenced voice actually loaded. Kept as a func type (rather than an
-// items import) to avoid an itemvoices -> items import — items is loaded
-// before itemvoices at boot, but the dependency is passed in, not
-// imported, to keep this package's import graph minimal and mirror the
-// DI pattern used by the schedule/patrol/faction world validators.
-type ItemSpecEnumerator func() map[int]string
-
 // LoadDataFiles reads all YAML files from the itemvoices/ data directory
 // and populates the in-memory registry. Called once at startup from
-// main.go, immediately after enchantments.LoadEnchantmentFiles() (which
-// follows the same pattern) and AFTER items.LoadDataFiles() so the
-// itemVoiceIds callback below can see every item's voice_id for
-// cross-validation.
+// main.go. It MUST run AFTER items.LoadDataFiles() so the voice_id
+// cross-validation below sees every loaded ItemSpec.
 //
-// itemVoiceIds, if non-nil, is called after voices load; every non-empty
-// VoiceId it returns must reference a loaded voice, or LoadDataFiles
-// panics (dangling voice_id references must fail loudly at boot, same as
-// schedule_id / patrol_id world validation).
-func LoadDataFiles(itemVoiceIds ...func() map[int]string) {
+// After voices load, every ItemSpec with a non-empty VoiceId must
+// reference a loaded voice, or LoadDataFiles panics (dangling voice_id
+// references must fail loudly at boot, same as schedule_id / patrol_id
+// world validation).
+func LoadDataFiles() {
 	start := time.Now()
 
 	dataPath := string(configs.GetFilePathsConfig().DataFiles) + `/itemvoices`
@@ -123,14 +112,12 @@ func LoadDataFiles(itemVoiceIds ...func() map[int]string) {
 	allVoices = tmpAll
 	mudlog.Info("itemvoices.LoadDataFiles()", "loadedCount", len(allVoices), "Time Taken", time.Since(start))
 
-	if len(itemVoiceIds) > 0 && itemVoiceIds[0] != nil {
-		for itemId, voiceId := range itemVoiceIds[0]() {
-			if voiceId == "" {
-				continue
-			}
-			if GetVoice(voiceId) == nil {
-				panic(fmt.Sprintf("item %d references unknown voice_id %q", itemId, voiceId))
-			}
+	for itemId, spec := range items.GetAllItemSpecsMap() {
+		if spec.VoiceId == "" {
+			continue
+		}
+		if GetVoice(spec.VoiceId) == nil {
+			panic(fmt.Sprintf("item %d references unknown voice_id %q", itemId, spec.VoiceId))
 		}
 	}
 }
