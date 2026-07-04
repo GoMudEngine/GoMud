@@ -749,7 +749,7 @@ Balance:
   StorageFeePerItem: 1               # Gold charged per stored item per game month
 
   # ── WAREHOUSES (Stage 3 ferry system) ─────────────────────────────────────
-  WarehouseItemCap: 400         # Per-item stock cap in city warehouses
+  WarehouseItemCap: 4000000     # Per-item stock cap in city warehouses (effectively unbounded reserves)
   WarehouseAccrualHours: 2      # Game-hours between ambient accrual ticks
 
   # ── CRAFTER MOBS ─────────────────────────────────────────────────────────
