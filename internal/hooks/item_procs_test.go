@@ -87,16 +87,20 @@ func TestProcAoeStun_StunsHostilesSkipsProtected(t *testing.T) {
 	}
 }
 
-// TestProcAoeStun_SkipsOwnerCharmedCompanion proves a mob charmed by the owner
-// (a companion) is spared even though it is otherwise a valid target.
-func TestProcAoeStun_SkipsOwnerCharmedCompanion(t *testing.T) {
+// TestProcAoeStun_SkipsCharmedCompanions proves charmed mobs are spared no
+// matter whose companions they are — the owner's AND a non-party bystander's
+// (player-cast HarmArea parity: bare IsCharmed()). Users 1 and 2 are seeded
+// by seedAllRegistries with no party, so user 2 is a non-party bystander.
+func TestProcAoeStun_SkipsCharmedCompanions(t *testing.T) {
 	defer seedAllRegistries()()
 	defer seedStunBuff(t)()
 	enableItemProcs(t)
 
 	hostile := mobs.GetInstance(100)
-	companion := addTestMob(203, false)
-	companion.Character.Charm(1, characters.CharmPermanent, "")
+	ownerCompanion := addTestMob(203, false)
+	ownerCompanion.Character.Charm(1, characters.CharmPermanent, "")
+	bystanderCompanion := addTestMob(204, false)
+	bystanderCompanion.Character.Charm(2, characters.CharmPermanent, "")
 
 	owner := users.GetByUserId(1).Character
 	owner.SetUserId(1)
@@ -107,8 +111,11 @@ func TestProcAoeStun_SkipsOwnerCharmedCompanion(t *testing.T) {
 	if !hostile.Character.HasBuff(84) {
 		t.Error("hostile mob 100 should be stunned")
 	}
-	if companion.Character.HasBuff(84) {
+	if ownerCompanion.Character.HasBuff(84) {
 		t.Error("owner-charmed companion 203 must NOT be stunned")
+	}
+	if bystanderCompanion.Character.HasBuff(84) {
+		t.Error("non-party bystander's companion 204 must NOT be stunned")
 	}
 }
 

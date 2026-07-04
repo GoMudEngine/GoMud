@@ -8,7 +8,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
-	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -160,8 +159,8 @@ func procApplyCondition(target *characters.Character, params map[string]float64)
 
 // procAoeStun applies the stagger-stun buff (84 — a 1-round Stunned) to every
 // hostile, stun-eligible mob in the owner's room. Non-combatants,
-// attack-immune, and owner/party-charmed mobs are never targeted — stunning
-// your own companions or town NPCs would be a prod incident. Returns true if
+// attack-immune, and charmed mobs are never targeted — stunning someone's
+// companion or a town NPC would be a prod incident. Returns true if
 // at least one target was stunned (only then is the proc's cooldown marked).
 //
 // Mob owners are a no-op: no Stage-2 mob wields an aoe_stun item, and "hostile
@@ -189,14 +188,6 @@ func procAoeStun(owner *characters.Character, room *rooms.Room, params map[strin
 		return false
 	}
 
-	// Ally userIds whose charmed companions must be spared: the owner plus
-	// every member of the owner's party. Mirrors the HarmArea ally-exclusion
-	// in spell_resolution.go (a mob charmed by any of these is an ally).
-	allyUserIds := []int{ownerUserId}
-	if party := parties.Get(ownerUserId); party != nil {
-		allyUserIds = append(allyUserIds, party.GetMembers()...)
-	}
-
 	stunned := 0
 	for _, mobId := range room.GetMobs(rooms.FindAll) {
 		m := mobs.GetInstance(mobId)
@@ -206,7 +197,12 @@ func procAoeStun(owner *characters.Character, room *rooms.Room, params map[strin
 		if m.IsNonCombatant() || m.PlayerAttackImmune {
 			continue
 		}
-		if m.Character.IsCharmed(allyUserIds...) {
+		// Spare ALL charmed companions, whoever their master is — the
+		// player-cast HarmArea precedent (spell_resolution.go, resolveSpell)
+		// uses bare IsCharmed() for exactly this: a non-party bystander's
+		// companion caught in the shockwave would be a prod incident just as
+		// surely as a party member's.
+		if m.Character.IsCharmed() {
 			continue
 		}
 		_ = m.Character.AddBuff(84, false)
