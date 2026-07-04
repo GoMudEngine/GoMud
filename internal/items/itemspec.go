@@ -252,11 +252,12 @@ var validProcEffects = map[string]bool{
 
 // The blueprint for an item
 type ItemSpec struct {
-	ItemId                int
-	Value                 int
-	Uses                  int        `yaml:"uses,omitempty"`                    // How many uses it starts with
-	BuffIds               []int      `yaml:"buffids,omitempty"`                 // What buffs it can apply (if used)
-	WornBuffIds           []int      `yaml:"wornbuffids,omitempty"`             // BuffId's that are applied while worn, and expired when removed.
+	ItemId      int
+	Value       int
+	Uses        int   `yaml:"uses,omitempty"`        // How many uses it starts with
+	BuffIds     []int `yaml:"buffids,omitempty"`     // What buffs it can apply (if used)
+	WornBuffIds []int `yaml:"wornbuffids,omitempty"` // BuffId's that are applied while worn, and expired when removed.
+	// ── Pinnacle Stage 1: procs, reserves, bandolier, mutation drip, hunger, voice ──
 	Procs                 []ItemProc `yaml:"procs,omitempty"`                   // data-driven combat procs
 	ReserveHealthPct      float64    `yaml:"reserve_health_pct,omitempty"`      // 0-1 fraction of HealthMax reserved while equipped
 	ReserveStaminaPct     float64    `yaml:"reserve_stamina_pct,omitempty"`     // 0-1 fraction of StaminaMax reserved while equipped
@@ -606,15 +607,31 @@ func (i *ItemSpec) Validate() error {
 			return fmt.Errorf("item %d proc %d: invalid effect %q", i.ItemId, idx, p.Effect)
 		}
 		if p.Chance < 1 || p.Chance > 100 {
-			return fmt.Errorf("item %d proc %d: chance must be 1-100", i.ItemId, idx)
+			return fmt.Errorf("item %d proc %d: chance must be 1-100, got %d", i.ItemId, idx, p.Chance)
 		}
 	}
 	for name, v := range map[string]float64{
 		"reserve_health_pct": i.ReserveHealthPct, "reserve_stamina_pct": i.ReserveStaminaPct, "reserve_conviction_pct": i.ReserveConvictionPct,
+		"hunger_drain_pct": i.HungerDrainPct,
 	} {
-		if v != 0 && (v < 0 || v >= 1) {
+		if v < 0 || v >= 1 {
 			return fmt.Errorf("item %d: %s must be in [0,1), got %v", i.ItemId, name, v)
 		}
+	}
+	if i.HungerRounds < 0 {
+		return fmt.Errorf("item %d: hunger_rounds must not be negative, got %d", i.ItemId, i.HungerRounds)
+	}
+	if i.MutationTickInterval < 0 {
+		return fmt.Errorf("item %d: mutation_tick_interval must not be negative, got %d", i.ItemId, i.MutationTickInterval)
+	}
+	if i.MutationTickChance < 0 || i.MutationTickChance > 100 {
+		return fmt.Errorf("item %d: mutation_tick_chance must be 0-100, got %d", i.ItemId, i.MutationTickChance)
+	}
+	if i.MutationTickInterval > 0 && (i.MutationTickChance < 1 || i.MutationTickChance > 100) {
+		return fmt.Errorf("item %d: mutation_tick_chance must be 1-100 when mutation_tick_interval is set, got %d", i.ItemId, i.MutationTickChance)
+	}
+	if i.MutationRarityFloor < 0 || i.MutationRarityFloor > 10 {
+		return fmt.Errorf("item %d: mutation_rarity_floor must be 0-10, got %d", i.ItemId, i.MutationRarityFloor)
 	}
 
 	return nil
