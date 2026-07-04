@@ -44,6 +44,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/inputhandlers"
 	"github.com/GoMudEngine/GoMud/internal/integrations/discord"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/itemvoices"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/language"
 	"github.com/GoMudEngine/GoMud/internal/actions"
@@ -1249,6 +1250,15 @@ func loadAllDataFiles(isReload bool) {
 	rooms.RebuildZonePlayerCount() // build the zone → player-count index
 	buffs.LoadDataFiles() // Load buffs before items for cost calculation reasons
 	items.LoadDataFiles()
+	// Pinnacle Stage 1: sentient item voices. Must load AFTER items so the
+	// voice_id cross-validation below can see every item's ItemSpec.
+	itemvoices.LoadDataFiles(func() map[int]string {
+		out := make(map[int]string)
+		for id, spec := range items.GetAllItemSpecsMap() {
+			out[id] = spec.VoiceId
+		}
+		return out
+	})
 	species.LoadDataFiles()
 	// Chunk 3.2: inject world-aware schedule validation. Done here in main.go
 	// to break the rooms ← mobs import cycle (mobs cannot directly import
