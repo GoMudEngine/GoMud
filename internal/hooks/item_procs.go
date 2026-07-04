@@ -6,6 +6,9 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -150,10 +153,73 @@ func procBearingItems(c *characters.Character, trigger string) []items.Item {
 	return nil
 }
 
-// Stubs — implemented by Tasks 5-7; returning false means "did not execute"
+// Stubs — implemented by Tasks 6-7; returning false means "did not execute"
 // (so the cooldown isn't marked).
 func procStealPool(owner, other *characters.Character, params map[string]float64) bool { return false }
-func procAoeStun(owner *characters.Character, room *rooms.Room, params map[string]float64) bool {
-	return false
-}
 func procApplyCondition(target *characters.Character, params map[string]float64) bool { return false }
+
+// procAoeStun applies the stagger-stun buff (84 — a 1-round Stunned) to every
+// hostile, stun-eligible mob in the owner's room. Non-combatants,
+// attack-immune, and owner/party-charmed mobs are never targeted — stunning
+// your own companions or town NPCs would be a prod incident. Returns true if
+// at least one target was stunned (only then is the proc's cooldown marked).
+//
+// Mob owners are a no-op: no Stage-2 mob wields an aoe_stun item, and "hostile
+// to a mob" has no clean definition here, so we return false (cooldown
+// unburned) rather than guess. owner.GetUserId() is 0 for mobs.
+//
+// The stun_rounds param is intentionally IGNORED: buff 84 is a fixed 1-round
+// stagger (triggercount:1 in its YAML) and cannot be duration-scaled from data
+// without hacking buff internals. The Stage-2 Aegis-of-Mockery shield tunes
+// its strength via the proc's chance/cooldown fields instead.
+func procAoeStun(owner *characters.Character, room *rooms.Room, params map[string]float64) bool {
+	if owner == nil {
+		return false
+	}
+	ownerUserId := owner.GetUserId()
+	if ownerUserId <= 0 {
+		// Mob (or unassigned) owner — no-op, see doc comment.
+		return false
+	}
+
+	if room == nil {
+		room = rooms.LoadRoom(owner.RoomId)
+	}
+	if room == nil {
+		return false
+	}
+
+	// Ally userIds whose charmed companions must be spared: the owner plus
+	// every member of the owner's party. Mirrors the HarmArea ally-exclusion
+	// in spell_resolution.go (a mob charmed by any of these is an ally).
+	allyUserIds := []int{ownerUserId}
+	if party := parties.Get(ownerUserId); party != nil {
+		allyUserIds = append(allyUserIds, party.GetMembers()...)
+	}
+
+	stunned := 0
+	for _, mobId := range room.GetMobs(rooms.FindAll) {
+		m := mobs.GetInstance(mobId)
+		if m == nil {
+			continue
+		}
+		if m.IsNonCombatant() || m.PlayerAttackImmune {
+			continue
+		}
+		if m.Character.IsCharmed(allyUserIds...) {
+			continue
+		}
+		_ = m.Character.AddBuff(84, false)
+		stunned++
+	}
+
+	if stunned == 0 {
+		return false
+	}
+
+	// Room-wide narration, no raw numbers (project rule). CategorySubmission
+	// matches buff 84's own submission-stagger flavor.
+	room.SendTextVisual(messaging.CategorySubmission,
+		`<ansi fg="yellow">A jarring shockwave ripples outward, staggering the hostile creatures nearby!</ansi>`)
+	return true
+}

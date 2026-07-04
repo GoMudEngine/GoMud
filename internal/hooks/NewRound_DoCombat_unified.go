@@ -141,6 +141,18 @@ func handleCombatRound(
 		dispatchItemProcs("on_hit", atk.GetCharacter(), def.GetCharacter(), atk.GetRoom(), res.DamageToTarget)
 	}
 
+	// Pinnacle item procs: defender's shield on_block. A "successful block" in
+	// this engine is a defended swing (res.Hit == false) whose widest-margin
+	// winning defense was block (res.DefenseUsed == combat.DefenseBlock). Both
+	// the normal-defense path (sendDefenseMessages) and the last-resort floor
+	// path (sendFloorDefenseMessages) set DefenseUsed on success; the attack
+	// floor-override leaves DefenseUsed empty when it forces a Hit — so gating
+	// on !Hit && block is exact. rollCombatAttack has already resolved defense
+	// into res by this point, so DefenseUsed is populated.
+	if !res.Hit && res.DefenseUsed == combat.DefenseBlock {
+		dispatchItemProcs("on_block", def.GetCharacter(), atk.GetCharacter(), atk.GetRoom(), 0)
+	}
+
 	// Combat analytics (shared across all four quadrants).
 	recordCombatAnalytics(atk, def, res, evt.RoundNumber)
 
