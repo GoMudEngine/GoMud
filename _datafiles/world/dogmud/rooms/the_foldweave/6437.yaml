@@ -24,6 +24,7 @@ coord:
 exits:
   out:
     roomid: 6436
+    mapdirection: up
 nouns:
   heart: >
     A space with no measure to it -- silk folded through silk until
@@ -45,4 +46,8 @@ idlemessages:
   longer than the whole warren above, and thrums once, deep.
 - The cold sweet air pools motionless around you, arrived at last at the
   place it was always falling toward.
-# spawninfo: The Foldweaver (boss) nest — added in Task 7
+spawninfo:
+  - mobid: 9581
+    respawnrate: "12 real minutes"
+  - mobid: 9581
+    respawnrate: "12 real minutes"

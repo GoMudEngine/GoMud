@@ -25,6 +25,7 @@ exits:
     roomid: 6434
   in:
     roomid: 6437
+    mapdirection: down
 nouns:
   court: >
     A hall's-worth of packed silk, level and broad, ringed by the
@@ -46,4 +47,6 @@ idlemessages:
   an instant, and the whole made place seems to lean inward.
 - From past the fold-gate comes a dry deliberate sound of great legs
   settling, and then the court is still again.
-# spawninfo: The Foldweaver (boss) + court adds — added in Task 7
+spawninfo:
+  - mobid: 9583
+    respawnrate: "30 real minutes"

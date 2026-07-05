@@ -47,4 +47,6 @@ idlemessages:
   sound of many legs at work.
 - A vibration travels the strand from somewhere deep, reaches your
   hand, and keeps traveling past you up the line.
-# spawninfo: Foldweave spider ecology added in Task 7
+spawninfo:
+  - mobid: 9580
+    respawnrate: "12 real minutes"

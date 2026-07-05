@@ -1,0 +1,22 @@
+itemid: 40207
+name: Folded-Space Silk
+namesimple: silk
+vendor_categories:
+- tailoring
+description: >-
+  A single length of grey spider-silk, coiled loose in the palm and
+  weighing nothing at all -- and yet the coil will not end. Pay it out
+  hand over hand and it keeps coming, longer than the hand that holds
+  it, longer than the room it is paid out in, a whole warren's worth of
+  strand folded back into a length you could close your fist around. It
+  runs out to the far wall and past it and comes to rest at your feet in
+  the same motion, near and far traded and traded back. Woven into cloth
+  it lends the wearer more reach than the cloth has thread, and the eye
+  slides off the place where the fold is sewn.
+type: object
+subtype: mundane
+component_tag: folded-space-silk
+weight: 0.3
+value: 1300
+rarity_tier: 82
+is_component: true

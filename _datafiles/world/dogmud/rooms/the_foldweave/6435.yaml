@@ -56,4 +56,6 @@ hidden_nouns:
     hidden_description: |
       A folded seam along the shelf's underlip has been spun shut over a
       small reserve of stored silk.
-# spawninfo: Foldweave spider ecology added in Task 7
+spawninfo:
+  - mobid: 9582
+    respawnrate: "12 real minutes"

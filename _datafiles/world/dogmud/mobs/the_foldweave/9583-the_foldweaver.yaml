@@ -1,0 +1,64 @@
+mobid: 9583
+zone: The Foldweave
+behavior_archetype: leader
+aiprofile: brute
+archetype: fighting
+submission_policy: lethal
+surrender_policy: never
+hostile: true
+statpool: 700
+itemdropchance: 5
+maxwander: 0
+groups:
+  - cave-pack
+mutationchance: 90
+spawnmutations:
+  - large
+  - thick-hide
+idlecommands:
+  - 'emote settles its vast weight across the court on legs that reach
+    the walls, and the whole floor of silk draws taut beneath it.'
+  - ''
+  - 'emote turns a cluster of black eyes upon you, patient, and pays out
+    a single strand toward you that folds back before it arrives.'
+  - ''
+  - ''
+combatcommands:
+  - 'emote hauls the whole weave tight at once, and for a moment the
+    court folds close and there is nowhere in it that is not within
+    its reach.'
+  - ''
+  - 'emote brings a great barbed leg down through a fold in the air, so
+    that the blow arrives from a direction the room did not hold.'
+  - bash
+  - ''
+character:
+  name: The Foldweaver
+  items:
+    - itemid: 40207   # Folded-Space Silk (ultra-rare apex drop)
+      dropchance: 5    # match mob's itemdropchance
+  description: |
+    The maker of the whole overlong warren -- a spider grown past any
+    natural measure, its body broad as a cart and slung low on legs that
+    reach clear across the court to the converging cables it rules. Its
+    carapace is a dull ancient grey, scarred and layered like the oldest
+    silk of the nest-heart, and set across the front of it a bank of
+    black eyes takes in the long approach it has watched a thousand times
+    before. It has spun for longer than the stone remembers, and in the
+    spinning it has learned to fold the space it spins -- so that the
+    warren above is one road doubled and doubled into a labyrinth, and
+    the court beneath it is only ever an arm's reach wide when it decides
+    to close. It does not flee and it does not yield. It has folded the
+    whole world down to this floor, and it means to keep you on it.
+  speciesid: 17
+  level: 1
+  gold: 0
+  stats:
+    strength:
+      training: 40
+    vitality:
+      training: 40
+    dexterity:
+      training: 10
+    perception:
+      training: 15

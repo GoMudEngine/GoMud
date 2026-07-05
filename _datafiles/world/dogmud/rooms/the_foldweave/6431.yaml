@@ -51,4 +51,8 @@ idlemessages:
   a fraction colder than the last.
 - Deep in the chimney something large adjusts itself, and a run of
   loose silk sighs down the shaft.
-# spawninfo: Foldweave spider ecology added in Task 7
+spawninfo:
+  - mobid: 9580
+    respawnrate: "12 real minutes"
+  - mobid: 9581
+    respawnrate: "12 real minutes"

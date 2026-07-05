@@ -48,4 +48,9 @@ idlemessages:
   and the felt gives back no sound at all.
 - A strand overhead draws suddenly tight with a low musical note, then
   slackens.
-# spawninfo: Foldweave spider ecology added in Task 7
+spawninfo:
+  - mobid: 9580
+    respawnrate: "12 real minutes"
+  - mobid: 9580
+    respawnrate: "12 real minutes"
+    statpoolmod: 20

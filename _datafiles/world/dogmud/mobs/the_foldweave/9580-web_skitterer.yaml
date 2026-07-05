@@ -1,0 +1,37 @@
+mobid: 9580
+behavior_archetype: generic_fighter
+aiprofile: ambush_predator
+zone: The Foldweave
+statpool: 150
+itemdropchance: 0
+hostile: true
+maxwander: 2
+groups:
+  - cave-pack
+archetype: fighting
+mutationchance: 20
+idlecommands:
+  - 'emote hangs motionless against a web-sheet, legs folded close'
+  - ''
+  - ''
+  - 'emote darts three paces along a strand and freezes again'
+  - ''
+activitylevel: 10
+character:
+  name: Web Skitterer
+  description: |
+    A quick grey spider the size of a spread hand, all leg and nerve,
+    its carapace the same dull grey as the silk it lives in so that it
+    seems less a creature than a knot of the weave come loose and gone
+    hunting. It moves in bursts -- still, then suddenly a body-length
+    nearer, then still again -- and it favors the folds and doublings
+    of the warren, using the weave's tricks of distance to be closer
+    than it looked a moment ago. Alone it is little more than a painful
+    bite. It is rarely alone.
+  speciesid: 17
+  level: 1
+  stats:
+    dexterity:
+      training: 12
+    perception:
+      training: 8

@@ -61,4 +61,10 @@ idlemessages:
   when you look for where it fell.
 - From both arches at once comes the same faint skitter, in step, like
   one sound reaching you by two roads.
-# spawninfo: Foldweave spider ecology added in Task 7
+spawninfo:
+  - mobid: 9581
+    respawnrate: "12 real minutes"
+  - mobid: 9581
+    respawnrate: "12 real minutes"
+  - mobid: 9580
+    respawnrate: "12 real minutes"
