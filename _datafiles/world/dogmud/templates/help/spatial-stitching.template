@@ -1,0 +1,16 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">spatial-stitching</ansi> (enchanting recipe)
+
+A spool of enchanted thread, reclaimed from unraveled work and spun
+again finer than before. Measure it and the spool holds more length than
+its size should allow, coil after coil paying out long after the spool
+ought to have emptied. Stitched into a seam, it leaves the seam holding
+more than the cloth around it was ever meant to.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       enchanting (minimum 50)
+  <ansi fg="yellow">Station:</ansi>     enchanting_circle
+  <ansi fg="yellow">Ingredients:</ansi> Binding Paste (x1), Chrysalis Setting (x1),
+               Mutation Catalyst (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help enchanting</ansi>, <ansi fg="command">help craft</ansi>

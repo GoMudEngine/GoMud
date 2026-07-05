@@ -1,0 +1,15 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">nutrient-suspension</ansi> (alchemy recipe)
+
+A cloudy suspension, thick and faintly sweet, brewed to keep a hungering
+crystal fed without ever waking it fully. A few drops through the
+lattice and whatever stirs inside settles again, quiescent, patient, fed
+just enough to stay fed. Alchemists who work with it never taste it
+themselves -- it is not brewed for a mouth.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       alchemy (minimum 50)
+  <ansi fg="yellow">Station:</ansi>     alchemy_bench
+  <ansi fg="yellow">Ingredients:</ansi> Healer's Root (x2), Blood-moss (x1), Veilbloom Petal (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help alchemy</ansi>, <ansi fg="command">help craft</ansi>

@@ -1,0 +1,17 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">assemble-seething-prism</ansi> (jewelcrafting recipe)
+
+Veyra's masterwork assembly. The finished piece is joined here from four
+self-crafted components and its bulk stock. This recipe is taught by
+commission, never discovered at the bench, and it demands that every
+component be of your own making.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       jewelcrafting (minimum 65)
+  <ansi fg="yellow">Station:</ansi>     jeweler_bench
+  <ansi fg="yellow">Ingredients:</ansi> Containment Lattice (x1), Nutrient Suspension (x1),
+               Seed-Crystal of the Breach (x1), Bloom-Saturated Geode (x1),
+               Raw Gem (x8), Gold Wire (x6)
+  <ansi fg="yellow">Learned:</ansi>     by commission from Veyra (not self-taught)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help jewelcrafting</ansi>, <ansi fg="command">help craft</ansi>

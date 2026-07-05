@@ -1,0 +1,18 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">assemble-the-blackrazor</ansi> (blacksmithing recipe)
+
+Veyra's masterwork assembly. The finished piece is joined here from four
+self-crafted components and its bulk stock. This recipe is taught by
+commission, never discovered at the bench, and it demands that every
+component be of your own making.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       blacksmithing (minimum 65)
+  <ansi fg="yellow">Station:</ansi>     forge
+  <ansi fg="yellow">Ingredients:</ansi> Hungering Guard (x1), Obsidian Edge-Resin (x1),
+               Void-Quenched Obsidian Core (x1),
+               Whisper of the Old White (x1), Pale-Grey Casting (x1),
+               Steel Ingot (x8), Coal Dust (x6)
+  <ansi fg="yellow">Learned:</ansi>     by commission from Veyra (not self-taught)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help blacksmithing</ansi>, <ansi fg="command">help craft</ansi>

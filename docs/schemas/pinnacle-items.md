@@ -407,3 +407,116 @@ zone-signature reagent **40207 Folded-Space Silk** (also a rare 1%
 trickle off broodlings). Being `non_cartesian`, the zone is exempt
 from the hard cartesian consistency checks (renders wrap exits as edge
 stubs); it boots with `errors=0 warnings=0`.
+
+## Stage 4a: recipes + workshop
+
+The crafting backbone that turns the Stage-2 items + Stage-3 reagents
+into a two-tier craft chain, all authored on branch
+`feature/pinnacle-stage4a-crafting-backbone`. Boot-verified
+`itemLoadedCount=421` (404 + 17 components), `crafting.LoadRecipeFiles
+loadedCount=126` (100 base + 17 component + 9 assembly),
+`mobs.LoadDataFiles() loadedCount=611`, Veyra's schedule validates,
+zero `ValidateRecipeIngredientTags` faults, `ValidateZoneConsistency
+errors=0 mode=panic`, 0 panics.
+
+**The two tiers.** A player first crafts the **component** (an
+everyday, discoverable recipe, `skill_minimum: 50`, no gating) at an
+ordinary station, then hands those self-made components — plus the
+rare Stage-3 reagents and bulk stock — to a **quest-taught assembly
+recipe** (`skill_minimum: 65`, `learn_only: true`,
+`require_own_components: true`) to produce the legendary-BIS item.
+Stage 4b's commission quests are what teach the assembly slugs via
+`learn_recipe`.
+
+### The 9 assembly recipes (Stage 4b teaches these slugs)
+
+Each `learn_only: true` + `require_own_components: true`,
+`skill_minimum: 65`, `time_rounds: 20`. Files live in
+`_datafiles/world/dogmud/recipes/<skill>/<slug>.yaml`.
+
+| Assembly slug | Output id | Item | Skill | Station |
+|---------------|-----------|------|-------|---------|
+| `assemble-the-blackrazor` | 40183 | The Blackrazor | blacksmithing | forge |
+| `assemble-aegis-of-mockery` | 40185 | Aegis of Mockery | blacksmithing | forge |
+| `assemble-thornwall-harness` | 40186 | Thornwall Harness | tailoring | loom |
+| `assemble-wayfarers-pack` | 40184 | Wayfarer's Bottomless Pack | tailoring | loom |
+| `assemble-zephyr-treads` | 40188 | Zephyr Treads | tailoring | loom |
+| `assemble-phial-of-second-birth` | 40181 | Phial of Second Birth | alchemy | alchemy_bench |
+| `assemble-vitalis-bandolier` | 40182 | Vitalis Bandolier | alchemy | alchemy_bench |
+| `assemble-seething-prism` | 40187 | Seething Prism | jewelcrafting | jeweler_bench |
+| `assemble-hollow-choir-staff` | 40189 | Staff of the Hollow Choir | enchanting | enchanting_circle |
+
+### The 17 components → recipe(skill) → assembly
+
+Each component is a self-crafted subcomponent (ids **40208-40224**,
+`is_component: true`, `rarity_tier: 78`), made by a discoverable
+`skill_minimum: 50` recipe of the same slug. `require_own_components`
+checks each component's `MakerName` — the player must craft these
+themselves before the assembly will accept them. The bulk materials
+and Stage-3 reagents each assembly also consumes are NOT self-craft-
+gated (only `is_component` items are). Note the assemblies each take
+**two** of these components except `assemble-phial-of-second-birth`,
+which takes only `reduction-base`.
+
+| Component id | component_tag (= recipe slug) | Recipe skill | Station | Feeds assembly |
+|--------------|-------------------------------|--------------|---------|----------------|
+| 40208 | `reinforced-harness` | tailoring | loom | `assemble-vitalis-bandolier` |
+| 40209 | `preservation-runes` | enchanting | enchanting_circle | `assemble-vitalis-bandolier` |
+| 40210 | `hungering-guard` | jewelcrafting | jeweler_bench | `assemble-the-blackrazor` |
+| 40211 | `obsidian-edge-resin` | alchemy | alchemy_bench | `assemble-the-blackrazor` |
+| 40212 | `reinforced-frame` | blacksmithing | forge | `assemble-wayfarers-pack` |
+| 40213 | `spatial-stitching` | enchanting | enchanting_circle | `assemble-wayfarers-pack` |
+| 40214 | `voice-amber-housing` | jewelcrafting | jeweler_bench | `assemble-aegis-of-mockery` |
+| 40215 | `resonance-lacquer` | alchemy | alchemy_bench | `assemble-aegis-of-mockery` |
+| 40216 | `barbed-spike-plates` | blacksmithing | forge | `assemble-thornwall-harness` |
+| 40217 | `anti-corrosion-quench` | alchemy | alchemy_bench | `assemble-thornwall-harness` |
+| 40218 | `containment-lattice` | enchanting | enchanting_circle | `assemble-seething-prism` |
+| 40219 | `nutrient-suspension` | alchemy | alchemy_bench | `assemble-seething-prism` |
+| 40220 | `quicksilver-soles` | alchemy | alchemy_bench | `assemble-zephyr-treads` |
+| 40221 | `windlace-bindings` | enchanting | enchanting_circle | `assemble-zephyr-treads` |
+| 40222 | `conductor-core` | blacksmithing | forge | `assemble-hollow-choir-staff` |
+| 40223 | `choir-focus-gems` | jewelcrafting | jeweler_bench | `assemble-hollow-choir-staff` |
+| 40224 | `reduction-base` | cooking | cooking_fire | `assemble-phial-of-second-birth` |
+
+### Veyra's workshop (The Confluence, craft row)
+
+All six craft stations the chain needs sit within one small
+workshop-plus-annexes hung off the Confluence craft row, so the whole
+backbone is reachable from one place. Veyra Coil-Tongue (mob **9584**,
+`crafter: true`, `non_combatant`, `schedule_id: veyra`) is the
+convergence-crafter who anchors it — Stage 4b's commissions run
+through her.
+
+| Room | Title | Station |
+|------|-------|---------|
+| 6438 | Veyra's Workshop | `alchemy_bench` (Veyra spawns here) |
+| 6439 | The Gem-Bench Nook | `jeweler_bench` |
+| 6440 | The Warded Corner | `enchanting_circle` |
+| 6441 | The Reduction Hearth | `cooking_fire` |
+| 6235 | (existing craft-row room) | `loom` (station added Stage 4a) |
+| 6239 | (existing craft-row room) | `forge` (station added Stage 4a) |
+
+Access: room **6233** (craft row) gained an `up` exit to the workshop
+(6438); the four annex rooms connect off 6438 (north/east/west), which
+also has `down` back to 6233. Veyra's schedule (`schedules/
+the_confluence/veyra.yaml`) keeps her at the alchemy bench crafting
+06:00-22:00 and sleeping there 22:00-06:00.
+
+### Author notes
+
+- **`learn_only` (assembly recipes).** The nine assembly recipes are
+  excluded from craft-discovery (`GetEligibleRecipes` skips
+  `LearnOnly`), so a player can never stumble onto them at the bench.
+  They are taught only by quest `learn_recipe` (Stage 4b commissions)
+  or admin `learn`. Help templates exist for every recipe (`help
+  <slug>`) as reference — the help file is documentation, not the
+  gate.
+- **`require_own_components` (assembly recipes).** Every `is_component`
+  ingredient must carry the assembling crafter's `MakerName`; the
+  gate is strict-any-match (see §7). This is why the components are
+  ordinary self-craftable recipes: the design intent is that the
+  player who assembles a masterwork forged its subcomponents with
+  their own hands. Bulk stock and Stage-3 reagents are exempt.
+- The 17 component recipes are plain discoverable recipes — no
+  `learn_only`, no `require_own_components` — so the everyday tier of
+  the chain needs no quest wiring at all.
