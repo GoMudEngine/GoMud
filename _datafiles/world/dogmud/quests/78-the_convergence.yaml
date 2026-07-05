@@ -1,0 +1,42 @@
+questid: 78
+name: The Convergence
+description: >-
+  Veyra Coil-Tongue has taken your measure and found you worth her time.
+  The convergence crafts are open to you now, one commission at a time.
+secret: false
+linear: true
+
+flags:
+  - key: commission
+    values: [bandolier, blackrazor, wayfarer, aegis, thornwall, prism,
+      zephyr, choir, phial, none]
+    description: "Which pinnacle commission the player has active (none =
+      free to start one)."
+
+steps:
+  - id: start
+    description: >-
+      You have shown Veyra a piece of your own making. She will hear a
+      commission now.
+  - id: end
+    description: "You are known to Veyra."
+
+triggers:
+  # Fires the moment Veyra's dialogue grants 78-start. Sets the shared
+  # commission flag to "none" (free to start a commission) and closes
+  # out the quest in the same beat -- there is no separate turn-in step,
+  # this quest exists to mark the player known + declare the flag.
+  # The missing:["78-end"] guard prevents any double-fire if Veyra's
+  # dialogue somehow re-grants 78-start after completion.
+  - event: quest_granted
+    quest_token: "78-start"
+    conditions:
+      missing: ["78-end"]
+    actions:
+      - set_flag: {key: "78-commission", value: "none"}
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "Good. When you want a thing made, ask.
+                One at a time."}
+      - grant: "78-end"
