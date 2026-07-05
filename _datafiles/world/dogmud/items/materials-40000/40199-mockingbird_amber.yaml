@@ -1,0 +1,20 @@
+itemid: 40199
+name: Mockingbird Amber
+namesimple: amber
+vendor_categories:
+- jewelcrafting
+description: >-
+  A bead of amber with a birdsong trapped inside it, gathered where
+  the wind combs the long grass of the Ironwind Steppe. Hold it to
+  the ear and you can almost hear the song -- never quite, always
+  just beneath hearing, a mockingbird's borrowed call caught
+  mid-phrase and sealed before it could finish. Turn the bead in
+  the light and the near-song seems to turn with it, circling just
+  out of reach.
+type: object
+subtype: mundane
+component_tag: mockingbird-amber
+weight: 0.1
+value: 1300
+rarity_tier: 82
+is_component: true

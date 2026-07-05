@@ -1,0 +1,20 @@
+itemid: 40201
+name: Bloom-Saturated Geode
+namesimple: geode
+vendor_categories:
+- jewelcrafting
+description: >-
+  A geode split open to show crystals that drank deep of the
+  Chrysalis bloom growing in the low tunnels, and glow faintly with
+  it still. The light inside has no source you can find by turning
+  the stone -- it simply is, a soft color with no name, seated in
+  the crystal's grain the way a scent settles into old cloth.
+  Jewelers say a geode like this keeps glowing years after the
+  tunnel bloom that fed it has been cut away and forgotten.
+type: object
+subtype: mundane
+component_tag: bloom-saturated-geode
+weight: 0.6
+value: 1400
+rarity_tier: 82
+is_component: true

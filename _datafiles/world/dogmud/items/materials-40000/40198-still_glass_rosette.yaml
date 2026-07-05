@@ -1,0 +1,20 @@
+itemid: 40198
+name: Still-Glass Rosette
+namesimple: rosette
+vendor_categories:
+- alchemy
+description: >-
+  A rosette of hardened marsh-glass, its petals fused smooth as
+  though blown rather than grown. It is found only where the marsh
+  goes utterly still, in black pools no current ever stirs, and it
+  turns slowly on its own axis when held -- a patient half-turn
+  with every few breaths, long after the hand around it has gone
+  quiet. No one has ever caught it mid-turn; it is only ever seen
+  paused, or already somewhere else.
+type: object
+subtype: mundane
+component_tag: still-glass-rosette
+weight: 0.2
+value: 1250
+rarity_tier: 82
+is_component: true

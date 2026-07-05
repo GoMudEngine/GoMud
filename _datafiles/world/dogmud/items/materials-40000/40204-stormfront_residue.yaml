@@ -1,0 +1,20 @@
+itemid: 40204
+name: Stormfront Residue
+namesimple: residue
+vendor_categories:
+- alchemy
+description: >-
+  A scrap of charged, ozone-smelling matter left hanging in the
+  air in the wake of a highland storm, gathered before the wind
+  carries it off for good. It clings faintly to the skin and
+  crackles if rubbed between the fingers, releasing a smell like
+  the moment just before lightning without ever quite discharging.
+  Storm-chasers on the Ironwind Steppe say residue gathered too
+  long after the fact has already gone dull and inert.
+type: object
+subtype: mundane
+component_tag: stormfront-residue
+weight: 0.1
+value: 1300
+rarity_tier: 82
+is_component: true
