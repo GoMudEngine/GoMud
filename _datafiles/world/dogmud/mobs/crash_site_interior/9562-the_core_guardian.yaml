@@ -39,6 +39,16 @@ character:
       dropchance: 100
     - itemid: 40170
       dropchance: 60
+    - itemid: 40190
+      dropchance: 4
+    - itemid: 40191
+      dropchance: 4
+    - itemid: 40192
+      dropchance: 4
+    - itemid: 40193
+      dropchance: 4
+    - itemid: 40194
+      dropchance: 4
   name: The Core Guardian
   description: |
     The last and worst of the dead guardians, wound about the innermost
