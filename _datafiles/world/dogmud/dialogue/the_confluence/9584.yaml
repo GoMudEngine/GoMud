@@ -1,0 +1,295 @@
+mobid: 9584
+zone: The Confluence
+defaultMood: neutral
+
+# Veyra Coil-Tongue -- the convergence-crafter. She asks exactly as many
+# questions as a commission requires and not one more. Transactional,
+# exacting, few words. Treats craft as contract, not conversation.
+#
+# Gating notes:
+#   - The intro (grantsQuest 78-start) requires masterworkRequired: 50 --
+#     the player must be carrying an item they personally crafted at
+#     craft skill >= 50. Quest 78's own trigger (see
+#     quests/78-the_convergence.yaml) fires the instant 78-start is
+#     granted, setting 78-commission=none and immediately granting
+#     78-end in the same beat.
+#   - The 9 commission offers require questRequired: ["78-end"] (known
+#     to Veyra) AND questFlagRequired: {"78-commission": "none"} (not
+#     already mid-commission). Because the shared flag can only ever
+#     equal exactly one of the 10 declared values, gating the offers on
+#     the exact value "none" and gating the mid-commission root variant
+#     on questFlagExcluded: {"78-commission": "none"} (i.e. "anything
+#     but none") cleanly partitions every known player into exactly one
+#     of those two states -- no per-slug mid-commission variant needed.
+#   - The actual gold charge + recipe teaching for each commission lives
+#     in that commission's own quest YAML (79-87, a later task). This
+#     file only makes the offer: grants "{id}-start" and sets the flag.
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey", "hail"]
+    responses:
+      - "Veyra. I don't repeat a greeting twice in one conversation."
+      - "If you're browsing, the bench speaks for itself. If you're
+          here about work, say so."
+
+  - keywords: ["confluence", "convergence", "commission", "measure",
+      "masterwork", "quest", "task", "work", "trade", "discipline"]
+    responses:
+      - "I don't take on hands I haven't seen work. Show me something
+          you made yourself, and we'll talk about what comes after."
+      - "Six trades, made to agree with each other -- that's the whole
+          of what I do here. I don't explain it to people who haven't
+          held a tool."
+
+  - keywords: ["scar", "hand", "latticework", "accident"]
+    responses:
+      - "One working didn't agree with me the way the others had. I
+          kept the hand. I kept the lesson."
+
+  - keywords: ["gold", "price", "cost", "pay", "fee"]
+    responses:
+      - "Nothing I make is cheap, and I don't haggle. Ask about a
+          specific piece if you want a number."
+
+  - keywords: [""]
+    responses:
+      - "Say what you need, or don't say anything at all."
+      - "I'm not paid to make conversation."
+      - "The bench doesn't wait on idle talk, and neither do I."
+
+tree:
+  root:
+    text: "Veyra doesn't look up from the bench. You'll have to earn
+      that."
+    hints: "You could ask Veyra about her work, or the convergence."
+    variants:
+      # ── Mid-commission: a commission is active (flag != none) ────
+      - questRequired: ["78-end"]
+        questFlagExcluded:
+          "78-commission": "none"
+        text: "I'm already working something of yours. It isn't done
+          faster for asking. Come back when I send for you."
+        hints: "Your commission with Veyra is already underway. Wait
+          for it to complete before asking about another."
+
+      # ── Known, ready, and has seen the Crash Site truth ──────────
+      - questRequired: ["78-end", "77-end"]
+        questFlagRequired:
+          "78-commission": "none"
+        text: "You've seen what's under the Crash Site, and you're
+          still standing here asking me for work. Good. That tells me
+          something. Name what you want made."
+        hints: "You could ask Veyra about a specific commission."
+
+      # ── Known and ready, ordinary case ────────────────────────────
+      - questRequired: ["78-end"]
+        questFlagRequired:
+          "78-commission": "none"
+        text: "You're known to me now. I'll hear one commission at a
+          time. Name what you want made, and I'll tell you what it
+          costs."
+        hints: "You could ask Veyra about a specific commission."
+
+      # ── Not yet known, but carrying proof of skill ───────────────
+      - masterworkRequired: 50
+        questExcluded: ["78-start", "78-end"]
+        text: "That's your hand on that work. I can tell. I don't
+          usually make time for strangers, but I'll make an exception.
+          Ask me about the convergence if you want to know what that
+          means."
+        hints: "You could ask Veyra about the convergence, or her
+          work."
+
+  nodes:
+    # ── INTRO: masterwork-gated, grants 78-start ─────────────────
+    - id: convergence_intro
+      triggers: ["convergence", "commission", "quest", "task", "work",
+        "masterwork", "measure"]
+      masterworkRequired: 50
+      questExcluded: ["78-start", "78-end"]
+      grantsQuest: "78-start"
+      text: "Turn that over again. Yes -- your hand, not a shop's.
+        That's the only credential I recognize. Six trades, made to
+        agree with each other in one piece -- that's the convergence.
+        I don't teach it. I commission it, one piece at a time, from
+        people who've already proven they can hold a tool steady. You
+        qualify now. Come back when you want something made, and I'll
+        tell you what it costs."
+      hints: "You are known to Veyra now. Ask her about a specific
+        commission to hear what she can make and what it costs."
+
+    # ── COMMISSION OFFER: Vitalis Bandolier (alchemy) ─────────────
+    - id: offer_bandolier
+      triggers: ["bandolier", "vitalis", "belt", "quest", "task"]
+      questRequired: ["78-end"]
+      questFlagRequired:
+        "78-commission": "none"
+      questExcluded: ["79-start", "79-end"]
+      grantsQuest: "79-start"
+      setsQuestFlag:
+        key: "78-commission"
+        value: "bandolier"
+      text: "The Vitalis Bandolier. A belt that keeps its own contents
+        fresh and feeds them to you without your hand ever leaving the
+        fight. Alchemy work, mostly, with a housing under it that has
+        to hold. Thirty-five thousand in gold -- half committed now,
+        half when I hand it over. Bring me what the work requires, and
+        I'll take you through it a piece at a time."
+      hints: "You have started the Vitalis Bandolier commission. Speak
+        with Veyra again to learn what materials she needs from you."
+
+    # ── COMMISSION OFFER: The Blackrazor (blacksmithing) ──────────
+    - id: offer_blackrazor
+      triggers: ["blackrazor", "razor", "quest", "task"]
+      questRequired: ["78-end"]
+      questFlagRequired:
+        "78-commission": "none"
+      questExcluded: ["80-start", "80-end"]
+      grantsQuest: "80-start"
+      setsQuestFlag:
+        key: "78-commission"
+        value: "blackrazor"
+      text: "The Blackrazor. Not a blade I'd hand to just anyone --
+        it doesn't stay quiet, and it doesn't stay fed. Blacksmithing,
+        with a hunger built into the steel that only a kill will
+        settle. Fifty thousand in gold -- half committed now, half
+        when it's finished. Understand what you're asking for before
+        you agree to it."
+      hints: "You have started The Blackrazor commission. Speak with
+        Veyra again to learn what materials she needs from you."
+
+    # ── COMMISSION OFFER: Wayfarer's Bottomless Pack (tailoring) ──
+    - id: offer_wayfarer
+      triggers: ["wayfarer", "pack", "bottomless", "quest", "task"]
+      questRequired: ["78-end"]
+      questFlagRequired:
+        "78-commission": "none"
+      questExcluded: ["81-start", "81-end"]
+      grantsQuest: "81-start"
+      setsQuestFlag:
+        key: "78-commission"
+        value: "wayfarer"
+      text: "Wayfarer's Bottomless Pack. Tailoring, mostly seams and
+        spatial stitching -- the trick is making the inside hold more
+        than the outside admits to. Twenty-five thousand in gold --
+        half committed now, half on delivery. It's the least
+        dangerous thing I make. That doesn't mean it's simple."
+      hints: "You have started the Wayfarer's Bottomless Pack
+        commission. Speak with Veyra again to learn what materials she
+        needs from you."
+
+    # ── COMMISSION OFFER: Aegis of Mockery (blacksmithing) ────────
+    - id: offer_aegis
+      triggers: ["aegis", "mockery", "shield", "quest", "task"]
+      questRequired: ["78-end"]
+      questFlagRequired:
+        "78-commission": "none"
+      questExcluded: ["82-start", "82-end"]
+      grantsQuest: "82-start"
+      setsQuestFlag:
+        key: "78-commission"
+        value: "aegis"
+      text: "The Aegis of Mockery. A shield that answers a blocked blow
+        with one of its own, aimed at everyone nearby who deserved it.
+        Blacksmithing and a housing for the voice inside it. Forty
+        thousand in gold -- half committed now, half when I hand it
+        over."
+      hints: "You have started the Aegis of Mockery commission. Speak
+        with Veyra again to learn what materials she needs from you."
+
+    # ── COMMISSION OFFER: Thornwall Harness (tailoring) ───────────
+    - id: offer_thornwall
+      triggers: ["thornwall", "harness", "quest", "task"]
+      questRequired: ["78-end"]
+      questFlagRequired:
+        "78-commission": "none"
+      questExcluded: ["83-start", "83-end"]
+      grantsQuest: "83-start"
+      setsQuestFlag:
+        key: "78-commission"
+        value: "thornwall"
+      text: "The Thornwall Harness. Tailoring built around barbed
+        plate -- anything that grabs you regrets it. Thirty thousand
+        in gold -- half committed now, half on delivery."
+      hints: "You have started the Thornwall Harness commission. Speak
+        with Veyra again to learn what materials she needs from you."
+
+    # ── COMMISSION OFFER: Seething Prism (jewelcrafting) ──────────
+    - id: offer_prism
+      triggers: ["prism", "seething", "quest", "task"]
+      questRequired: ["78-end"]
+      questFlagRequired:
+        "78-commission": "none"
+      questExcluded: ["84-start", "84-end"]
+      grantsQuest: "84-start"
+      setsQuestFlag:
+        key: "78-commission"
+        value: "prism"
+      text: "The Seething Prism. Jewelcrafting around a containment
+        lattice that doesn't quite contain what's inside it -- that's
+        the point. It'll change you, given time. Forty thousand in
+        gold -- half committed now, half when it's finished. I won't
+        pretend that price is only in coin."
+      hints: "You have started the Seething Prism commission. Speak
+        with Veyra again to learn what materials she needs from you."
+
+    # ── COMMISSION OFFER: Zephyr Treads (tailoring) ───────────────
+    - id: offer_zephyr
+      triggers: ["zephyr", "treads", "boots", "quest", "task"]
+      questRequired: ["78-end"]
+      questFlagRequired:
+        "78-commission": "none"
+      questExcluded: ["85-start", "85-end"]
+      grantsQuest: "85-start"
+      setsQuestFlag:
+        key: "78-commission"
+        value: "zephyr"
+      text: "Zephyr Treads. Tailoring and windlace bindings, soled
+        with quicksilver -- you'll forget what it cost to run before
+        you carried them. Twenty-five thousand in gold -- half
+        committed now, half on delivery."
+      hints: "You have started the Zephyr Treads commission. Speak
+        with Veyra again to learn what materials she needs from you."
+
+    # ── COMMISSION OFFER: Staff of the Hollow Choir (enchanting) ──
+    - id: offer_choir
+      triggers: ["choir", "hollow", "staff", "quest", "task"]
+      questRequired: ["78-end"]
+      questFlagRequired:
+        "78-commission": "none"
+      questExcluded: ["86-start", "86-end"]
+      grantsQuest: "86-start"
+      setsQuestFlag:
+        key: "78-commission"
+        value: "choir"
+      text: "The Staff of the Hollow Choir. Enchanting around a
+        conductor core -- it sings when you cast, and it takes a
+        little of what it hears from whatever you're casting at.
+        Forty-five thousand in gold -- half committed now, half when
+        I hand it over."
+      hints: "You have started the Staff of the Hollow Choir
+        commission. Speak with Veyra again to learn what materials she
+        needs from you."
+
+    # ── COMMISSION OFFER: Phial of Second Birth (alchemy) ─────────
+    - id: offer_phial
+      triggers: ["phial", "birth", "rebirth", "quest", "task"]
+      questRequired: ["78-end"]
+      questFlagRequired:
+        "78-commission": "none"
+      questExcluded: ["87-start", "87-end"]
+      grantsQuest: "87-start"
+      setsQuestFlag:
+        key: "78-commission"
+        value: "phial"
+      text: "The Phial of Second Birth. Alchemy, at the bottom of it --
+        a reduction that unmakes what you've become and gives you
+        exactly one chance to become something else. I don't sell this
+        one lightly. Thirty thousand in gold -- half committed now,
+        half when it's finished."
+      hints: "You have started the Phial of Second Birth commission.
+        Speak with Veyra again to learn what materials she needs from
+        you."
+
+memory:
+  expiryPeriod: ""
