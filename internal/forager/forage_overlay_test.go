@@ -31,6 +31,40 @@ func TestZoneAndStormForageOverlays(t *testing.T) {
 	}
 }
 
+func TestPinnacleForageReagentsPlaced(t *testing.T) {
+	cases := []struct {
+		zone string
+		id   int
+	}{
+		{"Stillwater Marsh", 40198},
+		{"Stillwater Marsh", 40202},
+		{"Ironwind Steppe", 40199},
+		{"The Fernway South", 40200},
+		{"Labyrinth of Low Tunnels", 40201},
+		{"The Confluence", 40203},
+	}
+	for _, c := range cases {
+		// reachable in its own zone (biome irrelevant to zone overlay)
+		if !poolContains(buildForagePool("cave", c.zone, "clear", false), c.id) {
+			t.Fatalf("reagent %d not reachable in zone %q", c.id, c.zone)
+		}
+		// NOT reachable in a different zone
+		if poolContains(buildForagePool("cave", "Nowhere Zone", "clear", false), c.id) {
+			t.Fatalf("reagent %d leaked outside zone %q", c.id, c.zone)
+		}
+	}
+	// Stormfront Residue: mountains + storm only
+	if !poolContains(buildForagePool("mountains", "", "storm", false), 40204) {
+		t.Fatal("Stormfront Residue not reachable in mountains during storm")
+	}
+	if poolContains(buildForagePool("mountains", "", "clear", false), 40204) {
+		t.Fatal("Stormfront Residue leaked in clear weather")
+	}
+	if poolContains(buildForagePool("swamp", "", "storm", false), 40204) {
+		t.Fatal("Stormfront Residue leaked into the wrong biome during storm")
+	}
+}
+
 func poolContains(p []int, id int) bool {
 	for _, x := range p {
 		if x == id {
