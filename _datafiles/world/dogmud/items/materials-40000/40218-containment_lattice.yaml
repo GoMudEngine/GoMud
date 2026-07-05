@@ -1,0 +1,19 @@
+itemid: 40218
+name: Containment Lattice
+namesimple: lattice
+vendor_categories:
+- enchanting
+description: >-
+  A fine enchanted cage of silver wire, wound tight in overlapping
+  rings that hum faintly when nothing else is near enough to
+  notice. It was made to hold a living thing that feeds -- not to
+  starve it, only to keep its hunger pointed inward, contained,
+  patient. The wire never quite goes cold, and neither does
+  whatever sits behind it.
+type: object
+subtype: mundane
+component_tag: containment-lattice
+weight: 0.3
+value: 700
+rarity_tier: 78
+is_component: true

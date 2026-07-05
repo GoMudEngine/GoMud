@@ -1,0 +1,19 @@
+itemid: 40222
+name: Conductor Core
+namesimple: core
+vendor_categories:
+- blacksmithing
+description: >-
+  A forged core, wound tight in banded coils, built to carry a
+  note the way honest wire carries a current -- cleanly,
+  completely, without losing anything to the distance. Strike it
+  and it does not ring so much as wait, holding the sound until
+  something asks it to let go. Smiths who wind one speak of it
+  like tuning rather than forging.
+type: object
+subtype: mundane
+component_tag: conductor-core
+weight: 0.5
+value: 720
+rarity_tier: 78
+is_component: true

@@ -1,0 +1,19 @@
+itemid: 40224
+name: Reduction Base
+namesimple: base
+vendor_categories:
+- cooking
+description: >-
+  A culinary reduction, cooked down slow over low heat until it
+  turns bitter, dark, and perfectly clarified, every impurity
+  risen and skimmed away twice over. It is not meant to be eaten
+  on its own -- only to sit at the bottom of something stronger,
+  giving an unmaking draught its bite and its clean, cold finish.
+  Cooks who make it work with the windows open.
+type: object
+subtype: mundane
+component_tag: reduction-base
+weight: 0.3
+value: 420
+rarity_tier: 78
+is_component: true

@@ -1,0 +1,19 @@
+itemid: 40221
+name: Windlace Bindings
+namesimple: bindings
+vendor_categories:
+- enchanting
+description: >-
+  Enchanted ankle-bindings, woven from cord too fine to trust with
+  the eye, that pull faintly at the wearer a half-beat ahead of
+  whatever wind is moving. Laced tight, they seem to lean forward
+  on their own, urging the step that follows before it is fully
+  taken. Loosen them and the lean goes with them, patient, waiting
+  to be worn again.
+type: object
+subtype: mundane
+component_tag: windlace-bindings
+weight: 0.2
+value: 650
+rarity_tier: 78
+is_component: true

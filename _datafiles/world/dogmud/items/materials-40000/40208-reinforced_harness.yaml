@@ -1,0 +1,20 @@
+itemid: 40208
+name: Reinforced Harness
+namesimple: harness
+vendor_categories:
+- tailoring
+description: >-
+  A chest-worn harness of layered, cured leather stitched over
+  webbing and doubled straps, every seam sewn twice until nothing
+  in it can flex. It was built to answer a load rather than absorb
+  it -- bolt a cradle to its frame and the leather holds true, no
+  creak, no give, no shifting weight settling wrong across the
+  shoulders. Simple work, honestly done, meant to disappear under
+  whatever it is asked to carry.
+type: object
+subtype: mundane
+component_tag: reinforced-harness
+weight: 0.6
+value: 550
+rarity_tier: 78
+is_component: true

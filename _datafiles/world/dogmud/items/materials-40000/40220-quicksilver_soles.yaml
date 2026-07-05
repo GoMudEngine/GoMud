@@ -1,0 +1,19 @@
+itemid: 40220
+name: Quicksilver Soles
+namesimple: soles
+vendor_categories:
+- alchemy
+description: >-
+  A pair of soles inlaid with a bright, living vein of quicksilver
+  that never sits still, shifting and pooling with every shift of
+  weight above it. Stand on them and you can feel the restlessness
+  underfoot, a current always looking for somewhere else to be.
+  Cobblers who work quicksilver keep their hands quick and their
+  windows open.
+type: object
+subtype: mundane
+component_tag: quicksilver-soles
+weight: 0.3
+value: 600
+rarity_tier: 78
+is_component: true

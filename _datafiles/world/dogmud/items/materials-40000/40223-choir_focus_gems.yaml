@@ -1,0 +1,19 @@
+itemid: 40223
+name: Choir-Focus Gems
+namesimple: gems
+vendor_categories:
+- jewelcrafting
+description: >-
+  A matched ring of cut gems, each faceted to the same angle as
+  its neighbors, tuned until set together they hold a single chord
+  rather than six separate notes. Strung or set in sequence, the
+  gems focus what passes through them into one clean line of
+  sound, refusing to let the chord fray at the edges. Jewelers
+  tune them by ear, not by eye.
+type: object
+subtype: mundane
+component_tag: choir-focus-gems
+weight: 0.2
+value: 800
+rarity_tier: 78
+is_component: true
