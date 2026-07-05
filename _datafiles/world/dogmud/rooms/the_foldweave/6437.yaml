@@ -1,0 +1,48 @@
+roomid: 6437
+zone: The Foldweave
+title: The Heart of the Fold
+description: >
+  Past the gate the fold closes over you and there is no more
+  pretending the cave has walls or a size. This is the
+  <ansi fg="itemname">heart</ansi> -- a space the eye cannot measure
+  because there is nothing in it that holds still to be measured
+  against, only silk, silk in every direction folded through itself
+  so that the near is the far and the far is near, a single chamber
+  wearing the shape of a warren. Underfoot the packed silk is warm.
+  Overhead and around and somehow also below, the
+  <ansi fg="itemname">nest-heart</ansi> hangs -- the oldest weave,
+  the first fold, the seed the whole overlong warren was spun outward
+  from. The cold sweet air has its source here and does not move,
+  because there is nowhere further in for it to go. This is the
+  bottom of the fold. The way out is the way you came, if the fold
+  will give it back.
+biome: cave
+coord:
+  x: -13
+  y: -22
+  z: -7
+exits:
+  out:
+    roomid: 6436
+nouns:
+  heart: >
+    A space with no measure to it -- silk folded through silk until
+    near and far change places and a single chamber holds the reach of
+    a whole warren. Turn in it and the turning does not take you
+    anywhere, because everywhere here is already here, folded close.
+  nest-heart: >
+    The oldest silk in the warren, hung at the fold's center: a dense
+    dark seed of weave, layered past counting, from which every strand
+    and circle and doubled door above was spun outward and folded back.
+    It is warm, and it is patient, and it has been growing inward as
+    long as it has been growing out.
+idlemessages:
+- The silk in every direction shifts at once, near becoming far and far
+  becoming near, and for a moment you cannot say which way you face.
+- The nest-heart at the center draws slowly inward on itself and eases,
+  and the still air thickens and thins with it.
+- A single strand runs from the heart out past every wall there is not,
+  longer than the whole warren above, and thrums once, deep.
+- The cold sweet air pools motionless around you, arrived at last at the
+  place it was always falling toward.
+# spawninfo: The Foldweaver (boss) nest — added in Task 7

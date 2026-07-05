@@ -1,0 +1,59 @@
+roomid: 6435
+zone: The Foldweave
+title: The Unreachable Overlook
+description: >
+  The sidepocket opens onto a shelf of hard-set silk that hangs out
+  over the hung deep like a balcony, and from it you can see the
+  <ansi fg="itemname">far side</ansi> plainly -- another shelf across
+  the gulf, close enough to call across, close enough to make out the
+  pale packed shapes of a <ansi fg="itemname">store</ansi> heaped
+  along it. But there is no crossing. Every strand that leaves this
+  shelf toward that one bends, partway out, and comes back; follow any
+  of them with your eye and it returns you to where you stand. The
+  weave has folded the two shelves near enough to see and far enough
+  to keep apart, and the only ways off the overlook are the two you
+  came by, both of which lead back into the deep. You can look as long
+  as you like. Looking is all the shelf permits.
+biome: cave
+coord:
+  x: -13
+  y: -21
+  z: -5
+exits:
+  north:
+    roomid: 6434
+  west:
+    roomid: 6434
+nouns:
+  far side: >
+    A shelf across the gulf, near enough to see the grain of the silk
+    on it, hung with a pale store of packed shapes. Near enough to
+    call across. There is no strand that reaches it -- every line that
+    sets out toward it folds back partway and returns, so that across
+    stays across no matter how you go.
+  store: >
+    Packed pale shapes heaped along the far shelf, kept and folded and
+    set apart -- a hoard of something the weaver values, laid up where
+    only the weaver's own long legs and folded roads can reach it. From
+    here it is a thing to want and not to have.
+idlemessages:
+- A strand leaves the shelf toward the far side, bends partway across,
+  and comes gently back to rest at your feet.
+- The far shelf holds its distance exactly, near enough to see the pale
+  store on it, too far by every road to reach.
+- The gulf between the shelves breathes cold and sweet, and carries no
+  sound across from the other side though the store seems to shift.
+- For a moment the far shelf seems to be the shelf you stand on, seen
+  from across, and then the wrongness passes.
+hidden_nouns:
+  fold-seam:
+    description: |
+      Along the shelf's underlip, where the hard silk curls back, a
+      seam has been spun that does not match the rest -- a folded pocket
+      pressed flat and shut, holding a length of the weaver's own store
+      laid up close to hand and forgotten, or kept in reserve. The
+      weave hoards even from itself.
+    hidden_description: |
+      A folded seam along the shelf's underlip has been spun shut over a
+      small reserve of stored silk.
+# spawninfo: Foldweave spider ecology added in Task 7

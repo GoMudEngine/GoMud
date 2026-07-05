@@ -1,0 +1,49 @@
+roomid: 6436
+zone: The Foldweave
+title: The Foldweaver's Court
+description: >
+  The bridge-strands of the deep draw together as they descend and
+  become, here, a <ansi fg="itemname">court</ansi> -- a floor of
+  packed silk broad and level as a hall, ringed by the great converging
+  cables and roofed by a canopy of them so dense and so high that it
+  makes a false sky, pricked with the pale points where anchor-knots
+  catch the light. The cold sweet air stands almost still here,
+  pooled, heavy. This is a made place, a throne-space, and everything
+  in the warren above was only the road to it: every fold and circle
+  and doubled door was a fold in the one long road that ends on this
+  floor. A single <ansi fg="itemname">fold-gate</ansi> at the court's
+  head leads in and down to the last and deepest fold. The floor is
+  clean. Whatever holds court here does not leave its leavings where
+  it sits.
+biome: cave
+coord:
+  x: -13
+  y: -22
+  z: -6
+exits:
+  up:
+    roomid: 6434
+  in:
+    roomid: 6437
+nouns:
+  court: >
+    A hall's-worth of packed silk, level and broad, ringed by the
+    converging cables of the whole weave and roofed by a false sky of
+    them. It has the stillness of a made and kept place -- a floor for
+    holding court, for being approached across, for watching a long
+    approach from the head of.
+  fold-gate: >
+    A single passage at the court's head, hung with drawn silk like a
+    curtain over a door, leading in and down. The air past it is the
+    coldest and sweetest of the whole warren. This is the last fold,
+    and the road ends past it.
+idlemessages:
+- The false sky of the canopy shifts as a single anchor-knot takes
+  weight far overhead, and the pale points of light wheel a fraction.
+- The pooled cold air stirs, once, as though something the size of the
+  court had drawn one slow breath.
+- Every converging cable that rings the court draws taut together for
+  an instant, and the whole made place seems to lean inward.
+- From past the fold-gate comes a dry deliberate sound of great legs
+  settling, and then the court is still again.
+# spawninfo: The Foldweaver (boss) + court adds — added in Task 7

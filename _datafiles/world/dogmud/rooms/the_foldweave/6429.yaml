@@ -1,0 +1,50 @@
+roomid: 6429
+zone: The Foldweave
+title: The Overlong Strand
+description: >
+  The shaft from the gallery drops into a tunnel so narrow it is
+  barely a tunnel at all -- a crawl-height throat of stone with a
+  single great <ansi fg="itemname">guide-strand</ansi> running its
+  length, thick as a wrist, that you follow because there is nothing
+  else to follow. And you follow it, and follow it. The
+  <ansi fg="itemname">tunnel</ansi> is short: you can see its end,
+  a low mouth of paler dark not twenty paces off. But the strand
+  between here and there is long -- far longer than twenty paces,
+  longer than the tunnel could contain if it were straightened out
+  and measured -- and the walking of it takes longer than the seeing
+  of it should. The mouth ahead does not come nearer for a while,
+  and then all at once it does. Cold sweet air pours up the strand
+  from below.
+biome: cave
+coord:
+  x: -14
+  y: -18
+  z: -3
+exits:
+  up:
+    roomid: 6427
+  down:
+    roomid: 6431
+nouns:
+  guide-strand: >
+    A single cable as thick as a wrist, anchored the length of the
+    crawl and glistening faintly with the damp. It is the only true
+    line in the tunnel, and it runs longer than the tunnel does --
+    pay it out hand over hand and the payout does not end where the
+    stone ahead says it must. Something spun this to be walked, and
+    spun more of it than the walking needs.
+  tunnel: >
+    A low throat of wet basalt, no more than twenty paces mouth to
+    mouth by the eye. The eye and the legs disagree. The mouth ahead
+    holds its distance, patient, and the strand keeps feeding through
+    your hands long after twenty paces are spent.
+idlemessages:
+- The guide-strand tightens under your hand and hums a single low note
+  that goes on longer than a note should.
+- The far mouth of the tunnel holds exactly where it was, neither
+  nearer nor further, for one breath and then another.
+- Cold sweet air pushes up the strand from below, carrying a dry busy
+  sound of many legs at work.
+- A vibration travels the strand from somewhere deep, reaches your
+  hand, and keeps traveling past you up the line.
+# spawninfo: Foldweave spider ecology added in Task 7

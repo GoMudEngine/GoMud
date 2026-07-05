@@ -1,0 +1,52 @@
+roomid: 6434
+zone: The Foldweave
+title: The Web-Hung Deep
+description: >
+  Down through the split the warren changes register. This is a great
+  hung deep, a cavern whose true walls stand somewhere out past the
+  reach of any light, and the space between is filled -- not choked,
+  filled, deliberately -- with a scaffolding of
+  <ansi fg="itemname">bridge-strands</ansi> stretched taut across the
+  dark in tiers and galleries, a whole architecture of silk with room
+  to move inside it. The cold sweet air is a current here, moving,
+  going somewhere. To one side a <ansi fg="itemname">sidepocket</ansi>
+  opens onto a false overlook; below, the strands draw together and
+  down toward a knotted core where the current of air is coldest and
+  the weave is oldest. Something down there has been spinning this
+  place for a very long time, and spinning it larger than the stone
+  that holds it.
+biome: cave
+coord:
+  x: -13
+  y: -21
+  z: -5
+exits:
+  up:
+    roomid: 6433
+  south:
+    roomid: 6435
+  down:
+    roomid: 6436
+nouns:
+  bridge-strands: >
+    Cables stretched across the deep in tiers, taut enough to walk if
+    you dared and dense enough to make an architecture of the empty
+    air -- galleries and spans and switchbacks of silk, all of it built
+    to be moved through by something long-legged and sure. The far
+    anchors are past the light. There is more structure here than the
+    cavern has walls to anchor it to.
+  sidepocket: >
+    A pocket opening off the deep to the south, hung so as to promise
+    an overlook of the whole hung architecture. The promise is a
+    little false, by the slant of the strands -- the pocket shows you
+    across without letting you cross.
+idlemessages:
+- The cold current of air moves steadily through the hung strands,
+  going somewhere down and in, and the whole architecture sways with it.
+- A tier of bridge-strands off in the dark takes a sudden weight, dips,
+  and holds, and the weight moves on out of hearing.
+- Far below, the knotted core draws a slow breath, and the current of
+  air quickens toward it and then eases.
+- Something crosses a high span against the last of the light, many
+  legs and no sound, and is swallowed by the dark beyond.
+# spawninfo: Foldweave spider ecology added in Task 7
