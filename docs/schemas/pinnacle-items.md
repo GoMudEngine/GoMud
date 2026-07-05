@@ -329,3 +329,81 @@ starting values; combat/economy tuning is a later stage.
 |----------|------|------|-----------|
 | blackrazor | `itemvoices/blackrazor.yaml` | The Blackrazor (40183) | Ancient, vain, starving aristocrat |
 | aegis | `itemvoices/aegis.yaml` | Aegis of Mockery (40185) | Period insult-comic |
+
+## Stage 3 reagents
+
+Eighteen legendary-tier crafting reagents (ids **40190-40207**, all in
+`items/materials-40000/`, all `is_component: true`, `rarity_tier: 82`)
+that feed the Stage 4 pinnacle recipes. They arrive by three routes:
+rare drops off endgame bosses, zone-exclusive player-forage, and one
+storm-gated forage. Every reagent carries a stable `component_tag` —
+Stage 4 recipe authors reference **these exact tags** (never item ids)
+in `ingredients:`. Boot-verified `itemLoadedCount=404` (386 Stage-2 +
+18), `mobs.LoadDataFiles() loadedCount=610`, `ValidateZoneConsistency
+errors=0 warnings=0 mode=panic`, 0 panics.
+
+> **Note — the existing 40166 Pale-Grey Casting** (`component_tag:
+> grey-relic`, `rarity_tier: 85`) is the pre-Stage-3 pinnacle reagent:
+> it drops off **the Sentinel** (Eastern Highlands boss) and is the
+> gate material for **The Blackrazor** (40183). It is not part of the
+> Stage 3 block but shares the same recipe-reagent role, so Stage 4
+> authors should treat it alongside the tags below.
+
+### Reagent → component_tag → source
+
+| ID | Name | component_tag | Source |
+|----|------|---------------|--------|
+| 40190 | Chrysalis Filter-Membrane | `chrysalis-filter-membrane` | drop: The Core Guardian (9562, Crash Site), 4% |
+| 40191 | Resonant Vox-Core | `resonant-vox-core` | drop: The Core Guardian (9562, Crash Site), 4% |
+| 40192 | Hollowed Voice-Box | `hollowed-voice-box` | drop: The Core Guardian (9562, Crash Site), 4% |
+| 40193 | Unmaking Distillate | `unmaking-distillate` | drop: The Core Guardian (9562, Crash Site), 4% |
+| 40194 | Seed-Crystal of the Breach | `seed-crystal-breach` | drop: The Core Guardian (9562, Crash Site), 4% |
+| 40195 | Void-Quenched Obsidian Core | `void-quenched-obsidian` | drop: Warden-Prime (9561, Crash Site), 5% |
+| 40196 | Warden Chassis-Loom | `warden-chassis-loom` | drop: Warden-Prime (9561, Crash Site), 5% |
+| 40197 | Whisper of the Old White | `whisper-old-white` | drop: The Old White (9570, NP Sewers), 4% |
+| 40198 | Still-Glass Rosette | `still-glass-rosette` | forage: Stillwater Marsh |
+| 40199 | Mockingbird Amber | `mockingbird-amber` | forage: Ironwind Steppe |
+| 40200 | Ironwood Thorn-Heart | `ironwood-thorn-heart` | forage: The Fernway South |
+| 40201 | Bloom-Saturated Geode | `bloom-saturated-geode` | forage: Labyrinth of Low Tunnels |
+| 40202 | First-Bloom Nectar | `first-bloom-nectar` | forage: Stillwater Marsh |
+| 40203 | Chorus-Shard | `chorus-shard` | forage: The Confluence |
+| 40204 | Stormfront Residue | `stormfront-residue` | forage: mountains biome, **storm-gated** |
+| 40205 | Scab-Chitin Plate | `scab-chitin-plate` | drop: A Pale Creeper (9568, NP Sewers), 5% |
+| 40206 | Gale-Sinew of the Steppe | `gale-sinew-steppe` | drop: Windscour Wyrm (229, Ironwind Steppe), 5% |
+| 40207 | Folded-Space Silk | `folded-space-silk` | drop: The Foldweaver (9583, apex 5%) + Fold Broodling (9581, 1%), The Foldweave |
+
+### Forage overlay (`internal/forager/forage_core.go`)
+
+The forage reagents are **player-forage only** — they are *not* added
+to NPC-forager yield pools. Two overlay tables, both consulted in
+`forageYieldPool`, appended onto the biome-common pool (a single rare
+entry among many commons = the rarest outcome):
+
+- **`ZoneForageYields`** — keyed by **zone display name**. Appended
+  only when the player forages in that exact zone. Carries the five
+  zone-exclusive reagents: `Stillwater Marsh` → 40198 + 40202,
+  `Ironwind Steppe` → 40199, `The Fernway South` → 40200, `Labyrinth
+  of Low Tunnels` → 40201, `The Confluence` → 40203.
+- **`StormForageYields`** — keyed by **biome**, appended only when the
+  zone's current weather is `"storm"`. Carries `mountains` → 40204
+  (Stormfront Residue, highland storms only).
+
+The `ForageRequest`'s `Zone` and `Weather` fields are set on the
+player-forage path only; the NPC-forager path leaves them empty, so
+neither overlay ever fires for NPCs.
+
+### The Foldweave zone
+
+A new `non_cartesian: true` cave zone (**The Foldweave**, rooms
+**6426-6437**, zone-config `roomid: 6426`, biome `cave`) hung off a
+**secret `down` exit** from The Fernway South room **4161** (a hidden
+root-gap under the great pine; the up-return from 6426 lands back at
+4161). Twelve rooms of space-folding spider-warren — the fiction is
+purely spider-craft (a spider that folds the space it spins), read
+clean by the world-critic for lore-boundary discipline. Four spiders
+on species 17: Web Skitterer (9580), Fold Broodling (9581), Silk
+Lurker (9582), and the apex **Foldweaver (9583)**, which drops the
+zone-signature reagent **40207 Folded-Space Silk** (also a rare 1%
+trickle off broodlings). Being `non_cartesian`, the zone is exempt
+from the hard cartesian consistency checks (renders wrap exits as edge
+stubs); it boots with `errors=0 warnings=0`.
