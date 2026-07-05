@@ -84,10 +84,26 @@ func Forage(actor Actor, opts ForageOptions) ForageResult {
 		actor.GetUserId(),
 	)
 
+	// Zone + weather overlay: player-forage only. Threading these here (and
+	// nowhere in the NPC forager path) is the intentional guard against
+	// zone/storm-gated ultra-rare reagents leaking into vendor stock via
+	// forager NPCs. Weather lookup degrades safely to "" when the weather
+	// module isn't installed or the zone is unrecognized.
+	weatherType := ""
+	if f, ok := GetExportedFunction("GetWeather"); ok {
+		if getW, ok := f.(func(string) map[string]any); ok {
+			if wx := getW(room.Zone); wx != nil {
+				weatherType, _ = wx["type"].(string)
+			}
+		}
+	}
+
 	coreResult := forager.ForageCore(forager.ForageAttempt{
 		Biome:       biome.BiomeId,
 		SearchScore: searchScore,
 		AtNight:     gametime.IsNight(),
+		Zone:        room.Zone,
+		Weather:     weatherType,
 	})
 
 	result.RollHappened = true

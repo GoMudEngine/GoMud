@@ -46,12 +46,47 @@ var NightForageYields = map[string][]int{
 	"land":      {40046},
 }
 
+// ZoneForageYields adds zone-exclusive forageables (keyed by zone display
+// name). Appended only when the player forages in that exact zone. Used for
+// the pinnacle ultra-rare reagents (single entry among many biome commons =
+// rarest outcome). Player-forage only — NOT applied to NPC foragers.
+var ZoneForageYields = map[string][]int{}
+
+// StormForageYields adds weather-gated forageables (keyed by biome), appended
+// only when the zone's current weather is "storm". Player-forage only.
+var StormForageYields = map[string][]int{}
+
+// buildForagePool assembles the candidate yield slice for a forage attempt:
+// the biome base + night overlay + zone overlay + storm overlay. Duplicate
+// entries raise probability; a single appended ultra-rare is the rarest
+// possible outcome.
+func buildForagePool(biome, zone, weather string, atNight bool) []int {
+	base := ForageYields[biome]
+	pool := append([]int{}, base...)
+	if atNight {
+		pool = append(pool, NightForageYields[biome]...)
+	}
+	if zone != "" {
+		pool = append(pool, ZoneForageYields[zone]...)
+	}
+	if weather == "storm" {
+		pool = append(pool, StormForageYields[biome]...)
+	}
+	return pool
+}
+
 // ForageAttempt holds the inputs needed to run one forage roll. Used
-// by both the player Forage command and NPC forager routines.
+// by both the player Forage command and NPC forager routines. Zone and
+// Weather are player-forage-only fields — the NPC forager path
+// (behaviortree/actions_forager.go) deliberately leaves them empty so
+// zone/weather-gated ultra-rare reagents can never be foraged by NPCs
+// and leaked into vendor stock.
 type ForageAttempt struct {
 	Biome       string
 	SearchScore float64 // perception + skill multiplier
 	AtNight     bool
+	Zone        string // player-forage only; see ZoneForageYields
+	Weather     string // player-forage only; see StormForageYields
 }
 
 // ForageResult is the outcome of a single attempt. Caller is responsible
@@ -69,14 +104,12 @@ type ForageResult struct {
 // Returns Found=false (and ItemId=0) if the biome is unknown or the
 // roll missed difficulty.
 func ForageCore(a ForageAttempt) ForageResult {
-	yields, ok := ForageYields[a.Biome]
-	if !ok || len(yields) == 0 {
+	if _, ok := ForageYields[a.Biome]; !ok {
 		return ForageResult{}
 	}
-	if a.AtNight {
-		if night, hasNight := NightForageYields[a.Biome]; hasNight {
-			yields = append(append([]int{}, yields...), night...)
-		}
+	pool := buildForagePool(a.Biome, a.Zone, a.Weather, a.AtNight)
+	if len(pool) == 0 {
+		return ForageResult{}
 	}
 	difficulty := ForageDifficulty[a.Biome]
 	if difficulty == 0 {
@@ -86,5 +119,5 @@ func ForageCore(a ForageAttempt) ForageResult {
 	if roll.Value < difficulty {
 		return ForageResult{}
 	}
-	return ForageResult{Found: true, ItemId: yields[util.Rand(len(yields))]}
+	return ForageResult{Found: true, ItemId: pool[util.Rand(len(pool))]}
 }
