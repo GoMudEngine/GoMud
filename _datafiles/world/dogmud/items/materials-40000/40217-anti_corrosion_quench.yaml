@@ -3,6 +3,7 @@ name: Anti-Corrosion Quench
 namesimple: quench
 vendor_categories:
 - alchemy
+- tailoring
 description: >-
   An alchemical quench-bath, cloudy and mineral-sharp, that leaves
   whatever metal passes through it proof against rot and rust for

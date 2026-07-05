@@ -1,0 +1,26 @@
+id: assemble-thornwall-harness
+name: Thornwall Harness
+skill: tailoring
+skill_minimum: 65
+station: loom
+require_own_components: true
+learn_only: true
+time_rounds: 20
+ingredients:
+  - item_tag: barbed-spike-plates
+    quantity: 1
+  - item_tag: anti-corrosion-quench
+    quantity: 1
+  - item_tag: ironwood-thorn-heart
+    quantity: 1
+  - item_tag: scab-chitin-plate
+    quantity: 1
+  - item_tag: leather-strip
+    quantity: 8
+  - item_tag: sinew
+    quantity: 6
+output:
+  item_id: 40186
+  quantity: 1
+success_message: "You rivet the barbed plates inward across the cured hide, quench every point against rust, and bind the thorn-heart deep beneath the chitin. The leather holds its threat. Veyra's masterwork is finished -- the Thornwall Harness is ready to wear."
+failure_message: "The barbs bite the wrong way through the hide and the quench sets crooked. The materials are wasted."

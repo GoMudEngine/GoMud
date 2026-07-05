@@ -3,6 +3,7 @@ name: Choir-Focus Gems
 namesimple: gems
 vendor_categories:
 - jewelcrafting
+- enchanting
 description: >-
   A matched ring of cut gems, each faceted to the same angle as
   its neighbors, tuned until set together they hold a single chord

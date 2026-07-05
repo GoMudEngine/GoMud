@@ -3,6 +3,7 @@ name: Conductor Core
 namesimple: core
 vendor_categories:
 - blacksmithing
+- enchanting
 description: >-
   A forged core, wound tight in banded coils, built to carry a
   note the way honest wire carries a current -- cleanly,

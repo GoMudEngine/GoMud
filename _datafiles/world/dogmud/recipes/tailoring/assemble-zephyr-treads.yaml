@@ -1,0 +1,26 @@
+id: assemble-zephyr-treads
+name: Zephyr Treads
+skill: tailoring
+skill_minimum: 65
+station: loom
+require_own_components: true
+learn_only: true
+time_rounds: 20
+ingredients:
+  - item_tag: quicksilver-soles
+    quantity: 1
+  - item_tag: windlace-bindings
+    quantity: 1
+  - item_tag: stormfront-residue
+    quantity: 1
+  - item_tag: gale-sinew-steppe
+    quantity: 1
+  - item_tag: leather-strip
+    quantity: 8
+  - item_tag: thread-spool
+    quantity: 6
+output:
+  item_id: 40188
+  quantity: 1
+success_message: "You inlay the quicksilver vein into the sole, lace the windlace cording ankle to heel, and work the storm-charged residue into the seam. The boots want to move before you have finished lacing them. Veyra's masterwork is finished -- the Zephyr Treads are ready."
+failure_message: "The quicksilver pools wrong and the windlace cording snaps taut before it sets. The materials are ruined."
