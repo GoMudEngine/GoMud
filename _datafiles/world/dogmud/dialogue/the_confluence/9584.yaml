@@ -118,9 +118,32 @@ tree:
       hints: "You are known to Veyra now. Ask her about a specific
         commission to hear what she can make and what it costs."
 
+    # ── COMMISSION LIST: names all 9, grants nothing ─────────────
+    # Placed above the offer nodes so the generic "quest"/"task"/
+    # "commission" words resolve HERE (a menu) instead of racing the 9
+    # co-equal grant nodes and silently auto-locking the first one.
+    # These nine names are the only in-game source for the learn_only
+    # commission items, so this node is also their discoverability point.
+    - id: commission_list
+      triggers: ["quest", "task", "commission", "commissions", "list",
+        "work"]
+      questRequired: ["78-end"]
+      questFlagRequired:
+        "78-commission": "none"
+      text: "Nine things I'll make, one at a time. The Vitalis
+        Bandolier -- thirty-five thousand. The Blackrazor -- fifty.
+        The Wayfarer's Pack -- twenty-five. The Aegis of Mockery --
+        forty. The Thornwall Harness -- thirty. The Seething Prism --
+        forty. The Zephyr Treads -- twenty-five. The Hollow Choir Staff
+        -- forty-five. The Phial of Second Birth -- thirty. Half the
+        gold committed when you name it, half when I hand it over. Say
+        which one and I'll tell you the rest."
+      hints: "You could ask Veyra to commission a specific piece --
+        for example, ask veyra blackrazor, or ask veyra bandolier."
+
     # ── COMMISSION OFFER: Vitalis Bandolier (alchemy) ─────────────
     - id: offer_bandolier
-      triggers: ["bandolier", "vitalis", "belt", "quest", "task"]
+      triggers: ["bandolier", "vitalis", "belt"]
       questRequired: ["78-end"]
       questFlagRequired:
         "78-commission": "none"
@@ -140,7 +163,7 @@ tree:
 
     # ── COMMISSION OFFER: The Blackrazor (blacksmithing) ──────────
     - id: offer_blackrazor
-      triggers: ["blackrazor", "razor", "quest", "task"]
+      triggers: ["blackrazor", "razor"]
       questRequired: ["78-end"]
       questFlagRequired:
         "78-commission": "none"
@@ -160,7 +183,7 @@ tree:
 
     # ── COMMISSION OFFER: Wayfarer's Bottomless Pack (tailoring) ──
     - id: offer_wayfarer
-      triggers: ["wayfarer", "pack", "bottomless", "quest", "task"]
+      triggers: ["wayfarer", "pack", "bottomless"]
       questRequired: ["78-end"]
       questFlagRequired:
         "78-commission": "none"
@@ -180,7 +203,7 @@ tree:
 
     # ── COMMISSION OFFER: Aegis of Mockery (blacksmithing) ────────
     - id: offer_aegis
-      triggers: ["aegis", "mockery", "shield", "quest", "task"]
+      triggers: ["aegis", "mockery", "shield"]
       questRequired: ["78-end"]
       questFlagRequired:
         "78-commission": "none"
@@ -199,7 +222,7 @@ tree:
 
     # ── COMMISSION OFFER: Thornwall Harness (tailoring) ───────────
     - id: offer_thornwall
-      triggers: ["thornwall", "harness", "quest", "task"]
+      triggers: ["thornwall", "harness"]
       questRequired: ["78-end"]
       questFlagRequired:
         "78-commission": "none"
@@ -216,7 +239,7 @@ tree:
 
     # ── COMMISSION OFFER: Seething Prism (jewelcrafting) ──────────
     - id: offer_prism
-      triggers: ["prism", "seething", "quest", "task"]
+      triggers: ["prism", "seething"]
       questRequired: ["78-end"]
       questFlagRequired:
         "78-commission": "none"
@@ -235,7 +258,7 @@ tree:
 
     # ── COMMISSION OFFER: Zephyr Treads (tailoring) ───────────────
     - id: offer_zephyr
-      triggers: ["zephyr", "treads", "boots", "quest", "task"]
+      triggers: ["zephyr", "treads", "boots"]
       questRequired: ["78-end"]
       questFlagRequired:
         "78-commission": "none"
@@ -253,7 +276,7 @@ tree:
 
     # ── COMMISSION OFFER: Staff of the Hollow Choir (enchanting) ──
     - id: offer_choir
-      triggers: ["choir", "hollow", "staff", "quest", "task"]
+      triggers: ["choir", "hollow", "staff"]
       questRequired: ["78-end"]
       questFlagRequired:
         "78-commission": "none"
@@ -273,7 +296,7 @@ tree:
 
     # ── COMMISSION OFFER: Phial of Second Birth (alchemy) ─────────
     - id: offer_phial
-      triggers: ["phial", "birth", "rebirth", "quest", "task"]
+      triggers: ["phial", "birth", "rebirth"]
       questRequired: ["78-end"]
       questFlagRequired:
         "78-commission": "none"
