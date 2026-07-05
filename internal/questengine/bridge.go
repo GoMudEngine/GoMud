@@ -58,6 +58,11 @@ func (b *GameBridge) GetQuestFlag(key string) string {
 	return b.user.Character.GetQuestFlag(key)
 }
 
+// GetGold returns the player's current gold total.
+func (b *GameBridge) GetGold() int {
+	return b.user.Character.Gold
+}
+
 // --- ActionContext ---
 
 // GetUserId returns the user's ID.
@@ -139,6 +144,20 @@ func (b *GameBridge) GiveGold(amount int) {
 	events.AddToQueue(events.EquipmentChange{
 		UserId:     b.user.UserId,
 		GoldChange: amount,
+	})
+}
+
+// ChargeGold deducts gold from the player's character, clamped so the
+// player's gold never goes negative, and notifies the client.
+func (b *GameBridge) ChargeGold(amount int) {
+	if amount > b.user.Character.Gold {
+		amount = b.user.Character.Gold
+	}
+	b.user.Character.Gold -= amount
+	b.user.SendText(messaging.CategoryLoot, fmt.Sprintf("You pay <ansi fg=\"gold\">%d gold</ansi>.", amount))
+	events.AddToQueue(events.EquipmentChange{
+		UserId:     b.user.UserId,
+		GoldChange: -amount,
 	})
 }
 

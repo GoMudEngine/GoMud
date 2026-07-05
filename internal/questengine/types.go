@@ -67,6 +67,7 @@ type Conditions struct {
 	MissingItem int               `yaml:"missing_item,omitempty"` // player must NOT have this item
 	HasFlag     map[string]string `yaml:"has_flag,omitempty"`     // player must have ALL these flag key=value pairs
 	MissingFlag map[string]string `yaml:"missing_flag,omitempty"` // player must NOT have ANY of these flag key=value pairs
+	HasGold     int               `yaml:"has_gold,omitempty"`     // player must have at least this much gold
 }
 
 // ActionDef is a single action to execute when a trigger fires.
@@ -76,6 +77,7 @@ type ActionDef struct {
 	ConsumeItem  int              `yaml:"consume_item,omitempty"`
 	GiveItem     int              `yaml:"give_item,omitempty"`
 	GiveGold     int              `yaml:"give_gold,omitempty"`
+	ChargeGold   int              `yaml:"charge_gold,omitempty"`
 	NpcSay       *NpcSayDef       `yaml:"npc_say,omitempty"`
 	SendText     string           `yaml:"send_text,omitempty"`
 	RoomText     string           `yaml:"room_text,omitempty"`

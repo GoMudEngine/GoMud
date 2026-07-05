@@ -17,6 +17,7 @@ type ActionContext interface {
 	ConsumeItem(itemId int)
 	GiveItem(itemId int)
 	GiveGold(amount int)
+	ChargeGold(amount int)
 	SendText(cat messaging.Category, text string)
 	RoomText(text string)
 	SpawnMob(s SpawnDef)
@@ -57,6 +58,11 @@ func ExecuteAction(a ActionDef, ctx ActionContext) error {
 	if a.GiveGold > 0 {
 		LogVerboseF(ctx.GetUserId(), "giving %d gold", a.GiveGold)
 		ctx.GiveGold(a.GiveGold)
+		return nil
+	}
+	if a.ChargeGold > 0 {
+		LogVerboseF(ctx.GetUserId(), "charging %d gold", a.ChargeGold)
+		ctx.ChargeGold(a.ChargeGold)
 		return nil
 	}
 	if a.SendText != "" {

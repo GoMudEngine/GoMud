@@ -25,6 +25,7 @@ type mockActionContext struct {
 	consumedItems    []int
 	givenItems       []int
 	givenGold        int
+	gold             int
 	sentTexts        []string
 	roomTexts        []string
 	spawnedMobs      []SpawnDef
@@ -52,6 +53,12 @@ func (m *mockActionContext) ConsumeItem(itemId int) {
 }
 func (m *mockActionContext) GiveItem(itemId int)  { m.givenItems = append(m.givenItems, itemId) }
 func (m *mockActionContext) GiveGold(amount int)  { m.givenGold += amount }
+func (m *mockActionContext) ChargeGold(amount int) {
+	if amount > m.gold {
+		amount = m.gold
+	}
+	m.gold -= amount
+}
 func (m *mockActionContext) SendText(_ messaging.Category, text string) {
 	m.sentTexts = append(m.sentTexts, text)
 }

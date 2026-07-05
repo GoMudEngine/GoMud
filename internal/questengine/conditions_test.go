@@ -11,6 +11,7 @@ type mockPlayer struct {
 	items  map[int]bool
 	flags  map[string]string
 	roomId int
+	gold   int
 }
 
 func newMockPlayer(roomId int) *mockPlayer {
@@ -26,6 +27,7 @@ func (m *mockPlayer) HasQuest(token string) bool     { return m.quests[token] }
 func (m *mockPlayer) HasItem(itemId int) bool        { return m.items[itemId] }
 func (m *mockPlayer) GetRoomId() int                 { return m.roomId }
 func (m *mockPlayer) GetQuestFlag(key string) string { return m.flags[key] }
+func (m *mockPlayer) GetGold() int                   { return m.gold }
 
 func TestEvalConditions_Empty(t *testing.T) {
 	p := newMockPlayer(100)

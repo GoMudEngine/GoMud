@@ -13,6 +13,7 @@ type fullMockPlayer struct {
 	items  map[int]bool
 	flags  map[string]string
 	roomId int
+	gold   int
 }
 
 func newFullMockPlayer(roomId int) *fullMockPlayer {
@@ -28,6 +29,7 @@ func (p *fullMockPlayer) HasQuest(token string) bool     { return p.quests[token
 func (p *fullMockPlayer) HasItem(itemId int) bool        { return p.items[itemId] }
 func (p *fullMockPlayer) GetRoomId() int                 { return p.roomId }
 func (p *fullMockPlayer) GetQuestFlag(key string) string { return p.flags[key] }
+func (p *fullMockPlayer) GetGold() int                   { return p.gold }
 
 // fullMockActionContext wraps mockActionContext but mutates the player's state
 // on GrantQuest, ConsumeItem, and GiveItem so chained evaluation works.
