@@ -1,0 +1,58 @@
+roomid: 6438
+zone: The Confluence
+title: Veyra's Workshop
+description: >
+  The stair from the craft row below ends at a door that was
+  clearly meant to be a shopfront once — the frame is right, the
+  lintel deep enough for a hung sign — except the sign itself
+  has been painted over in flat grey, twice now by the look of
+  the brushwork, and no name has replaced it. Inside, the room
+  runs long and low under ceiling beams strung with drying
+  herbs, coiled wire, and lengths of chain that do not obviously
+  belong to anything yet. A cluttered
+  <ansi fg="itemname">alchemy bench</ansi>
+  takes up the near wall, its surface crowded with work at every
+  stage of finish: a bandolier missing its buckles, a blade with
+  no edge ground onto it yet, a housing waiting for whatever is
+  meant to eventually sit inside it. The room smells of six
+  trades layered on top of each other — hot metal, spirit
+  vinegar, raw wool, something faintly ozone — none of them
+  quite covering the rest. Doorways lead off to three smaller
+  workrooms, and the stair descends back to the craft row below.
+biome: city
+coord:
+  x: -14
+  y: -68
+  z: 1
+station: alchemy_bench
+exits:
+  down:
+    roomid: 6233
+  north:
+    roomid: 6439
+  east:
+    roomid: 6440
+  west:
+    roomid: 6441
+nouns:
+  the painted-over sign: >
+    Whatever trade this shopfront once advertised has been
+    painted out in flat grey — twice, from the layering visible
+    at the edges where weather has worn a thin line through to
+    the coat beneath. No new sign has gone up in its place. On
+    this street, that is its own kind of statement.
+  alchemy bench: >
+    A long workbench scarred by acid, scorching, and the honest
+    wear of constant use, crowded with projects at every stage
+    of completion. Nothing here looks finished, and nothing here
+    looks abandoned either — the clutter has the particular
+    order of a mind that knows exactly where everything is.
+idlemessages:
+- Something on the bench hisses softly and is ignored.
+- A chain hanging from the beams above sways slightly, though
+  nothing in the room is moving.
+- The smell shifts a degree — metal fading, spirit-vinegar
+  rising — as though someone just stepped between two half-
+  finished projects.
+- A drawer somewhere in the clutter slides shut on its own worn
+  runners, the sound settling into the quiet.

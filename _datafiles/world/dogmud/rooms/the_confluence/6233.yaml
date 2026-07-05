@@ -13,8 +13,11 @@ description: >
   knows everyone and the boards exist more for strangers
   than for neighbors. The sound of work comes from every
   door: wood knocked, a loom's shuttle, someone calling
-  through a yard. The gate is east; the cooperage is
-  west; the row runs south.
+  through a yard. Tucked between two shopfronts, a
+  narrow stair climbs to a shuttered upper workshop, its
+  street-facing sign painted over in flat grey — no one
+  seems to mind that it stays open anyway. The gate is
+  east; the cooperage is west; the row runs south.
 biome: city
 coord:
   x: -14
@@ -27,6 +30,8 @@ exits:
     roomid: 6234
   south:
     roomid: 6236
+  up:
+    roomid: 6438
 nouns:
   the signboards: >
     Trade boards hung above the shopfronts: hoop and
@@ -36,6 +41,13 @@ nouns:
     same hand, years apart. Effective enough that a
     newcomer could find any shop on the row without
     asking.
+  the narrow stair: >
+    A tight stair between two shopfronts, climbing to a
+    door whose sign has been painted over rather than
+    replaced. Nobody on the row seems to find this odd,
+    or if they do, they have long since stopped
+    mentioning it. Traffic goes up and down it often
+    enough that it is clearly not abandoned.
 idlemessages:
 - A delivery man pulls up short outside the cooperage
   and checks a wax tablet before going in.

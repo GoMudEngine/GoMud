@@ -1,0 +1,40 @@
+roomid: 6441
+zone: The Confluence
+title: The Reduction Hearth
+description: >
+  The smallest of the annex rooms, given over almost entirely to
+  a stone
+  <ansi fg="itemname">cooking fire</ansi>
+  vented through a crude chimney hacked through the workshop's
+  original roof — a later addition, by the look of the
+  brickwork, and not one anybody sanctioned. A rack of reduction
+  pots hangs above the coals, each one blackened and thinned by
+  years of scraping, and shelves along the back wall hold jars
+  of concentrate boiled down from bulk goods into something
+  small enough to carry in a pocket. The smell here breaks from
+  the rest of the workshop — burnt sugar and bone broth instead
+  of metal and spirit — but is no less part of the same quietly
+  unlicensed trade. The main workshop lies back to the east.
+biome: city
+coord:
+  x: -15
+  y: -68
+  z: 1
+station: cooking_fire
+exits:
+  east:
+    roomid: 6438
+nouns:
+  cooking fire: >
+    A low stone hearth built for reduction work rather than
+    meals — no spit, no grill, just a bed of steady coals under
+    a rack sized for pots, not pans. The chimney above it is
+    patched brick, clearly punched through the roof well after
+    the building went up.
+idlemessages:
+- A pot on the rack simmers down another degree, thickening
+  toward whatever it is meant to become.
+- The smell of scorched sugar catches for a moment before
+  settling back into the room's usual mix.
+- A jar of dark concentrate on the back shelf has been labeled
+  and relabeled enough times that the original word is gone.
