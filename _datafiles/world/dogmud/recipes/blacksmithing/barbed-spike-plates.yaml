@@ -1,0 +1,18 @@
+id: barbed-spike-plates
+name: Barbed Spike-Plates
+skill: blacksmithing
+skill_minimum: 50
+station: forge
+time_rounds: 7
+ingredients:
+  - item_tag: steel-ingot
+    quantity: 2
+  - item_tag: chain-link
+    quantity: 1
+  - item_tag: coal-dust
+    quantity: 1
+output:
+  item_id: 40216
+  quantity: 1
+success_message: "You rivet the plates and hammer each spike angled inward toward the clinch, not the swing. Barbed spike-plates!"
+failure_message: "A spike shears off mid-hammer and the plate warps. The materials are ruined."

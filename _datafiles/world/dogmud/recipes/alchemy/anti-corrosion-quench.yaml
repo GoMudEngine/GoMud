@@ -1,0 +1,18 @@
+id: anti-corrosion-quench
+name: Anti-Corrosion Quench
+skill: alchemy
+skill_minimum: 50
+station: alchemy_bench
+time_rounds: 6
+ingredients:
+  - item_tag: salt-pouch
+    quantity: 1
+  - item_tag: coal-dust
+    quantity: 1
+  - item_tag: beeswax
+    quantity: 1
+output:
+  item_id: 40217
+  quantity: 1
+success_message: "You cut the bath mineral-sharp and cap it tight before its potency can thin. An anti-corrosion quench!"
+failure_message: "The bath clouds over and separates before it can cure. The materials are wasted."

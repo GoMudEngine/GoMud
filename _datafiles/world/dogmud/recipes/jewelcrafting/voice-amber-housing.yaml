@@ -1,0 +1,18 @@
+id: voice-amber-housing
+name: Voice-Amber Housing
+skill: jewelcrafting
+skill_minimum: 50
+station: jeweler_bench
+time_rounds: 7
+ingredients:
+  - item_tag: polished-stone
+    quantity: 2
+  - item_tag: gold-wire
+    quantity: 1
+  - item_tag: gem-dust
+    quantity: 1
+output:
+  item_id: 40214
+  quantity: 1
+success_message: "You facet the amber deep and hollow a cradle in its warm center. A voice-amber housing!"
+failure_message: "The amber fractures along a hidden seam. The materials are wasted."

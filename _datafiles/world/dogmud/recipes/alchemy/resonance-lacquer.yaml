@@ -1,0 +1,18 @@
+id: resonance-lacquer
+name: Resonance Lacquer
+skill: alchemy
+skill_minimum: 50
+station: alchemy_bench
+time_rounds: 6
+ingredients:
+  - item_tag: pine-pitch
+    quantity: 2
+  - item_tag: beeswax
+    quantity: 1
+  - item_tag: moonpetal
+    quantity: 1
+output:
+  item_id: 40215
+  quantity: 1
+success_message: "You cut the resin with wax and crushed moonpetal until it dries to a sheen that never quite goes still. Resonance lacquer!"
+failure_message: "The mixture dries brittle and flakes off the brush. The materials are ruined."

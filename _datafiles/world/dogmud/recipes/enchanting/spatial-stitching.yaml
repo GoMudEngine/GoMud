@@ -1,0 +1,18 @@
+id: spatial-stitching
+name: Spatial Stitching
+skill: enchanting
+skill_minimum: 50
+station: enchanting_circle
+time_rounds: 8
+ingredients:
+  - item_tag: binding-paste
+    quantity: 1
+  - item_tag: chrysalis-setting
+    quantity: 1
+  - item_tag: mutation-catalyst
+    quantity: 1
+output:
+  item_id: 40213
+  quantity: 1
+success_message: "You bind the setting's hollow into the paste and coax it to hold more than its size should allow. Spatial stitching!"
+failure_message: "The binding folds in on itself and the enchantment collapses inward. The materials are lost."

@@ -1,0 +1,18 @@
+id: obsidian-edge-resin
+name: Obsidian Edge-Resin
+skill: alchemy
+skill_minimum: 50
+station: alchemy_bench
+time_rounds: 6
+ingredients:
+  - item_tag: pine-pitch
+    quantity: 2
+  - item_tag: coal-dust
+    quantity: 1
+  - item_tag: blood-moss
+    quantity: 1
+output:
+  item_id: 40211
+  quantity: 1
+success_message: "You work coal-black pitch until it glasses over but never quite sets. Obsidian edge-resin!"
+failure_message: "The resin sets too fast and cracks in the jar. The materials are ruined."

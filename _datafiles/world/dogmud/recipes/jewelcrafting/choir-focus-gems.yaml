@@ -1,0 +1,18 @@
+id: choir-focus-gems
+name: Choir-Focus Gems
+skill: jewelcrafting
+skill_minimum: 50
+station: jeweler_bench
+time_rounds: 8
+ingredients:
+  - item_tag: raw-gem
+    quantity: 2
+  - item_tag: gem-dust
+    quantity: 1
+  - item_tag: gold-wire
+    quantity: 1
+output:
+  item_id: 40223
+  quantity: 1
+success_message: "You facet each gem to match its neighbor by ear, until the ring holds a single chord. Choir-focus gems!"
+failure_message: "A facet catches wrong and the chord frays at the edges. The materials are wasted."
