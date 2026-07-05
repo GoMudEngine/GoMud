@@ -1,0 +1,42 @@
+questid: 81
+name: Commission Wayfarer's Pack
+description: >-
+  Veyra has agreed to make the Wayfarer's Pack. Gather what she named,
+  craft the parts by your own hand, and bring them to her stations to be
+  stitched together.
+steps:
+  - id: start
+    description: "Veyra has taken the commission. Gather the reagents and
+      craft the parts by your own hand."
+  - id: end
+    description: "The Wayfarer's Pack is made."
+triggers:
+  - event: quest_granted
+    quest_token: "81-start"
+    actions:
+      - charge_gold: 12500
+      - learn_recipe: {recipe: "reinforced-frame"}
+      - learn_recipe: {recipe: "spatial-stitching"}
+      - learn_recipe: {recipe: "assemble-wayfarers-pack"}
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "Half now. The recipes are yours. Cut the
+                frame square -- a pack that fails you three roads from
+                home is worse than none at all."}
+
+  - event: item_gain
+    item: 40184
+    conditions:
+      has: ["81-start"]
+      missing: ["81-end"]
+    actions:
+      - charge_gold: 12500
+      - set_flag: {key: "78-commission", value: "none"}
+      - grant: "81-end"
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "Light on the shoulder, deep in the belly.
+                It will carry more than it should and never complain.
+                Balance settled. Safe roads."}
