@@ -84,11 +84,24 @@ func Forage(actor Actor, opts ForageOptions) ForageResult {
 		actor.GetUserId(),
 	)
 
-	coreResult := forager.ForageCore(forager.ForageAttempt{
+	// Zone + weather overlay: PLAYER-forage ONLY. Forage() is a shared entry
+	// point called by both the player command and the NPC forager path
+	// (behaviortree/mobcommands → actions.Forage), so the zone/weather
+	// overlay MUST be gated on actor.IsPlayer(). Leaving Zone/Weather
+	// zero-valued for mob actors is the intentional guard against
+	// zone/storm-gated ultra-rare reagents leaking into vendor stock via
+	// forager NPCs.
+	attempt := forager.ForageAttempt{
 		Biome:       biome.BiomeId,
 		SearchScore: searchScore,
 		AtNight:     gametime.IsNight(),
-	})
+	}
+	if actor.IsPlayer() {
+		attempt.Zone = room.Zone
+		attempt.Weather = currentWeatherType(room.Zone)
+	}
+
+	coreResult := forager.ForageCore(attempt)
 
 	result.RollHappened = true
 
@@ -129,4 +142,26 @@ func Forage(actor Actor, opts ForageOptions) ForageResult {
 	result.ItemId = coreResult.ItemId
 	result.ItemName = newItem.DisplayName()
 	return result
+}
+
+// currentWeatherType returns the weather module's reported weather type for
+// a zone ("storm", "clear", etc.), or "" when the weather module isn't
+// installed, the export has an unexpected signature, or the zone is
+// unrecognized. All three degrade paths return "" so the caller safely
+// treats the zone as calm.
+func currentWeatherType(zone string) string {
+	f, ok := GetExportedFunction("GetWeather")
+	if !ok {
+		return ""
+	}
+	getW, ok := f.(func(string) map[string]any)
+	if !ok {
+		return ""
+	}
+	wx := getW(zone)
+	if wx == nil {
+		return ""
+	}
+	wtype, _ := wx["type"].(string)
+	return wtype
 }

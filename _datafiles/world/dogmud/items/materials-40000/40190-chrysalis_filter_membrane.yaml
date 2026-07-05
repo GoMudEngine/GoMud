@@ -1,0 +1,20 @@
+itemid: 40190
+name: Chrysalis Filter-Membrane
+namesimple: membrane
+vendor_categories:
+- alchemy
+description: >-
+  A membrane of the grey material, thin enough to see through, cut
+  from the workings deep inside a fallen guardian. Held to the light
+  it shows a faint tracery of channels that carried no blood.
+  Whatever passes through it slows at the crossing, held for one
+  perfect instant before it is let through -- fresher, purer, truer
+  to itself than it was a moment before. It has not forgotten how to
+  filter, though the guardian it filtered for is long since stilled.
+type: object
+subtype: mundane
+component_tag: chrysalis-filter-membrane
+weight: 0.1
+value: 1250
+rarity_tier: 82
+is_component: true

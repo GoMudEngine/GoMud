@@ -1,0 +1,20 @@
+itemid: 40194
+name: Seed-Crystal of the Breach
+namesimple: seed-crystal
+vendor_categories:
+- jewelcrafting
+description: >-
+  A wet, faintly warm crystal no larger than a knuckle, drawn from
+  somewhere deep in the Breach where the grey material still
+  remembers what it was for. Set it down and the matter nearest it
+  stirs, ever so slightly, reshaping toward some old and patient
+  purpose. It has not stopped growing since it was cut free, only
+  slowed, and it waits now for a jeweler's hand to give it a new
+  shape to grow into.
+type: object
+subtype: mundane
+component_tag: seed-crystal-breach
+weight: 0.2
+value: 1350
+rarity_tier: 82
+is_component: true

@@ -1,0 +1,52 @@
+roomid: 6432
+zone: The Foldweave
+title: The Circling Passage
+description: >
+  A curving passage, silk-ribbed and close, that bends always to the
+  same hand. You walk it expecting the bend to open out and it only
+  bends again, the same bend, the wall on your inside shoulder always
+  the wall on your inside shoulder. There is a
+  <ansi fg="itemname">mark</ansi> on the silk at about eye height --
+  a torn place, a snag of old grey fiber -- and you will come to know
+  it, because the passage north leads you on to a place that looks
+  like an onward chamber and is not, and returns you here to pass the
+  mark again. Only the way <ansi fg="itemname">east</ansi>, back
+  toward the fold, breaks the circle. The passage does not want you
+  to take it. The passage would rather you kept walking.
+biome: cave
+coord:
+  x: -14
+  y: -20
+  z: -4
+exits:
+  east:
+    roomid: 6431
+  north:
+    roomid: 6433
+nouns:
+  mark: >
+    A torn snag of grey fiber on the silk at eye height, frayed pale
+    at the edges. You mark it the first time without meaning to, and
+    the marking is a mercy: it is how you learn that north from here
+    and north from the next chamber are the same north, circling, and
+    that you have passed this snag before.
+  circle: >
+    The passage bends to one hand and keeps bending, never opening,
+    the curve too even and too willing. Trust the bend and it will
+    carry you around and around past the same torn mark, patient as a
+    mill-wheel, for as long as you let it.
+idlemessages:
+- The same torn snag of grey fiber slides past at eye height, and you
+  cannot say for certain whether it is the first time or the fourth.
+- The passage bends again to the same hand, and the wall on your inner
+  shoulder is the wall it has always been.
+- Something paces you beyond the silk wall, matching the bend, keeping
+  the ribbed sheet between you.
+- A draught crosses the passage from no opening, cold and sweet, and
+  is gone.
+spawninfo:
+  - mobid: 9580
+    respawnrate: "12 real minutes"
+
+mutators:
+- mutatorid: foldweave-glow

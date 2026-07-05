@@ -35,6 +35,8 @@ character:
   items:
     - itemid: 40050
       dropchance: 30
+    - itemid: 40205
+      dropchance: 5
   name: A Pale Creeper
   description: |
     Something that may once have had a proper animal to be. It is

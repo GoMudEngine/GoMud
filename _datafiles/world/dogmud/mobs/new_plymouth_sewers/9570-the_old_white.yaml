@@ -45,6 +45,8 @@ character:
       dropchance: 100
     - itemid: 40180
       dropchance: 100
+    - itemid: 40197
+      dropchance: 4
   name: The Old White
   description: |
     A serpent, if the word can stretch that far. It is white the

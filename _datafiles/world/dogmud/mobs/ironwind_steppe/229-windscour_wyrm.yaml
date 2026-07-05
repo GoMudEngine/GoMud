@@ -28,6 +28,8 @@ character:
   items:
     - itemid: 40010   # Chrysalis Core (Stage 3.4 — apex-tier rare drop)
       dropchance: 5   # match mob's itemdropchance; carried items default to 100%
+    - itemid: 40206
+      dropchance: 5
   description: |
     The undisputed lord of the Windscour Caves -- a serpentine
     creature of enormous size, its body thick as a tree trunk and

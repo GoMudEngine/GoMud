@@ -1,0 +1,19 @@
+itemid: 40206
+name: Gale-Sinew of the Steppe
+namesimple: sinew
+vendor_categories:
+- tailoring
+description: >-
+  A long cord of sinew, cured by the same wind that scours the
+  steppe raw, taken from the apex predator that rules that open
+  country. Stretch it taut and it hums, faintly, as though the wind
+  that shaped it never quite let go. Tailors who work it find it
+  remembers motion long after the beast that owned it has stopped
+  moving -- a length of muscle that still wants to run.
+type: object
+subtype: mundane
+component_tag: gale-sinew-steppe
+weight: 0.3
+value: 1200
+rarity_tier: 82
+is_component: true

@@ -18,8 +18,11 @@ description: >
   different kind of mark: a long scrape at shoulder-height and
   a single tuft of grey-brown fur caught in the rough bark —
   the <ansi fg="itemname">wolf-sign</ansi> of something large
-  that uses this stand for its own reasons. The pines hold
-  their quiet around it.
+  that uses this stand for its own reasons. Where the largest
+  pine has heaved a shoulder of ground up with its roots, a
+  <ansi fg="itemname">root-tangle</ansi> makes a low dark
+  hollow at its base, and the needle-carpet is thin and
+  disturbed before it. The pines hold their quiet around it.
 biome: forest
 coord:
   x: -13
@@ -28,6 +31,10 @@ coord:
 exits:
   west:
     roomid: 4160
+  down:
+    roomid: 6426
+    secret: true
+    zone: The Foldweave
 nouns:
   pine-trunk: |
     Tall and straight-boled, the pines here have shed their
@@ -60,6 +67,27 @@ nouns:
     animal marking territory — or stretching. A single
     tuft of coarse grey fur is snagged in the rougher
     bark below it, still soft, not old.
+  root-tangle: |
+    Where the great pine heaved a shoulder of ground up with
+    its roots, a low dark hollow opens at its base — a snarl
+    of thick roots over a gap in the earth. The needle-carpet
+    before it is thin and pressed, disturbed by something that
+    comes and goes. Cold air seeps out of the gap, and under
+    the pine-resin there is a thread of a different smell,
+    sweetish and wrong, rising from somewhere below the roots.
+hidden_nouns:
+  root-gap:
+    description: |
+      Down inside the root-tangle, behind the first snarl of
+      roots, the earth does not close again — it drops. A gap
+      wide enough for a large body to pass runs down under the
+      pine, its edges worn smooth by use, and out of it pours a
+      steady breath of cold, sweetish air that has never seen
+      the sun. Whatever the wolf-sign belongs to does not den in
+      this stand. It only passes through, on its way down.
+    hidden_description: |
+      Behind the roots of the great pine a worn gap drops away
+      into the ground, breathing cold and sweetish air.
 idlemessages:
 - a pine needle drifts down
 - ''

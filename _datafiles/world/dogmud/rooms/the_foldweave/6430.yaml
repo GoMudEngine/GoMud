@@ -1,0 +1,57 @@
+roomid: 6430
+zone: The Foldweave
+title: The Doubled Chamber
+description: >
+  A wide low chamber, and the first thing wrong with it is that you
+  are sure you have already arrived here -- once from the left, once
+  from the right, and the memory will not decide which came first.
+  <ansi fg="itemname">Web-anchors</ansi> star the ceiling in a
+  radiating pattern, all of them drawn taut toward a single point
+  at the chamber's heart where the strands knot into a pale rosette,
+  and standing under it the pull of all those converging lines is
+  almost a sound. There is no clutter here, no bone, no sac -- only
+  the anchors and their center, and the sense of being weighed. One
+  <ansi fg="itemname">passage</ansi> leads back the way both ways
+  came, and one climbs on, north and up, toward a deeper knot of the
+  weave.
+biome: cave
+coord:
+  x: -13
+  y: -20
+  z: -3
+exits:
+  east:
+    roomid: 6428
+  north:
+    roomid: 6431
+nouns:
+  web-anchors: >
+    Points of silk driven into the stone of the ceiling, dozens of
+    them, every one paying out a strand toward the same knot at the
+    chamber's center. The pattern radiates like a struck web seen
+    from behind. Stand under the knot and you feel each line as a
+    separate small tug on the air, all of them pulling inward, all of
+    them pulling at you.
+  passage: >
+    The way out doubles back toward the vault -- and it is the same
+    single passage that both the eastern and the western arch of that
+    vault opened onto. Two mouths there, one throat here. Walk it and
+    you will fetch up at the egg vault by whichever of its faces the
+    weave prefers today.
+idlemessages:
+- The converging strands overhead draw a fraction tighter, all
+  together, and the pull of them presses faintly against your chest.
+- For an instant you are certain you entered this chamber from the
+  other side, and the certainty passes without resolving.
+- The pale rosette at the center turns a slow quarter-turn on nothing
+  and settles again.
+- A long leg reaches down from the knot overhead, tests the air above
+  your head, and withdraws into the dark.
+spawninfo:
+  - mobid: 9580
+    respawnrate: "12 real minutes"
+  - mobid: 9581
+    respawnrate: "12 real minutes"
+
+mutators:
+- mutatorid: foldweave-glow

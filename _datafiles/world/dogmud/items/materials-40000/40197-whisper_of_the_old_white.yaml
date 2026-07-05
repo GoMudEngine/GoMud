@@ -1,0 +1,19 @@
+itemid: 40197
+name: Whisper of the Old White
+namesimple: whisper
+vendor_categories:
+- blacksmithing
+description: >-
+  Something between a pale scale and a held breath, lifted from the
+  great white thing that rules the deepest sewers below the
+  capital. It weighs almost nothing and catches no light, yet it
+  carries a faint sound with it always -- a whisper, wordless, that
+  rises when the forge goes quiet. Smiths who work it swear it
+  never fully leaves the anvil, no matter how the metal is turned.
+type: object
+subtype: mundane
+component_tag: whisper-old-white
+weight: 0.1
+value: 1250
+rarity_tier: 82
+is_component: true

@@ -1,0 +1,20 @@
+itemid: 40202
+name: First-Bloom Nectar
+namesimple: nectar
+vendor_categories:
+- alchemy
+description: >-
+  Pale nectar drawn from the first flower of a deep-marsh bloom,
+  gathered before the bud has fully opened. It smells of rain
+  falling on nothing -- a clean, mineral scent with no wet ground
+  beneath it, as though the storm it recalls never actually broke.
+  The nectar clouds if left too long in open air, and alchemists
+  who work with it swear the first draw from a bloom is never the
+  same as the second.
+type: object
+subtype: mundane
+component_tag: first-bloom-nectar
+weight: 0.15
+value: 1250
+rarity_tier: 82
+is_component: true

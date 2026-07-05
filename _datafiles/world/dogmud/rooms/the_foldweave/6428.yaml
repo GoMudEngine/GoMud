@@ -1,0 +1,73 @@
+roomid: 6428
+zone: The Foldweave
+title: The Egg Vault
+description: >
+  The rent in the curtains opens into a rounded vault whose walls
+  are hung thick with <ansi fg="itemname">egg-sacs</ansi> -- pale
+  grey purses the size of a curled fist, bunched in clusters and
+  slung in hammocks of silk from every curve of the ceiling. Some
+  are taut and glossy; some have gone slack and dark. The vault is
+  quiet with the particular quiet of a nursery, and warm, warmer
+  than the stone should allow. Two low <ansi fg="itemname">arches</ansi>
+  lead out of it, one to the left hand and one to the right, set in
+  opposite walls -- and there is something the eye keeps trying to
+  correct and cannot: both arches, followed, spill you out into the
+  very same chamber beyond. Leave by the west and you arrive where
+  leaving by the east would have brought you, as though the vault
+  had only one door wearing two faces.
+biome: cave
+coord:
+  x: -13
+  y: -19
+  z: -3
+exits:
+  south:
+    roomid: 6427
+  east:
+    roomid: 6430
+  west:
+    roomid: 6430
+nouns:
+  egg-sacs: >
+    Fist-sized purses of layered silk, slung in clusters from the
+    ceiling's every curve. The taut glossy ones are warm to stand
+    near; the slack dark ones have already given up whatever they
+    held. Put an ear near a full one and there is a sound inside it,
+    a dry patient stirring, many small stirrings folded into one.
+  arches:
+    A pair of low silk-hung openings in opposite walls, left hand and
+    right. They look away from one another. They do not lead away from
+    one another. Whichever you take, the chamber it delivers you to is
+    the same chamber, entered from the same side -- the vault keeps two
+    mouths and one throat.
+hidden_nouns:
+  brood-cache:
+    description: |
+      Behind the slack dark egg-sacs, where the wall curves back on
+      itself further than a wall should, a deeper pocket has been spun
+      shut -- a hoard-purse, not a nursery-sac, packed tight with
+      folded silk laid down in careful lengths and kept apart from the
+      rest. The Foldweave stores something here it does not intend to
+      hatch.
+    hidden_description: |
+      A pocket in the wall behind the dark sacs has been spun shut over
+      a cache of stored silk.
+idlemessages:
+- One of the taut egg-sacs shivers on its silk, a small dry stirring
+  turning over inside it, and stills.
+- Warmth moves through the vault in a slow tide, as though the room
+  itself were breathing shallow and even.
+- A dark slack sac detaches without a sound and is not on the floor
+  when you look for where it fell.
+- From both arches at once comes the same faint skitter, in step, like
+  one sound reaching you by two roads.
+spawninfo:
+  - mobid: 9581
+    respawnrate: "12 real minutes"
+  - mobid: 9581
+    respawnrate: "12 real minutes"
+  - mobid: 9580
+    respawnrate: "12 real minutes"
+
+mutators:
+- mutatorid: foldweave-glow

@@ -1,0 +1,42 @@
+mobid: 9581
+behavior_archetype: generic_fighter
+aiprofile: ambush_predator
+zone: The Foldweave
+statpool: 200
+itemdropchance: 1
+hostile: true
+maxwander: 2
+groups:
+  - cave-pack
+archetype: fighting
+mutationchance: 30
+idlecommands:
+  - 'emote flexes its front legs and tastes the air with them'
+  - ''
+  - 'emote pulls itself half into a fold of silk and watches from it'
+  - ''
+  - ''
+activitylevel: 10
+character:
+  name: Fold Broodling
+  items:
+    - itemid: 40207   # Folded-Space Silk (rare trickle off broodlings)
+      dropchance: 1    # match mob's itemdropchance
+  description: |
+    A half-grown weaver, big as two fists and already carrying the trick
+    of the place in its legs -- it spins as it moves, laying a fine trail
+    of silk that folds the ground behind it so that a thing it has passed
+    finds the way back longer than the way in. Its carapace is banded
+    pale and dark, still soft at the joints, and a faint sweetness comes
+    off it, the same cold sweetness that hangs over the whole warren. It
+    is old enough to hunt and young enough to be reckless about it, and
+    it has begun, in a small way, to fold the space around a fight.
+  speciesid: 17
+  level: 1
+  stats:
+    dexterity:
+      training: 14
+    perception:
+      training: 10
+    willpower:
+      training: 6

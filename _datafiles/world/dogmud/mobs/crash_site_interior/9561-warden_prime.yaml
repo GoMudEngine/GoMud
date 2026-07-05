@@ -35,6 +35,10 @@ character:
       dropchance: 100
     - itemid: 40171
       dropchance: 60
+    - itemid: 40195
+      dropchance: 5
+    - itemid: 40196
+      dropchance: 5
   name: Warden-Prime
   description: |
     The greatest of the drifting guardians, a towering shape of the grey

@@ -1,0 +1,21 @@
+itemid: 40200
+name: Ironwood Thorn-Heart
+namesimple: thorn-heart
+vendor_categories:
+- tailoring
+description: >-
+  The dense heartwood-thorn drawn from the core of a Fernway
+  ironwood, harder than forged iron and darker than the tree that
+  grew it. Fernway ironwoods grow slow and mean, throwing thorns
+  the length of a forearm, but only the oldest trunks harbor a
+  heart-thorn like this one, grown inward instead of out. Worked
+  into cloth or leather it lends an edge of that same stubborn
+  hardness, resisting long after everything around it has given
+  way.
+type: object
+subtype: mundane
+component_tag: ironwood-thorn-heart
+weight: 0.4
+value: 1200
+rarity_tier: 82
+is_component: true

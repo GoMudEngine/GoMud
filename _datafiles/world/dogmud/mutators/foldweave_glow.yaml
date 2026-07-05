@@ -1,0 +1,5 @@
+mutatorid: foldweave-glow
+descriptionmodifier:
+  behavior: append
+  text: ' The egg-clusters and the folded silk hold a faint cold light of their own, a dim blue-green glow that always seems brightest where you are not looking.'
+lightmod: 2

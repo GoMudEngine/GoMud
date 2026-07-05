@@ -1,0 +1,61 @@
+roomid: 6431
+zone: The Foldweave
+title: The Convergence Fold
+description: >
+  Two ways feed into this fold and the weave makes no secret of it:
+  the strand-crawl comes up out of the floor here, and the doubled
+  chamber comes down into it from above, and both deliver you to the
+  same lip of the same drop. It is a junction the way a knot is a
+  junction -- everything drawn through one narrow place. The walls
+  are ribbed with <ansi fg="itemname">fold-ridges</ansi>, seams of
+  silk laid so densely they have gone hard as horn, curving in ways
+  that make the chamber seem to turn a corner it does not turn. West,
+  a low <ansi fg="itemname">gap</ansi> breathes; below, a raw
+  <ansi fg="itemname">chimney</ansi> drops toward the sweetest and
+  coldest of the air. From here on the weave stops pretending the
+  cave has a shape.
+biome: cave
+coord:
+  x: -13
+  y: -20
+  z: -4
+exits:
+  up:
+    roomid: 6430
+  west:
+    roomid: 6432
+  down:
+    roomid: 6433
+nouns:
+  fold-ridges: >
+    Seams where silk has been laid over silk for so long it has set
+    hard, ribbing the walls like the folds of a shut fan. Run a hand
+    along one and it leads the hand around a curve, and around another,
+    and the wall you end at is not where the wall you started at said
+    it would be.
+  gap: >
+    A low breathing gap in the western wall, cold air pulsing out of
+    it in slow even draughts. The passage past it does not run straight
+    -- it circles, by the feel of the draught, back toward its own
+    beginning.
+  chimney: >
+    A raw vertical drop in the floor, unspun and honest stone for once,
+    falling toward the coldest sweetest reach of the air. Whatever the
+    weave keeps deepest, it keeps down there.
+idlemessages:
+- Both feeds of the fold carry the same tremor at the same instant, up
+  from the crawl and down from the chamber, meeting at your feet.
+- A fold-ridge along the wall shifts under its own weight, and the room
+  seems to turn a corner without your having moved.
+- Cold air pulses from the western gap in slow even breaths, each one
+  a fraction colder than the last.
+- Deep in the chimney something large adjusts itself, and a run of
+  loose silk sighs down the shaft.
+spawninfo:
+  - mobid: 9580
+    respawnrate: "12 real minutes"
+  - mobid: 9581
+    respawnrate: "12 real minutes"
+
+mutators:
+- mutatorid: foldweave-glow

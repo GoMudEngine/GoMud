@@ -1,0 +1,46 @@
+mobid: 9582
+behavior_archetype: generic_fighter
+aiprofile: ambush_predator
+zone: The Foldweave
+statpool: 300
+itemdropchance: 5
+hostile: true
+maxwander: 1
+groups:
+  - cave-pack
+archetype: fighting
+mutationchance: 40
+spawnmutations:
+  - thick-hide
+idlecommands:
+  - 'emote holds utterly still in a doubled shadow, only its eyes moving'
+  - ''
+  - ''
+  - 'emote shifts its weight across three strands without a sound'
+  - ''
+  - 'emote draws a long leg back into the folded dark and is gone from sight'
+activitylevel: 10
+character:
+  name: Silk Lurker
+  description: |
+    A heavy-bodied spider grown to the size of a hunting hound, its
+    carapace thickened to a horned grey plate and its legs long enough
+    to span a passage wall to wall. It does not chase. It waits inside
+    the weave's own folds, in the places where near and far have been
+    made to change places, and it lets the warren bring the prey to it
+    -- a wanderer who thinks the far wall is far and finds the lurker
+    already upon them. Its bite carries the same numbing venom as the
+    lesser weavers, delivered with a great deal more weight behind it.
+    Patient, armored, and sure of its ground, it is the last thing the
+    warren tests you with before the floor at its heart.
+  speciesid: 17
+  level: 1
+  stats:
+    strength:
+      training: 12
+    dexterity:
+      training: 14
+    vitality:
+      training: 10
+    perception:
+      training: 12

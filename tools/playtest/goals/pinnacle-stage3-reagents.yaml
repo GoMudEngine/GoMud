@@ -1,0 +1,64 @@
+# Pinnacle Stage 3 — reagent placement live verification
+#
+# Admin smoketester. The reagents (40190-40207) drop at low chance (4-5%) or
+# forage rarely, so live-confirming an actual drop is slow — use admin
+# `mob spawn` + kill a few times, or inspect. The HIGH-VALUE live checks are:
+# the new Foldweave zone is reachable & traversable, its spiders are hostile
+# and tough, and the Foldweaver drops Folded-Space Silk. Report magnitudes
+# (too easy/hard) as feedback, not failures.
+
+session:
+  name: pinnacle-stage3-reagents
+  max_rounds: 260
+
+goals:
+  - id: foldweave-descent
+    desc: >-
+      Reach The Foldweave. Get to Fernway South room 4161 (Pine Stand) — use
+      admin `goto 4161` or `room 4161` if available, else navigate. SEARCH the
+      room (the descent is a secret exit revealed by search). Confirm a `down`
+      exit appears, go down, and confirm you land in The Foldweave (room 6426,
+      "The Foldthreshold") — a cave with space-folding flavor. Confirm the zone
+      loaded (look shows the room, exits).
+
+  - id: foldweave-traverse
+    desc: >-
+      Explore The Foldweave. Confirm the space-folding maze works: some rooms
+      loop back on themselves, some are reachable two ways. Confirm it is
+      TRAVERSABLE toward the boss lair (you can reach room 6436, The
+      Foldweaver's Court, from the entry). Note if you get hard-stuck (a trap
+      room with no way forward or back) — that would be a BUG.
+
+  - id: foldweave-spiders
+    desc: >-
+      Confirm the Foldweave spiders are hostile and endgame-tough. Fight a Web
+      Skitterer / Fold Broodling / Silk Lurker. Confirm they aggro and are
+      meaningfully dangerous (not trivial). Note relative difficulty vs your
+      character.
+
+  - id: foldweaver-silk-drop
+    desc: >-
+      The load-bearing check. `mob spawn 9583` (The Foldweaver) — or reach it
+      in 6436. Confirm it's a proper boss (huge, does not flee/yield). Kill it
+      (repeatedly if needed) and confirm it drops Folded-Space Silk (item
+      40207) — the 5% drop; admin may need several kills, or inspect the drop.
+      Confirm the silk item exists and reads as a reagent (is_component).
+
+  - id: forage-overlay-zone
+    desc: >-
+      Test the zone-forage overlay. Go to Stillwater Marsh (admin goto a
+      Stillwater Marsh room). Forage repeatedly (the `forage` skill). Confirm
+      the marsh reagents (Still-Glass Rosette 40198 / First-Bloom Nectar 40202)
+      CAN appear — they're ultra-rare (one entry among many), so many forages
+      may be needed; note if seen. Then forage in a DIFFERENT zone/biome and
+      confirm the marsh reagents do NOT appear there (the unit test covers this
+      deterministically — a spot-check is enough).
+
+  - id: mob-drop-tables
+    desc: >-
+      Spot-check the mob-drop reagents. `mob spawn 9570` (The Old White) and/or
+      `mob spawn 9562` (Core Guardian) and inspect/kill. Confirm the new
+      reagents (Whisper of the Old White 40197; Chrysalis Filter-Membrane
+      40190 etc.) are in their drop tables — admin-inspect the mob's loot or
+      kill a few times for the low-chance drop. Low-chance, so note whether
+      observed or just present-in-table.

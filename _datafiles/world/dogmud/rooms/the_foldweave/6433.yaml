@@ -1,0 +1,54 @@
+roomid: 6433
+zone: The Foldweave
+title: The Same Passage Again
+description: >
+  You come north into a chamber and stop, because it is the circling
+  passage -- the same ribbed curve, the same close silk, and if you
+  went looking you would find the same torn snag at eye height. Except
+  it is not; it only wears the passage's face. Go
+  <ansi fg="itemname">north</ansi> from here and the weave will fold
+  you straight back into the circle to try you again, patient, willing
+  to spend your whole strength on walking. But the floor here has a
+  flaw the true passage lacks: a <ansi fg="itemname">split</ansi> in
+  the silk-crust where the stone beneath has dropped away, and cold
+  sweet air comes up through it out of the real deep. Down is the only
+  direction in this whole warren that has meant, every time, down.
+biome: cave
+coord:
+  x: -14
+  y: -20
+  z: -4
+exits:
+  north:
+    roomid: 6432
+  down:
+    roomid: 6434
+nouns:
+  split: >
+    A rent in the silk-crust of the floor where the stone gave way
+    beneath it, edges frayed and hanging over a true drop. Cold sweet
+    air rises through it, thicker than the circling passage ever
+    breathed. This is the flaw the weave could not fold shut -- the
+    one honest way down.
+  north: >
+    The way north looks like onward and is not: take it and the fold
+    delivers you back into the circling passage to walk the same bend
+    past the same torn mark. The weave would keep you here forever, if
+    forever were what you were willing to spend.
+idlemessages:
+- The chamber wears the circling passage's face so exactly that for a
+  moment you are sure you never left it.
+- Cold sweet air rises steady through the split in the floor, thicker
+  and colder than anything the circle breathed.
+- A run of silk shifts overhead, and for an instant the torn snag seems
+  to hang at eye height where no snag is.
+- Deep below the split, something wide draws breath, and the rising air
+  pauses and then comes on again.
+spawninfo:
+  - mobid: 9580
+    respawnrate: "12 real minutes"
+  - mobid: 9581
+    respawnrate: "12 real minutes"
+
+mutators:
+- mutatorid: foldweave-glow

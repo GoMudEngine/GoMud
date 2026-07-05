@@ -5,6 +5,8 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/forager"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -162,6 +164,81 @@ func TestForage_CooldownGate(t *testing.T) {
 	}
 	if second.RollHappened {
 		t.Error("OnCooldown path should not roll")
+	}
+}
+
+// TestForage_ZoneOverlayPlayerOnly proves the zone-forage overlay is gated
+// on IsPlayer(). Forage() is a SHARED entry point — both the player command
+// and the NPC forager path (behaviortree/mobcommands → actions.Forage) call
+// it — so the zone/weather overlay must only apply for player actors. Here a
+// UserActor foraging in a zone with a seeded overlay CAN receive the overlay
+// item, while a MobActor foraging in the SAME zone NEVER does. That gate is
+// the guard against zone/weather-gated ultra-rare reagents leaking into
+// vendor stock via forager NPCs.
+func TestForage_ZoneOverlayPlayerOnly(t *testing.T) {
+	cleanupBiomes := seedForageBiomes(t)
+	defer cleanupBiomes()
+
+	// Seed ONLY the overlay item as a valid spec. Every base forest
+	// forageable is therefore invalid, so the ONLY way Forage() reports
+	// Found=true is by picking the overlay item — a clean observable signal
+	// (items aren't loaded in unit-test context, so an unseeded pick yields
+	// IsValid()=false → Found stays false).
+	const overlayItemId = 999123
+	cleanupItems := items.SeedItemsForTest(map[int]*items.ItemSpec{
+		overlayItemId: {
+			ItemId:  overlayItemId,
+			Name:    "Overlay Reagent",
+			Type:    items.Object,
+			Subtype: items.Mundane,
+		},
+	})
+	defer cleanupItems()
+
+	const zone = "Overlay Test Zone"
+	forager.ZoneForageYields[zone] = []int{overlayItemId}
+	defer delete(forager.ZoneForageYields, zone)
+
+	const trials = 200
+
+	// forageOnce runs one fresh forage attempt (fresh actor each call so the
+	// 6-round cooldown never collides) and reports whether the overlay item
+	// was received. A very high Perception guarantees the search roll clears
+	// the forest difficulty essentially every time, so a pool pick happens.
+	forageOnce := func(isPlayer bool) bool {
+		room := &rooms.Room{RoomId: 9400, Biome: "forest", Zone: zone}
+		var actor *forageFakeActor
+		if isPlayer {
+			// userId 0 keeps the test hermetic (skips the ItemOwnership
+			// event); IsPlayer() reads the bool field, not the userId.
+			actor = newForageFakeActor(t, "OverlayPlayer", room, true, 0)
+		} else {
+			mob := newForageTestMob(t, 9400, "OverlayMob", room.RoomId)
+			actor = newForageMobActor(t, mob, room)
+		}
+		actor.char.Stats.Perception.ValueAdj = 500
+		res := Forage(actor, ForageOptions{})
+		return res.Found && res.ItemId == overlayItemId
+	}
+
+	mobHits := 0
+	for i := 0; i < trials; i++ {
+		if forageOnce(false) {
+			mobHits++
+		}
+	}
+	if mobHits != 0 {
+		t.Fatalf("MobActor received the zone-overlay item %d time(s) over %d forages; the overlay MUST be gated on IsPlayer and never reach NPC foragers", mobHits, trials)
+	}
+
+	playerHits := 0
+	for i := 0; i < trials; i++ {
+		if forageOnce(true) {
+			playerHits++
+		}
+	}
+	if playerHits == 0 {
+		t.Fatalf("UserActor never received the zone-overlay item over %d forages; the player overlay path is not wiring Zone into ForageCore", trials)
 	}
 }
 

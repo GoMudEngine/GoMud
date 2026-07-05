@@ -1,0 +1,20 @@
+itemid: 40203
+name: Chorus-Shard
+namesimple: shard
+vendor_categories:
+- enchanting
+description: >-
+  A shard that hums a faint chord in sympathy with running water,
+  found only where the great rivers meet at the Confluence. Hold
+  it near open water and the hum steadies into something almost
+  like a tune, though it never resolves into one you could whistle
+  back. Enchanters prize the way it answers moving water without
+  ever being asked, as if it remembers a chorus older than the
+  rivers that now sing it.
+type: object
+subtype: mundane
+component_tag: chorus-shard
+weight: 0.15
+value: 1350
+rarity_tier: 82
+is_component: true

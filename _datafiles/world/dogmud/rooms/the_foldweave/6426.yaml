@@ -1,0 +1,63 @@
+roomid: 6426
+zone: The Foldweave
+title: The Foldthreshold
+description: >
+  The descent from the root-gap ends far sooner than the climb down
+  promised -- a few cold body-lengths of stone, and then the floor
+  opens into a chamber that has no business fitting beneath the pine
+  stand above. The air is chill and faintly sweet, the sweetness of
+  something kept too long in the dark. The first
+  <ansi fg="itemname">webs</ansi> hang here, and they are not the
+  loose grey drift of an old cellar: they are taut cables strung
+  corner to corner, and one <ansi fg="itemname">strand</ansi> runs
+  out from the near wall past the point where the far wall ought to
+  stop it, thinning and thinning into a distance the chamber plainly
+  does not hold. At the base of the rock lies a
+  <ansi fg="itemname">bone-litter</ansi> -- picked clean, a snapped
+  staff, a belt-buckle, the sole of a boot -- and it is stacked, not
+  scattered. Whatever keeps this threshold keeps its leavings tidy.
+  Overhead the way back is a pale slot of forest-light. Every other
+  way leads down and inward, and the space here is wrong in a manner
+  the eye slides off of and refuses to hold.
+biome: cave
+coord:
+  x: -13
+  y: -17
+  z: -1
+exits:
+  up:
+    roomid: 4161
+    zone: The Fernway South
+  down:
+    roomid: 6427
+nouns:
+  webs: >
+    Cables rather than threads -- grey and thick as harp-string,
+    anchored deep in the stone and drawn to a tension that hums
+    faintly when the air moves. They do not sag. They hold their
+    lines with the patience of something that measured the room
+    once and found the room wanting.
+  strand: >
+    A single line runs from the near wall outward and does not stop
+    where the wall across should stop it. It grows finer with
+    distance the way a road does, except there is no distance here
+    for it to cross -- the chamber is small, and the strand runs
+    long inside it, past the horizon of a space that has no horizon.
+  bone-litter: >
+    Human, mostly, and old. Picked to a clean ivory and set in a low
+    stack against the rock -- a snapped staff, a green belt-buckle,
+    a boot-sole cracked flat. Nothing here fell. Everything here was
+    placed, with the tidy economy of a thing that eats and keeps.
+idlemessages:
+- Far down and inward, a strand thrums once and goes still, as though
+  something tested its length and was satisfied.
+- The sweet cold air moves against your face from a direction that
+  should be solid wall.
+- A dry skittering starts somewhere below, travels a distance far
+  greater than the cave allows, and stops.
+- The pale slot of daylight overhead seems no nearer than when you
+  came down, and no further.
+# spawninfo: Foldweave spider ecology added in Task 7
+
+mutators:
+- mutatorid: foldweave-glow

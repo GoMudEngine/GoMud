@@ -1,0 +1,59 @@
+roomid: 6427
+zone: The Foldweave
+title: Web-Choked Gallery
+description: >
+  Below the threshold the passage widens into a long gallery hung
+  floor to ceiling with <ansi fg="itemname">web-curtains</ansi> --
+  sheet after grey sheet of them, layered close enough that the
+  torchlight dies three curtains deep and the far end of the gallery
+  is only a rumor of paler dark. The floor underfoot is a matted
+  felt of old silk, and it gives the wrong sound: a step here lands
+  softer and later than the foot expects, as though the ground were
+  a little further down than it looks. Two ways lead on from the
+  gallery's throat -- one <ansi fg="itemname">north</ansi> through
+  a slashed rent in the curtains, one dropping away steeply where
+  the silk-felt has torn open over a shaft. Both smell of the same
+  cold sweetness, and both, somehow, seem to lead deeper by the same
+  amount.
+biome: cave
+coord:
+  x: -13
+  y: -18
+  z: -2
+exits:
+  up:
+    roomid: 6426
+  north:
+    roomid: 6428
+  down:
+    roomid: 6429
+nouns:
+  web-curtains: >
+    Not woven so much as hung -- broad flat sheets of grey silk drawn
+    taut between the walls, one behind the next, each softening the
+    light that reaches the one beyond. Push a hand toward one and the
+    air moving ahead of the hand sets the whole rank of them swaying
+    in sequence, a wave passing back further than the gallery is long.
+  web-felt: >
+    The floor is matted silk trodden to a dense grey felt, soft and
+    slightly warm. It swallows sound and returns it late. Where it has
+    torn, the tear drops away into a shaft that the felt's edge
+    curtains over, hiding how far down the fall would be.
+idlemessages:
+- The rank of web-curtains sways in slow sequence though no air stirred
+  them, the last one moving long after the first.
+- A weight shifts somewhere in the silk overhead, and a fine grey dust
+  sifts down through the torchlight.
+- Something long-legged crosses the felt in the dark ahead, unhurried,
+  and the felt gives back no sound at all.
+- A strand overhead draws suddenly tight with a low musical note, then
+  slackens.
+spawninfo:
+  - mobid: 9580
+    respawnrate: "12 real minutes"
+  - mobid: 9580
+    respawnrate: "12 real minutes"
+    statpoolmod: 20
+
+mutators:
+- mutatorid: foldweave-glow
