@@ -50,3 +50,6 @@ idlemessages:
 spawninfo:
   - mobid: 9583
     respawnrate: "30 real minutes"
+
+mutators:
+- mutatorid: foldweave-glow

@@ -59,3 +59,6 @@ hidden_nouns:
 spawninfo:
   - mobid: 9582
     respawnrate: "12 real minutes"
+
+mutators:
+- mutatorid: foldweave-glow

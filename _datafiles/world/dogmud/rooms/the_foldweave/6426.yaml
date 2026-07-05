@@ -58,3 +58,6 @@ idlemessages:
 - The pale slot of daylight overhead seems no nearer than when you
   came down, and no further.
 # spawninfo: Foldweave spider ecology added in Task 7
+
+mutators:
+- mutatorid: foldweave-glow

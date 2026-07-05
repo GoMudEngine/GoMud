@@ -52,3 +52,6 @@ spawninfo:
     respawnrate: "12 real minutes"
   - mobid: 9581
     respawnrate: "12 real minutes"
+
+mutators:
+- mutatorid: foldweave-glow
