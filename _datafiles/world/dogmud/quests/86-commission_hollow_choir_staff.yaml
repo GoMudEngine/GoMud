@@ -1,0 +1,41 @@
+questid: 86
+name: Commission Hollow Choir Staff
+description: >-
+  Veyra has agreed to build the Hollow Choir Staff. Gather what she
+  named, craft the parts by your own hand, and bring them to her
+  stations to be tuned together.
+steps:
+  - id: start
+    description: "Veyra has taken the commission. Gather the reagents and
+      craft the parts by your own hand."
+  - id: end
+    description: "The Hollow Choir Staff is made."
+triggers:
+  - event: quest_granted
+    quest_token: "86-start"
+    actions:
+      - charge_gold: 22500
+      - learn_recipe: {recipe: "conductor-core"}
+      - learn_recipe: {recipe: "choir-focus-gems"}
+      - learn_recipe: {recipe: "assemble-hollow-choir-staff"}
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "Half now. The recipes are yours. Tune each
+                gem true, or the whole choir sings out of key."}
+
+  - event: item_gain
+    item: 40189
+    conditions:
+      has: ["86-start"]
+      missing: ["86-end"]
+    actions:
+      - charge_gold: 22500
+      - set_flag: {key: "78-commission", value: "none"}
+      - grant: "86-end"
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "...listen to that. Every voice in the wood
+                agrees. The rest is owed -- and paid. Let it sing for
+                you."}

@@ -1,0 +1,40 @@
+questid: 85
+name: Commission Zephyr Treads
+description: >-
+  Veyra has agreed to craft the Zephyr Treads. Gather what she named,
+  craft the parts by your own hand, and bring them to her stations to be
+  bound together.
+steps:
+  - id: start
+    description: "Veyra has taken the commission. Gather the reagents and
+      craft the parts by your own hand."
+  - id: end
+    description: "The Zephyr Treads are made."
+triggers:
+  - event: quest_granted
+    quest_token: "85-start"
+    actions:
+      - charge_gold: 12500
+      - learn_recipe: {recipe: "quicksilver-soles"}
+      - learn_recipe: {recipe: "windlace-bindings"}
+      - learn_recipe: {recipe: "assemble-zephyr-treads"}
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "Half now. The recipes are yours. Work
+                quickly -- the soles won't wait around for slow hands."}
+
+  - event: item_gain
+    item: 40188
+    conditions:
+      has: ["85-start"]
+      missing: ["85-end"]
+    actions:
+      - charge_gold: 12500
+      - set_flag: {key: "78-commission", value: "none"}
+      - grant: "85-end"
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "Light as a held breath. The rest is owed --
+                and paid. Try not to outrun your own feet."}

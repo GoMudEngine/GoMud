@@ -1,0 +1,42 @@
+questid: 84
+name: Commission Seething Prism
+description: >-
+  Veyra has agreed to grow the Seething Prism. Gather what she named, craft
+  the parts by your own hand, and bring them to her stations to be
+  contained.
+steps:
+  - id: start
+    description: "Veyra has taken the commission. Gather the reagents and
+      craft the parts by your own hand."
+  - id: end
+    description: "The Seething Prism is made."
+triggers:
+  - event: quest_granted
+    quest_token: "84-start"
+    actions:
+      - charge_gold: 20000
+      - learn_recipe: {recipe: "containment-lattice"}
+      - learn_recipe: {recipe: "nutrient-suspension"}
+      - learn_recipe: {recipe: "assemble-seething-prism"}
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "Half now. The recipes are yours. Contain it
+                properly, or it will grow past whatever you built to hold
+                it."}
+
+  - event: item_gain
+    item: 40187
+    conditions:
+      has: ["84-start"]
+      missing: ["84-end"]
+    actions:
+      - charge_gold: 20000
+      - set_flag: {key: "78-commission", value: "none"}
+      - grant: "84-end"
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "...it's still growing. Good. That means the
+                lattice took. The rest is owed -- and paid. Mind where you
+                set it down."}
