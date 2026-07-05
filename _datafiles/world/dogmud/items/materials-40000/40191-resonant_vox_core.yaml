@@ -1,0 +1,19 @@
+itemid: 40191
+name: Resonant Vox-Core
+namesimple: vox-core
+vendor_categories:
+- jewelcrafting
+description: >-
+  A fist-sized node of the grey material, warm at its center in a
+  way nothing else about it explains. Tap it, and it answers -- not
+  an echo, but a reply, pitched a half-step wrong and a shade too
+  loud. Torn whole from the ruined chest of a warden that no longer
+  needed it, the thing still resonates when a room falls silent, as
+  though listening for whatever it used to answer to.
+type: object
+subtype: mundane
+component_tag: resonant-vox-core
+weight: 0.5
+value: 1300
+rarity_tier: 82
+is_component: true

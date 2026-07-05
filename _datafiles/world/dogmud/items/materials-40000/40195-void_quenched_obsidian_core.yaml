@@ -1,0 +1,19 @@
+itemid: 40195
+name: Void-Quenched Obsidian Core
+namesimple: obsidian-core
+vendor_categories:
+- blacksmithing
+description: >-
+  A core of black glass, quenched in a cold no forge in the
+  lowlands can reach and no smith will admit to naming. It was
+  drawn from the stilled heart of a Warden-Prime, and it has not
+  warmed since. Strike it and it rings true, a long clean note that
+  fades slower than it should, as if something inside is still
+  listening for the next blow.
+type: object
+subtype: mundane
+component_tag: void-quenched-obsidian
+weight: 0.6
+value: 1400
+rarity_tier: 82
+is_component: true

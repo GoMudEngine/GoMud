@@ -1,0 +1,20 @@
+itemid: 40193
+name: Unmaking Distillate
+namesimple: distillate
+vendor_categories:
+- alchemy
+description: >-
+  A slim phial of solvent, thinner than water and greyer than
+  smoke, that never quite settles still inside the glass. A drop
+  laid on skin does not burn -- it simply undoes, patiently,
+  whatever the Chrysalis wrote into the flesh beneath it.
+  Alchemists who distill it speak of it as a sister to the greater
+  Catalyst of Unmaking, cut from the same recipe but gentler, meant
+  for smaller mercies.
+type: object
+subtype: mundane
+component_tag: unmaking-distillate
+weight: 0.2
+value: 1350
+rarity_tier: 82
+is_component: true

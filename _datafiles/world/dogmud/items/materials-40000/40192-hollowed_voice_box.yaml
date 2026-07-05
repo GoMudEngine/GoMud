@@ -1,0 +1,19 @@
+itemid: 40192
+name: Hollowed Voice-Box
+namesimple: voice-box
+vendor_categories:
+- enchanting
+description: >-
+  A hollow grey throat, smooth within and without, taken from
+  something built to speak and never given the chance. Blow across
+  the opening and it hums a single chord pitched just below
+  hearing, more felt than heard, the kind of note that settles in
+  the teeth. It came out of the ruin the Core Guardian left behind,
+  and it hums that same chord whether or not anyone is listening.
+type: object
+subtype: mundane
+component_tag: hollowed-voice-box
+weight: 0.3
+value: 1300
+rarity_tier: 82
+is_component: true

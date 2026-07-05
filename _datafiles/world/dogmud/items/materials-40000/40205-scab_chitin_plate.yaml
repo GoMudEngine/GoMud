@@ -1,0 +1,20 @@
+itemid: 40205
+name: Scab-Chitin Plate
+namesimple: plate
+vendor_categories:
+- tailoring
+description: >-
+  A plate of scabbed, mineral-crusted chitin, its joints wrong in
+  ways that unsettle the eye before the mind can say why. Prised
+  from something that grew too far beneath the city to see
+  daylight, it stays warm long after the creature it came from has
+  gone cold, and the warmth does not fade with handling. Tailors
+  say it takes a needle strangely, as if it still remembers being
+  part of something alive.
+type: object
+subtype: mundane
+component_tag: scab-chitin-plate
+weight: 0.4
+value: 1250
+rarity_tier: 82
+is_component: true

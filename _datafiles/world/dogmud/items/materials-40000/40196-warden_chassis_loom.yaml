@@ -1,0 +1,20 @@
+itemid: 40196
+name: Warden Chassis-Loom
+namesimple: chassis-loom
+vendor_categories:
+- tailoring
+description: >-
+  A machined frame of the grey material, its joints too clean, too
+  patient, to have come off any loom worked by human hands. Weavers
+  who study it find no seams, no knots, no sign of a shuttle ever
+  having passed -- only a lattice built once and built right, meant
+  to hold cloth the way a warden's frame once held itself together.
+  Salvaged from the wreck of one, it still remembers how to hold a
+  shape.
+type: object
+subtype: mundane
+component_tag: warden-chassis-loom
+weight: 0.5
+value: 1300
+rarity_tier: 82
+is_component: true
