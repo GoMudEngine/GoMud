@@ -63,6 +63,11 @@ func (b *GameBridge) GetGold() int {
 	return b.user.Character.Gold
 }
 
+// HasOwnMasterwork delegates to the character's own-crafted-item check.
+func (b *GameBridge) HasOwnMasterwork(skillMin int) bool {
+	return b.user.Character.HasOwnMasterwork(skillMin)
+}
+
 // --- ActionContext ---
 
 // GetUserId returns the user's ID.

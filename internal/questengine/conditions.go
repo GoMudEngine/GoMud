@@ -8,6 +8,7 @@ type PlayerState interface {
 	GetRoomId() int
 	GetQuestFlag(key string) string
 	GetGold() int
+	HasOwnMasterwork(skillMin int) bool
 }
 
 // EvalConditions checks all conditions against the player's current state.
@@ -43,6 +44,9 @@ func EvalConditions(c Conditions, p PlayerState) bool {
 		}
 	}
 	if c.HasGold > 0 && p.GetGold() < c.HasGold {
+		return false
+	}
+	if c.HasMasterwork > 0 && !p.HasOwnMasterwork(c.HasMasterwork) {
 		return false
 	}
 	return true

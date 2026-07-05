@@ -190,6 +190,9 @@ func buildPlayerState(user *users.UserRecord) *dialogue.PlayerState {
 				GoldChange: amount,
 			})
 		},
+		HasOwnMasterwork: func(skillMin int) bool {
+			return user.Character.HasOwnMasterwork(skillMin)
+		},
 	}
 }
 
