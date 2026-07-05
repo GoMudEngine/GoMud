@@ -1,0 +1,51 @@
+mobid: 9584
+zone: The Confluence
+schedule_id: veyra
+behavior_archetype: noncombat_questgiver
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+craft_support: alchemy
+crafter: true
+crafterskill: alchemy
+groups:
+  - humanoid
+idlecommands:
+  - 'emote turns a half-finished working over in her hands, weighing it
+    against something only she can see, and sets it back down unsatisfied.'
+  - ''
+  - 'emote runs a fingertip along a seam where two very different
+    materials have been made to agree with each other.'
+  - ''
+activitylevel: 12
+character:
+  name: Veyra Coil-Tongue
+  description: |
+    Veyra does not keep a sign, and the one that used to hang over her
+    door has been painted out twice. She works in a discipline that
+    does not have a name on any guild roster -- taking pieces from six
+    different trades and making them function as one thing, which is
+    either a marvel or a liability depending on who is asking, and she
+    has stopped caring which. She is lean, grey-shot, and moves between
+    her benches with the unhurried economy of someone who has already
+    solved the problem and is only now getting around to building it.
+    Her left hand carries a faint latticework of scarring that catches
+    the light strangely, the residue of one working that did not agree
+    with her the way the others had. She asks exactly as many questions
+    as a commission requires and not one more, and she expects the same
+    courtesy in return. People who come looking for her tend to already
+    know she is worth finding.
+  speciesid: 1
+  level: 1
+  gold: 300
+  stats:
+    dexterity:
+      training: 12
+    perception:
+      training: 10
+    willpower:
+      training: 8
+    charisma:
+      training: 2

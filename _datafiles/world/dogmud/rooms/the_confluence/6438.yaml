@@ -56,3 +56,6 @@ idlemessages:
   finished projects.
 - A drawer somewhere in the clutter slides shut on its own worn
   runners, the sound settling into the quiet.
+spawninfo:
+  - mobid: 9584
+    respawnrate: "20 real minutes"
