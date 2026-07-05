@@ -1,0 +1,20 @@
+itemid: 40214
+name: Voice-Amber Housing
+namesimple: housing
+vendor_categories:
+- jewelcrafting
+- blacksmithing
+description: >-
+  A jeweler's housing of deep-set amber, faceted and warm, shaped
+  with a hollow built to cradle something small that will not
+  stop talking. Hold it to your ear and you can just hear the
+  murmur trapped inside, muffled by the amber but never quite
+  silenced. It was built to listen as much as to hold -- a housing
+  that keeps its passenger close and its voice closer.
+type: object
+subtype: mundane
+component_tag: voice-amber-housing
+weight: 0.3
+value: 620
+rarity_tier: 78
+is_component: true

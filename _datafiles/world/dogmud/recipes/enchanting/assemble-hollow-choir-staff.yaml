@@ -1,0 +1,26 @@
+id: assemble-hollow-choir-staff
+name: Staff of the Hollow Choir
+skill: enchanting
+skill_minimum: 65
+station: enchanting_circle
+require_own_components: true
+learn_only: true
+time_rounds: 20
+ingredients:
+  - item_tag: conductor-core
+    quantity: 1
+  - item_tag: choir-focus-gems
+    quantity: 1
+  - item_tag: hollowed-voice-box
+    quantity: 1
+  - item_tag: chorus-shard
+    quantity: 1
+  - item_tag: chrysalis-setting
+    quantity: 6
+  - item_tag: mutation-catalyst
+    quantity: 4
+output:
+  item_id: 40189
+  quantity: 1
+success_message: "You crown the conductor-core with the ring of focus-gems and hollow the stave through to seat the voice-box, then bind the chorus-shard to the whole with chrysalis setting. The staff hums a chord just below hearing. Veyra's masterwork is finished -- the Staff of the Hollow Choir is bound."
+failure_message: "The chord fractures mid-binding and the voice-box goes silent for good. The materials are lost."

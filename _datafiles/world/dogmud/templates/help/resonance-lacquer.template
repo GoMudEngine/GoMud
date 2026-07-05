@@ -1,0 +1,15 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">resonance-lacquer</ansi> (alchemy recipe)
+
+A lacquer that dries to a dull, faintly humming sheen, never quite going
+still even long after it has cured hard. Coat a hollow body with it and
+sound that enters comes out larger than it went in, thrown far past
+anything its size should carry. It smells of resin and something
+underneath the resin, a note that never quite finishes ringing.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       alchemy (minimum 50)
+  <ansi fg="yellow">Station:</ansi>     alchemy_bench
+  <ansi fg="yellow">Ingredients:</ansi> Pine Pitch (x2), Beeswax (x1), Moonpetal (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help alchemy</ansi>, <ansi fg="command">help craft</ansi>

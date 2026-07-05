@@ -1,0 +1,26 @@
+id: assemble-phial-of-second-birth
+name: Phial of Second Birth
+skill: alchemy
+skill_minimum: 65
+station: alchemy_bench
+require_own_components: true
+learn_only: true
+time_rounds: 20
+ingredients:
+  - item_tag: reduction-base
+    quantity: 1
+  - item_tag: bottle
+    quantity: 1
+  - item_tag: unmaking-distillate
+    quantity: 1
+  - item_tag: first-bloom-nectar
+    quantity: 1
+  - item_tag: blood-moss
+    quantity: 6
+  - item_tag: salt-pouch
+    quantity: 4
+output:
+  item_id: 40181
+  quantity: 1
+success_message: "You reduce the base down to its bitter, clarified last, then thread the unmaking distillate through the nectar into the sealed decanter drop by careful drop. The phial smells like rain falling on nothing. Veyra's masterwork is finished -- the Phial of Second Birth is bottled."
+failure_message: "The distillate curdles the nectar and the reduction turns to ash on the tongue. The materials are ruined."

@@ -1,0 +1,16 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">obsidian-edge-resin</ansi> (alchemy recipe)
+
+A jar of black volcanic resin, glassy and warm, that never quite
+finishes setting no matter how long it sits corked on a shelf. Run a
+blade's edge through it and the resin clings, half-liquid, as though
+still deciding what shape to take. Whatever it seals stays a little
+unfinished too -- an edge that keeps wanting to be sharper than it
+already is.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       alchemy (minimum 50)
+  <ansi fg="yellow">Station:</ansi>     alchemy_bench
+  <ansi fg="yellow">Ingredients:</ansi> Pine Pitch (x2), Coal Dust (x1), Blood-moss (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help alchemy</ansi>, <ansi fg="command">help craft</ansi>

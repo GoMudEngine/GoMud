@@ -1,0 +1,20 @@
+itemid: 40213
+name: Spatial Stitching
+namesimple: stitching
+vendor_categories:
+- enchanting
+- tailoring
+description: >-
+  A spool of enchanted thread, reclaimed from unraveled work and
+  spun again finer than before. Measure it and the spool holds
+  more length than its size should allow, coil after coil paying
+  out long after the spool ought to have emptied. Stitched into a
+  seam, it leaves the seam holding more than the cloth around it
+  was ever meant to.
+type: object
+subtype: mundane
+component_tag: spatial-stitching
+weight: 0.1
+value: 750
+rarity_tier: 78
+is_component: true

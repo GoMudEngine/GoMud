@@ -1,0 +1,18 @@
+id: reinforced-frame
+name: Reinforced Frame
+skill: blacksmithing
+skill_minimum: 50
+station: forge
+time_rounds: 8
+ingredients:
+  - item_tag: steel-ingot
+    quantity: 2
+  - item_tag: iron-ingot
+    quantity: 1
+  - item_tag: coal-dust
+    quantity: 1
+output:
+  item_id: 40212
+  quantity: 1
+success_message: "You weld strut to pinned joint at angles that should buckle and don't. A reinforced frame!"
+failure_message: "A brace snaps under the hammer and the frame folds in on itself. The materials are ruined."

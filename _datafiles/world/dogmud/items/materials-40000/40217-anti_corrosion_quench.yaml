@@ -1,0 +1,20 @@
+itemid: 40217
+name: Anti-Corrosion Quench
+namesimple: quench
+vendor_categories:
+- alchemy
+- tailoring
+description: >-
+  An alchemical quench-bath, cloudy and mineral-sharp, that leaves
+  whatever metal passes through it proof against rot and rust for
+  good. Steel dipped once emerges duller in shine but somehow more
+  itself, as though the quench had stripped away every flaw that
+  time might have found later. Smiths keep it capped tight --
+  exposed to open air too long, its potency thins.
+type: object
+subtype: mundane
+component_tag: anti-corrosion-quench
+weight: 0.4
+value: 480
+rarity_tier: 78
+is_component: true

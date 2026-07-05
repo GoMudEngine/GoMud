@@ -1,0 +1,18 @@
+id: windlace-bindings
+name: Windlace Bindings
+skill: enchanting
+skill_minimum: 50
+station: enchanting_circle
+time_rounds: 7
+ingredients:
+  - item_tag: binding-paste
+    quantity: 1
+  - item_tag: chrysalis-setting
+    quantity: 1
+  - item_tag: oak-bark
+    quantity: 1
+output:
+  item_id: 40221
+  quantity: 1
+success_message: "You bind bark and setting into cord too fine to trust with the eye, leaning it a half-beat ahead of the step. Windlace bindings!"
+failure_message: "The binding snaps taut and unravels before the enchantment can catch. The materials are wasted."

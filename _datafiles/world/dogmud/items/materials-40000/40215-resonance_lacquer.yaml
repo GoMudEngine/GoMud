@@ -1,0 +1,20 @@
+itemid: 40215
+name: Resonance Lacquer
+namesimple: lacquer
+vendor_categories:
+- alchemy
+- blacksmithing
+description: >-
+  A lacquer that dries to a dull, faintly humming sheen, never
+  quite going still even long after it has cured hard. Coat a
+  hollow body with it and sound that enters comes out larger than
+  it went in, thrown far past anything its size should carry. It
+  smells of resin and something underneath the resin, a note that
+  never quite finishes ringing.
+type: object
+subtype: mundane
+component_tag: resonance-lacquer
+weight: 0.3
+value: 550
+rarity_tier: 78
+is_component: true

@@ -1,0 +1,18 @@
+id: containment-lattice
+name: Containment Lattice
+skill: enchanting
+skill_minimum: 50
+station: enchanting_circle
+time_rounds: 8
+ingredients:
+  - item_tag: chrysalis-setting
+    quantity: 1
+  - item_tag: binding-paste
+    quantity: 1
+  - item_tag: mutation-catalyst
+    quantity: 1
+output:
+  item_id: 40218
+  quantity: 1
+success_message: "You bind the setting into overlapping rings and turn the hunger inward, patient and contained. A containment lattice!"
+failure_message: "The rings won't close true and the binding slips its cage. The materials are lost."

@@ -1,0 +1,17 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">assemble-hollow-choir-staff</ansi> (enchanting recipe)
+
+Veyra's masterwork assembly. The finished piece is joined here from four
+self-crafted components and its bulk stock. This recipe is taught by
+commission, never discovered at the bench, and it demands that every
+component be of your own making.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       enchanting (minimum 65)
+  <ansi fg="yellow">Station:</ansi>     enchanting_circle
+  <ansi fg="yellow">Ingredients:</ansi> Conductor Core (x1), Choir-Focus Gems (x1),
+               Hollowed Voice-Box (x1), Chorus-Shard (x1),
+               Chrysalis Setting (x6), Mutation Catalyst (x4)
+  <ansi fg="yellow">Learned:</ansi>     by commission from Veyra (not self-taught)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help enchanting</ansi>, <ansi fg="command">help craft</ansi>

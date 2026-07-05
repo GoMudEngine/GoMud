@@ -1,0 +1,20 @@
+itemid: 40210
+name: Hungering Guard
+namesimple: guard
+vendor_categories:
+- jewelcrafting
+- blacksmithing
+description: >-
+  A jeweled crossguard, cool bright metal set around a small
+  hollow of darkness that seems to sit a little deeper than the
+  guard around it. Look at it too long and the eye slides inward
+  and stays there, caught on something with no bottom. It was
+  shaped to be gripped, and to grip back -- a guard that guards
+  nothing so much as its own appetite.
+type: object
+subtype: mundane
+component_tag: hungering-guard
+weight: 0.3
+value: 650
+rarity_tier: 78
+is_component: true

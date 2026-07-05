@@ -1,0 +1,20 @@
+itemid: 40212
+name: Reinforced Frame
+namesimple: frame
+vendor_categories:
+- blacksmithing
+- tailoring
+description: >-
+  A light pack-frame of forged strut and pinned joint, welded thin
+  and tested cruel, stronger for its weight than any honest smith
+  would admit is possible. Every brace meets its neighbor at an
+  angle that should buckle and does not. Strap a load to it and
+  the frame carries the weight somewhere other than your back,
+  though nobody who has built one can quite explain where.
+type: object
+subtype: mundane
+component_tag: reinforced-frame
+weight: 0.8
+value: 600
+rarity_tier: 78
+is_component: true

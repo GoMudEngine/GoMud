@@ -19,6 +19,7 @@ coord:
   x: -15
   y: -69
   z: 0
+station: loom
 exits:
   north:
     roomid: 6234

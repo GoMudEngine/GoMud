@@ -1,0 +1,18 @@
+id: reduction-base
+name: Reduction Base
+skill: cooking
+skill_minimum: 50
+station: cooking_fire
+time_rounds: 6
+ingredients:
+  - item_tag: broth
+    quantity: 2
+  - item_tag: salt-pouch
+    quantity: 1
+  - item_tag: wild-vegetables
+    quantity: 1
+output:
+  item_id: 40224
+  quantity: 1
+success_message: "You cook the broth down slow over low heat, skimming every impurity twice over until it clarifies dark and bitter. A reduction base!"
+failure_message: "The reduction scorches on the bottom of the pot. The materials are lost."

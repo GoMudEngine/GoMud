@@ -1,0 +1,26 @@
+id: assemble-wayfarers-pack
+name: Wayfarer's Bottomless Pack
+skill: tailoring
+skill_minimum: 65
+station: loom
+require_own_components: true
+learn_only: true
+time_rounds: 20
+ingredients:
+  - item_tag: reinforced-frame
+    quantity: 1
+  - item_tag: spatial-stitching
+    quantity: 1
+  - item_tag: folded-space-silk
+    quantity: 1
+  - item_tag: warden-chassis-loom
+    quantity: 1
+  - item_tag: leather-strip
+    quantity: 8
+  - item_tag: thread-spool
+    quantity: 6
+output:
+  item_id: 40184
+  quantity: 1
+success_message: "You mount the frame to the salvaged chassis-loom and stitch the folded silk through with spatial thread until the seams stop resolving to a fixed size. Veyra's masterwork holds -- the Wayfarer's Bottomless Pack is finished."
+failure_message: "The fold collapses in on itself mid-stitch and the silk unravels to nothing. The materials are lost."

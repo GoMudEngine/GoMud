@@ -1,0 +1,16 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">voice-amber-housing</ansi> (jewelcrafting recipe)
+
+A jeweler's housing of deep-set amber, faceted and warm, shaped with a
+hollow built to cradle something small that will not stop talking. Hold
+it to your ear and you can just hear the murmur trapped inside, muffled
+by the amber but never quite silenced. It was built to listen as much as
+to hold -- a housing that keeps its passenger close and its voice
+closer.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       jewelcrafting (minimum 50)
+  <ansi fg="yellow">Station:</ansi>     jeweler_bench
+  <ansi fg="yellow">Ingredients:</ansi> Polished Stone (x2), Gold Wire (x1), Gem Dust (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help jewelcrafting</ansi>, <ansi fg="command">help craft</ansi>

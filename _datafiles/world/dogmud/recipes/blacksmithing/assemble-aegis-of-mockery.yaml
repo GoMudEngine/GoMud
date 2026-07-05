@@ -1,0 +1,26 @@
+id: assemble-aegis-of-mockery
+name: Aegis of Mockery
+skill: blacksmithing
+skill_minimum: 65
+station: forge
+require_own_components: true
+learn_only: true
+time_rounds: 20
+ingredients:
+  - item_tag: voice-amber-housing
+    quantity: 1
+  - item_tag: resonance-lacquer
+    quantity: 1
+  - item_tag: resonant-vox-core
+    quantity: 1
+  - item_tag: mockingbird-amber
+    quantity: 1
+  - item_tag: steel-ingot
+    quantity: 8
+  - item_tag: chain-link
+    quantity: 5
+output:
+  item_id: 40185
+  quantity: 1
+success_message: "You seat the vox-core in its amber housing, lace the mockingbird bead through the boss, and sheet the face in humming lacquer. The shield clears its throat once. Veyra's masterwork is forged -- the Aegis of Mockery stands ready."
+failure_message: "The vox-core shrieks off-key and the lacquer curdles before it sets. The materials are ruined."

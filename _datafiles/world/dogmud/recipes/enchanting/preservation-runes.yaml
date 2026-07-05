@@ -1,0 +1,18 @@
+id: preservation-runes
+name: Preservation Runes
+skill: enchanting
+skill_minimum: 50
+station: enchanting_circle
+time_rounds: 8
+ingredients:
+  - item_tag: healers-root
+    quantity: 2
+  - item_tag: chrysalis-setting
+    quantity: 1
+  - item_tag: binding-paste
+    quantity: 1
+output:
+  item_id: 40209
+  quantity: 1
+success_message: "You bind the root's slow patience into the setting and etch it steady-handed into every line. Preservation runes!"
+failure_message: "The etching wavers and the binding slips away uncaught. The materials are wasted."

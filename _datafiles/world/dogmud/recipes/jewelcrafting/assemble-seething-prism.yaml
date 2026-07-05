@@ -1,0 +1,26 @@
+id: assemble-seething-prism
+name: Seething Prism
+skill: jewelcrafting
+skill_minimum: 65
+station: jeweler_bench
+require_own_components: true
+learn_only: true
+time_rounds: 20
+ingredients:
+  - item_tag: containment-lattice
+    quantity: 1
+  - item_tag: nutrient-suspension
+    quantity: 1
+  - item_tag: seed-crystal-breach
+    quantity: 1
+  - item_tag: bloom-saturated-geode
+    quantity: 1
+  - item_tag: raw-gem
+    quantity: 8
+  - item_tag: gold-wire
+    quantity: 6
+output:
+  item_id: 40187
+  quantity: 1
+success_message: "You cage the living crystal in silver lattice, feed it drop by drop from the suspension, and set it against a chain of glowing geode. The prism settles into a slow, patient hunger. Veyra's masterwork is finished -- the Seething Prism is set."
+failure_message: "The crystal wakes too fast and the lattice cannot hold the hunger back. The materials are lost."

@@ -1,0 +1,15 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">choir-focus-gems</ansi> (jewelcrafting recipe)
+
+A matched ring of cut gems, each faceted to the same angle as its
+neighbors, tuned until set together they hold a single chord rather than
+six separate notes. Strung or set in sequence, the gems focus what
+passes through them into one clean line of sound, refusing to let the
+chord fray at the edges. Jewelers tune them by ear, not by eye.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       jewelcrafting (minimum 50)
+  <ansi fg="yellow">Station:</ansi>     jeweler_bench
+  <ansi fg="yellow">Ingredients:</ansi> Raw Gem (x2), Gem Dust (x1), Gold Wire (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help jewelcrafting</ansi>, <ansi fg="command">help craft</ansi>

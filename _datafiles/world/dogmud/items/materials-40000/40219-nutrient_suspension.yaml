@@ -1,0 +1,20 @@
+itemid: 40219
+name: Nutrient Suspension
+namesimple: suspension
+vendor_categories:
+- alchemy
+- jewelcrafting
+description: >-
+  A cloudy suspension, thick and faintly sweet, brewed to keep a
+  hungering crystal fed without ever waking it fully. A few drops
+  through the lattice and whatever stirs inside settles again,
+  quiescent, patient, fed just enough to stay fed. Alchemists who
+  work with it never taste it themselves -- it is not brewed for
+  a mouth.
+type: object
+subtype: mundane
+component_tag: nutrient-suspension
+weight: 0.3
+value: 450
+rarity_tier: 78
+is_component: true

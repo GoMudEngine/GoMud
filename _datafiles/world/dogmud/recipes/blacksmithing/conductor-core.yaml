@@ -1,0 +1,18 @@
+id: conductor-core
+name: Conductor Core
+skill: blacksmithing
+skill_minimum: 50
+station: forge
+time_rounds: 8
+ingredients:
+  - item_tag: silver-wire
+    quantity: 2
+  - item_tag: steel-ingot
+    quantity: 1
+  - item_tag: coal-dust
+    quantity: 1
+output:
+  item_id: 40222
+  quantity: 1
+success_message: "You wind the coils banded tight around a forged core, tuning it the way you'd tune a bell. A conductor core!"
+failure_message: "A coil shorts against the casing and the core rings dead. The materials are ruined."

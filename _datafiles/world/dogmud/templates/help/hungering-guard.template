@@ -1,0 +1,15 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">hungering-guard</ansi> (jewelcrafting recipe)
+
+A jeweled crossguard, cool bright metal set around a small hollow of
+darkness that seems to sit a little deeper than the guard around it.
+Look at it too long and the eye slides inward and stays there, caught on
+something with no bottom. It was shaped to be gripped, and to grip back
+-- a guard that guards nothing so much as its own appetite.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       jewelcrafting (minimum 50)
+  <ansi fg="yellow">Station:</ansi>     jeweler_bench
+  <ansi fg="yellow">Ingredients:</ansi> Raw Gem (x2), Gold Wire (x1), Splintered Pass-Apex Claw (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help jewelcrafting</ansi>, <ansi fg="command">help craft</ansi>

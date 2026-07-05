@@ -1,0 +1,39 @@
+roomid: 6440
+zone: The Confluence
+title: The Warded Corner
+description: >
+  A closet-sized room made colder by its own construction — the
+  walls here are lined in a hatch-pattern of fine wire, and the
+  floor is scored with concentric warding-lines in chalk gone
+  permanent under repeated tracing. At the center, an
+  <ansi fg="itemname">enchanting circle</ansi>
+  is worked directly into the floorboards, its rings inlaid
+  rather than painted over, and a low hum rides just under
+  hearing whenever anything sits inside it. The air carries a
+  faint tang, like the moment before a storm that never quite
+  arrives. Whatever this room was built to contain before it
+  became a workroom, it kept some of the old caution in its
+  bones. The main workshop lies back to the west.
+biome: city
+coord:
+  x: -13
+  y: -68
+  z: 1
+station: enchanting_circle
+exits:
+  west:
+    roomid: 6438
+nouns:
+  enchanting circle: >
+    Rings of pale inlay set into the floorboards themselves,
+    fine as wire and laid with a precision no amateur hand
+    could manage. The pattern does not repeat cleanly — small
+    corrections and rerouted lines mark places where the design
+    was fixed mid-work rather than planned from the start.
+idlemessages:
+- The wire lining the walls ticks faintly, though nothing here
+  is warm enough to explain it.
+- A chalk line on the floor has been retraced so many times it
+  has worn a shallow groove into the wood.
+- The low hum from the circle rises for a moment and settles
+  again, as if something briefly leaned close.

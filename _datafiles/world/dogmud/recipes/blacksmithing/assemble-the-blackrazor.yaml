@@ -1,0 +1,28 @@
+id: assemble-the-blackrazor
+name: The Blackrazor
+skill: blacksmithing
+skill_minimum: 65
+station: forge
+require_own_components: true
+learn_only: true
+time_rounds: 20
+ingredients:
+  - item_tag: hungering-guard
+    quantity: 1
+  - item_tag: obsidian-edge-resin
+    quantity: 1
+  - item_tag: void-quenched-obsidian
+    quantity: 1
+  - item_tag: whisper-old-white
+    quantity: 1
+  - item_tag: grey-relic
+    quantity: 1
+  - item_tag: steel-ingot
+    quantity: 8
+  - item_tag: coal-dust
+    quantity: 6
+output:
+  item_id: 40183
+  quantity: 1
+success_message: "You quench the black core in the cold that will not be named, set the hungering guard, and seal the edge in obsidian resin. The blade drinks the last of the forge-light and stays warm. Veyra's masterwork is forged -- The Blackrazor lives."
+failure_message: "The core cracks along the quench-line and the darkness inside goes still and cold. The materials are ruined."

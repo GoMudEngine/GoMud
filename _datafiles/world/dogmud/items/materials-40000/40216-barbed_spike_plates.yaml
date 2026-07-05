@@ -1,0 +1,19 @@
+itemid: 40216
+name: Barbed Spike-Plates
+namesimple: plates
+vendor_categories:
+- blacksmithing
+- tailoring
+description: >-
+  Riveted plates of forged barb-work, each spike hammered and
+  angled inward toward the plate's own center rather than out and
+  away. Fitted to a grip or a guard, the barbs face the clinch,
+  not the swing -- built for the moment something is already held
+  and does not want to be. Ugly, honest work, made for holding on.
+type: object
+subtype: mundane
+component_tag: barbed-spike-plates
+weight: 0.7
+value: 580
+rarity_tier: 78
+is_component: true

@@ -1,0 +1,16 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">reinforced-frame</ansi> (blacksmithing recipe)
+
+A light pack-frame of forged strut and pinned joint, welded thin and
+tested cruel, stronger for its weight than any honest smith would admit
+is possible. Every brace meets its neighbor at an angle that should
+buckle and does not. Strap a load to it and the frame carries the weight
+somewhere other than your back, though nobody who has built one can
+quite explain where.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       blacksmithing (minimum 50)
+  <ansi fg="yellow">Station:</ansi>     forge
+  <ansi fg="yellow">Ingredients:</ansi> Steel Ingot (x2), Iron Ingot (x1), Coal Dust (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help blacksmithing</ansi>, <ansi fg="command">help craft</ansi>

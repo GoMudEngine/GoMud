@@ -1,0 +1,21 @@
+itemid: 40209
+name: Preservation Runes
+namesimple: runes
+vendor_categories:
+- enchanting
+- alchemy
+description: >-
+  A set of small rune-plates, each etched in a hand steadier than
+  most and warm faintly to the touch. Fitted to a thing at its
+  finest moment, they hold that moment fast -- the edge that will
+  not dull, the color that will not fade, the shape that refuses
+  to remember it was ever anything less. There is no decay in
+  them, only the patient insistence that perfection, once reached,
+  need not be temporary.
+type: object
+subtype: mundane
+component_tag: preservation-runes
+weight: 0.2
+value: 700
+rarity_tier: 78
+is_component: true

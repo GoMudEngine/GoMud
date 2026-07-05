@@ -22,6 +22,7 @@ coord:
   x: -14
   y: -71
   z: 0
+station: forge
 exits:
   north:
     roomid: 6237

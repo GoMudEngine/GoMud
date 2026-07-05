@@ -1,0 +1,27 @@
+id: veyra
+description: "Veyra works her convergence-craft benches through the day and
+  sleeps in the workshop at night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6438
+    activity: craft
+    idlecommands:
+      - emote sets two components from entirely different trades side by
+        side on the bench and studies the gap between them.
+      - say Six trades. One working. Everyone else stops at the border
+        between them -- that is the whole trick.
+      - emote tests a seam with a fingernail, listens for something, and
+        makes a small adjustment no one else would have noticed needed
+        making.
+      - emote sets down a tool, picks up a completely different one, and
+        does not pause between the two.
+  - start: 22
+    end: 6
+    target_room: 6438
+    activity: sleeping
+    idlecommands:
+      - emote sleeps sitting upright at the bench, one hand still resting
+        on an unfinished working.
+      - emote breathes slow and even in the quiet of the shuttered
+        workshop, the tools around her undisturbed.

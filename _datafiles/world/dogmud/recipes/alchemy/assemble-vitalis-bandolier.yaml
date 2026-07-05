@@ -1,0 +1,28 @@
+id: assemble-vitalis-bandolier
+name: Vitalis Bandolier
+skill: alchemy
+skill_minimum: 65
+station: alchemy_bench
+require_own_components: true
+learn_only: true
+time_rounds: 20
+ingredients:
+  - item_tag: reinforced-harness
+    quantity: 1
+  - item_tag: preservation-runes
+    quantity: 1
+  - item_tag: chrysalis-filter-membrane
+    quantity: 1
+  - item_tag: still-glass-rosette
+    quantity: 1
+  - item_tag: pine-pitch
+    quantity: 6
+  - item_tag: salt-pouch
+    quantity: 6
+  - item_tag: beeswax
+    quantity: 4
+output:
+  item_id: 40182
+  quantity: 1
+success_message: "You settle each rosette into its cradle and thread the preservation runes through the harness straps until the whole bandolier hums in time with your own pulse. Veyra's masterwork holds -- the Vitalis Bandolier is forged."
+failure_message: "The rosettes refuse to settle in step and the runes flare white before falling dark. The materials are ruined."

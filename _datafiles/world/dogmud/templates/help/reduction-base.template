@@ -1,0 +1,16 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="skill">reduction-base</ansi> (cooking recipe)
+
+A culinary reduction, cooked down slow over low heat until it turns
+bitter, dark, and perfectly clarified, every impurity risen and skimmed
+away twice over. It is not meant to be eaten on its own -- only to sit
+at the bottom of something stronger, giving an unmaking draught its bite
+and its clean, cold finish. Cooks who make it work with the windows
+open.
+
+<ansi fg="yellow">━━━ Crafting ━━━</ansi>
+
+  <ansi fg="yellow">Skill:</ansi>       cooking (minimum 50)
+  <ansi fg="yellow">Station:</ansi>     cooking_fire
+  <ansi fg="yellow">Ingredients:</ansi> Bowl of River Broth (x2), Salt Pouch (x1), Wild Vegetables (x1)
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help cooking</ansi>, <ansi fg="command">help craft</ansi>

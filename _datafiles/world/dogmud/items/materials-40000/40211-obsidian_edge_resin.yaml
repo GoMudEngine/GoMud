@@ -1,0 +1,20 @@
+itemid: 40211
+name: Obsidian Edge-Resin
+namesimple: resin
+vendor_categories:
+- alchemy
+- blacksmithing
+description: >-
+  A jar of black volcanic resin, glassy and warm, that never quite
+  finishes setting no matter how long it sits corked on a shelf.
+  Run a blade's edge through it and the resin clings, half-liquid,
+  as though still deciding what shape to take. Whatever it seals
+  stays a little unfinished too -- an edge that keeps wanting to
+  be sharper than it already is.
+type: object
+subtype: mundane
+component_tag: obsidian-edge-resin
+weight: 0.4
+value: 500
+rarity_tier: 78
+is_component: true

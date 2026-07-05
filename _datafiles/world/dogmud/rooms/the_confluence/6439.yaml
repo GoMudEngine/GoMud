@@ -1,0 +1,39 @@
+roomid: 6439
+zone: The Confluence
+title: The Gem-Bench Nook
+description: >
+  A narrow side room, barely wide enough for the bench that
+  fills it — a
+  <ansi fg="itemname">jeweler's bench</ansi>
+  bolted fast to the wall beneath a bracket of small lamps
+  angled in close for fine work. Trays of loupes, tweezers, and
+  setting burins sit within easy reach of the stool, and a
+  shallow drawer beneath the bench holds a felt-lined row of
+  stones sorted by some system a stranger could not guess at —
+  not color, not size, something else entirely. The room's one
+  window is hung with a heavy curtain, tied back only far enough
+  to work by and no farther. The main workshop lies back through
+  the door.
+biome: city
+coord:
+  x: -14
+  y: -67
+  z: 1
+station: jeweler_bench
+exits:
+  south:
+    roomid: 6438
+nouns:
+  jeweler's bench: >
+    A small, precise workbench, its surface a patchwork of tiny
+    burn-marks and fine scratches from decades of careful work
+    that predate whoever uses it now. The lamps clamped above it
+    can be angled to a hair's width. Whoever sits here does not
+    waste motion.
+idlemessages:
+- A loupe left on the bench catches the lamplight and throws a
+  small bright coin of light on the ceiling.
+- The felt-lined drawer sits very slightly open, just enough to
+  show a glint of something uncut.
+- A curtain over the window stirs with a draft that has no
+  obvious source.
