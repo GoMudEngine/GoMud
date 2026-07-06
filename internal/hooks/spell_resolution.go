@@ -272,7 +272,14 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 	// cast whether or not it fizzles for damage — the interrupt is the point, and
 	// a tanky boss shouldn't dodge it. (Backfires return above, so a botched cast
 	// still can't interrupt.)
-	maybeInterruptSpellOnMob(mob, spellData.SpellId, state.ActorRef{UserId: user.UserId})
+	if maybeInterruptSpellOnMob(mob, spellData.SpellId, state.ActorRef{UserId: user.UserId}) {
+		user.SendText(messaging.CategorySpellDisruption, fmt.Sprintf(
+			`<ansi fg="cyan-bold">Your %s scrambles %s's focus -- its spell collapses!</ansi>`,
+			spellData.Name, mobDisplayName(mob, room, user.UserId)))
+		sendVisualRoomText(room, messaging.CategorySpellDisruption, fmt.Sprintf(
+			`<ansi fg="cyan">%s's spell collapses!</ansi>`,
+			mobDisplayName(mob, room, user.UserId)), user.UserId)
+	}
 
 	if !success {
 		user.SendText(messaging.CategorySpellDisruption, fmt.Sprintf(

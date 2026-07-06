@@ -190,7 +190,14 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		// interrupt is the disruptor's purpose, not a side effect of a hit. Fires
 		// before the attack-success gate so a tanky boss can't simply dodge the
 		// interrupt. (Fumbles break above, so a botched throw still can't cancel.)
-		maybeInterruptOnThrow(mob, matchItem.ItemId, state.ActorRef{UserId: user.UserId})
+		if maybeInterruptOnThrow(mob, matchItem.ItemId, state.ActorRef{UserId: user.UserId}) {
+			user.SendText(messaging.CategorySpellDisruption, fmt.Sprintf(
+				`<ansi fg="cyan-bold">The blast shatters %s's concentration -- its spell collapses!</ansi>`,
+				mob.Character.Name))
+			room.SendTextVisual(messaging.CategorySpellDisruption, fmt.Sprintf(
+				`<ansi fg="cyan">%s's spell collapses as the blast strikes!</ansi>`,
+				mob.Character.Name), user.UserId)
+		}
 
 		if !attackSuccess {
 			continue
