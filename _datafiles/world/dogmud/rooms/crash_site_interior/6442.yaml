@@ -14,7 +14,6 @@ description: >
 exits:
   east:
     roomid: 6395
-    oneway: true
 nouns:
   vents: >
     A ring of dark, flush-set vent-mouths, cold and still now. Whatever

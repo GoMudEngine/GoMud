@@ -5,6 +5,7 @@ import (
 	"math"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
@@ -1099,6 +1100,32 @@ func resolveMobDrainArea(mob *mobs.Mob, room *rooms.Room, spellData *spells.Spel
 			mob.Character.Name, spellData.Name))
 		return
 	}
+
+	// Core Charge (crash-site-boss-mechanics Chunk D, the Core Guardian's
+	// drain-fed discharge gate): incremented HERE, at drain *resolution*,
+	// not at cast-initiation. Build-time decision (Task D3): an interrupted
+	// drain never reaches this point at all -- resolveMobDrainArea is only
+	// entered once a fold-cast completes (see the doc comment above), so a
+	// disruptor-cancelled drain automatically denies the charge without any
+	// extra guard, satisfying spec §10.4 ("an interrupted drain ... denies
+	// the charge/heal entirely").
+	//
+	// BehaviorState (mob.BTreeState) is a per-mob-instance store that lives
+	// on the mob itself (internal/mobs/mobs.go); behaviortree.EnsureBTreeState
+	// lazily initializes and returns it. It is the EXACT SAME object the
+	// btree's own `increment_state`/`state_greater_than` actions/conditions
+	// read and write during tree evaluation (see internal/behaviortree/
+	// actions_state.go, conditions_state.go) -- there is no separate storage
+	// to keep in sync. Writing it here from Go is therefore equivalent to a
+	// btree `increment_state` call, just triggered from the spell-resolution
+	// side (which is the only place that knows "the drain actually landed")
+	// rather than from the tree (which cannot observe fold-cast completion
+	// directly). This lets the Core Guardian's btree
+	// (9562-the_core_guardian.yaml) gate its core-discharge purely on
+	// `state_greater_than core_charge N`, with zero Go-side awareness of
+	// discharge itself.
+	chargeState := behaviortree.EnsureBTreeState(mob)
+	chargeState.Set("core_charge", chargeState.GetInt("core_charge")+1)
 
 	for _, pr := range result.PlayerResults {
 		if !pr.MoveResult.Hit {

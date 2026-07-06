@@ -19,11 +19,15 @@ description: >
   of the last thing between the world and the answer, and it will not step
   aside, and it cannot be gone around. Beyond it, faint, the grey opens
   north onto a deck where the light is different, and the truth waits.
+  West, half-hidden in the dark, a narrow vent-mouth stands open onto a
+  smaller chamber -- one more thing this vast room was built to expel.
 exits:
   south:
     roomid: 6394
   north:
     roomid: 6396
+  west:
+    roomid: 6442
 nouns:
   guardian: >
     The core's own keeper, built past every warden below it as a fortress
