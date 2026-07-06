@@ -288,6 +288,14 @@ func (b *Balance) validateMisc() {
 		b.CrashSiteSuppressionFactor = 0.35
 	}
 
+	// ── BOSS INTERRUPTS ──────────────────────────────────────────────────────
+	if len(b.BossInterruptItemIds) == 0 {
+		b.BossInterruptItemIds = []int{30057}
+	}
+	if len(b.BossInterruptSpellIds) == 0 {
+		b.BossInterruptSpellIds = []string{"neural-stun", "sensory-overload", "kinetic-shove"}
+	}
+
 	// ── SKILL WEIGHT ─────────────────────────────────────────────────────────
 	if b.SkillWeight <= 0 {
 		b.SkillWeight = 2.0
