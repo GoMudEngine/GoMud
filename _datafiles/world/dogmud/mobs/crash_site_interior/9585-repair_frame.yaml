@@ -1,0 +1,39 @@
+mobid: 9585
+zone: Crash Site Interior
+behavior_archetype: generic_fighter
+aiprofile: brute
+archetype: fighting
+hostile: true
+statpool: 100
+maxwander: 0
+groups:
+  - construct
+idlecommands:
+  - 'emote hovers low on a stuttering column of light, a cluster of thin
+    manipulator arms folded tight against its frame.'
+  - ''
+  - 'emote turns a slow circuit of the chamber, arc-welders idling with a
+    faint blue crackle.'
+  - ''
+combatcommands:
+  - 'emote flinches back on its light-column, keeping its manipulators
+    clear of the fight.'
+  - ''
+  - 'emote skitters sideways on a thread of cold fire, unwilling to
+    close.'
+  - ''
+character:
+  name: Repair Frame
+  description: |
+    A spindly construct built for maintenance, not war -- a knot of thin
+    jointed arms and arc-welders slung beneath a stuttering disc of cold
+    light. It carries no real weapon and no real armor; everything about
+    it is built toward one purpose, and it will keep doing that purpose
+    for as long as it is left standing. Ignore it, and it will undo
+    every wound you manage to open.
+  speciesid: 37
+  level: 1
+  gold: 0
+loot_pool:
+  - 20091
+itemdropchance: 20

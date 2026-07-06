@@ -1,0 +1,47 @@
+# Grapnel Warden — Loud Full-Lock Grapple Add (crash-site-boss-mechanics
+# Chunk B)
+#
+# On a cooldown while in combat (and only when not already holding
+# someone), issues the standard mob-grapple command
+# (internal/mobcommands/grapple.go, dispatched via mob.Command("grapple")
+# -> the "command" btree action's escape hatch — there is no dedicated
+# `try_grapple`/grapple-specific btree action, so `do: command, cmd:
+# grapple` is the cleanest expression available). ExecuteGrapple resolves
+# its own target internally and already sends its own room text on
+# success/failure ("<Warden> grapples <target> into <position>!" /
+# "tries to grapple <target> but fails!"); the send_room_text below adds
+# the loud counterplay cue the base message doesn't carry. `send_room_text`
+# takes a static string (no {target} token support), so the follow-up
+# line can't name the specific victim — the engine's own grapple message
+# immediately above it already does that.
+#
+# Full control-lock + auto-release on the Warden's death is an existing
+# engine guarantee (verified in Chunk A, Task A7) — no additional work
+# needed here for that half of the counterplay.
+
+tree:
+  type: selector
+  children:
+
+    - type: decorator
+      event: mob_idle
+      mod: cooldown
+      rounds: 12
+      child:
+        type: sequence
+        children:
+          - type: condition
+            check: mob_in_combat
+          - type: decorator
+            mod: invert
+            child:
+              type: condition
+              check: mob_is_grappling
+          - type: action
+            do: command
+            cmd: grapple
+          - type: action
+            do: send_room_text
+            text: >-
+              The Grapnel Warden's servo-clamp finds its hold — tear it
+              apart to break the grip before it locks completely!

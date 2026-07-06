@@ -1,0 +1,38 @@
+mobid: 9587
+zone: Crash Site Interior
+behavior_archetype: generic_fighter
+aiprofile: brute
+archetype: fighting
+hostile: true
+statpool: 100
+maxwander: 0
+groups:
+  - construct
+idlecommands:
+  - 'emote turns a slow ring of dark vents toward the room, each one
+    cold and quiet for now.'
+  - ''
+  - 'emote hums low, a disruptor coil charging somewhere behind its
+    grey plating.'
+  - ''
+combatcommands:
+  - 'emote spins its vent-ring outward, hunting for anything not flesh
+    and bone to cast out.'
+  - ''
+  - 'emote lets its disruptor coil howl up toward its peak charge.'
+  - ''
+character:
+  name: Hull Sweeper
+  description: |
+    A drum-shaped construct ringed with dark vents, built to clear a
+    breached compartment of anything that does not belong -- and the
+    buried place has decided that includes the shapes you have called
+    up to fight beside you. It carries a disruptor field tuned to
+    conjured and summoned things alone, and it will cast every one of
+    them out of the chamber the instant it gets the charge to do it.
+  speciesid: 37
+  level: 1
+  gold: 0
+loot_pool:
+  - 20091
+itemdropchance: 20

@@ -1,0 +1,39 @@
+mobid: 9586
+zone: Crash Site Interior
+behavior_archetype: generic_fighter
+aiprofile: brute
+archetype: fighting
+hostile: true
+statpool: 100
+maxwander: 0
+groups:
+  - construct
+idlecommands:
+  - 'emote holds a jointed clamp-arm loose at its side, the servo-lock
+    within it clicking over and over, patient and hungry.'
+  - ''
+  - 'emote tests the reach of its clamp-arm against nothing, servos
+    whining through the motion.'
+  - ''
+combatcommands:
+  - 'emote swings its whole weight behind the clamp-arm, hunting for a
+    hold.'
+  - ''
+  - 'emote braces low, clamp-arm cocked, tracking the nearest moving
+    shape.'
+  - ''
+character:
+  name: Grapnel Warden
+  description: |
+    A squat construct built around a single grasping limb, a segmented
+    clamp-arm ending in a servo-lock jaw that closes and does not open
+    again on its own account. It carries little else -- no reach, no
+    real defense -- because it was never built to fight a whole party.
+    It was built to take one of you out of the fight entirely, and hold
+    you there until something else finishes the rest.
+  speciesid: 37
+  level: 1
+  gold: 0
+loot_pool:
+  - 20091
+itemdropchance: 20

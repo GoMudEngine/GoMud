@@ -1,0 +1,32 @@
+roomid: 6442
+zone: Crash Site Interior
+title: The Airlock
+biome: cave
+description: >
+  A narrow chamber of the same grey material as the rest of the buried
+  place, ringed with dark vent-mouths set flush into the walls. Whatever
+  this room was built to admit or expel, it still remembers the job --
+  the floor is scarred in long radial gouges, as if things far larger
+  than a person have been thrown through here and skidded to a stop.
+  The cold light holds steady and even, untroubled by whatever violence
+  the walls have seen. It is quiet here in a way the rest of the place
+  is not; nothing in this room is built to fight you.
+exits:
+  east:
+    roomid: 6395
+    oneway: true
+nouns:
+  vents: >
+    A ring of dark, flush-set vent-mouths, cold and still now. Whatever
+    they were built to move -- air, pressure, unwanted things -- they are
+    not moving it at the moment.
+  gouges: >
+    Long radial scars dragged across the floor, all pointed outward from
+    the room's centre, as though whatever landed here came in hard and
+    had nowhere left to go.
+idlemessages:
+- The cold light holds steady and even over the scarred floor.
+- Something in the walls ticks over, once, and falls still again.
+- The vent-mouths sit dark and quiet, waiting on a charge that hasn't come.
+mutators:
+- mutatorid: hull_suppression

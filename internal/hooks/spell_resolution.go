@@ -570,6 +570,47 @@ func applyMobEffect_buff(
 	return 0
 }
 
+// applyMobEffect_heal handles the "heal" EffectType case for applyMobEffect —
+// a caster (mob or player) casting a HelpSingle heal at ANOTHER mob (e.g. an
+// ally construct healing a boss, or a player healing a charmed companion).
+// Prior to Chunk B of the crash-site boss-mechanics work this case did not
+// exist: applyMobEffect's switch only handled damage/dot/knockdown/buff, so
+// a mob-to-mob (or player-to-companion) "heal" cast silently fell through to
+// applyMobEffect_default and did nothing. Mirrors applyMobSelfEffect's
+// "heal" case (percentage-of-max regen via ConditionRegen) but targets
+// `mob` instead of the caster. Returns 0 (no damage dealt) to match the
+// applyMobEffect_* int-return convention.
+func applyMobEffect_heal(
+	casterChar *characters.Character,
+	mob *mobs.Mob,
+	room *rooms.Room,
+	spellData *spells.SpellData,
+	magnitude int,
+	mName string,
+) int {
+	skillLevel := 0
+	willpower := 0
+	casterName := "Something"
+	if casterChar != nil {
+		skillLevel = casterChar.GetSkillLevel(skills.Spellcasting)
+		willpower = casterChar.Stats.Willpower.ValueAdj
+		casterName = casterChar.Name
+	}
+	regenMult := float64(magnitude)
+	if regenMult < 1.0 {
+		regenMult = 1.0
+	}
+	durationRounds := calcSpellDuration(spellData.BaseFolds, skillLevel, willpower) / 2
+	if durationRounds < 6 {
+		durationRounds = 6
+	}
+	mob.Character.AddCondition(characters.ConditionRegen, durationRounds, regenMult, "heal spell")
+	sendVisualRoomText(room, messaging.CategorySpellVital, fmt.Sprintf(
+		`<ansi fg="cyan">%s</ansi>'s %s washes over %s, knitting wounds shut.`,
+		casterName, spellData.Name, mName))
+	return 0
+}
+
 func applyMobEffect_default(
 	user *users.UserRecord,
 	spellData *spells.SpellData,
@@ -606,6 +647,8 @@ func applyMobEffect(user *users.UserRecord, casterChar *characters.Character, mo
 		return applyMobEffect_knockdown(user, casterChar, mob, room, spellData, magnitude, isCrit, critTag, mName)
 	case "buff":
 		return applyMobEffect_buff(user, mob, room, spellData, critTag, mName)
+	case "heal":
+		return applyMobEffect_heal(casterChar, mob, room, spellData, magnitude, mName)
 	default:
 		return applyMobEffect_default(user, spellData, mName)
 	}
@@ -1130,6 +1173,16 @@ func applyMobSelfEffect(mob *mobs.Mob, room *rooms.Room, spellData *spells.Spell
 
 func resolveMobSpellAgainstMob(caster *mobs.Mob, target *mobs.Mob, room *rooms.Room,
 	spellData *spells.SpellData, spellAttack float64, magnitude int) {
+	// Help-type effects (e.g. a construct add healing an ally boss) are a
+	// cooperative cast, not an attack — the target should not roll defense
+	// against a friendly heal, and a "fumble" backfire makes no sense for
+	// it either. Bypass the harm opposed-roll/backfire gate entirely and
+	// apply directly. (Crash-site boss-mechanics Chunk B: the Repair Frame
+	// add heals Warden-Prime / the Core Guardian this way.)
+	if spellData.EffectType == "heal" {
+		applyMobEffect(nil, &caster.Character, target, room, spellData, magnitude, false)
+		return
+	}
 	defVal := spellDefenseValue(spellData.TargetDefenseType, &target.Character)
 	success, _, atkRoll, _ := dice.OpposedRollStat(spellAttack, defVal)
 	if atkRoll.ZScore <= -2.0 {
