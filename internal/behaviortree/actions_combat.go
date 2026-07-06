@@ -61,6 +61,14 @@ func actFlee(params map[string]any, ctx *EvalContext) Result {
 	return Success
 }
 
+// actCast issues a `cast <spell>` command for the acting mob. An optional
+// `target` param names another mob (or player) in the room to cast at —
+// e.g. a Repair Frame add healing the boss by name — and is forwarded as
+// `cast <spell> <target>`. The engine's mob HelpSingle targeting
+// (actions/cast.go, room.FindByName) resolves the named target; leaving
+// target unset preserves the existing self/default-target behavior.
+//
+// params: spell (string, required), target (string, optional)
 func actCast(params map[string]any, ctx *EvalContext) Result {
 	mob := mobs.GetInstance(ctx.InstanceId)
 	if mob == nil {
@@ -70,7 +78,12 @@ func actCast(params map[string]any, ctx *EvalContext) Result {
 	if spell == "" {
 		return Failure
 	}
-	mob.Command("cast " + spell)
+	target := getStringParam(params, "target")
+	if target != "" {
+		mob.Command("cast " + spell + " " + target)
+	} else {
+		mob.Command("cast " + spell)
+	}
 	return Success
 }
 
