@@ -75,9 +75,11 @@ recall after) instead of a flat nerf.
 
 **Hull Sweeper behavior:** when the boss activates a Sweeper (see §4), on its action
 it **pushes all of the party's summoned companions out of the boss room** into a
-designated adjacent "airlock" room — alive, gear intact. The players must then fight
-the boss directly for a window, kill the Sweeper, and re-summon / walk their
-companions back. This removes the tank wall *temporarily and reversibly*.
+dedicated **airlock room placed on the natural approach path** (adjacent, in the
+direction the party is already travelling — see §10.1) — alive, gear intact. The
+players must then fight the boss directly for a window, kill the Sweeper, and re-summon
+or walk their companions back (an intuitive on-route step, not a detour). This removes
+the tank wall *temporarily and reversibly*.
 
 ---
 
@@ -96,7 +98,7 @@ Each is a distinct new mob (new mob-ids in `crash_site_interior/`), authored lig
 | Add | Role | Counterplay |
 |---|---|---|
 | **Repair Frame** | Channels a repair (heal) on the Guardian each round it lives. | Peel and kill it fast, or the boss out-heals the party's DPS and the fight never ends. |
-| **Grapnel Warden** | Grapples and locks down one player (that player is controlled — can't freely act — until freed). | Free the grappled member (break the grapple) or accept reduced party DPS/interrupt capacity. |
+| **Grapnel Warden** | **Fully** grapples and control-locks one player (can only struggle), with **loud room messaging** flagging it as the cause. | Focus-fire the grappler — killing it releases the grapple. The loud tell is meant to *make* the party want to peel onto it, freeing their ally and restoring DPS/interrupt capacity. |
 | **Hull Sweeper** | Sweeps the party's companions out of the room (§3). | Kill it before it sweeps; re-summon/recall afterward. Activated when companions are present. |
 
 Spawn cadence is a tuning knob (§9): e.g. Repair Frame at 75%/40% HP, Grapnel Warden
@@ -253,18 +255,23 @@ All numeric, adjusted against the 3-Meirok harness party (see §11) to hit the t
 
 ---
 
-## 10. Open questions / decisions to confirm
+## 10. Resolved decisions
 
-1. **Airlock room for the Sweeper:** reuse an existing adjacent Crash Site room, or add
-   a dedicated dead-end "airlock" room the companions get shoved into? (Leaning: a
-   dedicated non-hostile stub so swept pets don't wander into another fight.)
-2. **Grapnel Warden lockdown severity:** full control-lock (player can do nothing but
-   struggle) vs. partial (can act at reduced effect)? Full is punchier but riskier if
-   the party has no escape tool — confirm the intended harshness.
-3. **Interrupt allowlist v1 contents:** confirm flashbang (item) + neural-stun /
-   sensory-overload / kinetic-shove (spells). Any others?
-4. **Does an interrupted discharge fully reset Core Charge, or only partially?** (Full
-   reset = interrupts are decisive; partial = the party is always racing the charge.)
+1. **Airlock room:** a dedicated non-hostile airlock room, placed **on the natural
+   approach path** — adjacent to the boss room in the direction the party is already
+   travelling — so swept companions land somewhere intuitive and safe to recover, not a
+   hidden dead-end off to the side and not into another fight. Recovering pets should
+   feel like a natural step on-route, not a detour.
+2. **Grapnel Warden lockdown:** **full control-lock** (the grappled player can only
+   struggle to break free), paired with **loud, prominent room messaging** that makes
+   the lock obvious to the rest of the party. The intended counterplay is that the other
+   players *want* to focus-fire the grappler to free their ally — so the grappler must
+   be conspicuously the cause, and killing it must release the grapple.
+3. **Interrupt allowlist v1:** flashbang (thrown) + neural-stun / sensory-overload /
+   kinetic-shove (spells). Confirmed.
+4. **Interrupted discharge:** **interrupts are decisive** — a successful interrupt fully
+   resets Core Charge and cancels the pending release. Same for an interrupted drain
+   (cancels the drain and denies the charge/heal entirely).
 
 ---
 
