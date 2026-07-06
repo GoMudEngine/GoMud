@@ -225,9 +225,47 @@ func ConsumeIngredients(inv []items.Item, componentInv []items.Item, recipe *Rec
 	return newInv, newComponent
 }
 
+// craftableComponentTags is the set of component_tags that some recipe
+// produces as output — i.e. genuinely crafted sub-assemblies. Lazily built
+// from allRecipes on first use. Used to scope require_own_components to
+// crafted intermediates, exempting drop/forage reagents that are
+// IsComponent (for bag routing only) but can never carry a maker's mark
+// (e.g. boss-drop Folded-Space Silk, Warden Chassis-Loom).
+var craftableComponentTags map[string]bool
+
+// isCraftableComponentTag reports whether tag is produced as the output of
+// some known recipe. Non-craftable tags (drop/forage reagents) are exempt
+// from the require_own_components maker-mark check in CheckOwnComponents.
+func isCraftableComponentTag(tag string) bool {
+	if craftableComponentTags == nil {
+		craftableComponentTags = make(map[string]bool)
+		for _, r := range allRecipes {
+			if r.Output.ItemId <= 0 {
+				continue
+			}
+			if ct := componentTagOf(items.New(r.Output.ItemId)); ct != "" {
+				craftableComponentTags[ct] = true
+			}
+		}
+	}
+	return craftableComponentTags[tag]
+}
+
+// ResetCraftableComponentTagsForTest clears the lazy craftableComponentTags
+// cache so tests that register recipes via RegisterRecipeForTest (after the
+// cache may have already been built by an earlier test in the same binary)
+// are picked up on the next isCraftableComponentTag call. Production code
+// should never call this.
+func ResetCraftableComponentTagsForTest() {
+	craftableComponentTags = nil
+}
+
 // CheckOwnComponents enforces require_own_components: every ingredient that
-// is itself a crafted component (IsComponent) must have been made by the
-// crafter. Bulk materials are exempt. Tag-matching mirrors HasIngredients /
+// is both (a) a crafted component (IsComponent) AND (b) genuinely craftable
+// (some recipe outputs an item with that component_tag) must have been made
+// by the crafter. Bulk materials and drop/forage reagents (IsComponent for
+// bag-routing only, but never any recipe's output — e.g. boss-drop
+// Folded-Space Silk) are exempt. Tag-matching mirrors HasIngredients /
 // ConsumeIngredients via componentTagOf.
 // Returns (true, "") on success; (false, offendingComponentName) on failure.
 // Callers own all player-facing text (same convention as HasIngredients).
@@ -244,6 +282,12 @@ func CheckOwnComponents(recipe *RecipeSpec, inv, componentInv []items.Item, craf
 
 	pools := [][]items.Item{componentInv, inv}
 	for _, ing := range recipe.Ingredients {
+		if !isCraftableComponentTag(ing.ItemTag) {
+			// Drop/forage reagent (is_component only for bag routing) — it can
+			// never carry a maker's mark, so require_own_components does not
+			// apply to it. Only crafted sub-assemblies are gated.
+			continue
+		}
 		for _, pool := range pools {
 			for _, item := range pool {
 				if componentTagOf(item) != ing.ItemTag {

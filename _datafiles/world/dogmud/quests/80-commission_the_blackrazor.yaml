@@ -1,0 +1,39 @@
+questid: 80
+name: Commission The Blackrazor
+description: >-
+  Veyra has agreed to forge The Blackrazor. Gather what she named, craft
+  the parts by your own hand, and forge the blade at her stations.
+steps:
+  - id: start
+    description: "Veyra has taken the commission. Gather the reagents and
+      forge the parts by your own hand."
+  - id: end
+    description: "The Blackrazor is made."
+triggers:
+  - event: quest_granted
+    quest_token: "80-start"
+    actions:
+      - charge_gold: 25000
+      - learn_recipe: {recipe: "hungering-guard"}
+      - learn_recipe: {recipe: "obsidian-edge-resin"}
+      - learn_recipe: {recipe: "assemble-the-blackrazor"}
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "Half now. The recipes are in your hands.
+                Bring me the rest when it is done."}
+
+  - event: item_gain
+    item: 40183
+    conditions:
+      has: ["80-start"]
+      missing: ["80-end"]
+    actions:
+      - charge_gold: 25000
+      - set_flag: {key: "78-commission", value: "none"}
+      - grant: "80-end"
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "...it holds. Balance settled. Take it,
+                before it gets ideas."}

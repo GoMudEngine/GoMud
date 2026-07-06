@@ -4,15 +4,16 @@ package dialogue
 // can gate options on player progress without importing characters/users.
 // When nil is passed the engine skips all quest/item checks (backward compat).
 type PlayerState struct {
-	HasQuest     func(token string) bool
-	HasItem      func(itemId int) bool
-	RemoveItem   func(itemId int) bool
-	GiveQuest    func(token string)
-	GiveItem     func(itemId int)
-	GetQuestFlag func(key string) string
-	SetQuestFlag func(key, value string)
-	BumpRep      func(faction string, delta int)
-	GiveGold     func(amount int)
+	HasQuest         func(token string) bool
+	HasItem          func(itemId int) bool
+	RemoveItem       func(itemId int) bool
+	GiveQuest        func(token string)
+	GiveItem         func(itemId int)
+	GetQuestFlag     func(key string) string
+	SetQuestFlag     func(key, value string)
+	BumpRep          func(faction string, delta int)
+	GiveGold         func(amount int)
+	HasOwnMasterwork func(skillMin int) bool
 }
 
 // QuestFlagSet describes a single key/value flag to write on the player's character.
@@ -42,57 +43,60 @@ const (
 
 // Pattern is a single keyword-triggered response rule in a dialogue file.
 type Pattern struct {
-	Keywords          []string          `yaml:"keywords"`
-	Moods             []string          `yaml:"moods,omitempty"`
-	Responses         []string          `yaml:"responses"`
-	MoodChange        string            `yaml:"moodChange,omitempty"`
-	QuestRequired     []string          `yaml:"questRequired,omitempty"`
-	QuestExcluded     []string          `yaml:"questExcluded,omitempty"`
-	GrantsQuest       string            `yaml:"grantsQuest,omitempty"`
-	RequiresItem      int               `yaml:"requiresItem,omitempty"`
-	GivesItem         int               `yaml:"givesItem,omitempty"`
-	QuestFlagRequired map[string]string `yaml:"questFlagRequired,omitempty"`
-	QuestFlagExcluded map[string]string `yaml:"questFlagExcluded,omitempty"`
-	SetsQuestFlag     *QuestFlagSet     `yaml:"setsQuestFlag,omitempty"`
-	BumpsRep          []RepBump         `yaml:"bumpsRep,omitempty"`
-	GivesGold         int               `yaml:"givesGold,omitempty"`
+	Keywords           []string          `yaml:"keywords"`
+	Moods              []string          `yaml:"moods,omitempty"`
+	Responses          []string          `yaml:"responses"`
+	MoodChange         string            `yaml:"moodChange,omitempty"`
+	QuestRequired      []string          `yaml:"questRequired,omitempty"`
+	QuestExcluded      []string          `yaml:"questExcluded,omitempty"`
+	GrantsQuest        string            `yaml:"grantsQuest,omitempty"`
+	RequiresItem       int               `yaml:"requiresItem,omitempty"`
+	GivesItem          int               `yaml:"givesItem,omitempty"`
+	QuestFlagRequired  map[string]string `yaml:"questFlagRequired,omitempty"`
+	QuestFlagExcluded  map[string]string `yaml:"questFlagExcluded,omitempty"`
+	SetsQuestFlag      *QuestFlagSet     `yaml:"setsQuestFlag,omitempty"`
+	BumpsRep           []RepBump         `yaml:"bumpsRep,omitempty"`
+	GivesGold          int               `yaml:"givesGold,omitempty"`
+	MasterworkRequired int               `yaml:"masterworkRequired,omitempty"`
 }
 
 // TreeNode is a stateful conversation node gated by triggers and unlock requirements.
 type TreeNode struct {
-	Id                string            `yaml:"id"`
-	Triggers          []string          `yaml:"triggers"`
-	Requires          []string          `yaml:"requires,omitempty"`
-	Text              string            `yaml:"text"`
-	Hints             string            `yaml:"hints,omitempty"`
-	Unlocks           []string          `yaml:"unlocks,omitempty"`
-	MoodChange        string            `yaml:"moodChange,omitempty"`
-	QuestRequired     []string          `yaml:"questRequired,omitempty"`
-	QuestExcluded     []string          `yaml:"questExcluded,omitempty"`
-	GrantsQuest       string            `yaml:"grantsQuest,omitempty"`
-	RequiresItem      int               `yaml:"requiresItem,omitempty"`
-	GivesItem         int               `yaml:"givesItem,omitempty"`
-	QuestFlagRequired map[string]string `yaml:"questFlagRequired,omitempty"`
-	QuestFlagExcluded map[string]string `yaml:"questFlagExcluded,omitempty"`
-	SetsQuestFlag     *QuestFlagSet     `yaml:"setsQuestFlag,omitempty"`
-	BumpsRep          []RepBump         `yaml:"bumpsRep,omitempty"`
-	GivesGold         int               `yaml:"givesGold,omitempty"`
+	Id                 string            `yaml:"id"`
+	Triggers           []string          `yaml:"triggers"`
+	Requires           []string          `yaml:"requires,omitempty"`
+	Text               string            `yaml:"text"`
+	Hints              string            `yaml:"hints,omitempty"`
+	Unlocks            []string          `yaml:"unlocks,omitempty"`
+	MoodChange         string            `yaml:"moodChange,omitempty"`
+	QuestRequired      []string          `yaml:"questRequired,omitempty"`
+	QuestExcluded      []string          `yaml:"questExcluded,omitempty"`
+	GrantsQuest        string            `yaml:"grantsQuest,omitempty"`
+	RequiresItem       int               `yaml:"requiresItem,omitempty"`
+	GivesItem          int               `yaml:"givesItem,omitempty"`
+	QuestFlagRequired  map[string]string `yaml:"questFlagRequired,omitempty"`
+	QuestFlagExcluded  map[string]string `yaml:"questFlagExcluded,omitempty"`
+	SetsQuestFlag      *QuestFlagSet     `yaml:"setsQuestFlag,omitempty"`
+	BumpsRep           []RepBump         `yaml:"bumpsRep,omitempty"`
+	GivesGold          int               `yaml:"givesGold,omitempty"`
+	MasterworkRequired int               `yaml:"masterworkRequired,omitempty"`
 }
 
 // QuestGreeting is an alternative greeting shown when the player matches quest conditions.
 type QuestGreeting struct {
-	QuestRequired     []string          `yaml:"questRequired,omitempty"`
-	QuestExcluded     []string          `yaml:"questExcluded,omitempty"`
-	QuestFlagRequired map[string]string `yaml:"questFlagRequired,omitempty"`
-	QuestFlagExcluded map[string]string `yaml:"questFlagExcluded,omitempty"`
-	Text              string            `yaml:"text"`
-	Hints             string            `yaml:"hints,omitempty"`
-	GrantsQuest       string            `yaml:"grantsQuest,omitempty"`
-	GivesItem         int               `yaml:"givesItem,omitempty"`
-	RequiresItem      int               `yaml:"requiresItem,omitempty"`
-	SetsQuestFlag     *QuestFlagSet     `yaml:"setsQuestFlag,omitempty"`
-	BumpsRep          []RepBump         `yaml:"bumpsRep,omitempty"`
-	GivesGold         int               `yaml:"givesGold,omitempty"`
+	QuestRequired      []string          `yaml:"questRequired,omitempty"`
+	QuestExcluded      []string          `yaml:"questExcluded,omitempty"`
+	QuestFlagRequired  map[string]string `yaml:"questFlagRequired,omitempty"`
+	QuestFlagExcluded  map[string]string `yaml:"questFlagExcluded,omitempty"`
+	Text               string            `yaml:"text"`
+	Hints              string            `yaml:"hints,omitempty"`
+	GrantsQuest        string            `yaml:"grantsQuest,omitempty"`
+	GivesItem          int               `yaml:"givesItem,omitempty"`
+	RequiresItem       int               `yaml:"requiresItem,omitempty"`
+	SetsQuestFlag      *QuestFlagSet     `yaml:"setsQuestFlag,omitempty"`
+	BumpsRep           []RepBump         `yaml:"bumpsRep,omitempty"`
+	GivesGold          int               `yaml:"givesGold,omitempty"`
+	MasterworkRequired int               `yaml:"masterworkRequired,omitempty"`
 }
 
 // TreeRoot holds the greeting delivered when a player first uses 'talk'.

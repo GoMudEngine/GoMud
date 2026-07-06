@@ -520,3 +520,110 @@ the_confluence/veyra.yaml`) keeps her at the alchemy bench crafting
 - The 17 component recipes are plain discoverable recipes — no
   `learn_only`, no `require_own_components` — so the everyday tier of
   the chain needs no quest wiring at all.
+
+## Stage 4b: commissions
+
+Veyra's commission questline is the delivery mechanism for the nine
+`learn_only` assembly recipes from Stage 4a — without it, those slugs
+are unreachable by any player. Authored on branch
+`feature/pinnacle-stage4b-veyra-commissions`.
+
+### Quests
+
+Quest **78 "The Convergence"** is the masterwork-gated intro: it fires
+the instant `78-start` is granted, sets `78-commission=none`, and
+immediately grants `78-end` in the same beat (there is no separate
+player step — the quest only exists to declare the shared flag and
+give Veyra's dialogue a `questRequired` token to key on). Quests
+**79-87** are the nine commissions, one per pinnacle item.
+
+| Quest | Slug | Item (id) | Skill | Gold total |
+|-------|------|-----------|-------|------------|
+| 79 | bandolier | Vitalis Bandolier (40182) | alchemy | 35,000 |
+| 80 | blackrazor | The Blackrazor (40183) | blacksmithing | 50,000 |
+| 81 | wayfarer | Wayfarer's Bottomless Pack (40184) | tailoring | 25,000 |
+| 82 | aegis | Aegis of Mockery (40185) | blacksmithing | 40,000 |
+| 83 | thornwall | Thornwall Harness (40186) | tailoring | 30,000 |
+| 84 | prism | Seething Prism (40187) | jewelcrafting | 40,000 |
+| 85 | zephyr | Zephyr Treads (40188) | tailoring | 25,000 |
+| 86 | choir | Staff of the Hollow Choir (40189) | enchanting | 45,000 |
+| 87 | phial | Phial of Second Birth (40181) | alchemy | 30,000 |
+
+Each quest's gold total is split in half: half on `quest_granted`,
+half on the `item_gain` trigger that fires when the crafted pinnacle
+item lands in the player's inventory.
+
+### The commission flow
+
+1. Player carries a self-crafted skill-50+ item (the masterwork gate,
+   `HasOwnMasterwork`) and asks Veyra about the convergence. Her
+   `convergence_intro` dialogue node grants `78-start`.
+2. Quest 78's `quest_granted` trigger sets `78-commission=none` and
+   grants `78-end` in the same beat — the player is now "known" to
+   Veyra.
+3. Player asks Veyra for a specific commission by item name (or reads
+   the `commission_list` node for all nine). The matching offer node
+   grants `{id}-start` and sets `78-commission=<slug>`.
+4. That quest's own `quest_granted` trigger charges the first half of
+   the gold (`charge_gold`), teaches the two component recipes plus
+   the one assembly recipe (`learn_recipe` x3, x1 for the phial which
+   only needs `reduction-base`), and has Veyra narrate the hand-off.
+5. Player gathers the Stage-3 reagents, crafts the components
+   themselves (so `require_own_components` accepts them), and
+   assembles the pinnacle item at one of Veyra's stations.
+6. The crafted item's `item_gain` trigger (gated on `has: {id}-start`,
+   `missing: {id}-end`) charges the second half of the gold, grants
+   `{id}-end`, and resets `78-commission=none` — freeing the next
+   commission.
+
+Only one commission runs at a time: every offer node requires
+`78-commission == "none"`, and the mid-commission root variant (gated
+on `78-commission != "none"`) tells the player to wait.
+
+### Veyra's dialogue gating (`dialogue/the_confluence/9584.yaml`)
+
+Root variants partition every player into exactly one state: unknown
+without a masterwork (flavor-only), unknown with a masterwork (the
+intro-grant variant), known and idle (the working greeting, with a
+truth-knower variant for players who've finished `77-end`), and known
+mid-commission (flavor, no grant). The `commission_list` node is the
+discoverability point for all nine learn_only item names — naming a
+commission item nowhere else in dialogue would make its recipe
+unreachable in practice — but it does not itself grant anything,
+unlike the nine offer nodes, which are keyed to item-name keywords
+only (`bandolier`, `blackrazor`, `pack`, etc.) and deliberately omit
+the generic `quest`/`task` triggers so the first ask doesn't
+auto-lock a random commission.
+
+### Engine additions (Stage 4b)
+
+1. **`charge_gold` action + `has_gold` condition**
+   (`internal/questengine/types.go`) — stages a gold fee on a quest
+   trigger or gates one on a minimum balance; the charge clamps at 0
+   rather than going negative.
+2. **Masterwork entry gate** — `Character.HasOwnMasterwork(skillMin)`
+   (`internal/characters/masterwork.go`) reports whether the player
+   carries any item with `MakerName == their own Name` and
+   `CraftSkill >= skillMin`. Exposed as a dialogue `masterworkRequired`
+   gate and a quest `has_masterwork` condition.
+3. **Quest-grant bridge** (`internal/hooks/Quest_HandleQuestUpdate.go`)
+   — a quest token granted by dialogue's `grantsQuest` (or any other
+   legacy path) now also fires the questengine's `quest_granted`
+   triggers, notifying only on a fresh grant so questengine-initiated
+   grants don't double-fire. Before this fix, dialogue-granted tokens
+   could not start a questengine quest at all — the entire commission
+   design (Veyra's dialogue grants `{id}-start`, the questengine quest
+   reacts to it) depends on this bridge.
+4. **`require_own_components` scope fix**
+   (`internal/crafting/crafting.go`) — the own-work gate now applies
+   only to ingredient tags that are some recipe's own output (a
+   genuinely crafted sub-assembly), exempting drop/forage reagents
+   that are `is_component` purely for bag-routing but can never carry
+   a maker's mark.
+
+### Note
+
+The Phial of Second Birth (87) is non-repeatable, same as the other
+eight commissions — the questengine quest format has no `repeatable`
+field. Making it repeatable (so a player could re-roll a mutation more
+than once) is a deferred enhancement.

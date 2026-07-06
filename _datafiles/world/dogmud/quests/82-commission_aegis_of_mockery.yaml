@@ -1,0 +1,41 @@
+questid: 82
+name: Commission Aegis of Mockery
+description: >-
+  Veyra has agreed to make the Aegis of Mockery. Gather what she named,
+  craft the parts by your own hand, and bring them to her stations to be
+  set into the housing.
+steps:
+  - id: start
+    description: "Veyra has taken the commission. Gather the reagents and
+      craft the parts by your own hand."
+  - id: end
+    description: "The Aegis of Mockery is made."
+triggers:
+  - event: quest_granted
+    quest_token: "82-start"
+    actions:
+      - charge_gold: 20000
+      - learn_recipe: {recipe: "voice-amber-housing"}
+      - learn_recipe: {recipe: "resonance-lacquer"}
+      - learn_recipe: {recipe: "assemble-aegis-of-mockery"}
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "Half now. The recipes are yours. Set the
+                housing clean -- a voice that cannot carry an insult is
+                just noise, and I will not put my name on noise."}
+
+  - event: item_gain
+    item: 40185
+    conditions:
+      has: ["82-start"]
+      missing: ["82-end"]
+    actions:
+      - charge_gold: 20000
+      - set_flag: {key: "78-commission", value: "none"}
+      - grant: "82-end"
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "Listen to it laugh. Balance settled. Go
+                let something regret standing close to you."}

@@ -9,10 +9,12 @@ import (
 // fullMockPlayer is a player mock whose quest/item state can be mutated by
 // the action context, so chained triggers see updated state immediately.
 type fullMockPlayer struct {
-	quests map[string]bool
-	items  map[int]bool
-	flags  map[string]string
-	roomId int
+	quests     map[string]bool
+	items      map[int]bool
+	flags      map[string]string
+	roomId     int
+	gold       int
+	masterwork bool
 }
 
 func newFullMockPlayer(roomId int) *fullMockPlayer {
@@ -24,10 +26,12 @@ func newFullMockPlayer(roomId int) *fullMockPlayer {
 	}
 }
 
-func (p *fullMockPlayer) HasQuest(token string) bool     { return p.quests[token] }
-func (p *fullMockPlayer) HasItem(itemId int) bool        { return p.items[itemId] }
-func (p *fullMockPlayer) GetRoomId() int                 { return p.roomId }
-func (p *fullMockPlayer) GetQuestFlag(key string) string { return p.flags[key] }
+func (p *fullMockPlayer) HasQuest(token string) bool         { return p.quests[token] }
+func (p *fullMockPlayer) HasItem(itemId int) bool            { return p.items[itemId] }
+func (p *fullMockPlayer) GetRoomId() int                     { return p.roomId }
+func (p *fullMockPlayer) GetQuestFlag(key string) string     { return p.flags[key] }
+func (p *fullMockPlayer) GetGold() int                       { return p.gold }
+func (p *fullMockPlayer) HasOwnMasterwork(skillMin int) bool { return p.masterwork }
 
 // fullMockActionContext wraps mockActionContext but mutates the player's state
 // on GrantQuest, ConsumeItem, and GiveItem so chained evaluation works.

@@ -60,39 +60,42 @@ type TriggerDef struct {
 
 // Conditions for trigger evaluation.
 type Conditions struct {
-	Has         []string          `yaml:"has,omitempty"`          // player must have ALL these quest tokens
-	Missing     []string          `yaml:"missing,omitempty"`      // player must NOT have ANY of these tokens
-	InRoom      int               `yaml:"in_room,omitempty"`      // player must be in this room
-	HasItem     int               `yaml:"has_item,omitempty"`     // player must have this item
-	MissingItem int               `yaml:"missing_item,omitempty"` // player must NOT have this item
-	HasFlag     map[string]string `yaml:"has_flag,omitempty"`     // player must have ALL these flag key=value pairs
-	MissingFlag map[string]string `yaml:"missing_flag,omitempty"` // player must NOT have ANY of these flag key=value pairs
+	Has           []string          `yaml:"has,omitempty"`            // player must have ALL these quest tokens
+	Missing       []string          `yaml:"missing,omitempty"`        // player must NOT have ANY of these tokens
+	InRoom        int               `yaml:"in_room,omitempty"`        // player must be in this room
+	HasItem       int               `yaml:"has_item,omitempty"`       // player must have this item
+	MissingItem   int               `yaml:"missing_item,omitempty"`   // player must NOT have this item
+	HasFlag       map[string]string `yaml:"has_flag,omitempty"`       // player must have ALL these flag key=value pairs
+	MissingFlag   map[string]string `yaml:"missing_flag,omitempty"`   // player must NOT have ANY of these flag key=value pairs
+	HasGold       int               `yaml:"has_gold,omitempty"`       // player must have at least this much gold
+	HasMasterwork int               `yaml:"has_masterwork,omitempty"` // player must carry an own-crafted item at this craft skill or higher
 }
 
 // ActionDef is a single action to execute when a trigger fires.
 // Only one field should be set per ActionDef.
 type ActionDef struct {
-	Grant        string           `yaml:"grant,omitempty"`
-	ConsumeItem  int              `yaml:"consume_item,omitempty"`
-	GiveItem     int              `yaml:"give_item,omitempty"`
-	GiveGold     int              `yaml:"give_gold,omitempty"`
-	NpcSay       *NpcSayDef       `yaml:"npc_say,omitempty"`
-	SendText     string           `yaml:"send_text,omitempty"`
-	RoomText     string           `yaml:"room_text,omitempty"`
-	SpawnMob     *SpawnDef        `yaml:"spawn_mob,omitempty"`
-	SpawnItem    *SpawnDef        `yaml:"spawn_item,omitempty"`
-	LockExits    *ExitLock        `yaml:"lock_exits,omitempty"`
-	UnlockExits  *ExitLock        `yaml:"unlock_exits,omitempty"`
-	TeachSpell   string           `yaml:"teach_spell,omitempty"`
-	TrainSkill   *SkillDef        `yaml:"train_skill,omitempty"`
-	TrainStat    *StatDef         `yaml:"train_stat,omitempty"`
-	LearnRecipe  *RecipeDef       `yaml:"learn_recipe,omitempty"`
-	ApplyBuff    *BuffDef         `yaml:"apply_buff,omitempty"`
-	Teleport     int              `yaml:"teleport,omitempty"`
-	GiveMutation bool             `yaml:"give_mutation,omitempty"` // roll and grant a random mutation
-	SetFlag      *QuestFlagAction `yaml:"set_flag,omitempty"`
-	Sequence     *SequenceDef     `yaml:"sequence,omitempty"`
-	BumpRep      *BumpRepDef      `yaml:"bump_rep,omitempty"`
+	Grant         string            `yaml:"grant,omitempty"`
+	ConsumeItem   int               `yaml:"consume_item,omitempty"`
+	GiveItem      int               `yaml:"give_item,omitempty"`
+	GiveGold      int               `yaml:"give_gold,omitempty"`
+	ChargeGold    int               `yaml:"charge_gold,omitempty"`
+	NpcSay        *NpcSayDef        `yaml:"npc_say,omitempty"`
+	SendText      string            `yaml:"send_text,omitempty"`
+	RoomText      string            `yaml:"room_text,omitempty"`
+	SpawnMob      *SpawnDef         `yaml:"spawn_mob,omitempty"`
+	SpawnItem     *SpawnDef         `yaml:"spawn_item,omitempty"`
+	LockExits     *ExitLock         `yaml:"lock_exits,omitempty"`
+	UnlockExits   *ExitLock         `yaml:"unlock_exits,omitempty"`
+	TeachSpell    string            `yaml:"teach_spell,omitempty"`
+	TrainSkill    *SkillDef         `yaml:"train_skill,omitempty"`
+	TrainStat     *StatDef          `yaml:"train_stat,omitempty"`
+	LearnRecipe   *RecipeDef        `yaml:"learn_recipe,omitempty"`
+	ApplyBuff     *BuffDef          `yaml:"apply_buff,omitempty"`
+	Teleport      int               `yaml:"teleport,omitempty"`
+	GiveMutation  bool              `yaml:"give_mutation,omitempty"` // roll and grant a random mutation
+	SetFlag       *QuestFlagAction  `yaml:"set_flag,omitempty"`
+	Sequence      *SequenceDef      `yaml:"sequence,omitempty"`
+	BumpRep       *BumpRepDef       `yaml:"bump_rep,omitempty"`
 	DeclareBounty *DeclareBountyDef `yaml:"declare_bounty,omitempty"`
 }
 
@@ -118,7 +121,7 @@ type DeclareBountyDef struct {
 		Type string `yaml:"type"` // "player" | "mob"
 		Id   int    `yaml:"id"`
 	} `yaml:"target,omitempty"`
-	Condition    string `yaml:"condition"`            // "kill"
+	Condition    string `yaml:"condition"` // "kill"
 	ExpiryRounds uint64 `yaml:"expiry_rounds,omitempty"`
 	GoldOverride int    `yaml:"gold_override,omitempty"`
 	RepOverride  int    `yaml:"rep_override,omitempty"`

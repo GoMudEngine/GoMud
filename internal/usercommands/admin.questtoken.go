@@ -40,6 +40,11 @@ func QuestToken(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 				qTokenStr := ``
 				qToken := fmt.Sprintf(`%d-%s`, qid, qt)
 				qInfo := quests.GetQuest(qToken)
+				if qInfo == nil {
+					// Stale/renumbered token in the player's progress — the
+					// quest no longer exists. Skip rather than nil-deref.
+					continue
+				}
 				for _, step := range qInfo.Steps {
 					if step.Id == qt {
 						qTokenStr += fmt.Sprintf(`[%d-%s] `, qid, step.Id)

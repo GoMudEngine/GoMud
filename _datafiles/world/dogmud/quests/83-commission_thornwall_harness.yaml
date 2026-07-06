@@ -1,0 +1,41 @@
+questid: 83
+name: Commission Thornwall Harness
+description: >-
+  Veyra has agreed to make the Thornwall Harness. Gather what she named,
+  craft the parts by your own hand, and bring them to her stations to be
+  quenched and set.
+steps:
+  - id: start
+    description: "Veyra has taken the commission. Gather the reagents and
+      craft the parts by your own hand."
+  - id: end
+    description: "The Thornwall Harness is made."
+triggers:
+  - event: quest_granted
+    quest_token: "83-start"
+    actions:
+      - charge_gold: 15000
+      - learn_recipe: {recipe: "barbed-spike-plates"}
+      - learn_recipe: {recipe: "anti-corrosion-quench"}
+      - learn_recipe: {recipe: "assemble-thornwall-harness"}
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "Half now. The recipes are yours. Set the
+                spikes even and quench them slow -- a wall that cannot
+                hold its edge is just a fence."}
+
+  - event: item_gain
+    item: 40186
+    conditions:
+      has: ["83-start"]
+      missing: ["83-end"]
+    actions:
+      - charge_gold: 15000
+      - set_flag: {key: "78-commission", value: "none"}
+      - grant: "83-end"
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "It will not yield first. Balance settled.
+                Stand your ground, and let it do the arguing."}

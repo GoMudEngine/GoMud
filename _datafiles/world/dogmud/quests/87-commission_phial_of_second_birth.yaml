@@ -1,0 +1,41 @@
+questid: 87
+name: Commission Phial Of Second Birth
+description: >-
+  Veyra has agreed to distill the Phial of Second Birth. Gather what she
+  named, craft the base by your own hand, and bring it to her stations
+  to be finished.
+steps:
+  - id: start
+    description: "Veyra has taken the commission. Gather the reagents and
+      craft the base by your own hand."
+  - id: end
+    description: "The Phial of Second Birth is made."
+triggers:
+  - event: quest_granted
+    quest_token: "87-start"
+    actions:
+      - charge_gold: 15000
+      - learn_recipe: {recipe: "reduction-base"}
+      - learn_recipe: {recipe: "assemble-phial-of-second-birth"}
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "Half now. The recipes are yours. Reduce
+                it slow -- rush the base and there is no second birth
+                in it, only ash."}
+
+  - event: item_gain
+    item: 40181
+    conditions:
+      has: ["87-start"]
+      missing: ["87-end"]
+    actions:
+      - charge_gold: 15000
+      - set_flag: {key: "78-commission", value: "none"}
+      - grant: "87-end"
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "...it breathes. Whatever dies to fill it
+                will not stay dead long. The rest is owed -- and paid.
+                Use it with care."}

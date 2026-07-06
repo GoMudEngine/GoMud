@@ -177,6 +177,18 @@ func TestPinnacleAssemblyGate_RealData(t *testing.T) {
 	})
 	defer restore()
 
+	// isCraftableComponentTag (crafting.go) scopes require_own_components to
+	// tags that are some recipe's OUTPUT. hungering-guard and
+	// obsidian-edge-resin are genuinely crafted intermediates (unlike the
+	// drop-reagent ingredients on this same recipe, e.g. Folded-Space Silk),
+	// so register their real component recipes into the global registry —
+	// mirroring what LoadRecipeFiles() does at boot — so this test exercises
+	// the real gating path rather than accidentally passing because the
+	// tags look unclaimed.
+	RegisterRecipeForTest(recipes["hungering-guard"])
+	RegisterRecipeForTest(recipes["obsidian-edge-resin"])
+	ResetCraftableComponentTagsForTest()
+
 	const smith = "TestSmith"
 
 	// Case 1: BOTH components made by the crafter → accepted.

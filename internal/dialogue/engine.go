@@ -8,7 +8,7 @@ import (
 
 // checkQuestGate returns true if the player satisfies quest/item/flag conditions.
 // When ps is nil all checks pass (backward compat for mob-to-mob or non-user contexts).
-func checkQuestGate(questRequired, questExcluded []string, requiresItem int, flagRequired, flagExcluded map[string]string, ps *PlayerState) bool {
+func checkQuestGate(questRequired, questExcluded []string, requiresItem int, flagRequired, flagExcluded map[string]string, masterworkRequired int, ps *PlayerState) bool {
 	if ps == nil {
 		return true
 	}
@@ -26,6 +26,10 @@ func checkQuestGate(questRequired, questExcluded []string, requiresItem int, fla
 	}
 
 	if requiresItem > 0 && !ps.HasItem(requiresItem) {
+		return false
+	}
+
+	if masterworkRequired > 0 && ps.HasOwnMasterwork != nil && !ps.HasOwnMasterwork(masterworkRequired) {
 		return false
 	}
 
@@ -117,7 +121,7 @@ func MatchWithFallbackInfo(df *DialogueFile, mobInstanceId int, topic string, ps
 		}
 
 		// Apply quest/item gate
-		if !checkQuestGate(p.QuestRequired, p.QuestExcluded, p.RequiresItem, p.QuestFlagRequired, p.QuestFlagExcluded, ps) {
+		if !checkQuestGate(p.QuestRequired, p.QuestExcluded, p.RequiresItem, p.QuestFlagRequired, p.QuestFlagExcluded, p.MasterworkRequired, ps) {
 			continue
 		}
 
@@ -203,7 +207,7 @@ func TreeAdvance(df *DialogueFile, mobInstanceId, userId int, topic string, ps *
 		}
 
 		// Enforce quest/item gate
-		if !checkQuestGate(node.QuestRequired, node.QuestExcluded, node.RequiresItem, node.QuestFlagRequired, node.QuestFlagExcluded, ps) {
+		if !checkQuestGate(node.QuestRequired, node.QuestExcluded, node.RequiresItem, node.QuestFlagRequired, node.QuestFlagExcluded, node.MasterworkRequired, ps) {
 			continue
 		}
 
@@ -243,7 +247,7 @@ func Greet(df *DialogueFile, mobInstanceId, userId int, ps *PlayerState) (string
 	// Check quest-variant greetings first
 	if ps != nil {
 		for _, v := range df.Tree.Root.Variants {
-			if checkQuestGate(v.QuestRequired, v.QuestExcluded, 0, v.QuestFlagRequired, v.QuestFlagExcluded, ps) {
+			if checkQuestGate(v.QuestRequired, v.QuestExcluded, 0, v.QuestFlagRequired, v.QuestFlagExcluded, v.MasterworkRequired, ps) {
 				applyQuestEffects(v.GrantsQuest, v.RequiresItem, v.GivesItem, v.SetsQuestFlag, v.BumpsRep, v.GivesGold, ps)
 				return v.Text, v.Hints, true
 			}

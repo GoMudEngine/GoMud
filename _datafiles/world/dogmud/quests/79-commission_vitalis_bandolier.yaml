@@ -1,0 +1,42 @@
+questid: 79
+name: Commission Vitalis Bandolier
+description: >-
+  Veyra has agreed to make the Vitalis Bandolier. Gather what she named,
+  craft the parts by your own hand, and bring them to her stations to be
+  bound together.
+steps:
+  - id: start
+    description: "Veyra has taken the commission. Gather the reagents and
+      craft the parts by your own hand."
+  - id: end
+    description: "The Vitalis Bandolier is made."
+triggers:
+  - event: quest_granted
+    quest_token: "79-start"
+    actions:
+      - charge_gold: 17500
+      - learn_recipe: {recipe: "reinforced-harness"}
+      - learn_recipe: {recipe: "preservation-runes"}
+      - learn_recipe: {recipe: "assemble-vitalis-bandolier"}
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "Half now. The recipes are yours. Bind the
+                straps true -- this one has to breathe on its own before
+                I will call it finished."}
+
+  - event: item_gain
+    item: 40182
+    conditions:
+      has: ["79-start"]
+      missing: ["79-end"]
+    actions:
+      - charge_gold: 17500
+      - set_flag: {key: "78-commission", value: "none"}
+      - grant: "79-end"
+      - npc_say:
+          mob: 9584
+          lines:
+            - {delay: 1, text: "It moves like it wants to be worn. Good.
+                The rest is owed -- and paid. It's already found your
+                pulse -- don't go still on it."}

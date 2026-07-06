@@ -12,6 +12,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/quests"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -204,11 +205,28 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 	// already set this token (GrantQuest sets it synchronously for chain
 	// evaluation, then fires this event for rewards). In that case, proceed
 	// with reward processing.
-	if !questUser.Character.GiveQuestToken(evt.QuestToken) {
+	freshlyGranted := questUser.Character.GiveQuestToken(evt.QuestToken)
+	if !freshlyGranted {
 		// Already at this step? The quest engine pre-set it. Continue to rewards.
 		if !questUser.Character.HasQuest(evt.QuestToken) {
 			return events.Continue
 		}
+	}
+
+	// Bridge legacy/dialogue token grants into the questengine's quest_granted
+	// triggers. The questengine fires quest_granted only from its own internal
+	// grant chain, so a token granted by DIALOGUE (grantsQuest) or any other
+	// legacy path would otherwise never fire a questengine quest_granted trigger.
+	// Notify ONLY on a fresh grant: a questengine-initiated grant pre-sets the
+	// token synchronously (GiveQuestToken returns false above), so it is skipped
+	// here — preventing a double-fire of the same trigger.
+	if freshlyGranted {
+		qbridge := questengine.NewGameBridge(questUser, questUser.Character.RoomId)
+		questengine.GetEngine().Notify("quest_granted", questengine.EventDetails{
+			UserId:     questUser.UserId,
+			RoomId:     questUser.Character.RoomId,
+			QuestToken: evt.QuestToken,
+		}, qbridge, qbridge)
 	}
 
 	_, stepName := quests.TokenToParts(evt.QuestToken)
