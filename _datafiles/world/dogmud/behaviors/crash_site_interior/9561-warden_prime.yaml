@@ -1,0 +1,98 @@
+# Warden-Prime -- Teaching Boss Behavior Tree (crash-site-boss-mechanics
+# Chunk C). The introductory encounter for the Crash Site Interior's
+# endgame arc: teaches the counterplay for the boss abilities that return,
+# harder, on The Core Guardian (mobid 9562, a later chunk). Two mechanics
+# only:
+#
+#   1. Core Discharge -- a telegraphed (base_folds: 2) party-wide harm
+#      spell cast on a fixed cooldown while in combat. The windup is
+#      sourced from the spell's own `cast_room_text` (fired once at cast
+#      initiation, see internal/mobcommands/cast.go), followed by the
+#      engine's generic per-round "weaves magic with focused intent" line
+#      while the remaining fold(s) accumulate (internal/hooks/
+#      NewRound_DoCombat_helpers.go handleMobFoldCasting -- StillCasting
+#      case, hardcoded, not spell-customizable for mob casters). It is
+#      interruptible for free by the existing disruptor system (a thrown
+#      flashbang or a disruption spell) per Chunk A, since any mob cast
+#      with base_folds >= 2 auto-telegraphs and is cancellable.
+#      Verified there is no custom "release" text hook for mob casts:
+#      WaitUserText/WaitRoomText/MagicUserText/MagicRoomText are consumed
+#      only by the PLAYER fold-casting path (handlePlayerFoldCasting /
+#      resolveSpell) -- dead fields if set on a mob-only spell. The
+#      resolution line mob-casters get instead is the engine's own
+#      auto-generated per-target damage text, which surfaces the spell's
+#      `name` ("Core Discharge") against each hit player.
+#      Confirmed via internal/hooks/spell_resolution.go resolveMobSpell
+#      (~line 1018): for a mob caster, HarmArea populates BOTH
+#      cs.TargetMobInstanceIds (other non-charmed, non-noncombatant mobs
+#      in room) AND cs.TargetUserIds (room.GetPlayers(FindAll)) -- so
+#      core-discharge genuinely hits every player in the room when
+#      Warden-Prime casts it.
+#
+#   2. Repair Frame add -- spawned once, at 50% HP, via `summon_companion`
+#      (deliberately NOT `spawn_mob`: that action creates the mob instance
+#      but never calls room.AddMob, so it would never register into the
+#      room's mob list -- room.GetMobs()/"look"/targeting all read
+#      room.mobs, an explicit slice only populated by AddMob. `spawn_mob`
+#      has zero existing usage anywhere in this codebase's behavior trees,
+#      so this looks unexercised/broken. `summon_companion` DOES call
+#      room.AddMob and is the exact pattern Old Edrin
+#      (behaviors/marches_spur_road/275-old_edrin.yaml) already uses to
+#      summon combat adds on a mob_hurt/HP trigger -- mirrored here).
+#      Repair Frame's own tree (9585-repair_frame.yaml) already branches
+#      on `mob_in_room: 9561` to heal Warden-Prime by name (Task A6's
+#      `cast` target passthrough) -- this tree only has to spawn it.
+#
+# No drain, no grapple, no sweep -- those are Core Guardian mechanics
+# (Chunk D, a full fight). This is the teaching version.
+
+tree:
+  type: selector
+  children:
+
+    # ── Core Discharge: telegraphed AoE, fixed cadence while in combat ──
+    - type: decorator
+      event: mob_idle
+      mod: cooldown
+      rounds: 6
+      child:
+        type: sequence
+        children:
+          - type: condition
+            check: mob_in_combat
+          - type: action
+            do: cast
+            spell: core-discharge
+
+    # ── Repair Frame: one-shot spawn at 50% HP (state-gated so it never
+    #    re-fires if Warden-Prime's HP crosses 50% more than once, e.g.
+    #    after a Repair Frame heal ticks it back up) ──
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 50
+        - type: decorator
+          mod: invert
+          child:
+            type: condition
+            check: state_equals
+            key: repair_frame_spawned
+            value: "true"
+        - type: action
+          do: set_state
+          key: repair_frame_spawned
+          value: "true"
+        - type: action
+          do: send_room_text
+          text: >-
+            Warden-Prime's core flickers and dims -- a spindly Repair
+            Frame wakes from a wall alcove and skitters in on a column
+            of cold light to mend it.
+        - type: action
+          do: summon_companion
+          mob_id: 9585
+          count: 1
+          base_pool: 50
+          hostile: true

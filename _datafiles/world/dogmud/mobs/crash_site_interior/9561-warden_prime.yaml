@@ -1,7 +1,7 @@
 mobid: 9561
 zone: Crash Site Interior
 behavior_archetype: leader
-aiprofile: brute
+aiprofile: aggressive
 archetype: fighting
 submission_policy: lethal
 surrender_policy: never
