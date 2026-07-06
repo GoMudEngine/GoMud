@@ -952,6 +952,22 @@ func resolveMobSpell(mob *mobs.Mob, cs activity.CastingData, spellData *spells.S
 		return
 	}
 
+	// drain_area is a boss-ability effect type: it drains every living
+	// player in the room and heals the caster by the aggregate lifesteal
+	// (actions.ExecuteDrainArea). It bypasses the HarmArea target
+	// population + per-target opposed-roll dispatch below entirely — the
+	// area drain resolves its own per-player hit/miss via ExecuteSkillMove
+	// inside ExecuteDrainArea, so running it through the generic
+	// spellAttack-vs-defense roll here would double-roll each player.
+	// Reachable ONLY at fold-cast completion (handleMobFoldCasting calls
+	// resolveMobSpell here), so a spell authored with EffectType
+	// "drain_area" and BaseFolds >= 2 telegraphs and is interruptible for
+	// free — this function never runs until the cast finishes.
+	if spellData.EffectType == "drain_area" {
+		resolveMobDrainArea(mob, room, spellData)
+		return
+	}
+
 	skillLevel := mob.Character.GetSkillLevel(skills.Spellcasting)
 	spellAttack := characters.CalcSpellAttack(mob.Character.Stats.Willpower.ValueAdj, skillLevel)
 	magnitude := spellData.EffectMagnitude
@@ -1005,6 +1021,53 @@ func resolveMobSpell(mob *mobs.Mob, cs activity.CastingData, spellData *spells.S
 			resolveMobSpellAgainstPlayer(mob, target, room, spellData, spellAttack, magnitude)
 		}
 	}
+}
+
+// resolveMobDrainArea is the resolution handler for a mob-cast spell whose
+// EffectType is "drain_area" (the Core Guardian's "core recharge" ability
+// design — see docs/superpowers/plans/2026-07-06-crashsite-boss-mechanics.md
+// Chunk D). It drains every living player in the room and heals the caster
+// by the aggregate lifesteal via actions.ExecuteDrainArea (which mirrors the
+// single-target vampire ExecuteDrain math exactly).
+//
+// Author's note for the spell YAML that will invoke this (Task D2): give it
+// effect_type: drain_area, a type that reads as a room-wide harm ability
+// (e.g. harm-area) for AI-targeting purposes even though this handler
+// ignores the generic HarmArea per-target dispatch, and base_folds >= 2 so
+// it telegraphs via the existing fold-cast windup and is interruptible via
+// the disruptor system — this function only runs once fold accumulation
+// completes (handleMobFoldCasting -> resolveMobSpell -> here), so telegraph
+// and interrupt are inherited for free; no changes needed here for either.
+func resolveMobDrainArea(mob *mobs.Mob, room *rooms.Room, spellData *spells.SpellData) {
+	result := actions.ExecuteDrainArea(actions.NewMobActorInRoom(mob, room))
+
+	if !result.Executed {
+		sendVisualRoomText(room, messaging.CategorySpellDisruption, fmt.Sprintf(
+			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> crackles through the air, finding no one to drain.`,
+			mob.Character.Name, spellData.Name))
+		return
+	}
+
+	for _, pr := range result.PlayerResults {
+		if !pr.MoveResult.Hit {
+			continue
+		}
+		target := users.GetByUserId(pr.UserId)
+		if target == nil {
+			continue
+		}
+		target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
+			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> saps your strength! (<ansi fg="damage">%s</ansi>)`,
+			mob.Character.Name, spellData.Name,
+			combat.GetDamageDescription(pr.MoveResult.Damage, target.Character.HealthMax.Value)))
+		if !target.Character.IsInCombat() {
+			target.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
+		}
+	}
+
+	sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
+		`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> tears the life from everyone in the room!`,
+		mob.Character.Name, spellData.Name))
 }
 
 // applyMobSelfEffect handles self-targeted help spells (heal, minor-shield).
