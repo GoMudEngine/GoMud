@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
@@ -14,9 +15,30 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
+
+// maybeInterruptOnThrow cancels a mob's in-progress fold-cast if the thrown
+// item id is a configured boss-interrupt disruptor
+// (Balance.BossInterruptItemIds) AND the mob is currently casting
+// (Character.IsCasting()). Generic (non-allowlisted) thrown items never
+// interrupt a cast, even on a hit. Reuses the shared InterruptTargetCast
+// primitive (conviction refund + TriggerCastCancel) rather than reimplementing
+// cast cancellation here. Returns true if a cast was actually interrupted.
+func maybeInterruptOnThrow(mob *mobs.Mob, thrownItemId int, by state.ActorRef) bool {
+	if mob == nil {
+		return false
+	}
+	if !configs.GetBalanceConfig().IsBossInterruptItem(thrownItemId) {
+		return false
+	}
+	if !mob.Character.IsCasting() {
+		return false
+	}
+	return actions.InterruptTargetCast(&mob.Character, by)
+}
 
 func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
@@ -168,6 +190,11 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		}
 
 		hitCount++
+
+		// Boss-interrupt: a configured disruptor thrown into a mid-fold-cast
+		// mob cancels the cast, regardless of whether the item also deals
+		// damage or applies buffs.
+		maybeInterruptOnThrow(mob, matchItem.ItemId, state.ActorRef{UserId: user.UserId})
 
 		// Apply effects to mob
 		if hasDamage {
