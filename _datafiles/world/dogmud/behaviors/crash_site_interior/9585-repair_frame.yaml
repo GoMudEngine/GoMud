@@ -30,7 +30,7 @@ tree:
 
     # ── Heal Warden-Prime ──
     - type: decorator
-      event: mob_idle
+      event: mob_combat_round
       mod: cooldown
       rounds: 8
       child:
@@ -53,7 +53,7 @@ tree:
 
     # ── Heal The Core Guardian ──
     - type: decorator
-      event: mob_idle
+      event: mob_combat_round
       mod: cooldown
       rounds: 8
       child:

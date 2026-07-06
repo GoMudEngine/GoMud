@@ -52,7 +52,7 @@ tree:
 
     # ── Core Discharge: telegraphed AoE, fixed cadence while in combat ──
     - type: decorator
-      event: mob_idle
+      event: mob_combat_round
       mod: cooldown
       rounds: 6
       child:

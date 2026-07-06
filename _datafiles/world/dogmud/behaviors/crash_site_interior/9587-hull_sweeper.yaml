@@ -14,7 +14,7 @@ tree:
   children:
 
     - type: decorator
-      event: mob_idle
+      event: mob_combat_round
       mod: cooldown
       rounds: 15
       child:
