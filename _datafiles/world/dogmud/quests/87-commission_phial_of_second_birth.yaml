@@ -20,9 +20,9 @@ triggers:
       - npc_say:
           mob: 9584
           lines:
-            - {delay: 1, text: "Half now. The recipe is yours. Reduce it
-                slow -- rush the base and there is no second birth in
-                it, only ash."}
+            - {delay: 1, text: "Half now. The recipes are yours. Reduce
+                it slow -- rush the base and there is no second birth
+                in it, only ash."}
 
   - event: item_gain
     item: 40181

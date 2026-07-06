@@ -77,8 +77,8 @@ tree:
         questFlagRequired:
           "78-commission": "none"
         text: "You've seen what's under the Crash Site, and you're
-          still standing here asking me for work. Good. That tells me
-          something. Name what you want made."
+          still standing here asking me for work. Good. Name what you
+          want made."
         hints: "You could ask Veyra about a specific commission."
 
       # ── Known and ready, ordinary case ────────────────────────────
@@ -132,12 +132,13 @@ tree:
         "78-commission": "none"
       text: "Nine things I'll make, one at a time. The Vitalis
         Bandolier -- thirty-five thousand. The Blackrazor -- fifty.
-        The Wayfarer's Pack -- twenty-five. The Aegis of Mockery --
-        forty. The Thornwall Harness -- thirty. The Seething Prism --
-        forty. The Zephyr Treads -- twenty-five. The Hollow Choir Staff
-        -- forty-five. The Phial of Second Birth -- thirty. Half the
-        gold committed when you name it, half when I hand it over. Say
-        which one and I'll tell you the rest."
+        The Wayfarer's Bottomless Pack -- twenty-five. The Aegis of
+        Mockery -- forty. The Thornwall Harness -- thirty. The
+        Seething Prism -- forty. The Zephyr Treads -- twenty-five.
+        The Staff of the Hollow Choir -- forty-five. The Phial of
+        Second Birth -- thirty. Half the gold committed when you name
+        it, half when I hand it over. Say which one and I'll tell you
+        the rest."
       hints: "You could ask Veyra to commission a specific piece --
         for example, ask veyra blackrazor, or ask veyra bandolier."
 
@@ -213,10 +214,10 @@ tree:
         key: "78-commission"
         value: "aegis"
       text: "The Aegis of Mockery. A shield that answers a blocked blow
-        with one of its own, aimed at everyone nearby who deserved it.
-        Blacksmithing and a housing for the voice inside it. Forty
-        thousand in gold -- half committed now, half when I hand it
-        over."
+        by putting everyone nearby who deserved it flat on their
+        heels. Blacksmithing and a housing for the voice inside it.
+        Forty thousand in gold -- half committed now, half when I
+        hand it over."
       hints: "You have started the Aegis of Mockery commission. Speak
         with Veyra again to learn what materials she needs from you."
 

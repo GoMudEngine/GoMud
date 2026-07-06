@@ -38,4 +38,5 @@ triggers:
           mob: 9584
           lines:
             - {delay: 1, text: "It moves like it wants to be worn. Good.
-                The rest is owed -- and paid. Wear it well."}
+                The rest is owed -- and paid. It's already found your
+                pulse -- don't go still on it."}
