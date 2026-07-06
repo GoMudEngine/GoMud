@@ -281,7 +281,32 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 	dmgDealt := applyMobEffect(user, user.Character, mob, room, spellData, magnitude, isCrit)
 	// Stage 30.1: Record spell hit with actual damage
 	combat.RecordSpell(combat.User, combat.Mob, true, isCrit, false, false, dmgDealt, atkRoll.ZScore, user.Character, &mob.Character, round)
+
+	// Boss-interrupt: a configured disruption spell cancels the mob's
+	// in-progress fold-cast after the effect applies.
+	maybeInterruptSpellOnMob(mob, spellData.SpellId, state.ActorRef{UserId: user.UserId})
+
 	return false
+}
+
+// maybeInterruptSpellOnMob cancels a mob's in-progress fold-cast if spellId
+// is a configured boss-interrupt disruption spell (Balance.BossInterruptSpellIds)
+// AND the mob is currently casting (Character.IsCasting()). Non-allowlisted
+// spells never interrupt, even on a successful hit. Reuses the shared
+// InterruptTargetCast primitive (conviction refund + TriggerCastCancel)
+// rather than reimplementing cast cancellation here. Returns true if a cast
+// was actually interrupted.
+func maybeInterruptSpellOnMob(mob *mobs.Mob, spellId string, by state.ActorRef) bool {
+	if mob == nil {
+		return false
+	}
+	if !configs.GetBalanceConfig().IsBossInterruptSpell(spellId) {
+		return false
+	}
+	if !mob.Character.IsCasting() {
+		return false
+	}
+	return actions.InterruptTargetCast(&mob.Character, by)
 }
 
 // spellSchoolCategory picks the messaging Category from a spell's
