@@ -185,16 +185,18 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			break // Fumble ends the AoE loop
 		}
 
+		// Boss-interrupt: a configured disruptor thrown at a mid-fold-cast mob
+		// cancels the cast whether or not the throw wins its damage roll — the
+		// interrupt is the disruptor's purpose, not a side effect of a hit. Fires
+		// before the attack-success gate so a tanky boss can't simply dodge the
+		// interrupt. (Fumbles break above, so a botched throw still can't cancel.)
+		maybeInterruptOnThrow(mob, matchItem.ItemId, state.ActorRef{UserId: user.UserId})
+
 		if !attackSuccess {
 			continue
 		}
 
 		hitCount++
-
-		// Boss-interrupt: a configured disruptor thrown into a mid-fold-cast
-		// mob cancels the cast, regardless of whether the item also deals
-		// damage or applies buffs.
-		maybeInterruptOnThrow(mob, matchItem.ItemId, state.ActorRef{UserId: user.UserId})
 
 		// Apply effects to mob
 		if hasDamage {

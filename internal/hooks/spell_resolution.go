@@ -268,6 +268,12 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 		return true
 	}
 
+	// Boss-interrupt: a disruption spell cast at a mid-fold-cast mob cancels the
+	// cast whether or not it fizzles for damage — the interrupt is the point, and
+	// a tanky boss shouldn't dodge it. (Backfires return above, so a botched cast
+	// still can't interrupt.)
+	maybeInterruptSpellOnMob(mob, spellData.SpellId, state.ActorRef{UserId: user.UserId})
+
 	if !success {
 		user.SendText(messaging.CategorySpellDisruption, fmt.Sprintf(
 			`<ansi fg="yellow">Your %s fizzles against %s.</ansi>`,
@@ -281,10 +287,6 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 	dmgDealt := applyMobEffect(user, user.Character, mob, room, spellData, magnitude, isCrit)
 	// Stage 30.1: Record spell hit with actual damage
 	combat.RecordSpell(combat.User, combat.Mob, true, isCrit, false, false, dmgDealt, atkRoll.ZScore, user.Character, &mob.Character, round)
-
-	// Boss-interrupt: a configured disruption spell cancels the mob's
-	// in-progress fold-cast after the effect applies.
-	maybeInterruptSpellOnMob(mob, spellData.SpellId, state.ActorRef{UserId: user.UserId})
 
 	return false
 }
