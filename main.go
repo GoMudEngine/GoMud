@@ -265,6 +265,11 @@ func main() {
 	// internal/rooms → internal/hooks import cycle (hooks imports rooms).
 	rooms.SetCompanionTransport(hooks.CompanionTransportCallback)
 
+	// Wire the sweep_companions btree action into
+	// hooks.PushCompanionsToRoom. Avoids the internal/behaviortree →
+	// internal/hooks import cycle (hooks imports behaviortree).
+	behaviortree.SetCompanionSweep(hooks.CompanionSweepCallback)
+
 	// Register the grace-period untargetable-user check so SetAggro
 	// can short-circuit against grace-protected respawning players
 	// without characters/aggro.go needing to import users (would

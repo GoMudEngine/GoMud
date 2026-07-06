@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/exit"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
@@ -233,4 +234,132 @@ func TestTransportCompanions_MovesCompanionAndClearsAggro(t *testing.T) {
 		"companion must be in destination room")
 	assert.Nil(t, mob.Character.Aggro,
 		"aggro must be cleared because target (99) is not in dest room")
+}
+
+// ─── PushCompanionsToRoom tests ───────────────────────────────────────────────
+
+// TestPushCompanionsToRoom_NilOwner verifies that a nil owner does not panic.
+func TestPushCompanionsToRoom_NilOwner(t *testing.T) {
+	cleanup := seedFollowRegistries(t)
+	defer cleanup()
+
+	assert.NotPanics(t, func() {
+		PushCompanionsToRoom(nil, 2)
+	})
+}
+
+// TestPushCompanionsToRoom_MovesCompanionGearIntact is the load-bearing
+// gear-safety test: a companion carrying equipped gear + backpack items is
+// pushed to a new room. The companion mob instance must still EXIST
+// (not destroyed) and its Equipment/Items must be byte-for-byte unchanged,
+// just relocated to the new room.
+func TestPushCompanionsToRoom_MovesCompanionGearIntact(t *testing.T) {
+	cleanup := seedFollowRegistries(t)
+	defer cleanup()
+
+	owner := newOwnerWithCompanion(1, 1)
+	cleanupUsers := users.SeedUsersForTest(map[int]*users.UserRecord{1: owner})
+	defer cleanupUsers()
+
+	mob := mobs.GetInstance(200)
+	require.NotNil(t, mob)
+
+	// Give the companion gear-safety-relevant state: equipped weapon +
+	// backpack item.
+	mob.Character.Equipment.Weapon = items.Item{ItemId: 555, Uses: 3}
+	mob.Character.Items = []items.Item{{ItemId: 777, Uses: 1}}
+
+	PushCompanionsToRoom(owner, 2)
+
+	// Companion instance must still exist post-move (relocated, not
+	// destroyed).
+	movedMob := mobs.GetInstance(200)
+	require.NotNil(t, movedMob, "companion mob instance must still exist after sweep")
+
+	assert.Equal(t, 2, movedMob.Character.RoomId,
+		"companion must now be in the destination room")
+	assert.Equal(t, 555, movedMob.Character.Equipment.Weapon.ItemId,
+		"equipped weapon must survive the sweep untouched")
+	assert.Equal(t, 3, movedMob.Character.Equipment.Weapon.Uses,
+		"equipped weapon uses must survive the sweep untouched")
+	require.Len(t, movedMob.Character.Items, 1)
+	assert.Equal(t, 777, movedMob.Character.Items[0].ItemId,
+		"backpack item must survive the sweep untouched")
+
+	// Companion must no longer be tracked in the old room.
+	oldRoom := rooms.LoadRoom(1)
+	require.NotNil(t, oldRoom)
+	assert.NotContains(t, oldRoom.GetMobs(), 200,
+		"companion must be removed from the old room's mob list")
+
+	// Companion must be tracked in the new room.
+	newRoom := rooms.LoadRoom(2)
+	require.NotNil(t, newRoom)
+	assert.Contains(t, newRoom.GetMobs(), 200,
+		"companion must be added to the destination room's mob list")
+}
+
+// TestPushCompanionsToRoom_AlreadyInDest verifies a companion already in the
+// destination room is left alone (no duplicate move).
+func TestPushCompanionsToRoom_AlreadyInDest(t *testing.T) {
+	cleanup := seedFollowRegistries(t)
+	defer cleanup()
+
+	owner := newOwnerWithCompanion(1, 2)
+	cleanupUsers := users.SeedUsersForTest(map[int]*users.UserRecord{1: owner})
+	defer cleanupUsers()
+
+	mob := mobs.GetInstance(200)
+	require.NotNil(t, mob)
+	mob.Character.RoomId = 2
+
+	PushCompanionsToRoom(owner, 2)
+
+	assert.Equal(t, 2, mob.Character.RoomId,
+		"companion RoomId must stay at 2 — no double-move")
+}
+
+// TestPushCompanionsToRoom_CastInterrupt verifies an in-progress companion
+// cast is aborted by the sweep (mirrors TransportCompanions).
+func TestPushCompanionsToRoom_CastInterrupt(t *testing.T) {
+	cleanup := seedFollowRegistries(t)
+	defer cleanup()
+
+	owner := newOwnerWithCompanion(1, 1)
+	cleanupUsers := users.SeedUsersForTest(map[int]*users.UserRecord{1: owner})
+	defer cleanupUsers()
+
+	mob := mobs.GetInstance(200)
+	require.NotNil(t, mob)
+	mob.Character.Activity = activity.NewMachine()
+	_ = mob.Character.Activity.TransitionToCasting(
+		activity.CastingData{SpellId: "sparks", FoldsNeeded: 3},
+		state.TransitionReason{Trigger: activity.TriggerCastBegin},
+	)
+
+	PushCompanionsToRoom(owner, 2)
+
+	assert.True(t, mob.Character.Activity == nil || mob.Character.Activity.IsFree(),
+		"Activity must be Free (cast cleared) on sweep")
+	assert.Equal(t, 2, mob.Character.RoomId,
+		"companion must be in destination room after cast-interrupt")
+}
+
+// TestPushCompanionsToRoom_StaleCompanionEntry verifies a companion whose mob
+// instance no longer exists is silently skipped without panicking.
+func TestPushCompanionsToRoom_StaleCompanionEntry(t *testing.T) {
+	cleanup := seedFollowRegistries(t)
+	defer cleanup()
+
+	u := users.NewTestUser(1, "owner", "Owner", 9002)
+	u.Character.RoomId = 1
+	u.Character.Companions = []characters.CompanionInfo{
+		{InstanceId: 999, Name: "Ghost", MobId: 10},
+	}
+	cleanupUsers := users.SeedUsersForTest(map[int]*users.UserRecord{1: u})
+	defer cleanupUsers()
+
+	assert.NotPanics(t, func() {
+		PushCompanionsToRoom(u, 2)
+	})
 }

@@ -2,7 +2,8 @@ package behaviortree
 
 // actions_mob.go — mob movement, spawning, and instance actions:
 // actSpawnMob, actSummonCompanion, actCommand, actCommandMob, actCommandBestOf,
-// actTrySpecialMove, actMove, actOpenInstancePortal, actCreateInstance
+// actTrySpecialMove, actSweepCompanions, actMove, actOpenInstancePortal,
+// actCreateInstance
 // helpers: splitTwo, parseIntStr
 
 import (
@@ -249,6 +250,34 @@ func actGoToCallerRoom(params map[string]any, ctx *EvalContext) Result {
 		}
 	}
 	return Failure
+}
+
+// actSweepCompanions relocates every player-in-room's live companions to a
+// destination room (the "airlock"), gear intact. Used by the Hull Sweeper
+// boss add to shove conjured allies (golems/wolves/undead) out of the boss
+// fight without destroying them.
+//
+// params: dest_room (int) — the room id companions are pushed into.
+//
+// Delegates to hooks.PushCompanionsToRoom via the companionSweep callback
+// (wired in main.go) to avoid a behaviortree → hooks import cycle (hooks
+// already imports behaviortree).
+func actSweepCompanions(params map[string]any, ctx *EvalContext) Result {
+	if companionSweep == nil {
+		return Failure
+	}
+	destRoomId := getIntParam(params, "dest_room")
+	if destRoomId == 0 {
+		return Failure
+	}
+	room := rooms.LoadRoom(ctx.RoomId)
+	if room == nil {
+		return Failure
+	}
+	for _, playerId := range room.GetPlayers() {
+		companionSweep(playerId, destRoomId)
+	}
+	return Success
 }
 
 func actMove(params map[string]any, ctx *EvalContext) Result {
