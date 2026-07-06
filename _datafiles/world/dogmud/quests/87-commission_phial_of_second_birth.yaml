@@ -4,6 +4,15 @@ description: >-
   Veyra has agreed to distill the Phial of Second Birth. Gather what she
   named, craft the base by your own hand, and bring it to her stations
   to be finished.
+# The Phial is a consumable rebirth potion — a player may commission it again.
+# Repeatable with no timer: the cost (15k+15k gold + the reduction-base craft +
+# unmaking-distillate/first-bloom-nectar/blood-moss/salt-pouch/bottle each time)
+# is the throttle. cooldown_rounds MUST stay 0 — a >0 cooldown would let the
+# dialogue set 78-commission=phial while HandleQuestUpdate refuses the re-grant,
+# stranding the player (flag set, no active quest). On completion the legacy
+# end-handler ClearQuestToken wipes 87's progress so Veyra's offer re-shows.
+repeatable: true
+cooldown_rounds: 0
 steps:
   - id: start
     description: "Veyra has taken the commission. Gather the reagents and
