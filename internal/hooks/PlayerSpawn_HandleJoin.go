@@ -6,6 +6,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/justice"
@@ -207,6 +208,22 @@ func HandleJoin(e events.Event) events.ListenerReturn {
 	if user == nil {
 		mudlog.Error("HandleJoin", "error", fmt.Sprintf(`user %d not found`, evt.UserId))
 		return events.Cancel
+	}
+
+	// Auto-flag AI-port characters so leaderboards exclude them. Bots play via
+	// an AI connection but never get the persisted IsAI account flag on their
+	// own; the leaderboard filters on UserRecord.IsAI (online + offline), so
+	// persist it once here the first time they enter the world on the AI port.
+	if !user.IsAI {
+		if cd := connections.Get(user.ConnectionId()); cd != nil && cd.ConnType() == connections.ConnAI {
+			user.IsAI = true
+			// Persist so offline leaderboard exclusion works even on an unclean
+			// disconnect. Fires once per account (the !user.IsAI guard above).
+			if err := users.SaveUser(*user); err != nil {
+				mudlog.Error("HandleJoin", "auto-flag save failed", user.Username, "error", err)
+			}
+			mudlog.Info("HandleJoin", "auto-flagged AI account", user.Username)
+		}
 	}
 
 	user.EventLog.Add(`conn`, fmt.Sprintf(`<ansi fg="username">%s</ansi> entered the world`, user.Character.Name))
