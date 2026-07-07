@@ -38,6 +38,7 @@ type SpellData struct {
 	BuffIds             []int  `yaml:"buff_ids,omitempty"`             // Buff IDs to apply (for "buff" effect type)
 	QuestRequired       string `yaml:"quest_required,omitempty"`       // Quest token required before spell can be discovered
 	NoDamageInterrupt   bool   `yaml:"no_damage_interrupt,omitempty"`  // Telegraphed casts: skip damage/position concentration-break (still interrupted by the disruptor system)
+	IgnoreMoveCooldown  bool   `yaml:"ignore_move_cooldown,omitempty"` // Scripted boss abilities: bypass the shared special-move cast cooldown (btree controls cadence)
 
 	// Companion summoning fields — replaces JS onMagic for summon spells
 	SummonMobId          int    `yaml:"summon_mob_id,omitempty"`

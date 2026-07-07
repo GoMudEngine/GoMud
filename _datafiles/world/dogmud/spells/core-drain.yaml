@@ -26,3 +26,4 @@ no_damage_interrupt: true
 effect_magnitude: 100
 cast_user_text: "Power gathers inward, filaments of cold light reaching for your prey."
 cast_room_text: "{source}'s chest-cavity irises open -- filaments of cold light reach toward you. It will feed on the room next round."
+ignore_move_cooldown: true

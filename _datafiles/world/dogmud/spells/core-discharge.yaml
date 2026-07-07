@@ -22,3 +22,4 @@ categories:
   - harm_multi
 cast_user_text: "Power floods inward, gathering at your core."
 cast_room_text: "{source}'s core flares white-hot -- the air begins to scream."
+ignore_move_cooldown: true
