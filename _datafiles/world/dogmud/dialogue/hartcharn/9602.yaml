@@ -1,0 +1,50 @@
+mobid: 9602
+zone: Hartcharn
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome to the rune-carver's hut. Mind the circle, do not step
+        on the chalk."
+      - "Crane. What do you need set or bound?"
+  - keywords: ["buy", "sell", "shop", "wares", "goods", "enchant",
+      "chrysalis", "shard"]
+    responses:
+      - "Shards, binding paste, and a setting or two if the last batch
+        held true. Ask specific and I will tell you what is finished."
+      - "I work in chrysalis shard and fine wire, mostly. Careful work,
+        slow work, but it holds when I am done."
+  - keywords: ["circle", "chalk", "working"]
+    responses:
+      - "I re-chalk the circle every few days. The lines wear thin
+        under all the working, same as a path through grass."
+  - keywords: [""]
+    responses:
+      - "Mind the circle."
+      - "I am listening, but do not cross the chalk while I work."
+
+tree:
+  root:
+    text: "Welcome to the rune-carver's hut. Mind the circle, do not
+      step on the chalk."
+    hints: "You could ask Sefa Crane about her wares or the enchanting
+      circle."
+
+  nodes:
+    - id: stock_general
+      triggers: ["buy", "sell", "shop", "wares", "goods", "enchant",
+        "chrysalis", "shard", "stock"]
+      text: "Chrysalis shards, binding paste, mutation catalyst when I
+        have it steady. Ask specific and I will tell you what is set
+        and what is still in the circle."
+      hints: "You could ask Sefa Crane about the circle."
+
+    - id: circle_note
+      triggers: ["circle", "chalk", "working", "sigil"]
+      text: "Every line has to be re-traced sooner or later. Rush the
+        chalk and the working comes out crooked, and crooked work in
+        this trade tends to bite."
+
+memory:
+  expiryPeriod: ""

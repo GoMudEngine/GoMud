@@ -1,0 +1,18 @@
+id: hartcharn_enchanter
+description: "Enchanter Sefa Crane's daily routine: works the circle by day, sleeps in the rune-carver's hut by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6457
+    activity: ""
+    idlecommands:
+      - emote traces a line of the circle, muttering under her breath.
+      - emote holds a chrysalis shard up to the thin window light.
+      - say This chalk will need re-drawing again before long.
+  - start: 22
+    end: 6
+    target_room: 6457
+    activity: sleeping
+    idlecommands:
+      - emote is curled up on a mat just outside the chalked circle.
+      - emote breathes slow and even, asleep in the dim hut.

@@ -1,0 +1,18 @@
+id: hartcharn_jeweler
+description: "Jeweler Til Marsh's daily routine: works the bench by day, sleeps in the gem hut by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6458
+    activity: ""
+    idlecommands:
+      - emote holds a polished stone up to the window, turning it slowly.
+      - emote squints through a lens at a half-finished ring.
+      - say This setting will hold once the wire is drawn tighter.
+  - start: 22
+    end: 6
+    target_room: 6458
+    activity: sleeping
+    idlecommands:
+      - emote is curled up on a narrow cot beside the workbench.
+      - emote breathes slow and even, asleep among the stone trays.

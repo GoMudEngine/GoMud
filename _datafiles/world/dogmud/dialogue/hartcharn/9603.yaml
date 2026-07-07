@@ -1,0 +1,49 @@
+mobid: 9603
+zone: Hartcharn
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome to the gem hut. Mind the bench, everything on it is
+        small and easily lost."
+      - "Marsh. Looking for a setting, or bringing me stone to work?"
+  - keywords: ["buy", "sell", "shop", "wares", "goods", "gem", "ring",
+      "wire"]
+    responses:
+      - "Wire, polished stone, and a ring or pendant if the last batch
+        set clean. Ask specific and I will show you the tray."
+      - "I set stones the foragers bring down off the hills. Copper and
+        silver mostly, gold when someone pays for it."
+  - keywords: ["stone", "polish", "setting"]
+    responses:
+      - "Stream stone polishes up nicer than most people expect. Give
+        it a good light and a patient hand and it shows its colour."
+  - keywords: [""]
+    responses:
+      - "Careful of the bench, please."
+      - "I am here. What do you need?"
+
+tree:
+  root:
+    text: "Welcome to the gem hut. Mind the bench, everything on it is
+      small and easily lost."
+    hints: "You could ask Til Marsh about her wares or her stonework."
+
+  nodes:
+    - id: stock_general
+      triggers: ["buy", "sell", "shop", "wares", "goods", "gem", "ring",
+        "wire", "stock"]
+      text: "Copper and silver wire, polished stone, gem dust for the
+        finer settings. Ask specific and I will tell you what is ready
+        and what is still on the bench."
+      hints: "You could ask Til Marsh about her stonework."
+
+    - id: stone_note
+      triggers: ["stone", "polish", "setting", "gem"]
+      text: "Good light and a patient hand, that is the whole trick.
+        Rush a setting and the stone comes loose the first time it is
+        knocked against something."
+
+memory:
+  expiryPeriod: ""

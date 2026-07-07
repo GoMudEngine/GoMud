@@ -1,0 +1,102 @@
+mobid: 9603
+zone: Hartcharn
+craft_support: jewelcrafting
+behavior_archetype: noncombat_shopkeeper
+statpool: 66
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+schedule_id: hartcharn_jeweler
+groups:
+  - humanoid
+  - hartcharn_folk
+idlecommands:
+  - 'emote holds a polished stone up to the window, turning it slowly'
+  - 'emote polishes a bit of wire setting with a soft cloth'
+  - ''
+  - 'emote squints through a lens at a half-finished ring'
+  - ''
+activitylevel: 15
+crafter: true
+crafterskill: jewelcrafting
+crafterrecipeids:
+  - chrysalis-setting
+  - copper-ring
+  - crystalline-decanter
+  - engraved-bracelet
+  - gem-set-necklace
+  - gold-signet-ring
+  - master-lockpicks
+  - masterwork-gem-pendant
+  - polished-stone-amulet
+  - precision-disarm-kit
+  - sealed-phial
+  - silver-ring
+  - simple-pendant
+crafterrestockmaterials:
+  - 40021
+  - 40022
+  - 40024
+  - 40026
+character:
+  name: Til Marsh
+  description: |
+    I set stones for a living, mostly stream-polished pieces the
+    foragers bring down off the hills. It is quiet work and it suits
+    me -- the light in this hut is good for close labour, and I would
+    rather squint at a ring than make conversation most days.
+  speciesid: 1
+  level: 1
+  gold: 1000
+  skills:
+    jewelcrafting: 10
+  stats:
+    dexterity:
+      training: 15
+    perception:
+      training: 10
+    charisma:
+      training: 5
+  shop:
+    # Thornwall refined (in-shop crafted)
+    - itemid: 40021    # copper wire
+      quantity: 0
+      quantitymax: 0
+      price: 10
+    - itemid: 40022    # silver wire
+      quantity: 0
+      quantitymax: 0
+      price: 22
+    - itemid: 40023    # gold wire
+      quantity: 0
+      quantitymax: 0
+      price: 55
+    - itemid: 40024    # polished stone
+      quantity: 0
+      quantitymax: 0
+      price: 7
+    - itemid: 40025    # raw gem
+      quantity: 0
+      quantitymax: 0
+      price: 35
+    - itemid: 40026    # gem dust
+      quantity: 0
+      quantitymax: 0
+      price: 5
+    # Stillwater unique (caravan-fed from Kess)
+    - itemid: 40053    # Stillwater black pearl
+      quantity: 0
+      quantitymax: 0
+      price: 600
+    # Thornwall chrysalis (in-shop / Sefa overlap)
+    - itemid: 40030    # chrysalis setting
+      quantity: 0
+      quantitymax: 0
+      price: 80
+    # Base jewelcraft
+    - itemid: 40019    # chain link
+      quantity: 0
+      quantitymax: 0
+      price: 4

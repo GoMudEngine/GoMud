@@ -1,0 +1,35 @@
+roomid: 6457
+zone: Hartcharn
+title: The Rune-Carver's Hut
+description: >
+  A dim, close hut smelling faintly of scorched wax and hot metal. A
+  chalked <ansi fg="itemname">enchanting circle</ansi> covers most of
+  the floor, its lines worn and re-drawn so many times the boards
+  beneath show through in places. Shelves along the wall hold trays of
+  chrysalis shards and coils of fine wire, each sorted with obsessive
+  care. A single shuttered window lets in a thin blade of daylight that
+  cuts across the circle's edge.
+biome: city
+coord:
+  x: -22
+  y: 36
+  z: 0
+station: enchanting_circle
+exits:
+  east:
+    roomid: 6456
+  south:
+    roomid: 6459
+nouns:
+  enchanting circle: A wide chalked circle covering most of the floor,
+    its lines re-traced so many times over the years that the boards
+    beneath have worn to a paler grain. Small scorch marks freckle its
+    edge where a working has gone slightly wrong.
+idlemessages:
+- The chalk lines of the circle seem to catch the light strangely.
+- A tray of chrysalis shards clicks faintly as one shifts against another.
+- The thin blade of daylight from the window creeps slowly across the floor.
+- Something smells faintly of scorched wax, though nothing is burning.
+spawninfo:
+  - mobid: 9602
+    cooldown: 600 rounds

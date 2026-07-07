@@ -1,0 +1,18 @@
+id: hartcharn_alchemist
+description: "Alchemist Alard Fen's daily routine: brews at the bench by day, sleeps in the apothecary's hut by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6456
+    activity: ""
+    idlecommands:
+      - emote grinds a dried root down to powder in the mortar.
+      - emote holds a bottle up to the light and checks its colour.
+      - say That kettle has been simmering since sunup.
+  - start: 22
+    end: 6
+    target_room: 6456
+    activity: sleeping
+    idlecommands:
+      - emote is stretched out on a cot beside the cold hearth.
+      - emote breathes slow and even, asleep among the herb bundles.

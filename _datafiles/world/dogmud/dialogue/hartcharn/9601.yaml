@@ -1,0 +1,49 @@
+mobid: 9601
+zone: Hartcharn
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome to the apothecary's hut. What ails you, or what do you
+        need brewed?"
+      - "Fen. Mind the bench, some of what is on it bites back."
+  - keywords: ["buy", "sell", "shop", "wares", "goods", "potion",
+      "tincture", "brew"]
+    responses:
+      - "Roots, barks, and a shelf of tinctures for whatever is wrong
+        with you. Ask specific and I will point you to the jar."
+      - "I keep the common cures on hand and brew the rest to order.
+        The hills grow most of what I need."
+  - keywords: ["herbs", "roots", "sage", "mint"]
+    responses:
+      - "Hill sage and marsh mint mostly, gathered close by. A little
+        of what the foragers bring down from further out too."
+  - keywords: [""]
+    responses:
+      - "Have a look at the shelf."
+      - "The kettle can wait a moment. What do you need?"
+
+tree:
+  root:
+    text: "Welcome to the apothecary's hut. What ails you, or what do
+      you need brewed?"
+    hints: "You could ask Alard Fen about his wares or his herbs."
+
+  nodes:
+    - id: stock_general
+      triggers: ["buy", "sell", "shop", "wares", "goods", "potion",
+        "tincture", "brew", "stock"]
+      text: "Healing salves, tonics, the odd catalyst for the more
+        stubborn ailments. Ask specific and I will tell you what is
+        brewed and what needs a day to steep."
+      hints: "You could ask Alard Fen about his herbs."
+
+    - id: herbs_note
+      triggers: ["herbs", "roots", "sage", "mint", "bark"]
+      text: "Most of it grows within a morning's walk of this hut. The
+        rest comes down with the foragers, and I pay fair for good
+        stock."
+
+memory:
+  expiryPeriod: ""

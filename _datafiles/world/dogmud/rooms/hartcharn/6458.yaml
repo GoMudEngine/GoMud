@@ -1,0 +1,31 @@
+roomid: 6458
+zone: Hartcharn
+title: The Gem Hut
+description: >
+  A tidy little hut with a single well-lit workbench set beneath the
+  window. Trays of polished stones and coils of thin wire are arranged
+  in careful rows, and a magnifying lens on a brass stand looms over
+  the bench like a patient onlooker. The floor is swept bare of the
+  usual hill-town grit, kept clean for the small, easily-lost pieces
+  that pass across the bench each day.
+biome: city
+coord:
+  x: -21
+  y: 35
+  z: 0
+station: jeweler_bench
+exits:
+  north:
+    roomid: 6456
+nouns:
+  jeweler bench: A narrow workbench lit by the window above it, its
+    surface scattered with tiny files, pliers, and a scattering of
+    polished stone chips too small to bother sweeping up.
+idlemessages:
+- Light catches briefly on a tray of polished stones.
+- A coil of fine wire glints where it rests on the bench.
+- The magnifying lens sways very slightly on its brass stand.
+- Somewhere a small file rasps once against metal, then stops.
+spawninfo:
+  - mobid: 9603
+    cooldown: 600 rounds
