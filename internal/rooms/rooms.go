@@ -231,6 +231,14 @@ func (r *Room) UpdateCorpses(roundNow uint64) {
 		corpse.Update(roundNow, c.Death.CorpseDecayTime.String())
 		if corpse.Prunable {
 			removeIdx = append(removeIdx, idx)
+			// Last-resort: drop any remaining loot to the floor so it
+			// isn't destroyed along with the decaying corpse.
+			if corpse.HasLoot() {
+				for _, it := range corpse.Loot.Items {
+					r.AddItem(it, false)
+				}
+				r.Gold += corpse.Loot.Gold
+			}
 			if corpse.MobId > 0 {
 				r.SendText(messaging.CategoryRoomDescription, fmt.Sprintf(`A <ansi fg="mob-corpse">%s</ansi> crumbles to dust.`, corpse.DisplayName()))
 			}
