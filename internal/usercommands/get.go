@@ -337,6 +337,14 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			return true, nil
 		}
 
+		// Loot-mode gate (round-robin / leader-hold): ownership already passed
+		// above; this reserves specific items to specific members until the
+		// free-for-all timeout.
+		if !corpse.CanTakeItem(matchItem.UUID.String(), user.UserId, util.GetRoundCount()) {
+			user.SendText(messaging.CategorySystem, corpseItemGateMessage(corpse.LootMode))
+			return true, nil
+		}
+
 		user.Character.CancelBuffsWithFlag(buffs.Hidden) // No longer sneaking
 
 		if user.Character.StoreItem(matchItem) {
@@ -655,6 +663,18 @@ func sendEncumbranceWarning(user *users.UserRecord) {
 // round-robin/leaderhold gating (Task 10) layers on top of this.
 func canLootCorpse(user *users.UserRecord, corpse *rooms.Corpse) bool {
 	return corpse.LootAllowed(user.UserId, util.GetRoundCount())
+}
+
+// corpseItemGateMessage returns the refusal shown when a loot item is reserved
+// to another party member (Corpse.CanTakeItem gate), keyed by the corpse's
+// stamped loot mode.
+func corpseItemGateMessage(mode string) string {
+	switch mode {
+	case "leaderhold":
+		return `The leader is holding the loot.`
+	default: // roundrobin
+		return `That's not your share.`
+	}
 }
 
 // grantCorpseGold credits gold looted from a corpse to the looter.

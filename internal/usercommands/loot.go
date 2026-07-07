@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -31,8 +32,13 @@ func Loot(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// Tolerate a leading "from" ("loot from wolf corpse").
+	// "loot pass <corpse>" — reassign your round-robin share to the next member.
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
+	if len(args) > 0 && args[0] == "pass" {
+		return lootPassCorpse(strings.TrimSpace(strings.Join(args[1:], " ")), user, room)
+	}
+
+	// Tolerate a leading "from" ("loot from wolf corpse").
 	if len(args) > 0 && args[0] == "from" {
 		rest = strings.Join(args[1:], " ")
 	}
@@ -75,8 +81,13 @@ func lootCorpseAll(user *users.UserRecord, room *rooms.Room, corpseIdx int) {
 	tookSomething := false
 
 	// Items first. Copy the slice so removal during iteration is safe.
+	now := util.GetRoundCount()
 	itemCopies := append([]items.Item{}, corpse.Loot.Items...)
 	for _, it := range itemCopies {
+		// Loot-mode gate: only take items reserved to this user (or unreserved).
+		if !corpse.CanTakeItem(it.UUID.String(), user.UserId, now) {
+			continue
+		}
 		if user.Character.StoreItem(it) {
 			events.AddToQueue(events.ItemOwnership{
 				UserId: user.UserId,
@@ -117,4 +128,88 @@ func lootCorpseAll(user *users.UserRecord, room *rooms.Room, corpseIdx int) {
 		)
 		sendEncumbranceWarning(user)
 	}
+}
+
+// lootPassCorpse reassigns the passing user's still-present round-robin loot on
+// the named corpse to the NEXT member in the party rotation. Only meaningful in
+// round-robin mode; ffa/leader-hold have nothing to pass.
+func lootPassCorpse(rest string, user *users.UserRecord, room *rooms.Room) (bool, error) {
+
+	if rest == `` {
+		user.SendText(messaging.CategorySystem, "Pass your loot on which corpse?")
+		return true, nil
+	}
+
+	corpseIdx := room.FindCorpseIndex(rest)
+	if corpseIdx < 0 {
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("You don't see a %s to loot.", rest))
+		return true, nil
+	}
+
+	corpse := &room.Corpses[corpseIdx]
+
+	if corpse.LootMode != "roundrobin" || len(corpse.RRAssignee) == 0 {
+		user.SendText(messaging.CategorySystem, "There's nothing to pass — loot passing only applies to round-robin looting.")
+		return true, nil
+	}
+
+	party := parties.Get(user.UserId)
+	if party == nil {
+		user.SendText(messaging.CategorySystem, "There's nothing to pass.")
+		return true, nil
+	}
+
+	// Reconstruct the rotation: party join order filtered to the corpse owners.
+	ownerSet := make(map[int]struct{}, len(corpse.OwnerUserIds))
+	for _, id := range corpse.OwnerUserIds {
+		ownerSet[id] = struct{}{}
+	}
+	members := make([]int, 0, len(party.UserIds))
+	for _, id := range party.UserIds {
+		if _, ok := ownerSet[id]; ok {
+			members = append(members, id)
+		}
+	}
+	if len(members) < 2 {
+		user.SendText(messaging.CategorySystem, "There's no one to pass your share to.")
+		return true, nil
+	}
+
+	selfIdx := -1
+	for i, id := range members {
+		if id == user.UserId {
+			selfIdx = i
+			break
+		}
+	}
+	if selfIdx < 0 {
+		user.SendText(messaging.CategorySystem, "There's nothing to pass.")
+		return true, nil
+	}
+
+	next := members[(selfIdx+1)%len(members)]
+
+	reassigned := 0
+	for _, it := range corpse.Loot.Items {
+		uid := it.UUID.String()
+		if owner, ok := corpse.RRAssignee[uid]; ok && owner == user.UserId {
+			corpse.RRAssignee[uid] = next
+			reassigned++
+		}
+	}
+
+	if reassigned == 0 {
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You have no share to pass on the <ansi fg="mob-corpse">%s</ansi>.`, corpse.DisplayName()))
+		return true, nil
+	}
+
+	nextName := "the next member"
+	if u := users.GetByUserId(next); u != nil {
+		nextName = u.Character.Name
+	}
+	user.SendText(messaging.CategorySystem,
+		fmt.Sprintf(`You pass your share of the <ansi fg="mob-corpse">%s</ansi> to <ansi fg="username">%s</ansi>.`, corpse.DisplayName(), nextName),
+	)
+
+	return true, nil
 }

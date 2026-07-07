@@ -51,6 +51,12 @@ type Party struct {
 	// spawn to stamp the corpse's ownership rules.
 	LootMode string // "ffa"|"roundrobin"|"leaderhold" ("" = ffa)
 
+	// RRCursor is the round-robin deal cursor: the index (into the same-room
+	// owner-member list) that receives the next dealt loot item. Persists across
+	// corpses so the rotation stays fair over a whole hunt. Advanced by
+	// rooms.RoundRobinOrder at each corpse spawn.
+	RRCursor int
+
 	// ── NPC party state ──
 	HomeRoomId int // 0 if none designated; for party_at_home_stand
 	HelpRoomId int // 0 if no active call; rally room when set
