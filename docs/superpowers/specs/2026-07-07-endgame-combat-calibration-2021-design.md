@@ -153,10 +153,32 @@ against DPS/EHP math rather than trusting a single run.
   plumbing.
 - The prod push of any resulting changes (its own pre-push SOP pass afterward).
 
-## Open items to resolve in the plan
+## Settled values (live-calibrated 2026-07-07)
 
-- Exact starting statpool + gear values for the Apex and Sentinel (empirical;
-  seed from the baseline analysis).
-- Final choice + threshold for the Sentinel hook (default "Rouse the Wards").
-- Whether the one-size-smaller control run is run every iteration or only at the
-  end to confirm the lower bound.
+Calibrated via the manual N-bridge harness rig (quester4=Vael, quester5=Ryn);
+see `docs/ENDGAME_COMBAT_TUNING.md` for the full method + baseline table.
+
+- **#20 Pass-Apex (9541):** `statpool` **1100**; hide 40230 mitigation
+  **62/52/52**. No mechanic. Result: 1 Meirok + wolf, a fresh isolated Apex →
+  **win ending ~34% HP** (no heal used), two ~110 bursts. In-band. (Run 1 at
+  900 + 30/20/20 = faceroll at 79%.)
+- **#21 Sentinel (9552):** `statpool` **2400**; carapace 40231 **65/52/48** +
+  warding-core 40232 **10/45/45**; "Rouse the Wards" btree fires at **50% HP**
+  (summons Roused Ward 9550 + Watcher-Shard 9551). Result: 2 Meiroks + 2 wolves →
+  Sentinel survives into the rouse phase; a face-tanking party **loses a member**
+  (Ryn hit 3.6%); competent heal + taunt-swap recovers it → **win**. In-band
+  (a hair hard). (Run 1 at 1900 + 35/30/25 = comfortable win, wards spawned as the
+  Sentinel died.)
+
+**Resolved:** Sentinel hook = "Rouse the Wards" @ 50% (kept). One-size-smaller
+control observed implicitly (a solo could not sustain the Sentinel's focus that
+downed a party member). Both are **first-pass** values with a final human
+feel-check owed before/at prod push.
+
+## Notes / caveats banked
+- The AI harness reacts late, so these lean slightly hard on purpose (a
+  coordinated human party reacts sooner and wins with more margin).
+- **84%-HP-on-arrival spawn anomaly** seen on both overworld bosses; calibrate via
+  `mob spawn` for a clean 100% target.
+- The Sentinel **auto-wields its loot Ironhorn Warbow (10046)** — the tuned
+  numbers include that extra damage.
