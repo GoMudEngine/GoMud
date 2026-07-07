@@ -614,6 +614,112 @@ func TestActSummonCompanion_HostileSetsAggroAndEngages(t *testing.T) {
 	}
 }
 
+// TestActSummonCompanion_HostileFallsBackWithoutEventUserId covers the
+// crashsite-boss-mechanics Part A fix: production's "mob_combat_round"
+// event (fired every round from internal/hooks/NewRound_DoCombat.go for
+// the summoning mob's own combat tick — the actual trigger the Core
+// Guardian's Grapnel Warden / Hull Sweeper re-summon nodes use) never
+// carries a UserId. Before the fix, that meant a hostile summon_companion
+// triggered from that event silently never called SetAggro at all — the
+// companion spawned into the room inert. This asserts the fallback picks
+// an eligible present player and sets Aggro even when ctx.Event.UserId==0.
+func TestActSummonCompanion_HostileFallsBackWithoutEventUserId(t *testing.T) {
+	fn := LookupAction("summon_companion")
+	if fn == nil {
+		t.Fatal("summon_companion not registered")
+	}
+
+	cleanRoom := seedTestRoom(t, 1, "TestZone")
+	defer cleanRoom()
+
+	callerSpec := &mobs.Mob{
+		MobId: mobs.MobId(1),
+		Character: characters.Character{
+			Name:   "TestCaller",
+			RoomId: 1,
+			Buffs:  buffs.New(),
+		},
+	}
+	callerInstance := &mobs.Mob{
+		MobId:      mobs.MobId(1),
+		InstanceId: 100,
+		HomeRoomId: 1,
+		Character: characters.Character{
+			Name:   "TestCaller",
+			RoomId: 1,
+			Buffs:  buffs.New(),
+		},
+	}
+	companionSpec := &mobs.Mob{
+		MobId: mobs.MobId(7),
+		Character: characters.Character{
+			Name:   "TestCompanion",
+			RoomId: 1,
+			Buffs:  buffs.New(),
+		},
+	}
+	cleanMobs := mobs.SeedMobsForTest(
+		map[int]*mobs.Mob{1: callerSpec, 7: companionSpec},
+		map[int]*mobs.Mob{100: callerInstance},
+	)
+	defer cleanMobs()
+
+	rooms.LoadRoom(1).AddMob(100)
+
+	cleanUser := seedTestUser(t, 1, "alice", "Aliceia", 1)
+	defer cleanUser()
+
+	room := rooms.LoadRoom(1)
+	// seedTestUser only stamps Character.RoomId — the room's own player
+	// list (what GetPlayers/pickEligibleRoomPlayer scans) is a separate
+	// registry that must be populated explicitly.
+	room.AddPlayer(1)
+	preMobs := room.GetMobs(rooms.FindAll)
+
+	params := map[string]any{
+		"mob_id":    7,
+		"hostile":   true,
+		"count":     1,
+		"base_pool": 50,
+	}
+	// No UserId on the event — matches the real mob_combat_round trigger.
+	ctx := &EvalContext{
+		InstanceId: 100,
+		RoomId:     1,
+		Event:      EventContext{EventType: "mob_combat_round"},
+	}
+	if result := fn(params, ctx); result != Success {
+		t.Fatalf("expected Success, got %v", result)
+	}
+
+	postMobs := room.GetMobs(rooms.FindAll)
+	preSet := make(map[int]bool, len(preMobs))
+	for _, id := range preMobs {
+		preSet[id] = true
+	}
+	newInstanceId := 0
+	for _, id := range postMobs {
+		if !preSet[id] {
+			newInstanceId = id
+			break
+		}
+	}
+	if newInstanceId == 0 {
+		t.Fatalf("could not find new instance ID in post-summon mob list %v", postMobs)
+	}
+
+	companion := mobs.GetInstance(newInstanceId)
+	if companion == nil {
+		t.Fatalf("mobs.GetInstance(%d) returned nil after summon", newInstanceId)
+	}
+	if companion.Character.Aggro == nil {
+		t.Fatalf("expected companion.Character.Aggro != nil (fallback target), got nil")
+	}
+	if companion.Character.Aggro.UserId != 1 {
+		t.Errorf("expected Aggro.UserId=1 (the only eligible player in the room), got %d", companion.Character.Aggro.UserId)
+	}
+}
+
 // ─── command_best_of ───────────────────────────────────────────────────────
 
 func TestActCommandBestOf_FiresFirstReady(t *testing.T) {

@@ -2,7 +2,16 @@ mobid: 9585
 zone: Crash Site Interior
 behavior_archetype: generic_fighter
 aiprofile: brute
-archetype: fighting
+# crashsite-boss-mechanics Part B: support/caster identity, not a melee
+# add. "fighting" put 80% of its stat pool into Str/Dex/Vit, which is
+# exactly what turned it into a melee killer once its summon base_pool
+# was raised for survivability (base_pool scales Strength -> damage).
+# "casting" puts 80% into Per/Wil/Cha instead -- its only ability
+# (repair-pulse) has primarystat: willpower, so this is a pure win for
+# its actual job while gutting its melee. Durability now comes from
+# the nodrop mitigation gear below, not from a bigger Vitality/Strength
+# stat pool.
+archetype: casting
 hostile: true
 statpool: 100
 maxwander: 0
@@ -34,6 +43,14 @@ character:
   speciesid: 37
   level: 1
   gold: 0
+  # Nodrop mitigation-only gear (crashsite-boss-mechanics Part B): buys
+  # enough survivability to land its heal cast and soak a couple rounds
+  # of focus-fire, with NO stat bonus of any kind -- durability comes
+  # from the gear, not from Strength/Vitality, so it can't become a
+  # melee threat regardless of how its summon stat pool scales.
+  equipment:
+    body:
+      itemid: 40227
 loot_pool:
   - 20091
 itemdropchance: 20

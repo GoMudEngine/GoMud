@@ -2,7 +2,16 @@ mobid: 9587
 zone: Crash Site Interior
 behavior_archetype: generic_fighter
 aiprofile: brute
-archetype: fighting
+# crashsite-boss-mechanics Part B: sweep_companions (internal/behaviortree/
+# actions_mob.go actSweepCompanions) is a guaranteed action with NO stat
+# roll at all, so this has no combat ability that benefits from Strength
+# or Dexterity. "fighting" put 80% of its stat pool into Str/Dex/Vit,
+# which is exactly what turned it into "the single biggest melee threat
+# in the fight" in live calibration even at the default base_pool.
+# "casting" (80% Per/Wil/Cha) is a free reduction in melee potential with
+# zero downside to its actual job. Durability now comes from the nodrop
+# mitigation gear below, not from a bigger Vitality/Strength stat pool.
+archetype: casting
 hostile: true
 statpool: 100
 maxwander: 0
@@ -33,6 +42,12 @@ character:
   speciesid: 37
   level: 1
   gold: 0
+  # Nodrop mitigation-only gear (crashsite-boss-mechanics Part B): buys
+  # enough survivability to land its sweep and soak a couple rounds of
+  # focus-fire, with NO stat bonus of any kind.
+  equipment:
+    body:
+      itemid: 40229
 loot_pool:
   - 20091
 itemdropchance: 20

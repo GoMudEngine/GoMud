@@ -1,0 +1,16 @@
+itemid: 40228
+name: Servo-Reinforced Warden Housing
+namesimple: housing
+description: >-
+  Layered plating bolted tight around the Grapnel Warden's frame, dense
+  enough to keep the clamp-arm's servos running through a beating that
+  would otherwise stall them cold. It buys the thing time to find its
+  hold, nothing more.
+type: body
+subtype: wearable
+physical_mitigation: 35
+magical_mitigation: 25
+never_drops: true
+not_salable: true
+weight: 0.0
+value: 0

@@ -2,6 +2,14 @@ mobid: 9586
 zone: Crash Site Interior
 behavior_archetype: generic_fighter
 aiprofile: brute
+# crashsite-boss-mechanics Part B: kept on "fighting" (not switched to
+# "casting" like its sibling adds) because AttemptGrapple
+# (internal/combat/grapple.go) rolls Dexterity + combat skill, NOT
+# Strength -- "fighting"'s even Str/Dex/Vit split is what keeps its one
+# job (the grapple) reliable. Its melee (Strength-driven) stays modest
+# on its own at the reverted base_pool; durability against focus-fire
+# comes from the nodrop mitigation gear below, not from a bigger stat
+# pool, so it isn't tuned toward hitting harder.
 archetype: fighting
 hostile: true
 statpool: 100
@@ -34,6 +42,12 @@ character:
   speciesid: 37
   level: 1
   gold: 0
+  # Nodrop mitigation-only gear (crashsite-boss-mechanics Part B): buys
+  # enough survivability to land its grapple and soak a couple rounds of
+  # focus-fire, with NO stat bonus of any kind.
+  equipment:
+    body:
+      itemid: 40228
 loot_pool:
   - 20091
 itemdropchance: 20
