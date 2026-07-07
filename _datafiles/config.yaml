@@ -1065,7 +1065,7 @@ Balance:
   ScoreWeightShopGold:   0.10
 
   # ── PINNACLE ITEMS ──────────────────────────────────────────────────────────
-  BandolierAttuneRounds: 100          # Rounds of re-attunement after bandolier contents change
+  BandolierAttuneRounds: 10           # Rounds of re-attunement after bandolier contents change
   SentientChatterCooldownRounds: 20   # Min rounds between sentient item lines
   SentientChatterChancePct: 15        # Percent chance per eligible round that a sentient item speaks
 

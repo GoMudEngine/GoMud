@@ -434,7 +434,7 @@ func (b *Balance) validateMisc() {
 
 	// ── PINNACLE ITEMS ───────────────────────────────────────────────────
 	if b.BandolierAttuneRounds <= 0 {
-		b.BandolierAttuneRounds = 100
+		b.BandolierAttuneRounds = 10
 	}
 	if b.SentientChatterCooldownRounds <= 0 {
 		b.SentientChatterCooldownRounds = 20
