@@ -25,9 +25,12 @@ import (
 func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 	currentRound := util.GetRoundCount()
 
-	if !m.Character.HasBuffFlag(buffs.PermaGear) {
+	// Build the loot container from the dead mob's carried + equipped items
+	// and gold, applying the same gating rules as before. Where the loot ends
+	// up (corpse container vs. room floor) is decided below by CorpsesEnabled.
+	var loot rooms.Container
 
-		lootDropped := false
+	if !m.Character.HasBuffFlag(buffs.PermaGear) {
 
 		// Carried items: 100% base drop chance (per-item DropChance
 		// still applies via ShouldDrop).
@@ -35,13 +38,7 @@ func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 			if !item.ShouldDrop(100) {
 				continue
 			}
-			msg := fmt.Sprintf(
-				`<ansi fg="item">%s</ansi> drops to the ground.`,
-				item.DisplayName(),
-			)
-			room.SendTextVisual(messaging.CategoryLoot, msg)
-			room.AddItem(item, false)
-			lootDropped = true
+			loot.AddItem(item)
 		}
 
 		// Equipped items: gate on mob.ItemDropChance unless the item
@@ -58,33 +55,18 @@ func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 			if !item.ShouldDrop(m.ItemDropChance) {
 				continue
 			}
-			msg := fmt.Sprintf(
-				`<ansi fg="item">%s</ansi> drops to the ground.`,
-				item.DisplayName(),
-			)
-			room.SendTextVisual(messaging.CategoryLoot, msg)
-			room.AddItem(item, false)
-			lootDropped = true
+			loot.AddItem(item)
 		}
 
 		if m.Character.Gold > 0 {
-			msg := fmt.Sprintf(
-				`<ansi fg="yellow-bold">%d gold</ansi> drops to the ground.`,
-				m.Character.Gold,
-			)
-			room.SendTextVisual(messaging.CategoryLoot, msg)
-			room.Gold += m.Character.Gold
-			lootDropped = true
-		}
-
-		// Dark-room fallback sound for loot drops.
-		if lootDropped && room.GetVisibility() < 1 {
-			room.SendText(messaging.CategoryLoot, `You hear something clatter to the ground.`)
+			loot.Gold += m.Character.Gold
 		}
 	}
 
 	config := configs.GetGamePlayConfig()
 	if config.Death.CorpsesEnabled {
+		// Loot goes into the corpse container — nothing drops to the floor.
+		// Owner/mode/timeout fields are stamped by a later task.
 		room.AddCorpse(rooms.Corpse{
 			MobId:             int(m.MobId),
 			Character:         m.Character,
@@ -92,7 +74,38 @@ func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 			WasCharmed:        m.Character.IsCharmed() || m.Character.EverCharmed,
 			CorpseName:        m.CorpseName,
 			CorpseDescription: m.CorpseDescription,
+			Loot:              loot,
 		})
+		return
+	}
+
+	// Corpses disabled — fall back to the legacy floor-drop behavior,
+	// preserving the exact player-facing messages.
+	lootDropped := false
+
+	for _, item := range loot.Items {
+		msg := fmt.Sprintf(
+			`<ansi fg="item">%s</ansi> drops to the ground.`,
+			item.DisplayName(),
+		)
+		room.SendTextVisual(messaging.CategoryLoot, msg)
+		room.AddItem(item, false)
+		lootDropped = true
+	}
+
+	if loot.Gold > 0 {
+		msg := fmt.Sprintf(
+			`<ansi fg="yellow-bold">%d gold</ansi> drops to the ground.`,
+			loot.Gold,
+		)
+		room.SendTextVisual(messaging.CategoryLoot, msg)
+		room.Gold += loot.Gold
+		lootDropped = true
+	}
+
+	// Dark-room fallback sound for loot drops.
+	if lootDropped && room.GetVisibility() < 1 {
+		room.SendText(messaging.CategoryLoot, `You hear something clatter to the ground.`)
 	}
 }
 
