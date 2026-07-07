@@ -6,7 +6,7 @@ archetype: fighting
 submission_policy: lethal
 surrender_policy: never
 hostile: true
-statpool: 550
+statpool: 900
 maxwander: 1
 groups:
   - animal
@@ -58,6 +58,9 @@ character:
   speciesid: 3
   level: 1
   gold: 0
+  equipment:
+    body:
+      itemid: 40230
   stats:
     strength:
       training: 15
