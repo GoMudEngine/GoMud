@@ -4,7 +4,7 @@ segments:
   - start: 6
     end: 22
     target_room: 6456
-    activity: ""
+    activity: craft
     idlecommands:
       - emote grinds a dried root down to powder in the mortar.
       - emote holds a bottle up to the light and checks its colour.

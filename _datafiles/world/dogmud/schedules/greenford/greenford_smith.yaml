@@ -4,7 +4,7 @@ segments:
   - start: 6
     end: 22
     target_room: 6445
-    activity: ""
+    activity: craft
     idlecommands:
       - emote hammers a glowing piece of metal on the anvil with measured strokes.
       - emote holds a blade up to the light, examining the edge critically.

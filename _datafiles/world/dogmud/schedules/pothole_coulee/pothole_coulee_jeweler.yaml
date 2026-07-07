@@ -4,7 +4,7 @@ segments:
   - start: 6
     end: 22
     target_room: 6462
-    activity: ""
+    activity: craft
     idlecommands:
       - emote holds a gem up to the light, turning it slow between two fingers.
       - emote polishes a wire setting with a scrap of soft cloth.

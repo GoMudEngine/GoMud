@@ -4,7 +4,7 @@ segments:
   - start: 6
     end: 22
     target_room: 6463
-    activity: ""
+    activity: craft
     idlecommands:
       - emote stirs the kettle over the coals, tasting from a scarred spoon.
       - emote chops wild vegetables with quick, practiced strokes.

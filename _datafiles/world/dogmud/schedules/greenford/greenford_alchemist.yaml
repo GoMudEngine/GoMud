@@ -4,7 +4,7 @@ segments:
   - start: 6
     end: 22
     target_room: 6447
-    activity: ""
+    activity: craft
     idlecommands:
       - emote grinds something in a mortar with small, precise movements.
       - emote holds a bottle up to the light, examining the colour of its contents.

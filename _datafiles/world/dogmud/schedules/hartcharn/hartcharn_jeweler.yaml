@@ -4,7 +4,7 @@ segments:
   - start: 6
     end: 22
     target_room: 6458
-    activity: ""
+    activity: craft
     idlecommands:
       - emote holds a polished stone up to the window, turning it slowly.
       - emote squints through a lens at a half-finished ring.

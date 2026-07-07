@@ -4,7 +4,7 @@ segments:
   - start: 6
     end: 22
     target_room: 6455
-    activity: ""
+    activity: craft
     idlecommands:
       - emote feeds wool through the loom in a slow, even rhythm.
       - emote checks a length of cloth against the light for flaws.

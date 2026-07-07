@@ -47,7 +47,7 @@ character:
     charisma:
       training: -10
   shop:
-    # Thornwall chrysalis (in-shop crafted) — Rane's specialty
+    # chrysalis reagents — Rane's specialty
     - itemid: 40010    # Chrysalis Core
       quantity: 0
       quantitymax: 0
