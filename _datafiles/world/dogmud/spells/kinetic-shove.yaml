@@ -1,5 +1,6 @@
 spellid: kinetic-shove
 name: Kinetic Shove
+aliases: [shove]
 description: Telekinetic force slams the target to the ground.
 type: harmsingle
 schools:

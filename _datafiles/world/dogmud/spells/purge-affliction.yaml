@@ -1,6 +1,7 @@
 # Learned from book in Mystic Garden Essentials (ROOM 870)
 spellid: purge-affliction
 name: Purge Affliction
+aliases: [purge]
 description: Neutralizes foreign agents and toxins in the target's body.
 type: helpsingle
 schools:

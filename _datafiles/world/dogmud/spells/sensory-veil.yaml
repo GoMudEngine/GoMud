@@ -1,5 +1,6 @@
 spellid: sensory-veil
 name: Sensory Veil
+aliases: [veil]
 description: Chrysalis shroud clouds the target's perception.
 type: harmsingle
 schools:

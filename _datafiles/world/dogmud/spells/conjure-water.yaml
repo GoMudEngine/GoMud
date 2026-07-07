@@ -1,5 +1,6 @@
 spellid: conjure-water
 name: Conjure Water Elemental
+aliases: [water]
 description: Tears a water elemental from the elemental plane and binds it
   to your will. A dependable tank with regenerative endurance.
 type: neutral

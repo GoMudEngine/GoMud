@@ -1,5 +1,6 @@
 spellid: conviction-ward
 name: Conviction Ward
+aliases: [ward]
 description: Solidifies belief into a barrier that absorbs damage.
 type: helpsingle
 schools:

@@ -1,5 +1,6 @@
 spellid: hemorrhagic-wave
 name: Hemorrhagic Wave
+aliases: [hemorrhage]
 description: Rupturing wave that bursts blood vessels in all nearby foes.
 type: harmarea
 schools:

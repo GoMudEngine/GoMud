@@ -1,5 +1,6 @@
 spellid: core-drain
 name: Core Drain
+aliases: [drain]
 description: >
   The Core Guardian irises open its chest-cavity and reaches into the
   room itself, drawing the vitality from everything living in it to feed

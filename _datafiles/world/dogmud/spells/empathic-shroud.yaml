@@ -1,5 +1,6 @@
 spellid: empathic-shroud
 name: Empathic Shroud
+aliases: [shroud]
 description: Wraps the target in a psionic veil, making them difficult to perceive.
 type: helpsingle
 schools:

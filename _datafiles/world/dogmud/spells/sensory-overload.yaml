@@ -1,5 +1,6 @@
 spellid: sensory-overload
 name: Sensory Overload
+aliases: [overload]
 description: Overwhelms the target's senses, blinding and slowing them.
 type: harmsingle
 schools:

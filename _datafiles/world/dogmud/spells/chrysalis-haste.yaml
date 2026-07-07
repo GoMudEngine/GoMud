@@ -1,5 +1,6 @@
 spellid: chrysalis-haste
 name: Chrysalis Haste
+aliases: [haste]
 description: Accelerates the target's movements and reflexes.
 type: helpsingle
 schools:

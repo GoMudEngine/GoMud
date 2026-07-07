@@ -1,5 +1,6 @@
 spellid: kinetic-hurl
 name: Kinetic Hurl
+aliases: [hurl]
 description: Propels a telekinetic bolt of force at the target.
 type: harmsingle
 schools:

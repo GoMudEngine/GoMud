@@ -1,5 +1,6 @@
 spellid: conviction-barrage
 name: Conviction Barrage
+aliases: [barrage]
 description: Devastating barrage of crystallized belief shards hits all foes.
 type: harmarea
 schools:

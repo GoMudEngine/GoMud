@@ -1,5 +1,6 @@
 spellid: repair-pulse
 name: Arc-Weld Repair
+aliases: [repair]
 description: >
   Directs a raw current through failing servos and cracked plating,
   forcing damaged construct systems to knit themselves whole again.

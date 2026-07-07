@@ -1,5 +1,6 @@
 spellid: communion-of-flesh
 name: Communion of Flesh
+aliases: [communion]
 description: Deep Chrysalis energy mends the wounds of all nearby allies.
 type: helparea
 schools:

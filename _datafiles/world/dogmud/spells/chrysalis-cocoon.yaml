@@ -1,5 +1,6 @@
 spellid: chrysalis-cocoon
 name: Chrysalis Cocoon
+aliases: [cocoon]
 description: Encases the target in a protective Chrysalis shell.
 type: helpsingle
 schools:

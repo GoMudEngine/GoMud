@@ -1,5 +1,6 @@
 spellid: fold-anchor
 name: Fold Anchor
+aliases: [anchor]
 description: Sets a Chrysalis anchor at your current location.
 type: helpsingle
 schools:

@@ -1,5 +1,6 @@
 spellid: mutation-catalyst
 name: Mutation Catalyst
+aliases: [mutate]
 description: Accelerates the target's mutagenic processes.
 type: helpsingle
 schools:

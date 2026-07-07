@@ -1,5 +1,6 @@
 spellid: conjure-fire
 name: Conjure Fire Elemental
+aliases: [fire]
 description: Wrenches a fire elemental into existence and shackles it to
   your will. Strikes back at anyone who hits it with bare flesh.
 type: neutral

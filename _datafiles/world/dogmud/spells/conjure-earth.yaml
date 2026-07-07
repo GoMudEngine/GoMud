@@ -1,5 +1,6 @@
 spellid: conjure-earth
 name: Conjure Earth Elemental
+aliases: [earth]
 description: Drags a hulking earth elemental into the world and binds it
   as a companion. Brutally slow but nearly impossible to topple.
 type: neutral

@@ -1,5 +1,6 @@
 spellid: mass-mend
 name: Mass Mend
+aliases: [massmend]
 description: Heals all nearby allies and grants sustained regeneration.
 type: helparea
 schools:

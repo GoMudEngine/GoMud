@@ -1,5 +1,6 @@
 spellid: blood-boil
 name: Blood Boil
+aliases: [boil]
 description: Superheats the target's blood, causing hemorrhage over time.
 type: harmsingle
 schools:

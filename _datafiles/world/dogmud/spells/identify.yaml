@@ -1,5 +1,6 @@
 spellid: identify
 name: Identify
+aliases: [id]
 description: >
   Reach out with your mind to sense the hidden properties
   of an item you are carrying or wearing.

@@ -1,5 +1,6 @@
 spellid: neural-toxin
 name: Neural Toxin
+aliases: [toxin]
 description: Injects psionic venom that deals sustained damage over time.
 type: harmsingle
 schools:

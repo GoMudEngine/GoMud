@@ -1,5 +1,6 @@
 spellid: synaptic-overload
 name: Synaptic Overload
+aliases: [synaptic]
 description: Floods the target's nervous system with overwhelming force.
 type: harmsingle
 schools:
