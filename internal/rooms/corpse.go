@@ -18,6 +18,18 @@ type Corpse struct {
 	// corpse creation time.
 	CorpseName        string
 	CorpseDescription string
+
+	// Corpse-loot redesign (2026-07-07): mob loot lives here, not on the floor.
+	Loot            Container // items + gold looted from the dead mob
+	OwnerUserIds    []int     // who may loot before RoundOwnedUntil (empty = anyone)
+	LootMode        string    // "ffa" | "roundrobin" | "leaderhold" ("" = solo/ffa)
+	RoundOwnedUntil uint64    // round at which ownership opens to free-for-all
+	RRAssignee      []int     // round-robin: parallel to Loot.Items, itemIdx -> ownerUserId (0 = unassigned)
+}
+
+// HasLoot reports whether the corpse still holds any items or gold.
+func (c *Corpse) HasLoot() bool {
+	return len(c.Loot.Items) > 0 || c.Loot.Gold > 0
 }
 
 // DisplayName returns the rendered corpse name. If CorpseName is set

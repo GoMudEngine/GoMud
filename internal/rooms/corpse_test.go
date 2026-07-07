@@ -5,8 +5,30 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/stretchr/testify/assert"
 )
+
+// Corpse-loot redesign (2026-07-07): the corpse carries its own loot
+// container; HasLoot reports whether anything remains to take.
+func TestCorpse_HasLoot(t *testing.T) {
+	var c Corpse
+
+	if c.HasLoot() {
+		t.Fatalf("empty corpse should not report loot")
+	}
+
+	c.Loot.Gold = 5
+	if !c.HasLoot() {
+		t.Fatalf("corpse with gold should report loot")
+	}
+
+	c.Loot.Gold = 0
+	c.Loot.AddItem(items.Item{ItemId: 42})
+	if !c.HasLoot() {
+		t.Fatalf("corpse with an item should report loot")
+	}
+}
 
 // Test that if the corpse is already prunable, calling Update does nothing.
 func TestCorpseUpdate_PrunableAlreadyTrue(t *testing.T) {
