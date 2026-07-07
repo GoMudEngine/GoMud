@@ -1,0 +1,44 @@
+roomid: 6466
+zone: New Plymouth Crafting
+title: The Jeweler's Atelier
+description: >
+  Up a narrow stair above the Tannery, the air clears of hide
+  and bark and turns instead to metal polish and lamp oil. A
+  <ansi fg="itemname">jeweler's bench</ansi> sits square in
+  the light from the room's single tall window, fitted with a
+  ring of small drawers for wire, stone, and dust. A cushioned
+  stool waits at the bench, worn to the shape of long sittings.
+  Loupes and pliers hang from a rack within easy reach, and a
+  velvet display cloth lies folded at the bench's corner,
+  ready to be unrolled for a customer's inspection. The stair
+  down returns to the Tannery floor below.
+biome: city
+station: jeweler_bench
+coord:
+  x: -16
+  y: 90
+  z: 1
+exits:
+  down:
+    roomid: 5717
+nouns:
+  jeweler's bench: A square bench set in the light of the
+    room's single tall window, fitted with a ring of small
+    drawers for wire, stone, and gem dust. Its surface is
+    scarred with fine cross-hatching from years of careful
+    work.
+  display cloth: A velvet cloth folded at the bench's corner,
+    its nap worn thin at the fold lines from being unrolled
+    and rolled again more times than anyone has counted.
+idlemessages:
+- A loupe is lifted from the rack, checked against the light,
+  and set back in its place.
+- The cushioned stool creaks as its occupant leans in over
+  the bench.
+- The velvet display cloth is smoothed flat and then folded
+  away again.
+- Downstairs, the Tannery's noise rises faintly through the
+  floorboards.
+spawninfo:
+  - mobid: 9611
+    cooldown: 600 rounds

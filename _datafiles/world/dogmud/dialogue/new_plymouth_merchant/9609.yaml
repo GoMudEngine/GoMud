@@ -1,0 +1,37 @@
+mobid: 9609
+zone: New Plymouth Merchant
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome to the Exchange. State your business and I will
+        see to it."
+      - "Master Coyne, at your service. Deposit, withdrawal, or
+        simply looking?"
+
+  - keywords: ["deposit", "store", "vault", "strongbox"]
+    responses:
+      - "A deposit is a simple matter. I will assign you a
+        strongbox, record the sum against your name, and you
+        will find it exactly as you left it whenever you return."
+      - "The vault has never lost a coin under my watch and it
+        is not about to start. Tell me what you are storing."
+
+  - keywords: ["withdraw", "gold", "coin", "balance", "account"]
+    responses:
+      - "Give me your name and I will check the ledger. If the
+        figure is there, the gold will be too."
+      - "Withdrawals are handled at this counter and nowhere
+        else. I do not send gold by messenger, no matter who
+        asks."
+
+  - keywords: [""]
+    responses:
+      - "The ledger does not fill itself. Speak plainly and I
+        will attend to you."
+      - "I am at the counter. State your business."
+
+memory:
+  expiryPeriod: ""

@@ -33,6 +33,8 @@ exits:
     roomid: 5821
   up:
     roomid: 5809
+  south:
+    roomid: 6464
 nouns:
   auction-block: A raised platform of dressed hardwood,
     its surface worn pale at the presenter's position

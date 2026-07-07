@@ -1,0 +1,40 @@
+mobid: 9609
+zone: New Plymouth Merchant
+behavior_archetype: noncombat_questgiver
+statpool: 80
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+schedule_id: new_plymouth_merchant_clerk
+groups:
+  - humanoid
+idlecommands:
+  - 'emote draws a careful line beneath a column of figures and
+    sets the pen down to check the sum.'
+  - ''
+  - 'emote slots a rolled document into a numbered strongbox and
+    presses the wax seal flat with one thumb.'
+  - ''
+  - 'emote checks a account-holder name against the ledger and
+    nods once, satisfied, before moving to the next line.'
+  - ''
+  - 'emote makes a small notation in the margin of the ledger,
+    initials it, and blows it dry.'
+  - ''
+activitylevel: 12
+character:
+  name: Master Coyne
+  description: |
+    I keep the Exchange's accounts and I keep them precisely --
+    every deposit, every withdrawal, every numbered strongbox
+    matched to the name on its lease. I do not raise my voice
+    and I do not lose a figure. My coat is grey because grey
+    does not show ink, and my hands are steady because thirty
+    years behind this counter will make anyone's hands steady
+    or put them out of the trade entirely. I have counted more
+    of this city's gold than I care to total, and none of it
+    has ever gone missing on my watch.
+  speciesid: 1
+  level: 1
