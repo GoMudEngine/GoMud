@@ -27,6 +27,21 @@ type Corpse struct {
 	RRAssignee      []int     // round-robin: parallel to Loot.Items, itemIdx -> ownerUserId (0 = unassigned)
 }
 
+// LootAllowed reports whether userId may loot this corpse at round `now`.
+// Free-for-all once now >= RoundOwnedUntil, or when there is no owner set
+// (mob/environment kill). Otherwise only listed owners may loot.
+func (c *Corpse) LootAllowed(userId int, now uint64) bool {
+	if now >= c.RoundOwnedUntil || len(c.OwnerUserIds) == 0 {
+		return true
+	}
+	for _, id := range c.OwnerUserIds {
+		if id == userId {
+			return true
+		}
+	}
+	return false
+}
+
 // HasLoot reports whether the corpse still holds any items or gold.
 func (c *Corpse) HasLoot() bool {
 	return len(c.Loot.Items) > 0 || c.Loot.Gold > 0

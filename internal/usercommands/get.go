@@ -650,10 +650,11 @@ func sendEncumbranceWarning(user *users.UserRecord) {
 
 // canLootCorpse reports whether user is entitled to take loot from corpse.
 //
-// TEMPORARY STUB (corpse-loot redesign Task 3): always true. Tasks 8 (kill
-// ownership) and 10 (loot-mode round-robin/leaderhold gating) replace this.
+// Kill-ownership gate (corpse-loot redesign Task 8): delegates to the pure,
+// unit-tested Corpse.LootAllowed, feeding it the current round. Loot-mode
+// round-robin/leaderhold gating (Task 10) layers on top of this.
 func canLootCorpse(user *users.UserRecord, corpse *rooms.Corpse) bool {
-	return true
+	return corpse.LootAllowed(user.UserId, util.GetRoundCount())
 }
 
 // grantCorpseGold credits gold looted from a corpse to the looter.
