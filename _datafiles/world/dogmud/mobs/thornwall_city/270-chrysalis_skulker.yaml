@@ -56,3 +56,4 @@ character:
     unarmed-combat: 6
   items:
     - itemid: 10023
+      dropchance: 10

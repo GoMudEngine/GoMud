@@ -78,3 +78,4 @@ character:
       itemid: 10024
   items:
     - itemid: 20065
+      dropchance: 10

@@ -43,3 +43,4 @@ character:
     skullduggery: 5
   items:
     - itemid: 10021
+      dropchance: 15

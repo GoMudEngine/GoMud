@@ -44,3 +44,4 @@ character:
       training: 3
   items:
     - itemid: 10006
+      dropchance: 20
