@@ -1,0 +1,17 @@
+itemid: 40231
+name: Sentinel Grey-Carapace
+namesimple: carapace
+description: >-
+  A shell of the same seamless grey as the buried thing the Sentinel guards
+  -- denser than stone, older than reckoning, and cold to a degree that has
+  nothing to do with the vault. Blows land on it and stop, as though the
+  material simply refuses the idea of being broken.
+type: body
+subtype: wearable
+physical_mitigation: 35
+magical_mitigation: 30
+conviction_mitigation: 25
+never_drops: true
+not_salable: true
+weight: 0.0
+value: 0

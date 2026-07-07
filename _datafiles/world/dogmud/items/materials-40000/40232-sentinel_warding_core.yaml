@@ -1,0 +1,17 @@
+itemid: 40232
+name: Sentinel Warding-Core
+namesimple: core
+description: >-
+  A second, deeper socket set behind the Sentinel's watching eye, banked
+  with the same cold fire -- a ward turned inward, bleeding off the force of
+  spell and shout and conviction alike before it can reach the frame it
+  protects.
+type: neck
+subtype: wearable
+physical_mitigation: 0
+magical_mitigation: 20
+conviction_mitigation: 20
+never_drops: true
+not_salable: true
+weight: 0.0
+value: 0
