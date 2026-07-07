@@ -1,0 +1,18 @@
+id: pothole_coulee_enchanter
+description: "Enchanter Skell's daily routine: the wards by day, the dugout floor by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6461
+    activity: ""
+    idlecommands:
+      - emote traces a binding sigil in the dugout air, muttering.
+      - emote peers at a chrysalis shard through a cracked lens.
+      - say The wards hold better where no sun reaches them.
+  - start: 22
+    end: 6
+    target_room: 6461
+    activity: sleeping
+    idlecommands:
+      - emote sleeps on a pallet inside the ring of scratched wards.
+      - emote breathes slow, one hand still loose over a jar of shard-dust.

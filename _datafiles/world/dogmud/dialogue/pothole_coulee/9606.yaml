@@ -1,0 +1,33 @@
+mobid: 9606
+zone: Pothole Coulee
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Speak, or do not. I am working either way."
+      - "The wards hold better down here than up in the sun. State
+        your business."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "You again. The dugout remembers faces even if I pretend not
+        to."
+
+  - keywords: ["ward", "sigil", "enchant", "chrysalis", "shard"]
+    responses:
+      - "Chrysalis shard, binding paste, mutation catalyst -- I keep
+        what the work needs down here where the earth holds the wards
+        steady. Ask for a thing by name and I will tell you the price
+        without wasting either of our time."
+      - "Ward-work does not forgive carelessness. I do mine slow and
+        underground, where the light behaves and the sigils hold
+        their shape."
+
+  - keywords: [""]
+    responses:
+      - "Hm."
+      - "The dust settles when it settles. Come back if you need
+        something specific."

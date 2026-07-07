@@ -1,0 +1,32 @@
+mobid: 9608
+zone: Pothole Coulee
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Sit close to the fire, mind the smoke. Hungry?"
+      - "Hesk. Pull up a stone and I will see what the kettle has
+        going."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "Good to see a full belly did you some good last time. Sit,
+        I will see what is left in the pot."
+
+  - keywords: ["stew", "tea", "chowder", "broth", "wine", "bread", "food", "cook"]
+    responses:
+      - "Hearty stew, herbal tea, a chowder if the traders bring
+        clams up from the lake, antidote broth if the coulee has
+        bitten you somewhere it should not have. Ask by name and I
+        will tell you what is on the coals."
+      - "I cook over scavenged tin and coulee coal, and I do not
+        apologize for either. The coin-guards eat what I put in front
+        of them and come back asking for more."
+
+  - keywords: [""]
+    responses:
+      - "The kettle bites if you are careless. Mind your hands."
+      - "Fire's hot, the food's honest. Sit."

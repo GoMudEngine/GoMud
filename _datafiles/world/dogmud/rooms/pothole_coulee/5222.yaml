@@ -19,6 +19,8 @@ exits:
     roomid: 5207
   south:
     roomid: 5264
+  east:
+    roomid: 6462
 nouns:
   reeds: The reeds stand thick and head-high where the wash slows and
     pools, their roots in still green water that smells of sweet rot and,

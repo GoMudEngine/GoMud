@@ -1,0 +1,34 @@
+roomid: 6462
+zone: Pothole Coulee
+title: The Gem Stall
+description: >
+  A plank stall raised on stilts at the reed line, a canvas awning
+  strung overhead to keep the sun and the coulee drizzle off the trays.
+  Trays of raw stone and polished bead sit under thin muslin, and a
+  small anvil-block for setting wire is bolted to the counter's corner,
+  dented from years of careful, patient taps. The reeds of Reedwash
+  lean close on two sides, and the smell of wet green growth mixes odd
+  with hot metal and rock dust.
+biome: shore
+station: jeweler_bench
+coord:
+  x: 48
+  y: 2
+  z: 0
+exits:
+  west:
+    roomid: 5222
+nouns:
+  trays: Shallow wooden trays under thin muslin, sorted stone from
+    bead from half-set wire. Nothing here is loud to look at, though
+    some of it is worth more than the stall itself.
+  anvil-block: A fist-sized block of iron bolted to the counter's
+    corner, its face dimpled from years of small, exact taps setting
+    wire and stone into place.
+spawninfo:
+  - mobid: 9607
+    cooldown: 600 rounds
+idlemessages:
+- A gull-cry carries up from somewhere out past the reeds.
+- The awning snaps once in a gust off the wash and goes still.
+- A tray of polished stone catches the light and throws it back dull.

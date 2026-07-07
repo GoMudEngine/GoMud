@@ -1,0 +1,18 @@
+id: pothole_coulee_jeweler
+description: "Jeweler Vurl's daily routine: the gem stall by day, the stall floor by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6462
+    activity: ""
+    idlecommands:
+      - emote holds a gem up to the light, turning it slow between two fingers.
+      - emote polishes a wire setting with a scrap of soft cloth.
+      - say The reed-light shows a stone's true color, come look.
+  - start: 22
+    end: 6
+    target_room: 6462
+    activity: sleeping
+    idlecommands:
+      - emote sleeps behind the counter, trays covered against the damp.
+      - emote stirs faintly as a gull cries somewhere out past the reeds.
