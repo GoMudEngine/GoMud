@@ -14,6 +14,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/state/presence"
@@ -520,7 +521,7 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 		return handled, err
 	}
 
-	if user.Character.HasSpell(cmd) {
+	if spellId := spells.ResolveSpellId(cmd); spellId != "" && user.Character.HasSpell(spellId) {
 		castCmd := cmd
 		if len(rest) > 0 {
 			castCmd += ` ` + rest
