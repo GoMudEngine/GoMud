@@ -53,9 +53,11 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	// Auto-pull from storage: at a storage room that satisfies the recipe's station,
-	// draw exactly the missing components from storage so the craft can proceed.
-	// All-or-nothing (PlanStoragePull returns complete=false if storage can't cover it).
-	if recipe != nil && room.IsStorage &&
+	// draw exactly the missing components from the player's storage so the craft
+	// can proceed. Fires wherever you can craft (at the station); your storage is
+	// one per-character pool, reachable while crafting. All-or-nothing
+	// (PlanStoragePull returns complete=false if storage can't cover it).
+	if recipe != nil &&
 		(recipe.Station == "" || room.Station == recipe.Station) &&
 		user.Character.HasRecipe(recipe.RecipeId) {
 		if ok, _ := crafting.HasIngredients(user.Character.Items, user.Character.ComponentItems, recipe); !ok {
@@ -253,10 +255,9 @@ func classifyRecipe(user *users.UserRecord, room *rooms.Room, r *crafting.Recipe
 	if ok, _ := crafting.HasIngredients(user.Character.Items, user.Character.ComponentItems, r); ok {
 		return "ready"
 	}
-	if room.IsStorage {
-		if _, complete := crafting.PlanStoragePull(r, user.Character.Items, user.Character.ComponentItems, user.ItemStorage.GetItems()); complete {
-			return "ready"
-		}
+	// Completable by pulling from the player's storage (auto-pulled at craft time).
+	if _, complete := crafting.PlanStoragePull(r, user.Character.Items, user.Character.ComponentItems, user.ItemStorage.GetItems()); complete {
+		return "ready"
 	}
 	return "missing"
 }
