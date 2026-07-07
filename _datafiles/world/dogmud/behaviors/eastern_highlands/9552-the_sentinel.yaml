@@ -1,0 +1,49 @@
+# The Sentinel -- Eastern Highlands (#21) duo optional-boss.
+# ONE light hook: "Rouse the Wards." At 50% HP the Sentinel telegraphs,
+# then summons its two dormant guardians (Roused Ward 9550, Watcher-Shard
+# 9551) to split a duo's focus. State-gated so it fires exactly once even
+# if the Sentinel's HP crosses 50% more than once. Modeled on
+# behaviors/crash_site_interior/9561-warden_prime.yaml (proven pattern:
+# summon_companion, NOT spawn_mob -- the latter never calls room.AddMob
+# and produces ghost mobs).
+tree:
+  type: selector
+  children:
+
+    # -- Rouse the Wards: one-shot telegraphed add-summon at 50% HP --
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 50
+        - type: decorator
+          mod: invert
+          child:
+            type: condition
+            check: state_equals
+            key: wards_roused
+            value: "true"
+        - type: action
+          do: set_state
+          key: wards_roused
+          value: "true"
+        - type: action
+          do: send_room_text
+          text: >-
+            The light in the Sentinel's socket flares white and splits --
+            and along the vault walls two banked guardians grind awake and
+            drop from their niches to stand between you and the thing it
+            keeps.
+        - type: action
+          do: summon_companion
+          mob_id: 9550
+          count: 1
+          base_pool: 300
+          hostile: true
+        - type: action
+          do: summon_companion
+          mob_id: 9551
+          count: 1
+          base_pool: 300
+          hostile: true

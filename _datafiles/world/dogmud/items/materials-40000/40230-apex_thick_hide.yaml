@@ -1,0 +1,17 @@
+itemid: 40230
+name: Apex Thick-Hide
+namesimple: hide
+description: >-
+  The layered, scar-thick hide of a beast that has outlived every rival in
+  the pass -- gnarled with old wounds gone hard, dense enough to turn a
+  blade that would open a lesser animal. It is not armour and was never
+  worn; it is simply what a thing this old is made of.
+type: body
+subtype: wearable
+physical_mitigation: 62
+magical_mitigation: 52
+conviction_mitigation: 52
+never_drops: true
+not_salable: true
+weight: 0.0
+value: 0
