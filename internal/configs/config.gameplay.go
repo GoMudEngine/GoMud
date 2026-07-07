@@ -89,7 +89,7 @@ func (g *GamePlay) Validate() {
 	}
 
 	if g.Death.CorpseLootTimeout == `` {
-		g.Death.CorpseLootTimeout = `4 minutes`
+		g.Death.CorpseLootTimeout = `4 real minutes` // real-time; bare "minutes" is parsed as game-time by AddPeriod (~0 rounds)
 	}
 
 	// DOGMud death penalty defaults (Stage 20.1)
