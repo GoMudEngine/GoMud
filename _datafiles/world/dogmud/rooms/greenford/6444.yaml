@@ -1,0 +1,46 @@
+roomid: 6444
+zone: Greenford
+title: The Greenford Counting House
+description: >
+  The Counting House sits just off the Guild Lane, a squat
+  building of the same grey stone as the town hall but with
+  none of the civic flourish. A plain counter of scrubbed
+  oak divides the room, and behind it a wall of pigeonholes
+  holds tied bundles of paper. A strongbox is bolted to the
+  floor in the far corner, and a ledger the size of a
+  cartwheel lies open on a slanted writing desk. The smell
+  is beeswax and old paper, with a faint mineral note from
+  the strongbox iron. Examine the counter or the ledger.
+biome: city
+isbank: true
+isstorage: true
+storagecapacity: 1000
+coord: {x: 23, y: -78, z: 1}
+exits:
+  north: {roomid: 6294}
+nouns:
+  the counter: >
+    A long counter of scrubbed oak, its surface pale from
+    years of scouring. A small bell sits at one end for
+    summoning the clerk, and a shallow ink-stain has soaked
+    permanently into the grain near the ledger's usual
+    resting place.
+  the ledger: >
+    A ledger the size of a cartwheel, lying open on a
+    slanted writing desk behind the counter. Columns of
+    figures run down every page in a careful, unhurried
+    hand — rents, loan payments, grain-tithe accounts, and
+    a few larger entries in red ink that carry no names.
+  the strongbox: >
+    A heavy iron strongbox bolted through the floorboards
+    into the stone beneath. The lock takes a long-shanked
+    key that never seems to leave the clerk's coat. The
+    iron is dull and scarred, but sounds entirely solid
+    when a knuckle taps it.
+spawninfo:
+  - mobid: 9589
+    cooldown: 600 rounds
+idlemessages:
+- The clerk turns a page of the ledger, smoothing the crease with a thumb.
+- A wax seal cracks softly as a folded paper is slotted into a pigeonhole.
+- The strongbox settles with a low tick as the building shifts in the evening cool.

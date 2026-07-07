@@ -1,0 +1,41 @@
+mobid: 9589
+zone: Greenford
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Good day to you. What business brings you to the Counting House?"
+      - "Come in out of the lane. What can I set down in the ledger for you?"
+
+  - keywords: ["bank", "storage", "vault", "deposit", "gold", "account"]
+    responses:
+      - "This counting house will hold your coin and your goods as
+        safe as anything in Greenford — the strongbox is bolted
+        through the floor and I keep the only key. Ask me to store
+        or withdraw whenever you have need of it."
+      - "I keep an honest ledger. Every deposit gets its own line,
+        every withdrawal too. There has not been a shortfall on my
+        watch and there will not be one while I am counting."
+
+  - keywords: ["ledger", "rent", "tithe", "rate", "town"]
+    responses:
+      - "This ledger holds rents, grain-tithes, quarter-rates, and
+        the odd loan against next season's harvest. I know who
+        owes what and who has always paid on time. It is not
+        complicated work, but it wants a steady hand."
+
+  - keywords: [""]
+    responses:
+      - "The counter is right here whenever you need it."
+      - "Take your time. The ledger is not going anywhere."
+
+tree:
+  root:
+    text: "Good day to you. What business brings you to the Counting House?"
+    hints: "You could ask Prewitt about the bank and storage, or about
+      the ledger and the town's accounts."
+
+memory:
+  expiryPeriod: ""

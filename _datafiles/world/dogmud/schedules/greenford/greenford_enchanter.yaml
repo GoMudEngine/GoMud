@@ -1,0 +1,18 @@
+id: greenford_enchanter
+description: "Cade the Enchanter's daily routine: at the circle by day, asleep behind the shuttered window by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6448
+    activity: ""
+    idlecommands:
+      - emote traces a binding sigil in the air with one finger, muttering.
+      - emote peers at a chrysalis shard through a magnifying glass.
+      - emote makes a notation in a weathered journal, frowning.
+  - start: 22
+    end: 6
+    target_room: 6448
+    activity: sleeping
+    idlecommands:
+      - emote breathes evenly, asleep beside the chalk circle.
+      - emote fingers twitch faintly with a branching glow, then still.

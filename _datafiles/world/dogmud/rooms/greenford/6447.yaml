@@ -1,0 +1,39 @@
+roomid: 6447
+zone: Greenford
+title: The Herbalist's Stall
+description: >
+  The Herbalist's Stall is a narrow shop crowded with the
+  business of drying and grinding — bundles of herbs hang
+  in rows from the ceiling beams, and a stout alchemy bench
+  along the back wall holds a mortar, a rack of small
+  bottles, and a set of brass scales. The air is thick with
+  the mixed smell of dried mint, bitter root, and something
+  faintly sweet underneath. Examine the bench or the herbs.
+biome: city
+coord: {x: 26, y: -77, z: 1}
+station: alchemy_bench
+exits:
+  west: {roomid: 6446}
+  east: {roomid: 6448}
+nouns:
+  the alchemy bench: >
+    A stout wooden bench scarred with old burns and stains,
+    holding a stone mortar, a rack of small glass and clay
+    bottles, and a set of brass scales balanced to the
+    grain. Everything on it has a place and stays there.
+  the herbs: >
+    Bundles of drying herbs hang in tidy rows from the
+    ceiling beams — mint, thistle, root, and bark, each
+    bundle tagged with a small wooden marker in a cramped
+    hand.
+  the scales: >
+    A set of brass scales on the bench, their pans worn
+    bright at the edges. A small tin of counterweights
+    sits beside them, sorted smallest to largest.
+spawninfo:
+  - mobid: 9592
+    cooldown: 600 rounds
+idlemessages:
+- A mortar grinds something to powder with a slow, steady scrape.
+- The brass scales tip and settle as a measure is weighed out.
+- A bundle of herbs is taken down, sniffed, and hung back in its place.

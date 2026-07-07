@@ -1,0 +1,38 @@
+mobid: 9591
+zone: Greenford
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome to the Weaver's Loft. Come in, mind the shuttle."
+      - "Wenna. Looking for cloth, thread, or something already made up?"
+
+  - keywords: ["weave", "cloth", "wares", "buy", "stock", "thread"]
+    responses:
+      - "Thread spools, bone needles, a bit of beeswax for waxing
+        seams. I keep a modest shelf, but everything on it is
+        stitched to actually last through a season's work."
+      - "The loom is always running. Cloth, tunics, cloaks, satchels
+        and packs when I have the leather in. Ask specifically and
+        I will tell you what is finished."
+
+  - keywords: ["craft", "recipe", "make", "garment", "sew"]
+    responses:
+      - "I can cut and stitch most anything from a plain tunic to a
+        reinforced travel pack, so long as you bring the cloth and
+        thread. Bring me good material and I will not waste it."
+
+  - keywords: [""]
+    responses:
+      - "Have a look at the baskets. Ask if you need something specific."
+
+tree:
+  root:
+    text: "Welcome to the Weaver's Loft. Come in, mind the shuttle."
+    hints: "You could ask Wenna about her stock, or about weaving and
+      stitching a garment."
+
+memory:
+  expiryPeriod: ""

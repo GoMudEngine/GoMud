@@ -1,0 +1,137 @@
+mobid: 9592
+zone: Greenford
+craft_support: alchemy
+archetype: casting
+behavior_archetype: noncombat_shopkeeper
+statpool: 120
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+schedule_id: greenford_alchemist
+groups:
+  - humanoid
+idlecommands:
+  - 'emote grinds something in a mortar with small, precise movements'
+  - 'emote holds a bottle up to the light, examining the colour of its contents'
+  - ''
+  - 'emote makes a notation in a leather-bound journal'
+  - ''
+activitylevel: 10
+crafter: true
+crafterskill: alchemy
+crafterrecipeids:
+  - battle-trance
+  - berserker-elixir
+  - cats-eye-draught
+  - chrysalis-catalyst
+  - clarity-tonic
+  - conviction-draught
+  - elixir-of-renewal
+  - essence-of-growth
+  - fire-resistance-draught
+  - firebomb
+  - flashbang
+  - healing-salve
+  - ironhide-brew
+  - mindshield-elixir
+  - minor-antidote
+  - mutagen-brew
+  - preachers-tincture
+  - purging-draught
+  - savants-infusion
+  - silver-tongue-oil
+  - stamina-tonic
+  - stone-stomach
+  - swiftfoot-essence
+  - toxic-flask
+  - veilguard-tonic
+  - warriors-brew
+  - windrunner-draught
+crafterrestockmaterials:
+  - 40004
+  - 40005
+  - 40006
+  - 40007
+character:
+  name: Hebb the Herbalist
+  description: |
+    A lean, stoop-shouldered man with ink and herb-dust ground
+    permanently into the creases of his hands. Hebb has run the
+    Herbalist's Stall for as long as anyone can recall asking,
+    and he talks to his drying bundles more than he talks to
+    customers, though he always looks up when the bell over the
+    door sounds. He measures doses the way a farmer measures
+    seed -- carefully, and with an eye toward not wasting a
+    grain of it.
+  speciesid: 1
+  level: 1
+  gold: 1000
+  skills:
+    alchemy: 8
+  stats:
+    perception:
+      training: 15
+    willpower:
+      training: 10
+    charisma:
+      training: -5
+  shop:
+    # Thornwall chrysalis (in-shop crafted)
+    - itemid: 40010    # Chrysalis Core
+      quantity: 0
+      quantitymax: 0
+      price: 80
+    - itemid: 40029    # mutation catalyst
+      quantity: 0
+      quantitymax: 0
+      price: 60
+    # Stillwater unique (caravan-fed from Ilsa)
+    - itemid: 40056    # marsh willow bark
+      quantity: 0
+      quantitymax: 0
+      price: 18
+    - itemid: 40057    # lake mint
+      quantity: 0
+      quantitymax: 0
+      price: 15
+    # Fernway forest (caravan-fed)
+    - itemid: 40062    # oak bark
+      quantity: 0
+      quantitymax: 0
+      price: 35
+    - itemid: 40063    # shadowcap mushroom
+      quantity: 0
+      quantitymax: 0
+      price: 40
+    - itemid: 40065    # beeswax
+      quantity: 0
+      quantitymax: 0
+      price: 30
+    - itemid: 40066    # blood-moss
+      quantity: 0
+      quantitymax: 0
+      price: 45
+    # Mid-tier overlap alchemy
+    - itemid: 40004    # healer's root
+      quantity: 0
+      quantitymax: 0
+      price: 5
+    - itemid: 40005    # bitter thistle
+      quantity: 0
+      quantitymax: 0
+      price: 5
+    - itemid: 40009    # dustwalk herb
+      quantity: 0
+      quantitymax: 0
+      price: 8
+    # Base alchemy infrastructure
+    - itemid: 40006    # glass vial
+      quantity: 0
+      quantitymax: 0
+      price: 1
+    - itemid: 40043    # clay flask
+      quantity: 0
+      quantitymax: 0
+      price: 1

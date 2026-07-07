@@ -1,0 +1,40 @@
+roomid: 6446
+zone: Greenford
+title: The Weaver's Loft
+description: >
+  The Weaver's Loft is a bright, cluttered room a step up
+  from the lane, its front window angled to catch the
+  morning light. A great wooden loom takes up most of the
+  floor space, half-strung with an undyed length of wool.
+  Baskets of carded fleece and spun thread sit along the
+  wall, sorted more by habit than by any visible system.
+  The air smells faintly of lanolin and dye. Examine the
+  loom or the baskets.
+biome: city
+coord: {x: 25, y: -77, z: 1}
+station: loom
+exits:
+  west: {roomid: 6445}
+  east: {roomid: 6447}
+nouns:
+  the loom: >
+    A great wooden loom strung with an undyed length of
+    wool, half-woven, the shuttle resting in the warp
+    where it was last set down. The frame is old and worn
+    smooth at every point a hand naturally falls.
+  the baskets: >
+    Baskets of carded fleece and spun thread along the
+    wall, sorted by weight and colour more by habit than
+    by any label. A few skeins show the faint tint of a
+    dye-batch still drying.
+  the window: >
+    A wide front window angled to catch the morning light
+    at the best working angle, its sill dusted with lint
+    that never quite gets swept away.
+spawninfo:
+  - mobid: 9591
+    cooldown: 600 rounds
+idlemessages:
+- The loom's shuttle clicks back and forth in a steady rhythm.
+- A skein of dyed wool is lifted to the light and turned over once.
+- Loose lint drifts from the loom and settles on the sill.

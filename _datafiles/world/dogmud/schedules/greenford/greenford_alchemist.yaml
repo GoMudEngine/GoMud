@@ -1,0 +1,18 @@
+id: greenford_alchemist
+description: "Hebb the Herbalist's daily routine: at the bench by day, asleep among the drying herbs by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6447
+    activity: ""
+    idlecommands:
+      - emote grinds something in a mortar with small, precise movements.
+      - emote holds a bottle up to the light, examining the colour of its contents.
+      - emote makes a notation in a leather-bound journal.
+  - start: 22
+    end: 6
+    target_room: 6447
+    activity: sleeping
+    idlecommands:
+      - emote breathes evenly, asleep in a chair beneath the hanging herbs.
+      - emote murmurs a measure in his sleep and settles again.

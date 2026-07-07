@@ -1,0 +1,39 @@
+mobid: 9590
+zone: Greenford
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome to the Guild Forge. Mind the sparks."
+      - "Aldo. Something needs made, mended, or sharpened?"
+
+  - keywords: ["smith", "blacksmith", "wares", "buy", "stock", "forge"]
+    responses:
+      - "Ingots, iron, coal, a few blanks I have not sold yet.
+        I take orders too, if you need something particular made
+        proper instead of bought off a shelf."
+      - "I keep the forge lit most every day. Steel, iron, chain
+        link, wooden stock for hafts and hilts. Ask specifically
+        and I will tell you what is on the rack."
+
+  - keywords: ["craft", "recipe", "make", "blade", "weapon"]
+    responses:
+      - "I can turn out blades, buckles, chain, and a fair bit of
+        plate if you bring the right materials. The forge does not
+        care whose order it is, only whether the metal is honest."
+
+  - keywords: [""]
+    responses:
+      - "Speak up if you need something. The hammer does not stop
+        for conversation."
+
+tree:
+  root:
+    text: "Welcome to the Guild Forge. Mind the sparks."
+    hints: "You could ask Aldo about his stock, or about crafting a
+      blade or piece of gear."
+
+memory:
+  expiryPeriod: ""

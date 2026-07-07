@@ -1,0 +1,41 @@
+roomid: 6445
+zone: Greenford
+title: The Guild Forge
+description: >
+  The Guild Forge opens straight off the Guild Lane, its
+  wide doorway thrown back to let the heat and hammer-noise
+  spill into the street. A stone forge dominates the near
+  wall, coals banked orange beneath a black iron hood, and
+  an anvil sits bedded on a section of tree-stump worn
+  smooth by years of strikes. Racks of tongs, files, and
+  half-finished blade-blanks line the far wall. The air
+  smells of coal-smoke and hot metal. Examine the forge or
+  the anvil.
+biome: city
+coord: {x: 24, y: -77, z: 1}
+station: forge
+exits:
+  west: {roomid: 6294}
+  east: {roomid: 6446}
+nouns:
+  the forge: >
+    A stone forge with a black iron hood, coals banked low
+    and orange beneath a slow-turning bellows. The brick
+    around the mouth has gone a permanent smoke-grey, and
+    the heat rolls off it in a wave even from the doorway.
+  the anvil: >
+    A heavy anvil bedded on a section of tree-stump, its
+    face polished to a dull shine by years of hammer-strikes.
+    The horn is chipped in one small place from an old
+    mistake nobody talks about anymore.
+  the racks: >
+    Racks of tongs, files, and half-finished blade-blanks
+    line the far wall, each tool hung on its own peg in an
+    order that makes sense to exactly one person.
+spawninfo:
+  - mobid: 9590
+    cooldown: 600 rounds
+idlemessages:
+- Sparks scatter from the anvil in a bright, short-lived shower.
+- The bellows wheeze and the coals brighten from orange to white.
+- A length of iron hisses as it goes into the slack tub.

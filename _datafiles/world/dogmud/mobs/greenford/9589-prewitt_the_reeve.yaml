@@ -1,0 +1,41 @@
+mobid: 9589
+zone: Greenford
+behavior_archetype: noncombat_questgiver
+schedule_id: greenford_clerk
+statpool: 80
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote draws a careful line beneath a column of figures
+    and sets the pen down to check the sum'
+  - ''
+  - 'emote slots a rolled document into a pigeonhole and
+    presses the wax seal flat with one thumb'
+  - ''
+  - 'emote opens the strongbox briefly, counts something
+    without removing it, and closes it again'
+  - ''
+  - 'emote makes a small notation in the margin of the ledger,
+    initials it, and blows it dry'
+  - ''
+activitylevel: 12
+character:
+  name: Prewitt the Reeve
+  description: |
+    Prewitt the Reeve keeps the Counting House's books with the
+    same unhurried patience he brings to everything else. A
+    stout, grey-whiskered man in a coat gone shiny at the
+    elbows, he has counted every rent, every grain-tithe, and
+    every quarter-rate this town has paid for longer than most
+    residents have been alive. He speaks slowly and precisely,
+    as though every sentence were itself an entry that might
+    need correcting later. He knows who owes what to whom, and
+    he keeps that knowledge behind the counter along with the
+    strongbox key.
+  speciesid: 1
+  level: 1
