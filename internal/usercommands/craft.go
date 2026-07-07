@@ -23,8 +23,12 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	rest = strings.TrimSpace(rest)
 
-	// ── craft / craft list ────────────────────────────────────────────────────
-	if rest == "" || strings.ToLower(rest) == "list" {
+	// ── craft (bare) → only recipes craftable right now, here ─────────────────
+	if rest == "" {
+		return craftCraftableNow(user, room), nil
+	}
+	// ── craft list / craft all → full sectioned view ──────────────────────────
+	if lc := strings.ToLower(rest); lc == "list" || lc == "all" {
 		return craftList(user, room), nil
 	}
 
@@ -235,7 +239,103 @@ func craftEnchanting(rest string, recipe *crafting.RecipeSpec, user *users.UserR
 	return true, nil
 }
 
-// craftList prints all known recipes grouped by skill with craftability indicators.
+// classifyRecipe buckets a known recipe for the current room: "ready" (makeable
+// now, incl. from this room's storage), "missing" (skill+station OK, lack mats),
+// or "locked" (wrong/absent station or skill too low).
+func classifyRecipe(user *users.UserRecord, room *rooms.Room, r *crafting.RecipeSpec) string {
+	lvl := user.Character.GetSkillLevel(skills.SkillTag(r.Skill))
+	if lvl < r.SkillMinimum {
+		return "locked"
+	}
+	if r.Station != "" && room.Station != r.Station {
+		return "locked"
+	}
+	if ok, _ := crafting.HasIngredients(user.Character.Items, user.Character.ComponentItems, r); ok {
+		return "ready"
+	}
+	if room.IsStorage {
+		if _, complete := crafting.PlanStoragePull(r, user.Character.Items, user.Character.ComponentItems, user.ItemStorage.GetItems()); complete {
+			return "ready"
+		}
+	}
+	return "missing"
+}
+
+// craftRecipeRow renders a single recipe line (name + ingredients + station +
+// time) using the shared craftList row style, WITHOUT the leading [X] indicator.
+// Used by the bare-craft "Ready to Craft" view.
+func craftRecipeRow(r *crafting.RecipeSpec) string {
+	ingredientList := ingredientSummary(r)
+	stationStr := ""
+	if r.Station != "" {
+		stationStr = fmt.Sprintf(" [%s]", strings.ReplaceAll(r.Station, "_", " "))
+	}
+	displayName := r.Name
+	if crafting.IsEnchantingRecipe(r) && r.TargetType != "" {
+		displayName = fmt.Sprintf("%s (%s)", r.Name, r.TargetType)
+	}
+	return fmt.Sprintf(
+		`  <ansi fg="green">[V]</ansi> <ansi fg="white">%-26s</ansi> — %s  <ansi fg="dark-cyan">%s, %s</ansi>`,
+		displayName, ingredientList, stationStr, craftTimeDesc(r.TimeRounds))
+}
+
+// craftCraftableNow prints only the recipes the player can craft right now in
+// the current room (materials in hand or completable from this room's storage).
+func craftCraftableNow(user *users.UserRecord, room *rooms.Room) bool {
+	all := crafting.GetAll()
+
+	// Collect known + ready recipes, grouped by skill for a stable ordering.
+	bySkill := make(map[string][]*crafting.RecipeSpec)
+	skillSet := make(map[string]struct{})
+	ready := 0
+	for id, r := range all {
+		if !user.Character.HasRecipe(id) {
+			continue
+		}
+		if classifyRecipe(user, room, r) != "ready" {
+			continue
+		}
+		bySkill[r.Skill] = append(bySkill[r.Skill], r)
+		skillSet[r.Skill] = struct{}{}
+		ready++
+	}
+
+	user.SendText(messaging.CategorySystem, ``)
+	user.SendText(messaging.CategorySystem, `<ansi fg="green-bold"> .:. Ready to Craft .:.</ansi>`)
+
+	if ready == 0 {
+		user.SendText(messaging.CategorySystem, ``)
+		user.SendText(messaging.CategorySystem, `<ansi fg="yellow">Nothing you can craft here right now — try <ansi fg="cyan-bold">craft list</ansi> to see everything you know.</ansi>`)
+		user.SendText(messaging.CategorySystem, ``)
+		return true
+	}
+
+	skillNames := make([]string, 0, len(skillSet))
+	for sk := range skillSet {
+		skillNames = append(skillNames, sk)
+	}
+	sort.Strings(skillNames)
+
+	for _, skillName := range skillNames {
+		recipes := bySkill[skillName]
+		sort.SliceStable(recipes, func(i, j int) bool { return recipes[i].Name < recipes[j].Name })
+		user.SendText(messaging.CategorySystem, ``)
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
+			`<ansi fg="yellow">%s</ansi>`,
+			titleCase(strings.ReplaceAll(skillName, "-", " "))))
+		for _, r := range recipes {
+			user.SendText(messaging.CategorySystem, craftRecipeRow(r))
+		}
+	}
+
+	user.SendText(messaging.CategorySystem, ``)
+	user.SendText(messaging.CategorySystem, `<ansi fg="cyan">Type <ansi fg="cyan-bold">craft list</ansi> to see every recipe you know.</ansi>`)
+	user.SendText(messaging.CategorySystem, ``)
+	return true
+}
+
+// craftList prints all known recipes, sectioned by craftability — Ready to
+// craft, Missing ingredients, then Locked — with per-recipe status details.
 func craftList(user *users.UserRecord, room *rooms.Room) bool {
 	all := crafting.GetAll()
 	if len(all) == 0 {
@@ -256,69 +356,100 @@ func craftList(user *users.UserRecord, room *rooms.Room) bool {
 		return true
 	}
 
-	// Collect unique skill names sorted alphabetically
-	skillSet := make(map[string]struct{})
+	// Bucket every known recipe by craftability, keyed by skill within the
+	// bucket so we can preserve the existing per-skill grouping inside sections.
+	type bucket struct {
+		bySkill map[string][]*crafting.RecipeSpec
+	}
+	buckets := map[string]*bucket{
+		"ready":   {bySkill: map[string][]*crafting.RecipeSpec{}},
+		"missing": {bySkill: map[string][]*crafting.RecipeSpec{}},
+		"locked":  {bySkill: map[string][]*crafting.RecipeSpec{}},
+	}
 	for _, r := range known {
-		skillSet[r.Skill] = struct{}{}
+		b := buckets[classifyRecipe(user, room, r)]
+		b.bySkill[r.Skill] = append(b.bySkill[r.Skill], r)
 	}
-	skillNames := make([]string, 0, len(skillSet))
-	for sk := range skillSet {
-		skillNames = append(skillNames, sk)
+
+	// Overall completion accounting (known vs total across all skills).
+	totalKnown := 0
+	grandTotal := 0
+	{
+		countedSkills := make(map[string]struct{})
+		for _, r := range known {
+			countedSkills[r.Skill] = struct{}{}
+		}
+		for skillName := range countedSkills {
+			allForSkill := crafting.GetAllForSkill(skillName)
+			for _, r := range allForSkill {
+				grandTotal++
+				if user.Character.HasRecipe(r.RecipeId) {
+					totalKnown++
+				}
+			}
+		}
 	}
-	sort.Strings(skillNames)
 
 	user.SendText(messaging.CategorySystem, ``)
 	user.SendText(messaging.CategorySystem, `<ansi fg="cyan-bold"> .:. Crafting Recipes .:.</ansi>`)
 
-	totalKnown := 0
-	grandTotal := 0
+	// Ordered sections, actionable ones first.
+	sections := []struct {
+		key    string
+		header string
+	}{
+		{"ready", `<ansi fg="green-bold">Ready to craft</ansi>`},
+		{"missing", `<ansi fg="yellow-bold">Missing ingredients</ansi>`},
+		{"locked", `<ansi fg="red-bold">Locked (station or skill)</ansi>`},
+	}
 
-	for _, skillName := range skillNames {
-		skillLevel := user.Character.GetSkillLevel(skills.SkillTag(skillName))
-
-		// Count known vs total for this skill
-		allForSkill := crafting.GetAllForSkill(skillName)
-		knownCount := 0
-		for _, r := range allForSkill {
-			if user.Character.HasRecipe(r.RecipeId) {
-				knownCount++
-			}
+	for _, sec := range sections {
+		b := buckets[sec.key]
+		if len(b.bySkill) == 0 {
+			continue
 		}
-		totalKnown += knownCount
-		grandTotal += len(allForSkill)
-
-		completionDesc := recipeCompletionTier(knownCount, len(allForSkill))
-
 		user.SendText(messaging.CategorySystem, ``)
-		user.SendText(messaging.CategorySystem, fmt.Sprintf(
-			`<ansi fg="yellow">%s</ansi> <ansi fg="white">(%s)</ansi> — <ansi fg="black-bold">%s</ansi>`,
-			titleCase(strings.ReplaceAll(skillName, "-", " ")), skills.GetSkillRankDescription(skillLevel), completionDesc))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(` %s`, sec.header))
 
-		recipes := crafting.GetAllForSkill(skillName)
-		for _, r := range recipes {
-			if !user.Character.HasRecipe(r.RecipeId) {
-				continue
-			}
-			indicator, reason := recipeStatus(user, room, r, skillLevel)
-			ingredientList := ingredientSummary(r)
-			stationStr := ""
-			if r.Station != "" {
-				stationStr = fmt.Sprintf(" [%s]", strings.ReplaceAll(r.Station, "_", " "))
-			}
-			// Enchanting recipes target an equipped item; annotate the
-			// recipe name with the slot for at-a-glance lookup.
-			displayName := r.Name
-			if crafting.IsEnchantingRecipe(r) && r.TargetType != "" {
-				displayName = fmt.Sprintf("%s (%s)", r.Name, r.TargetType)
-			}
-			if reason != "" {
-				user.SendText(messaging.CategorySystem, fmt.Sprintf(
-					`  <ansi fg="red">[%s]</ansi> <ansi fg="white">%-26s</ansi> — %s  <ansi fg="red">%s</ansi><ansi fg="dark-cyan">%s, %s</ansi>`,
-					indicator, displayName, ingredientList, reason, stationStr, craftTimeDesc(r.TimeRounds)))
-			} else {
-				user.SendText(messaging.CategorySystem, fmt.Sprintf(
-					`  <ansi fg="green">[%s]</ansi> <ansi fg="white">%-26s</ansi> — %s  <ansi fg="dark-cyan">%s, %s</ansi>`,
-					indicator, displayName, ingredientList, stationStr, craftTimeDesc(r.TimeRounds)))
+		// Sort skill names within the section for stable output.
+		skillNames := make([]string, 0, len(b.bySkill))
+		for sk := range b.bySkill {
+			skillNames = append(skillNames, sk)
+		}
+		sort.Strings(skillNames)
+
+		for _, skillName := range skillNames {
+			skillLevel := user.Character.GetSkillLevel(skills.SkillTag(skillName))
+
+			recipes := b.bySkill[skillName]
+			sort.SliceStable(recipes, func(i, j int) bool { return recipes[i].Name < recipes[j].Name })
+
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
+				`  <ansi fg="yellow">%s</ansi> <ansi fg="white">(%s)</ansi>`,
+				titleCase(strings.ReplaceAll(skillName, "-", " ")), skills.GetSkillRankDescription(skillLevel)))
+
+			for _, r := range recipes {
+				indicator, reason := recipeStatus(user, room, r, skillLevel)
+				ingredientList := ingredientSummary(r)
+				stationStr := ""
+				if r.Station != "" {
+					stationStr = fmt.Sprintf(" [%s]", strings.ReplaceAll(r.Station, "_", " "))
+				}
+				// Enchanting recipes target an equipped item; annotate the
+				// recipe name with the slot for at-a-glance lookup.
+				displayName := r.Name
+				if crafting.IsEnchantingRecipe(r) && r.TargetType != "" {
+					displayName = fmt.Sprintf("%s (%s)", r.Name, r.TargetType)
+				}
+				if reason != "" {
+					user.SendText(messaging.CategorySystem, fmt.Sprintf(
+						`    <ansi fg="red">[%s]</ansi> <ansi fg="white">%-26s</ansi> — %s  <ansi fg="red">%s</ansi><ansi fg="dark-cyan">%s, %s</ansi>`,
+						indicator, displayName, ingredientList, reason, stationStr, craftTimeDesc(r.TimeRounds)))
+				} else {
+					user.SendText(messaging.CategorySystem, fmt.Sprintf(
+						`    <ansi fg="green">[%s]</ansi> <ansi fg="white">%-26s</ansi> — %s  <ansi fg="dark-cyan">%s, %s</ansi>`,
+						indicator, displayName, ingredientList, stationStr, craftTimeDesc(r.TimeRounds)))
+				}
 			}
 		}
 	}
