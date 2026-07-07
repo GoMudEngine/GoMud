@@ -11,7 +11,10 @@ description: >
   lengths in the window, from finger-thin tapers to
   full altar rounds, with sealing wax and lamp oil
   advertised on a card in the lower pane. The lane
-  is narrow and well-swept. A pigeonhole board beside the scribe's
+  is narrow and well-swept. Past the chandler the lane
+  continues east into a short row of craftsmen's shops,
+  and a counting house does its quiet business just south
+  of here. A pigeonhole board beside the scribe's
   door holds correspondence awaiting collection — a
   dozen slots, half of them full. Examine the scribe's
   shop or the board.
@@ -20,6 +23,8 @@ coord: {x: 23, y: -77, z: 1}
 exits:
   west: {roomid: 6289}
   north: {roomid: 6291}
+  south: {roomid: 6444}
+  east: {roomid: 6445}
 nouns:
   the scribe's shop: >
     A narrow shopfront, shutters thrown open to the

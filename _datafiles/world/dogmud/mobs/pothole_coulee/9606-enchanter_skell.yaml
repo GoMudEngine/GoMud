@@ -1,0 +1,79 @@
+mobid: 9606
+zone: Pothole Coulee
+craft_support: enchanting
+archetype: casting
+behavior_archetype: noncombat_shopkeeper
+statpool: 54
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+schedule_id: pothole_coulee_enchanter
+groups:
+  - humanoid
+  - coulee_folk
+idlecommands:
+  - 'emote traces a binding sigil in the dugout air with one finger, muttering'
+  - 'emote peers at a chrysalis shard through a cracked magnifying glass'
+  - ''
+  - 'emote makes a notation in a dirt-smudged journal, frowning'
+  - ''
+activitylevel: 10
+character:
+  name: Enchanter Skell
+  description: |
+    I keep the dugout below Provisions because the wards hold better
+    in packed earth than in open air, and because the coulee sun does
+    strange things to shard-dust left in the light too long. I do not
+    talk much while I am working. I talk less when I am not, but I
+    will sell you what you came for either way.
+  speciesid: 1
+  level: 1
+  gold: 1000
+  equipment:
+    weapon:
+      itemid: 10017
+  stats:
+    perception:
+      training: 15
+    willpower:
+      training: 10
+    charisma:
+      training: -10
+  shop:
+    # Thornwall chrysalis (in-shop crafted) — Skell's specialty
+    - itemid: 40010    # Chrysalis Core
+      quantity: 0
+      quantitymax: 0
+      price: 75
+    - itemid: 40027    # chrysalis shard
+      quantity: 0
+      quantitymax: 0
+      price: 20
+    - itemid: 40028    # binding paste
+      quantity: 0
+      quantitymax: 0
+      price: 25
+    - itemid: 40029    # mutation catalyst
+      quantity: 0
+      quantitymax: 0
+      price: 55
+    - itemid: 40030    # chrysalis setting
+      quantity: 0
+      quantitymax: 0
+      price: 75
+    - itemid: 40011    # Hive Fragment
+      quantity: 0
+      quantitymax: 0
+      price: 30
+    # Fernway forest (caravan-fed) — oak bark for ward inscriptions
+    - itemid: 40062    # oak bark
+      quantity: 0
+      quantitymax: 0
+      price: 35
+    # Stillwater unique (caravan-fed from Kess) — pearl for high-tier enchants
+    - itemid: 40053    # Stillwater black pearl
+      quantity: 0
+      quantitymax: 0
+      price: 600

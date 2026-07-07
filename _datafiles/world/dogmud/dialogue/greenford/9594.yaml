@@ -1,0 +1,37 @@
+mobid: 9594
+zone: Greenford
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome to the Jeweler's Bench. Take a seat, if you like."
+      - "Tibb. Looking to buy, sell, or have something set proper?"
+
+  - keywords: ["jewel", "gem", "wares", "buy", "stock", "ring"]
+    responses:
+      - "Copper, silver, and gold wire, polished stone, a few raw
+        gems worth setting. I keep a small tray, but everything in
+        it is honest work."
+      - "Ask specifically and I will tell you what is in the tray
+        today. Some weeks are better than others for good stone."
+
+  - keywords: ["craft", "recipe", "make", "setting", "ring"]
+    responses:
+      - "I can set a ring, a pendant, or a chrysalis setting if you
+        bring me the stone and the wire. The bench does not hurry,
+        but the work holds up."
+
+  - keywords: [""]
+    responses:
+      - "Have a look at the tray. Ask if you need something particular."
+
+tree:
+  root:
+    text: "Welcome to the Jeweler's Bench. Take a seat, if you like."
+    hints: "You could ask Tibb about his stock, or about setting a
+      ring or pendant."
+
+memory:
+  expiryPeriod: ""

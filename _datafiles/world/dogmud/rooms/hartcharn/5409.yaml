@@ -22,6 +22,8 @@ exits:
     roomid: 5408
   east:
     roomid: 5404
+  west:
+    roomid: 6455
 nouns:
   routes board: The routes board stretches the full width of the back
     wall, aged linen inked in fine, close columns. Two main routes are

@@ -1,0 +1,37 @@
+roomid: 6456
+zone: Hartcharn
+title: The Apothecary's Hut
+description: >
+  A cramped, fragrant hut lined with shelves of jarred roots and bundled
+  herbs. The <ansi fg="itemname">alchemy bench</ansi> takes up most of
+  the floor space, its surface scarred by spilled tinctures and old
+  burns. Dried bundles of hill sage and marsh-mint hang from the low
+  rafters, and a kettle simmers quietly over a bed of coals in the
+  corner. The air is thick with the smell of crushed leaves and
+  something faintly medicinal underneath.
+biome: city
+coord:
+  x: -21
+  y: 36
+  z: 0
+station: alchemy_bench
+exits:
+  east:
+    roomid: 6455
+  west:
+    roomid: 6457
+  south:
+    roomid: 6458
+nouns:
+  alchemy bench: A stained wooden bench crowded with mortars, pestles,
+    and a rack of small clay jars. Dark rings mark where countless
+    tinctures have been left to cool, and a set of brass scales sits
+    bolted to one corner.
+idlemessages:
+- A kettle simmers quietly over the coals in the corner.
+- The smell of crushed hill sage drifts from a bundle overhead.
+- Something in a clay jar bubbles once, then settles.
+- Dried herbs rustle faintly as the draft moves through the rafters.
+spawninfo:
+  - mobid: 9601
+    cooldown: 600 rounds

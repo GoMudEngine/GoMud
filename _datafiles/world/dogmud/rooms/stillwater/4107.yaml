@@ -22,6 +22,8 @@ coord:
 exits:
   east:
     roomid: 4106
+  down:
+    roomid: 6443
 nouns:
   slag heap: A heap of cooled forge-tailings against the
     alley's western dead end — glassy black lumps that

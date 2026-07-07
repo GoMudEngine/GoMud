@@ -1,0 +1,39 @@
+mobid: 9605
+zone: Pothole Coulee
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Sit a moment if the tent has room. What tore this time?"
+      - "Bex. If it is cloth or leather and it has a hole in it, I can
+        likely fix that or make you a new one."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "Good to see the mend held up. Bring it back if the seam ever
+        gives -- I stand by my stitching."
+
+  - keywords: ["loom", "cloth", "leather", "stitch", "mend", "patch"]
+    responses:
+      - "The loom runs from first light past dark most days. Thread
+        spool and bone needle are on the shelf if you want to try your
+        own hand at it, but honestly, bring it to me and save yourself
+        the crooked seams."
+      - "Coulee weave holds up better than most cloth against the
+        wind and grit out here. I stitch it tight and I do not skimp
+        on thread, because thread is cheaper than doing the job
+        twice."
+
+  - keywords: ["backpack", "satchel", "vest", "bandolier", "tunic", "cloak"]
+    responses:
+      - "Backpacks, satchels, a good wool cloak for the cold nights --
+        I keep the loom busy with all of it. Ask what you need and I
+        will tell you if I have it ready or need a day to finish it."
+
+  - keywords: [""]
+    responses:
+      - "Needle's in my hand, so speak plain and quick."
+      - "The tent stays open long as the light holds."

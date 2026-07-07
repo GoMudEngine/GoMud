@@ -1,0 +1,50 @@
+mobid: 9604
+zone: Hartcharn
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome to the cookhouse. Sit, or take something with you, I
+        do not much care which."
+      - "Crook. Hungry, or just passing through my smoke?"
+  - keywords: ["buy", "sell", "shop", "wares", "goods", "food", "stew",
+      "meal", "eat"]
+    responses:
+      - "Stew, bread, a bit of broth if you are feeling poorly. Ask
+        specific and I will tell you what is on the fire."
+      - "Whatever the foragers bring down, I can turn into something
+        worth eating. Come hungry and leave full."
+  - keywords: ["fire", "kettle", "cook", "cooking"]
+    responses:
+      - "That fire has not gone cold in longer than I can remember. It
+        knows the kettle better than I do most days."
+  - keywords: [""]
+    responses:
+      - "Sit if you are staying."
+      - "The kettle is always on."
+
+tree:
+  root:
+    text: "Welcome to the cookhouse. Sit, or take something with you, I
+      do not much care which."
+    hints: "You could ask Gerta Crook about her cooking or what is on
+      the fire."
+
+  nodes:
+    - id: stock_general
+      triggers: ["buy", "sell", "shop", "wares", "goods", "food",
+        "stew", "meal", "eat", "stock"]
+      text: "Hearty stew, herbal tea, a bit of spiced wine if the mood
+        takes you. Ask specific and I will tell you what is ready and
+        what needs another turn on the fire."
+      hints: "You could ask Gerta Crook about the cooking fire."
+
+    - id: fire_note
+      triggers: ["fire", "kettle", "cook", "cooking", "hearth"]
+      text: "Banked coals and a steady hand, that is most of the trade.
+        Let it simmer too long and everything tastes of smoke. Not
+        long enough and it tastes of nothing at all."
+
+memory:
+  expiryPeriod: ""

@@ -1,0 +1,37 @@
+mobid: 9593
+zone: Greenford
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Come in, if you must. The circle is drawn fresh."
+      - "Cade. State your business plainly, the light in here is poor."
+
+  - keywords: ["enchant", "sigil", "wares", "buy", "stock", "shard"]
+    responses:
+      - "Chrysalis shards, binding paste, mutation catalyst, a few
+        settings not yet claimed. I keep what the working demands,
+        nothing more."
+      - "Ask specifically and I will tell you what is on the shelf.
+        I do not stock idle curiosities."
+
+  - keywords: ["craft", "recipe", "make", "circle", "working"]
+    responses:
+      - "I can bind a chrysalis setting or work a chrysalis core if
+        you bring the materials to the circle. The working wants
+        precision. I have that in ready supply."
+
+  - keywords: [""]
+    responses:
+      - "Speak plainly. The circle does not tolerate wasted words."
+
+tree:
+  root:
+    text: "Come in, if you must. The circle is drawn fresh."
+    hints: "You could ask Cade about his stock, or about enchanting at
+      the circle."
+
+memory:
+  expiryPeriod: ""

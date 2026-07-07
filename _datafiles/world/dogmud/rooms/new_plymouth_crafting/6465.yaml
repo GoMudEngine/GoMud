@@ -1,0 +1,46 @@
+roomid: 6465
+zone: New Plymouth Crafting
+title: The Enchanter's Atelier
+description: >
+  North of the Tannery, the smell of hides gives way to
+  something drier and stranger — chalk dust and the faint
+  ozone tang that clings to worked chrysalis material. An
+  <ansi fg="itemname">enchanting circle</ansi> is inlaid
+  directly into the floorboards at the room's center, its
+  lines gone dark with use and re-traced in fresh chalk before
+  each working. Shelves along the walls hold labeled trays of
+  shard, paste, and setting, organized with a precision that
+  has nothing to do with the tannery-district's usual clutter.
+  A single high window lets in a controlled measure of light.
+  South, the Tannery's noise carries faintly through the wall.
+biome: city
+station: enchanting_circle
+coord:
+  x: -16
+  y: 91
+  z: 0
+exits:
+  south:
+    roomid: 5717
+nouns:
+  enchanting circle: A ring inlaid into the floorboards at
+    the room's center, its lines gone dark with years of use
+    and re-chalked before every working. Faint scorch marks
+    radiate outward in a few places where a working did not
+    go quite as intended.
+  shelves: Shelves along the walls holding labeled trays of
+    chrysalis shard, jars of binding paste, and settings not
+    yet fitted to anything, each tray marked in a small,
+    exacting hand.
+idlemessages:
+- The chalk lines of the circle are redrawn with slow,
+  deliberate strokes.
+- A faint ozone tang rises and fades as a shard is set down
+  on its tray.
+- Through the wall, the Tannery's noise carries faintly from
+  the south.
+- The high window admits a narrow, controlled measure of
+  daylight onto the workbench.
+spawninfo:
+  - mobid: 9610
+    cooldown: 600 rounds

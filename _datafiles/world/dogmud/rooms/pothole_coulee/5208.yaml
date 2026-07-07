@@ -15,6 +15,8 @@ description: >
   here when you come back.
 biome: house
 isbank: true
+isstorage: true
+storagecapacity: 1000
 coord:
   x: 46
   y: 1
@@ -26,6 +28,8 @@ exits:
     roomid: 5203
   north:
     roomid: 5202
+  east:
+    roomid: 6463
 nouns:
   strongboxes: The strongboxes are squat chests of dark wood bound in
     riveted iron, stacked along the walls in patient rows from floor to

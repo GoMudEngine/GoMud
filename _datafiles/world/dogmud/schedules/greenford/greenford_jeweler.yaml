@@ -1,0 +1,18 @@
+id: greenford_jeweler
+description: "Tibb the Jeweler's daily routine: at the bench by day, asleep in the back room by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6449
+    activity: craft
+    idlecommands:
+      - emote holds a gem up to the lamplight, turning it slowly between his fingers.
+      - emote polishes a silver setting with a soft cloth, working in tiny circles.
+      - emote squints through a magnifying lens at a half-finished ring.
+  - start: 22
+    end: 6
+    target_room: 6449
+    activity: sleeping
+    idlecommands:
+      - emote breathes evenly, asleep in a chair beside the bench.
+      - emote lies still, fingers twitching as if working a setting.

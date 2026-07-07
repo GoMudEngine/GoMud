@@ -1,0 +1,83 @@
+mobid: 9610
+zone: New Plymouth Crafting
+craft_support: enchanting
+archetype: casting
+behavior_archetype: noncombat_shopkeeper
+statpool: 54
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+schedule_id: new_plymouth_crafting_enchanter
+groups:
+  - humanoid
+idlecommands:
+  - 'emote traces a binding sigil in the air with one finger, muttering'
+  - 'emote peers at a chrysalis shard through a magnifying glass'
+  - ''
+  - 'emote makes a notation in a weathered journal, frowning'
+  - ''
+activitylevel: 10
+character:
+  name: Ansel Rune
+  description: |
+    I read the grain of a chrysalis shard the way another man
+    reads a face, and it tells me just as much. My coat carries
+    more scorch marks than I would like to admit, mostly from
+    workings that went slightly wrong before I understood why.
+    I do not talk while I am binding a sigil -- a wandering
+    thought at the wrong moment ruins good material and I have
+    ruined enough of it already to know better. Ask me for
+    something specific and I will tell you exactly what it
+    costs and exactly how long it will take. I am not in the
+    habit of being wrong about either.
+  speciesid: 1
+  level: 1
+  gold: 1000
+  equipment:
+    weapon:
+      itemid: 10017
+  stats:
+    perception:
+      training: 15
+    willpower:
+      training: 10
+    charisma:
+      training: -10
+  shop:
+    # Thornwall chrysalis (in-shop crafted) — Rune's specialty
+    - itemid: 40010    # Chrysalis Core
+      quantity: 0
+      quantitymax: 0
+      price: 75
+    - itemid: 40027    # chrysalis shard
+      quantity: 0
+      quantitymax: 0
+      price: 20
+    - itemid: 40028    # binding paste
+      quantity: 0
+      quantitymax: 0
+      price: 25
+    - itemid: 40029    # mutation catalyst
+      quantity: 0
+      quantitymax: 0
+      price: 55
+    - itemid: 40030    # chrysalis setting
+      quantity: 0
+      quantitymax: 0
+      price: 75
+    - itemid: 40011    # Hive Fragment
+      quantity: 0
+      quantitymax: 0
+      price: 30
+    # Fernway forest (caravan-fed) — oak bark for ward inscriptions
+    - itemid: 40062    # oak bark
+      quantity: 0
+      quantitymax: 0
+      price: 35
+    # Stillwater unique (caravan-fed from Kess) — pearl for high-tier enchants
+    - itemid: 40053    # Stillwater black pearl
+      quantity: 0
+      quantitymax: 0
+      price: 600

@@ -1,0 +1,32 @@
+roomid: 6459
+zone: Hartcharn
+title: The Cookhouse
+description: >
+  A warm, smoky room built around a wide stone
+  <ansi fg="itemname">cooking fire</ansi>, its chimney drawing the
+  worst of the smoke up through the thatch. Strings of dried herbs and
+  hanging pots crowd the low rafters, and a scarred table along one
+  wall holds a row of covered crocks. The smell of woodsmoke and
+  simmering broth fills the room, thick enough to cling to a coat
+  after only a few minutes inside.
+biome: city
+coord:
+  x: -22
+  y: 35
+  z: 0
+station: cooking_fire
+exits:
+  north:
+    roomid: 6457
+nouns:
+  cooking fire: A wide stone hearth banked with glowing coals, a black
+    kettle hung over it on an iron arm. Soot streaks the stone above it
+    in a long dark fan reaching toward the chimney draw.
+idlemessages:
+- The cooking fire pops and settles beneath the kettle.
+- Woodsmoke curls up toward the chimney draw.
+- A covered crock on the table gives off a faint simmering smell.
+- Something in the kettle bubbles once, low and slow.
+spawninfo:
+  - mobid: 9604
+    cooldown: 600 rounds

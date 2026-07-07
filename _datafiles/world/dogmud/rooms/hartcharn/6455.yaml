@@ -1,0 +1,37 @@
+roomid: 6455
+zone: Hartcharn
+title: The Weaving Shed
+description: >
+  A long, low shed with a plank floor worn smooth by years of shuttling
+  feet. The <ansi fg="itemname">loom</ansi> dominates the far wall, its
+  frame dark with age and its heddles strung tight as fiddle strings.
+  Skeins of undyed wool hang from pegs along the rafters, drying in the
+  draft that slips under the eaves. The smell of raw fleece and warm
+  timber fills the room, and a thin layer of lint drifts in the light
+  from the open door.
+biome: city
+coord:
+  x: -20
+  y: 36
+  z: 0
+station: loom
+exits:
+  east:
+    roomid: 5409
+  west:
+    roomid: 6456
+  south:
+    roomid: 6454
+nouns:
+  loom: A broad standing loom, its heddles and treadles worn shiny where
+    hands and feet have worked them for years. A half-finished length of
+    grey wool cloth stretches taut across the beam, the shuttle resting
+    where it was last set down.
+idlemessages:
+- The loom's treadles creak in a steady, practiced rhythm.
+- A skein of wool sways gently on its peg in the draft.
+- Lint drifts through a shaft of light from the open doorway.
+- The shuttle clacks across the warp and back again.
+spawninfo:
+  - mobid: 9600
+    cooldown: 600 rounds

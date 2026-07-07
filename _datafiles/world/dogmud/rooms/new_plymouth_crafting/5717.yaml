@@ -30,6 +30,10 @@ exits:
     roomid: 5718
   south:
     roomid: 5724
+  north:
+    roomid: 6465
+  up:
+    roomid: 6466
 nouns:
   stretching-frames: Wooden frames of mortise-and-tenon
     construction, each adjustable along two axes to

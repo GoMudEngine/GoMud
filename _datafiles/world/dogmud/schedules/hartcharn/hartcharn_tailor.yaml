@@ -1,0 +1,18 @@
+id: hartcharn_tailor
+description: "Tailor Bryd Harrow's daily routine: works the loom by day, sleeps in the weaving shed by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6455
+    activity: craft
+    idlecommands:
+      - emote feeds wool through the loom in a slow, even rhythm.
+      - emote checks a length of cloth against the light for flaws.
+      - say This batch of wool spins up thicker than the last.
+  - start: 22
+    end: 6
+    target_room: 6455
+    activity: sleeping
+    idlecommands:
+      - emote is curled up on a pile of raw fleece near the loom.
+      - emote breathes slow and even, asleep by the loom.

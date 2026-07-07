@@ -1,0 +1,39 @@
+mobid: 9592
+zone: Greenford
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome to the Herbalist's Stall. Mind the drying racks overhead."
+      - "Hebb. What ails you, or what are you here to buy?"
+
+  - keywords: ["herb", "alchemy", "wares", "buy", "stock", "potion"]
+    responses:
+      - "Healer's root, bitter thistle, dustwalk herb, glass vials
+        and clay flasks for the bottling. I keep a fair stock and
+        restock whenever the caravans bring in something worth
+        drying."
+      - "Ask specifically and I will tell you what is in season. Not
+        everything grows year round, and I will not sell you a
+        withered bundle and pretend otherwise."
+
+  - keywords: ["craft", "recipe", "make", "brew", "tonic"]
+    responses:
+      - "I can mix a fair range of tonics and draughts, so long as
+        you bring the right ingredients to my bench. Bring me good
+        material and I will measure the dose properly."
+
+  - keywords: [""]
+    responses:
+      - "Mind the bundles overhead. Ask if you need something specific."
+
+tree:
+  root:
+    text: "Welcome to the Herbalist's Stall. Mind the drying racks overhead."
+    hints: "You could ask Hebb about his stock, or about brewing a
+      tonic or draught."
+
+memory:
+  expiryPeriod: ""

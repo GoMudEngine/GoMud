@@ -1,0 +1,81 @@
+mobid: 9605
+zone: Pothole Coulee
+craft_support: tailoring
+behavior_archetype: noncombat_shopkeeper
+statpool: 58
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+schedule_id: pothole_coulee_tailor
+groups:
+  - humanoid
+  - coulee_folk
+idlecommands:
+  - 'emote feeds cloth through the loom with practiced, rhythmic strokes'
+  - 'emote holds a length of fabric taut and checks its weave against the light'
+  - ''
+  - 'emote snips a trailing thread and tucks the end back into the seam'
+  - ''
+activitylevel: 12
+crafter: true
+crafterskill: tailoring
+crafterrecipeids:
+  - artisans-satchel
+  - cloth-bandage
+  - cloth-pants
+  - leather-backpack
+  - leather-bandolier
+  - leather-leggings
+  - leather-satchel
+  - leather-vest
+  - linen-tunic
+  - masters-component-case
+  - reinforced-bandolier
+  - reinforced-travel-pack
+  - wool-cloak
+crafterrestockmaterials:
+  - 40007
+  - 40012
+  - 40002
+character:
+  name: Stitcher Bex
+  description: |
+    I patch what the coulee tears. Dry heat cracks leather, wet season
+    rots thread, and either way something of yours ends up in my lap
+    with a hole where it should not be. I keep the loom running from
+    first light past dark, and I do not waste good cloth on anything
+    that will not outlast the season it is made in.
+  speciesid: 1
+  level: 1
+  gold: 1000
+  skills:
+    tailoring: 12
+  stats:
+    dexterity:
+      training: 12
+    perception:
+      training: 8
+    willpower:
+      training: 5
+  shop:
+    # Base sewing tools
+    - itemid: 40012    # thread spool
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40013    # bone needle
+      quantity: 0
+      quantitymax: 0
+      price: 1
+    # Fernway beeswax
+    - itemid: 40065    # beeswax
+      quantity: 0
+      quantitymax: 0
+      price: 30
+    # Existing specialty
+    - itemid: 30033
+      quantity: 0
+      quantitymax: 0
+      price: 0

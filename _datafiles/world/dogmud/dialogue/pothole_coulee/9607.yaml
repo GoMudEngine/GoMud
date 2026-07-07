@@ -1,0 +1,32 @@
+mobid: 9607
+zone: Pothole Coulee
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Mind the trays, the wind off the wash likes to take things.
+        What can I set for you?"
+      - "Vurl. Stone, wire, and a steady hand -- that is the whole of
+        my trade out here."
+
+  - keywords: ["hello", "hi"]
+    moods: ["grateful"]
+    responses:
+      - "Back again. Good. I remember what caught your eye last time."
+
+  - keywords: ["gem", "stone", "wire", "ring", "pendant", "setting"]
+    responses:
+      - "Copper wire, silver wire, gold if you can pay for it, and raw
+        gem or polished stone to set into whatever you are building. I
+        work small pieces, careful ones -- nothing rushed leaves this
+        stall."
+      - "The light off the reed water shows a stone's true color
+        better than any lamp indoors. That is half of why I set up
+        out here instead of in a proper shop."
+
+  - keywords: [""]
+    responses:
+      - "Take your time with the trays. Nothing there minds waiting."
+      - "The reeds are loud today. Speak up if you need me."

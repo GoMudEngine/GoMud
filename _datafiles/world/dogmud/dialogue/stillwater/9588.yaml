@@ -1,0 +1,37 @@
+mobid: 9588
+zone: Stillwater
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome to the Chrysalis Workshop. Mind the circle -- the
+        inlay is dry, but I would rather you not test it."
+      - "Rane. Come in, but keep your boots off the circle if you
+        would."
+
+  - keywords: ["enchant", "circle", "workshop", "binding"]
+    responses:
+      - "The circle in the floor is the only enchanting station on
+        this side of Stillwater. Bring me chrysalis materials and I
+        will show you what the inlay can do."
+      - "Binding work is slow and it does not forgive impatience.
+        Every shard I sell you is one I have already tested against
+        the circle myself."
+
+  - keywords: ["wares", "buy", "stock", "shard", "paste", "catalyst"]
+    responses:
+      - "Chrysalis core, shard, binding paste, mutation catalyst,
+        setting, hive fragment -- I keep a full bench of it. Oak
+        bark comes up from Fernway and the black pearl comes in
+        with Kess's runs, so those two I only stock when the
+        caravan is kind to me."
+      - "Ask for anything specific and I will tell you what is on
+        the shelf. Most of what I sell, I ground or bound myself."
+
+  - keywords: [""]
+    responses:
+      - "The circle hums when it is ready to work. It is quiet right
+        now, which tells you something."
+      - "If you need enchanting materials, just ask."

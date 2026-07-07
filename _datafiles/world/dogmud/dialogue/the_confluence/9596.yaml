@@ -1,0 +1,40 @@
+mobid: 9596
+zone: The Confluence
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Mind the sparks. What do you need forged?"
+      - "Come in, but stay clear of the anvil until I set the
+        hammer down."
+
+  - keywords: ["forge", "smith", "work", "craft", "blacksmithing"]
+    responses:
+      - "I work steel and iron both -- blades, fittings, whatever
+        the river trade needs. Bring me the ingredients and a clear
+        idea of what you want, and I will see it done."
+      - "The forge stays lit from morning to evening. If you have a
+        recipe in mind, ask and I will tell you what it takes."
+
+  - keywords: ["stock", "buy", "sell", "ingot", "materials"]
+    responses:
+      - "I keep steel ingot, lake-iron nodule, and pine pitch on the
+        shelf, along with the base smithing stock -- iron ingot,
+        wooden plank, chain link, coal dust. Ask specifically and I
+        will tell you the price."
+
+  - keywords: [""]
+    responses:
+      - "The anvil does not wait for idle talk."
+      - "Speak your business or let me get back to the fire."
+
+tree:
+  root:
+    text: "Mind the sparks. What do you need forged?"
+    hints: "You could ask Roan about the forge and her craft, or
+      about her stock of smithing materials."
+
+memory:
+  expiryPeriod: ""

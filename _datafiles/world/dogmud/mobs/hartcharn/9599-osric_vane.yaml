@@ -1,0 +1,36 @@
+mobid: 9599
+zone: Hartcharn
+behavior_archetype: noncombat_questgiver
+statpool: 80
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+schedule_id: hartcharn_clerk
+groups:
+  - humanoid
+  - hartcharn_folk
+idlecommands:
+  - 'emote counts a small stack of coin twice before entering the sum
+    in his ledger'
+  - ''
+  - 'emote runs a thumbnail along the strongbox lock, checking it out
+    of habit'
+  - ''
+  - 'emote blows dust off an old account book and sets it back on the
+    shelf'
+  - ''
+  - 'emote taps his pen against the counter while he works out a sum
+    in his head'
+  - ''
+activitylevel: 12
+character:
+  name: Osric Vane
+  description: |
+    I keep the strongbox for this end of Hartcharn, and I keep it
+    honest -- every coin in and every coin out gets a line in my
+    ledger. I do not have much use for chatter when there are figures
+    to balance, but I will always make time for an account.
+  speciesid: 1
+  level: 1

@@ -1,0 +1,18 @@
+id: pothole_coulee_cook
+description: "Cook Hesk's daily routine: the cook-fire by day, the coals banked low by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6463
+    activity: craft
+    idlecommands:
+      - emote stirs the kettle over the coals, tasting from a scarred spoon.
+      - emote chops wild vegetables with quick, practiced strokes.
+      - say Sit close to the fire, mind the smoke.
+  - start: 22
+    end: 6
+    target_room: 6463
+    activity: sleeping
+    idlecommands:
+      - emote sleeps on a bedroll near the banked coals.
+      - emote snores once, low, over the last of the fire's warmth.

@@ -1,0 +1,18 @@
+id: greenford_clerk
+description: "Prewitt the Reeve's daily routine: at the counter by day, asleep in the back by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6444
+    activity: ""
+    idlecommands:
+      - emote draws a careful line beneath a column of figures and sets the pen down to check the sum.
+      - emote slots a rolled document into a pigeonhole and presses the wax seal flat with one thumb.
+      - emote opens the strongbox briefly, counts something without removing it, and closes it again.
+  - start: 22
+    end: 6
+    target_room: 6444
+    activity: sleeping
+    idlecommands:
+      - emote breathes evenly, asleep in a chair behind the counter.
+      - emote stirs, mutters a figure, and settles again.

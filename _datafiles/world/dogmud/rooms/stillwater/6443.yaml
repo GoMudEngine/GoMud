@@ -1,0 +1,25 @@
+roomid: 6443
+zone: Stillwater
+title: The Chrysalis Workshop
+description: >
+  A narrow, low-ceilinged room built into the alley's dead end, lit
+  by the pale green glow of chrysalis shards racked along every
+  wall. A wide stone <ansi fg="itemname">enchanting circle</ansi>
+  dominates the floor, its inlaid channels stained dark from years
+  of catalyst spills. Shelves of labeled jars hold binding paste,
+  ground shard-dust, and settings still warm from the kiln. The
+  air smells faintly of ozone and lake-mud, and somewhere beneath
+  the workbench a chrysalis core hums at a pitch just below
+  hearing.
+biome: city
+station: enchanting_circle
+coord:
+  x: -20
+  y: 4
+  z: -1
+exits:
+  up:
+    roomid: 4107
+spawninfo:
+- mobid: 9588
+  cooldown: 600 rounds

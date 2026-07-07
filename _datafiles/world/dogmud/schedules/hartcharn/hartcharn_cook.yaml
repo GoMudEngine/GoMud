@@ -1,0 +1,18 @@
+id: hartcharn_cook
+description: "Cook Gerta Crook's daily routine: tends the fire by day, sleeps in the cookhouse by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6459
+    activity: craft
+    idlecommands:
+      - emote stirs the kettle over the fire, tasting from a wooden spoon.
+      - emote chops root vegetables with quick, practiced strokes.
+      - say This batch of stew needs another turn on the coals.
+  - start: 22
+    end: 6
+    target_room: 6459
+    activity: sleeping
+    idlecommands:
+      - emote is stretched out on a pallet near the banked fire.
+      - emote breathes slow and even, asleep by the cooling coals.

@@ -1,0 +1,46 @@
+mobid: 9599
+zone: Hartcharn
+defaultMood: neutral
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome to the strongbox. What do you need looked after?"
+      - "Vane. I keep the ledger for this end of town."
+  - keywords: ["bank", "storage", "deposit", "withdraw", "store", "gold"]
+    responses:
+      - "You can leave your coin and your goods with me, and take them
+        out again whenever you like. I keep careful count."
+      - "Every deposit gets a line in the ledger. What comes in, comes
+        back out, same as it went in."
+  - keywords: ["strongbox", "safe", "secure"]
+    responses:
+      - "That box has been bolted to this floor since before I took the
+        post. Nobody has moved it and nobody is going to."
+  - keywords: [""]
+    responses:
+      - "Mm."
+      - "The ledger waits for no one, but I have a moment."
+
+tree:
+  root:
+    text: "Welcome to the strongbox. What do you need looked after?"
+    hints: "You could ask Osric Vane about storing your coin or goods,
+      or about the strongbox itself."
+
+  nodes:
+    - id: storage_general
+      triggers: ["bank", "storage", "deposit", "withdraw", "store",
+        "gold", "coin"]
+      text: "I hold coin and goods both, for as long as you need. Ask
+        and I will show you the ledger page with your name on it."
+      hints: "You could ask Osric Vane about the strongbox."
+
+    - id: strongbox_note
+      triggers: ["strongbox", "safe", "secure", "lock"]
+      text: "Bolted through the floor into the stone beneath. Nothing
+        in this hut has ever walked off on its own, and it is not
+        going to start now."
+
+memory:
+  expiryPeriod: ""

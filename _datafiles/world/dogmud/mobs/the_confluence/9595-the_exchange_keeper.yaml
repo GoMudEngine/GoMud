@@ -1,0 +1,42 @@
+mobid: 9595
+zone: The Confluence
+behavior_archetype: noncombat_questgiver
+schedule_id: the_confluence_clerk
+statpool: 80
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote draws a careful line beneath a column of figures
+    and sets the pen down to check the sum'
+  - ''
+  - 'emote slots a rolled document into a pigeonhole and
+    presses the wax seal flat with one thumb'
+  - ''
+  - 'emote opens the strongbox briefly, counts something
+    without removing it, and closes it again'
+  - ''
+  - 'emote makes a small notation in the margin of the ledger,
+    initials it, and blows it dry'
+  - ''
+activitylevel: 12
+character:
+  name: The Exchange-Keeper
+  description: |
+    The Exchange-Keeper minds the Confluence's ledger with
+    the same unhurried patience she brings to every other
+    part of her day. A lean, grey-eyed woman in a coat gone
+    shiny at the elbows, she has counted barge tolls,
+    warehouse rents, and pearl-consignment fees for longer
+    than most of the tri-city has been trading here. She
+    speaks slowly and precisely, as though every sentence
+    were itself a ledger entry that might need correcting
+    later. She knows what every trade house on the river
+    owes and to whom, and keeps that knowledge behind the
+    counter along with the strongbox key.
+  speciesid: 1
+  level: 1

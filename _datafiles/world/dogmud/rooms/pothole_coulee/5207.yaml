@@ -24,6 +24,10 @@ exits:
     roomid: 5204
   east:
     roomid: 5222
+  south:
+    roomid: 6460
+  down:
+    roomid: 6461
 nouns:
   shelves: The shelves run from the worn floorboards clear up to the
     rafters, every plank sagging a little under its load. Sacks and tins

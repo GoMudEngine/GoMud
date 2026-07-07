@@ -1,0 +1,18 @@
+id: the_confluence_smith
+description: "Roan the Smith's daily routine: at the forge by day, asleep by the banked coals at night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6451
+    activity: craft
+    idlecommands:
+      - emote hammers a glowing piece of metal on the anvil with measured strokes.
+      - emote holds a blade up to the light, examining the edge critically.
+      - emote thrusts a piece of metal into the forge coals, working the bellows.
+  - start: 22
+    end: 6
+    target_room: 6451
+    activity: sleeping
+    idlecommands:
+      - emote sleeps on a cot by the banked forge, the coals ticking quietly down through the night.
+      - emote breathes evenly, one hand still curled as if around a hammer.

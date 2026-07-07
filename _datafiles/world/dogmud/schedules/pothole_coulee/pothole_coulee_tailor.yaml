@@ -1,0 +1,18 @@
+id: pothole_coulee_tailor
+description: "Stitcher Bex's daily routine: the loom by day, the cot by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6460
+    activity: craft
+    idlecommands:
+      - emote feeds cloth through the loom with practiced, rhythmic strokes.
+      - emote holds a length of fabric taut and checks its weave in the light.
+      - say Bring it here before the seam gives out entirely.
+  - start: 22
+    end: 6
+    target_room: 6460
+    activity: sleeping
+    idlecommands:
+      - emote sleeps curled on a cot among the bolts of cloth.
+      - emote turns over, one hand still loose on a spool of thread.

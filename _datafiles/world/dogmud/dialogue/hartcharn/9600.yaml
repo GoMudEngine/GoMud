@@ -1,0 +1,46 @@
+mobid: 9600
+zone: Hartcharn
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    responses:
+      - "Welcome to the weaving shed. Looking for cloth or thread?"
+      - "Harrow. Mind the shuttle, it swings wide sometimes."
+  - keywords: ["buy", "sell", "shop", "wares", "goods", "cloth", "wool",
+      "thread"]
+    responses:
+      - "Thread, needles, and a bit of beeswax for waxing the seams.
+        Have a look at what is on the shelf."
+      - "Wool comes off the hill flocks and I turn it into whatever the
+        town needs. Cloaks, satchels, the odd bandolier."
+  - keywords: ["loom", "weave", "weaving"]
+    responses:
+      - "This loom has been in the family longer than I have. Treadle
+        it wrong and it lets you know."
+  - keywords: [""]
+    responses:
+      - "Have a look around the shed."
+      - "The loom does not stop for chatter, but I am listening."
+
+tree:
+  root:
+    text: "Welcome to the weaving shed. Looking for cloth or thread?"
+    hints: "You could ask Bryd Harrow about her wares or the loom."
+
+  nodes:
+    - id: stock_general
+      triggers: ["buy", "sell", "shop", "wares", "goods", "cloth",
+        "wool", "thread", "stock"]
+      text: "Thread spools, bone needles, beeswax for the seams, and a
+        length of cloth when the loom is caught up. Ask specific and I
+        will tell you what is on hand."
+      hints: "You could ask Bryd Harrow about the loom."
+
+    - id: loom_note
+      triggers: ["loom", "weave", "weaving", "shuttle"]
+      text: "Feed the wool through even and let the treadle do the
+        work. Rush it and the weave comes out lumpy, same as bread."
+
+memory:
+  expiryPeriod: ""

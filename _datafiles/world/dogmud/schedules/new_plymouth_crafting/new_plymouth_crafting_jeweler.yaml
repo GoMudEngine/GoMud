@@ -1,0 +1,18 @@
+id: new_plymouth_crafting_jeweler
+description: "Perla Gilt's daily routine: the bench by day, the loft above it by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6466
+    activity: craft
+    idlecommands:
+      - emote settles onto the cushioned stool and adjusts the bench light.
+      - emote unrolls the velvet display cloth and smooths it flat.
+      - say The morning light is best for setting work. Come in.
+  - start: 22
+    end: 6
+    target_room: 6466
+    activity: sleeping
+    idlecommands:
+      - emote sleeps curled on a narrow cot near the shuttered window.
+      - emote breathes evenly, the loupe still hanging loose around her neck.

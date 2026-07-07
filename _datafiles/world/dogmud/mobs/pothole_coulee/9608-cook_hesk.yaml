@@ -1,0 +1,93 @@
+mobid: 9608
+zone: Pothole Coulee
+craft_support: cooking
+crafter: true
+crafterskill: cooking
+crafterrecipeids:
+  - hearty-stew
+  - herbal-tea
+  - stillwater-lake-chowder
+  - antidote-broth
+  - spiced-wine
+  - energy-bread
+crafterrestockmaterials: []
+behavior_archetype: noncombat_shopkeeper
+statpool: 120
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+schedule_id: pothole_coulee_cook
+groups:
+  - humanoid
+  - coulee_folk
+idlecommands:
+  - 'emote stirs the kettle over the coals, tasting from a scarred wooden spoon'
+  - 'emote chops wild vegetables with quick, practiced strokes'
+  - ''
+  - 'emote wipes his hands on a stained apron and checks the coals'
+  - ''
+activitylevel: 15
+character:
+  name: Cook Hesk
+  description: |
+    I keep the fire going next to the strongbox wall because coin-guards
+    get hungry same as anyone, and a hot meal is worth more out here
+    than most of what they are minding. I have cooked over worse than
+    scavenged tin and coulee coal. Sit close, the smoke goes where it
+    wants, and mind the kettle -- it bites if you are careless.
+  speciesid: 1
+  level: 1
+  gold: 1000
+  skills:
+    cooking: 24
+  stats:
+    vitality:
+      training: 5
+    perception:
+      training: 3
+  shop:
+    # Stillwater unique cooking (caravan-fed)
+    - itemid: 40057    # lake mint
+      quantity: 0
+      quantitymax: 0
+      price: 15
+    - itemid: 40058    # freshwater clam
+      quantity: 0
+      quantitymax: 0
+      price: 8
+    # Fernway cooking (caravan-fed)
+    - itemid: 40063    # shadowcap mushroom
+      quantity: 0
+      quantitymax: 0
+      price: 40
+    - itemid: 40064    # wild hare meat
+      quantity: 0
+      quantitymax: 0
+      price: 50
+    - itemid: 40066    # blood-moss
+      quantity: 0
+      quantitymax: 0
+      price: 45
+    # Base cooking
+    - itemid: 40004    # healer's root
+      quantity: 0
+      quantitymax: 0
+      price: 5
+    - itemid: 40014    # raw meat
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 40015    # wild vegetables
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40016    # water flask
+      quantity: 0
+      quantitymax: 0
+      price: 1
+    - itemid: 40017    # salt pouch
+      quantity: 0
+      quantitymax: 0
+      price: 1

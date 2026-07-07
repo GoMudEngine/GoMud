@@ -1,0 +1,18 @@
+id: greenford_smith
+description: "Aldo the Smith's daily routine: at the forge by day, asleep in the loft above by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6445
+    activity: craft
+    idlecommands:
+      - emote hammers a glowing piece of metal on the anvil with measured strokes.
+      - emote holds a blade up to the light, examining the edge critically.
+      - emote thrusts a piece of metal into the forge coals, working the bellows.
+  - start: 22
+    end: 6
+    target_room: 6445
+    activity: sleeping
+    idlecommands:
+      - emote breathes evenly, asleep on a cot near the banked forge.
+      - emote turns over with a soft snore.

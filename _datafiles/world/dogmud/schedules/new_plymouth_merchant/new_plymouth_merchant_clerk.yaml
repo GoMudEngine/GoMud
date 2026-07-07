@@ -1,0 +1,18 @@
+id: new_plymouth_merchant_clerk
+description: "Master Coyne's daily routine: the counter by day, the cot in the back by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6464
+    activity: ""
+    idlecommands:
+      - emote unlocks the strongbox wall and checks each number in turn.
+      - emote squares the ledger against the counter edge.
+      - say The Exchange is open. State your business.
+  - start: 22
+    end: 6
+    target_room: 6464
+    activity: sleeping
+    idlecommands:
+      - emote sleeps sitting upright behind the counter, the ledger closed.
+      - emote breathes evenly, one hand still resting near the strongbox key.

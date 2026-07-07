@@ -1,0 +1,47 @@
+roomid: 6464
+zone: New Plymouth Merchant
+title: The Plymouth Exchange
+description: >
+  South of Falk's, the Exchange occupies a hall of quiet
+  gravity — polished stone floor, brass rails, and a long
+  counter of dark oak beneath a coffered ceiling that keeps
+  every voice at a murmur. Clerks in identical grey coats
+  move between the counter and a wall of numbered strongboxes
+  set flush into the stone, each fitted with a lock too fine
+  to have been made anywhere but a capital. A ledger-stand
+  holds the day's open account book, chained to the counter
+  by a short brass leash. The room does its business without
+  ceremony, and without ever quite letting a visitor forget
+  whose city this is.
+biome: city
+isbank: true
+isstorage: true
+storagecapacity: 1000
+coord:
+  x: -11
+  y: 87
+  z: 0
+exits:
+  north:
+    roomid: 5808
+nouns:
+  strongboxes: A wall of numbered strongboxes set flush into
+    the stone, each door fitted with a lock of fine capital
+    make. A small brass plate above each records a number and
+    nothing else.
+  ledger-stand: A standing lectern holding the day's open
+    account book, chained to the counter by a short brass
+    leash. The pages are ruled in a hand too neat to belong
+    to anyone but a career clerk.
+idlemessages:
+- A clerk in a grey coat squares a stack of receipts against
+  the counter edge before filing them.
+- The brass leash on the ledger-stand rattles softly as the
+  book is turned to a fresh page.
+- Someone's coin is counted twice before it is recorded,
+  quietly, without comment.
+- The coffered ceiling holds the room's voices to a murmur
+  no matter how many people are waiting at the counter.
+spawninfo:
+  - mobid: 9609
+    cooldown: 600 rounds

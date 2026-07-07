@@ -1,0 +1,34 @@
+roomid: 6461
+zone: Pothole Coulee
+title: The Warder's Dugout
+description: >
+  Packed-clay steps drop down from Coulee Provisions into a room cut
+  straight into the hardpan, braced overhead with squared timber against
+  the weight of the coulee soil. A ring of scratched wards circles the
+  floor, chalk and ash worked so deep into the packed earth no broom
+  lifts it clean. Shelves cut into the dirt walls hold jars of glowing
+  shard-dust and coils of binding wire, all of it catching a faint,
+  sourceless light that owes nothing to any lamp in the room.
+biome: house
+station: enchanting_circle
+coord:
+  x: 46
+  y: 2
+  z: -1
+exits:
+  up:
+    roomid: 5207
+nouns:
+  wards: A ring of scratched sigils worked into the dirt floor, chalk
+    and old ash gone down past sweeping. They hold a faint warmth even
+    when nothing else in the dugout is lit.
+  shelves: Shelves cut straight into the clay wall, each one lined with
+    jars of shard-dust that glow faint and steady, and coils of thin
+    wire waiting to be bound into something with a purpose.
+spawninfo:
+  - mobid: 9606
+    cooldown: 600 rounds
+idlemessages:
+- A jar of shard-dust flares faint and dims again, unbidden.
+- The scratched wards underfoot seem to hum, just past hearing.
+- Dust sifts down from the timber overhead and settles without a sound.

@@ -1,0 +1,33 @@
+roomid: 6463
+zone: Pothole Coulee
+title: The Cook-Fire
+description: >
+  A stone-ringed fire pit sits just east of Strongbox House, its smoke
+  drawn off through a chimney hood built from scavenged tin. Skewers
+  and a blackened kettle hang from an iron bar over the coals, and a
+  plank counter nearby holds cutting boards scored deep from years of
+  the knife. The smell of woodsmoke and rendered fat clings to
+  everything this close to the strongbox wall, coin-guards and
+  cook-fire sharing one patch of hard ground.
+biome: house
+station: cooking_fire
+coord:
+  x: 47
+  y: 1
+  z: 0
+exits:
+  west:
+    roomid: 5208
+nouns:
+  fire pit: A ring of fitted stone banked with coals, a scavenged tin
+    hood overhead drawing most of the smoke clear. The heat off it is
+    steady even in a hard wind.
+  kettle: A blackened kettle hung from an iron bar over the coals, its
+    lid rattling faint whenever whatever is inside comes near a boil.
+spawninfo:
+  - mobid: 9608
+    cooldown: 600 rounds
+idlemessages:
+- The kettle lid rattles once over a rolling boil.
+- Woodsmoke curls up and away through the tin chimney hood.
+- A skewer turns with a faint hiss where the fat catches the coals.

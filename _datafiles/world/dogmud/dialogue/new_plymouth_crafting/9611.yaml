@@ -1,0 +1,36 @@
+mobid: 9611
+zone: New Plymouth Crafting
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Come in out of the light, it is better for the eyes at
+        the bench than in the doorway. What brings you up here?"
+      - "Perla Gilt. If you are after a setting or a ring, you
+        have come to the right stool."
+
+  - keywords: ["gem", "ring", "jewel", "pendant", "necklace", "setting"]
+    responses:
+      - "Bring me stone and wire and I will set it flush enough
+        that a fingernail cannot catch the seam. Tell me what
+        you have in mind."
+      - "A raw gem is only worth what the setting lets it show.
+        I have wire in copper, silver, and gold, and I know
+        which pairs with which."
+
+  - keywords: ["wares", "stock", "sell", "buy", "shop"]
+    responses:
+      - "Wire, stone, gem dust, chain link -- the ordinary trade
+        of the bench. Black pearl comes in by caravan and does
+        not sit on the shelf long once it arrives."
+
+  - keywords: [""]
+    responses:
+      - "The lamplight is best in the morning. Come back or ask
+        what you need."
+      - "I am at the bench. Speak up if you need something set."
+
+memory:
+  expiryPeriod: ""

@@ -1,0 +1,33 @@
+roomid: 6454
+zone: Hartcharn
+title: The Hartcharn Strongbox
+description: >
+  A small stone-walled room built into the hillside, cooler than the
+  shops above it and smelling faintly of old iron. A squat
+  <ansi fg="itemname">strongbox</ansi> sits bolted to the floor behind
+  a plain counter, and a single narrow window lets in just enough light
+  to read a ledger by. Hill-town gold does not amount to much, but what
+  there is of it rests here, locked down tight and watched close.
+biome: city
+isbank: true
+isstorage: true
+storagecapacity: 1000
+coord:
+  x: -20
+  y: 35
+  z: 0
+exits:
+  north:
+    roomid: 6455
+nouns:
+  strongbox: A squat iron strongbox, its lock a heavy long-shank
+    mechanism gone dull with age. It is bolted through the floorboards
+    into the stone beneath, and does not budge when nudged.
+idlemessages:
+- The strongbox sits heavy and silent behind the counter.
+- A narrow beam of daylight creeps slowly across the stone floor.
+- Somewhere in the wall, the hillside settles with a faint tick.
+- The counter's surface is cool and bare beneath one hand.
+spawninfo:
+  - mobid: 9599
+    cooldown: 600 rounds

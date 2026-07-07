@@ -1,0 +1,106 @@
+mobid: 9611
+zone: New Plymouth Crafting
+craft_support: jewelcrafting
+behavior_archetype: noncombat_shopkeeper
+statpool: 66
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+schedule_id: new_plymouth_crafting_jeweler
+groups:
+  - humanoid
+idlecommands:
+  - 'emote holds a gem up to the lamplight, turning it slowly between her fingers'
+  - 'emote polishes a silver setting with a soft cloth, working in tiny circles'
+  - ''
+  - 'emote squints through a magnifying lens at a half-finished ring'
+  - ''
+activitylevel: 15
+crafter: true
+crafterskill: jewelcrafting
+crafterrecipeids:
+  - chrysalis-setting
+  - copper-ring
+  - crystalline-decanter
+  - engraved-bracelet
+  - gem-set-necklace
+  - gold-signet-ring
+  - master-lockpicks
+  - masterwork-gem-pendant
+  - polished-stone-amulet
+  - precision-disarm-kit
+  - sealed-phial
+  - silver-ring
+  - simple-pendant
+crafterrestockmaterials:
+  - 40021
+  - 40022
+  - 40024
+  - 40026
+character:
+  name: Perla Gilt
+  description: |
+    I have set more gems than I have fingers to count them on,
+    and my hands have not once shaken over it. This bench and
+    this light are mine -- I chose the window myself for the
+    angle of the sun in the morning, which is when the finest
+    work gets done. I keep a pocketful of tools I trust and a
+    magnifying lens I trust more, and I do not let a piece
+    leave this room until the setting is flush enough that a
+    fingernail cannot catch on the seam. Bring me stone and
+    wire and I will bring you back something worth wearing.
+  speciesid: 1
+  level: 1
+  gold: 1000
+  skills:
+    jewelcrafting: 10
+  stats:
+    dexterity:
+      training: 15
+    perception:
+      training: 10
+    charisma:
+      training: 5
+  shop:
+    # Thornwall refined (in-shop crafted)
+    - itemid: 40021    # copper wire
+      quantity: 0
+      quantitymax: 0
+      price: 10
+    - itemid: 40022    # silver wire
+      quantity: 0
+      quantitymax: 0
+      price: 22
+    - itemid: 40023    # gold wire
+      quantity: 0
+      quantitymax: 0
+      price: 55
+    - itemid: 40024    # polished stone
+      quantity: 0
+      quantitymax: 0
+      price: 7
+    - itemid: 40025    # raw gem
+      quantity: 0
+      quantitymax: 0
+      price: 35
+    - itemid: 40026    # gem dust
+      quantity: 0
+      quantitymax: 0
+      price: 5
+    # Stillwater unique (caravan-fed from Kess)
+    - itemid: 40053    # Stillwater black pearl
+      quantity: 0
+      quantitymax: 0
+      price: 600
+    # Thornwall chrysalis (in-shop / Rune overlap)
+    - itemid: 40030    # chrysalis setting
+      quantity: 0
+      quantitymax: 0
+      price: 80
+    # Base jewelcraft
+    - itemid: 40019    # chain link
+      quantity: 0
+      quantitymax: 0
+      price: 4

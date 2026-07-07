@@ -1,0 +1,40 @@
+roomid: 6448
+zone: Greenford
+title: The Sigil Room
+description: >
+  The Sigil Room is a dim, close space, its single window
+  shuttered against the light. A ring of pale chalk marks
+  the floorboards at the room's centre — an enchanting
+  circle worn into the wood itself from repeated use.
+  Shelves along the walls hold chrysalis shards, binding
+  paste, and other materials too particular to be left in
+  daylight. The air carries a faint, unplaceable hum.
+  Examine the circle or the shelves.
+biome: city
+coord: {x: 27, y: -77, z: 1}
+station: enchanting_circle
+exits:
+  west: {roomid: 6447}
+  east: {roomid: 6449}
+nouns:
+  the enchanting circle: >
+    A ring worn into the floorboards at the room's centre,
+    traced over in fresh chalk before each working. Faint
+    scorch marks radiate from it in places, old evidence
+    of workings that did not go quite as planned.
+  the shelves: >
+    Shelves along the walls holding chrysalis shards in
+    small trays, jars of binding paste, and settings not
+    yet fitted to anything. Everything is labelled in a
+    small, precise hand.
+  the shutter: >
+    A single shuttered window, kept closed against the
+    light. A thin line of daylight leaks through the gap
+    at the hinge regardless.
+spawninfo:
+  - mobid: 9593
+    cooldown: 600 rounds
+idlemessages:
+- The chalk circle is redrawn with slow, deliberate care.
+- A chrysalis shard is lifted to the lamplight and turned over.
+- The faint hum in the room rises and fades again.

@@ -1,0 +1,58 @@
+roomid: 6450
+zone: The Confluence
+title: The Confluence Exchange
+description: >
+  The Exchange occupies a squat building of river-stone just
+  east off the Craft-Supply Stall, its single carved
+  <ansi fg="itemname">anchor-and-scales</ansi>
+  sign hung low enough for a barge-hand to read without
+  craning. Inside, a scarred
+  <ansi fg="itemname">counter</ansi>
+  of dark river-oak spans the room, and behind it a wall of
+  pigeonholes holds bundled paper tied off in cord. A
+  <ansi fg="itemname">strongbox</ansi>
+  of river-iron sits bolted through the floor in the corner,
+  and a ledger the size of a cartwheel lies open on the
+  writing-slope beside it. The air smells of beeswax, old
+  paper, and the faint silt-smell that never quite leaves
+  a building this close to three rivers. The stall is west.
+biome: city
+isbank: true
+isstorage: true
+storagecapacity: 1000
+coord:
+  x: -12
+  y: -71
+  z: 0
+exits:
+  west:
+    roomid: 6240
+nouns:
+  the counter: >
+    A long counter of dark river-oak, worn pale where hands
+    and elbows have rested over many seasons. A small brass
+    bell sits at one end for summoning the clerk, and a
+    shallow groove near the ledger's usual place is stained
+    faintly with old ink.
+  the strongbox: >
+    A heavy coffer of river-iron, squat and bolted through
+    the floorboards into the stone beneath. The lock takes
+    a long-shanked key the clerk keeps on a cord under their
+    coat. The iron is dull from the river damp but sounds
+    entirely solid when a knuckle taps it.
+  the ledger: >
+    An enormous ledger open on the writing-slope, its pages
+    dense with columns in several different hands across
+    several seasons — barge tolls, warehouse rents, a few
+    larger entries in red ink that carry no names, only
+    account numbers.
+spawninfo:
+  - mobid: 9595
+    cooldown: 600 rounds
+idlemessages:
+- The clerk turns a page of the ledger, smoothing the crease
+  with a practised thumb.
+- A wax seal cracks softly as a folded paper is slotted into
+  its pigeonhole.
+- The strongbox settles with a low tick as the building
+  shifts against the river damp.

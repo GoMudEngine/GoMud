@@ -1,0 +1,18 @@
+id: greenford_tailor
+description: "Wenna the Weaver's daily routine: at the loom by day, asleep in the loft by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6446
+    activity: craft
+    idlecommands:
+      - emote feeds cloth through the loom with practiced, rhythmic strokes.
+      - emote holds a length of fabric taut and examines its weave against the light.
+      - emote snips a trailing thread and tucks the end back into the seam.
+  - start: 22
+    end: 6
+    target_room: 6446
+    activity: sleeping
+    idlecommands:
+      - emote breathes evenly, asleep in a chair beside the loom.
+      - emote shifts, murmurs something about a stitch count, and settles again.
