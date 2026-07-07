@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
@@ -14,9 +15,30 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
+
+// maybeInterruptOnThrow cancels a mob's in-progress fold-cast if the thrown
+// item id is a configured boss-interrupt disruptor
+// (Balance.BossInterruptItemIds) AND the mob is currently casting
+// (Character.IsCasting()). Generic (non-allowlisted) thrown items never
+// interrupt a cast, even on a hit. Reuses the shared InterruptTargetCast
+// primitive (conviction refund + TriggerCastCancel) rather than reimplementing
+// cast cancellation here. Returns true if a cast was actually interrupted.
+func maybeInterruptOnThrow(mob *mobs.Mob, thrownItemId int, by state.ActorRef) bool {
+	if mob == nil {
+		return false
+	}
+	if !configs.GetBalanceConfig().IsBossInterruptItem(thrownItemId) {
+		return false
+	}
+	if !mob.Character.IsCasting() {
+		return false
+	}
+	return actions.InterruptTargetCast(&mob.Character, by)
+}
 
 func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
@@ -161,6 +183,20 @@ func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 				}
 			}
 			break // Fumble ends the AoE loop
+		}
+
+		// Boss-interrupt: a configured disruptor thrown at a mid-fold-cast mob
+		// cancels the cast whether or not the throw wins its damage roll — the
+		// interrupt is the disruptor's purpose, not a side effect of a hit. Fires
+		// before the attack-success gate so a tanky boss can't simply dodge the
+		// interrupt. (Fumbles break above, so a botched throw still can't cancel.)
+		if maybeInterruptOnThrow(mob, matchItem.ItemId, state.ActorRef{UserId: user.UserId}) {
+			user.SendText(messaging.CategorySpellDisruption, fmt.Sprintf(
+				`<ansi fg="cyan-bold">The blast shatters %s's concentration -- its spell collapses!</ansi>`,
+				mob.Character.Name))
+			room.SendTextVisual(messaging.CategorySpellDisruption, fmt.Sprintf(
+				`<ansi fg="cyan">%s's spell collapses as the blast strikes!</ansi>`,
+				mob.Character.Name), user.UserId)
 		}
 
 		if !attackSuccess {

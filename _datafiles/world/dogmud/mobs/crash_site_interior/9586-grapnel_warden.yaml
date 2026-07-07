@@ -1,0 +1,53 @@
+mobid: 9586
+zone: Crash Site Interior
+behavior_archetype: generic_fighter
+aiprofile: brute
+# crashsite-boss-mechanics Part B: kept on "fighting" (not switched to
+# "casting" like its sibling adds) because AttemptGrapple
+# (internal/combat/grapple.go) rolls Dexterity + combat skill, NOT
+# Strength -- "fighting"'s even Str/Dex/Vit split is what keeps its one
+# job (the grapple) reliable. Its melee (Strength-driven) stays modest
+# on its own at the reverted base_pool; durability against focus-fire
+# comes from the nodrop mitigation gear below, not from a bigger stat
+# pool, so it isn't tuned toward hitting harder.
+archetype: fighting
+hostile: true
+statpool: 100
+maxwander: 0
+groups:
+  - construct
+idlecommands:
+  - 'emote holds a jointed clamp-arm loose at its side, the servo-lock
+    within it clicking over and over, patient and hungry.'
+  - ''
+  - 'emote tests the reach of its clamp-arm against nothing, servos
+    whining through the motion.'
+  - ''
+combatcommands:
+  - 'emote swings its whole weight behind the clamp-arm, hunting for a
+    hold.'
+  - ''
+  - 'emote braces low, clamp-arm cocked, tracking the nearest moving
+    shape.'
+  - ''
+character:
+  name: Grapnel Warden
+  description: |
+    A squat construct built around a single grasping limb, a segmented
+    clamp-arm ending in a servo-lock jaw that closes and does not open
+    again on its own account. It carries little else -- no reach, no
+    real defense -- because it was never built to fight a whole party.
+    It was built to take one of you out of the fight entirely, and hold
+    you there until something else finishes the rest.
+  speciesid: 37
+  level: 1
+  gold: 0
+  # Nodrop mitigation-only gear (crashsite-boss-mechanics Part B): buys
+  # enough survivability to land its grapple and soak a couple rounds of
+  # focus-fire, with NO stat bonus of any kind.
+  equipment:
+    body:
+      itemid: 40228
+loot_pool:
+  - 20091
+itemdropchance: 20

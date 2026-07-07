@@ -1,0 +1,16 @@
+itemid: 40227
+name: Arc-Welded Repair Housing
+namesimple: housing
+description: >-
+  A thin shell of scavenged plating arc-welded around the Repair Frame's
+  light-column, patched over and over by the very machine it protects.
+  It was never meant to turn a real blow -- only to buy the frame one
+  more pulse of current before something finally breaks through.
+type: body
+subtype: wearable
+physical_mitigation: 35
+magical_mitigation: 25
+never_drops: true
+not_salable: true
+weight: 0.0
+value: 0

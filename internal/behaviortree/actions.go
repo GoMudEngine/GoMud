@@ -10,6 +10,18 @@ type ActionFunc func(params map[string]any, ctx *EvalContext) Result
 // actionRegistry maps action names to their implementations.
 var actionRegistry = map[string]ActionFunc{}
 
+// companionSweep is set at startup by main.go to wire
+// hooks.PushCompanionsToRoom into the sweep_companions action without
+// creating an import cycle (behaviortree already imports rooms/users;
+// hooks imports behaviortree, so behaviortree can't import hooks back).
+var companionSweep func(userId, destRoomId int)
+
+// SetCompanionSweep registers the companion-sweep callback used by the
+// sweep_companions btree action. Called from main.go at startup.
+func SetCompanionSweep(fn func(userId, destRoomId int)) {
+	companionSweep = fn
+}
+
 func init() {
 	actionRegistry["respond"] = actRespond
 	actionRegistry["say"] = actSay
@@ -62,6 +74,11 @@ func init() {
 
 	// Pack tactics actions
 	actionRegistry["go_to_caller_room"] = actGoToCallerRoom
+
+	// Companion sweep (Hull Sweeper boss add): relocate every player's
+	// companions in the acting mob's room to a destination room, gear
+	// intact.
+	actionRegistry["sweep_companions"] = actSweepCompanions
 
 	// Predator actions
 	//

@@ -1,0 +1,32 @@
+# Hull Sweeper — Relocates Companions Add (crash-site-boss-mechanics
+# Chunk B)
+#
+# On a cooldown while in combat, sweeps every present player's summoned/
+# charmed companions to the airlock (room 6442) via the engine's
+# `sweep_companions` btree action (Task A5 — gear-safe relocation through
+# hooks.PushCompanionsToRoom; not a kill, companions can be walked back
+# to and recovered). The action fires instantly (no telegraph delay in
+# v1, per the design note in the plan) — the loud send_room_text below is
+# the only tell.
+
+tree:
+  type: selector
+  children:
+
+    - type: decorator
+      event: mob_combat_round
+      mod: cooldown
+      rounds: 15
+      child:
+        type: sequence
+        children:
+          - type: condition
+            check: mob_in_combat
+          - type: action
+            do: sweep_companions
+            dest_room: 6442
+          - type: action
+            do: send_room_text
+            text: >-
+              The Hull Sweeper's disruptor field lashes out — your
+              conjured allies are hurled from the chamber!

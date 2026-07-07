@@ -31,6 +31,27 @@ func TestBalanceConfig_CaravanDefaults(t *testing.T) {
 	}
 }
 
+func TestBalance_BossInterruptDefaults(t *testing.T) {
+	cfg := &Balance{}
+	cfg.Validate()
+
+	if !cfg.IsBossInterruptItem(30057) {
+		t.Error("expected flashbang (30057) to be a configured boss-interrupt item")
+	}
+	if cfg.IsBossInterruptItem(99999) {
+		t.Error("unexpected item id reported as a boss-interrupt item")
+	}
+
+	for _, spellId := range []string{"neural-stun", "sensory-overload", "kinetic-shove"} {
+		if !cfg.IsBossInterruptSpell(spellId) {
+			t.Errorf("expected %q to be a configured boss-interrupt spell", spellId)
+		}
+	}
+	if cfg.IsBossInterruptSpell("fireball") {
+		t.Error("unexpected spell id reported as a boss-interrupt spell")
+	}
+}
+
 func TestBalance_BountyHunterDefaults(t *testing.T) {
 	b := &Balance{}
 	b.validateMisc()

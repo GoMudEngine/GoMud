@@ -1,0 +1,56 @@
+mobid: 9585
+zone: Crash Site Interior
+behavior_archetype: generic_fighter
+aiprofile: brute
+# crashsite-boss-mechanics Part B: support/caster identity, not a melee
+# add. "fighting" put 80% of its stat pool into Str/Dex/Vit, which is
+# exactly what turned it into a melee killer once its summon base_pool
+# was raised for survivability (base_pool scales Strength -> damage).
+# "casting" puts 80% into Per/Wil/Cha instead -- its only ability
+# (repair-pulse) has primarystat: willpower, so this is a pure win for
+# its actual job while gutting its melee. Durability now comes from
+# the nodrop mitigation gear below, not from a bigger Vitality/Strength
+# stat pool.
+archetype: casting
+hostile: true
+statpool: 100
+maxwander: 0
+groups:
+  - construct
+idlecommands:
+  - 'emote hovers low on a stuttering column of light, a cluster of thin
+    manipulator arms folded tight against its frame.'
+  - ''
+  - 'emote turns a slow circuit of the chamber, arc-welders idling with a
+    faint blue crackle.'
+  - ''
+combatcommands:
+  - 'emote flinches back on its light-column, keeping its manipulators
+    clear of the fight.'
+  - ''
+  - 'emote skitters sideways on a thread of cold fire, unwilling to
+    close.'
+  - ''
+character:
+  name: Repair Frame
+  description: |
+    A spindly construct built for maintenance, not war -- a knot of thin
+    jointed arms and arc-welders slung beneath a stuttering disc of cold
+    light. It carries no real weapon and no real armor; everything about
+    it is built toward one purpose, and it will keep doing that purpose
+    for as long as it is left standing. Ignore it, and it will undo
+    every wound you manage to open.
+  speciesid: 37
+  level: 1
+  gold: 0
+  # Nodrop mitigation-only gear (crashsite-boss-mechanics Part B): buys
+  # enough survivability to land its heal cast and soak a couple rounds
+  # of focus-fire, with NO stat bonus of any kind -- durability comes
+  # from the gear, not from Strength/Vitality, so it can't become a
+  # melee threat regardless of how its summon stat pool scales.
+  equipment:
+    body:
+      itemid: 40227
+loot_pool:
+  - 20091
+itemdropchance: 20

@@ -255,9 +255,15 @@ func InitiateCast(actor Actor, spellName, targetName string) CastResult {
 
 	// 4. Special-move cooldown — shared slot with bash/kick/trip.
 	// Applied AFTER target resolution so invalid targets don't waste it.
-	cfg := configs.GetBalanceConfig()
-	if !char.TryCooldown(`special-move`, fmt.Sprintf(`%d rounds`, cfg.SpecialMoveCooldown)) {
-		return CastResult{SpellInfo: spellInfo, OnCooldown: true}
+	// Scripted boss abilities flagged ignore_move_cooldown bypass this
+	// player-balance gate: their cadence is controlled by the behavior tree,
+	// and sharing the slot lets one ability (e.g. a recharge drain) permanently
+	// block another that fires right after it (the discharge it arms).
+	if !spellInfo.IgnoreMoveCooldown {
+		cfg := configs.GetBalanceConfig()
+		if !char.TryCooldown(`special-move`, fmt.Sprintf(`%d rounds`, cfg.SpecialMoveCooldown)) {
+			return CastResult{SpellInfo: spellInfo, OnCooldown: true}
+		}
 	}
 
 	// 5. Fold calculation — school-aware stat/skill selection.

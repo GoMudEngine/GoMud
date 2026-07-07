@@ -1,0 +1,236 @@
+# The Core Guardian -- Full Boss Behavior Tree (crash-site-boss-mechanics
+# Chunk D). The exam fight: everything Warden-Prime (9561) taught, at once,
+# plus a drain-fed Core Charge loop. See docs/superpowers/specs/
+# 2026-07-06-crashsite-boss-mechanics-design.md §4 and the plan's Task D3
+# for the full design; this file's comments cover the two build-time
+# decisions the plan flagged as genuinely open.
+#
+# ── Why one flat `selector` at the root is safe here ──
+# Every mechanic below except the two Repair Frame spawns is tagged
+# `event: mob_combat_round`. A `selector` stops at the first child that
+# returns Success, so in principle several same-event siblings would
+# "compete" for a single round. This is fine, not a bug: `handleMobFoldCasting`
+# (internal/hooks/NewRound_DoCombat.go ~:303) `continue`s the round BEFORE
+# the btree's `mob_combat_round` dispatch whenever the mob is mid-fold-cast
+# -- so the tree is only ever evaluated on rounds where the Guardian is free
+# to act, and a real combatant can only take one action per round anyway.
+# Children are ordered by priority: discharge (the payoff, once charged) >
+# drain (the recharge) > adds (lowest priority -- a summon can wait a round
+# without consequence, its own cooldown doesn't reset by being skipped).
+#
+# ── Build decision 1: how Core Charge is fed ──
+# Core Charge is a BehaviorState counter (key `core_charge`), same
+# `set_state`/`state_greater_than` primitive Old Edrin and Warden-Prime use
+# for phase gates. The plan flagged the choice: increment it from the
+# core-drain spell's Go-side RESOLUTION handler, or from a btree
+# `increment_state` action after merely INITIATING the cast. Chose the
+# resolution-side increment (internal/hooks/spell_resolution.go
+# resolveMobDrainArea, ~10 lines above the per-player damage loop): it is
+# reachable ONLY when the fold-cast actually completes (see that function's
+# doc comment), so an interrupted drain -- cancelled by a disruptor before
+# it resolves -- never runs that code path and never grants charge. That is
+# exactly spec §10.4 ("an interrupted drain ... denies the charge/heal
+# entirely") with zero extra guard needed on the tree side. BehaviorState
+# lives on the mob instance itself (mob.BTreeState, lazily wrapped by
+# behaviortree.EnsureBTreeState) -- it is the SAME store the tree's own
+# `state_greater_than` reads below, not a parallel value that needs syncing.
+#
+# ── Build decision 2: resetting charge on an INTERRUPTED discharge ──
+# The btree cannot observe "the discharge I just issued was later
+# cancelled" -- InterruptTargetCast fires a player-facing CastInterrupted
+# event keyed off GetUserId(), which is meaningless for a mob target, and
+# there is no `mob_cast_cancelled` btree event. Rather than build one,
+# the discharge branch below resets Core Charge to 0 at CAST-INITIATION
+# time (same sequence, right after issuing `cast core-discharge`), not at
+# resolution. That single reset is provably correct for BOTH outcomes: if
+# the discharge resolves cleanly, charge is already (and should be) back to
+# 0; if a disruptor interrupts it mid-windup, charge is ALSO already 0 --
+# decisively denying a second attempt off the same charge, satisfying spec
+# §10.4's "an interrupted discharge resets Core Charge" without the tree
+# ever needing to know which outcome happened. The only cost is that a
+# discharge which gets interrupted "wastes" the charge exactly once --
+# which is the intended cost of NOT interrupting it, inverted: the party
+# spent a disruptor to deny a discharge, so the Guardian must rebuild from
+# zero either way.
+#
+# ── Adds ──
+# All three (Repair Frame 9585, Grapnel Warden 9586, Hull Sweeper 9587)
+# already exist from Chunk B with their own combat behavior authored; this
+# tree only decides WHEN the Guardian summons them.
+#   - Repair Frame: HP-threshold one-shots at 75% and 40% (mirrors
+#     Warden-Prime's single 50% one-shot, doubled per spec §4.1's table).
+#   - Grapnel Warden / Hull Sweeper: no engine condition exists for "the
+#     party has companions out" (the plan's preferred Sweeper gate), so
+#     both fall back to the plan's explicitly-sanctioned alternative:
+#     recurring on a cooldown, gated by `mob_in_room` (inverted) so the
+#     Guardian never has two of the same add alive at once -- kill one and
+#     a fresh one arrives on the next eligible round, keeping the pressure
+#     without stacking.
+
+tree:
+  type: selector
+  children:
+
+    # ── 1. Core Discharge: the payoff. Fires as soon as Core Charge is
+    #    past threshold; resets charge immediately (see Build decision 2
+    #    above -- this covers both a clean resolve and an interrupt). ──
+    - type: sequence
+      event: mob_combat_round
+      children:
+        - type: condition
+          check: mob_in_combat
+        - type: condition
+          check: state_greater_than
+          key: core_charge
+          value: 1
+        - type: action
+          do: send_room_text
+          text: >-
+            The grey mass of the Core Guardian shudders -- the vitality it
+            has stolen floods inward all at once, and its core begins to
+            flare toward release.
+        - type: action
+          do: cast
+          spell: core-discharge
+        - type: action
+          do: set_state
+          key: core_charge
+          value: 0
+
+    # ── 2. Core Drain: the recharge, telegraphed + interruptible. Core
+    #    Charge is incremented in Go on resolution -- see Build decision 1
+    #    above. Nothing to do here but cast it on a cadence. ──
+    - type: decorator
+      event: mob_combat_round
+      mod: cooldown
+      rounds: 3
+      child:
+        type: sequence
+        children:
+          - type: condition
+            check: mob_in_combat
+          - type: action
+            do: cast
+            spell: core-drain
+
+    # ── 3. Repair Frame, first wake @ 75% HP (one-shot) ──
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 75
+        - type: decorator
+          mod: invert
+          child:
+            type: condition
+            check: state_equals
+            key: repair_frame_1
+            value: "true"
+        - type: action
+          do: set_state
+          key: repair_frame_1
+          value: "true"
+        - type: action
+          do: send_room_text
+          text: >-
+            A seam in the Core Guardian's flank splits open -- a spindly
+            Repair Frame skitters free on a column of cold light to mend
+            the damage.
+        - type: action
+          do: summon_companion
+          mob_id: 9585
+          count: 1
+          base_pool: 50
+          hostile: true
+
+    # ── 4. Repair Frame, second wake @ 40% HP (one-shot, independent of
+    #    whether the first is still alive) ──
+    - type: sequence
+      event: mob_hurt
+      children:
+        - type: condition
+          check: mob_health_below
+          percent: 40
+        - type: decorator
+          mod: invert
+          child:
+            type: condition
+            check: state_equals
+            key: repair_frame_2
+            value: "true"
+        - type: action
+          do: set_state
+          key: repair_frame_2
+          value: "true"
+        - type: action
+          do: send_room_text
+          text: >-
+            Another seam splits low on the Core Guardian's frame -- a
+            second Repair Frame wakes and hauls itself out to keep the
+            ancient thing standing.
+        - type: action
+          do: summon_companion
+          mob_id: 9585
+          count: 1
+          base_pool: 50
+          hostile: true
+
+    # ── 5. Grapnel Warden: recurring re-summon while none is alive ──
+    - type: decorator
+      event: mob_combat_round
+      mod: cooldown
+      rounds: 6
+      child:
+        type: sequence
+        children:
+          - type: condition
+            check: mob_in_combat
+          - type: decorator
+            mod: invert
+            child:
+              type: condition
+              check: mob_in_room
+              mob_id: 9586
+          - type: action
+            do: send_room_text
+            text: >-
+              A wall alcove grinds open and a Grapnel Warden drops free,
+              its servo-clamp already hunting for a hold.
+          - type: action
+            do: summon_companion
+            mob_id: 9586
+            count: 1
+            base_pool: 50
+            hostile: true
+
+    # ── 6. Hull Sweeper: recurring re-summon while none is alive. No
+    #    engine condition exists for "companions present in room" (the
+    #    plan's preferred gate) -- falls back to the plan's sanctioned
+    #    alternative, a timer, same shape as the Grapnel Warden above. ──
+    - type: decorator
+      event: mob_combat_round
+      mod: cooldown
+      rounds: 4
+      child:
+        type: sequence
+        children:
+          - type: condition
+            check: mob_in_combat
+          - type: decorator
+            mod: invert
+            child:
+              type: condition
+              check: mob_in_room
+              mob_id: 9587
+          - type: action
+            do: send_room_text
+            text: >-
+              A low vent along the vault wall irises wide and a Hull
+              Sweeper glides out, its disruptor field already humming.
+          - type: action
+            do: summon_companion
+            mob_id: 9587
+            count: 1
+            base_pool: 50
+            hostile: true

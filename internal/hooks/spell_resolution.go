@@ -5,6 +5,7 @@ import (
 	"math"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
@@ -268,6 +269,19 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 		return true
 	}
 
+	// Boss-interrupt: a disruption spell cast at a mid-fold-cast mob cancels the
+	// cast whether or not it fizzles for damage — the interrupt is the point, and
+	// a tanky boss shouldn't dodge it. (Backfires return above, so a botched cast
+	// still can't interrupt.)
+	if maybeInterruptSpellOnMob(mob, spellData.SpellId, state.ActorRef{UserId: user.UserId}) {
+		user.SendText(messaging.CategorySpellDisruption, fmt.Sprintf(
+			`<ansi fg="cyan-bold">Your %s scrambles %s's focus -- its spell collapses!</ansi>`,
+			spellData.Name, mobDisplayName(mob, room, user.UserId)))
+		sendVisualRoomText(room, messaging.CategorySpellDisruption, fmt.Sprintf(
+			`<ansi fg="cyan">%s's spell collapses!</ansi>`,
+			mobDisplayName(mob, room, user.UserId)), user.UserId)
+	}
+
 	if !success {
 		user.SendText(messaging.CategorySpellDisruption, fmt.Sprintf(
 			`<ansi fg="yellow">Your %s fizzles against %s.</ansi>`,
@@ -281,7 +295,28 @@ func resolveAgainstMob(user *users.UserRecord, mob *mobs.Mob, room *rooms.Room, 
 	dmgDealt := applyMobEffect(user, user.Character, mob, room, spellData, magnitude, isCrit)
 	// Stage 30.1: Record spell hit with actual damage
 	combat.RecordSpell(combat.User, combat.Mob, true, isCrit, false, false, dmgDealt, atkRoll.ZScore, user.Character, &mob.Character, round)
+
 	return false
+}
+
+// maybeInterruptSpellOnMob cancels a mob's in-progress fold-cast if spellId
+// is a configured boss-interrupt disruption spell (Balance.BossInterruptSpellIds)
+// AND the mob is currently casting (Character.IsCasting()). Non-allowlisted
+// spells never interrupt, even on a successful hit. Reuses the shared
+// InterruptTargetCast primitive (conviction refund + TriggerCastCancel)
+// rather than reimplementing cast cancellation here. Returns true if a cast
+// was actually interrupted.
+func maybeInterruptSpellOnMob(mob *mobs.Mob, spellId string, by state.ActorRef) bool {
+	if mob == nil {
+		return false
+	}
+	if !configs.GetBalanceConfig().IsBossInterruptSpell(spellId) {
+		return false
+	}
+	if !mob.Character.IsCasting() {
+		return false
+	}
+	return actions.InterruptTargetCast(&mob.Character, by)
 }
 
 // spellSchoolCategory picks the messaging Category from a spell's
@@ -545,6 +580,47 @@ func applyMobEffect_buff(
 	return 0
 }
 
+// applyMobEffect_heal handles the "heal" EffectType case for applyMobEffect —
+// a caster (mob or player) casting a HelpSingle heal at ANOTHER mob (e.g. an
+// ally construct healing a boss, or a player healing a charmed companion).
+// Prior to Chunk B of the crash-site boss-mechanics work this case did not
+// exist: applyMobEffect's switch only handled damage/dot/knockdown/buff, so
+// a mob-to-mob (or player-to-companion) "heal" cast silently fell through to
+// applyMobEffect_default and did nothing. Mirrors applyMobSelfEffect's
+// "heal" case (percentage-of-max regen via ConditionRegen) but targets
+// `mob` instead of the caster. Returns 0 (no damage dealt) to match the
+// applyMobEffect_* int-return convention.
+func applyMobEffect_heal(
+	casterChar *characters.Character,
+	mob *mobs.Mob,
+	room *rooms.Room,
+	spellData *spells.SpellData,
+	magnitude int,
+	mName string,
+) int {
+	skillLevel := 0
+	willpower := 0
+	casterName := "Something"
+	if casterChar != nil {
+		skillLevel = casterChar.GetSkillLevel(skills.Spellcasting)
+		willpower = casterChar.Stats.Willpower.ValueAdj
+		casterName = casterChar.Name
+	}
+	regenMult := float64(magnitude)
+	if regenMult < 1.0 {
+		regenMult = 1.0
+	}
+	durationRounds := calcSpellDuration(spellData.BaseFolds, skillLevel, willpower) / 2
+	if durationRounds < 6 {
+		durationRounds = 6
+	}
+	mob.Character.AddCondition(characters.ConditionRegen, durationRounds, regenMult, "heal spell")
+	sendVisualRoomText(room, messaging.CategorySpellVital, fmt.Sprintf(
+		`<ansi fg="cyan">%s</ansi>'s %s washes over %s, knitting wounds shut.`,
+		casterName, spellData.Name, mName))
+	return 0
+}
+
 func applyMobEffect_default(
 	user *users.UserRecord,
 	spellData *spells.SpellData,
@@ -581,6 +657,8 @@ func applyMobEffect(user *users.UserRecord, casterChar *characters.Character, mo
 		return applyMobEffect_knockdown(user, casterChar, mob, room, spellData, magnitude, isCrit, critTag, mName)
 	case "buff":
 		return applyMobEffect_buff(user, mob, room, spellData, critTag, mName)
+	case "heal":
+		return applyMobEffect_heal(casterChar, mob, room, spellData, magnitude, mName)
 	default:
 		return applyMobEffect_default(user, spellData, mName)
 	}
@@ -927,6 +1005,22 @@ func resolveMobSpell(mob *mobs.Mob, cs activity.CastingData, spellData *spells.S
 		return
 	}
 
+	// drain_area is a boss-ability effect type: it drains every living
+	// player in the room and heals the caster by the aggregate lifesteal
+	// (actions.ExecuteDrainArea). It bypasses the HarmArea target
+	// population + per-target opposed-roll dispatch below entirely — the
+	// area drain resolves its own per-player hit/miss via ExecuteSkillMove
+	// inside ExecuteDrainArea, so running it through the generic
+	// spellAttack-vs-defense roll here would double-roll each player.
+	// Reachable ONLY at fold-cast completion (handleMobFoldCasting calls
+	// resolveMobSpell here), so a spell authored with EffectType
+	// "drain_area" and BaseFolds >= 2 telegraphs and is interruptible for
+	// free — this function never runs until the cast finishes.
+	if spellData.EffectType == "drain_area" {
+		resolveMobDrainArea(mob, room, spellData)
+		return
+	}
+
 	skillLevel := mob.Character.GetSkillLevel(skills.Spellcasting)
 	spellAttack := characters.CalcSpellAttack(mob.Character.Stats.Willpower.ValueAdj, skillLevel)
 	magnitude := spellData.EffectMagnitude
@@ -980,6 +1074,79 @@ func resolveMobSpell(mob *mobs.Mob, cs activity.CastingData, spellData *spells.S
 			resolveMobSpellAgainstPlayer(mob, target, room, spellData, spellAttack, magnitude)
 		}
 	}
+}
+
+// resolveMobDrainArea is the resolution handler for a mob-cast spell whose
+// EffectType is "drain_area" (the Core Guardian's "core recharge" ability
+// design — see docs/superpowers/plans/2026-07-06-crashsite-boss-mechanics.md
+// Chunk D). It drains every living player in the room and heals the caster
+// by the aggregate lifesteal via actions.ExecuteDrainArea (which mirrors the
+// single-target vampire ExecuteDrain math exactly).
+//
+// Author's note for the spell YAML that will invoke this (Task D2): give it
+// effect_type: drain_area, a type that reads as a room-wide harm ability
+// (e.g. harm-area) for AI-targeting purposes even though this handler
+// ignores the generic HarmArea per-target dispatch, and base_folds >= 2 so
+// it telegraphs via the existing fold-cast windup and is interruptible via
+// the disruptor system — this function only runs once fold accumulation
+// completes (handleMobFoldCasting -> resolveMobSpell -> here), so telegraph
+// and interrupt are inherited for free; no changes needed here for either.
+func resolveMobDrainArea(mob *mobs.Mob, room *rooms.Room, spellData *spells.SpellData) {
+	result := actions.ExecuteDrainArea(actions.NewMobActorInRoom(mob, room))
+
+	if !result.Executed {
+		sendVisualRoomText(room, messaging.CategorySpellDisruption, fmt.Sprintf(
+			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> crackles through the air, finding no one to drain.`,
+			mob.Character.Name, spellData.Name))
+		return
+	}
+
+	// Core Charge (crash-site-boss-mechanics Chunk D, the Core Guardian's
+	// drain-fed discharge gate): incremented HERE, at drain *resolution*,
+	// not at cast-initiation. Build-time decision (Task D3): an interrupted
+	// drain never reaches this point at all -- resolveMobDrainArea is only
+	// entered once a fold-cast completes (see the doc comment above), so a
+	// disruptor-cancelled drain automatically denies the charge without any
+	// extra guard, satisfying spec §10.4 ("an interrupted drain ... denies
+	// the charge/heal entirely").
+	//
+	// BehaviorState (mob.BTreeState) is a per-mob-instance store that lives
+	// on the mob itself (internal/mobs/mobs.go); behaviortree.EnsureBTreeState
+	// lazily initializes and returns it. It is the EXACT SAME object the
+	// btree's own `increment_state`/`state_greater_than` actions/conditions
+	// read and write during tree evaluation (see internal/behaviortree/
+	// actions_state.go, conditions_state.go) -- there is no separate storage
+	// to keep in sync. Writing it here from Go is therefore equivalent to a
+	// btree `increment_state` call, just triggered from the spell-resolution
+	// side (which is the only place that knows "the drain actually landed")
+	// rather than from the tree (which cannot observe fold-cast completion
+	// directly). This lets the Core Guardian's btree
+	// (9562-the_core_guardian.yaml) gate its core-discharge purely on
+	// `state_greater_than core_charge N`, with zero Go-side awareness of
+	// discharge itself.
+	chargeState := behaviortree.EnsureBTreeState(mob)
+	chargeState.Set("core_charge", chargeState.GetInt("core_charge")+1)
+
+	for _, pr := range result.PlayerResults {
+		if !pr.MoveResult.Hit {
+			continue
+		}
+		target := users.GetByUserId(pr.UserId)
+		if target == nil {
+			continue
+		}
+		target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
+			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> saps your strength! (<ansi fg="damage">%s</ansi>)`,
+			mob.Character.Name, spellData.Name,
+			combat.GetDamageDescription(pr.MoveResult.Damage, target.Character.HealthMax.Value)))
+		if !target.Character.IsInCombat() {
+			target.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
+		}
+	}
+
+	sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
+		`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> tears the life from everyone in the room!`,
+		mob.Character.Name, spellData.Name))
 }
 
 // applyMobSelfEffect handles self-targeted help spells (heal, minor-shield).
@@ -1042,6 +1209,16 @@ func applyMobSelfEffect(mob *mobs.Mob, room *rooms.Room, spellData *spells.Spell
 
 func resolveMobSpellAgainstMob(caster *mobs.Mob, target *mobs.Mob, room *rooms.Room,
 	spellData *spells.SpellData, spellAttack float64, magnitude int) {
+	// Help-type effects (e.g. a construct add healing an ally boss) are a
+	// cooperative cast, not an attack — the target should not roll defense
+	// against a friendly heal, and a "fumble" backfire makes no sense for
+	// it either. Bypass the harm opposed-roll/backfire gate entirely and
+	// apply directly. (Crash-site boss-mechanics Chunk B: the Repair Frame
+	// add heals Warden-Prime / the Core Guardian this way.)
+	if spellData.EffectType == "heal" {
+		applyMobEffect(nil, &caster.Character, target, room, spellData, magnitude, false)
+		return
+	}
 	defVal := spellDefenseValue(spellData.TargetDefenseType, &target.Character)
 	success, _, atkRoll, _ := dice.OpposedRollStat(spellAttack, defVal)
 	if atkRoll.ZScore <= -2.0 {

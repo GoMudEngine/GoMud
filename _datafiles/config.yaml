@@ -1069,6 +1069,18 @@ Balance:
   SentientChatterCooldownRounds: 20   # Min rounds between sentient item lines
   SentientChatterChancePct: 15        # Percent chance per eligible round that a sentient item speaks
 
+  # ── BOSS INTERRUPTS ──────────────────────────────────────────────────────────
+  # General-purpose disruptor allowlists (not crash-site-specific). A mob
+  # mid-fold-cast has its cast interrupted when hit by a thrown item whose id
+  # is listed here, or targeted with a player spell whose id is listed here.
+  # Generic melee never interrupts a cast.
+  BossInterruptItemIds:
+    - 30057  # Flashbang
+  BossInterruptSpellIds:
+    - "neural-stun"
+    - "sensory-overload"
+    - "kinetic-shove"
+
 ################################################################################
 #
 #   LLM

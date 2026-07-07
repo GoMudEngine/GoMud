@@ -1,0 +1,29 @@
+spellid: core-drain
+name: Core Drain
+description: >
+  The Core Guardian irises open its chest-cavity and reaches into the
+  room itself, drawing the vitality from everything living in it to feed
+  its own cold fire. Mob-castable only -- this is the Guardian's
+  signature recharge, not a spell any living caster could learn.
+type: harmarea
+schools:
+  - vital
+cost: 20
+waitrounds: 1
+difficulty: 45
+primarystat: willpower
+base_folds: 2
+effect_type: drain_area
+no_damage_interrupt: true
+# effect_magnitude is NOT read by the drain_area handler. resolveMobDrainArea
+# (internal/hooks/spell_resolution.go) dispatches straight to
+# actions.ExecuteDrainArea, which derives its damage from the caster's own
+# Strength stat + the TripDamagePercent balance knob -- mirroring the
+# single-target `drain` command exactly (internal/actions/combat_drain.go).
+# Left here at a nominal value for schema completeness; a future Chunk-E
+# tuning pass may wire a real scalar in, but today this field has zero
+# mechanical effect on the drain's damage/heal.
+effect_magnitude: 100
+cast_user_text: "Power gathers inward, filaments of cold light reaching for your prey."
+cast_room_text: "{source}'s chest-cavity irises open -- filaments of cold light reach toward you. It will feed on the room next round."
+ignore_move_cooldown: true

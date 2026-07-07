@@ -1,0 +1,18 @@
+itemid: 40226
+name: Core Matrix
+namesimple: matrix
+description: >-
+  A lattice of cold white filaments knotted around the guardian's chest
+  cavity, feeding the fire at its center. The pattern never repeats and
+  never settles, folding into itself the way the makers' own script
+  once folded meaning into meaning. Whatever it is thinking with, it is
+  thinking harder than it should be able to.
+type: neck
+subtype: wearable
+statmods:
+  willpower: 200
+  spellcasting: 40
+never_drops: true
+not_salable: true
+weight: 0.0
+value: 0

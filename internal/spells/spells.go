@@ -31,12 +31,14 @@ type SpellData struct {
 	BaseFolds           int    `yaml:"base_folds,omitempty"`           // 0 = default to 4
 	TargetDefenseType   string `yaml:"target_defense_type,omitempty"`  // "physical", "mental", "" = none
 	ComponentTag        string `yaml:"component_tag,omitempty"`        // Required item component tag (e.g. "stone")
-	EffectType          string  `yaml:"effect_type,omitempty"`          // "damage"|"heal"|"buff"|"shield"|"dot"|"knockdown"|"charm"
+	EffectType          string  `yaml:"effect_type,omitempty"`          // "damage"|"heal"|"buff"|"shield"|"dot"|"knockdown"|"charm"|"drain_area" (mob-cast only: area life-drain + self-heal, see resolveMobDrainArea)
 	EffectMagnitude     int     `yaml:"effect_magnitude,omitempty"`     // Legacy: base damage/heal amount
 	DamageMultiplier    float64 `yaml:"damage_multiplier,omitempty"`   // Spell damage multiplier for new pipeline (Stage 34)
 	EffectDuration      int    `yaml:"effect_duration,omitempty"`      // DoT tick count (default 0 = use 3)
 	BuffIds             []int  `yaml:"buff_ids,omitempty"`             // Buff IDs to apply (for "buff" effect type)
 	QuestRequired       string `yaml:"quest_required,omitempty"`       // Quest token required before spell can be discovered
+	NoDamageInterrupt   bool   `yaml:"no_damage_interrupt,omitempty"`  // Telegraphed casts: skip damage/position concentration-break (still interrupted by the disruptor system)
+	IgnoreMoveCooldown  bool   `yaml:"ignore_move_cooldown,omitempty"` // Scripted boss abilities: bypass the shared special-move cast cooldown (btree controls cadence)
 
 	// Companion summoning fields — replaces JS onMagic for summon spells
 	SummonMobId          int    `yaml:"summon_mob_id,omitempty"`

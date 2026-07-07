@@ -1,0 +1,16 @@
+itemid: 40229
+name: Vent-Shielded Sweeper Drum
+namesimple: drum
+description: >-
+  A second skin of grey plating ringed around the Hull Sweeper's vents,
+  baffling the worst of a blow before it reaches the disruptor coil
+  underneath. It is built to survive long enough to clear the room
+  once, not to win a fight.
+type: body
+subtype: wearable
+physical_mitigation: 35
+magical_mitigation: 25
+never_drops: true
+not_salable: true
+weight: 0.0
+value: 0

@@ -1,0 +1,75 @@
+# Repair Frame — Boss-Heal Add (crash-site-boss-mechanics Chunk B)
+#
+# Spawned by BOTH bosses (Warden-Prime 9561 and The Core Guardian 9562),
+# so the heal target can't be hardcoded to one name. Each branch below
+# gates on a `mob_in_room` check for the specific boss template id, then
+# casts repair-pulse (a HelpSingle heal, see Task A6 target passthrough)
+# AT that boss by name via the `cast` action's `target` param.
+#
+# Mechanism verified by reading the mob-spell resolution code
+# (internal/hooks/spell_resolution.go): a mob HelpSingle cast with a
+# named target resolves via room.FindByName into TargetMobInstanceIds
+# (internal/actions/cast.go "Mob HelpSingle: named target or self"),
+# and resolveMobSpellAgainstMob dispatches non-self mob targets through
+# applyMobEffect. Prior to this chunk, applyMobEffect's switch had no
+# "heal" case (only damage/dot/knockdown/buff), so a mob healing another
+# mob silently no-op'd — added the missing case (+ bypassed the harmful
+# opposed-roll/backfire gate for heal-type effects, since a friendly heal
+# shouldn't be "resisted") in internal/hooks/spell_resolution.go as part
+# of this task. HelpArea was ruled out per the file's own comment: "mobs
+# never cast area healing in this engine."
+#
+# Fold-casting (base_folds: 2) means the heal telegraphs and is
+# interruptible — killing the Repair Frame mid-cast (or disrupting it
+# per Chunk A's disruptor system) denies the heal entirely, which is the
+# intended reward for focusing it down.
+
+tree:
+  type: selector
+  children:
+
+    # ── Heal Warden-Prime ──
+    - type: decorator
+      event: mob_combat_round
+      mod: cooldown
+      rounds: 8
+      child:
+        type: sequence
+        children:
+          - type: condition
+            check: mob_in_combat
+          - type: condition
+            check: mob_in_room
+            mob_id: 9561
+          - type: action
+            do: cast
+            spell: repair-pulse
+            target: "Warden-Prime"
+          - type: action
+            do: send_room_text
+            text: >-
+              The Repair Frame's arc-welders flare and knit Warden-Prime's
+              cracked plating back together!
+
+    # ── Heal The Core Guardian ──
+    - type: decorator
+      event: mob_combat_round
+      mod: cooldown
+      rounds: 8
+      child:
+        type: sequence
+        children:
+          - type: condition
+            check: mob_in_combat
+          - type: condition
+            check: mob_in_room
+            mob_id: 9562
+          - type: action
+            do: cast
+            spell: repair-pulse
+            target: "The Core Guardian"
+          - type: action
+            do: send_room_text
+            text: >-
+              The Repair Frame's arc-welders flare and knit the Core
+              Guardian's cracked plating back together!

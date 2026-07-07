@@ -3,9 +3,63 @@ package behaviortree
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
+
+// TestActCast_NoTarget_EmitsPlainCast verifies backward compatibility: a
+// cast node with no target param still emits "cast <spell>" (no trailing
+// target token).
+func TestActCast_NoTarget_EmitsPlainCast(t *testing.T) {
+	cleanRoom := seedTestRoom(t, 1, "TestZone")
+	defer cleanRoom()
+	cleanMob := seedTestMob(t, 5, 105, 1, "Repair Frame")
+	defer cleanMob()
+	defer events.DrainQueuedInputsForTest(105)
+
+	ctx := &EvalContext{InstanceId: 105, RoomId: 1}
+	if r := actCast(map[string]any{"spell": "sparks"}, ctx); r != Success {
+		t.Fatalf("expected Success, got %v", r)
+	}
+
+	cmd := events.InspectQueuedInputForTest(105, "cast ")
+	if cmd != "cast sparks" {
+		t.Errorf(`expected queued command "cast sparks", got %q`, cmd)
+	}
+}
+
+// TestActCast_WithTarget_EmitsCastWithTargetName verifies the Task A6
+// target passthrough: a cast node with a target param emits
+// "cast <spell> <target>" so a mob (e.g. a Repair Frame add) can heal
+// another named mob (the boss) instead of itself.
+func TestActCast_WithTarget_EmitsCastWithTargetName(t *testing.T) {
+	cleanRoom := seedTestRoom(t, 1, "TestZone")
+	defer cleanRoom()
+	cleanMob := seedTestMob(t, 5, 105, 1, "Repair Frame")
+	defer cleanMob()
+	defer events.DrainQueuedInputsForTest(105)
+
+	ctx := &EvalContext{InstanceId: 105, RoomId: 1}
+	r := actCast(map[string]any{"spell": "mend", "target": "the_core_guardian"}, ctx)
+	if r != Success {
+		t.Fatalf("expected Success, got %v", r)
+	}
+
+	cmd := events.InspectQueuedInputForTest(105, "cast ")
+	if cmd != "cast mend the_core_guardian" {
+		t.Errorf(`expected queued command "cast mend the_core_guardian", got %q`, cmd)
+	}
+}
+
+// TestActCast_NoMobInstance_Failure verifies actCast fails gracefully when
+// the acting mob instance can't be resolved.
+func TestActCast_NoMobInstance_Failure(t *testing.T) {
+	ctx := &EvalContext{InstanceId: 99999, RoomId: 1}
+	if r := actCast(map[string]any{"spell": "sparks", "target": "boss"}, ctx); r != Failure {
+		t.Errorf("expected Failure with no mob instance, got %v", r)
+	}
+}
 
 func TestTargetWeakestMobInRoom_EmptyRoom(t *testing.T) {
 	cleanRoom := seedTestRoom(t, 1, "TestZone")

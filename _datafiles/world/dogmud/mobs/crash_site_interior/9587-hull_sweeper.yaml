@@ -1,0 +1,53 @@
+mobid: 9587
+zone: Crash Site Interior
+behavior_archetype: generic_fighter
+aiprofile: brute
+# crashsite-boss-mechanics Part B: sweep_companions (internal/behaviortree/
+# actions_mob.go actSweepCompanions) is a guaranteed action with NO stat
+# roll at all, so this has no combat ability that benefits from Strength
+# or Dexterity. "fighting" put 80% of its stat pool into Str/Dex/Vit,
+# which is exactly what turned it into "the single biggest melee threat
+# in the fight" in live calibration even at the default base_pool.
+# "casting" (80% Per/Wil/Cha) is a free reduction in melee potential with
+# zero downside to its actual job. Durability now comes from the nodrop
+# mitigation gear below, not from a bigger Vitality/Strength stat pool.
+archetype: casting
+hostile: true
+statpool: 100
+maxwander: 0
+groups:
+  - construct
+idlecommands:
+  - 'emote turns a slow ring of dark vents toward the room, each one
+    cold and quiet for now.'
+  - ''
+  - 'emote hums low, a disruptor coil charging somewhere behind its
+    grey plating.'
+  - ''
+combatcommands:
+  - 'emote spins its vent-ring outward, hunting for anything not flesh
+    and bone to cast out.'
+  - ''
+  - 'emote lets its disruptor coil howl up toward its peak charge.'
+  - ''
+character:
+  name: Hull Sweeper
+  description: |
+    A drum-shaped construct ringed with dark vents, built to clear a
+    breached compartment of anything that does not belong -- and the
+    buried place has decided that includes the shapes you have called
+    up to fight beside you. It carries a disruptor field tuned to
+    conjured and summoned things alone, and it will cast every one of
+    them out of the chamber the instant it gets the charge to do it.
+  speciesid: 37
+  level: 1
+  gold: 0
+  # Nodrop mitigation-only gear (crashsite-boss-mechanics Part B): buys
+  # enough survivability to land its sweep and soak a couple rounds of
+  # focus-fire, with NO stat bonus of any kind.
+  equipment:
+    body:
+      itemid: 40229
+loot_pool:
+  - 20091
+itemdropchance: 20

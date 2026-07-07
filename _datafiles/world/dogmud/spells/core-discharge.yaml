@@ -1,0 +1,25 @@
+spellid: core-discharge
+name: Core Discharge
+description: >
+  A ruinous vent of raw power torn straight from a guardian construct's
+  core -- a room-wide detonation of cold light and crushing force that
+  scours everything standing in the open. Mob-castable only; the
+  buildup would kill any living caster before release.
+type: harmarea
+schools:
+  - elemental
+cost: 20
+waitrounds: 1
+difficulty: 45
+primarystat: willpower
+base_folds: 2
+target_defense_type: physical
+effect_type: damage
+effect_magnitude: 150
+damage_multiplier: 2.0
+no_damage_interrupt: true
+categories:
+  - harm_multi
+cast_user_text: "Power floods inward, gathering at your core."
+cast_room_text: "{source}'s core flares white-hot -- the air begins to scream."
+ignore_move_cooldown: true

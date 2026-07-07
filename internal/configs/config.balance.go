@@ -513,6 +513,16 @@ type Balance struct {
 	// ── CRASH SITE (#22) ─────────────────────────────────────────────────────
 	CrashSiteSuppressionFactor ConfigFloat `yaml:"CrashSiteSuppressionFactor"` // inside the buried hull (#22), spell power and mutation combat bonuses are scaled to this fraction; 0=fully suppressed, 1=no effect (default 0.35)
 
+	// ── BOSS INTERRUPTS ──────────────────────────────────────────────────────
+	// General-purpose disruptor allowlists (not crash-site-specific). Any mob
+	// mid-fold-cast (Character.IsCasting() / Activity.IsCasting()) has its
+	// cast interrupted via actions.InterruptTargetCast when hit by a thrown
+	// item whose id is in BossInterruptItemIds, or a player spell whose id is
+	// in BossInterruptSpellIds. Generic melee never interrupts. Defaults set
+	// in validateMisc(); see IsBossInterruptItem / IsBossInterruptSpell.
+	BossInterruptItemIds  []int    `yaml:"BossInterruptItemIds"`
+	BossInterruptSpellIds []string `yaml:"BossInterruptSpellIds"`
+
 	// ── CARAVAN SYSTEM ───────────────────────────────────────────────────────
 	// CaravanServedZones lists zone display names whose vendor mobs do NOT
 	// auto-restock — they restock only on caravan visit. Mobs in zones not
@@ -708,6 +718,28 @@ func (b *Balance) GetSkillProgressionMultiplier(skillName string) (float64, bool
 func (b Balance) IsCaravanServedZone(zone string) bool {
 	for _, z := range b.CaravanServedZones {
 		if z == zone {
+			return true
+		}
+	}
+	return false
+}
+
+// IsBossInterruptItem reports whether the given item id is a configured
+// boss-interrupt disruptor (see BossInterruptItemIds).
+func (b Balance) IsBossInterruptItem(itemId int) bool {
+	for _, id := range b.BossInterruptItemIds {
+		if id == itemId {
+			return true
+		}
+	}
+	return false
+}
+
+// IsBossInterruptSpell reports whether the given spell id is a configured
+// boss-interrupt disruption spell (see BossInterruptSpellIds).
+func (b Balance) IsBossInterruptSpell(spellId string) bool {
+	for _, id := range b.BossInterruptSpellIds {
+		if id == spellId {
 			return true
 		}
 	}
