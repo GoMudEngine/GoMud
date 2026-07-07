@@ -1,5 +1,6 @@
 id: barbed-spike-plates
 name: Barbed Spike-Plates
+aliases: [barbed]
 skill: blacksmithing
 skill_minimum: 50
 station: forge

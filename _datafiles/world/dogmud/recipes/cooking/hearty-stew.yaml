@@ -1,5 +1,6 @@
 id: hearty-stew
 name: Hearty Stew
+aliases: [stew]
 skill: cooking
 skill_minimum: 5
 station: cooking_fire

@@ -1,5 +1,6 @@
 id: iron-short-sword
 name: Iron Short Sword
+aliases: [shortsword]
 skill: blacksmithing
 skill_minimum: 8
 station: forge

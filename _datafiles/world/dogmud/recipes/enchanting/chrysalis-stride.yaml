@@ -1,5 +1,6 @@
 id: chrysalis-stride
 name: "Chrysalis-Stride"
+aliases: [stride]
 skill: enchanting
 skill_minimum: 15
 station: enchanting_circle

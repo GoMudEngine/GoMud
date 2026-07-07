@@ -1,5 +1,6 @@
 id: herbal-tea
 name: Herbal Tea
+aliases: [tea]
 skill: cooking
 skill_minimum: 5
 station: cooking_fire

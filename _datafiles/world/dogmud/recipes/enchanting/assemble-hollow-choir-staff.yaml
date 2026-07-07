@@ -1,5 +1,6 @@
 id: assemble-hollow-choir-staff
 name: Staff of the Hollow Choir
+aliases: [choirstaff]
 skill: enchanting
 skill_minimum: 65
 station: enchanting_circle

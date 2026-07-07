@@ -1,5 +1,6 @@
 id: reinforced-disarm-kit
 name: Reinforced Disarm Kit
+aliases: [disarmkit]
 skill: jewelcrafting
 skill_minimum: 15
 station: jeweler_bench

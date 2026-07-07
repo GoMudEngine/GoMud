@@ -1,5 +1,6 @@
 id: reduction-base
 name: Reduction Base
+aliases: [reduction]
 skill: cooking
 skill_minimum: 50
 station: cooking_fire

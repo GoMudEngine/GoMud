@@ -1,5 +1,6 @@
 id: hunter-eel-scale-vest
 name: Hunter-Eel Scale Vest
+aliases: [eelvest]
 skill: tailoring
 skill_minimum: 25
 station: loom

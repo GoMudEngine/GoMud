@@ -1,5 +1,6 @@
 id: stamina-tonic
 name: Stamina Tonic
+aliases: [stamina]
 skill: alchemy
 skill_minimum: 0
 station: alchemy_bench

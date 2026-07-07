@@ -1,5 +1,6 @@
 id: cats-eye-draught
 name: Cat's Eye Draught
+aliases: [catseye]
 skill: alchemy
 skill_minimum: 12
 station: alchemy_bench

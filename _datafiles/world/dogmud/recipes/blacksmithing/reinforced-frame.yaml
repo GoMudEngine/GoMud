@@ -1,5 +1,6 @@
 id: reinforced-frame
 name: Reinforced Frame
+aliases: [frame]
 skill: blacksmithing
 skill_minimum: 50
 station: forge

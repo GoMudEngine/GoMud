@@ -1,5 +1,6 @@
 id: polished-stone-amulet
 name: Polished Stone Amulet
+aliases: [amulet]
 skill: jewelcrafting
 skill_minimum: 8
 station: jeweler_bench

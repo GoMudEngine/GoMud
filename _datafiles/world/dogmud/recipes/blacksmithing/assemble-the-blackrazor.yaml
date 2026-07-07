@@ -1,5 +1,6 @@
 id: assemble-the-blackrazor
 name: The Blackrazor
+aliases: [blackrazor]
 skill: blacksmithing
 skill_minimum: 65
 station: forge

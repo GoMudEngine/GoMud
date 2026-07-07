@@ -1,5 +1,6 @@
 id: steel-buckler
 name: Steel Buckler
+aliases: [steelbuckler]
 skill: blacksmithing
 skill_minimum: 30
 station: forge

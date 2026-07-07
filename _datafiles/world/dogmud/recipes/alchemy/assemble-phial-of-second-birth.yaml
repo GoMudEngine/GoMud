@@ -1,5 +1,6 @@
 id: assemble-phial-of-second-birth
 name: Phial of Second Birth
+aliases: [rebirth]
 skill: alchemy
 skill_minimum: 65
 station: alchemy_bench

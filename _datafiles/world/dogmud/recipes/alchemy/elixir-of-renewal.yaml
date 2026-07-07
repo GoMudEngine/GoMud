@@ -1,5 +1,6 @@
 id: elixir-of-renewal
 name: Elixir of Renewal
+aliases: [renewal]
 skill: alchemy
 skill_minimum: 25
 station: alchemy_bench

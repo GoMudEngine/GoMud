@@ -1,5 +1,6 @@
 id: spore-mantle
 name: "Spore-Mantle"
+aliases: [mantle]
 skill: enchanting
 skill_minimum: 14
 station: enchanting_circle

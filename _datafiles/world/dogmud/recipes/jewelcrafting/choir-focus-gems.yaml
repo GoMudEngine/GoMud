@@ -1,5 +1,6 @@
 id: choir-focus-gems
 name: Choir-Focus Gems
+aliases: [choirgems]
 skill: jewelcrafting
 skill_minimum: 50
 station: jeweler_bench

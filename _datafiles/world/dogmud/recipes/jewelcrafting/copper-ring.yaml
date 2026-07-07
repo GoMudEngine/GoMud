@@ -1,5 +1,6 @@
 id: copper-ring
 name: Copper Ring
+aliases: [copper]
 skill: jewelcrafting
 skill_minimum: 0
 station: jeweler_bench

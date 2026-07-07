@@ -1,5 +1,6 @@
 id: honed-edge
 name: "Honed-Edge"
+aliases: [honed]
 skill: enchanting
 skill_minimum: 0
 station: enchanting_circle

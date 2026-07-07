@@ -1,5 +1,6 @@
 id: berserker-elixir
 name: Berserker Elixir
+aliases: [berserker]
 skill: alchemy
 skill_minimum: 18
 station: alchemy_bench

@@ -1,5 +1,6 @@
 id: simple-pendant
 name: Simple Pendant
+aliases: [pendant]
 skill: jewelcrafting
 skill_minimum: 3
 station: jeweler_bench

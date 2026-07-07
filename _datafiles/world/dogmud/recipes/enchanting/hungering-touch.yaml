@@ -1,5 +1,6 @@
 id: hungering-touch
 name: "Hungering-Touch"
+aliases: [touch]
 skill: enchanting
 skill_minimum: 30
 station: enchanting_circle

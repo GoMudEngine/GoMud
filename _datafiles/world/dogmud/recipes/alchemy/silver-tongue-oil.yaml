@@ -1,5 +1,6 @@
 id: silver-tongue-oil
 name: Silver Tongue Oil
+aliases: [silvertongue]
 skill: alchemy
 skill_minimum: 20
 station: alchemy_bench

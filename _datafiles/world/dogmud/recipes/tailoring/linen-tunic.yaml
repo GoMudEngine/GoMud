@@ -1,5 +1,6 @@
 id: linen-tunic
 name: Linen Tunic
+aliases: [tunic]
 skill: tailoring
 skill_minimum: 0
 station: loom

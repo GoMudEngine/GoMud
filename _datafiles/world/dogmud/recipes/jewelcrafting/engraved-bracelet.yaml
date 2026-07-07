@@ -1,5 +1,6 @@
 id: engraved-bracelet
 name: Engraved Bracelet
+aliases: [bracelet]
 skill: jewelcrafting
 skill_minimum: 22
 station: jeweler_bench

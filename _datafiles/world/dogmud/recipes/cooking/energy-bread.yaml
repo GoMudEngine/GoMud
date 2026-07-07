@@ -1,5 +1,6 @@
 id: energy-bread
 name: Energy Bread
+aliases: [bread]
 skill: cooking
 skill_minimum: 20
 station: cooking_fire

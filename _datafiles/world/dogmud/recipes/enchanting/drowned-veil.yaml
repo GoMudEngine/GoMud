@@ -1,5 +1,6 @@
 id: drowned-veil
 name: "Drowned Veil"
+aliases: [drowned]
 skill: enchanting
 skill_minimum: 40
 station: enchanting_circle

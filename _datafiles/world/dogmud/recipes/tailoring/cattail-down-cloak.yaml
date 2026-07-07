@@ -1,5 +1,6 @@
 id: cattail-down-cloak
 name: Cattail-Down Cloak
+aliases: [cattail]
 skill: tailoring
 skill_minimum: 20
 station: loom

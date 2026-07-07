@@ -1,5 +1,6 @@
 id: savants-infusion
 name: Savant's Infusion
+aliases: [savant]
 skill: alchemy
 skill_minimum: 30
 station: alchemy_bench

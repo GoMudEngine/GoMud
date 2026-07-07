@@ -1,5 +1,6 @@
 id: leather-bandolier
 name: Leather Bandolier
+aliases: [bandolier]
 skill: tailoring
 skill_minimum: 10
 station: loom

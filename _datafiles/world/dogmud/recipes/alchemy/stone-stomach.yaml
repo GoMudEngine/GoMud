@@ -1,5 +1,6 @@
 id: stone-stomach
 name: Stone Stomach
+aliases: [stonestomach]
 skill: alchemy
 skill_minimum: 8
 station: alchemy_bench

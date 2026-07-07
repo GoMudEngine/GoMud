@@ -1,5 +1,6 @@
 id: antidote-broth
 name: Antidote Broth
+aliases: [broth]
 skill: cooking
 skill_minimum: 10
 station: cooking_fire

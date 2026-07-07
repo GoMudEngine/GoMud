@@ -1,5 +1,6 @@
 id: gold-signet-ring
 name: Gold Signet Ring
+aliases: [signet]
 skill: jewelcrafting
 skill_minimum: 28
 station: jeweler_bench

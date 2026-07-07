@@ -1,5 +1,6 @@
 id: gem-set-necklace
 name: Gem-Set Necklace
+aliases: [necklace]
 skill: jewelcrafting
 skill_minimum: 18
 station: jeweler_bench

@@ -1,5 +1,6 @@
 id: leather-satchel
 name: Leather Satchel
+aliases: [satchel]
 skill: tailoring
 skill_minimum: 20
 station: loom

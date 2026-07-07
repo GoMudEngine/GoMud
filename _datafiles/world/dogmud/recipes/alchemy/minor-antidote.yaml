@@ -1,5 +1,6 @@
 id: minor-antidote
 name: Minor Antidote
+aliases: [antidote]
 skill: alchemy
 skill_minimum: 8
 station: alchemy_bench

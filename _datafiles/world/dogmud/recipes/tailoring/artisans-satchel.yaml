@@ -1,5 +1,6 @@
 id: artisans-satchel
 name: Artisan's Satchel
+aliases: [artisan]
 skill: tailoring
 skill_minimum: 15
 station: loom

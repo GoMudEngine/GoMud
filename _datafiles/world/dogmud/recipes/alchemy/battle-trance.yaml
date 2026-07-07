@@ -1,5 +1,6 @@
 id: battle-trance
 name: Battle Trance
+aliases: [trance]
 skill: alchemy
 skill_minimum: 25
 station: alchemy_bench

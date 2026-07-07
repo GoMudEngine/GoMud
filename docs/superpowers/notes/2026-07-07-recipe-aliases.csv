@@ -1,0 +1,127 @@
+skill,id,name,alias
+alchemy,anti-corrosion-quench,Anti-Corrosion Quench,quench
+alchemy,assemble-phial-of-second-birth,Phial of Second Birth,rebirth
+alchemy,assemble-vitalis-bandolier,Vitalis Bandolier,vitalis
+alchemy,battle-trance,Battle Trance,trance
+alchemy,berserker-elixir,Berserker Elixir,berserker
+alchemy,cats-eye-draught,Cat's Eye Draught,catseye
+alchemy,chrysalis-catalyst,Chrysalis Catalyst,catalyst
+alchemy,clarity-tonic,Clarity Tonic,clarity
+alchemy,conviction-draught,Conviction Draught,conviction
+alchemy,elixir-of-renewal,Elixir of Renewal,renewal
+alchemy,essence-of-growth,Essence of Growth,growth
+alchemy,firebomb,Firebomb,firebomb
+alchemy,fire-resistance-draught,Fire Resistance Draught,fireres
+alchemy,flashbang,Flashbang,flashbang
+alchemy,healing-salve,Healing Salve,salve
+alchemy,ironhide-brew,Ironhide Brew,ironhide
+alchemy,lake-tonic-of-steady-hand,Lake-Tonic of Steady Hand,steadyhand
+alchemy,mindshield-elixir,Mindshield Elixir,mindshield
+alchemy,minor-antidote,Minor Antidote,antidote
+alchemy,mire-renewal-draught,Mire Renewal Draught,mire
+alchemy,mutagen-brew,Mutagen Brew,mutagen
+alchemy,nutrient-suspension,Nutrient Suspension,nutrient
+alchemy,obsidian-edge-resin,Obsidian Edge-Resin,obsidian
+alchemy,preachers-tincture,Preacher's Tincture,preacher
+alchemy,purging-draught,Purging Draught,purging
+alchemy,quicksilver-soles,Quicksilver Soles,quicksilver
+alchemy,resonance-lacquer,Resonance Lacquer,lacquer
+alchemy,savants-infusion,Savant's Infusion,savant
+alchemy,silver-tongue-oil,Silver Tongue Oil,silvertongue
+alchemy,stamina-tonic,Stamina Tonic,stamina
+alchemy,stone-stomach,Stone Stomach,stonestomach
+alchemy,swiftfoot-essence,Swiftfoot Essence,swiftfoot
+alchemy,toxic-flask,Toxic Flask,toxic
+alchemy,veilguard-tonic,Veilguard Tonic,veilguard
+alchemy,warriors-brew,Warrior's Brew,warrior
+alchemy,windrunner-draught,Windrunner Draught,windrunner
+blacksmithing,assemble-aegis-of-mockery,Aegis of Mockery,aegis
+blacksmithing,assemble-the-blackrazor,The Blackrazor,blackrazor
+blacksmithing,barbed-spike-plates,Barbed Spike-Plates,barbed
+blacksmithing,basalt-iron-blade,Basalt-Iron Blade,basalt
+blacksmithing,chain-links,Chain Links,chainlinks
+blacksmithing,chainmail-vest,Chainmail Vest,chainmail
+blacksmithing,conductor-core,Conductor Core,conductor
+blacksmithing,iron-buckler,Iron Buckler,ironbuckler
+blacksmithing,iron-dagger,Iron Dagger,dagger
+blacksmithing,iron-short-sword,Iron Short Sword,shortsword
+blacksmithing,lake-iron-hook-spear,Lake-Iron Hook-Spear,hookspear
+blacksmithing,master-lockpicks,Master Lockpicks,masterlockpicks
+blacksmithing,masterwork-plate-helm,Masterwork Plate Helm,platehelm
+blacksmithing,reinforced-frame,Reinforced Frame,frame
+blacksmithing,reinforced-wooden-shield,Reinforced Wooden Shield,woodenshield
+blacksmithing,steel-buckler,Steel Buckler,steelbuckler
+blacksmithing,steel-ingot,Steel Ingot,ingot
+blacksmithing,steel-lockpicks,Steel Lockpicks,steelpicks
+blacksmithing,steel-longsword,Steel Longsword,longsword
+cooking,antidote-broth,Antidote Broth,broth
+cooking,energy-bread,Energy Bread,bread
+cooking,grilled-meat,Grilled Meat,meat
+cooking,hearty-stew,Hearty Stew,stew
+cooking,herbal-tea,Herbal Tea,tea
+cooking,reduction-base,Reduction Base,reduction
+cooking,spiced-wine,Spiced Wine,wine
+cooking,stillwater-lake-chowder,Stillwater Lake Chowder,chowder
+cooking,trail-rations,Trail Rations,rations
+enchanting,assemble-hollow-choir-staff,Staff of the Hollow Choir,choirstaff
+enchanting,carapace-ward,Carapace-Ward,carapace
+enchanting,chitin-brace,Chitin-Brace,chitin
+enchanting,chrysalis-bond,Chrysalis-Bond,bond
+enchanting,chrysalis-sight,Chrysalis-Sight,sight
+enchanting,chrysalis-stride,Chrysalis-Stride,stride
+enchanting,containment-lattice,Containment Lattice,containment
+enchanting,drowned-veil,Drowned Veil,drowned
+enchanting,honed-edge,Honed-Edge,honed
+enchanting,hungering-touch,Hungering-Touch,touch
+enchanting,ironblood,Ironblood,ironblood
+enchanting,mindweave,Mindweave,mindweave
+enchanting,predators-instinct,Predators-Instinct,instinct
+enchanting,preservation-runes,Preservation Runes,runes
+enchanting,rootbind,Rootbind,rootbind
+enchanting,rootwalker,Rootwalker,rootwalk
+enchanting,serpents-edge,Serpents-Edge,serpent
+enchanting,shadowweave,Shadowweave,shadowweave
+enchanting,spatial-stitching,Spatial Stitching,spatial
+enchanting,spore-mantle,Spore-Mantle,mantle
+enchanting,sporeweave,Sporeweave,sporeweave
+enchanting,thornguard,Thornguard,thornguard
+enchanting,venomgrip,Venomgrip,venomgrip
+enchanting,windlace-bindings,Windlace Bindings,windlace
+jewelcrafting,assemble-seething-prism,Seething Prism,prism
+jewelcrafting,choir-focus-gems,Choir-Focus Gems,choirgems
+jewelcrafting,chrysalis-setting,Chrysalis Setting,setting
+jewelcrafting,copper-ring,Copper Ring,copper
+jewelcrafting,crystalline-decanter,Crystalline Decanter,decanter
+jewelcrafting,engraved-bracelet,Engraved Bracelet,bracelet
+jewelcrafting,gem-set-necklace,Gem-Set Necklace,necklace
+jewelcrafting,gold-signet-ring,Gold Signet Ring,signet
+jewelcrafting,hungering-guard,Hungering Guard,hungering
+jewelcrafting,masterwork-gem-pendant,Masterwork Gem Pendant,gempendant
+jewelcrafting,polished-stone-amulet,Polished Stone Amulet,amulet
+jewelcrafting,precision-disarm-kit,Precision Disarm Kit,precision
+jewelcrafting,reinforced-disarm-kit,Reinforced Disarm Kit,disarmkit
+jewelcrafting,sealed-phial,Sealed Phial,sealedphial
+jewelcrafting,silver-ring,Silver Ring,silver
+jewelcrafting,simple-pendant,Simple Pendant,pendant
+jewelcrafting,stillwater-pearl-pendant,Stillwater Pearl Pendant,pearl
+jewelcrafting,voice-amber-housing,Voice-Amber Housing,amber
+tailoring,artisans-satchel,Artisan's Satchel,artisan
+tailoring,assemble-thornwall-harness,Thornwall Harness,thornwall
+tailoring,assemble-wayfarers-pack,Wayfarer's Bottomless Pack,wayfarer
+tailoring,assemble-zephyr-treads,Zephyr Treads,zephyr
+tailoring,cattail-down-cloak,Cattail-Down Cloak,cattail
+tailoring,cloth-bandage,Cloth Bandage,bandage
+tailoring,cloth-pants,Cloth Pants,pants
+tailoring,hunter-eel-scale-vest,Hunter-Eel Scale Vest,eelvest
+tailoring,leather-backpack,Leather Backpack,backpack
+tailoring,leather-bandolier,Leather Bandolier,bandolier
+tailoring,leather-leggings,Leather Leggings,leggings
+tailoring,leather-satchel,Leather Satchel,satchel
+tailoring,leather-vest,Leather Vest,leathervest
+tailoring,linen-tunic,Linen Tunic,tunic
+tailoring,masters-component-case,Master's Component Case,componentcase
+tailoring,reinforced-bandolier,Reinforced Bandolier,reinforcedbandolier
+tailoring,reinforced-harness,Reinforced Harness,reinforcedharness
+tailoring,reinforced-travel-pack,Reinforced Travel Pack,travelpack
+tailoring,scab-hide-jerkin,Scab-Hide Jerkin,jerkin
+tailoring,wool-cloak,Wool Cloak,wool

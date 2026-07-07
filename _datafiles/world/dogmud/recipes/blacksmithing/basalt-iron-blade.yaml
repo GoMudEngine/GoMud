@@ -1,5 +1,6 @@
 id: basalt-iron-blade
 name: Basalt-Iron Blade
+aliases: [basalt]
 skill: blacksmithing
 skill_minimum: 5
 station: forge

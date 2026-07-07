@@ -1,5 +1,6 @@
 id: mire-renewal-draught
 name: Mire Renewal Draught
+aliases: [mire]
 skill: alchemy
 skill_minimum: 6
 station: alchemy_bench

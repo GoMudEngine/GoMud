@@ -1,5 +1,6 @@
 id: cloth-pants
 name: Cloth Pants
+aliases: [pants]
 skill: tailoring
 skill_minimum: 0
 station: loom

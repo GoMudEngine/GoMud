@@ -1,5 +1,6 @@
 id: warriors-brew
 name: Warrior's Brew
+aliases: [warrior]
 skill: alchemy
 skill_minimum: 12
 station: alchemy_bench

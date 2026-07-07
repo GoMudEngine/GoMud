@@ -1,5 +1,6 @@
 id: reinforced-wooden-shield
 name: Reinforced Wooden Shield
+aliases: [woodenshield]
 skill: blacksmithing
 skill_minimum: 12
 station: forge

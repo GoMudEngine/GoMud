@@ -1,5 +1,6 @@
 id: masterwork-plate-helm
 name: Masterwork Plate Helm
+aliases: [platehelm]
 skill: blacksmithing
 skill_minimum: 38
 station: forge

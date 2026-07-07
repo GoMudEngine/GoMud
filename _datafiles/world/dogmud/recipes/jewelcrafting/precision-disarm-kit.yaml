@@ -1,5 +1,6 @@
 id: precision-disarm-kit
 name: Precision Disarm Kit
+aliases: [precision]
 skill: jewelcrafting
 skill_minimum: 22
 station: jeweler_bench
