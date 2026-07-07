@@ -19,6 +19,7 @@ type SpellType string
 type SpellData struct {
 	SpellId     string     `yaml:"spellid,omitempty"`
 	Name        string     `yaml:"name,omitempty"`
+	Aliases     []string   `yaml:"aliases,omitempty"` // short single-word invocation forms (primary first)
 	Description string     `yaml:"description,omitempty"`
 	Type        SpellType  `yaml:"type,omitempty"`
 	Schools     []string   `yaml:"schools,omitempty"`    // Can have multiple school tags
@@ -77,7 +78,8 @@ const (
 )
 
 var (
-	allSpells = map[string]*SpellData{}
+	allSpells     = map[string]*SpellData{}
+	spellsByAlias = map[string]*SpellData{}
 )
 
 func (s SpellType) HelpOrHarmString() string {
@@ -164,6 +166,48 @@ func FindSpellByName(spellName string) *SpellData {
 
 	}
 	return closestMatch
+}
+
+// buildSpellAliasIndex (re)builds the alias→spell index from allSpells, panicking
+// on a duplicate alias or an alias that collides with a spellid.
+func buildSpellAliasIndex() {
+	spellsByAlias = make(map[string]*SpellData, len(allSpells))
+	for _, s := range allSpells {
+		for _, a := range s.Aliases {
+			a = strings.ToLower(strings.TrimSpace(a))
+			if a == "" {
+				continue
+			}
+			if _, clash := allSpells[a]; clash {
+				panic(fmt.Sprintf("spell alias %q (on %s) collides with a spellid", a, s.SpellId))
+			}
+			if other, dup := spellsByAlias[a]; dup {
+				panic(fmt.Sprintf("duplicate spell alias %q on %s and %s", a, other.SpellId, s.SpellId))
+			}
+			spellsByAlias[a] = s
+		}
+	}
+}
+
+// ResolveSpell resolves a token to a spell by canonical id, then alias, then
+// full display name (case-insensitive). Returns nil if none match.
+func ResolveSpell(token string) *SpellData {
+	token = strings.ToLower(strings.TrimSpace(token))
+	if sd, ok := allSpells[token]; ok {
+		return sd
+	}
+	if sd, ok := spellsByAlias[token]; ok {
+		return sd
+	}
+	return FindSpellByName(token)
+}
+
+// ResolveSpellId returns the canonical spellid for a token (id/alias/name), or "".
+func ResolveSpellId(token string) string {
+	if sd := ResolveSpell(token); sd != nil {
+		return sd.SpellId
+	}
+	return ""
 }
 
 func GetAllSpells() map[string]*SpellData {
@@ -338,6 +382,8 @@ func LoadSpellFiles() {
 	}
 
 	allSpells = tmpAllSpells
+
+	buildSpellAliasIndex()
 
 	mudlog.Info("spells.loadAllSpells()", "loadedCount", len(allSpells), "Time Taken", time.Since(start))
 
