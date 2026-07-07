@@ -8,9 +8,9 @@ description: >-
   worn; it is simply what a thing this old is made of.
 type: body
 subtype: wearable
-physical_mitigation: 30
-magical_mitigation: 20
-conviction_mitigation: 20
+physical_mitigation: 62
+magical_mitigation: 52
+conviction_mitigation: 52
 never_drops: true
 not_salable: true
 weight: 0.0

@@ -6,7 +6,7 @@ archetype: fighting
 submission_policy: lethal
 surrender_policy: never
 hostile: true
-statpool: 900
+statpool: 1100
 maxwander: 1
 groups:
   - animal
