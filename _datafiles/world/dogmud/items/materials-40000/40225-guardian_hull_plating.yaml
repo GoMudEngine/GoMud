@@ -1,0 +1,18 @@
+itemid: 40225
+name: Guardian Hull Plating
+namesimple: plating
+description: >-
+  Grey construct-hull grafted into a single unbroken carapace, denser
+  than anything the makers left lying loose in the ruin around it. No
+  seam or rivet shows where it was fitted to whatever wears it -- as
+  though it grew that way, armor and body raised together against the
+  same dark. It does not so much resist a blow as refuse to notice
+  one.
+type: body
+subtype: wearable
+physical_mitigation: 55
+magical_mitigation: 45
+never_drops: true
+not_salable: true
+weight: 0.0
+value: 0

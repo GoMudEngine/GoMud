@@ -6,7 +6,7 @@ archetype: fighting
 submission_policy: lethal
 surrender_policy: never
 hostile: true
-statpool: 500
+statpool: 4000
 maxwander: 0
 groups:
   - construct
@@ -62,6 +62,11 @@ character:
   speciesid: 37
   level: 1
   gold: 0
+  equipment:
+    body:
+      itemid: 40225
+    neck:
+      itemid: 40226
   stats:
     strength:
       training: 30

@@ -82,7 +82,7 @@ tree:
         - type: condition
           check: state_greater_than
           key: core_charge
-          value: 3
+          value: 1
         - type: action
           do: send_room_text
           text: >-
@@ -103,7 +103,7 @@ tree:
     - type: decorator
       event: mob_combat_round
       mod: cooldown
-      rounds: 5
+      rounds: 3
       child:
         type: sequence
         children:
@@ -180,7 +180,7 @@ tree:
     - type: decorator
       event: mob_combat_round
       mod: cooldown
-      rounds: 18
+      rounds: 6
       child:
         type: sequence
         children:
@@ -211,7 +211,7 @@ tree:
     - type: decorator
       event: mob_combat_round
       mod: cooldown
-      rounds: 22
+      rounds: 4
       child:
         type: sequence
         children:

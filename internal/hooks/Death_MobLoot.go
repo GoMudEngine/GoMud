@@ -47,6 +47,14 @@ func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 		// Equipped items: gate on mob.ItemDropChance unless the item
 		// has its own per-instance DropChance.
 		for _, item := range m.Character.Equipment.GetAllItems() {
+			// NeverDrops (e.g. boss-only stat-boost gear like the Core
+			// Guardian's Hull Plating / Core Matrix) is skipped entirely —
+			// distinct from PermaGear, which also suppresses this mob's
+			// carried Items + Gold. NeverDrops only touches equipped gear,
+			// leaving the mob's intended carried-item loot untouched.
+			if item.GetSpec().NeverDrops {
+				continue
+			}
 			if !item.ShouldDrop(m.ItemDropChance) {
 				continue
 			}
