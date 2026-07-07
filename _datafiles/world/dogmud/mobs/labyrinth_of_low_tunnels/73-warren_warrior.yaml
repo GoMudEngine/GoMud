@@ -47,6 +47,7 @@ character:
       itemid: 20048
   items:
     - itemid: 10010
+      dropchance: 15
   stats:
     strength:
       training: 10

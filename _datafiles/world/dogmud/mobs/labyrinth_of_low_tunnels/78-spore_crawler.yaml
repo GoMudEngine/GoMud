@@ -38,6 +38,7 @@ character:
   gold: 0
   items:
     - itemid: 40008
+      dropchance: 20
   stats:
     vitality:
       training: 10
