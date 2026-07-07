@@ -46,6 +46,11 @@ type Party struct {
 	AutoAttackerActors []partyActor
 	ActorPosition      map[ActorKey]string
 
+	// LootMode controls how corpse loot is distributed among same-room party
+	// members. Set by the party loot-mode command (Task 9); read at corpse
+	// spawn to stamp the corpse's ownership rules.
+	LootMode string // "ffa"|"roundrobin"|"leaderhold" ("" = ffa)
+
 	// ── NPC party state ──
 	HomeRoomId int // 0 if none designated; for party_at_home_stand
 	HelpRoomId int // 0 if no active call; rally room when set

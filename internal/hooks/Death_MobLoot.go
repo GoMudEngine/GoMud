@@ -66,7 +66,6 @@ func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 	config := configs.GetGamePlayConfig()
 	if config.Death.CorpsesEnabled {
 		// Loot goes into the corpse container — nothing drops to the floor.
-		// Owner/mode/timeout fields are stamped by a later task.
 		room.AddCorpse(rooms.Corpse{
 			MobId:             int(m.MobId),
 			Character:         m.Character,
@@ -75,6 +74,9 @@ func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 			CorpseName:        m.CorpseName,
 			CorpseDescription: m.CorpseDescription,
 			Loot:              loot,
+			OwnerUserIds:      computeCorpseOwners(m.Character.PlayerDamage, room.RoomId),
+			LootMode:          corpseLootMode(m.Character.PlayerDamage),
+			RoundOwnedUntil:   lootTimeoutRound(currentRound, config.Death.CorpseLootTimeout.String()),
 		})
 		return
 	}
