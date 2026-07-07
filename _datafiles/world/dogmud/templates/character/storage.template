@@ -4,4 +4,5 @@
  {{ end -}}
  └──────────────────────────────────────────────────────────────────────────┘
  <ansi fg="command">storage add [item/all]</ansi> to store items. <ansi fg="command">unstore [item/#]</ansi> to retrieve.
+ <ansi fg="command">stow</ansi> deposits all your crafting components here at once.
 
