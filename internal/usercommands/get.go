@@ -302,7 +302,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	if corpseIdx >= 0 {
 		corpse := &room.Corpses[corpseIdx]
 
-		// Ownership/mode gate — Task 3 stub always allows; Tasks 8/10 gate.
+		// Ownership/mode gate: enforces kill ownership and party loot mode.
 		if !canLootCorpse(user, corpse) {
 			user.SendText(messaging.CategorySystem, `This isn't your kill.`)
 			return true, nil

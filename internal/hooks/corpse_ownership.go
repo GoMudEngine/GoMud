@@ -1,11 +1,55 @@
 package hooks
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
+
+// topDamager returns the userId that dealt the most damage in playerDamage,
+// tie-broken by the LOWER userId for determinism (maps range in random order,
+// so a plain "first" pick is nondeterministic). Returns 0 for an empty map.
+// Mirrors the highest-damager selection in MobDeath_BountyClaim.go.
+func topDamager(playerDamage map[int]int) int {
+	topUser, topDamage := 0, -1
+	for userId, dmg := range playerDamage {
+		if dmg > topDamage || (dmg == topDamage && userId < topUser) {
+			topUser, topDamage = userId, dmg
+		}
+	}
+	return topUser
+}
+
+// payoutPartyGold settles the shared party gold pool and credits each ONLINE
+// member their share, emitting a gold-sync event so prompts/GMCP refresh.
+// Shares for offline/unloaded members (and an offline leader's remainder) are
+// re-pooled rather than destroyed, so gold is conserved. Used on player logout
+// (PlayerDespawn) where there is no interactive command context.
+func payoutPartyGold(p *parties.Party) {
+	payouts := p.SettleGold() // pure: pool now 0
+	if len(payouts) == 0 {
+		return
+	}
+	var reserved int
+	for uid, amt := range payouts {
+		if amt <= 0 {
+			continue
+		}
+		u := users.GetByUserId(uid)
+		if u == nil {
+			reserved += amt // keep absent members' shares in the pool
+			continue
+		}
+		u.Character.Gold += amt
+		events.AddToQueue(events.EquipmentChange{
+			UserId:     uid,
+			GoldChange: -amt,
+		})
+	}
+	p.GoldPool += reserved // conserve: undistributed shares stay pooled
+}
 
 // computeCorpseOwners returns userIds allowed to loot before the free-for-all
 // timeout: the damagers plus their same-room party members. Empty when no
@@ -53,17 +97,17 @@ func computeCorpseOwners(playerDamage map[int]int, roomId int) []int {
 // corpseLootMode returns the killer's party loot mode, or "ffa" if the killer
 // is solo / not in a party (or no player damaged the mob).
 func corpseLootMode(playerDamage map[int]int) string {
-	for userId := range playerDamage {
-		party := parties.Get(userId)
-		if party == nil {
-			continue
-		}
-		if party.LootMode == "" {
-			return "ffa"
-		}
-		return party.LootMode
+	// Use the highest-damager's party deterministically (maps range randomly),
+	// so the stamped mode matches the party item assignment uses.
+	top := topDamager(playerDamage)
+	if top == 0 {
+		return "ffa"
 	}
-	return "ffa"
+	party := parties.Get(top)
+	if party == nil || party.LootMode == "" {
+		return "ffa"
+	}
+	return party.LootMode
 }
 
 // lootTimeoutRound returns the round at which corpse ownership opens to
@@ -72,15 +116,15 @@ func lootTimeoutRound(now uint64, dur string) uint64 {
 	return gametime.GetDate(now).AddPeriod(dur)
 }
 
-// killerParty returns the party a damager belongs to (first found), or nil when
-// the killer is solo. Mirrors the first-damager selection corpseLootMode uses.
+// killerParty returns the highest-damager's party, or nil when the killer is
+// solo. Uses the same deterministic top-damager selection as corpseLootMode so
+// the stamped loot mode and per-item assignment agree on one party.
 func killerParty(playerDamage map[int]int) *parties.Party {
-	for userId := range playerDamage {
-		if party := parties.Get(userId); party != nil {
-			return party
-		}
+	top := topDamager(playerDamage)
+	if top == 0 {
+		return nil
 	}
-	return nil
+	return parties.Get(top)
 }
 
 // assignCorpseLoot maps each loot item's stable UID to the userId it is reserved

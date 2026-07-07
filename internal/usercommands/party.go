@@ -666,18 +666,20 @@ func settlePartyGold(currentParty *parties.Party) int {
 	}
 
 	total := 0
+	reserved := 0
 	for uid, amount := range payouts {
 		if amount <= 0 {
 			continue
 		}
-		total += amount
 		u := users.GetByUserId(uid)
 		if u == nil {
-			// Member is offline/unloaded; skip crediting. (Gold for absent
-			// members is forfeited rather than lost to a nil deref — the pool
-			// is already zeroed. Parties are online-player groups in practice.)
+			// Member is offline/unloaded; keep their share in the pool rather
+			// than destroying it (SettleGold already zeroed the pool). Re-pooled
+			// below so gold is conserved for when they next settle.
+			reserved += amount
 			continue
 		}
+		total += amount
 		u.Character.Gold += amount
 		// Reuse the solo/pool gold-sync event shape (Task 11 / get.go): a
 		// credit is signalled with a negative GoldChange so prompts refresh.
@@ -688,6 +690,7 @@ func settlePartyGold(currentParty *parties.Party) int {
 		u.SendText(messaging.CategoryLoot,
 			fmt.Sprintf(`Your share of the party pool: <ansi fg="yellow-bold">%d gold</ansi>.`, amount))
 	}
+	currentParty.GoldPool += reserved // conserve: undistributed shares stay pooled
 	return total
 }
 

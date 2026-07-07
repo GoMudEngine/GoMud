@@ -118,6 +118,9 @@ func HandleLeave(e events.Event) events.ListenerReturn {
 	}
 
 	if currentParty := parties.Get(evt.UserId); currentParty != nil {
+		// Settle the shared gold pool before the departing member is removed,
+		// so their (and other members') pooled gold isn't lost on logout.
+		payoutPartyGold(currentParty)
 		currentParty.Leave(evt.UserId)
 	}
 

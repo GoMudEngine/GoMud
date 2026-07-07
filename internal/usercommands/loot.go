@@ -67,7 +67,7 @@ func lootCorpseAll(user *users.UserRecord, room *rooms.Room, corpseIdx int) {
 
 	corpse := &room.Corpses[corpseIdx]
 
-	// Ownership/mode gate — Task 3 stub always allows; Tasks 8/10 gate.
+	// Ownership/mode gate: enforces kill ownership and party loot mode.
 	if !canLootCorpse(user, corpse) {
 		user.SendText(messaging.CategorySystem, `This isn't your kill.`)
 		return
