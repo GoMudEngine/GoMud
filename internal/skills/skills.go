@@ -169,6 +169,7 @@ func GetSkillTier(allRanks map[string]int) string {
 	// the curve needs rebalancing, not every time a skill is added.
 	const totalSkills = 17
 	const softCap = 50.0
+	const demigodRankTotal = 1200.0 // raw rank-sum for the demigod pinnacle
 	maxTotal := totalSkills * softCap
 
 	total := 0.0
@@ -176,16 +177,19 @@ func GetSkillTier(allRanks map[string]int) string {
 		total += float64(rank)
 	}
 
-	// demigod: every profession mastered (all canonical skills at the master
+	// demigod: the raw-total pinnacle — an enormous sum of ranks (only reachable
+	// by pushing skills well past the soft cap across the board).
+	if total >= demigodRankTotal {
+		return "demigod"
+	}
+	// grandmaster: every profession mastered (all canonical skills at the master
 	// rank, 50 = soft cap). The all-professions-mastered capstone.
 	if allProfessionsMastered(allRanks) {
-		return "demigod"
+		return "grandmaster"
 	}
 
 	pct := total / maxTotal
 	switch {
-	case pct >= 0.85:
-		return "grandmaster"
 	case pct >= 0.56:
 		return "master"
 	case pct >= 0.31:
@@ -203,7 +207,7 @@ func GetSkillTier(allRanks map[string]int) string {
 
 // allProfessionsMastered reports whether every canonical DOG skill (the keys of
 // SkillPrimaryStats) is at the master rank (50 = the soft cap) or above. This is
-// the "demigod" all-professions-mastered capstone condition for GetSkillTier.
+// the "grandmaster" all-professions-mastered capstone condition for GetSkillTier.
 func allProfessionsMastered(allRanks map[string]int) bool {
 	const masterRank = 50
 	for skill := range SkillPrimaryStats {
