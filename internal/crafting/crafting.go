@@ -255,6 +255,43 @@ func ConsumeIngredients(inv []items.Item, componentInv []items.Item, recipe *Rec
 	return newInv, newComponent
 }
 
+// PlanStoragePull computes which storage items would complete recipe's
+// ingredients given what the actor already holds (inv = backpack, componentInv
+// = component bag). Returns the exact storage items to pull and whether pulling
+// them makes the recipe craftable. All-or-nothing: if storage can't cover the
+// full shortfall, returns (nil, false) — pull nothing. Tag-matching mirrors
+// HasIngredients / ConsumeIngredients via componentTagOf.
+func PlanStoragePull(recipe *RecipeSpec, inv, componentInv, storage []items.Item) ([]items.Item, bool) {
+	shortfall := make(map[string]int)
+	for _, ing := range recipe.Ingredients {
+		shortfall[ing.ItemTag] = ing.Quantity
+	}
+	for _, it := range componentInv {
+		if t := componentTagOf(it); shortfall[t] > 0 {
+			shortfall[t]--
+		}
+	}
+	for _, it := range inv {
+		if t := componentTagOf(it); shortfall[t] > 0 {
+			shortfall[t]--
+		}
+	}
+	pull := []items.Item{}
+	for _, it := range storage {
+		t := componentTagOf(it)
+		if shortfall[t] > 0 {
+			pull = append(pull, it)
+			shortfall[t]--
+		}
+	}
+	for _, remaining := range shortfall {
+		if remaining > 0 {
+			return nil, false
+		}
+	}
+	return pull, true
+}
+
 // craftableComponentTags is the set of component_tags that some recipe
 // produces as output — i.e. genuinely crafted sub-assemblies. Lazily built
 // from allRecipes on first use. Used to scope require_own_components to
