@@ -26,6 +26,14 @@ coord:
 exits:
   west:
     roomid: 6239
+  east:
+    roomid: 6450
+  north:
+    roomid: 6451
+  south:
+    roomid: 6452
+  up:
+    roomid: 6453
 spawninfo:
   - mobid: 9477
     respawnrate: "20 real minutes"

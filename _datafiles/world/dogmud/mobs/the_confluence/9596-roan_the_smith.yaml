@@ -1,0 +1,103 @@
+mobid: 9596
+zone: The Confluence
+craft_support: blacksmithing
+archetype: fighting
+behavior_archetype: noncombat_shopkeeper
+schedule_id: the_confluence_smith
+statpool: 66
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote hammers a glowing piece of metal on the anvil with measured strokes'
+  - 'emote holds a blade up to the light, examining the edge critically'
+  - ''
+  - 'emote thrusts a piece of metal into the forge coals, working the bellows'
+  - ''
+activitylevel: 15
+crafter: true
+crafterskill: blacksmithing
+crafterrecipeids:
+  - chain-links
+  - chainmail-vest
+  - iron-buckler
+  - iron-dagger
+  - iron-short-sword
+  - masterwork-plate-helm
+  - reinforced-disarm-kit
+  - reinforced-wooden-shield
+  - steel-buckler
+  - steel-ingot
+  - steel-lockpicks
+  - steel-longsword
+crafterrestockmaterials:
+  - 40001
+  - 40002
+  - 40003
+character:
+  name: Roan the Smith
+  description: |
+    A broad-shouldered woman with forearms like cable and a
+    face permanently flushed from the forge heat. Roan keeps
+    the Riverside Forge running for whichever crew or trade
+    house needs fittings on short notice, and her hands are
+    mapped with the small burn scars of a trade learned the
+    hard way. She is blunt and unhurried at the anvil, and
+    has little patience left over for people who waste her
+    time once she is standing at it.
+  speciesid: 1
+  level: 1
+  gold: 1000
+  equipment:
+    weapon:
+      itemid: 10008
+    body:
+      itemid: 20045
+    feet:
+      itemid: 20052
+  skills:
+    blacksmithing: 10
+  stats:
+    strength:
+      training: 15
+    vitality:
+      training: 10
+    perception:
+      training: 5
+  shop:
+    # Thornwall refined (in-shop crafted)
+    - itemid: 40018    # steel ingot
+      quantity: 0
+      quantitymax: 0
+      price: 25
+    # Stillwater unique (caravan-fed from Brindle)
+    - itemid: 40059    # lake-iron nodule
+      quantity: 0
+      quantitymax: 0
+      price: 14
+    # Fernway forest (caravan-fed)
+    - itemid: 40067    # pine pitch
+      quantity: 0
+      quantitymax: 0
+      price: 35
+    # Base smithing
+    - itemid: 40001    # iron ingot
+      quantity: 0
+      quantitymax: 0
+      price: 3
+    - itemid: 40003    # wooden plank
+      quantity: 0
+      quantitymax: 0
+      price: 2
+    - itemid: 40019    # chain link
+      quantity: 0
+      quantitymax: 0
+      price: 4
+    - itemid: 40020    # coal dust
+      quantity: 0
+      quantitymax: 0
+      price: 4

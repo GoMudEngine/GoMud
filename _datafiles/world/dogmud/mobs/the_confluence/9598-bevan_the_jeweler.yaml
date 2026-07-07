@@ -1,0 +1,106 @@
+mobid: 9598
+zone: The Confluence
+craft_support: jewelcrafting
+behavior_archetype: noncombat_shopkeeper
+schedule_id: the_confluence_jeweler
+statpool: 66
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+groups:
+  - humanoid
+idlecommands:
+  - 'emote holds a gem up to the lamplight, turning it slowly between her fingers'
+  - 'emote polishes a silver setting with a soft cloth, working in tiny circles'
+  - ''
+  - 'emote squints through a magnifying lens at a half-finished ring'
+  - ''
+activitylevel: 15
+crafter: true
+crafterskill: jewelcrafting
+crafterrecipeids:
+  - chrysalis-setting
+  - copper-ring
+  - crystalline-decanter
+  - engraved-bracelet
+  - gem-set-necklace
+  - gold-signet-ring
+  - master-lockpicks
+  - masterwork-gem-pendant
+  - polished-stone-amulet
+  - precision-disarm-kit
+  - sealed-phial
+  - silver-ring
+  - simple-pendant
+crafterrestockmaterials:
+  - 40021
+  - 40022
+  - 40024
+  - 40026
+character:
+  name: Bevan the Jeweler
+  description: |
+    A wiry woman with sharp eyes and steady hands, Bevan
+    wears a leather apron fitted with dozens of small
+    pockets holding files, pliers, and setting tools. Her
+    fingers are calloused but nimble, and her nails are
+    permanently stained with metal polish. A magnifying
+    lens on a brass arm hangs from a chain around her neck,
+    ready to be flipped up at a moment's notice. She speaks
+    quietly and precisely -- the habit of someone who works
+    with very small, very expensive things.
+  speciesid: 1
+  level: 1
+  gold: 1000
+  skills:
+    jewelcrafting: 10
+  stats:
+    dexterity:
+      training: 15
+    perception:
+      training: 10
+    charisma:
+      training: 5
+  shop:
+    # Thornwall refined (in-shop crafted)
+    - itemid: 40021    # copper wire
+      quantity: 0
+      quantitymax: 0
+      price: 10
+    - itemid: 40022    # silver wire
+      quantity: 0
+      quantitymax: 0
+      price: 22
+    - itemid: 40023    # gold wire
+      quantity: 0
+      quantitymax: 0
+      price: 55
+    - itemid: 40024    # polished stone
+      quantity: 0
+      quantitymax: 0
+      price: 7
+    - itemid: 40025    # raw gem
+      quantity: 0
+      quantitymax: 0
+      price: 35
+    - itemid: 40026    # gem dust
+      quantity: 0
+      quantitymax: 0
+      price: 5
+    # Stillwater unique (caravan-fed from Kess)
+    - itemid: 40053    # Stillwater black pearl
+      quantity: 0
+      quantitymax: 0
+      price: 600
+    # Thornwall chrysalis (in-shop / Merrow overlap)
+    - itemid: 40030    # chrysalis setting
+      quantity: 0
+      quantitymax: 0
+      price: 80
+    # Base jewelcraft
+    - itemid: 40019    # chain link
+      quantity: 0
+      quantitymax: 0
+      price: 4

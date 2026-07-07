@@ -1,0 +1,43 @@
+mobid: 9595
+zone: The Confluence
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Good day to you. What business brings you to the Exchange?"
+      - "Come in off the quay. What can I set down in the ledger for
+        you?"
+
+  - keywords: ["bank", "storage", "vault", "deposit", "gold", "account"]
+    responses:
+      - "This exchange will hold your coin and your goods as safe as
+        anything on the river -- the strongbox is bolted through the
+        floor and I keep the only key. Ask me to store or withdraw
+        whenever you have need of it."
+      - "I keep an honest ledger. Every deposit gets its own line,
+        every withdrawal too. There has not been a shortfall on my
+        watch and there will not be one while I am counting."
+
+  - keywords: ["ledger", "toll", "rent", "trade", "river", "houses"]
+    responses:
+      - "This ledger holds barge tolls, warehouse rents, and
+        consignment fees from every trade house working the three
+        rivers. I know who owes what and who has always paid on
+        time. It is not complicated work, but it wants a steady
+        hand."
+
+  - keywords: [""]
+    responses:
+      - "The counter is right here whenever you need it."
+      - "Take your time. The ledger is not going anywhere."
+
+tree:
+  root:
+    text: "Good day to you. What business brings you to the Exchange?"
+    hints: "You could ask the Exchange-Keeper about the bank and
+      storage, or about the ledger and the river trade."
+
+memory:
+  expiryPeriod: ""

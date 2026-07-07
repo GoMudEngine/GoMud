@@ -1,0 +1,41 @@
+mobid: 9597
+zone: The Confluence
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Yes. Come in, close the shutter behind you. What binding do
+        you need?"
+      - "The circle is drawn. State your business plainly."
+
+  - keywords: ["enchant", "sigil", "binding", "circle", "chrysalis"]
+    responses:
+      - "I work chrysalis materials into lasting bindings -- shard,
+        paste, catalyst, setting. Bring me the piece and the
+        materials and I will tell you what the working requires."
+      - "Every sigil traced in this room has a purpose. I do not
+        draw them for curiosity."
+
+  - keywords: ["stock", "buy", "sell", "shard", "paste", "materials"]
+    responses:
+      - "I keep chrysalis core, shard, binding paste, mutation
+        catalyst, and setting on the shelf, along with oak bark for
+        ward inscriptions and black pearl for the higher-tier work.
+        Ask specifically and I will name the price."
+
+  - keywords: [""]
+    responses:
+      - "The hum in this room does not tolerate idle chatter."
+      - "State your business or let the working continue undisturbed."
+
+tree:
+  root:
+    text: "Yes. Come in, close the shutter behind you. What binding do
+      you need?"
+    hints: "You could ask Merrow about enchanting and sigil work, or
+      about their stock of chrysalis materials."
+
+memory:
+  expiryPeriod: ""

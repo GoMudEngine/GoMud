@@ -1,0 +1,43 @@
+roomid: 6452
+zone: The Confluence
+title: The Warded Alcove
+description: >
+  The Warded Alcove is a dim, close space tucked south of the
+  supply stall, its single window shuttered against the
+  light. A ring of pale chalk marks the floorboards at the
+  room's centre — an
+  <ansi fg="itemname">enchanting circle</ansi>
+  worn into the wood itself from repeated use.
+  <ansi fg="itemname">Shelves</ansi>
+  along the walls hold chrysalis shards, jars of binding
+  paste, and settings not yet fitted to anything. The air
+  carries a faint, unplaceable hum that never quite settles.
+  The stall is north.
+biome: city
+station: enchanting_circle
+coord:
+  x: -13
+  y: -72
+  z: 0
+exits:
+  north:
+    roomid: 6240
+nouns:
+  the enchanting circle: >
+    A ring worn into the floorboards at the room's centre,
+    traced over in fresh chalk before each working. Faint
+    scorch marks radiate outward in places, old evidence of
+    workings that did not go quite as planned.
+  the shelves: >
+    Shelves along the walls holding chrysalis shards in
+    small trays, jars of binding paste, and settings not yet
+    fitted to anything. Everything is labelled in a small,
+    precise hand.
+spawninfo:
+  - mobid: 9597
+    cooldown: 600 rounds
+idlemessages:
+- The chalk circle is redrawn with slow, deliberate care.
+- A chrysalis shard is lifted to the lamplight and turned
+  over once.
+- The faint hum in the room rises and fades again.

@@ -1,0 +1,40 @@
+mobid: 9598
+zone: The Confluence
+defaultMood: friendly
+
+patterns:
+  - keywords: ["hello", "hi", "greet", "hey"]
+    moods: ["neutral", "friendly"]
+    responses:
+      - "Welcome up. Mind the stairs -- what can I set for you?"
+      - "Good light in here this time of day. What do you need
+        cut or set?"
+
+  - keywords: ["gem", "jewel", "ring", "setting", "jewelcrafting"]
+    responses:
+      - "I cut and set stone -- rings, pendants, bracelets,
+        whatever the metal will hold. Bring me a raw gem and tell
+        me what you have in mind."
+      - "Every setting I sell up here has been checked twice under
+        the lens. I do not let flawed work leave this bench."
+
+  - keywords: ["stock", "buy", "sell", "wire", "stone", "materials"]
+    responses:
+      - "I keep copper, silver, and gold wire, polished stone, raw
+        gem, and gem dust on the tray, along with black pearl and a
+        chrysalis setting or two. Ask specifically and I will name
+        the price."
+
+  - keywords: [""]
+    responses:
+      - "The bench is right here. Come have a look."
+      - "Small work wants a steady hand and a little patience."
+
+tree:
+  root:
+    text: "Welcome up. Mind the stairs -- what can I set for you?"
+    hints: "You could ask Bevan about gem-cutting and settings, or
+      about her stock of jewelcrafting materials."
+
+memory:
+  expiryPeriod: ""

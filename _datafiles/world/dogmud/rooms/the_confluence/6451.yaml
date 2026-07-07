@@ -1,0 +1,50 @@
+roomid: 6451
+zone: The Confluence
+title: The Riverside Forge
+description: >
+  The Riverside Forge sits just north of the supply stall,
+  its wide doorway propped open to let the heat and the
+  hammer-noise roll out over the lane. A stone
+  <ansi fg="itemname">forge</ansi>
+  dominates the back wall, coals banked orange beneath a
+  soot-blackened hood, and an
+  <ansi fg="itemname">anvil</ansi>
+  sits bedded on a river-log section worn smooth from years
+  of strikes. Racks of tongs and half-finished blade-blanks
+  line the near wall, close enough to the door that river
+  air keeps the worst of the smoke from settling. The stall
+  is south.
+biome: city
+station: forge
+coord:
+  x: -13
+  y: -70
+  z: 0
+exits:
+  south:
+    roomid: 6240
+nouns:
+  the forge: >
+    A stone forge with a soot-blackened hood, coals banked
+    low and orange beneath a slow-turning bellows. The brick
+    around the mouth has gone a permanent smoke-grey from
+    years of the same fire tended and banked and tended
+    again.
+  the anvil: >
+    A heavy anvil bedded on a section of river-log, its face
+    polished to a dull shine by countless hammer-strikes.
+    The horn shows the small chips of old mistakes nobody
+    bothers to mention anymore.
+  the racks: >
+    Racks of tongs and half-finished blade-blanks along the
+    near wall, each tool hung on its own peg in an order
+    that makes sense to exactly one person.
+spawninfo:
+  - mobid: 9596
+    cooldown: 600 rounds
+idlemessages:
+- Sparks scatter from the anvil in a bright, short-lived
+  shower.
+- The bellows wheeze and the coals brighten from orange to
+  white.
+- A length of iron hisses as it goes into the slack-tub.

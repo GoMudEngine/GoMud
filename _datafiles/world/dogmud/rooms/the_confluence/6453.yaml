@@ -1,0 +1,46 @@
+roomid: 6453
+zone: The Confluence
+title: The Gemcutter's Nook
+description: >
+  A short flight of stairs climbs from the supply stall into
+  this small, well-lit loft, built around a single sturdy
+  <ansi fg="itemname">bench</ansi>
+  fitted with files, pliers, and small setting-tools each in
+  their own pocket. A magnifying
+  <ansi fg="itemname">lens</ansi>
+  on a brass arm hangs over the bench, and a shallow
+  <ansi fg="itemname">tray</ansi>
+  of raw stones and coiled wire sits within easy reach. A
+  narrow window looks down over the stall's rooftop toward
+  the confluence of the three rivers. The stall is below.
+biome: city
+station: jeweler_bench
+coord:
+  x: -13
+  y: -71
+  z: 1
+exits:
+  down:
+    roomid: 6240
+nouns:
+  the bench: >
+    A sturdy bench fitted with dozens of small pockets
+    holding files, pliers, and setting-tools, each within
+    easy reach of a seated hand. The surface is scarred with
+    fine scratches from years of careful work.
+  the tray: >
+    A shallow tray holding raw stones, coils of wire, and a
+    few polished settings not yet claimed, sorted by size
+    rather than value.
+  the lens: >
+    A magnifying lens on a brass arm, swung over the bench
+    and angled to the light. The glass is kept spotless;
+    everything else in the room is merely tidy.
+spawninfo:
+  - mobid: 9598
+    cooldown: 600 rounds
+idlemessages:
+- A gem is turned slowly between two fingers, catching the
+  lamplight.
+- The magnifying lens is swung down and back up again.
+- A fine file rasps once against a setting and stops.
