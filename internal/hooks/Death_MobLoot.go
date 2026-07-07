@@ -38,6 +38,7 @@ func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 			if !item.ShouldDrop(100) {
 				continue
 			}
+			item.Validate() // ensure a distinct UUID (round-robin keys loot by UUID)
 			loot.AddItem(item)
 		}
 
@@ -55,6 +56,7 @@ func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 			if !item.ShouldDrop(m.ItemDropChance) {
 				continue
 			}
+			item.Validate() // ensure a distinct UUID (round-robin keys loot by UUID)
 			loot.AddItem(item)
 		}
 
