@@ -51,6 +51,9 @@ type Party struct {
 	// spawn to stamp the corpse's ownership rules.
 	LootMode string // "ffa"|"roundrobin"|"leaderhold" ("" = ffa)
 
+	// GoldPool is the shared corpse-gold pool; settle-split on membership change.
+	GoldPool int
+
 	// RRCursor is the round-robin deal cursor: the index (into the same-room
 	// owner-member list) that receives the next dealt loot item. Persists across
 	// corpses so the rotation stays fair over a whole hunt. Advanced by
@@ -152,6 +155,9 @@ func Get(userId int) *Party {
 	}
 	return nil
 }
+
+// AddGold adds n to the shared party gold pool.
+func (p *Party) AddGold(n int) { p.GoldPool += n }
 
 func (p *Party) ChanceToBeTargetted(userId int) int {
 

@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -677,14 +678,22 @@ func corpseItemGateMessage(mode string) string {
 	}
 }
 
-// grantCorpseGold credits gold looted from a corpse to the looter.
-//
-// TEMPORARY STUB (corpse-loot redesign Task 3): straight to the character's
-// purse. Task 11 routes it to a shared party gold pool when in a party.
+// grantCorpseGold credits gold looted from a corpse. In a party, the gold
+// accrues into the shared party gold pool (settled/split out later when the
+// pool pays out); solo, it goes straight to the looter's purse.
 func grantCorpseGold(user *users.UserRecord, amt int) {
 	if amt <= 0 {
 		return
 	}
+	if p := parties.Get(user.UserId); p != nil {
+		// Pooled: the coins aren't in anyone's purse yet — don't touch the
+		// character's gold or emit the gold-sync event; the pool pays out later.
+		p.AddGold(amt)
+		user.SendText(messaging.CategoryLoot,
+			fmt.Sprintf(`<ansi fg="yellow-bold">%d gold</ansi> goes into the party pool.`, amt))
+		return
+	}
+	// Solo: straight to the purse (keep the prompt/GMCP gold-sync event).
 	user.Character.Gold += amt
 	events.AddToQueue(events.EquipmentChange{
 		UserId:     user.UserId,
