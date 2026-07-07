@@ -15,4 +15,5 @@ The <ansi fg="command">party</ansi> manages player parties/groups.
   <ansi fg="command">party promote [name]</ansi>       - Promotes a player to leader of the party
   <ansi fg="command">party [say/chat] [message]</ansi> - Sends a message only your party can receive
   <ansi fg="command">party autoattack [on/off]</ansi>  - Automatically join your party leader in combat
-  
+  <ansi fg="command">party loot [mode]</ansi>          - (Leader) Set corpse loot: ffa/roundrobin/leaderhold
+

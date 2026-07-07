@@ -91,6 +91,10 @@ func Party(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		cmdPartyPromote(user, currentParty, rest)
 	}
 
+	if partyCommand == `loot` {
+		return cmdPartyLoot(user, currentParty, rest)
+	}
+
 	if partyCommand == `chat` || partyCommand == `say` {
 		cmdPartyChat(user, currentParty, rest)
 	}
@@ -561,6 +565,70 @@ func cmdPartyPromote(user *users.UserRecord, currentParty *parties.Party, rest s
 			}
 		}
 	}
+}
+
+// cmdPartyLoot sets the party's corpse-loot distribution mode. Leader-only.
+// Accepts several aliases for each of the three canonical modes and announces
+// the change to the whole party.
+func cmdPartyLoot(user *users.UserRecord, currentParty *parties.Party, rest string) (bool, error) {
+	if !currentParty.IsLeader(user.UserId) {
+		user.SendText(messaging.CategorySystem, `Only the party leader can set the loot mode.`)
+		return true, nil
+	}
+
+	// Canonicalize the requested mode from its aliases.
+	mode := ``
+	switch strings.ToLower(strings.TrimSpace(rest)) {
+	case `ffa`, `free`, `freeforall`, `free-for-all`:
+		mode = `ffa`
+	case `roundrobin`, `rr`, `round-robin`, `round`:
+		mode = `roundrobin`
+	case `leaderhold`, `leader`, `hold`, `master`:
+		mode = `leaderhold`
+	}
+
+	if mode == `` {
+		// Unrecognized or empty: show usage + the current mode without changing.
+		current := currentParty.LootMode
+		if current == `` {
+			current = `ffa`
+		}
+		user.SendText(messaging.CategorySystem, `Usage: <ansi fg="command">party loot [ffa/roundrobin/leaderhold]</ansi>`)
+		user.SendText(messaging.CategorySystem, `  <ansi fg="command">ffa</ansi>         - Free-for-all: anyone can loot corpses.`)
+		user.SendText(messaging.CategorySystem, `  <ansi fg="command">roundrobin</ansi>  - Loot rights rotate through party members.`)
+		user.SendText(messaging.CategorySystem, `  <ansi fg="command">leaderhold</ansi>  - Only the leader may loot corpses.`)
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`The current loot mode is <ansi fg="magenta-bold">%s</ansi>.`, current))
+		return true, nil
+	}
+
+	currentParty.LootMode = mode
+
+	// Friendly label for the announcement.
+	label := mode
+	switch mode {
+	case `ffa`:
+		label = `free-for-all`
+	case `roundrobin`:
+		label = `round-robin`
+	case `leaderhold`:
+		label = `leader-only`
+	}
+
+	for _, uid := range currentParty.UserIds {
+		u := users.GetByUserId(uid)
+		if u == nil {
+			continue
+		}
+		if uid == user.UserId {
+			u.SendText(messaging.CategorySystem, fmt.Sprintf(`You set the party loot mode to <ansi fg="magenta-bold">%s</ansi>.`, label))
+		} else {
+			u.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> set the party loot mode to <ansi fg="magenta-bold">%s</ansi>.`, user.Character.Name, label))
+		}
+	}
+
+	dispatchPartyEvent(currentParty, `behavior`)
+
+	return true, nil
 }
 
 func cmdPartyChat(user *users.UserRecord, currentParty *parties.Party, rest string) {
