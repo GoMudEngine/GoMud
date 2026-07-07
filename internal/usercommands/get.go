@@ -187,8 +187,21 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		isBagGet := lastArg == "bag" || lastArg == "case" || lastArg == "pouch" || lastArg == "components"
 		isBandolierGet := lastArg == "bandolier" || lastArg == "potions"
 
+		// Without an explicit "from", `get X bandolier` (or bag/pouch/case) is
+		// ambiguous: it can mean "pull X from your bandolier", OR it can be an
+		// item whose name simply ends in a container keyword (e.g. "Vitalis
+		// Bandolier"). Prefer a real floor item in that case so such items stay
+		// pickupable — both directly and via `get all`'s per-item recursion.
+		explicitFrom := len(args) >= 3 && args[len(args)-2] == "from"
+		if (isBagGet || isBandolierGet) && !explicitFrom {
+			if _, onFloor := room.FindOnFloor(strings.Join(args, " "), getFromStash); onFloor {
+				isBagGet = false
+				isBandolierGet = false
+			}
+		}
+
 		if isBagGet || isBandolierGet {
-			if len(args) >= 3 && args[len(args)-2] == "from" {
+			if explicitFrom {
 				rest = strings.Join(args[0:len(args)-2], " ")
 			} else {
 				rest = strings.Join(args[0:len(args)-1], " ")

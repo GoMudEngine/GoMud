@@ -260,6 +260,20 @@ func seedAllRegistries() func() {
 			Uses:        3,
 			Value:       25,
 		},
+		// An item whose name ends in a container keyword ("bandolier"). Used to
+		// verify that `get`/`get all` picks it up rather than mis-parsing the
+		// phrase as "get X from your bandolier".
+		40182: {
+			ItemId:            40182,
+			Name:              "Vitalis Bandolier",
+			NameSimple:        "bandolier",
+			Description:       "A test bandolier that holds potions.",
+			Type:              items.Belt,
+			Subtype:           items.Wearable,
+			IsBandolier:       true,
+			BandolierCapacity: 4,
+			Value:             500,
+		},
 	})
 
 	cleanupSpecies := species.SeedSpeciesForTest(map[int]*species.Species{
@@ -904,6 +918,85 @@ func TestGet(t *testing.T) {
 		handled, err := Get("nonexistent", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
+	})
+
+	// Regression: an item whose NAME ends in a container keyword ("Vitalis
+	// Bandolier") must be pickupable. Previously the last-word "bandolier"
+	// hijacked the phrase into a "get X from your bandolier" lookup, so the
+	// item could never be picked up off the floor.
+	t.Run("item_name_ends_in_container_word_direct", func(t *testing.T) {
+		floorItem := items.New(40182)
+		room.AddItem(floorItem, false)
+		before := len(user.Character.Items)
+
+		handled, err := Get("vitalis bandolier", user, room, 0)
+		assert.True(t, handled)
+		assert.NoError(t, err)
+
+		// The bandolier should now be in the backpack, not left on the floor.
+		assert.Equal(t, before+1, len(user.Character.Items), "vitalis bandolier should be picked up")
+		_, stillOnFloor := room.FindOnFloor("vitalis bandolier", false)
+		assert.False(t, stillOnFloor, "vitalis bandolier should no longer be on the floor")
+
+		// Cleanup
+		for _, it := range user.Character.Items {
+			if it.ItemId == 40182 {
+				user.Character.RemoveItem(it)
+			}
+		}
+		room.RemoveItem(floorItem, false)
+	})
+
+	// The legitimate container-pull shorthand must still work: `get X bandolier`
+	// (no explicit "from") and `get X from bandolier` both pull a potion out of
+	// the bandolier when there's no colliding floor item.
+	t.Run("get_from_bandolier_still_works", func(t *testing.T) {
+		user.Character.PotionItems = append(user.Character.PotionItems, items.New(30001))
+		before := len(user.Character.Items)
+
+		// Shorthand form (no "from").
+		handled, err := Get("healing potion bandolier", user, room, 0)
+		assert.True(t, handled)
+		assert.NoError(t, err)
+		assert.Equal(t, before+1, len(user.Character.Items), "healing potion should move from bandolier to backpack")
+		assert.Equal(t, 0, len(user.Character.PotionItems), "bandolier should be empty after pull")
+
+		// Explicit "from" form.
+		user.Character.PotionItems = append(user.Character.PotionItems, items.New(30001))
+		before = len(user.Character.Items)
+		handled, err = Get("healing potion from bandolier", user, room, 0)
+		assert.True(t, handled)
+		assert.NoError(t, err)
+		assert.Equal(t, before+1, len(user.Character.Items), "explicit 'from bandolier' should also pull")
+		assert.Equal(t, 0, len(user.Character.PotionItems))
+
+		// Cleanup
+		user.Character.Items = nil
+		user.Character.PotionItems = nil
+	})
+
+	// Regression: `get all` recursively calls Get(item.Name()) per floor item.
+	// A floor item named "Vitalis Bandolier" must be swept up by `get all`.
+	t.Run("get_all_picks_up_container_named_item", func(t *testing.T) {
+		floorItem := items.New(40182)
+		room.AddItem(floorItem, false)
+		before := len(user.Character.Items)
+
+		handled, err := Get("all", user, room, 0)
+		assert.True(t, handled)
+		assert.NoError(t, err)
+
+		assert.Equal(t, before+1, len(user.Character.Items), "get all should pick up the vitalis bandolier")
+		_, stillOnFloor := room.FindOnFloor("vitalis bandolier", false)
+		assert.False(t, stillOnFloor, "vitalis bandolier should no longer be on the floor after get all")
+
+		// Cleanup
+		for _, it := range user.Character.Items {
+			if it.ItemId == 40182 {
+				user.Character.RemoveItem(it)
+			}
+		}
+		room.RemoveItem(floorItem, false)
 	})
 }
 
