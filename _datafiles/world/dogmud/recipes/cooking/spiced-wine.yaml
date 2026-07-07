@@ -1,5 +1,6 @@
 id: spiced-wine
 name: Spiced Wine
+aliases: [wine]
 skill: cooking
 skill_minimum: 15
 station: cooking_fire

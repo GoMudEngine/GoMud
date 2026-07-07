@@ -1,5 +1,6 @@
 id: serpents-edge
 name: "Serpents-Edge"
+aliases: [serpent]
 skill: enchanting
 skill_minimum: 8
 station: enchanting_circle

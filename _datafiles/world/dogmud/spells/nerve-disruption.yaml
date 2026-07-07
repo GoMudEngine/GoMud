@@ -1,5 +1,6 @@
 spellid: nerve-disruption
 name: Nerve Disruption
+aliases: [nerve]
 description: Disrupts nerve signals, weakening dexterity and strength.
 type: harmsingle
 schools:

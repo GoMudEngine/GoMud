@@ -1,5 +1,6 @@
 id: reinforced-travel-pack
 name: Reinforced Travel Pack
+aliases: [travelpack]
 skill: tailoring
 skill_minimum: 25
 station: loom

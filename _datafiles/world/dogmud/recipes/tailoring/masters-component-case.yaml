@@ -1,5 +1,6 @@
 id: masters-component-case
 name: Master's Component Case
+aliases: [componentcase]
 skill: tailoring
 skill_minimum: 30
 station: loom

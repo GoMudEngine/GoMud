@@ -1,5 +1,6 @@
 id: cloth-bandage
 name: Cloth Bandage
+aliases: [bandage]
 skill: tailoring
 skill_minimum: 5
 station: loom

@@ -1,5 +1,6 @@
 spellid: raise-skeleton
 name: Raise Skeleton
+aliases: [skeleton]
 description: Animates the bones of a nearby corpse, stripping flesh and
   sinew away to leave a rattling skeleton servant under your command.
   The weakest of the raised undead, but requiring little essence to

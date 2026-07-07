@@ -1,5 +1,6 @@
 id: chrysalis-bond
 name: "Chrysalis-Bond"
+aliases: [bond]
 skill: enchanting
 skill_minimum: 12
 station: enchanting_circle

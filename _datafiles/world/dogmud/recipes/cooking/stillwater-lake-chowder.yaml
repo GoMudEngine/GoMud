@@ -1,5 +1,6 @@
 id: stillwater-lake-chowder
 name: Stillwater Lake Chowder
+aliases: [chowder]
 skill: cooking
 skill_minimum: 12
 station: cooking_fire

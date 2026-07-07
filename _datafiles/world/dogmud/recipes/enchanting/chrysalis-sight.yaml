@@ -1,5 +1,6 @@
 id: chrysalis-sight
 name: "Chrysalis-Sight"
+aliases: [sight]
 skill: enchanting
 skill_minimum: 6
 station: enchanting_circle

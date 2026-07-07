@@ -1,5 +1,6 @@
 id: spatial-stitching
 name: Spatial Stitching
+aliases: [spatial]
 skill: enchanting
 skill_minimum: 50
 station: enchanting_circle

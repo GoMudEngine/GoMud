@@ -1,5 +1,6 @@
 spellid: fold-recall
 name: Fold Recall
+aliases: [recall]
 description: Folds the Veil and teleports you to your Chrysalis anchor.
 type: helpsingle
 schools:

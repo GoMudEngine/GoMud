@@ -1,5 +1,6 @@
 id: steel-ingot
 name: Steel Ingot
+aliases: [ingot]
 skill: blacksmithing
 skill_minimum: 4
 station: forge

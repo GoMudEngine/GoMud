@@ -1,5 +1,6 @@
 id: silver-ring
 name: Silver Ring
+aliases: [silver]
 skill: jewelcrafting
 skill_minimum: 12
 station: jeweler_bench

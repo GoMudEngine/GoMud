@@ -1,5 +1,6 @@
 id: nutrient-suspension
 name: Nutrient Suspension
+aliases: [nutrient]
 skill: alchemy
 skill_minimum: 50
 station: alchemy_bench

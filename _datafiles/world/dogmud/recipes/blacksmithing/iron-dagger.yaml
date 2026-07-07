@@ -1,5 +1,6 @@
 id: iron-dagger
 name: Iron Dagger
+aliases: [dagger]
 skill: blacksmithing
 skill_minimum: 0
 station: forge

@@ -1,5 +1,6 @@
 id: healing-salve
 name: Healing Salve
+aliases: [salve]
 skill: alchemy
 skill_minimum: 0
 station: alchemy_bench

@@ -1,0 +1,60 @@
+spellid,name,alias
+blood-boil,Blood Boil,boil
+charm,Charm,charm
+chrysalis-cocoon,Chrysalis Cocoon,cocoon
+chrysalis-glow,Chrysalis Glow,glow
+chrysalis-haste,Chrysalis Haste,haste
+chrysalis-regeneration,Chrysalis Regeneration,regen
+cleansing-wave,Cleansing Wave,cleanse
+communion-of-flesh,Communion of Flesh,communion
+conjure-air,Conjure Air Elemental,air
+conjure-earth,Conjure Earth Elemental,earth
+conjure-fire,Conjure Fire Elemental,fire
+conjure-magma,Conjure Magma Elemental,magma
+conjure-water,Conjure Water Elemental,water
+conviction-armor,Conviction Armor,armor
+conviction-barrage,Conviction Barrage,barrage
+conviction-spike,Conviction Spike,spike
+conviction-surge,Conviction Surge,surge
+conviction-ward,Conviction Ward,ward
+core-discharge,Core Discharge,discharge
+core-drain,Core Drain,drain
+empathic-shroud,Empathic Shroud,shroud
+fold-anchor,Fold Anchor,anchor
+fold-recall,Fold Recall,recall
+heal,Mend Flesh,heal
+hemorrhagic-burst,Hemorrhagic Burst,burst
+hemorrhagic-wave,Hemorrhagic Wave,hemorrhage
+identify,Identify,id
+iron-will,Iron Will,ironwill
+kinetic-hurl,Kinetic Hurl,hurl
+kinetic-shove,Kinetic Shove,shove
+mass-mend,Mass Mend,massmend
+mend-all,Mend All,mendall
+mend-wounds,Mend Wounds,mend
+mind-fog,Mind Fog,fog
+mind-spike,Mind Spike,mindspike
+mutation-catalyst,Mutation Catalyst,mutate
+nerve-disruption,Nerve Disruption,nerve
+neural-stun,Neural Stun,stun
+neural-toxin,Neural Toxin,toxin
+psychic-anchor,Psychic Anchor,psychic
+purge-affliction,Purge Affliction,purge
+pyretic-surge,Pyretic Surge,pyretic
+raise-golem,Raise Flesh Golem,golem
+raise-skeleton,Raise Skeleton,skeleton
+raise-spectre,Raise Spectre,spectre
+raise-vampire,Raise Vampire,vampire
+raise-wraith,Raise Wraith,wraith
+raise-zombie,Raise Zombie,zombie
+repair-pulse,Arc-Weld Repair,repair
+sensory-overload,Sensory Overload,overload
+sensory-veil,Sensory Veil,veil
+skill-attunement,Skill Attunement,attune
+sparks,Conviction Sparks,sparks
+summon-hive-swarm,Summon Hive Swarm,swarm
+summon-steppe-spirit,Summon Steppe Spirit,spirit
+synaptic-overload,Synaptic Overload,synaptic
+veil-rend,Veil Rend,rend
+veil-sight,Veil Sight,sight
+vital-surge,Vital Surge,vital

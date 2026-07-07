@@ -1,5 +1,6 @@
 id: quicksilver-soles
 name: Quicksilver Soles
+aliases: [quicksilver]
 skill: alchemy
 skill_minimum: 50
 station: alchemy_bench

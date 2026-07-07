@@ -1,5 +1,6 @@
 spellid: conjure-air
 name: Conjure Air Elemental
+aliases: [air]
 description: Tears an air elemental from the elemental plane and binds it
   to your command. Blindingly fast but fragile; best for harassment.
 type: neutral

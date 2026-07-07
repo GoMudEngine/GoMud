@@ -1,5 +1,6 @@
 id: steel-longsword
 name: Steel Longsword
+aliases: [longsword]
 skill: blacksmithing
 skill_minimum: 20
 station: forge

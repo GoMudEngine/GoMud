@@ -1,5 +1,6 @@
 spellid: neural-stun
 name: Neural Stun
+aliases: [stun]
 description: Overloads the target's nervous system, stunning them.
 type: harmsingle
 schools:

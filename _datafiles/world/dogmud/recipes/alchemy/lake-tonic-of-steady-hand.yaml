@@ -1,5 +1,6 @@
 id: lake-tonic-of-steady-hand
 name: Lake-Tonic of Steady Hand
+aliases: [steadyhand]
 skill: alchemy
 skill_minimum: 18
 station: alchemy_bench

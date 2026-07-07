@@ -1,5 +1,6 @@
 id: windrunner-draught
 name: Windrunner Draught
+aliases: [windrunner]
 skill: alchemy
 skill_minimum: 15
 station: alchemy_bench

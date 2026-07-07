@@ -1,5 +1,6 @@
 spellid: psychic-anchor
 name: Psychic Anchor
+aliases: [psychic]
 description: Anchors the target's mind, preventing movement or teleport.
 type: harmsingle
 schools:

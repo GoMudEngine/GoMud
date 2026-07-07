@@ -1,5 +1,6 @@
 id: purging-draught
 name: Purging Draught
+aliases: [purging]
 skill: alchemy
 skill_minimum: 35
 station: alchemy_bench

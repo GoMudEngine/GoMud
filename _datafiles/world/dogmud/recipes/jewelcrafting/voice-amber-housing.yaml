@@ -1,5 +1,6 @@
 id: voice-amber-housing
 name: Voice-Amber Housing
+aliases: [amber]
 skill: jewelcrafting
 skill_minimum: 50
 station: jeweler_bench

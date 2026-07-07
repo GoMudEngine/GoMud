@@ -1,5 +1,6 @@
 id: essence-of-growth
 name: Essence of Growth
+aliases: [growth]
 skill: alchemy
 skill_minimum: 28
 station: alchemy_bench

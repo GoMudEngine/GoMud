@@ -1,5 +1,6 @@
 id: lake-iron-hook-spear
 name: Lake-Iron Hook-Spear
+aliases: [hookspear]
 skill: blacksmithing
 skill_minimum: 22
 station: forge

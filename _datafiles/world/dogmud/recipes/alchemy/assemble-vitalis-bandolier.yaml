@@ -1,5 +1,6 @@
 id: assemble-vitalis-bandolier
 name: Vitalis Bandolier
+aliases: [vitalis]
 skill: alchemy
 skill_minimum: 65
 station: alchemy_bench

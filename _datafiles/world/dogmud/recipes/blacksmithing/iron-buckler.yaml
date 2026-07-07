@@ -1,5 +1,6 @@
 id: iron-buckler
 name: Iron Buckler
+aliases: [ironbuckler]
 skill: blacksmithing
 skill_minimum: 5
 station: forge

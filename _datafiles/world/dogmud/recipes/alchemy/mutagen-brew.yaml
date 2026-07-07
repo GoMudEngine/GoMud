@@ -1,5 +1,6 @@
 id: mutagen-brew
 name: Mutagen Brew
+aliases: [mutagen]
 skill: alchemy
 skill_minimum: 35
 station: alchemy_bench

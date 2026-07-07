@@ -1,5 +1,6 @@
 spellid: hemorrhagic-burst
 name: Hemorrhagic Burst
+aliases: [burst]
 description: Ruptures blood vessels outward in a devastating explosion.
 type: harmarea
 schools:

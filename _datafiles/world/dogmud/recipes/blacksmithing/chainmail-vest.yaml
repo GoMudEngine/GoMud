@@ -1,5 +1,6 @@
 id: chainmail-vest
 name: Chainmail Vest
+aliases: [chainmail]
 skill: blacksmithing
 skill_minimum: 25
 station: forge

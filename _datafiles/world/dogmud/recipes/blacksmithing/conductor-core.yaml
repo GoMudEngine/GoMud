@@ -1,5 +1,6 @@
 id: conductor-core
 name: Conductor Core
+aliases: [conductor]
 skill: blacksmithing
 skill_minimum: 50
 station: forge

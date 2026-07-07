@@ -1,5 +1,6 @@
 id: chrysalis-setting
 name: Chrysalis Setting
+aliases: [setting]
 skill: jewelcrafting
 skill_minimum: 7
 station: jeweler_bench

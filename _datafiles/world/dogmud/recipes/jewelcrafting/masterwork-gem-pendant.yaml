@@ -1,5 +1,6 @@
 id: masterwork-gem-pendant
 name: Masterwork Gem Pendant
+aliases: [gempendant]
 skill: jewelcrafting
 skill_minimum: 35
 station: jeweler_bench

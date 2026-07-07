@@ -1,5 +1,6 @@
 spellid: summon-steppe-spirit
 name: Summon Steppe Spirit
+aliases: [spirit]
 description: Calls forth a spirit wolf from the steppe's spiritual
   plane to fight alongside you.
 type: helpsingle

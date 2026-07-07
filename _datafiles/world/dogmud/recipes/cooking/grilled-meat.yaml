@@ -1,5 +1,6 @@
 id: grilled-meat
 name: Grilled Meat
+aliases: [meat]
 skill: cooking
 skill_minimum: 0
 station: cooking_fire

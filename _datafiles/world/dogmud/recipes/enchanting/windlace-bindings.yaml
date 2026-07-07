@@ -1,5 +1,6 @@
 id: windlace-bindings
 name: Windlace Bindings
+aliases: [windlace]
 skill: enchanting
 skill_minimum: 50
 station: enchanting_circle

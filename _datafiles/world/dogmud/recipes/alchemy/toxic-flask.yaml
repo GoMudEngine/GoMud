@@ -1,5 +1,6 @@
 id: toxic-flask
 name: Toxic Flask
+aliases: [toxic]
 skill: alchemy
 skill_minimum: 20
 station: alchemy_bench

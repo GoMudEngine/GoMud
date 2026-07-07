@@ -1,5 +1,6 @@
 id: reinforced-bandolier
 name: Reinforced Bandolier
+aliases: [reinforcedbandolier]
 skill: tailoring
 skill_minimum: 20
 station: loom

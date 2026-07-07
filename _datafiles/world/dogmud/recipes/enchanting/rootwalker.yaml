@@ -1,5 +1,6 @@
 id: rootwalker
 name: "Rootwalker"
+aliases: [rootwalk]
 skill: enchanting
 skill_minimum: 7
 station: enchanting_circle

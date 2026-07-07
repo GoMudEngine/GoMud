@@ -1,5 +1,6 @@
 id: chain-links
 name: Chain Links
+aliases: [chainlinks]
 skill: blacksmithing
 skill_minimum: 7
 station: forge

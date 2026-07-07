@@ -1,6 +1,7 @@
 # Learned at the Sanctuary of the Benevolent Heart (ROOM 18)
 spellid: mend-all
 name: Mend All
+aliases: [mendall]
 description: Radiates healing energy, mending all nearby allies.
 type: helparea
 schools:

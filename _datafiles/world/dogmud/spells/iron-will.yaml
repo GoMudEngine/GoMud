@@ -1,5 +1,6 @@
 spellid: iron-will
 name: Iron Will
+aliases: [ironwill]
 description: Fortifies the target's willpower, strengthening their mental defenses.
 type: helpsingle
 schools:

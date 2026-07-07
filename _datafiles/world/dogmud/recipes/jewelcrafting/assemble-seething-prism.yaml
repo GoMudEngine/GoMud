@@ -1,5 +1,6 @@
 id: assemble-seething-prism
 name: Seething Prism
+aliases: [prism]
 skill: jewelcrafting
 skill_minimum: 65
 station: jeweler_bench

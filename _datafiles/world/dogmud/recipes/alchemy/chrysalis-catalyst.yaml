@@ -1,5 +1,6 @@
 id: chrysalis-catalyst
 name: Chrysalis Catalyst
+aliases: [catalyst]
 skill: alchemy
 skill_minimum: 40
 station: alchemy_bench

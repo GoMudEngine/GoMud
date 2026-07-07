@@ -1,5 +1,6 @@
 spellid: pyretic-surge
 name: Pyretic Surge
+aliases: [pyretic]
 description: Superheats the target's blood to the point of combustion.
 type: harmsingle
 schools:

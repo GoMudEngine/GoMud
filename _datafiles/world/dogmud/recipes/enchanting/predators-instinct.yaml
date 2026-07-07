@@ -1,5 +1,6 @@
 id: predators-instinct
 name: "Predators-Instinct"
+aliases: [instinct]
 skill: enchanting
 skill_minimum: 25
 station: enchanting_circle

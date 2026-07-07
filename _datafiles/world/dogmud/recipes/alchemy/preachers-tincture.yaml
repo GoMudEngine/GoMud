@@ -1,5 +1,6 @@
 id: preachers-tincture
 name: Preacher's Tincture
+aliases: [preacher]
 skill: alchemy
 skill_minimum: 12
 station: alchemy_bench

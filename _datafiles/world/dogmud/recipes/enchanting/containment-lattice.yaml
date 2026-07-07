@@ -1,5 +1,6 @@
 id: containment-lattice
 name: Containment Lattice
+aliases: [containment]
 skill: enchanting
 skill_minimum: 50
 station: enchanting_circle

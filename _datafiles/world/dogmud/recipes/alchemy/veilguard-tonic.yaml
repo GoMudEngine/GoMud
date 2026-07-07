@@ -1,5 +1,6 @@
 id: veilguard-tonic
 name: Veilguard Tonic
+aliases: [veilguard]
 skill: alchemy
 skill_minimum: 10
 station: alchemy_bench

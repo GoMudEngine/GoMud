@@ -1,6 +1,7 @@
 # Learned from Elara, the Frostfang Librarian (ROOM 48)
 spellid: chrysalis-glow
 name: Chrysalis Glow
+aliases: [glow]
 description: Coaxes Chrysalis spores to luminesce, casting a soft glow.
 type: helpsingle
 schools:

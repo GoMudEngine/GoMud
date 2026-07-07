@@ -1,5 +1,6 @@
 spellid: cleansing-wave
 name: Cleansing Wave
+aliases: [cleanse]
 description: Purifying wave that neutralizes poisons in all allies.
 type: helparea
 schools:

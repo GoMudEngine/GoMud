@@ -1,5 +1,6 @@
 id: assemble-zephyr-treads
 name: Zephyr Treads
+aliases: [zephyr]
 skill: tailoring
 skill_minimum: 65
 station: loom

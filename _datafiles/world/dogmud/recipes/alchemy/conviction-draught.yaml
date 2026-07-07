@@ -1,5 +1,6 @@
 id: conviction-draught
 name: Conviction Draught
+aliases: [conviction]
 skill: alchemy
 skill_minimum: 3
 station: alchemy_bench

@@ -1,5 +1,6 @@
 id: sealed-phial
 name: Sealed Phial
+aliases: [sealedphial]
 skill: jewelcrafting
 skill_minimum: 8
 station: jeweler_bench

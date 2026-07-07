@@ -1,5 +1,6 @@
 id: master-lockpicks
 name: Master Lockpicks
+aliases: [masterlockpicks]
 skill: blacksmithing
 skill_minimum: 20
 station: forge

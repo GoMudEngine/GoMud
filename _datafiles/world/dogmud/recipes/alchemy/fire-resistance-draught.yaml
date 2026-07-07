@@ -1,5 +1,6 @@
 id: fire-resistance-draught
 name: Fire Resistance Draught
+aliases: [fireres]
 skill: alchemy
 skill_minimum: 20
 station: alchemy_bench

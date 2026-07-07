@@ -1,5 +1,6 @@
 id: crystalline-decanter
 name: Crystalline Decanter
+aliases: [decanter]
 skill: jewelcrafting
 skill_minimum: 20
 station: jeweler_bench

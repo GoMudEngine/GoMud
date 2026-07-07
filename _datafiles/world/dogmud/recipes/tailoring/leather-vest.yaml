@@ -1,5 +1,6 @@
 id: leather-vest
 name: Leather Vest
+aliases: [leathervest]
 skill: tailoring
 skill_minimum: 15
 station: loom

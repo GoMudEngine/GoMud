@@ -1,5 +1,6 @@
 spellid: mind-spike
 name: Mind Spike
+aliases: [mindspike]
 description: Drives a psionic spike into the target's consciousness.
 type: harmsingle
 schools:

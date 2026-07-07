@@ -1,5 +1,6 @@
 id: hungering-guard
 name: Hungering Guard
+aliases: [hungering]
 skill: jewelcrafting
 skill_minimum: 50
 station: jeweler_bench

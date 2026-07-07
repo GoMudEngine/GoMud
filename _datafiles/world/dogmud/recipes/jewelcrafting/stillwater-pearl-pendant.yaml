@@ -1,5 +1,6 @@
 id: stillwater-pearl-pendant
 name: Stillwater Pearl Pendant
+aliases: [pearl]
 skill: jewelcrafting
 skill_minimum: 30
 station: jeweler_bench

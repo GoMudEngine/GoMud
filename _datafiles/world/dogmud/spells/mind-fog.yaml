@@ -1,5 +1,6 @@
 spellid: mind-fog
 name: Mind Fog
+aliases: [fog]
 description: Psionic fog dulls the target's perception and willpower.
 type: harmsingle
 schools:

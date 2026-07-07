@@ -1,5 +1,6 @@
 id: wool-cloak
 name: Wool Cloak
+aliases: [wool]
 skill: tailoring
 skill_minimum: 10
 station: loom

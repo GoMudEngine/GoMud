@@ -1,5 +1,6 @@
 id: assemble-thornwall-harness
 name: Thornwall Harness
+aliases: [thornwall]
 skill: tailoring
 skill_minimum: 65
 station: loom

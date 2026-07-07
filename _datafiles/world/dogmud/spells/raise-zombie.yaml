@@ -1,5 +1,6 @@
 spellid: raise-zombie
 name: Raise Zombie
+aliases: [zombie]
 description: Infuses a corpse with foul necrotic energy, reanimating it
   as a shambling zombie. Slower than a skeleton but considerably
   tougher, the zombie retains the bulk and durability of its former

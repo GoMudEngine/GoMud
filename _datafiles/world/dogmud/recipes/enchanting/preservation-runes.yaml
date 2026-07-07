@@ -1,5 +1,6 @@
 id: preservation-runes
 name: Preservation Runes
+aliases: [runes]
 skill: enchanting
 skill_minimum: 50
 station: enchanting_circle

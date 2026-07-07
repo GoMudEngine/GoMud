@@ -32,6 +32,7 @@ type RecipeOutput struct {
 type RecipeSpec struct {
 	RecipeId             string             `yaml:"id"`
 	Name                 string             `yaml:"name"`
+	Aliases              []string           `yaml:"aliases,omitempty"` // short single-word invocation forms
 	Skill                string             `yaml:"skill"`
 	SkillMinimum         int                `yaml:"skill_minimum"`
 	RequireOwnComponents bool               `yaml:"require_own_components,omitempty"` // crafted-component ingredients must carry the crafter's MakerName
@@ -88,6 +89,26 @@ func LoadRecipeFiles() {
 	}
 
 	allRecipes = tmpAll
+
+	// Validate alias uniqueness within the recipe namespace and ensure no alias
+	// collides with any RecipeId (panic on violation, mirroring the spell validator).
+	seen := make(map[string]string, len(allRecipes)) // alias -> recipeId
+	for _, r := range allRecipes {
+		for _, a := range r.Aliases {
+			a = strings.ToLower(strings.TrimSpace(a))
+			if a == "" || a == r.RecipeId {
+				continue // blank, or a redundant self-alias (already resolves via the id)
+			}
+			if _, clash := allRecipes[a]; clash {
+				panic(fmt.Sprintf("recipe alias %q (on %s) collides with a recipe id", a, r.RecipeId))
+			}
+			if other, dup := seen[a]; dup {
+				panic(fmt.Sprintf("duplicate recipe alias %q on %s and %s", a, other, r.RecipeId))
+			}
+			seen[a] = r.RecipeId
+		}
+	}
+
 	mudlog.Info("crafting.LoadRecipeFiles()", "loadedCount", len(allRecipes), "Time Taken", time.Since(start))
 }
 
@@ -130,6 +151,15 @@ func FindRecipeByName(name string) *RecipeSpec {
 	for _, r := range allRecipes {
 		if strings.ToLower(r.Name) == lower {
 			return r
+		}
+	}
+
+	// Alias pass: exact match against a recipe's declared aliases.
+	for _, r := range allRecipes {
+		for _, a := range r.Aliases {
+			if strings.ToLower(strings.TrimSpace(a)) == lower {
+				return r
+			}
 		}
 	}
 

@@ -1,5 +1,6 @@
 id: scab-hide-jerkin
 name: Scab-Hide Jerkin
+aliases: [jerkin]
 skill: tailoring
 skill_minimum: 8
 station: loom

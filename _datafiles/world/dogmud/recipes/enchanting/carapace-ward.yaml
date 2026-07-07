@@ -1,5 +1,6 @@
 id: carapace-ward
 name: "Carapace-Ward"
+aliases: [carapace]
 skill: enchanting
 skill_minimum: 3
 station: enchanting_circle

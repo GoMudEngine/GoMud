@@ -1,5 +1,6 @@
 id: chitin-brace
 name: "Chitin-Brace"
+aliases: [chitin]
 skill: enchanting
 skill_minimum: 2
 station: enchanting_circle

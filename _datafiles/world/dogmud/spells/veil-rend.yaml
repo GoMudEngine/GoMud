@@ -1,5 +1,6 @@
 spellid: veil-rend
 name: Veil Rend
+aliases: [rend]
 description: Tears open the Veil, unleashing raw energy on all nearby.
 type: harmarea
 schools:

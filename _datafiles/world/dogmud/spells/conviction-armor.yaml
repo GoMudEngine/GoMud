@@ -1,5 +1,6 @@
 spellid: conviction-armor
 name: Conviction Armor
+aliases: [armor]
 description: Encases the target in solidified belief for protection.
 type: helpsingle
 schools:

@@ -51,28 +51,42 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	parts := strings.SplitN(rest, ` `, 2)
-	spellName := strings.ToLower(parts[0])
+	// Greedy longest-match: try the whole rest as a spell (id, alias, or full
+	// multi-word display name), then drop the last word and retry. The leftover
+	// trailing words are the target. This lets "cast conviction ward on bob"
+	// and single-word aliases ("cast ward") both resolve. Downstream plumbing
+	// (skill check, InitiateCast, cooldowns, quests) is keyed by the canonical
+	// spellid, so we assign spellInfo.SpellId to spellName below.
+	words := strings.Fields(rest)
+	var spellInfo *spells.SpellData
 	targetName := ``
-	if len(parts) > 1 {
-		targetName = strings.TrimSpace(parts[1])
-	}
-
-	// 3. Verify spell exists — lookup first so we can give a useful error
-	//    message before spending a cooldown. InitiateCast will repeat the
-	//    lookup; the second lookup is cheap (map key hit).
-	spellInfo := spells.GetSpell(spellName)
-	if spellInfo == nil {
-		spellInfo = spells.FindSpellByName(spellName)
+	for n := len(words); n >= 1; n-- {
+		if sd := spells.ResolveSpell(strings.Join(words[:n], ` `)); sd != nil {
+			spellInfo = sd
+			targetName = strings.TrimSpace(strings.Join(words[n:], ` `))
+			break
+		}
 	}
 	if spellInfo == nil {
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(
-			`<ansi fg="red">No spell found for "%s". Use the spell ID (e.g. `+
-				`<ansi fg="cyan-bold">mm</ansi>, <ansi fg="cyan-bold">heal</ansi>). `+
+			`<ansi fg="red">No spell found for "%s". Use the spell name or an alias `+
+				`(e.g. <ansi fg="cyan-bold">mm</ansi>, <ansi fg="cyan-bold">heal</ansi>). `+
 				`Type <ansi fg="cyan-bold">spells</ansi> to list what you know.</ansi>`,
-			spellName))
+			rest))
 		return true, nil
 	}
+
+	// The room target resolver (FindByName) doesn't tolerate a leading
+	// preposition, so strip one "on"/"at" so "cast heal on bob" works.
+	if targetName != `` {
+		tw := strings.Fields(targetName)
+		if len(tw) > 0 && (strings.ToLower(tw[0]) == `on` || strings.ToLower(tw[0]) == `at`) {
+			targetName = strings.TrimSpace(strings.Join(tw[1:], ` `))
+		}
+	}
+
+	spellName := spellInfo.SpellId
+
 	if !user.Character.HasSpell(spellInfo.SpellId) {
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">You haven't learned the spell "%s".</ansi>`, spellInfo.Name))
 		return true, nil
