@@ -1,5 +1,46 @@
 # DOGMud Patch Notes
 
+## 2026-07-06 — The guardians learned to fight back
+
+- **The Crash Site's constructs are no longer stat-sponges.** The
+  Warden-Prime and the Core Guardian now fight with intent. Watch the
+  Guardian's core: when it flares white-hot, the whole room is about to be
+  scoured — and the only thing that stops it is a thrown flashbang or a
+  disrupting spell landed in that heartbeat. A plain knockdown will not do
+  it; bring the right tools or brace for the blast.
+- **It calls for help, and each helper has a job.** A Repair Frame wakes
+  from the wall to mend the Guardian — cut it down or the fight never ends.
+  A Grapnel Warden seizes one of you in a servo-lock; tear it apart to free
+  your ally. A Hull Sweeper hurls your conjured companions clean out of the
+  chamber, leaving you to face the thing yourselves.
+- **And it feeds.** The Guardian drains the life from everyone in the room
+  to recharge its core — telegraphed, and interruptible by the same tools.
+  Spend your grenades on the drains, or save them for the discharge; you
+  will not have enough for both. This is a fight for a coordinated party
+  that reads the tells and plays the mechanics, not a race to out-hit it.
+
+## 2026-07-05 — The pinnacle crafts: nine legends, and the one who makes them
+
+- **Veyra Coil-Tongue keeps a workshop at the Confluence.** She is the
+  finest artificer alive — exacting, expensive, and with no time for
+  strangers. Show her something you crafted with your own hands, a true
+  masterwork, and she will hear a commission. One at a time.
+- **Nine works, each the best of its kind.** A sentient blade that hungers
+  as it kills; a bandolier that keeps its potions alive against your pulse;
+  a bottomless pack; a shield that answers a blocked blow by staggering
+  everyone who deserved it; a barbed battle-harness; a necklace of caged,
+  seething growth; boots quick as quicksilver; a staff that sings a hollow
+  choir; and the Phial of Second Birth — a draught that unmakes your
+  mutations and grants a single new one, pruned to the rare, and which you
+  may commission again.
+- **The price is everything you have.** Each commission wants the rarest
+  reagents in the world — foraged in the far zones, torn from endgame
+  bosses, or spun in a newly-found cave of folding-space spiders — plus
+  components you must craft by your own hand across a half-dozen
+  disciplines, assembled at Veyra's stations, and a staged fee in gold that
+  would ransom a town. The god-touched might gather all nine; a determined
+  master might earn a few. That is the point.
+
 ## 2026-07-03 — Boats on the water: ferries, factors, and the living trade
 
 - **The boats are running.** Three vessels now work the waters on regular
