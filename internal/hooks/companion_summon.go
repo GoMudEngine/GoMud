@@ -75,6 +75,9 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 			if c.WasCharmed {
 				continue
 			}
+			if c.HasLoot() {
+				continue // don't consume a corpse that still holds loot
+			}
 			// Name filter if spellRest is a specific mob name
 			if spellRest != "" && !strings.Contains(strings.ToLower(c.Character.Name), strings.ToLower(spellRest)) {
 				continue

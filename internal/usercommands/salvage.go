@@ -142,6 +142,13 @@ func startCorpseSalvage(user *users.UserRecord, corpse rooms.Corpse) (bool, erro
 		return true, nil
 	}
 
+	// A corpse that still holds loot must be picked clean first — salvaging
+	// removes the corpse and would destroy any loot on it.
+	if corpse.HasLoot() {
+		user.SendText(messaging.CategorySystem, `That corpse still has loot on it. Pick it clean first.`)
+		return true, nil
+	}
+
 	bal := configs.GetBalanceConfig()
 	totalGold := crafting.CalcSalvageReturnGoldValue(returns)
 	rounds := crafting.CalcSalvageRounds(totalGold,

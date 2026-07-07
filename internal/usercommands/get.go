@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -159,6 +160,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	getFromStash := false
 	containerName := ``
 	petUserId := 0
+	corpseIdx := -1
 
 	if len(args) >= 2 {
 		// Detect "stash" or "from stash" at end and remove it
@@ -266,6 +268,110 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				}
 			}
 		}
+
+		//
+		// "get <item|gold> from <corpse name>" — corpse loot container.
+		// A corpse name is multi-word ("grey wolf corpse"), so unlike room
+		// Containers we split on the "from" keyword and treat everything
+		// after it as the corpse search name. Only attempt this if nothing
+		// else (room container, pet) already claimed the trailing target.
+		//
+		if containerName == `` && petUserId == 0 {
+			fromIdx := -1
+			for i, a := range args {
+				if a == "from" {
+					fromIdx = i
+					break
+				}
+			}
+			if fromIdx > 0 && fromIdx < len(args)-1 {
+				corpseSearch := strings.Join(args[fromIdx+1:], " ")
+				if idx := room.FindCorpseIndex(corpseSearch); idx >= 0 {
+					corpseIdx = idx
+					getFromStash = false
+					rest = strings.Join(args[0:fromIdx], " ")
+				}
+			}
+		}
+	}
+
+	//
+	// Corpse loot: operate on a POINTER into room.Corpses so mutations to
+	// the loot container (item removal, gold drawdown) persist in place.
+	//
+	if corpseIdx >= 0 {
+		corpse := &room.Corpses[corpseIdx]
+
+		// Ownership/mode gate: enforces kill ownership and party loot mode.
+		if !canLootCorpse(user, corpse) {
+			user.SendText(messaging.CategorySystem, `This isn't your kill.`)
+			return true, nil
+		}
+
+		goldName := `gold`
+		if args[0] == goldName || (len(args[0]) < 5 && goldName[0:len(args[0])-1] == args[0]) {
+
+			if corpse.Loot.Gold < 1 {
+				user.SendText(messaging.CategorySystem, "There's no gold to grab.")
+			} else {
+				user.Character.CancelBuffsWithFlag(buffs.Hidden) // No longer sneaking
+
+				amt := corpse.Loot.Gold
+				corpse.Loot.Gold -= amt
+				grantCorpseGold(user, amt)
+
+				user.SendText(messaging.CategorySystem,
+					fmt.Sprintf(`You take <ansi fg="gold">%d gold</ansi> from the <ansi fg="mob-corpse">%s</ansi>.`, amt, corpse.DisplayName()),
+				)
+				room.SendTextVisual(messaging.CategoryLoot,
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> loots some <ansi fg="gold">gold</ansi> from the <ansi fg="mob-corpse">%s</ansi>.`, user.Character.Name, corpse.DisplayName()),
+					user.UserId,
+				)
+			}
+
+			return true, nil
+		}
+
+		matchItem, found := corpse.Loot.FindItem(rest)
+		if !found {
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You don't see a %s in the <ansi fg="mob-corpse">%s</ansi>.`, rest, corpse.DisplayName()))
+			return true, nil
+		}
+
+		// Loot-mode gate (round-robin / leader-hold): ownership already passed
+		// above; this reserves specific items to specific members until the
+		// free-for-all timeout.
+		if !corpse.CanTakeItem(matchItem.UUID.String(), user.UserId, util.GetRoundCount()) {
+			user.SendText(messaging.CategorySystem, corpseItemGateMessage(corpse.LootMode))
+			return true, nil
+		}
+
+		user.Character.CancelBuffsWithFlag(buffs.Hidden) // No longer sneaking
+
+		if user.Character.StoreItem(matchItem) {
+			events.AddToQueue(events.ItemOwnership{
+				UserId: user.UserId,
+				Item:   matchItem,
+				Gained: true,
+			})
+			corpse.Loot.RemoveItem(matchItem)
+
+			user.SendText(messaging.CategorySystem,
+				fmt.Sprintf(`You take the <ansi fg="itemname">%s</ansi> from the <ansi fg="mob-corpse">%s</ansi>.`, matchItem.DisplayName(), corpse.DisplayName()),
+			)
+			room.SendTextVisual(messaging.CategoryLoot,
+				fmt.Sprintf(`<ansi fg="username">%s</ansi> loots the <ansi fg="itemname">%s</ansi> from the <ansi fg="mob-corpse">%s</ansi>...`, user.Character.Name, matchItem.DisplayName(), corpse.DisplayName()),
+				user.UserId,
+			)
+
+			sendEncumbranceWarning(user)
+		} else {
+			user.SendText(messaging.CategorySystem,
+				fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
+			)
+		}
+
+		return true, nil
 	}
 
 	if petUserId == user.UserId {
@@ -549,4 +655,48 @@ func sendEncumbranceWarning(user *users.UserRecord) {
 		user.SendText(messaging.CategorySystem, `<ansi fg="yellow">You are carrying a moderate load.</ansi>`)
 	}
 	// No message for light load or unencumbered
+}
+
+// canLootCorpse reports whether user is entitled to take loot from corpse.
+//
+// Kill-ownership gate (corpse-loot redesign Task 8): delegates to the pure,
+// unit-tested Corpse.LootAllowed, feeding it the current round. Loot-mode
+// round-robin/leaderhold gating (Task 10) layers on top of this.
+func canLootCorpse(user *users.UserRecord, corpse *rooms.Corpse) bool {
+	return corpse.LootAllowed(user.UserId, util.GetRoundCount())
+}
+
+// corpseItemGateMessage returns the refusal shown when a loot item is reserved
+// to another party member (Corpse.CanTakeItem gate), keyed by the corpse's
+// stamped loot mode.
+func corpseItemGateMessage(mode string) string {
+	switch mode {
+	case "leaderhold":
+		return `The leader is holding the loot.`
+	default: // roundrobin
+		return `That's not your share.`
+	}
+}
+
+// grantCorpseGold credits gold looted from a corpse. In a party, the gold
+// accrues into the shared party gold pool (settled/split out later when the
+// pool pays out); solo, it goes straight to the looter's purse.
+func grantCorpseGold(user *users.UserRecord, amt int) {
+	if amt <= 0 {
+		return
+	}
+	if p := parties.Get(user.UserId); p != nil {
+		// Pooled: the coins aren't in anyone's purse yet — don't touch the
+		// character's gold or emit the gold-sync event; the pool pays out later.
+		p.AddGold(amt)
+		user.SendText(messaging.CategoryLoot,
+			fmt.Sprintf(`<ansi fg="yellow-bold">%d gold</ansi> goes into the party pool.`, amt))
+		return
+	}
+	// Solo: straight to the purse (keep the prompt/GMCP gold-sync event).
+	user.Character.Gold += amt
+	events.AddToQueue(events.EquipmentChange{
+		UserId:     user.UserId,
+		GoldChange: -amt,
+	})
 }

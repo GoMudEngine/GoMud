@@ -91,6 +91,14 @@ func Party(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		cmdPartyPromote(user, currentParty, rest)
 	}
 
+	if partyCommand == `loot` {
+		return cmdPartyLoot(user, currentParty, rest)
+	}
+
+	if partyCommand == `gold` {
+		return cmdPartyGold(user, currentParty, rest)
+	}
+
 	if partyCommand == `chat` || partyCommand == `say` {
 		cmdPartyChat(user, currentParty, rest)
 	}
@@ -202,6 +210,12 @@ func cmdPartyInvite(user *users.UserRecord, room *rooms.Room, currentParty *part
 }
 
 func cmdPartyAccept(user *users.UserRecord, currentParty *parties.Party) (bool, error) {
+	// Settle the shared pool to the EXISTING members before the new member
+	// joins, so the joiner doesn't collect a share of gold pooled pre-join.
+	if currentParty.Invited(user.UserId) {
+		settlePartyGold(currentParty)
+	}
+
 	if currentParty.AcceptInvite(user.UserId) {
 
 		user.EventLog.Add(`party`, `Joined a party`)
@@ -404,6 +418,10 @@ func cmdPartyAutoattack(user *users.UserRecord, currentParty *parties.Party, res
 }
 
 func cmdPartyLeave(user *users.UserRecord, currentParty *parties.Party) (bool, error) {
+	// Settle the shared gold pool BEFORE the departing member is removed, so
+	// they still receive their share.
+	settlePartyGold(currentParty)
+
 	if currentParty.IsLeader(user.UserId) {
 
 		if len(currentParty.UserIds) <= 1 {
@@ -483,6 +501,10 @@ func cmdPartyDisband(user *users.UserRecord, currentParty *parties.Party) (bool,
 		return true, nil
 	}
 
+	// Settle the shared gold pool BEFORE disbanding, so every member gets
+	// their share.
+	settlePartyGold(currentParty)
+
 	for _, uid := range currentParty.UserIds {
 		if uid == user.UserId {
 			continue
@@ -511,6 +533,10 @@ func cmdPartyKick(user *users.UserRecord, currentParty *parties.Party, rest stri
 		user.SendText(messaging.CategorySystem, `You are not the leader of your party.`)
 		return
 	}
+
+	// Settle the shared gold pool BEFORE the kicked member is removed, so
+	// they still receive their share.
+	settlePartyGold(currentParty)
 
 	kickUserId, matchUser, found := findPartyMemberByName(currentParty, rest)
 	if !found {
@@ -561,6 +587,132 @@ func cmdPartyPromote(user *users.UserRecord, currentParty *parties.Party, rest s
 			}
 		}
 	}
+}
+
+// cmdPartyLoot sets the party's corpse-loot distribution mode. Leader-only.
+// Accepts several aliases for each of the three canonical modes and announces
+// the change to the whole party.
+func cmdPartyLoot(user *users.UserRecord, currentParty *parties.Party, rest string) (bool, error) {
+	if !currentParty.IsLeader(user.UserId) {
+		user.SendText(messaging.CategorySystem, `Only the party leader can set the loot mode.`)
+		return true, nil
+	}
+
+	// Canonicalize the requested mode from its aliases.
+	mode := ``
+	switch strings.ToLower(strings.TrimSpace(rest)) {
+	case `ffa`, `free`, `freeforall`, `free-for-all`:
+		mode = `ffa`
+	case `roundrobin`, `rr`, `round-robin`, `round`:
+		mode = `roundrobin`
+	case `leaderhold`, `leader`, `hold`, `master`:
+		mode = `leaderhold`
+	}
+
+	if mode == `` {
+		// Unrecognized or empty: show usage + the current mode without changing.
+		current := currentParty.LootMode
+		if current == `` {
+			current = `ffa`
+		}
+		user.SendText(messaging.CategorySystem, `Usage: <ansi fg="command">party loot [ffa/roundrobin/leaderhold]</ansi>`)
+		user.SendText(messaging.CategorySystem, `  <ansi fg="command">ffa</ansi>         - Free-for-all: anyone can loot corpses.`)
+		user.SendText(messaging.CategorySystem, `  <ansi fg="command">roundrobin</ansi>  - Loot rights rotate through party members.`)
+		user.SendText(messaging.CategorySystem, `  <ansi fg="command">leaderhold</ansi>  - Only the leader may loot corpses.`)
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`The current loot mode is <ansi fg="magenta-bold">%s</ansi>.`, current))
+		return true, nil
+	}
+
+	currentParty.LootMode = mode
+
+	// Friendly label for the announcement.
+	label := mode
+	switch mode {
+	case `ffa`:
+		label = `free-for-all`
+	case `roundrobin`:
+		label = `round-robin`
+	case `leaderhold`:
+		label = `leader-only`
+	}
+
+	for _, uid := range currentParty.UserIds {
+		u := users.GetByUserId(uid)
+		if u == nil {
+			continue
+		}
+		if uid == user.UserId {
+			u.SendText(messaging.CategorySystem, fmt.Sprintf(`You set the party loot mode to <ansi fg="magenta-bold">%s</ansi>.`, label))
+		} else {
+			u.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> set the party loot mode to <ansi fg="magenta-bold">%s</ansi>.`, user.Character.Name, label))
+		}
+	}
+
+	dispatchPartyEvent(currentParty, `behavior`)
+
+	return true, nil
+}
+
+// settlePartyGold splits the party's shared gold pool evenly across members
+// (remainder to the leader), credits each member's character gold, emits a
+// gold-sync event so prompts/GMCP update, and tells each member their share.
+// SettleGold is a pure computation in the parties package (which does not
+// import internal/users); the crediting + announcement happen here in the
+// command layer. Returns the total gold paid out (0 if the pool was empty).
+func settlePartyGold(currentParty *parties.Party) int {
+	payouts := currentParty.SettleGold()
+	if len(payouts) == 0 {
+		return 0
+	}
+
+	total := 0
+	reserved := 0
+	for uid, amount := range payouts {
+		if amount <= 0 {
+			continue
+		}
+		u := users.GetByUserId(uid)
+		if u == nil {
+			// Member is offline/unloaded; keep their share in the pool rather
+			// than destroying it (SettleGold already zeroed the pool). Re-pooled
+			// below so gold is conserved for when they next settle.
+			reserved += amount
+			continue
+		}
+		total += amount
+		u.Character.Gold += amount
+		// Reuse the solo/pool gold-sync event shape (Task 11 / get.go): a
+		// credit is signalled with a negative GoldChange so prompts refresh.
+		events.AddToQueue(events.EquipmentChange{
+			UserId:     uid,
+			GoldChange: -amount,
+		})
+		u.SendText(messaging.CategoryLoot,
+			fmt.Sprintf(`Your share of the party pool: <ansi fg="yellow-bold">%d gold</ansi>.`, amount))
+	}
+	currentParty.GoldPool += reserved // conserve: undistributed shares stay pooled
+	return total
+}
+
+// cmdPartyGold reports or splits the shared party gold pool. Any member may
+// trigger a split. With no argument (or "split"), the pool is settled and
+// paid out; otherwise the current pool balance is shown.
+func cmdPartyGold(user *users.UserRecord, currentParty *parties.Party, rest string) (bool, error) {
+	arg := strings.ToLower(strings.TrimSpace(rest))
+
+	if arg == `` || strings.HasPrefix(arg, `split`) {
+		if currentParty.GoldPool == 0 {
+			user.SendText(messaging.CategorySystem, `The party pool is empty.`)
+			return true, nil
+		}
+		settlePartyGold(currentParty)
+		return true, nil
+	}
+
+	user.SendText(messaging.CategorySystem,
+		fmt.Sprintf(`The party pool holds <ansi fg="yellow-bold">%d gold</ansi>.`, currentParty.GoldPool))
+	user.SendText(messaging.CategorySystem, `Type <ansi fg="command">party gold split</ansi> to divide it among members.`)
+	return true, nil
 }
 
 func cmdPartyChat(user *users.UserRecord, currentParty *parties.Party, rest string) {

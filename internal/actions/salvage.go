@@ -135,6 +135,14 @@ func salvageCorpse(actor Actor, room *rooms.Room, opts SalvageOptions, chance fl
 		return result
 	}
 
+	// Belt-and-suspenders: never consume a corpse that still holds loot.
+	// The user/mob start paths guard this, but salvaging removes the corpse
+	// and would destroy any loot on it — refuse here too.
+	if target.HasLoot() {
+		result.Reason = "corpse still holds loot"
+		return result
+	}
+
 	result.RollHappened = true
 
 	mobSpec := mobs.GetMobSpec(mobs.MobId(target.MobId))

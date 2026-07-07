@@ -37,6 +37,7 @@ type GameplayDeath struct {
 	ProtectionSkillRanks ConfigInt  `yaml:"ProtectionSkillRanks"` // Total skill ranks below which death penalties are waived
 	CorpsesEnabled      ConfigBool   `yaml:"CorpsesEnabled"`      // Whether corpses are left behind after mob/player deaths
 	CorpseDecayTime     ConfigString `yaml:"CorpseDecayTime"`     // How long until corpses decay to dust (go away)
+	CorpseLootTimeout   ConfigString `yaml:"CorpseLootTimeout"`   // Real-time duration a mob corpse's loot stays owner-locked (killer/party) before opening to free-for-all
 	// DOGMud death penalties (Stage 20.1)
 	StatDecayMin          ConfigInt `yaml:"StatDecayMin"`          // Min Training loss on death (default 1)
 	StatDecayMax          ConfigInt `yaml:"StatDecayMax"`          // Max Training loss on death (default 2)
@@ -85,6 +86,10 @@ func (g *GamePlay) Validate() {
 
 	if g.Death.CorpseDecayTime == `` {
 		g.Death.CorpseDecayTime = `1 hour`
+	}
+
+	if g.Death.CorpseLootTimeout == `` {
+		g.Death.CorpseLootTimeout = `4 real minutes` // real-time; bare "minutes" is parsed as game-time by AddPeriod (~0 rounds)
 	}
 
 	// DOGMud death penalty defaults (Stage 20.1)

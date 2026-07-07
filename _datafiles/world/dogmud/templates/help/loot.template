@@ -1,0 +1,16 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">loot</ansi>
+
+The <ansi fg="command">loot</ansi> command takes everything you're entitled to
+from a corpse - all its items and any gold - in a single action.
+
+To take just one thing, use <ansi fg="command">get</ansi> with the corpse as
+the source (for example <ansi fg="command">get sword from wolf corpse</ansi> or
+<ansi fg="command">get gold from wolf corpse</ansi>). Use
+<ansi fg="command">look</ansi> at a corpse to see what it holds first.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">loot wolf corpse</ansi>      Take all loot from the wolf's corpse.
+  <ansi fg="command">loot wolf</ansi>             Same - the corpse name is matched loosely.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help get</ansi>, <ansi fg="command">help inventory</ansi>, <ansi fg="command">help item-names</ansi>

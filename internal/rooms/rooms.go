@@ -231,6 +231,14 @@ func (r *Room) UpdateCorpses(roundNow uint64) {
 		corpse.Update(roundNow, c.Death.CorpseDecayTime.String())
 		if corpse.Prunable {
 			removeIdx = append(removeIdx, idx)
+			// Last-resort: drop any remaining loot to the floor so it
+			// isn't destroyed along with the decaying corpse.
+			if corpse.HasLoot() {
+				for _, it := range corpse.Loot.Items {
+					r.AddItem(it, false)
+				}
+				r.Gold += corpse.Loot.Gold
+			}
 			if corpse.MobId > 0 {
 				r.SendText(messaging.CategoryRoomDescription, fmt.Sprintf(`A <ansi fg="mob-corpse">%s</ansi> crumbles to dust.`, corpse.DisplayName()))
 			}
@@ -1236,6 +1244,60 @@ func (r *Room) FindCorpse(searchName string) (Corpse, bool) {
 	}
 
 	return Corpse{}, false
+}
+
+// FindCorpseIndex mirrors FindCorpse's name-matching but returns the slice
+// index of the first non-prunable matching corpse (or -1). Callers mutate
+// r.Corpses[idx] in place via a pointer (FindCorpse returns a value copy,
+// which silently drops loot mutations).
+func (r *Room) FindCorpseIndex(searchName string) int {
+
+	playerCorpseLookup := map[string]int{}
+	playerCorpses := []string{}
+
+	mobCorpseLookup := map[string]int{}
+	mobCorpses := []string{}
+
+	for idx, c := range r.Corpses {
+
+		if c.Prunable {
+			continue
+		}
+
+		if c.UserId > 0 {
+			name := c.Character.Name + ` corpse`
+			if _, ok := playerCorpseLookup[name]; !ok {
+				playerCorpseLookup[name] = idx
+				playerCorpses = append(playerCorpses, name)
+			}
+		}
+
+		if c.MobId > 0 {
+			name := c.Character.Name + ` corpse`
+			if _, ok := mobCorpseLookup[name]; !ok {
+				mobCorpseLookup[name] = idx
+				mobCorpses = append(mobCorpses, name)
+			}
+		}
+	}
+
+	userMatch, closeUserMatch := util.FindMatchIn(searchName, playerCorpses...)
+	if userMatch != `` {
+		return playerCorpseLookup[userMatch]
+	}
+
+	mobMatch, closeMobMatch := util.FindMatchIn(searchName, mobCorpses...)
+	if mobMatch != `` {
+		return mobCorpseLookup[mobMatch]
+	}
+
+	if closeUserMatch != `` {
+		return playerCorpseLookup[closeUserMatch]
+	} else if closeMobMatch != `` {
+		return mobCorpseLookup[closeMobMatch]
+	}
+
+	return -1
 }
 
 func (r *Room) FindOnFloor(itemName string, stash bool) (items.Item, bool) {

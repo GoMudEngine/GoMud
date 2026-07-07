@@ -5,8 +5,53 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/stretchr/testify/assert"
 )
+
+// Corpse-loot redesign (2026-07-07): the corpse carries its own loot
+// container; HasLoot reports whether anything remains to take.
+func TestCorpse_HasLoot(t *testing.T) {
+	var c Corpse
+
+	if c.HasLoot() {
+		t.Fatalf("empty corpse should not report loot")
+	}
+
+	c.Loot.Gold = 5
+	if !c.HasLoot() {
+		t.Fatalf("corpse with gold should report loot")
+	}
+
+	c.Loot.Gold = 0
+	c.Loot.AddItem(items.Item{ItemId: 42})
+	if !c.HasLoot() {
+		t.Fatalf("corpse with an item should report loot")
+	}
+}
+
+// Corpse-loot redesign (2026-07-07): LootAllowed gates who may loot a
+// corpse. Free-for-all once now >= RoundOwnedUntil or when no owner is set;
+// otherwise only listed owners may loot before the timeout.
+func TestCorpse_LootAllowed(t *testing.T) {
+	const until uint64 = 100
+
+	// Owner in set, still owned -> allowed.
+	owned := &Corpse{OwnerUserIds: []int{1, 2}, RoundOwnedUntil: until}
+	assert.True(t, owned.LootAllowed(1, 50), "owner should loot while owned")
+
+	// Non-owner, still owned -> denied.
+	assert.False(t, owned.LootAllowed(3, 50), "non-owner should be denied while owned")
+
+	// Non-owner, past the timeout -> allowed (free-for-all).
+	assert.True(t, owned.LootAllowed(3, 100), "free-for-all at the timeout")
+	assert.True(t, owned.LootAllowed(3, 150), "free-for-all past the timeout")
+
+	// Empty owner set -> allowed regardless of round.
+	free := &Corpse{OwnerUserIds: nil, RoundOwnedUntil: until}
+	assert.True(t, free.LootAllowed(3, 0), "ownerless corpse is free-for-all")
+	assert.True(t, free.LootAllowed(3, 50), "ownerless corpse is free-for-all")
+}
 
 // Test that if the corpse is already prunable, calling Update does nothing.
 func TestCorpseUpdate_PrunableAlreadyTrue(t *testing.T) {

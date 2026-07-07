@@ -464,6 +464,35 @@ func Look(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				user.SendText(messaging.CategoryRoomDescription, descTxt)
 			}
 
+			// Corpse-loot redesign (2026-07-07): show what can be looted,
+			// mirroring the room-container listing.
+			if corpse.HasLoot() {
+
+				itemNames := []string{}
+				itemNamesFormatted := []string{}
+
+				if corpse.Loot.Gold > 0 {
+					itemNames = append(itemNames, fmt.Sprintf(`%d gold`, corpse.Loot.Gold))
+					itemNamesFormatted = append(itemNamesFormatted, fmt.Sprintf(`<ansi fg="gold">%d gold</ansi>`, corpse.Loot.Gold))
+				}
+
+				for _, item := range corpse.Loot.Items {
+					if !item.IsValid() {
+						continue
+					}
+					itemNames = append(itemNames, item.Name())
+					itemNamesFormatted = append(itemNamesFormatted, fmt.Sprintf(`<ansi fg="itemname">%s</ansi>`, item.DisplayName()))
+				}
+
+				corpseStuff := map[string]any{
+					`ItemNames`:          itemNames,
+					`ItemNamesFormatted`: itemNamesFormatted,
+				}
+
+				textOut, _ := templates.Process("descriptions/insidecontainer", corpseStuff, user.UserId)
+				user.SendText(messaging.CategoryRoomDescription, textOut)
+			}
+
 			return true, nil
 
 		}

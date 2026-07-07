@@ -46,6 +46,20 @@ type Party struct {
 	AutoAttackerActors []partyActor
 	ActorPosition      map[ActorKey]string
 
+	// LootMode controls how corpse loot is distributed among same-room party
+	// members. Set by the party loot-mode command (Task 9); read at corpse
+	// spawn to stamp the corpse's ownership rules.
+	LootMode string // "ffa"|"roundrobin"|"leaderhold" ("" = ffa)
+
+	// GoldPool is the shared corpse-gold pool; settle-split on membership change.
+	GoldPool int
+
+	// RRCursor is the round-robin deal cursor: the index (into the same-room
+	// owner-member list) that receives the next dealt loot item. Persists across
+	// corpses so the rotation stays fair over a whole hunt. Advanced by
+	// rooms.RoundRobinOrder at each corpse spawn.
+	RRCursor int
+
 	// ── NPC party state ──
 	HomeRoomId int // 0 if none designated; for party_at_home_stand
 	HelpRoomId int // 0 if no active call; rally room when set
@@ -140,6 +154,49 @@ func Get(userId int) *Party {
 		return party
 	}
 	return nil
+}
+
+// AddGold adds n to the shared party gold pool.
+func (p *Party) AddGold(n int) { p.GoldPool += n }
+
+// SettleGold is a PURE computation: it splits the shared gold pool evenly
+// across the current members, zeroes the pool, and returns the per-user
+// payout map (userId -> amount). It does NOT credit any character gold or
+// emit events — the caller (command layer) performs the actual crediting
+// and gold-sync, so this package avoids importing internal/users.
+//
+// Split rules:
+//   - Every member receives base := GoldPool / len(members).
+//   - The remainder (GoldPool % len(members)) is added to the LEADER's share.
+//   - Gold is conserved exactly: sum(payouts) == old GoldPool.
+//
+// Returns nil when the pool is empty or the party has no members.
+func (p *Party) SettleGold() map[int]int {
+	if p.GoldPool == 0 || len(p.UserIds) == 0 {
+		return nil
+	}
+
+	n := len(p.UserIds)
+	base := p.GoldPool / n
+	remainder := p.GoldPool % n
+
+	payouts := make(map[int]int, n)
+	for _, uid := range p.UserIds {
+		payouts[uid] += base
+	}
+
+	// Route the remainder to the leader. If the leader isn't in the member
+	// list (defensive), fall back to the first member so no gold is lost.
+	if remainder > 0 {
+		leader := p.LeaderUserId
+		if _, ok := payouts[leader]; !ok {
+			leader = p.UserIds[0]
+		}
+		payouts[leader] += remainder
+	}
+
+	p.GoldPool = 0
+	return payouts
 }
 
 func (p *Party) ChanceToBeTargetted(userId int) int {

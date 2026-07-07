@@ -262,6 +262,36 @@ func TestSalvage_SkipsPrunableCorpse(t *testing.T) {
 		"remaining corpse should be the prunable one")
 }
 
+// ── Test 5b: loot-bearing corpse is refused ──────────────────────────────────
+
+// A corpse that still holds loot (items or gold) must NOT be salvaged —
+// salvaging removes the corpse and would destroy any loot on it. The
+// salvage resolver must skip it, leaving the corpse in the room intact.
+func TestSalvage_LootBearingCorpse_Refused(t *testing.T) {
+	mob, room, cleanup := buildSalvageFixtures(t)
+	defer cleanup()
+
+	mob.Character.Skills[string(skills.Salvage)] = 50
+
+	looted := buildAnimalCorpse()
+	looted.Loot.Gold = 1 // still holds loot → must be refused
+	room.AddCorpse(looted)
+	require.Len(t, room.Corpses, 1)
+
+	initialItemCount := len(mob.Character.Items)
+
+	handled, err := Salvage("corpse", mob, room)
+
+	assert.True(t, handled)
+	assert.NoError(t, err)
+	assert.Len(t, room.Corpses, 1,
+		"loot-bearing corpse must NOT be consumed by salvage")
+	assert.True(t, room.Corpses[0].HasLoot(),
+		"the retained corpse must still hold its loot")
+	assert.Equal(t, initialItemCount, len(mob.Character.Items),
+		"no materials should be recovered from a refused corpse")
+}
+
 // ── Test 6: salvage is registered in the mob command map ─────────────────────
 
 func TestSalvageCommandRegistered(t *testing.T) {

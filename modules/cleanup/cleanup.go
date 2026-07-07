@@ -129,6 +129,11 @@ func (c *CleanupModule) userBuryCommand(rest string, user *users.UserRecord, roo
 
 	if corpse, corpseFound := room.FindCorpse(rest); corpseFound {
 
+		if corpse.HasLoot() {
+			user.SendText(messaging.CategorySystem, `That corpse still has loot on it.`)
+			return true, nil
+		}
+
 		if room.RemoveCorpse(corpse) {
 
 			corpseColor := `mob-corpse`
@@ -159,6 +164,11 @@ func (c *CleanupModule) mobBuryCommand(rest string, mob *mobs.Mob, room *rooms.R
 	}
 
 	if corpse, corpseFound := room.FindCorpse(rest); corpseFound {
+
+		if corpse.HasLoot() {
+			// No player to message; silently skip so unlooted loot survives.
+			return true, nil
+		}
 
 		if room.RemoveCorpse(corpse) {
 
