@@ -8,9 +8,9 @@ description: >-
   material simply refuses the idea of being broken.
 type: body
 subtype: wearable
-physical_mitigation: 35
-magical_mitigation: 30
-conviction_mitigation: 25
+physical_mitigation: 65
+magical_mitigation: 52
+conviction_mitigation: 48
 never_drops: true
 not_salable: true
 weight: 0.0

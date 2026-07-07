@@ -8,9 +8,9 @@ description: >-
   protects.
 type: neck
 subtype: wearable
-physical_mitigation: 0
-magical_mitigation: 20
-conviction_mitigation: 20
+physical_mitigation: 10
+magical_mitigation: 45
+conviction_mitigation: 45
 never_drops: true
 not_salable: true
 weight: 0.0
