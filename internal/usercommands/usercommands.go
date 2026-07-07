@@ -206,6 +206,7 @@ var (
 		`stand`:           {Stand, true, true, false},   // Can stand when downed
 		`suggest`:         {Suggest, true, true, false},
 		`storage`:         {Storage, false, false, false}, // Can't manipulate storage in combat
+		`stow`:            {Stow, false, false, false},    // Can't manipulate storage in combat
 		`suicide`:         {Suicide, true, true, false},
 		`syslogs`:         {SysLogs, true, true, true}, // Admin only
 		`talk`:            {Talk, false, true, false},
