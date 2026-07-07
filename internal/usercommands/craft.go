@@ -48,6 +48,24 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return craftEnchanting(rest, recipe, user, room)
 	}
 
+	// Auto-pull from storage: at a storage room that satisfies the recipe's station,
+	// draw exactly the missing components from storage so the craft can proceed.
+	// All-or-nothing (PlanStoragePull returns complete=false if storage can't cover it).
+	if recipe != nil && room.IsStorage &&
+		(recipe.Station == "" || room.Station == recipe.Station) &&
+		user.Character.HasRecipe(recipe.RecipeId) {
+		if ok, _ := crafting.HasIngredients(user.Character.Items, user.Character.ComponentItems, recipe); !ok {
+			if pull, complete := crafting.PlanStoragePull(recipe, user.Character.Items, user.Character.ComponentItems, user.ItemStorage.GetItems()); complete {
+				for _, itm := range pull {
+					if user.ItemStorage.RemoveItem(itm) {
+						user.Character.StoreItem(itm)
+						user.SendText(messaging.CategoryLoot, fmt.Sprintf(`You draw <ansi fg="item">%s</ansi> from storage.`, itm.DisplayName()))
+					}
+				}
+			}
+		}
+	}
+
 	// ── Normal craft path: delegate to shared action ──────────────────────────
 	actor := &actions.UserActor{User: user, Room: room}
 	result := actions.InitiateCraft(actor, rest)
