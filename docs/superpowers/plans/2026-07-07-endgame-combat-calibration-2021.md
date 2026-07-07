@@ -517,12 +517,46 @@ git add docs/superpowers/specs/2026-07-07-endgame-combat-calibration-2021-design
 git commit -m "docs(calibration): record settled #20/#21 tuning values"
 ```
 
-- [ ] **Step 3: Bank the nodrop-gear SOP to memory.** Update `MEMORY.md` + a
-  topic file so the two-axis method (statpool = threat, `never_drops` gear =
-  durability, never `base_pool`) is standing practice for all future endgame
-  tuning, and cross-link the crashsite + zone-expansion project memories.
+- [ ] **Step 3: Author the endgame-combat tuning reference doc** (user request,
+  2026-07-07). Create `docs/ENDGAME_COMBAT_TUNING.md` — a best-practices author
+  guide that establishes **"Meirok" as the standard difficulty unit** and the
+  nodrop-gear method as the standing way to build endgame fights. It MUST contain:
+  - **The difficulty unit.** One geared **Meirok + companions** = 1 unit (define
+    it from `prod_meirok.yaml`: HP, stat band, key skills, the companion kit).
+    A fight is specified as targeting **N Meiroks** (1 / 2 / 3 …).
+  - **The two-axis method.** `statpool` sets threat (damage/accuracy);
+    `NeverDrops` mitigation gear sets durability (EHP). **Never `base_pool`** (it
+    scales melee and turns supports into killers). Include the nodrop-item recipe
+    (the `never_drops`/`not_salable`/mitigation-fields shape) and the equip block.
+  - **The three empirical anchors** — the settled numbers from this effort and
+    #22, as the baseline table to interpolate from going forward:
+    | Target | Encounter | statpool | nodrop mitigation | mechanic |
+    |--------|-----------|----------|-------------------|----------|
+    | 1 Meirok | #20 Pass-Apex | *(settled)* | *(settled)* | none |
+    | 2 Meirok | #21 Sentinel | *(settled)* | *(settled)* | 1 light hook |
+    | 3 Meirok | #22 Core Guardian | *(from #22)* | *(from #22)* | full apparatus |
+  - **Success criteria** (win-but-under-~30%, one-smaller-loses) and the
+    **mechanical-depth ramp** (0 hooks → 1 light hook → full apparatus).
+  - **The test method** — the manual N-bridge conductor rig (one driver
+    puppeteering N geared quester chars round-by-round; N = target Meirok count),
+    the instance-save nuke, and the "AI plays sub-optimally → tune to the hard
+    side" caveat.
+  Fill the *(settled)* cells with the actual Task 4 / Task 10 results, and pull
+  the #22 Core Guardian row from its shipped values (statpool ×7 × gold, its
+  nodrop gear 40225/40226). Commit:
 
-- [ ] **Step 4: Flag pre-push, do NOT push.** Note in the final report that a prod
+```bash
+git add docs/ENDGAME_COMBAT_TUNING.md
+git commit -m "docs: endgame-combat tuning reference (Meirok-unit + nodrop-gear method)"
+```
+
+- [ ] **Step 4: Bank the nodrop-gear SOP + Meirok-unit metric to memory.** Update
+  `MEMORY.md` + a topic file so the two-axis method (statpool = threat,
+  `never_drops` gear = durability, never `base_pool`) and the Meirok-multiple
+  difficulty unit are standing practice, pointing at `docs/ENDGAME_COMBAT_TUNING.md`
+  as the reference. Cross-link the crashsite + zone-expansion project memories.
+
+- [ ] **Step 5: Flag pre-push, do NOT push.** Note in the final report that a prod
   push is owed and gated behind the pre-push SOP (PATCH_NOTES entry,
   `Logging.LogToFile: false`, boot-test, droplet deploy + perf datapoint). The
   user runs the push.
