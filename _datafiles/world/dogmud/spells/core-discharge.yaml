@@ -17,6 +17,7 @@ target_defense_type: physical
 effect_type: damage
 effect_magnitude: 150
 damage_multiplier: 2.5
+no_damage_interrupt: true
 categories:
   - harm_multi
 cast_user_text: "Power floods inward, gathering at your core."

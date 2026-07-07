@@ -375,6 +375,90 @@ func TestCheckConcentrationBreak_WithDamage(t *testing.T) {
 	_ = checkConcentrationBreak(ch, 50)
 }
 
+func TestCheckConcentrationBreak_NoDamageInterrupt_NeverBreaks(t *testing.T) {
+	cleanup := spells.SeedSpellsForTest(map[string]*spells.SpellData{
+		"core-discharge": {SpellId: "core-discharge", NoDamageInterrupt: true},
+	})
+	defer cleanup()
+
+	ch := newCastingChar("core-discharge")
+	ch.HealthMax.Value = 100
+	// Low willpower so a normal roll would very likely break — the flag
+	// should short-circuit before the roll is ever made.
+	ch.Stats.Willpower.ValueAdj = 1
+
+	for i := 0; i < 50; i++ {
+		broke := checkConcentrationBreak(ch, ch.HealthMax.Value*10)
+		assert.False(t, broke, "NoDamageInterrupt spell must never break from damage, even at massive damage%% and low willpower")
+	}
+}
+
+func TestCheckConcentrationBreak_NormalSpell_StillBreaks(t *testing.T) {
+	cleanup := spells.SeedSpellsForTest(map[string]*spells.SpellData{
+		"sparks": {SpellId: "sparks"},
+	})
+	defer cleanup()
+
+	ch := newCastingChar("sparks")
+	ch.HealthMax.Value = 100
+	// Low willpower + massive damage% should break virtually every time.
+	ch.Stats.Willpower.ValueAdj = 1
+
+	brokeAtLeastOnce := false
+	for i := 0; i < 50; i++ {
+		if checkConcentrationBreak(ch, ch.HealthMax.Value*10) {
+			brokeAtLeastOnce = true
+			break
+		}
+	}
+	assert.True(t, brokeAtLeastOnce, "a normal (non-flagged) spell should still be breakable by damage")
+}
+
+// newProneCastingChar builds a Character mid-cast (Activity=Casting) and
+// knocked Prone (Position), for exercising processFoldRound's position-based
+// concentration-disruption check.
+func newProneCastingChar(spellId string) *characters.Character {
+	ch := newCastingChar(spellId)
+	ch.HealthMax.Value = 100
+	ch.Stats.Willpower.ValueAdj = 1 // low willpower -> disruption roll very likely to break
+	ch.Position = position.NewMachine()
+	r := state.TransitionReason{Trigger: "test_setup"}
+	ch.Position.ForceStanding(r)
+	_ = ch.Position.TransitionToProne(position.ProneData{}, r)
+	return ch
+}
+
+func TestProcessFoldRound_NoDamageInterrupt_SkipsPositionBreak(t *testing.T) {
+	cleanup := spells.SeedSpellsForTest(map[string]*spells.SpellData{
+		"core-discharge": {SpellId: "core-discharge", NoDamageInterrupt: true, BaseFolds: 4},
+	})
+	defer cleanup()
+
+	for i := 0; i < 50; i++ {
+		ch := newProneCastingChar("core-discharge")
+		result := processFoldRound(ch)
+		assert.False(t, result.ProneBroke, "NoDamageInterrupt cast must not break from position disruption while Prone")
+	}
+}
+
+func TestProcessFoldRound_NormalSpell_PositionCanBreak(t *testing.T) {
+	cleanup := spells.SeedSpellsForTest(map[string]*spells.SpellData{
+		"sparks": {SpellId: "sparks", BaseFolds: 4},
+	})
+	defer cleanup()
+
+	brokeAtLeastOnce := false
+	for i := 0; i < 50; i++ {
+		ch := newProneCastingChar("sparks")
+		result := processFoldRound(ch)
+		if result.ProneBroke {
+			brokeAtLeastOnce = true
+			break
+		}
+	}
+	assert.True(t, brokeAtLeastOnce, "a normal (non-flagged) spell should still be breakable by position disruption while Prone")
+}
+
 // ─── Spell Resolution Helpers ─────────────────────────────────────────────────
 
 func TestSpellDefenseValue_Physical(t *testing.T) {

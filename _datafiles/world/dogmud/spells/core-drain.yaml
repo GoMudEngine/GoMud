@@ -14,6 +14,7 @@ difficulty: 45
 primarystat: willpower
 base_folds: 2
 effect_type: drain_area
+no_damage_interrupt: true
 # effect_magnitude is NOT read by the drain_area handler. resolveMobDrainArea
 # (internal/hooks/spell_resolution.go) dispatches straight to
 # actions.ExecuteDrainArea, which derives its damage from the caster's own

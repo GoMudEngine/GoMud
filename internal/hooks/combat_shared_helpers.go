@@ -114,6 +114,14 @@ func checkConcentrationBreak(ch *characters.Character, damage int) bool {
 	if ch.Activity == nil || !ch.Activity.IsCasting() || damage <= 0 {
 		return false
 	}
+	// Telegraphed casts flagged NoDamageInterrupt only break to the
+	// disruptor system's intended interrupts (thrown flashbang / disruption
+	// spells) — incidental combat damage never breaks them.
+	if cs, ok := ch.Activity.CastingData(); ok {
+		if sd := spells.GetSpell(cs.SpellId); sd != nil && sd.NoDamageInterrupt {
+			return false
+		}
+	}
 	maxHealth := ch.HealthMax.Value
 	damagePct := damage * 100 / maxHealth
 	if damagePct < 1 {
@@ -451,6 +459,14 @@ func processFoldRound(char *characters.Character) FoldRoundResult {
 	}
 	cs, _ := char.Activity.CastingData()
 
+	// Fetch the spell being cast up-front so both the position-disruption
+	// check below and the damage-path checkConcentrationBreak (called by
+	// the combat handlers) can consult NoDamageInterrupt. Telegraphed boss
+	// casts (e.g. Core Guardian's core-discharge/core-drain) set this flag
+	// so they only break to the disruptor system's intended interrupts,
+	// never to incidental party damage or position churn.
+	spellData := spells.GetSpell(cs.SpellId)
+
 	// Position-based concentration disruption (chunk 4f). Replaces the
 	// three deterministic 100% gates (Prone/Supine/Grapple) that chunks
 	// pre-4e shipped. Now: damage%-equivalent per (position, role) →
@@ -459,8 +475,9 @@ func processFoldRound(char *characters.Character) FoldRoundResult {
 	//
 	// The damage-path checkConcentrationBreak still fires independently
 	// when damage lands during a round — both paths can break a single
-	// cast (layered disruption).
-	if char.Position != nil {
+	// cast (layered disruption) — unless the spell is flagged
+	// NoDamageInterrupt, in which case both paths are skipped.
+	if char.Position != nil && (spellData == nil || !spellData.NoDamageInterrupt) {
 		posState := char.Position.State()
 		var ctrlState control.State
 		if char.Control != nil {
@@ -495,7 +512,6 @@ func processFoldRound(char *characters.Character) FoldRoundResult {
 	}
 
 	// Target-gone check: any dead/nil target breaks the spell.
-	spellData := spells.GetSpell(cs.SpellId)
 	targetGone := false
 	for _, mobInstId := range cs.TargetMobInstanceIds {
 		m := mobs.GetInstance(mobInstId)
