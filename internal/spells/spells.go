@@ -175,8 +175,8 @@ func buildSpellAliasIndex() {
 	for _, s := range allSpells {
 		for _, a := range s.Aliases {
 			a = strings.ToLower(strings.TrimSpace(a))
-			if a == "" {
-				continue
+			if a == "" || a == s.SpellId {
+				continue // blank, or a redundant self-alias (already resolves via the id)
 			}
 			if _, clash := allSpells[a]; clash {
 				panic(fmt.Sprintf("spell alias %q (on %s) collides with a spellid", a, s.SpellId))

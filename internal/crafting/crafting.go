@@ -96,8 +96,8 @@ func LoadRecipeFiles() {
 	for _, r := range allRecipes {
 		for _, a := range r.Aliases {
 			a = strings.ToLower(strings.TrimSpace(a))
-			if a == "" {
-				continue
+			if a == "" || a == r.RecipeId {
+				continue // blank, or a redundant self-alias (already resolves via the id)
 			}
 			if _, clash := allRecipes[a]; clash {
 				panic(fmt.Sprintf("recipe alias %q (on %s) collides with a recipe id", a, r.RecipeId))
