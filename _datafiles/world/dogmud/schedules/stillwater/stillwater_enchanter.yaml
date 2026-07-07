@@ -1,0 +1,18 @@
+id: stillwater_enchanter
+description: "Enchanter Rane's daily routine: works the circle by day, sleeps in the workshop by night."
+segments:
+  - start: 6
+    end: 22
+    target_room: 6443
+    activity: ""
+    idlecommands:
+      - emote traces a slow sigil above the enchanting circle.
+      - say The binding holds if the inlay stays dry.
+      - emote grinds a chrysalis shard down to fine dust.
+  - start: 22
+    end: 6
+    target_room: 6443
+    activity: sleeping
+    idlecommands:
+      - emote sleeps curled against the cool stone of the circle.
+      - emote murmurs a half-finished binding word in sleep.

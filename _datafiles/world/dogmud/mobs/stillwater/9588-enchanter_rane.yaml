@@ -1,0 +1,84 @@
+mobid: 9588
+zone: Stillwater
+craft_support: enchanting
+archetype: casting
+behavior_archetype: noncombat_shopkeeper
+statpool: 54
+itemdropchance: 0
+hostile: false
+charm_immune: true
+non_combatant: true
+maxwander: 0
+schedule_id: stillwater_enchanter
+groups:
+  - humanoid
+  - merchant
+  - stillwater_citizens
+  - shopkeepers
+idlecommands:
+  - 'emote turns a chrysalis shard slowly, watching the light shift inside it'
+  - 'emote dips a brush in binding paste and traces a careful sigil'
+  - ''
+  - 'emote checks the enchanting circle for stray cracks in the inlay'
+  - ''
+activitylevel: 10
+character:
+  name: Enchanter Rane
+  description: |
+    Rane works with the unhurried patience of someone who has burned
+    a hand or two learning not to rush the binding. Lake-damp has
+    swollen the workshop's timbers, so the door never quite shuts,
+    but the enchanting circle at the center of the room stays bone
+    dry no matter the weather. Rane's fingers are stained faint
+    green from years of handling chrysalis dust, and the enchanter
+    talks more to the shards than to visitors -- though visitors
+    are welcome to listen in.
+  speciesid: 1
+  level: 1
+  gold: 1000
+  equipment:
+    weapon:
+      itemid: 10017
+  stats:
+    perception:
+      training: 15
+    willpower:
+      training: 10
+    charisma:
+      training: -10
+  shop:
+    # Thornwall chrysalis (in-shop crafted) — Rane's specialty
+    - itemid: 40010    # Chrysalis Core
+      quantity: 0
+      quantitymax: 0
+      price: 75
+    - itemid: 40027    # chrysalis shard
+      quantity: 0
+      quantitymax: 0
+      price: 20
+    - itemid: 40028    # binding paste
+      quantity: 0
+      quantitymax: 0
+      price: 25
+    - itemid: 40029    # mutation catalyst
+      quantity: 0
+      quantitymax: 0
+      price: 55
+    - itemid: 40030    # chrysalis setting
+      quantity: 0
+      quantitymax: 0
+      price: 75
+    - itemid: 40011    # Hive Fragment
+      quantity: 0
+      quantitymax: 0
+      price: 30
+    # Fernway forest (caravan-fed) — oak bark for ward inscriptions
+    - itemid: 40062    # oak bark
+      quantity: 0
+      quantitymax: 0
+      price: 35
+    # Stillwater unique (caravan-fed from Kess) — pearl for high-tier enchants
+    - itemid: 40053    # Stillwater black pearl
+      quantity: 0
+      quantitymax: 0
+      price: 600
