@@ -159,6 +159,46 @@ func Get(userId int) *Party {
 // AddGold adds n to the shared party gold pool.
 func (p *Party) AddGold(n int) { p.GoldPool += n }
 
+// SettleGold is a PURE computation: it splits the shared gold pool evenly
+// across the current members, zeroes the pool, and returns the per-user
+// payout map (userId -> amount). It does NOT credit any character gold or
+// emit events — the caller (command layer) performs the actual crediting
+// and gold-sync, so this package avoids importing internal/users.
+//
+// Split rules:
+//   - Every member receives base := GoldPool / len(members).
+//   - The remainder (GoldPool % len(members)) is added to the LEADER's share.
+//   - Gold is conserved exactly: sum(payouts) == old GoldPool.
+//
+// Returns nil when the pool is empty or the party has no members.
+func (p *Party) SettleGold() map[int]int {
+	if p.GoldPool == 0 || len(p.UserIds) == 0 {
+		return nil
+	}
+
+	n := len(p.UserIds)
+	base := p.GoldPool / n
+	remainder := p.GoldPool % n
+
+	payouts := make(map[int]int, n)
+	for _, uid := range p.UserIds {
+		payouts[uid] += base
+	}
+
+	// Route the remainder to the leader. If the leader isn't in the member
+	// list (defensive), fall back to the first member so no gold is lost.
+	if remainder > 0 {
+		leader := p.LeaderUserId
+		if _, ok := payouts[leader]; !ok {
+			leader = p.UserIds[0]
+		}
+		payouts[leader] += remainder
+	}
+
+	p.GoldPool = 0
+	return payouts
+}
+
 func (p *Party) ChanceToBeTargetted(userId int) int {
 
 	rank := p.GetRank(userId)

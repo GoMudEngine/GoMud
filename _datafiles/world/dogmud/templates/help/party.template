@@ -16,4 +16,5 @@ The <ansi fg="command">party</ansi> manages player parties/groups.
   <ansi fg="command">party [say/chat] [message]</ansi> - Sends a message only your party can receive
   <ansi fg="command">party autoattack [on/off]</ansi>  - Automatically join your party leader in combat
   <ansi fg="command">party loot [mode]</ansi>          - (Leader) Set corpse loot: ffa/roundrobin/leaderhold
+  <ansi fg="command">party gold [split]</ansi>         - Show the shared gold pool, or split it to members
 
