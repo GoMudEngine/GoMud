@@ -63,9 +63,14 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		if ok, _ := crafting.HasIngredients(user.Character.Items, user.Character.ComponentItems, recipe); !ok {
 			if pull, complete := crafting.PlanStoragePull(recipe, user.Character.Items, user.Character.ComponentItems, user.ItemStorage.GetItems()); complete {
 				for _, itm := range pull {
-					if user.ItemStorage.RemoveItem(itm) {
-						user.Character.StoreItem(itm)
+					// storageRemoveQuiet places the item on the character FIRST and
+					// only removes it from storage if that succeeds — so an
+					// over-encumbered player can't destroy banked components.
+					if storageRemoveQuiet(user, itm) {
 						user.SendText(messaging.CategoryLoot, fmt.Sprintf(`You draw <ansi fg="item">%s</ansi> from storage.`, itm.DisplayName()))
+					} else {
+						user.SendText(messaging.CategorySystem, `You're too encumbered to draw any more from storage.`)
+						break
 					}
 				}
 			}
@@ -256,7 +261,7 @@ func classifyRecipe(user *users.UserRecord, room *rooms.Room, r *crafting.Recipe
 		return "ready"
 	}
 	// Completable by pulling from the player's storage (auto-pulled at craft time).
-	if _, complete := crafting.PlanStoragePull(r, user.Character.Items, user.Character.ComponentItems, user.ItemStorage.GetItems()); complete {
+	if storageCompletable(user, r) {
 		return "ready"
 	}
 	return "missing"
@@ -495,9 +500,25 @@ func recipeStatus(user *users.UserRecord, room *rooms.Room, r *crafting.RecipeSp
 	}
 	ok, missing := crafting.HasIngredients(user.Character.Items, user.Character.ComponentItems, r)
 	if !ok {
+		// Completable by auto-pull from storage → shows as ready, matching the
+		// "Ready to craft" section and the auto-pull behavior.
+		if storageCompletable(user, r) {
+			return "V", ""
+		}
 		return "X", fmt.Sprintf("missing %s", missing)
 	}
 	return "V", ""
+}
+
+// storageCompletable reports whether recipe r could be crafted right now by
+// auto-pulling its missing components from the player's storage. Enchanting
+// recipes are excluded — they route to craftEnchanting, which does not pull.
+func storageCompletable(user *users.UserRecord, r *crafting.RecipeSpec) bool {
+	if crafting.IsEnchantingRecipe(r) {
+		return false
+	}
+	_, complete := crafting.PlanStoragePull(r, user.Character.Items, user.Character.ComponentItems, user.ItemStorage.GetItems())
+	return complete
 }
 
 // ingredientSummary returns a short comma-separated ingredient list.
