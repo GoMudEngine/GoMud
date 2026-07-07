@@ -174,6 +174,21 @@ func TestPinnacleAgingFreeze(t *testing.T) {
 	if c2.PotionItems[0].CraftedRound != 1000 {
 		t.Fatalf("plain belt must not freeze aging, got %d", c2.PotionItems[0].CraftedRound)
 	}
+
+	// Regression (purchased/vendor potion bug): a CraftedRound == 0 potion —
+	// never crafted, so the aging system treats it as fresh forever — must NOT
+	// be incremented by a preserves belt. Incrementing it flips it into the
+	// aging range (elapsed = now-1 ≈ millions of rounds → instantly spoiled and
+	// ejected), which was the live "potions rot and fall out of the bandolier" bug.
+	c3 := characters.New()
+	c3.Equipment.Belt = items.New(999951)
+	p3 := items.New(999953)
+	p3.CraftedRound = 0
+	c3.PotionItems = append(c3.PotionItems, p3)
+	tickPreserveContents(c3)
+	if c3.PotionItems[0].CraftedRound != 0 {
+		t.Fatalf("purchased potion (CraftedRound 0) must stay 0 in a preserves belt, got %d", c3.PotionItems[0].CraftedRound)
+	}
 }
 
 // ─── Ambient potions ────────────────────────────────────────────────────────

@@ -85,6 +85,15 @@ func tickPreserveContents(c *characters.Character) {
 		if c.PotionItems[i].ItemId <= 0 {
 			continue
 		}
+		// A potion with CraftedRound == 0 (purchased/vendor/spawned — never
+		// crafted) is treated as "never ages" by the aging system (drink.go and
+		// NewRound_AutoHeal both gate aging on CraftedRound > 0). Incrementing it
+		// would flip it INTO the aging range (elapsed = now - 1 ≈ millions of
+		// rounds → instantly spoiled + ejected). Such potions are already at full
+		// strength forever, so preservation must skip them entirely.
+		if c.PotionItems[i].CraftedRound == 0 {
+			continue
+		}
 		c.PotionItems[i].CraftedRound++
 	}
 }
