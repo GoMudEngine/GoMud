@@ -94,8 +94,13 @@ func Spells(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				costStr += ", drains health"
 			}
 
+			nameStr := sp.Name
+			if len(sp.Aliases) > 0 && sp.Aliases[0] != "" {
+				nameStr += " (" + sp.Aliases[0] + ")"
+			}
+
 			row := []string{sp.SpellId,
-				sp.Name,
+				nameStr,
 				target,
 				costStr,
 			}
