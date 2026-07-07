@@ -159,6 +159,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	getFromStash := false
 	containerName := ``
 	petUserId := 0
+	corpseIdx := -1
 
 	if len(args) >= 2 {
 		// Detect "stash" or "from stash" at end and remove it
@@ -266,6 +267,102 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				}
 			}
 		}
+
+		//
+		// "get <item|gold> from <corpse name>" — corpse loot container.
+		// A corpse name is multi-word ("grey wolf corpse"), so unlike room
+		// Containers we split on the "from" keyword and treat everything
+		// after it as the corpse search name. Only attempt this if nothing
+		// else (room container, pet) already claimed the trailing target.
+		//
+		if containerName == `` && petUserId == 0 {
+			fromIdx := -1
+			for i, a := range args {
+				if a == "from" {
+					fromIdx = i
+					break
+				}
+			}
+			if fromIdx > 0 && fromIdx < len(args)-1 {
+				corpseSearch := strings.Join(args[fromIdx+1:], " ")
+				if idx := room.FindCorpseIndex(corpseSearch); idx >= 0 {
+					corpseIdx = idx
+					getFromStash = false
+					rest = strings.Join(args[0:fromIdx], " ")
+				}
+			}
+		}
+	}
+
+	//
+	// Corpse loot: operate on a POINTER into room.Corpses so mutations to
+	// the loot container (item removal, gold drawdown) persist in place.
+	//
+	if corpseIdx >= 0 {
+		corpse := &room.Corpses[corpseIdx]
+
+		// Ownership/mode gate — Task 3 stub always allows; Tasks 8/10 gate.
+		if !canLootCorpse(user, corpse) {
+			user.SendText(messaging.CategorySystem, `This isn't your kill.`)
+			return true, nil
+		}
+
+		goldName := `gold`
+		if args[0] == goldName || (len(args[0]) < 5 && goldName[0:len(args[0])-1] == args[0]) {
+
+			if corpse.Loot.Gold < 1 {
+				user.SendText(messaging.CategorySystem, "There's no gold to grab.")
+			} else {
+				user.Character.CancelBuffsWithFlag(buffs.Hidden) // No longer sneaking
+
+				amt := corpse.Loot.Gold
+				corpse.Loot.Gold -= amt
+				grantCorpseGold(user, amt)
+
+				user.SendText(messaging.CategorySystem,
+					fmt.Sprintf(`You take <ansi fg="gold">%d gold</ansi> from the <ansi fg="mob-corpse">%s</ansi>.`, amt, corpse.DisplayName()),
+				)
+				room.SendTextVisual(messaging.CategoryLoot,
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> loots some <ansi fg="gold">gold</ansi> from the <ansi fg="mob-corpse">%s</ansi>.`, user.Character.Name, corpse.DisplayName()),
+					user.UserId,
+				)
+			}
+
+			return true, nil
+		}
+
+		matchItem, found := corpse.Loot.FindItem(rest)
+		if !found {
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You don't see a %s in the <ansi fg="mob-corpse">%s</ansi>.`, rest, corpse.DisplayName()))
+			return true, nil
+		}
+
+		user.Character.CancelBuffsWithFlag(buffs.Hidden) // No longer sneaking
+
+		if user.Character.StoreItem(matchItem) {
+			events.AddToQueue(events.ItemOwnership{
+				UserId: user.UserId,
+				Item:   matchItem,
+				Gained: true,
+			})
+			corpse.Loot.RemoveItem(matchItem)
+
+			user.SendText(messaging.CategorySystem,
+				fmt.Sprintf(`You take the <ansi fg="itemname">%s</ansi> from the <ansi fg="mob-corpse">%s</ansi>.`, matchItem.DisplayName(), corpse.DisplayName()),
+			)
+			room.SendTextVisual(messaging.CategoryLoot,
+				fmt.Sprintf(`<ansi fg="username">%s</ansi> loots the <ansi fg="itemname">%s</ansi> from the <ansi fg="mob-corpse">%s</ansi>...`, user.Character.Name, matchItem.DisplayName(), corpse.DisplayName()),
+				user.UserId,
+			)
+
+			sendEncumbranceWarning(user)
+		} else {
+			user.SendText(messaging.CategorySystem,
+				fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
+			)
+		}
+
+		return true, nil
 	}
 
 	if petUserId == user.UserId {
@@ -549,4 +646,27 @@ func sendEncumbranceWarning(user *users.UserRecord) {
 		user.SendText(messaging.CategorySystem, `<ansi fg="yellow">You are carrying a moderate load.</ansi>`)
 	}
 	// No message for light load or unencumbered
+}
+
+// canLootCorpse reports whether user is entitled to take loot from corpse.
+//
+// TEMPORARY STUB (corpse-loot redesign Task 3): always true. Tasks 8 (kill
+// ownership) and 10 (loot-mode round-robin/leaderhold gating) replace this.
+func canLootCorpse(user *users.UserRecord, corpse *rooms.Corpse) bool {
+	return true
+}
+
+// grantCorpseGold credits gold looted from a corpse to the looter.
+//
+// TEMPORARY STUB (corpse-loot redesign Task 3): straight to the character's
+// purse. Task 11 routes it to a shared party gold pool when in a party.
+func grantCorpseGold(user *users.UserRecord, amt int) {
+	if amt <= 0 {
+		return
+	}
+	user.Character.Gold += amt
+	events.AddToQueue(events.EquipmentChange{
+		UserId:     user.UserId,
+		GoldChange: -amt,
+	})
 }

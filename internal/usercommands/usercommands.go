@@ -128,6 +128,7 @@ var (
 		`locate`:          {Locate, true, true, true}, // Admin only
 		`lock`:            {Lock, false, true, false},
 		`look`:            {Look, true, true, false},
+		`loot`:            {Loot, false, true, false}, // Loot allowed in combat — wandering mobs can loot your kills otherwise
 		`map`:             {Map, false, true, false},
 		`macros`:          {Macros, true, true, false},
 		`mob`:             {Mob, true, true, true},    // Admin only
