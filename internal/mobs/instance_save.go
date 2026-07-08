@@ -67,6 +67,19 @@ func SaveMobInstance(mob *Mob) error {
 		return nil
 	}
 
+	// Bounty hunters are transient dispatched entities. bountyhunter.
+	// RunDispatchSweep re-evaluates every open bounty fresh on each boot and
+	// its per-player dedup (activeHunts) is in-memory only. If a combat-trained
+	// hunter's instance file reloaded after a restart, the sweep — seeing an
+	// empty activeHunts — would spawn ANOTHER hunter on top, accumulating one
+	// duplicate "guard" per restart while the bounty stays open. The
+	// bh_target_user_id marker is stamped on the live instance at spawn
+	// (bountyhunter.spawnHunter) and never cleared, so it reliably identifies
+	// a hunter here at save time.
+	if mob.Character.GetMiscData("bh_target_user_id") != nil {
+		return nil
+	}
+
 	b := configs.GetBalanceConfig()
 	if !bool(b.MobProgressionEnabled) {
 		return nil

@@ -98,6 +98,50 @@ func TestSaveMobInstance_UncharmedMobWritesFile(t *testing.T) {
 	_ = os.Remove(filepath.Dir(path))
 }
 
+// TestSaveMobInstance_BountyHunterSkipsWrite verifies that a dispatched
+// bounty hunter (an instance carrying the bh_target_user_id marker) never
+// persists, even when it has combat progression that would otherwise save.
+//
+// Bounty hunters are transient — bountyhunter.RunDispatchSweep re-evaluates
+// open bounties fresh each boot and its dedup (activeHunts) is in-memory only.
+// If a combat-trained hunter's instance file reloaded after a restart, the
+// sweep (with an empty activeHunts) would spawn ANOTHER hunter on top,
+// accumulating one duplicate "guard" per restart while the bounty stays open.
+func TestSaveMobInstance_BountyHunterSkipsWrite(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	withMobProgressionEnabled(t)
+
+	mob := NewMobById(1, 100)
+	if mob == nil {
+		t.Fatal("NewMobById returned nil")
+	}
+
+	// Clean up any stale files from previous test runs
+	path := instancePath(mob.MobId, mob.Zone, mob.Character.Name, mob.HomeRoomId)
+	_ = os.Remove(path)
+	_ = os.Remove(filepath.Dir(path))
+
+	// Give the mob progression so it WOULD normally persist.
+	mob.Character.Stats.Strength.Training = 10
+	// Stamp the bounty-hunter target marker (set by bountyhunter.spawnHunter).
+	mob.Character.SetMiscData("bh_target_user_id", 42)
+
+	err := SaveMobInstance(mob)
+	assert.NoError(t, err)
+
+	// Assert no file was written.
+	_, statErr := os.Stat(path)
+	assert.True(t, os.IsNotExist(statErr),
+		"expected no file at %s for bounty hunter, got stat err %v",
+		path, statErr)
+
+	// Cleanup in case the test fails and a file was written.
+	_ = os.Remove(path)
+	_ = os.Remove(filepath.Dir(path))
+}
+
 // TestNukeSummonsInstances_RemovesAllFiles verifies the boot-cleanup
 // nuke — every file under mobs.instances/summons/ is removed, and the
 // count is returned for logging.
