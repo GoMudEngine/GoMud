@@ -201,6 +201,16 @@ func SaveAllShops() {
 
 // ClearCache drops all cached shop inventories. Used in tests to ensure
 // isolation between test cases.
+// RemoveShopFile deletes a shop's persisted YAML (if present). Used for test
+// isolation and admin resets; a missing file is not an error.
+func RemoveShopFile(zone string, mobId int, roomId int) error {
+	err := os.Remove(shopPath(zone, mobId, roomId))
+	if err != nil && os.IsNotExist(err) {
+		return nil
+	}
+	return err
+}
+
 func ClearCache() {
 	shopCacheMu.Lock()
 	shopCache = map[string]*ShopInventory{}
