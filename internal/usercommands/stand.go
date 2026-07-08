@@ -25,9 +25,19 @@ func Stand(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		mobs.OnSleeperWoken(user.Character)
 	}
 
-	// Chunk 4b W7: gate on the new Position FSM (Prone or Supine).
-	if !user.Character.IsProne() && !user.Character.IsSupine() {
+	// Gate on the Position FSM. Only Prone/Supine can "stand"; a grapple lock
+	// must be escaped, not stood out of (previously any non-prone/supine state
+	// — including grapples — wrongly reported "already standing").
+	if user.Character.IsStanding() {
 		user.SendText(messaging.CategorySystem, "You're already standing.")
+		return true, nil
+	}
+	if user.Character.IsGrappling() {
+		user.SendText(messaging.CategorySystem, "You're locked in a grapple — you'll need to break free first.")
+		return true, nil
+	}
+	if !user.Character.IsProne() && !user.Character.IsSupine() {
+		user.SendText(messaging.CategorySystem, "You can't stand up right now.")
 		return true, nil
 	}
 
