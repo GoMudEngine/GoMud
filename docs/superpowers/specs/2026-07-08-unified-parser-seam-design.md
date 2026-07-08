@@ -107,13 +107,42 @@ single `KindInventoryItem` (`character.FindItem` returns the combined pool);
 | Stage | Scope | Status |
 |-------|-------|--------|
 | 0 — Foundation | `internal/parser` package | ✅ done (master) |
-| 1 — `get` composition | Route `get`'s container/corpse resolution through `ResolveItem`; retire that ladder; gates stay in the command. `all`/gold/bag/bandolier/stash untouched. | this plan |
-| 2 — `give` two-slot | Route `give`'s item→recipient split through `splitOnConnective` + `ResolveItem`/`ResolveActor`; retire `splitGiveArgs`. | later |
-| 3 — Admin two-slot | `knowledge`/`opinion`/`crime` multi-word mob+player lookup. | later |
-| 4 — Convergence | Retire dead bespoke matchers; document the un-hyphenated authoring convention. | later |
+| 1 — `get` composition | Route `get`'s container/corpse detection through `SplitTrailingContainer`; retire that ladder; gates stay in the command. | ✅ done (master) — also fixed a latent multi-word-container bug |
+| 2 — Admin two-slot | `knowledge`/`opinion`/`crime`/`faction` multi-word mob lookup, via a scope-agnostic `SplitLeadingMatch` helper. | this plan |
+| 3 — Convergence | Retire dead bespoke matchers; document the un-hyphenated authoring convention. | later (optional) |
 
-The original Stages 2 (item/inventory cmds) and 4 (nouns) are **dropped** — those
-commands already handle multi-word via existing matchers.
+The original Stages 2 (item/inventory), 3 (`give`), and 4 (nouns) are **dropped** —
+those commands already handle multi-word via existing matchers (verified).
+
+### After Stage 1 (`get`) + verifying the other candidates — 2026-07-08
+
+More stages proved unnecessary once verified against live code:
+
+- **`get all <container>` already works** — the `all` branch resolves the
+  container by last word via `FindContainerByName`'s fuzzy match, and has no
+  item-span to mis-strip (that was the non-`all` bug). Verified by test.
+- **`give` two-slot already works** — `give.go` line 1 `StripPrepositions` drops
+  `to`, then `splitGiveArgs` does a greedy-from-right split validating both the
+  object and recipient resolve (`give dagger to smith rusk` works). Migrating it
+  would be a pure refactor with regression risk and ~zero benefit — dropped.
+- **`look <noun>` / single-item / actor commands already work** (Stage-0
+  divergence) — dropped.
+
+**Only the admin two-slot commands are genuinely broken:** `knowledge` /
+`opinion` / `crime` / `faction` use `strings.Fields` + positional `args[0]` /
+`args[1]`, so `knowledge show bank clerk <player>` reads mob="bank",
+player="clerk". Confirmed by reading the code.
+
+**Divergence in the fix approach:** the parser's adapters are **room-scoped**
+(`FindByName` searches mobs present in the room), but admin resolves mobs by
+**template name** globally (`knowledgeResolveMobIdent` → `AllMobTemplates`). So
+admin cannot reuse the room adapters. Instead it reuses the composition
+*pattern* via a new **scope-agnostic** helper `parser.SplitLeadingMatch(input,
+matches func(string) bool)` — greedy longest-leading-span with a caller-injected
+validator. This keeps the seam useful for global-scoped commands without forcing
+a room `Scope` on them. Value is admin/dev ergonomics (B) — the numeric-mobId
+workaround exists today, so this is a low-priority polish, done because the gap
+is real and the fix is small.
 
 ## Design
 
