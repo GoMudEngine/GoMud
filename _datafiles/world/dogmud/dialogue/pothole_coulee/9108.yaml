@@ -135,7 +135,8 @@ tree:
     # ── COMBAT HELP: consider + combatverbosity ────────────
     - id: combat_help
       triggers: ["consider", "combatverbosity", "verbosity",
-        "moves", "help", "kick", "trip"]
+        "moves", "help", "kick", "trip", "shout", "shouts",
+        "rally", "warcry"]
       text: "Consider tells you how dangerous something looks before
         you commit to the fight. Type consider on a target and read
         what it says -- that is how you stop walking into fights you
@@ -145,11 +146,16 @@ tree:
         your choice. Special moves are kick and trip -- kick hits
         harder when they are standing, trip puts them on the ground
         so your next swing lands harder. Both cost stamina. Use them
-        when the moment calls for it, not every round."
+        when the moment calls for it, not every round. And when a
+        fight needs more than muscle, there are battle-shouts -- rally
+        steadies your nerves and your allies', warcry hardens the
+        whole line. Those lean on a silver tongue more than a strong
+        arm, so they come later; for now, just know they exist."
       hints: "Type consider dummy to read the training dummy.
         Type set combatverbosity full, medium, or light to set your
         output preference. Type kick dummy or trip dummy to try
-        a special move."
+        a special move. When you are ready for more than swings, type
+        help rally and help warcry to read about battle-shouts."
 
 memory:
   expiryPeriod: ""

@@ -1,9 +1,13 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">bury</ansi>
 
 The <ansi fg="command">bury</ansi> command cleans up corpses from the room.
+Be sure to <ansi fg="command">loot</ansi> a corpse for its gear and gold before you
+bury it -- once buried, whatever it held is gone.
 
 <ansi fg="yellow">Usage: </ansi>
 
   <ansi fg="command">bury rat corpse</ansi>
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help loot</ansi>, <ansi fg="command">help get</ansi>
 
 

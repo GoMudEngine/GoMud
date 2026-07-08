@@ -83,8 +83,10 @@ triggers:
     actions:
       - grant: "33-scout"
       - send_text: >-
-          The bandit scout goes down. One threat in the wash is done.
-          Push deeper toward the cistern for the squatter.
+          The bandit scout goes down. His gear stays on the body until
+          you take it -- type loot corpse (or get all corpse) to strip
+          it, then wear any armor you pull. One threat in the wash is
+          done. Push deeper toward the cistern for the squatter.
 
   # ── SQUATTER: defeat a bandit squatter (mob 9111) ───────────────────
   - event: mob_death
@@ -95,5 +97,7 @@ triggers:
     actions:
       - grant: "33-squatter"
       - send_text: >-
-          The bandit squatter drops. The wash is clear down to the
-          cistern. Walk back and give Garve the word.
+          The bandit squatter drops -- and he was wearing something
+          worth having. Loot the corpse before you go, then walk back
+          and give Garve the word. The wash is clear down to the
+          cistern.

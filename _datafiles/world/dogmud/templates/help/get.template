@@ -1,7 +1,8 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">get</ansi>
 
 The <ansi fg="command">get</ansi> command picks up an item on the ground and puts
-it in your backpack.
+it in your backpack. It also pulls single items out of a container,
+a stash, or a slain creature's corpse.
 
 <ansi fg="yellow">Usage: </ansi>
 
@@ -11,8 +12,20 @@ it in your backpack.
   <ansi fg="command">get all.stick</ansi>          Pick up all sticks.
   <ansi fg="command">get stick from stash</ansi>   Get a stick from the stash.
 
+<ansi fg="yellow">Looting corpses: </ansi>
+
+When you kill something, its gear and gold stay on the corpse until
+you take them.
+
+  <ansi fg="command">get sword from corpse</ansi>  Take one item off a corpse.
+  <ansi fg="command">get sword corpse</ansi>       Same thing -- the "from" is optional.
+  <ansi fg="command">get all corpse</ansi>         Take everything off a corpse.
+
+To grab a corpse's items AND its gold in one action, use
+<ansi fg="command">loot</ansi> instead. Type <ansi fg="command">look corpse</ansi> to see what a corpse holds.
+
 Find out more about referring to items by name by typing
 <ansi fg="command">help item-names</ansi>.
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help drop</ansi>, <ansi fg="command">help inventory</ansi>, <ansi fg="command">help item-names</ansi>
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help loot</ansi>, <ansi fg="command">help drop</ansi>, <ansi fg="command">help inventory</ansi>, <ansi fg="command">help item-names</ansi>
 

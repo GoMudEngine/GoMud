@@ -156,14 +156,18 @@ tree:
         happens -- you wake at the Mending Hut on the west side
         of the hollow. Not in a ditch. Not gone. You walk back
         and try again. That is how the coulee works.
+        One more thing. Strip what they carry while you are at
+        it -- gear does a dead bandit no good, and it will do
+        you plenty.
       hints: >-
         Head east from here into the lower wash to find the
         scout. The squatter camps deeper in by the cistern.
         Type flee to pull out if a fight turns against you --
         you will wake at the Mending Hut if you fall, not dead
-        for good. Look for armor the bandits drop and type wear
-        to put it on. Type sethome coulee if you have not set
-        your wake point yet.
+        for good. When a bandit falls, its gear stays on the
+        corpse -- type loot corpse (or get all corpse) to take
+        it, then type wear to put on any armor you find. Type
+        sethome coulee if you have not set your wake point yet.
       moodChange: neutral
 
     - id: wash_turnin
