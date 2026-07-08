@@ -3,11 +3,52 @@ package actions
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/shops"
 )
+
+// TestBuy_AffixedStockItem: a shop's per-instance affixed stock is listed and,
+// on purchase, the buyer receives the EXACT stored item (per-instance value,
+// affixed flag) and the entry is removed. Exercises tryPurchaseFromInventory
+// directly (bypassing room/merchant discovery).
+func TestBuy_AffixedStockItem(t *testing.T) {
+	defer seedSellItemSpecs()() // registers sellTestItemId ("iron sword")
+
+	m := &mobs.Mob{}
+	m.Character.Name = "Buyer"
+	m.Character.Gold = 1000
+	m.Character.Buffs = buffs.New()
+	m.Character.Stats.Strength.ValueAdj = 100 // carry capacity
+	buyer := &MobActor{Mob: m}
+
+	shopInv := &shops.ShopInventory{Gold: 1000}
+	shopInv.AddAffixedStock(items.Item{ItemId: sellTestItemId, Affixed: true,
+		Spec: &items.ItemSpec{Value: 400, Name: "iron sword", NameSimple: "sword", Type: items.Weapon}}, 400, 8)
+
+	shopMob := &mobs.Mob{Character: characters.Character{Name: "Merchant"}}
+
+	res := tryPurchaseFromInventory(buyer, "iron sword", shopMob, shopInv)
+	if !res.Success {
+		t.Fatalf("affixed purchase failed: %+v", res)
+	}
+	if len(shopInv.AffixedStock) != 0 {
+		t.Errorf("affixed entry should be removed after purchase; have %d", len(shopInv.AffixedStock))
+	}
+	got, has := m.Character.FindInBackpack("iron sword")
+	if !has {
+		t.Fatal("buyer should hold the bought item")
+	}
+	if got.GetSpec().Value != 400 || !got.Affixed {
+		t.Errorf("bought item not the affixed instance: value=%d affixed=%v", got.GetSpec().Value, got.Affixed)
+	}
+	if m.Character.Gold != 600 { // 1000 - relist 400
+		t.Errorf("buyer gold = %d; want 600", m.Character.Gold)
+	}
+}
 
 func TestBuy_EmptyRequest(t *testing.T) {
 	result := Buy(nil, BuyOptions{Request: ""})

@@ -62,6 +62,13 @@ type Item struct {
 	tempDataStore map[string]any // Temporary data store for this item. Not saved to disk.
 }
 
+// NewItemUUID mints a fresh per-instance item UUID. Used when handing an
+// existing item a new identity (e.g. reselling a shop-stored affixed item whose
+// UUID was not persisted).
+func NewItemUUID() uuid.UUID {
+	return uuid.New(UUIDItem)
+}
+
 func New(itemId int) Item {
 	itemSpec := GetItemSpec(itemId)
 
