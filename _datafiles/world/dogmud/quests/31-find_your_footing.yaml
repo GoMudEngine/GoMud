@@ -32,7 +32,7 @@ steps:
 
 rewards:
   gold: 20
-  player_message: >-
+  playermessage: >-
     Toke presses a small purse into your palm with his upper mouth still
     talking and the lower one already calling the next notice.
 

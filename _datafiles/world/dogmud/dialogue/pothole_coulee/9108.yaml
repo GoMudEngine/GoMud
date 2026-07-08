@@ -135,8 +135,7 @@ tree:
     # ── COMBAT HELP: consider + combatverbosity ────────────
     - id: combat_help
       triggers: ["consider", "combatverbosity", "verbosity",
-        "moves", "help", "kick", "trip", "shout", "shouts",
-        "rally", "warcry"]
+        "moves", "help", "kick", "trip"]
       text: "Consider tells you how dangerous something looks before
         you commit to the fight. Type consider on a target and read
         what it says -- that is how you stop walking into fights you
@@ -146,16 +145,23 @@ tree:
         your choice. Special moves are kick and trip -- kick hits
         harder when they are standing, trip puts them on the ground
         so your next swing lands harder. Both cost stamina. Use them
-        when the moment calls for it, not every round. And when a
-        fight needs more than muscle, there are battle-shouts -- rally
-        steadies your nerves and your allies', warcry hardens the
-        whole line. Those lean on a silver tongue more than a strong
-        arm, so they come later; for now, just know they exist."
+        when the moment calls for it, not every round."
       hints: "Type consider dummy to read the training dummy.
         Type set combatverbosity full, medium, or light to set your
         output preference. Type kick dummy or trip dummy to try
-        a special move. When you are ready for more than swings, type
-        help rally and help warcry to read about battle-shouts."
+        a special move. Ask me about shouts when you want more than
+        muscle in a fight."
+
+    - id: shouts_help
+      triggers: ["shout", "shouts", "rally", "warcry", "battle-shout"]
+      text: "There is more to a fight than the swing. A battle-shout
+        can turn one -- rally steadies your nerve and your allies',
+        warcry hardens the whole line. They lean on a silver tongue,
+        not a strong arm, so they come to you later. For now, know
+        they exist."
+      hints: "Battle-shouts -- rally and warcry -- come later. Type
+        help rally or help warcry to read about them when you are
+        ready."
 
 memory:
   expiryPeriod: ""

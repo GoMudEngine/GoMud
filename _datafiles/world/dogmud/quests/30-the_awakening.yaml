@@ -26,7 +26,7 @@ steps:
     hint: "New to Gaius? Go south to Hub Square and type ask toke footing. Know your way already? The Threshold House is south through the market -- type ask esk passage there. Type mutations any time to see what the pool woke -- and ask Hadwen about the glow, the light spell you carry for dark places."
 
 rewards:
-  player_message: >-
+  playermessage: >-
     Something under your skin settles into place, the way silt settles
     in still water. You are not quite who you were when you arrived.
 

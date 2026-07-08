@@ -13,7 +13,10 @@ tree:
       children:
         - type: condition
           check: command_matches
-          commands: [get, take, g, inventory, inv, i]
+          commands: [get, take, g]
+        - type: condition
+          check: command_rest_contains
+          keywords: [token]
         - type: action
           do: set_state
           key: lesson_done
@@ -21,7 +24,7 @@ tree:
         - type: action
           do: send_user_text
           text: >-
-            Good -- picked up and counted. North is open -- type  north.
+            Good -- the token is yours. North is open -- type  north.
 
     # ── Movement before lesson: block with a nudge ──
     - type: sequence
@@ -37,6 +40,6 @@ tree:
         - type: action
           do: send_user_text
           text: >-
-            Take the token first -- type  get token  (or  inv ), then go north.
+            Take the token first -- type  get token , then go north.
         - type: action
           do: intercept

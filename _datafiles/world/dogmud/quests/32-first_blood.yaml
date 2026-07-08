@@ -29,7 +29,7 @@ steps:
   - id: verbosity
     description: "You have tuned your combat output. The Drill Yard
       has taught you what it can. Report to Vorn."
-    hint: "Ask Vorn you are done -- type ask vorn report."
+    hint: "Tell Vorn you are done -- type ask vorn report."
   - id: end
     description: "Drillmaster Vorn has signed off on your first bout.
       The cudgel has earned its first notch. Head east into the wash
@@ -65,7 +65,6 @@ triggers:
   # ── SPECIAL MOVE: kick (room 5227) ────────────────────
   - event: command
     command: kick
-    room: 5227
     conditions:
       has: ["32-start"]
       missing: ["32-special"]
@@ -75,7 +74,6 @@ triggers:
   # ── SPECIAL MOVE: trip (room 5227) ────────────────────
   - event: command
     command: trip
-    room: 5227
     conditions:
       has: ["32-start"]
       missing: ["32-special"]
@@ -85,7 +83,6 @@ triggers:
   # ── CONSIDER (room 5227) ──────────────────────────────
   - event: command
     command: consider
-    room: 5227
     conditions:
       has: ["32-start"]
       missing: ["32-consider"]
@@ -95,7 +92,6 @@ triggers:
   # ── COMBATVERBOSITY (room 5227) ───────────────────────
   - event: command
     command: combatverbosity
-    room: 5227
     conditions:
       has: ["32-start"]
       missing: ["32-verbosity"]

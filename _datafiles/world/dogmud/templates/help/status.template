@@ -38,7 +38,7 @@ stat in your adventures, the more it grows over time.
 
 <ansi fg="yellow">Related: </ansi>
 
-  <ansi fg="command">help experience</ansi>
+  <ansi fg="command">help skills</ansi>
   <ansi fg="command">help health</ansi>
   <ansi fg="command">help armor</ansi>
   <ansi fg="command">help submission</ansi>
