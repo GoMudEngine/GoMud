@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/opinions"
+	"github.com/GoMudEngine/GoMud/internal/parser"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -68,15 +69,20 @@ func opinionShowUsage(user *users.UserRecord) {
 }
 
 func opinionShow(args []string, user *users.UserRecord) (bool, error) {
-	switch len(args) {
-	case 1:
-		return opinionShowAll(args[0], user)
-	case 2:
-		return opinionShowOne(args[0], args[1], user)
-	default:
+	if len(args) == 0 {
 		opinionShowUsage(user)
 		return true, nil
 	}
+	// Peel a leading (possibly multi-word) mob name; if one resolves and a
+	// player remains, that's "show <mob> <player>". Otherwise treat the whole
+	// input as a player name ("show <player>").
+	if head, tail, ok := parser.SplitLeadingMatch(strings.Join(args, " "), func(c string) bool {
+		_, _, f := opinionResolveMobIdent(c)
+		return f
+	}); ok && strings.TrimSpace(tail) != "" {
+		return opinionShowOne(head, strings.TrimSpace(tail), user)
+	}
+	return opinionShowAll(strings.Join(args, " "), user)
 }
 
 func opinionShowAll(playerName string, user *users.UserRecord) (bool, error) {
@@ -138,48 +144,55 @@ const (
 )
 
 func opinionMutate(args []string, user *users.UserRecord, mode opinionMutateMode) (bool, error) {
-	expected := 3
-	if mode == mutateReset {
-		expected = 2
+	// Greedy multi-word mob: consume the longest leading span that names a mob;
+	// the remaining tokens are the player + optional value.
+	mobIdent, tail, ok := parser.SplitLeadingMatch(strings.Join(args, " "), func(c string) bool {
+		_, _, f := opinionResolveMobIdent(c)
+		return f
+	})
+	if !ok {
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Unknown mob: %s\r\n", strings.Join(args, " ")))
+		return true, nil
 	}
-	if len(args) != expected {
+	rest := strings.Fields(tail)
+	expected := 2 // player + value
+	if mode == mutateReset {
+		expected = 1 // player only
+	}
+	if len(rest) != expected {
 		opinionShowUsage(user)
 		return true, nil
 	}
-	mobId, mobName, ok := opinionResolveMobIdent(args[0])
-	if !ok {
-		user.SendText(messaging.CategorySystem, fmt.Sprintf("Unknown mob: %s\r\n", args[0]))
-		return true, nil
-	}
-	target := users.GetByCharacterNameOrLoad(args[1])
+	mobId, mobName, _ := opinionResolveMobIdent(mobIdent)
+	target := users.GetByCharacterNameOrLoad(rest[0])
 	if target == nil {
-		user.SendText(messaging.CategorySystem, fmt.Sprintf("No such player: %s\r\n", args[1]))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("No such player: %s\r\n", rest[0]))
 		return true, nil
 	}
 
 	switch mode {
 	case mutateSet:
-		v, err := strconv.Atoi(args[2])
+		v, err := strconv.Atoi(rest[1])
 		if err != nil {
-			user.SendText(messaging.CategorySystem, fmt.Sprintf("Bad score %q: %v\r\n", args[2], err))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf("Bad score %q: %v\r\n", rest[1], err))
 			return true, nil
 		}
 		opinions.Set(mobId, target.UserId, v)
-		user.SendText(messaging.CategorySystem, fmt.Sprintf("Set %s (%d) -> %s = %d\r\n", mobName, mobId, args[1], v))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Set %s (%d) -> %s = %d\r\n", mobName, mobId, rest[0], v))
 	case mutateBump:
-		v, err := strconv.Atoi(args[2])
+		v, err := strconv.Atoi(rest[1])
 		if err != nil {
-			user.SendText(messaging.CategorySystem, fmt.Sprintf("Bad delta %q: %v\r\n", args[2], err))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf("Bad delta %q: %v\r\n", rest[1], err))
 			return true, nil
 		}
 		opinions.Bump(mobId, target.UserId, v)
 		user.SendText(messaging.CategorySystem, fmt.Sprintf("Bumped %s (%d) -> %s by %d (now %d)\r\n",
-			mobName, mobId, args[1], v, opinions.Get(mobId, target.UserId)))
+			mobName, mobId, rest[0], v, opinions.Get(mobId, target.UserId)))
 	case mutateReset:
 		def := opinionMobDefaultDisposition(mobId)
 		opinions.Set(mobId, target.UserId, def)
 		user.SendText(messaging.CategorySystem, fmt.Sprintf("Reset %s (%d) -> %s to default %d\r\n",
-			mobName, mobId, args[1], def))
+			mobName, mobId, rest[0], def))
 	}
 	return true, nil
 }
@@ -195,7 +208,9 @@ func opinionResolveMobIdent(s string) (int, string, bool) {
 		}
 		return id, spec.Character.Name, true
 	}
-	wanted := strings.ToLower(s)
+	// Normalize the input the same way the template name is, so a multi-word
+	// name typed with spaces ("bank clerk") matches the filename form.
+	wanted := util.ConvertForFilename(s)
 	for _, spec := range mobs.AllMobTemplates() {
 		if strings.EqualFold(util.ConvertForFilename(spec.Character.Name), wanted) {
 			return int(spec.MobId), spec.Character.Name, true
