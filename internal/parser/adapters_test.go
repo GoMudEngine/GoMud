@@ -58,3 +58,36 @@ func TestCorpseAdapter(t *testing.T) {
 	assert.Equal(t, KindCorpse, m.Kind)
 	assert.Equal(t, 0, m.CorpseIdx)
 }
+
+func TestFloorItemAdapter(t *testing.T) {
+	s, cleanup := seedParserTest(t)
+	defer cleanup()
+	s.Room.AddItem(items.New(40100), false) // "lake iron nodule"
+
+	m, ok := floorItemAdapter(s, "lake iron nodule")
+	require.True(t, ok)
+	assert.Equal(t, KindFloorItem, m.Kind)
+	assert.Equal(t, 40100, m.Item.ItemId)
+}
+
+func TestInventoryItemAdapter(t *testing.T) {
+	s, cleanup := seedParserTest(t)
+	defer cleanup()
+	s.User.Character.StoreItem(items.New(10001)) // Iron Sword to backpack
+
+	m, ok := inventoryItemAdapter(s, "iron sword")
+	require.True(t, ok)
+	assert.Equal(t, KindInventoryItem, m.Kind)
+	assert.Equal(t, 10001, m.Item.ItemId)
+}
+
+func TestPotionItemAdapter(t *testing.T) {
+	s, cleanup := seedParserTest(t)
+	defer cleanup()
+	s.User.Character.PotionItems = append(s.User.Character.PotionItems, items.New(30001))
+
+	m, ok := potionItemAdapter(s, "healing potion")
+	require.True(t, ok)
+	assert.Equal(t, KindPotionItem, m.Kind)
+	assert.Equal(t, 30001, m.Item.ItemId)
+}

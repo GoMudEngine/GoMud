@@ -45,6 +45,50 @@ func corpseAdapter(s Scope, candidate string) (Match, bool) {
 	return Match{Kind: KindCorpse, Name: s.Room.Corpses[idx].DisplayName(), CorpseIdx: idx}, true
 }
 
+func floorItemAdapter(s Scope, candidate string) (Match, bool) {
+	if s.Room == nil {
+		return Match{}, false
+	}
+	it, ok := s.Room.FindOnFloor(candidate, false)
+	if !ok {
+		return Match{}, false
+	}
+	return Match{Kind: KindFloorItem, Name: it.Name(), Item: it}, true
+}
+
+func inventoryItemAdapter(s Scope, candidate string) (Match, bool) {
+	if s.User == nil {
+		return Match{}, false
+	}
+	it, source, ok := s.User.Character.FindItem(candidate)
+	if !ok {
+		return Match{}, false
+	}
+	return Match{Kind: KindInventoryItem, Name: it.Name(), Item: it, Source: source}, true
+}
+
+func componentItemAdapter(s Scope, candidate string) (Match, bool) {
+	if s.User == nil {
+		return Match{}, false
+	}
+	it, ok := matchInSlice(candidate, s.User.Character.ComponentItems)
+	if !ok {
+		return Match{}, false
+	}
+	return Match{Kind: KindComponentItem, Name: it.Name(), Item: it}, true
+}
+
+func potionItemAdapter(s Scope, candidate string) (Match, bool) {
+	if s.User == nil {
+		return Match{}, false
+	}
+	it, ok := matchInSlice(candidate, s.User.Character.PotionItems)
+	if !ok {
+		return Match{}, false
+	}
+	return Match{Kind: KindPotionItem, Name: it.Name(), Item: it}, true
+}
+
 // matchInSlice resolves candidate against an item slice via items.FindMatchIn,
 // preferring a full match over a partial one.
 func matchInSlice(candidate string, list []items.Item) (items.Item, bool) {
