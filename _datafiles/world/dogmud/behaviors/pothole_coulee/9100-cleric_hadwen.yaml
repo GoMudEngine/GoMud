@@ -85,8 +85,8 @@ tree:
           do: say
           text: >-
             If the name you carried here no longer fits the shape of
-            you, <ansi fg="command">renameself</ansi> lets you choose
-            truer. And <ansi fg="command">help</ansi> answers most
+            you, <ansi fg="command">rename</ansi> lets you choose a
+            truer one. And <ansi fg="command">help</ansi> answers most
             questions with more patience than I have.
           delay: 29.5
         - type: action

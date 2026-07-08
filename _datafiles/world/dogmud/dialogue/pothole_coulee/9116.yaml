@@ -130,8 +130,8 @@ tree:
       text: "Three things worth knowing. First: the forge here is
         a station -- some recipes need to be made at a specific
         station, and the craft command will tell you if you are
-        standing in the wrong place. Second: the component bag on
-        your belt is where crafting materials live. Pick up an
+        standing in the wrong place. Second: the component bag is
+        where crafting materials live. Pick up an
         ingot and it routes there automatically. If you have loose
         materials in your pack already, type sort and it migrates
         them. Third: salvage breaks a worn or unwanted piece of

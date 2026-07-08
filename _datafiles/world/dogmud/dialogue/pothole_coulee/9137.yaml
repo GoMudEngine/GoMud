@@ -174,7 +174,7 @@ tree:
     # ── REPEATABLE HUNT LOOP OFFER ────────────────────────────
     - id: game_loop_offer
       triggers: ["work", "again", "more", "hunt", "job", "quest", "task"]
-      questRequired: "43-end"
+      questRequired: ["43-end"]
       grantsQuest: "56-start"
       questExcluded: ["56-start", "56-hunt", "56-end"]
       text: "The fringe is always running game. Go out and bring one

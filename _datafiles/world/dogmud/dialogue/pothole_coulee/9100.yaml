@@ -146,7 +146,7 @@ tree:
         Some people walk out of the pool and their old name still
         fits. Some find it hangs on them like a borrowed coat. If
         yours no longer fits the shape of you, type
-        <ansi fg="command">renameself</ansi> and choose truer. The
+        <ansi fg="command">rename</ansi> followed by the name you choose. The
         coulee will learn the new one fast enough.
       hints: >-
         You could ask about mutations or the Chrysalis.

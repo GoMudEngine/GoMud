@@ -171,7 +171,7 @@ tree:
     # ── REPEATABLE GROVE TENDING OFFER ────────────────────────
     - id: grove_loop_offer
       triggers: ["work", "again", "more", "tend", "job", "quest", "task"]
-      questRequired: "46-end"
+      questRequired: ["46-end"]
       grantsQuest: "57-start"
       questExcluded: ["57-start", "57-end"]
       text: "The warped things drift back in. That is the nature of a

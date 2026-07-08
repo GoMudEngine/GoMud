@@ -267,7 +267,7 @@ tree:
 
     - id: forge_loop_offer
       triggers: ["work", "again", "more", "forge", "job", "quest", "task"]
-      questRequired: "37-end"
+      questRequired: ["37-end"]
       grantsQuest: "54-start"
       questExcluded: ["54-start", "54-end"]
       text: >-

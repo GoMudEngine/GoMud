@@ -304,7 +304,7 @@ tree:
 
     - id: cull_offer
       triggers: ["work", "again", "more", "job", "quest", "task"]
-      questRequired: "34-end"
+      questRequired: ["34-end"]
       grantsQuest: "53-start"
       questExcluded: ["53-start", "53-firstkill", "53-end"]
       text: >-

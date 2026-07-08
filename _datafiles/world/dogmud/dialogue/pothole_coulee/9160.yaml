@@ -121,7 +121,7 @@ tree:
     # ── REPEATABLE STONES READING OFFER ──────────────────────
     - id: stones_loop_offer
       triggers: ["work", "again", "more", "stones", "shrine", "quest", "task"]
-      questRequired: "49-end"
+      questRequired: ["49-end"]
       grantsQuest: "58-start"
       questExcluded: ["58-start", "58-end"]
       text: "The shrine speaks differently each time. If you have the
