@@ -2,7 +2,75 @@ package items
 
 import (
 	"testing"
+
+	"github.com/GoMudEngine/GoMud/internal/statmods"
 )
+
+func TestAffixValue(t *testing.T) {
+	base := ItemSpec{Value: 100}
+
+	tests := []struct {
+		name    string
+		affixed ItemSpec
+		gpp     float64
+		want    int
+	}{
+		{"no affixes", ItemSpec{Value: 100}, 3.0, 100},
+		{"stat +3 strength", ItemSpec{Value: 100, StatMods: statmods.StatMods{"strength": 3}}, 3.0, 100 + 9*3},
+		{"skill +1 weapon-combat", ItemSpec{Value: 100, StatMods: statmods.StatMods{"weapon-combat": 1}}, 3.0, 100 + 12*3},
+		{"phys mit +5", ItemSpec{Value: 100, PhysicalMitigation: 5}, 3.0, 100 + 25*3},
+		{"damage phys +0.10", ItemSpec{Value: 100, DamageMultiplier: 0.10}, 3.0, 100 + 16*3},
+		{"damage both +0.05", ItemSpec{Value: 100, DamageMultiplier: 0.05, SpellDamageMultiplier: 0.05}, 3.0, 100 + 12*3},
+		{"gpp scales linearly", ItemSpec{Value: 100, StatMods: statmods.StatMods{"strength": 3}}, 2.0, 100 + 9*2},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := AffixValue(tt.affixed, base, tt.gpp)
+			if got != tt.want {
+				t.Errorf("AffixValue(%s) = %d; want %d", tt.name, got, tt.want)
+			}
+		})
+	}
+}
+
+// A base with its own damage/stats must only count the POSITIVE delta above base.
+func TestAffixValue_OnlyCountsDeltaAboveBase(t *testing.T) {
+	base := ItemSpec{Value: 80, DamageMultiplier: 1.0, StatMods: statmods.StatMods{"strength": 2}}
+	affixed := ItemSpec{Value: 80, DamageMultiplier: 1.10, StatMods: statmods.StatMods{"strength": 5}}
+	want := 80 + 25*3 // damage +0.10 = 16pts, strength +3 = 9pts, total 25 * gpp 3
+	if got := AffixValue(affixed, base, 3.0); got != want {
+		t.Errorf("AffixValue delta = %d; want %d", got, want)
+	}
+}
+
+// TestGenerateAffixedItem_StampsValue proves the generated instance's Value is
+// self-consistent with its rolled affixes: Value == AffixValue(spec, base, gpp).
+// RNG-independent — whatever affixes roll, the stamped value must match them.
+func TestGenerateAffixedItem_StampsValue(t *testing.T) {
+	cleanup := SeedItemsForTest(map[int]*ItemSpec{
+		9100: {ItemId: 9100, Name: "Test Torc", Type: Neck, Value: 85},
+	})
+	defer cleanup()
+
+	baseItem := New(9100)
+	base := baseItem.GetSpec() // base template spec (Value 85, no affixes)
+
+	// goldPaid 200, scalar 7 → budget ~98 points, so Value should exceed base.
+	item := GenerateAffixedItem(9100, 200, 7.0, 3.0)
+
+	if item.Spec == nil {
+		t.Fatal("expected a per-instance spec on an affixed item")
+	}
+	stamped := item.Spec.Value
+	recomputed := AffixValue(*item.Spec, base, 3.0)
+	if stamped != recomputed {
+		t.Errorf("stamped Value %d != AffixValue(spec) %d", stamped, recomputed)
+	}
+	if stamped <= base.Value {
+		t.Errorf("stamped Value %d should exceed base %d for a budgeted item", stamped, base.Value)
+	}
+}
 
 // ---------------------------------------------------------------------------
 // CalcLootBudget

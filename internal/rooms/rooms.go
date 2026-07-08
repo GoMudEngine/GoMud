@@ -853,8 +853,9 @@ func (r *Room) Prepare(checkAdjacentRooms bool) {
 				if goldPaid, ok := r.GetTempData("gold_paid").(int); ok && goldPaid > 0 {
 					if len(mob.LootPool) > 0 {
 						scalar := float64(configs.GetBalanceConfig().LootBudgetScalar)
+						goldPerPoint := float64(configs.GetBalanceConfig().GoldPerAffixPoint)
 						for _, baseItemId := range mob.LootPool {
-							affixedItem := items.GenerateAffixedItem(baseItemId, goldPaid, scalar)
+							affixedItem := items.GenerateAffixedItem(baseItemId, goldPaid, scalar, goldPerPoint)
 							if affixedItem.ItemId > 0 {
 								if _, worn, reason := mob.Character.Wear(affixedItem); !worn {
 									mudlog.Warn("rooms.SpawnMob()",

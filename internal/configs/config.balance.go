@@ -506,6 +506,7 @@ type Balance struct {
 
 	// ── LOOT ──────────────────────────────────────────────────────────────────
 	LootBudgetScalar ConfigFloat `yaml:"LootBudgetScalar"` // Multiplier for sqrt(goldPaid) loot budget (default 7.0)
+	GoldPerAffixPoint ConfigFloat `yaml:"GoldPerAffixPoint"` // Gold value per affix cost-point on instance/affixed loot (default 3.0)
 
 	// ── INSTANCES ────────────────────────────────────────────────────────────
 	InstanceStatPoolCap ConfigInt `yaml:"InstanceStatPoolCap"` // Max stat pool per mob in instances (default 50000, 0=uncapped)
