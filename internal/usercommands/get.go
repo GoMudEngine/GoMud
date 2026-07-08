@@ -93,6 +93,33 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			}
 		}
 
+		// get all <corpse> — sweep every item + gold from a corpse's loot.
+		// Corpses aren't room Containers, so FindContainerByName above misses
+		// them; resolve via FindCorpseIndex and recurse with the explicit
+		// "from" form so each item flows through the ownership/loot-mode gates.
+		if len(args) >= 2 {
+			if cIdx := room.FindCorpseIndex(args[len(args)-1]); cIdx >= 0 {
+				corpse := &room.Corpses[cIdx]
+				if !canLootCorpse(user, corpse) {
+					user.SendText(messaging.CategorySystem, `This isn't your kill.`)
+					return true, nil
+				}
+				corpseName := corpse.DisplayName()
+				hadGold := corpse.Loot.Gold > 0
+				iCopies := append([]items.Item{}, corpse.Loot.Items...)
+				if hadGold {
+					Get(fmt.Sprintf("gold from %s", corpseName), user, room, flags)
+				}
+				for _, item := range iCopies {
+					Get(fmt.Sprintf("%s from %s", item.Name(), corpseName), user, room, flags)
+				}
+				if !hadGold && len(iCopies) == 0 {
+					user.SendText(messaging.CategorySystem, fmt.Sprintf(`There's nothing left on the <ansi fg="mob-corpse">%s</ansi>.`, corpseName))
+				}
+				return true, nil
+			}
+		}
+
 		// get all — grab everything from the floor
 		if room.Gold > 0 {
 			Get(`gold`, user, room, flags)
@@ -289,6 +316,11 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		// after it as the corpse search name. Only attempt this if nothing
 		// else (room container, pet) already claimed the trailing target.
 		//
+		// If there's no "from", fall back to treating the trailing word as
+		// the corpse name — the same phrasing players use for bags and room
+		// containers ("get core corpse"). "corpse" alone substring-matches
+		// the corpse's display name via FindCorpseIndex.
+		//
 		if containerName == `` && petUserId == 0 {
 			fromIdx := -1
 			for i, a := range args {
@@ -303,6 +335,12 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 					corpseIdx = idx
 					getFromStash = false
 					rest = strings.Join(args[0:fromIdx], " ")
+				}
+			} else if fromIdx < 0 {
+				if idx := room.FindCorpseIndex(args[len(args)-1]); idx >= 0 {
+					corpseIdx = idx
+					getFromStash = false
+					rest = strings.Join(args[0:len(args)-1], " ")
 				}
 			}
 		}
