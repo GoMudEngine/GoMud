@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
@@ -41,54 +40,22 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		}
 	}
 
-	if strings.EqualFold(user.Character.Name, user.Username) || user.Character.Name == user.TempName() || len(user.Character.Name) == 0 || strings.ToLower(user.Character.Name) == `nameless` {
-
-		question := cmdPrompt.Ask(`What will your character be known as (name)?`, []string{})
-		if !question.Done {
-			return true, nil
-		}
-
-		// Signup sets Character.Name = Username as a placeholder; this prompt
-		// is how the player replaces it. Prevent them from just re-entering
-		// their account Username (which would leave the placeholder unchanged).
-		if strings.EqualFold(question.Response, user.Username) {
-			user.SendText(messaging.CategorySystem, `Your username cannot match your character name!`)
-			question.RejectResponse()
-			return true, nil
-		}
-
-		for _, c := range characters.LoadAlts(user.UserId) {
-			if strings.EqualFold(question.Response, c.Name) {
-				user.SendText(messaging.CategorySystem, `Your already have a character named that!`)
-				question.RejectResponse()
-				return true, nil
-			}
-		}
-
-		if err := users.ValidateActorName(question.Response, users.ValidateActorOpts{}); err != nil {
-			user.SendText(messaging.CategorySystem, `That name won't work: ` + err.Error())
-			question.RejectResponse()
-			return true, nil
-		}
-
-		usernameSelected := question.Response
-
-		question = cmdPrompt.Ask(`Choose the name <ansi fg="username">`+usernameSelected+`</ansi>?`, []string{`yes`, `no`}, `no`)
-		if !question.Done {
-			return true, nil
-		}
-
-		if question.Response == `no` {
-			user.ClearPrompt()
-			return Start(rest, user, room, flags)
-		}
-
-		if err := user.SetCharacterName(usernameSelected); err != nil {
-			user.SendText(messaging.CategorySystem, err.Error())
-			question.RejectResponse()
-			return true, nil
-		}
-
+	// DOGMud has no separate account/character identity: the character name IS
+	// the account username, set at signup (login.go -> SetCharacterName(username)).
+	// We deliberately DROP upstream's "choose a character name different from your
+	// username" prompt — asking a player to name themselves a second time (and
+	// refusing the name they just chose) is the regression that surfaced once the
+	// onboarding overhaul routed new players through the void/`start` flow.
+	//
+	// A normally-created character arrives here with Name == Username, which is
+	// correct and needs no prompt. The only case we defend against is a character
+	// that somehow reached `start` still carrying the TempName placeholder (legacy
+	// save or an odd signup path): default its name to the username rather than
+	// prompting. Never ask twice.
+	if user.Character.Name == user.TempName() || len(user.Character.Name) == 0 || strings.ToLower(user.Character.Name) == `nameless` {
+		// SetCharacterName only fails validation, and the username was already
+		// validated at signup, so this cannot realistically error here.
+		_ = user.SetCharacterName(user.Username)
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You will be known as <ansi fg="yellow-bold">%s</ansi>!%s`, user.Character.Name, term.CRLFStr))
 	}
 
