@@ -202,6 +202,54 @@ func GenerateAffixedItem(baseItemId int, goldPaid int, scalar float64) Item {
 	return item
 }
 
+// AffixValue computes the gold value of an affixed item instance: the base
+// template value plus a premium for each affix cost-point of power added above
+// the base, priced at goldPerPoint gold per point. affixedSpec is the item's
+// per-instance spec; baseSpec is the unmodified template. Only positive deltas
+// count (affixes never subtract). See the design spec's Calibration section.
+func AffixValue(affixedSpec, baseSpec ItemSpec, goldPerPoint float64) int {
+	pts := affixPoints(affixedSpec, baseSpec)
+	return baseSpec.Value + int(math.Round(float64(pts)*goldPerPoint))
+}
+
+// affixPoints reconstructs the affix cost-point budget spent on affixedSpec vs
+// baseSpec, using the same per-affix cost weights as allBonusTypes:
+// damage_mult_phys 8 (+0.05/rank), the spell half of damage_mult_both 4,
+// mitigations 5, stats 3, skills 12.
+func affixPoints(affixedSpec, baseSpec ItemSpec) int {
+	pts := 0
+
+	if d := affixedSpec.DamageMultiplier - baseSpec.DamageMultiplier; d > 0 {
+		pts += int(math.Round(d/0.05)) * 8
+	}
+	if d := affixedSpec.SpellDamageMultiplier - baseSpec.SpellDamageMultiplier; d > 0 {
+		pts += int(math.Round(d/0.05)) * 4
+	}
+	if d := affixedSpec.PhysicalMitigation - baseSpec.PhysicalMitigation; d > 0 {
+		pts += d * 5
+	}
+	if d := affixedSpec.MagicalMitigation - baseSpec.MagicalMitigation; d > 0 {
+		pts += d * 5
+	}
+	if d := affixedSpec.ConvictionMitigation - baseSpec.ConvictionMitigation; d > 0 {
+		pts += d * 5
+	}
+	for k, v := range affixedSpec.StatMods {
+		base := 0
+		if baseSpec.StatMods != nil {
+			base = baseSpec.StatMods[k]
+		}
+		if d := v - base; d > 0 {
+			if isSkillMod(k) {
+				pts += d * 12
+			} else {
+				pts += d * 3
+			}
+		}
+	}
+	return pts
+}
+
 // applyBonus mutates spec by applying one rank of the named bonus.
 func applyBonus(spec *ItemSpec, bonusName string) {
 	switch bonusName {
