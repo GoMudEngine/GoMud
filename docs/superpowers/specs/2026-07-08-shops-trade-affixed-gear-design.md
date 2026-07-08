@@ -75,8 +75,9 @@ Notes:
   which affix produced it.
 - Skill vs stat is disambiguated by `isSkillMod(name)` (already in `affixgen.go`).
 - Only positive deltas count (affixes never subtract).
-- Config: one new `Balance.GoldPerAffixPoint` (float; tuned so a mid-budget item
-  sells sensibly relative to base template values).
+- Config: one new `Balance.GoldPerAffixPoint` (float). **Default 3.0**, chosen
+  from the modeling below (see Calibration): GPP=2 was the conservative baseline;
+  GPP=3 lands premium oasis gear ~50% higher, which matches the desired feel.
 
 `GenerateAffixedItem` stamps `specCopy.Value = AffixValue(specCopy, baseSpec)`
 after applying bonuses, so the per-instance `Value` is authoritative and every
@@ -94,6 +95,40 @@ sell path treats an item as affixed-sellable when this marker is set; all other
 `EnchantType`. The plan will pick the least-surprising option and lock it with a
 test.)
 
+### Pricing model for unique affixed items (fixed spread, NOT scarcity)
+
+Modeling surfaced a hard constraint: the dynamic `ScarcityMultiplier`
+(`shops/pricing.go`) can't price unique gear — a qty-1 affixed item always reads
+"scarce" and the multiplier runs up toward the 5× ceiling. So affixed trades use
+a **fixed spread off `AffixValue`**, bypassing the scarcity curve:
+
+- **Player sell → shop:** `AffixValue × ShopBuyRatio` (0.5). This deliberately
+  **overrides the legacy `Mob.GetSellPrice` 25% cap** for affixed items — they're
+  premium instance rewards, priced on value, not the commodity 25% rule. (Stage 2
+  routes affixed sells through this instead of the capped path, which also
+  returns 0 for `IsSpecial`.)
+- **Shop relist → player:** `AffixValue × 1.0` (full value). Shop margin is the
+  half it underpaid on purchase.
+
+### Calibration (from modeling, 2026-07-08)
+
+Grounded in real values (`LootBudgetScalar` = 7.0, so `budget = floor(7×√buyIn)`;
+Tidal Torc base 85, Earthshaker Warhammer base 80). Buy-in = gold paid to open
+the instance.
+
+| Item | Buy-in | budget | AffixValue @GPP=3 | Player sells (0.5×) | Relist (1.0×) |
+|------|-------:|------:|------:|------:|------:|
+| Tidal Torc | 200 | 98 | 379 | ~190 | ~379 |
+| Tidal Torc | 300 | 121 | 448 | ~224 | ~448 |
+| Earthshaker | 200 | 98 | 374 | ~187 | ~374 |
+| Earthshaker | 300 | 121 | 443 | ~222 | ~443 |
+
+Verdict (user, 2026-07-08): in the right ballpark, not orders of magnitude off.
+GPP=3 (~50% above the GPP=2 baseline) is the chosen default. **Separately, the
+base template values of premium items are too low** (an oasis torc at 85g / a
+warhammer at 80g) — the **Stage 4 catalog audit should raise these base values**;
+the affix model rides on top of whatever base we settle on.
+
 ### Staging
 
 Each stage is independently shippable, leaves the game working, and gets its own
@@ -103,8 +138,8 @@ implementation plan. Stage 1 precedes all; 2 precedes 3; 4 is a separate project
 |-------|-------|-------|
 | **1 — Value primitive** | `items.AffixValue` + `Balance.GoldPerAffixPoint`; stamp `Value` in `GenerateAffixedItem`. Pure + fully unit-tested. No sell/shop behavior change (items still `IsSpecial`-blocked). | Correct intrinsic value on affixed items; foundation for all pricing. |
 | **2 — Sellability (melt)** | Explicit affixed marker; narrow sell-path allowance so affixed items sell for `AffixValue`-scaled gold. Item consumed on sale (no resale yet). Enchanted/other custom-spec items stay blocked. | Players can finally sell instance loot for fair gold. |
-| **3 — Shop resale** | Extend `characters.ShopItem` to carry an optional per-instance `items.Item`; thread through `GetInstock`/listing/buy/pricing + shop YAML persistence. Sell → adds affixed item to stock at scaled buy price; buy → hands back the exact affixed item at price × markup (reuse `CalcBuyPrice`/`CalcSellPrice`). Clutter control: cap affixed entries per shop + make them temporary/decaying to respect the 20-variety limit. | Full "shops trade affixed gear" loop, surviving restart. |
-| **4 — Catalog value audit** (separate project) | Apply the `GoldPerAffixPoint` rubric to audit/retune base `Value`s across the item catalog; spot mispriced items. | Consistent economy-wide item values. |
+| **3 — Shop resale** | Extend `characters.ShopItem` to carry an optional per-instance `items.Item`; thread through `GetInstock`/listing/buy/pricing + shop YAML persistence. Sell → adds affixed item to stock at scaled buy price; buy → hands back the exact affixed item at `AffixValue × 1.0`. Uses the **fixed spread** (sell 0.5×, relist 1.0×), NOT `ScarcityMultiplier`. Clutter control: cap affixed entries per shop + make them temporary/decaying to respect the 20-variety limit. | Full "shops trade affixed gear" loop, surviving restart. |
+| **4 — Catalog value audit** (separate project) | Apply the `GoldPerAffixPoint` rubric to audit/retune base `Value`s across the catalog — **starting with premium/instance items whose bases are too low** (oasis torc 85g, warhammer 80g). Spot mispriced items. | Consistent economy-wide item values. |
 
 ### Data flow
 
@@ -113,9 +148,9 @@ implementation plan. Stage 1 precedes all; 2 precedes 3; 4 is a separate project
 - **Sell (Stage 2):** sell command → affixed marker allows it → price from
   `GetSellPrice` (reads scaled `spec.Value`) → player credited, item removed.
 - **Sell→stock (Stage 3):** the sold affixed `items.Item` is stored on a
-  `ShopItem` (per-instance) at the scaled buy price.
+  `ShopItem` (per-instance) at the fixed-spread buy price (`AffixValue × 0.5`).
 - **Buy (Stage 3):** listing shows affixed stock entries; purchase clones the
-  stored `items.Item` to the buyer at price × markup; entry decrements.
+  stored `items.Item` to the buyer at `AffixValue × 1.0`; entry decrements.
 - **Persistence (Stage 3):** shop YAML serializes per-instance stock entries so
   affixed stock survives restart.
 
