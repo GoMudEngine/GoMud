@@ -111,6 +111,12 @@ func ExecuteSkillMove(p SkillMoveParams) SkillMoveResult {
 			if fsmErr != nil {
 				mudlog.Warn("ExecuteSkillMove: knockdown transition failed",
 					"to_supine", p.KnockdownToSupine, "err", fsmErr)
+				// The position did not actually change (e.g. the target was
+				// already grappled/prone, not Standing), so DON'T report a
+				// knockdown — otherwise every caller narrates a takedown that
+				// never happened (the grapple move-collision bug). The move
+				// still connected and dealt damage; it just didn't knock down.
+				result.KnockedDown = false
 			}
 		}
 	}
