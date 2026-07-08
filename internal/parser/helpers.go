@@ -15,37 +15,47 @@ func splitOnConnective(input, connective string) (left, right string, found bool
 	return input, "", false
 }
 
+// SplitTrailingContainer detects whether input ends in a container / corpse /
+// pet and, if so, returns the leading item span plus the container Match. It
+// does NOT resolve the item inside — callers (e.g. get.go) apply their own gates
+// and item lookup. Handles both "X from Y" and "X Y" forms.
+//
+// The no-"from" form tries each "<item> <container>" split from the longest item
+// / shortest container span down and returns the first split whose trailing span
+// resolves to a container/corpse/pet.
+func SplitTrailingContainer(s Scope, input string) (itemPart string, cm Match, ok bool) {
+	// Explicit "from <container>".
+	if left, right, found := splitOnConnective(input, "from"); found {
+		if m, matched := Resolve(s, right, KindRoomContainer, KindCorpse, KindPet); matched {
+			return left, m, true
+		}
+		return "", Match{}, false
+	}
+	// No "from".
+	tokens := strings.Fields(input)
+	for start := 1; start < len(tokens); start++ {
+		left := strings.Join(tokens[:start], " ")
+		right := strings.Join(tokens[start:], " ")
+		if m, matched := Resolve(s, right, KindRoomContainer, KindCorpse, KindPet); matched {
+			return left, m, true
+		}
+	}
+	return "", Match{}, false
+}
+
 // ResolveItem is the shared get/drop/look-item ladder. It resolves an item that
 // may live in a trailing container / corpse ("get X from Y" or "get X Y"), or on
 // the floor / in inventory. When the item comes from a container-like source,
 // the returned Match carries that source (Kind + ContainerName / CorpseIdx) plus
 // the item, so the command can still apply its own gates.
 func ResolveItem(s Scope, input string) (Match, bool) {
-	// Explicit "from <container>".
-	if itemPart, containerPart, ok := splitOnConnective(input, "from"); ok {
-		if cm, ok2 := Resolve(s, containerPart, KindRoomContainer, KindCorpse); ok2 {
-			return lootFromContainer(s, cm, itemPart)
+	if itemPart, cm, ok := SplitTrailingContainer(s, input); ok {
+		if m, ok2 := lootFromContainer(s, cm, itemPart); ok2 {
+			return m, true
 		}
-		return Match{}, false
+		// A trailing container matched but held no such item — fall through so a
+		// bare floor/inventory item of that literal name can still resolve.
 	}
-
-	// No "from": try each "<item> <container>" split, from the longest item /
-	// shortest container span down. Accept the first split where the container
-	// resolves AND the item resolves inside it — validating the item avoids
-	// mis-stripping when the typed word differs from the container's canonical
-	// name (e.g. "sword corpse" vs. canonical "Skeleton corpse").
-	tokens := strings.Fields(input)
-	for start := 1; start < len(tokens); start++ {
-		itemPart := strings.Join(tokens[:start], " ")
-		containerPart := strings.Join(tokens[start:], " ")
-		if cm, ok := Resolve(s, containerPart, KindRoomContainer, KindCorpse); ok {
-			if m, ok2 := lootFromContainer(s, cm, itemPart); ok2 {
-				return m, true
-			}
-		}
-	}
-
-	// No container: resolve the item from floor / inventory.
 	return Resolve(s, input, KindFloorItem, KindInventoryItem)
 }
 

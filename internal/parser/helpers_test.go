@@ -55,3 +55,41 @@ func TestResolveActor_MultiWordMob(t *testing.T) {
 	require.True(t, ok)
 	assert.Equal(t, 100, m.MobInstanceId)
 }
+
+func TestSplitTrailingContainer_Corpse(t *testing.T) {
+	s, cleanup := seedParserTest(t)
+	defer cleanup()
+	s.Room.Corpses = []rooms.Corpse{{
+		MobId:     1,
+		Character: characters.Character{Name: "Skeleton"},
+		Loot:      rooms.Container{Items: []items.Item{items.New(10001)}},
+	}}
+
+	// "sword corpse" (no "from") splits into item="sword", corpse container.
+	itemPart, cm, ok := SplitTrailingContainer(s, "sword corpse")
+	require.True(t, ok)
+	assert.Equal(t, "sword", itemPart)
+	assert.Equal(t, KindCorpse, cm.Kind)
+	assert.Equal(t, 0, cm.CorpseIdx)
+}
+
+func TestSplitTrailingContainer_ExplicitFrom(t *testing.T) {
+	s, cleanup := seedParserTest(t)
+	defer cleanup()
+	s.Room.Containers = map[string]rooms.Container{
+		"wooden chest": {Items: []items.Item{items.New(10001)}},
+	}
+	itemPart, cm, ok := SplitTrailingContainer(s, "iron sword from wooden chest")
+	require.True(t, ok)
+	assert.Equal(t, "iron sword", itemPart)
+	assert.Equal(t, KindRoomContainer, cm.Kind)
+	assert.Equal(t, "wooden chest", cm.ContainerName)
+}
+
+func TestSplitTrailingContainer_NoContainer(t *testing.T) {
+	s, cleanup := seedParserTest(t)
+	defer cleanup()
+	// Nothing trailing resolves to a container/corpse/pet.
+	_, _, ok := SplitTrailingContainer(s, "lake iron nodule")
+	assert.False(t, ok)
+}
