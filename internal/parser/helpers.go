@@ -84,3 +84,20 @@ func lootFromContainer(s Scope, cm Match, itemName string) (Match, bool) {
 func ResolveActor(s Scope, input string, kinds ...Kind) (Match, bool) {
 	return Resolve(s, input, kinds...)
 }
+
+// SplitLeadingMatch finds the longest leading token span of input for which
+// matches() returns true, and returns that span (head) plus the remaining tail.
+// It is scope-agnostic — the caller injects the validator — so it serves
+// global-scoped commands (e.g. admin "<mob-template-name> <player> [value]")
+// that the room-scoped adapters don't fit. ok=false when no leading span
+// matches.
+func SplitLeadingMatch(input string, matches func(candidate string) bool) (head, tail string, ok bool) {
+	tokens := strings.Fields(input)
+	for headLen := len(tokens); headLen >= 1; headLen-- {
+		candidate := strings.Join(tokens[:headLen], " ")
+		if matches(candidate) {
+			return candidate, strings.Join(tokens[headLen:], " "), true
+		}
+	}
+	return "", "", false
+}
