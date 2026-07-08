@@ -275,6 +275,9 @@ func (b *Balance) validateMisc() {
 	if b.LootBudgetScalar <= 0 {
 		b.LootBudgetScalar = 7.0
 	}
+	if b.GoldPerAffixPoint <= 0 {
+		b.GoldPerAffixPoint = 3.0
+	}
 
 	// ── INSTANCES ────────────────────────────────────────────────────────────
 	if b.InstanceStatPoolCap < 1 {
