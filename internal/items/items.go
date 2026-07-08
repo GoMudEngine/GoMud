@@ -50,6 +50,7 @@ type Item struct {
 	BottleMultiplier float64        `yaml:"bottle_multiplier,omitempty"` // Aging speed from the bottle used during crafting
 	MakerName        string         `yaml:"maker_name,omitempty"`        // Cosmetic crafter attribution (skill 30+)
 	Spec          *ItemSpec      `yaml:"overrides,omitempty"`
+	Affixed       bool           `yaml:"affixed,omitempty"`      // Instance-loot affix-scaled item (sellable + value-scaled; distinct from enchanted)
 	Uncursed      bool           `yaml:"uncursed,omitempty"`     // Is this item uncursed?
 	Enchantments  uint8          `yaml:"enchantments,omitempty"` // Is this item enchanted?
 	Adjectives    []string       `yaml:"adjectives,omitempty"`   // Decorative text for the name of the item (e.g. "exploding")
