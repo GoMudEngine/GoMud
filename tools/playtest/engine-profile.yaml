@@ -11,6 +11,9 @@ commands:
   examine: look <target>
   get: get <item>
   drop: drop <item>
+  loot: loot <corpse>                    # take everything you're owed from a corpse
+  loot_item: get <item> <corpse>         # e.g. `get sample corpse` (also `get <item> from <corpse>`)
+  loot_all: get all <corpse>             # sweep every item + gold from a corpse
   attack: attack <target>
   flee: flee
   say: say <message>
@@ -58,6 +61,15 @@ mechanics:
     There are NO levels or XP. The six stats (Strength, Dexterity, Perception,
     Vitality, Willpower, Charisma, centered at 100) and ten skills improve by
     USE, probabilistically. Don't look for an XP bar or level-ups.
+  looting: >-
+    A slain mob leaves a CORPSE that holds its loot (items + gold) as a
+    container — the loot is NOT dropped on the floor. `look corpse` shows what's
+    inside. Take it several ways, and EXERCISE ALL OF THEM when you kill
+    something: `loot corpse` (take everything you're owed), `get all corpse`
+    (sweep every item + gold), `get <item> corpse` and `get <item> from corpse`
+    (take one named item), `get gold corpse`. These mirror how bags and room
+    containers work. FLAG as a bug any form that fails to take loot that
+    `look corpse` shows is present, or that silently does nothing.
 
 notes:
   - The AI port already delivers ANSI-stripped output — do NOT file display

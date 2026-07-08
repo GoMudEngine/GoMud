@@ -1,0 +1,59 @@
+# Corpse-loot smoke: exercise EVERY way a player takes loot from a corpse.
+#
+# Why this exists: the 2026-07-07 corpse-loot redesign made mob loot live
+# inside a corpse container instead of on the floor. The redesign was verified
+# only with the `get <item> FROM <corpse>` syntax and the `loot` command, so
+# two natural forms players actually type — `get <item> <corpse>` (no "from")
+# and `get all <corpse>` — shipped broken (fixed 2026-07-08, commit on master).
+# This goals file makes a tester drive the forms real players reach for, not
+# just the implementer's intended syntax.
+
+session:
+  name: corpse-looting
+  max_rounds: 200
+  notes: >
+    Kill a weak, lootable creature and take its loot every supported way.
+    A reliable target: leave any city by a gate into the wilds/farmland and
+    find a Crop Pest (Thornwall Outskirts "Pest Fields", west of Thornwall) or
+    any low-threat critter. Fight unarmed if you have no weapon. Report the
+    EXACT server line for each loot attempt.
+
+objectives:
+  - id: kill-and-inspect
+    desc: >
+      Find and kill a weak mob to leave a corpse. Then `look corpse` and record
+      exactly what the "Inside:" line lists (items and/or gold). If nothing is
+      inside, kill another mob until you have a corpse with visible loot — you
+      need loot present to tell "took it" from "nothing there".
+    verify: "look corpse shows an Inside: line with at least one item or gold"
+
+  - id: get-item-no-from
+    desc: >
+      With a loot-bearing corpse present, take ONE named item using the no-"from"
+      form: `get <item> corpse` (e.g. `get sample corpse`). EXPECTED: "You take
+      the <item> from the <mob> corpse." FLAG A BUG if it says "You don't see a
+      ... around." or otherwise fails to take an item that `look corpse` showed.
+    verify: "get <item> corpse transfers the item (confirm via inventory)"
+
+  - id: get-all-corpse
+    desc: >
+      On a FRESH loot-bearing corpse (kill another mob if needed), run
+      `get all corpse`. EXPECTED: it sweeps every item AND any gold into your
+      inventory, one "You take ..." line per item. FLAG A BUG if it does nothing
+      silently, only takes gold, or leaves items behind.
+    verify: "get all corpse empties the corpse (look corpse afterward shows nothing left)"
+
+  - id: loot-and-from-forms
+    desc: >
+      On fresh corpses, also confirm the sibling forms still work: `loot corpse`
+      (take everything owed), `get <item> from corpse` (explicit "from"), and
+      `get gold corpse` / `get gold from corpse`. Report each line. These are the
+      forms that already worked pre-fix — they must not have regressed.
+    verify: "loot corpse and the explicit-from forms both transfer loot"
+
+  - id: empty-corpse-message
+    desc: >
+      After emptying a corpse, run `get all corpse` and `loot corpse` on it once
+      more. EXPECTED: a clear "nothing left / nothing to loot" message — NOT a
+      silent no-op and NOT a crash.
+    verify: "looting an emptied corpse gives a clear nothing-there message"
