@@ -44,6 +44,34 @@ func TestAffixValue_OnlyCountsDeltaAboveBase(t *testing.T) {
 	}
 }
 
+// TestGenerateAffixedItem_StampsValue proves the generated instance's Value is
+// self-consistent with its rolled affixes: Value == AffixValue(spec, base, gpp).
+// RNG-independent — whatever affixes roll, the stamped value must match them.
+func TestGenerateAffixedItem_StampsValue(t *testing.T) {
+	cleanup := SeedItemsForTest(map[int]*ItemSpec{
+		9100: {ItemId: 9100, Name: "Test Torc", Type: Neck, Value: 85},
+	})
+	defer cleanup()
+
+	baseItem := New(9100)
+	base := baseItem.GetSpec() // base template spec (Value 85, no affixes)
+
+	// goldPaid 200, scalar 7 → budget ~98 points, so Value should exceed base.
+	item := GenerateAffixedItem(9100, 200, 7.0, 3.0)
+
+	if item.Spec == nil {
+		t.Fatal("expected a per-instance spec on an affixed item")
+	}
+	stamped := item.Spec.Value
+	recomputed := AffixValue(*item.Spec, base, 3.0)
+	if stamped != recomputed {
+		t.Errorf("stamped Value %d != AffixValue(spec) %d", stamped, recomputed)
+	}
+	if stamped <= base.Value {
+		t.Errorf("stamped Value %d should exceed base %d for a budgeted item", stamped, base.Value)
+	}
+}
+
 // ---------------------------------------------------------------------------
 // CalcLootBudget
 // ---------------------------------------------------------------------------

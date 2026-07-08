@@ -84,8 +84,9 @@ func spawnHunter(targetUserId, bountyId, bountyGold int, issuerFaction string) i
 	// Equip affix-scaled gear — mirrors the instance-loot path in rooms.go:786.
 	gg := gearGold(statpool, int(bal.BountyHunterGearGoldDivisor))
 	scalar := float64(bal.LootBudgetScalar)
+	goldPerPoint := float64(bal.GoldPerAffixPoint)
 	for _, baseId := range hunter.LootPool {
-		affixed := items.GenerateAffixedItem(baseId, gg, scalar)
+		affixed := items.GenerateAffixedItem(baseId, gg, scalar, goldPerPoint)
 		if affixed.ItemId > 0 {
 			if _, worn, reason := hunter.Character.Wear(affixed); !worn {
 				mudlog.Warn("bountyhunter.spawnHunter()",

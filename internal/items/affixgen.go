@@ -90,7 +90,7 @@ func GetEligibleBonuses(isWeapon bool, isCasterWeapon bool) []BonusType {
 // dice.RollStat so the actual amount spent may be slightly above or below.
 // Bonuses are drawn randomly from the eligible pool until the budget is
 // exhausted.  Each draw of the same bonus type stacks by +1 on the same field.
-func GenerateAffixedItem(baseItemId int, goldPaid int, scalar float64) Item {
+func GenerateAffixedItem(baseItemId int, goldPaid int, scalar float64, goldPerPoint float64) Item {
 	item := New(baseItemId)
 
 	// Fetch and copy the base spec so that our Spec field is a full snapshot —
@@ -192,6 +192,9 @@ func GenerateAffixedItem(baseItemId int, goldPaid int, scalar float64) Item {
 		// Snowball: increase weight of chosen bonus for next iteration.
 		weights[chosen.Name]++
 	}
+
+	// Value scales with the affix power added (Stage 1: shops-trade-affixed-gear).
+	specCopy.Value = AffixValue(specCopy, baseSpec, goldPerPoint)
 
 	item.Spec = &specCopy
 
