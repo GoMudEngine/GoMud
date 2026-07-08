@@ -1,0 +1,34 @@
+# Newbie-experience evaluation run — Pothole Coulee onboarding arc.
+#
+# For the EXPERIENCED evaluation personas (new-to-dogmud vet, dogmud vet,
+# adversarial critic). The total-noob run uses newbie-naive.yaml instead
+# (deliberately un-coached). These personas already know how to play, so
+# naming the intended arc is fair — the point is to EVALUATE it through
+# each persona's lens, not to test whether they can find their way.
+#
+# The intended first-hour arc (do not skip ahead of a fresh character's
+# ability):
+#   1. Create a fresh character and enter the world.
+#   2. The Awakening — Cleric Hadwen, at the reflecting pool north of the hub.
+#   3. Find Your Footing — Crier Toke: learn the hub (school, shop, inn).
+#   4. First Blood — Drillmaster Vorn: combat training on the dummy.
+#   5. Hold the Wash — Caravan Guard Garve: your first real kills, then LOOT
+#      the corpses (this is a recent redesign — corpse loot must be learned).
+#   6. Step into ONE discipline spoke (smithing / mining / alchemy / marsh /
+#      hunting / casting / rhetoric / ranged) far enough to judge how it
+#      teaches its craft.
+goals:
+  - >-
+    Create a brand-new character and play the Pothole Coulee onboarding arc
+    in order: the Awakening, hub orientation, combat training, the wash
+    (your first real fights), and at least one discipline spoke. Play it the
+    way your persona would, and evaluate it through your persona's lens the
+    whole way — file findings continuously, not just at the end.
+  - >-
+    Confirm the corpse-loot teaching works: after your first real kill in the
+    wash, verify you can figure out how to take the loot from the game's own
+    text (loot / get all corpse), and grade how clearly it was taught.
+  - >-
+    Reach a point where you can render an honest verdict on whether this is a
+    newbie experience the developers should be proud of. If you get stuck or
+    bored before then, that is itself the finding — say so and stop.
