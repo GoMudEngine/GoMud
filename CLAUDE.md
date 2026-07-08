@@ -414,6 +414,38 @@ Before creating any new data file, verify the expected filename from the loader'
 - Items/mobs follow the same `ConvertForFilename` pattern
 - Mismatch between filesystem path and `Filepath()` output causes a startup panic
 
+## Command Parsing & Multi-Word Input (`internal/parser`)
+
+`internal/parser` is the shared target-resolution seam for **composition-heavy**
+commands — the ones that must split input into roles (item vs. container, mob
+vs. player). Use it instead of hand-rolling a per-command `strings.Fields`
+ladder (that pattern is what hid the 2026-07-08 corpse-loot bug):
+
+- **`SplitTrailingContainer(scope, input)`** — splits `<item> [from] <container|
+  corpse|pet>`; `get.go` uses it. Room-scoped (`Scope{User, Room}`).
+- **`SplitLeadingMatch(input, matches)`** — greedy longest-leading-span with a
+  caller-injected validator; **scope-agnostic**, for globally-resolved slots like
+  admin `<mob-template-name> <player>` (`knowledge`/`opinion` use it).
+- **`Resolve` / `ResolveItem` / `ResolveActor`** — greedy multi-word resolution
+  over requested `Kind`s. Gates (ownership, hidden-container discovery, exploding
+  guards) stay in the **command**, not the parser — the parser only *finds*.
+
+**Most single-token multi-word input already resolves** via the existing fuzzy
+matchers (`room.FindByName`, `items.FindMatchIn`, `room.FindNoun`), which match
+the whole phrase. So `attack bank clerk`, `get lake iron nodule`, and
+`look hare paths` already work — do NOT add parser plumbing for cases that
+already resolve. Reach for the parser only when a command must *split* input
+into multiple slots.
+
+**Authoring convention (un-hyphenated):** because the matchers handle multi-word
+input, author multi-word room nouns, item names, and `component_tag`s with
+**spaces**, not forced hyphens (`lake iron nodule`, not `lake-iron-nodule`). Use
+a hyphen only where the term genuinely reads hyphenated to the player. Note the
+mob-ident gotcha fixed in Stage 2: name lookups must `ConvertForFilename()` the
+*input* too (so a space-form query matches the underscore filename form) — see
+`knowledgeResolveMobIdent`/`opinionResolveMobIdent`. Full design +
+divergences: `docs/superpowers/specs/2026-07-08-unified-parser-seam-design.md`.
+
 ## MUD Line Width
 All player-visible text (descriptions, help files, templates, ANSI-formatted tables) must wrap at **80 characters per line**. MUD clients render in fixed-width columns — long lines get cut off or wrap uglily. When writing multi-line `description:` fields, room descriptions, or help templates, hard-wrap prose at ~78–80 chars.
 
