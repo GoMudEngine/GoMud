@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/parser"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -267,80 +268,55 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			return true, nil
 		}
 
-		containerName = room.FindContainerByName(args[len(args)-1])
-		if containerName != `` {
-			if c, exists := room.Containers[containerName]; exists && c.Hidden {
-				if user == nil || !user.Character.HasDiscovery(room.RoomId, containerName) {
-					containerName = ``
-				}
-			}
-		}
-		if containerName != `` {
-			getFromStash = false
-			if args[len(args)-2] == "from" {
-				rest = strings.Join(args[0:len(args)-2], " ")
-			} else {
-				rest = strings.Join(args[0:len(args)-1], " ")
-			}
-		}
-
-		//
-		// Look for any pets in the room
-		//
-		petUserId = room.FindByPetName(args[len(args)-1])
-		if petUserId == 0 && args[len(args)-1] == `pet` && user.Character.Pet.Exists() {
-			petUserId = user.UserId
-		}
-		if petUserId > 0 {
-
-			if petUserId != user.UserId {
-				user.SendText(messaging.CategorySystem, `You can't do that!`)
-				return true, nil
-			}
-
-			getFromStash = false
-			if petUser := users.GetByUserId(petUserId); petUser != nil {
-
-				if args[len(args)-2] == "from" {
-					rest = strings.Join(args[0:len(args)-2], " ")
-				} else {
-					rest = strings.Join(args[0:len(args)-1], " ")
-				}
-			}
-		}
-
-		//
-		// "get <item|gold> from <corpse name>" — corpse loot container.
-		// A corpse name is multi-word ("grey wolf corpse"), so unlike room
-		// Containers we split on the "from" keyword and treat everything
-		// after it as the corpse search name. Only attempt this if nothing
-		// else (room container, pet) already claimed the trailing target.
-		//
-		// If there's no "from", fall back to treating the trailing word as
-		// the corpse name — the same phrasing players use for bags and room
-		// containers ("get core corpse"). "corpse" alone substring-matches
-		// the corpse's display name via FindCorpseIndex.
-		//
-		if containerName == `` && petUserId == 0 {
-			fromIdx := -1
-			for i, a := range args {
-				if a == "from" {
-					fromIdx = i
-					break
-				}
-			}
-			if fromIdx > 0 && fromIdx < len(args)-1 {
-				corpseSearch := strings.Join(args[fromIdx+1:], " ")
-				if idx := room.FindCorpseIndex(corpseSearch); idx >= 0 {
-					corpseIdx = idx
+		// Composition detection (Stage 1): the parser owns "is the trailing span
+		// a container / corpse, and what's the item span?" — replacing the old
+		// last-word-only ladder that mis-split multi-word container/corpse names
+		// (the site of the corpse-loot bug). Branch bodies below (gates +
+		// transfer) are unchanged.
+		scope := parser.Scope{User: user, Room: room}
+		if itemPart, cm, ok := parser.SplitTrailingContainer(scope, rest); ok {
+			switch cm.Kind {
+			case parser.KindRoomContainer:
+				// Preserve the hidden-container discovery gate: only claim the
+				// container if it's visible or already discovered.
+				if c, exists := room.Containers[cm.ContainerName]; exists &&
+					(!c.Hidden || (user != nil && user.Character.HasDiscovery(room.RoomId, cm.ContainerName))) {
+					containerName = cm.ContainerName
 					getFromStash = false
-					rest = strings.Join(args[0:fromIdx], " ")
+					rest = itemPart
 				}
-			} else if fromIdx < 0 {
-				if idx := room.FindCorpseIndex(args[len(args)-1]); idx >= 0 {
-					corpseIdx = idx
-					getFromStash = false
-					rest = strings.Join(args[0:len(args)-1], " ")
+			case parser.KindCorpse:
+				corpseIdx = cm.CorpseIdx
+				getFromStash = false
+				rest = itemPart
+			}
+		}
+
+		//
+		// Look for any pets in the room — only if no container/corpse claimed the
+		// trailing target. Kept as-is to preserve the literal "pet" keyword case
+		// that the parser's name-based pet lookup doesn't cover.
+		//
+		if containerName == `` && corpseIdx < 0 {
+			petUserId = room.FindByPetName(args[len(args)-1])
+			if petUserId == 0 && args[len(args)-1] == `pet` && user.Character.Pet.Exists() {
+				petUserId = user.UserId
+			}
+			if petUserId > 0 {
+
+				if petUserId != user.UserId {
+					user.SendText(messaging.CategorySystem, `You can't do that!`)
+					return true, nil
+				}
+
+				getFromStash = false
+				if petUser := users.GetByUserId(petUserId); petUser != nil {
+
+					if args[len(args)-2] == "from" {
+						rest = strings.Join(args[0:len(args)-2], " ")
+					} else {
+						rest = strings.Join(args[0:len(args)-1], " ")
+					}
 				}
 			}
 		}
