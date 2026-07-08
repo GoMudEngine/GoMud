@@ -61,6 +61,60 @@ Two consequences:
 - **No behavior changes** beyond "multi-word now resolves where it previously
   failed." Every migration is refactor-only for existing inputs.
 
+## Divergences Discovered During Implementation
+
+Recorded as stages land, so the spec stays honest about what we learned.
+
+### After Stage 0 (foundation) + reading the live commands — 2026-07-08
+
+**The "A" (multi-word) gap is far narrower than this spec assumed.** Most
+multi-word input *already resolves* via the existing fuzzy matchers, because
+single-target commands pass the whole `rest` to a substring/prefix matcher:
+
+- `attack bank clerk` already works — `actions.FindAttackTarget` →
+  `room.FindByName` → `util.FindMatchIn("bank clerk", ["Bank Clerk#1"])`
+  (prefix match, `rooms.go:1819`).
+- `get lake iron nodule` already works — the floor path passes the whole `rest`
+  to `FindOnFloor` → `FindMatchIn` (substring match on the item name).
+- `look hare paths` already works — `FindNoun` gained multi-word aliasing +
+  `SplitButRespectQuotes` since the memory behind this spec was written.
+
+**What actually breaks is ladder *composition*, not multi-word matching** — the
+cases where the parser must *split* input into two roles: `get <item>
+<container>` / `get <item> <corpse>` (which trailing span is the container — the
+exact site of the 2026-07-08 corpse-loot bug), and two-slot commands (`give
+<item> to <mob>`, admin `<mob> <player>`).
+
+**Consequence — the project is re-scoped to composition-only** (user decision,
+2026-07-08):
+
+- **In scope (composition-heavy):** `get` (container/corpse split), `give`
+  (item→actor split), admin two-slot lookups (`knowledge`/`opinion`/`crime`).
+  The seam's value here is **C** (kill the duplicated ladders + the composition
+  bugs they hide), not A.
+- **Out of scope now (YAGNI):** migrating pure single-token-fuzzy commands
+  (`attack`, `consider`, `target`, single-item `get`/`drop`, `look <noun>`) —
+  they already work; migrating them is a pure refactor with regression risk and
+  ~zero user benefit. The revised staging below drops those.
+
+**Carried refinements from Stage 0:** `KindBackpackItem`+`KindEquippedItem` →
+single `KindInventoryItem` (`character.FindItem` returns the combined pool);
+`lootFromContainer`'s pet-inventory branch was deferred and is completed in the
+`get` migration.
+
+### Revised staging (supersedes the table in "Staged Decomposition")
+
+| Stage | Scope | Status |
+|-------|-------|--------|
+| 0 — Foundation | `internal/parser` package | ✅ done (master) |
+| 1 — `get` composition | Route `get`'s container/corpse resolution through `ResolveItem`; retire that ladder; gates stay in the command. `all`/gold/bag/bandolier/stash untouched. | this plan |
+| 2 — `give` two-slot | Route `give`'s item→recipient split through `splitOnConnective` + `ResolveItem`/`ResolveActor`; retire `splitGiveArgs`. | later |
+| 3 — Admin two-slot | `knowledge`/`opinion`/`crime` multi-word mob+player lookup. | later |
+| 4 — Convergence | Retire dead bespoke matchers; document the un-hyphenated authoring convention. | later |
+
+The original Stages 2 (item/inventory cmds) and 4 (nouns) are **dropped** — those
+commands already handle multi-word via existing matchers.
+
 ## Design
 
 ### New package `internal/parser`
