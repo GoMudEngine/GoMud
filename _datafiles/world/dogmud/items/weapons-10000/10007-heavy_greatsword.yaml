@@ -6,6 +6,7 @@ namesimple: greatsword
 description: A massive two-handed sword with a wide, thick blade. It requires both
   hands to wield but delivers devastating blows.
 type: weapon
+value: 48
 hands: 2
 subtype: slashing
 weight: 20.0  # Heavy two-handed weapon

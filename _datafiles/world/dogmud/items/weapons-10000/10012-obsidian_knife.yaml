@@ -10,6 +10,7 @@ description: |
   craftsmanship the warren produces -- a status weapon, a symbol of authority. The
   glass edge catches light and fractures it into dark rainbows.
 type: weapon
+value: 5
 hands: 1
 subtype: slashing
 weight: 2.0

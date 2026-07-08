@@ -9,6 +9,7 @@ description: |
   shaft is short, sized for the tunnel dwellers who made it, but serviceable in
   larger hands. The flint edge is surprisingly sharp.
 type: weapon
+value: 5
 hands: 1
 subtype: piercing
 weight: 5.0

@@ -17,6 +17,7 @@ Usage: python tools/item_value_audit.py [--gold-per-point N] [--premium-min N]
 import argparse
 import glob
 import os
+import re
 
 import yaml
 
@@ -61,12 +62,41 @@ def load_specs(subdirs):
     return out
 
 
+def fix_zero_values(gear, gpp, floor):
+    """Assign a rubric value to gear items currently priced at 0, via a safe
+    text edit (replace the `value:` line, or insert it after `type:`)."""
+    changed = 0
+    for s in gear:
+        if (s.get("value", 0) or 0) != 0:
+            continue
+        v = max(floor, int(round(affix_points(s) * gpp)))
+        path = s["_path"]
+        with open(path, "r", encoding="utf-8") as f:
+            text = f.read()
+        if re.search(r"(?m)^value:\s*\d+\s*$", text):
+            text = re.sub(r"(?m)^value:\s*\d+\s*$", f"value: {v}", text, count=1)
+        else:
+            # Insert after the first top-level `type:` line.
+            text = re.sub(r"(?m)^(type:.*)$", r"\1\nvalue: " + str(v), text, count=1)
+        with open(path, "w", encoding="utf-8", newline="\n") as f:
+            f.write(text)
+        print(f"  fixed value:0 -> {v:>5}  {s.get('name','?')[:32]:32} {os.path.basename(path)}")
+        changed += 1
+    print(f"\n{changed} value:0 gear items assigned rubric values (gpp={gpp}, floor={floor}).")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--gold-per-point", type=float, default=3.0)
     ap.add_argument("--premium-min", type=int, default=200)
+    ap.add_argument("--fix-zero", action="store_true", help="Assign rubric values to value:0 gear (writes files)")
+    ap.add_argument("--floor", type=int, default=5, help="Minimum assigned value")
     args = ap.parse_args()
     gpp = args.gold_per_point
+
+    if args.fix_zero:
+        fix_zero_values(load_specs(GEAR_DIRS), gpp, args.floor)
+        return
 
     gear = load_specs(GEAR_DIRS)
     rows = []

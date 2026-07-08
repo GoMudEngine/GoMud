@@ -6,6 +6,7 @@ namesimple: dagger
 description: A lightweight practice dagger with a dulled blade and a well-balanced grip.
   Perfect for quick strikes and dual wielding practice.
 type: weapon
+value: 5
 hands: 1
 subtype: stabbing
 weight: 2.0  # Light weapon

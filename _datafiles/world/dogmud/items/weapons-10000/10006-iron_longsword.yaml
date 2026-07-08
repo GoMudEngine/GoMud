@@ -6,6 +6,7 @@ namesimple: longsword
 description: A sturdy iron longsword with a leather-wrapped hilt. The blade shows
   signs of use but remains sharp and serviceable.
 type: weapon
+value: 5
 hands: 1
 subtype: slashing
 weight: 8.0  # Medium sword

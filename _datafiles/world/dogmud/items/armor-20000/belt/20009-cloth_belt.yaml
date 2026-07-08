@@ -5,6 +5,7 @@ vendor_categories:
 namesimple: belt
 description: Just enough to hold your pants up.
 type: belt
+value: 5
 subtype: wearable
 damagereduction: 1
 physical_mitigation: 1
