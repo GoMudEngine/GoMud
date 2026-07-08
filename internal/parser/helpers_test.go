@@ -93,3 +93,24 @@ func TestSplitTrailingContainer_NoContainer(t *testing.T) {
 	_, _, ok := SplitTrailingContainer(s, "lake iron nodule")
 	assert.False(t, ok)
 }
+
+func TestSplitLeadingMatch(t *testing.T) {
+	// Validator: "bank clerk" and "bank" are valid; nothing longer is.
+	matches := func(c string) bool { return c == "bank clerk" || c == "bank" }
+
+	// Longest valid leading span wins.
+	head, tail, ok := SplitLeadingMatch("bank clerk smoketester", matches)
+	require.True(t, ok)
+	assert.Equal(t, "bank clerk", head)
+	assert.Equal(t, "smoketester", tail)
+
+	// Single-token head + trailing value.
+	head, tail, ok = SplitLeadingMatch("bank smoketester extra", matches)
+	require.True(t, ok)
+	assert.Equal(t, "bank", head)
+	assert.Equal(t, "smoketester extra", tail)
+
+	// No leading span matches.
+	_, _, ok = SplitLeadingMatch("nobody here", matches)
+	assert.False(t, ok)
+}

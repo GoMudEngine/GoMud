@@ -3,6 +3,8 @@ package usercommands
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/opinions"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -46,6 +48,38 @@ func TestAdminOpinionSetAndShow(t *testing.T) {
 	// Note: output content assertions are skipped because user.SendText
 	// enqueues to the event queue rather than an in-test capture buffer.
 	// The show command exercising without error is sufficient here.
+}
+
+// TestAdminOpinionMultiWordMob is the Stage 2 fix target: "opinion set bank
+// clerk <player> <score>" must resolve the multi-word mob template. Before the
+// fix, positional args + a space-vs-underscore ident comparison made it fail
+// (mob unresolved / arg count wrong). Observable via opinions.Get.
+func TestAdminOpinionMultiWordMob(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+
+	cleanMobs := mobs.SeedMobsForTest(
+		map[int]*mobs.Mob{
+			1: {MobId: 1, Zone: "TestZone", Character: characters.Character{Name: "Skeleton"}},
+			3: {MobId: 3, Zone: "TestZone", Character: characters.Character{Name: "Bank Clerk"}},
+		},
+		map[int]*mobs.Mob{},
+	)
+	defer cleanMobs()
+
+	dir := t.TempDir()
+	t.Setenv("DOGMUD_OPINIONS_DIR_OVERRIDE", dir)
+	opinions.ClearCache()
+
+	admin, room := getTestUserAndRoom(t)
+	target := users.GetByUserId(1)
+
+	if _, err := Opinion("set bank clerk "+target.Character.Name+" -60", admin, room, 0); err != nil {
+		t.Fatalf("opinion set multi-word mob: %v", err)
+	}
+	if got := opinions.Get(3, target.UserId); got != -60 {
+		t.Errorf("after set on multi-word mob, Get(3) = %d, want -60", got)
+	}
 }
 
 func TestAdminOpinionBump(t *testing.T) {
