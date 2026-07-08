@@ -88,6 +88,18 @@ func merchantSay(room *rooms.Room, mob *mobs.Mob, line string) {
 		FormatSayText(mob.Character.Name, result.Text, false, "mobname", "saytext-mob"))
 }
 
+// affixedSellPrice is the fixed-spread price a shop pays for an affix-scaled
+// instance item: its (Stage-1 stamped) value times the buy/sell spread. It
+// deliberately bypasses the scarcity curve and the legacy 25% cap — unique
+// affixed gear is priced on value, not commodity stock levels.
+func affixedSellPrice(item items.Item, cfg shops.PricingConfig) int {
+	price := int(math.Ceil(float64(item.GetSpec().Value) * cfg.BuyRatio))
+	if price < 1 {
+		price = 1
+	}
+	return price
+}
+
 // resolveMerchant finds the first merchant in the room willing to buy probe,
 // returning the merchant mob and its living-economy ShopInventory (nil for
 // legacy-shop merchants).
@@ -99,7 +111,9 @@ func resolveMerchant(room *rooms.Room, probe items.Item) (*mobs.Mob, *shops.Shop
 		}
 		shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId)
 		var probeValue int
-		if shopInv != nil {
+		if probe.Affixed {
+			probeValue = affixedSellPrice(probe, shops.PricingConfigFromBalance())
+		} else if shopInv != nil {
 			cfg := shops.PricingConfigFromBalance()
 			wornItems := mob.Character.Equipment.GetAllItemsWithEmptySlots()
 			offer := shops.EvaluateBuyRules(probe, shopInv, mob.CrafterSkill, mob.BuysGeneral, cfg, wornItems)

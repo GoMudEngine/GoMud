@@ -9,10 +9,21 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+// affixedSellPrice must be spec.Value * ShopBuyRatio (fixed spread), independent
+// of scarcity — the Stage-2 melt price for instance loot.
+func TestAffixedSellPrice(t *testing.T) {
+	cfg := shops.DefaultPricingConfig() // BuyRatio 0.50
+	it := items.Item{ItemId: 1, Affixed: true, Spec: &items.ItemSpec{Value: 400}}
+	if got := affixedSellPrice(it, cfg); got != 200 { // 400 * 0.50
+		t.Errorf("affixedSellPrice = %d; want 200", got)
+	}
+}
 
 // ─── Sell test infrastructure ───────────────────────────────────────────────
 //
