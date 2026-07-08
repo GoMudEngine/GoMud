@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/knowledge"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/parser"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/templates"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -65,13 +66,32 @@ func knowledgeResolveMobIdent(s string) (int, bool) {
 		}
 		return 0, false
 	}
-	wanted := strings.ToLower(s)
+	// Normalize the input the same way the template name is normalized, so a
+	// multi-word name typed with spaces ("bank clerk") matches the underscore
+	// filename form ("bank_clerk").
+	wanted := util.ConvertForFilename(s)
 	for _, spec := range mobs.AllMobTemplates() {
 		if strings.EqualFold(util.ConvertForFilename(spec.Character.Name), wanted) {
 			return int(spec.MobId), true
 		}
 	}
 	return 0, false
+}
+
+// knowledgeSplitMob greedily consumes the longest leading span of args that
+// resolves to a mob template (so multi-word mob names like "bank clerk" work),
+// returning the mobId and the remaining tokens (player + optional value).
+// ok=false when no leading span names a mob.
+func knowledgeSplitMob(args []string) (mobId int, rest []string, ok bool) {
+	head, tail, matched := parser.SplitLeadingMatch(strings.Join(args, " "), func(c string) bool {
+		_, f := knowledgeResolveMobIdent(c)
+		return f
+	})
+	if !matched {
+		return 0, nil, false
+	}
+	id, _ := knowledgeResolveMobIdent(head)
+	return id, strings.Fields(tail), true
 }
 
 func knowledgeResolveSubject(args []string) (knowledge.Subject, bool) {
@@ -100,13 +120,13 @@ func knowledgeShow(args []string, user *users.UserRecord) (bool, error) {
 		knowledgeUsage(user)
 		return true, nil
 	}
-	mobId, ok := knowledgeResolveMobIdent(args[0])
+	mobId, rest, ok := knowledgeSplitMob(args)
 	if !ok {
-		user.SendText(messaging.CategorySystem, fmt.Sprintf("Unknown mob: %s\r\n", args[0]))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Unknown mob: %s\r\n", strings.Join(args, " ")))
 		return true, nil
 	}
 
-	if len(args) == 1 {
+	if len(rest) == 0 {
 		// List all records for this observer.
 		records := knowledge.AllForObserver(mobId)
 		if len(records) == 0 {
@@ -135,7 +155,7 @@ func knowledgeShow(args []string, user *users.UserRecord) (bool, error) {
 	}
 
 	// Drill into a specific subject.
-	subj, ok := knowledgeResolveSubject(args[1:])
+	subj, ok := knowledgeResolveSubject(rest)
 	if !ok {
 		user.SendText(messaging.CategorySystem, "Unknown subject\r\n")
 		return true, nil
@@ -171,19 +191,23 @@ func knowledgeFrequented(args []string, user *users.UserRecord) (bool, error) {
 		knowledgeUsage(user)
 		return true, nil
 	}
-	mobId, ok := knowledgeResolveMobIdent(args[0])
+	mobId, rest, ok := knowledgeSplitMob(args)
 	if !ok {
-		user.SendText(messaging.CategorySystem, fmt.Sprintf("Unknown mob: %s\r\n", args[0]))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Unknown mob: %s\r\n", strings.Join(args, " ")))
 		return true, nil
 	}
-	target := users.GetByCharacterNameOrLoad(args[1])
+	if len(rest) < 1 {
+		knowledgeUsage(user)
+		return true, nil
+	}
+	target := users.GetByCharacterNameOrLoad(rest[0])
 	if target == nil {
-		user.SendText(messaging.CategorySystem, fmt.Sprintf("No such player: %s\r\n", args[1]))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("No such player: %s\r\n", rest[0]))
 		return true, nil
 	}
 	topK := 5
-	if len(args) >= 3 {
-		if v, err := strconv.Atoi(args[2]); err == nil && v > 0 {
+	if len(rest) >= 2 {
+		if v, err := strconv.Atoi(rest[1]); err == nil && v > 0 {
 			topK = v
 		}
 	}
@@ -193,7 +217,7 @@ func knowledgeFrequented(args []string, user *users.UserRecord) (bool, error) {
 		return true, nil
 	}
 	var b strings.Builder
-	fmt.Fprintf(&b, "Top %d rooms for mob %d watching %s:\r\n\r\n", topK, mobId, args[1])
+	fmt.Fprintf(&b, "Top %d rooms for mob %d watching %s:\r\n\r\n", topK, mobId, rest[0])
 	for _, r := range rows {
 		fmt.Fprintf(&b, "  room %d  (%d sightings)\r\n", r.Room, r.Count)
 	}
@@ -206,23 +230,27 @@ func knowledgeForget(args []string, user *users.UserRecord) (bool, error) {
 		knowledgeUsage(user)
 		return true, nil
 	}
-	mobId, ok := knowledgeResolveMobIdent(args[0])
+	mobId, rest, ok := knowledgeSplitMob(args)
 	if !ok {
-		user.SendText(messaging.CategorySystem, fmt.Sprintf("Unknown mob: %s\r\n", args[0]))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Unknown mob: %s\r\n", strings.Join(args, " ")))
 		return true, nil
 	}
-	target := users.GetByCharacterNameOrLoad(args[1])
+	if len(rest) < 1 {
+		knowledgeUsage(user)
+		return true, nil
+	}
+	target := users.GetByCharacterNameOrLoad(rest[0])
 	if target == nil {
-		user.SendText(messaging.CategorySystem, fmt.Sprintf("No such player: %s\r\n", args[1]))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("No such player: %s\r\n", rest[0]))
 		return true, nil
 	}
 	subj := knowledge.PlayerSubject(target.UserId)
-	if len(args) == 2 {
+	if len(rest) == 1 {
 		knowledge.Forget(mobId, subj)
-		user.SendText(messaging.CategorySystem, fmt.Sprintf("Forgot record: mob %d <-> %s\r\n", mobId, args[1]))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf("Forgot record: mob %d <-> %s\r\n", mobId, rest[0]))
 		return true, nil
 	}
-	knowledge.ForgetFact(mobId, subj, strings.ToLower(args[2]))
-	user.SendText(messaging.CategorySystem, fmt.Sprintf("Forgot fact %q: mob %d <-> %s\r\n", args[2], mobId, args[1]))
+	knowledge.ForgetFact(mobId, subj, strings.ToLower(rest[1]))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf("Forgot fact %q: mob %d <-> %s\r\n", rest[1], mobId, rest[0]))
 	return true, nil
 }
