@@ -497,15 +497,23 @@ func applyMobEffect_knockdown(
 	// "slams to the ground" wording fits backward force). Skip the
 	// legacy parallel-write if the FSM transition fails so the two
 	// views stay consistent.
+	knocked := true
 	if err := mob.Character.Position.TransitionToSupine(
 		position.SupineData{MinRecoveryRounds: 1},
 		state.TransitionReason{Trigger: position.TriggerKnockdownSpell},
 	); err != nil {
 		mudlog.Warn("applyMobEffect_knockdown: TransitionToSupine failed", "mob", mob.InstanceId, "err", err)
+		// Target was already grappled/prone — the spell hit and dealt damage,
+		// but no knockdown occurred; don't narrate one (grapple move-collision).
+		knocked = false
 	}
 	setMobSpellAggro(user, mob)
 	if user != nil {
-		if kdDeflected {
+		if !knocked {
+			user.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
+				`Your %s strikes %s, but %s is already down. (<ansi fg="damage">%s</ansi>)%s`,
+				spellData.Name, mName, mName, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value), critTag))
+		} else if kdDeflected {
 			user.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
 				`<ansi fg="yellow">%s partially deflects your %s, but is knocked down! (<ansi fg="damage">%s</ansi>)</ansi>`,
 				mName, spellData.Name, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value)))
@@ -514,9 +522,11 @@ func applyMobEffect_knockdown(
 				`Your %s slams %s to the ground! (<ansi fg="damage">%s</ansi>)%s`,
 				spellData.Name, mName, combat.GetDamageDescription(dmg, mob.Character.HealthMax.Value), critTag))
 		}
-		sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
-			`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> knocks %s to the ground!`,
-			user.Character.Name, spellData.Name, mName), user.UserId)
+		if knocked {
+			sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
+				`<ansi fg="username">%s</ansi>'s <ansi fg="cyan">%s</ansi> knocks %s to the ground!`,
+				user.Character.Name, spellData.Name, mName), user.UserId)
+		}
 	}
 	return dmg
 }
@@ -1368,22 +1378,33 @@ func resolveMobSpellAgainstPlayer(caster *mobs.Mob, target *users.UserRecord, ro
 		}
 		// Chunk 4b W5 cutover: mob-cast knockdown on player. Same
 		// Supine choice as the player-cast branch above.
+		knocked := true
 		if err := target.Character.Position.TransitionToSupine(
 			position.SupineData{MinRecoveryRounds: 1},
 			state.TransitionReason{Trigger: position.TriggerKnockdownSpell},
 		); err != nil {
 			mudlog.Warn("mob spell knockdown: TransitionToSupine failed",
 				"target_user", target.UserId, "err", err)
+			// Already grappled/prone — spell hit + damaged, but no knockdown.
+			knocked = false
 		}
-		target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
-			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> slams you `+
-				`to the ground! (<ansi fg="damage">%s</ansi>)%s`,
-			caster.Character.Name, spellData.Name,
-			combat.GetDamageDescription(dmg, target.Character.HealthMax.Value), critTag))
-		sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
-			`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> knocks `+
-				`<ansi fg="username">%s</ansi> to the ground!`,
-			caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
+		if knocked {
+			target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
+				`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> slams you `+
+					`to the ground! (<ansi fg="damage">%s</ansi>)%s`,
+				caster.Character.Name, spellData.Name,
+				combat.GetDamageDescription(dmg, target.Character.HealthMax.Value), critTag))
+			sendVisualRoomText(room, spellSchoolCategory(spellData), fmt.Sprintf(
+				`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> knocks `+
+					`<ansi fg="username">%s</ansi> to the ground!`,
+				caster.Character.Name, spellData.Name, target.Character.Name), target.UserId)
+		} else {
+			target.SendText(spellSchoolCategory(spellData), fmt.Sprintf(
+				`<ansi fg="mobname">%s</ansi>'s <ansi fg="cyan">%s</ansi> strikes you, but you're `+
+					`already down. (<ansi fg="damage">%s</ansi>)%s`,
+				caster.Character.Name, spellData.Name,
+				combat.GetDamageDescription(dmg, target.Character.HealthMax.Value), critTag))
+		}
 		if !target.Character.IsInCombat() {
 			target.Character.SetAggro(0, caster.InstanceId, characters.DefaultAttack)
 		}
