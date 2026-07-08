@@ -1,5 +1,40 @@
 # DOGMud Patch Notes
 
+## 2026-07-07 — Banks in every town, one-word spells, and a smoother bench
+
+- **Every proper town now has a bank.** New counting houses open in Greenford,
+  the Confluence, Hartcharn, and New Plymouth — deposit gold and store items
+  without hauling everything back to Stillwater or Thornwall. Pothole Coulee's
+  strongbox now takes item storage too.
+- **The starved crafts finally have shops.** Enchanters and jewelers now trade
+  in every proper town (they used to be a one-of-a-kind rarity), and Greenford
+  and the Confluence have their own smiths at last. Each new shop keeps its
+  crafting station on-site, so you buy the materials and work them at the same
+  bench. Look for the new artisan rows and market clusters.
+- **Cast and craft with a single word.** Every spell and every recipe now
+  answers to a short one-word name — no more hyphenated mouthfuls. `cast heal`,
+  `craft dagger`. The old full names still work, and the `spells` list shows you
+  each short name.
+- **A smarter crafting bench.** Bare `craft` now lists only what you can make
+  right now, and `craft list` is sorted into Ready / Missing / Locked so you see
+  at a glance what you're short on. At a station, crafting pulls the materials it
+  needs straight from your storage — and the new `stow` command dumps all your
+  crafting components into storage in one go.
+- **Two new heights to climb.** Master every profession and you earn the title
+  of **Grandmaster**; drive your raw skill total to the very top and you become
+  a **Demigod**.
+- **The web client shows off your best gear.** The equipment and inventory
+  panels now render unique painted icons for the legendary endgame pieces — the
+  pinnacle crafts, the Crash Site relics, and the arena and elemental-oasis
+  prizes — instead of generic silhouettes.
+- **The two hardest instance fights got a fair, graduated ramp,** tuned so a
+  well-geared Meirok-and-companions can win them without it feeling like a wall.
+- **Fixes.** Items whose names end in a container word (like a "…Bandolier") can
+  be picked up again with `get`. Purchased potions carried in a bandolier no
+  longer rot, and it attunes faster. A handful of low-tier enemies no longer drop
+  their weapon on every single kill. The leaderboard no longer lists practice
+  bots.
+
 ## 2026-07-06 — The guardians learned to fight back
 
 - **The Crash Site's constructs are no longer stat-sponges.** The
