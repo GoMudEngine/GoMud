@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-07-08 — Hotfix: looting corpses with `get`
+
+- **`get` now loots corpses the way you'd expect.** `get all corpse` sweeps
+  every item and all the gold off a kill, and `get <item> corpse` takes a single
+  named item — the same phrasing you already use for bags and containers.
+  Previously only `loot corpse` and `get <item> from corpse` worked; the shorter
+  forms silently did nothing or claimed they couldn't find the corpse. Those
+  older forms are unchanged and still work.
+
 ## 2026-07-07 — Banks in every town, one-word spells, and a smoother bench
 
 - **Every proper town now has a bank.** New counting houses open in Greenford,
