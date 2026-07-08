@@ -45,6 +45,10 @@ triggers:
       missing: [31-school]
     actions:
       - grant: 31-school
+      - send_text: >-
+          A tutor glances up from a slate as you enter. "Newly Opened.
+          When the changes start and you want to know what is happening to
+          you, this hall is where you come."
 
   # ── PROVISIONS: list the wares (room 5207) ──────────────
   - event: command
@@ -55,6 +59,10 @@ triggers:
       missing: [31-shop]
     actions:
       - grant: 31-shop
+      - send_text: >-
+          Trader Onna watches you weigh her wares. "Coin is coin, and the
+          coulee is hard on the unprepared. Buy what keeps you breathing
+          out there."
 
   # ── PROVISIONS: buying also counts (room 5207) ──────────
   - event: command
@@ -65,6 +73,9 @@ triggers:
       missing: [31-shop]
     actions:
       - grant: 31-shop
+      - send_text: >-
+          Trader Onna takes your coin with a nod. "Wise. The coulee is hard
+          on the unprepared -- come back when you need more."
 
   # ── THE DROWNED LANTERN: arrive (room 5205) ─────────────
   - event: room_enter
@@ -74,3 +85,7 @@ triggers:
       missing: [31-lantern]
     actions:
       - grant: 31-lantern
+      - send_text: >-
+          The keeper of the Drowned Lantern tips you a nod as you step in.
+          "First one is on the house -- the coulee's welcome. Rest while it
+          is still being gentle with you."

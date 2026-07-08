@@ -1,100 +1,53 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">stamina</ansi>
 
-Stamina represents your physical endurance and is a critical resource in combat and
-exploration. Managing stamina effectively is the key to survival in extended fights.
+Stamina (SP) is your physical endurance -- one of your three resource
+pools, alongside Health and Conviction. It is the fuel of the body in a
+fight, and managing it is the difference between winning a long exchange
+and gassing out halfway through one.
 
-<ansi fg="yellow">━━━ What is Stamina? ━━━</ansi>
+<ansi fg="yellow">━━━ What Stamina Powers ━━━</ansi>
 
-Stamina is your physical energy pool, used for:
-  - Defensive actions (dodge, parry, block)
-  - Special combat moves (bash, trip, kick)
-  - Standing up when knocked prone
-  - Movement and other physical activities
+  - <ansi fg="stat">Defending</ansi> -- dodging, parrying, and blocking all cost stamina.
+  - <ansi fg="stat">Special moves</ansi> -- bash, trip, kick, and the like.
+  - <ansi fg="stat">Getting back up</ansi> -- standing from prone takes a real effort.
+  - <ansi fg="stat">Movement</ansi> -- travelling, and hauling more than you can comfortably
+    carry, both draw on it.
 
-<ansi fg="stat">Maximum Stamina:</ansi> Based on your Vitality stat
-<ansi fg="stat">Regeneration:</ansi> Regenerates slowly during combat, faster while resting
+<ansi fg="yellow">━━━ The Cost of Defending ━━━</ansi>
 
-<ansi fg="yellow">━━━ Stamina Costs ━━━</ansi>
+Every defensive attempt spends stamina -- and it spends it whether the
+defense succeeds or fails. Dodging is the cheapest, parrying costs more,
+and blocking with a shield is the most expensive of the three. Because a
+single incoming blow can test all of your defenses at once, a hard-pressed
+fighter bleeds stamina fast. Shield-heavy styles hit hardest on the pool;
+dodge-focused styles are leaner.
 
-Every defensive action and special move costs stamina:
+<ansi fg="yellow">━━━ Running Low ━━━</ansi>
 
-  <ansi fg="stat">Defensive Actions (per attempt):</ansi>
-  - Dodge: 2 stamina (cheapest defense)
-  - Parry: 4 stamina (requires weapon)
-  - Block: 5 stamina (requires shield, most expensive)
+Stamina does not fail all at once at some cliff-edge -- it fades. As the
+pool drains, your effectiveness slides down with it, smoothly and steadily:
+you land fewer and weaker blows, your defenses grow less reliable (while
+still costing full stamina to attempt), and if you bottom out you may not
+have the strength left to stand at all. Fighting on an empty pool is a
+death spiral -- the tools keep costing but stop working. When you feel it
+going, break off and recover, or <ansi fg="command">flee</ansi> outright.
 
-  <ansi fg="stat">Special Combat Moves:</ansi>
-  - Bash: Variable stamina
-  - Trip: Variable stamina
-  - Kick: Variable stamina
+<ansi fg="yellow">━━━ Regeneration ━━━</ansi>
 
-  <ansi fg="stat">Recovery Actions:</ansi>
-  - Stand: 15% of maximum stamina (manual recovery from prone)
-  - Auto-recovery: Free (automatic standing attempts)
+Stamina returns a little each round, and much faster while you are out of
+combat and at rest -- the same rhythm as Health and Conviction. In-combat
+recovery is deliberately slow, so extended fights are a test of endurance.
+If you are losing the stamina war, disengage and let it come back before
+you commit again.
 
-Note: Defenses cost stamina even when they fail. A single incoming attack can drain
-8-11 stamina if all three defenses miss (2+4+5)!
+<ansi fg="yellow">━━━ Raising It ━━━</ansi>
 
-<ansi fg="yellow">━━━ Low Stamina Penalties ━━━</ansi>
-
-When your stamina drops below 50% of maximum, you suffer severe penalties:
-
-  <ansi fg="red">Combat Penalties:</ansi>
-  - <ansi fg="stat">Reduced Hit Chance:</ansi> Harder to land attacks
-  - <ansi fg="stat">Reduced Damage:</ansi> Weaker attacks
-  - <ansi fg="stat">Reduced Defense:</ansi> Less effective defenses (still cost full stamina!)
-
-  <ansi fg="red">Stamina Exhaustion:</ansi>
-  - Cannot use <ansi fg="command">stand</ansi> command if below 15% stamina
-  - Some abilities may be restricted at very low stamina
-
-Fighting at low stamina is extremely dangerous. Your defenses still drain stamina
-but become less effective, creating a death spiral if you can't regenerate or flee.
-
-<ansi fg="yellow">━━━ Stamina Management Strategy ━━━</ansi>
-
-  <ansi fg="stat">1. Watch Your Stamina:</ansi>
-  Monitor stamina in your combat prompt. When it drops below 50%, consider fleeing
-  or ending combat to regenerate.
-
-  <ansi fg="stat">2. Choose Defenses Wisely:</ansi>
-  Shields are powerful but drain stamina quickly (5 per block). Dodge-focused builds
-  are more stamina-efficient (2 per dodge).
-
-  <ansi fg="stat">3. Use Special Moves Tactically:</ansi>
-  Don't spam special moves. Use them when knockdown would give a significant advantage,
-  not just for extra damage.
-
-  <ansi fg="stat">4. Standing Up:</ansi>
-  Auto-recovery is free (costs no stamina), while <ansi fg="command">stand</ansi> costs 15%. Only use
-  manual stand when you absolutely must get up immediately.
-
-  <ansi fg="stat">5. Vitality Stat:</ansi>
-  Increase your Vitality stat to raise maximum stamina. More stamina = longer fights
-  before penalties kick in.
-
-<ansi fg="yellow">━━━ Stamina Regeneration ━━━</ansi>
-
-  <ansi fg="stat">During Combat:</ansi> Slow regeneration (configurable, usually ~2-5 per round)
-  <ansi fg="stat">While Resting:</ansi> Fast regeneration when not in combat
-  <ansi fg="stat">Vitality Bonus:</ansi> Higher Vitality increases regeneration rate
-
-Stamina regeneration during combat is intentionally slow to make extended fights
-challenging. If you're losing the stamina war, flee and recover!
-
-<ansi fg="yellow">━━━ Improving Maximum Stamina ━━━</ansi>
-
-  <ansi fg="stat">Vitality Stat:</ansi>
-  Your primary stamina stat. Every point of Vitality increases max stamina.
-  Vitality progresses through use-based mechanics.
-
-  <ansi fg="stat">Equipment:</ansi>
-  Some items provide Vitality bonuses, indirectly increasing stamina.
-
-  <ansi fg="stat">Buffs:</ansi>
-  Temporary buffs may increase maximum stamina or regeneration rate.
+Your maximum Stamina is governed by <ansi fg="stat">Vitality</ansi>, which -- like every stat on
+Gaius -- grows through use. The more you fight, endure, and exert, the
+deeper the pool becomes and the longer you last before it tells. Some
+equipment and buffs raise Vitality (and so stamina) as well.
 
 <ansi fg="yellow">See Also:</ansi>
 
-  <ansi fg="command">help combat</ansi>, <ansi fg="command">help defense</ansi>, <ansi fg="command">help stand</ansi>, <ansi fg="command">help prone</ansi>
-  <ansi fg="command">help status</ansi>, <ansi fg="command">help flee</ansi>
+  <ansi fg="command">help health</ansi>, <ansi fg="command">help conviction</ansi>, <ansi fg="command">help combat</ansi>, <ansi fg="command">help stand</ansi>
+  <ansi fg="command">help flee</ansi>, <ansi fg="command">help status</ansi>

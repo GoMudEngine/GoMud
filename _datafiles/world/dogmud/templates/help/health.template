@@ -20,8 +20,11 @@ Health will change color to reflect your condition:
 <ansi fg="health-dead">dead</ansi>
 
 When your Health drops to zero, you collapse and begin
-bleeding out. If you are not aided in time, you will die.
-When you die, your gear drops to the ground.
+bleeding out. If you are not aided in time, you will die --
+but death on Gaius does not delete your character. You wake
+at your home point, weakened by the brush with death, and
+your gear stays with you. See <ansi fg="command">help death</ansi> for what a
+fall truly costs and how to avoid paying it.
 
 Health regenerates slowly over time, recovering faster
 when you are out of combat. Certain spells and items can
@@ -29,6 +32,9 @@ speed the healing process.
 
 <ansi fg="yellow">Related: </ansi>
   <ansi fg="command">help vitality</ansi>
+  <ansi fg="command">help death</ansi>
+  <ansi fg="command">help stamina</ansi>
+  <ansi fg="command">help conviction</ansi>
   <ansi fg="command">help status</ansi>
   <ansi fg="command">help armor</ansi>
 

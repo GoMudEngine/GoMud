@@ -40,6 +40,8 @@ stat in your adventures, the more it grows over time.
 
   <ansi fg="command">help skills</ansi>
   <ansi fg="command">help health</ansi>
+  <ansi fg="command">help stamina</ansi>
+  <ansi fg="command">help conviction</ansi>
   <ansi fg="command">help armor</ansi>
   <ansi fg="command">help submission</ansi>
   <ansi fg="command">help surrender</ansi>

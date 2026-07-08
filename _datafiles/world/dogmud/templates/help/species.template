@@ -26,12 +26,7 @@ Here is some useful species detail:
   <ansi fg="yellow">Unarmed:</ansi>     <ansi fg="white-bold">{{ $speciesInfo.UnarmedName }}</ansi> (<ansi fg="red">{{ $speciesInfo.Damage.DiceRoll }}</ansi>)
   <ansi fg="yellow">First Aid:</ansi>   {{ if $speciesInfo.KnowsFirstAid }}<ansi fg="123">Yes</ansi>{{ else }}<ansi fg="210">No</ansi>{{ end }}
   <ansi fg="yellow">Gear Slots:</ansi>  {{ if eq (len $speciesInfo.GetEnabledSlots) 0 }}<ansi fg="234">*None*</ansi>{{end}}{{ range $slotIndex, $slotName := $speciesInfo.GetEnabledSlots }}{{if gt $slotIndex 0 }}{{ if eq (mod $slotIndex 5) 0 }}{{ printf "\n               " }}{{ end }}{{ end }}<ansi fg="157">{{ padRight 9 (uc $slotName) }}</ansi>{{ end }}
-  <ansi fg="yellow">Stat Gains:</ansi>  <ansi fg="{{ if gt $speciesInfo.Stats.Strength.Base 0   }}cyan-bold{{ else}}234{{end}}">Str: {{ $speciesInfo.Stats.Strength.Base   }}</ansi>{{- `   ` -}}
-                                        <ansi fg="{{ if gt $speciesInfo.Stats.Speed.Base 0      }}cyan-bold{{ else}}234{{end}}">Spd: {{ $speciesInfo.Stats.Speed.Base      }}</ansi>{{- `   ` -}}
-                                        <ansi fg="{{ if gt $speciesInfo.Stats.Smarts.Base 0     }}cyan-bold{{ else}}234{{end}}">Smt: {{ $speciesInfo.Stats.Smarts.Base     }}</ansi>{{- `   ` -}}
-                                        <ansi fg="{{ if gt $speciesInfo.Stats.Vitality.Base 0   }}cyan-bold{{ else}}234{{end}}">Vit: {{ $speciesInfo.Stats.Vitality.Base   }}</ansi>{{- `   ` -}}
-                                        <ansi fg="{{ if gt $speciesInfo.Stats.Mysticism.Base 0  }}cyan-bold{{ else}}234{{end}}">Mys: {{ $speciesInfo.Stats.Mysticism.Base  }}</ansi>{{- `   ` -}}
-                                        <ansi fg="{{ if gt $speciesInfo.Stats.Perception.Base 0 }}cyan-bold{{ else}}234{{end}}">Per: {{ $speciesInfo.Stats.Perception.Base }}</ansi>
+  <ansi fg="yellow">Stat Gains:</ansi>  <ansi fg="234">None -- every character begins at the human baseline (all six stats near 100) and grows through use, not from species.</ansi>
   <ansi fg="yellow">Buffs:</ansi>       {{if eq (len $speciesInfo.BuffIds) 0}}<ansi fg="234">*None*</ansi>{{end}}{{ range $slotIndex, $buffId := $speciesInfo.BuffIds }}{{if gt $slotIndex 0 }}{{ printf "\n               " }}{{ end }}<ansi fg="buff">{{ buffname $buffId }}</ansi>{{ end }}
 
 └──────────────────────────────────────────────────────────────────────────────┘

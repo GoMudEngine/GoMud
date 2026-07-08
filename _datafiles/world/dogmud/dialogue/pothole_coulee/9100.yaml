@@ -75,7 +75,8 @@ tree:
       questExcluded: ["30-start", "30-end"]
       grantsQuest: "30-start"
       text: >-
-        Everyone who stays in Gaius is Opened, sooner or later -- the
+        Everyone who stays in Gaius is Opened, sooner or later -- that
+        is our word for it, once the Chrysalis takes hold in you. The
         world insists. The rite only makes the first change a kindness
         instead of a surprise. You stand at the edge, I do the small
         part I do, and the pool does the rest. It does not hurt. It
@@ -89,7 +90,8 @@ tree:
       questRequired: ["30-start"]
       questExcluded: ["30-end"]
       text: >-
-        Everyone who stays in Gaius is Opened, sooner or later -- the
+        Everyone who stays in Gaius is Opened, sooner or later -- that
+        is our word for it, once the Chrysalis takes hold in you. The
         world insists. The rite only makes the first change a kindness
         instead of a surprise. You stand at the edge, I do the small
         part I do, and the pool does the rest. It does not hurt. It
