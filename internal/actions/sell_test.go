@@ -163,6 +163,69 @@ func newSellerActor(t *testing.T, isPlayer bool, itemIds ...int) Actor {
 	return &MobActor{Mob: m, Room: room}
 }
 
+// shopQty returns the merchant's legacy-Shop stock quantity for itemId (0 if
+// absent), for the melt-path (not-stocked) assertion.
+func shopQty(m *mobs.Mob, itemId int) int {
+	for _, si := range m.Character.Shop {
+		if si.ItemId == itemId {
+			return si.Quantity
+		}
+	}
+	return 0
+}
+
+// newAffixedInstance builds an affix-scaled instance of the base sell item with
+// the given stamped Value (Name preserved from the base so it resolves by name).
+func newAffixedInstance(value int) items.Item {
+	it := items.New(sellTestItemId)
+	spec := it.GetSpec()
+	spec.Value = value
+	it.Spec = &spec
+	it.Affixed = true
+	return it
+}
+
+// TestSell_AffixedItem_MeltPath: an affixed item sells for spec.Value*BuyRatio,
+// leaves the player's inventory, and (Stage 2) is NOT stocked as a base ItemId.
+func TestSell_AffixedItem_MeltPath(t *testing.T) {
+	defer seedSellItemSpecs()()
+	defer seedSellRoom(t)()
+	defer seedSellMerchant(t, 100000)()
+
+	seller := newSellerActor(t, true)
+	char := seller.GetCharacter()
+	require.True(t, char.StoreItem(newAffixedInstance(400)))
+	goldBefore := char.Gold
+	qtyBefore := shopQty(merchantInstance(), sellTestItemId)
+
+	res := Sell(seller, SellOptions{ItemName: "iron sword", Quantity: 1})
+
+	assert.Equal(t, goldBefore+200, char.Gold, "affixed sells for Value*0.5 (res=%+v)", res)
+	_, has := char.FindInBackpack("iron sword")
+	assert.False(t, has, "affixed item should be gone after sale")
+	assert.Equal(t, qtyBefore, shopQty(merchantInstance(), sellTestItemId), "affixed melt: base ItemId must NOT be stocked")
+}
+
+// TestSell_NonAffixedCustomSpec_Rejected proves the IsSpecial protection is
+// intact: a custom-spec item that is NOT affixed still can't be sold.
+func TestSell_NonAffixedCustomSpec_Rejected(t *testing.T) {
+	defer seedSellItemSpecs()()
+	defer seedSellRoom(t)()
+	defer seedSellMerchant(t, 100000)()
+
+	seller := newSellerActor(t, true)
+	char := seller.GetCharacter()
+	special := items.New(sellTestItemId)
+	spec := special.GetSpec()
+	spec.Value = 400
+	special.Spec = &spec // Affixed stays false
+	require.True(t, char.StoreItem(special))
+	goldBefore := char.Gold
+
+	Sell(seller, SellOptions{ItemName: "iron sword", Quantity: 1})
+	assert.Equal(t, goldBefore, char.Gold, "a non-affixed custom-spec item must not sell")
+}
+
 // ─── Tests ──────────────────────────────────────────────────────────────────
 
 func TestSell_MobSale_DoesNotDrainShopGold(t *testing.T) {
