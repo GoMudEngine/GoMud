@@ -75,3 +75,35 @@ func resolveWith(tokens []string, s Scope, adapters []adapter) (Match, bool) {
 func tokenize(input string) []string {
 	return util.SplitButRespectQuotes(strings.ToLower(strings.TrimSpace(input)))
 }
+
+// registry maps each Kind to its adapter.
+var registry = map[Kind]adapter{
+	KindMob:           mobAdapter,
+	KindPlayer:        playerAdapter,
+	KindPet:           petAdapter,
+	KindFloorItem:     floorItemAdapter,
+	KindInventoryItem: inventoryItemAdapter,
+	KindComponentItem: componentItemAdapter,
+	KindPotionItem:    potionItemAdapter,
+	KindRoomContainer: containerAdapter,
+	KindCorpse:        corpseAdapter,
+	KindNoun:          nounAdapter,
+	KindExit:          exitAdapter,
+}
+
+// Resolve tokenizes input and greedily resolves the longest multi-word span
+// against the requested kinds, in the order given (used as the tie-breaker at a
+// given span length). Returns the best Match and whether anything resolved.
+func Resolve(s Scope, input string, kinds ...Kind) (Match, bool) {
+	tokens := tokenize(input)
+	if len(tokens) == 0 || len(kinds) == 0 {
+		return Match{}, false
+	}
+	adapters := make([]adapter, 0, len(kinds))
+	for _, k := range kinds {
+		if a, ok := registry[k]; ok {
+			adapters = append(adapters, a)
+		}
+	}
+	return resolveWith(tokens, s, adapters)
+}

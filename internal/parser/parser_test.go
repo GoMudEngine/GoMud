@@ -118,3 +118,36 @@ func TestResolveWith_NoMatch(t *testing.T) {
 	_, ok := resolveWith([]string{"totally", "absent"}, Scope{}, adapters)
 	assert.False(t, ok)
 }
+
+func TestResolve_PicksRequestedKindByPriority(t *testing.T) {
+	s, cleanup := seedParserTest(t)
+	defer cleanup()
+	s.Room.Nouns = map[string]string{"skeleton": "A pile of old bones."}
+
+	// Asking for Mob before Noun must return the mob, not the same-named noun.
+	m, ok := Resolve(s, "skeleton", KindMob, KindNoun)
+	require.True(t, ok)
+	assert.Equal(t, KindMob, m.Kind)
+
+	// Asking for Noun only returns the noun.
+	m, ok = Resolve(s, "skeleton", KindNoun)
+	require.True(t, ok)
+	assert.Equal(t, KindNoun, m.Kind)
+}
+
+func TestResolve_MultiWordFloorItem(t *testing.T) {
+	s, cleanup := seedParserTest(t)
+	defer cleanup()
+	s.Room.AddItem(items.New(40100), false)
+
+	m, ok := Resolve(s, "lake iron nodule", KindFloorItem)
+	require.True(t, ok)
+	assert.Equal(t, 40100, m.Item.ItemId)
+}
+
+func TestResolve_UnknownKindReturnsFalse(t *testing.T) {
+	s, cleanup := seedParserTest(t)
+	defer cleanup()
+	_, ok := Resolve(s, "nothing here", KindFloorItem)
+	assert.False(t, ok)
+}
