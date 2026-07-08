@@ -88,6 +88,18 @@ func merchantSay(room *rooms.Room, mob *mobs.Mob, line string) {
 		FormatSayText(mob.Character.Name, result.Text, false, "mobname", "saytext-mob"))
 }
 
+// affixedSellPrice is the fixed-spread price a shop pays for an affix-scaled
+// instance item: its (Stage-1 stamped) value times the buy/sell spread. It
+// deliberately bypasses the scarcity curve and the legacy 25% cap — unique
+// affixed gear is priced on value, not commodity stock levels.
+func affixedSellPrice(item items.Item, cfg shops.PricingConfig) int {
+	price := int(math.Ceil(float64(item.GetSpec().Value) * cfg.BuyRatio))
+	if price < 1 {
+		price = 1
+	}
+	return price
+}
+
 // resolveMerchant finds the first merchant in the room willing to buy probe,
 // returning the merchant mob and its living-economy ShopInventory (nil for
 // legacy-shop merchants).
@@ -99,7 +111,9 @@ func resolveMerchant(room *rooms.Room, probe items.Item) (*mobs.Mob, *shops.Shop
 		}
 		shopInv := shops.GetShopInventory(mob.Zone, int(mob.MobId), mob.HomeRoomId)
 		var probeValue int
-		if shopInv != nil {
+		if probe.Affixed {
+			probeValue = affixedSellPrice(probe, shops.PricingConfigFromBalance())
+		} else if shopInv != nil {
 			cfg := shops.PricingConfigFromBalance()
 			wornItems := mob.Character.Equipment.GetAllItemsWithEmptySlots()
 			offer := shops.EvaluateBuyRules(probe, shopInv, mob.CrafterSkill, mob.BuysGeneral, cfg, wornItems)
@@ -239,14 +253,20 @@ func sellOneToMerchant(seller Actor, itemName string, room *rooms.Room,
 	}
 
 	char.CancelBuffsWithFlag(buffs.Hidden)
-	if item.IsSpecial() {
+	// Affixed instance loot is sellable despite carrying a per-instance Spec;
+	// every other custom-spec item (enchanted / blob / uses) stays blocked.
+	if item.IsSpecial() && !item.Affixed {
 		merchantSay(room, mob, "I'm afraid I don't buy those.")
 		return 0, SellStopRejected
 	}
 
 	var sellValue int
 	var buyReason string
-	if shopInv != nil {
+	if item.Affixed {
+		// Unique affix-scaled loot: fixed spread off its stamped value, bypassing
+		// scarcity pricing and the legacy 25% cap.
+		sellValue = affixedSellPrice(item, shops.PricingConfigFromBalance())
+	} else if shopInv != nil {
 		cfg := shops.PricingConfigFromBalance()
 		wornItems := mob.Character.Equipment.GetAllItemsWithEmptySlots()
 		offer := shops.EvaluateBuyRules(item, shopInv, mob.CrafterSkill, mob.BuysGeneral, cfg, wornItems)
@@ -299,37 +319,40 @@ func sellOneToMerchant(seller Actor, itemName string, room *rooms.Room,
 		events.AddToQueue(events.ItemOwnership{MobInstanceId: seller.GetMobInstanceId(), Item: item, Gained: false})
 	}
 
-	// Stock update (merchant side, unchanged from trySellOne).
-	if shopInv != nil {
-		shopInv.BuysCount++
-		if buyReason == "gear_upgrade" {
-			newItem := items.New(item.ItemId)
-			if newItem.ItemId > 0 {
-				returnedItems, wore, _ := mob.Character.Wear(newItem)
-				if wore {
-					for _, old := range returnedItems {
-						if old.ItemId > 0 {
-							shopInv.AddStockAtRound(old.ItemId, 1, util.GetRoundCount())
+	// Stock update (merchant side). Affixed items are melted in Stage 2 — NOT
+	// stocked as a base ItemId (Stage 3 adds per-instance resale stock).
+	if !item.Affixed {
+		if shopInv != nil {
+			shopInv.BuysCount++
+			if buyReason == "gear_upgrade" {
+				newItem := items.New(item.ItemId)
+				if newItem.ItemId > 0 {
+					returnedItems, wore, _ := mob.Character.Wear(newItem)
+					if wore {
+						for _, old := range returnedItems {
+							if old.ItemId > 0 {
+								shopInv.AddStockAtRound(old.ItemId, 1, util.GetRoundCount())
+							}
 						}
+						room.SendTextVisual(messaging.CategoryLoot,
+							fmt.Sprintf(`<ansi fg="mobname">%s</ansi> examines the <ansi fg="itemname">%s</ansi> and puts it on.`, mob.Character.Name, newItem.DisplayName()),
+							seller.GetUserId(),
+						)
+					} else {
+						shopInv.AddStockAtRound(item.ItemId, 1, util.GetRoundCount())
 					}
-					room.SendTextVisual(messaging.CategoryLoot,
-						fmt.Sprintf(`<ansi fg="mobname">%s</ansi> examines the <ansi fg="itemname">%s</ansi> and puts it on.`, mob.Character.Name, newItem.DisplayName()),
-						seller.GetUserId(),
-					)
 				} else {
 					shopInv.AddStockAtRound(item.ItemId, 1, util.GetRoundCount())
 				}
 			} else {
 				shopInv.AddStockAtRound(item.ItemId, 1, util.GetRoundCount())
 			}
+			if err := shops.SaveShop(mob.Zone, int(mob.MobId), mob.HomeRoomId); err != nil {
+				mudlog.Error("SELL", "msg", "SaveShop failed", "error", err)
+			}
 		} else {
-			shopInv.AddStockAtRound(item.ItemId, 1, util.GetRoundCount())
+			mob.Character.Shop.StockItem(item.ItemId)
 		}
-		if err := shops.SaveShop(mob.Zone, int(mob.MobId), mob.HomeRoomId); err != nil {
-			mudlog.Error("SELL", "msg", "SaveShop failed", "error", err)
-		}
-	} else {
-		mob.Character.Shop.StockItem(item.ItemId)
 	}
 
 	// Progression.

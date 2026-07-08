@@ -197,6 +197,7 @@ func GenerateAffixedItem(baseItemId int, goldPaid int, scalar float64, goldPerPo
 	specCopy.Value = AffixValue(specCopy, baseSpec, goldPerPoint)
 
 	item.Spec = &specCopy
+	item.Affixed = true
 
 	// Set display prefix based on dominant bonus type.
 	prefix := getAffixPrefix(&specCopy, &baseSpec)

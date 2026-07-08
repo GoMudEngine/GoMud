@@ -44,6 +44,24 @@ func TestAffixValue_OnlyCountsDeltaAboveBase(t *testing.T) {
 	}
 }
 
+func TestGenerateAffixedItem_SetsAffixedMarker(t *testing.T) {
+	cleanup := SeedItemsForTest(map[int]*ItemSpec{
+		9100: {ItemId: 9100, Name: "Test Torc", Type: Neck, Value: 85},
+	})
+	defer cleanup()
+
+	it := GenerateAffixedItem(9100, 200, 7.0, 3.0)
+	if !it.Affixed {
+		t.Error("expected Affixed=true on a budgeted affixed item")
+	}
+
+	// A zero-budget generation returns a plain item — not marked affixed.
+	plain := GenerateAffixedItem(9100, 0, 7.0, 3.0)
+	if plain.Affixed {
+		t.Error("expected Affixed=false when no affixes were applied (goldPaid 0)")
+	}
+}
+
 // TestGenerateAffixedItem_StampsValue proves the generated instance's Value is
 // self-consistent with its rolled affixes: Value == AffixValue(spec, base, gpp).
 // RNG-independent — whatever affixes roll, the stamped value must match them.
