@@ -66,6 +66,15 @@ type StockEvent struct {
 	RefilledRound uint64 `yaml:"refilled_round"`
 }
 
+// AffixedStockEntry is one unique affix-scaled item a shop bought from a player
+// and will resell. Unlike StockEntry (ItemId-keyed commodities), it carries the
+// full per-instance item so the exact affixes survive.
+type AffixedStockEntry struct {
+	Item       items.Item `yaml:"item"`
+	Price      int        `yaml:"price"`                 // relist price (AffixValue x 1.0)
+	AddedRound uint64     `yaml:"added_round,omitempty"` // for age-based clutter eviction
+}
+
 // StockEntry represents one item type in a shop's inventory.
 type StockEntry struct {
 	ItemId        int    `yaml:"item_id"`
@@ -77,12 +86,13 @@ type StockEntry struct {
 
 // ShopInventory is the persistent economic state for one shop NPC.
 type ShopInventory struct {
-	Gold         int          `yaml:"gold"`
-	StartingGold int          `yaml:"starting_gold"` // Seed value; used for gold reserve calc
-	LastRestock  uint64       `yaml:"last_restock"`
-	Stock        []StockEntry `yaml:"inventory"`
-	KnownRecipes []string     `yaml:"known_recipes,omitempty"` // Recipes the NPC knows
-	CraftSupport string       `yaml:"craft_support,omitempty"` // Discipline this shop's stock supports — see ValidCraftSupports
+	Gold         int                 `yaml:"gold"`
+	StartingGold int                 `yaml:"starting_gold"` // Seed value; used for gold reserve calc
+	LastRestock  uint64              `yaml:"last_restock"`
+	Stock        []StockEntry        `yaml:"inventory"`
+	AffixedStock []AffixedStockEntry `yaml:"affixed_stock,omitempty"` // unique bought-back affixed items for resale
+	KnownRecipes []string            `yaml:"known_recipes,omitempty"` // Recipes the NPC knows
+	CraftSupport string              `yaml:"craft_support,omitempty"` // Discipline this shop's stock supports — see ValidCraftSupports
 
 	// LastRestockByTier records the round of the most recent restock
 	// per rarity tier. Replaces the single LastRestock for the
@@ -124,6 +134,31 @@ type ShopInventory struct {
 	Zone   string `yaml:"-"`
 	MobId  int    `yaml:"-"`
 	RoomId int    `yaml:"-"`
+}
+
+// AddAffixedStock appends a bought-back affixed item at relist price, evicting
+// the oldest entry (FIFO) when the list is at cap. cap <= 0 means no cap.
+func (si *ShopInventory) AddAffixedStock(item items.Item, price, cap int) {
+	si.AffixedStock = append(si.AffixedStock, AffixedStockEntry{
+		Item:       item,
+		Price:      price,
+		AddedRound: util.GetRoundCount(),
+	})
+	if cap > 0 {
+		for len(si.AffixedStock) > cap {
+			si.AffixedStock = si.AffixedStock[1:] // drop oldest
+		}
+	}
+}
+
+// RemoveAffixedStock removes and returns the entry at idx (e.g. on purchase).
+func (si *ShopInventory) RemoveAffixedStock(idx int) (items.Item, bool) {
+	if idx < 0 || idx >= len(si.AffixedStock) {
+		return items.Item{}, false
+	}
+	it := si.AffixedStock[idx].Item
+	si.AffixedStock = append(si.AffixedStock[:idx], si.AffixedStock[idx+1:]...)
+	return it, true
 }
 
 // GetStock returns the StockEntry for an item, or nil if not stocked.

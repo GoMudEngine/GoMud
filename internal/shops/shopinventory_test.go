@@ -450,3 +450,39 @@ func TestIsValidVendorCategory(t *testing.T) {
 		}
 	}
 }
+
+func TestAffixedStock_AddListRemove(t *testing.T) {
+	si := &ShopInventory{}
+	a := items.Item{ItemId: 10, Affixed: true, Spec: &items.ItemSpec{Value: 400, Name: "Keen Torc"}}
+	b := items.Item{ItemId: 11, Affixed: true, Spec: &items.ItemSpec{Value: 300, Name: "Warding Ring"}}
+
+	si.AddAffixedStock(a, 200, 100)
+	si.AddAffixedStock(b, 150, 100)
+	if len(si.AffixedStock) != 2 {
+		t.Fatalf("want 2 affixed entries, got %d", len(si.AffixedStock))
+	}
+
+	got, ok := si.RemoveAffixedStock(0)
+	if !ok || got.ItemId != 10 {
+		t.Fatalf("RemoveAffixedStock(0) = %+v, %v", got, ok)
+	}
+	if len(si.AffixedStock) != 1 || si.AffixedStock[0].Item.ItemId != 11 {
+		t.Fatalf("after remove, want [11], got %+v", si.AffixedStock)
+	}
+}
+
+func TestAffixedStock_CapEvictsOldest(t *testing.T) {
+	si := &ShopInventory{}
+	for i := 0; i < 5; i++ {
+		si.AddAffixedStock(items.Item{ItemId: 100 + i, Affixed: true,
+			Spec: &items.ItemSpec{Value: 100}}, 50, 3)
+	}
+	if len(si.AffixedStock) != 3 {
+		t.Fatalf("cap 3: want 3 entries, got %d", len(si.AffixedStock))
+	}
+	for i, want := range []int{102, 103, 104} {
+		if si.AffixedStock[i].Item.ItemId != want {
+			t.Errorf("entry %d = %d; want %d", i, si.AffixedStock[i].Item.ItemId, want)
+		}
+	}
+}
