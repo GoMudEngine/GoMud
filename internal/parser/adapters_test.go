@@ -91,3 +91,21 @@ func TestPotionItemAdapter(t *testing.T) {
 	assert.Equal(t, KindPotionItem, m.Kind)
 	assert.Equal(t, 30001, m.Item.ItemId)
 }
+
+func TestMobAdapter(t *testing.T) {
+	s, cleanup := seedParserTest(t)
+	defer cleanup()
+	m, ok := mobAdapter(s, "skeleton")
+	require.True(t, ok)
+	assert.Equal(t, KindMob, m.Kind)
+	assert.Equal(t, 100, m.MobInstanceId)
+}
+
+func TestPlayerAdapter(t *testing.T) {
+	s, cleanup := seedParserTest(t)
+	defer cleanup()
+	m, ok := playerAdapter(s, "aliceia")
+	require.True(t, ok)
+	assert.Equal(t, KindPlayer, m.Kind)
+	assert.Equal(t, 1, m.UserId)
+}

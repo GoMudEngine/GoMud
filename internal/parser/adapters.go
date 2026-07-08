@@ -89,6 +89,39 @@ func potionItemAdapter(s Scope, candidate string) (Match, bool) {
 	return Match{Kind: KindPotionItem, Name: it.Name(), Item: it}, true
 }
 
+func mobAdapter(s Scope, candidate string) (Match, bool) {
+	if s.Room == nil {
+		return Match{}, false
+	}
+	_, mobInstanceId := s.Room.FindByName(candidate)
+	if mobInstanceId == 0 {
+		return Match{}, false
+	}
+	return Match{Kind: KindMob, Name: candidate, MobInstanceId: mobInstanceId}, true
+}
+
+func playerAdapter(s Scope, candidate string) (Match, bool) {
+	if s.Room == nil {
+		return Match{}, false
+	}
+	playerId, _ := s.Room.FindByName(candidate)
+	if playerId == 0 {
+		return Match{}, false
+	}
+	return Match{Kind: KindPlayer, Name: candidate, UserId: playerId}, true
+}
+
+func petAdapter(s Scope, candidate string) (Match, bool) {
+	if s.Room == nil {
+		return Match{}, false
+	}
+	playerId := s.Room.FindByPetName(candidate)
+	if playerId == 0 {
+		return Match{}, false
+	}
+	return Match{Kind: KindPet, Name: candidate, UserId: playerId}, true
+}
+
 // matchInSlice resolves candidate against an item slice via items.FindMatchIn,
 // preferring a full match over a partial one.
 func matchInSlice(candidate string, list []items.Item) (items.Item, bool) {
