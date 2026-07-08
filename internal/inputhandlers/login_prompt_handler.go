@@ -150,26 +150,6 @@ func ValidateYesNo(input string, _ map[string]string) (string, error) {
 	return "", ErrInvalidResponse
 }
 
-// ValidateCharacterName checks that a character name is valid for a new user.
-// It replicates the checks from the tutorial's `start` command.
-func ValidateCharacterName(input string, results map[string]string) (string, error) {
-	if len(input) == 0 {
-		return "", ErrInputRequired
-	}
-
-	// Can't match their account username
-	if strings.EqualFold(input, results["username-new"]) {
-		return "", errors.New("your character name cannot match your account username")
-	}
-
-	// Centralised validation: length, regex, banned names, mob names, existing character/user
-	if err := users.ValidateActorName(input, users.ValidateActorOpts{}); err != nil {
-		return "", err
-	}
-
-	return input, nil
-}
-
 // CreatePromptHandler creates a generic input handler for multi-step prompts.
 func CreatePromptHandler(steps []*PromptStep, onComplete CompletionFunc) connections.InputHandler {
 

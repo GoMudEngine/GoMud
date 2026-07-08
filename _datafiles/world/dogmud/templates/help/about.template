@@ -39,15 +39,14 @@ What no living person knows: the moons are not moons. They are the other colony 
 still in orbit after ten thousand years. Their presence influences the Chrysalis in
 ways that look exactly like astrology and feel exactly like divine favour.
 
-<ansi fg="yellow">━━━ The Windward Marches ━━━</ansi>
+<ansi fg="yellow">━━━ Where You Begin ━━━</ansi>
 
-The game begins in <ansi fg="yellow">The Windward Marches</ansi>, a region of varied terrain on the western
-edge of Thera — forests, cliffs, shore, highland passes. The climate runs cool and
-temperate, prone to sudden storms at the seasonal turns. It is a place where old
-power is contested and new factions are rising.
-
-<ansi fg="yellow">Startland</ansi> is the entry point: a rough settlement where newcomers find their
-footing before venturing further into the world.
+You begin in <ansi fg="yellow">Pothole Coulee</ansi>, a hardscrabble frontier settlement dug into a
+maze of dry stone washes on the edge of the settled lands. It is where the newly
+Opened find their footing — a town of trainers, tradesfolk, and bandit-troubled
+canyons close enough to be dangerous and forgiving enough to survive. From the
+coulee the roads run on to larger towns and cities such as <ansi fg="yellow">Thornwall</ansi> and the
+capital at <ansi fg="yellow">New Plymouth</ansi>.
 
 <ansi fg="yellow">━━━ What Kind of Game Is This? ━━━</ansi>
 
@@ -69,10 +68,23 @@ footing before venturing further into the world.
   makes blades. An alchemy bench makes potions. What you can craft depends on
   your skill and what you can find or gather.
 
+<ansi fg="yellow">If you've played other MUDs, three things work differently here:</ansi>
+
+<ansi fg="white">Three pools, not two.</ansi>  Actions draw on Health, Stamina (SP), and Conviction
+  (CP). Watch all three in a fight, not just health — running a pool dry has
+  consequences beyond that pool.
+
+<ansi fg="white">Loot is on the body.</ansi>  A slain foe keeps its gear and gold until you take it.
+  Loot the corpse: <ansi fg="command">loot corpse</ansi>, or <ansi fg="command">get all corpse</ansi>.
+
+<ansi fg="white">Death is not deletion.</ansi>  Falling routes you through injury and waking (and, if
+  you've earned it, a justice system) — never a lost character.
+
 <ansi fg="yellow">━━━ Getting Started ━━━</ansi>
 
   <ansi fg="command">look</ansi>              See your surroundings.
   <ansi fg="command">help combat</ansi>       How fighting works.
+  <ansi fg="command">help loot</ansi>         Taking gear and gold from a corpse.
   <ansi fg="command">help craft</ansi>        How the crafting system works.
   <ansi fg="command">help skills</ansi>       Your current skill levels.
   <ansi fg="command">help status</ansi>       Your stats, health, and condition.

@@ -100,6 +100,10 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	default: // routeMudVet
 		user.ClearPrompt()
 		startInCoulee(user)
+		// Option 2 is "I know MUDs; show me what's different." Point them at
+		// the one doc that actually answers that, rather than leaving them to
+		// discover it.
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`%sNew to DOGMud but not to MUDs? Type <ansi fg="command">help dogmud</ansi> for what works differently here.%s`, term.CRLFStr, term.CRLFStr))
 		return true, nil
 	}
 }

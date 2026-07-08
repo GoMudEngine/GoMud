@@ -65,9 +65,9 @@ idea. The more you know, the harder new discoveries come.
 
 <ansi fg="yellow">━━━ Crafting Stations ━━━</ansi>
 
-  <ansi fg="yellow">forge</ansi>              The Forge — east of Town Square, Startland.
-  <ansi fg="yellow">alchemy_bench</ansi>      Alchemist's Workshop — west of Training Grounds.
-  <ansi fg="yellow">loom</ansi>               Tailor's shop — Thornwall City.
+  <ansi fg="yellow">forge</ansi>              Smithing station — in Pothole Coulee and most towns.
+  <ansi fg="yellow">alchemy_bench</ansi>      Alchemy station — in Pothole Coulee and most towns.
+  <ansi fg="yellow">loom</ansi>               Tailoring station — in Pothole Coulee and most towns.
   <ansi fg="yellow">hearth</ansi>             Kitchen or tavern hearth.
   <ansi fg="yellow">jeweler_bench</ansi>      Jeweler's Workshop — Thornwall City.
   <ansi fg="yellow">enchanting_circle</ansi>  Enchanter's Circle — east of Jeweler's Workshop.
