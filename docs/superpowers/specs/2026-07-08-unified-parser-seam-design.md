@@ -108,8 +108,14 @@ single `KindInventoryItem` (`character.FindItem` returns the combined pool);
 |-------|-------|--------|
 | 0 — Foundation | `internal/parser` package | ✅ done (master) |
 | 1 — `get` composition | Route `get`'s container/corpse detection through `SplitTrailingContainer`; retire that ladder; gates stay in the command. | ✅ done (master) — also fixed a latent multi-word-container bug |
-| 2 — Admin two-slot | `knowledge`/`opinion`/`crime`/`faction` multi-word mob lookup, via a scope-agnostic `SplitLeadingMatch` helper. | this plan |
-| 3 — Convergence | Retire dead bespoke matchers; document the un-hyphenated authoring convention. | later (optional) |
+| 2 — Admin two-slot | multi-word mob lookup via a scope-agnostic `SplitLeadingMatch` helper. | ✅ done (master) — `knowledge` + `opinion` fixed (greedy split + `ConvertForFilename`-normalized ident). `crime`/`faction` verified NOT affected (faction-slug + single-token player, no mob names). |
+| 3 — Convergence | Retire dead bespoke matchers; document the un-hyphenated authoring convention. | later (optional, low priority) |
+
+**Project status (2026-07-08): the valuable work is complete.** Stage 0
+(foundation) + Stage 1 (`get`, which fixed a real player-facing multi-word-
+container bug) + Stage 2 (admin knowledge/opinion) are on `master`. Everything
+else the original spec proposed was verified to already work and was dropped.
+Only optional Stage 3 convergence cleanup remains.
 
 The original Stages 2 (item/inventory), 3 (`give`), and 4 (nouns) are **dropped** —
 those commands already handle multi-word via existing matchers (verified).
