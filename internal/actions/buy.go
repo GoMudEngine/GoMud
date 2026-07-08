@@ -500,10 +500,11 @@ func tryPurchaseFromInventory(buyer Actor, request string, shopMob *mobs.Mob, sh
 	cfg := shops.PricingConfigFromBalance()
 
 	type invEntry struct {
-		entry     *shops.StockEntry
-		item      items.Item
-		plainName string
-		price     int
+		entry      *shops.StockEntry
+		item       items.Item
+		plainName  string
+		price      int
+		affixedIdx int // index into shopInv.AffixedStock, or -1 for base-ItemId stock
 	}
 
 	var available []invEntry
@@ -533,13 +534,34 @@ func tryPurchaseFromInventory(buyer Actor, request string, shopMob *mobs.Mob, sh
 		}
 
 		available = append(available, invEntry{
-			entry:     entry,
-			item:      itm,
-			plainName: spec.Name,
-			price:     basePrice,
+			entry:      entry,
+			item:       itm,
+			plainName:  spec.Name,
+			price:      basePrice,
+			affixedIdx: -1,
 		})
 		itemNames = append(itemNames, spec.Name)
 		itemNamesFancy = append(itemNamesFancy, itm.DisplayName())
+	}
+
+	// Per-instance affixed resale stock (Stage 3): unique bought-back gear,
+	// priced at its stored relist price (AffixValue x 1.0), less any barter.
+	for i := range shopInv.AffixedStock {
+		e := &shopInv.AffixedStock[i]
+		spec := e.Item.GetSpec()
+		price := e.Price
+		if barterSkill := char.GetSkillLevel(skills.Bartering); barterSkill > 0 {
+			discount := float64(barterSkill) / 50.0 * 0.15
+			price = shops.ApplyBarterSellDiscount(price, discount)
+		}
+		available = append(available, invEntry{
+			item:       e.Item,
+			plainName:  spec.Name,
+			price:      price,
+			affixedIdx: i,
+		})
+		itemNames = append(itemNames, spec.Name)
+		itemNamesFancy = append(itemNamesFancy, e.Item.DisplayName())
 	}
 
 	match, closeMatch := util.FindMatchIn(request, itemNames...)
@@ -576,6 +598,47 @@ func tryPurchaseFromInventory(buyer Actor, request string, shopMob *mobs.Mob, sh
 			buyer.SendText(messaging.CategoryError, "You can't carry any more.")
 		}
 		return BuyResult{Reason: BuyReasonOverburdened}
+	}
+
+	// Affixed resale purchase (Stage 3): hand the exact stored item with a fresh
+	// UUID and remove the entry. Bypasses the base-ItemId destock path below
+	// (matched.entry is nil for affixed rows).
+	if matched.affixedIdx >= 0 {
+		if char.Gold < matched.price {
+			if shopMob != nil {
+				shopMob.Command(`say You don't have enough gold for that.`)
+			} else if buyer.IsPlayer() {
+				buyer.SendText(messaging.CategoryError, `You don't have enough gold for that.`)
+			}
+			return BuyResult{Reason: BuyReasonInsufficientGold}
+		}
+		bought, ok := shopInv.RemoveAffixedStock(matched.affixedIdx)
+		if !ok {
+			return BuyResult{Reason: BuyReasonOutOfStock}
+		}
+		bought.UUID = items.NewItemUUID()
+		if !char.StoreItem(bought) {
+			shopInv.AddAffixedStock(bought, matched.price, 0) // roll back on carry failure
+			if buyer.IsPlayer() {
+				buyer.SendText(messaging.CategoryError, "You can't carry any more.")
+			}
+			return BuyResult{Reason: BuyReasonOverburdened}
+		}
+		shopInv.SalesCount++
+		char.Gold -= matched.price
+		shopInv.Gold += matched.price
+		if buyer.IsPlayer() {
+			events.AddToQueue(events.ItemOwnership{UserId: buyer.GetUserId(), Item: bought, Gained: true})
+			events.AddToQueue(events.EquipmentChange{UserId: buyer.GetUserId(), GoldChange: -matched.price})
+		}
+		if err := shops.SaveShop(shopInv.Zone, shopInv.MobId, shopInv.RoomId); err != nil {
+			mudlog.Error("PURCHASE", "msg", "SaveShop failed", "error", err)
+		}
+		buyer.SendText(messaging.CategoryLoot, fmt.Sprintf(`You buy the <ansi fg="itemname">%s</ansi>.`, bought.DisplayName()))
+		if room := buyer.GetRoom(); room != nil {
+			room.SendTextVisual(messaging.CategoryLoot, fmt.Sprintf(`<ansi fg="username">%s</ansi> buys the <ansi fg="itemname">%s</ansi>.`, buyer.GetName(), bought.DisplayName()), buyer.GetUserId())
+		}
+		return BuyResult{Success: true, Purchased: 1, SaleType: "item"}
 	}
 
 	if matched.entry.Current <= 0 {

@@ -400,3 +400,35 @@ func TestSell_QuestItemRejectedNoMerchantPresent(t *testing.T) {
 	assert.Equal(t, SellStopRejected, res.Reason,
 		"must report SellStopRejected even when no merchant is present")
 }
+
+// TestSell_AffixedItem_StocksForResale: selling an affixed item to a
+// living-economy shop stores the exact item for resale at the fixed-spread buy
+// price, not the base ItemId stock.
+func TestSell_AffixedItem_StocksForResale(t *testing.T) {
+	defer seedSellItemSpecs()()
+	defer seedSellRoom(t)()
+	defer seedSellMerchant(t, 100000)()
+
+	// Hermetic: no cached/persisted shop from a prior run.
+	shops.ClearCache()
+	_ = shops.RemoveShopFile("TestZone", 2, 1)
+	defer shops.RemoveShopFile("TestZone", 2, 1)
+	defer shops.ClearCache()
+
+	si := shops.RegisterShop("TestZone", 2, 1, shops.ShopInventory{Gold: 100000})
+
+	seller := newSellerActor(t, true)
+	char := seller.GetCharacter()
+	require.True(t, char.StoreItem(newAffixedInstance(400)))
+	goldBefore := char.Gold
+
+	res := Sell(seller, SellOptions{ItemName: "iron sword", Quantity: 1})
+	require.Equal(t, SellStopSoldAll, res.Reason)
+
+	// Player was paid the buy price (Value*ShopBuyRatio = 200).
+	assert.Equal(t, goldBefore+200, char.Gold, "player paid Value*ShopBuyRatio")
+	// The exact item is stored for resale at the full-value relist price (400).
+	require.Len(t, si.AffixedStock, 1, "affixed item should be stored for resale")
+	assert.Equal(t, 400, si.AffixedStock[0].Price, "relist price = AffixValue*1.0")
+	assert.Equal(t, 400, si.AffixedStock[0].Item.GetSpec().Value, "stored per-instance value preserved")
+}

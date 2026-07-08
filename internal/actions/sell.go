@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
@@ -319,40 +320,47 @@ func sellOneToMerchant(seller Actor, itemName string, room *rooms.Room,
 		events.AddToQueue(events.ItemOwnership{MobInstanceId: seller.GetMobInstanceId(), Item: item, Gained: false})
 	}
 
-	// Stock update (merchant side). Affixed items are melted in Stage 2 — NOT
-	// stocked as a base ItemId (Stage 3 adds per-instance resale stock).
-	if !item.Affixed {
+	// Stock update (merchant side). Living-economy shops store the exact affixed
+	// item for resale; legacy shops (shopInv == nil) melt it.
+	if item.Affixed {
 		if shopInv != nil {
+			c := int(configs.GetBalanceConfig().ShopAffixedStockCap)
+			shopInv.AddAffixedStock(item, item.GetSpec().Value, c)
 			shopInv.BuysCount++
-			if buyReason == "gear_upgrade" {
-				newItem := items.New(item.ItemId)
-				if newItem.ItemId > 0 {
-					returnedItems, wore, _ := mob.Character.Wear(newItem)
-					if wore {
-						for _, old := range returnedItems {
-							if old.ItemId > 0 {
-								shopInv.AddStockAtRound(old.ItemId, 1, util.GetRoundCount())
-							}
+			if err := shops.SaveShop(shopInv.Zone, shopInv.MobId, shopInv.RoomId); err != nil {
+				mudlog.Error("SELL", "msg", "SaveShop failed", "error", err)
+			}
+		}
+	} else if shopInv != nil {
+		shopInv.BuysCount++
+		if buyReason == "gear_upgrade" {
+			newItem := items.New(item.ItemId)
+			if newItem.ItemId > 0 {
+				returnedItems, wore, _ := mob.Character.Wear(newItem)
+				if wore {
+					for _, old := range returnedItems {
+						if old.ItemId > 0 {
+							shopInv.AddStockAtRound(old.ItemId, 1, util.GetRoundCount())
 						}
-						room.SendTextVisual(messaging.CategoryLoot,
-							fmt.Sprintf(`<ansi fg="mobname">%s</ansi> examines the <ansi fg="itemname">%s</ansi> and puts it on.`, mob.Character.Name, newItem.DisplayName()),
-							seller.GetUserId(),
-						)
-					} else {
-						shopInv.AddStockAtRound(item.ItemId, 1, util.GetRoundCount())
 					}
+					room.SendTextVisual(messaging.CategoryLoot,
+						fmt.Sprintf(`<ansi fg="mobname">%s</ansi> examines the <ansi fg="itemname">%s</ansi> and puts it on.`, mob.Character.Name, newItem.DisplayName()),
+						seller.GetUserId(),
+					)
 				} else {
 					shopInv.AddStockAtRound(item.ItemId, 1, util.GetRoundCount())
 				}
 			} else {
 				shopInv.AddStockAtRound(item.ItemId, 1, util.GetRoundCount())
 			}
-			if err := shops.SaveShop(mob.Zone, int(mob.MobId), mob.HomeRoomId); err != nil {
-				mudlog.Error("SELL", "msg", "SaveShop failed", "error", err)
-			}
 		} else {
-			mob.Character.Shop.StockItem(item.ItemId)
+			shopInv.AddStockAtRound(item.ItemId, 1, util.GetRoundCount())
 		}
+		if err := shops.SaveShop(mob.Zone, int(mob.MobId), mob.HomeRoomId); err != nil {
+			mudlog.Error("SELL", "msg", "SaveShop failed", "error", err)
+		}
+	} else {
+		mob.Character.Shop.StockItem(item.ItemId)
 	}
 
 	// Progression.
