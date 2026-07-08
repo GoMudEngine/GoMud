@@ -486,3 +486,35 @@ func TestAffixedStock_CapEvictsOldest(t *testing.T) {
 		}
 	}
 }
+
+// TestAffixedStock_YAMLRoundTrip proves a per-instance affixed entry survives
+// YAML marshal/unmarshal — the serialization SaveShop/loadFromDisk rely on — so
+// bought-back gear (spec value + affix mods + Affixed flag) persists.
+func TestAffixedStock_YAMLRoundTrip(t *testing.T) {
+	si := ShopInventory{Gold: 500}
+	si.AddAffixedStock(items.Item{ItemId: 10, Affixed: true,
+		Spec: &items.ItemSpec{Value: 400, PhysicalMitigation: 5}}, 200, 8)
+
+	data, err := yaml.Marshal(&si)
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+	var got ShopInventory
+	if err := yaml.Unmarshal(data, &got); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+
+	if len(got.AffixedStock) != 1 {
+		t.Fatalf("want 1 affixed entry after round-trip, got %d", len(got.AffixedStock))
+	}
+	e := got.AffixedStock[0]
+	if e.Price != 200 {
+		t.Errorf("price = %d; want 200", e.Price)
+	}
+	if !e.Item.Affixed {
+		t.Error("Affixed flag did not round-trip")
+	}
+	if e.Item.Spec == nil || e.Item.Spec.Value != 400 || e.Item.Spec.PhysicalMitigation != 5 {
+		t.Errorf("per-instance spec did not round-trip: %+v", e.Item.Spec)
+	}
+}
