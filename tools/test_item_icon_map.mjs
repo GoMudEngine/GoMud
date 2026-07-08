@@ -31,6 +31,43 @@ eq(itemIconURL({ name: "Steel Ingot" }), urlFor("metal_ingot"), "exact: case-ins
 eq(itemIconURL({ name: "a wool cloak" }), urlFor("cloak"), "exact: leading article stripped");
 eq(itemIconURL({ name: "bounty hunter's cloak" }), urlFor("cloak"), "exact: apostrophe name");
 
+// Legendary BIS gear (rarity_tier 82) — NAME_MAP must win over generic keywords.
+eq(itemIconURL({ name: "The Blackrazor", type: "weapon", subtype: "slashing" }), urlFor("blackrazor"), "bis: blackrazor (article)");
+eq(itemIconURL({ name: "Blackrazor", type: "weapon", subtype: "slashing" }), urlFor("blackrazor"), "bis: blackrazor (displayname)");
+eq(itemIconURL({ name: "Staff of the Hollow Choir", type: "weapon", subtype: "staff" }), urlFor("staff_of_the_hollow_choir"), "bis: hollow choir beats generic staff");
+eq(itemIconURL({ name: "Phial of Second Birth", type: "potion", subtype: "drinkable" }), urlFor("phial_of_second_birth"), "bis: phial");
+eq(itemIconURL({ name: "Vitalis Bandolier", type: "belt" }), urlFor("vitalis_bandolier"), "bis: bandolier");
+eq(itemIconURL({ name: "Wayfarer's Bottomless Pack", type: "back" }), urlFor("wayfarers_bottomless_pack"), "bis: pack");
+eq(itemIconURL({ name: "Aegis of Mockery", type: "offhand" }), urlFor("aegis_of_mockery"), "bis: aegis");
+eq(itemIconURL({ name: "Thornwall Harness", type: "body" }), urlFor("thornwall_harness"), "bis: harness");
+eq(itemIconURL({ name: "Seething Prism", type: "neck" }), urlFor("seething_prism"), "bis: prism");
+eq(itemIconURL({ name: "Zephyr Treads", type: "feet" }), urlFor("zephyr_treads"), "bis: treads");
+eq(itemIconURL({ name: "Warden's Lash", type: "weapon" }), urlFor("wardens_lash"), "bis: lash");
+eq(itemIconURL({ name: "Relic Sidearm", type: "weapon" }), urlFor("relic_sidearm"), "bis: sidearm");
+eq(itemIconURL({ name: "Ironhorn Warbow", type: "weapon", subtype: "ranged" }), urlFor("ironhorn_warbow"), "bis: warbow beats generic bow");
+eq(itemIconURL({ name: "Coldlight Lance", type: "weapon" }), urlFor("coldlight_lance"), "bis: lance");
+eq(itemIconURL({ name: "Warden-Step Greaves", type: "legs" }), urlFor("warden_step_greaves"), "bis: greaves (hyphen)");
+eq(itemIconURL({ name: "Grey Warden Helm", type: "head" }), urlFor("grey_warden_helm"), "bis: helm");
+eq(itemIconURL({ name: "Greyfield Striders", type: "feet" }), urlFor("greyfield_striders"), "bis: striders");
+eq(itemIconURL({ name: "Hull-Plate Cuirass", type: "body" }), urlFor("hull_plate_cuirass"), "bis: cuirass (hyphen)");
+eq(itemIconURL({ name: "Coldlight Mantle", type: "back" }), urlFor("coldlight_mantle"), "bis: mantle");
+
+// Arena + Elemental Oasis instance loot pool (near-BIS).
+eq(itemIconURL({ name: "Earthshaker Warhammer", type: "weapon", subtype: "bludgeoning" }), urlFor("earthshaker_warhammer"), "inst: warhammer beats generic hammer");
+eq(itemIconURL({ name: "Champion Mace", type: "weapon", subtype: "bludgeoning" }), urlFor("champion_mace"), "inst: champion mace beats generic mace");
+eq(itemIconURL({ name: "Crystal Sceptre", type: "weapon", subtype: "sceptre" }), urlFor("crystal_sceptre"), "inst: crystal sceptre");
+eq(itemIconURL({ name: "Wind Scimitar", type: "weapon", subtype: "slashing" }), urlFor("wind_scimitar"), "inst: wind scimitar");
+eq(itemIconURL({ name: "Drowned Claws", type: "weapon", subtype: "claws" }), urlFor("drowned_claws"), "inst: drowned claws");
+eq(itemIconURL({ name: "Arena Tower Shield", type: "offhand" }), urlFor("arena_tower_shield"), "inst: tower shield");
+eq(itemIconURL({ name: "Arena Chain Gloves", type: "gloves" }), urlFor("arena_chain_gloves"), "inst: chain gloves");
+eq(itemIconURL({ name: "Arena Iron Greaves", type: "legs" }), urlFor("arena_iron_greaves"), "inst: iron greaves");
+eq(itemIconURL({ name: "Volcanic Plate", type: "body" }), urlFor("volcanic_plate"), "inst: volcanic plate");
+eq(itemIconURL({ name: "Ice Crown", type: "head" }), urlFor("ice_crown"), "inst: ice crown");
+eq(itemIconURL({ name: "Mist Pauldrons", type: "shoulders" }), urlFor("mist_pauldrons"), "inst: mist pauldrons (repointed)");
+eq(itemIconURL({ name: "Stone Ring", type: "ring" }), urlFor("stone_ring"), "inst: stone ring");
+eq(itemIconURL({ name: "Storm Bracer", type: "wrist" }), urlFor("storm_bracer"), "inst: storm bracer (repointed)");
+eq(itemIconURL({ name: "Tidal Torc", type: "neck" }), urlFor("tidal_torc"), "inst: tidal torc");
+
 // Equip-keyword tier (weapon/armor nouns, safe on any name)
 eq(itemIconURL({ name: "rusted broadsword" }), urlFor("finely_crafted_shortsword"), "equip-kw: broadsword->sword");
 eq(itemIconURL({ name: "gnarled quarterstaff" }), urlFor("staff"), "equip-kw: staff");
