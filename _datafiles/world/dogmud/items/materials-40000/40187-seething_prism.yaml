@@ -20,5 +20,5 @@ mutation_tick_chance: 10
 mutation_rarity_floor: 5
 weight: 0.5
 rarity_tier: 82
-value: 7000
+value: 40000
 not_salable: true

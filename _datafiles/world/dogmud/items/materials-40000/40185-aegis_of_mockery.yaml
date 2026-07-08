@@ -26,5 +26,5 @@ voice_id: aegis
 taunt_pull: true
 weight: 8.0
 rarity_tier: 82
-value: 7000
+value: 40000
 not_salable: true
