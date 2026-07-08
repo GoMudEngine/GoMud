@@ -4,7 +4,7 @@ namesimple: bow
 description: A simple recurve bow made from laminated wood. It has a moderate draw weight,
   suitable for target practice and light combat.
 type: weapon
-value: 288
+value: 5
 hands: 2
 subtype: shooting
 weight: 3.0  # Lightweight bow
