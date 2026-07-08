@@ -76,6 +76,26 @@ func TestGet_MultiWordContainer_Composition(t *testing.T) {
 	})
 }
 
+// TestGet_QuotedMultiWordFloorItem locks the F1 fix: a quoted multi-word item
+// name must resolve off the floor. Before the fix, get.go's floor lookup used
+// `rest`, which kept the literal quote characters (only `args` was de-quoted),
+// so `get "iron sword"` fell through to a noun/failure.
+func TestGet_QuotedMultiWordFloorItem(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+	user, room := getTestUserAndRoom(t)
+
+	room.AddItem(items.New(10001), false) // Iron Sword
+	user.Character.Items = nil
+
+	handled, err := Get(`"iron sword"`, user, room, 0)
+	assert.True(t, handled)
+	assert.NoError(t, err)
+	assert.Len(t, user.Character.Items, 1, `get "iron sword" (quoted) should pick up the item`)
+	_, stillOnFloor := room.FindOnFloor("iron sword", false)
+	assert.False(t, stillOnFloor, "item should no longer be on the floor")
+}
+
 // TestGet_HiddenContainerGate_SingleWord locks that an undiscovered hidden
 // container is NOT lootable — the discovery gate must survive the refactor.
 // Single-word name so the container genuinely resolves (isolating the gate, not

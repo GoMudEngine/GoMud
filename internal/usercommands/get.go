@@ -31,6 +31,12 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		return true, nil
 	}
 
+	// De-quote `rest` so it matches the quote-stripped `args`. The floor/noun
+	// lookups below use `rest` directly; without this, `get "iron sword"` would
+	// carry the literal quote characters and never match. Case-preserving and a
+	// no-op for unquoted input.
+	rest = strings.Join(util.SplitButRespectQuotes(rest), " ")
+
 	// Sealed crate short-circuit — players can't `get` from it.
 	if len(args) > 0 && room.MatchesSealedCrate(strings.ToLower(args[len(args)-1])) {
 		user.SendText(messaging.CategorySystem, `The shipping crate is sealed and bound for the caravan; you can't get into it.`)
