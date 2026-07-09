@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(rm \"/c/Users/Calabe Davis/.claude/projects/C--Users-Calabe-Davis-workspace-DOGMud/memory/project_heal_tick_text_gap.md\")",
-      "Read(//c/Users/Calabe Davis/.claude/projects/C--Users-Calabe-Davis-workspace-DOGMud/memory//**)",
-      "Bash(rm \"/c/Users/Calabe Davis/.claude/projects/C--Users-Calabe-Davis-workspace-DOGMud/memory/project_edrin_summon_on_entry.md\" \"/c/Users/Calabe Davis/.claude/projects/C--Users-Calabe-Davis-workspace-DOGMud/memory/project_knuckle_weapon_skill_bug.md\" \"/c/Users/Calabe Davis/.claude/projects/C--Users-Calabe-Davis-workspace-DOGMud/memory/project_actsummoncompanion_hostile_should_be_bool.md\")"
-    ]
-  }
-}
