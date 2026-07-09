@@ -11,6 +11,7 @@
 - Preserve the distinction between system commands, prompt handling, protocol sanitization, and normal command processing.
 - If a change touches telnet or ANSI parsing, inspect the matching terminal/connection behavior together rather than patching only one side.
 - Avoid adding gameplay-specific command policy here when it belongs in `internal/usercommands`.
+- `ClientInput.Cursor` is a byte offset into `Buffer` and is the editing position. `CleanserInputHandler` owns buffer mutation: it inserts at the cursor and deletes the rune before it; `AnsiHandler` moves it with the arrow/Home/End/Delete keys. Any code that resizes `Buffer` (history recall in `term_ansi.go`, signal shortcuts in `signals.go`, login submit, prompt redraws in `main.go`) must reset/keep `Cursor` consistent or `clampCursor` will paper over it. Display (echo, erase, cursor moves) is width-aware via `runewidth` so CJK/wide characters occupy 2 columns; it is only emitted for server-side-echo, non-masked input — local-echo clients (Mudlet/web) and masked (password) fields manage their own line and stay linear.
 
 ## Verification
 

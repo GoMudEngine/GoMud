@@ -199,6 +199,21 @@ var (
 	AnsiF3b = TerminalCommand{[]byte{ANSI_ESC, 'O'}, []byte{'R'}}           // macos terminal telnet
 	AnsiF4b = TerminalCommand{[]byte{ANSI_ESC, 'O'}, []byte{'S'}}           // macos terminal telnet
 
+	///////////////////////////
+	// EDITING KEYS
+	///////////////////////////
+	// These arrive from the client when the user presses cursor-editing keys.
+	// Left/Right reuse the cursor-motion sequences (ESC [ C / ESC [ D).
+	AnsiKeyLeftApp   = TerminalCommand{[]byte{ANSI_ESC, 'O'}, []byte{'D'}}      // ESC O D (application cursor mode)
+	AnsiKeyRightApp  = TerminalCommand{[]byte{ANSI_ESC, 'O'}, []byte{'C'}}      // ESC O C (application cursor mode)
+	AnsiKeyHomeCSI   = TerminalCommand{[]byte{ANSI_ESC, '['}, []byte{'H'}}      // ESC [ H (same bytes as cursor-home)
+	AnsiKeyEndCSI    = TerminalCommand{[]byte{ANSI_ESC, '['}, []byte{'F'}}      // ESC [ F
+	AnsiKeyHomeTilde = TerminalCommand{[]byte{ANSI_ESC, '['}, []byte{'1', '~'}} // ESC [ 1 ~
+	AnsiKeyEndTilde  = TerminalCommand{[]byte{ANSI_ESC, '['}, []byte{'4', '~'}} // ESC [ 4 ~
+	AnsiKeyDelete    = TerminalCommand{[]byte{ANSI_ESC, '['}, []byte{'3', '~'}} // ESC [ 3 ~
+	AnsiKeyHomeApp   = TerminalCommand{[]byte{ANSI_ESC, 'O'}, []byte{'H'}}      // ESC O H (xterm app mode)
+	AnsiKeyEndApp    = TerminalCommand{[]byte{ANSI_ESC, 'O'}, []byte{'F'}}      // ESC O F (xterm app mode)
+
 	// Payload is the window title to set it to
 	AnsiSetWindowTitle = TerminalCommand{[]byte{ANSI_ESC, ']', '2', ';'}, []byte{'S', 'T'}}
 

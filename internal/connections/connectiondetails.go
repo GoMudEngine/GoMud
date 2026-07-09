@@ -117,6 +117,7 @@ type ClientInput struct {
 	EnterPressed  bool         // Did they hit enter? It's stripped from the buffer/input FYI
 	BSPressed     bool         // Did they hit backspace?
 	TabPressed    bool         // Did they hit tab?
+	Cursor        int          // Byte offset into Buffer where the next edit happens (0..len(Buffer))
 	History       InputHistory // A list of the last 10 things they typed
 }
 
@@ -124,6 +125,7 @@ type ClientInput struct {
 func (ci *ClientInput) Reset() {
 	ci.DataIn = ci.DataIn[:0]
 	ci.Buffer = ci.Buffer[:0]
+	ci.Cursor = 0
 	ci.EnterPressed = false
 }
 
