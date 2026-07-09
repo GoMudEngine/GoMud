@@ -1,0 +1,72 @@
+# Parser stress-test: hammer the command parser with alternate, multi-word, and
+# deliberately weird phrasings to shake out target-resolution bugs. Focus is the
+# 2026-07-08 unified-parser work (get container/corpse composition + multi-word
+# resolution). Report EXACT input → EXACT server response for anything that
+# mis-resolves, silently no-ops, or gives a confusing message.
+
+session:
+  name: parser-stress
+  max_rounds: 260
+  notes: >
+    You are a chaos-monkey parser tester. For every interaction, phrase commands
+    as many DIFFERENT ways as you can — the point is to break the parser, not to
+    play efficiently. Vary word order, add filler/prepositions, use multi-word
+    names, quotes, mixed case, and synonyms. After each command, record the exact
+    text you typed and the exact response. FLAG (as a possible bug) any case
+    where: a command that clearly names a real target says it can't find it; a
+    command silently does nothing; the parser grabs the wrong target; or the
+    response contradicts what `look` shows is present. Do NOT flag intentional
+    refusals (locked, not-your-kill, etc.).
+
+objectives:
+  - id: corpse-loot-phrasings
+    desc: >
+      Kill a weak creature (e.g. a Crop Pest in the Thornwall Outskirts pest
+      fields, west out the gate; fight unarmed if needed). Then `look corpse` to
+      see its loot, and try to take that loot EVERY way you can think of, one per
+      line, noting each result:
+      `get all corpse`, `get <item> corpse`, `get <item> from corpse`,
+      `get <item> from <full mob name> corpse`, `loot corpse`, `loot <mob>`,
+      `loot from corpse`, `get all from corpse`, `take <item> corpse` (if "take"
+      exists), plus the item named partially / in full / in mixed case. On a
+      fresh corpse, try `get all corpse` to sweep. Report which phrasings worked
+      and which failed.
+    verify: "at least get all corpse, get <item> corpse, and loot corpse all transfer loot"
+
+  - id: multiword-item-and-floor
+    desc: >
+      Acquire or find multi-word-named items (buy from a shop, or pick up drops).
+      Reference them with varied phrasing: full name, partial name, last word
+      only, with a leading article ("get the <item>"), quoted ("get \"<item>\""),
+      wrong case. Drop and re-get them. Note any phrasing that fails to resolve
+      an item you can clearly see.
+    verify: "multi-word item names resolve by full name AND partial name"
+
+  - id: container-phrasings
+    desc: >
+      If you find a room container (chest, crate, barrel, etc.), take items from
+      it with multi-word phrasing: `get <item> <container>`,
+      `get <item> from <container>`, `get all <container>`, and try a multi-word
+      container name if one exists. Note failures.
+    verify: "get <item> <container> and get <item> from <container> both work"
+
+  - id: target-phrasings
+    desc: >
+      Target mobs/NPCs with varied phrasing: `look <mob>`, `look at <mob>`,
+      `consider <mob>`, `attack <mob>`, using multi-word mob names (e.g. "bank
+      clerk", "tavern keeper"), partial names, last-word-only, and mixed case.
+      Also `give <item> to <npc>` and `give <item> <npc>` with multi-word
+      recipient names. Note any that fail to find a target that is clearly in the
+      room.
+    verify: "multi-word mob names resolve for look/consider/attack and give"
+
+  - id: adversarial-garbage
+    desc: >
+      Deliberately feed the parser junk and edge cases to look for crashes or
+      confusing output (NOT to accomplish anything): empty-ish commands, very
+      long strings of words, repeated prepositions ("get from from corpse"),
+      trailing/leading spaces, numbers as names, `get 2.<item>` / `get <item>#2`
+      disambiguation, `get all` with nothing present. The server should respond
+      gracefully (a sensible "you don't see that" is fine); FLAG any panic,
+      disconnect, or nonsensical success.
+    verify: "no crash/disconnect; junk input yields graceful responses"

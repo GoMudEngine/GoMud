@@ -232,19 +232,24 @@ first-person `text`, player-perspective `hints`, discoverable triggers.
     - itemid: 40123   # watercress
     - itemid: 40124   # freshwater mussels
 ```
-- [ ] **Step 2: Author the Chandler (9423)** — vendor; reuse NP general goods + the new line:
+- [ ] **Step 2: Author the Chandler (9423)** — vendor. A ship's chandler is a
+  general store for ships, so use `craft_support: general` (like Mardle 9390) —
+  the shop's category check (`buyrules.go`: `vendorAcceptsAny`) treats `general`
+  as accepting every item category, so the mixed reused goods all stock cleanly
+  (verified: 40102 rope = tailoring, 40103 waterskin = tailoring, 40105 tinderbox
+  = blacksmithing; a `tailoring` vendor would REJECT the tinderbox, a `general`
+  one does not):
 ```yaml
-  craft_support: tailoring
+  craft_support: general
   behavior_archetype: noncombat_shopkeeper
   gold: 40
   ...
   shop:
-    - itemid: 40129   # coil of tarred line
+    - itemid: 40129   # coil of tarred line (new)
     - itemid: 40102   # rope (reuse NP good)
     - itemid: 40103   # waterskin
     - itemid: 40105   # tinderbox
 ```
-(Confirm 40102/40103/40105 exist and their categories are compatible with a `tailoring` shop's accepted list; if the shop rejects an item by category, drop it from the list — the chandler can sell fewer reused goods. The new 40129 is the guaranteed stock.)
 - [ ] **Step 3: Author 9419/9420/9422/9424** with dialogue trees (warden, barge master + Davan node, dockmaster, tavern-keeper).
 - [ ] **Step 4: Author 9425/9426** as light ambient (idlecommands; minimal or no dialogue tree).
 - [ ] **Step 5: Verify** mob filenames match `ConvertForFilename(name)`; all carry `quayfolk` in `groups`; placement rooms (Task 2) have matching `spawninfo`.
