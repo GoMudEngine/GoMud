@@ -1,5 +1,54 @@
 # DOGMud Patch Notes
 
+## 2026-07-08 — Newbie zone rebuilt, gear trading, and combat/quest fixes
+
+### The first hour (Pothole Coulee)
+- **Quest-givers can talk again.** Seven of the newbie zone's quest-givers — the
+  ones running the wash, the mines, the marsh, the hunt, the grove, the standing
+  stones, and the canyon — had gone silent and could neither hand out nor close
+  their quests. All seven are back. If a spoke seemed impossible to start, try
+  again.
+- **You are only asked your name once.** Creating a character no longer asks for
+  a name a second time (and no longer refuses the name you just chose). Your
+  login name is your character name.
+- **Looting is taught where you first need it.** After your first real kill in
+  the wash, the game tells you to loot the corpse (`loot corpse`, or
+  `get all corpse`), and the town explains that a fallen foe's gear rides on the
+  body until you take it.
+- **A livelier welcome.** The opening "void" is shorter and to the point; the
+  town's three orientation stops (school, shop, inn) now react in-character when
+  you visit; the tutorial also teaches picking things up (`get`); and the guide,
+  trainers, and clerics all read cleaner.
+
+### Help that matches the game
+- **New `help conviction`** explains the third resource pool most games do not
+  have. **`help stamina`** and **`help health`** were rewritten to match how
+  combat actually works now — and to stop claiming you drop your gear when you
+  fall (you keep it). **`help death`** is honest that a new character's deaths
+  are a grace period that fades. **`help dogmud`** and the crafting guides now
+  point to the real world (Pothole Coulee, Thornwall, New Plymouth) instead of
+  an old test town.
+
+### Shops & gear
+- **Merchants now buy and resell affix-scaled gear.** The stat-boosted gear you
+  bring back from instanced zones can finally be sold, and its price scales with
+  the power rolled onto it. Shops relist what they buy for other players.
+- **Corrected item values.** Dozens of pieces of gear that were priced at zero
+  now carry a sensible value, and the pinnacle craftables are priced to match
+  what they cost to make.
+
+### Combat & world
+- **No more phantom knockdowns.** Trip, bash, kick, gore, and similar moves no
+  longer claim to knock a target down when they did not actually land the
+  takedown (for example, against something already grappled or prone).
+- **Bounty hunters stop multiplying.** Hunters dispatched after you no longer
+  pile up into a crowd across server restarts.
+- **Fairer first-spoke bosses.** The bandit tower crew and captain that cap the
+  first combat spoke were under-strength; they now put up a proper fight.
+- **Items read more naturally.** Quoted and multi-word item names, and taking a
+  single item out of a multi-word container, now resolve the way you would
+  expect.
+
 ## 2026-07-08 — Hotfix: looting corpses with `get`
 
 - **`get` now loots corpses the way you'd expect.** `get all corpse` sweeps
