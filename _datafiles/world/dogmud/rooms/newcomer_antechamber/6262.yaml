@@ -1,13 +1,12 @@
 roomid: 6262
 zone: Newcomer Antechamber
-title: The Threshold
+title: The Landing
 description: >
-  A figure of grey light waits here. 'Last lesson, and the kindest:
-  you are not alone here. Out in the world, people and creatures
-  answer when you speak to them -- so speak to me now, and that same
-  breath will carry you through. Type  talk guide  to speak to me, or
-  ask guide world  to ask a question. Either one sends you on. The
-  real world is waiting.'
+  A figure of grey light waits here. 'Last lesson, and the kindest --
+  you are not alone here. Out in the world, people and creatures answer
+  when you speak to them. Ask me about the world if you are curious, and
+  when you are ready, type  talk guide , and that same breath will carry
+  you through. The real world is waiting.'
 biome: default
 spawninfo:
   - mobid: 9491

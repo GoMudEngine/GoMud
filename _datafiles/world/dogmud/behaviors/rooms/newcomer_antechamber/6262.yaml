@@ -17,7 +17,7 @@ tree:
       children:
         - type: condition
           check: command_matches
-          commands: [talk, ask, say]
+          commands: [talk, say]
         - type: action
           do: send_user_text
           text: >-

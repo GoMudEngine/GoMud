@@ -44,10 +44,14 @@ character:
       itemid: 10014
   stats:
     strength:
-      training: 10
+      training: 34
     dexterity:
-      training: 10
+      training: 28
     vitality:
-      training: 8
+      training: 30
+    charisma:
+      training: 18
     perception:
-      training: 6
+      training: 12
+    willpower:
+      training: 8

@@ -47,8 +47,8 @@ The defense that wins by the widest margin is used:
 
 <ansi fg="yellow">━━━ Defense Crits ━━━</ansi>
 
-An extraordinary defense roll (z-score > 2.0) triggers a powerful
-counter-move against the attacker:
+A rare, exceptional defense -- reading the attack almost before it lands --
+triggers a powerful counter-move against the attacker:
 
   <ansi fg="cyan-bold">⚔ Parry Crit → RIPOSTE:</ansi> Free counter-attack at half damage.
     Your blade turns their strike aside and bites back.

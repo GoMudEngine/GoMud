@@ -16,14 +16,6 @@ patterns:
       - "That is what I am here for. Ask me properly -- not
           at a shout."
 
-  - keywords: ["consider", "read", "assess", "size up", "size"]
-    responses:
-      - "Consider is how you stop guessing. Type consider on
-          a target before you swing. It tells you what you
-          are walking into -- their apparent toughness, how
-          dangerous they look. A moment of assessment is
-          worth three blind swings."
-
   - keywords: ["combatverbosity", "verbosity", "combat output",
       "verbose", "output"]
     responses:

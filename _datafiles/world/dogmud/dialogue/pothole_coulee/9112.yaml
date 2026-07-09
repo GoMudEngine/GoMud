@@ -290,6 +290,7 @@ tree:
     - id: tower_hint
       triggers: ["tower", "further", "beyond", "deeper", "up",
                  "what", "next"]
+      questExcluded: ["34-start", "34-end"]
       text: >-
         There is a structure up the wash, past the cistern.
         Stone walls -- old work, not something the bandits
