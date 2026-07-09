@@ -1720,10 +1720,19 @@ func TestHandlePlayerFoldCasting_PronePlayer(t *testing.T) {
 	)
 	setCombatPositionParallel(u.Character, position.Prone)
 
-	result := handlePlayerFoldCasting(u, 1)
-	assert.True(t, result, "prone player should skip combat")
+	// Prone concentration breaks are probabilistic (chunk 4f): each round the
+	// caster rolls to hold, with the hold chance clamped to at least 5%, so a
+	// single round can resolve either way. Both outcomes (break, or the fold
+	// completing) free the activity within the spell's fold count, so drive
+	// the handler until the cast resolves and assert the per-round contract
+	// rather than a single roll's outcome. The break-rate curve itself is
+	// covered in combat_shared_helpers_test.go.
+	for i := 0; i < 50 && u.Character.Activity != nil && u.Character.Activity.IsCasting(); i++ {
+		result := handlePlayerFoldCasting(u, 1)
+		assert.True(t, result, "casting player should skip combat every round")
+	}
 	assert.True(t, u.Character.Activity == nil || u.Character.Activity.IsFree(),
-		"Activity must be Free after prone-player abort")
+		"Activity must be Free once the prone cast resolves (break or completion)")
 }
 
 // ─── HandleMobFoldCasting ─────────────────────────────────────────────────────
@@ -1753,10 +1762,15 @@ func TestHandleMobFoldCasting_ProneMob(t *testing.T) {
 	setCombatPositionParallel(&mob.Character, position.Prone)
 	room := rooms.LoadRoom(1)
 
-	result := handleMobFoldCasting(mob, room)
-	assert.True(t, result)
+	// Same probabilistic-break contract as the player prone test above:
+	// drive rounds until the cast resolves (break or completion), asserting
+	// the handler skips combat every casting round.
+	for i := 0; i < 50 && mob.Character.Activity != nil && mob.Character.Activity.IsCasting(); i++ {
+		result := handleMobFoldCasting(mob, room)
+		assert.True(t, result, "casting mob should skip combat every round")
+	}
 	assert.True(t, mob.Character.Activity == nil || mob.Character.Activity.IsFree(),
-		"Activity must be Free after prone-mob abort")
+		"Activity must be Free once the prone cast resolves (break or completion)")
 }
 
 // ─── IdleMobs ─────────────────────────────────────────────────────────────────

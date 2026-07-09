@@ -1058,6 +1058,16 @@ func TestCharacter_LearnSpell(t *testing.T) {
 		})
 	}
 }
+
+// Regression: LearnSpell must not panic on a nil SpellBook. Characters
+// constructed directly (without New()/Validate()) hit this via the
+// fold-casting spell-discovery path (CI flake 2026-07-08).
+func TestCharacter_LearnSpell_NilSpellBook(t *testing.T) {
+	c := &Character{}
+	got := c.LearnSpell("heal")
+	assert.True(t, got)
+	assert.Equal(t, 1, c.SpellBook["heal"])
+}
 func TestCharacter_TrackCharmed(t *testing.T) {
 	tests := []struct {
 		name        string

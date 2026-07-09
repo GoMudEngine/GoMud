@@ -167,6 +167,11 @@ func (c *Character) LearnSpell(spellName string) bool {
 	if _, ok := c.SpellBook[spellName]; ok {
 		return false
 	}
+	if c.SpellBook == nil {
+		// Characters constructed directly (tests, tooling) skip Validate(),
+		// which normally initializes this map on load.
+		c.SpellBook = make(map[string]int)
+	}
 	c.SpellBook[spellName] = 1
 
 	// Grant paired spell if one exists
