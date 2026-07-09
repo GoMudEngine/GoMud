@@ -42,6 +42,7 @@ func SignalHandler(clientInput *connections.ClientInput, sharedState map[string]
 	if clientInput.DataIn[len(clientInput.DataIn)-1] == CtrlQ {
 		clientInput.DataIn = []byte("/quit")
 		clientInput.Buffer = []byte{}
+		clientInput.Cursor = 0
 		clientInput.EnterPressed = true
 		return true
 	}
@@ -49,6 +50,7 @@ func SignalHandler(clientInput *connections.ClientInput, sharedState map[string]
 	if clientInput.DataIn[len(clientInput.DataIn)-1] == CtrlW {
 		clientInput.DataIn = []byte("/who")
 		clientInput.Buffer = []byte{}
+		clientInput.Cursor = 0
 		clientInput.EnterPressed = true
 		return true
 	}
@@ -56,6 +58,7 @@ func SignalHandler(clientInput *connections.ClientInput, sharedState map[string]
 	if clientInput.DataIn[len(clientInput.DataIn)-1] == CtrlX {
 		clientInput.DataIn = []byte("/shutdown 0")
 		clientInput.Buffer = []byte{}
+		clientInput.Cursor = 0
 		clientInput.EnterPressed = true
 		return true
 	}
@@ -66,6 +69,7 @@ func SignalHandler(clientInput *connections.ClientInput, sharedState map[string]
 		copy(clientInput.DataIn, clientInput.Clipboard)
 
 		clientInput.Buffer = []byte{}
+		clientInput.Cursor = 0
 		clientInput.EnterPressed = false
 		return true
 	}

@@ -38,6 +38,7 @@ func SystemCommandInputHandler(clientInput *connections.ClientInput, sharedState
 	if trySystemCommand(message, clientInput.ConnectionId) {
 		// zero out the current buffer
 		clientInput.Buffer = clientInput.Buffer[:0]
+		clientInput.Cursor = 0
 		return false
 	}
 
