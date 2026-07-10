@@ -1303,6 +1303,11 @@ func loadAllDataFiles(isReload bool) {
 	)
 	mobs.LoadDataFiles()
 
+	// Hostile mobs whose behavior tree gates engagement via a
+	// player_enter branch get that gate silently preempted by the
+	// entry auto-attack — warn at boot instead of during play.
+	behaviortree.ValidateAutoAggroBehaviorGates()
+
 	// Cross-reference validation: body-part tags and intrinsic
 	// mutation references must be coherent.
 	mutations.ValidateBodyPartTags()
