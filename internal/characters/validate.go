@@ -111,6 +111,13 @@ func (c *Character) RecalculateStats() {
 		}
 	}
 
+	// Mutation graph: deep Body-pole commitment shrinks the Conviction pool
+	// (chokes spells, taunt, and summons — all Conviction-fuelled). Mirror of
+	// the Belief pole's gear-effectiveness decay. Applied before the floor.
+	if cScale := mutations.BodyConvictionScale(c.Mutations); cScale < 1.0 {
+		c.ConvictionMax.Value = int(float64(c.ConvictionMax.Value) * cScale)
+	}
+
 	// Floors. Pool maxes are floored at 1, not 0, because downstream
 	// consumers (prompt `{sp%}` / `{mp%}` tokens at
 	// internal/users/userrecord.prompt.go, ratio calcs in combat /

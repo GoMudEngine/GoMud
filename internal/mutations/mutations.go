@@ -62,6 +62,18 @@ type MutationSpec struct {
 	// when the mutation-graph redesign lands (see the 2026-07-10
 	// mutation-archetype-shift design doc).
 	ArchetypePull string `yaml:"archetype_pull,omitempty"`
+
+	// Clusters lists the design-side playstyle clusters this mutation
+	// belongs to (empty = universal/generalist). Steers acquisition drift.
+	Clusters []string `yaml:"clusters,omitempty"`
+
+	// Pole is "body", "belief", or "" (neutral). Drives the opposition:
+	// deep Body shrinks the Conviction pool; deep Belief degrades gear.
+	Pole string `yaml:"pole,omitempty"`
+
+	// Prerequisites lists mutations (with min level) that must be owned
+	// before this one can be acquired. Gates apex/spine mutations.
+	Prerequisites []MutationPrereq `yaml:"prerequisites,omitempty"`
 }
 
 // Id implements fileloader.Loadable.
@@ -646,11 +658,12 @@ func GetGearEffectivenessLoss(owned map[string]int) float64 {
 	return loss
 }
 
-// GearEffectivenessMultiplier returns the multiplier consumers
-// apply to gear-derived values (1.0 = full effectiveness, 0.0 = none).
-// Convenience wrapper over GetGearEffectivenessLoss.
+// GearEffectivenessMultiplier returns the multiplier consumers apply to
+// gear-derived values (1.0 = full effectiveness, 0.0 = none). Combines the
+// per-mutation gear_effectiveness_loss (incorporeal) with the Belief-pole
+// opposition decay (deep casters render worn gear ornamental).
 func GearEffectivenessMultiplier(owned map[string]int) float64 {
-	return 1.0 - GetGearEffectivenessLoss(owned)
+	return (1.0 - GetGearEffectivenessLoss(owned)) * BeliefGearScale(owned)
 }
 
 // GetPhysicalDefenseBonus returns the total bonus added to the

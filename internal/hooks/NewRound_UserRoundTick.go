@@ -19,8 +19,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/textutil"
@@ -251,6 +251,8 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 							math.Pow(float64(mb.MutationProgressScale), load)
 						if user.Character.MutationProgress >= threshold {
 							user.Character.MutationProgress = 0
+							// Mutation-graph drift fades on each mutation event so recent behavior dominates.
+							mutations.DecayAffinity(user.Character.ClusterAffinity, float64(mb.MutationAffinityDecay))
 							// Decide: deepen existing mutation or acquire new one
 							doDeepen := false
 							if canAcquire && canDeepen {
@@ -282,7 +284,8 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 							} else if canAcquire {
 								// Pass the user's species so body-part requirements gate the pool.
 								sp := species.GetSpecies(user.Character.SpeciesId)
-								pool := mutations.GetWeightedPool(user.Character.Mutations, sp)
+								aff := mutations.EffectiveAffinity(user.Character.Mutations, user.Character.ClusterAffinity)
+								pool := mutations.GetGraphPool(user.Character.Mutations, aff, sp)
 								if len(pool) > 0 {
 									mutId := mutations.RollAcquisition(pool)
 									if user.Character.Mutations == nil {

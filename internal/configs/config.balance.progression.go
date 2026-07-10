@@ -74,6 +74,24 @@ func (b *Balance) validateProgression() {
 	if b.MutationProgressGainPerRound <= 0 {
 		b.MutationProgressGainPerRound = 1.0
 	}
+	if b.MutationAffinityPerSkillUse <= 0 {
+		b.MutationAffinityPerSkillUse = 1.0
+	}
+	if b.MutationAffinityPerRarity <= 0 {
+		b.MutationAffinityPerRarity = 1.0
+	}
+	if b.MutationAffinityDecay <= 0 || b.MutationAffinityDecay > 1.0 {
+		b.MutationAffinityDecay = 0.98
+	}
+	if b.MutationBodyConvictionDecayMax <= 0 || b.MutationBodyConvictionDecayMax > 1.0 {
+		b.MutationBodyConvictionDecayMax = 0.9
+	}
+	if b.MutationBeliefGearDecayMax <= 0 || b.MutationBeliefGearDecayMax > 1.0 {
+		b.MutationBeliefGearDecayMax = 0.9
+	}
+	if b.MutationPoleDecayRef <= 0 {
+		b.MutationPoleDecayRef = 60.0
+	}
 	if b.MutationLevel2Multiplier <= 0 {
 		b.MutationLevel2Multiplier = 1.5
 	}

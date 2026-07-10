@@ -236,6 +236,14 @@ func (c *Character) OnSkillUseScaled(skillName string, userId int, bonusMultipli
 	c.TrackSkillUse(skillName)
 	mudlog.Debug("Progression", "event", "skill_use", "skill", skillName, "bonus", fmt.Sprintf("%.2f", bonusMultiplier), "character", c.Name)
 
+	// Mutation-graph drift: cluster-relevant skill use nudges affinity.
+	if clusters := mutations.ClustersForSkill(skillName); clusters != nil {
+		amt := float64(configs.GetBalanceConfig().MutationAffinityPerSkillUse)
+		for _, cl := range clusters {
+			c.AddClusterAffinity(cl, amt)
+		}
+	}
+
 	gained := false
 	if configs.GetGamePlayConfig().UseSkillProgression {
 		gained = c.CheckSkillProgression(skillName, userId, bonusMultiplier)
@@ -255,6 +263,15 @@ func (c *Character) OnSkillUseScaled(skillName string, userId int, bonusMultipli
 	}
 
 	return gained
+}
+
+// AddClusterAffinity accumulates mutation-graph drift affinity toward a
+// cluster. Lazily initializes the map.
+func (c *Character) AddClusterAffinity(cluster string, amount float64) {
+	if c.ClusterAffinity == nil {
+		c.ClusterAffinity = make(map[string]float64)
+	}
+	c.ClusterAffinity[cluster] += amount
 }
 
 // OnCriticalSuccess is called when a character lands a critical hit or
