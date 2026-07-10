@@ -285,39 +285,51 @@ func tickMobMutationAcquisition(mob *mobs.Mob, mb *configs.Balance) {
 		sp := species.GetSpecies(mob.Character.SpeciesId)
 		pool := mutations.GetWeightedPool(mob.Character.Mutations, sp)
 		if mutId := mutations.RollAcquisition(pool); mutId != "" {
-			if mob.Character.Mutations == nil {
-				mob.Character.Mutations = make(map[string]int)
-			}
-			mob.Character.Mutations[mutId] = 1
-			if spec := mutations.GetMutation(mutId); spec != nil {
-				if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
-					sendVisualRoomText(room, messaging.CategoryMutation, fmt.Sprintf(
-						`<ansi fg="magenta">Something shifts in <ansi fg="mobname">%s</ansi>. %s</ansi>`,
-						mob.Character.Name, spec.Visual))
-				}
-				sig := worldevents.Local
-				if spec.Rarity >= 8 {
-					sig = worldevents.Global
-				} else if spec.Rarity >= 5 {
-					sig = worldevents.Regional
-				}
-				zone := mob.Character.Zone
-				region := ""
-				if zCfg := rooms.GetZoneConfig(zone); zCfg != nil {
-					region = zCfg.Region
-				}
-				worldevents.EmitWorldEvent(worldevents.WorldEvent{
-					Type:         worldevents.MobMutationGained,
-					Significance: sig,
-					ZoneName:     zone,
-					RegionName:   region,
-					MobName:      mob.Character.Name,
-					Description: fmt.Sprintf("%s has manifested a mutation: %s",
-						mob.Character.Name, spec.Name),
-				})
-			}
+			applyAcquiredMutation(mob, mutId)
 		}
 	}
+}
+
+// applyAcquiredMutation applies a newly rolled mutation to a mob:
+// records it, announces it (room text + world event), and re-evaluates
+// the mob's archetype against its mutation pulls (2026-07-10 shift
+// feature — acquisition only; deepening never re-archetypes).
+// Extracted from tickMobMutationAcquisition so the deterministic
+// side-effect path is testable without the RNG/threshold plumbing.
+func applyAcquiredMutation(mob *mobs.Mob, mutId string) {
+	if mob.Character.Mutations == nil {
+		mob.Character.Mutations = make(map[string]int)
+	}
+	mob.Character.Mutations[mutId] = 1
+	if spec := mutations.GetMutation(mutId); spec != nil {
+		if room := rooms.LoadRoom(mob.Character.RoomId); room != nil {
+			sendVisualRoomText(room, messaging.CategoryMutation, fmt.Sprintf(
+				`<ansi fg="magenta">Something shifts in <ansi fg="mobname">%s</ansi>. %s</ansi>`,
+				mob.Character.Name, spec.Visual))
+		}
+		sig := worldevents.Local
+		if spec.Rarity >= 8 {
+			sig = worldevents.Global
+		} else if spec.Rarity >= 5 {
+			sig = worldevents.Regional
+		}
+		zone := mob.Character.Zone
+		region := ""
+		if zCfg := rooms.GetZoneConfig(zone); zCfg != nil {
+			region = zCfg.Region
+		}
+		worldevents.EmitWorldEvent(worldevents.WorldEvent{
+			Type:         worldevents.MobMutationGained,
+			Significance: sig,
+			ZoneName:     zone,
+			RegionName:   region,
+			MobName:      mob.Character.Name,
+			Description: fmt.Sprintf("%s has manifested a mutation: %s",
+				mob.Character.Name, spec.Name),
+		})
+	}
+
+	behaviortree.ReevaluateArchetypeShift(mob)
 }
 
 // tickMobCharmState — current inline blocks at lines 262–279 (expiry

@@ -451,6 +451,20 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 			}
 			mob.Character.MutationProgress = savedInstance.MutationProgress
 
+			// Restore a mutation-driven archetype shift (2026-07-10).
+			// Policies were derived from the TEMPLATE archetype earlier in
+			// this spawn path, so re-derive them for the restored one —
+			// same author-override guard as the original derivation.
+			if savedInstance.BehaviorArchetype != "" {
+				mob.BehaviorArchetype = savedInstance.BehaviorArchetype
+				if mob.SubmissionPolicy == "" {
+					mob.Character.SubmissionPolicy = characters.DefaultSubmissionPolicyForArchetype(mob.BehaviorArchetype)
+				}
+				if mob.SurrenderPolicy == "" {
+					mob.Character.SurrenderPolicy = characters.DefaultSurrenderPolicyForArchetype(mob.BehaviorArchetype)
+				}
+			}
+
 			// Goal-progress restore (2026-06-01). Each guarded by presence:
 			// nil means the field was absent in the save (old-format file or
 			// a non-goal mob) — leave the template value untouched.
@@ -1083,6 +1097,20 @@ func (r *Mob) Validate() error {
 	// if AutoAggro wasn't set explicitly. New mob YAMLs should use `auto_aggro: true`.
 	if r.LegacyHostile && !r.AutoAggro {
 		r.AutoAggro = true
+	}
+
+	// Actor parity (2026-07-10): every mob carries the player baseline
+	// spellbook so mutation-driven shifts into caster archetypes always
+	// have something to cast. Baseline merges UNDER authored spellbooks —
+	// an authored entry is never modified; missing entries seed at 1
+	// (fresh-player proficiency). Inert for non-caster btrees.
+	if r.Character.SpellBook == nil {
+		r.Character.SpellBook = make(map[string]int, len(characters.StarterSpells))
+	}
+	for _, spellId := range characters.StarterSpells {
+		if _, ok := r.Character.SpellBook[spellId]; !ok {
+			r.Character.SpellBook[spellId] = 1
+		}
 	}
 
 	r.Character.Validate()

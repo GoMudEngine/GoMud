@@ -2,6 +2,8 @@ mutationid: large
 name: Large
 description: Your frame expands beyond normal proportions. Bones thicken, muscles swell. You become a towering presence — harder to miss, but far harder to fell.
 rarity: 7
+# PROVISIONAL pull - re-curate with the mutation-graph redesign.
+archetype_pull: generic_fighter
 visual: They tower over most others, broad and imposing in a way that seems almost unnatural.
 conflicts:
   - small

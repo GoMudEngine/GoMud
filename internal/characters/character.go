@@ -12,8 +12,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/pets"
-	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/state/awareness"
@@ -115,10 +115,10 @@ type Character struct {
 	Health              int              // The health of the character
 	Stamina             int              // The stamina of the character (physical energy)
 	Conviction          int              // The conviction of the character (mental/spiritual energy)
-	Toxicity            float64          `yaml:"toxicity,omitempty"` // Current toxicity from potions
+	Toxicity            float64          `yaml:"toxicity,omitempty"`        // Current toxicity from potions
 	BloomAddiction      int              `yaml:"bloom_addiction,omitempty"` // Bloom-drug addiction level (0 = clean)
-	BloomLastDoseRound  uint64           `yaml:"-"`                          // runtime: round of last Bloom dose (abstinence clock)
-	BloomHadCommunion   bool             `yaml:"-"`                          // runtime: true while buff 90 was active last tick (Crash transition gate)
+	BloomLastDoseRound  uint64           `yaml:"-"`                         // runtime: round of last Bloom dose (abstinence clock)
+	BloomHadCommunion   bool             `yaml:"-"`                         // runtime: true while buff 90 was active last tick (Crash transition gate)
 	ActionPoints        int              // The resevoir of action points the character has to spend on movement etc.
 	Gold                int              // The gold the character is holding
 	Bank                int              // The gold the character has in the bank
@@ -246,35 +246,35 @@ type Character struct {
 	// Presence.Dormant. Used by Presence.PresenceTick to determine
 	// when to transition to Despawning.
 	LastDormantEntryRound   uint64                         `yaml:"-"`
-	Conditions              []CombatCondition              `yaml:"-"`                          // Active temporary combat conditions (Stage 9.8). Don't store this.
-	AttacksThisRound        int                            `yaml:"-"`                          // Stage 9.4: Tracks recent attacks for stance calculation. Don't store this.
-	DefensesThisRound       int                            `yaml:"-"`                          // Stage 9.4: Tracks recent defenses for stance calculation. Don't store this.
-	ConsecutiveHits         int                            `yaml:"-"`                          // Stage 9.4: Consecutive successful hits for momentum. Don't store this.
-	ConsecutiveMisses       int                            `yaml:"-"`                          // Stage 9.4: Consecutive misses for momentum. Don't store this.
-	ExtraArms               int                            `yaml:"-"`                          // Derived from extra-arms mutation level (0-2). Don't store this.
-	IsMob                   bool                           `yaml:"-"`                          // True for mob characters; used for progression caps. Don't store this.
-	MobInstanceId           int                            `yaml:"-"`                          // Non-zero for mob characters; mirrors Mob.InstanceId. Don't store this.
-	Skills                  map[string]int                 `yaml:"skills,omitempty"`           // The skills the character has, and what level they are at
-	Mutations               map[string]int                 `yaml:"mutations,omitempty"`        // mutationId → level (Stage 12.1)
-	MutationProgress        float64                        `yaml:"mutationprogress,omitempty"` // accumulates toward next mutation (Stage 12.1)
+	Conditions              []CombatCondition              `yaml:"-"`                             // Active temporary combat conditions (Stage 9.8). Don't store this.
+	AttacksThisRound        int                            `yaml:"-"`                             // Stage 9.4: Tracks recent attacks for stance calculation. Don't store this.
+	DefensesThisRound       int                            `yaml:"-"`                             // Stage 9.4: Tracks recent defenses for stance calculation. Don't store this.
+	ConsecutiveHits         int                            `yaml:"-"`                             // Stage 9.4: Consecutive successful hits for momentum. Don't store this.
+	ConsecutiveMisses       int                            `yaml:"-"`                             // Stage 9.4: Consecutive misses for momentum. Don't store this.
+	ExtraArms               int                            `yaml:"-"`                             // Derived from extra-arms mutation level (0-2). Don't store this.
+	IsMob                   bool                           `yaml:"-"`                             // True for mob characters; used for progression caps. Don't store this.
+	MobInstanceId           int                            `yaml:"-"`                             // Non-zero for mob characters; mirrors Mob.InstanceId. Don't store this.
+	Skills                  map[string]int                 `yaml:"skills,omitempty"`              // The skills the character has, and what level they are at
+	Mutations               map[string]int                 `yaml:"mutations,omitempty"`           // mutationId → level (Stage 12.1)
+	MutationProgress        float64                        `yaml:"mutationprogress,omitempty"`    // accumulates toward next mutation (Stage 12.1)
 	MutationRerollBonus     int                            `yaml:"mutationrerollbonus,omitempty"` // post-scour charges: while >0, re-acquired mutations bias hard toward rare, one charge consumed per new mutation
-	Cooldowns               Cooldowns                      `yaml:"cooldowns,omitempty"`        // How many rounds until it is cooled down
-	Settings                map[string]string              `yaml:"settings,omitempty"`         // custom setting tracking, used for anything.
-	QuestProgress           map[int]string                 `yaml:"questprogress,omitempty"`    // quest progress tracking
-	QuestFlags              map[string]string              `yaml:"questflags,omitempty"`       // quest flag tracking (e.g., "11-branch" → "rhett")
-	LastQuestId             int                            `yaml:"lastquestid,omitempty"`      // most recently progressed quest
-	KeyRing                 map[string]string              `yaml:"keyring,omitempty"`          // key is the lock id, value is the sequence
-	KD                      KDStats                        `yaml:"kd,omitempty"`               // Kill/Death stats
-	MiscData                map[string]any                 `yaml:"miscdata,omitempty"`         // Any random other data that needs to be stored
-	Discoveries             map[int][]string               `yaml:"discoveries,omitempty"`      // Per-room hidden object discoveries
-	VisitedRooms            map[string][]int               `yaml:"visitedrooms,omitempty"`     // zone name -> visited roomIds (fog-of-war for the web map)
-	MobMastery              MobMasteries                   `yaml:"mobmastery,omitempty"`       // Tracks particular masteries around a given mob
-	SkillUseCount           map[string]int                 `yaml:"skillusecount,omitempty"`    // Tracks how many times each skill has been used
-	StatUseCount            map[string]int                 `yaml:"statusecount,omitempty"`     // Tracks how many times each stat has been checked
-	Pet                     pets.Pet                       `yaml:"pet,omitempty"`              // Do they have a pet?
-	Companions              []CompanionInfo                `yaml:"companions,omitempty"`       // Active companions (manifestation system)
-	Created                 time.Time                      `yaml:"created"`                    // When this character was created
-	Timers                  map[string]gametime.RoundTimer `yaml:"timers,omitempty"`           // any special timers added to this character
+	Cooldowns               Cooldowns                      `yaml:"cooldowns,omitempty"`           // How many rounds until it is cooled down
+	Settings                map[string]string              `yaml:"settings,omitempty"`            // custom setting tracking, used for anything.
+	QuestProgress           map[int]string                 `yaml:"questprogress,omitempty"`       // quest progress tracking
+	QuestFlags              map[string]string              `yaml:"questflags,omitempty"`          // quest flag tracking (e.g., "11-branch" → "rhett")
+	LastQuestId             int                            `yaml:"lastquestid,omitempty"`         // most recently progressed quest
+	KeyRing                 map[string]string              `yaml:"keyring,omitempty"`             // key is the lock id, value is the sequence
+	KD                      KDStats                        `yaml:"kd,omitempty"`                  // Kill/Death stats
+	MiscData                map[string]any                 `yaml:"miscdata,omitempty"`            // Any random other data that needs to be stored
+	Discoveries             map[int][]string               `yaml:"discoveries,omitempty"`         // Per-room hidden object discoveries
+	VisitedRooms            map[string][]int               `yaml:"visitedrooms,omitempty"`        // zone name -> visited roomIds (fog-of-war for the web map)
+	MobMastery              MobMasteries                   `yaml:"mobmastery,omitempty"`          // Tracks particular masteries around a given mob
+	SkillUseCount           map[string]int                 `yaml:"skillusecount,omitempty"`       // Tracks how many times each skill has been used
+	StatUseCount            map[string]int                 `yaml:"statusecount,omitempty"`        // Tracks how many times each stat has been checked
+	Pet                     pets.Pet                       `yaml:"pet,omitempty"`                 // Do they have a pet?
+	Companions              []CompanionInfo                `yaml:"companions,omitempty"`          // Active companions (manifestation system)
+	Created                 time.Time                      `yaml:"created"`                       // When this character was created
+	Timers                  map[string]gametime.RoundTimer `yaml:"timers,omitempty"`              // any special timers added to this character
 	roomHistory             []int                          // A stack FILO of the last X rooms the character has been in
 	PlayerDamage            map[int]int                    `yaml:"-"` // key = who, value = how much
 	LastPlayerDamage        uint64                         `yaml:"-"` // last round a player damaged this character
@@ -301,6 +301,26 @@ type DriftRollSnapshot struct {
 	DefenderZScore float64
 }
 
+// StarterSpells is the baseline spellbook every new player receives at
+// creation AND every mob receives at Validate() (actor parity — added
+// 2026-07-10 so mutation-driven archetype shifts into caster roles
+// always have something to cast). Values seed at 1 (fresh-player
+// proficiency) and never overwrite authored entries.
+var StarterSpells = []string{
+	"conviction-spike", // starting attack spell
+	"chrysalis-glow",   // light source for caves
+	"identify",         // inspect item properties
+}
+
+// starterSpellbook builds a fresh SpellBook map from StarterSpells.
+func starterSpellbook() map[string]int {
+	sb := make(map[string]int, len(StarterSpells))
+	for _, id := range StarterSpells {
+		sb[id] = 1
+	}
+	return sb
+}
+
 func New() *Character {
 	c := &Character{
 		//Name:   defaultName,
@@ -315,11 +335,7 @@ func New() *Character {
 		Bank:       100,
 		// Starting spells — attack, utility light for dark zones, and
 		// basic item inspection so new players can evaluate drops.
-		SpellBook: map[string]int{
-			"conviction-spike": 1, // Conviction Spike — starting attack spell
-			"chrysalis-glow":   1, // Chrysalis Glow — light source for caves
-			"identify":         1, // Identify — inspect item properties
-		},
+		SpellBook:                  starterSpellbook(),
 		KnownRecipes:               crafting.GetStarterRecipes(), // All recipes with skill_minimum == 0
 		CharmedMobs:                []int{},
 		Items:                      []items.Item{},

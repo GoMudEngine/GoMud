@@ -1,0 +1,54 @@
+# Mutation archetype-shift smoke: force a mob to mutate mid-fight and
+# watch it change how it fights.
+#
+# Why this exists: the 2026-07-10 archetype-shift feature re-archetypes a
+# mob when it acquires a mutation carrying an archetype_pull (extra-arms,
+# incorporeal, clawed-hands, etc.). Server config has MobMutationRate
+# TEMPORARILY cranked to 60.0 for this session, so any mob you keep in
+# combat should acquire a mutation within a few rounds. The unit tests
+# cover the logic; this session verifies the live loop: acquisition tick
+# fires, the room shows the mutation gain and (when the rolled mutation
+# has a pull differing from the mob's archetype) a "bearing changes"
+# style flavor line, and the mob's behavior visibly changes.
+
+session:
+  name: mutation-shift-smoke
+  max_rounds: 250
+  notes: >
+    You are NOT trying to win fights — you are trying to keep a mob alive
+    and in combat long enough for it to mutate. Prefer weak-hitting,
+    durable opponents. Do not use potions or flee unless below a quarter
+    health. Record EXACT server lines for every mutation/shift message.
+
+objectives:
+  - id: sustain-combat
+    desc: >
+      Find any wilderness creature (wolves, boars, lizards — leave town by
+      any gate) and attack it. Stay in the fight WITHOUT killing it quickly
+      — if you are winning fast, stop attacking and just defend (the fight
+      continues). Keep one mob in combat for at least 10 rounds.
+    verify: "at least 10 consecutive combat rounds against one creature"
+
+  - id: observe-mutation-gain
+    desc: >
+      Watch for a line like "Something shifts in <creature>." followed by a
+      mutation description. Record the exact line and which creature.
+    verify: "exact mutation-gain line recorded"
+
+  - id: observe-archetype-shift
+    desc: >
+      After a mutation gain, watch for a bearing-change flavor line (e.g.
+      "squares up, settling into a fighter's stance", "drops low, its
+      movements turning predatory", "melts toward the shadows"). Not every
+      mutation triggers one (only ~10 of 41 mutations carry a pull, and the
+      pull must differ from the creature's current role) — if none appears
+      after 2-3 mutation gains, keep fighting new creatures until one does.
+      Record the exact line.
+    verify: "exact shift flavor line recorded, or explicit note that none fired after N mutation gains"
+
+  - id: observe-behavior-change
+    desc: >
+      After a shift line, describe how the creature's fighting changes over
+      the next few rounds (e.g. started bashing/tripping, went defensive,
+      tried to hide, started casting). Contrast with its pre-shift behavior.
+    verify: "before/after behavior contrast described"

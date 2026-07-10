@@ -31,6 +31,11 @@ type MobInstanceData struct {
 	Mutations          map[string]int `yaml:"mutations,omitempty"`
 	MutationProgress   float64        `yaml:"mutation_progress,omitempty"`
 
+	// BehaviorArchetype persists a mutation-driven archetype shift
+	// (2026-07-10). Written only when the live value differs from the
+	// template's; empty = never shifted.
+	BehaviorArchetype string `yaml:"behavior_archetype,omitempty"`
+
 	// Goal-progress persistence (2026-06-01). Pointers / nil-able so that
 	// "absent in the save" (old file or non-goal mob) is distinguishable
 	// from a real zero value (mob spent all gold / stripped all gear).
@@ -99,6 +104,12 @@ func SaveMobInstance(mob *Mob) error {
 		WillpowerTraining:  mob.Character.Stats.Willpower.Training,
 		CharismaTraining:   mob.Character.Stats.Charisma.Training,
 		MutationProgress:   mob.Character.MutationProgress,
+	}
+
+	// Persist a mutation-driven archetype shift (2026-07-10): only when
+	// the live value differs from the template's.
+	if tmpl := GetMobSpec(mob.MobId); tmpl != nil && mob.BehaviorArchetype != tmpl.BehaviorArchetype {
+		data.BehaviorArchetype = mob.BehaviorArchetype
 	}
 
 	if len(mob.Character.Skills) > 0 {
@@ -303,6 +314,9 @@ func hasPersistableState(mob *Mob) bool {
 	tmpl := GetMobSpec(mob.MobId)
 	if tmpl == nil {
 		return false
+	}
+	if mob.BehaviorArchetype != tmpl.BehaviorArchetype {
+		return true
 	}
 	if mob.Character.Gold != tmpl.Character.Gold {
 		return true

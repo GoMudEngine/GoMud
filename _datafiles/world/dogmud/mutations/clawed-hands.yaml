@@ -2,6 +2,8 @@ mutationid: clawed-hands
 name: Clawed Hands
 description: Your fingernails fuse and harden into rending claws. Formidable in combat, unsettling to behold.
 rarity: 5
+# PROVISIONAL pull - re-curate with the mutation-graph redesign.
+archetype_pull: predator
 visual: Their fingers end in curved, dark claws.
 requires_body_parts: [hands]
 pro:
