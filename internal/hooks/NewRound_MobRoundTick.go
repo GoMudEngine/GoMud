@@ -8,7 +8,6 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/bountyhunter"
-	"github.com/GoMudEngine/GoMud/internal/justice"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -17,6 +16,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/goals"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/justice"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -234,6 +234,8 @@ func tickMobMutationAcquisition(mob *mobs.Mob, mb *configs.Balance) {
 		return
 	}
 	mob.Character.MutationProgress = 0
+	// Mutation-graph drift fades on each mutation event so recent behavior dominates.
+	mutations.DecayAffinity(mob.Character.ClusterAffinity, float64(mb.MutationAffinityDecay))
 	doDeepen := false
 	if canAcquire && canDeepen {
 		if util.Rand(100) < int(mb.MutationDeepenChance*100) {
@@ -283,7 +285,8 @@ func tickMobMutationAcquisition(mob *mobs.Mob, mb *configs.Balance) {
 
 	if canAcquire {
 		sp := species.GetSpecies(mob.Character.SpeciesId)
-		pool := mutations.GetWeightedPool(mob.Character.Mutations, sp)
+		aff := mutations.EffectiveAffinity(mob.Character.Mutations, mob.Character.ClusterAffinity)
+		pool := mutations.GetGraphPool(mob.Character.Mutations, aff, sp)
 		if mutId := mutations.RollAcquisition(pool); mutId != "" {
 			applyAcquiredMutation(mob, mutId)
 		}
