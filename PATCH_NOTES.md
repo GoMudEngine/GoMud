@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-07-10 — Mutations change how creatures fight
+
+- **A creature that mutates mid-battle may fight differently afterward.** A
+  wolf that sprouts extra arms stops circling and starts brawling; something
+  that slips partway out of the physical world stops trading blows and starts
+  channeling; a beast that shrinks doesn't get meeker — it gets sneakier.
+  Watch for the change in its bearing — the fight you started may not be the
+  fight you finish.
+
 ## 2026-07-10 — The wild wakes back up
 
 - **Hostile creatures attack on sight again.** A bug dating to mid-May had
