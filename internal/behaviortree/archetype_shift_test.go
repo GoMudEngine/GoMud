@@ -50,6 +50,7 @@ func seedShiftSpecs(t *testing.T) {
 		"brawn": {MutationId: "brawn", Rarity: 9, ArchetypePull: "generic_fighter"},
 		"fangs": {MutationId: "fangs", Rarity: 5, ArchetypePull: "predator"},
 		"aura":  {MutationId: "aura", Rarity: 5, ArchetypePull: "combat_passive"},
+		"zeal":  {MutationId: "zeal", Rarity: 9, ArchetypePull: "generic_fighter"},
 		"plain": {MutationId: "plain", Rarity: 10}, // no pull — rarity must NOT matter
 	})
 	t.Cleanup(cleanup)
@@ -93,12 +94,24 @@ func TestReevaluateArchetypeShift_RarestPullWins(t *testing.T) {
 	seedMutationTestRoom(t)
 	mob := buildMutationMob(t, 9403, 99903, mutTestRoomId)
 	mob.BehaviorArchetype = "prey"
-	// fangs (r5, predator) + brawn (r9, generic_fighter) + plain (r10, NO pull)
-	mob.Character.Mutations = map[string]int{"fangs": 1, "brawn": 1, "plain": 1}
+	// aura (r5, combat_passive) sorts FIRST alphabetically; zeal (r9,
+	// generic_fighter) is rarest with a pull; plain (r10, NO pull). An
+	// alphabetical-min implementation would wrongly pick combat_passive.
+	mob.Character.Mutations = map[string]int{"aura": 1, "zeal": 1, "plain": 1}
 
 	ReevaluateArchetypeShift(mob)
 	if mob.BehaviorArchetype != "generic_fighter" {
 		t.Fatalf("got %q, want generic_fighter (rarest PULL wins; pull-less rarity ignored)", mob.BehaviorArchetype)
+	}
+}
+
+func TestStrongestArchetypePull_TiebreakDeterministic(t *testing.T) {
+	seedShiftSpecs(t)
+	owned := map[string]int{"fangs": 1, "aura": 1} // both r5
+	for i := 0; i < 50; i++ {
+		if got := strongestArchetypePull(owned); got != "combat_passive" {
+			t.Fatalf("iteration %d: got %q, want combat_passive (alphabetical tiebreak must be deterministic)", i, got)
+		}
 	}
 }
 
@@ -169,5 +182,30 @@ func TestReevaluateArchetypeShift_AuthoredPolicyPreserved(t *testing.T) {
 	ReevaluateArchetypeShift(mob)
 	if mob.Character.SubmissionPolicy != prior {
 		t.Error("authored submission_policy must not be re-derived on shift")
+	}
+}
+
+func TestReevaluateArchetypeShift_ArchetypeLessMobGainsArchetype(t *testing.T) {
+	seedShiftSpecs(t)
+	seedMutationTestRoom(t)
+	mob := buildMutationMob(t, 9408, 99908, mutTestRoomId)
+	mob.BehaviorArchetype = "" // archetype-less — in the FROM set
+	mob.Character.Mutations = map[string]int{"fangs": 1}
+	mob.BTreeState = NewBehaviorState()
+
+	ReevaluateArchetypeShift(mob)
+	if mob.BehaviorArchetype != "predator" {
+		t.Fatalf("got %q, want predator (archetype-less mobs gain an archetype)", mob.BehaviorArchetype)
+	}
+	if mob.BTreeState != nil {
+		t.Fatal("BTreeState must be reset to nil on shift")
+	}
+	wantSub := characters.DefaultSubmissionPolicyForArchetype("predator")
+	if mob.Character.SubmissionPolicy != wantSub {
+		t.Errorf("SubmissionPolicy = %v, want re-derived %v", mob.Character.SubmissionPolicy, wantSub)
+	}
+	wantSur := characters.DefaultSurrenderPolicyForArchetype("predator")
+	if mob.Character.SurrenderPolicy != wantSur {
+		t.Errorf("SurrenderPolicy = %v, want re-derived %v", mob.Character.SurrenderPolicy, wantSur)
 	}
 }
