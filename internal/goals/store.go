@@ -67,6 +67,21 @@ func loadOrLazyInit(mobId int, namesimple string) *MobGoals {
 	return mg
 }
 
+// MergeArchetypeDefaults additively merges the mob's CURRENT archetype's
+// default goals into its goal list. Used by behaviortree's mutation-
+// driven archetype shift (2026-07-10) after swapping BehaviorArchetype,
+// so a re-archetyped mob picks up its new role's defaults without losing
+// learned/reactive goals. Thin exported wrapper over the 5.3 merge-seed
+// path: additive-only (never removes or displaces existing goals) and
+// safe to call repeatedly — a default type already covered by an
+// existing goal is skipped via the normal Add conflict logic (silently,
+// for AllowMultiple=false types; via DedupKey coexistence for
+// AllowMultiple=true types).
+func MergeArchetypeDefaults(templateId int, namesimple string, mob *mobs.Mob) {
+	mg := loadOrLazyInit(templateId, namesimple)
+	mergeSeedFromArchetype(templateId, namesimple, mg, mob)
+}
+
 // GoalsOf returns the mob's goals in priority-desc, then id-asc order
 // (stable for admin output and any future selection layer). Lazy
 // loads from disk on first call.
