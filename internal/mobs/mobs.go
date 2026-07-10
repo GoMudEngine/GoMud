@@ -1085,6 +1085,20 @@ func (r *Mob) Validate() error {
 		r.AutoAggro = true
 	}
 
+	// Actor parity (2026-07-10): every mob carries the player baseline
+	// spellbook so mutation-driven shifts into caster archetypes always
+	// have something to cast. Baseline merges UNDER authored spellbooks —
+	// an authored entry is never modified; missing entries seed at 1
+	// (fresh-player proficiency). Inert for non-caster btrees.
+	if r.Character.SpellBook == nil {
+		r.Character.SpellBook = make(map[string]int, len(characters.StarterSpells))
+	}
+	for _, spellId := range characters.StarterSpells {
+		if _, ok := r.Character.SpellBook[spellId]; !ok {
+			r.Character.SpellBook[spellId] = 1
+		}
+	}
+
 	r.Character.Validate()
 
 	// Always (re)initialize Presence with the mob transition table.
