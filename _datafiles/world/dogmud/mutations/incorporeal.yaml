@@ -9,6 +9,8 @@ description: |
   drift from the physical world. At the deepest rank, gear becomes
   ornamental — passing through your form as if it weren't there.
 rarity: 10
+# PROVISIONAL pull - re-curate with the mutation-graph redesign.
+archetype_pull: defensive_caster
 visual: Their form shimmers and grows translucent, edges blurring as if not entirely present.
 conflicts:
   - extra-arms

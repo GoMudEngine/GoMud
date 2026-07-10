@@ -2,6 +2,8 @@ mutationid: pacifism-aura
 name: Pacifism Aura
 description: A subtle psychic calm radiates from you, dampening hostile intent in those nearby -- creatures are less likely to attack you unprovoked. The same calm works against you, too, making it harder to rouse your own aggression when a fight needs it.
 rarity: 7
+# PROVISIONAL pull - re-curate with the mutation-graph redesign.
+archetype_pull: combat_passive
 visual: There is a strange calm about them, an almost imperceptible aura that makes nearby creatures seem less agitated.
 pros:
   - type: flag

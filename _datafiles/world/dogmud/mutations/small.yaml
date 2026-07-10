@@ -2,6 +2,8 @@ mutationid: small
 name: Small
 description: Your body compacts, shedding mass for agility. You become a difficult target — quick and nimble, though your strikes carry less weight.
 rarity: 7
+# PROVISIONAL pull - re-curate with the mutation-graph redesign.
+archetype_pull: ambusher
 visual: They are noticeably smaller than average, with a compact, wiry build.
 conflicts:
   - large
