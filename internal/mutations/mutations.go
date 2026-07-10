@@ -62,6 +62,18 @@ type MutationSpec struct {
 	// when the mutation-graph redesign lands (see the 2026-07-10
 	// mutation-archetype-shift design doc).
 	ArchetypePull string `yaml:"archetype_pull,omitempty"`
+
+	// Clusters lists the design-side playstyle clusters this mutation
+	// belongs to (empty = universal/generalist). Steers acquisition drift.
+	Clusters []string `yaml:"clusters,omitempty"`
+
+	// Pole is "body", "belief", or "" (neutral). Drives the opposition:
+	// deep Body shrinks the Conviction pool; deep Belief degrades gear.
+	Pole string `yaml:"pole,omitempty"`
+
+	// Prerequisites lists mutations (with min level) that must be owned
+	// before this one can be acquired. Gates apex/spine mutations.
+	Prerequisites []MutationPrereq `yaml:"prerequisites,omitempty"`
 }
 
 // Id implements fileloader.Loadable.

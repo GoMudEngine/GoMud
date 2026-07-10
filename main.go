@@ -1315,6 +1315,7 @@ func loadAllDataFiles(isReload bool) {
 	// Cross-reference validation: body-part tags and intrinsic
 	// mutation references must be coherent.
 	mutations.ValidateBodyPartTags()
+	mutations.ValidateGraph()
 	species.ValidateBodyPartTags(mutations.HasSpec)
 
 	mobs.AuditMobNameCollisions(func(name string) (int, bool) {
