@@ -57,11 +57,15 @@ func affinityFor(spec *MutationSpec, aff map[string]float64) float64 {
 // GetGraphPool builds a weighted acquisition pool from the mutation graph.
 // A candidate is included only if: not already owned, not conflicting, its
 // body-part requirements fit the species, its prerequisites are owned, AND
-// its best cluster affinity clears its rarity-based depth threshold. Weight
-// scales with rarity (commoner = heavier) plus the surplus affinity, so a
-// strongly-expressed cluster dominates the roll. aff must already fold in
-// owned-gravity (see EffectiveAffinity). Pass nil sp to skip body filtering.
+// its best cluster affinity clears its rarity-based depth threshold. Base
+// weight follows rarity (commoner = heavier) minus the advanced-character
+// rarity uplift (calcRarityBonus — preserves parity with GetWeightedPool so
+// untagged legacy mutations still behave as before), plus the mutation's
+// cluster affinity so a strongly-expressed cluster dominates the roll. aff
+// must already fold in owned-gravity (see EffectiveAffinity). Pass nil sp to
+// skip body filtering.
 func GetGraphPool(owned map[string]int, aff map[string]float64, sp *species.Species) []string {
+	rarityBonus := calcRarityBonus(owned)
 	pool := make([]string, 0, len(allMutations)*4)
 	for id, spec := range allMutations {
 		if _, has := owned[id]; has {
@@ -80,7 +84,7 @@ func GetGraphPool(owned map[string]int, aff map[string]float64, sp *species.Spec
 		if a < depthThreshold(spec.Rarity) {
 			continue
 		}
-		weight := 11 - spec.Rarity
+		weight := 11 - spec.Rarity - rarityBonus
 		if weight < 1 {
 			weight = 1
 		}
