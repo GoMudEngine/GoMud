@@ -451,6 +451,20 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 			}
 			mob.Character.MutationProgress = savedInstance.MutationProgress
 
+			// Restore a mutation-driven archetype shift (2026-07-10).
+			// Policies were derived from the TEMPLATE archetype earlier in
+			// this spawn path, so re-derive them for the restored one —
+			// same author-override guard as the original derivation.
+			if savedInstance.BehaviorArchetype != "" {
+				mob.BehaviorArchetype = savedInstance.BehaviorArchetype
+				if mob.SubmissionPolicy == "" {
+					mob.Character.SubmissionPolicy = characters.DefaultSubmissionPolicyForArchetype(mob.BehaviorArchetype)
+				}
+				if mob.SurrenderPolicy == "" {
+					mob.Character.SurrenderPolicy = characters.DefaultSurrenderPolicyForArchetype(mob.BehaviorArchetype)
+				}
+			}
+
 			// Goal-progress restore (2026-06-01). Each guarded by presence:
 			// nil means the field was absent in the save (old-format file or
 			// a non-goal mob) — leave the template value untouched.
