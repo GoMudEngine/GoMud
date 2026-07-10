@@ -67,16 +67,19 @@ func loadOrLazyInit(mobId int, namesimple string) *MobGoals {
 	return mg
 }
 
-// MergeArchetypeDefaults additively merges the mob's CURRENT archetype's
-// default goals into its goal list. Used by behaviortree's mutation-
-// driven archetype shift (2026-07-10) after swapping BehaviorArchetype,
-// so a re-archetyped mob picks up its new role's defaults without losing
-// learned/reactive goals. Thin exported wrapper over the 5.3 merge-seed
-// path: additive-only (never removes or displaces existing goals) and
-// safe to call repeatedly — a default type already covered by an
-// existing goal is skipped via the normal Add conflict logic (silently,
-// for AllowMultiple=false types; via DedupKey coexistence for
-// AllowMultiple=true types).
+// MergeArchetypeDefaults merges the mob's CURRENT archetype's default
+// goals into its goal list. Used by behaviortree's mutation-driven
+// archetype shift (2026-07-10) after swapping BehaviorArchetype, so a
+// re-archetyped mob picks up its new role's defaults. Thin exported
+// wrapper over the 5.3 merge-seed path. Safe to call repeatedly.
+//
+// Semantics: additive for goal types not already present. For a type
+// already present (or ConflictsWith-linked), normal Add priority rules
+// apply — an archetype default with strictly higher priority DISPLACES
+// the existing conflicting goal; an equal-or-lower-priority default is
+// skipped (Add's ConflictError, swallowed by the merge). So existing
+// learned/reactive goals survive unless a new-archetype default of the
+// same (or conflicting) type strictly outranks them.
 func MergeArchetypeDefaults(templateId int, namesimple string, mob *mobs.Mob) {
 	mg := loadOrLazyInit(templateId, namesimple)
 	mergeSeedFromArchetype(templateId, namesimple, mg, mob)
@@ -506,7 +509,10 @@ func seedFromArchetype(mobId int, namesimple string, mg *MobGoals) {
 // A ConflictError from Add is the expected signal that the type is already
 // covered — it is logged at debug level and skipped. Any other Add error
 // (param validation failure, etc.) is logged at warn level and skipped.
-// The existing goal list is never modified or removed by this function.
+// Note this is NOT strictly additive: when an incoming default has strictly
+// higher priority than a conflicting existing goal, Add succeeds and
+// DISPLACES that existing goal (normal Add priority resolution). Only
+// equal-or-lower-priority defaults are skipped.
 //
 // The mob parameter is optional. When non-nil it is passed directly to
 // resolveArchetypeDefaults, letting the lookup read live archetype state.
