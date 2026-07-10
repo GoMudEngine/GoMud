@@ -4,6 +4,8 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/GoMudEngine/GoMud/internal/characters"
 )
 
 // TestInstanceSavePersistsShiftedArchetype verifies the 2026-07-10
@@ -79,5 +81,58 @@ func TestInstanceSavePersistsShiftedArchetype(t *testing.T) {
 	}
 	if loadedSame.BehaviorArchetype != "" {
 		t.Fatalf("non-shifted mob persisted BehaviorArchetype %q, want empty", loadedSame.BehaviorArchetype)
+	}
+
+	// --- Non-shifted mob with a NON-empty template archetype. ---
+	// Template 1's archetype is "", so the sub-case above cannot
+	// distinguish "correctly skipped" from a broken unconditional
+	// `data.BehaviorArchetype = mob.BehaviorArchetype` (omitempty would
+	// drop "" either way). Seed a template whose archetype is non-empty
+	// (mirrors TestNewMobById_SubmissionPolicyFromArchetypeDefault) and
+	// assert live == template still writes NO archetype field.
+	mobsMu.Lock()
+	mobs[50] = &Mob{
+		MobId:             50,
+		Zone:              "Test",
+		StatPool:          10,
+		ActivityLevel:     50,
+		BehaviorArchetype: "civilian",
+		Character: characters.Character{
+			Name:      "Test Civilian",
+			SpeciesId: 0,
+		},
+	}
+	mobsMu.Unlock()
+
+	civ := NewMobById(50, 102)
+	if civ == nil {
+		t.Fatal("NewMobById returned nil for mob 50")
+	}
+	defer DestroyInstance(civ.InstanceId)
+
+	civPath := instancePath(civ.MobId, civ.Zone, civ.Character.Name, civ.HomeRoomId)
+	_ = os.Remove(civPath)
+	_ = os.Remove(filepath.Dir(civPath))
+	t.Cleanup(func() {
+		_ = os.Remove(civPath)
+		_ = os.Remove(filepath.Dir(civPath))
+	})
+
+	civ.Character.Stats.Strength.Training = 10
+	// civ.BehaviorArchetype stays "civilian" — equal to its template.
+	if civ.BehaviorArchetype != "civilian" {
+		t.Fatalf("precondition: spawned civ archetype = %q, want civilian", civ.BehaviorArchetype)
+	}
+
+	if err := SaveMobInstance(civ); err != nil {
+		t.Fatalf("SaveMobInstance(civ): %v", err)
+	}
+
+	loadedCiv := LoadMobInstance(civ.MobId, civ.Zone, civ.Character.Name, civ.HomeRoomId)
+	if loadedCiv == nil {
+		t.Fatal("LoadMobInstance(civ) returned nil")
+	}
+	if loadedCiv.BehaviorArchetype != "" {
+		t.Fatalf("non-shifted civilian persisted BehaviorArchetype %q, want empty (live == non-empty template must not write the field)", loadedCiv.BehaviorArchetype)
 	}
 }
