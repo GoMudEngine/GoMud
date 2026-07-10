@@ -88,11 +88,12 @@ type Mob struct {
 	ActivityLevel   int      `yaml:"activitylevel,omitempty"` // 1-100%
 	InstanceId      int      `yaml:"-"`
 	HomeRoomId      int      `yaml:"-"`
-	// legacyHostile is the backward-compat YAML field. Loaders read `hostile:`
+	// LegacyHostile is the backward-compat YAML field. Loaders read `hostile:`
 	// and copy to AutoAggro in Validate(). New YAML should use `auto_aggro: true`.
-	// Future cleanup: bulk-rename hostile: → auto_aggro: in mob YAMLs, then
-	// remove this field.
-	legacyHostile bool `yaml:"hostile,omitempty"`
+	// MUST stay exported: yaml unmarshal silently skips unexported fields — the
+	// b1145cdb6 sunset lowercased this and every `hostile:` mob silently
+	// stopped auto-aggroing until 2026-07-10.
+	LegacyHostile bool `yaml:"hostile,omitempty"`
 	PackFleeImmune  bool     `yaml:"pack_flee_immune,omitempty"` // if true, won't flee when packmates die
 	LastIdleCommand uint8    `yaml:"-"`                          // Track what hte last used idlecommand was
 	Groups          []string // What group do they identify with? Helps with teamwork
@@ -1080,7 +1081,7 @@ func (r *Mob) Validate() error {
 
 	// Backward-compat: populate AutoAggro from the legacy `hostile:` YAML field
 	// if AutoAggro wasn't set explicitly. New mob YAMLs should use `auto_aggro: true`.
-	if r.legacyHostile && !r.AutoAggro {
+	if r.LegacyHostile && !r.AutoAggro {
 		r.AutoAggro = true
 	}
 
