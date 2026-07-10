@@ -658,11 +658,12 @@ func GetGearEffectivenessLoss(owned map[string]int) float64 {
 	return loss
 }
 
-// GearEffectivenessMultiplier returns the multiplier consumers
-// apply to gear-derived values (1.0 = full effectiveness, 0.0 = none).
-// Convenience wrapper over GetGearEffectivenessLoss.
+// GearEffectivenessMultiplier returns the multiplier consumers apply to
+// gear-derived values (1.0 = full effectiveness, 0.0 = none). Combines the
+// per-mutation gear_effectiveness_loss (incorporeal) with the Belief-pole
+// opposition decay (deep casters render worn gear ornamental).
 func GearEffectivenessMultiplier(owned map[string]int) float64 {
-	return 1.0 - GetGearEffectivenessLoss(owned)
+	return (1.0 - GetGearEffectivenessLoss(owned)) * BeliefGearScale(owned)
 }
 
 // GetPhysicalDefenseBonus returns the total bonus added to the
