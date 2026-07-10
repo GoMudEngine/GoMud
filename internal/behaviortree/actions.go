@@ -118,6 +118,8 @@ func init() {
 	actionRegistry["try_mutation_active"] = actTryMutationActive
 	// Autonomous mutation dispatch (2.10-followups)
 	actionRegistry["try_any_active_mutation"] = actTryAnyActiveMutation
+	// Single-target mutation dispatch with engaged-target resolution
+	actionRegistry["try_mutation_active_at_target"] = actTryMutationActiveAtTarget
 }
 
 // LookupAction returns the action function for the given name,

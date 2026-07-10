@@ -17,13 +17,14 @@ package behaviortree
 // archetype edits when a mob evolves a new mutation at runtime.
 //
 // Single-target mutations (blinding-spit, toxic-bite) are intentionally
-// excluded from this map. They require a resolved target actor before
-// dispatch; without one the mutationPreamble succeeds (consuming stamina
-// and the special-move cooldown) and then TriggerXxx immediately returns
-// BlockReason="no-target", wasting both resources. A future
-// try_mutation_active_at_target primitive will add target resolution
-// before dispatch. See the project_mutation_active_runtime_evolution_btree
-// memory entry for design details.
+// excluded from try_mutation_active / try_any_active_mutation. They require
+// a resolved target actor before dispatch; without one the mutationPreamble
+// succeeds (consuming stamina and the special-move cooldown) and then
+// TriggerXxx immediately returns BlockReason="no-target", wasting both
+// resources. try_mutation_active_at_target dispatches them instead: it
+// resolves the mob's engaged combat target (actions.ResolveEngagedTarget —
+// CombatPhase FSM + Aggro fallback) BEFORE dispatch and fails fast when
+// there is none.
 
 import (
 	"sort"
@@ -47,8 +48,17 @@ var mutationTriggers = map[string]func(actions.Actor, actions.MutationOpts) acti
 	"pacifism-aura":  actions.TriggerPacifismAura,
 	"sonic-shout":    actions.TriggerSonicShout,
 	// blinding-spit and toxic-bite intentionally excluded — they require
-	// a resolved target. A future try_mutation_active_at_target primitive
-	// will dispatch them with target resolution.
+	// a resolved target. try_mutation_active_at_target dispatches them
+	// (see mutationTriggersAtTarget below).
+}
+
+// mutationTriggersAtTarget maps single-target mutation key → trigger.
+// These need a resolved target actor; actTryMutationActiveAtTarget
+// resolves the mob's engaged combat target before dispatching. Add a row
+// when lifting a new single-target mutation into the actions package.
+var mutationTriggersAtTarget = map[string]func(actions.Actor, actions.MutationOpts) actions.MutationResult{
+	"blinding-spit": actions.TriggerBlindingSpit,
+	"toxic-bite":    actions.TriggerToxicBite,
 }
 
 // actTryMutationActive fires the first available mutation in the
@@ -180,4 +190,74 @@ func mutationRarity(key string) int {
 		return 0
 	}
 	return spec.Rarity
+}
+
+// actTryMutationActiveAtTarget fires a single-target mutation
+// (blinding-spit, toxic-bite) at the mob's engaged combat target.
+//
+// Target resolution is implicit: actions.ResolveEngagedTarget consults
+// CurrentCombatTarget (CombatPhase FSM + Aggro fallback). Resolution
+// happens BEFORE any trigger dispatch — the trigger preamble deducts
+// stamina and arms the shared special-move cooldown ahead of its own
+// no-target check, so dispatching without a target would waste both.
+// No resolvable target → immediate Failure, resources untouched.
+//
+// Keys behavior: `key`/`keys` select a curated preference list (same
+// shape as try_mutation_active). With neither set, the action enumerates
+// the mob's owned single-target mutations sorted by rarity descending
+// (alphabetical tiebreak) — the try_any_active_mutation analog, so
+// autonomous archetypes pick up runtime-evolved mutations without YAML
+// edits.
+func actTryMutationActiveAtTarget(params map[string]any, ctx *EvalContext) Result {
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil {
+		return Failure
+	}
+	room := rooms.LoadRoom(mob.Character.RoomId)
+	if room == nil {
+		return Failure
+	}
+
+	keys := collectMutationKeys(params)
+	if len(keys) == 0 {
+		for key := range mob.Character.Mutations {
+			if _, ok := mutationTriggersAtTarget[key]; ok {
+				keys = append(keys, key)
+			}
+		}
+		sort.SliceStable(keys, func(i, j int) bool {
+			ri := mutationRarity(keys[i])
+			rj := mutationRarity(keys[j])
+			if ri != rj {
+				return ri > rj // higher rarity fires first
+			}
+			return keys[i] < keys[j] // alphabetical tiebreak
+		})
+	}
+	if len(keys) == 0 {
+		return Failure
+	}
+
+	actor := actions.NewMobActorInRoom(mob, room)
+	target := actions.ResolveEngagedTarget(actor, room)
+	if target == nil {
+		return Failure
+	}
+
+	for _, key := range keys {
+		trigger, ok := mutationTriggersAtTarget[key]
+		if !ok {
+			mudlog.Warn("try_mutation_active_at_target",
+				"warn", "unknown single-target mutation key (no actions.TriggerXxx or not single-target)",
+				"key", key, "instance_id", ctx.InstanceId)
+			continue
+		}
+		res := trigger(actor, actions.MutationOpts{TargetActor: target})
+		if res.Triggered {
+			return Success
+		}
+		// BlockReason in {no-mutation, on-cooldown, low-stamina,
+		// not-in-combat} — fall through to next candidate.
+	}
+	return Failure
 }
