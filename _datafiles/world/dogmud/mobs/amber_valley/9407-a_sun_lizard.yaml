@@ -3,7 +3,7 @@ zone: Amber Valley
 behavior_archetype: ambusher
 aiprofile: serpent
 archetype: fighting
-hostile: true
+hostile: false # engagement owned by ambusher btree (hidden surprise strike)
 statpool: 28
 itemdropchance: 20
 maxwander: 1

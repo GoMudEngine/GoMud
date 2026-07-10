@@ -1,7 +1,7 @@
 mobid: 9178
 zone: The Empty Reach
 behavior_archetype: ambusher
-hostile: true
+hostile: false # engagement owned by ambusher btree (hidden surprise strike)
 archetype: fighting
 statpool: 46
 maxwander: 2

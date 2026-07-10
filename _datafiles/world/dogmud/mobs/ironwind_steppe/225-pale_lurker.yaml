@@ -5,7 +5,7 @@ routine: cave_pack_ironwind
 buffids: [9]
 statpool: 160
 itemdropchance: 20
-hostile: true
+hostile: false # engagement owned by ambusher btree (hidden surprise strike)
 maxwander: 2
 groups:
   - cave-pack

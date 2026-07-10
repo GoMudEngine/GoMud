@@ -3,7 +3,7 @@ zone: Eastern Highlands
 behavior_archetype: ambusher
 aiprofile: ambush_predator
 archetype: fighting
-hostile: true
+hostile: false # engagement owned by ambusher btree (hidden surprise strike)
 statpool: 350
 maxwander: 3
 groups:

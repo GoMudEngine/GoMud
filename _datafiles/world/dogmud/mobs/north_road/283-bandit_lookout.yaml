@@ -9,7 +9,7 @@ statpool: 100
 itemdropchance: 30
 items:
   - itemid: 53
-hostile: true
+hostile: false # engagement owned by lookout btree (power-ratio gate)
 pack_flee_immune: true
 buffids: [9]
 maxwander: 1

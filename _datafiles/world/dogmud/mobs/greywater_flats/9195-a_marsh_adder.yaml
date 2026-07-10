@@ -3,7 +3,7 @@ zone: Greywater Flats
 behavior_archetype: ambusher
 aiprofile: serpent
 archetype: fighting
-hostile: true
+hostile: false # engagement owned by ambusher btree (hidden surprise strike)
 statpool: 34
 itemdropchance: 25
 maxwander: 2

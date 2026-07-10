@@ -6,7 +6,7 @@ routine_links:
   - goblin_warband
 statpool: 115
 itemdropchance: 20
-hostile: true
+hostile: false # engagement owned by lookout btree (power-ratio gate)
 maxwander: 2
 groups:
   - steppe-goblin

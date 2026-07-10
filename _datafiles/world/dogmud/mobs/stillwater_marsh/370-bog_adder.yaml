@@ -5,7 +5,7 @@ aiprofile: serpent
 archetype: fighting
 statpool: 60
 itemdropchance: 0
-hostile: true
+hostile: false # engagement owned by ambusher btree (hidden surprise strike)
 charm_immune: false
 maxwander: 3
 groups:

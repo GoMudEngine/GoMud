@@ -3,7 +3,7 @@ zone: Labyrinth of Low Tunnels
 behavior_archetype: lookout
 statpool: 8
 itemdropchance: 10
-hostile: true
+hostile: false # engagement owned by lookout btree (power-ratio gate)
 maxwander: 2
 buffids: [9, 29]
 groups:

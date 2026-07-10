@@ -5,7 +5,7 @@ aiprofile: serpent
 buffids: [9]
 statpool: 275
 itemdropchance: 100
-hostile: true
+hostile: false # engagement owned by ambusher btree (hidden surprise strike)
 maxwander: 1
 groups:
   - lake-cave

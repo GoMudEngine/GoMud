@@ -7,7 +7,7 @@ statpool: 200
 itemdropchance: 20
 items:
   - itemid: 40048
-hostile: true
+hostile: false # engagement owned by ambusher btree (hidden surprise strike)
 maxwander: 2
 groups:
   - cave-pack
