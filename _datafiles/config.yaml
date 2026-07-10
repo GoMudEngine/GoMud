@@ -871,6 +871,13 @@ Balance:
   MutationMaxLevel: 4                # Max level any single mutation can reach (1–4)
   MutationDeepenChance: 0.70         # Probability of deepening vs new when both possible (0.0-1.0)
   MutationProgressGainPerRound: 1.0  # Progress added per combat round
+  # Mutation graph (drift + Body<->Belief opposition)
+  MutationAffinityPerSkillUse: 1.0    # Drift affinity gained per cluster-relevant skill use
+  MutationAffinityPerRarity: 1.0      # Affinity required per point of rarity to unlock a mutation
+  MutationAffinityDecay: 0.98         # Per-event multiplicative decay of cluster affinity (0.0-1.0)
+  MutationBodyConvictionDecayMax: 0.9 # Max fraction of ConvictionMax lost to deep Body commitment
+  MutationBeliefGearDecayMax: 0.9     # Max fraction of gear effectiveness lost to deep Belief commitment
+  MutationPoleDecayRef: 60.0          # Pole-depth at which opposition decay reaches half its max
   MutationLevel2Multiplier: 1.5      # Effect magnitude at level 2 (1.5× level 1)
   MutationLevel3Multiplier: 2.0      # Effect magnitude at level 3 (2.0× level 1)
   MutationLevel4Multiplier: 2.5      # Effect magnitude at level 4 (2.5× level 1)
