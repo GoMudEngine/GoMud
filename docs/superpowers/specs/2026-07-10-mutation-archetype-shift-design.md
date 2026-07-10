@@ -38,6 +38,12 @@ caught by the pre-push boot test).
 
 ### Starter mapping (10 pulls; all other mutations have none)
 
+> **PROVISIONAL:** a mutation-graph redesign is queued (clustering the 41
+> mutations into playstyle clusters with graph-aware acquisition + phial-flavor
+> steering). When it lands, this table gets re-curated so each cluster's
+> mutations pull consistently — a data-only change; the shift mechanism below
+> is unaffected. Do not treat these 10 rows as load-bearing content decisions.
+
 | Mutation | Pull | Rationale |
 |---|---|---|
 | incorporeal (r10) | defensive_caster | Drifted from the physical — avoids melee, channels will |
