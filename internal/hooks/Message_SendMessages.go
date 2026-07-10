@@ -41,6 +41,14 @@ func Message_SendMessage(e events.Event) events.ListenerReturn {
 		}
 	}
 
+	// RoomId branch: post-T9, Room.SendText/SendTextVisual fan out
+	// per-recipient (UserId events above), so this branch serves only the
+	// remaining RoomId-keyed emitters: Room.SendTextCommunication (player
+	// chat — the Deafened moderation filter below is load-bearing) and
+	// direct events.Message{RoomId} constructions. The IsQuiet /
+	// SuperHearing filter currently has zero emitters in DOGMud (no dogmud
+	// buff grants superhearing) — dormant upstream-compat, kept for
+	// cherry-pick parity. Audited 2026-07-10.
 	if message.RoomId > 0 {
 
 		room := rooms.LoadRoom(message.RoomId)
