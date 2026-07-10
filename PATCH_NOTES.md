@@ -1,5 +1,18 @@
 # DOGMud Patch Notes
 
+## 2026-07-10 — The wild wakes back up
+
+- **Hostile creatures attack on sight again.** A bug dating to mid-May had
+  quietly left every aggressive creature in the world passive when you walked
+  in — wolves, bandits, sewer dwellers, and worse would only fight if provoked
+  first. That's fixed. Walking into the wrong room is properly dangerous
+  again; travel accordingly.
+- **Ambushers ambush, and lookouts think twice.** Lurking predators — adders,
+  stalkers, cave lurkers and their kin — now strike from hiding rather than
+  charging into the open, and sentries size you up before starting a fight
+  they can't win; they'd sooner raise the alarm. Keep your eyes open in
+  tight country.
+
 ## 2026-07-08 — Newbie zone rebuilt, gear trading, and combat/quest fixes
 
 ### The first hour (Pothole Coulee)
