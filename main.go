@@ -1308,6 +1308,10 @@ func loadAllDataFiles(isReload bool) {
 	// entry auto-attack — warn at boot instead of during play.
 	behaviortree.ValidateAutoAggroBehaviorGates()
 
+	// Mutations carrying an archetype_pull must reference a real,
+	// whitelisted shift-target archetype — panic at boot, not mid-fight.
+	behaviortree.ValidateArchetypePulls()
+
 	// Cross-reference validation: body-part tags and intrinsic
 	// mutation references must be coherent.
 	mutations.ValidateBodyPartTags()
