@@ -50,6 +50,18 @@ type MutationSpec struct {
 	// Boot-time validation is added in chunk-2.5 Task 6 (or see
 	// species.IsCanonicalBodyPart for the canonical set).
 	RequiresBodyParts []string `yaml:"requires_body_parts,omitempty"`
+
+	// ArchetypePull optionally names a behavior archetype this mutation
+	// pulls its owner toward. When a MOB acquires a pull-mutation, the
+	// archetype-shift path (behaviortree.ReevaluateArchetypeShift) may
+	// re-archetype it. Validated at boot by
+	// behaviortree.ValidateArchetypePulls (whitelist + file existence);
+	// this package only carries the string. Players are unaffected.
+	//
+	// PROVISIONAL CONTENT: the pull table is expected to be re-curated
+	// when the mutation-graph redesign lands (see the 2026-07-10
+	// mutation-archetype-shift design doc).
+	ArchetypePull string `yaml:"archetype_pull,omitempty"`
 }
 
 // Id implements fileloader.Loadable.
@@ -133,6 +145,17 @@ func GetMutation(id string) *MutationSpec {
 // GetAll returns the full mutation registry map.
 func GetAll() map[string]*MutationSpec {
 	return allMutations
+}
+
+// AllSpecs returns every loaded mutation spec. Read-only convenience
+// for boot-time validation passes (e.g. archetype_pull validation);
+// callers must not mutate the returned specs.
+func AllSpecs() []*MutationSpec {
+	out := make([]*MutationSpec, 0, len(allMutations))
+	for _, spec := range allMutations {
+		out = append(out, spec)
+	}
+	return out
 }
 
 // ─── Load & Conflict system (Phase 24.1) ───────────────────────────────────────
