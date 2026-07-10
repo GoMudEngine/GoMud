@@ -52,7 +52,13 @@ def main():
     only = {u.strip().lower() for u in args.only.split(",") if u.strip()}
     flagged, matched, already, other = [], [], [], []
 
-    for path in sorted(glob.glob(os.path.join(args.users_dir, "*.yaml"))):
+    paths = sorted(glob.glob(os.path.join(args.users_dir, "*.yaml")))
+    if not paths:
+        sys.exit(f"ERROR: no user YAMLs found in {args.users_dir!r}. Wrong "
+                 "--users-dir, or the directory isn't readable by this user "
+                 "(on the droplet the server writes saves as root - run with sudo).")
+
+    for path in paths:
         if os.path.basename(path) == "users.idx":
             continue
         with open(path, encoding="utf-8") as fh:
@@ -72,7 +78,7 @@ def main():
             flagged.append(uname)
 
     print(f"users dir: {args.users_dir}")
-    print(f"already excluded (admin or isai:true): {len(already)}")
+    print(f"already excluded (admin or isai:true): {len(already)} -> {sorted(already)}")
     print(f"non-bot unflagged players (LEFT ALONE): {len(other)} -> {sorted(other)}")
     print(f"bot/test accounts matched: {len(matched)} -> {sorted(matched)}")
     if args.apply:
