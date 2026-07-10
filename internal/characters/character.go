@@ -271,6 +271,7 @@ type Character struct {
 	MobMastery              MobMasteries                   `yaml:"mobmastery,omitempty"`          // Tracks particular masteries around a given mob
 	SkillUseCount           map[string]int                 `yaml:"skillusecount,omitempty"`       // Tracks how many times each skill has been used
 	StatUseCount            map[string]int                 `yaml:"statusecount,omitempty"`        // Tracks how many times each stat has been checked
+	ClusterAffinity         map[string]float64             `yaml:"clusteraffinity,omitempty"`     // cluster -> mutation-graph drift affinity
 	Pet                     pets.Pet                       `yaml:"pet,omitempty"`                 // Do they have a pet?
 	Companions              []CompanionInfo                `yaml:"companions,omitempty"`          // Active companions (manifestation system)
 	Created                 time.Time                      `yaml:"created"`                       // When this character was created

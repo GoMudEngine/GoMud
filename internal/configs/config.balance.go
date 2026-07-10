@@ -264,6 +264,13 @@ type Balance struct {
 	MutationMaxLevel             ConfigInt   `yaml:"MutationMaxLevel"`             // Max level any single mutation can reach (default 3)
 	MutationDeepenChance         ConfigFloat `yaml:"MutationDeepenChance"`         // Probability of deepening vs new discovery when both possible (default 0.70)
 	MutationProgressGainPerRound ConfigFloat `yaml:"MutationProgressGainPerRound"` // Progress added per combat round (default 1.0)
+	// ── MUTATION GRAPH (drift + opposition) ───────────────────────────────────
+	MutationAffinityPerSkillUse    ConfigFloat `yaml:"MutationAffinityPerSkillUse"`    // drift affinity added per cluster-relevant skill use (default 1.0)
+	MutationAffinityPerRarity      ConfigFloat `yaml:"MutationAffinityPerRarity"`      // affinity required per point of rarity to unlock a mutation (default 1.0)
+	MutationAffinityDecay          ConfigFloat `yaml:"MutationAffinityDecay"`          // per-tick multiplicative decay of cluster affinity (default 0.98)
+	MutationBodyConvictionDecayMax ConfigFloat `yaml:"MutationBodyConvictionDecayMax"` // max fraction of ConvictionMax lost to deep Body commitment (default 0.9)
+	MutationBeliefGearDecayMax     ConfigFloat `yaml:"MutationBeliefGearDecayMax"`     // max fraction of gear effectiveness lost to deep Belief commitment (default 0.9)
+	MutationPoleDecayRef           ConfigFloat `yaml:"MutationPoleDecayRef"`           // pole-depth at which decay reaches half its max (default 60.0)
 	MutationLevel2Multiplier     ConfigFloat `yaml:"MutationLevel2Multiplier"`     // Effect scaling at level 2 (default 1.5)
 	MutationLevel3Multiplier     ConfigFloat `yaml:"MutationLevel3Multiplier"`     // Effect scaling at level 3 (default 2.0)
 	MutationLevel4Multiplier     ConfigFloat `yaml:"MutationLevel4Multiplier"`     // Effect scaling at level 4 (default 2.5)
