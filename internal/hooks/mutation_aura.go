@@ -2,6 +2,7 @@ package hooks
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
+	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -36,7 +37,16 @@ func applyRoomAllyAuras(room *rooms.Room) {
 		if len(buffIds) == 0 {
 			continue
 		}
+		// Project only onto the owner's PARTY — never strangers or PvP foes.
+		// A solo owner (no party) has no allies to embolden.
+		party := parties.Get(ownerId)
+		if party == nil {
+			continue
+		}
 		for _, rid := range auraRecipients(playerIds, ownerId) {
+			if !party.IsMember(rid) {
+				continue
+			}
 			ally := users.GetByUserId(rid)
 			if ally == nil {
 				continue
