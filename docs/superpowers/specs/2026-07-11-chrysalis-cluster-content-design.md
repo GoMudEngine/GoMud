@@ -179,8 +179,16 @@ from either and stitches the ring together.
 
 ## 5. The Center — Generalist hub
 
-`clusters: [generalist]`, `pole: ""` (no opposition penalty). The on-ramp
-everyone builds in; deep here = the flight generalist.
+`pole: ""` (no opposition penalty). The on-ramp everyone builds in; deep here =
+the flight generalist.
+
+> **Implementation note (from Wave 1):** Center enablers are authored
+> **zero-cluster** (omit `clusters`), not `clusters: [generalist]`. In the
+> engine a zero-cluster mutation is always eligible — exactly the "everyone
+> starts here / always-available baseline" behavior the hub needs. A
+> `generalist`-tagged mutation would be *unreachable* by drift, since no skill
+> signal feeds `generalist` affinity. Winged Flight stays reachable via its
+> prerequisite gate (Hollow Bones + Prehensile Tail), not a cluster tag.
 
 | Keystone | Primitive | Rarity | Effect |
 |---|---|---|---|
