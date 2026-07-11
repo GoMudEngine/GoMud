@@ -1,0 +1,9 @@
+mutationid: cocoon
+name: Cocoon
+description: On command, you fold inward and secrete a hardened chrysalis shell that snaps shut around you. For a few rounds the world's blows barely reach you, and the fight loses sight of you entirely -- but sealing yourself away costs you the moment.
+rarity: 8
+visual: Faint seams trace their skin, as though something beneath could fold shut at any moment.
+pros:
+  - type: flag
+    target: active-ability
+    value: 1
