@@ -69,6 +69,9 @@ type CompanionInfo struct {
 	// Gear persistence — snapshotted at logout, restored on respawn.
 	Items     []items.Item `yaml:"items,omitempty"`     // Carried (backpack)
 	Equipment Worn         `yaml:"equipment,omitempty"` // Equipped/worn slots
+	// Conviction reserved to keep this companion fielded, snapshotted at summon
+	// time so it doesn't drift when the summoner's skill/mutation changes mid-life.
+	ConvictionReserve int `yaml:"conviction_reserve,omitempty"`
 }
 
 // GetCompanion finds a companion by name (case-insensitive partial match).

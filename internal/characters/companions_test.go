@@ -165,6 +165,16 @@ func TestGetCompanionByInstanceId(t *testing.T) {
 	assert.Nil(t, notFound)
 }
 
+// ─── ConvictionReserve field ─────────────────────────────────────────────────
+
+func TestCompanionInfo_ConvictionReserveField(t *testing.T) {
+	c := New()
+	c.Skills[string(skills.Manifestation)] = 19
+	comp := CompanionInfo{MobId: 1001, InstanceId: 5, Name: "Spirit Wolf", ConvictionReserve: 333}
+	require.True(t, c.AddCompanion(comp))
+	assert.Equal(t, 333, c.Companions[0].ConvictionReserve)
+}
+
 // ─── CalcCompanionStatPool ────────────────────────────────────────────────────
 
 func TestCalcCompanionStatPool(t *testing.T) {
