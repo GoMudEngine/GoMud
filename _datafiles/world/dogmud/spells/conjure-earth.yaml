@@ -25,4 +25,5 @@ wait_user_text: >-
   rising reluctantly toward your call...
 summon_mob_id: 311
 summon_base_pool: 90
+summon_conviction_reserve: 350
 summon_scaling_divisor: 500

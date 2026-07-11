@@ -28,6 +28,7 @@ wait_user_text: >-
   borrowed animation. A low, wet groan rises from the remains...
 summon_mob_id: 301
 summon_base_pool: 80
+summon_conviction_reserve: 350
 summon_scaling_divisor: 500
 summon_requires_corpse: true
 summon_min_corpse_pool: 60

@@ -24,5 +24,6 @@ wait_user_text: >-
   the shattered fragment...
 summon_mob_id: 111
 summon_base_pool: 18
+summon_conviction_reserve: 350
 summon_scaling_divisor: 200
 summon_component_id: 40011
