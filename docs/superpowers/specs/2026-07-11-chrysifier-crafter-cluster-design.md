@@ -73,24 +73,37 @@ maker's faith.
   (statmod or a `carry_capacity_multiplier` effect feeding `CarryCapacity()`).
 
 ### 3.4 Homunculus — apex ★
-You craft a living homunculus of yourself — a **crafted companion**, built rather
-than summoned. The crafter's answer to Winged Flight; the capstone Duard climbs
-toward.
+*(Working name — strong candidate to rename, e.g. "Mind of the Sculptor"; the
+companion could read as "\<name>'s Sculpted Self." Finalize at authoring.)*
+
+You forge a living copy of yourself — **crafted** from the player's point of view
+(all flavor text is "you sculpt / shape / forge" it into being), a **crafted
+companion** rather than a summoned one. The crafter's answer to Winged Flight; the
+capstone Duard climbs toward.
+
+- **Creation = auto-manifest + respawn.** When you acquire the apex the homunculus
+  is spawned automatically (no command, no recipe — the flavor is "your masterwork
+  wakes"). If it is killed, it **respawns after a short cooldown** (a brood-style
+  respawn tick). Mechanically simple; narratively "crafted."
 - **Boss-tier copy.** Not a weak clone — a terrifying you-shaped monster.
-- **Stat scaling ties to craft mastery:** homunculus **statpool = (sum of the
-  player's crafting-skill levels) × `HomunculusCraftScale`** (≈ 4). For a maxed
-  crafter (craft-sum ≈ 500) that's ≈ 2000 statpool — roughly a boss / ~3× a normal
-  character, ~3 elder golems' worth of a single body. A novice crafter's homunculus
-  is modest; the more you've crafted, the mightier the self you forge.
+  **Statpool = (sum of the player's crafting-skill levels) × `HomunculusCraftScale`**
+  (≈ 4). Maxed crafter (craft-sum ≈ 500) → ≈ 2000 statpool — a boss / ~3× a normal
+  character, ~3 elder golems' worth in one body. Novice crafter → modest. The more
+  you've crafted, the mightier the self you forge.
+- **Inheritance:** inherits the player's **non-crafting skills** (so it fights the
+  way you do) **and a preset loadout of physical-cluster mutations** (Colossus/
+  Ravener/etc. — since the Chrysifier themselves has no combat cluster, the
+  homunculus is the bruiser). It does **NOT** inherit gear (companions can be geared
+  now, so copying the player's kit would be redundant/OP — gear it separately if you
+  like).
 - **Reserves a LOT of Conviction** (Wave-5 companion economy): a high fixed
   reservation (`HomunculusConvictionReserve`, a Tier-4-scale value) so a Chrysifier
   can realistically field **only the one** — "having such wonderful times, all by
   themself." Not five-elder-golem strong; one big friend.
 - *Impl surface:* **P8 companion** — reuse `CompanionInfo` + the companion economy
-  (`ConvictionReserve` snapshot). Two design points for the plan: (a) how the
-  homunculus is *created* (a `craft homunculus` command / recipe vs. auto-manifest
-  while the apex is owned + a respawn tick like a brood), and (b) the crafted-stat
-  scaling path (spawn the mob then override its stat pool from craft-sum × scale).
+  (`ConvictionReserve` snapshot) + a brood-style respawn tick keyed on the apex
+  flag. Spawn the base mob, then **override its stat pool from craft-sum × scale**
+  and apply the inherited non-crafting skills + preset physical mutations.
 
 ---
 
@@ -113,9 +126,10 @@ toward.
 ---
 
 ## 6. Open questions for the plan
-- Homunculus creation trigger (command/recipe vs. auto-manifest + respawn tick).
-- Does the homunculus **inherit** the player's look/name ("<name>'s Homunculus")
-  and any of their equipment/skills, or purely a stat-scaled boss mob?
+- Finalize the apex/companion **name** (Homunculus vs. "Mind of the Sculptor" /
+  "Sculpted Self" — pick at authoring).
+- Which **preset physical-cluster mutations** the homunculus carries, and at what
+  ranks (a fixed bruiser loadout — decide the exact set in the plan).
 - Whether Provident Hands' three sub-effects are one keystone (as specced) or split
   (keep as one — three small consumers, one identity).
 - Exact drift weighting for the many crafting skills feeding one cluster (so a

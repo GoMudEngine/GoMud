@@ -171,6 +171,19 @@ Reuse the proven versioned per-user framework (mirror `0.13.0.go`):
   reach 60–75; combat 0.23 is slow to LEVEL but that's the intended per-round
   throttle). A real rebaseline wants a per-skill effective-rate study
   (use-count ÷ level across veterans) — a balance pass, not migration work.*
+- **⚠ NPC mutations — UNANSWERED, needs a decision (user-raised 2026-07-11).** Mobs
+  currently use the retired-41 mutations: `tickMobMutationAcquisition` /
+  `applyAcquiredMutation` (`internal/hooks/NewRound_MobRoundTick.go`) grant mob
+  mutations, gated by the provisional `archetype_pull` table. This player migration
+  wipes the old mutations for *players* — but says nothing about *mobs*. Two paths
+  to weigh: **(a)** leave the old mutation system in place for NPCs (they keep using
+  the retired-41 until we design a separate NPC migration), or **(b)** migrate NPCs
+  onto the new graph too (re-curate `archetype_pull` → cluster tags, so mobs acquire
+  new-graph mutations — this is already listed as a Wave 6 item). Blast radius: if
+  players are on the new graph and mobs on the old, both systems must coexist
+  cleanly (the engine is backward-compatible today, so (a) is *possible* — but it's
+  two parallel mutation vocabularies to maintain). **Decide before the migration
+  ships.**
 
 ---
 
