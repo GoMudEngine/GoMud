@@ -326,9 +326,11 @@ func applyCombatDamageBonuses(atk, def actions.Actor, res *combat.AttackResult) 
 	defChar := def.GetCharacter()
 
 	// Mutation graph: on-hit-buff mutations (Venom Glands, …) afflict the
-	// struck defender. Character.AddBuff is nil-safe and no-ops on an unknown id.
+	// struck defender. Route through the actor buff wrapper (not the raw
+	// Character.AddBuff) so the buff's start text fires and the GMCP
+	// conditions panel refreshes, for both player and mob defenders.
 	for _, buffId := range mutations.GetOnHitBuffs(atkChar.Mutations) {
-		_ = defChar.AddBuff(buffId, false)
+		def.AddBuff(buffId, "mutation")
 	}
 
 	// Conviction Surge: +15% damage on hit when DamageBonus buff flag set.
