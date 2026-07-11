@@ -25,4 +25,5 @@ wait_user_text: >-
   inward from every direction...
 summon_mob_id: 310
 summon_base_pool: 80
+summon_conviction_reserve: 350
 summon_scaling_divisor: 500

@@ -1,5 +1,25 @@
 # DOGMud Patch Notes
 
+## 2026-07-11 — Companions cost conviction, not a headcount
+
+- **Summoned and raised companions now draw on your conviction to stay in the
+  world.** The old rule — a flat number of pets tied to your manifestation
+  skill — is gone. Instead, every creature you bind holds a share of your
+  conviction for as long as it lives, and mightier creatures hold more. Since
+  conviction is also what fuels your spells, this is a real choice: each pet at
+  your side is conviction you can't spend warding, healing, or blasting. A
+  menagerie or a spellbook — lean whichever way you like.
+- **Deepen the calling to field more.** Raising your manifestation skill eases
+  what each companion costs you, and a manifester who has reshaped themselves
+  toward the summoner's path pays less still — enough to march a whole brood and
+  keep power in reserve. The most devoted can hold a formidable host.
+- **The body-bound need not apply.** A warrior who has hardened into pure flesh
+  finds their conviction runs shallow, and a brood simply won't fit — the pull
+  between raw body and inner conviction is now felt at the summoning circle, not
+  just in the spellbook.
+- **A stronger corpse still makes a stronger servant** — for the same cost — so
+  it pays to raise your undead from the mightiest remains you can find.
+
 ## 2026-07-10 — Mutations change how creatures fight
 
 - **A creature that mutates mid-battle may fight differently afterward.** A

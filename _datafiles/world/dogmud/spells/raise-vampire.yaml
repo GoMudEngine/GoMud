@@ -29,6 +29,7 @@ wait_user_text: >-
   Something almost stirs...
 summon_mob_id: 304
 summon_base_pool: 100
+summon_conviction_reserve: 440
 summon_scaling_divisor: 500
 summon_requires_corpse: true
 summon_min_corpse_pool: 300

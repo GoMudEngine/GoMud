@@ -48,6 +48,9 @@ type SpellData struct {
 	SummonComponentId    int    `yaml:"summon_component_id,omitempty"`
 	SummonRequiresCorpse bool   `yaml:"summon_requires_corpse,omitempty"`
 	SummonMinCorpsePool  int    `yaml:"summon_min_corpse_pool,omitempty"`
+	// Ongoing Conviction reserved to maintain this companion (per summon type).
+	// 0 = fall back to CompanionReserveDefault at summon time.
+	SummonConvictionReserve int `yaml:"summon_conviction_reserve,omitempty"`
 
 	// YAML text fields — flavor text sent by the engine (replaces JS messaging)
 	CastUserText  string `yaml:"cast_user_text,omitempty"`

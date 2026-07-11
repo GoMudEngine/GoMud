@@ -70,6 +70,8 @@ func DescribeEffect(e MutationEffect) string {
 		return "Turns hostile attention away from you."
 	case "conditional_damage_low_hp":
 		return "You strike harder the more badly wounded you are."
+	case "companion_reserve_reduction":
+		return "Eases the conviction you must devote to sustaining your companions, letting you field more of them."
 	case "flag":
 		return flagPhrase(e.Target)
 	}

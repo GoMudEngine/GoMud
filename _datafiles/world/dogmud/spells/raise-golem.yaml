@@ -31,6 +31,7 @@ wait_user_text: >-
   of raw meat and ozone...
 summon_mob_id: 305
 summon_base_pool: 120
+summon_conviction_reserve: 440
 summon_scaling_divisor: 500
 summon_requires_corpse: true
 summon_min_corpse_pool: 500

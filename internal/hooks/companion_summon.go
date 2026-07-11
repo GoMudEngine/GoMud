@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -34,9 +35,17 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 
 	ch := user.Character
 
-	// ── 1. Companion cap ────────────────────────────────────────────────
-	if len(ch.Companions) >= ch.GetMaxCompanions() {
-		user.SendText(messaging.CategorySystem, "You cannot maintain any more companions.")
+	// ── 1. Reservation + budget gate ────────────────────────────────────
+	// The Conviction budget is the real limit (a soft count backstop lives in
+	// CanAffordCompanion). Fail early, before consuming any component/corpse.
+	baseReserve := spellData.SummonConvictionReserve
+	if baseReserve <= 0 {
+		baseReserve = int(configs.GetBalanceConfig().CompanionReserveDefault)
+	}
+	reserve := ch.CalcCompanionReserve(baseReserve)
+	if !ch.CanAffordCompanion(reserve) {
+		user.SendText(messaging.CategorySpellManifestation,
+			"You cannot spare the conviction to bind another companion.")
 		return false
 	}
 
@@ -148,18 +157,21 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 
 	// Register as companion
 	info := characters.CompanionInfo{
-		MobId:      int(mob.MobId),
-		InstanceId: mob.InstanceId,
-		SourceType: sourceType,
-		Name:       mob.Character.Name,
-		BaseName:   mob.Character.Name,
-		AutoAssist: true,
+		MobId:             int(mob.MobId),
+		InstanceId:        mob.InstanceId,
+		SourceType:        sourceType,
+		Name:              mob.Character.Name,
+		BaseName:          mob.Character.Name,
+		AutoAssist:        true,
+		ConvictionReserve: reserve,
 	}
 	if !ch.AddCompanion(info) {
-		// Should not happen since we checked cap above, but be safe
+		// Should not happen since we checked the budget above, but be safe
 		user.SendText(messaging.CategorySystem, "You cannot maintain any more companions.")
 		return false
 	}
+	// Apply the new reservation immediately so usable Conviction drops now.
+	ch.RecalculateStats()
 
 	// Clear aggro from existing companions toward the new mob
 	for _, charmId := range ch.GetCharmIds() {

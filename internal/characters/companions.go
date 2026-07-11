@@ -6,8 +6,8 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/skills"
-	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -69,6 +69,9 @@ type CompanionInfo struct {
 	// Gear persistence — snapshotted at logout, restored on respawn.
 	Items     []items.Item `yaml:"items,omitempty"`     // Carried (backpack)
 	Equipment Worn         `yaml:"equipment,omitempty"` // Equipped/worn slots
+	// Conviction reserved to keep this companion fielded, snapshotted at summon
+	// time so it doesn't drift when the summoner's skill/mutation changes mid-life.
+	ConvictionReserve int `yaml:"conviction_reserve,omitempty"`
 }
 
 // GetCompanion finds a companion by name (case-insensitive partial match).
@@ -123,40 +126,22 @@ func (c *Character) RemoveCompanion(instanceId int) *CompanionInfo {
 	return nil
 }
 
-// GetMaxCompanions returns the maximum number of companions this character
-// may have at once, based on the manifestation skill level.
-// Formula: skill / 19, capped at 4. Minimum 1 if the character has any
-// manifestation-school spells in their spellbook.
+// GetMaxCompanions returns the SOFT count backstop on simultaneous companions.
+// It is a safety limit only — the real constraint is the Conviction budget
+// (see CanAffordCompanion). The Manifester apex ("companion-cap-raise" flag)
+// raises the backstop.
 func (c *Character) GetMaxCompanions() int {
-	skill := c.GetSkillLevel(skills.Manifestation)
-	max := skill / 19
-	if max > 4 {
-		max = 4
+	cfg := configs.GetBalanceConfig()
+	cap := int(cfg.CompanionSoftCap)
+	if cap < 1 {
+		cap = 5
 	}
-
-	// Minimum 1 if the character knows any manifestation-school spell.
-	if max < 1 && c.hasManifestationSpell() {
-		max = 1
-	}
-
-	return max
-}
-
-// hasManifestationSpell returns true if the character's spellbook contains
-// at least one spell belonging to the "manifestation" school.
-func (c *Character) hasManifestationSpell() bool {
-	for spellId := range c.SpellBook {
-		sd := spells.GetSpell(spellId)
-		if sd == nil {
-			continue
-		}
-		for _, school := range sd.Schools {
-			if strings.EqualFold(school, "manifestation") {
-				return true
-			}
+	if mutations.HasMutationFlag(c.Mutations, "companion-cap-raise") {
+		if apex := int(cfg.CompanionSoftCapApex); apex > cap {
+			cap = apex
 		}
 	}
-	return false
+	return cap
 }
 
 // CalcCompanionStatPool computes the stat pool for a summoned companion,
@@ -177,4 +162,31 @@ func CalcCompanionStatPool(baseStatPool int, charisma int, manifestationSkill in
 	}
 	scale := 1.0 + float64(charisma)/chaFactor + float64(manifestationSkill)*skillFactor
 	return int(math.Round(float64(baseStatPool) * scale))
+}
+
+// CalcCompanionReserve returns the Conviction a companion of the given base
+// cost reserves for THIS summoner, after manifestation-skill and Manifester-
+// mutation reductions. reservation = round(base * (1 - reduction)).
+func (c *Character) CalcCompanionReserve(baseCost int) int {
+	cfg := configs.GetBalanceConfig()
+	manif := c.GetSkillLevel(skills.Manifestation)
+	manifRed := math.Min(float64(cfg.CompanionReserveSkillCap), float64(manif)*float64(cfg.CompanionReserveSkillPct))
+	mutRank := mutations.GetCompanionReserveRank(c.Mutations)
+	mutRed := math.Min(float64(cfg.CompanionReserveMutCap), float64(mutRank)*float64(cfg.CompanionReserveMutPctPerRank))
+	reduction := math.Min(float64(cfg.CompanionReserveTotalCap), manifRed+mutRed)
+	return int(math.Round(float64(baseCost) * (1.0 - reduction)))
+}
+
+// CanAffordCompanion reports whether the character can field one more companion
+// reserving `reserveCost` Conviction: the new total reservation (plus any
+// casting floor) must fit within ConvictionMax, and the soft count backstop
+// must not be exceeded.
+func (c *Character) CanAffordCompanion(reserveCost int) bool {
+	if len(c.Companions) >= c.GetMaxCompanions() {
+		return false
+	}
+	cfg := configs.GetBalanceConfig()
+	current := c.GetPoolReservation("conviction", c.ConvictionMax.Value)
+	floor := int(math.Round(float64(c.ConvictionMax.Value) * float64(cfg.CompanionCastingFloorPct)))
+	return current+reserveCost+floor <= c.ConvictionMax.Value
 }

@@ -487,6 +487,17 @@ type Balance struct {
 	ManifestStatScaleChaFactor   ConfigInt   `yaml:"ManifestStatScaleChaFactor"`   // Charisma divisor for companion stat scaling (default 150)
 	ManifestStatScaleSkillFactor ConfigFloat `yaml:"ManifestStatScaleSkillFactor"` // Manifestation skill additive factor (default 0.02)
 
+	// ── COMPANION CONVICTION ECONOMY ────────────────────────────────────────
+	CompanionReserveSkillPct      ConfigFloat `yaml:"CompanionReserveSkillPct"`      // Reservation reduction per manifestation skill point (default 0.01)
+	CompanionReserveSkillCap      ConfigFloat `yaml:"CompanionReserveSkillCap"`      // Max reduction from skill (default 0.55, cap reached at manifestation 55)
+	CompanionReserveMutPctPerRank ConfigFloat `yaml:"CompanionReserveMutPctPerRank"` // Reservation reduction per Manifester mutation rank (default 0.06)
+	CompanionReserveMutCap        ConfigFloat `yaml:"CompanionReserveMutCap"`        // Max reduction from the Manifester mutation (default 0.24)
+	CompanionReserveTotalCap      ConfigFloat `yaml:"CompanionReserveTotalCap"`      // Combined reduction ceiling (default 0.79)
+	CompanionSoftCap              ConfigInt   `yaml:"CompanionSoftCap"`              // Soft count backstop; real limit is the Conviction budget (default 5)
+	CompanionSoftCapApex          ConfigInt   `yaml:"CompanionSoftCapApex"`          // Soft count backstop with the Manifester apex (default 7)
+	CompanionReserveDefault       ConfigInt   `yaml:"CompanionReserveDefault"`       // Fallback reserve when a summon spell omits summon_conviction_reserve (default 350)
+	CompanionCastingFloorPct      ConfigFloat `yaml:"CompanionCastingFloorPct"`      // Conviction fraction kept unreservable as casting headroom (default 0.0)
+
 	// ── SHOP ECONOMY ─────────────────────────────────────────────────────────
 	ShopBuyRatio              ConfigFloat `yaml:"ShopBuyRatio,omitempty"`              // Base buy/sell spread: NPC buy offer = baseValue * BuyRatio * scarcityMult (default 0.50)
 	ShopPriceFloor            ConfigFloat `yaml:"ShopPriceFloor,omitempty"`            // Minimum scarcity multiplier when stock is very high (default 0.25)
