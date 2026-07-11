@@ -81,7 +81,9 @@ func applyRoomEnemyAuras(room *rooms.Room) {
 	}
 	for _, mid := range room.GetMobs() {
 		mob := mobs.GetInstance(mid)
-		if mob == nil || !mob.Character.IsInCombat() {
+		// Skip charmed/summoned allied mobs — an enemy aura must never debuff
+		// its own side's combat pets (they are in-combat mobs in the room too).
+		if mob == nil || !mob.Character.IsInCombat() || mob.Character.IsCharmed() {
 			continue
 		}
 		for _, buffId := range debuffs {
