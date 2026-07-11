@@ -176,3 +176,17 @@ func (c *Character) CalcCompanionReserve(baseCost int) int {
 	reduction := math.Min(float64(cfg.CompanionReserveTotalCap), manifRed+mutRed)
 	return int(math.Round(float64(baseCost) * (1.0 - reduction)))
 }
+
+// CanAffordCompanion reports whether the character can field one more companion
+// reserving `reserveCost` Conviction: the new total reservation (plus any
+// casting floor) must fit within ConvictionMax, and the soft count backstop
+// must not be exceeded.
+func (c *Character) CanAffordCompanion(reserveCost int) bool {
+	if len(c.Companions) >= c.GetMaxCompanions() {
+		return false
+	}
+	cfg := configs.GetBalanceConfig()
+	current := c.GetPoolReservation("conviction", c.ConvictionMax.Value)
+	floor := int(math.Round(float64(c.ConvictionMax.Value) * float64(cfg.CompanionCastingFloorPct)))
+	return current+reserveCost+floor <= c.ConvictionMax.Value
+}
