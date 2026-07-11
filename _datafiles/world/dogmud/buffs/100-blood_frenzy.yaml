@@ -1,0 +1,11 @@
+buffid: 100
+name: Blood Frenzy
+description: A red haze — you hit like a cornered beast and cannot make yourself retreat.
+triggerrate: 1 round
+triggercount: 2
+flags:
+  - damage-bonus
+  - no-flee
+start_user_text: The world goes red. Something in you comes off its chain.
+start_room_text: "{source}'s eyes go wide and bloodshot, and a low snarl builds in their throat."
+end_user_text: The red haze recedes, and your limbs sag with the ebb of it.

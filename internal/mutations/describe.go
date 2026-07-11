@@ -102,6 +102,8 @@ func flagPhrase(target string) string {
 		return "You grow a tail, gaining its equipment slot."
 	case "movement":
 		return "Changes how you move through the world."
+	case "battle-frenzy":
+		return "When badly wounded you fly into a battle frenzy — you hit harder, but cannot make yourself retreat."
 	}
 	return ""
 }
