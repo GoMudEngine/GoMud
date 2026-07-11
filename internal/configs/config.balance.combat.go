@@ -59,6 +59,17 @@ func (b *Balance) validateCombat() {
 		b.TauntHoldRounds = 4
 	}
 
+	// ── MUTATION: WINGED FLIGHT ──
+	if b.FlightOpposedEdge < 1 {
+		b.FlightOpposedEdge = 25
+	}
+	if b.FlightMoveStaminaMult <= 0 {
+		b.FlightMoveStaminaMult = 0.5
+	}
+	if b.FlightFleeStaminaMult <= 0 {
+		b.FlightFleeStaminaMult = 0.5
+	}
+
 	// ── RANGED ───────────────────────────────────────────────────────────────
 	if b.RangedShotScale <= 0 {
 		b.RangedShotScale = 1.0
