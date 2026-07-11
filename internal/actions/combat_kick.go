@@ -61,6 +61,17 @@ type KickResult struct {
 //
 // Callers are responsible for all messaging, skill progression events, and
 // any combat-initiation logic (e.g. SetAggro for player out-of-combat kick).
+// raptorLegsKickBonus boosts standard-kick damage and knockdown when the
+// attacker has the Raptor Legs mutation (digitigrade, talon-clawed legs).
+// Returns the (possibly) adjusted damagePercent and knockdownChance.
+func raptorLegsKickBonus(owned map[string]int, damagePercent float64, knockdownChance int) (float64, int) {
+	if _, ok := owned["raptor-legs"]; ok {
+		damagePercent += 0.20
+		knockdownChance += 15
+	}
+	return damagePercent, knockdownChance
+}
+
 func ExecuteKick(actor Actor) KickResult {
 	char := actor.GetCharacter()
 
@@ -113,6 +124,11 @@ func ExecuteKick(actor Actor) KickResult {
 		damagePercent = float64(cfg.KneeDamagePercent)
 		knockdownChance = 0
 		mitigationMult = 1.0
+	}
+
+	// Raptor Legs mutation: talon-clawed legs make a plain kick bite far harder.
+	if variant == KickStandard {
+		damagePercent, knockdownChance = raptorLegsKickBonus(char.Mutations, damagePercent, knockdownChance)
 	}
 
 	// Execute the skill move.
