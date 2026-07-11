@@ -530,6 +530,27 @@ func HasMutationFlag(owned map[string]int, flag string) bool {
 	return false
 }
 
+// GetCompanionReserveRank returns the highest owned rank among mutations that
+// carry a "companion_reserve_reduction" effect (0 if none). The reduction
+// magnitude is computed by the caller from config knobs (linear per rank) —
+// NOT via sumEffects — because companion reservation reduction is a
+// character-economy knob, not a stat effect scaled by the mutation-level curve.
+func GetCompanionReserveRank(owned map[string]int) int {
+	rank := 0
+	for id, level := range owned {
+		spec := GetMutation(id)
+		if spec == nil {
+			continue
+		}
+		for _, p := range spec.Pros {
+			if p.Type == "companion_reserve_reduction" && level > rank {
+				rank = level
+			}
+		}
+	}
+	return rank
+}
+
 // GetConditionalHealthRegen returns the health_regen_if_lit value if biomeIsLit is true, else 0.
 func GetConditionalHealthRegen(owned map[string]int, biomeIsLit bool) int {
 	if !biomeIsLit {
