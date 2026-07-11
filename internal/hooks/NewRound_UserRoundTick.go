@@ -234,6 +234,10 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 				// Stage 12.2: Mutation progress — accumulates during combat, triggers acquisition or deepening
 				// Stage 17.2: The Eye modulates how quickly mutations happen (0.5× at new moon, 1.5× at full)
 				if user.Character.IsInCombat() {
+					// Blood Frenzy: enter/refresh the frenzy state while wounded.
+					if shouldFrenzy(mutations.HasMutationFlag(user.Character.Mutations, "battle-frenzy"), user.Character.Health, user.Character.HealthMax.Value) {
+						user.AddBuff(bloodFrenzyBuffId, "blood-frenzy")
+					}
 					mb := configs.GetBalanceConfig()
 					canAcquire := len(user.Character.Mutations) < int(mb.MutationMaxCount)
 					canDeepen := mutations.CanDeepen(user.Character.Mutations)
