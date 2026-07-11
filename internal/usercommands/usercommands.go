@@ -111,6 +111,7 @@ var (
 		`goal`:            {Goal, true, true, true}, // Admin only
 		`grapple`:         {Grapple, false, true, false},
 		`healing-gel`:     {HealingGel, false, true, false},
+		`venom-coat`:      {VenomCoat, false, true, false},
 		`help`:            {Help, true, true, false},
 		`hint`:            {Hint, true, true, false},
 		`keyring`:         {KeyRing, true, true, false},
