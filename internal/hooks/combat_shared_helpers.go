@@ -39,6 +39,11 @@ func calcSpellDamageForCharacter(spellData *spells.SpellData, caster *characters
 		skillLevel := caster.GetSkillLevel(skills.Spellcasting)
 		rawDmg := combat.CalcRawDamage(caster.Stats.Willpower.ValueAdj, skillLevel, spellData.DamageMultiplier, combat.ChannelMagical)
 
+		// Mutation graph: spell-power passives (Ether Gland, Corvid Brain) amplify caster output.
+		if spBonus := mutations.GetSpellPowerMultiplier(caster.Mutations); spBonus != 0 {
+			rawDmg *= 1.0 + spBonus
+		}
+
 		// #22 crash-site: inside the buried hull, belief-driven power is suppressed.
 		if caster != nil && caster.HasBuffFlag(buffs.Dampened) {
 			factor := float64(configs.GetBalanceConfig().CrashSiteSuppressionFactor)
