@@ -1,0 +1,13 @@
+mutationid: blood-frenzy
+name: Blood Frenzy
+description: |
+  Predatory adrenal glands flood you the moment a fight turns against you.
+  Wounded, you come off the chain — you hit like something cornered and rabid,
+  and you could not turn your back on prey if you tried.
+rarity: 6
+clusters: [ravener]
+pole: body
+visual: A network of dark, engorged glands stands out along their throat and shoulders.
+pros:
+  - type: flag
+    target: battle-frenzy

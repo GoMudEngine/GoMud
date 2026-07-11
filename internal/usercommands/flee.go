@@ -20,6 +20,13 @@ func Flee(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
+	// A no-flee state (Blood Frenzy, hamstrung, winded, tackled, …) forbids
+	// retreat: you can still move and fight, but you can't break off to flee.
+	if user.Character.HasBuffFlag(buffs.NoFlee) {
+		user.SendText(messaging.CategorySystem, `You can't break off to flee right now — you can only fight.`)
+		return true, nil
+	}
+
 	if !user.Character.IsDisengaging() {
 		// Fleeing costs stamina
 		const fleeStaminaCost = 10

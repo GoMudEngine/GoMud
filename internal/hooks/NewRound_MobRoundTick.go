@@ -135,6 +135,9 @@ func MobRoundTick(e events.Event) events.ListenerReturn {
 		// (crafting) all gate behind at least one player in the zone.
 		tickMobProneRecovery(mob)
 		tickMobMutationAcquisition(mob, &mb)
+		if mob.Character.IsInCombat() && shouldFrenzy(mutations.HasMutationFlag(mob.Character.Mutations, "battle-frenzy"), mob.Character.Health, mob.Character.HealthMax.Value) {
+			mob.AddBuff(bloodFrenzyBuffId, "blood-frenzy")
+		}
 		tickMobCharmState(mob)
 		tickMobCrafting(mob)
 		revalidateMobStats(mob)
