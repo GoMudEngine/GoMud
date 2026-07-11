@@ -42,8 +42,10 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 			room.RoundTick()
 
 			// Mutation graph: project ally auras (Commanding Presence, …) onto
-			// the room's other players while their owner is in combat.
+			// the room's other players, and enemy auras (Dissonance Organ, …)
+			// onto its in-combat mobs, while the owner is in combat.
 			applyRoomAllyAuras(room)
+			applyRoomEnemyAuras(room)
 
 			allowIdleMessages := true
 			behaviortree.TryRoomBehavior(roomId, behaviortree.EventContext{

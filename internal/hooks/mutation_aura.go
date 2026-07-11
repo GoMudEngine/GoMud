@@ -1,6 +1,7 @@
 package hooks
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -54,6 +55,37 @@ func applyRoomAllyAuras(room *rooms.Room) {
 			for _, buffId := range buffIds {
 				ally.AddBuff(buffId, "aura")
 			}
+		}
+	}
+}
+
+// applyRoomEnemyAuras applies each in-combat enemy-aura owner's debuff to the
+// in-combat mobs in the room. Buffs go through the mob AddBuff wrapper (room
+// text + GMCP; silent on refresh) and are short-lived so they lapse when the
+// owner leaves or the fight ends.
+func applyRoomEnemyAuras(room *rooms.Room) {
+	playerIds := room.GetPlayers()
+	if len(playerIds) == 0 {
+		return
+	}
+	var debuffs []int
+	for _, ownerId := range playerIds {
+		owner := users.GetByUserId(ownerId)
+		if owner == nil || !owner.Character.IsInCombat() {
+			continue
+		}
+		debuffs = append(debuffs, mutations.GetEnemyAuraBuffs(owner.Character.Mutations)...)
+	}
+	if len(debuffs) == 0 {
+		return
+	}
+	for _, mid := range room.GetMobs() {
+		mob := mobs.GetInstance(mid)
+		if mob == nil || !mob.Character.IsInCombat() {
+			continue
+		}
+		for _, buffId := range debuffs {
+			mob.AddBuff(buffId, "aura")
 		}
 	}
 }
