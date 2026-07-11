@@ -8,57 +8,29 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/skills"
-	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 // ─── GetMaxCompanions ────────────────────────────────────────────────────────
 
-func TestGetMaxCompanions_Ranks(t *testing.T) {
-	// Seed a minimal manifestation spell so the "has spell → min 1" path works.
-	cleanup := spells.SeedSpellsForTest(map[string]*spells.SpellData{
-		"spirit-wolf": {
-			SpellId: "spirit-wolf",
-			Name:    "Spirit Wolf",
-			Schools: []string{"manifestation"},
+func TestGetMaxCompanions_SoftBackstop(t *testing.T) {
+	seedMut := mutations.SeedMutationsForTest(map[string]*mutations.MutationSpec{
+		"broodqueen": {
+			MutationId: "broodqueen", Name: "Brood Queen", Rarity: 8, Pole: "belief",
+			Pros: []mutations.MutationEffect{{Type: "flag", Target: "companion-cap-raise"}},
 		},
 	})
-	defer cleanup()
+	defer seedMut()
 
-	tests := []struct {
-		name         string
-		skill        int
-		hasSpell     bool
-		wantMax      int
-	}{
-		// No manifestation spell and no skill → 0
-		{"skill=0 no spell", 0, false, 0},
-		// Has a manifestation spell but skill=0 → floor(0/19)=0, bumped to 1
-		{"skill=0 with spell", 0, true, 1},
-		// Boundary cases around divisor 19
-		{"skill=18", 18, false, 0},  // 18/19 = 0
-		{"skill=19", 19, false, 1},  // 19/19 = 1
-		{"skill=37", 37, false, 1},  // 37/19 = 1
-		{"skill=38", 38, false, 2},  // 38/19 = 2
-		{"skill=56", 56, false, 2},  // 56/19 = 2
-		{"skill=57", 57, false, 3},  // 57/19 = 3
-		{"skill=75", 75, false, 3},  // 75/19 = 3 (floor)
-		{"skill=76", 76, false, 4},  // 76/19 = 4
-		// Hard cap at 4 even if skill is very high
-		{"skill=200 cap=4", 200, false, 4},
-	}
+	// No manifestation investment still returns the soft cap — the real gate is
+	// the Conviction budget (CanAffordCompanion), not this count.
+	c := New()
+	assert.Equal(t, 5, c.GetMaxCompanions())
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c := New()
-			c.Skills[string(skills.Manifestation)] = tt.skill
-			if tt.hasSpell {
-				c.SpellBook["spirit-wolf"] = 1
-			}
-			assert.Equal(t, tt.wantMax, c.GetMaxCompanions())
-		})
-	}
+	// The apex flag raises the backstop.
+	c.Mutations = map[string]int{"broodqueen": 1}
+	assert.Equal(t, 7, c.GetMaxCompanions())
 }
 
 // ─── AddCompanion ────────────────────────────────────────────────────────────
@@ -83,18 +55,15 @@ func TestAddCompanion_Success(t *testing.T) {
 
 func TestAddCompanion_AtCap(t *testing.T) {
 	c := New()
-	// cap = 1
-	c.Skills[string(skills.Manifestation)] = 19
-
-	first := CompanionInfo{MobId: 1001, InstanceId: 1, Name: "Wolf One"}
-	second := CompanionInfo{MobId: 1002, InstanceId: 2, Name: "Wolf Two"}
-
-	ok := c.AddCompanion(first)
-	assert.True(t, ok, "first add should succeed")
-
-	ok = c.AddCompanion(second)
-	assert.False(t, ok, "second add should fail at cap")
-	assert.Len(t, c.Companions, 1, "companion count should remain 1")
+	// Soft backstop is 5 (the real limit is the Conviction budget, tested
+	// separately). Filling to the backstop and rejecting the next verifies it.
+	for i := 0; i < 5; i++ {
+		ok := c.AddCompanion(CompanionInfo{MobId: 1000 + i, InstanceId: i + 1, Name: "Wolf"})
+		assert.True(t, ok, "add under the soft cap should succeed")
+	}
+	ok := c.AddCompanion(CompanionInfo{MobId: 2000, InstanceId: 99, Name: "Wolf Too Many"})
+	assert.False(t, ok, "add at the soft cap should fail")
+	assert.Len(t, c.Companions, 5, "companion count should remain at the soft cap")
 }
 
 // ─── RemoveCompanion ─────────────────────────────────────────────────────────

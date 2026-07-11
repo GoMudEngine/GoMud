@@ -8,7 +8,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/skills"
-	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -127,40 +126,22 @@ func (c *Character) RemoveCompanion(instanceId int) *CompanionInfo {
 	return nil
 }
 
-// GetMaxCompanions returns the maximum number of companions this character
-// may have at once, based on the manifestation skill level.
-// Formula: skill / 19, capped at 4. Minimum 1 if the character has any
-// manifestation-school spells in their spellbook.
+// GetMaxCompanions returns the SOFT count backstop on simultaneous companions.
+// It is a safety limit only — the real constraint is the Conviction budget
+// (see CanAffordCompanion). The Manifester apex ("companion-cap-raise" flag)
+// raises the backstop.
 func (c *Character) GetMaxCompanions() int {
-	skill := c.GetSkillLevel(skills.Manifestation)
-	max := skill / 19
-	if max > 4 {
-		max = 4
+	cfg := configs.GetBalanceConfig()
+	cap := int(cfg.CompanionSoftCap)
+	if cap < 1 {
+		cap = 5
 	}
-
-	// Minimum 1 if the character knows any manifestation-school spell.
-	if max < 1 && c.hasManifestationSpell() {
-		max = 1
-	}
-
-	return max
-}
-
-// hasManifestationSpell returns true if the character's spellbook contains
-// at least one spell belonging to the "manifestation" school.
-func (c *Character) hasManifestationSpell() bool {
-	for spellId := range c.SpellBook {
-		sd := spells.GetSpell(spellId)
-		if sd == nil {
-			continue
-		}
-		for _, school := range sd.Schools {
-			if strings.EqualFold(school, "manifestation") {
-				return true
-			}
+	if mutations.HasMutationFlag(c.Mutations, "companion-cap-raise") {
+		if apex := int(cfg.CompanionSoftCapApex); apex > cap {
+			cap = apex
 		}
 	}
-	return false
+	return cap
 }
 
 // CalcCompanionStatPool computes the stat pool for a summoned companion,
