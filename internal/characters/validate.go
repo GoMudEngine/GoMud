@@ -265,6 +265,14 @@ func (c *Character) GetPoolReservation(pool string, poolMax int) int {
 			total += int(math.Floor(float64(poolMax) * itemPct))
 		}
 	}
+
+	// Companions reserve Conviction while fielded (snapshotted at summon time).
+	if pool == "conviction" {
+		for i := range c.Companions {
+			total += c.Companions[i].ConvictionReserve
+		}
+	}
+
 	return total
 }
 
