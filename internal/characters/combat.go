@@ -205,9 +205,15 @@ func (c *Character) GetPhysicalMitigation() float64 {
 	// Apply gear-effectiveness multiplier to the gear-derived portion.
 	gearMit = int(float64(gearMit) * mutations.GearEffectivenessMultiplier(c.Mutations))
 
-	// Non-gear additions (shield spell, mutations, species natural armor).
+	// Non-gear additions (shield spell, mutations, species natural armor, buff
+	// statmods). The buff/statmod contribution via c.StatMod("physical_mitigation")
+	// mirrors GetMagicalMitigation / GetConvictionMitigation, which have always
+	// folded their statmod sibling — physical was the odd one out, so buffs like
+	// Cocoon (104) and Ironhide Brew (61) that reserve physical_mitigation as a
+	// statmod silently did nothing until this line.
 	nonGearMit := int(c.GetConditionMagnitude(ConditionShield))
 	nonGearMit += mutations.GetNaturalArmor(c.Mutations)
+	nonGearMit += c.StatMod("physical_mitigation")
 	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
 		nonGearMit += speciesInfo.NaturalArmor
 	}
