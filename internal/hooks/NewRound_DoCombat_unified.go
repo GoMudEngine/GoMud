@@ -325,6 +325,12 @@ func applyCombatDamageBonuses(atk, def actions.Actor, res *combat.AttackResult) 
 	atkChar := atk.GetCharacter()
 	defChar := def.GetCharacter()
 
+	// Mutation graph: on-hit-buff mutations (Venom Glands, …) afflict the
+	// struck defender. Character.AddBuff is nil-safe and no-ops on an unknown id.
+	for _, buffId := range mutations.GetOnHitBuffs(atkChar.Mutations) {
+		_ = defChar.AddBuff(buffId, false)
+	}
+
 	// Conviction Surge: +15% damage on hit when DamageBonus buff flag set.
 	if atkChar.HasBuffFlag(buffs.DamageBonus) {
 		bonusDmg := int(math.Round(float64(res.DamageToTarget) * 0.15))
