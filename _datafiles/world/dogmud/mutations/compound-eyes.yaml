@@ -1,0 +1,17 @@
+mutationid: compound-eyes
+name: Compound Eyes
+description: |
+  Your eyes facet into hundreds of glinting lenses. Nothing crosses your
+  field of view unseen and nothing flanks you — though a sudden bright light
+  is a blaze of confusion.
+rarity: 4
+clusters: [stalker]
+pole: body
+requires_body_parts: [eyes]
+visual: Their eyes are faceted and iridescent, catching light in a hundred tiny glints.
+pros:
+  - type: flag
+    target: see-hidden
+    value: 1
+  - type: dodge_modifier
+    value: 10

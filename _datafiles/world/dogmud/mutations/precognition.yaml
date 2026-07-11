@@ -1,0 +1,10 @@
+mutationid: precognition
+name: Precognition
+description: |
+  A half-second of the future bleeds into your present. You flinch from blows
+  before they are thrown.
+rarity: 4
+visual: Their eyes track things a moment before those things happen.
+pros:
+  - type: dodge_modifier
+    value: 15

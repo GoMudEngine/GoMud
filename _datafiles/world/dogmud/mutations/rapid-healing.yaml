@@ -1,0 +1,10 @@
+mutationid: rapid-healing
+name: Rapid Healing
+description: |
+  Your flesh knits with unnatural speed. Rest a moment and wounds close that
+  should have scarred for weeks.
+rarity: 3
+visual: Old cuts on their skin are already pink and closing, faster than they ought to be.
+pros:
+  - type: health_regen_multiplier
+    value: 0.15
