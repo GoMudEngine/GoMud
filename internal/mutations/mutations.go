@@ -581,6 +581,24 @@ func GetSpellPowerMultiplier(owned map[string]int) float64 {
 	return sumEffects(owned, "spell_power", "")
 }
 
+// GetOnHitBuffs returns the buff ids that owned mutations apply to a struck
+// target on a landed melee/natural hit (effect type "on_hit_buff", Value = buff id).
+func GetOnHitBuffs(owned map[string]int) []int {
+	var out []int
+	for id := range owned {
+		spec := GetMutation(id)
+		if spec == nil {
+			continue
+		}
+		for _, p := range spec.Pros {
+			if p.Type == "on_hit_buff" && p.Value > 0 {
+				out = append(out, int(p.Value))
+			}
+		}
+	}
+	return out
+}
+
 // GetMovementSpeedModifier returns the net movement speed modifier.
 // Negative = faster (reduced stamina cost), positive = slower.
 // Apply as: cost = int(float64(cost) * (1.0 - GetMovementSpeedModifier(m)))
