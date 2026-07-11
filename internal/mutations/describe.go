@@ -43,6 +43,8 @@ func DescribeEffect(e MutationEffect) string {
 			return "Sharpens your reflexes, making blows harder to land on you."
 		}
 		return "Slows your reflexes, making you easier to strike."
+	case "on_hit_buff":
+		return "Your natural strikes leave a debilitating affliction in the wound."
 	case "conviction_cost_multiplier":
 		// Additive delta (cost * (1.0 + value)); <0 is cheaper, >0 dearer.
 		if e.Value < 0 {

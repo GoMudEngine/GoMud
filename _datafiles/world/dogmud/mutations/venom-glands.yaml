@@ -1,0 +1,14 @@
+mutationid: venom-glands
+name: Venom Glands
+description: |
+  Glands swell behind your teeth and beneath your nails, weeping a potent
+  neurotoxin. Anything you strike with tooth or claw is envenomed — the
+  poison does its slow, certain work long after the blow lands.
+rarity: 7
+clusters: [ravener, stalker]
+pole: body
+requires_body_parts: [mouth]
+visual: Their teeth and nails glisten with a faint, oily sheen that smells of bitter almonds.
+pros:
+  - type: on_hit_buff
+    value: 39
