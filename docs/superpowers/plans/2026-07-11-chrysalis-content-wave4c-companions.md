@@ -1,5 +1,13 @@
 # Chrysalis Content — Wave 4c: companion subsystem (Brood Sac)
 
+> **⚠ SUPERSEDED (2026-07-11)** by the Companion Conviction Economy design
+> (`docs/superpowers/specs/2026-07-11-companion-conviction-economy-design.md`).
+> The "Brood Sac = passively respawn one weak pet" approach below is scrapped:
+> companions now reserve Conviction (powerful pets cost more; manifestation skill
+> + a Manifester mutation reduce the cost), and the Manifester mutations become
+> reservation-cost reducers. Do not implement this plan as written; the
+> replacement's implementation plan is a follow-on. Kept for history.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans. Steps use checkbox (`- [ ]`) syntax.
 
 **Goal:** Establish the **passive-companion** mechanic (P8) — a mutation that keeps a bonded creature at your side — proven with **Brood Sac** (Manifester): you always have one companion; if it dies, you birth another.
