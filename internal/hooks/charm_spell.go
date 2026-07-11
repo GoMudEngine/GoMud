@@ -5,6 +5,7 @@ import (
 	"math"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -31,9 +32,14 @@ func resolveCharmSpell(user *users.UserRecord, targetMob *mobs.Mob, room *rooms.
 		return false
 	}
 
-	// ── 2. Companion cap ───────────────────────────────────────────────
-	if len(ch.Companions) >= ch.GetMaxCompanions() {
-		user.SendText(messaging.CategorySystem, `You cannot maintain any more companions.`)
+	// ── 2. Reservation + budget gate ───────────────────────────────────
+	// A charmed creature isn't an authored summon type, so it reserves the
+	// configured default (reduced by the caster's manifestation/mutation). The
+	// Conviction budget is the real limit; the soft count backstop lives in
+	// CanAffordCompanion.
+	reserve := ch.CalcCompanionReserve(int(configs.GetBalanceConfig().CompanionReserveDefault))
+	if !ch.CanAffordCompanion(reserve) {
+		user.SendText(messaging.CategorySystem, `You cannot spare the conviction to bind another creature to your will.`)
 		return false
 	}
 
@@ -78,17 +84,20 @@ func resolveCharmSpell(user *users.UserRecord, targetMob *mobs.Mob, room *rooms.
 
 		// Register as companion
 		info := characters.CompanionInfo{
-			MobId:      int(targetMob.MobId),
-			InstanceId: targetMob.InstanceId,
-			SourceType: characters.CompanionCharmed,
-			Name:       targetName,
-			BaseName:   targetName,
-			AutoAssist: true,
+			MobId:             int(targetMob.MobId),
+			InstanceId:        targetMob.InstanceId,
+			SourceType:        characters.CompanionCharmed,
+			Name:              targetName,
+			BaseName:          targetName,
+			AutoAssist:        true,
+			ConvictionReserve: reserve,
 		}
 		if !ch.AddCompanion(info) {
 			user.SendText(messaging.CategorySystem, `You cannot maintain any more companions.`)
 			return false
 		}
+		// Apply the new reservation immediately so usable Conviction drops now.
+		ch.RecalculateStats()
 
 		// Clear aggro from existing companions toward the new mob
 		for _, charmId := range ch.GetCharmIds() {

@@ -237,7 +237,9 @@ func (c *Character) RecalculateStats() {
 // GetPoolReservation returns the total pool max reduction from Chrysalis
 // enchantments and pinnacle-item ItemSpec reserve percentages (ReserveHealthPct/
 // ReserveStaminaPct/ReserveConvictionPct) on all equipped items that reserve
-// the given pool ("health", "stamina", "conviction").
+// the given pool ("health", "stamina", "conviction"). For the "conviction"
+// pool it also adds each live companion's snapshotted ConvictionReserve — the
+// companion Conviction economy piggybacks on this same reservation total.
 func (c *Character) GetPoolReservation(pool string, poolMax int) int {
 	total := 0
 	for _, itm := range c.Equipment.GetAllItems() {
