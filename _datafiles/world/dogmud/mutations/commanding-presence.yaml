@@ -1,0 +1,13 @@
+mutationid: commanding-presence
+name: Commanding Presence
+description: |
+  Something in your bearing — a scent, a stillness, a weight to your voice —
+  makes those who fight alongside you stand straighter and swing surer. You
+  are the kind of thing others follow into a bad situation.
+rarity: 4
+clusters: [zealot]
+pole: belief
+visual: They hold themselves with an unhurried certainty that makes a room orient toward them.
+pros:
+  - type: aura_ally_buff
+    value: 101

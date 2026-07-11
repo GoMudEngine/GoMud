@@ -1,0 +1,10 @@
+buffid: 101
+name: Emboldened
+description: A commanding presence at your side steadies your hand and stiffens your spine.
+triggerrate: 1 round
+triggercount: 2
+statmods:
+  strength: 5
+  willpower: 5
+start_user_text: You stand a little taller — someone at your side is worth following.
+end_user_text: The steadying presence fades, and the fight feels lonelier.
