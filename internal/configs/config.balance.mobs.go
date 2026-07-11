@@ -125,6 +125,33 @@ func (b *Balance) validateMobs() {
 		b.ManifestStatScaleSkillFactor = 0.02
 	}
 
+	// ── COMPANION CONVICTION ECONOMY ──────────────────────────────────────────
+	if b.CompanionReserveSkillPct <= 0 {
+		b.CompanionReserveSkillPct = 0.01
+	}
+	if b.CompanionReserveSkillCap <= 0 {
+		b.CompanionReserveSkillCap = 0.55
+	}
+	if b.CompanionReserveMutPctPerRank <= 0 {
+		b.CompanionReserveMutPctPerRank = 0.06
+	}
+	if b.CompanionReserveMutCap <= 0 {
+		b.CompanionReserveMutCap = 0.24
+	}
+	if b.CompanionReserveTotalCap <= 0 {
+		b.CompanionReserveTotalCap = 0.79
+	}
+	if b.CompanionSoftCap < 1 {
+		b.CompanionSoftCap = 5
+	}
+	if b.CompanionSoftCapApex < 1 {
+		b.CompanionSoftCapApex = 7
+	}
+	if b.CompanionReserveDefault < 1 {
+		b.CompanionReserveDefault = 350
+	}
+	// CompanionCastingFloorPct intentionally defaults to 0.0 (costs self-limit).
+
 	// ── GOAL SELECTION ───────────────────────────────────────────────────────
 	if b.GoalSelectSwitchMargin <= 0 {
 		b.GoalSelectSwitchMargin = 5.0
