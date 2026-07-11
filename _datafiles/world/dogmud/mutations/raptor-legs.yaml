@@ -1,0 +1,15 @@
+mutationid: raptor-legs
+name: Raptor Legs
+description: |
+  Your legs re-tension into digitigrade, talon-clawed limbs — built to run
+  prey down and open it up. You are quicker on your feet, and a kick from
+  you lands like a falling axe.
+rarity: 4
+clusters: [ravener]
+pole: body
+requires_body_parts: [legs]
+visual: Their legs bend the wrong way at the ankle, ending in splayed, black-taloned feet.
+pros:
+  - type: stat_multiplier
+    target: dexterity
+    value: 0.05

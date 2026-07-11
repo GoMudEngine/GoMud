@@ -1,0 +1,13 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Venom Glands</ansi> mutation
+
+Glands behind your teeth and beneath your nails weep a potent
+neurotoxin. Anything you strike with tooth or claw is envenomed.
+
+<ansi fg="yellow">Type:</ansi>     Passive
+<ansi fg="yellow">Rarity:</ansi>   Very Rare
+
+<ansi fg="yellow">Benefits:</ansi>
+  Your natural strikes leave a debilitating venom in the wound that
+  keeps harming the target after the blow lands
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>
