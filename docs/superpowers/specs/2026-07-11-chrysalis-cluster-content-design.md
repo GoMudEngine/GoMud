@@ -232,6 +232,13 @@ build the primitives, then author YAML against them.
 - **No hard numbers in player text**; descriptive language only (per repo SOP).
 - **Naming/filenames** follow `ConvertForFilename`; new effect types documented
   in `docs/schemas/`.
+- **Per-rank magnitudes are NOT yet defined (deferred).** This spec fixes each
+  mutation's *identity, primitive, rarity, and prereqs* — but **not** the numeric
+  strength of ranks 1–4 (how much bleed, how much armor, how large each reflect,
+  how long Venom Coat lasts per rank, the exact deepening curve). Those values are
+  authored during implementation and tuned in the post-build playtest (Wave 6 /
+  §10). Deepening should always escalate the *effect*, not just a decimal — a
+  design rule the numbers must honor.
 - **Drift-signal coverage (engine addition).** The engine's `skillClusters` map
   currently covers Colossus/Ravener/Stalker/Ethereal/Zealot/Manifester. **Ironhide**
   (damage-absorbed signal), **Trickster**, and **Weaver** (mixed Dex/Wil/Per) need
