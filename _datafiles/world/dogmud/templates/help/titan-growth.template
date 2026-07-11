@@ -1,0 +1,19 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Titan Growth</ansi> mutation
+
+Your frame swells past any natural bound. You tower, and there is
+simply more of you to endure a fight — but a target this large is
+hard to miss.
+
+<ansi fg="yellow">Type:</ansi>     Passive
+<ansi fg="yellow">Rarity:</ansi>   Very Rare
+
+<ansi fg="yellow">Benefits:</ansi>
+  Toughens your body, deepening your reserves of health
+
+<ansi fg="yellow">Drawbacks:</ansi>
+  Slows your reflexes — your sheer size makes blows easier to land
+  on you
+
+<ansi fg="yellow">Conflicts:</ansi> Hollow Bones
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

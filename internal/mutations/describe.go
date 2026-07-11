@@ -26,6 +26,23 @@ func DescribeEffect(e MutationEffect) string {
 			return "Quickens how fast your stamina returns."
 		}
 		return "Slows how fast your stamina returns."
+	case "health_regen_multiplier":
+		// Additive delta (regen * (1.0 + value)); >0 quickens healing.
+		if e.Value > 0 {
+			return "Quickens how fast your wounds close."
+		}
+		return "Slows how fast your wounds close."
+	case "spell_power":
+		// Additive delta (spell dmg * (1.0 + value)); >0 strengthens magic.
+		if e.Value >= 0 {
+			return "Sharpens your spellcraft, lending your magic greater force."
+		}
+		return "Dulls the force of your spellcraft."
+	case "dodge_modifier":
+		if e.Value >= 0 {
+			return "Sharpens your reflexes, making blows harder to land on you."
+		}
+		return "Slows your reflexes, making you easier to strike."
 	case "conviction_cost_multiplier":
 		// Additive delta (cost * (1.0 + value)); <0 is cheaper, >0 dearer.
 		if e.Value < 0 {

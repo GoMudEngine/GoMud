@@ -1,0 +1,18 @@
+mutationid: titan-growth
+name: Titan Growth
+description: |
+  Your frame swells past any natural bound — bones lengthen, mass piles on.
+  You tower, and there is simply more of you to endure a fight. But a target
+  this large is hard to miss and slow to duck a blow.
+rarity: 7
+clusters: [colossus]
+pole: body
+conflicts:
+  - hollow-bones
+visual: They loom a full head taller than they should, shoulders blotting out the light behind them.
+pros:
+  - type: health_multiplier
+    value: 0.20
+cons:
+  - type: dodge_modifier
+    value: -15

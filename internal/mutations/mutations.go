@@ -573,6 +573,14 @@ func GetDamageMultiplier(owned map[string]int) float64 {
 	return sumEffects(owned, "damage_multiplier", "")
 }
 
+// GetSpellPowerMultiplier returns the net spell_power bonus from mutations
+// (Ether Gland, Corvid Brain, …). Apply as:
+//
+//	dmg = dmg * (1.0 + GetSpellPowerMultiplier(m))
+func GetSpellPowerMultiplier(owned map[string]int) float64 {
+	return sumEffects(owned, "spell_power", "")
+}
+
 // GetMovementSpeedModifier returns the net movement speed modifier.
 // Negative = faster (reduced stamina cost), positive = slower.
 // Apply as: cost = int(float64(cost) * (1.0 - GetMovementSpeedModifier(m)))
