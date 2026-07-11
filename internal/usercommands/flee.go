@@ -20,6 +20,13 @@ func Flee(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
+	// A no-flee state (e.g. the Blood Frenzy mutation state) forbids retreat:
+	// you can still move and fight, but you cannot make yourself turn and run.
+	if user.Character.HasBuffFlag(buffs.NoFlee) {
+		user.SendText(messaging.CategorySystem, `Something in you refuses to turn your back and run — you can only fight.`)
+		return true, nil
+	}
+
 	if !user.Character.IsDisengaging() {
 		// Fleeing costs stamina
 		const fleeStaminaCost = 10
