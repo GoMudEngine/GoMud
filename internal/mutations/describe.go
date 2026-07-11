@@ -45,6 +45,8 @@ func DescribeEffect(e MutationEffect) string {
 		return "Slows your reflexes, making you easier to strike."
 	case "on_hit_buff":
 		return "Your natural strikes leave a debilitating affliction in the wound."
+	case "aura_ally_buff":
+		return "Your presence steadies and emboldens allies who fight beside you."
 	case "conviction_cost_multiplier":
 		// Additive delta (cost * (1.0 + value)); <0 is cheaper, >0 dearer.
 		if e.Value < 0 {
