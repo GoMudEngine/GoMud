@@ -45,10 +45,12 @@ Two things make this fit the game we already have:
   the companion lives and frees on its death/dismissal.
 - **Reservation = `round(base × (1 − reduction))`**, floored at a minimum
   fraction of base.
-- **`base`** is authored per companion **tier** (§3), not derived from the live
-  scaled stat pool — this sidesteps the undead problem (a raised golem's live
-  pool swings with the corpse, so pool-derived cost would swing per corpse; a
-  tier bracket does not).
+- **`base`** is authored **per summon type** (§3) — a fixed `conviction_reserve`
+  on the summon/raise spell — **not** derived from the summoned creature's actual
+  stat pool. This sidesteps the undead problem entirely: a golem raised from a
+  huge corpse is stronger but costs the *same* as any golem, so the raised pool
+  never affects price. (Nice side effect: raising from beefier corpses is a pure
+  power gain for the same Conviction — a summoner's corpse-hunting reward.)
 - **`reduction`** comes from manifestation skill + the Manifester mutation,
   capped (§4).
 - Companions' total reservation is added into `GetPoolReservation("conviction",
@@ -62,21 +64,27 @@ This replaces the `min(4, skill/19)` count formula.
 
 ## 3. Companion cost tiers
 
-Base reservation is bracketed by companion power. For **spell summons**, the
-tier is a field on the summon spell. For **raised undead**, the tier brackets by
-**corpse value** (gold worth / boss rank), so a 300–325g Elemental-Oasis boss
-corpse (e.g. Elemental King) → the "Greater" bracket regardless of the exact
-corpse stats.
+Each **summon type** carries its own fixed `conviction_reserve` (a field on its
+summon/raise spell) — the cost is tied to *what you summoned*, not how powerful
+the resulting creature happens to be. The corpse a golem is raised from changes
+the golem's *power* but never its *cost*. The tier labels below are just
+groupings of those per-type numbers.
 
-| Tier | Examples | Base reservation (first-pass) |
+| Tier | Summon types (each authored individually) | `conviction_reserve` (first-pass) |
 |---|---|---|
-| **Lesser** | Spirit wolf, conjured imp | **350** |
-| **Greater** | Golem from a ~300–325g boss corpse | **440** |
-| **Elder** | Golem from an elite/higher-value boss corpse | **735** |
+| **Lesser** | Spirit wolf, conjured imp | **~350** |
+| **Greater** | Magma elemental, standard golem | **~440** |
+| **Elder** | Elite golem / high-end summon | **~735** |
 | **Tier 4+ (RESERVED — speculative, §10)** | Support-caster ghost, lich, undead dragon | 900–1500+ (TBD) |
 
-> Base numbers are the **tuning surface** — the §5 calibration fixes them
-> against the acceptance targets; final values land in the post-build playtest.
+> The premium between tiers is intentionally **modest, not power-proportional**:
+> a golem is ~6× a wolf's stat pool but only ~1.3× its cost, because the anchor
+> targets (§5: newbie's wolf ≈75%, Meirok's 2 golems) mathematically require the
+> dominant cost to be "supporting another body at all," with tier a small
+> premium on top. A summoner's payoff is fielding *beefier* bodies at a
+> *discount* (skill + mutation), plus raising from fat corpses — not a
+> cheaper-per-power rate. Base numbers are the **tuning surface**; §5 fixes them,
+> final values land in playtest.
 
 ---
 
@@ -170,8 +178,9 @@ Wave 6 content pass, against the effect types this spec defines.
 - **`CompanionInfo` gains `ConvictionReserve int`** (snapshotted at summon).
 - **Death/dismiss** frees the reservation automatically — `MobDeath_CompanionCleanup`
   already removes the companion; `GetPoolReservation` simply stops counting it.
-- **Undead tier bracket:** a small helper maps corpse gold-value → tier at raise
-  time (extends the `SummonRequiresCorpse` path).
+- **Undead:** the raise spell carries its own `conviction_reserve` like any
+  summon — no corpse-value math. The corpse only sets the raised creature's
+  power (existing behavior), never its cost.
 
 ---
 
