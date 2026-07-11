@@ -41,6 +41,10 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 		if room := rooms.LoadRoom(roomId); room != nil {
 			room.RoundTick()
 
+			// Mutation graph: project ally auras (Commanding Presence, …) onto
+			// the room's other players while their owner is in combat.
+			applyRoomAllyAuras(room)
+
 			allowIdleMessages := true
 			behaviortree.TryRoomBehavior(roomId, behaviortree.EventContext{
 				EventType: "room_idle",
