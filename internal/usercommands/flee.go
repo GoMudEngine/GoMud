@@ -2,8 +2,10 @@ package usercommands
 
 import (
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
@@ -28,8 +30,14 @@ func Flee(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	if !user.Character.IsDisengaging() {
-		// Fleeing costs stamina
-		const fleeStaminaCost = 10
+		// Fleeing costs stamina — a flyer breaks away far more easily (Winged Flight).
+		fleeStaminaCost := 10
+		if mutations.IsFlying(user.Character.Mutations) {
+			fleeStaminaCost = int(float64(fleeStaminaCost) * float64(configs.GetBalanceConfig().FlightFleeStaminaMult))
+			if fleeStaminaCost < 1 {
+				fleeStaminaCost = 1
+			}
+		}
 		if !user.Character.DeductStamina(fleeStaminaCost) {
 			user.SendText(messaging.CategorySystem, `You're too exhausted to flee! You need to stand and fight.`)
 			return true, nil

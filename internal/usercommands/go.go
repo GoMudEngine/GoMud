@@ -15,6 +15,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/relationships"
@@ -148,6 +149,13 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 		// Calculate and check stamina cost
 		staminaCost := user.Character.GetMovementStaminaCost(terrainMultiplier)
+		if mutations.IsFlying(user.Character.Mutations) {
+			// Winged Flight glides over terrain — movement barely tires you.
+			staminaCost = int(float64(staminaCost) * float64(configs.GetBalanceConfig().FlightMoveStaminaMult))
+			if staminaCost < 1 {
+				staminaCost = 1
+			}
+		}
 		if !user.Character.DeductStamina(staminaCost) {
 			user.SendText(messaging.CategorySystem, "You're too exhausted to move! Rest and recover your stamina.")
 			// Refund the action points since movement failed

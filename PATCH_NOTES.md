@@ -1,5 +1,25 @@
 # DOGMud Patch Notes
 
+## 2026-07-11 — New chrysalis powers: venom, cocoon, and wings
+
+- **Venom Coat.** Those whose bodies have turned toward the predator can now
+  flush their weapons with their own burning venom on command — for a short
+  while every blow you land bites far deeper. Working the venom up draws on the
+  same readiness your other special moves share.
+- **Cocoon.** A rarer path lets you fold inward and snap a hardened shell shut
+  around yourself: for a few rounds the world's blows barely reach you, and
+  whatever you were fighting loses sight of you entirely. A powerful way to
+  break a bad moment — but sealing yourself away costs you that moment.
+- **Winged Flight.** Go light enough — hollow your bones — and grow a tail for
+  balance, and great wings may unfurl. Flight is always with you once it comes:
+  you strike down at earthbound foes and are far harder for them to touch, you
+  break away from fights almost at will, and you glide over terrain so travel
+  barely tires you. Against others on the wing, the advantage cancels. Your
+  hollowed frame, though, bruises more easily.
+- **Fix:** Ironhide-style protective draughts that toughen your hide against
+  physical blows now actually do so — a long-standing bug had quietly ignored
+  their armor while honoring their other effects.
+
 ## 2026-07-11 — Companions cost conviction, not a headcount
 
 - **Summoned and raised companions now draw on your conviction to stay in the

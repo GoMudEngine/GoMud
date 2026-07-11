@@ -110,6 +110,8 @@ func flagPhrase(target string) string {
 		return "Changes how you move through the world."
 	case "battle-frenzy":
 		return "When badly wounded you fly into a battle frenzy — you hit harder, but cannot make yourself retreat."
+	case "flying":
+		return "You take to the air on wings — swift over ground, hard for the earthbound to touch, and free to break away at will."
 	}
 	return ""
 }

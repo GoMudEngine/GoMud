@@ -55,6 +55,8 @@ var (
 		"gearup":         {Gearup, false},
 		"hamstring":      {Hamstring, false},
 		"healing-gel":    {HealingGel, false},
+		"venom-coat":     {VenomCoat, false},
+		"cocoon":         {Cocoon, false},
 		"howl":           {Howl, false},
 		"taunt":          {Taunt, false},
 		"go":             {Go, false},

@@ -1,0 +1,9 @@
+buffid: 103
+name: Venom Coat
+description: Your weapons run slick with your own venom, each strike carrying a burning, debilitating edge.
+triggerrate: 1 round
+triggercount: 15
+statmods:
+  strength: 12
+start_user_text: You flex, and a slick sheen of venom weeps across your weapons. Every blow will bite deeper now.
+end_user_text: The last of the venom dries and flakes away from your weapons.

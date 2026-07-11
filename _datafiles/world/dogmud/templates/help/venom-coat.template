@@ -1,0 +1,18 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Venom Coat</ansi> mutation
+
+On command, your venom glands flush your skin and weapons with a
+slick, burning toxin. For a short while every strike you land carries
+its bite.
+
+<ansi fg="yellow">Type:</ansi>     Active (command: <ansi fg="command">venom-coat</ansi>)
+<ansi fg="yellow">Rarity:</ansi>   Rare
+
+<ansi fg="yellow">Benefits:</ansi>
+  Coats your weapons in venom so that, for a short while, your blows
+  land with far greater force
+
+<ansi fg="yellow">Drawbacks:</ansi>
+  Working up the venom draws on your special-move readiness and
+  costs stamina
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

@@ -1,0 +1,11 @@
+buffid: 104
+name: Cocoon
+description: You have sealed yourself inside a hardened chrysalis shell, and the blows of the world barely reach you.
+triggerrate: 1 round
+triggercount: 3
+statmods:
+  physical_mitigation: 75
+  magical_mitigation: 75
+  conviction_mitigation: 75
+start_user_text: You fold inward and a hard, translucent shell snaps shut around you. The world's blows dull to distant taps.
+end_user_text: Your shell splits and sloughs away, and the world rushes back in.

@@ -108,6 +108,9 @@ type Balance struct {
 
 	// ── COMBAT: SPECIAL MOVES ────────────────────────────────────────────────
 	SpecialMoveCooldown     ConfigInt   `yaml:"SpecialMoveCooldown"`     // Shared cooldown rounds for bash/trip/kick (default 5)
+	FlightOpposedEdge       ConfigInt   `yaml:"FlightOpposedEdge"`       // Winged Flight: melee opposed-roll edge a flyer gets over the earthbound (default 25)
+	FlightMoveStaminaMult   ConfigFloat `yaml:"FlightMoveStaminaMult"`   // Winged Flight: move-stamina cost multiplier while flying (default 0.5)
+	FlightFleeStaminaMult   ConfigFloat `yaml:"FlightFleeStaminaMult"`   // Winged Flight: flee-stamina cost multiplier while flying (default 0.5)
 	TauntHoldRounds         ConfigInt   `yaml:"TauntHoldRounds"`         // Rounds a successful taunt pins the target's aggro onto the taunter (default 4)
 	BashDamagePercent       ConfigFloat `yaml:"BashDamagePercent"`       // Fraction of normal melee damage (default 0.50)
 	BashKnockdownChance     ConfigInt   `yaml:"BashKnockdownChance"`     // Base % knockdown chance (default 40)
