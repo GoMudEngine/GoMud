@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -18,6 +19,12 @@ func Flee(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	// Non-combatant mobs never flee (they should never be in combat)
 	if mob.IsNonCombatant() {
+		return true, nil
+	}
+
+	// A no-flee state (e.g. the Blood Frenzy mutation state) forbids retreat —
+	// mirrors the player-flee gate so a frenzied mob cannot panic-flee.
+	if mob.Character.HasBuffFlag(buffs.NoFlee) {
 		return true, nil
 	}
 
