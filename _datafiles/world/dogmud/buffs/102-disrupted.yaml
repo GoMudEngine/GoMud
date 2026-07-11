@@ -1,0 +1,10 @@
+buffid: 102
+name: Disrupted
+description: A grinding dissonance fills your skull — your aim wanders and your focus slips.
+triggerrate: 1 round
+triggercount: 2
+statmods:
+  willpower: -10
+  perception: -10
+start_room_text: "{source} shudders as a grinding resonance sets their teeth on edge."
+end_room_text: "The dissonance around {source} fades."
