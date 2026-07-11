@@ -91,7 +91,7 @@ groupings of those per-type numbers.
 ## 4. Reduction & ceiling
 
 ```
-manifReduction = min(0.55, manifestationSkill × 0.012)      # skill: up to 55% off (cap ~manif 46)
+manifReduction = min(0.55, manifestationSkill × 0.01)       # skill: up to 55% off, cap reached at manifestation 55
 mutReduction   = min(0.24, manifesterMutationRank × 0.06)   # mutation: up to 24% off (rank 4)
 reduction      = min(0.79, manifReduction + mutReduction)   # combined cap 79% (cost floors at 21% of base)
 ```
@@ -103,7 +103,7 @@ reduction      = min(0.79, manifReduction + mutReduction)   # combined cap 79% (
   **7** by the Manifester apex. Prevents absurd swarms if the Conviction math is
   ever mis-tuned.
 
-Config knobs (Balance): `CompanionReserveSkillPct` (0.012),
+Config knobs (Balance): `CompanionReserveSkillPct` (0.01),
 `CompanionReserveSkillCap` (0.55), `CompanionReserveMutPctPerRank` (0.06),
 `CompanionReserveMutCap` (0.24), `CompanionReserveTotalCap` (0.79),
 `CompanionSoftCap` (5), plus per-tier base costs in data.
@@ -117,9 +117,9 @@ base+training (dashboard values). Reduction per §4; base costs per §3.
 
 | Character | Manif | Mut | Wil / Cha | ConvMax | Reduction | Loadout | Reserved | % / left |
 |---|---|---|---|---|---|---|---|---|
-| **Newbie** (post-quest) | 5 | — | ~108 / ~108 | ~440 | 6% | 1 Spirit Wolf (350→329) | 329 | **75% / 25%** |
+| **Newbie** (post-quest) | 5 | — | ~108 / ~108 | ~440 | 5% | 1 Spirit Wolf (350→333) | 333 | **76% / 24%** |
 | **Martial dabbler** (Saphira) | 1 | — | 89 / 115 | ~413 | 1% | 1 Spirit Wolf (350→346) | 346 | **84% / 16%** |
-| **Meirok** (geared, no companion mut) | 48 | — | 148 / 123 | ~547 | 55% | 2 Greater golems (440→198) | 396 | **72% / 28%** (3rd → 109%) |
+| **Meirok** (geared, no companion mut) | 48 | — | 148 / 123 | ~547 | 48% | 2 Greater golems (440→229) | 458 | **84% / 16%** (3rd → 126%) |
 | **Fully-archetyped** | 55 | r4 | ~135 / ~135 | ~600 | 79% | 5 Greater (440→92) | 462 | **77% / 23%** |
 | " (alt loadout) | 55 | r4 | — | ~600 | 79% | 3 Elder (735→154) | 462 | **77% / 23%** |
 | **Absolute unit** (grind + gear) | 65 | r4 | ~150+gear | ~850 | 79% | 5 Elder (735→154) | 770 | **91% / 9%** |
@@ -132,8 +132,11 @@ base+training (dashboard values). Reduction per §4; base costs per §3.
   cost of dabbling. And if that character is **deep Body pole**, the opposition
   has already shrunk their `ConvictionMax`, so a single wolf may not fit at all —
   companions are a belief-pole fantasy, enforced by the resource, not a rule.
-- **Meirok** (no companion mutation yet) fields his 2 boss-golems at ~72%, a
-  third just out of reach — matching live behavior (his `floor(48/19)=2` today).
+- **Meirok** (no companion mutation yet) fields his 2 boss-golems at ~84% —
+  near his ceiling, with a third well out of reach. That's the design working:
+  a strong summoner *without* the companion mutation tops out at 2; the mutation
+  (up to 24% off) is exactly what unlocks the 3rd+. Matches his live count today
+  (`floor(48/19)=2`).
 - **Fully-archetyped** picks: 3 Elder or 5 Greater, either way ~77% reserved,
   ~23% left for `conviction-ward` + a heal/offense — the mutation's ~24% off is
   what lets 3 golems become 5, or lets the Elders come out.
@@ -221,3 +224,19 @@ These would sit at **Tier 4+** (base ~900–1500+), gated behind rare content
 budget-based rather than a hard count: a dragon that eats 100% of your Conviction
 is a coherent build, not a special case. **Speculative only — revisit when the
 Tier 1–3 economy is live and tuned.**
+
+### 10b. Rejected (for now): per-pool reservation
+
+Considered making companion *type* determine which pool it reserves — undead draw
+**Health**, elementals draw **Conviction** — for a glass-cannon risk/reward feel.
+**Rejected** because it breaks the load-bearing part of this design: a Body-pole
+brute has *high* Health and *choked* Conviction, so undead-reserve-Health would
+let the brute field an army *because* they went Body — inverting the pole
+opposition the whole model expresses. It also forces a hard count cap back in
+(two pools can't share one budget), and makes companions compete with gear
+enchantments across both pools.
+
+If the fragile-necromancer fantasy is wanted later, the safe form is a **deep
+necromancer sub-branch mutation** that opts *part* of an undead's reservation
+onto Health — a deliberate, earned, single-path choice — **not** a free unlock
+for any low-Conviction martial. Note-for-later, do not build now.
