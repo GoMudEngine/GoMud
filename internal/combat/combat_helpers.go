@@ -413,6 +413,15 @@ func calcAttackScore(sourceChar *characters.Character, targetChar *characters.Ch
 		attackScore *= float64(bal.DarknessCombatPenalty)
 	}
 
+	// Winged Flight: a flyer beats the earthbound on the melee opposed roll —
+	// striking from a superior angle (attacker flying) or staying out of an
+	// earthbound reach (defender flying). Cancels flyer-vs-flyer / grounded-vs-
+	// grounded. Applied additively to the attacker's score.
+	if edge := flightEdge(mutations.IsFlying(sourceChar.Mutations), mutations.IsFlying(targetChar.Mutations),
+		int(bal.FlightOpposedEdge)); edge != 0 {
+		attackScore += float64(edge)
+	}
+
 	return attackScore
 }
 
