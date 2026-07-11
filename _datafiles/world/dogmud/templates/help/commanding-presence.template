@@ -1,0 +1,13 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Commanding Presence</ansi> mutation
+
+Something in your bearing makes those who fight alongside you stand
+straighter and swing surer.
+
+<ansi fg="yellow">Type:</ansi>     Passive (aura)
+<ansi fg="yellow">Rarity:</ansi>   Uncommon
+
+<ansi fg="yellow">Benefits:</ansi>
+  While you fight, allies in the room with you are emboldened — their
+  bodies and wills are steadied by your presence
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>
