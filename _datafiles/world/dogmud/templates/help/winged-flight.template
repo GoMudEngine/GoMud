@@ -1,0 +1,21 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Winged Flight</ansi> mutation
+
+Great membranous wings unfurl from your back and the ground releases
+its claim on you. You move above the fight -- always aloft, no command
+needed.
+
+<ansi fg="yellow">Type:</ansi>     Transformation (always on)
+<ansi fg="yellow">Rarity:</ansi>   Apex
+<ansi fg="yellow">Requires:</ansi> Hollow Bones and a tail
+
+<ansi fg="yellow">Benefits:</ansi>
+  You strike down at earthbound foes from a superior angle and are
+  far harder for them to touch; you break away from a fight almost
+  effortlessly; and you glide over terrain, so travel barely tires
+  you. Against others who fly, the aerial advantage cancels out.
+
+<ansi fg="yellow">Drawbacks:</ansi>
+  Reaching flight means hollowing your bones, so your lightened frame
+  takes wounds more easily
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>
