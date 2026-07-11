@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -180,4 +181,17 @@ func CalcCompanionStatPool(baseStatPool int, charisma int, manifestationSkill in
 	}
 	scale := 1.0 + float64(charisma)/chaFactor + float64(manifestationSkill)*skillFactor
 	return int(math.Round(float64(baseStatPool) * scale))
+}
+
+// CalcCompanionReserve returns the Conviction a companion of the given base
+// cost reserves for THIS summoner, after manifestation-skill and Manifester-
+// mutation reductions. reservation = round(base * (1 - reduction)).
+func (c *Character) CalcCompanionReserve(baseCost int) int {
+	cfg := configs.GetBalanceConfig()
+	manif := c.GetSkillLevel(skills.Manifestation)
+	manifRed := math.Min(float64(cfg.CompanionReserveSkillCap), float64(manif)*float64(cfg.CompanionReserveSkillPct))
+	mutRank := mutations.GetCompanionReserveRank(c.Mutations)
+	mutRed := math.Min(float64(cfg.CompanionReserveMutCap), float64(mutRank)*float64(cfg.CompanionReserveMutPctPerRank))
+	reduction := math.Min(float64(cfg.CompanionReserveTotalCap), manifRed+mutRed)
+	return int(math.Round(float64(baseCost) * (1.0 - reduction)))
 }

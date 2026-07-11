@@ -6,6 +6,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/stretchr/testify/assert"
@@ -173,6 +174,37 @@ func TestCompanionInfo_ConvictionReserveField(t *testing.T) {
 	comp := CompanionInfo{MobId: 1001, InstanceId: 5, Name: "Spirit Wolf", ConvictionReserve: 333}
 	require.True(t, c.AddCompanion(comp))
 	assert.Equal(t, 333, c.Companions[0].ConvictionReserve)
+}
+
+// ─── CalcCompanionReserve ─────────────────────────────────────────────────────
+
+func TestCalcCompanionReserve_Calibration(t *testing.T) {
+	seedMut := mutations.SeedMutationsForTest(map[string]*mutations.MutationSpec{
+		"broodmaster": {
+			MutationId: "broodmaster", Name: "Broodmaster", Rarity: 5, Pole: "belief",
+			Pros: []mutations.MutationEffect{{Type: "companion_reserve_reduction"}},
+		},
+	})
+	defer seedMut()
+
+	newbie := New()
+	newbie.Skills[string(skills.Manifestation)] = 5
+	assert.Equal(t, 333, newbie.CalcCompanionReserve(350)) // 350*(1-0.05)=332.5 -> 333
+
+	meirok := New()
+	meirok.Skills[string(skills.Manifestation)] = 48
+	assert.Equal(t, 229, meirok.CalcCompanionReserve(440)) // 440*(1-0.48)=228.8 -> 229
+
+	archety := New()
+	archety.Skills[string(skills.Manifestation)] = 55
+	archety.Mutations = map[string]int{"broodmaster": 4}
+	assert.Equal(t, 92, archety.CalcCompanionReserve(440))  // 440*0.21 = 92.4 -> 92
+	assert.Equal(t, 154, archety.CalcCompanionReserve(735)) // 735*0.21 = 154.35 -> 154
+
+	unit := New()
+	unit.Skills[string(skills.Manifestation)] = 65
+	unit.Mutations = map[string]int{"broodmaster": 4}
+	assert.Equal(t, 154, unit.CalcCompanionReserve(735)) // reduction caps at 0.79 -> same as archetyped
 }
 
 // ─── CalcCompanionStatPool ────────────────────────────────────────────────────
