@@ -36,6 +36,7 @@ idlecommands:
   - consume
   - 'emote raises its muzzle and lets out a long, commanding howl'
 activitylevel: 25
+spawnmutations: [apex-predator, rending-claws]
 character:
   name: Alpha Wolf
   description: |

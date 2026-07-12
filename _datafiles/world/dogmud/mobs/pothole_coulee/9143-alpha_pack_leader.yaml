@@ -40,6 +40,7 @@ combatcommands:
   - 'emote drops the massive head and presses straight in, giving no
     ground, absorbing what lands and continuing forward anyway'
   - ''
+spawnmutations: [apex-predator, rending-claws]
 character:
   name: Alpha Pack-Leader
   description: |

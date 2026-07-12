@@ -25,6 +25,7 @@ combatcommands:
   - 'emote shouts a sharp command, voice carrying over the noise of the
     fight with practiced authority'
   - ''
+spawnmutations: [radiant-avatar, commanding-presence]
 character:
   name: Bandit Captain
   description: |

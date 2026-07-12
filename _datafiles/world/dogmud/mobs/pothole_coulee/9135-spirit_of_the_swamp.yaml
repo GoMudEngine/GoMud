@@ -36,6 +36,7 @@ combatcommands:
     expands, the outline growing larger and less defined as it takes
     more of the swamp into itself'
   - ''
+spawnmutations: [discorporation, kinetic-backlash]
 character:
   name: Spirit of the Swamp
   description: |

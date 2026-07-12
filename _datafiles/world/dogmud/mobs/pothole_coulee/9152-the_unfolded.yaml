@@ -28,6 +28,7 @@ combatcommands:
   - 'emote turns the target inside the fold, so that for an instant up is
     toward it and there is nowhere to step that is away'
   - ''
+spawnmutations: [discorporation, kinetic-backlash]
 character:
   name: The Unfolded
   description: |

@@ -24,6 +24,7 @@ combatcommands:
   - 'emote reads your rush, drifts wide along the rim, and makes you cross
     open stone for every stride you steal back'
   - ''
+spawnmutations: [chameleon-skin, compound-eyes]
 character:
   name: Bowmaster Skell
   description: |
