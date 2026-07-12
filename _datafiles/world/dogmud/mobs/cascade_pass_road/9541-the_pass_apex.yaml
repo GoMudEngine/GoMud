@@ -11,7 +11,7 @@ maxwander: 1
 groups:
   - animal
   - predator
-spawnmutations: [titan-growth]
+spawnmutations: [colossus-form, titan-growth]
 idlecommands:
   - 'emote stands at the center of the pass, motionless, its back
     broad against the sky.'

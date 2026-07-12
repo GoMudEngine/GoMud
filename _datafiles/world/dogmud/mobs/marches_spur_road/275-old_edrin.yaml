@@ -5,7 +5,7 @@ behavior_archetype: boss_edrin
 submission_policy: lethal
 surrender_policy: never
 statpool: 500
-spawnmutations: [rapid-healing, thick-hide]
+spawnmutations: [living-carapace, regrowth]
 itemdropchance: 10
 hostile: false
 charm_immune: true

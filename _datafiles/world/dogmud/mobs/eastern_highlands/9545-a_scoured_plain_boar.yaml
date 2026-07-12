@@ -8,7 +8,7 @@ statpool: 400
 maxwander: 3
 groups:
   - animal
-spawnmutations: [thick-hide]
+spawnmutations: [colossus-form, dense-muscles]
 idlecommands:
   - 'emote roots through the scoured earth with its broad snout,
     grunting, turning up ground that does not have much left in it.'

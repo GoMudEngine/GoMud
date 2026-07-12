@@ -11,7 +11,7 @@ maxwander: 1
 groups:
   - animal
   - predator
-spawnmutations: [dense-muscles]
+spawnmutations: [colossus-form, titan-growth]
 idlecommands:
   - 'emote stands at the highest point of the reach, motionless,
     its back broad against the pale sky.'

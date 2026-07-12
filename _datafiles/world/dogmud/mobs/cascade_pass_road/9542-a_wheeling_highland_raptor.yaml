@@ -9,7 +9,7 @@ maxwander: 3
 groups:
   - animal
   - avian
-spawnmutations: [keen-senses]
+spawnmutations: [apex-predator, raptor-legs]
 idlecommands:
   - 'emote wheels overhead in a long, patient circle, riding the
     thermal off the pass face without a wingbeat.'

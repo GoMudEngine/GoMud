@@ -8,7 +8,7 @@ statpool: 275
 maxwander: 3
 groups:
   - animal
-spawnmutations: [thick-hide]
+spawnmutations: [colossus-form, dense-muscles]
 idlecommands:
   - 'emote roots through the leaf litter with its broad snout,
     grunting, turning over ground that does not have much left

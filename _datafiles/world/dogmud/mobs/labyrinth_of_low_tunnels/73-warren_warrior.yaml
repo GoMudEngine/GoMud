@@ -25,7 +25,7 @@ combatcommands:
 activitylevel: 25
 aiprofile: brawler
 specialmovechance: 15
-spawnmutations: [dense-muscles, thick-hide]
+spawnmutations: [colossus-form, dense-muscles]
 mutationchance: 20
 character:
   name: Warren Warrior

@@ -10,8 +10,7 @@ groups:
   - cave-pack
 archetype: fighting
 mutationchance: 40
-spawnmutations:
-  - thick-hide
+spawnmutations: [paralytic-field, sticky-secretion]
 idlecommands:
   - 'emote holds utterly still in a doubled shadow, only its eyes moving'
   - ''

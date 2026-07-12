@@ -11,7 +11,7 @@ maxwander: 0
 groups:
   - construct
   - guardian
-spawnmutations: [titan-growth]
+spawnmutations: [colossus-form, titan-growth]
 idlecommands:
   - 'emote coils close about the heart of the buried place, a vast grey
     shape lit from within by a cold and steady fire, keeping the records

@@ -9,7 +9,7 @@ statpool: 4
 hostile: true
 groups:
   - elemental
-spawnmutations: [titan-growth]
+spawnmutations: [colossus-form, living-carapace]
 activitylevel: 30
 combatcommands:
   - 'emote brings both fists down in a thunderous overhead strike'

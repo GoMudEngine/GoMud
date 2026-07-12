@@ -11,10 +11,7 @@ groups:
 archetype: fighting
 aiprofile: aggressive
 mutationchance: 80
-spawnmutations:
-  - rapid-healing
-  - thick-hide
-  - dense-muscles
+spawnmutations: [paralytic-field, grasping-tendrils]
 idlecommands:
   - 'emote displaces a heavy slow ring of water at the pool''s centre, then sinks again out of sight'
   - ''

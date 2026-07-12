@@ -12,7 +12,7 @@ groups:
   - animal
   - serpent
   - predator
-spawnmutations: [titan-growth]
+spawnmutations: [chameleon-skin, venom-glands]
 idlecommands:
   - 'emote lies coiled on the silt-shelf in a pale hill of itself,
     utterly still, the milk-blind head resting on the topmost

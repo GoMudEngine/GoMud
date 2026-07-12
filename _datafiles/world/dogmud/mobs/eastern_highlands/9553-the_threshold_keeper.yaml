@@ -8,7 +8,7 @@ statpool: 40
 maxwander: 0
 groups:
   - humanoid
-spawnmutations: [titan-growth]
+spawnmutations: [living-carapace, thick-hide]
 idlecommands:
   - 'emote feeds a scrap of something to a small banked fire at the foot
     of the door and watches the flame take it.'

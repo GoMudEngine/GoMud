@@ -22,7 +22,7 @@ combatcommands:
   - 'emote lets out a shrill whistle that echoes through the tunnels'
   - ''
 activitylevel: 35
-spawnmutations: [keen-senses]
+spawnmutations: [chameleon-skin, padded-soles]
 character:
   name: Warren Scout
   description: |

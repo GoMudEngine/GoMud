@@ -9,7 +9,7 @@ statpool: 30
 maxwander: 0
 groups:
   - humanoid
-spawnmutations: [titan-growth]
+spawnmutations: [colossus-form, dense-muscles]
 idlecommands:
   - 'emote drags a stub of chalk down a plank, marking the grain, then
     sets the chalk behind his ear and moves to the next board.'

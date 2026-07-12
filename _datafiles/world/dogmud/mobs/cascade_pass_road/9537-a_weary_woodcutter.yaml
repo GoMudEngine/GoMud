@@ -8,7 +8,7 @@ statpool: 30
 maxwander: 0
 groups:
   - humanoid
-spawnmutations: [dense-muscles]
+spawnmutations: [colossus-form, dense-muscles]
 idlecommands:
   - 'emote draws the saw back in a long, steady pull, setting the
     rhythm and keeping it, the cut moving with the grain.'

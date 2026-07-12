@@ -9,7 +9,7 @@ maxwander: 3
 groups:
   - animal
   - predator
-spawnmutations: [padded-soles]
+spawnmutations: [chameleon-skin, compound-eyes]
 idlecommands:
   - 'emote settles flat against the ridge face, its banded flanks
     going still, reading as stone.'

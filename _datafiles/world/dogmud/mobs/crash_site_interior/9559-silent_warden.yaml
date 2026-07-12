@@ -22,6 +22,7 @@ combatcommands:
   - 'emote closes both hands and crushes inward with the patience of
     stone.'
   - ''
+spawnmutations: [colossus-form, titan-growth]
 character:
   name: Silent Warden
   description: |

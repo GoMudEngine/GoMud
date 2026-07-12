@@ -10,9 +10,7 @@ groups:
   - cave-pack
 archetype: fighting
 mutationchance: 80
-spawnmutations:
-  - rapid-healing
-  - thick-hide
+spawnmutations: [colossus-form, titan-growth]
 idlecommands:
   - 'emote coils its massive body, scales rasping against stone'
   - ''

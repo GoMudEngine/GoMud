@@ -8,7 +8,7 @@ statpool: 30
 maxwander: 0
 groups:
   - humanoid
-spawnmutations: [keen-senses]
+spawnmutations: [living-carapace, regrowth]
 idlecommands:
   - 'emote sits with his back to the rock, watching the east road with
     the patience of a man who has looked at it a very long time.'

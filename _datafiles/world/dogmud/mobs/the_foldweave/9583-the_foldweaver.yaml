@@ -12,9 +12,7 @@ maxwander: 0
 groups:
   - cave-pack
 mutationchance: 90
-spawnmutations:
-  - titan-growth
-  - thick-hide
+spawnmutations: [paralytic-field, grasping-tendrils]
 idlecommands:
   - 'emote settles its vast weight across the court on legs that reach
     the walls, and the whole floor of silk draws taut beneath it.'

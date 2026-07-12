@@ -14,8 +14,7 @@ groups:
   - animal
 archetype: fighting
 mutationchance: 60
-spawnmutations:
-  - keen-senses
+spawnmutations: [translucent-body, evil-eye]
 idlecommands:
   - 'emote tilts its eyeless head, listening with preternatural focus'
   - ''

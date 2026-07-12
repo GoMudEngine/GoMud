@@ -15,8 +15,7 @@ hates:
 archetype: fighting
 aiprofile: predator
 mutationchance: 50
-spawnmutations:
-  - dense-muscles
+spawnmutations: [apex-predator, rending-claws]
 combatcommands:
   - howl
   - hamstring
