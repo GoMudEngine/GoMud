@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -16,7 +17,9 @@ func (c *Character) CarryCapacity() float64 {
 		return c.carryCapacityOverride
 	}
 	bal := configs.GetBalanceConfig()
-	return float64(c.Stats.Strength.ValueAdj) * float64(bal.CarryCapacityMultiplier)
+	base := float64(c.Stats.Strength.ValueAdj) * float64(bal.CarryCapacityMultiplier)
+	// Chrysifier's Faithwrought lets a maker haul their whole workshop.
+	return base * (1.0 + mutations.GetCarryCapacityMultiplier(c.Mutations))
 }
 
 // GetCarriedWeight returns the total weight of all carried items in pounds

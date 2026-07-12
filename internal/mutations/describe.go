@@ -72,6 +72,16 @@ func DescribeEffect(e MutationEffect) string {
 		return "You strike harder the more badly wounded you are."
 	case "companion_reserve_reduction":
 		return "Eases the conviction you must devote to sustaining your companions, letting you field more of them."
+	case "forage_yield_multiplier":
+		return "Your practiced eye turns up more when you forage the land."
+	case "salvage_yield_bonus":
+		return "You break things down more thoroughly, recovering more from your salvage."
+	case "craft_material_discount":
+		return "Your careful hands waste fewer materials when you craft."
+	case "craft_quality_bonus":
+		return "Your conviction in your craft lends your finished work greater quality."
+	case "carry_capacity_multiplier":
+		return "You can haul far more than your frame suggests."
 	case "flag":
 		return flagPhrase(e.Target)
 	}
@@ -112,6 +122,10 @@ func flagPhrase(target string) string {
 		return "When badly wounded you fly into a battle frenzy — you hit harder, but cannot make yourself retreat."
 	case "flying":
 		return "You take to the air on wings — swift over ground, hard for the earthbound to touch, and free to break away at will."
+	case "portable-workshop":
+		return "Your body is itself a workshop — you can craft anywhere, needing no station or tools."
+	case "homunculus":
+		return "You can forge a living copy of yourself — a crafted companion that fights at your side."
 	}
 	return ""
 }

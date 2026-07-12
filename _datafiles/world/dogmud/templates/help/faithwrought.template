@@ -1,0 +1,14 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Faithwrought</ansi> mutation
+
+Your conviction in your craft has become a physical force -- you
+believe your work finer, and finer it becomes.
+
+<ansi fg="yellow">Type:</ansi>     Passive
+<ansi fg="yellow">Rarity:</ansi>   Rare
+<ansi fg="yellow">Requires:</ansi> Provident Hands
+
+<ansi fg="yellow">Benefits:</ansi>
+  The things you craft come out of greater quality, and your
+  reinforced frame can haul far more than most
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

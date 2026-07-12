@@ -3,13 +3,21 @@ package actions
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/forager"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 )
+
+// foragedSearchScore applies the Chrysifier forage-yield multiplier (Provident
+// Hands) to the base search score — a keener eye turns up more from the land.
+func foragedSearchScore(char *characters.Character) float64 {
+	return CalcSearchScore(char) * (1.0 + mutations.GetForageYieldMult(char.Mutations))
+}
 
 // ForageOptions parameterizes a forage attempt.
 // Empty v1 — biome derives from actor.GetRoom().GetBiome().
@@ -62,7 +70,7 @@ func Forage(actor Actor, opts ForageOptions) ForageResult {
 		return result
 	}
 
-	searchScore := CalcSearchScore(char)
+	searchScore := foragedSearchScore(char)
 
 	// Actor-direct message: player-only ("you crouch low" reads from
 	// the actor's perspective; mobs have no perspective to address).

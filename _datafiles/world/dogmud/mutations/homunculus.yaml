@@ -1,0 +1,21 @@
+mutationid: homunculus
+name: Homunculus
+description: |
+  The final work of the self-made: you craft a living copy of yourself. Forged
+  from your own reshaped flesh and your mastery of every craft, it wakes as a
+  broader, harder, more terrible version of you -- and it fights at your side.
+  The greater your craft, the mightier the self you forge. Sustaining it takes
+  nearly all the conviction you have; you and your one great work, and little
+  room for anything else.
+rarity: 8
+clusters: [chrysifier]
+prerequisites:
+  - id: walking-chrysalis
+    min_level: 1
+  - id: faithwrought
+    min_level: 1
+visual: Faint assembly-seams run beneath their skin, as though the body were something they built and could build again.
+pros:
+  - type: flag
+    target: homunculus
+    value: 1

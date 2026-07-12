@@ -234,6 +234,9 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 				// Pinnacle item upkeep (procs are event-driven; this is the always-on layer).
 				pinnacleUserTick(user, room)
 
+				// Chrysifier: keep the Homunculus-apex owner supplied with their crafted twin.
+				tickHomunculus(user, room)
+
 				// Stage 9.8: Tick all combat conditions (decrements Duration, removes expired)
 				user.Character.TickConditions()
 
@@ -426,11 +429,14 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 											}
 										}
 									} else {
-										user.Character.Items, user.Character.ComponentItems = crafting.ConsumeIngredients(user.Character.Items, user.Character.ComponentItems, recipe)
+										// Provident Hands may preserve the materials (efficient craft).
+										if !user.Character.CraftMaterialsSaved() {
+											user.Character.Items, user.Character.ComponentItems = crafting.ConsumeIngredients(user.Character.Items, user.Character.ComponentItems, recipe)
+										}
 										// Normal crafting: produce output item
 										newItem := items.New(recipe.Output.ItemId)
 										newItem.CraftedRound = util.GetRoundCount()
-										newItem.CraftSkill = user.Character.GetSkillLevel(skills.SkillTag(recipe.Skill))
+										newItem.CraftSkill = user.Character.CraftQualityLevel(user.Character.GetSkillLevel(skills.SkillTag(recipe.Skill))) // Faithwrought quality lift
 										if bottleAgingMult > 0 {
 											newItem.BottleMultiplier = bottleAgingMult
 										}

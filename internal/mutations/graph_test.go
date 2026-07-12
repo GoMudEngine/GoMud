@@ -62,8 +62,11 @@ func TestClustersForSkill(t *testing.T) {
 	if got := ClustersForSkill("spellcasting"); len(got) != 1 || got[0] != "ethereal" {
 		t.Fatalf("spellcasting -> %v, want [ethereal]", got)
 	}
-	if got := ClustersForSkill("cooking"); got != nil {
-		t.Fatalf("cooking -> %v, want nil", got)
+	if got := ClustersForSkill("cooking"); len(got) != 1 || got[0] != "chrysifier" {
+		t.Fatalf("cooking -> %v, want [chrysifier]", got)
+	}
+	if got := ClustersForSkill("tracking"); got != nil {
+		t.Fatalf("tracking -> %v, want nil (unmapped skill)", got)
 	}
 }
 

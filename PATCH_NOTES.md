@@ -1,5 +1,24 @@
 # DOGMud Patch Notes
 
+## 2026-07-11 — The maker's path: the Chrysifier
+
+- **Crafting now shapes what the Chrysalis makes of you.** A new path has opened
+  for those who live by the forge, the loom, and the reagent bench — plying your
+  crafts now draws you toward mutations of the self-made.
+- **Provident Hands** — an uncanny knack for the getting and making of things:
+  you turn up more when you forage, recover more from what you salvage, and
+  waste fewer materials at the workbench.
+- **Walking Chrysalis** — your body becomes its own workshop. You can craft
+  anything, anywhere, needing no station and no tools.
+- **Faithwrought** — your conviction in your craft becomes a physical force:
+  the things you make come out finer, and your reinforced frame hauls far more
+  than most could carry.
+- **Homunculus** — the final work of the self-made. You forge a living copy of
+  yourself — a boss-tier twin whose might grows with how much you've mastered
+  your crafts — and it fights at your side. Sustaining it claims nearly all your
+  conviction; it is, in truth, the only companion you'll have room for. If it
+  falls, you forge it anew.
+
 ## 2026-07-11 — New chrysalis powers: venom, cocoon, and wings
 
 - **Venom Coat.** Those whose bodies have turned toward the predator can now

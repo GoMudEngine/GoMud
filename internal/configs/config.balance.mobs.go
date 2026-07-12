@@ -151,6 +151,12 @@ func (b *Balance) validateMobs() {
 		b.CompanionReserveDefault = 350
 	}
 	// CompanionCastingFloorPct intentionally defaults to 0.0 (costs self-limit).
+	if b.HomunculusCraftScale <= 0 {
+		b.HomunculusCraftScale = 4.0
+	}
+	if b.HomunculusConvictionReserve < 1 {
+		b.HomunculusConvictionReserve = 1000
+	}
 
 	// ── GOAL SELECTION ───────────────────────────────────────────────────────
 	if b.GoalSelectSwitchMargin <= 0 {
