@@ -1,0 +1,16 @@
+mutationid: reflect-skin-barbed
+name: Barbed Skin
+description: |
+  Your hide bristles with hardened barbs and hooked scales. Anything that
+  strikes you tears itself on them -- the harder the blow, the worse the
+  recoil. Which form this reflex takes was decided by the moons the night it
+  woke; yours came in under a barbed sky.
+rarity: 5
+clusters: [ironhide]
+pole: body
+moon_flavor: 1
+conflicts: [reflect-skin-molten, reflect-skin-frostbite, reflect-skin-voltaic]
+visual: Rows of dark, hooked barbs lie flat along their forearms and shoulders, bristling when threatened.
+pros:
+  - type: reflect_damage
+    value: 25

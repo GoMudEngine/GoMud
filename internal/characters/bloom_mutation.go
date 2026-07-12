@@ -8,6 +8,7 @@ import (
 	"sort"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/species"
 )
@@ -91,6 +92,12 @@ func (c *Character) BloomSeedNewMutation(rng *rand.Rand) (string, int) {
 			continue
 		}
 		if !spec.CanApplyTo(sp) {
+			continue
+		}
+		// Moon-gated flavor (Reflect Skin): only the variant matching the
+		// current moon bucket is eligible now, so the moon at the moment of
+		// acquisition decides which flavor the Chrysalis grants.
+		if spec.MoonFlavor != 0 && spec.MoonFlavor != gametime.CurrentMoonFlavorBucket() {
 			continue
 		}
 		// Weight = Rarity (1=common … 10=very rare). Bloom biases toward

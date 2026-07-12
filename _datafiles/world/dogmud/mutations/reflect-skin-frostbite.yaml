@@ -1,0 +1,18 @@
+mutationid: reflect-skin-frostbite
+name: Frostbite Skin
+description: |
+  A rime of living frost sheathes you, hard as plate and biting cold. Those who
+  strike you are stung by the chill, and the frost-hardened hide turns blows
+  that would open softer flesh. Which form this reflex took was decided by the
+  moons the night it woke; yours came in under a frozen sky.
+rarity: 5
+clusters: [ironhide]
+pole: body
+moon_flavor: 3
+conflicts: [reflect-skin-barbed, reflect-skin-molten, reflect-skin-voltaic]
+visual: A thin sheen of frost clings to their skin, cracking and re-forming as they move.
+pros:
+  - type: reflect_damage
+    value: 18
+  - type: natural_armor
+    value: 5

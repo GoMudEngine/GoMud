@@ -1,0 +1,14 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Living Carapace</ansi> mutation
+
+Your whole body seals inside a thick, living shell that grows and
+repairs itself endlessly.
+
+<ansi fg="yellow">Type:</ansi>     Transformation (apex)
+<ansi fg="yellow">Rarity:</ansi>   Apex
+<ansi fg="yellow">Requires:</ansi> Thick Hide and Regrowth
+
+<ansi fg="yellow">Benefits:</ansi>
+  Tremendous natural armor, blows that strike the carapace are hurled
+  back with a vengeance, and enemies are drawn to attack you first
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

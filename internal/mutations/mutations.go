@@ -12,6 +12,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -44,6 +45,12 @@ type MutationSpec struct {
 	// Conflicts lists mutation IDs that cannot coexist with this mutation.
 	// If a character owns any conflicting mutation, this one is excluded from the pool.
 	Conflicts []string `yaml:"conflicts,omitempty"`
+
+	// MoonFlavor gates a mutation to a moon "bucket" (1–4): the bloom pool only
+	// offers it when the current moon bucket matches. 0 = always eligible. Used
+	// by the Reflect Skin family so the moon at acquisition picks which flavor
+	// you receive.
+	MoonFlavor int `yaml:"moon_flavor,omitempty"`
 
 	// RequiresBodyParts lists canonical body-part tags from
 	// species.CanonicalBodyParts. Empty/nil = body-agnostic.
@@ -261,6 +268,7 @@ func GetWeightedPool(owned map[string]int, sp *species.Species) []string {
 func GetWeightedPoolWithFloor(owned map[string]int, sp *species.Species, minRarity int) []string {
 	// Rarity uplift: reduce common mutation weights for advanced players
 	rarityBonus := calcRarityBonus(owned)
+	moonBucket := gametime.CurrentMoonFlavorBucket()
 
 	pool := make([]string, 0, len(allMutations)*5)
 	for id, spec := range allMutations {
@@ -274,6 +282,10 @@ func GetWeightedPoolWithFloor(owned map[string]int, sp *species.Species, minRari
 			continue
 		}
 		if !spec.CanApplyTo(sp) {
+			continue
+		}
+		// Moon-gated flavor (Reflect Skin): only the current-bucket variant.
+		if spec.MoonFlavor != 0 && spec.MoonFlavor != moonBucket {
 			continue
 		}
 		weight := 11 - spec.Rarity - rarityBonus

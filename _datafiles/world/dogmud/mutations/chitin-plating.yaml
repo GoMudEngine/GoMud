@@ -1,0 +1,19 @@
+mutationid: chitin-plating
+name: Chitin Plating
+description: |
+  Overlapping plates of dense chitin lock across your body like a beetle's
+  shell, and the muscle beneath thickens to carry them. Little gets through --
+  but the weight of it costs you some of your quickness.
+rarity: 6
+clusters: [colossus, ironhide]
+pole: body
+visual: Broad, dark plates of chitin overlap across their back, shoulders, and forearms, clicking faintly as they move.
+pros:
+  - type: natural_armor
+    value: 12
+  - type: stat_flat
+    target: strength
+    value: 8
+cons:
+  - type: dodge_modifier
+    value: -5
