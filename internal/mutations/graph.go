@@ -56,6 +56,16 @@ var skillClusters = map[string][]string{
 	"spellcasting":   {"ethereal"},
 	"rhetoric":       {"zealot"},
 	"manifestation":  {"manifester"},
+	// Crafting skills all drift toward the Chrysifier (the crafter cluster in
+	// the Generalist center). This is the first cluster fed by crafting use.
+	"blacksmithing": {"chrysifier"},
+	"alchemy":       {"chrysifier"},
+	"tailoring":     {"chrysifier"},
+	"cooking":       {"chrysifier"},
+	"jewelcrafting": {"chrysifier"},
+	"enchanting":    {"chrysifier"},
+	"salvage":       {"chrysifier"},
+	"foraging":      {"chrysifier"},
 }
 
 // OwnedGravity returns each cluster's pull from currently-owned mutations:
