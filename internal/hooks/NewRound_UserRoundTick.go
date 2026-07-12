@@ -237,6 +237,9 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 				// Chrysifier: keep the Homunculus-apex owner supplied with their crafted twin.
 				tickHomunculus(user, room)
 
+				// Manifester: strengthen the owner's companions (Symbiotic Bond / bridges).
+				tickCompanionEmpowerment(user, room)
+
 				// Stage 9.8: Tick all combat conditions (decrements Duration, removes expired)
 				user.Character.TickConditions()
 
