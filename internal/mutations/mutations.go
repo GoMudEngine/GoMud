@@ -58,17 +58,6 @@ type MutationSpec struct {
 	// species.IsCanonicalBodyPart for the canonical set).
 	RequiresBodyParts []string `yaml:"requires_body_parts,omitempty"`
 
-	// ArchetypePull optionally names a behavior archetype this mutation
-	// pulls its owner toward. When a MOB acquires a pull-mutation, the
-	// archetype-shift path (behaviortree.ReevaluateArchetypeShift) may
-	// re-archetype it. Validated at boot by
-	// behaviortree.ValidateArchetypePulls (whitelist + file existence);
-	// this package only carries the string. Players are unaffected.
-	//
-	// PROVISIONAL CONTENT: the pull table is expected to be re-curated
-	// when the mutation-graph redesign lands (see the 2026-07-10
-	// mutation-archetype-shift design doc).
-	ArchetypePull string `yaml:"archetype_pull,omitempty"`
 
 	// Clusters lists the design-side playstyle clusters this mutation
 	// belongs to (empty = universal/generalist). Steers acquisition drift.

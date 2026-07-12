@@ -1,42 +1,35 @@
 package behaviortree
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 )
 
-func TestValidateArchetypePullsCore(t *testing.T) {
-	exists := func(path string) bool {
-		return strings.Contains(path, "generic_fighter") || strings.Contains(path, "predator")
+func TestArchetypeForSpec(t *testing.T) {
+	cases := []struct {
+		clusters []string
+		want     string
+	}{
+		{[]string{"colossus"}, "tank_taunter"},
+		{[]string{"ironhide"}, "tank_taunter"},
+		{[]string{"ravener"}, "predator"},
+		{[]string{"stalker"}, "ambusher"},
+		{[]string{"ethereal"}, "pure_caster"},
+		{[]string{"manifester"}, "defensive_caster"},
+		{[]string{"zealot"}, "defensive_caster"},
+		{[]string{"weaver"}, ""},
+		{[]string{"trickster"}, ""},
+		{[]string{"chrysifier"}, ""},
+		{nil, ""},
+		{[]string{"ironhide", "zealot"}, "tank_taunter"}, // bridge: first mapped cluster wins
 	}
-
-	// Valid pulls: whitelisted + file exists.
-	good := []*mutations.MutationSpec{
-		{MutationId: "no-pull", Rarity: 3},
-		{MutationId: "brawn", Rarity: 9, ArchetypePull: "generic_fighter"},
-		{MutationId: "fangs", Rarity: 5, ArchetypePull: "predator"},
-	}
-	if err := validateArchetypePulls(good, exists); err != nil {
-		t.Fatalf("valid pulls: unexpected error %v", err)
-	}
-
-	// Non-whitelisted target (boss archetype).
-	bad := []*mutations.MutationSpec{
-		{MutationId: "hubris", Rarity: 9, ArchetypePull: "boss_soren"},
-	}
-	if err := validateArchetypePulls(bad, exists); err == nil {
-		t.Fatal("non-whitelisted pull: expected error, got nil")
-	}
-
-	// Whitelisted but no archetype file on disk.
-	missing := []*mutations.MutationSpec{
-		{MutationId: "ghost", Rarity: 9, ArchetypePull: "pure_caster"},
-	}
-	if err := validateArchetypePulls(missing, exists); err == nil {
-		t.Fatal("missing archetype file: expected error, got nil")
+	for _, c := range cases {
+		spec := &mutations.MutationSpec{Clusters: c.clusters}
+		if got := archetypeForSpec(spec); got != c.want {
+			t.Errorf("archetypeForSpec(%v) = %q, want %q", c.clusters, got, c.want)
+		}
 	}
 }
 
@@ -47,11 +40,11 @@ func TestValidateArchetypePullsCore(t *testing.T) {
 func seedShiftSpecs(t *testing.T) {
 	t.Helper()
 	cleanup := mutations.SeedMutationsForTest(map[string]*mutations.MutationSpec{
-		"brawn": {MutationId: "brawn", Rarity: 9, ArchetypePull: "generic_fighter"},
-		"fangs": {MutationId: "fangs", Rarity: 5, ArchetypePull: "predator"},
-		"aura":  {MutationId: "aura", Rarity: 5, ArchetypePull: "combat_passive"},
-		"zeal":  {MutationId: "zeal", Rarity: 9, ArchetypePull: "generic_fighter"},
-		"plain": {MutationId: "plain", Rarity: 10}, // no pull — rarity must NOT matter
+		"brawn": {MutationId: "brawn", Rarity: 9, Clusters: []string{"colossus"}}, // -> tank_taunter
+		"fangs": {MutationId: "fangs", Rarity: 5, Clusters: []string{"ravener"}},  // -> predator
+		"aura":  {MutationId: "aura", Rarity: 5, Clusters: []string{"zealot"}},    // -> defensive_caster
+		"zeal":  {MutationId: "zeal", Rarity: 9, Clusters: []string{"colossus"}},  // -> tank_taunter
+		"plain": {MutationId: "plain", Rarity: 10},                                 // zero-cluster: no pull, rarity must NOT matter
 	})
 	t.Cleanup(cleanup)
 }
@@ -100,8 +93,8 @@ func TestReevaluateArchetypeShift_RarestPullWins(t *testing.T) {
 	mob.Character.Mutations = map[string]int{"aura": 1, "zeal": 1, "plain": 1}
 
 	ReevaluateArchetypeShift(mob)
-	if mob.BehaviorArchetype != "generic_fighter" {
-		t.Fatalf("got %q, want generic_fighter (rarest PULL wins; pull-less rarity ignored)", mob.BehaviorArchetype)
+	if mob.BehaviorArchetype != "tank_taunter" {
+		t.Fatalf("got %q, want tank_taunter (rarest PULL wins; pull-less rarity ignored)", mob.BehaviorArchetype)
 	}
 }
 
@@ -109,8 +102,8 @@ func TestStrongestArchetypePull_TiebreakDeterministic(t *testing.T) {
 	seedShiftSpecs(t)
 	owned := map[string]int{"fangs": 1, "aura": 1} // both r5
 	for i := 0; i < 50; i++ {
-		if got := strongestArchetypePull(owned); got != "combat_passive" {
-			t.Fatalf("iteration %d: got %q, want combat_passive (alphabetical tiebreak must be deterministic)", i, got)
+		if got := strongestArchetypePull(owned); got != "defensive_caster" {
+			t.Fatalf("iteration %d: got %q, want defensive_caster (alphabetical tiebreak must be deterministic)", i, got)
 		}
 	}
 }
@@ -120,12 +113,12 @@ func TestReevaluateArchetypeShift_RarityTieAlphabeticalKey(t *testing.T) {
 	seedMutationTestRoom(t)
 	mob := buildMutationMob(t, 9404, 99904, mutTestRoomId)
 	mob.BehaviorArchetype = "generic_fighter"
-	// aura + fangs both r5 → "aura" < "fangs" alphabetically → combat_passive.
+	// aura + fangs both r5 → "aura" < "fangs" alphabetically → defensive_caster.
 	mob.Character.Mutations = map[string]int{"fangs": 1, "aura": 1}
 
 	ReevaluateArchetypeShift(mob)
-	if mob.BehaviorArchetype != "combat_passive" {
-		t.Fatalf("got %q, want combat_passive (alphabetical tiebreak)", mob.BehaviorArchetype)
+	if mob.BehaviorArchetype != "defensive_caster" {
+		t.Fatalf("got %q, want defensive_caster (alphabetical tiebreak)", mob.BehaviorArchetype)
 	}
 }
 
@@ -153,17 +146,17 @@ func TestReevaluateArchetypeShift_SwapResetsStateAndPolicies(t *testing.T) {
 	mob.BTreeState = NewBehaviorState()
 
 	ReevaluateArchetypeShift(mob)
-	if mob.BehaviorArchetype != "generic_fighter" {
-		t.Fatalf("got %q, want generic_fighter", mob.BehaviorArchetype)
+	if mob.BehaviorArchetype != "tank_taunter" {
+		t.Fatalf("got %q, want tank_taunter", mob.BehaviorArchetype)
 	}
 	if mob.BTreeState != nil {
 		t.Fatal("BTreeState must be reset to nil on shift")
 	}
-	wantSub := characters.DefaultSubmissionPolicyForArchetype("generic_fighter")
+	wantSub := characters.DefaultSubmissionPolicyForArchetype("tank_taunter")
 	if mob.Character.SubmissionPolicy != wantSub {
 		t.Errorf("SubmissionPolicy = %v, want re-derived %v", mob.Character.SubmissionPolicy, wantSub)
 	}
-	wantSur := characters.DefaultSurrenderPolicyForArchetype("generic_fighter")
+	wantSur := characters.DefaultSurrenderPolicyForArchetype("tank_taunter")
 	if mob.Character.SurrenderPolicy != wantSur {
 		t.Errorf("SurrenderPolicy = %v, want re-derived %v", mob.Character.SurrenderPolicy, wantSur)
 	}

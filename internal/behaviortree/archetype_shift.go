@@ -49,38 +49,34 @@ var shiftTargetWhitelist = map[string]bool{
 	"ambusher":         true,
 }
 
-// validateArchetypePulls is the testable core of ValidateArchetypePulls.
-// fileExists is injected so tests don't depend on the config data path.
-func validateArchetypePulls(specs []*mutations.MutationSpec, fileExists func(string) bool) error {
-	for _, spec := range specs {
-		if spec.ArchetypePull == "" {
-			continue
-		}
-		if !shiftTargetWhitelist[spec.ArchetypePull] {
-			return fmt.Errorf("mutation %q: archetype_pull %q is not in the shift target whitelist",
-				spec.MutationId, spec.ArchetypePull)
-		}
-		if !fileExists(GetArchetypePath(spec.ArchetypePull)) {
-			return fmt.Errorf("mutation %q: archetype_pull %q has no archetype file at %s",
-				spec.MutationId, spec.ArchetypePull, GetArchetypePath(spec.ArchetypePull))
-		}
-	}
-	return nil
+// clusterArchetype maps a mutation-graph cluster to the behavior archetype a
+// mob drifts toward as it acquires that cluster's mutations (2026-07-12 NPC
+// migration — replaces the provisional archetype_pull table). Clusters absent
+// here (weaver, trickster, chrysifier) and zero-cluster/Center mutations
+// produce no pull. Targets are TO-whitelist archetypes only.
+var clusterArchetype = map[string]string{
+	"colossus":   "tank_taunter",
+	"ironhide":   "tank_taunter",
+	"ravener":    "predator",
+	"stalker":    "ambusher",
+	"ethereal":   "pure_caster",
+	"manifester": "defensive_caster",
+	"zealot":     "defensive_caster",
 }
 
-// ValidateArchetypePulls panics at boot when any mutation's
-// archetype_pull names a nonexistent archetype or one outside the
-// target whitelist — same convention as the schedule validators;
-// caught by the pre-push boot test. Call after mutations and behavior
-// data files are loaded.
-func ValidateArchetypePulls() {
-	err := validateArchetypePulls(mutations.AllSpecs(), func(path string) bool {
-		_, statErr := os.Stat(path)
-		return statErr == nil
-	})
-	if err != nil {
-		panic(err.Error())
+// archetypeForSpec returns the archetype a mutation pulls toward, derived from
+// its clusters (first mapped cluster wins — deterministic because a bridge's
+// Clusters slice order is fixed by its YAML). "" = no pull.
+func archetypeForSpec(spec *mutations.MutationSpec) string {
+	if spec == nil {
+		return ""
 	}
+	for _, cl := range spec.Clusters {
+		if a, ok := clusterArchetype[cl]; ok {
+			return a
+		}
+	}
+	return ""
 }
 
 // archetypeShiftFlavor gives the room-visible line per shift target.
@@ -122,11 +118,15 @@ func strongestArchetypePull(owned map[string]int) string {
 	bestKey, bestRarity, bestPull := "", -1, ""
 	for key := range owned {
 		spec := mutations.GetMutation(key)
-		if spec == nil || spec.ArchetypePull == "" {
+		if spec == nil {
+			continue
+		}
+		pull := archetypeForSpec(spec)
+		if pull == "" {
 			continue
 		}
 		if spec.Rarity > bestRarity || (spec.Rarity == bestRarity && key < bestKey) {
-			bestKey, bestRarity, bestPull = key, spec.Rarity, spec.ArchetypePull
+			bestKey, bestRarity, bestPull = key, spec.Rarity, pull
 		}
 	}
 	return bestPull
