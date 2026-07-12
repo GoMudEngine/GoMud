@@ -1,0 +1,13 @@
+buffid: 115
+name: Rending Bleed
+description: Deep, ragged claw-wounds bleed freely, and the blood will not stop coming.
+triggerrate: 1 round
+triggercount: 4
+tick_pool: health
+tick_percent: -0.04
+tick_variance: 0.02
+tick_min: 2
+start_user_text: Ragged claw-wounds tear open across you, bleeding freely!
+start_room_text: "{source_plain} is raked open, blood welling from ragged claw-wounds."
+trigger_user_text: Your torn wounds keep bleeding.
+end_user_text: The bleeding finally slows and clots.

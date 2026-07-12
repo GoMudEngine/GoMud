@@ -1,0 +1,10 @@
+buffid: 116
+name: Terrified
+description: A primal, animal dread rolls off the thing in front of you, and every instinct screams to run.
+triggerrate: 1 round
+triggercount: 2
+statmods:
+  willpower: -12
+  charisma: -10
+start_room_text: "{source_plain} shrinks back, gripped by a sudden animal dread."
+end_room_text: "The dread gripping {source} loosens."

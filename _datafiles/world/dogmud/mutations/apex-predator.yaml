@@ -1,0 +1,24 @@
+mutationid: apex-predator
+name: Apex Predator
+description: |
+  The change finishes and there is no man left in you when the blood is up --
+  only the perfect hunting animal. Your whole body is a weapon, the things you
+  hunt know it on sight, and the dread of you rolls ahead like a cold wind.
+rarity: 9
+clusters: [ravener]
+pole: body
+prerequisites:
+  - id: rending-claws
+    min_level: 1
+  - id: raptor-legs
+    min_level: 1
+visual: A lean, terrible predator shape, all coiled muscle and hooked claws, moving with a patient, appalling certainty.
+pros:
+  - type: natural_weapon
+    target: ""
+    value: 8.0
+  - type: stat_multiplier
+    target: strength
+    value: 0.20
+  - type: aura_enemy_debuff
+    value: 116

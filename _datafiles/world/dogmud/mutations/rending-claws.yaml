@@ -1,0 +1,17 @@
+mutationid: rending-claws
+name: Rending Claws
+description: |
+  Your fingers split and lengthen into hooked, serrated claws made for opening
+  flesh. Every unarmed strike you land tears a ragged, bleeding wound -- and the
+  more you land, the worse the bleeding grows.
+rarity: 3
+clusters: [ravener]
+pole: body
+requires_body_parts: [hands]
+visual: Their fingers end in long, hooked, serrated claws, stained dark at the tips.
+pros:
+  - type: on_hit_buff
+    value: 115
+  - type: natural_weapon
+    target: ""
+    value: 3.0
