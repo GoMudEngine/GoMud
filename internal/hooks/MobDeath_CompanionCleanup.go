@@ -37,6 +37,12 @@ func CompanionCleanup(e events.Event) events.ListenerReturn {
 			}
 		}
 
+		// Chrysifier: a fallen homunculus reforges only after a delay — start the
+		// respawn cooldown now (tickHomunculus reads it), before removal.
+		if comp.MobId == homunculusMobId {
+			user.Character.TryCooldown("homunculus-respawn", "10 rounds")
+		}
+
 		user.Character.RemoveCompanion(evt.InstanceId)
 		user.Character.TrackCharmed(evt.InstanceId, false)
 

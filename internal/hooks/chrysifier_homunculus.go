@@ -89,11 +89,17 @@ func tickHomunculus(user *users.UserRecord, room *rooms.Room) {
 	if hasLiveHomunculus(ch) {
 		return
 	}
-	// Pace respawns and serve as the post-death delay.
-	if !ch.TryCooldown("homunculus-respawn", "10 rounds") {
+	// Respawn delay: the "homunculus-respawn" cooldown is set when the twin
+	// FALLS (see CompanionCleanup), so it reforges a while after death rather
+	// than instantly. On first acquisition no cooldown exists → immediate forge.
+	if ch.GetCooldown("homunculus-respawn") > 0 {
 		return
 	}
-	spawnHomunculus(user, room)
+	if spawnHomunculus(user, room) == nil {
+		// Couldn't manifest (e.g. the owner is at the companion cap) — back off
+		// so we don't retry every single round.
+		ch.TryCooldown("homunculus-respawn", "10 rounds")
+	}
 }
 
 // spawnHomunculus forges the owner's homunculus companion into `room` and
@@ -138,7 +144,14 @@ func spawnHomunculus(user *users.UserRecord, room *rooms.Room) *mobs.Mob {
 		AutoAssist:        true,
 		ConvictionReserve: reserve,
 	}
-	ch.AddCompanion(info)
+	if !ch.AddCompanion(info) {
+		// At the soft companion cap — undo the spawn so we don't leak an
+		// orphaned charmed mob that hasLiveHomunculus can never see.
+		ch.TrackCharmed(mob.InstanceId, false)
+		room.RemoveMob(mob.InstanceId)
+		mobs.DestroyInstance(mob.InstanceId)
+		return nil
+	}
 	ch.RecalculateStats() // apply the new reservation immediately
 	return mob
 }
