@@ -4,6 +4,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -57,6 +58,42 @@ func inheritedHomunculusSkills(c *characters.Character) map[string]int {
 		}
 	}
 	return out
+}
+
+// hasLiveHomunculus reports whether the owner currently has a live homunculus
+// companion (registered AND its mob instance still exists).
+func hasLiveHomunculus(ch *characters.Character) bool {
+	for i := range ch.Companions {
+		if ch.Companions[i].MobId == homunculusMobId &&
+			mobs.GetInstance(ch.Companions[i].InstanceId) != nil {
+			return true
+		}
+	}
+	return false
+}
+
+// tickHomunculus keeps a Homunculus-apex owner supplied with their crafted twin:
+// if they hold the apex and have no live homunculus, it (re)forges one after a
+// short respawn cooldown. There is NO affordability gate — the homunculus is the
+// owner's apex identity and always manifests; its heavy Conviction reservation
+// simply eats their pool (usually leaving them their one big companion and
+// little else). Called per-round from UserRoundTick.
+func tickHomunculus(user *users.UserRecord, room *rooms.Room) {
+	if room == nil {
+		return
+	}
+	ch := user.Character
+	if !mutations.HasHomunculus(ch.Mutations) {
+		return
+	}
+	if hasLiveHomunculus(ch) {
+		return
+	}
+	// Pace respawns and serve as the post-death delay.
+	if !ch.TryCooldown("homunculus-respawn", "10 rounds") {
+		return
+	}
+	spawnHomunculus(user, room)
 }
 
 // spawnHomunculus forges the owner's homunculus companion into `room` and

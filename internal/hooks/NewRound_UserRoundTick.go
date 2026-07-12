@@ -234,6 +234,9 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 				// Pinnacle item upkeep (procs are event-driven; this is the always-on layer).
 				pinnacleUserTick(user, room)
 
+				// Chrysifier: keep the Homunculus-apex owner supplied with their crafted twin.
+				tickHomunculus(user, room)
+
 				// Stage 9.8: Tick all combat conditions (decrements Duration, removes expired)
 				user.Character.TickConditions()
 
