@@ -469,8 +469,9 @@ grep -rln "spawnmutations:" _datafiles/world/dogmud/mobs/ | sort
 grep -rilnE "^name:.*(apex|alpha|sentinel|keeper|warden|prime|guardian|king|queen|lord|matriarch|chieftain|the )" _datafiles/world/dogmud/mobs/ | sort
 ```
 Cross-reference with the endgame/quest bosses named in the spec §5.2
-(`docs/ENDGAME_COMBAT_TUNING.md` for #20/#21 + Meirok; Confluence #17 Q73/Q74;
-Q34 captain). Assemble the final ~40–60 set. `log`-style note in the commit which
+(`docs/ENDGAME_COMBAT_TUNING.md` for the #20/#21 encounter bosses — "Meirok" in
+that doc is the PLAYER-CHARACTER difficulty yardstick, NOT a boss; Confluence #17
+Q73/Q74; Q34 captain). Assemble the final ~40–60 set. `log`-style note in the commit which
 mobs were included and which named mobs were intentionally left on species-kit
 only (no silent truncation).
 
@@ -493,7 +494,7 @@ single entry with the boss kit. Worked examples:
 # elemental_king (elemental, signature — splash):         spawnmutations: [discorporation, colossus-form]
 # stone_beetle_queen (arachnid/Weaver or Ironhide):       spawnmutations: [living-carapace, chitin-plating]
 ```
-Signature/endgame bosses (Meirok, #20/#21) get a heavier kit per
+Signature/endgame bosses (the #20/#21 encounter bosses) get a heavier kit per
 `ENDGAME_COMBAT_TUNING.md` — their cluster apex + 2 supporting keystones, or a
 two-cluster splash where their lore warrants it.
 

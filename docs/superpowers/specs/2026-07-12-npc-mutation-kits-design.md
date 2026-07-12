@@ -130,8 +130,9 @@ per-mob so a boss reads as a deliberate, formidable version of its kind.
 A mob qualifies for a bespoke kit if it is any of:
 - one of the existing 33 `spawnmutations` mobs (upgrade from the repointed single
   mutation to a full kit);
-- an **endgame** boss (#20/#21 tuning targets, `docs/ENDGAME_COMBAT_TUNING.md`;
-  Meirok as the difficulty unit);
+- an **endgame** boss (the #20/#21 encounter bosses in
+  `docs/ENDGAME_COMBAT_TUNING.md`). NOTE: "Meirok" in that doc is the *player
+  character* used as the difficulty yardstick, NOT a boss — do not give it a kit;
 - a **Confluence** climax boss (#17, Q73/Q74);
 - a **quest-line** boss (e.g. the Q34 bandit captain);
 - a **zone apex/alpha/sentinel/keeper** (proper-noun uniques like
@@ -150,7 +151,7 @@ policy so enumeration is mechanical.
 | `elemental_king` | elemental | cross-element: `titan-growth`, `discorporation` |
 | `warden_prime` / `the_core_guardian` | flesh_golem/construct | Colossus: `titan-growth`, `colossus-form` |
 | `the_pass_apex` / `the_reach_alpha` | feline/beast | Ravener/Stalker: `rending-claws`, `apex-predator` |
-| Meirok / #20-#21 | (per lore) | signature apex kit per `ENDGAME_COMBAT_TUNING.md` |
+| #20/#21 encounter bosses | (per lore) | signature apex kit per `ENDGAME_COMBAT_TUNING.md` |
 
 ## 6. Ranks are PROVISIONAL — coupled to the 6e balance pass
 
