@@ -1,5 +1,24 @@
 # DOGMud Patch Notes
 
+## 2026-07-12 — The ironhide's path: hide, reflect, and carapace
+
+- **The tank has a mutation home now.** Those who would rather endure a blow than
+  avoid it can grow a hide that fights back.
+- **Thick Hide** — leathery integument that turns aside blows meant for softer
+  flesh.
+- **Reflect Skin** — a retaliating skin that lashes a share of every blow back
+  into whoever struck you. It comes in several forms — barbed, molten, frostbite,
+  voltaic — and **which one the Chrysalis grants you is decided by the moons on
+  the night it wakes.** You cannot hold two at once, and those who watch the sky
+  may learn to time what they become.
+- **Regrowth** — torn flesh that knits itself closed even in the thick of a
+  fight.
+- **Chitin Plating** — overlapping beetle-shell plates and the muscle to carry
+  them, at the cost of some quickness.
+- **Living Carapace** — the apex: a thick, self-repairing living shell with
+  tremendous armor that hurls attackers' blows back at them and draws every
+  enemy to strike you first.
+
 ## 2026-07-12 — The broodmaster's path: the Manifester
 
 - **Summoning has a mutation home now.** Those who bind creatures to their side
