@@ -45,6 +45,12 @@ type MutationSpec struct {
 	// If a character owns any conflicting mutation, this one is excluded from the pool.
 	Conflicts []string `yaml:"conflicts,omitempty"`
 
+	// MoonFlavor gates a mutation to a moon "bucket" (1–4): the bloom pool only
+	// offers it when the current moon bucket matches. 0 = always eligible. Used
+	// by the Reflect Skin family so the moon at acquisition picks which flavor
+	// you receive.
+	MoonFlavor int `yaml:"moon_flavor,omitempty"`
+
 	// RequiresBodyParts lists canonical body-part tags from
 	// species.CanonicalBodyParts. Empty/nil = body-agnostic.
 	// Boot-time validation is added in chunk-2.5 Task 6 (or see

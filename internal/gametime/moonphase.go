@@ -70,6 +70,26 @@ func GetAllPhases() (swiftmoon, wanderer, eye float64) {
 	return currentPhases()
 }
 
+// moonFlavorBucket maps two moons' fullness (each 0..1, >=0.5 = "full") to a
+// 1–4 bucket. Pure, for testability.
+func moonFlavorBucket(eye, wander float64) int {
+	b := 1
+	if eye >= 0.5 {
+		b += 2
+	}
+	if wander >= 0.5 {
+		b += 1
+	}
+	return b
+}
+
+// CurrentMoonFlavorBucket returns the current 1–4 moon bucket, derived from The
+// Eye's and The Wanderer's fullness. Used to pick which flavor of a moon-gated
+// mutation family (e.g. Reflect Skin) the Chrysalis grants at acquisition.
+func CurrentMoonFlavorBucket() int {
+	return moonFlavorBucket(GetEyePhase(), GetWandererPhase())
+}
+
 // MoonStatDelta computes the integer stat delta a moon phase applies to a stat.
 //
 // phase:   0.0 = new moon (negative), 0.5 = quarter (zero), 1.0 = full (positive)
