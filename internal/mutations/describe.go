@@ -128,6 +128,10 @@ func flagPhrase(target string) string {
 		return "Your body is itself a workshop — you can craft anywhere, needing no station or tools."
 	case "homunculus":
 		return "You can forge a living copy of yourself — a crafted companion that fights at your side."
+	case "companion-cap-raise":
+		return "You can keep more companions at your side at once."
+	case "brood-mother":
+		return "You endlessly birth and sustain a brood — and are never left without a companion."
 	}
 	return ""
 }
