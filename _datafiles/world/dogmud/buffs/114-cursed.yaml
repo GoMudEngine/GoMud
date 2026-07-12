@@ -1,0 +1,11 @@
+buffid: 114
+name: Cursed
+description: A baleful gaze clings to you, dragging your aim wide and leaving your guard sagging and slow.
+triggerrate: 1 round
+triggercount: 3
+statmods:
+  dexterity: -12
+  perception: -12
+start_user_text: A cold, watching malice settles over you — your aim wavers and your guard sags.
+start_room_text: "{source_plain} falters under an unseen, baleful gaze."
+end_user_text: The watching malice lifts, and your focus returns.

@@ -1,0 +1,13 @@
+mutationid: evil-eye
+name: Evil Eye
+description: |
+  One of your eyes darkens to a fathomless, baleful thing that fixes on
+  whatever you fight. Under that gaze an enemy's aim drifts, their guard
+  slackens, and a creeping wrongness eats at whatever they try to do.
+rarity: 5
+clusters: [trickster]
+requires_body_parts: [eyes]
+visual: One eye is a deep, lightless black, and holding its gaze raises the hair on the back of your neck.
+pros:
+  - type: on_hit_buff
+    value: 114

@@ -1,0 +1,14 @@
+mutationid: corvid-brain
+name: Corvid Brain
+description: |
+  Your brain refolds into something denser and cleverer, wired for trickery and
+  illusion. Deceptions and mind-magics come to you almost without effort --
+  they bite harder on their victims and cost you far less to weave.
+rarity: 6
+clusters: [trickster]
+visual: Their eyes hold a sharp, corvid cleverness, forever watching for the angle no one else has seen.
+pros:
+  - type: spell_power
+    value: 0.25
+  - type: conviction_cost_multiplier
+    value: -0.10

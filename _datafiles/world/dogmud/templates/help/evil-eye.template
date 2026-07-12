@@ -1,0 +1,13 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Evil Eye</ansi> mutation
+
+One of your eyes darkens to a fathomless, baleful thing that fixes on
+whatever you fight.
+
+<ansi fg="yellow">Type:</ansi>     Passive (Trickster)
+<ansi fg="yellow">Rarity:</ansi>   Rare
+
+<ansi fg="yellow">Benefits:</ansi>
+  When you strike a foe, your baleful gaze fixes on them — their aim
+  drifts and their guard sags under the curse
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

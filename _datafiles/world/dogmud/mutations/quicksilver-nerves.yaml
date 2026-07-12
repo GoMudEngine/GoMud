@@ -1,0 +1,15 @@
+mutationid: quicksilver-nerves
+name: Quicksilver Nerves
+description: |
+  Your nervous system rewires itself into something fast and frictionless.
+  Hands blur, footwork sharpens, and the small mental knots that slow a spell
+  come untied -- you cast and move a half-beat ahead of everyone else.
+rarity: 4
+clusters: [trickster]
+visual: Their movements have a liquid, faintly-too-fast quality, always finishing a moment before you expect.
+pros:
+  - type: stat_multiplier
+    target: dexterity
+    value: 0.10
+  - type: conviction_cost_multiplier
+    value: -0.08

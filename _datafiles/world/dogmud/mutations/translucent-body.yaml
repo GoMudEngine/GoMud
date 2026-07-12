@@ -1,0 +1,24 @@
+mutationid: translucent-body
+name: Translucent Body
+description: |
+  The change completes and your flesh turns to glass. Light slides through you,
+  edges smear into the background, and at rest you all but vanish. A blade
+  swung at you finds mostly empty air where you seemed to be.
+rarity: 8
+clusters: [trickster]
+prerequisites:
+  - id: quicksilver-nerves
+    min_level: 1
+  - id: corvid-brain
+    min_level: 1
+visual: A glassy, see-through figure that bends the light passing through it, hard to fix your eyes on and harder to be sure is really there.
+pros:
+  - type: dodge_modifier
+    value: 25
+  - type: stealth_bonus
+    value: 30
+  - type: spell_power
+    value: 0.20
+cons:
+  - type: natural_armor
+    value: -12
