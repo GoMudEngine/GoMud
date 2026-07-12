@@ -28,6 +28,23 @@ func TestCraftMaterialsSaved_Bounds(t *testing.T) {
 	}
 }
 
+func TestCarryCapacity_Faithwrought(t *testing.T) {
+	cleanup := mutations.SeedMutationsForTest(map[string]*mutations.MutationSpec{
+		"carry": {MutationId: "carry", Name: "Carry", Rarity: 6,
+			Pros: []mutations.MutationEffect{{Type: "carry_capacity_multiplier", Value: 0.50}}},
+	})
+	defer cleanup()
+
+	c := New()
+	c.Stats.Strength.ValueAdj = 100
+	base := c.CarryCapacity()
+	c.Mutations = map[string]int{"carry": 1}
+	boosted := c.CarryCapacity()
+	if boosted <= base {
+		t.Fatalf("carry mutation should raise capacity: base=%v boosted=%v", base, boosted)
+	}
+}
+
 func TestCraftQualityLevel_Faithwrought(t *testing.T) {
 	cleanup := mutations.SeedMutationsForTest(map[string]*mutations.MutationSpec{
 		"faith": {MutationId: "faith", Name: "Faith", Rarity: 6,
