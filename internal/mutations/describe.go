@@ -82,6 +82,8 @@ func DescribeEffect(e MutationEffect) string {
 		return "Your conviction in your craft lends your finished work greater quality."
 	case "carry_capacity_multiplier":
 		return "You can haul far more than your frame suggests."
+	case "companion_empowerment":
+		return "The bond you share with your companions makes them fight harder at your side."
 	case "flag":
 		return flagPhrase(e.Target)
 	}
