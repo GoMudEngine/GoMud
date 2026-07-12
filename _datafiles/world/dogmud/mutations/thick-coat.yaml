@@ -1,0 +1,15 @@
+mutationid: thick-coat
+name: Thick Coat
+description: |
+  A dense pelt of coarse fur grows in over your whole body, trapping warmth and
+  turning the bite of wind, cold, and rough country. You shrug off conditions
+  that would wear a bare-skinned traveller down, and the matted coat blunts a
+  blow or two besides.
+rarity: 3
+visual: A thick, weatherproof coat of coarse fur covers them from head to foot.
+pros:
+  - type: stat_flat
+    target: vitality
+    value: 8
+  - type: natural_armor
+    value: 4

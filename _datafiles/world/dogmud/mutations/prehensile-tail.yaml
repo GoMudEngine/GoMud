@@ -1,0 +1,20 @@
+mutationid: prehensile-tail
+name: Prehensile Tail
+description: |
+  A long, dexterous tail grows from the base of your spine, quick and sensitive
+  and always in motion. It steadies your balance, frees a hand by taking a grip
+  of its own, and gives you the fine control that flight demands -- all without
+  costing you the use of your legs.
+rarity: 3
+conflicts:
+  - tail
+visual: A slender, restless tail curls and counterbalances behind them, moving with a will of its own.
+pros:
+  - type: flag
+    target: tail
+    value: 1
+  - type: stat_flat
+    target: dexterity
+    value: 5
+  - type: dodge_modifier
+    value: 5

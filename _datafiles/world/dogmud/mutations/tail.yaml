@@ -8,6 +8,7 @@ visual: A thick, muscular tail extends from the base of their spine,
   swaying with each movement.
 conflicts:
   - small
+  - prehensile-tail
 pros:
   - type: stat_flat
     target: dexterity

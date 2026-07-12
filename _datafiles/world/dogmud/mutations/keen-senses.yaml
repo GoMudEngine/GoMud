@@ -1,0 +1,14 @@
+mutationid: keen-senses
+name: Keen Senses
+description: |
+  Every sense sharpens at once -- sight, hearing, the prickle at the back of the
+  neck. You react a beat sooner than you should, catch the things others miss,
+  and see a blow coming in time to slip aside.
+rarity: 3
+visual: Their eyes and ears twitch at the smallest movement, forever a half-beat ahead of everyone else.
+pros:
+  - type: dodge_modifier
+    value: 8
+  - type: stat_flat
+    target: perception
+    value: 8

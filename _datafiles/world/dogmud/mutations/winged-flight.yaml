@@ -6,7 +6,7 @@ visual: Vast, translucent wings arch from their shoulders, stirring the air with
 prerequisites:
   - id: hollow-bones
     min_level: 1
-  - id: tail
+  - id: prehensile-tail
     min_level: 1
 pros:
   - type: flag
