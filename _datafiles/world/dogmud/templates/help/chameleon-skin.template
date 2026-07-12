@@ -1,22 +1,19 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Chameleon Skin</ansi> mutation
 
-Your skin shifts colour and pattern to match your surroundings, making
-you extraordinarily difficult to spot when still. The mutation comes
-with a cost — your skin becomes thinner and more sensitive, leaving
-you vulnerable to temperature extremes.
+Your skin runs with colour and shadow at will, folding you into any
+surroundings until you are all but invisible in the dark.
 
-<ansi fg="yellow">Requires:</ansi>  Skin
-<ansi fg="yellow">Type:</ansi>     Passive
-<ansi fg="yellow">Rarity:</ansi>   Very Rare
+<ansi fg="yellow">Type:</ansi>     Transformation (apex)
+<ansi fg="yellow">Rarity:</ansi>   Apex
+<ansi fg="yellow">Requires:</ansi> Padded Soles and Compound Eyes (and skin)
 
 <ansi fg="yellow">Benefits:</ansi>
-  Greatly improved stealth — nearly invisible when standing still
-  Slightly improved dodge — your shifting colours disrupt targeting
+  All but invisible when still, your shifting colours make you very hard
+  to strike, and your predator's senses pick out anything hidden
 
 <ansi fg="yellow">Drawbacks:</ansi>
-  Slightly reduced charisma — the constant rippling skin unnerves
-  those around you
-  Reduced natural armor — your thinner skin offers less protection
+  The constant rippling skin unnerves those around you, and your thinner
+  hide offers far less protection from blows
 
 <ansi fg="yellow">Conflicts:</ansi> Thick Hide, Bioluminescence
 

@@ -2,6 +2,8 @@ mutationid: venom-coat
 name: Venom Coat
 description: On command, your venom glands flush your skin and weapons with a slick, burning toxin. For a short while every strike you land carries its bite -- but working the venom up costs you.
 rarity: 7
+clusters: [stalker]
+pole: body
 visual: A faint, oily green film clings to the edges of their weapons and knuckles.
 pros:
   - type: flag

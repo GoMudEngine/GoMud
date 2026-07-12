@@ -26,6 +26,8 @@ func TestDescribeEffect(t *testing.T) {
 		{"see-hidden", MutationEffect{Type: "flag", Target: "see-hidden", Value: 1}, "You notice hidden creatures and things others miss."},
 		{"natural_armor", MutationEffect{Type: "natural_armor", Value: 5}, "Hardens your hide against physical blows."},
 		{"aggro up", MutationEffect{Type: "aggro_magnet", Target: "aggro", Value: 1}, "Draws hostile attention toward you."},
+		{"stealth_bonus", MutationEffect{Type: "stealth_bonus", Value: 20}, "Sharpens your ability to move unseen and unheard."},
+		{"movement_speed faster", MutationEffect{Type: "movement_speed", Value: -0.15}, "Lightens your step -- you move faster and more quietly."},
 		{"unknown type", MutationEffect{Type: "no_such_type"}, ""},
 	}
 	for _, c := range cases {

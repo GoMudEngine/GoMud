@@ -1,0 +1,13 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Padded Soles</ansi> mutation
+
+Thick, spongy pads grow in across the soles of your feet, soaking up
+sound and letting you flow over any ground without a whisper.
+
+<ansi fg="yellow">Type:</ansi>     Passive (Stalker)
+<ansi fg="yellow">Rarity:</ansi>   Uncommon
+
+<ansi fg="yellow">Benefits:</ansi>
+  You move unseen and unheard far more easily, and your step is lighter
+  and quicker over any ground
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

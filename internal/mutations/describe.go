@@ -43,6 +43,17 @@ func DescribeEffect(e MutationEffect) string {
 			return "Sharpens your reflexes, making blows harder to land on you."
 		}
 		return "Slows your reflexes, making you easier to strike."
+	case "stealth_bonus":
+		if e.Value >= 0 {
+			return "Sharpens your ability to move unseen and unheard."
+		}
+		return "Makes you easier to notice as you move."
+	case "movement_speed":
+		// Negative value = faster/lighter step (see GetMovementSpeedModifier).
+		if e.Value <= 0 {
+			return "Lightens your step -- you move faster and more quietly."
+		}
+		return "Weighs down your step, slowing how you move."
 	case "on_hit_buff":
 		return "Your natural strikes leave a debilitating affliction in the wound."
 	case "aura_ally_buff":

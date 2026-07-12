@@ -1,0 +1,16 @@
+mutationid: padded-soles
+name: Padded Soles
+description: |
+  Thick, spongy pads grow in across the soles of your feet, soaking up sound
+  and letting you flow over any ground without a whisper. You move like a
+  shadow, and the world stops noticing you pass.
+rarity: 3
+clusters: [stalker]
+pole: body
+requires_body_parts: [legs]
+visual: They move with an unnerving, weightless quiet, feet meeting the ground without a sound.
+pros:
+  - type: stealth_bonus
+    value: 22
+  - type: movement_speed
+    value: -0.15
