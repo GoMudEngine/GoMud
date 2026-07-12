@@ -1,0 +1,16 @@
+mutationid: symbiotic-bond
+name: Symbiotic Bond
+description: |
+  The bond between you and your brood runs both ways. Something of your own
+  vigor flows out along it, and the creatures you keep fight harder and endure
+  longer for being yours.
+rarity: 5
+clusters: [manifester]
+pole: belief
+prerequisites:
+  - id: sustaining-presence
+    min_level: 1
+visual: Fine, pulsing threads of translucent tissue seem to reach from them toward the creatures they command.
+pros:
+  - type: companion_empowerment
+    value: 0.15

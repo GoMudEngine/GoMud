@@ -1,0 +1,13 @@
+mutationid: spirit-tether
+name: Spirit Tether
+description: |
+  A specialized organ opens a channel between your spirit and the things you
+  bind to you. Through it your will steadies and strengthens them, half-summoned
+  and half-real at your side.
+rarity: 6
+clusters: [ethereal, manifester]
+pole: belief
+visual: A faint, taut line of pale light seems to run from their sternum to whatever creature stands nearest in their service.
+pros:
+  - type: companion_empowerment
+    value: 0.10

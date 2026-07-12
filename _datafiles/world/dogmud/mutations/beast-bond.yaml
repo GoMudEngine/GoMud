@@ -1,0 +1,13 @@
+mutationid: beast-bond
+name: Beast Bond
+description: |
+  Your command carries into the creatures that serve you as surely as your own
+  limbs. What steels you steels them; where you press, they press with you, and
+  they fight the fiercer for the bond.
+rarity: 6
+clusters: [manifester, zealot]
+pole: belief
+visual: The beasts at their side move in unnerving sympathy with them, tensing and turning as one.
+pros:
+  - type: companion_empowerment
+    value: 0.10
