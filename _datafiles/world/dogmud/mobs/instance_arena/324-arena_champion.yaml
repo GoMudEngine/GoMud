@@ -26,6 +26,7 @@ combatcommands:
   - ''
   - 'emote absorbs the blow on the tower shield without flinching'
   - ''
+spawnmutations: [colossus-form, dense-muscles]
 character:
   name: Arena Champion
   description: >-

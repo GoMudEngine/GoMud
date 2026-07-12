@@ -14,6 +14,7 @@ combatcommands:
   - 'emote coils a whip of water around its prey before striking'
   - 'emote dissolves to spray and reforms at your flank, claws first'
   - ''
+spawnmutations: [living-carapace, regrowth]
 character:
   name: Elemental Princess
   description: >-

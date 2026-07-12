@@ -15,6 +15,7 @@ combatcommands:
   - ''
   - 'emote whispers and the sand rises in choking spirals'
   - ''
+spawnmutations: [living-carapace, reflect-skin-frostbite]
 character:
   name: Elemental Queen
   description: >-

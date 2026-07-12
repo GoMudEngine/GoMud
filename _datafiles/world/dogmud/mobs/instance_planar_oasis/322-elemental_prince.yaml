@@ -14,6 +14,7 @@ combatcommands:
   - 'emote dissolves into mist and reforms behind its target'
   - 'emote lashes out with whip-thin tendrils of superheated air'
   - ''
+spawnmutations: [discorporation, veiling-musk]
 character:
   name: Elemental Prince
   description: >-

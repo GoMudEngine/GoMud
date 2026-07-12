@@ -39,6 +39,7 @@ combatcommands:
     swinging'
   - ''
 activitylevel: 90
+spawnmutations: [translucent-body, quicksilver-nerves]
 character:
   name: Chrysalis Phantom
   description: |
