@@ -1,0 +1,38 @@
+mobid: 9613
+zone: Summons
+archetype: fighting
+aiprofile: predator
+behavior_archetype: generic_fighter
+statpool: 120
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - summon
+idlecommands:
+  - 'emote skitters close to its brood-mother, chittering softly'
+  - ''
+  - 'emote flexes newborn limbs, still glistening'
+  - ''
+activitylevel: 40
+combatcommands:
+  - ''
+  - ''
+character:
+  name: Brood Spawn
+  description: |
+    A small, newborn thing birthed from its master's own flesh -- part
+    insect, part something worse, all teeth and hunger. It is weak alone,
+    but it is never truly alone, and it will throw itself at any threat to
+    the one who made it.
+  speciesid: 2
+  level: 1
+  stats:
+    strength:
+      training: 12
+    dexterity:
+      training: 15
+    vitality:
+      training: 10
+    perception:
+      training: 8

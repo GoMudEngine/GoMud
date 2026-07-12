@@ -1,0 +1,25 @@
+mutationid: brood-mother
+name: Brood Mother
+description: |
+  You have become a wellspring of life, endlessly birthing and sustaining a
+  brood. The conviction it takes to keep your creatures eases to almost nothing,
+  you can hold a true swarm at once, and should you ever stand alone, your body
+  simply makes another -- you are never without your children.
+rarity: 9
+clusters: [manifester]
+pole: belief
+prerequisites:
+  - id: sustaining-presence
+    min_level: 1
+  - id: hive-mind
+    min_level: 1
+visual: Their torso ripples with constant, unsettling motion, as though something within is always about to be born.
+pros:
+  - type: companion_reserve_reduction
+    value: 1
+  - type: flag
+    target: companion-cap-raise
+    value: 1
+  - type: flag
+    target: brood-mother
+    value: 1

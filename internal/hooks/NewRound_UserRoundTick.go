@@ -240,6 +240,9 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 				// Manifester: strengthen the owner's companions (Symbiotic Bond / bridges).
 				tickCompanionEmpowerment(user, room)
 
+				// Manifester: a Brood Mother is never petless.
+				tickBroodMotherFloor(user, room)
+
 				// Stage 9.8: Tick all combat conditions (decrements Duration, removes expired)
 				user.Character.TickConditions()
 
