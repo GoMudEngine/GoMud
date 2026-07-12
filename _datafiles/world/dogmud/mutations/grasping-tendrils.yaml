@@ -1,0 +1,12 @@
+mutationid: grasping-tendrils
+name: Grasping Tendrils
+description: |
+  Coiled, barbed tendrils lie dormant beneath your skin and lash out the
+  instant you land a blow, whipping around your victim and rooting them where
+  they stand. What you hit tends to stay hit.
+rarity: 6
+clusters: [weaver]
+visual: Thin, barbed tendrils writhe just beneath their skin, breaking free to lash out whenever they strike.
+pros:
+  - type: on_hit_buff
+    value: 111

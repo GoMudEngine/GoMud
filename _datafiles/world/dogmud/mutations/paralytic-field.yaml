@@ -1,0 +1,20 @@
+mutationid: paralytic-field
+name: Paralytic Field
+description: |
+  The change settles and never lifts: you trail a constant, smothering field
+  of drifting silk and grinding dissonance. Everything hostile that comes near
+  bogs down in it -- slowed, half-snared, and unable to hold a spell or shout
+  together.
+rarity: 9
+clusters: [weaver]
+prerequisites:
+  - id: sticky-secretion
+    min_level: 1
+  - id: grasping-tendrils
+    min_level: 1
+visual: A shimmering haze of drifting silk-threads and heat-warp dissonance hangs about them, and things nearby move as though through syrup.
+pros:
+  - type: aura_enemy_debuff
+    value: 112
+  - type: dodge_modifier
+    value: 10

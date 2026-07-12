@@ -1,0 +1,10 @@
+buffid: 111
+name: Ensnared
+description: Barbed tendrils are wrapped tight around your limbs, rooting you in place.
+triggerrate: 1 round
+triggercount: 3
+statmods:
+  dexterity: -20
+start_user_text: Barbed tendrils erupt and coil around your limbs, rooting you fast!
+start_room_text: "{source_plain} is snared by a mass of barbed, writhing tendrils."
+end_user_text: The tendrils wither and release their grip.

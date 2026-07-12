@@ -1,0 +1,10 @@
+buffid: 110
+name: Mired
+description: Sticky, clinging residue drags at your limbs, fouling every movement.
+triggerrate: 1 round
+triggercount: 3
+statmods:
+  dexterity: -12
+start_user_text: Clinging residue smears across you, dragging at every move.
+start_room_text: "{source_plain} flounders, limbs fouled with clinging residue."
+end_user_text: The clinging residue finally flakes away.
