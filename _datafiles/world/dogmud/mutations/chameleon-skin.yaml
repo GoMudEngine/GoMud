@@ -16,7 +16,6 @@ prerequisites:
     min_level: 1
 conflicts:
   - thick-hide
-  - bioluminescence
 visual: Their outline swims and dissolves against the background, seen only as a ripple where the light bends wrong.
 pros:
   - type: stealth_bonus

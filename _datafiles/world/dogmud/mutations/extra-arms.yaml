@@ -6,9 +6,6 @@ clusters: [colossus, ravener]
 pole: body
 visual: A second pair of arms extends from their torso, moving with surprising coordination.
 requires_body_parts: [arms]
-conflicts:
-  - clawed-hands
-  - elongated-limbs
 pros:
   - type: flag
     target: active-ability
