@@ -2,17 +2,29 @@ package actions
 
 import (
 	"fmt"
+	"math"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
+
+// salvageChanceWithMutations applies the Chrysifier salvage-yield bonus
+// (Provident Hands — a more thorough breakdown recovers more), capping at 1.0.
+func salvageChanceWithMutations(char *characters.Character, base float64) float64 {
+	if bonus := mutations.GetSalvageYieldBonus(char.Mutations); bonus > 0 {
+		return math.Min(1.0, base*(1.0+bonus))
+	}
+	return base
+}
 
 // SalvageOptions identifies the salvage target.
 //
@@ -71,6 +83,7 @@ func Salvage(actor Actor, opts SalvageOptions) SalvageResult {
 		float64(bal.SalvageMinChance),
 		float64(bal.SalvageMaxChance),
 		int(bal.SalvageSoftCap))
+	chance = salvageChanceWithMutations(char, chance)
 
 	if opts.TargetCorpse {
 		return salvageCorpse(actor, room, opts, chance)
