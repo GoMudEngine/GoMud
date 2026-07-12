@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
@@ -101,7 +102,10 @@ func InitiateCraft(actor Actor, recipeName string) CraftResult {
 	}
 
 	// ── Station check ─────────────────────────────────────────────────────────
-	if recipe.Station != "" && room.Station != recipe.Station {
+	// Chrysifier's Walking Chrysalis (portable-workshop) makes the body itself
+	// the workshop — no station or tools required, anywhere.
+	if recipe.Station != "" && room.Station != recipe.Station &&
+		!mutations.HasPortableWorkshop(char.Mutations) {
 		res.StationNeeded = strings.ReplaceAll(recipe.Station, "_", " ")
 		res.WrongStation = true
 		return res
@@ -132,10 +136,13 @@ func InitiateCraft(actor Actor, recipeName string) CraftResult {
 
 	// ── Immediate completion (TimeRounds <= 0) ────────────────────────────────
 	if recipe.TimeRounds <= 0 {
-		char.Items, char.ComponentItems = crafting.ConsumeIngredients(
-			char.Items, char.ComponentItems, recipe)
+		// Provident Hands may preserve the materials entirely (efficient craft).
+		if !char.CraftMaterialsSaved() {
+			char.Items, char.ComponentItems = crafting.ConsumeIngredients(
+				char.Items, char.ComponentItems, recipe)
+		}
 		newItem := items.New(recipe.Output.ItemId)
-		newItem.CraftSkill = skillLevel
+		newItem.CraftSkill = char.CraftQualityLevel(skillLevel) // Faithwrought quality lift
 		// Maker's mark — same policy as the async completion path
 		// (crafting.ShouldStampMakerName): components stamp regardless of
 		// Type so require_own_components provenance works for
