@@ -2,6 +2,8 @@ mutationid: thick-hide
 name: Thick Hide
 description: Your skin thickens into a leathery integument, tough enough to turn a blade. The cost is a certain gracelessness and an unsettling appearance.
 rarity: 6
+clusters: [ironhide]
+pole: body
 requires_body_parts: [skin]
 visual: Their skin has a thick, leathery quality with visible ridges along the forearms and shoulders.
 pros:

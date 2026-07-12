@@ -1,0 +1,16 @@
+mutationid: regrowth
+name: Regrowth
+description: |
+  Torn flesh knits itself closed even in the thick of a fight, and wounds that
+  would cripple another mend as fast as they open. You do not stay hurt for
+  long.
+rarity: 6
+clusters: [ironhide]
+pole: body
+prerequisites:
+  - id: thick-hide
+    min_level: 1
+visual: Old scars fade and fresh cuts close over as you watch, the skin sealing with faint, steady motion.
+pros:
+  - type: health_regen_multiplier
+    value: 0.5
