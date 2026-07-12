@@ -1,0 +1,17 @@
+mutationid: hive-mind
+name: Hive Mind
+description: |
+  A shared nerve-web binds you to your brood, and you can hold more of them in
+  your thoughts at once than any lone mind should. (They do not yet act in true
+  concert -- that is a deeper attunement still to come.)
+rarity: 6
+clusters: [manifester]
+pole: belief
+prerequisites:
+  - id: sustaining-presence
+    min_level: 1
+visual: Their eyes flick and track as though watching through many others at once.
+pros:
+  - type: flag
+    target: companion-cap-raise
+    value: 1

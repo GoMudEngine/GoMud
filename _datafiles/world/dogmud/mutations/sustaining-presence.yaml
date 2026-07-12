@@ -1,0 +1,14 @@
+mutationid: sustaining-presence
+name: Sustaining Presence
+description: |
+  Your very presence sustains the things you call forth. The conviction it
+  takes to keep a companion at your side eases the deeper this grows -- and a
+  competent summoner becomes a broodmaster, able to hold more of the brood with
+  the same will.
+rarity: 4
+clusters: [manifester]
+pole: belief
+visual: A faint, ever-present aura clings to them, and the creatures at their side seem calmer, steadier, closer.
+pros:
+  - type: companion_reserve_reduction
+    value: 1
