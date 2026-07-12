@@ -1,5 +1,25 @@
 # DOGMud Patch Notes
 
+## 2026-07-12 — Creatures come into their own (NPC mutation kits)
+
+- **The world's monsters have grown into the new order of change.** Undead,
+  elementals, and the stranger things that stalk the wilds now carry coherent
+  sets of mutations that match what they *are* — a wraith is a truly ethereal
+  terror, a golem an unmoving colossus, a great serpent a venomous ambusher.
+- **Ghosts are ghosts again.** Wraiths, spectres, and the elementals that drift
+  between blows are once more hard to touch and harder to hold, their nature
+  written in the mutation graph rather than left to a single trait.
+- **Named terrors are properly terrifying.** The apex predators, wardens,
+  queens, and the Foldweaver himself now wear their kind's ultimate
+  transformation atop their natural gifts — the fights that matter hit back like
+  they should.
+- **Even ordinary beasts feel true to type.** Wolves rend, cats stalk unseen,
+  boars and bears bull through — each carries a small, fitting touch of the graph.
+- *(Under the hood: curated cluster kits on ~20 monstrous/magical species +
+  bespoke apex overlays on 34 curated bosses; a coherence test locks every kit to
+  a live, cluster-anchored mutation. Kit ranks are provisional and will be tuned
+  in the balance pass.)*
+
 ## 2026-07-12 — The old mutations fade (NPC mutation migration)
 
 - **The Chrysalis stops offering its old, half-formed gifts.** The graph of
