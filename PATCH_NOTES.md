@@ -1,5 +1,24 @@
 # DOGMud Patch Notes
 
+## 2026-07-12 — The old mutations fade (NPC mutation migration)
+
+- **The Chrysalis stops offering its old, half-formed gifts.** The graph of
+  mutations you can grow into is now exactly the designed clusters, bridges, and
+  central paths — the scattered legacy mutations that used to surface at random
+  have been swept out of the pool entirely, for creatures and characters alike.
+- **Beasts and monsters carry sensible traits again.** Every creature that used
+  to be born with one of the retired mutations now carries its nearest true
+  equivalent (or simply goes without), and the species themselves — from wolves
+  to wraiths to elementals — have been re-fitted the same way.
+- **Living things still change as they grow.** A creature that mutates in battle
+  can still shift the way it fights, but now it drifts toward a role that matches
+  the *kind* of power it is growing into — the brute toward the front line, the
+  will-touched toward the casting arts.
+- *(Under the hood: retired 34 legacy mutations + 6 dead active abilities;
+  repointed all mob/species mutation references; re-based the mob archetype-shift
+  onto the cluster graph. Part of the 0.14.0 clean-break with the player
+  migration.)*
+
 ## 2026-07-12 — The ironhide's path: hide, reflect, and carapace
 
 - **The tank has a mutation home now.** Those who would rather endure a blow than
