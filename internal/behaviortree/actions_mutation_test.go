@@ -250,26 +250,15 @@ func TestTryAnyActiveMutation_RarityOrdering_UnitSkipped(t *testing.T) {
 // mutations (blinding-spit, toxic-bite) are intentionally absent. Absent
 // entries would consume stamina + cooldown via the preamble and then fail
 // with BlockReason="no-target", wasting resources with no observable effect.
-func TestMutationTriggers_SelfAoEPresent(t *testing.T) {
-	expected := []string{
-		"blinding-flash",
-		"healing-gel",
-		"pacifism-aura",
-		"sonic-shout",
+// TestMutationTriggers_EmptyPostLegacyRemoval documents that both dispatch
+// maps are empty after the legacy active-ability mutations were removed
+// (2026-07-12 NPC migration). The generic dispatch machinery is retained so a
+// future active can register a row; until then neither map offers anything.
+func TestMutationTriggers_EmptyPostLegacyRemoval(t *testing.T) {
+	if len(mutationTriggers) != 0 {
+		t.Errorf("mutationTriggers should be empty after legacy active removal, has %d", len(mutationTriggers))
 	}
-	for _, key := range expected {
-		if _, ok := mutationTriggers[key]; !ok {
-			t.Errorf("mutationTriggers missing SELF/AoE key %q", key)
-		}
-	}
-
-	// Single-target mutations must be absent — they need a target-resolving
-	// primitive that doesn't exist yet. Their presence would cause a
-	// resource-leak bug (stamina + cooldown consumed, then "no-target" block).
-	excluded := []string{"blinding-spit", "toxic-bite"}
-	for _, key := range excluded {
-		if _, ok := mutationTriggers[key]; ok {
-			t.Errorf("mutationTriggers must NOT contain single-target key %q (resource leak)", key)
-		}
+	if len(mutationTriggersAtTarget) != 0 {
+		t.Errorf("mutationTriggersAtTarget should be empty after legacy active removal, has %d", len(mutationTriggersAtTarget))
 	}
 }

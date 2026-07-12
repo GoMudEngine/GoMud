@@ -88,56 +88,6 @@ func TestTryMutationActiveAtTarget_UnknownKeySkipped(t *testing.T) {
 	}
 }
 
-// TestTryMutationActiveAtTarget_ExplicitKeyFires drives the full success
-// path: mutation owned, in combat, aggro target resolvable → the trigger
-// dispatches with the resolved target (Triggered=true regardless of the
-// opposed roll's outcome) and stamina is deducted.
-func TestTryMutationActiveAtTarget_ExplicitKeyFires(t *testing.T) {
-	seedMutationTestRoom(t)
-	mob := buildMutationMob(t, 9203, 99999, mutTestRoomId)
-	mob.Character.Mutations = map[string]int{"blinding-spit": 1}
-	victim := buildMutationMob(t, 9204, 99998, mutTestRoomId)
-	_ = victim
-	mob.Character.SetAggro(0, 9204, characters.DefaultAttack)
-
-	ctx := &EvalContext{
-		InstanceId: 9203,
-		RoomId:     mutTestRoomId,
-		MobState:   NewBehaviorState(),
-	}
-	res := actTryMutationActiveAtTarget(map[string]any{"key": "blinding-spit"}, ctx)
-	if res != Success {
-		t.Fatalf("explicit key with target: expected Success, got %v", res)
-	}
-	// Blinding-spit stamina cost is 10.
-	if mob.Character.Stamina != 90 {
-		t.Errorf("expected stamina 90 (100-10), got %d", mob.Character.Stamina)
-	}
-}
-
-// TestTryMutationActiveAtTarget_NoKeysUsesOwnedSingleTarget: with no
-// key/keys param the action enumerates the mob's owned single-target
-// mutations (rarity-sorted) instead of erroring — the try_any analog for
-// mobs that evolve mutations at runtime.
-func TestTryMutationActiveAtTarget_NoKeysUsesOwnedSingleTarget(t *testing.T) {
-	seedMutationTestRoom(t)
-	mob := buildMutationMob(t, 9205, 99999, mutTestRoomId)
-	mob.Character.Mutations = map[string]int{"blinding-spit": 1}
-	victim := buildMutationMob(t, 9206, 99998, mutTestRoomId)
-	_ = victim
-	mob.Character.SetAggro(0, 9206, characters.DefaultAttack)
-
-	ctx := &EvalContext{
-		InstanceId: 9205,
-		RoomId:     mutTestRoomId,
-		MobState:   NewBehaviorState(),
-	}
-	res := actTryMutationActiveAtTarget(map[string]any{}, ctx)
-	if res != Success {
-		t.Fatalf("no keys, owned single-target mutation: expected Success, got %v", res)
-	}
-}
-
 // TestTryMutationActiveAtTarget_NoKeysIgnoresSelfAoEMutations: default
 // enumeration only considers single-target mutations; owning only self/AoE
 // ones yields Failure even with a valid target.

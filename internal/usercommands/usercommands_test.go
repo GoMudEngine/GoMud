@@ -2704,68 +2704,6 @@ func TestTrip(t *testing.T) {
 	})
 }
 
-// ─── Mutation Commands ──────────────────────────────────────────────────────
-
-func TestBlindingFlash(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-	handled, err := BlindingFlash("", user, room, 0)
-	assert.True(t, handled)
-	assert.NoError(t, err)
-}
-
-func TestBlindingSpit(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-	handled, err := BlindingSpit("", user, room, 0)
-	assert.True(t, handled)
-	assert.NoError(t, err)
-}
-
-func TestSonicShout(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-	handled, err := SonicShout("", user, room, 0)
-	assert.True(t, handled)
-	assert.NoError(t, err)
-}
-
-func TestToxicBite(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-	handled, err := ToxicBite("", user, room, 0)
-	assert.True(t, handled)
-	assert.NoError(t, err)
-}
-
-func TestHealingGel(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-	handled, err := HealingGel("", user, room, 0)
-	assert.True(t, handled)
-	assert.NoError(t, err)
-}
-
-func TestPacifismAura(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-	handled, err := PacifismAura("", user, room, 0)
-	assert.True(t, handled)
-	assert.NoError(t, err)
-}
-
 // ─── Deeper Coverage: Set sub-commands ──────────────────────────────────────
 
 func TestSetSubCommands(t *testing.T) {
@@ -4012,42 +3950,6 @@ func TestCombatCommandsInCombat(t *testing.T) {
 
 	t.Run("grapple_in_combat", func(t *testing.T) {
 		handled, err := Grapple("skeleton", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-	})
-
-	user.Character.Aggro = nil
-}
-
-// ─── Deeper Coverage: Mutation commands in combat ───────────────────────────
-
-func TestMutationCommandsInCombat(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-	user.Character.Aggro = &characters.Aggro{MobInstanceId: 100}
-
-	t.Run("toxic_bite_in_combat", func(t *testing.T) {
-		handled, err := ToxicBite("skeleton", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-	})
-
-	t.Run("sonic_shout_in_combat", func(t *testing.T) {
-		handled, err := SonicShout("skeleton", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-	})
-
-	t.Run("blinding_flash_in_combat", func(t *testing.T) {
-		handled, err := BlindingFlash("skeleton", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-	})
-
-	t.Run("blinding_spit_in_combat", func(t *testing.T) {
-		handled, err := BlindingSpit("skeleton", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
 	})
@@ -5406,31 +5308,6 @@ func TestBreakDeep(t *testing.T) {
 	t.Run("break_in_combat", func(t *testing.T) {
 		user.Character.Aggro = &characters.Aggro{MobInstanceId: 100}
 		handled, err := Break("", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-		user.Character.Aggro = nil
-	})
-}
-
-// ─── Deeper Mutations with combat ───────────────────────────────────────────
-
-func TestMutationsDeep(t *testing.T) {
-	cleanup := seedAllRegistries()
-	defer cleanup()
-
-	user, room := getTestUserAndRoom(t)
-
-	t.Run("healing_gel_self", func(t *testing.T) {
-		user.Character.Health = 50
-		handled, err := HealingGel("", user, room, 0)
-		assert.True(t, handled)
-		assert.NoError(t, err)
-		user.Character.Health = 100
-	})
-
-	t.Run("pacifism_aura_in_combat", func(t *testing.T) {
-		user.Character.Aggro = &characters.Aggro{MobInstanceId: 100}
-		handled, err := PacifismAura("", user, room, 0)
 		assert.True(t, handled)
 		assert.NoError(t, err)
 		user.Character.Aggro = nil

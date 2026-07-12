@@ -42,24 +42,19 @@ import (
 // Single-target mutations (blinding-spit, toxic-bite) are intentionally
 // excluded — they need a target-resolving primitive that does not exist
 // yet. See the file-level godoc above for the full rationale.
-var mutationTriggers = map[string]func(actions.Actor, actions.MutationOpts) actions.MutationResult{
-	"blinding-flash": actions.TriggerBlindingFlash,
-	"healing-gel":    actions.TriggerHealingGel,
-	"pacifism-aura":  actions.TriggerPacifismAura,
-	"sonic-shout":    actions.TriggerSonicShout,
-	// blinding-spit and toxic-bite intentionally excluded — they require
-	// a resolved target. try_mutation_active_at_target dispatches them
-	// (see mutationTriggersAtTarget below).
-}
+// Empty since the legacy active-ability mutations were removed (2026-07-12
+// NPC migration). The dispatch machinery is retained generically — add a row
+// when lifting a new SELF/AoE active mutation into the actions package.
+var mutationTriggers = map[string]func(actions.Actor, actions.MutationOpts) actions.MutationResult{}
 
 // mutationTriggersAtTarget maps single-target mutation key → trigger.
 // These need a resolved target actor; actTryMutationActiveAtTarget
 // resolves the mob's engaged combat target before dispatching. Add a row
 // when lifting a new single-target mutation into the actions package.
-var mutationTriggersAtTarget = map[string]func(actions.Actor, actions.MutationOpts) actions.MutationResult{
-	"blinding-spit": actions.TriggerBlindingSpit,
-	"toxic-bite":    actions.TriggerToxicBite,
-}
+// Empty since the legacy single-target active mutations were removed
+// (2026-07-12 NPC migration). Add a row when lifting a new single-target
+// active mutation into the actions package.
+var mutationTriggersAtTarget = map[string]func(actions.Actor, actions.MutationOpts) actions.MutationResult{}
 
 // actTryMutationActive fires the first available mutation in the
 // preference list. Success on a triggered mutation; Failure if no

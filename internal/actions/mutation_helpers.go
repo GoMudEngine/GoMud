@@ -8,6 +8,21 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 )
 
+// MutationOpts carries optional inputs to a mutation-active trigger (e.g. a
+// pre-resolved target actor for single-target actives). Shared by the actives
+// still in the actions package (cocoon, venom coat).
+type MutationOpts struct {
+	TargetActor Actor
+}
+
+// MutationResult reports the outcome of a mutation-active trigger for the
+// behaviortree dispatch layer.
+type MutationResult struct {
+	Triggered     bool
+	BlockReason   string
+	AffectedCount int
+}
+
 // preambleResult is the outcome of a mutation-active preamble check.
 // On OK=false, BlockReason is set to one of:
 //

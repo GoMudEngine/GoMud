@@ -62,8 +62,6 @@ var (
 		`ai-list`:         {AiList, true, true, true},      // Admin only
 		`badcommands`:     {BadCommands, true, true, true}, // Admin only
 		`bash`:            {Bash, false, true, false},
-		`blinding-flash`:  {BlindingFlash, false, true, false},
-		`blinding-spit`:   {BlindingSpit, false, true, false},
 		`bug`:             {Bug, true, true, false},
 		`biome`:           {Biome, true, true, false},
 		`broadcast`:       {Broadcast, true, true, false},
@@ -110,7 +108,6 @@ var (
 		`go`:              {Go, false, true, false},
 		`goal`:            {Goal, true, true, true}, // Admin only
 		`grapple`:         {Grapple, false, true, false},
-		`healing-gel`:     {HealingGel, false, true, false},
 		`venom-coat`:      {VenomCoat, false, true, false},
 		`cocoon`:          {Cocoon, false, true, false},
 		`help`:            {Help, true, true, false},
@@ -145,7 +142,6 @@ var (
 		`online`:          {Online, true, true, false},
 		`opinion`:         {Opinion, true, true, true}, // Admin only
 		`party`:           {Party, true, true, false},
-		`pacifism-aura`:   {PacifismAura, false, true, false},
 		`password`:        {Password, true, true, false},
 		`paz`:             {Paz, true, true, true}, // Admin only
 		`pet`:             {Pet, false, true, false},
@@ -197,7 +193,6 @@ var (
 		`skillset`:        {Skillset, false, true, true}, // Admin only
 		`shadow`:          {Shadow, false, false, false},
 		`sneak`:           {Sneak, false, false, false}, // Can't sneak in combat
-		`sonic-shout`:     {SonicShout, false, true, false},
 		`spawn`:           {Spawn, false, true, true}, // Admin only
 		`spell`:           {Spell, true, true, true},  // Admin only
 		`spells`:          {Spells, true, true, false},
@@ -214,7 +209,6 @@ var (
 		`talk`:            {Talk, false, true, false},
 		`target`:          {Target, false, true, false},
 		`teleport`:        {Teleport, true, true, true}, // Admin only
-		`toxic-bite`:      {ToxicBite, false, true, false},
 		`throw`:           {Throw, false, true, false},
 		`track`:           {Track, false, true, false},
 		`taunt`:           {Taunt, false, true, false},
