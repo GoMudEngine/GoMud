@@ -4,6 +4,7 @@ description: A winged mammal of the deep caves, navigating by echolocation.
 body_parts: [legs, eyes, mouth, skin]
 intrinsic_mutations:
   tremorsense: 1
+  keen-senses: 1
 size: small
 unarmedname: wings and fangs
 natural_attack: claws

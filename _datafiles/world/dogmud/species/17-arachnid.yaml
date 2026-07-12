@@ -7,6 +7,7 @@ description: A many-legged predator that spins silken webs and waits
 body_parts: [legs, eyes, mouth, skin]
 intrinsic_mutations:
   tremorsense: 1
+  silk-glands: 1
 buffids:
   - 29 # Night Vision
 size: small

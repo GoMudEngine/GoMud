@@ -6,6 +6,7 @@ description: A four-legged predator with keen senses and powerful jaws.
 body_parts: [legs, eyes, mouth, skin, tail]
 intrinsic_mutations:
   tail: 1
+  rending-claws: 1
 buffids:
   - 29 # Night Vision
 size: medium

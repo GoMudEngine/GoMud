@@ -6,6 +6,7 @@ description: A massive apex predator with thick hide and devastating
 body_parts: [arms, legs, eyes, mouth, skin]
 intrinsic_mutations:
   thick-hide: 1
+  dense-muscles: 1
 naturalarmor: 8
 size: large
 unarmedname: claws and teeth

@@ -8,6 +8,7 @@ description: |
 body_parts: [legs, eyes, mouth, skin, tail]
 intrinsic_mutations:
   tail: 1
+  padded-soles: 1
 buffids:
   - 29 # Night Vision (mostly nocturnal hunters)
 size: small

@@ -6,6 +6,7 @@ description: A keen-eyed bird of prey with razor talons and a hooked
 body_parts: [legs, eyes, mouth, skin]
 intrinsic_mutations:
   keen-senses: 1
+  raptor-legs: 1
 buffids:
   - 29 # Night Vision
 size: small

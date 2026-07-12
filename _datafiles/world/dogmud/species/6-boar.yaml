@@ -7,6 +7,7 @@ body_parts: [legs, eyes, mouth, skin, tail, horns]
 intrinsic_mutations:
   tail: 1
   thick-hide: 1
+  dense-muscles: 1
 naturalarmor: 5
 size: medium
 unarmedname: tusks
