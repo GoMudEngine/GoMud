@@ -8,6 +8,7 @@ description: The magma elemental combines the crushing mass of earth with
 body_parts: [skin]
 intrinsic_mutations:
   thick-hide: 1
+  chitin-plating: 1
 size: large
 unarmedname: molten slam
 natural_attack: slam

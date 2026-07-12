@@ -6,8 +6,9 @@ description: A lumbering fortress of living rock and compacted soil, the
   mass lets it knock foes sprawling without need of a shield.
 body_parts: [arms, legs, skin]
 intrinsic_mutations:
-  thick-hide: 1
+  dense-muscles: 1
   titan-growth: 1
+  thick-hide: 1
 size: large
 unarmedname: stone fists
 natural_attack: slam

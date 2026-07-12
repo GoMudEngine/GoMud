@@ -5,6 +5,9 @@ description: A roiling column of living flame, the fire elemental blazes
   and punishes those foolish enough to strike it with bare hands. The heat
   it radiates is enough to blister skin before it even attacks.
 body_parts: []
+intrinsic_mutations:
+  ether-gland: 1
+  kinetic-backlash: 1
 size: medium
 unarmedname: scorching strike
 natural_attack: slam

@@ -6,6 +6,9 @@ description: A howling vortex of wind and lightning-laced current, the air
   preternatural speed. What it lacks in durability it repays in relentless
   aggression.
 body_parts: []
+intrinsic_mutations:
+  ether-gland: 1
+  second-sight: 1
 size: medium
 unarmedname: slicing gust
 natural_attack: slam

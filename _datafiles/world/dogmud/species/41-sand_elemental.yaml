@@ -30,3 +30,6 @@ damage:
   variance: 1
 disabledslots: []  # opened so loot_pool gear can equip + drop (oasis loot fix 2026-06-02)
 body_parts: [skin]
+intrinsic_mutations:
+  padded-soles: 1
+  veiling-musk: 1
