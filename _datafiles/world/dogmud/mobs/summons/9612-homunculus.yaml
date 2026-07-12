@@ -1,0 +1,39 @@
+mobid: 9612
+zone: Summons
+archetype: fighting
+aiprofile: predator
+behavior_archetype: generic_fighter
+statpool: 120
+itemdropchance: 0
+hostile: false
+maxwander: 0
+groups:
+  - summon
+idlecommands:
+  - 'emote flexes hands that are almost, but not quite, its maker''s'
+  - ''
+  - 'emote studies its own reshaped form with a craftsman''s eye'
+  - ''
+activitylevel: 40
+combatcommands:
+  - ''
+  - ''
+character:
+  name: Homunculus
+  description: |
+    A living copy of its maker, forged rather than born -- broader,
+    harder, and stranger than the original. Its skin has the faint
+    seams of something assembled with great care, and it moves with
+    an unsettling, borrowed familiarity, as though it remembers being
+    you. Whatever craft made it, it was made to fight.
+  speciesid: 1
+  level: 1
+  stats:
+    strength:
+      training: 20
+    dexterity:
+      training: 15
+    vitality:
+      training: 20
+    perception:
+      training: 10
