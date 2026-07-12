@@ -1,0 +1,10 @@
+buffid: 109
+name: Reeling
+description: An unseen force shoved you off-balance, and you are still fighting to stay on your feet.
+triggerrate: 1 round
+triggercount: 2
+statmods:
+  dexterity: -15
+start_user_text: An unseen force slams into you, sending you staggering!
+start_room_text: "{source_plain} staggers as though struck by something unseen."
+end_user_text: You recover your footing.

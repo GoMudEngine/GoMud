@@ -1,0 +1,30 @@
+mutationid: discorporation
+name: Discorporation
+description: |
+  The change completes and your body stops being quite real. You are more
+  presence than flesh now -- blades pass through the blur of you, your gear
+  hangs ornamental on a thing that barely bothers with matter, and the raw
+  force of your will strikes harder than any weapon could.
+rarity: 10
+clusters: [ethereal]
+pole: belief
+prerequisites:
+  - id: ether-gland
+    min_level: 1
+  - id: second-sight
+    min_level: 1
+visual: A translucent, half-there figure, edges smoking away into nothing, features swimming as though seen through deep water.
+pros:
+  - type: spell_power
+    value: 0.5
+  - type: dodge_modifier
+    value: 30
+  - type: flag
+    target: see-hidden
+    value: 1
+cons:
+  - type: natural_armor
+    value: -20
+  - type: stat_flat
+    target: strength
+    value: -10

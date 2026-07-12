@@ -1,0 +1,15 @@
+mutationid: kinetic-backlash
+name: Kinetic Backlash
+description: |
+  Your will sheathes you in a taut skin of telekinetic force. Strike it and the
+  force answers -- the blow rebounds on whoever threw it, and the recoil is
+  enough to send them staggering.
+rarity: 7
+clusters: [ethereal]
+pole: belief
+visual: The air around them warps faintly, and dust lifts from the ground in a slow, deliberate spiral.
+pros:
+  - type: reflect_damage
+    value: 12
+  - type: on_reflect_buff
+    value: 109

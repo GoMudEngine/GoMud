@@ -1,0 +1,20 @@
+mutationid: second-sight
+name: Second Sight
+description: |
+  A third awareness opens behind your eyes -- you feel a blow forming before
+  the muscle moves to throw it, and nothing stays hidden from you for long.
+  Ambush becomes almost impossible against someone who sees the intent, not
+  just the body.
+rarity: 5
+clusters: [ethereal]
+pole: belief
+visual: Their gaze seems to track things a half-second before they happen, never quite meeting your eyes.
+pros:
+  - type: flag
+    target: see-hidden
+    value: 1
+  - type: dodge_modifier
+    value: 12
+  - type: stat_flat
+    target: perception
+    value: 8
