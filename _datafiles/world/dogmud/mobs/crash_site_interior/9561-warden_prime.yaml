@@ -11,7 +11,7 @@ maxwander: 0
 groups:
   - construct
   - guardian
-spawnmutations: [large]
+spawnmutations: [titan-growth]
 idlecommands:
   - 'emote holds the whole passage in the sweep of its single cold eye,
     slow and unhurried, and lets nothing pass unweighed.'

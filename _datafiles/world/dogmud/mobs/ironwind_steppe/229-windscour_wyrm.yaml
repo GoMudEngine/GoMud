@@ -11,7 +11,7 @@ groups:
 archetype: fighting
 mutationchance: 80
 spawnmutations:
-  - regenerative-tissue
+  - rapid-healing
   - thick-hide
 idlecommands:
   - 'emote coils its massive body, scales rasping against stone'

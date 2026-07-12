@@ -33,6 +33,3 @@ damage:
   variance: 2
 disabledslots: []  # opened so loot_pool gear (ice crown, sceptre) can equip + drop (oasis loot fix 2026-06-02)
 body_parts: [arms, legs, skin]
-intrinsic_mutations:
-  cold-blooded: 1
-  magical-resistance: 1

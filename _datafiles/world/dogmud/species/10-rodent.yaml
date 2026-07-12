@@ -4,7 +4,6 @@ description: A small furry creature with strong teeth.
 body_parts: [legs, eyes, mouth, skin, tail]
 intrinsic_mutations:
   tail: 1
-  small: 1
 size: small
 unarmedname: teeth and nails
 natural_attack: bite

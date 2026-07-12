@@ -13,7 +13,7 @@ groups:
   - cave-pack
 mutationchance: 90
 spawnmutations:
-  - large
+  - titan-growth
   - thick-hide
 idlecommands:
   - 'emote settles its vast weight across the court on legs that reach

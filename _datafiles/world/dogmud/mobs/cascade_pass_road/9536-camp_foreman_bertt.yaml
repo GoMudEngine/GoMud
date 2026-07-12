@@ -9,7 +9,7 @@ statpool: 30
 maxwander: 0
 groups:
   - humanoid
-spawnmutations: [iron-constitution]
+spawnmutations: [titan-growth]
 idlecommands:
   - 'emote drags a stub of chalk down a plank, marking the grain, then
     sets the chalk behind his ear and moves to the next board.'

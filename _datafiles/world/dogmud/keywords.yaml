@@ -64,8 +64,6 @@ help:
       - assist
       - attack
       - bash
-      - blinding-flash
-      - blinding-spit
       - break
       - cancel
       - cast
@@ -76,9 +74,7 @@ help:
       - flee
       - gore
       - grapple
-      - healing-gel
       - kick
-      - pacifism-aura
       - pvp
       - maul
       - pounce
@@ -88,7 +84,6 @@ help:
       - shadow
       - shoot
       - sneak
-      - sonic-shout
       - stamina
       - stand
       - steal
@@ -97,7 +92,6 @@ help:
       - taunt
       - throttle
       - throw
-      - toxic-bite
       - trip
       - warcry
     crafting:

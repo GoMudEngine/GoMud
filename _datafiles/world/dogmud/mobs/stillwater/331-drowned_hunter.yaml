@@ -13,8 +13,7 @@ groups:
 archetype: fighting
 mutationchance: 50
 spawnmutations:
-  - cold-blooded
-  - camo-skin
+  - padded-soles
 idlecommands:
   - 'emote hangs motionless in the dark water, only the pale eye-shimmer giving it away'
   - ''

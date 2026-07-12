@@ -6,7 +6,7 @@ description: A graceful, fleet-footed herbivore with large, watchful
 body_parts: [legs, eyes, mouth, skin, tail, horns]
 intrinsic_mutations:
   tail: 1
-  keen-eyes: 1
+  keen-senses: 1
 size: medium
 unarmedname: antlers
 natural_attack: gore

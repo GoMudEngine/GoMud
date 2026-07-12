@@ -9,7 +9,7 @@ maxwander: 3
 groups:
   - animal
   - predator
-spawnmutations: [chameleon-skin]
+spawnmutations: [padded-soles]
 idlecommands:
   - 'emote settles lower against the rock face, its grey-dun flanks
     going still, becoming part of the scree.'

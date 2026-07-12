@@ -9,7 +9,6 @@ maxwander: 3
 groups:
   - animal
   - canine
-spawnmutations: [rapid-metabolism]
 idlecommands:
   - 'emote circles the ground in a wide, restless arc, nose low,
     covering ground without apparent purpose.'

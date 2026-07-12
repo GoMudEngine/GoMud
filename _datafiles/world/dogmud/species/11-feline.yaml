@@ -6,7 +6,6 @@ description: A sleek, silent predator built for ambush. Felines stalk
 body_parts: [legs, eyes, mouth, skin, tail]
 intrinsic_mutations:
   tail: 1
-  night-vision: 1
 buffids:
   - 29 # Night Vision
 size: medium

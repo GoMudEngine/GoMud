@@ -6,7 +6,7 @@ description: A surging mass of animated water, the water elemental flows
   blows and wears down resistance through sheer persistence.
 body_parts: [skin]
 intrinsic_mutations:
-  regenerative-tissue: 1
+  rapid-healing: 1
 size: large
 unarmedname: watery surge
 natural_attack: slam

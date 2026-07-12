@@ -12,7 +12,7 @@ archetype: fighting
 aiprofile: aggressive
 mutationchance: 80
 spawnmutations:
-  - regenerative-tissue
+  - rapid-healing
   - thick-hide
   - dense-muscles
 idlecommands:

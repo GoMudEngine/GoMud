@@ -11,7 +11,7 @@ maxwander: 0
 groups:
   - construct
   - guardian
-spawnmutations: [large]
+spawnmutations: [titan-growth]
 idlecommands:
   - 'emote turns its single socketed eye across the dark of the vault,
     slow and unblinking, and settles it on nothing.'

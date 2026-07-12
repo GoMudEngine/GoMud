@@ -9,7 +9,7 @@ maxwander: 3
 groups:
   - animal
   - avian
-spawnmutations: [keen-eyes]
+spawnmutations: [keen-senses]
 idlecommands:
   - 'emote wheels above the crags in a long, banking arc, neither
     gaining nor losing height.'

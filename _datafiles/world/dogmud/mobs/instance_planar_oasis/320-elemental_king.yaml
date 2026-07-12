@@ -9,7 +9,7 @@ statpool: 4
 hostile: true
 groups:
   - elemental
-spawnmutations: [large]
+spawnmutations: [titan-growth]
 activitylevel: 30
 combatcommands:
   - 'emote brings both fists down in a thunderous overhead strike'

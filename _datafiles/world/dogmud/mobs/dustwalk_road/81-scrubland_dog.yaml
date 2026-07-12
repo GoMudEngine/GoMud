@@ -23,7 +23,7 @@ combatcommands:
   - ''
   - 'emote circles low to the ground, looking for an opening'
   - ''
-spawnmutations: [fast-reflexes]
+spawnmutations: [keen-senses]
 mutationchance: 10
 activitylevel: 30
 character:

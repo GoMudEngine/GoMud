@@ -9,7 +9,7 @@ maxwander: 2
 groups:
   - animal
   - predator
-spawnmutations: [fast-reflexes]
+spawnmutations: [keen-senses]
 idlecommands:
   - 'emote moves along the cliff face, picking ledges with an
     unhurried familiarity with the route.'

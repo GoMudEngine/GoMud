@@ -23,7 +23,7 @@ combatcommands:
   - 'emote drags its claws across stone as it circles for another strike'
   - ''
 activitylevel: 20
-spawnmutations: [thick-hide, cold-blooded]
+spawnmutations: [thick-hide]
 character:
   name: River Lurker
   description: |

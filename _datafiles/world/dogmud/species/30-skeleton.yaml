@@ -5,7 +5,6 @@ description: An animated framework of bones, stripped of flesh and driven by
   burning with pale fire. They feel no pain and know no fear.
 body_parts: [arms, hands, legs, eyes, mouth]
 intrinsic_mutations:
-  cold-blooded: 1
   hollow-bones: 1
 size: medium
 unarmedname: claws

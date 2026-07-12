@@ -12,7 +12,7 @@ groups:
   - animal
   - serpent
   - predator
-spawnmutations: [large]
+spawnmutations: [titan-growth]
 idlecommands:
   - 'emote lies coiled on the silt-shelf in a pale hill of itself,
     utterly still, the milk-blind head resting on the topmost

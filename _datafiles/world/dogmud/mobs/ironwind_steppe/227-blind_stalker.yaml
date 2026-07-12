@@ -15,7 +15,7 @@ groups:
 archetype: fighting
 mutationchance: 60
 spawnmutations:
-  - heightened-senses
+  - keen-senses
 idlecommands:
   - 'emote tilts its eyeless head, listening with preternatural focus'
   - ''

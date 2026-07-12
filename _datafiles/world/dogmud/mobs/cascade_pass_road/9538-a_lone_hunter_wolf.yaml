@@ -9,7 +9,7 @@ maxwander: 3
 groups:
   - animal
   - canine
-spawnmutations: [fast-reflexes]
+spawnmutations: [keen-senses]
 idlecommands:
   - 'emote raises its muzzle and tests the air in a slow, deliberate
     sweep, reading something you cannot.'

@@ -4,8 +4,6 @@ description: A grotesque flora with grasping tendrils and a tooth-lined
   maw hidden among deceptively lush foliage. It waits with
   the patience of stone for prey to wander within reach.
 body_parts: [mouth, skin]
-intrinsic_mutations:
-  photosynthetic-skin: 1
 naturalarmor: 6
 size: medium
 unarmedname: tendrils and maw

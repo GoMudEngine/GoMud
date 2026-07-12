@@ -2,8 +2,6 @@ speciesid: 99
 name: Ascended
 description: Something beyond mortal classification. The Chrysalis did not reshape this one — it answered to them.
 body_parts: [arms, hands, legs, eyes, mouth, skin]
-intrinsic_mutations:
-  magical-resistance: 1
 size: medium
 unarmedname: will
 selectable: false

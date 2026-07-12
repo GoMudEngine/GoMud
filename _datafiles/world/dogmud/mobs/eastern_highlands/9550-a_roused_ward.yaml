@@ -8,7 +8,6 @@ statpool: 300
 maxwander: 0
 groups:
   - construct
-spawnmutations: [magical-resistance]
 idlecommands:
   - 'emote drifts a slow circuit of the chamber, a mote of cold light
     with no face.'

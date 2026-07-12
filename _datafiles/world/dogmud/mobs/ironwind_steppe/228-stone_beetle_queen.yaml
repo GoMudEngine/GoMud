@@ -15,7 +15,7 @@ archetype: fighting
 mutationchance: 70
 spawnmutations:
   - dense-muscles
-  - tough-skin
+  - thick-hide
 idlecommands:
   - 'emote shifts its massive bulk, carapace scraping against stone'
   - ''

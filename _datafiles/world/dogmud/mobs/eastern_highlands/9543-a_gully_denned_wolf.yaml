@@ -9,7 +9,6 @@ maxwander: 3
 groups:
   - animal
   - canine
-spawnmutations: [night-vision]
 idlecommands:
   - 'emote lifts its muzzle to the gully dark and holds there,
     reading the air in a long, patient pull.'

@@ -8,7 +8,6 @@ statpool: 300
 maxwander: 0
 groups:
   - construct
-spawnmutations: [psychic-resistance]
 idlecommands:
   - 'emote hangs in the air at the vault''s edge, a splinter of grey
     light that does not quite hold still.'

@@ -36,6 +36,4 @@ damage:
 disabledslots: []  # opened so loot_pool gear can equip + drop (oasis loot fix 2026-06-02)
 body_parts: []
 intrinsic_mutations:
-  incorporeal: 4
-  hasted: 1
-  fast-reflexes: 1
+  keen-senses: 1

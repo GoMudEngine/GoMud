@@ -3,7 +3,7 @@ name: troll
 description: A massive creature of raw muscle and calcified growths, driven by hunger and fury.
 body_parts: [arms, hands, legs, eyes, mouth, skin]
 intrinsic_mutations:
-  regenerative-tissue: 1
+  rapid-healing: 1
 buffids:
   - 29 # Night Vision
   - 30 # Regeneration
