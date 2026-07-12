@@ -199,6 +199,21 @@ and behind the broader Wave 6 cluster authoring.
 
 ## 10. Future notes
 
+- **⚠ DOCUMENTATION DELIVERABLE — do WITH the player migration (user, 2026-07-12).**
+  The migration is a player-facing sea change; it needs heavy doc updates shipped
+  alongside it, NOT deferred:
+  - **Mutation helpfiles** (`_datafiles/world/dogmud/templates/help/*.template`
+    + `help mutations` overview) — rewrite to teach the new cluster graph:
+    clusters, poles, drift/affinity, prereq spines, apexes, re-spec phials, the
+    Chrysifier crafter path. The per-mutation templates exist but the *framing*
+    (how the system works, how to build toward a cluster) is stale.
+  - **`help dogmud`** (the in-game top-level orientation topic) — refresh to
+    describe the mutation-graph identity system as a headline feature.
+  - **Repo `README.md`** — update the project overview to reflect the
+    mutation-graph redesign (clusters/bridges/Center, use-based progression) as
+    a defining feature of DOGMud.
+  Treat these as first-class tasks in the player-migration plan, not a cleanup
+  afterthought.
 - **Reframe player titles around the cluster matrix** (user idea, 2026-07-11).
   Current titles are derived differently; a future pass could base a player's
   title (or part of it) on their dominant cluster + depth — "Master Artificer,"
