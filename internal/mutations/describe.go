@@ -99,6 +99,8 @@ func DescribeEffect(e MutationEffect) string {
 		return "A share of the harm done to you lashes back into whoever struck you."
 	case "on_reflect_buff":
 		return "Your backlash leaves a lingering affliction on whoever struck you."
+	case "shout_amp":
+		return "Your rallying shouts and war cries carry further and land with far greater force."
 	case "flag":
 		return flagPhrase(e.Target)
 	}
@@ -149,6 +151,8 @@ func flagPhrase(target string) string {
 		return "You endlessly birth and sustain a brood — and are never left without a companion."
 	case "control-immune":
 		return "Nothing can take you off your feet — you cannot be knocked down or grappled."
+	case "shout-stacking":
+		return "You can loose several battle-shouts at once — a single cry carries the force of both a rally and a war cry together."
 	}
 	return ""
 }

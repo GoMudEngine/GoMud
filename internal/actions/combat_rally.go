@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/awareness"
@@ -54,6 +55,27 @@ func ExecuteRally(actor Actor) RallyResult {
 		return RallyResult{OnCooldown: true}
 	}
 
+	bonus, duration := ApplyRallyEffect(char)
+
+	// Set combat wait if in combat (matches player + mob behavior).
+	if char.Aggro != nil {
+		char.Aggro.RoundsWaiting = 1
+	}
+
+	return RallyResult{
+		Executed: true,
+		Bonus:    bonus,
+		Duration: duration,
+	}
+}
+
+// ApplyRallyEffect computes the rally magnitude (rhetoric + charisma, then
+// shout-amp scaled) and applies the rally condition + buff to char, returning
+// the bonus and duration for the caller to fan out to allies. It performs NO
+// cooldown or activity gating — ExecuteRally owns those. Exposed so the
+// shout-stacking mutation (Resonant Larynx) can loose a rally as part of another
+// shout in the same action, under that shout's single cooldown.
+func ApplyRallyEffect(char *characters.Character) (float64, int) {
 	// Magnitude: 0.05 + 0.15 * sqrt((rhetoric/75) * (charisma/175)), clamped.
 	rhetoric := float64(char.GetSkillLevel(skills.Rhetoric))
 	charisma := float64(char.Stats.Charisma.ValueAdj)
@@ -66,17 +88,14 @@ func ExecuteRally(actor Actor) RallyResult {
 	}
 	duration := 25
 
+	// Booming Lungs (shout-amp) scales magnitude AND duration past the normal
+	// cap — deliberately, that is the point of the amplification.
+	if amp := mutations.GetShoutAmp(char.Mutations); amp > 0 {
+		bonus *= 1.0 + amp
+		duration = int(float64(duration) * (1.0 + amp))
+	}
+
 	char.AddCondition(characters.ConditionRally, duration, bonus, "rally")
 	char.AddBuff(80, false)
-
-	// Set combat wait if in combat (matches player + mob behavior).
-	if char.Aggro != nil {
-		char.Aggro.RoundsWaiting = 1
-	}
-
-	return RallyResult{
-		Executed: true,
-		Bonus:    bonus,
-		Duration: duration,
-	}
+	return bonus, duration
 }

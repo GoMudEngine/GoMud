@@ -653,6 +653,13 @@ func GetReflectRiderBuffs(owned map[string]int) []int {
 	return out
 }
 
+// GetShoutAmp returns the total shout amplification fraction from owned
+// mutations (effect type "shout_amp"). Rally/war-cry magnitude and duration are
+// scaled by (1.0 + this). Booming Lungs (Zealot) is the source.
+func GetShoutAmp(owned map[string]int) float64 {
+	return sumEffects(owned, "shout_amp", "")
+}
+
 // GetMovementSpeedModifier returns the net movement speed modifier.
 // Negative = faster (reduced stamina cost), positive = slower.
 // Apply as: cost = int(float64(cost) * (1.0 - GetMovementSpeedModifier(m)))

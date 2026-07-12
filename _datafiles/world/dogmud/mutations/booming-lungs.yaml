@@ -12,3 +12,5 @@ pros:
   - type: stat_multiplier
     target: charisma
     value: 0.12
+  - type: shout_amp
+    value: 0.30

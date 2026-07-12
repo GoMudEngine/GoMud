@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
@@ -61,6 +62,33 @@ func Warcry(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 	// Apply to caster's own companions in the room
 	applyWarcryToCompanions(user, room, result.Bonus, result.Duration)
+
+	// Resonant Larynx (shout-stacking): the same breath also looses a rally,
+	// under the war-cry cooldown already paid. ApplyRallyEffect applies the
+	// rally to the caster; fan it to the same allies the war cry reached.
+	if mutations.HasMutationFlag(user.Character.Mutations, "shout-stacking") {
+		rb, rd := actions.ApplyRallyEffect(user.Character)
+		user.SendText(messaging.CategorySystem, `<ansi fg="cyan-bold">Your layered voice weaves a rallying cry into the same breath!</ansi>`)
+		room.SendTextVisual(messaging.CategoryRally,
+			fmt.Sprintf(`<ansi fg="cyan-bold"><ansi fg="username">%s</ansi>'s cry carries a rally within it!</ansi>`, user.Character.Name),
+			user.UserId,
+		)
+		if party := parties.Get(user.UserId); party != nil {
+			for _, memberId := range party.GetMembers() {
+				if memberId == user.UserId {
+					continue
+				}
+				memberUser := users.GetByUserId(memberId)
+				if memberUser == nil || memberUser.Character.RoomId != user.Character.RoomId {
+					continue
+				}
+				memberUser.Character.AddCondition(characters.ConditionRally, rd, rb, "rally")
+				memberUser.Character.AddBuff(80, false)
+				applyRallyToCompanions(memberUser, room, rb, rd)
+			}
+		}
+		applyRallyToCompanions(user, room, rb, rd)
+	}
 
 	// Skill and stat progression
 	// OnSkillUse handles rhetoric progression + charisma stat use internally.
