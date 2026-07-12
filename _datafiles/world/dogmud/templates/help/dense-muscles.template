@@ -3,12 +3,13 @@
 Your muscles condense into cables of extraordinary power. Strength
 surges, but endurance suffers.
 
-<ansi fg="yellow">Type:</ansi>     Passive
+<ansi fg="yellow">Type:</ansi>     Passive (Colossus)
 <ansi fg="yellow">Rarity:</ansi>   Uncommon
 
 <ansi fg="yellow">Benefits:</ansi>
   Moderately increased strength — your condensed muscle fibers
-  generate extraordinary force
+  generate extraordinary force — and you can haul far heavier loads
+  than your frame suggests
 
 <ansi fg="yellow">Drawbacks:</ansi>
   Slightly slower stamina recovery — the dense tissue demands more

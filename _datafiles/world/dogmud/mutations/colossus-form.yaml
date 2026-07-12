@@ -1,0 +1,31 @@
+mutationid: colossus-form
+name: Colossus Form
+description: |
+  The changes complete themselves and never recede. You are a giant now --
+  mountainous, unstoppable, each blow landing with the weight of a falling
+  wall. The ground seems to brace itself when you plant your feet, and lesser
+  things scatter before you.
+rarity: 9
+clusters: [colossus]
+pole: body
+prerequisites:
+  - id: dense-muscles
+    min_level: 1
+  - id: titan-growth
+    min_level: 1
+visual: A towering giant of corded muscle and heavy bone, each footfall landing with the weight of a siege engine.
+pros:
+  - type: stat_multiplier
+    target: strength
+    value: 0.30
+  - type: health_multiplier
+    value: 0.25
+  - type: flag
+    target: control-immune
+    value: 1
+  - type: aggro_magnet
+    target: aggro
+    value: 1.0
+cons:
+  - type: dodge_modifier
+    value: -18

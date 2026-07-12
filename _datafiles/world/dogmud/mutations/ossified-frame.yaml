@@ -1,0 +1,21 @@
+mutationid: ossified-frame
+name: Ossified Frame
+description: |
+  Your skeleton thickens and fuses into a single braced structure, rooted
+  through the hips like an old oak. Nothing short of a landslide can take you
+  off your feet -- but the same rigidity makes you a fraction slower to slip a
+  blow.
+rarity: 5
+clusters: [colossus]
+pole: body
+visual: They stand with an immovable, planted heaviness, as though bolted to the ground beneath them.
+pros:
+  - type: flag
+    target: control-immune
+    value: 1
+  - type: stat_flat
+    target: vitality
+    value: 10
+cons:
+  - type: dodge_modifier
+    value: -8

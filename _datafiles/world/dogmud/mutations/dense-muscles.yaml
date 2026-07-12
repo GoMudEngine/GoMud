@@ -1,17 +1,22 @@
 mutationid: dense-muscles
 name: Dense Muscles
-description: Your muscles condense into cables of extraordinary power. Strength surges, but endurance suffers.
-rarity: 4
-# PROVISIONAL pull - re-curate with the mutation-graph redesign.
-archetype_pull: tank_taunter
-visual: Their musculature is visibly denser and more compact than normal.
+description: |
+  Your muscles condense into cables of extraordinary power. Raw strength
+  surges and you can shoulder loads that would buckle a normal frame -- but
+  the dense tissue burns through your endurance faster.
+rarity: 3
+clusters: [colossus]
+pole: body
 conflicts:
   - hollow-bones
-pro:
-  type: stat_multiplier
-  target: strength
-  value: 0.15
-con:
-  type: stamina_regen_multiplier
-  target: ""
-  value: -0.10
+visual: Their musculature is visibly denser and more compact than normal.
+pros:
+  - type: stat_multiplier
+    target: strength
+    value: 0.15
+  - type: carry_capacity_multiplier
+    value: 0.20
+cons:
+  - type: stamina_regen_multiplier
+    target: ""
+    value: -0.10
