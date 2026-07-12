@@ -1,0 +1,14 @@
+buffid: 106
+name: Searing Backlash
+description: Molten backlash clings to your skin, searing you from the outside in.
+triggerrate: 1 round
+triggercount: 3
+tick_pool: health
+tick_percent: -0.05
+tick_variance: 0.03
+tick_min: 2
+start_user_text: Molten backlash splashes across you and clings, searing!
+start_room_text: "{source_plain} recoils, skin blistering with molten backlash."
+trigger_user_text: The clinging heat burns deeper.
+trigger_room_text: "{source_plain} grimaces as the molten residue burns on."
+end_user_text: The searing heat finally fades from your skin.

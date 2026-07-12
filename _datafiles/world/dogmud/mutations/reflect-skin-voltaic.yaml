@@ -16,3 +16,5 @@ pros:
     value: 18
   - type: dodge_modifier
     value: 5
+  - type: on_reflect_buff
+    value: 108

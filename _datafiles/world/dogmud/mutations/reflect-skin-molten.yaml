@@ -16,3 +16,5 @@ pros:
     value: 18
   - type: magical_damage_reduction
     value: 0.05
+  - type: on_reflect_buff
+    value: 106

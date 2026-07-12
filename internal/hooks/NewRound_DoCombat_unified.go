@@ -366,6 +366,12 @@ func applyCombatDamageBonuses(atk, def actions.Actor, res *combat.AttackResult) 
 		if returnDmg > 0 {
 			atkChar.Health -= returnDmg
 			emitReturnDamageText(atk, def, returnDmg)
+			// Reflect-Skin flavor riders: the backlash also afflicts the
+			// attacker (Molten burn DoT, Frostbite chill, Voltaic shock).
+			// Route through the actor wrapper so start text + GMCP fire.
+			for _, buffId := range mutations.GetReflectRiderBuffs(defChar.Mutations) {
+				atk.AddBuff(buffId, "mutation")
+			}
 		}
 	}
 

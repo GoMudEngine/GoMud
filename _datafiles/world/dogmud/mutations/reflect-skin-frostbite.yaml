@@ -16,3 +16,5 @@ pros:
     value: 18
   - type: natural_armor
     value: 5
+  - type: on_reflect_buff
+    value: 107

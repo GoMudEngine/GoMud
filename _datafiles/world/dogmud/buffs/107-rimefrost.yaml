@@ -1,0 +1,10 @@
+buffid: 107
+name: Rimefrost
+description: A biting frost numbs your limbs, slowing every movement.
+triggerrate: 1 round
+triggercount: 4
+statmods:
+  dexterity: -18
+start_user_text: Numbing frost creeps into your limbs, stiffening them.
+start_room_text: "{source_plain} stiffens as frost bites into their limbs."
+end_user_text: Warmth returns and the frost releases your limbs.
