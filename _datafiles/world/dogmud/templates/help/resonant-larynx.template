@@ -1,0 +1,14 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Resonant Larynx</ansi> mutation
+
+Your throat grows a second, layered set of vocal cords that can sound
+more than one note at once.
+
+<ansi fg="yellow">Type:</ansi>     Passive (Ironhide / Zealot bridge)
+<ansi fg="yellow">Rarity:</ansi>   Rare
+
+<ansi fg="yellow">Benefits:</ansi>
+  When you rally or raise a war cry, both roll out together in a single
+  shout — you loose the force of both in one breath — and your carrying
+  voice lends weight to your presence
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

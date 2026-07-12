@@ -1,0 +1,16 @@
+mutationid: resonant-larynx
+name: Resonant Larynx
+description: |
+  Your throat grows a second, layered set of vocal cords that can sound more
+  than one note at once. When you raise your voice you no longer have to choose
+  -- a rally and a war cry roll out together in a single, overwhelming shout.
+rarity: 6
+clusters: [ironhide, zealot]
+visual: Their throat ripples with a strange doubled motion when they speak, and their voice carries an eerie, chordal undertone.
+pros:
+  - type: flag
+    target: shout-stacking
+    value: 1
+  - type: stat_flat
+    target: charisma
+    value: 6
