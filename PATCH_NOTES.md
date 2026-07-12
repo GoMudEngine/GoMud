@@ -1,5 +1,22 @@
 # DOGMud Patch Notes
 
+## 2026-07-12 — The broodmaster's path: the Manifester
+
+- **Summoning has a mutation home now.** Those who bind creatures to their side
+  can grow into true broodmasters as the Chrysalis reshapes them.
+- **Sustaining Presence** — the conviction it costs to keep a companion at your
+  side eases the deeper this grows, so you can field more of your brood at once.
+- **Hive Mind** — a shared nerve-web lets you hold more companions in mind than
+  any lone summoner could.
+- **Symbiotic Bond** (and the Spirit Tether and Beast Bond bindings) — your vigor
+  flows out along the bond; the creatures you keep fight harder and endure longer
+  for being yours. (This strengthens them in its own right — it does not simply
+  double up the rally and warcry effects your shouts already share with them.)
+- **Brood Mother** — the apex of the path: sustaining your brood costs almost
+  nothing, you can hold a whole swarm, and should you ever be left with no
+  companion at all, your body simply births another. You are never without your
+  children.
+
 ## 2026-07-11 — The maker's path: the Chrysifier
 
 - **Crafting now shapes what the Chrysalis makes of you.** A new path has opened
