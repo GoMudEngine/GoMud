@@ -7,6 +7,7 @@ description: A massive construct of stitched corpse-parts, the flesh golem is
   like a bog soaks rain.
 body_parts: [arms, hands, legs, eyes, mouth, skin]
 intrinsic_mutations:
+  dense-muscles: 1
   titan-growth: 1
 size: large
 unarmedname: fists

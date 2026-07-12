@@ -5,6 +5,10 @@ description: Where a wraith strikes with raw willpower, the spectre works throug
   the will to fight. Ancient and calculating, spectres are the most feared of
   the lesser undead for what they take from the spirit rather than the flesh.
 body_parts: []
+intrinsic_mutations:
+  ether-gland: 2
+  second-sight: 1
+  discorporation: 1
 size: medium
 unarmedname: presence
 selectable: false

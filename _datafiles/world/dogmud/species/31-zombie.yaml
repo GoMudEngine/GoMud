@@ -4,6 +4,8 @@ description: A rotting corpse reanimated by necromantic energy, driven by a
   mindless hunger. Zombies are ponderous but terrifyingly strong, their decaying
   flesh absorbing punishment that would fell a living creature. They do not stop.
 body_parts: [arms, hands, legs, eyes, mouth, skin]
+intrinsic_mutations:
+  regrowth: 1
 size: medium
 unarmedname: fists
 selectable: false

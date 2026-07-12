@@ -6,7 +6,9 @@ description: A predator in the truest sense — stronger than any mortal, faster
   the power of the will, and a bite that drains more than blood.
 body_parts: [arms, hands, legs, eyes, mouth, skin]
 intrinsic_mutations:
-  rapid-healing: 1
+  padded-soles: 1
+  compound-eyes: 1
+  venom-glands: 1
 size: medium
 unarmedname: claws
 natural_attack: claws
