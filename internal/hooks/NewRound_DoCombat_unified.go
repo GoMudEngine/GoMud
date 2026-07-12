@@ -360,6 +360,7 @@ func applyCombatDamageBonuses(atk, def actions.Actor, res *combat.AttackResult) 
 	if sp := species.GetSpecies(defChar.SpeciesId); sp != nil {
 		returnPct += sp.ReturnDamage
 	}
+	returnPct += int(mutations.GetReflectDamage(defChar.Mutations)) // Ironhide Reflect Skin
 	if returnPct > 0 {
 		returnDmg := int(float64(res.DamageToTarget) * float64(returnPct) / 100.0)
 		if returnDmg > 0 {

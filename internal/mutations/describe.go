@@ -84,6 +84,8 @@ func DescribeEffect(e MutationEffect) string {
 		return "You can haul far more than your frame suggests."
 	case "companion_empowerment":
 		return "The bond you share with your companions makes them fight harder at your side."
+	case "reflect_damage":
+		return "A share of the harm done to you lashes back into whoever struck you."
 	case "flag":
 		return flagPhrase(e.Target)
 	}
