@@ -6,7 +6,7 @@ description: An amorphous blob of translucent, corrosive gel that oozes
   they engulf.
 body_parts: [skin]
 intrinsic_mutations:
-  rapid-healing: 1
+  regrowth: 1
 naturalarmor: 12
 size: medium
 unarmedname: pseudopods

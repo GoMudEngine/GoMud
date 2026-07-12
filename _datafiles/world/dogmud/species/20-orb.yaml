@@ -1,6 +1,8 @@
 speciesid: 20
 name: orb
 description: A sphere of pure energy
+intrinsic_mutations:
+  ether-gland: 1
 size: medium
 unarmedname: energy
 damage:

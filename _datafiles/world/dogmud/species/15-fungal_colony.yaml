@@ -5,6 +5,9 @@ description: A sprawling mass of interwoven mycelium and fruiting bodies
   releasing clouds of toxic spores and lashing with fibrous
   tendrils.
 body_parts: [skin]
+intrinsic_mutations:
+  sticky-secretion: 1
+  dissonance-organ: 1
 naturalarmor: 4
 size: medium
 unarmedname: spore tendrils
