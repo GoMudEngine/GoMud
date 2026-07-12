@@ -1,0 +1,10 @@
+buffid: 105
+name: Empowered by Bond
+description: The bond with your manifester lends this companion greater strength and resilience.
+triggerrate: 1 round
+triggercount: 3
+statmods:
+  strength: 10
+  vitality: 10
+start_user_text: You feel your bond-master's will surge through you.
+end_user_text: The bond's strength ebbs away.
