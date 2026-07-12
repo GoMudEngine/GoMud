@@ -1,0 +1,14 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Zealous Conviction</ansi> mutation
+
+An unshakeable certainty settles into you, bone-deep — your words
+strike like blows and cling where they land.
+
+<ansi fg="yellow">Type:</ansi>     Passive (Zealot)
+<ansi fg="yellow">Rarity:</ansi>   Rare
+
+<ansi fg="yellow">Benefits:</ansi>
+  Your heightened presence drives your conviction-channel attacks harder
+  and makes them cling, and no jeer or dread can shake your resolve —
+  you shrug off blows aimed at your conviction
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

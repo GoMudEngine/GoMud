@@ -1,0 +1,16 @@
+mutationid: zealous-conviction
+name: Zealous Conviction
+description: |
+  An unshakeable certainty settles into you, bone-deep. Your words strike like
+  blows and cling where they land, and no jeer or dread the enemy throws back
+  can make you doubt yourself for an instant.
+rarity: 5
+clusters: [zealot]
+pole: belief
+visual: They carry themselves with a burning, absolute certainty that is difficult to look at directly.
+pros:
+  - type: stat_flat
+    target: charisma
+    value: 12
+  - type: conviction_damage_reduction
+    value: 0.20

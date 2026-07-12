@@ -1,0 +1,25 @@
+mutationid: radiant-avatar
+name: Radiant Avatar
+description: |
+  The change finishes and you become a beacon that never dims. Those who fight
+  beside you are bathed in an unrelenting exaltation, the enemy cannot tear
+  their eyes or their fear away from you, and nothing anyone says or does can
+  make you flinch.
+rarity: 9
+clusters: [zealot]
+pole: belief
+prerequisites:
+  - id: commanding-presence
+    min_level: 1
+  - id: zealous-conviction
+    min_level: 1
+visual: A steady, sourceless radiance haloes them, and the eye is dragged to them the way it is dragged to a fire in the dark.
+pros:
+  - type: aura_ally_buff
+    value: 113
+  - type: aggro_magnet
+    target: aggro
+    value: 1.5
+  - type: stat_flat
+    target: charisma
+    value: 15

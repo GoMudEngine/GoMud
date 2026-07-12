@@ -1,0 +1,14 @@
+mutationid: booming-lungs
+name: Booming Lungs
+description: |
+  Your chest deepens and a second set of resonating chambers grows behind your
+  ribs. When you raise your voice it carries -- a rally, a war cry, a taunt
+  rolls out with a force that fills a room and rattles the people in it.
+rarity: 5
+clusters: [zealot]
+pole: belief
+visual: Their voice carries an impossible depth and volume, felt in the chest as much as heard.
+pros:
+  - type: stat_multiplier
+    target: charisma
+    value: 0.12

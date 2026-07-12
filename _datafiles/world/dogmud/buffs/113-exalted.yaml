@@ -1,0 +1,11 @@
+buffid: 113
+name: Exalted
+description: A radiant presence blazes beside you, lifting your body and spirit beyond their ordinary limits.
+triggerrate: 1 round
+triggercount: 2
+statmods:
+  strength: 10
+  willpower: 10
+  charisma: 8
+start_user_text: A radiant presence blazes at your side — you feel lifted beyond yourself.
+end_user_text: The radiant presence dims, and you settle back into yourself.
