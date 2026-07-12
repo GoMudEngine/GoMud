@@ -1,0 +1,18 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="yellow">Molten Skin</ansi> mutation
+
+Your flesh runs hot -- blows against you are answered with a searing
+backlash, and the cold barely touches you.
+
+<ansi fg="yellow">Type:</ansi>     Passive (one flavor of Reflect Skin)
+<ansi fg="yellow">Rarity:</ansi>   Rare
+
+<ansi fg="yellow">Benefits:</ansi>
+  A share of the harm done to you lashes back into whoever struck you,
+  and you shrug off some magical and cold harm
+
+<ansi fg="yellow">Note:</ansi>
+  Reflect Skin comes in several forms; which one the Chrysalis gives
+  you is decided by the moons on the night it wakes. They cannot be
+  held together.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

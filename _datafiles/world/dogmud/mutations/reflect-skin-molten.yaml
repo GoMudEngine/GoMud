@@ -1,0 +1,18 @@
+mutationid: reflect-skin-molten
+name: Molten Skin
+description: |
+  Your flesh runs hot, veined with something like slow lava. Blows against you
+  are answered by a searing backlash, and the cold barely touches you. Which
+  form this reflex took was decided by the moons the night it woke; yours came
+  in under a burning sky.
+rarity: 5
+clusters: [ironhide]
+pole: body
+moon_flavor: 2
+conflicts: [reflect-skin-barbed, reflect-skin-frostbite, reflect-skin-voltaic]
+visual: A faint red glow pulses beneath their skin, and the air around them shimmers with heat.
+pros:
+  - type: reflect_damage
+    value: 18
+  - type: magical_damage_reduction
+    value: 0.05

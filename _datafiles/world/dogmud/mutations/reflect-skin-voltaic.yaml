@@ -1,0 +1,18 @@
+mutationid: reflect-skin-voltaic
+name: Voltaic Skin
+description: |
+  A charge crawls constantly across your skin. Strike it and it strikes back in
+  a snapping arc, and the same current keeps your own reflexes wound tight and
+  fast. Which form this reflex took was decided by the moons the night it woke;
+  yours came in under a storm-lit sky.
+rarity: 5
+clusters: [ironhide]
+pole: body
+moon_flavor: 4
+conflicts: [reflect-skin-barbed, reflect-skin-molten, reflect-skin-frostbite]
+visual: Faint blue sparks crawl and snap across their skin, standing their hair on end.
+pros:
+  - type: reflect_damage
+    value: 18
+  - type: dodge_modifier
+    value: 5
