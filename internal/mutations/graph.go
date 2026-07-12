@@ -15,6 +15,8 @@ var KnownClusters = map[string]bool{
 	"colossus": true, "ironhide": true, "zealot": true, "manifester": true,
 	"ethereal": true, "weaver": true, "trickster": true, "stalker": true,
 	"ravener": true, "generalist": true,
+	// Chrysifier — the crafter cluster in the Generalist center (crafting-fed).
+	"chrysifier": true,
 }
 
 var knownPoles = map[string]bool{"": true, "body": true, "belief": true}
@@ -58,6 +60,8 @@ var skillClusters = map[string][]string{
 	"manifestation":  {"manifester"},
 	// Crafting skills all drift toward the Chrysifier (the crafter cluster in
 	// the Generalist center). This is the first cluster fed by crafting use.
+	// (No "foraging" entry — that skill was merged into "search"; adding search
+	// here would wrongly pull rogue-ish hidden-detection into the crafter drift.)
 	"blacksmithing": {"chrysifier"},
 	"alchemy":       {"chrysifier"},
 	"tailoring":     {"chrysifier"},
@@ -65,7 +69,6 @@ var skillClusters = map[string][]string{
 	"jewelcrafting": {"chrysifier"},
 	"enchanting":    {"chrysifier"},
 	"salvage":       {"chrysifier"},
-	"foraging":      {"chrysifier"},
 }
 
 // OwnedGravity returns each cluster's pull from currently-owned mutations:

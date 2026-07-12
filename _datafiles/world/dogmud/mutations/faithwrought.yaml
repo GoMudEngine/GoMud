@@ -1,0 +1,18 @@
+mutationid: faithwrought
+name: Faithwrought
+description: |
+  Your conviction in your own craft has become a physical force. You believe a
+  thing into being finer than your hands alone could manage, and it comes out
+  finer -- and your reshaped frame bears loads that would break another's back,
+  the better to carry everything a maker needs.
+rarity: 6
+clusters: [chrysifier]
+prerequisites:
+  - id: provident-hands
+    min_level: 1
+visual: There is an unshakable certainty in how they handle their tools, and their frame is broadened and reinforced for burden.
+pros:
+  - type: craft_quality_bonus
+    value: 0.15
+  - type: carry_capacity_multiplier
+    value: 0.50

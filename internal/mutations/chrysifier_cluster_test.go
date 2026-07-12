@@ -4,7 +4,7 @@ import "testing"
 
 func TestSkillClusters_Chrysifier(t *testing.T) {
 	crafts := []string{"blacksmithing", "alchemy", "tailoring", "cooking",
-		"jewelcrafting", "enchanting", "salvage", "foraging"}
+		"jewelcrafting", "enchanting", "salvage"}
 	for _, s := range crafts {
 		cls := ClustersForSkill(s)
 		if len(cls) != 1 || cls[0] != "chrysifier" {

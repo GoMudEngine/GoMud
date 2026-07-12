@@ -1,0 +1,17 @@
+mutationid: provident-hands
+name: Provident Hands
+description: |
+  The Chrysalis has tuned your hands and eyes to the getting and making of
+  things. You spot forageables others walk past, strip salvage down to its last
+  usable scrap, and waste almost nothing at the workbench. A maker's foothold --
+  self-sufficiency made flesh.
+rarity: 3
+clusters: [chrysifier]
+visual: Their fingertips are calloused and stained with a dozen crafts, and their eyes never stop reading the ground.
+pros:
+  - type: forage_yield_multiplier
+    value: 0.25
+  - type: salvage_yield_bonus
+    value: 0.20
+  - type: craft_material_discount
+    value: 0.15

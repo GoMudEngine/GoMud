@@ -1,0 +1,17 @@
+mutationid: walking-chrysalis
+name: Walking Chrysalis
+description: |
+  Your body has become its own workshop. Glands secrete solvents and fluxes,
+  hardened ridges serve as anvil and vise, and a dozen fine manipulators fold
+  out at need. You no longer require a forge, a loom, or a bench of any kind --
+  you carry the whole craft inside you, and can make anything, anywhere.
+rarity: 6
+clusters: [chrysifier]
+prerequisites:
+  - id: provident-hands
+    min_level: 1
+visual: Fine tool-like ridges and retractable manipulators lie flush against their forearms, ready to unfold.
+pros:
+  - type: flag
+    target: portable-workshop
+    value: 1
