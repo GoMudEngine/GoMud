@@ -134,6 +134,8 @@ func flagPhrase(target string) string {
 		return "You can keep more companions at your side at once."
 	case "brood-mother":
 		return "You endlessly birth and sustain a brood — and are never left without a companion."
+	case "control-immune":
+		return "Nothing can take you off your feet — you cannot be knocked down or grappled."
 	}
 	return ""
 }

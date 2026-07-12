@@ -4,6 +4,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/position"
 )
@@ -77,10 +78,15 @@ func ExecuteSkillMove(p SkillMoveParams) SkillMoveResult {
 	result.Damage = baseDamage
 
 	if attackSuccess {
-		// Knockdown roll — standardized to dice.RollStat(50)
-		knockdownRoll := dice.RollStat(50)
-		if knockdownRoll.Value < float64(p.KnockdownChance) {
-			result.KnockedDown = true
+		// Knockdown roll — standardized to dice.RollStat(50). Control-immune
+		// defenders (Ironhide's Living Carapace, Colossus's Ossified Frame) are
+		// immovable and cannot be knocked down — the blow still lands and deals
+		// damage, it just doesn't take them off their feet.
+		if !mutations.IsControlImmune(p.Defender.Mutations) {
+			knockdownRoll := dice.RollStat(50)
+			if knockdownRoll.Value < float64(p.KnockdownChance) {
+				result.KnockedDown = true
+			}
 		}
 
 		// Apply damage

@@ -9,6 +9,7 @@ repairs itself endlessly.
 
 <ansi fg="yellow">Benefits:</ansi>
   Tremendous natural armor, blows that strike the carapace are hurled
-  back with a vengeance, and enemies are drawn to attack you first
+  back with a vengeance, you cannot be knocked down or grappled, and
+  enemies are drawn to attack you first
 
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help mutations</ansi>

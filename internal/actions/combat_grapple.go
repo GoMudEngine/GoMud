@@ -5,6 +5,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -85,6 +86,11 @@ func ExecuteGrapple(actor Actor) GrappleResult {
 
 	// Grapple immunity (ethereal creatures, fire elementals, etc.)
 	if sp := species.GetSpecies(target.Char.SpeciesId); sp != nil && sp.GrappleImmune {
+		return GrappleResult{Target: target, GrappleImmune: true}
+	}
+	// Control-immune (immovable) targets cannot be grappled — Ironhide's Living
+	// Carapace, Colossus's Ossified Frame.
+	if mutations.IsControlImmune(target.Char.Mutations) {
 		return GrappleResult{Target: target, GrappleImmune: true}
 	}
 

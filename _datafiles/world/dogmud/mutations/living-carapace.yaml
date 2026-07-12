@@ -3,8 +3,8 @@ name: Living Carapace
 description: |
   Your whole body seals inside a thick, living shell that grows and repairs
   itself endlessly. Blows barely reach you, and what does strike the carapace is
-  hurled back with a vengeance -- and everything nearby wants to hit you first.
-  (An even deeper hardening, that nothing can move you, is still to come.)
+  hurled back with a vengeance. Nothing can take you off your feet, and
+  everything nearby wants to hit you first.
 rarity: 9
 clusters: [ironhide]
 pole: body
@@ -21,3 +21,6 @@ pros:
     value: 15
   - type: aggro_magnet
     value: 1.0
+  - type: flag
+    target: control-immune
+    value: 1
