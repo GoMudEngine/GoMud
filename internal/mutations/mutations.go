@@ -695,18 +695,6 @@ func GetMutationLevel(owned map[string]int, id string) int {
 	return owned[id]
 }
 
-// IsAdrenalSurgeActive returns true when the character has the adrenaline-surge
-// mutation and their current HP is below 25% of max.
-func IsAdrenalSurgeActive(owned map[string]int, currentHP, maxHP int) bool {
-	if !HasMutation(owned, "adrenaline-surge") {
-		return false
-	}
-	if maxHP <= 0 {
-		return false
-	}
-	return currentHP*4 < maxHP
-}
-
 // ─── Stage 2.2a: Incorporeal mutation helpers ────────────────────────────────
 
 // GetGearEffectivenessLoss returns the total fraction (0.0–1.0)

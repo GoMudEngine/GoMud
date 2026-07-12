@@ -254,37 +254,6 @@ func TestGetWeightedPool(t *testing.T) {
 	}
 }
 
-func TestIsAdrenalSurgeActive(t *testing.T) {
-	seedRegistry()
-
-	owned := buildOwned("adrenaline-surge", 1)
-	noOwned := map[string]int{}
-
-	tests := []struct {
-		name      string
-		owned     map[string]int
-		currentHP int
-		maxHP     int
-		expected  bool
-	}{
-		{"no mutation", noOwned, 10, 100, false},
-		{"at exactly 25%", owned, 25, 100, false}, // 25*4 = 100, NOT < 100
-		{"just below 25%", owned, 24, 100, true},  // 24*4 = 96 < 100
-		{"full HP", owned, 100, 100, false},
-		{"zero maxHP guard", owned, 0, 0, false},
-		{"1 HP out of 100", owned, 1, 100, true},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := IsAdrenalSurgeActive(tt.owned, tt.currentHP, tt.maxHP)
-			if got != tt.expected {
-				t.Errorf("IsAdrenalSurgeActive(%d/%d) = %v, want %v", tt.currentHP, tt.maxHP, got, tt.expected)
-			}
-		})
-	}
-}
-
 func TestRollAcquisition(t *testing.T) {
 	seedRegistry()
 

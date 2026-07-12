@@ -343,17 +343,6 @@ func applyCombatDamageBonuses(atk, def actions.Actor, res *combat.AttackResult) 
 		res.DamageToTarget += bonusDmg
 	}
 
-	// Adrenaline Surge (mutation).
-	if mutations.IsAdrenalSurgeActive(atkChar.Mutations, atkChar.Health, atkChar.HealthMax.Value) {
-		if surgeBonus := mutations.GetAdrenalSurgeBonus(atkChar.Mutations); surgeBonus > 0 {
-			bonusDmg := int(math.Round(float64(res.DamageToTarget) * surgeBonus))
-			if bonusDmg < 1 {
-				bonusDmg = 1
-			}
-			defChar.Health -= bonusDmg
-			res.DamageToTarget += bonusDmg
-		}
-	}
 
 	// Return damage (species + equipment).
 	returnPct := defChar.StatMod("return_damage")
