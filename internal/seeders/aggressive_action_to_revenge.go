@@ -1,7 +1,9 @@
 package seeders
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/crimes"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 )
@@ -42,20 +44,28 @@ func aggressiveActionToRevenge(event events.Event) {
 		return
 	}
 
+	// Gate on the VICTIM's faction, mirroring the (already faction-gated) crime
+	// record: attacking a factionless target — a training dummy, wildlife, a
+	// monster, an unaligned tutorial mob — is not a social crime, so no bystander
+	// reacts. (Fixes the drillmaster who fled the sparring dummy he assigned.)
+	victimFactions := registeredFactionIds(attackedMob.Groups, func(g string) bool {
+		return factions.GetDefinition(g) != nil
+	})
+	if len(victimFactions) == 0 {
+		return
+	}
+
 	// Classify and respond for the attacked mob at victim priority.
 	seedWitnessResponse(attackedMob, pa.UserId, aggressiveVictimRevengePriority)
 
-	// Seed revenge into non-hostile witnesses sharing the same room at
-	// witness priority (lower than the direct victim — they aren't the
-	// immediate target of the attack).
+	// Seed revenge into witnesses who SHARE a faction with the victim (the same
+	// rule crimes.WitnessesInRoom applies), at witness priority. Skip AutoAggro
+	// witnesses — they already attack on sight, so revenge is redundant noise.
 	room := rooms.LoadRoom(attackedMob.Character.RoomId)
 	if room == nil {
 		return
 	}
-	for _, witnessInstId := range room.GetMobs() {
-		if witnessInstId == attackedMob.InstanceId {
-			continue
-		}
+	for _, witnessInstId := range crimes.WitnessesInRoom(victimFactions, room, attackedMob.InstanceId) {
 		witness := mobs.GetInstance(witnessInstId)
 		if witness == nil || witness.AutoAggro {
 			continue
