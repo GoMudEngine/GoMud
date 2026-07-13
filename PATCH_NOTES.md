@@ -1,5 +1,25 @@
 # DOGMud Patch Notes
 
+## 2026-07-13 — The change quickens (mutation & progression tuning)
+
+- **Every path is walkable now.** The tank, the trickster, and the weaver-of-
+  control grow from how you actually fight — soaking blows, slipping them, or
+  binding your foes — so those ways of being are reachable by play, not just in
+  theory.
+- **Change comes faster.** The Chrysalis reshapes you far more readily than
+  before — you'll feel your body turning as you fight, not once in a blue moon.
+  You can also carry a deeper set of mutations at once.
+- **Each step matters, and mastery is a leap.** Deepening a mutation is a real
+  upgrade every rank, and pushing one to its limit is a dramatic jump in power —
+  worth the long road. An apex transformation is a true finish line: once you
+  become it, you *are* it, complete.
+- **You grow quicker.** Your stats climb noticeably faster through use, so your
+  character comes into their strength without the old grind.
+- *(Under the hood: behavior-based cluster drift for Ironhide/Trickster/Weaver;
+  per-mutation rank ceilings — apexes are rank-1; a non-linear deepening curve;
+  ~8× mutation acquisition + higher mutation cap; ~2.25× stat progression; a
+  magnitude consistency sweep + guard. Final values are tuned in live playtest.)*
+
 ## 2026-07-12 — The Chrysalis remade: the mutation graph
 
 The single largest change to DOGMud since launch. The Chrysalis is no longer a
