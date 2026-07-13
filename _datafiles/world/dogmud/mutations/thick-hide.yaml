@@ -8,7 +8,7 @@ requires_body_parts: [skin]
 visual: Their skin has a thick, leathery quality with visible ridges along the forearms and shoulders.
 pros:
   - type: natural_armor
-    value: 40
+    value: 15
 cons:
   - type: stat_multiplier
     target: dexterity
