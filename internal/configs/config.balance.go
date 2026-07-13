@@ -271,7 +271,7 @@ type Balance struct {
 	// ── MUTATION GRAPH (drift + opposition) ───────────────────────────────────
 	MutationAffinityPerSkillUse    ConfigFloat `yaml:"MutationAffinityPerSkillUse"`    // drift affinity added per cluster-relevant skill use (default 1.0)
 	MutationAffinityPerCombatEvent ConfigFloat `yaml:"MutationAffinityPerCombatEvent"` // drift affinity per combat behavior event — tank/dodge/control (default 1.0)
-	MutationAffinityPerRarity      ConfigFloat `yaml:"MutationAffinityPerRarity"`      // affinity required per point of rarity to unlock a mutation (default 6.0 — r3 entry ~18, r9 apex/Extra Arms ~54; earned via drift)
+	MutationAffinityPerRarity      ConfigFloat `yaml:"MutationAffinityPerRarity"`      // coefficient of the QUADRATIC depth gate: threshold = rarity^2 * this (default 2.0 → r3 ~18, r6 ~72, r8 bridge ~128, r9 apex ~162)
 	MutationAffinityDecay          ConfigFloat `yaml:"MutationAffinityDecay"`          // per-tick multiplicative decay of cluster affinity (default 0.98)
 	MutationBodyConvictionDecayMax ConfigFloat `yaml:"MutationBodyConvictionDecayMax"` // max fraction of ConvictionMax lost to deep Body commitment (default 0.9)
 	MutationBeliefGearDecayMax     ConfigFloat `yaml:"MutationBeliefGearDecayMax"`     // max fraction of gear effectiveness lost to deep Belief commitment (default 0.9)

@@ -35,9 +35,19 @@ func EffectiveAffinity(owned map[string]int, actionAff map[string]float64) map[s
 }
 
 // depthThreshold is the affinity required to unlock a mutation of the given
-// rarity. Rarer/deeper keystones demand more affinity.
+// rarity. Rarer/deeper mutations demand more affinity.
+//
+// The curve is QUADRATIC in rarity so the acquisition journey spreads out:
+// entry cluster mutations (low rarity) unlock once a playstyle is established,
+// while apex + connective-tissue bridge mutations (high rarity) require
+// sustained, dedicated drift — not one big fight. A linear curve compressed the
+// whole range into a few fights (a rarity-9 mutation was only ~3x a rarity-3
+// one), which let apex-class powers like Extra Arms emerge in a player's first
+// fight. With MutationAffinityPerRarity=2: r3≈18, r6≈72, r8(bridge)≈128,
+// r9(apex)≈162. PROVISIONAL — dial in during playtest.
 func depthThreshold(rarity int) float64 {
-	return float64(rarity) * float64(configs.GetBalanceConfig().MutationAffinityPerRarity)
+	r := float64(rarity)
+	return r * r * float64(configs.GetBalanceConfig().MutationAffinityPerRarity)
 }
 
 // affinityFor returns the best affinity across a mutation's clusters. A

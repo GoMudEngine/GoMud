@@ -4,7 +4,8 @@ description: |
   A specialized organ opens a channel between your spirit and the things you
   bind to you. Through it your will steadies and strengthens them, half-summoned
   and half-real at your side.
-rarity: 6
+rarity: 8
+max_rank: 1  # connective-tissue bridge: apex-class, binary (no deepen)
 clusters: [ethereal, manifester]
 pole: belief
 visual: A faint, taut line of pale light seems to run from their sternum to whatever creature stands nearest in their service.

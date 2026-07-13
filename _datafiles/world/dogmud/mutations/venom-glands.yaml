@@ -4,7 +4,8 @@ description: |
   Glands swell behind your teeth and beneath your nails, weeping a potent
   neurotoxin. Anything you strike with tooth or claw is envenomed — the
   poison does its slow, certain work long after the blow lands.
-rarity: 7
+rarity: 8
+max_rank: 1  # connective-tissue bridge: apex-class, binary (no deepen)
 clusters: [ravener, stalker]
 pole: body
 requires_body_parts: [mouth]

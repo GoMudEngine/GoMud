@@ -1,7 +1,8 @@
 mutationid: extra-arms
 name: Extra Arms
 description: A second pair of arms has sprouted from your torso, granting you the ability to wield additional weapons. The grotesque sight of four flailing limbs draws hostile attention and unsettles everyone around you.
-rarity: 9
+rarity: 8
+max_rank: 1  # connective-tissue bridge: apex-class, binary (no deepen)
 clusters: [colossus, ravener]
 pole: body
 visual: A second pair of arms extends from their torso, moving with surprising coordination.

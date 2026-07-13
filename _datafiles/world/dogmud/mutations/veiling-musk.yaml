@@ -4,7 +4,8 @@ description: |
   Glands beneath your skin weep a constant, subtle musk that muddles scent,
   blurs the eye, and makes the mind slide right off you. You are simply harder
   to notice -- and harder still to keep track of once someone looks away.
-rarity: 4
+rarity: 8
+max_rank: 1  # connective-tissue bridge: apex-class, binary (no deepen)
 clusters: [stalker, trickster]
 visual: A faint, hard-to-place haze seems to hang about them, and the eye keeps sliding away to somewhere else.
 pros:
