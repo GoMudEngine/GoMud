@@ -3,7 +3,9 @@
 # Owns the Awakening Rite beat of quest 30:
 #   - dialogue (dialogue/pothole_coulee/9100.yaml) grants 30-start
 #   - this tree answers "ask hadwen begin/ready" while 30-start is held,
-#     plays the paced rite sequence, and fires grant_mutation + 30-end.
+#     plays the paced rite sequence, and fires 30-end (the "Opened" token).
+#     Blank-slate Awakening: the rite grants NO starter mutation — mutations
+#     are earned afterward through use-based drift.
 # Token gating makes the rite single-shot: 30-end is granted at eval
 # time, so a re-ask falls through to dialogue (which has a gentle
 # refusal node). Pattern follows behaviors/rooms/sanctum_basin/113.yaml.
@@ -77,9 +79,11 @@ tree:
         - type: action
           do: say
           text: >-
-            Type <ansi fg="command">mutations</ansi> whenever you want
-            to see what the pool woke in you. It will not be the last --
-            the rest, you will earn the slow way.
+            The pool woke the capacity, not the shape. Nothing has
+            changed in you yet -- and that is right. Type
+            <ansi fg="command">mutations</ansi> whenever you like to
+            watch it come. What comes, you earn the slow way: by how you
+            fight, what you endure, and who you decide to be.
           delay: 26.0
         - type: action
           do: say
@@ -110,15 +114,12 @@ tree:
             <ansi fg="command">ask esk passage</ansi>. The coulee will
             still be here either way.
           delay: 36.5
-        # The mutation lands at the moment of transformation (just after the
-        # "newly, quietly awake" line at 20.0, and before the 26.0 line that
-        # tells the player to type `mutations` to see it). The quest completion
-        # is the FINAL beat, after the last send-off line at 36.5 -- otherwise
-        # the "quest complete" banner fires at t=0 and spoils the whole rite.
-        # Both actions honor the static `delay` param (behaviortree/actions.go).
-        - type: action
-          do: grant_mutation
-          delay: 21.0
+        # Blank-slate Awakening: no starter mutation is granted during the rite.
+        # The pool opens the capacity; every mutation is earned afterward through
+        # use-based drift (see the mutation-graph acquisition design). The quest
+        # completion is the FINAL beat, after the last send-off line at 36.5 --
+        # otherwise the "quest complete" banner fires at t=0 and spoils the rite.
+        # This action honors the static `delay` param (behaviortree/actions.go).
         - type: action
           do: grant_quest
           quest: "30-end"

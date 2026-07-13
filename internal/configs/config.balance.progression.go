@@ -84,7 +84,7 @@ func (b *Balance) validateProgression() {
 		b.StatProgressionRate = 1.0
 	}
 	if b.MutationAffinityPerRarity <= 0 {
-		b.MutationAffinityPerRarity = 1.0
+		b.MutationAffinityPerRarity = 6.0
 	}
 	if b.MutationAffinityDecay <= 0 || b.MutationAffinityDecay > 1.0 {
 		b.MutationAffinityDecay = 0.98

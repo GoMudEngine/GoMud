@@ -55,17 +55,18 @@ tree:
       questRequired: ["30-end", "21-start"]
       questExcluded: ["21-end"]
       text: >-
-        The pool woke something in you -- a mutation, your first. Type
-        mutations to look at it; more will come, with time and hard use.
-        And hear this, for it is the law of Gaius and it surprises
-        newcomers: there are no levels here, and no experience to grind.
+        The pool woke something in you -- a capacity, not yet a shape.
+        Nothing has changed in you so far, and that is right; the changes
+        come with time and hard use. Type mutations whenever you like to
+        watch them arrive. And hear this, for it is the law of Gaius and it
+        surprises newcomers: there are no levels here, and no experience to grind.
         You grow by doing, and only by doing. Swing a blade and your blade-arm sharpens;
         study and your mind does. Type skills to see what you can do,
         and status to see your stats -- both climb as you use them. Go
         and use them.
       hints: >-
-        You are newly Opened. Type <ansi fg="command">mutations</ansi> to see
-        what the pool woke, <ansi fg="command">skills</ansi> to see your skills,
+        You are newly Opened. Type <ansi fg="command">mutations</ansi> to watch
+        the changes arrive, <ansi fg="command">skills</ansi> to see your skills,
         and <ansi fg="command">status</ansi> for your stats -- all of which
         grow through use, not levels or XP.
       moodChange: friendly
