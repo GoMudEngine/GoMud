@@ -21,6 +21,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // File: NewRound_DoCombat_unified.go
@@ -132,6 +133,21 @@ func handleCombatRound(
 
 	// Phase 3: damage-layer bonuses (Conviction / Adrenaline / Return / Lifesteal).
 	applyCombatDamageBonuses(atk, def, &res)
+
+	// 6e drift signals: Ironhide/Trickster/Weaver have no skill map, so they
+	// drift from combat BEHAVIOR (once per cluster per round, spam-guarded).
+	driftRound := util.GetRoundCount()
+	if defCh := def.GetCharacter(); defCh != nil {
+		if res.Hit && res.DamageToTargetReduction > 0 {
+			defCh.DriftFromCombat("ironhide", driftRound) // tanked/mitigated a blow
+		}
+		if !res.Hit && (res.DefenseUsed == combat.DefenseDodge || res.DefenseUsed == combat.DefenseParry) {
+			defCh.DriftFromCombat("trickster", driftRound) // evaded a blow
+		}
+	}
+	if atkCh := atk.GetCharacter(); atkCh != nil && res.Hit && len(res.BuffTarget) > 0 {
+		atkCh.DriftFromCombat("weaver", driftRound) // landed a debilitating effect on the foe
+	}
 
 	// Pinnacle item procs: attacker's weapon on_hit. Fires for all four
 	// quadrants (player and mob attackers) — the point of hooking the unified

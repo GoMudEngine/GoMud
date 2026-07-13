@@ -274,6 +274,22 @@ func (c *Character) AddClusterAffinity(cluster string, amount float64) {
 	c.ClusterAffinity[cluster] += amount
 }
 
+// DriftFromCombat grants drift affinity toward a cluster from a combat behavior
+// (tanking, evading, controlling) — at most once per cluster per combat round,
+// mirroring once-per-action skill drift so many sub-events in a round can't
+// spam it. round is util.GetRoundCount(). This is what makes Ironhide/Trickster/
+// Weaver reachable, since no skill maps to them.
+func (c *Character) DriftFromCombat(cluster string, round uint64) {
+	if c.combatDriftRound == nil {
+		c.combatDriftRound = make(map[string]uint64)
+	}
+	if round > 0 && c.combatDriftRound[cluster] >= round {
+		return // already granted this round
+	}
+	c.combatDriftRound[cluster] = round
+	c.AddClusterAffinity(cluster, float64(configs.GetBalanceConfig().MutationAffinityPerCombatEvent))
+}
+
 // OnCriticalSuccess is called when a character lands a critical hit or
 // achieves a critical success. Triggers progression checks with a
 // 2x bonus multiplier for both the skill and related stats.

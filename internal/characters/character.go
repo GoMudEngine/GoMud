@@ -272,6 +272,7 @@ type Character struct {
 	SkillUseCount           map[string]int                 `yaml:"skillusecount,omitempty"`       // Tracks how many times each skill has been used
 	StatUseCount            map[string]int                 `yaml:"statusecount,omitempty"`        // Tracks how many times each stat has been checked
 	ClusterAffinity         map[string]float64             `yaml:"clusteraffinity,omitempty"`     // cluster -> mutation-graph drift affinity
+	combatDriftRound        map[string]uint64              // transient (not persisted): cluster -> last round we granted combat drift (once-per-round spam guard)
 	Pet                     pets.Pet                       `yaml:"pet,omitempty"`                 // Do they have a pet?
 	Companions              []CompanionInfo                `yaml:"companions,omitempty"`          // Active companions (manifestation system)
 	Created                 time.Time                      `yaml:"created"`                       // When this character was created
