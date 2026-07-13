@@ -1371,11 +1371,11 @@
             renderAutomation();
         }
 
-        // Death-clear: when mode transitions to "downed", wipe the queue.
+        // Death-clear: when mode transitions to "dead", wipe the queue.
         var _lastMode = "";
         function checkDeathClearsQueue() {
             var mode = (((GMCPStructs["Commands"] || {}).State) || {}).mode || "";
-            if (mode === "downed" && _lastMode !== "downed") clearActionQueue();
+            if (mode === "dead" && _lastMode !== "dead") clearActionQueue();
             _lastMode = mode;
         }
 

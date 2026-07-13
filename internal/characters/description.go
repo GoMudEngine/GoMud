@@ -125,9 +125,10 @@ func (c *Character) GetAdjectives() []string {
 
 	retAdjectives := []string{}
 
-	// Start dynamic adjectives
+	// Start dynamic adjectives. Health<=0 is dead (pending the respawn sweep)
+	// under the death-on-zero model — there is no "downed but alive" state.
 	if c.Health < 1 {
-		retAdjectives = append(retAdjectives, `downed`)
+		retAdjectives = append(retAdjectives, `dead`)
 	}
 
 	if len(c.Shop) > 0 {

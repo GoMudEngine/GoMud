@@ -474,13 +474,15 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 
 		if !cmdInfo.AllowedWhenDowned {
 
-			// If actually downed, prevent it (unless admin)
+			// If dead (Health<=0, awaiting the respawn sweep), prevent it
+			// (unless admin). AllowedWhenDowned is the legacy field name for
+			// "may be run while dead" — there is no "downed but alive" state.
 			if userDisabled && !cmdInfo.AdminOnly {
-				user.SendText(messaging.CategorySystem, "You are unable to do that while downed.")
+				user.SendText(messaging.CategorySystem, "You can't do that — you're dead. Hold on; you'll be pulled back to safety.")
 				return true, nil
 			}
 
-			// Disabled input affects commands which can't be performed when downed.
+			// Disabled input affects commands which can't be performed while dead.
 			if user.InputBlocked() {
 				return true, nil
 			}

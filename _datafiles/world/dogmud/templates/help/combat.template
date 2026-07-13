@@ -91,7 +91,7 @@ decisively win a grapple round from a dominant position. See
 
   <ansi fg="stat">Stamina:</ansi> Fuels attacks, defenses, special moves
   <ansi fg="stat">Conviction:</ansi> Fuels spells, attacked by taunts
-  <ansi fg="stat">Health:</ansi> Reach 0 and you're downed
+  <ansi fg="stat">Health:</ansi> Reach 0 and you die, then wake at safety
 
 <ansi fg="yellow">See Also:</ansi>
 
