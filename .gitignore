@@ -106,3 +106,7 @@ tools/mud_bridge_log.txt
 # Claude Code harness local state
 .claude/projects/
 .claude/scheduled_tasks.lock
+
+# Prod player saves pulled for migration analysis — never commit
+_archive/prod-users/
+_archive/prod-users.tgz
