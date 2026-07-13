@@ -20,13 +20,23 @@ func Read(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	// Search for an exact match first
 	if readItem, found := user.Character.FindInBackpack(rest); found {
 		iSpec := readItem.GetSpec()
+		// Readable items (books/scrolls) carry their text in the blob.
+		desc := ""
 		if iSpec.Type == items.Readable {
+			desc = string(readItem.GetBlob())
+		}
+		// Fall back to the item's description for anything else. Quest
+		// notices/letters/signs are frequently authored as `object`/`holdable`
+		// yet the game explicitly tells players to "read the notice on the
+		// post" — restricting `read` to the Readable type dead-ends that beat.
+		// Any held item that carries text can be read.
+		if len(desc) == 0 {
+			desc = iSpec.Description
+		}
+		if len(desc) > 0 {
 			foundItemName = readItem.DisplayName()
 			foundItemLongName = readItem.DisplayName()
-			foundItemDescription = string(readItem.GetBlob())
-			if len(foundItemDescription) == 0 {
-				foundItemDescription = iSpec.Description
-			}
+			foundItemDescription = desc
 		}
 	}
 
