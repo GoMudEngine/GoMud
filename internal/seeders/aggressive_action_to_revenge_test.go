@@ -6,6 +6,17 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 )
 
+// TestAggressiveActionToRevenge_UnknownMob_NoPanic_WithGate guards that the
+// faction-gate additions don't panic on the unresolved-mob path.
+func TestAggressiveActionToRevenge_UnknownMob_NoPanic_WithGate(t *testing.T) {
+	defer func() {
+		if r := recover(); r != nil {
+			t.Fatalf("aggressiveActionToRevenge panicked: %v", r)
+		}
+	}()
+	aggressiveActionToRevenge(events.PlayerAttackedMob{UserId: 5, MobInstanceId: 987654})
+}
+
 func TestAggressiveActionToRevenge_Registered(t *testing.T) {
 	registryMu.RLock()
 	defer registryMu.RUnlock()
