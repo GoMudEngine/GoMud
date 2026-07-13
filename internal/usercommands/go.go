@@ -110,7 +110,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 	if exitName != `` {
 
 		if user.Character.IsDisabled() {
-			user.SendText(messaging.CategorySystem, "You are unable to do that while downed.")
+			user.SendText(messaging.CategorySystem, "You can't do that — you're dead. Hold on; you'll be pulled back to safety.")
 			return true, nil
 		}
 

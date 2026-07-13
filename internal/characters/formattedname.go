@@ -24,7 +24,7 @@ var (
 	// -short suffix should also be defined in case shorthand symbols are preferred
 	adjectiveStyles = map[string]adjectiveStyle{
 		`charmed`:  {`♥friend`, `♥`, `pink`},     // Are they charmed/friendly?
-		`downed`:   {`☠downed`, `☠`, `red`},      // Are they downed?
+		`dead`:     {`☠dead`, `☠`, `red`},        // Are they dead (Health<=0, pending respawn)?
 		`hidden`:   {`hidden`, `?`, `gray`},      // Are they hiding?
 		`lit`:      {`☀️Lit`, `☀️`, `lit`},       // Does light come from this character?
 		`sleeping`: {`asleep`, `zZz`, `gray`},    // Are they hiding?
@@ -185,7 +185,8 @@ func (c *Character) getFormattedName(viewingUserId int, uType string, renderFlag
 		}
 	}
 
-	// If including health, only do so if not downed, because downed shows as its own adjective.
+	// If including health, only do so if alive; a dead (Health<=0) actor shows
+	// the "dead" adjective instead while it awaits the respawn sweep.
 	if includeHealth && c.Health > 0 {
 		pctHealth := int(math.Ceil(float64(c.Health) / float64(c.HealthMax.Value) * 100))
 		f.Adjectives = append(f.Adjectives, strconv.Itoa(pctHealth)+`%`)
@@ -194,7 +195,7 @@ func (c *Character) getFormattedName(viewingUserId int, uType string, renderFlag
 	f.Adjectives = append(f.Adjectives, c.GetAdjectives()...)
 
 	if c.Health < 1 {
-		f.Suffix = `downed`
+		f.Suffix = `dead`
 	} else if c.Aggro != nil && c.Aggro.UserId == viewingUserId {
 		f.Suffix = `aggro`
 	}

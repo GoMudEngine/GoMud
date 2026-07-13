@@ -198,7 +198,7 @@ func buildCommandsState(user *users.UserRecord) GMCPCommandsState {
 	// Determine mode
 	mode := `exploration`
 	if user.Character.Health <= 0 {
-		mode = `downed`
+		mode = `dead`
 	} else if user.Character.Aggro != nil {
 		mode = `combat`
 	}
