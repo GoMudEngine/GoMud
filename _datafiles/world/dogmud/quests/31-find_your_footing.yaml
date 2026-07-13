@@ -19,7 +19,7 @@ steps:
     hint: "From Hub Square go north past the Awakening Pool and climb the basalt stair -- keep north to the school hall. Type map if you lose your way."
   - id: school
     description: "You found the school hall. Next, see what Trader Onna sells at Coulee Provisions."
-    hint: "Coulee Provisions is south of Hub Square -- go south to Market Row, then east. Type list at her counter to see her wares; buy something if anything suits you."
+    hint: "Coulee Provisions is south of Hub Square -- go south to Market Row, then east. Stepping inside is enough; try list at her counter to see her wares, and buy something if it suits you."
   - id: shop
     description: "You know where the goods are. Now put your head into The Drowned Lantern, the town's inn."
     hint: "The Drowned Lantern is off Market Row -- from Coulee Provisions go west twice. Walking in is enough."
@@ -76,6 +76,20 @@ triggers:
       - send_text: >-
           Trader Onna takes your coin with a nod. "Wise. The coulee is hard
           on the unprepared -- come back when you need more."
+
+  # ── PROVISIONS: arrive (room 5207) — entering is enough, consistent with the
+  #    inn step below; the list/buy triggers above stay as flavorful alternates.
+  - event: room_enter
+    room: 5207
+    conditions:
+      has: [31-school]
+      missing: [31-shop]
+    actions:
+      - grant: 31-shop
+      - send_text: >-
+          Trader Onna looks up from her counter. "Newly Opened and already
+          shopping? Type list to see my wares -- the coulee is hard on the
+          unprepared."
 
   # ── THE DROWNED LANTERN: arrive (room 5205) ─────────────
   - event: room_enter

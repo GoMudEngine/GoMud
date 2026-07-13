@@ -45,7 +45,9 @@ nouns:
 spawninfo:
 - mobid: 96
 - mobid: 117
-- itemid: 30
+# Protection Notice (itemid 30) is handed out by Marek's dialogue (the_squeeze /
+# lost_notice) as the quest-10 start item; a respawning floor copy here was a
+# duplicate source that left players carrying 2-3 notices. Removed.
 idlemessages:
 - The clink of cups and low murmur of conversation fill the room.
 - Smoke from a pipe drifts across the ceiling in lazy blue layers.

@@ -13,18 +13,17 @@ import (
 func Consider(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 	args := util.SplitButRespectQuotes(rest)
 	if len(args) == 0 {
+		user.SendText(messaging.CategorySystem, "Consider whom? (try consider <target>)")
 		return true, nil
 	}
 
 	target, err := actions.ResolveTargetActor(room, args[0],
 		actions.ResolveTargetOptions{ExcludeUserId: user.UserId})
 	if err != nil {
-		// Pre-migration silently no-oped on no-match. On
-		// ErrTargetVanished (stale mob ID) the original code DID
-		// message "You don't see them here." — preserve that.
-		if err == actions.ErrTargetVanished {
-			user.SendText(messaging.CategorySystem, "You don't see them here.")
-		}
+		// Always give feedback for an unresolved target — dead, absent, or no
+		// match — instead of silently no-oping (which left the player unsure
+		// whether the command even registered).
+		user.SendText(messaging.CategorySystem, "You don't see them here.")
 		return true, nil
 	}
 
