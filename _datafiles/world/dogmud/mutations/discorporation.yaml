@@ -6,6 +6,7 @@ description: |
   hangs ornamental on a thing that barely bothers with matter, and the raw
   force of your will strikes harder than any weapon could.
 rarity: 10
+max_rank: 1
 clusters: [ethereal]
 pole: belief
 prerequisites:

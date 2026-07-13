@@ -6,6 +6,7 @@ description: |
   wall. The ground seems to brace itself when you plant your feet, and lesser
   things scatter before you.
 rarity: 9
+max_rank: 1
 clusters: [colossus]
 pole: body
 prerequisites:

@@ -6,6 +6,7 @@ description: |
   hurled back with a vengeance. Nothing can take you off your feet, and
   everything nearby wants to hit you first.
 rarity: 9
+max_rank: 1
 clusters: [ironhide]
 pole: body
 prerequisites:

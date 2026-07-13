@@ -5,6 +5,7 @@ description: |
   only the perfect hunting animal. Your whole body is a weapon, the things you
   hunt know it on sight, and the dread of you rolls ahead like a cold wind.
 rarity: 9
+max_rank: 1
 clusters: [ravener]
 pole: body
 prerequisites:

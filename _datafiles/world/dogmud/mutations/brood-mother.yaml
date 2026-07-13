@@ -6,6 +6,7 @@ description: |
   you can hold a true swarm at once, and should you ever stand alone, your body
   simply makes another -- you are never without your children.
 rarity: 9
+max_rank: 1
 clusters: [manifester]
 pole: belief
 prerequisites:

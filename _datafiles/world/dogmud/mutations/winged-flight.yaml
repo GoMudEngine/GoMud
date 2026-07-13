@@ -2,6 +2,7 @@ mutationid: winged-flight
 name: Winged Flight
 description: Your hollow bones and balancing tail finish what they started -- great membranous wings unfurl from your back, and the ground releases its claim on you. You move above the fight, striking down at the earthbound and slipping away on the wind, though your lightened frame bruises easily.
 rarity: 8
+max_rank: 1
 visual: Vast, translucent wings arch from their shoulders, stirring the air with every movement.
 prerequisites:
   - id: hollow-bones

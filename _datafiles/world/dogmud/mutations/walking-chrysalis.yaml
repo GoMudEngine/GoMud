@@ -6,6 +6,7 @@ description: |
   out at need. You no longer require a forge, a loom, or a bench of any kind --
   you carry the whole craft inside you, and can make anything, anywhere.
 rarity: 6
+max_rank: 1
 clusters: [chrysifier]
 prerequisites:
   - id: provident-hands

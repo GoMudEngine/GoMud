@@ -6,6 +6,7 @@ description: |
   bogs down in it -- slowed, half-snared, and unable to hold a spell or shout
   together.
 rarity: 9
+max_rank: 1
 clusters: [weaver]
 prerequisites:
   - id: sticky-secretion

@@ -6,6 +6,7 @@ description: |
   their eyes or their fear away from you, and nothing anyone says or does can
   make you flinch.
 rarity: 9
+max_rank: 1
 clusters: [zealot]
 pole: belief
 prerequisites:

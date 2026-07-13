@@ -8,6 +8,7 @@ description: |
   nearly all the conviction you have; you and your one great work, and little
   room for anything else.
 rarity: 8
+max_rank: 1
 clusters: [chrysifier]
 prerequisites:
   - id: walking-chrysalis

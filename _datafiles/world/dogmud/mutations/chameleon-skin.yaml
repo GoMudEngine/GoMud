@@ -6,6 +6,7 @@ description: |
   the dark. You strike from nowhere -- but the same thin, sensitive hide leaves
   you fragile and cold.
 rarity: 9
+max_rank: 1
 clusters: [stalker]
 pole: body
 requires_body_parts: [skin]

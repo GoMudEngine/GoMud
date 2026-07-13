@@ -5,6 +5,7 @@ description: |
   edges smear into the background, and at rest you all but vanish. A blade
   swung at you finds mostly empty air where you seemed to be.
 rarity: 8
+max_rank: 1
 clusters: [trickster]
 prerequisites:
   - id: quicksilver-nerves

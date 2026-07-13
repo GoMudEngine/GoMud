@@ -6,6 +6,7 @@ description: |
   finer -- and your reshaped frame bears loads that would break another's back,
   the better to carry everything a maker needs.
 rarity: 6
+max_rank: 1
 clusters: [chrysifier]
 prerequisites:
   - id: provident-hands
