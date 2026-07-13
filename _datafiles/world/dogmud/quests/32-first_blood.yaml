@@ -15,7 +15,8 @@ steps:
   - id: strike
     description: "You have traded blows with the training dummy and
       lived to tell it. The dummy did not fare as well."
-    hint: "Now try a special move -- type kick dummy or trip dummy."
+    hint: "The dummy resets after it drops. On a fresh one, LEAD with
+      kick dummy or trip dummy -- land the special before the killing blow."
   - id: special
     description: "You landed a special move on the dummy. Kicks and
       trips are tools, not tricks -- use them when the moment is right."

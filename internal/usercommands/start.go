@@ -141,6 +141,17 @@ func startInCoulee(user *users.UserRecord) {
 	if destRoom := rooms.LoadRoom(rooms.StartRoomIdAlias); destRoom != nil {
 		rooms.MoveToRoom(user.UserId, destRoom.RoomId)
 		Look(``, user, destRoom, events.CmdSecretly)
+		// The onboarding vortex is a direct MoveToRoom, not a login/spawn, so it
+		// bypasses the HandleJoin room_enter notification that the Awakening
+		// quest's room-enter trigger relies on — leaving a brand-new player at
+		// 5200 without 30-start, so `ask hadwen begin` (the room's own suggested
+		// command) silently no-ops. Grant it explicitly here (idempotent: the
+		// room_enter trigger is gated on `missing: [30-start, 30-end]`), matching
+		// how autoAwaken seeds the veteran path's token.
+		events.AddToQueue(events.Quest{
+			UserId:     user.UserId,
+			QuestToken: "30-start",
+		})
 	}
 }
 
