@@ -8,8 +8,9 @@
 #               Cleric Hadwen's dialogue also grants it (ask hadwen
 #               rite) for veterans who walk in via the corridor.
 #   30-end    — granted by Hadwen's behavior tree at the close of the
-#               rite sequence (behaviors/pothole_coulee/9100-*.yaml),
-#               alongside grant_mutation.
+#               rite sequence (behaviors/pothole_coulee/9100-*.yaml).
+#               Blank-slate Awakening: the rite grants NO starter mutation
+#               — mutations are earned afterward through use-based drift.
 
 questid: 30
 name: The Awakening
@@ -23,7 +24,7 @@ steps:
     hint: "Stand at the Awakening Pool and type ask hadwen begin when you are ready."
   - id: end
     description: "The pool has opened you. Two roads from here: learn the town with Crier Toke, or leave through Warden Esk's arch."
-    hint: "New to Gaius? Go south to Hub Square and type ask toke footing. Know your way already? The Threshold House is south through the market -- type ask esk passage there. Type mutations any time to see what the pool woke -- and ask Hadwen about the glow, the light spell you carry for dark places."
+    hint: "New to Gaius? Go south to Hub Square and type ask toke footing. Know your way already? The Threshold House is south through the market -- type ask esk passage there. Type mutations any time to watch the change take shape as you live and fight -- and ask Hadwen about the glow, the light spell you carry for dark places."
 
 rewards:
   playermessage: >-
