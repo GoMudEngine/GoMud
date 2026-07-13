@@ -1,5 +1,37 @@
 # DOGMud Patch Notes
 
+## 2026-07-12 — The Chrysalis remade: the mutation graph
+
+The single largest change to DOGMud since launch. The Chrysalis is no longer a
+grab-bag of scattered mutations you roll at random — it is a living **ring of
+nine paths**, and which one you walk grows from how you play.
+
+- **Nine clusters, two poles, one center.** The paths of change:
+  - <ansi fg="yellow">Colossus</ansi> (size & smashing might) · <ansi fg="yellow">Ironhide</ansi> (the hide that fights back) ·
+    <ansi fg="yellow">Ravener</ansi> (feral unarmed ferocity) · <ansi fg="yellow">Stalker</ansi> (stealth & venom) — the Body pole.
+  - <ansi fg="yellow">Ethereal</ansi> (incorporeal & psychic) · <ansi fg="yellow">Manifester</ansi> (brood & summoning) ·
+    <ansi fg="yellow">Zealot</ansi> (voice, presence & command) — the Belief pole.
+  - <ansi fg="yellow">Weaver</ansi> (control, web & disruption) · <ansi fg="yellow">Trickster</ansi> (illusion & guile) — hybrids.
+  - A generalist **Center** everyone begins on, a **Chrysifier** maker's path for
+    crafters, and shared **bridge** mutations where neighbouring clusters meet.
+- **You drift; you don't pick.** The skills you use pull you toward the clusters
+  they suit — swing a sword toward Colossus, strike unarmed toward Ravener, sneak
+  or shoot toward Stalker, cast toward Ethereal, sway others toward Zealot, raise
+  companions toward Manifester, ply a craft toward the maker. Grow a cluster deep
+  enough, along its prerequisite spine, and you earn its single towering **apex**
+  transformation — Living Carapace, Colossus Form, Discorporation, Apex Predator,
+  Chameleon Skin, Radiant Avatar, Paralytic Field, Translucent Body, Brood Mother.
+- **A louder voice.** Those who walk the Zealot path can amplify their rallies and
+  war cries, and the rarest can loose more than one battle-shout in a single breath.
+- **The world changed with you.** Every creature now carries a mutation kit fitting
+  its nature (wraiths are ethereal terrors, golems unmoving colossi, great serpents
+  venomous ambushers), the fiercest bosses wear their kind's apex, and machines —
+  untouched by a biological plague — mutate not at all. And every existing character
+  has been carried across onto the new graph as what their history made them (see the
+  entries below).
+
+Type <ansi fg="command">help mutations</ansi> or <ansi fg="command">help dogmud</ansi> to see the ring you now walk.
+
 ## 2026-07-12 — The Opened are remade (player mutation migration)
 
 - **Everyone steps onto the new path of change.** With the Chrysalis reshaped into
