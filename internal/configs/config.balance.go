@@ -212,6 +212,7 @@ type Balance struct {
 	StatSoftCap              ConfigInt   `yaml:"StatSoftCap"`              // Stat value where progression slows sharply (default 150)
 	UsesPerRank              ConfigInt   `yaml:"UsesPerRank"`              // Skill/stat uses that equal one virtual rank (default 25)
 	BaseProgressionChance    ConfigFloat `yaml:"BaseProgressionChance"`    // Starting chance to progress at rank 0 (default 0.30)
+	StatProgressionRate      ConfigFloat `yaml:"StatProgressionRate"`      // Global multiplier on STAT progression chance; skills unaffected (default 1.0)
 	ProgressionDecayBelowCap ConfigFloat `yaml:"ProgressionDecayBelowCap"` // Exponential steepness below soft cap (default 3.0)
 	ProgressionDecayAboveCap ConfigFloat `yaml:"ProgressionDecayAboveCap"` // Exponential steepness above soft cap (default 2.0)
 	StatSoftCapThreshold     ConfigInt   `yaml:"StatSoftCapThreshold"`     // Raw stat value where adjusted formula kicks in (default 105)
@@ -269,6 +270,7 @@ type Balance struct {
 	MutationProgressGainPerRound ConfigFloat `yaml:"MutationProgressGainPerRound"` // Progress added per combat round (default 1.0)
 	// ── MUTATION GRAPH (drift + opposition) ───────────────────────────────────
 	MutationAffinityPerSkillUse    ConfigFloat `yaml:"MutationAffinityPerSkillUse"`    // drift affinity added per cluster-relevant skill use (default 1.0)
+	MutationAffinityPerCombatEvent ConfigFloat `yaml:"MutationAffinityPerCombatEvent"` // drift affinity per combat behavior event — tank/dodge/control (default 1.0)
 	MutationAffinityPerRarity      ConfigFloat `yaml:"MutationAffinityPerRarity"`      // affinity required per point of rarity to unlock a mutation (default 1.0)
 	MutationAffinityDecay          ConfigFloat `yaml:"MutationAffinityDecay"`          // per-tick multiplicative decay of cluster affinity (default 0.98)
 	MutationBodyConvictionDecayMax ConfigFloat `yaml:"MutationBodyConvictionDecayMax"` // max fraction of ConvictionMax lost to deep Body commitment (default 0.9)

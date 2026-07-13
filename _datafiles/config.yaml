@@ -685,6 +685,7 @@ Balance:
   StatSoftCap: 150               # Stat value where progression slows sharply
   UsesPerRank: 25                # Skill/stat uses that equal one virtual rank
   BaseProgressionChance: 0.12    # Chance to progress per check at rank 0 (12%)
+  StatProgressionRate: 2.25      # 6e: ~2.25x STAT progression (skills unaffected)
   ProgressionDecayBelowCap: 3.0  # Exponential steepness below soft cap (higher = faster decay)
   ProgressionDecayAboveCap: 2.0  # Exponential steepness above soft cap
   #
@@ -865,22 +866,23 @@ Balance:
   # Progress needed for the Nth mutation: BaseProgress × ProgressScale^(N-1)
   #   Example: base 50, scale 1.5:
   #     1st mutation: 50 progress,  2nd: 75,  3rd: 112.5,  4th: 168.75
-  MutationBaseProgress: 60.0         # Progress needed for first mutation (0.14.0: +10, richer graph)
+  MutationBaseProgress: 15.0         # 6e: ~4x lower threshold — the graph should feel alive
   MutationProgressScale: 1.5         # Each additional mutation costs Scale^n more
-  MutationMaxCount: 6                # Max simultaneous mutations per character (0.14.0: +1 for deeper cluster builds)
+  MutationMaxCount: 8                # 6e: room for a full cluster spine + apex + a splash
   MutationMaxLevel: 4                # Max level any single mutation can reach (1–4)
   MutationDeepenChance: 0.70         # Probability of deepening vs new when both possible (0.0-1.0)
-  MutationProgressGainPerRound: 1.0  # Progress added per combat round
+  MutationProgressGainPerRound: 2.0  # 6e: 2x/round (combined ~8x acquisition)
   # Mutation graph (drift + Body<->Belief opposition)
   MutationAffinityPerSkillUse: 1.0    # Drift affinity gained per cluster-relevant skill use
+  MutationAffinityPerCombatEvent: 1.0 # 6e: drift from tanking/dodging/controlling in combat
   MutationAffinityPerRarity: 1.0      # Affinity required per point of rarity to unlock a mutation
   MutationAffinityDecay: 0.98         # Per-event multiplicative decay of cluster affinity (0.0-1.0)
   MutationBodyConvictionDecayMax: 0.9 # Max fraction of ConvictionMax lost to deep Body commitment
   MutationBeliefGearDecayMax: 0.9     # Max fraction of gear effectiveness lost to deep Belief commitment
   MutationPoleDecayRef: 60.0          # Pole-depth at which opposition decay reaches half its max
-  MutationLevel2Multiplier: 1.5      # Effect magnitude at level 2 (1.5× level 1)
-  MutationLevel3Multiplier: 2.0      # Effect magnitude at level 3 (2.0× level 1)
-  MutationLevel4Multiplier: 2.5      # Effect magnitude at level 4 (2.5× level 1)
+  MutationLevel2Multiplier: 1.6      # 6e: non-linear curve — a clear step at level 2
+  MutationLevel3Multiplier: 2.5      # 6e: a bigger step at level 3
+  MutationLevel4Multiplier: 4.0      # 6e: dramatic max-rank payoff for deep investment
 
   # ── SPELLCASTING ──────────────────────────────────────────────────────
   # Spell discovery: chance to learn a new spell on a successful cast.

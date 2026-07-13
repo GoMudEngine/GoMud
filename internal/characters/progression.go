@@ -171,7 +171,7 @@ func (c *Character) CheckStatProgression(statName string, userId int, bonusMulti
 	mutStatMult := 1.0 + mutations.GetStatProgressionMultiplier(c.Mutations)
 	// Phase 39.1: Per-stat progression multiplier from config
 	statMult := b.GetStatProgressionMultiplier(statName)
-	chance := CalculateProgressionChance(virtualRank, int(b.StatSoftCap)) * bonusMultiplier * mutStatMult * statMult
+	chance := CalculateProgressionChance(virtualRank, int(b.StatSoftCap)) * bonusMultiplier * mutStatMult * statMult * float64(b.StatProgressionRate)
 	if chance > 1.0 {
 		chance = 1.0
 	}
