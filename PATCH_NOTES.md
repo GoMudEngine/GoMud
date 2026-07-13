@@ -1,5 +1,37 @@
 # DOGMud Patch Notes
 
+## 2026-07-13 — Awakening, refined (blank slate + polish)
+
+The final shaping of the Chrysalis rework before it goes live, plus a round of fixes.
+
+- **You begin unshaped.** The Awakening opens the *capacity* for change but grants
+  no mutation — what you become is earned entirely through how you live and fight.
+  Your first change emerges naturally in play, drifting toward the path your deeds
+  suggest.
+- **The rarest powers are earned.** The great shared abilities that bridge two
+  paths — extra arms, the living cocoon, and their kin — are now apex-class:
+  powerful, singular, and reached only by deep commitment to the paths that share
+  them, not stumbled into in your first fight.
+- **Change at a satisfying pace.** Mutation comes far faster than the old grind,
+  but it is no longer a firehose — each change lands as a discrete, earned moment.
+- **Existing heroes, reshaped.** Characters made before this update are carried
+  onto the new ring of paths in a one-time reawakening: your old mutations become
+  their nearest home on the new map, plus a seed for the path you were walking.
+
+Fixes:
+- The Awakening Rite now begins on the very command the pool suggests
+  (`ask hadwen begin`) for brand-new arrivals — no more silent dead-end.
+- Sparring is sparring: striking a training dummy (or other sanctioned target) no
+  longer sends bystanders — including the drillmaster who set up the drill —
+  fleeing in alarm.
+- Quest notices and letters can be `read` again; quest rewards name the item you
+  received; the first-blood special-move lesson reads clearly.
+- The Vitalis Bandolier keeps its promise — potions stored in it no longer spoil
+  while you are logged out.
+- Small cleanups: clearer `consider` feedback, consistent tutorial shop/inn steps,
+  no duplicate protection notices, and instance rooms no longer leak phantom nodes
+  onto the zone map.
+
 ## 2026-07-13 — The change quickens (mutation & progression tuning)
 
 - **Every path is walkable now.** The tank, the trickster, and the weaver-of-
@@ -17,8 +49,9 @@
   character comes into their strength without the old grind.
 - *(Under the hood: behavior-based cluster drift for Ironhide/Trickster/Weaver;
   per-mutation rank ceilings — apexes are rank-1; a non-linear deepening curve;
-  ~8× mutation acquisition + higher mutation cap; ~2.25× stat progression; a
-  magnitude consistency sweep + guard. Final values are tuned in live playtest.)*
+  faster mutation acquisition (dialed back from the first pass) + higher mutation
+  cap; ~2.25× stat progression; a magnitude consistency sweep + guard. Final
+  values are tuned in live playtest.)*
 
 ## 2026-07-12 — The Chrysalis remade: the mutation graph
 
