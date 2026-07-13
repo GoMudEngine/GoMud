@@ -42,7 +42,7 @@ func TestGetGraphPool_GatesByAffinityAndPrereqs(t *testing.T) {
 	cleanup := SeedMutationsForTest(map[string]*MutationSpec{
 		// universal enabler: no cluster -> always eligible
 		"hollow-bones": {MutationId: "hollow-bones", Name: "HB", Rarity: 2},
-		// ravener deep keystone: needs affinity >= rarity*1.0 = 5
+		// ravener deep keystone: needs affinity >= rarity*MutationAffinityPerRarity
 		"apex": {MutationId: "apex", Name: "Apex", Rarity: 5, Clusters: []string{"ravener"}},
 		// gated behind a prerequisite the owner lacks
 		"flight": {MutationId: "flight", Name: "Flight", Rarity: 8, Clusters: []string{"generalist"},
@@ -50,8 +50,11 @@ func TestGetGraphPool_GatesByAffinityAndPrereqs(t *testing.T) {
 	})
 	defer cleanup()
 
-	// Low ravener affinity -> apex excluded, hollow-bones present, flight blocked (no prereq)
-	pool := GetGraphPool(map[string]int{}, map[string]float64{"ravener": 1}, nil)
+	// Below-threshold ravener affinity -> apex excluded, hollow-bones present,
+	// flight blocked (no prereq). Compute relative to the live config so this
+	// stays correct as MutationAffinityPerRarity is tuned.
+	belowThreshold := depthThreshold(5) - 1
+	pool := GetGraphPool(map[string]int{}, map[string]float64{"ravener": belowThreshold}, nil)
 	if contains(pool, "apex") {
 		t.Fatal("apex should be gated out at low affinity")
 	}
@@ -62,8 +65,8 @@ func TestGetGraphPool_GatesByAffinityAndPrereqs(t *testing.T) {
 		t.Fatal("flight should be blocked without its prerequisite")
 	}
 
-	// High ravener affinity -> apex now eligible
-	pool2 := GetGraphPool(map[string]int{}, map[string]float64{"ravener": 10}, nil)
+	// Above-threshold ravener affinity -> apex now eligible
+	pool2 := GetGraphPool(map[string]int{}, map[string]float64{"ravener": depthThreshold(5) + 1}, nil)
 	if !contains(pool2, "apex") {
 		t.Fatal("apex should be eligible once affinity clears threshold")
 	}

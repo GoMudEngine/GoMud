@@ -1,0 +1,71 @@
+# Mutation graph + progression (6e) — the reworked Chrysalis system.
+#
+# What changed and what we're testing: mutations are now a ring of 9 CLUSTERS
+# grown by use-based DRIFT (the skills you use pull you toward matching clusters;
+# tanking->ironhide, dodging->trickster, landing debuffs->weaver come from combat
+# behavior). Acquisition was sped up ~8x (you should gain a mutation within a
+# reasonable stretch of combat, not dozens of hours). Deepening now uses a
+# non-linear curve (each rank a real step; rank 4 a big jump). Apexes are binary
+# (rank 1). Stat progression is ~2.25x faster. Seeds/magnitudes are PROVISIONAL —
+# we want feel + bugs, not final numbers.
+
+session:
+  name: mutation-graph
+  max_rounds: 400
+  notes: >
+    Your job is to EXERCISE and JUDGE the mutation + progression systems.
+    Fight sustained combat (mutations emerge from combat rounds). Use `mutations`
+    and `status` often to see what you have and how it changes. Record EXACT
+    server lines for every mutation gain/deepen and every stat/skill advance.
+    Note the PACE (too fast/slow/right) and whether gaining or deepening a
+    mutation feels IMPACTFUL. Flag any error text, nonsense message, or crash.
+
+objectives:
+  - id: first-mutation-pace
+    desc: >
+      Leave town by any gate, find wilderness creatures, and fight sustained
+      combat with a consistent style (e.g. always weapon attacks, or always
+      unarmed). Count roughly how many combat rounds pass before your FIRST
+      mutation emerges. Record the exact "a mutation emerges" style line and the
+      mutation name.
+    verify: "first mutation acquired; approximate round-count recorded; exact line captured"
+
+  - id: drift-coherence
+    desc: >
+      Check whether the mutations you gain match how you FIGHT — a weapon user
+      should trend toward Colossus-flavored mutations, an unarmed fighter toward
+      Ravener, a sneaky/ranged style toward Stalker, etc. Run `mutations` and note
+      each mutation's flavor vs your playstyle. Note if you get something
+      incongruous.
+    verify: "acquired mutations described vs playstyle; coherence judged"
+
+  - id: deepen-impact
+    desc: >
+      Keep fighting to DEEPEN an owned mutation to rank 2+ (watch for an
+      "intensifies"/"deepens" style line). Judge whether the deepen felt like a
+      real upgrade or a non-event. Record the exact deepen line.
+    verify: "a mutation deepened to rank 2+, or note that none deepened in the session; impact judged"
+
+  - id: behavior-drift-reachability
+    desc: >
+      Try to steer toward a cluster with no skill map by BEHAVIOR: tank hits
+      (let a durable foe hit you while you have armor), or dodge a lot (fight
+      something you evade), or land control moves (trip/grapple). Over time, note
+      if you drift toward Ironhide/Trickster/Weaver mutations. This is slow — just
+      note whether it seems reachable at all.
+    verify: "attempted behavior-drift; any ironhide/trickster/weaver signal noted (or none)"
+
+  - id: stat-progression-feel
+    desc: >
+      Track your stats via `status` at the start and after sustained play. Note
+      whether stats climb noticeably (the rate was ~2.25x'd). Record any stat
+      advancement banners.
+    verify: "before/after stat snapshot; pace judged (noticeable / still slow / too fast)"
+
+  - id: bug-and-message-hunt
+    desc: >
+      Throughout, flag ANY error text, malformed/placeholder message, hard
+      numbers leaking into player text, a mutation that reads wrong or does
+      nothing, or a crash/disconnect. Try `help mutations` and `help dogmud` and
+      note if they read correctly.
+    verify: "list of bugs/oddities found (or an explicit 'none observed')"

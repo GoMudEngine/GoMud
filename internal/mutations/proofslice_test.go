@@ -21,8 +21,9 @@ func TestGraphPool_ProofSliceGating(t *testing.T) {
 		t.Fatal("clustered mutations must be gated out with zero affinity")
 	}
 
-	// A caster (ethereal affinity ≥ rarity 4) unlocks ether-gland but not titan-growth.
-	caster := GetGraphPool(map[string]int{}, map[string]float64{"ethereal": 6}, nil)
+	// A caster (ethereal affinity ≥ ether-gland's depth threshold) unlocks
+	// ether-gland but not titan-growth (a colossus keystone, zero colossus affinity).
+	caster := GetGraphPool(map[string]int{}, map[string]float64{"ethereal": depthThreshold(4) + 1}, nil)
 	if !contains(caster, "ether-gland") {
 		t.Fatal("ethereal affinity should unlock ether-gland")
 	}

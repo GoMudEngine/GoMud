@@ -199,11 +199,12 @@ func grantNewcomerMarker(user *users.UserRecord) {
 
 // ─── Veteran auto-awaken ─────────────────────────────────────────────────────
 
-// autoAwaken gives a veteran-tier character the two effects of the Awakening
-// Rite without making them perform it: the 30-end "Opened" token (clears the
-// 5200 movement block and Warden Esk's gate) and a starting mutation.
+// autoAwaken gives a veteran-tier character the Awakening Rite's world effect
+// without making them perform it: the 30-end "Opened" token (clears the 5200
+// movement block and Warden Esk's gate). No starter mutation is granted — the
+// Awakening opens the capacity, but every mutation is earned through use-based
+// drift (blank-slate Awakening; see the mutation-graph acquisition design).
 func autoAwaken(user *users.UserRecord) {
-	user.Character.GrantRandomMutation()
 	events.AddToQueue(events.Quest{
 		UserId:     user.UserId,
 		QuestToken: "30-end",

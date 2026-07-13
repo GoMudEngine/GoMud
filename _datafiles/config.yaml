@@ -875,7 +875,7 @@ Balance:
   # Mutation graph (drift + Body<->Belief opposition)
   MutationAffinityPerSkillUse: 1.0    # Drift affinity gained per cluster-relevant skill use
   MutationAffinityPerCombatEvent: 1.0 # 6e: drift from tanking/dodging/controlling in combat
-  MutationAffinityPerRarity: 1.0      # Affinity required per point of rarity to unlock a mutation
+  MutationAffinityPerRarity: 6.0      # Affinity required per point of rarity to unlock a mutation (r3 entry ~18, r9 apex/Extra Arms ~54 — earned via drift, not one lucky fight). PROVISIONAL, tune in playtest.
   MutationAffinityDecay: 0.98         # Per-event multiplicative decay of cluster affinity (0.0-1.0)
   MutationBodyConvictionDecayMax: 0.9 # Max fraction of ConvictionMax lost to deep Body commitment
   MutationBeliefGearDecayMax: 0.9     # Max fraction of gear effectiveness lost to deep Belief commitment
