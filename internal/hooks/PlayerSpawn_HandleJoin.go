@@ -18,6 +18,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // respawnCompanions re-creates mob instances for all stored companions.
@@ -227,6 +228,12 @@ func HandleJoin(e events.Event) events.ListenerReturn {
 	}
 
 	user.EventLog.Add(`conn`, fmt.Sprintf(`<ansi fg="username">%s</ansi> entered the world`, user.Character.Name))
+
+	// Preserved-bandolier potions are frozen only while online (tickPreserveContents
+	// runs on UserRoundTick), so an offline gap balloons their aging elapsed and they
+	// spoil+eject at login. Re-baseline them to fresh here so the pinnacle bandolier
+	// keeps its no-rot promise.
+	reconcilePreservedPotionRounds(user.Character.PotionItems, user.Character.Equipment.Belt.GetSpec().PreservesContents, util.GetRoundCount())
 
 	users.RemoveZombieUser(evt.UserId)
 

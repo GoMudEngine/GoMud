@@ -98,6 +98,27 @@ func tickPreserveContents(c *characters.Character) {
 	}
 }
 
+// reconcilePreservedPotionRounds re-stamps crafted potions' CraftedRound to `now`
+// when they sit in a preserves_contents bandolier. tickPreserveContents only runs
+// while a character is ONLINE, so across a logout the global round counter keeps
+// climbing while CraftedRound is frozen — the potion's elapsed (now-CraftedRound)
+// balloons by the entire offline duration and it spoils + ejects the moment the
+// player logs back in (the "rots at login" bug). Called from HandleJoin to keep
+// the pinnacle bandolier's promise that preserved potions never rot: bringing them
+// back fresh on login. Purchased potions (CraftedRound==0) already never age, so
+// they are left untouched. Pure (takes `now`) so it is unit-testable.
+func reconcilePreservedPotionRounds(potions []items.Item, preserves bool, now uint64) {
+	if !preserves {
+		return
+	}
+	for i := range potions {
+		if potions[i].ItemId <= 0 || potions[i].CraftedRound == 0 {
+			continue
+		}
+		potions[i].CraftedRound = now
+	}
+}
+
 // tickHunger drains the wielder when a hunger-flagged weapon (Blackrazor) has
 // gone too long without a kill. Escalation grows with overdue time, capped at
 // 3x, and NEVER kills outright — it clamps at 1 HP (the sword wants a living

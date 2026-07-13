@@ -529,3 +529,39 @@ func TestPinnacleUserTick_MasterGate(t *testing.T) {
 		t.Fatal("enabled feature should run sub-ticks (hunger anchor should be set)")
 	}
 }
+
+// TestReconcilePreservedPotionRounds is the regression guard for the "potions
+// rot at login" bug: tickPreserveContents only freezes aging while online, so an
+// offline gap balloons a preserved potion's elapsed and it spoils at login.
+// HandleJoin calls this to re-baseline crafted potions to fresh.
+func TestReconcilePreservedPotionRounds(t *testing.T) {
+	const now = uint64(2_000_000)
+	mk := func() []items.Item {
+		return []items.Item{
+			{ItemId: 30001, CraftedRound: 1000}, // crafted, stale (offline gap) -> re-stamp
+			{ItemId: 30002, CraftedRound: 0},    // purchased/never-crafted -> leave alone
+			{ItemId: 0, CraftedRound: 500},      // empty slot -> leave alone
+		}
+	}
+
+	// No preserving belt: nothing changes.
+	p := mk()
+	reconcilePreservedPotionRounds(p, false, now)
+	if p[0].CraftedRound != 1000 {
+		t.Fatalf("without a preserving belt, CraftedRound must be untouched; got %d", p[0].CraftedRound)
+	}
+
+	// Preserving belt: crafted potion re-baselined to now (elapsed=0, cannot spoil);
+	// purchased and empty slots left alone.
+	p = mk()
+	reconcilePreservedPotionRounds(p, true, now)
+	if p[0].CraftedRound != now {
+		t.Errorf("crafted potion should re-stamp to now (%d); got %d", now, p[0].CraftedRound)
+	}
+	if p[1].CraftedRound != 0 {
+		t.Errorf("purchased potion (CraftedRound 0) must be left alone; got %d", p[1].CraftedRound)
+	}
+	if p[2].CraftedRound != 500 {
+		t.Errorf("empty slot must be left alone; got %d", p[2].CraftedRound)
+	}
+}
