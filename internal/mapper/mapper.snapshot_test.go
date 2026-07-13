@@ -1,6 +1,47 @@
 package mapper
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/GoMudEngine/GoMud/internal/rooms"
+)
+
+// TestSnapshotSkipsEphemeralRooms guards that instance/ephemeral rooms (dungeon
+// instances, the Mending Hut copy) that a crawl stepped into never leak their
+// billion-range ids into the client Zone.Map snapshot — neither as room nodes
+// nor as exit stubs.
+func TestSnapshotSkipsEphemeralRooms(t *testing.T) {
+	const ephID = 1_000_000_000
+	if !rooms.IsEphemeralRoomId(ephID) {
+		t.Fatalf("test setup: %d should be an ephemeral room id", ephID)
+	}
+	nodes := map[int]*mapNode{
+		5: node(5, 0, 0, 0, map[string]nodeExit{
+			"north": {RoomId: ephID, Direction: d(0, -1, 0)}, // exit toward the instance
+		}),
+		ephID: node(ephID, 0, -1, 0, map[string]nodeExit{}),
+	}
+	m := mkMapper(nodes)
+	snap := m.Snapshot(map[int]struct{}{5: {}, ephID: {}}) // both "visited"
+
+	var r5 *SnapshotRoom
+	for i := range snap {
+		if snap[i].RoomId == ephID {
+			t.Errorf("ephemeral room %d must not appear in the snapshot", ephID)
+		}
+		if snap[i].RoomId == 5 {
+			r5 = &snap[i]
+		}
+	}
+	if r5 == nil {
+		t.Fatal("real room 5 missing from snapshot")
+	}
+	for _, e := range r5.Exits {
+		if e.ToRoomId == ephID {
+			t.Errorf("exit toward ephemeral room %d must be filtered from the snapshot", ephID)
+		}
+	}
+}
 
 func TestSnapshotSymbolDefaultsWhenUnset(t *testing.T) {
 	nodes := map[int]*mapNode{

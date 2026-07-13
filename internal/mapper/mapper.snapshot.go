@@ -44,6 +44,13 @@ func (r *mapper) Snapshot(visited map[int]struct{}) []SnapshotRoom {
 		if _, ok := visited[id]; !ok {
 			continue
 		}
+		// Ephemeral/instance rooms (dungeon instances, the Mending Hut copy,
+		// etc.) are not part of the static zone map — a crawl that stepped into
+		// one must not leak its billion-range id into the client snapshot
+		// (mirrors mapper.consistency's roomCrawlable exclusion).
+		if rooms.IsEphemeralRoomId(id) {
+			continue
+		}
 
 		sym := n.Symbol
 		if sym == 0 {
@@ -81,6 +88,10 @@ func (r *mapper) Snapshot(visited map[int]struct{}) []SnapshotRoom {
 		}
 
 		for _, e := range n.Exits {
+			// Don't render an exit stub toward an ephemeral/instance room.
+			if rooms.IsEphemeralRoomId(e.RoomId) {
+				continue
+			}
 			se := SnapshotExit{
 				ToRoomId: e.RoomId,
 				DX:       e.Direction.x,
