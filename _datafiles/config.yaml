@@ -866,12 +866,12 @@ Balance:
   # Progress needed for the Nth mutation: BaseProgress × ProgressScale^(N-1)
   #   Example: base 50, scale 1.5:
   #     1st mutation: 50 progress,  2nd: 75,  3rd: 112.5,  4th: 168.75
-  MutationBaseProgress: 15.0         # 6e: ~4x lower threshold — the graph should feel alive
+  MutationBaseProgress: 30.0         # was 15 in 6e (~8x w/ 2x/round); dialed back to ~4x of the pre-6e 60 — faster than original but not overboard (retest: a newbie earned 2 mutations in one dummy-grind). PROVISIONAL, tune in playtest.
   MutationProgressScale: 1.5         # Each additional mutation costs Scale^n more
   MutationMaxCount: 8                # 6e: room for a full cluster spine + apex + a splash
   MutationMaxLevel: 4                # Max level any single mutation can reach (1–4)
   MutationDeepenChance: 0.70         # Probability of deepening vs new when both possible (0.0-1.0)
-  MutationProgressGainPerRound: 2.0  # 6e: 2x/round (combined ~8x acquisition)
+  MutationProgressGainPerRound: 2.0  # 2x/round; combined with BaseProgress 30 = ~4x the pre-6e acquisition speed
   # Mutation graph (drift + Body<->Belief opposition)
   MutationAffinityPerSkillUse: 0.5    # Drift affinity gained per cluster-relevant skill use (halved so reaching high tiers takes sustained play, not one fight)
   MutationAffinityPerCombatEvent: 0.5 # 6e: drift from tanking/dodging/controlling in combat (halved alongside PerSkillUse)
