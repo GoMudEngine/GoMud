@@ -61,9 +61,11 @@ capital at <ansi fg="yellow">New Plymouth</ansi>.
   through use. A mage who never lifts a sword will have weak arms. A blacksmith
   who never trains the mind will struggle with spells.
 
-<ansi fg="white">Mutation-driven.</ansi>  Sustained combat feeds the Chrysalis. Your body changes. Every
-  mutation has a benefit and a cost. You do not choose them — the organism does.
-  You can carry up to five mutations at once.
+<ansi fg="white">Mutation-driven.</ansi>  How you live reshapes your body. The Chrysalis grows a web of
+  mutations arranged in nine clusters — Colossus, Stalker, Ethereal, and their kin —
+  and the skills you use drift you toward the ones that fit. You do not pick them;
+  you grow into them, keystone by keystone, toward each cluster's apex. Every change
+  has a cost as well as a gift. See <ansi fg="command">help mutations</ansi>.
 
 <ansi fg="white">Crafting.</ansi>  Raw materials become gear through skill and a working station. A forge
   makes blades. An alchemy bench makes potions. What you can craft depends on

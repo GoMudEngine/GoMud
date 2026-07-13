@@ -67,10 +67,17 @@ side-by-side minimap layout, and per-player line wrapping. See
   checks (chunk 4f) replace the old "knocked down = guaranteed
   fizzle" gate with Willpower-mediated odds; strong-willed casters
   can sometimes finish a spell from underneath.
-- **41 mutations.** The Chrysalis grants belief-driven physical
-  changes — Extra Arms, infrared vision, gear-effectiveness
-  modifiers, regen multipliers in light, magical resistance,
-  perception-tuned The Eye phases, and more.
+- **The mutation graph.** The Chrysalis reshapes players and creatures
+  through a **use-based cluster graph** rather than a flat pool: nine
+  identity clusters (Colossus, Ironhide, Ravener, Stalker, Ethereal,
+  Manifester, Zealot, Weaver, Trickster) arranged in a Body/Belief ring
+  around a generalist Center and a crafter's path, stitched by shared
+  bridge nodes. The skills you *use* drift your affinity toward matching
+  clusters; mutations unlock keystone-by-keystone along prerequisite
+  spines toward a single earned **apex** transformation each. Species
+  carry themed intrinsic kits (a wraith is Ethereal, a golem Colossus);
+  machines are mutation-immune. Progression is entirely use-based — no
+  picking from a menu, no levels.
 
 ### NPC Aliveness
 
