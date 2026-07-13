@@ -431,6 +431,18 @@ func CreateUser(u *UserRecord) error {
 	u.UserId = GetUniqueUserId()
 	u.Role = RoleUser
 
+	// Seed the Character's userId back-reference at creation time. Login
+	// (LoginUser) and LoadUser both do this defensively, but a brand-new
+	// character created via `new` plays its ENTIRE first session on this
+	// in-memory record without ever going through those paths — so without
+	// this, Character.GetUserId() stays 0 until the first re-login. A zero
+	// userId makes Die() take the mob branch (player dies but never respawns
+	// -> stuck "downed" at Health<=0) AND makes the grapple FSM build
+	// ActorRef{UserId:0} -> ErrPartnerRequired. See the soft-lock fixed here.
+	if u.Character != nil {
+		u.Character.SetUserId(u.UserId)
+	}
+
 	idx := NewUserIndex()
 	idx.AddUser(u.UserId, u.Username)
 
