@@ -1,5 +1,25 @@
 # DOGMud Patch Notes
 
+## 2026-07-12 — The Opened are remade (player mutation migration)
+
+- **Everyone steps onto the new path of change.** With the Chrysalis reshaped into
+  its true form — a ring of nine clusters grown through how you live and fight —
+  every existing character has been carried across from the old scattered mutations
+  onto the new graph.
+- **You arrive as what you were becoming.** The Chrysalis reads your history and
+  sets you on the cluster your deeds already pointed toward: those who kept a stable
+  of companions begin as broodmasters, deep casters as ethereal adepts, unarmed
+  fighters as ravening predators, master crafters on the maker's path — and those
+  who kept their options open stay adaptable at the Center. No one is handed an apex;
+  you arrive *near* your calling and grow the rest through play.
+- **A fresh start, honestly given.** The old half-formed mutations are gone; what you
+  receive is a true starting point in a system where everything is earned through use.
+  Type <ansi fg="command">help mutations</ansi> to see the ring you now walk.
+- *(Under the hood: history-based classification of every account into a cluster seed
+  (spec §3–5), a versioned, idempotent, backed-up 0.14.0 migration verified end-to-end
+  against copies of real accounts; help + README reframed around the graph. Seed ranks
+  are provisional, tuned in the balance pass.)*
+
 ## 2026-07-12 — Creatures come into their own (NPC mutation kits)
 
 - **The world's monsters have grown into the new order of change.** Undead,
