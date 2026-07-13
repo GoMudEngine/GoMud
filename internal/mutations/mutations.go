@@ -32,7 +32,10 @@ type MutationSpec struct {
 	Name        string `yaml:"name"`
 	Description string `yaml:"description"`
 	Rarity      int    `yaml:"rarity"` // 1=common … 10=very rare
-	Visual      string `yaml:"visual"` // appended to character look desc
+	// MaxRank caps how deep this mutation can grow (0/unset => the global
+	// MutationMaxLevel). Apexes set 1 — a transformation is binary, not scalable.
+	MaxRank int    `yaml:"max_rank,omitempty"`
+	Visual  string `yaml:"visual"` // appended to character look desc
 
 	// Legacy single-effect fields (backward compat — migrated into Pros/Cons during Validate)
 	Pro MutationEffect `yaml:"pro"`
@@ -91,6 +94,9 @@ func (m *MutationSpec) Validate() error {
 	}
 	if m.Rarity < 1 || m.Rarity > 10 {
 		return fmt.Errorf("mutation %q: rarity must be 1–10, got %d", m.MutationId, m.Rarity)
+	}
+	if m.MaxRank < 0 {
+		return fmt.Errorf("mutation %q: max_rank must be >= 0, got %d", m.MutationId, m.MaxRank)
 	}
 
 	// Migrate legacy single Pro into Pros list if present and not already in Pros
@@ -356,24 +362,33 @@ func TotalMutationEvents(owned map[string]int) int {
 	return total
 }
 
-// CanDeepen returns true if any owned mutation is below MutationMaxLevel.
+// effectiveMax returns a mutation's rank ceiling: its own MaxRank if set,
+// otherwise the global MutationMaxLevel. Apexes (MaxRank 1) stay binary.
+func effectiveMax(id string, globalMax int) int {
+	if spec := GetMutation(id); spec != nil && spec.MaxRank > 0 {
+		return spec.MaxRank
+	}
+	return globalMax
+}
+
+// CanDeepen returns true if any owned mutation is below its per-mutation ceiling.
 func CanDeepen(owned map[string]int) bool {
-	maxLevel := int(configs.GetBalanceConfig().MutationMaxLevel)
-	for _, level := range owned {
-		if level < maxLevel {
+	globalMax := int(configs.GetBalanceConfig().MutationMaxLevel)
+	for id, level := range owned {
+		if level < effectiveMax(id, globalMax) {
 			return true
 		}
 	}
 	return false
 }
 
-// RollDeepening picks a random mutation id that is below MutationMaxLevel.
-// Returns "" if all mutations are already at max level or owned is empty.
+// RollDeepening picks a random owned mutation below its per-mutation ceiling.
+// Returns "" if all mutations are already at their cap or owned is empty.
 func RollDeepening(owned map[string]int) string {
-	maxLevel := int(configs.GetBalanceConfig().MutationMaxLevel)
+	globalMax := int(configs.GetBalanceConfig().MutationMaxLevel)
 	var candidates []string
 	for id, level := range owned {
-		if level < maxLevel {
+		if level < effectiveMax(id, globalMax) {
 			candidates = append(candidates, id)
 		}
 	}
