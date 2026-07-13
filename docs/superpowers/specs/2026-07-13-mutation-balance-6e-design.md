@@ -161,6 +161,9 @@ to catch outliers before play:
 ## 9. Out of scope
 
 - Play-validated final magnitudes (post-ship playtest).
-- Directional re-spec phials (separate feature).
+- **Directional re-spec phials → deferred to stage 6f** (its own spec/plan;
+  lets a player redirect their mutation drift/build. The graph engine was
+  designed with this in mind but it is a distinct feature, after the arc's
+  balance pass ships).
 - Skill-progression rate changes (stats only, per the request).
 - New mutations / clusters (graph is complete).
