@@ -35,6 +35,17 @@ func TestApplyIntrinsicMutations_AddsToEmpty(t *testing.T) {
 	}
 }
 
+func TestApplyIntrinsicMutations_MutationImmuneSkipped(t *testing.T) {
+	c := &Character{}
+	// A mutation_immune construct must gain NO intrinsics even if the species
+	// carries a kit (machines are not touched by the Chrysalis).
+	sp := &species.Species{MutationImmune: true, IntrinsicMutations: map[string]int{"titan-growth": 1}}
+	c.ApplyIntrinsicMutations(sp)
+	if len(c.Mutations) != 0 {
+		t.Errorf("mutation_immune species must gain no mutations, got %d entries", len(c.Mutations))
+	}
+}
+
 func TestApplyIntrinsicMutations_StacksAdditively(t *testing.T) {
 	c := &Character{Mutations: map[string]int{"tail": 1}}
 	sp := &species.Species{IntrinsicMutations: map[string]int{"tail": 1}}

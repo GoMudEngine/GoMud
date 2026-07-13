@@ -11,7 +11,6 @@ maxwander: 0
 groups:
   - construct
   - guardian
-spawnmutations: [colossus-form, titan-growth]
 idlecommands:
   - 'emote holds the whole passage in the sweep of its single cold eye,
     slow and unhurried, and lets nothing pass unweighed.'
@@ -47,7 +46,7 @@ character:
     light, and it turns that light on you with the slow certainty of a
     thing that has judged every intruder for an age and found each of them
     wanting. It does not hurry. It has never needed to.
-  speciesid: 37
+  speciesid: 45
   level: 1
   gold: 0
   stats:

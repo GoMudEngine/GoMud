@@ -19,7 +19,7 @@ const MutationMaxRank = 4
 // roll + persistent acquired). No-op if species is nil or has
 // no intrinsic_mutations.
 func (c *Character) ApplyIntrinsicMutations(sp *species.Species) {
-	if sp == nil || len(sp.IntrinsicMutations) == 0 {
+	if sp == nil || sp.MutationImmune || len(sp.IntrinsicMutations) == 0 {
 		return
 	}
 	if c.Mutations == nil {

@@ -39,7 +39,7 @@ character:
     real defense -- because it was never built to fight a whole party.
     It was built to take one of you out of the fight entirely, and hold
     you there until something else finishes the rest.
-  speciesid: 37
+  speciesid: 45
   level: 1
   gold: 0
   # Nodrop mitigation-only gear (crashsite-boss-mechanics Part B): buys

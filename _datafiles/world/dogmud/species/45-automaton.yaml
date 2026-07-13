@@ -1,0 +1,34 @@
+speciesid: 45
+name: Automaton
+description: A machine of dark alloy and humming light, built by hands that were
+  not human and left to keep watch long after its makers were gone. It moves with
+  the patient, unbothered certainty of something that does not tire, does not
+  fear, and was never alive to begin with.
+body_parts: [arms, legs, skin]
+mutation_immune: true
+size: large
+unarmedname: servo-driven fists
+natural_attack: slam
+selectable: false
+tameable: false
+naturalbash: true
+angrycommands:
+  - emote pivots with a grind of servos, targeting sensors flaring.
+  - emote raises a heavy alloy fist and drives it down like a piston.
+stats:
+  strength:
+    base: 160
+  dexterity:
+    base: 45
+  perception:
+    base: 50
+  vitality:
+    base: 220
+  willpower:
+    base: 30
+  charisma:
+    base: 70
+damage:
+  basedamage: 6
+  variance: 2
+disabledslots: []

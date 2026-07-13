@@ -221,6 +221,10 @@ func tickMobBuffs(mob *mobs.Mob, mobInstanceId int) {
 
 // tickMobMutationAcquisition — current inline block at lines 162–260.
 func tickMobMutationAcquisition(mob *mobs.Mob, mb *configs.Balance) {
+	// Machines/constructs never acquire mutations — the Chrysalis is biological.
+	if sp := species.GetSpecies(mob.Character.SpeciesId); sp != nil && sp.MutationImmune {
+		return
+	}
 	if !(bool(mb.MobMutationEnabled) && mob.Character.IsInCombat()) {
 		return
 	}

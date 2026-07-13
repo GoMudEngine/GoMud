@@ -39,7 +39,7 @@ character:
     up to fight beside you. It carries a disruptor field tuned to
     conjured and summoned things alone, and it will cast every one of
     them out of the chamber the instant it gets the charge to do it.
-  speciesid: 37
+  speciesid: 45
   level: 1
   gold: 0
   # Nodrop mitigation-only gear (crashsite-boss-mechanics Part B): buys

@@ -22,7 +22,6 @@ combatcommands:
   - 'emote closes both hands and crushes inward with the patience of
     stone.'
   - ''
-spawnmutations: [colossus-form, titan-growth]
 character:
   name: Silent Warden
   description: |
@@ -31,7 +30,7 @@ character:
     thing. It has never spoken and it never will. Whatever lies behind it
     was worth making a thing this strong to keep, and it has kept it,
     faithfully, through every age since.
-  speciesid: 35
+  speciesid: 45
   level: 1
   gold: 0
   items:

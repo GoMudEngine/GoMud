@@ -56,6 +56,10 @@ type Species struct {
 	GrappleImmune    bool             `yaml:"grapple_immune,omitempty"` // Cannot be grappled (ethereal, fire, etc.)
 	BodyParts        []string         `yaml:"body_parts,omitempty"`     // Set of canonical body-part tags this species has
 	IntrinsicMutations map[string]int `yaml:"intrinsic_mutations,omitempty"` // Maps mutation id -> baseline rank
+	// MutationImmune marks a species that never gains mutations — neither
+	// intrinsic kits nor in-combat acquisition. Machines/constructs (the
+	// Chrysalis is a biological phenomenon; it does not touch the mechanical).
+	MutationImmune bool `yaml:"mutation_immune,omitempty"`
 }
 
 func GetAllSpecies() []Species {
