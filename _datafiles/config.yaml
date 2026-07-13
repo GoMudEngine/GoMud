@@ -873,9 +873,9 @@ Balance:
   MutationDeepenChance: 0.70         # Probability of deepening vs new when both possible (0.0-1.0)
   MutationProgressGainPerRound: 2.0  # 6e: 2x/round (combined ~8x acquisition)
   # Mutation graph (drift + Body<->Belief opposition)
-  MutationAffinityPerSkillUse: 1.0    # Drift affinity gained per cluster-relevant skill use
-  MutationAffinityPerCombatEvent: 1.0 # 6e: drift from tanking/dodging/controlling in combat
-  MutationAffinityPerRarity: 6.0      # Affinity required per point of rarity to unlock a mutation (r3 entry ~18, r9 apex/Extra Arms ~54 — earned via drift, not one lucky fight). PROVISIONAL, tune in playtest.
+  MutationAffinityPerSkillUse: 0.5    # Drift affinity gained per cluster-relevant skill use (halved so reaching high tiers takes sustained play, not one fight)
+  MutationAffinityPerCombatEvent: 0.5 # 6e: drift from tanking/dodging/controlling in combat (halved alongside PerSkillUse)
+  MutationAffinityPerRarity: 2.0      # Coefficient of the QUADRATIC depth gate (threshold = rarity^2 * this): r3 entry ~18, r6 ~72, r8 bridge ~128, r9 apex ~162. Spreads the journey so apex/bridge powers (Extra Arms) need many fights of dedicated drift, not one. PROVISIONAL, tune in playtest.
   MutationAffinityDecay: 0.98         # Per-event multiplicative decay of cluster affinity (0.0-1.0)
   MutationBodyConvictionDecayMax: 0.9 # Max fraction of ConvictionMax lost to deep Body commitment
   MutationBeliefGearDecayMax: 0.9     # Max fraction of gear effectiveness lost to deep Belief commitment

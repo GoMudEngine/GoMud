@@ -4,7 +4,8 @@ description: |
   Your throat grows a second, layered set of vocal cords that can sound more
   than one note at once. When you raise your voice you no longer have to choose
   -- a rally and a war cry roll out together in a single, overwhelming shout.
-rarity: 6
+rarity: 8
+max_rank: 1  # connective-tissue bridge: apex-class, binary (no deepen)
 clusters: [ironhide, zealot]
 visual: Their throat ripples with a strange doubled motion when they speak, and their voice carries an eerie, chordal undertone.
 pros:

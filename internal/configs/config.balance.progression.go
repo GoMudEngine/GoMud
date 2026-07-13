@@ -75,16 +75,16 @@ func (b *Balance) validateProgression() {
 		b.MutationProgressGainPerRound = 1.0
 	}
 	if b.MutationAffinityPerSkillUse <= 0 {
-		b.MutationAffinityPerSkillUse = 1.0
+		b.MutationAffinityPerSkillUse = 0.5
 	}
 	if b.MutationAffinityPerCombatEvent <= 0 {
-		b.MutationAffinityPerCombatEvent = 1.0
+		b.MutationAffinityPerCombatEvent = 0.5
 	}
 	if b.StatProgressionRate <= 0 {
 		b.StatProgressionRate = 1.0
 	}
 	if b.MutationAffinityPerRarity <= 0 {
-		b.MutationAffinityPerRarity = 6.0
+		b.MutationAffinityPerRarity = 2.0
 	}
 	if b.MutationAffinityDecay <= 0 || b.MutationAffinityDecay > 1.0 {
 		b.MutationAffinityDecay = 0.98

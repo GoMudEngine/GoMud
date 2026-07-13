@@ -4,7 +4,8 @@ description: |
   Spinnerets open along your wrists and spine, trailing fine, impossibly strong
   silk wherever you move. It webs the ground around you and fouls the footing of
   anyone who closes in, while you ride your own lines clear of trouble.
-rarity: 4
+rarity: 8
+max_rank: 1  # connective-tissue bridge: apex-class, binary (no deepen)
 clusters: [trickster, weaver]
 visual: Fine, glinting strands of silk drift and cling around them, webbing the ground at their feet.
 pros:
