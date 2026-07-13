@@ -144,6 +144,24 @@ fights** got a first-pass fix (2026-07-13, master `9a6606a3d`) — needs live pl
 - 🟡 **Suppress NPC ambient barks during a paced rite** (Hadwen's backstop line
   interleaved into the ceremony once).
 
+### 5d. Presentation / delight polish
+Not gating, but directly serves the "coherent, memorable first hour" advertising
+goal — cheap wins that make the world feel crafted.
+- ⬜ **Mutation-acquisition art + reveal popup** — reuse the eq-icon generation
+  pipeline (`image-gen-mcp` low-quality → `tools/strip_icon_bg.py`) to make small
+  per-mutation illustrations, and show a richer reveal on acquisition. Two
+  independent pieces: **(A) art batch** (no engine risk; lock a shared house style,
+  pilot on ~3, MVP = the 13 apexes + keystones first with a per-cluster crest
+  fallback, then expand to all 96) → `static/img/mutations/<id>.png`; **(B) reveal
+  event** — a GMCP event carrying the mutation id/name at grant time + a web-client
+  toast/modal with the illustration + flavor, degrading gracefully to a richer text
+  flourish on terminal clients. Brainstorm the style lock + GMCP shape before
+  generating anything.
+- ⬜ **Celestial splash screens** — improve the moon-phase / sunrise / sunset splash
+  art & messaging. The events already fire; this is a presentation pass (better
+  ASCII/art, evocative copy, maybe a web-client visual treatment) so day/night and
+  the lunar cycle feel like events, not log lines.
+
 ---
 
 ## 6. Suggested sequencing
@@ -157,8 +175,9 @@ fights** got a first-pass fix (2026-07-13, master `9a6606a3d`) — needs live pl
 4. **Bug burn-down** (5b) — knock these out continuously; several are quick.
 5. **Admin web-building** — the big build; spec it, then chunk it.
 6. **Retention layer:** guilds/clans, achievements.
-7. **Weather/seasons polish, moderation hardening, content/help polish** — parallel
-   / as-capacity.
+7. **Weather/seasons polish, moderation hardening, content/help polish, presentation
+   / delight polish (5d)** — parallel / as-capacity. The 5d art batch in particular
+   has no engine risk and can start any time.
 
 ---
 
