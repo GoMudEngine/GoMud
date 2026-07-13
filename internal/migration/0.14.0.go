@@ -46,8 +46,13 @@ var craftSkills = []string{"alchemy", "blacksmithing", "tailoring", "cooking", "
 // and writes nothing — used to eyeball the result against spec §4 before applying.
 func migrate_ReclassifyPlayerMutations(dryRun bool) error {
 	c := configs.GetConfig()
-	usersGlob := filepath.Join(string(c.FilePaths.DataFiles), "users", "*.yaml")
-	matches, err := filepath.Glob(usersGlob)
+	return reclassifyUsersInDir(filepath.Join(string(c.FilePaths.DataFiles), "users"), dryRun)
+}
+
+// reclassifyUsersInDir is the testable core — operates on any users directory so
+// tests can run it against a disposable temp copy of representative accounts.
+func reclassifyUsersInDir(usersDir string, dryRun bool) error {
+	matches, err := filepath.Glob(filepath.Join(usersDir, "*.yaml"))
 	if err != nil {
 		return err
 	}
