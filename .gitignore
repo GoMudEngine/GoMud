@@ -110,3 +110,6 @@ tools/mud_bridge_log.txt
 # Prod player saves pulled for migration analysis — never commit
 _archive/prod-users/
 _archive/prod-users.tgz
+
+# Stray screenshots dropped in the repo root (see memory)
+Screenshot *.png
