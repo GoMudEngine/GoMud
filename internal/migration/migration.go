@@ -65,6 +65,15 @@ func doAllMigrations(lastConfigVersion version.Version) error {
 
 	}
 
+	if lastConfigVersion.IsOlderThan(version.New(0, 14, 0)) {
+		// Player mutation migration: reclassify every save onto the cluster
+		// graph (wipe retired-41, grant a cluster seed). Datafiles are backed
+		// up by Run() before this and restored on error (spec §7 safety).
+		if err := migrate_ReclassifyPlayerMutations(false); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
