@@ -865,9 +865,9 @@ Balance:
   # Progress needed for the Nth mutation: BaseProgress × ProgressScale^(N-1)
   #   Example: base 50, scale 1.5:
   #     1st mutation: 50 progress,  2nd: 75,  3rd: 112.5,  4th: 168.75
-  MutationBaseProgress: 50.0         # Progress needed for first mutation
+  MutationBaseProgress: 60.0         # Progress needed for first mutation (0.14.0: +10, richer graph)
   MutationProgressScale: 1.5         # Each additional mutation costs Scale^n more
-  MutationMaxCount: 5                # Max simultaneous mutations per character
+  MutationMaxCount: 6                # Max simultaneous mutations per character (0.14.0: +1 for deeper cluster builds)
   MutationMaxLevel: 4                # Max level any single mutation can reach (1–4)
   MutationDeepenChance: 0.70         # Probability of deepening vs new when both possible (0.0-1.0)
   MutationProgressGainPerRound: 1.0  # Progress added per combat round
