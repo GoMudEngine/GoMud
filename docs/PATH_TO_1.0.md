@@ -52,9 +52,17 @@ experience just passed a full feel-test — so the hill is shorter than it looks
     affordability check — fixes the gold-faucet), seller buyout + derived 25% reserve + buy-it-now,
     house commission (gold sink), reliable unsold-return to bank storage/inbox (+ fixed offline
     item-loss & a sold-seller item-dup bug). Unit-tested + suite 91/91 + boot clean.
-  - ⬜ **#2 Living-world NPC buyers** — 5 archetypes (collector/shopkeeper/adventurer/official/
-    craftsperson), each with an interest filter + valuation + gold-gated wallet. User's note: this
-    is ~5 substages of its own. The big "feels alive" piece.
+  - 🟡 **#2 Living-world NPC buyers** — 5 archetypes, ~5 substages (spec+plan per substage):
+    - ✅ **#2.1 Foundation + Collector** — DONE 2026-07-14 (local master, unpushed; spec+plan
+      `2026-07-14-npc-auction-buyers-foundation-*`). The engine: `NpcBuyer` framework (Interested/
+      MaxBid/Wallet) in `modules/auctions/npc_buyers.go`, non-user sentinel bidder (`HighestBidIsNPC`
+      + `npcBid` + unified `refundPreviousBidder`) threaded through #1's escrow, per-tick bid-decision
+      (incremental, capped at valuation → players always outbid), Collector archetype (prestige gear,
+      regenerating persisted wallet, item-sink flavor). Unit-tested + suite 91/91 + boot clean.
+      Provisional numbers (min-value 500, premium 1.0, wallet 10k, bid-chance 35%) — tune in playtest.
+    - ⬜ **#2.2 Craftsperson** (components), **#2.3 Adventurer** (gear+stats), **#2.4 Shopkeeper**
+      (VendorCategories match; bids from REAL shop gold — hybrid wallet), **#2.5 Official** (needs a
+      new "restricted" flag — deferred/optional). Each = an `NpcBuyer` impl plugging into #2.1.
   - ⬜ **#3 Shopkeeper relisting** — a shopkeeper-archetype win routes the item into shop stock.
   - ⬜ **#4 Bank-storage → auction** — storage items whose owner can't pay go to the block instead
     of being deleted.
