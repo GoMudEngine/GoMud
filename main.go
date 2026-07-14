@@ -31,6 +31,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/connections"
+	"github.com/GoMudEngine/GoMud/internal/copyover"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/ferry"
 	"github.com/GoMudEngine/GoMud/internal/flags"
@@ -142,6 +143,26 @@ func main() {
 
 	flags.HandleFlags(VERSION)
 
+	// Register copyover contributors (must happen before copyover.Restore is called).
+	copyover.Register(connections.CopyoverContributor())
+	copyover.Register(users.CopyoverContributor())
+	copyover.Register(util.CopyoverContributor())
+	copyover.Register(gametime.CopyoverContributor())
+	copyover.Register(copyover.TokenContributor())
+
+	// Wire the reconnect-token issuer so the connections contributor can mint
+	// one-time relog tokens for WebSocket clients without an import cycle.
+	connections.IssueWebSocketReconnectToken = func(connectionId connections.ConnectionId) (string, error) {
+		u := users.GetByConnectionId(connectionId)
+		if u == nil {
+			return "", fmt.Errorf("no user for connection %d", connectionId)
+		}
+		return copyover.IssueReconnectToken(u.UserId)
+	}
+
+	// True when this process is a copyover restart (a state pipe fd was passed).
+	isCopyover := flags.CopyoverFd() >= 0
+
 	configs.ReloadConfig()
 	c := configs.GetConfig()
 
@@ -178,9 +199,13 @@ func main() {
 
 	currentVersion, _ := version.Parse(VERSION)
 
-	if err = migration.Run(lastKnownVersion, currentVersion); err != nil {
-		mudlog.Error("migration.Run()", "error", err)
-		os.Exit(1)
+	// Migrations only run on a normal boot — a copyover restart carries live
+	// state and must not re-migrate anything.
+	if !isCopyover {
+		if err = migration.Run(lastKnownVersion, currentVersion); err != nil {
+			mudlog.Error("migration.Run()", "error", err)
+			os.Exit(1)
+		}
 	}
 
 	// Default i18n localize folders
@@ -374,19 +399,34 @@ func main() {
 
 	mudlog.Info(`========================`)
 
-	// Create the user index
-	idx := users.NewUserIndex()
-	if !idx.Exists() {
-		// Since it doesn't exist yet, that's a good indication we should do a quick format migration check
-		users.DoUserMigrations()
-	}
-	idx.Create()
-	idx.Rebuild()
-	mudlog.Info("UserIndex", "info", "User index recreated.")
+	// Normal boot only: rebuild the user index and load the round count from
+	// disk. A copyover restart carries the live user index + round count in the
+	// state pipe, so doing this here would clobber it.
+	if !isCopyover {
+		// Create the user index
+		idx := users.NewUserIndex()
+		if !idx.Exists() {
+			// Since it doesn't exist yet, that's a good indication we should do a quick format migration check
+			users.DoUserMigrations()
+		}
+		idx.Create()
+		idx.Rebuild()
+		mudlog.Info("UserIndex", "info", "User index recreated.")
 
-	// Load the round count from the file
-	if util.LoadRoundCount(c.FilePaths.DataFiles.String()+`/`+util.RoundCountFilename) == util.RoundCountMinimum {
-		gametime.SetToDay(-3)
+		// Load the round count from the file
+		if util.LoadRoundCount(c.FilePaths.DataFiles.String()+`/`+util.RoundCountFilename) == util.RoundCountMinimum {
+			gametime.SetToDay(-3)
+		}
+	}
+
+	// Copyover restart: restore live state (connections, users, round count) from
+	// the pipe. A restore failure is fatal — the old process is already gone.
+	if isCopyover {
+		if err := copyover.Restore(flags.CopyoverFd()); err != nil {
+			mudlog.Error("copyover.Restore()", "error", err)
+			os.Exit(1)
+		}
+		mudlog.Info("Copyover", "status", "state restored")
 	}
 
 	gametime.GetZodiac(1) // The first time this is called it randomizes all zodiacs
@@ -421,6 +461,11 @@ func main() {
 
 	// Set the server to be alive
 	serverAlive.Store(true)
+
+	// Copyover: install the SIGUSR1 handler (Unix) and let the `copyover` command
+	// trigger a live restart.
+	startCopyoverSignalHandler()
+	usercommands.SetCopyoverFunc(triggerCopyover)
 
 	mudlog.Info(`========================`)
 	web.Listen(&wg, HandleWebSocketConnection)

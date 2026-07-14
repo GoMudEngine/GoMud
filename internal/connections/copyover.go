@@ -2,6 +2,13 @@ package connections
 
 import "github.com/GoMudEngine/GoMud/internal/copyover"
 
+// IssueWebSocketReconnectToken is set by main to avoid an import cycle. It is
+// called for each WebSocket connection during CopyoverSave (Unix only),
+// returning a one-time token the client uses to skip the login prompt after
+// reconnecting. Declared here (not the Unix-only fd file) so main can reference
+// it on every platform.
+var IssueWebSocketReconnectToken func(connectionId ConnectionId) (string, error)
+
 type connectionRecord struct {
 	ConnectionId   ConnectionId   `json:"connection_id"`
 	State          ConnectState   `json:"state"`

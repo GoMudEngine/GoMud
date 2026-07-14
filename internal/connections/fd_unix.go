@@ -12,10 +12,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 )
 
-// IssueWebSocketReconnectToken is set by main to avoid an import cycle.
-// It is called for each WebSocket connection during CopyoverSave, returning a
-// one-time token the client can use to skip the login prompt after reconnecting.
-var IssueWebSocketReconnectToken func(connectionId ConnectionId) (string, error)
 
 func (c *connectionsCopyoverContributor) CopyoverSave(enc *copyover.Encoder) error {
 	lock.Lock()
