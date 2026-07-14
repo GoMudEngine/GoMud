@@ -162,8 +162,25 @@ func (c *Character) StoreItem(i items.Item) bool {
 	if (iSpec.Type == items.Potion || (iSpec.Subtype == items.Drinkable && len(iSpec.BuffIds) > 0) || iSpec.Subtype == items.Throwable) && c.Equipment.Belt.ItemId > 0 {
 		beltSpec := c.Equipment.Belt.GetSpec()
 		if beltSpec.IsBandolier && beltSpec.BandolierCapacity > 0 && len(c.PotionItems) < beltSpec.BandolierCapacity {
-			c.PotionItems = append(c.PotionItems, i)
-			return true
+			// Ambient bandoliers (e.g. the Vitalis Bandolier) passively tick
+			// every slotted potion's effect each round. Same-type buffs dedupe,
+			// so a duplicate potion type is a wasted slot that only exists to
+			// stack near-immortal regen — cap ambient bandoliers to one of each
+			// potion type. Duplicates fall through to the backpack. Ordinary
+			// (non-ambient) storage bandoliers still allow duplicates.
+			dup := false
+			if beltSpec.AmbientPotions {
+				for _, existing := range c.PotionItems {
+					if existing.ItemId == i.ItemId {
+						dup = true
+						break
+					}
+				}
+			}
+			if !dup {
+				c.PotionItems = append(c.PotionItems, i)
+				return true
+			}
 		}
 	}
 
