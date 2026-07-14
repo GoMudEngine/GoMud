@@ -165,8 +165,10 @@ func (s *shopkeeper) Flavor() string     { return "for the shelves" }
 func (s *shopkeeper) Wallet() *NpcWallet { return nil } // real-gold buyer
 
 // selectFor picks the shop with the highest affordable counter-offer for item.
-// Memoized by item UUID within a single decision (Interested→MaxBid→CanAfford
-// run for the same item on the single-threaded auction tick).
+// Memoized by item UUID: one shops.AllShops() scan per lot (the item is stable
+// for a lot's lifetime), reused across the Interested→MaxBid→CanAfford calls
+// nextNpcBid makes on the single-threaded auction tick. CanAfford still re-reads
+// the shop's live Gold, so a stale offer can never cause an overspend.
 func (s *shopkeeper) selectFor(item items.Item) shopSel {
 	if !item.UUID.IsNil() && s.sel.uuid == item.UUID {
 		return s.sel

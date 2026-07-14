@@ -203,3 +203,28 @@ func TestShopkeeper_EscrowUsesRealShopGold(t *testing.T) {
 		t.Errorf("after Refund(400) shop gold=%d want 5000", smith.Gold)
 	}
 }
+
+func TestShopkeeper_SelectionUpdatesPerItem(t *testing.T) {
+	cleanup := items.SeedItemsForTest(map[int]*items.ItemSpec{
+		911: {ItemId: 911, Name: "blade", Type: items.Weapon, Value: 1000,
+			VendorCategories: []string{shops.CraftSupportBlacksmithing}},
+		912: {ItemId: 912, Name: "cloak", Type: items.Body, Value: 1000,
+			VendorCategories: []string{shops.CraftSupportTailoring}},
+	})
+	defer cleanup()
+	shops.ClearCache()
+	defer shops.ClearCache()
+	shops.RegisterShop("z", 1, 100, shops.ShopInventory{Gold: 5000, StartingGold: 5000, CraftSupport: shops.CraftSupportBlacksmithing})
+	shops.RegisterShop("z", 2, 100, shops.ShopInventory{Gold: 5000, StartingGold: 5000, CraftSupport: shops.CraftSupportTailoring})
+
+	sk := &shopkeeper{name: "The Merchants' Guild"}
+	blade := items.New(911)
+	cloak := items.New(912)
+	if !sk.Interested(blade) || sk.selectFor(blade).shop.CraftSupport != shops.CraftSupportBlacksmithing {
+		t.Fatal("blade should select the blacksmith")
+	}
+	// Different item UUID must recompute, not return the memoized blacksmith selection.
+	if !sk.Interested(cloak) || sk.selectFor(cloak).shop.CraftSupport != shops.CraftSupportTailoring {
+		t.Fatal("cloak should re-select the tailor (memoization must invalidate per item UUID)")
+	}
+}
