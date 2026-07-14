@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-07-14 — The auction house comes alive: collectors
+
+The auction house now has interested buyers of its own. Wealthy collectors watch
+the block and bid on fine equipment they covet — competing with you up to what
+they think it's worth, but never beyond, so anything you truly want you can still
+win. When a collector does win, the piece disappears into their private collection.
+They spend real, limited coin, so they can't buy everything. (More kinds of NPC
+buyers — merchants, adventurers, crafters — are coming.)
+
 ## 2026-07-14 — Auction house: a real bidding economy
 
 The auction house now handles gold properly. When you bid, the gold is set aside
