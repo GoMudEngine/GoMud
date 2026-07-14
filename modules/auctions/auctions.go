@@ -113,6 +113,13 @@ func (ae AuctionUpdate) Data(name string) any {
 func (mod *AuctionsModule) load() {
 	mod.plug.ReadIntoStruct(`auctionhistory`, &mod.auctionMgr)
 
+	// Restore persisted NPC wallet balances onto the live buyers.
+	for _, b := range npcBuyers {
+		if bal, ok := mod.auctionMgr.WalletBalances[b.Name()]; ok {
+			b.Wallet().Balance = bal
+		}
+	}
+
 	// Reserve / commission fractions from plugin config (defaults otherwise).
 	if v, ok := mod.plug.Config.Get(`AuctionReservePct`).(float64); ok && v > 0 {
 		auctionReservePct = v
@@ -120,9 +127,31 @@ func (mod *AuctionsModule) load() {
 	if v, ok := mod.plug.Config.Get(`AuctionCommissionPct`).(float64); ok && v >= 0 {
 		auctionCommissionPct = v
 	}
+
+	// NPC-buyer knobs.
+	if v, ok := mod.plug.Config.Get(`AuctionNpcBuyersEnabled`).(bool); ok {
+		npcBuyersEnabled = v
+	}
+	if v, ok := mod.plug.Config.Get(`AuctionNpcBidChance`).(float64); ok && v >= 0 {
+		npcBidChancePct = int(v * 100)
+	}
+	if v, ok := mod.plug.Config.Get(`CollectorMinValue`).(int); ok && v > 0 {
+		collectorMinValue = v
+	}
+	if v, ok := mod.plug.Config.Get(`CollectorPremium`).(float64); ok && v > 0 {
+		collectorPremium = v
+	}
+	if v, ok := mod.plug.Config.Get(`CollectorWalletRegenPerTick`).(int); ok && v >= 0 {
+		collectorRegenPerTick = v
+	}
 }
 
 func (mod *AuctionsModule) save() {
+	// Snapshot live NPC wallet balances for persistence.
+	mod.auctionMgr.WalletBalances = map[string]int{}
+	for _, b := range npcBuyers {
+		mod.auctionMgr.WalletBalances[b.Name()] = b.Wallet().Balance
+	}
 	mod.plug.WriteStruct(`auctionhistory`, mod.auctionMgr)
 }
 
@@ -587,6 +616,7 @@ type AuctionManager struct {
 	ActiveAuction   *AuctionItem `yaml:"ActiveAuction,omitempty"`
 	maxHistoryItems int
 	PastAuctions    []PastAuctionItem `yaml:"PastAuctions,omitempty"`
+	WalletBalances  map[string]int    `yaml:"WalletBalances,omitempty"` // NPC persona name -> wallet balance
 }
 
 type AuctionItem struct {
