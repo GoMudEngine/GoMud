@@ -94,10 +94,10 @@ type NpcBuyer interface {
 }
 ```
 
-**Regen archetypes** (collector/craftsperson/adventurer): change the `wallet *NpcWallet` field to an
-**embedded `*NpcWallet`** so `CanAfford/Spend/Refund/Regen` promote automatically — zero delegation
-boilerplate. `Wallet()` returns the embedded pointer. Registry init changes from
-`wallet: &NpcWallet{...}` to `NpcWallet: &NpcWallet{...}`. This is behavior-preserving.
+**Regen archetypes** (collector/craftsperson/adventurer): keep the existing `wallet *NpcWallet` field
+and `Wallet()` accessor unchanged (so all existing archetype tests compile untouched); add three
+one-line delegating methods each — `CanAfford/Spend/Refund` forward to `c.wallet`. Behavior-preserving,
+minimal churn (chosen over embedding, which would rename the field and churn ~15 test literals).
 
 **Shopkeeper**: `Wallet()` returns `nil`; escrow hits the selected/bound shop's real gold.
 
