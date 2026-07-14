@@ -73,9 +73,16 @@ experience just passed a full feel-test — so the hill is shorter than it looks
   cross-delivery + toggle test (A→B delivery, B toggles newbie off → stops receiving, broadcast→chat
   confirmed). Minor: usage text uses the `&lt;name&gt;` convention (shared by 4 other commands) —
   eyeball on the real web client.
-- ⬜ 🎯 **Copyover / hot-reboot** — **not ported** from upstream (in the backlog).
-  During a launch push we iterate constantly; without copyover every update
-  disconnects everyone — worst right when we're most active.
+- ✅ 🎯 **Copyover / hot-reboot** — **DONE 2026-07-14** (local master, unpushed; spec+plan
+  `2026-07-14-copyover-*`). Ported upstream GoMud's copyover: live restart without dropping
+  players (telnet FDs handed off across the `exec`; web clients auto-relog via one-time tokens).
+  New `internal/copyover` pkg + contributors (connections/users/util/gametime/tokens), `copyover`
+  admin command + SIGUSR1, main.go wiring (register/restore/resume/skip-steps + websocket relog),
+  web-client relog JS, + a DOGMud living-economy flush (shops/forage/caravan/opinions) so nothing
+  rewinds. **Compiles to a no-op on Windows; both-platform build + suite + boot-smoke green here.**
+  ⚠ **The actual hot-reboot is UNTESTED — validate on the Linux droplet** (checklist below): connect
+  a telnet + web client, run `copyover`, confirm telnet survives + web auto-relogs + no economy
+  rewind. A failed `copyover.Restore` exits(1) (players drop) → treat as a normal cold restart.
 
 ---
 
