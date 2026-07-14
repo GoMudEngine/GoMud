@@ -7,8 +7,11 @@ type NpcBuyer interface {
 	Name() string
 	Interested(item items.Item) bool
 	MaxBid(item items.Item) int
-	Wallet() *NpcWallet
-	Flavor() string // trailing phrase in the win broadcast, e.g. "for their collection"
+	CanAfford(n int) bool // escrow seam: does the buyer's purse cover n?
+	Spend(n int)          // escrow seam: debit the purse
+	Refund(n int)         // escrow seam: credit the purse back (on outbid)
+	Wallet() *NpcWallet   // synthetic regen wallet for persistence/regen; nil for real-gold buyers
+	Flavor() string       // trailing phrase in the win broadcast, e.g. "for their collection"
 }
 
 // NpcWallet is a persistent, gold-gated balance that regenerates toward Cap.
@@ -67,8 +70,11 @@ func (c *collector) Interested(item items.Item) bool {
 func (c *collector) MaxBid(item items.Item) int {
 	return int(float64(item.GetSpec().Value) * collectorPremium)
 }
-func (c *collector) Wallet() *NpcWallet { return c.wallet }
-func (c *collector) Flavor() string     { return "for their collection" }
+func (c *collector) CanAfford(n int) bool { return c.wallet.CanAfford(n) }
+func (c *collector) Spend(n int)          { c.wallet.Spend(n) }
+func (c *collector) Refund(n int)         { c.wallet.Refund(n) }
+func (c *collector) Wallet() *NpcWallet   { return c.wallet }
+func (c *collector) Flavor() string       { return "for their collection" }
 
 // ── Craftsperson archetype: buys valuable crafting materials ──
 type craftsperson struct {
@@ -84,8 +90,11 @@ func (c *craftsperson) Interested(item items.Item) bool {
 func (c *craftsperson) MaxBid(item items.Item) int {
 	return int(float64(item.GetSpec().Value) * craftPremium)
 }
-func (c *craftsperson) Wallet() *NpcWallet { return c.wallet }
-func (c *craftsperson) Flavor() string     { return "for their workshop" }
+func (c *craftsperson) CanAfford(n int) bool { return c.wallet.CanAfford(n) }
+func (c *craftsperson) Spend(n int)          { c.wallet.Spend(n) }
+func (c *craftsperson) Refund(n int)         { c.wallet.Refund(n) }
+func (c *craftsperson) Wallet() *NpcWallet   { return c.wallet }
+func (c *craftsperson) Flavor() string       { return "for their workshop" }
 
 // ── Adventurer archetype: buys usable gear upgrades (stat-bearing equipment) ──
 type adventurer struct {
@@ -101,8 +110,11 @@ func (a *adventurer) Interested(item items.Item) bool {
 func (a *adventurer) MaxBid(item items.Item) int {
 	return int(float64(item.GetSpec().Value) * advPremium)
 }
-func (a *adventurer) Wallet() *NpcWallet { return a.wallet }
-func (a *adventurer) Flavor() string     { return "to gear up" }
+func (a *adventurer) CanAfford(n int) bool { return a.wallet.CanAfford(n) }
+func (a *adventurer) Spend(n int)          { a.wallet.Spend(n) }
+func (a *adventurer) Refund(n int)         { a.wallet.Refund(n) }
+func (a *adventurer) Wallet() *NpcWallet   { return a.wallet }
+func (a *adventurer) Flavor() string       { return "to gear up" }
 
 // ── Registry of active NPC buyers (#2.1: two collectors) ──
 var npcBuyers = []NpcBuyer{
@@ -140,7 +152,7 @@ func nextNpcBid(buyers []NpcBuyer, item items.Item, highBid, minBid int, highNam
 		if next > b.MaxBid(item) {
 			continue
 		}
-		if !b.Wallet().CanAfford(next) {
+		if !b.CanAfford(next) {
 			continue
 		}
 		return b, next, true

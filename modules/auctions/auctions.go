@@ -115,8 +115,10 @@ func (mod *AuctionsModule) load() {
 
 	// Restore persisted NPC wallet balances onto the live buyers.
 	for _, b := range npcBuyers {
-		if bal, ok := mod.auctionMgr.WalletBalances[b.Name()]; ok {
-			b.Wallet().Balance = bal
+		if w := b.Wallet(); w != nil {
+			if bal, ok := mod.auctionMgr.WalletBalances[b.Name()]; ok {
+				w.Balance = bal
+			}
 		}
 	}
 
@@ -162,7 +164,9 @@ func (mod *AuctionsModule) save() {
 	// Snapshot live NPC wallet balances for persistence.
 	mod.auctionMgr.WalletBalances = map[string]int{}
 	for _, b := range npcBuyers {
-		mod.auctionMgr.WalletBalances[b.Name()] = b.Wallet().Balance
+		if w := b.Wallet(); w != nil {
+			mod.auctionMgr.WalletBalances[b.Name()] = w.Balance
+		}
 	}
 	mod.plug.WriteStruct(`auctionhistory`, mod.auctionMgr)
 }
@@ -586,7 +590,9 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 		// (before the update broadcast so it reflects the new bid).
 		if npcBuyersEnabled && auctionNow.BuyoutPrice > 0 {
 			for _, b := range npcBuyers {
-				b.Wallet().Regen(collectorRegenPerTick)
+				if w := b.Wallet(); w != nil {
+					w.Regen(collectorRegenPerTick)
+				}
 			}
 			if util.Rand(100) < npcBidChancePct {
 				if b, bid, ok := nextNpcBid(npcBuyers, auctionNow.ItemData, auctionNow.HighestBid, auctionNow.MinimumBid, auctionNow.HighestBidderName, auctionNow.HighestBidIsNPC); ok {
@@ -778,7 +784,7 @@ func (am *AuctionManager) npcBid(buyer NpcBuyer, bid int) {
 		return
 	}
 	am.refundPreviousBidder()
-	buyer.Wallet().Spend(bid)
+	buyer.Spend(bid)
 	am.ActiveAuction.HighestBid = bid
 	am.ActiveAuction.HighestBidUserId = 0
 	am.ActiveAuction.HighestBidIsNPC = true
@@ -794,7 +800,7 @@ func (am *AuctionManager) refundPreviousBidder() {
 	}
 	if a.HighestBidIsNPC {
 		if b := buyerByName(a.HighestBidderName); b != nil {
-			b.Wallet().Refund(a.HighestBid)
+			b.Refund(a.HighestBid)
 		}
 		return
 	}
