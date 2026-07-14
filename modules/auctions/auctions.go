@@ -112,6 +112,14 @@ func (ae AuctionUpdate) Data(name string) any {
 
 func (mod *AuctionsModule) load() {
 	mod.plug.ReadIntoStruct(`auctionhistory`, &mod.auctionMgr)
+
+	// Reserve / commission fractions from plugin config (defaults otherwise).
+	if v, ok := mod.plug.Config.Get(`AuctionReservePct`).(float64); ok && v > 0 {
+		auctionReservePct = v
+	}
+	if v, ok := mod.plug.Config.Get(`AuctionCommissionPct`).(float64); ok && v >= 0 {
+		auctionCommissionPct = v
+	}
 }
 
 func (mod *AuctionsModule) save() {
@@ -292,7 +300,7 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 		return true, nil
 	}
 
-	questionAmount := cmdPrompt.Ask(`Auction for how much gold?`, []string{})
+	questionAmount := cmdPrompt.Ask(`Set a buyout (buy-it-now) price in gold?`, []string{})
 	if !questionAmount.Done {
 		return true, nil
 	}
@@ -306,7 +314,7 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 
 	user.ClearPrompt()
 
-	user.SendText(messaging.CategorySystem, fmt.Sprintf("Auctioning your <ansi fg=\"item\">%s</ansi> for <ansi fg=\"gold\">%d gold</ansi>.", matchItem.DisplayName(), amt))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf("Auctioning your <ansi fg=\"item\">%s</ansi> — buyout <ansi fg=\"gold\">%d gold</ansi>, reserve <ansi fg=\"gold\">%d gold</ansi>.", matchItem.DisplayName(), amt, reserveFrom(amt, auctionReservePct)))
 
 	duration := 60
 	if dur, ok := mod.plug.Config.Get(`DurationSeconds`).(int); ok {
