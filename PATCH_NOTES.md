@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-07-14 — Hot-reboot (copyover)
+
+The server can now live-restart to deploy updates **without disconnecting
+players** — a brief pause and a "Copyover complete." instead of everyone
+dropping. Telnet players keep their connection straight through; web clients
+reconnect automatically. Admins trigger it with the `copyover` command (Unix
+servers only). The living economy (shops, foraging, caravans) is flushed first,
+so nothing rewinds.
+
 ## 2026-07-14 — Global chat channels
 
 Three tunable, world-wide channels so you can talk to (and hear) everyone online:

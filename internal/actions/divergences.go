@@ -20,6 +20,7 @@ var userOnlyCommands = map[string]string{
 	"caravan":      "admin",
 	"command":      "admin",
 	"combatstats":  "admin",
+	"copyover":     "admin", // live server restart (hot-reboot)
 	"crime":        "admin",
 	"deafen":       "admin",
 	"devtool":      "admin",
