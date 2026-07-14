@@ -61,11 +61,18 @@ experience just passed a full feel-test — so the hill is shorter than it looks
   + capability flags + descriptive config). Contact/Hostname/Port default empty (privacy — public
   repo). Verified live via `tools/mssp_probe.py`. **Post-deploy:** validate against a public MSSP
   checker + register DOGMud with the directory sites (manual, non-code).
-- ⬜ 🎯 **Global player channels (gossip / chat / newbie / OOC)** — **appears
-  absent** (we have `say`/`shout`/`whisper`/`broadcast`/`who` + a Discord bridge,
-  but no tune-able game-wide chat or newbie-help channel). A newcomer needs to
-  *feel* other players and ask for help world-wide. Core community glue and
-  retention. (Confirm truly absent before building.)
+- ✅ 🎯 **Global player channels (chat / newbie / trade)** — **DONE 2026-07-14** (local master,
+  unpushed; spec+plan `2026-07-14-global-channels-*`). The reframe: `broadcast` was ALREADY a
+  global channel — the real gaps were tunability, a newbie/help channel, and separating player
+  chat from the system-announcement firehose. Built three tunable channels on the existing
+  broadcast fan-out: new `internal/channels` package (registry + default-on rule), `ChannelMessage`
+  event + per-recipient toggle-filtered fan-out (`ChannelMessage_SendToAll`), `chat`/`newbie`/`trade`
+  commands + a `channels` manager (toggles via `GetConfigOption`/`SetConfigOption`), `broadcast`
+  re-pointed to chat. **Web accounted for both sides:** `gmcp.Comm.go onComm` routes the new
+  CommTypes (toggle-filtered) + `webclient-pure.html` Comms tabs. Verified live with a TWO-client
+  cross-delivery + toggle test (A→B delivery, B toggles newbie off → stops receiving, broadcast→chat
+  confirmed). Minor: usage text uses the `&lt;name&gt;` convention (shared by 4 other commands) —
+  eyeball on the real web client.
 - ⬜ 🎯 **Copyover / hot-reboot** — **not ported** from upstream (in the backlog).
   During a launch push we iterate constantly; without copyover every update
   disconnects everyone — worst right when we're most active.
