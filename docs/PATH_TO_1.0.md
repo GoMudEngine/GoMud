@@ -127,6 +127,14 @@ fights** got a first-pass fix (2026-07-13, master `9a6606a3d`) — needs live pl
 - ~~ASCII charset "gap"~~ — **NOT a game bug.** `set charset` is a client-mode toggle;
   the testers just didn't converge to ASCII (a harness-driver step, documented in the
   engine profile). No server change needed; ensure future testers converge.
+- ⬜ **Inconsistent item-name capitalization** (2026-07-14, Meirok screenshot) — the SAME item
+  shows both cases in the equipment list (`drowned claws` vs `Drowned Claws`, `storm bracer` vs
+  `Storm Bracer`), all with the same `(Masterwork)` adjective. Not a render bug — it's baked
+  per-instance: `Item.DisplayName()` returns `spec.Name` merged with per-instance `overrides`,
+  and some crafted/affixed copies carry a Title-Cased `name` override while base copies keep the
+  lowercase template name. Seam: affix/masterwork generation (`internal/items/affixgen.go`) and
+  `Item.Rename`. Cleanest fix is likely to normalize casing at the render layer (`DisplayName`
+  Title-cases or sentence-cases consistently) so stored inconsistency stops mattering. LOW pri.
 - ⬜ **GMCP `Char.Stats` transient spike** (LOW) — right after "STATISTIC INCREASED"
   the wire feed briefly reports a stale `ValueAdj` (pre-softcap-recompute), reverting
   next round. ASCII `status` is fine; only a rich/web client flashes it. Deferred —
