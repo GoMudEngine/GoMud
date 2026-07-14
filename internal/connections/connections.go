@@ -89,7 +89,7 @@ func GetAllConnectionIds() []ConnectionId {
 	lock.Lock()
 	defer lock.Unlock()
 
-	ids := make([]ConnectionId, len(netConnections))
+	ids := make([]ConnectionId, 0, len(netConnections))
 
 	for id := range netConnections {
 		ids = append(ids, id)

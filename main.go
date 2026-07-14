@@ -31,6 +31,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/connections"
+	"github.com/GoMudEngine/GoMud/internal/copyover"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/ferry"
 	"github.com/GoMudEngine/GoMud/internal/flags"
@@ -142,6 +143,26 @@ func main() {
 
 	flags.HandleFlags(VERSION)
 
+	// Register copyover contributors (must happen before copyover.Restore is called).
+	copyover.Register(connections.CopyoverContributor())
+	copyover.Register(users.CopyoverContributor())
+	copyover.Register(util.CopyoverContributor())
+	copyover.Register(gametime.CopyoverContributor())
+	copyover.Register(copyover.TokenContributor())
+
+	// Wire the reconnect-token issuer so the connections contributor can mint
+	// one-time relog tokens for WebSocket clients without an import cycle.
+	connections.IssueWebSocketReconnectToken = func(connectionId connections.ConnectionId) (string, error) {
+		u := users.GetByConnectionId(connectionId)
+		if u == nil {
+			return "", fmt.Errorf("no user for connection %d", connectionId)
+		}
+		return copyover.IssueReconnectToken(u.UserId)
+	}
+
+	// True when this process is a copyover restart (a state pipe fd was passed).
+	isCopyover := flags.CopyoverFd() >= 0
+
 	configs.ReloadConfig()
 	c := configs.GetConfig()
 
@@ -178,9 +199,13 @@ func main() {
 
 	currentVersion, _ := version.Parse(VERSION)
 
-	if err = migration.Run(lastKnownVersion, currentVersion); err != nil {
-		mudlog.Error("migration.Run()", "error", err)
-		os.Exit(1)
+	// Migrations only run on a normal boot — a copyover restart carries live
+	// state and must not re-migrate anything.
+	if !isCopyover {
+		if err = migration.Run(lastKnownVersion, currentVersion); err != nil {
+			mudlog.Error("migration.Run()", "error", err)
+			os.Exit(1)
+		}
 	}
 
 	// Default i18n localize folders
@@ -374,19 +399,34 @@ func main() {
 
 	mudlog.Info(`========================`)
 
-	// Create the user index
-	idx := users.NewUserIndex()
-	if !idx.Exists() {
-		// Since it doesn't exist yet, that's a good indication we should do a quick format migration check
-		users.DoUserMigrations()
-	}
-	idx.Create()
-	idx.Rebuild()
-	mudlog.Info("UserIndex", "info", "User index recreated.")
+	// Normal boot only: rebuild the user index and load the round count from
+	// disk. A copyover restart carries the live user index + round count in the
+	// state pipe, so doing this here would clobber it.
+	if !isCopyover {
+		// Create the user index
+		idx := users.NewUserIndex()
+		if !idx.Exists() {
+			// Since it doesn't exist yet, that's a good indication we should do a quick format migration check
+			users.DoUserMigrations()
+		}
+		idx.Create()
+		idx.Rebuild()
+		mudlog.Info("UserIndex", "info", "User index recreated.")
 
-	// Load the round count from the file
-	if util.LoadRoundCount(c.FilePaths.DataFiles.String()+`/`+util.RoundCountFilename) == util.RoundCountMinimum {
-		gametime.SetToDay(-3)
+		// Load the round count from the file
+		if util.LoadRoundCount(c.FilePaths.DataFiles.String()+`/`+util.RoundCountFilename) == util.RoundCountMinimum {
+			gametime.SetToDay(-3)
+		}
+	}
+
+	// Copyover restart: restore live state (connections, users, round count) from
+	// the pipe. A restore failure is fatal — the old process is already gone.
+	if isCopyover {
+		if err := copyover.Restore(flags.CopyoverFd()); err != nil {
+			mudlog.Error("copyover.Restore()", "error", err)
+			os.Exit(1)
+		}
+		mudlog.Info("Copyover", "status", "state restored")
 	}
 
 	gametime.GetZodiac(1) // The first time this is called it randomizes all zodiacs
@@ -422,6 +462,11 @@ func main() {
 	// Set the server to be alive
 	serverAlive.Store(true)
 
+	// Copyover: install the SIGUSR1 handler (Unix) and let the `copyover` command
+	// trigger a live restart.
+	startCopyoverSignalHandler()
+	usercommands.SetCopyoverFunc(triggerCopyover)
+
 	mudlog.Info(`========================`)
 	web.Listen(&wg, HandleWebSocketConnection)
 
@@ -447,6 +492,25 @@ func main() {
 
 	go worldManager.InputWorker(workerShutdownChan, &wg)
 	go worldManager.MainWorker(workerShutdownChan, &wg)
+
+	// Copyover: re-drive every logged-in connection that survived the restart,
+	// then announce completion. (No-op on a normal boot.)
+	if isCopyover {
+		for _, connId := range connections.GetAllConnectionIds() {
+			cd := connections.Get(connId)
+			if cd == nil || cd.State() != connections.LoggedIn {
+				continue
+			}
+			u := users.GetByConnectionId(connId)
+			if u == nil {
+				continue
+			}
+			wg.Add(1)
+			go resumeRestoredConnection(cd, u, &wg)
+		}
+		connections.Broadcast([]byte("\r\nCopyover complete.\r\n"))
+		mudlog.Info("Copyover", "status", "complete")
+	}
 
 	// Hourly economy-health snapshot capture. Runs while the server is
 	// up; uses workerShutdownChan to halt cleanly. Pruning runs once
@@ -971,6 +1035,155 @@ func handleTelnetConnection(connDetails *connections.ConnectionDetails, wg *sync
 
 }
 
+// resumeRestoredConnection re-drives the I/O loop for a telnet connection that
+// survived a copyover. The user is already logged in (restored from the state
+// pipe), so it wires the post-login input handlers, re-enters the world, and
+// runs the same read/handle/dispatch loop a normal connection uses.
+func resumeRestoredConnection(connDetails *connections.ConnectionDetails, userObject *users.UserRecord, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	mudlog.Info("Copyover", "resuming connection", connDetails.ConnectionId(), "userId", userObject.UserId)
+
+	var sharedState map[string]any = make(map[string]any)
+
+	connDetails.AddInputHandler("TelnetIACHandler", inputhandlers.TelnetIACHandler)
+	connDetails.AddInputHandler("AnsiHandler", inputhandlers.AnsiHandler)
+	connDetails.AddInputHandler("CleanserInputHandler", inputhandlers.CleanserInputHandler)
+	connDetails.AddInputHandler("EchoInputHandler", inputhandlers.EchoInputHandler)
+	connDetails.AddInputHandler("HistoryInputHandler", inputhandlers.HistoryInputHandler)
+
+	if userObject.Role == users.RoleAdmin {
+		connDetails.AddInputHandler("SystemCommandInputHandler", inputhandlers.SystemCommandInputHandler)
+	}
+
+	connDetails.AddInputHandler("SignalHandler", inputhandlers.SignalHandler, "AnsiHandler")
+
+	worldManager.SendEnterWorld(userObject.UserId, userObject.Character.RoomId)
+
+	inputBuffer := make([]byte, connections.ReadBufferSize)
+	clientInput := &connections.ClientInput{
+		ConnectionId: connDetails.ConnectionId(),
+		DataIn:       []byte{},
+		Buffer:       make([]byte, 0, connections.ReadBufferSize),
+		EnterPressed: false,
+		Clipboard:    []byte{},
+		History:      connections.InputHistory{},
+	}
+
+	var sug suggestions.Suggestions
+	lastInput := time.Now()
+	c := configs.GetConfig()
+
+	for {
+		clientInput.EnterPressed = false
+		clientInput.TabPressed = false
+		clientInput.BSPressed = false
+
+		n, err := connDetails.Read(inputBuffer)
+		if err != nil {
+			userObject.EventLog.Add(`conn`, `Disconnected`)
+
+			if c.Network.ZombieSeconds > 0 {
+				connDetails.SetState(connections.Zombie)
+				worldManager.SendSetZombie(userObject.UserId, true)
+			} else {
+				worldManager.SendLeaveWorld(userObject.UserId)
+				worldManager.SendLogoutConnectionId(connDetails.ConnectionId())
+			}
+
+			mudlog.Warn("Telnet", "connectionID", connDetails.ConnectionId(), "error", err)
+			connections.Remove(connDetails.ConnectionId())
+			break
+		}
+
+		if connDetails.InputDisabled() {
+			continue
+		}
+
+		clientInput.DataIn = inputBuffer[:n]
+		okContinue, lastHandlerName, err := connDetails.HandleInput(clientInput, sharedState)
+		if err != nil {
+			mudlog.Warn("InputHandler Error", "handler", lastHandlerName, "error", err)
+			continue
+		}
+
+		if !okContinue {
+			_, suggested := userObject.GetUnsentText()
+
+			redrawPrompt := false
+
+			if clientInput.TabPressed {
+				if sug.Count() < 1 {
+					sug.Set(worldManager.GetAutoComplete(userObject.UserId, string(clientInput.Buffer)))
+				}
+				if sug.Count() > 0 {
+					suggested = sug.Next()
+					userObject.SetUnsentText(string(clientInput.Buffer), suggested)
+					redrawPrompt = true
+				}
+			} else if clientInput.BSPressed {
+				userObject.SetUnsentText(string(clientInput.Buffer), ``)
+				if suggested != `` {
+					suggested = ``
+					sug.Clear()
+					redrawPrompt = true
+				}
+			} else {
+				if suggested != `` {
+					if len(clientInput.Buffer) > 0 && clientInput.Buffer[len(clientInput.Buffer)-1] == term.ASCII_SPACE {
+						clientInput.Buffer = append(clientInput.Buffer[0:len(clientInput.Buffer)-1], []byte(suggested)...)
+						clientInput.Buffer = append(clientInput.Buffer[0:len(clientInput.Buffer)], []byte(` `)...)
+						redrawPrompt = true
+						userObject.SetUnsentText(string(clientInput.Buffer), ``)
+						sug.Clear()
+					} else {
+						suggested = ``
+						sug.Clear()
+						userObject.SetUnsentText(string(clientInput.Buffer), suggested)
+						redrawPrompt = true
+					}
+				}
+				userObject.SetUnsentText(string(clientInput.Buffer), suggested)
+			}
+
+			if redrawPrompt {
+				pTxt := userObject.GetCommandPrompt()
+				connections.SendTo([]byte(templates.AnsiParse(pTxt)), clientInput.ConnectionId)
+			}
+
+			continue
+		}
+
+		if clientInput.EnterPressed {
+			c = configs.GetConfig()
+
+			if time.Since(lastInput) < time.Duration(c.Timing.TurnMs)*time.Millisecond {
+				clientInput.Reset()
+				userObject.SetUnsentText(``, ``)
+			} else {
+				_, suggested := userObject.GetUnsentText()
+				if len(suggested) > 0 {
+					clientInput.Buffer = append(clientInput.Buffer, []byte(suggested)...)
+					sug.Clear()
+					userObject.SetUnsentText(string(clientInput.Buffer), ``)
+					connections.SendTo([]byte(templates.AnsiParse(userObject.GetCommandPrompt())), clientInput.ConnectionId)
+				}
+
+				wi := WorldInput{
+					FromId:    userObject.UserId,
+					InputText: string(clientInput.Buffer),
+				}
+				worldManager.SendInput(wi)
+				clientInput.Reset()
+				userObject.SetUnsentText(``, ``)
+				lastInput = time.Now()
+			}
+
+			time.Sleep(time.Duration(10) * time.Millisecond)
+		}
+	}
+}
+
 func HandleWebSocketConnection(conn *websocket.Conn) {
 
 	var userObject *users.UserRecord
@@ -1064,6 +1277,41 @@ func HandleWebSocketConnection(conn *websocket.Conn) {
 
 			mudlog.Warn("WS Read", "error", err)
 			break
+		}
+
+		// Copyover: a web client reconnecting after a restart sends its one-time
+		// RELOGTKN as its first message. Consume it to re-attach the session and
+		// skip the login prompt.
+		if userObject == nil {
+			if userId, ok := copyover.ConsumeReconnectToken(string(message)); ok {
+				if tmpUser := users.GetByUserId(userId); tmpUser != nil {
+					loggedInUser, msg, loginErr := users.CopyoverReconnectUser(tmpUser, clientInput.ConnectionId)
+					if loginErr != nil {
+						if len(msg) > 0 {
+							connections.SendTo([]byte(msg), clientInput.ConnectionId)
+						}
+						connections.Remove(clientInput.ConnectionId)
+						return
+					}
+					if len(msg) > 0 {
+						connections.SendTo([]byte(msg), clientInput.ConnectionId)
+					}
+					userObject = loggedInUser
+					connDetails.RemoveInputHandler("LoginPromptHandler")
+					connDetails.AddInputHandler("EchoInputHandler", inputhandlers.EchoInputHandler)
+					connDetails.AddInputHandler("HistoryInputHandler", inputhandlers.HistoryInputHandler)
+					if userObject.Role == users.RoleAdmin {
+						connDetails.AddInputHandler("SystemCommandInputHandler", inputhandlers.SystemCommandInputHandler)
+					}
+					connDetails.AddInputHandler("SignalHandler", inputhandlers.SignalHandler, "AnsiHandler")
+					connDetails.SetState(connections.LoggedIn)
+					worldManager.SendEnterWorld(userObject.UserId, userObject.Character.RoomId)
+					mudlog.Info("WebSocket copyover reconnect", "username", userObject.Username, "connectionId", clientInput.ConnectionId)
+					clientInput.Reset()
+					continue
+				}
+				// Token valid but user not in memory; fall through to normal login.
+			}
 		}
 
 		clientInput.DataIn = message

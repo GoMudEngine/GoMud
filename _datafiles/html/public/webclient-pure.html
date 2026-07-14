@@ -2007,6 +2007,11 @@
             return false;
         }
 
+        // Copyover: a one-time token the server sends (RELOGTKN:) just before a
+        // live restart. We stash it, auto-reconnect when the socket drops, and
+        // send it on the new connection so the server re-attaches our session.
+        let pendingReconnectToken = null;
+
         function reconnect() {
             // Close current socket if open, then trigger a fresh connect
             if (socket && socket.readyState === WebSocket.OPEN) {
@@ -2042,12 +2047,28 @@
                 var sessConn = document.getElementById('sess-conn');
                 if (sessConn) { sessConn.textContent = '● Connected'; sessConn.style.color = ''; }
 
+                // Copyover: if we reconnected after a restart, send the token first
+                // so the server re-attaches our session (skips the login prompt).
+                if (pendingReconnectToken) {
+                    var t = pendingReconnectToken;
+                    pendingReconnectToken = null;
+                    socket.send(t);
+                }
+
                 textInput.focus();
             };
 
             socket.onmessage = function(event) {
                 payloadsReceived++;
                 totalBytesReceived += event.data.length;
+
+                // Copyover: capture the reconnect token (sent right before a live
+                // restart) and stash it — don't display it. Must run before the
+                // webclient-command check below (RELOGTKN: also has ':' at pos 8).
+                if (typeof event.data === "string" && event.data.indexOf("RELOGTKN:") === 0) {
+                    pendingReconnectToken = event.data.substring(9).replace(/[\r\n]+$/, "");
+                    return;
+                }
 
                 // Check if it's a webclient command
                 if (event.data.length > 9 && event.data.substring(8, 9) === ':') {
@@ -2172,6 +2193,18 @@
             };
 
             socket.onclose = function(event) {
+                // Copyover: the server dropped us for a live restart and we hold a
+                // reconnect token — auto-reconnect after a beat (give the new
+                // process time to bind the listener) instead of waiting on a click.
+                if (pendingReconnectToken) {
+                    term.writeln("Server rebooting — reconnecting…");
+                    // Re-enable the button (disabled while connected) so the
+                    // programmatic click actually fires the connect handler.
+                    connectButton.disabled = false;
+                    connectButton.style.display = 'block';
+                    setTimeout(function() { connectButton.click(); }, 750);
+                    return;
+                }
                 if (event.wasClean) {
                     term.writeln(`Connection closed cleanly, code=${event.code}, reason=${event.reason}`);
                 } else {
