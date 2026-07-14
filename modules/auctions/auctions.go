@@ -401,20 +401,24 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 
 			if auctionNow.SellerUserId > 0 {
 
-				msg := fmt.Sprintf(`Your auction of the <ansi fg="item">%s</ansi> has ended. The highest bid was made by <ansi fg="username">%s</ansi> for <ansi fg="gold">%d gold</ansi>.`, auctionNow.ItemData.DisplayName(), auctionNow.HighestBidderName, auctionNow.HighestBid)
+				// The winner already paid at bid time (escrow). The held gold
+				// settles to the seller minus the house commission (a gold sink).
+				payout := auctionNow.HighestBid - commissionFor(auctionNow.HighestBid, auctionCommissionPct)
+
+				msg := fmt.Sprintf(`Your auction of the <ansi fg="item">%s</ansi> has ended. The highest bid was made by <ansi fg="username">%s</ansi> for <ansi fg="gold">%d gold</ansi> (after the auction house's cut).`, auctionNow.ItemData.DisplayName(), auctionNow.HighestBidderName, payout)
 
 				if sellerUser := users.GetByUserId(auctionNow.SellerUserId); sellerUser != nil {
-					sellerUser.Character.Bank += auctionNow.HighestBid
-					sellerUser.SendText(messaging.CategorySystem, `<ansi fg="yellow">` + msg + `</ansi>`)
+					sellerUser.Character.Bank += payout
+					sellerUser.SendText(messaging.CategorySystem, `<ansi fg="yellow">`+msg+`</ansi>`)
 
 					events.AddToQueue(events.EquipmentChange{
 						UserId:     sellerUser.UserId,
-						BankChange: auctionNow.HighestBid,
+						BankChange: payout,
 					})
 
 				} else {
 
-					msg := fmt.Sprintf(`Your auction of the <ansi fg="item">%s</ansi> has ended while you were offline. The highest bid was made by <ansi fg="username">%s</ansi> for <ansi fg="gold">%d gold</ansi>.`, auctionNow.ItemData.DisplayName(), auctionNow.HighestBidderName, auctionNow.HighestBid)
+					msg := fmt.Sprintf(`Your auction of the <ansi fg="item">%s</ansi> has ended while you were offline. The highest bid was made by <ansi fg="username">%s</ansi> for <ansi fg="gold">%d gold</ansi> (after the auction house's cut).`, auctionNow.ItemData.DisplayName(), auctionNow.HighestBidderName, payout)
 
 					users.SearchOfflineUsers(func(u *users.UserRecord) bool {
 						if u.UserId == auctionNow.SellerUserId {
@@ -425,12 +429,12 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 					})
 
 					if sellerUser != nil {
+						// Gold only — the item went to the winner (do NOT re-attach it).
 						sellerUser.Inbox.Add(
 							users.Message{
 								FromName: `Auction System`,
 								Message:  msg,
-								Gold:     auctionNow.HighestBid,
-								Item:     &auctionNow.ItemData,
+								Gold:     payout,
 							},
 						)
 						users.SaveUser(*sellerUser)
@@ -440,19 +444,10 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 			}
 
 		} else if auctionNow.SellerUserId > 0 {
-			if user := users.GetByUserId(auctionNow.SellerUserId); user != nil {
-				if user.Character.StoreItem(auctionNow.ItemData) {
 
-					events.AddToQueue(events.ItemOwnership{
-						UserId: user.UserId,
-						Item:   auctionNow.ItemData,
-						Gained: true,
-					})
-
-					msg := fmt.Sprintf(`<ansi fg="yellow">The auction for the <ansi fg="item">%s</ansi> has ended without a winner. It has been returned to you.</ansi>`, auctionNow.ItemData.DisplayName())
-					user.SendText(messaging.CategorySystem, msg)
-				}
-			}
+			// No bids: reliably return the item to the seller (online or offline)
+			// — bank storage if there's room, else the inbox. Never lost.
+			returnUnsoldItem(auctionNow.SellerUserId, auctionNow.ItemData)
 
 			for _, uid := range users.GetOnlineUserIds() {
 				if uid == auctionNow.SellerUserId {
@@ -710,6 +705,42 @@ func refundUser(userId int, amount int) {
 		if u.UserId == userId {
 			u.Character.Bank += amount
 			users.SaveUser(*u)
+			return false
+		}
+		return true
+	})
+}
+
+// auctionStorageCap bounds how many items an unsold-return pushes into bank
+// storage before falling back to the inbox (the storage cap is normally
+// room-based, but the seller may be offline / not at a bank).
+const auctionStorageCap = 20
+
+// returnUnsoldItem returns an unsold lot to its seller — bank storage if there's
+// room, else the inbox. Works whether the seller is online or offline.
+func returnUnsoldItem(sellerUserId int, item items.Item) {
+	deliver := func(u *users.UserRecord, offline bool) {
+		if u.ItemStorage.SlotCount() < auctionStorageCap {
+			u.ItemStorage.AddItem(item)
+		} else {
+			u.Inbox.Add(users.Message{
+				FromName: `Auction System`,
+				Message:  `Your auction ended with no bids. The item is returned.`,
+				Item:     &item,
+			})
+		}
+		if offline {
+			users.SaveUser(*u)
+		}
+	}
+	if u := getUser(sellerUserId); u != nil {
+		deliver(u, false)
+		u.SendText(messaging.CategorySystem, `<ansi fg="yellow">Your auction ended with no bids; the item was returned to your bank storage.</ansi>`)
+		return
+	}
+	users.SearchOfflineUsers(func(u *users.UserRecord) bool {
+		if u.UserId == sellerUserId {
+			deliver(u, true)
 			return false
 		}
 		return true

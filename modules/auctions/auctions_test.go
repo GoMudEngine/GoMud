@@ -107,3 +107,12 @@ func TestBid_BuyItNow(t *testing.T) {
 		t.Errorf("buyer bank=%d want 4000 (1000 escrowed)", b.Character.Bank)
 	}
 }
+
+func TestCommissionFor(t *testing.T) {
+	if got := commissionFor(1000, 0.05); got != 50 {
+		t.Errorf("commissionFor(1000,0.05)=%d want 50", got)
+	}
+	if got := commissionFor(10, 0.05); got != 0 {
+		t.Errorf("commissionFor(10,0.05)=%d want 0", got)
+	}
+}
