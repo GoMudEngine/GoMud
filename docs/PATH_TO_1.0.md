@@ -64,10 +64,20 @@ experience just passed a full feel-test — so the hill is shorter than it looks
       `2026-07-14-npc-buyers-crafter-adventurer-*`). Craftsperson (buys `IsComponent` mats ≥ value),
       adventurer (buys `isEquipment` + `StatMods` gear ≥ value), + `NpcBuyer.Flavor()` for distinct
       per-archetype win broadcasts. Unit-tested + suite 91/91 + boot clean.
-    - ⬜ **#2.4 Shopkeeper** (VendorCategories match; bids from REAL shop gold — hybrid wallet;
-      relisting = #3), **#2.5 Official** (needs a new "restricted" flag — deferred/optional). Each =
-      an `NpcBuyer` impl plugging into #2.1.
-  - ⬜ **#3 Shopkeeper relisting** — a shopkeeper-archetype win routes the item into shop stock.
+    - ✅ **#2.4 Shopkeeper (+ #3 relisting, folded in)** — DONE 2026-07-14 (spec+plan
+      `2026-07-14-npc-buyer-shopkeeper-*`). A single dynamic "The Merchants' Guild" persona: per lot it
+      scans `shops.AllShops()`, delegates valuation to the existing `shops.EvaluateBuyRules`
+      (VendorCategories ↔ CraftSupport match + dynamic buy price + overstock + gold-reserve gate), and
+      bids from the best-matching shop's **real gold** (hybrid wallet via a widened
+      `CanAfford/Spend/Refund` seam on `NpcBuyer`; `Wallet()` returns nil so it's skipped by the regen/
+      persistence loops). A win **relists the item into that shop's stock** (`AddAffixedStock`,
+      instance-safe) — folding #3 in so a shop never spends gold for nothing. `AuctionShopkeeperEnabled`
+      toggle. Unit-tested + suite green + build clean. Followup noted: a min-auction-value floor on
+      *listings* (keeps trivial items off the block / out of relist).
+    - ⬜ **#2.5 Official** (needs a new "restricted" flag — deferred/optional). An `NpcBuyer` impl
+      plugging into #2.1.
+  - ✅ **#3 Shopkeeper relisting** — DONE (folded into #2.4 above): a shopkeeper win routes the item
+    into the bound shop's resale stock.
   - ⬜ **#4 Bank-storage → auction** — storage items whose owner can't pay go to the block instead
     of being deleted.
 - 🟡 **Player-to-player mudmail** — the admin mass-mail + inbox exist, but there is NO player→player

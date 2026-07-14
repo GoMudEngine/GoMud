@@ -1,5 +1,15 @@
 # DOGMud Patch Notes
 
+## 2026-07-14 — Auction buyers: shopkeepers who restock from the block
+
+The town's shopkeepers now watch the auction house too. A merchant will bid on
+wares that fit their trade — a smith on arms and armor, an alchemist on
+reagents, and so on — spending their shop's own coin, and only up to what they'd
+pay for the piece over their counter, so you can always outbid them. When a
+shopkeeper wins, the item doesn't vanish: it turns up for sale on their shelves,
+so a lot you pass on may reappear in a shop later. Merchants keep back enough
+working capital to stay open, so they never bankrupt themselves chasing a lot.
+
 ## 2026-07-14 — More auction buyers: crafters and adventurers
 
 Two more kinds of NPC now watch the auction block: a master craftsperson who
