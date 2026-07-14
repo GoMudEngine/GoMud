@@ -314,12 +314,18 @@
                 <button id="comm-tab-whisper" class="tab-button" data-tab="comm-whisper" data-label="Whisper" data-unread="0">Whisper</button>
                 <button id="comm-tab-party" class="tab-button" data-tab="comm-party" data-label="Party" data-unread="0">Party</button>
                 <button id="comm-tab-broadcast" class="tab-button" data-tab="comm-broadcast" data-label="Broadcasts" data-unread="0">Broadcasts</button>
+                <button id="comm-tab-chat" class="tab-button" data-tab="comm-chat" data-label="Chat" data-unread="0">Chat</button>
+                <button id="comm-tab-newbie" class="tab-button" data-tab="comm-newbie" data-label="Newbie" data-unread="0">Newbie</button>
+                <button id="comm-tab-trade" class="tab-button" data-tab="comm-trade" data-label="Trade" data-unread="0">Trade</button>
               </div>
               <div class="tab-contents">
                 <div id="comm-say" class="chat-window say tab-content active"></div>
                 <div id="comm-whisper" class="chat-window whisper tab-content"></div>
                 <div id="comm-party" class="chat-window party tab-content"></div>
                 <div id="comm-broadcast" class="chat-window broadcast tab-content"></div>
+                <div id="comm-chat" class="chat-window chat tab-content"></div>
+                <div id="comm-newbie" class="chat-window newbie tab-content"></div>
+                <div id="comm-trade" class="chat-window trade tab-content"></div>
               </div>
             </div>
             <input type="text" id="chat-input" placeholder="Say to the room…">
@@ -2796,7 +2802,10 @@
                 'say':       'Say to the room…',
                 'whisper':   'Whisper: <name> <message>…',
                 'party':     'Party chat…',
-                'broadcast': 'Broadcast…'
+                'broadcast': 'Broadcast…',
+                'chat':      'Chat (global)…',
+                'newbie':    'Newbie help…',
+                'trade':     'Trade: buying/selling…'
             };
 
             // Return the active comm channel name (e.g. "say", "whisper", …)
