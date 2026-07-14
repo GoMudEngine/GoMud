@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/shops"
 )
 
 func TestNpcWallet(t *testing.T) {
@@ -120,5 +121,85 @@ func TestAdventurer(t *testing.T) {
 	}
 	if a.Flavor() != "to gear up" {
 		t.Errorf("flavor=%q", a.Flavor())
+	}
+}
+
+func newShopkeeperTestItem(t *testing.T) (items.Item, func()) {
+	t.Helper()
+	cleanup := items.SeedItemsForTest(map[int]*items.ItemSpec{
+		901: {ItemId: 901, Name: "iron blade", Type: items.Weapon, Value: 1000,
+			VendorCategories: []string{shops.CraftSupportBlacksmithing}},
+		902: {ItemId: 902, Name: "no-vendor trinket", Type: items.Ring, Value: 1000},
+	})
+	return items.New(901), cleanup
+}
+
+func TestShopkeeper_InterestedAndMaxBid(t *testing.T) {
+	item, cleanup := newShopkeeperTestItem(t)
+	defer cleanup()
+
+	shops.ClearCache()
+	defer shops.ClearCache()
+	smith := shops.RegisterShop("testzone", 1, 100, shops.ShopInventory{
+		Gold: 5000, StartingGold: 5000, CraftSupport: shops.CraftSupportBlacksmithing})
+	shops.RegisterShop("testzone", 2, 100, shops.ShopInventory{
+		Gold: 5000, StartingGold: 5000, CraftSupport: shops.CraftSupportTailoring})
+
+	sk := &shopkeeper{name: "The Merchants' Guild"}
+	if !sk.Interested(item) {
+		t.Fatal("shopkeeper should want a blacksmith item when a blacksmith shop has gold")
+	}
+	want := shops.EvaluateBuyRules(item, smith, "", false, shops.PricingConfigFromBalance(), nil).Price
+	if want <= 0 {
+		t.Fatalf("test setup: expected a positive counter offer, got %d", want)
+	}
+	if got := sk.MaxBid(item); got != want {
+		t.Errorf("MaxBid=%d want %d (EvaluateBuyRules price)", got, want)
+	}
+}
+
+func TestShopkeeper_NoMatchingShop(t *testing.T) {
+	item, cleanup := newShopkeeperTestItem(t)
+	defer cleanup()
+	shops.ClearCache()
+	defer shops.ClearCache()
+	shops.RegisterShop("testzone", 2, 100, shops.ShopInventory{
+		Gold: 5000, StartingGold: 5000, CraftSupport: shops.CraftSupportTailoring})
+
+	sk := &shopkeeper{name: "The Merchants' Guild"}
+	if sk.Interested(item) {
+		t.Error("shopkeeper should NOT want an item no live shop's discipline accepts")
+	}
+	if got := sk.MaxBid(item); got != 0 {
+		t.Errorf("MaxBid=%d want 0 when uninterested", got)
+	}
+}
+
+func TestShopkeeper_EscrowUsesRealShopGold(t *testing.T) {
+	item, cleanup := newShopkeeperTestItem(t)
+	defer cleanup()
+	shops.ClearCache()
+	defer shops.ClearCache()
+	smith := shops.RegisterShop("testzone", 1, 100, shops.ShopInventory{
+		Gold: 5000, StartingGold: 5000, CraftSupport: shops.CraftSupportBlacksmithing})
+
+	orig := saveShopFn
+	saveShopFn = func(zone string, mobId, roomId int) error { return nil }
+	defer func() { saveShopFn = orig }()
+
+	sk := &shopkeeper{name: "The Merchants' Guild"}
+	if !sk.Interested(item) {
+		t.Fatal("precondition: shopkeeper should be interested")
+	}
+	if !sk.CanAfford(400) {
+		t.Fatal("shop with 5000 gold / 2500 reserve should afford 400")
+	}
+	sk.Spend(400)
+	if smith.Gold != 4600 {
+		t.Errorf("after Spend(400) shop gold=%d want 4600", smith.Gold)
+	}
+	sk.Refund(400)
+	if smith.Gold != 5000 {
+		t.Errorf("after Refund(400) shop gold=%d want 5000", smith.Gold)
 	}
 }

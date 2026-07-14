@@ -1,6 +1,12 @@
 package auctions
 
-import "github.com/GoMudEngine/GoMud/internal/items"
+import (
+	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/shops"
+	"github.com/GoMudEngine/GoMud/internal/uuid"
+)
 
 // NpcBuyer is one living-world auction buyer archetype.
 type NpcBuyer interface {
@@ -43,6 +49,12 @@ var (
 	craftPremium  = 1.0
 	advMinValue   = 300
 	advPremium    = 0.9 // an adventurer haggles a bit
+
+	shopkeeperEnabled = true // gated by AuctionShopkeeperEnabled config
+
+	// saveShopFn persists a shop after the shopkeeper mutates its gold/stock.
+	// Overridable in tests to avoid disk I/O.
+	saveShopFn = shops.SaveShop
 )
 
 // isEquipment reports whether an item type is wearable/wieldable gear.
@@ -115,6 +127,94 @@ func (a *adventurer) Spend(n int)          { a.wallet.Spend(n) }
 func (a *adventurer) Refund(n int)         { a.wallet.Refund(n) }
 func (a *adventurer) Wallet() *NpcWallet   { return a.wallet }
 func (a *adventurer) Flavor() string       { return "to gear up" }
+
+// reserveRatio returns the shop gold-reserve fraction from config (0.50 fallback).
+func reserveRatio() float64 {
+	r := float64(configs.GetBalanceConfig().ShopGoldReserveRatio)
+	if r <= 0 {
+		r = 0.50
+	}
+	return r
+}
+
+func persistShop(inv *shops.ShopInventory) {
+	if err := saveShopFn(inv.Zone, inv.MobId, inv.RoomId); err != nil {
+		mudlog.Error("auctions.shopkeeper", "msg", "SaveShop failed", "error", err)
+	}
+}
+
+// ── Shopkeeper archetype: bids from a REAL shop's gold on items that shop
+// deals in (VendorCategories ↔ CraftSupport), then relists the win into that
+// shop's stock. Thin adapter over shops.EvaluateBuyRules. ──
+
+// shopSel is the shopkeeper's memoized per-item shop selection.
+type shopSel struct {
+	uuid  uuid.UUID
+	shop  *shops.ShopInventory
+	offer int // best affordable BuyOffer.Price across live shops (0 = none)
+}
+
+type shopkeeper struct {
+	name  string
+	sel   shopSel              // memoized selection for the current decision
+	bound *shops.ShopInventory // shop escrowed against while high bidder
+}
+
+func (s *shopkeeper) Name() string       { return s.name }
+func (s *shopkeeper) Flavor() string     { return "for the shelves" }
+func (s *shopkeeper) Wallet() *NpcWallet { return nil } // real-gold buyer
+
+// selectFor picks the shop with the highest affordable counter-offer for item.
+// Memoized by item UUID within a single decision (Interested→MaxBid→CanAfford
+// run for the same item on the single-threaded auction tick).
+func (s *shopkeeper) selectFor(item items.Item) shopSel {
+	if !item.UUID.IsNil() && s.sel.uuid == item.UUID {
+		return s.sel
+	}
+	cfg := shops.PricingConfigFromBalance()
+	best := shopSel{uuid: item.UUID}
+	for _, inv := range shops.AllShops() {
+		off := shops.EvaluateBuyRules(item, inv, "", false, cfg, nil)
+		if off.Price > best.offer {
+			best.shop, best.offer = inv, off.Price
+		}
+	}
+	s.sel = best
+	return best
+}
+
+func (s *shopkeeper) Interested(item items.Item) bool {
+	if !shopkeeperEnabled {
+		return false
+	}
+	return s.selectFor(item).offer > 0
+}
+
+func (s *shopkeeper) MaxBid(item items.Item) int { return s.selectFor(item).offer }
+
+func (s *shopkeeper) CanAfford(n int) bool {
+	if s.sel.shop == nil {
+		return false
+	}
+	return s.sel.shop.CanAfford(n, s.sel.shop.GoldReserve(reserveRatio()))
+}
+
+func (s *shopkeeper) Spend(n int) {
+	s.bound = s.sel.shop // freeze the binding for refund/win
+	if s.bound == nil {
+		return
+	}
+	s.bound.Gold -= n
+	persistShop(s.bound)
+}
+
+func (s *shopkeeper) Refund(n int) {
+	if s.bound == nil {
+		return
+	}
+	s.bound.Gold += n
+	persistShop(s.bound)
+}
 
 // ── Registry of active NPC buyers (#2.1: two collectors) ──
 var npcBuyers = []NpcBuyer{
