@@ -53,10 +53,14 @@ experience just passed a full feel-test — so the hill is shorter than it looks
 
 ## 2. Advertising-critical gaps 🎯 (do these or the ads underperform)
 
-- ⬜ 🎯 **MSSP (MUD Server Status Protocol)** — **not present.** This is the single
-  highest-leverage item for the stated goal. Every listing site crawls MSSP for
-  player count, uptime, genre, codebase, etc. Without it DOGMud lists as a
-  blank/dead entry nobody clicks. Cheap to add, high payoff.
+- ✅ 🎯 **MSSP (MUD Server Status Protocol)** — **DONE 2026-07-14** (local master, unpushed;
+  spec `2026-07-14-mssp-design.md`, plan `2026-07-14-mssp.md`). Telnet option 70, mirroring the
+  existing MSP option: `internal/term/mssp.go` (byte protocol + encoder), `internal/inputhandlers/
+  mssp.go` (field assembler), `term_iac.go` reply + `main.go` WILL-offer, `internal/util` uptime
+  accessor, new `Server.MSSP` config block. Rich field set (live player count/uptime + world counts
+  + capability flags + descriptive config). Contact/Hostname/Port default empty (privacy — public
+  repo). Verified live via `tools/mssp_probe.py`. **Post-deploy:** validate against a public MSSP
+  checker + register DOGMud with the directory sites (manual, non-code).
 - ⬜ 🎯 **Global player channels (gossip / chat / newbie / OOC)** — **appears
   absent** (we have `say`/`shout`/`whisper`/`broadcast`/`who` + a Discord bridge,
   but no tune-able game-wide chat or newbie-help channel). A newcomer needs to
