@@ -218,6 +218,24 @@ func (s *shopkeeper) Refund(n int) {
 	persistShop(s.bound)
 }
 
+// shopBinder is implemented by NPC buyers escrowed against a real shop, so the
+// auction can persist which shop was debited and restore it after a restart.
+type shopBinder interface {
+	BoundShop() (zone string, mobId, roomId int, ok bool)
+	RestoreBoundShop(zone string, mobId, roomId int)
+}
+
+func (s *shopkeeper) BoundShop() (zone string, mobId, roomId int, ok bool) {
+	if s.bound == nil {
+		return "", 0, 0, false
+	}
+	return s.bound.Zone, s.bound.MobId, s.bound.RoomId, true
+}
+
+func (s *shopkeeper) RestoreBoundShop(zone string, mobId, roomId int) {
+	s.bound = shops.GetShopInventory(zone, mobId, roomId)
+}
+
 // auctionWinReceiver lets a buyer take custody of the item it won (instead of
 // the default sink). Only the shopkeeper implements it.
 type auctionWinReceiver interface {

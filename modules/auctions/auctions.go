@@ -110,8 +110,23 @@ func (ae AuctionUpdate) Data(name string) any {
 	return nil
 }
 
+// restoreNpcBinding rebinds a shopkeeper high bidder to the shop it escrowed
+// against, after ActiveAuction is reloaded from disk (the binding is in-memory
+// only, so a restart would otherwise strand the shop's gold on refund/relist).
+func restoreNpcBinding(a *AuctionItem) {
+	if a == nil || !a.HighestBidIsNPC || a.NpcBoundZone == "" {
+		return
+	}
+	if b := buyerByName(a.HighestBidderName); b != nil {
+		if sb, ok := b.(shopBinder); ok {
+			sb.RestoreBoundShop(a.NpcBoundZone, a.NpcBoundMobId, a.NpcBoundRoomId)
+		}
+	}
+}
+
 func (mod *AuctionsModule) load() {
 	mod.plug.ReadIntoStruct(`auctionhistory`, &mod.auctionMgr)
+	restoreNpcBinding(mod.auctionMgr.ActiveAuction)
 
 	// Restore persisted NPC wallet balances onto the live buyers.
 	for _, b := range npcBuyers {
@@ -659,7 +674,13 @@ type AuctionItem struct {
 	HighestBidUserId  int
 	HighestBidderName string
 	HighestBidIsNPC   bool // sentinel: high bid is an NPC (HighestBidUserId==0, name in HighestBidderName)
-	LastUpdate        time.Time
+	// NpcBound{Zone,MobId,RoomId} record the real shop a shopkeeper high bidder
+	// escrowed against, so a refund/relist survives a restart (the shopkeeper's
+	// in-memory binding is lost on reload). Empty zone = no shopkeeper binding.
+	NpcBoundZone   string `yaml:"NpcBoundZone,omitempty"`
+	NpcBoundMobId  int    `yaml:"NpcBoundMobId,omitempty"`
+	NpcBoundRoomId int    `yaml:"NpcBoundRoomId,omitempty"`
+	LastUpdate     time.Time
 }
 
 type PastAuctionItem struct {
@@ -773,6 +794,7 @@ func (am *AuctionManager) Bid(userId int, bid int) error {
 	am.ActiveAuction.HighestBidUserId = userId
 	am.ActiveAuction.HighestBidIsNPC = false
 	am.ActiveAuction.HighestBidderName = u.Character.Name
+	am.ActiveAuction.NpcBoundZone, am.ActiveAuction.NpcBoundMobId, am.ActiveAuction.NpcBoundRoomId = "", 0, 0
 
 	if buyNow {
 		// End immediately — set just in the past so IsEnded() is unambiguously
@@ -795,6 +817,13 @@ func (am *AuctionManager) npcBid(buyer NpcBuyer, bid int) {
 	am.ActiveAuction.HighestBidUserId = 0
 	am.ActiveAuction.HighestBidIsNPC = true
 	am.ActiveAuction.HighestBidderName = buyer.Name()
+
+	am.ActiveAuction.NpcBoundZone, am.ActiveAuction.NpcBoundMobId, am.ActiveAuction.NpcBoundRoomId = "", 0, 0
+	if sb, ok := buyer.(shopBinder); ok {
+		if z, m, r, ok2 := sb.BoundShop(); ok2 {
+			am.ActiveAuction.NpcBoundZone, am.ActiveAuction.NpcBoundMobId, am.ActiveAuction.NpcBoundRoomId = z, m, r
+		}
+	}
 }
 
 // refundPreviousBidder returns the currently-held escrow to whoever holds the

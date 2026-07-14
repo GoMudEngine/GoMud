@@ -303,3 +303,68 @@ func TestShopkeeper_DisabledIsUninterested(t *testing.T) {
 		t.Error("disabled shopkeeper must not be interested")
 	}
 }
+
+func TestShopkeeper_BoundShopRoundTrip(t *testing.T) {
+	item, cleanup := newShopkeeperTestItem(t)
+	defer cleanup()
+	shops.ClearCache()
+	defer shops.ClearCache()
+	smith := shops.RegisterShop("bindzone", 7, 100, shops.ShopInventory{
+		Gold: 5000, StartingGold: 5000, CraftSupport: shops.CraftSupportBlacksmithing})
+
+	orig := saveShopFn
+	saveShopFn = func(zone string, mobId, roomId int) error { return nil }
+	defer func() { saveShopFn = orig }()
+
+	sk := &shopkeeper{name: "The Merchants' Guild"}
+	sk.Interested(item)
+	sk.Spend(200) // binds smith
+
+	z, m, r, ok := sk.BoundShop()
+	if !ok || z != "bindzone" || m != 7 || r != 100 {
+		t.Fatalf("BoundShop() = (%q,%d,%d,%v) want (bindzone,7,100,true)", z, m, r, ok)
+	}
+
+	// Simulate a restart: a FRESH shopkeeper with no in-memory binding.
+	fresh := &shopkeeper{name: "The Merchants' Guild"}
+	if _, _, _, ok := fresh.BoundShop(); ok {
+		t.Fatal("fresh shopkeeper should have no binding")
+	}
+	fresh.RestoreBoundShop("bindzone", 7, 100)
+	// After restore, a refund must credit the SAME real shop.
+	before := smith.Gold
+	fresh.Refund(200)
+	if smith.Gold != before+200 {
+		t.Errorf("restored shopkeeper refund credited %d, want shop gold %d", smith.Gold, before+200)
+	}
+}
+
+func TestNpcBid_PersistsShopkeeperBinding(t *testing.T) {
+	item, cleanup := newShopkeeperTestItem(t)
+	defer cleanup()
+	shops.ClearCache()
+	defer shops.ClearCache()
+	shops.RegisterShop("bindzone", 7, 100, shops.ShopInventory{
+		Gold: 5000, StartingGold: 5000, CraftSupport: shops.CraftSupportBlacksmithing})
+
+	orig := saveShopFn
+	saveShopFn = func(zone string, mobId, roomId int) error { return nil }
+	defer func() { saveShopFn = orig }()
+
+	sk := &shopkeeper{name: "The Merchants' Guild"}
+	sk.Interested(item) // select the shop
+
+	am := &AuctionManager{ActiveAuction: &AuctionItem{ItemData: item, MinimumBid: 1}}
+	am.npcBid(sk, 200)
+
+	a := am.ActiveAuction
+	if a.NpcBoundZone != "bindzone" || a.NpcBoundMobId != 7 || a.NpcBoundRoomId != 100 {
+		t.Errorf("npcBid did not persist binding: (%q,%d,%d)", a.NpcBoundZone, a.NpcBoundMobId, a.NpcBoundRoomId)
+	}
+
+	// A subsequent USER bid must clear the NPC binding (a user is now high bidder).
+	// (restoreNpcBinding is a no-op then.)
+	am.ActiveAuction.HighestBidIsNPC = false
+	am.ActiveAuction.NpcBoundZone = ""
+	restoreNpcBinding(am.ActiveAuction) // must be a safe no-op
+}
