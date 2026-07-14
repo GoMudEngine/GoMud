@@ -218,6 +218,26 @@ func (s *shopkeeper) Refund(n int) {
 	persistShop(s.bound)
 }
 
+// auctionWinReceiver lets a buyer take custody of the item it won (instead of
+// the default sink). Only the shopkeeper implements it.
+type auctionWinReceiver interface {
+	Receive(item items.Item)
+}
+
+// Receive routes a won lot into the bound shop's resale stock. AddAffixedStock
+// holds the full item instance, so exact affixes/enchants survive and the item
+// becomes purchasable — mirroring the counter-buyback path in actions/sell.go.
+func (s *shopkeeper) Receive(item items.Item) {
+	if s.bound == nil {
+		return
+	}
+	cap := int(configs.GetBalanceConfig().ShopAffixedStockCap)
+	s.bound.AddAffixedStock(item, item.GetSpec().Value, cap)
+	s.bound.BuysCount++
+	persistShop(s.bound)
+	s.bound = nil
+}
+
 // ── Registry of active NPC buyers (#2.1: two collectors) ──
 var npcBuyers = []NpcBuyer{
 	&collector{name: "Collector Veyd", wallet: &NpcWallet{Balance: 10000, Cap: 10000}},

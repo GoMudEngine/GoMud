@@ -228,3 +228,46 @@ func TestShopkeeper_SelectionUpdatesPerItem(t *testing.T) {
 		t.Fatal("cloak should re-select the tailor (memoization must invalidate per item UUID)")
 	}
 }
+
+func TestShopkeeper_WinRelistsIntoBoundShop(t *testing.T) {
+	item, cleanup := newShopkeeperTestItem(t)
+	defer cleanup()
+	shops.ClearCache()
+	defer shops.ClearCache()
+	smith := shops.RegisterShop("testzone", 1, 100, shops.ShopInventory{
+		Gold: 5000, StartingGold: 5000, CraftSupport: shops.CraftSupportBlacksmithing})
+	other := shops.RegisterShop("testzone", 9, 100, shops.ShopInventory{
+		Gold: 5000, StartingGold: 5000, CraftSupport: shops.CraftSupportBlacksmithing})
+
+	orig := saveShopFn
+	saveShopFn = func(zone string, mobId, roomId int) error { return nil }
+	defer func() { saveShopFn = orig }()
+
+	sk := &shopkeeper{name: "The Merchants' Guild"}
+	sk.Interested(item) // select the best shop
+	sk.Spend(300)       // bind to the chosen shop
+
+	// Capture the binding before Receive clears it (test is in-package).
+	bound := sk.bound
+	if bound == nil {
+		t.Fatal("expected a bound shop after Spend")
+	}
+
+	var r auctionWinReceiver = sk // the receiver contract used by the resolution
+	r.Receive(item)
+
+	if len(bound.AffixedStock) != 1 || bound.AffixedStock[0].Item.ItemId != 901 {
+		t.Errorf("won item not relisted into bound shop: %+v", bound.AffixedStock)
+	}
+	if bound.BuysCount != 1 {
+		t.Errorf("BuysCount=%d want 1", bound.BuysCount)
+	}
+	// The non-bound shop must be untouched.
+	notBound := smith
+	if bound == smith {
+		notBound = other
+	}
+	if len(notBound.AffixedStock) != 0 {
+		t.Errorf("non-bound shop should not receive the item")
+	}
+}

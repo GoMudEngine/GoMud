@@ -503,6 +503,9 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 				flavor := "for their collection"
 				if b := buyerByName(auctionNow.HighestBidderName); b != nil {
 					flavor = b.Flavor()
+					if r, ok := b.(auctionWinReceiver); ok {
+						r.Receive(auctionNow.ItemData) // shopkeeper relists; others no-op sink
+					}
 				}
 				for _, uid := range users.GetOnlineUserIds() {
 					if u := users.GetByUserId(uid); u != nil {
