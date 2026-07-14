@@ -11,6 +11,14 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 )
 
+// copyoverFd is the file descriptor of the copyover state pipe, or -1 when this
+// is not a copyover restore. Set from the --copyover-fd flag.
+var copyoverFd int = -1
+
+// CopyoverFd returns the copyover pipe file descriptor, or -1 if this is not a
+// copyover restore.
+func CopyoverFd() int { return copyoverFd }
+
 func HandleFlags(serverVersion string) {
 
 	var portsearch string
@@ -18,6 +26,7 @@ func HandleFlags(serverVersion string) {
 
 	flag.StringVar(&portsearch, "port-search", "", "Search for the first 10 open ports: -port-search=30000-40000")
 	flag.BoolVar(&showVersion, "version", false, "Display the current binary version")
+	flag.IntVar(&copyoverFd, "copyover-fd", -1, "Internal: file descriptor for copyover state pipe (do not set manually)")
 
 	flag.Parse()
 
