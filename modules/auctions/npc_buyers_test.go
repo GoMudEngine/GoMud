@@ -368,3 +368,39 @@ func TestNpcBid_PersistsShopkeeperBinding(t *testing.T) {
 	am.ActiveAuction.NpcBoundZone = ""
 	restoreNpcBinding(am.ActiveAuction) // must be a safe no-op
 }
+
+func TestRestoreNpcBinding_RebindsRegistryShopkeeper(t *testing.T) {
+	shops.ClearCache()
+	defer shops.ClearCache()
+	smith := shops.RegisterShop("bindzone", 7, 100, shops.ShopInventory{
+		Gold: 5000, StartingGold: 5000, CraftSupport: shops.CraftSupportBlacksmithing})
+
+	orig := saveShopFn
+	saveShopFn = func(zone string, mobId, roomId int) error { return nil }
+	defer func() { saveShopFn = orig }()
+
+	// The real registry singleton (what buyerByName resolves + what runs on load()).
+	sk, ok := buyerByName("The Merchants' Guild").(*shopkeeper)
+	if !ok || sk == nil {
+		t.Fatal("registry shopkeeper persona not found")
+	}
+	sk.bound = nil                    // simulate a fresh post-restart process
+	defer func() { sk.bound = nil }() // don't leak global state to other tests
+
+	a := &AuctionItem{
+		HighestBidIsNPC:   true,
+		HighestBidderName: "The Merchants' Guild",
+		HighestBid:        200,
+		NpcBoundZone:      "bindzone",
+		NpcBoundMobId:     7,
+		NpcBoundRoomId:    100,
+	}
+	restoreNpcBinding(a)
+
+	// After restore, a refund must reach the correct real shop.
+	before := smith.Gold
+	sk.Refund(200)
+	if smith.Gold != before+200 {
+		t.Errorf("restoreNpcBinding did not rebind the registry shopkeeper to the right shop; refund credited %d want %d", smith.Gold, before+200)
+	}
+}
