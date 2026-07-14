@@ -59,6 +59,7 @@ var (
 		`assist`:          {Assist, false, true, false},
 		`attack`:          {Attack, false, true, false},
 		`ai-flag`:         {AiFlag, true, true, true},      // Admin only
+		`copyover`:        {Copyover, true, true, true},    // Admin only — live server restart
 		`ai-list`:         {AiList, true, true, true},      // Admin only
 		`badcommands`:     {BadCommands, true, true, true}, // Admin only
 		`bash`:            {Bash, false, true, false},
