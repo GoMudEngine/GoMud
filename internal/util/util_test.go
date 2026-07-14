@@ -1246,3 +1246,10 @@ func TestConvertToAscii(t *testing.T) {
 		})
 	}
 }
+
+func TestServerStartUnix(t *testing.T) {
+	SetServerStart(time.Unix(1_700_000_000, 0))
+	if got := GetServerStartUnix(); got != 1_700_000_000 {
+		t.Fatalf("GetServerStartUnix()=%d, want 1700000000", got)
+	}
+}

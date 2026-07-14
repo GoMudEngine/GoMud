@@ -1,5 +1,12 @@
 # DOGMud Patch Notes
 
+## 2026-07-14 — MUD listing support (MSSP)
+
+DOGMud now answers the MSSP telnet handshake, so directory sites (TMC,
+MudConnect, Grapevine, mudstats, etc.) can read live player count, uptime, world
+size, and supported features — the difference between a blank listing and a real
+one that people click. Configurable under `Server.MSSP` in config.yaml.
+
 ## 2026-07-14 — The Vitalis Bandolier, clarified
 
 Quality-of-life for the pinnacle Vitalis Bandolier's passive potion effects.

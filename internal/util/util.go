@@ -1059,3 +1059,13 @@ var unicodeToAscii = map[rune]byte{
 	// Diagonal lines
 	'╲': '\\', '╱': '/',
 }
+
+// Server start time, stamped once from main() so MSSP (and anything else) can
+// report uptime without threading it through call sites.
+var serverStartTime time.Time
+
+// SetServerStart records when the server started.
+func SetServerStart(t time.Time) { serverStartTime = t }
+
+// GetServerStartUnix returns the unix timestamp the server started (0 if unset).
+func GetServerStartUnix() int64 { return serverStartTime.Unix() }
