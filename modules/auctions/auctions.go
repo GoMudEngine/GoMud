@@ -113,6 +113,13 @@ func (ae AuctionUpdate) Data(name string) any {
 func (mod *AuctionsModule) load() {
 	mod.plug.ReadIntoStruct(`auctionhistory`, &mod.auctionMgr)
 
+	// Restore persisted NPC wallet balances onto the live buyers.
+	for _, b := range npcBuyers {
+		if bal, ok := mod.auctionMgr.WalletBalances[b.Name()]; ok {
+			b.Wallet().Balance = bal
+		}
+	}
+
 	// Reserve / commission fractions from plugin config (defaults otherwise).
 	if v, ok := mod.plug.Config.Get(`AuctionReservePct`).(float64); ok && v > 0 {
 		auctionReservePct = v
@@ -120,9 +127,31 @@ func (mod *AuctionsModule) load() {
 	if v, ok := mod.plug.Config.Get(`AuctionCommissionPct`).(float64); ok && v >= 0 {
 		auctionCommissionPct = v
 	}
+
+	// NPC-buyer knobs.
+	if v, ok := mod.plug.Config.Get(`AuctionNpcBuyersEnabled`).(bool); ok {
+		npcBuyersEnabled = v
+	}
+	if v, ok := mod.plug.Config.Get(`AuctionNpcBidChance`).(float64); ok && v >= 0 {
+		npcBidChancePct = int(v * 100)
+	}
+	if v, ok := mod.plug.Config.Get(`CollectorMinValue`).(int); ok && v > 0 {
+		collectorMinValue = v
+	}
+	if v, ok := mod.plug.Config.Get(`CollectorPremium`).(float64); ok && v > 0 {
+		collectorPremium = v
+	}
+	if v, ok := mod.plug.Config.Get(`CollectorWalletRegenPerTick`).(int); ok && v >= 0 {
+		collectorRegenPerTick = v
+	}
 }
 
 func (mod *AuctionsModule) save() {
+	// Snapshot live NPC wallet balances for persistence.
+	mod.auctionMgr.WalletBalances = map[string]int{}
+	for _, b := range npcBuyers {
+		mod.auctionMgr.WalletBalances[b.Name()] = b.Wallet().Balance
+	}
 	mod.plug.WriteStruct(`auctionhistory`, mod.auctionMgr)
 }
 
@@ -367,8 +396,9 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 			}
 		}
 
-		// Give the item to the winner and let them know
-		if auctionNow.HighestBidUserId > 0 {
+		// Give the item to the winner and let them know. An NPC win counts as
+		// sold too (HighestBidUserId is 0 for an NPC — the item sinks below).
+		if auctionNow.HighestBidUserId > 0 || auctionNow.HighestBidIsNPC {
 
 			if user := users.GetByUserId(auctionNow.HighestBidUserId); user != nil {
 				if user.Character.StoreItem(auctionNow.ItemData) {
@@ -451,6 +481,18 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 				}
 			}
 
+			// An NPC winner takes the item out of circulation (into their
+			// collection) — a flavored sink. Broadcast it.
+			if auctionNow.HighestBidIsNPC {
+				for _, uid := range users.GetOnlineUserIds() {
+					if u := users.GetByUserId(uid); u != nil {
+						if on := u.GetConfigOption(`auction`); on == nil || on.(bool) {
+							u.SendText(messaging.CategoryBroadcast, fmt.Sprintf(`<ansi fg="yellow"><ansi fg="username">%s</ansi> has acquired the <ansi fg="item">%s</ansi> for their collection.</ansi>`, auctionNow.HighestBidderName, auctionNow.ItemData.DisplayName()))
+						}
+					}
+				}
+			}
+
 		} else if auctionNow.SellerUserId > 0 {
 
 			// No bids: reliably return the item to the seller (online or offline)
@@ -524,6 +566,19 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 
 		auctionNow.LastUpdate = evt.TimeNow
 
+		// Living-world NPC buyers: regen wallets, then maybe place a competing bid
+		// (before the update broadcast so it reflects the new bid).
+		if npcBuyersEnabled && auctionNow.BuyoutPrice > 0 {
+			for _, b := range npcBuyers {
+				b.Wallet().Regen(collectorRegenPerTick)
+			}
+			if util.Rand(100) < npcBidChancePct {
+				if b, bid, ok := nextNpcBid(npcBuyers, auctionNow.ItemData, auctionNow.HighestBid, auctionNow.MinimumBid, auctionNow.HighestBidderName, auctionNow.HighestBidIsNPC); ok {
+					mod.auctionMgr.npcBid(b, bid)
+				}
+			}
+		}
+
 		for _, uid := range users.GetOnlineUserIds() {
 
 			auctionTxt, _ := templates.Process("auctions/auction-update", auctionNow, uid)
@@ -561,6 +616,7 @@ type AuctionManager struct {
 	ActiveAuction   *AuctionItem `yaml:"ActiveAuction,omitempty"`
 	maxHistoryItems int
 	PastAuctions    []PastAuctionItem `yaml:"PastAuctions,omitempty"`
+	WalletBalances  map[string]int    `yaml:"WalletBalances,omitempty"` // NPC persona name -> wallet balance
 }
 
 type AuctionItem struct {
@@ -574,6 +630,7 @@ type AuctionItem struct {
 	HighestBid        int
 	HighestBidUserId  int
 	HighestBidderName string
+	HighestBidIsNPC   bool // sentinel: high bid is an NPC (HighestBidUserId==0, name in HighestBidderName)
 	LastUpdate        time.Time
 }
 
@@ -678,16 +735,15 @@ func (am *AuctionManager) Bid(userId int, bid int) error {
 		return fmt.Errorf(`You only have <ansi fg="gold">%d gold</ansi> in the bank.`, u.Character.Bank)
 	}
 
-	// Escrow: refund the previous high bidder, then debit this bidder. The held
-	// gold (= HighestBid) settles to the seller at resolution.
-	if am.ActiveAuction.HighestBidUserId > 0 {
-		refundUser(am.ActiveAuction.HighestBidUserId, am.ActiveAuction.HighestBid)
-	}
+	// Escrow: refund the previous high bidder (user or NPC), then debit this
+	// bidder. The held gold (= HighestBid) settles to the seller at resolution.
+	am.refundPreviousBidder()
 	u.Character.Bank -= bid
 	events.AddToQueue(events.EquipmentChange{UserId: u.UserId, BankChange: -bid})
 
 	am.ActiveAuction.HighestBid = bid
 	am.ActiveAuction.HighestBidUserId = userId
+	am.ActiveAuction.HighestBidIsNPC = false
 	am.ActiveAuction.HighestBidderName = u.Character.Name
 
 	if buyNow {
@@ -697,6 +753,38 @@ func (am *AuctionManager) Bid(userId int, bid int) error {
 	}
 
 	return nil
+}
+
+// npcBid places a bid for an NPC buyer, escrowing from its wallet and refunding
+// whoever held the high bid (user or NPC).
+func (am *AuctionManager) npcBid(buyer NpcBuyer, bid int) {
+	if am.ActiveAuction == nil {
+		return
+	}
+	am.refundPreviousBidder()
+	buyer.Wallet().Spend(bid)
+	am.ActiveAuction.HighestBid = bid
+	am.ActiveAuction.HighestBidUserId = 0
+	am.ActiveAuction.HighestBidIsNPC = true
+	am.ActiveAuction.HighestBidderName = buyer.Name()
+}
+
+// refundPreviousBidder returns the currently-held escrow to whoever holds the
+// high bid — a user (bank) or an NPC (wallet). Safe when there is no bid.
+func (am *AuctionManager) refundPreviousBidder() {
+	a := am.ActiveAuction
+	if a == nil || a.HighestBid <= 0 {
+		return
+	}
+	if a.HighestBidIsNPC {
+		if b := buyerByName(a.HighestBidderName); b != nil {
+			b.Wallet().Refund(a.HighestBid)
+		}
+		return
+	}
+	if a.HighestBidUserId > 0 {
+		refundUser(a.HighestBidUserId, a.HighestBid)
+	}
 }
 
 // refundUser returns escrowed gold to a bidder, online or offline.
