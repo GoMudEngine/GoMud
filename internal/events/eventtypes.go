@@ -93,6 +93,18 @@ type Broadcast struct {
 
 func (b Broadcast) Type() string { return `Broadcast` }
 
+// ChannelMessage is a global chat-channel line for terminal fan-out. Recipients
+// are filtered per-user by their channel toggle in ChannelMessage_SendToAll. The
+// web/GMCP delivery goes through the separate Communication event.
+type ChannelMessage struct {
+	Channel      string // channel name, e.g. "newbie"
+	SourceUserId int
+	Name         string // sender display name
+	Text         string // fully-formatted, ansi-tagged line (ends with CRLF)
+}
+
+func (c ChannelMessage) Type() string { return `ChannelMessage` }
+
 type Message struct {
 	UserId          int
 	ExcludeUserIds  []int
