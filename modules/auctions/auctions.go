@@ -367,8 +367,9 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 			}
 		}
 
-		// Give the item to the winner and let them know
-		if auctionNow.HighestBidUserId > 0 {
+		// Give the item to the winner and let them know. An NPC win counts as
+		// sold too (HighestBidUserId is 0 for an NPC — the item sinks below).
+		if auctionNow.HighestBidUserId > 0 || auctionNow.HighestBidIsNPC {
 
 			if user := users.GetByUserId(auctionNow.HighestBidUserId); user != nil {
 				if user.Character.StoreItem(auctionNow.ItemData) {
@@ -448,6 +449,18 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 						users.SaveUser(*sellerUser)
 					}
 
+				}
+			}
+
+			// An NPC winner takes the item out of circulation (into their
+			// collection) — a flavored sink. Broadcast it.
+			if auctionNow.HighestBidIsNPC {
+				for _, uid := range users.GetOnlineUserIds() {
+					if u := users.GetByUserId(uid); u != nil {
+						if on := u.GetConfigOption(`auction`); on == nil || on.(bool) {
+							u.SendText(messaging.CategoryBroadcast, fmt.Sprintf(`<ansi fg="yellow"><ansi fg="username">%s</ansi> has acquired the <ansi fg="item">%s</ansi> for their collection.</ansi>`, auctionNow.HighestBidderName, auctionNow.ItemData.DisplayName()))
+						}
+					}
 				}
 			}
 
