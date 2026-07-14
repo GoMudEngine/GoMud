@@ -219,16 +219,18 @@ func tickMutationItems(user *users.UserRecord, worn []items.Item, now uint64) {
 // Attunement mechanism: CONTENT FINGERPRINTING (chosen over per-call-site
 // stamping). The tick remembers a fingerprint (belt itemId + sorted potion
 // itemIds) in MiscData; whenever it changes — the player drank a slotted
-// potion, added/removed one, or swapped the belt — we stamp the attunement
-// cooldown and revoke the ambience. This catches ALL mutation paths with zero
-// edits to drink/get/remove/equip commands and is robust to future code, at
-// the cost of one MiscData key + a fingerprint build — paid ONLY while an
-// ambient_potions belt is worn (the flag-off path never builds it). First-ever
-// equip trips attunement too (fp goes ""→something) — acceptable, arguably
-// correct flavor. One leniency from flag-off-skips-fingerprint: unequipping the
-// belt DURING the attunement window (no buffs applied yet) and re-equipping it
-// with identical contents resumes the same attunement clock rather than
-// resetting it — fine, the contents never changed.
+// potion, added/removed one, or swapped the belt — we react. This catches ALL
+// mutation paths with zero edits to drink/get/remove/equip commands, paid ONLY
+// while an ambient_potions belt is worn (the flag-off path never builds it).
+//
+// SMARTER RESET (2026-07-14): a contents change no longer revokes everything and
+// re-attunes the whole bandolier. Instead we KEEP every already-attuned buff
+// active, revoke only the buff of a potion that actually left, and start the
+// attunement window ONLY for a genuinely new potion effect. So crafting a second
+// potion never drops the regen you already had, and rapid crafting doesn't
+// perpetually reset the clock for potions that are already attuned. The player
+// is told once when a new potion begins attuning and once when it settles in,
+// so the ~40s window reads as intentional rather than broken.
 //
 // Deferred (Stage 2): the item card's "slotted potions can't be drunk" rule is
 // item-level behavior for a later stage; the attunement cooldown is the Stage-1
@@ -277,44 +279,97 @@ func tickAmbientPotions(user *users.UserRecord, now uint64) {
 	}
 
 	applied := readMiscIntSlice(c.GetMiscData("pinnacle_bandolier_buffs"))
+	appliedSet := map[int]bool{}
+	for _, id := range applied {
+		appliedSet[id] = true
+	}
+	desired := desiredAmbientBuffs(c.PotionItems)
 
 	// Content-change detection (see mechanism note above).
 	fp := bandolierFingerprint(belt, c.PotionItems)
 	prevFp, _ := c.GetMiscData("pinnacle_bandolier_fingerprint").(string)
 	if fp != prevFp {
 		c.SetMiscData("pinnacle_bandolier_fingerprint", fp)
-		c.SetMiscData("pinnacle_bandolier_attune_round",
-			now+uint64(configs.GetBalanceConfig().BandolierAttuneRounds))
-		revokeAmbient(c, applied)
-		return
-	}
-	if attune, ok := readMiscRound(c.GetMiscData("pinnacle_bandolier_attune_round")); ok && now < attune {
-		revokeAmbient(c, applied)
+
+		// Revoke ONLY the buffs whose potion just left; keep already-attuned
+		// buffs active so adding/removing one potion never drops the others.
+		kept := make([]int, 0, len(applied))
+		for _, id := range applied {
+			if desired[id] {
+				kept = append(kept, id)
+			} else {
+				c.RemoveBuff(id)
+			}
+		}
+
+		// Start the attunement window (and announce it once) only when a
+		// genuinely new potion effect has appeared — not on a pure removal.
+		hasNew := false
+		for id := range desired {
+			if !appliedSet[id] {
+				hasNew = true
+				break
+			}
+		}
+		if hasNew {
+			c.SetMiscData("pinnacle_bandolier_attune_round",
+				now+uint64(configs.GetBalanceConfig().BandolierAttuneRounds))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
+				`<ansi fg="magenta">The %s stirs, drawing in the essence of what you have slotted; it will take a moment to attune.</ansi>`,
+				spec.Name))
+		}
+		c.SetMiscData("pinnacle_bandolier_buffs", kept)
 		return
 	}
 
-	// Apply/refresh the buffs of every slotted potion at Peak potency (1.30).
-	current := map[int]bool{}
-	for _, p := range c.PotionItems {
-		for _, buffId := range p.GetSpec().BuffIds {
-			current[buffId] = true
-			if !c.Buffs.HasBuff(buffId) {
-				_ = c.AddBuffScaled(buffId, 1.30)
+	// Contents unchanged. While a new potion is still attuning, keep the
+	// already-active buffs refreshed but hold the pending one back.
+	if attune, ok := readMiscRound(c.GetMiscData("pinnacle_bandolier_attune_round")); ok && now < attune {
+		for _, id := range applied {
+			if desired[id] && !c.Buffs.HasBuff(id) {
+				_ = c.AddBuffScaled(id, 1.30)
 			}
 		}
+		return
 	}
-	// Revoke any buff whose potion left the bandolier since last tick.
-	for _, id := range applied {
-		if !current[id] {
-			c.RemoveBuff(id)
+
+	// Attuned (or nothing pending): apply/refresh every slotted potion's buff at
+	// Peak potency (1.30). Announce completion once when a new effect just landed.
+	newlyApplied := false
+	for id := range desired {
+		if !appliedSet[id] {
+			newlyApplied = true
+		}
+		if !c.Buffs.HasBuff(id) {
+			_ = c.AddBuffScaled(id, 1.30)
 		}
 	}
-	// Persist the applied set as []int (readMiscIntSlice reads it tolerantly).
-	ids := make([]int, 0, len(current))
-	for id := range current {
+	if _, ok := readMiscRound(c.GetMiscData("pinnacle_bandolier_attune_round")); ok {
+		if newlyApplied {
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
+				`<ansi fg="magenta">The %s settles into resonance — its stored virtues suffuse you.</ansi>`,
+				spec.Name))
+		}
+		c.SetMiscData("pinnacle_bandolier_attune_round", nil)
+	}
+	// Persist the active set (= desired; every slotted effect is now applied).
+	ids := make([]int, 0, len(desired))
+	for id := range desired {
 		ids = append(ids, id)
 	}
 	c.SetMiscData("pinnacle_bandolier_buffs", ids)
+}
+
+// desiredAmbientBuffs is the set of buff ids emitted by the potions currently
+// slotted in the bandolier.
+func desiredAmbientBuffs(potions []items.Item) map[int]bool {
+	out := map[int]bool{}
+	for _, p := range potions {
+		for _, buffId := range p.GetSpec().BuffIds {
+			out[buffId] = true
+		}
+	}
+	return out
 }
 
 // revokeAmbient removes every previously-applied ambient buff and clears the

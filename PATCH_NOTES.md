@@ -1,6 +1,19 @@
 # DOGMud Patch Notes
 
-## 2026-07-13 — Awakening, refined (blank slate + polish)
+## 2026-07-14 — The Vitalis Bandolier, clarified
+
+Quality-of-life for the pinnacle Vitalis Bandolier's passive potion effects.
+
+- **It tells you what it's doing.** Slot a potion and the bandolier announces
+  that it has begun *attuning* to it, then tells you when it *settles into
+  resonance* and the effect takes hold. The brief attunement was always there;
+  now it reads as intentional instead of looking broken.
+- **Adding a potion no longer drops the ones you had.** Attuning a newly-slotted
+  potion keeps every already-active effect running — only the new one waits its
+  moment. Removing a potion cleanly ends just that one effect.
+- **One of each kind.** The bandolier now holds a single potion of any given
+  type; a duplicate goes to your pack instead. Identical potions never stacked
+  their passive effect anyway, so this only frees the slot for something useful.
 
 The final shaping of the Chrysalis rework before it goes live, plus a round of fixes.
 
