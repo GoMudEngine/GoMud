@@ -3,6 +3,7 @@ package gmcp
 import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/channels"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
@@ -100,6 +101,16 @@ func (g *GMCPCommModule) onComm(e events.Event) events.ListenerReturn {
 
 		if evt.TargetUserId > 0 {
 			sendToUserIds = append(sendToUserIds, evt.TargetUserId)
+		}
+
+	} else if ch, ok := channels.Get(evt.CommType); ok {
+
+		// Global chat channels: every online user who has the channel on (the
+		// sender always sees their own line), mirroring the terminal fan-out.
+		for _, u := range users.GetAllActiveUsers() {
+			if channels.ShouldReceive(u.UserId == evt.SourceUserId, u.Deafened, u.GetConfigOption(ch.ConfigKey)) {
+				sendToUserIds = append(sendToUserIds, u.UserId)
+			}
 		}
 
 	}
