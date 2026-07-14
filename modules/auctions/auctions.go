@@ -652,24 +652,68 @@ func (am *AuctionManager) Bid(userId int, bid int) error {
 		return errors.New("You are already the highest bidder.")
 	}
 
-	if bid < am.ActiveAuction.MinimumBid || bid < am.ActiveAuction.HighestBid+1 {
-		minBid := am.ActiveAuction.MinimumBid
-		if am.ActiveAuction.HighestBid > 0 {
-			minBid = am.ActiveAuction.HighestBid + 1
-		}
+	// Buy-it-now: a bid at/above the buyout caps at buyout and ends the lot.
+	buyNow := false
+	if am.ActiveAuction.BuyoutPrice > 0 && bid >= am.ActiveAuction.BuyoutPrice {
+		bid = am.ActiveAuction.BuyoutPrice
+		buyNow = true
+	}
+
+	minBid := am.ActiveAuction.MinimumBid
+	if am.ActiveAuction.HighestBid > 0 {
+		minBid = am.ActiveAuction.HighestBid + 1
+	}
+	if bid < minBid {
 		return fmt.Errorf(`The minimum bid is <ansi fg="gold">%d gold</ansi>`, minBid)
 	}
 
-	u := users.GetByUserId(userId)
+	u := getUser(userId)
 	if u == nil {
 		return errors.New("User not found.")
 	}
+	if u.Character.Bank < bid {
+		return fmt.Errorf(`You only have <ansi fg="gold">%d gold</ansi> in the bank.`, u.Character.Bank)
+	}
+
+	// Escrow: refund the previous high bidder, then debit this bidder. The held
+	// gold (= HighestBid) settles to the seller at resolution.
+	if am.ActiveAuction.HighestBidUserId > 0 {
+		refundUser(am.ActiveAuction.HighestBidUserId, am.ActiveAuction.HighestBid)
+	}
+	u.Character.Bank -= bid
+	events.AddToQueue(events.EquipmentChange{UserId: u.UserId, BankChange: -bid})
 
 	am.ActiveAuction.HighestBid = bid
 	am.ActiveAuction.HighestBidUserId = userId
 	am.ActiveAuction.HighestBidderName = u.Character.Name
 
+	if buyNow {
+		// End immediately — set just in the past so IsEnded() is unambiguously
+		// true on the next resolution tick (avoids equal-instant clock edge cases).
+		am.ActiveAuction.EndTime = time.Now().Add(-time.Second)
+	}
+
 	return nil
+}
+
+// refundUser returns escrowed gold to a bidder, online or offline.
+func refundUser(userId int, amount int) {
+	if amount <= 0 {
+		return
+	}
+	if u := getUser(userId); u != nil {
+		u.Character.Bank += amount
+		events.AddToQueue(events.EquipmentChange{UserId: u.UserId, BankChange: amount})
+		return
+	}
+	users.SearchOfflineUsers(func(u *users.UserRecord) bool {
+		if u.UserId == userId {
+			u.Character.Bank += amount
+			users.SaveUser(*u)
+			return false
+		}
+		return true
+	})
 }
 
 func (am *AuctionManager) EndAuction() {
