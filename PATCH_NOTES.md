@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-07-14 — Global chat channels
+
+Three tunable, world-wide channels so you can talk to (and hear) everyone online:
+**chat** (general), **newbie** (ask for help — everyone's on it by default so
+there's always someone to answer), and **trade** (buying and selling). Use `chat`,
+`newbie`, or `trade` to talk; type `channels` to see them and toggle any on or off.
+Player chat now has its own channels, separate from system announcements.
+(`broadcast` still works — it's now the chat channel.)
+
 ## 2026-07-14 — MUD listing support (MSSP)
 
 DOGMud now answers the MSSP telnet handshake, so directory sites (TMC,

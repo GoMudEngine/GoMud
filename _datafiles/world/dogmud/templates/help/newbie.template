@@ -1,0 +1,16 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">newbie</ansi>
+
+The <ansi fg="command">newbie</ansi> command talks on the world-wide
+<ansi fg="green">newbie</ansi> channel — the place to ask for help. Everyone is
+listening by default, so there is usually someone around to answer.
+
+If you are an experienced player and want to help (or want quiet), turn the
+channel on or off with <ansi fg="command">channels</ansi>.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">newbie how do I equip a weapon?</ansi>
+
+  Output to everyone with newbie on:
+
+  <ansi fg="green">(newbie)</ansi> Charles: how do I equip a weapon?
