@@ -90,6 +90,7 @@ func RegisterListeners() {
 	events.RegisterListener(events.CharacterChanged{}, BroadcastNewChar)
 
 	events.RegisterListener(events.Broadcast{}, Broadcast_SendToAll)
+	events.RegisterListener(events.ChannelMessage{}, ChannelMessage_SendToAll)
 
 	events.RegisterListener(events.RebuildMap{}, HandleMapRebuild)
 
