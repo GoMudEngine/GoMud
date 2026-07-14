@@ -574,6 +574,7 @@ type AuctionItem struct {
 	HighestBid        int
 	HighestBidUserId  int
 	HighestBidderName string
+	HighestBidIsNPC   bool // sentinel: high bid is an NPC (HighestBidUserId==0, name in HighestBidderName)
 	LastUpdate        time.Time
 }
 
@@ -678,16 +679,15 @@ func (am *AuctionManager) Bid(userId int, bid int) error {
 		return fmt.Errorf(`You only have <ansi fg="gold">%d gold</ansi> in the bank.`, u.Character.Bank)
 	}
 
-	// Escrow: refund the previous high bidder, then debit this bidder. The held
-	// gold (= HighestBid) settles to the seller at resolution.
-	if am.ActiveAuction.HighestBidUserId > 0 {
-		refundUser(am.ActiveAuction.HighestBidUserId, am.ActiveAuction.HighestBid)
-	}
+	// Escrow: refund the previous high bidder (user or NPC), then debit this
+	// bidder. The held gold (= HighestBid) settles to the seller at resolution.
+	am.refundPreviousBidder()
 	u.Character.Bank -= bid
 	events.AddToQueue(events.EquipmentChange{UserId: u.UserId, BankChange: -bid})
 
 	am.ActiveAuction.HighestBid = bid
 	am.ActiveAuction.HighestBidUserId = userId
+	am.ActiveAuction.HighestBidIsNPC = false
 	am.ActiveAuction.HighestBidderName = u.Character.Name
 
 	if buyNow {
@@ -697,6 +697,38 @@ func (am *AuctionManager) Bid(userId int, bid int) error {
 	}
 
 	return nil
+}
+
+// npcBid places a bid for an NPC buyer, escrowing from its wallet and refunding
+// whoever held the high bid (user or NPC).
+func (am *AuctionManager) npcBid(buyer NpcBuyer, bid int) {
+	if am.ActiveAuction == nil {
+		return
+	}
+	am.refundPreviousBidder()
+	buyer.Wallet().Spend(bid)
+	am.ActiveAuction.HighestBid = bid
+	am.ActiveAuction.HighestBidUserId = 0
+	am.ActiveAuction.HighestBidIsNPC = true
+	am.ActiveAuction.HighestBidderName = buyer.Name()
+}
+
+// refundPreviousBidder returns the currently-held escrow to whoever holds the
+// high bid — a user (bank) or an NPC (wallet). Safe when there is no bid.
+func (am *AuctionManager) refundPreviousBidder() {
+	a := am.ActiveAuction
+	if a == nil || a.HighestBid <= 0 {
+		return
+	}
+	if a.HighestBidIsNPC {
+		if b := buyerByName(a.HighestBidderName); b != nil {
+			b.Wallet().Refund(a.HighestBid)
+		}
+		return
+	}
+	if a.HighestBidUserId > 0 {
+		refundUser(a.HighestBidUserId, a.HighestBid)
+	}
 }
 
 // refundUser returns escrowed gold to a bidder, online or offline.

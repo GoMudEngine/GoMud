@@ -116,3 +116,42 @@ func TestCommissionFor(t *testing.T) {
 		t.Errorf("commissionFor(10,0.05)=%d want 0", got)
 	}
 }
+
+func TestNpcBid_SentinelAndRefunds(t *testing.T) {
+	seller := users.NewTestUser(9030, "sell4", "Sell4", 9930)
+	user := users.NewTestUser(9031, "usr", "Usr", 9931)
+	user.Character.Bank = 10000
+	defer fakeUsers(seller, user)()
+
+	col := &collector{name: "TestCol", wallet: &NpcWallet{Balance: 5000, Cap: 5000}}
+	col2 := &collector{name: "TestCol2", wallet: &NpcWallet{Balance: 5000, Cap: 5000}}
+	prev := npcBuyers
+	npcBuyers = []NpcBuyer{col, col2}
+	defer func() { npcBuyers = prev }()
+
+	am := &AuctionManager{}
+	am.StartAuction(items.Item{ItemId: 1}, 9030, 1000, 60, false) // reserve 250
+
+	am.npcBid(col, 300)
+	if !am.ActiveAuction.HighestBidIsNPC || am.ActiveAuction.HighestBidUserId != 0 || am.ActiveAuction.HighestBidderName != "TestCol" {
+		t.Fatalf("npcBid should make TestCol the sentinel high bidder: %+v", am.ActiveAuction)
+	}
+	if col.wallet.Balance != 4700 {
+		t.Errorf("col wallet=%d want 4700", col.wallet.Balance)
+	}
+
+	am.npcBid(col2, 400)
+	if col.wallet.Balance != 5000 {
+		t.Errorf("col refunded to %d want 5000", col.wallet.Balance)
+	}
+
+	if err := am.Bid(9031, 500); err != nil {
+		t.Fatalf("user bid rejected: %v", err)
+	}
+	if col2.wallet.Balance != 5000 {
+		t.Errorf("col2 refunded to %d want 5000", col2.wallet.Balance)
+	}
+	if am.ActiveAuction.HighestBidIsNPC || am.ActiveAuction.HighestBidUserId != 9031 {
+		t.Errorf("user bid should clear the NPC sentinel: %+v", am.ActiveAuction)
+	}
+}
