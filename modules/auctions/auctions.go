@@ -144,6 +144,18 @@ func (mod *AuctionsModule) load() {
 	if v, ok := mod.plug.Config.Get(`CollectorWalletRegenPerTick`).(int); ok && v >= 0 {
 		collectorRegenPerTick = v
 	}
+	if v, ok := mod.plug.Config.Get(`CraftspersonMinValue`).(int); ok && v > 0 {
+		craftMinValue = v
+	}
+	if v, ok := mod.plug.Config.Get(`CraftspersonPremium`).(float64); ok && v > 0 {
+		craftPremium = v
+	}
+	if v, ok := mod.plug.Config.Get(`AdventurerMinValue`).(int); ok && v > 0 {
+		advMinValue = v
+	}
+	if v, ok := mod.plug.Config.Get(`AdventurerPremium`).(float64); ok && v > 0 {
+		advPremium = v
+	}
 }
 
 func (mod *AuctionsModule) save() {
