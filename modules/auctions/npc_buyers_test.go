@@ -281,3 +281,25 @@ func TestShopkeeper_ReceiveNoBoundIsNoOp(t *testing.T) {
 		t.Errorf("bound should remain nil, got %+v", sk.bound)
 	}
 }
+
+func TestShopkeeper_RegisteredAndResolvable(t *testing.T) {
+	if buyerByName("The Merchants' Guild") == nil {
+		t.Fatal("shopkeeper persona must be registered so refunds/flavor/receive resolve by name")
+	}
+}
+
+func TestShopkeeper_DisabledIsUninterested(t *testing.T) {
+	item, cleanup := newShopkeeperTestItem(t)
+	defer cleanup()
+	shops.ClearCache()
+	defer shops.ClearCache()
+	shops.RegisterShop("testzone", 1, 100, shops.ShopInventory{
+		Gold: 5000, StartingGold: 5000, CraftSupport: shops.CraftSupportBlacksmithing})
+
+	shopkeeperEnabled = false
+	defer func() { shopkeeperEnabled = true }()
+	sk := &shopkeeper{name: "The Merchants' Guild"}
+	if sk.Interested(item) {
+		t.Error("disabled shopkeeper must not be interested")
+	}
+}

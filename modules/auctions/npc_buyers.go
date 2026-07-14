@@ -244,6 +244,7 @@ var npcBuyers = []NpcBuyer{
 	&collector{name: "Lady Ashcombe", wallet: &NpcWallet{Balance: 10000, Cap: 10000}},
 	&craftsperson{name: "Master Ordwin", wallet: &NpcWallet{Balance: 6000, Cap: 6000}},
 	&adventurer{name: "Sellsword Kest", wallet: &NpcWallet{Balance: 6000, Cap: 6000}},
+	&shopkeeper{name: "The Merchants' Guild"},
 }
 
 func buyerByName(name string) NpcBuyer {
