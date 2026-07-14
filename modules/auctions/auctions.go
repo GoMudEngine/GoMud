@@ -566,7 +566,8 @@ type AuctionItem struct {
 	SellerName        string
 	Anonymous         bool
 	EndTime           time.Time
-	MinimumBid        int
+	BuyoutPrice       int // seller-set buy-it-now; reserve/min-bid derive from this
+	MinimumBid        int // the reserve — derived as BuyoutPrice * auctionReservePct
 	HighestBid        int
 	HighestBidUserId  int
 	HighestBidderName string
@@ -586,20 +587,46 @@ func (a *AuctionItem) IsEnded() bool {
 	return time.Now().After(a.EndTime)
 }
 
-func (am *AuctionManager) StartAuction(item items.Item, userId int, minimumBid int, durationSeconds int, anon bool) bool {
+// getUser is the auctions package's user lookup, overridable in tests. Defaults
+// to the live users.GetByUserId.
+var getUser = users.GetByUserId
+
+// auctionReservePct / auctionCommissionPct are the reserve and house-commission
+// fractions. Defaults here; overridden from plugin config in load().
+var (
+	auctionReservePct    = 0.25
+	auctionCommissionPct = 0.05
+)
+
+// reserveFrom derives the reserve / minimum bid from a buyout price. Floors at 1.
+func reserveFrom(buyout int, pct float64) int {
+	r := int(float64(buyout) * pct)
+	if r < 1 {
+		r = 1
+	}
+	return r
+}
+
+// commissionFor is the house cut of a sale (a gold sink). Rounds down.
+func commissionFor(bid int, pct float64) int {
+	return int(float64(bid) * pct)
+}
+
+func (am *AuctionManager) StartAuction(item items.Item, userId int, buyout int, durationSeconds int, anon bool) bool {
 
 	if am.ActiveAuction != nil {
 		return false
 	}
 
-	if u := users.GetByUserId(userId); u != nil {
+	if u := getUser(userId); u != nil {
 		am.ActiveAuction = &AuctionItem{
 			ItemData:          item,
 			SellerUserId:      userId,
 			SellerName:        u.Character.Name,
 			Anonymous:         anon,
 			EndTime:           time.Now().Add(time.Second * time.Duration(durationSeconds)),
-			MinimumBid:        minimumBid,
+			BuyoutPrice:       buyout,
+			MinimumBid:        reserveFrom(buyout, auctionReservePct),
 			HighestBid:        0,
 			HighestBidUserId:  0,
 			HighestBidderName: ``,
