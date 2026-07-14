@@ -8,6 +8,7 @@ type NpcBuyer interface {
 	Interested(item items.Item) bool
 	MaxBid(item items.Item) int
 	Wallet() *NpcWallet
+	Flavor() string // trailing phrase in the win broadcast, e.g. "for their collection"
 }
 
 // NpcWallet is a persistent, gold-gated balance that regenerates toward Cap.
@@ -62,6 +63,7 @@ func (c *collector) MaxBid(item items.Item) int {
 	return int(float64(item.GetSpec().Value) * collectorPremium)
 }
 func (c *collector) Wallet() *NpcWallet { return c.wallet }
+func (c *collector) Flavor() string     { return "for their collection" }
 
 // ── Registry of active NPC buyers (#2.1: two collectors) ──
 var npcBuyers = []NpcBuyer{
