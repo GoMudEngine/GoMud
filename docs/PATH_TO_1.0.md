@@ -44,10 +44,23 @@ experience just passed a full feel-test — so the hill is shorter than it looks
   and lets non-coders contribute. Biggest scope here; worth its own spec.
 - 🟡 **Weather / seasons polish** — the systems exist (`modules/weather/`); finish
   and polish. Scope the specific gaps before committing.
-- 🟡 **Auction: NPC bidders** — add NPCs that bid on player lots with real gold
-  (gold-gated), so the house feels alive even at low population; verify enabled.
-- 🟡 **MUD mail: verify + polish** — confirm it's enabled and discoverable for
-  players; UX pass on the send flow and inbox.
+- 🟡 **Econ loop — a 4-part living-marketplace arc** (bigger than the original "NPC bidders +
+  mudmail verify"; the exploration found mudmail's player-to-player send doesn't exist and the
+  auction house had a gold-faucet bug). Sub-projects, in order:
+  - ✅ **#1 Auction mechanics core** — DONE 2026-07-14 (local master, unpushed; spec+plan
+    `2026-07-14-auction-mechanics-core-*`). Escrowed bidding (winner pays, outbid refunds,
+    affordability check — fixes the gold-faucet), seller buyout + derived 25% reserve + buy-it-now,
+    house commission (gold sink), reliable unsold-return to bank storage/inbox (+ fixed offline
+    item-loss & a sold-seller item-dup bug). Unit-tested + suite 91/91 + boot clean.
+  - ⬜ **#2 Living-world NPC buyers** — 5 archetypes (collector/shopkeeper/adventurer/official/
+    craftsperson), each with an interest filter + valuation + gold-gated wallet. User's note: this
+    is ~5 substages of its own. The big "feels alive" piece.
+  - ⬜ **#3 Shopkeeper relisting** — a shopkeeper-archetype win routes the item into shop stock.
+  - ⬜ **#4 Bank-storage → auction** — storage items whose owner can't pay go to the block instead
+    of being deleted.
+- 🟡 **Player-to-player mudmail** — the admin mass-mail + inbox exist, but there is NO player→player
+  send (message + gold + item to a specific recipient, gold via bank). A real (moderate) build reusing
+  the existing Message/Inbox infra. Deferred behind the econ-loop arc (user chose auction first).
 
 ---
 
