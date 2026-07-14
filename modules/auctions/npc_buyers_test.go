@@ -271,3 +271,13 @@ func TestShopkeeper_WinRelistsIntoBoundShop(t *testing.T) {
 		t.Errorf("non-bound shop should not receive the item")
 	}
 }
+
+func TestShopkeeper_ReceiveNoBoundIsNoOp(t *testing.T) {
+	item, cleanup := newShopkeeperTestItem(t)
+	defer cleanup()
+	sk := &shopkeeper{name: "The Merchants' Guild"} // never Spent → bound is nil
+	sk.Receive(item)                                // must not panic
+	if sk.bound != nil {
+		t.Errorf("bound should remain nil, got %+v", sk.bound)
+	}
+}

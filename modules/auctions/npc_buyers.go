@@ -231,8 +231,8 @@ func (s *shopkeeper) Receive(item items.Item) {
 	if s.bound == nil {
 		return
 	}
-	cap := int(configs.GetBalanceConfig().ShopAffixedStockCap)
-	s.bound.AddAffixedStock(item, item.GetSpec().Value, cap)
+	c := int(configs.GetBalanceConfig().ShopAffixedStockCap)
+	s.bound.AddAffixedStock(item, item.GetSpec().Value, c)
 	s.bound.BuysCount++
 	persistShop(s.bound)
 	s.bound = nil
