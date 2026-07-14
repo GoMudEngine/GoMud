@@ -524,6 +524,19 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 
 		auctionNow.LastUpdate = evt.TimeNow
 
+		// Living-world NPC buyers: regen wallets, then maybe place a competing bid
+		// (before the update broadcast so it reflects the new bid).
+		if npcBuyersEnabled && auctionNow.BuyoutPrice > 0 {
+			for _, b := range npcBuyers {
+				b.Wallet().Regen(collectorRegenPerTick)
+			}
+			if util.Rand(100) < npcBidChancePct {
+				if b, bid, ok := nextNpcBid(npcBuyers, auctionNow.ItemData, auctionNow.HighestBid, auctionNow.MinimumBid, auctionNow.HighestBidderName, auctionNow.HighestBidIsNPC); ok {
+					mod.auctionMgr.npcBid(b, bid)
+				}
+			}
+		}
+
 		for _, uid := range users.GetOnlineUserIds() {
 
 			auctionTxt, _ := templates.Process("auctions/auction-update", auctionNow, uid)

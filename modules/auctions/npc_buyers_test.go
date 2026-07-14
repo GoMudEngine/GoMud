@@ -48,3 +48,25 @@ func TestCollector_InterestAndMaxBid(t *testing.T) {
 		t.Errorf("MaxBid=%d want 800 (Value*1.0)", got)
 	}
 }
+
+func TestNextNpcBid(t *testing.T) {
+	defer items.SeedItemsForTest(map[int]*items.ItemSpec{
+		201: {ItemId: 201, Name: "prize", Type: items.Weapon, Value: 800},
+	})()
+	collectorMinValue = 500
+	collectorPremium = 1.0
+	rich := &collector{name: "Rich", wallet: &NpcWallet{Balance: 5000, Cap: 5000}}
+	broke := &collector{name: "Broke", wallet: &NpcWallet{Balance: 10, Cap: 5000}}
+	item := items.New(201)
+
+	b, bid, ok := nextNpcBid([]NpcBuyer{broke, rich}, item, 0, 250, "", false)
+	if !ok || b.Name() != "Rich" || bid != 250 {
+		t.Fatalf("expected Rich to bid 250, got %v %d %v", b, bid, ok)
+	}
+	if _, _, ok := nextNpcBid([]NpcBuyer{rich}, item, 800, 801, "Rich", true); ok {
+		t.Fatal("nobody should bid past MaxBid")
+	}
+	if _, _, ok := nextNpcBid([]NpcBuyer{rich}, item, 300, 301, "Rich", true); ok {
+		t.Fatal("the current high NPC must not bid against itself")
+	}
+}
