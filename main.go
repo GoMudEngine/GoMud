@@ -119,6 +119,7 @@ var systemNPCAnchorRooms = []int{
 func main() {
 
 	serverStartTime := time.Now()
+	util.SetServerStart(serverStartTime)
 
 	// Capture panic and write msg/stack to logs
 	defer func() {
@@ -615,6 +616,14 @@ func handleTelnetConnection(connDetails *connections.ConnectionDetails, wg *sync
 		term.MspEnable.BytesWithPayload(nil),
 		connDetails.ConnectionId(),
 	)
+
+	// Offer MSSP (server status protocol) so crawlers can read our stats.
+	if bool(configs.GetServerConfig().MSSP.Enabled) {
+		connections.SendTo(
+			term.MsspEnable.BytesWithPayload(nil),
+			connDetails.ConnectionId(),
+		)
+	}
 
 	connections.SendTo(
 		term.TelnetSuppressGoAhead.BytesWithPayload(nil),

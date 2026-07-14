@@ -65,6 +65,20 @@ func TelnetIACHandler(clientInput *connections.ClientInput, sharedState map[stri
 
 		}
 
+		if term.IsMSSPCommand(iacCmd) {
+			// A crawler accepted our WILL MSSP (IAC DO MSSP) — reply once with
+			// the status block. A DONT/refuse is a silent no-op.
+			if ok, _ := term.Matches(iacCmd, term.MsspAccept); ok {
+				if fields := gatherMSSPFields(); len(fields) > 0 {
+					connections.SendTo(
+						term.MsspCommand.BytesWithPayload(term.EncodeMSSPPayload(fields)),
+						clientInput.ConnectionId,
+					)
+				}
+			}
+			continue
+		}
+
 		if term.IsMSPCommand(iacCmd) {
 
 			if ok, payload := term.Matches(iacCmd, term.MspAccept); ok {
