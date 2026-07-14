@@ -34,6 +34,25 @@ Server:
   #   Display name of the MUD.
   #   This will be used a few places by default (such as the web pages).
   MudName: "Delusions of Grandeur"
+  # - MSSP -
+  #   MUD Server Status Protocol (telnet option 70). Lets directory sites read
+  #   live player count, uptime, world size, and features. Contact/Hostname/Port
+  #   are left empty on purpose (public repo); set them on the droplet if wanted.
+  MSSP:
+    Enabled: true
+    Website: https://www.dogmud.org
+    Genre: Fantasy
+    Gameplay:
+      - Adventure
+      - Roleplaying
+    Status: Open Beta
+    Language: English
+    Family: Custom
+    Location: United States
+    Created: "2026"
+    Contact: ""
+    Hostname: ""
+    Port: ""
   # - Seed -
   #   The seed used for certain types of content generation
   #   To prevent certain secrets or content from being spoiled, you can set this
