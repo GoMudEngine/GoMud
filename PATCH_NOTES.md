@@ -1,5 +1,15 @@
 # DOGMud Patch Notes
 
+## 2026-07-14 — Auction house: a real bidding economy
+
+The auction house now handles gold properly. When you bid, the gold is set aside
+from your bank; if you're outbid it comes straight back, and the winner actually
+pays — no more free gold appearing from a sale. Sellers now set a **buyout**
+(buy-it-now) price: pay it to win instantly, and a lot only sells if bids clear a
+**reserve** (a quarter of the buyout), with a small house **commission** taken on
+the sale. A lot that ends with **no bids is returned to the seller** — into bank
+storage, or the mailbox if storage is full — never lost, online or off.
+
 ## 2026-07-14 — Hot-reboot (copyover)
 
 The server can now live-restart to deploy updates **without disconnecting

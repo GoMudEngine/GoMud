@@ -112,6 +112,14 @@ func (ae AuctionUpdate) Data(name string) any {
 
 func (mod *AuctionsModule) load() {
 	mod.plug.ReadIntoStruct(`auctionhistory`, &mod.auctionMgr)
+
+	// Reserve / commission fractions from plugin config (defaults otherwise).
+	if v, ok := mod.plug.Config.Get(`AuctionReservePct`).(float64); ok && v > 0 {
+		auctionReservePct = v
+	}
+	if v, ok := mod.plug.Config.Get(`AuctionCommissionPct`).(float64); ok && v >= 0 {
+		auctionCommissionPct = v
+	}
 }
 
 func (mod *AuctionsModule) save() {
@@ -292,7 +300,7 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 		return true, nil
 	}
 
-	questionAmount := cmdPrompt.Ask(`Auction for how much gold?`, []string{})
+	questionAmount := cmdPrompt.Ask(`Set a buyout (buy-it-now) price in gold?`, []string{})
 	if !questionAmount.Done {
 		return true, nil
 	}
@@ -306,7 +314,7 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 
 	user.ClearPrompt()
 
-	user.SendText(messaging.CategorySystem, fmt.Sprintf("Auctioning your <ansi fg=\"item\">%s</ansi> for <ansi fg=\"gold\">%d gold</ansi>.", matchItem.DisplayName(), amt))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf("Auctioning your <ansi fg=\"item\">%s</ansi> — buyout <ansi fg=\"gold\">%d gold</ansi>, reserve <ansi fg=\"gold\">%d gold</ansi>.", matchItem.DisplayName(), amt, reserveFrom(amt, auctionReservePct)))
 
 	duration := 60
 	if dur, ok := mod.plug.Config.Get(`DurationSeconds`).(int); ok {
@@ -401,20 +409,24 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 
 			if auctionNow.SellerUserId > 0 {
 
-				msg := fmt.Sprintf(`Your auction of the <ansi fg="item">%s</ansi> has ended. The highest bid was made by <ansi fg="username">%s</ansi> for <ansi fg="gold">%d gold</ansi>.`, auctionNow.ItemData.DisplayName(), auctionNow.HighestBidderName, auctionNow.HighestBid)
+				// The winner already paid at bid time (escrow). The held gold
+				// settles to the seller minus the house commission (a gold sink).
+				payout := auctionNow.HighestBid - commissionFor(auctionNow.HighestBid, auctionCommissionPct)
+
+				msg := fmt.Sprintf(`Your auction of the <ansi fg="item">%s</ansi> has ended. The highest bid was made by <ansi fg="username">%s</ansi> for <ansi fg="gold">%d gold</ansi> (after the auction house's cut).`, auctionNow.ItemData.DisplayName(), auctionNow.HighestBidderName, payout)
 
 				if sellerUser := users.GetByUserId(auctionNow.SellerUserId); sellerUser != nil {
-					sellerUser.Character.Bank += auctionNow.HighestBid
-					sellerUser.SendText(messaging.CategorySystem, `<ansi fg="yellow">` + msg + `</ansi>`)
+					sellerUser.Character.Bank += payout
+					sellerUser.SendText(messaging.CategorySystem, `<ansi fg="yellow">`+msg+`</ansi>`)
 
 					events.AddToQueue(events.EquipmentChange{
 						UserId:     sellerUser.UserId,
-						BankChange: auctionNow.HighestBid,
+						BankChange: payout,
 					})
 
 				} else {
 
-					msg := fmt.Sprintf(`Your auction of the <ansi fg="item">%s</ansi> has ended while you were offline. The highest bid was made by <ansi fg="username">%s</ansi> for <ansi fg="gold">%d gold</ansi>.`, auctionNow.ItemData.DisplayName(), auctionNow.HighestBidderName, auctionNow.HighestBid)
+					msg := fmt.Sprintf(`Your auction of the <ansi fg="item">%s</ansi> has ended while you were offline. The highest bid was made by <ansi fg="username">%s</ansi> for <ansi fg="gold">%d gold</ansi> (after the auction house's cut).`, auctionNow.ItemData.DisplayName(), auctionNow.HighestBidderName, payout)
 
 					users.SearchOfflineUsers(func(u *users.UserRecord) bool {
 						if u.UserId == auctionNow.SellerUserId {
@@ -425,12 +437,12 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 					})
 
 					if sellerUser != nil {
+						// Gold only — the item went to the winner (do NOT re-attach it).
 						sellerUser.Inbox.Add(
 							users.Message{
 								FromName: `Auction System`,
 								Message:  msg,
-								Gold:     auctionNow.HighestBid,
-								Item:     &auctionNow.ItemData,
+								Gold:     payout,
 							},
 						)
 						users.SaveUser(*sellerUser)
@@ -440,19 +452,10 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 			}
 
 		} else if auctionNow.SellerUserId > 0 {
-			if user := users.GetByUserId(auctionNow.SellerUserId); user != nil {
-				if user.Character.StoreItem(auctionNow.ItemData) {
 
-					events.AddToQueue(events.ItemOwnership{
-						UserId: user.UserId,
-						Item:   auctionNow.ItemData,
-						Gained: true,
-					})
-
-					msg := fmt.Sprintf(`<ansi fg="yellow">The auction for the <ansi fg="item">%s</ansi> has ended without a winner. It has been returned to you.</ansi>`, auctionNow.ItemData.DisplayName())
-					user.SendText(messaging.CategorySystem, msg)
-				}
-			}
+			// No bids: reliably return the item to the seller (online or offline)
+			// — bank storage if there's room, else the inbox. Never lost.
+			returnUnsoldItem(auctionNow.SellerUserId, auctionNow.ItemData)
 
 			for _, uid := range users.GetOnlineUserIds() {
 				if uid == auctionNow.SellerUserId {
@@ -566,7 +569,8 @@ type AuctionItem struct {
 	SellerName        string
 	Anonymous         bool
 	EndTime           time.Time
-	MinimumBid        int
+	BuyoutPrice       int // seller-set buy-it-now; reserve/min-bid derive from this
+	MinimumBid        int // the reserve — derived as BuyoutPrice * auctionReservePct
 	HighestBid        int
 	HighestBidUserId  int
 	HighestBidderName string
@@ -586,20 +590,46 @@ func (a *AuctionItem) IsEnded() bool {
 	return time.Now().After(a.EndTime)
 }
 
-func (am *AuctionManager) StartAuction(item items.Item, userId int, minimumBid int, durationSeconds int, anon bool) bool {
+// getUser is the auctions package's user lookup, overridable in tests. Defaults
+// to the live users.GetByUserId.
+var getUser = users.GetByUserId
+
+// auctionReservePct / auctionCommissionPct are the reserve and house-commission
+// fractions. Defaults here; overridden from plugin config in load().
+var (
+	auctionReservePct    = 0.25
+	auctionCommissionPct = 0.05
+)
+
+// reserveFrom derives the reserve / minimum bid from a buyout price. Floors at 1.
+func reserveFrom(buyout int, pct float64) int {
+	r := int(float64(buyout) * pct)
+	if r < 1 {
+		r = 1
+	}
+	return r
+}
+
+// commissionFor is the house cut of a sale (a gold sink). Rounds down.
+func commissionFor(bid int, pct float64) int {
+	return int(float64(bid) * pct)
+}
+
+func (am *AuctionManager) StartAuction(item items.Item, userId int, buyout int, durationSeconds int, anon bool) bool {
 
 	if am.ActiveAuction != nil {
 		return false
 	}
 
-	if u := users.GetByUserId(userId); u != nil {
+	if u := getUser(userId); u != nil {
 		am.ActiveAuction = &AuctionItem{
 			ItemData:          item,
 			SellerUserId:      userId,
 			SellerName:        u.Character.Name,
 			Anonymous:         anon,
 			EndTime:           time.Now().Add(time.Second * time.Duration(durationSeconds)),
-			MinimumBid:        minimumBid,
+			BuyoutPrice:       buyout,
+			MinimumBid:        reserveFrom(buyout, auctionReservePct),
 			HighestBid:        0,
 			HighestBidUserId:  0,
 			HighestBidderName: ``,
@@ -625,24 +655,104 @@ func (am *AuctionManager) Bid(userId int, bid int) error {
 		return errors.New("You are already the highest bidder.")
 	}
 
-	if bid < am.ActiveAuction.MinimumBid || bid < am.ActiveAuction.HighestBid+1 {
-		minBid := am.ActiveAuction.MinimumBid
-		if am.ActiveAuction.HighestBid > 0 {
-			minBid = am.ActiveAuction.HighestBid + 1
-		}
+	// Buy-it-now: a bid at/above the buyout caps at buyout and ends the lot.
+	buyNow := false
+	if am.ActiveAuction.BuyoutPrice > 0 && bid >= am.ActiveAuction.BuyoutPrice {
+		bid = am.ActiveAuction.BuyoutPrice
+		buyNow = true
+	}
+
+	minBid := am.ActiveAuction.MinimumBid
+	if am.ActiveAuction.HighestBid > 0 {
+		minBid = am.ActiveAuction.HighestBid + 1
+	}
+	if bid < minBid {
 		return fmt.Errorf(`The minimum bid is <ansi fg="gold">%d gold</ansi>`, minBid)
 	}
 
-	u := users.GetByUserId(userId)
+	u := getUser(userId)
 	if u == nil {
 		return errors.New("User not found.")
 	}
+	if u.Character.Bank < bid {
+		return fmt.Errorf(`You only have <ansi fg="gold">%d gold</ansi> in the bank.`, u.Character.Bank)
+	}
+
+	// Escrow: refund the previous high bidder, then debit this bidder. The held
+	// gold (= HighestBid) settles to the seller at resolution.
+	if am.ActiveAuction.HighestBidUserId > 0 {
+		refundUser(am.ActiveAuction.HighestBidUserId, am.ActiveAuction.HighestBid)
+	}
+	u.Character.Bank -= bid
+	events.AddToQueue(events.EquipmentChange{UserId: u.UserId, BankChange: -bid})
 
 	am.ActiveAuction.HighestBid = bid
 	am.ActiveAuction.HighestBidUserId = userId
 	am.ActiveAuction.HighestBidderName = u.Character.Name
 
+	if buyNow {
+		// End immediately — set just in the past so IsEnded() is unambiguously
+		// true on the next resolution tick (avoids equal-instant clock edge cases).
+		am.ActiveAuction.EndTime = time.Now().Add(-time.Second)
+	}
+
 	return nil
+}
+
+// refundUser returns escrowed gold to a bidder, online or offline.
+func refundUser(userId int, amount int) {
+	if amount <= 0 {
+		return
+	}
+	if u := getUser(userId); u != nil {
+		u.Character.Bank += amount
+		events.AddToQueue(events.EquipmentChange{UserId: u.UserId, BankChange: amount})
+		return
+	}
+	users.SearchOfflineUsers(func(u *users.UserRecord) bool {
+		if u.UserId == userId {
+			u.Character.Bank += amount
+			users.SaveUser(*u)
+			return false
+		}
+		return true
+	})
+}
+
+// auctionStorageCap bounds how many items an unsold-return pushes into bank
+// storage before falling back to the inbox (the storage cap is normally
+// room-based, but the seller may be offline / not at a bank).
+const auctionStorageCap = 20
+
+// returnUnsoldItem returns an unsold lot to its seller — bank storage if there's
+// room, else the inbox. Works whether the seller is online or offline.
+func returnUnsoldItem(sellerUserId int, item items.Item) {
+	deliver := func(u *users.UserRecord, offline bool) {
+		if u.ItemStorage.SlotCount() < auctionStorageCap {
+			u.ItemStorage.AddItem(item)
+		} else {
+			u.Inbox.Add(users.Message{
+				FromName: `Auction System`,
+				Message:  `Your auction ended with no bids. The item is returned.`,
+				Item:     &item,
+			})
+		}
+		if offline {
+			users.SaveUser(*u)
+		}
+	}
+	if u := getUser(sellerUserId); u != nil {
+		deliver(u, false)
+		u.SendText(messaging.CategorySystem, `<ansi fg="yellow">Your auction ended with no bids; the item was returned to your bank storage.</ansi>`)
+		return
+	}
+	users.SearchOfflineUsers(func(u *users.UserRecord) bool {
+		if u.UserId == sellerUserId {
+			deliver(u, true)
+			return false
+		}
+		return true
+	})
 }
 
 func (am *AuctionManager) EndAuction() {
