@@ -225,6 +225,10 @@ different valuation + a real-gold purse into the same engine.
 - **#4 Bank-storage → auction** — separate substage.
 - Commodity-merge of won items into regular `StockEntry` (AffixedStock is instance-safe and
   sufficient); fine-tuning of thresholds (delegated to existing shop config).
+- **Followup (separate): a minimum-value floor on auction *listings*.** Gating what can be listed on
+  the block (on the `auction` sell path, not the shopkeeper) keeps trivial items — a plain iron sword —
+  off the block entirely, which also keeps them out of the shopkeeper's AffixedStock relist. Own
+  spec/plan; not part of #2.4.
 
 ---
 
