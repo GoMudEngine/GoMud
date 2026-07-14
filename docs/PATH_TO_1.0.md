@@ -60,9 +60,13 @@ experience just passed a full feel-test — so the hill is shorter than it looks
       (incremental, capped at valuation → players always outbid), Collector archetype (prestige gear,
       regenerating persisted wallet, item-sink flavor). Unit-tested + suite 91/91 + boot clean.
       Provisional numbers (min-value 500, premium 1.0, wallet 10k, bid-chance 35%) — tune in playtest.
-    - ⬜ **#2.2 Craftsperson** (components), **#2.3 Adventurer** (gear+stats), **#2.4 Shopkeeper**
-      (VendorCategories match; bids from REAL shop gold — hybrid wallet), **#2.5 Official** (needs a
-      new "restricted" flag — deferred/optional). Each = an `NpcBuyer` impl plugging into #2.1.
+    - ✅ **#2.2 Craftsperson + #2.3 Adventurer** — DONE 2026-07-14 (batched; spec+plan
+      `2026-07-14-npc-buyers-crafter-adventurer-*`). Craftsperson (buys `IsComponent` mats ≥ value),
+      adventurer (buys `isEquipment` + `StatMods` gear ≥ value), + `NpcBuyer.Flavor()` for distinct
+      per-archetype win broadcasts. Unit-tested + suite 91/91 + boot clean.
+    - ⬜ **#2.4 Shopkeeper** (VendorCategories match; bids from REAL shop gold — hybrid wallet;
+      relisting = #3), **#2.5 Official** (needs a new "restricted" flag — deferred/optional). Each =
+      an `NpcBuyer` impl plugging into #2.1.
   - ⬜ **#3 Shopkeeper relisting** — a shopkeeper-archetype win routes the item into shop stock.
   - ⬜ **#4 Bank-storage → auction** — storage items whose owner can't pay go to the block instead
     of being deleted.
