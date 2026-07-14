@@ -70,3 +70,55 @@ func TestNextNpcBid(t *testing.T) {
 		t.Fatal("the current high NPC must not bid against itself")
 	}
 }
+
+func TestCraftsperson(t *testing.T) {
+	craftMinValue = 50
+	craftPremium = 1.0
+	c := &craftsperson{name: "Ordwin", wallet: &NpcWallet{Balance: 5000, Cap: 5000}}
+	defer items.SeedItemsForTest(map[int]*items.ItemSpec{
+		301: {ItemId: 301, Name: "rare ore", IsComponent: true, Value: 200},
+		302: {ItemId: 302, Name: "junk scrap", IsComponent: true, Value: 5},
+		303: {ItemId: 303, Name: "sword", Type: items.Weapon, Value: 900},
+	})()
+	if !c.Interested(items.New(301)) {
+		t.Error("crafter should want a valuable component")
+	}
+	if c.Interested(items.New(302)) {
+		t.Error("crafter should NOT want a near-worthless component")
+	}
+	if c.Interested(items.New(303)) {
+		t.Error("crafter should NOT want a non-component weapon")
+	}
+	if c.MaxBid(items.New(301)) != 200 {
+		t.Errorf("MaxBid=%d want 200", c.MaxBid(items.New(301)))
+	}
+	if c.Flavor() != "for their workshop" {
+		t.Errorf("flavor=%q", c.Flavor())
+	}
+}
+
+func TestAdventurer(t *testing.T) {
+	advMinValue = 300
+	advPremium = 0.9
+	a := &adventurer{name: "Kest", wallet: &NpcWallet{Balance: 5000, Cap: 5000}}
+	defer items.SeedItemsForTest(map[int]*items.ItemSpec{
+		311: {ItemId: 311, Name: "enchanted blade", Type: items.Weapon, Value: 1000, StatMods: map[string]int{"strength": 5}},
+		312: {ItemId: 312, Name: "plain blade", Type: items.Weapon, Value: 1000},
+		313: {ItemId: 313, Name: "ore", IsComponent: true, Value: 1000, StatMods: map[string]int{"strength": 5}},
+	})()
+	if !a.Interested(items.New(311)) {
+		t.Error("adventurer should want stat-bearing gear")
+	}
+	if a.Interested(items.New(312)) {
+		t.Error("adventurer should NOT want plain gear (no statmods)")
+	}
+	if a.Interested(items.New(313)) {
+		t.Error("adventurer should NOT want a non-equipment component")
+	}
+	if a.MaxBid(items.New(311)) != 900 {
+		t.Errorf("MaxBid=%d want 900", a.MaxBid(items.New(311)))
+	}
+	if a.Flavor() != "to gear up" {
+		t.Errorf("flavor=%q", a.Flavor())
+	}
+}

@@ -144,6 +144,18 @@ func (mod *AuctionsModule) load() {
 	if v, ok := mod.plug.Config.Get(`CollectorWalletRegenPerTick`).(int); ok && v >= 0 {
 		collectorRegenPerTick = v
 	}
+	if v, ok := mod.plug.Config.Get(`CraftspersonMinValue`).(int); ok && v > 0 {
+		craftMinValue = v
+	}
+	if v, ok := mod.plug.Config.Get(`CraftspersonPremium`).(float64); ok && v > 0 {
+		craftPremium = v
+	}
+	if v, ok := mod.plug.Config.Get(`AdventurerMinValue`).(int); ok && v > 0 {
+		advMinValue = v
+	}
+	if v, ok := mod.plug.Config.Get(`AdventurerPremium`).(float64); ok && v > 0 {
+		advPremium = v
+	}
 }
 
 func (mod *AuctionsModule) save() {
@@ -481,13 +493,17 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 				}
 			}
 
-			// An NPC winner takes the item out of circulation (into their
-			// collection) — a flavored sink. Broadcast it.
+			// An NPC winner takes the item out of circulation — a flavored sink
+			// (per-archetype phrase). Broadcast it.
 			if auctionNow.HighestBidIsNPC {
+				flavor := "for their collection"
+				if b := buyerByName(auctionNow.HighestBidderName); b != nil {
+					flavor = b.Flavor()
+				}
 				for _, uid := range users.GetOnlineUserIds() {
 					if u := users.GetByUserId(uid); u != nil {
 						if on := u.GetConfigOption(`auction`); on == nil || on.(bool) {
-							u.SendText(messaging.CategoryBroadcast, fmt.Sprintf(`<ansi fg="yellow"><ansi fg="username">%s</ansi> has acquired the <ansi fg="item">%s</ansi> for their collection.</ansi>`, auctionNow.HighestBidderName, auctionNow.ItemData.DisplayName()))
+							u.SendText(messaging.CategoryBroadcast, fmt.Sprintf(`<ansi fg="yellow"><ansi fg="username">%s</ansi> has acquired the <ansi fg="item">%s</ansi> %s.</ansi>`, auctionNow.HighestBidderName, auctionNow.ItemData.DisplayName(), flavor))
 						}
 					}
 				}

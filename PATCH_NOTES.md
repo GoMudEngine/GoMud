@@ -1,5 +1,13 @@
 # DOGMud Patch Notes
 
+## 2026-07-14 — More auction buyers: crafters and adventurers
+
+Two more kinds of NPC now watch the auction block: a master craftsperson who
+buys up worthwhile crafting materials for their workshop, and a wandering
+adventurer looking to buy a real gear upgrade. Like the collectors, they bid
+only up to what a piece is worth to them — so you can always outbid them for
+something you want — and they spend their own limited coin.
+
 ## 2026-07-14 — The auction house comes alive: collectors
 
 The auction house now has interested buyers of its own. Wealthy collectors watch
