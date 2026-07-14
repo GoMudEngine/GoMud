@@ -1279,6 +1279,41 @@ func HandleWebSocketConnection(conn *websocket.Conn) {
 			break
 		}
 
+		// Copyover: a web client reconnecting after a restart sends its one-time
+		// RELOGTKN as its first message. Consume it to re-attach the session and
+		// skip the login prompt.
+		if userObject == nil {
+			if userId, ok := copyover.ConsumeReconnectToken(string(message)); ok {
+				if tmpUser := users.GetByUserId(userId); tmpUser != nil {
+					loggedInUser, msg, loginErr := users.CopyoverReconnectUser(tmpUser, clientInput.ConnectionId)
+					if loginErr != nil {
+						if len(msg) > 0 {
+							connections.SendTo([]byte(msg), clientInput.ConnectionId)
+						}
+						connections.Remove(clientInput.ConnectionId)
+						return
+					}
+					if len(msg) > 0 {
+						connections.SendTo([]byte(msg), clientInput.ConnectionId)
+					}
+					userObject = loggedInUser
+					connDetails.RemoveInputHandler("LoginPromptHandler")
+					connDetails.AddInputHandler("EchoInputHandler", inputhandlers.EchoInputHandler)
+					connDetails.AddInputHandler("HistoryInputHandler", inputhandlers.HistoryInputHandler)
+					if userObject.Role == users.RoleAdmin {
+						connDetails.AddInputHandler("SystemCommandInputHandler", inputhandlers.SystemCommandInputHandler)
+					}
+					connDetails.AddInputHandler("SignalHandler", inputhandlers.SignalHandler, "AnsiHandler")
+					connDetails.SetState(connections.LoggedIn)
+					worldManager.SendEnterWorld(userObject.UserId, userObject.Character.RoomId)
+					mudlog.Info("WebSocket copyover reconnect", "username", userObject.Username, "connectionId", clientInput.ConnectionId)
+					clientInput.Reset()
+					continue
+				}
+				// Token valid but user not in memory; fall through to normal login.
+			}
+		}
+
 		clientInput.DataIn = message
 		clientInput.Buffer = message
 		clientInput.EnterPressed = true

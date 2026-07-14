@@ -8,11 +8,52 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/copyover"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
 
 	"gopkg.in/yaml.v2"
 )
+
+// CopyoverReconnectUser re-attaches a user (restored across a copyover) to a
+// fresh WebSocket connection, skipping the login prompt.
+func CopyoverReconnectUser(user *UserRecord, connectionId connections.ConnectionId) (*UserRecord, string, error) {
+
+	mudlog.Info("CopyoverReconnectUser()", "username", user.Username, "connectionId", connectionId)
+
+	user.Character.SetAdjective(`zombie`, false)
+
+	if userId, ok := userManager.Usernames[user.Username]; ok {
+		if existingUser, ok := userManager.Users[userId]; ok {
+			user = existingUser
+		}
+
+		if oldConnId, ok := userManager.UserConnections[userId]; ok {
+			delete(userManager.ZombieConnections, oldConnId)
+			delete(userManager.Connections, oldConnId)
+		}
+	}
+
+	user.connectionId = connectionId
+	user.Character.SetAdjective(`zombie`, false)
+	user.connectionTime = time.Now()
+	user.SetLastInputRound(util.GetRoundCount())
+
+	userManager.Users[user.UserId] = user
+	userManager.Usernames[user.Username] = user.UserId
+	userManager.Connections[user.connectionId] = user.UserId
+	userManager.UserConnections[user.UserId] = user.connectionId
+
+	for _, mobInstId := range user.Character.GetCharmIds() {
+		if !mobs.MobInstanceExists(mobInstId) {
+			user.Character.TrackCharmed(mobInstId, false)
+		}
+	}
+
+	user.EventLog.Add(`conn`, `Reconnected`)
+
+	return user, "Reconnecting...", nil
+}
 
 type userEntry struct {
 	UserId       int                      `json:"user_id"`
