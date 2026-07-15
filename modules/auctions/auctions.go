@@ -460,7 +460,11 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 
 		// Give the item to the winner and let them know. An NPC win counts as
 		// sold too (HighestBidUserId is 0 for an NPC — the item sinks below).
-		if auctionNow.HighestBidUserId > 0 || auctionNow.HighestBidIsNPC {
+		// Seized lots take a dedicated path (lien settlement, stack delivery,
+		// dispose-if-unsold); all other lots use the standard resolution.
+		if auctionNow.Seized {
+			mod.resolveSeizedLot(auctionNow)
+		} else if auctionNow.HighestBidUserId > 0 || auctionNow.HighestBidIsNPC {
 
 			if user := users.GetByUserId(auctionNow.HighestBidUserId); user != nil {
 				if user.Character.StoreItem(auctionNow.ItemData) {
@@ -815,6 +819,107 @@ func (mod *AuctionsModule) drainSeizedQueue(durationSeconds int) {
 		Seized:            true,
 		OwedLien:          lot.Owed,
 		SeizedCount:       count,
+	}
+}
+
+// resolveSeizedLot settles a seized lot at end-of-auction: deliver the stack to
+// the winner (player or NPC), recoup the lien and return the surplus to the
+// ex-owner, or dispose the item if it drew no bids. Mirrors the normal
+// resolution but with lien math, Count-aware delivery, and dispose-on-unsold.
+func (mod *AuctionsModule) resolveSeizedLot(a *AuctionItem) {
+	sold := a.HighestBidUserId > 0 || a.HighestBidIsNPC
+
+	if !sold {
+		// No bids — dispose (do NOT return to storage; that would re-trigger the debt).
+		if u := getUser(a.SellerUserId); u != nil {
+			u.Inbox.Add(users.Message{
+				FromName: `Auction System`,
+				Message:  fmt.Sprintf(`Your seized <ansi fg="item">%s</ansi> found no buyer at auction and was disposed.`, a.ItemData.DisplayName()),
+			})
+			u.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="yellow">Your seized <ansi fg="item">%s</ansi> found no buyer and was disposed.</ansi>`, a.ItemData.DisplayName()))
+		} else {
+			users.SearchOfflineUsers(func(u *users.UserRecord) bool {
+				if u.UserId == a.SellerUserId {
+					u.Inbox.Add(users.Message{
+						FromName: `Auction System`,
+						Message:  fmt.Sprintf(`Your seized %s found no buyer at auction and was disposed.`, a.ItemData.DisplayName()),
+					})
+					users.SaveUser(*u)
+					return false
+				}
+				return true
+			})
+		}
+		return
+	}
+
+	count := a.SeizedCount
+	if count < 1 {
+		count = 1
+	}
+
+	// Deliver Count units to a player winner (NPC winner: item sinks/relists below).
+	if a.HighestBidUserId > 0 {
+		if winner := getUser(a.HighestBidUserId); winner != nil {
+			for i := 0; i < count; i++ {
+				winner.Character.StoreItem(a.ItemData)
+				events.AddToQueue(events.ItemOwnership{UserId: winner.UserId, Item: a.ItemData, Gained: true})
+			}
+			winner.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="yellow">You have won the auction for <ansi fg="item">%s</ansi>! It has been added to your backpack.</ansi>`, a.ItemData.DisplayName()))
+		} else {
+			users.SearchOfflineUsers(func(u *users.UserRecord) bool {
+				if u.UserId == a.HighestBidUserId {
+					for i := 0; i < count; i++ {
+						itemCopy := a.ItemData
+						u.Inbox.Add(users.Message{
+							FromName: `Auction System`,
+							Message:  fmt.Sprintf(`You won the auction for <ansi fg="item">%s</ansi> while you were offline.`, a.ItemData.DisplayName()),
+							Item:     &itemCopy,
+						})
+					}
+					users.SaveUser(*u)
+					return false
+				}
+				return true
+			})
+		}
+	}
+
+	// Lien settlement: surplus after commission + lien returns to the ex-owner.
+	afterCommission := a.HighestBid - commissionFor(a.HighestBid, auctionCommissionPct)
+	lien := a.OwedLien
+	if lien > afterCommission {
+		lien = afterCommission
+	}
+	surplus := afterCommission - lien
+	if surplus > 0 {
+		if seller := getUser(a.SellerUserId); seller != nil {
+			seller.Character.Bank += surplus
+			events.AddToQueue(events.EquipmentChange{UserId: seller.UserId, BankChange: surplus})
+			seller.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="yellow">Your seized <ansi fg="item">%s</ansi> sold at auction. After the debt and the house's cut, <ansi fg="gold">%d gold</ansi> was returned to your account.</ansi>`, a.ItemData.DisplayName(), surplus))
+		} else {
+			users.SearchOfflineUsers(func(u *users.UserRecord) bool {
+				if u.UserId == a.SellerUserId {
+					u.Inbox.Add(users.Message{
+						FromName: `Auction System`,
+						Message:  fmt.Sprintf(`Your seized %s sold at auction. After the debt and the house's cut, %d gold was returned to your account.`, a.ItemData.DisplayName(), surplus),
+						Gold:     surplus,
+					})
+					users.SaveUser(*u)
+					return false
+				}
+				return true
+			})
+		}
+	}
+
+	// NPC winner takes the item out of circulation (or a shopkeeper relists it).
+	if a.HighestBidIsNPC {
+		if b := buyerByName(a.HighestBidderName); b != nil {
+			if r, ok := b.(auctionWinReceiver); ok {
+				r.Receive(a.ItemData)
+			}
+		}
 	}
 }
 
