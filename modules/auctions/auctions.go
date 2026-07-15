@@ -68,6 +68,7 @@ func init() {
 	a.plug.Callbacks.SetOnSave(a.save)
 
 	events.RegisterListener(events.NewRound{}, a.newRoundHandler)
+	events.RegisterListener(events.StorageItemSeized{}, a.storageSeizedHandler)
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -403,12 +404,39 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 	return true, nil
 }
 
+// storageSeizedHandler enqueues a seized storage item for the auction block. It
+// runs on the event queue (same goroutine as newRoundHandler), so no locking.
+func (mod *AuctionsModule) storageSeizedHandler(e events.Event) events.ListenerReturn {
+	evt, ok := e.(events.StorageItemSeized)
+	if !ok {
+		return events.Continue
+	}
+	count := evt.Count
+	if count < 1 {
+		count = 1
+	}
+	mod.auctionMgr.SeizedQueue = append(mod.auctionMgr.SeizedQueue, SeizedLot{
+		Item:          evt.Item,
+		Count:         count,
+		ExOwnerUserId: evt.UserId,
+		Owed:          evt.Owed,
+	})
+	return events.Continue
+}
+
 func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn {
 
 	evt := e.(events.NewRound)
 
 	auctionNow := mod.auctionMgr.GetCurrentAuction()
 	if auctionNow == nil {
+		mod.drainSeizedQueue(mod.seizedLotDuration())
+		auctionNow = mod.auctionMgr.GetCurrentAuction()
+		if auctionNow == nil {
+			return events.Continue
+		}
+		// A freshly-listed seized lot; players see it via the normal reminder
+		// broadcast on subsequent rounds. Nothing else to do this tick.
 		return events.Continue
 	}
 
@@ -432,7 +460,11 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 
 		// Give the item to the winner and let them know. An NPC win counts as
 		// sold too (HighestBidUserId is 0 for an NPC — the item sinks below).
-		if auctionNow.HighestBidUserId > 0 || auctionNow.HighestBidIsNPC {
+		// Seized lots take a dedicated path (lien settlement, stack delivery,
+		// dispose-if-unsold); all other lots use the standard resolution.
+		if auctionNow.Seized {
+			mod.resolveSeizedLot(auctionNow)
+		} else if auctionNow.HighestBidUserId > 0 || auctionNow.HighestBidIsNPC {
 
 			if user := users.GetByUserId(auctionNow.HighestBidUserId); user != nil {
 				if user.Character.StoreItem(auctionNow.ItemData) {
@@ -655,11 +687,22 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 	return events.Continue
 }
 
+// SeizedLot is a stored item seized from a player who couldn't pay bank-storage
+// rent, waiting for a free auction block. It lists anonymously; sale proceeds
+// settle a lien (Owed) with the surplus returning to the ex-owner.
+type SeizedLot struct {
+	Item          items.Item `yaml:"Item"`
+	Count         int        `yaml:"Count"`         // >=1; winner receives all Count units
+	ExOwnerUserId int        `yaml:"ExOwnerUserId"` // surplus after the lien returns here
+	Owed          int        `yaml:"Owed"`          // the lien — unpaid rent to recoup from the sale
+}
+
 type AuctionManager struct {
 	ActiveAuction   *AuctionItem `yaml:"ActiveAuction,omitempty"`
 	maxHistoryItems int
 	PastAuctions    []PastAuctionItem `yaml:"PastAuctions,omitempty"`
 	WalletBalances  map[string]int    `yaml:"WalletBalances,omitempty"` // NPC persona name -> wallet balance
+	SeizedQueue     []SeizedLot       `yaml:"SeizedQueue,omitempty"`    // storage seizures awaiting a free block
 }
 
 type AuctionItem struct {
@@ -681,6 +724,12 @@ type AuctionItem struct {
 	NpcBoundMobId  int    `yaml:"NpcBoundMobId,omitempty"`
 	NpcBoundRoomId int    `yaml:"NpcBoundRoomId,omitempty"`
 	LastUpdate     time.Time
+	// Seized-lot fields (storage-seizure auction, econ #4). Seized lots list
+	// anonymously; the surplus after OwedLien settles to SellerUserId (ex-owner),
+	// and the winner receives SeizedCount units.
+	Seized      bool `yaml:"Seized,omitempty"`
+	OwedLien    int  `yaml:"OwedLien,omitempty"`
+	SeizedCount int  `yaml:"SeizedCount,omitempty"`
 }
 
 type PastAuctionItem struct {
@@ -719,6 +768,174 @@ func reserveFrom(buyout int, pct float64) int {
 // commissionFor is the house cut of a sale (a gold sink). Rounds down.
 func commissionFor(bid int, pct float64) int {
 	return int(float64(bid) * pct)
+}
+
+// seizedLotDuration is the block time for a seized lot — the same DurationSeconds
+// player lots use (default 60). Tolerates a nil plug for tests.
+func (mod *AuctionsModule) seizedLotDuration() int {
+	if mod.plug != nil {
+		if dur, ok := mod.plug.Config.Get(`DurationSeconds`).(int); ok && dur > 0 {
+			return dur
+		}
+	}
+	return 60
+}
+
+// drainSeizedQueue lists the front seized lot if the block is free. Lists
+// directly (not via StartAuction) because the ex-owner may be offline by now.
+func (mod *AuctionsModule) drainSeizedQueue(durationSeconds int) {
+	if mod.auctionMgr.ActiveAuction != nil || len(mod.auctionMgr.SeizedQueue) == 0 {
+		return
+	}
+	lot := mod.auctionMgr.SeizedQueue[0]
+	mod.auctionMgr.SeizedQueue = mod.auctionMgr.SeizedQueue[1:]
+
+	count := lot.Count
+	if count < 1 {
+		count = 1
+	}
+	buyout := lot.Item.GetSpec().Value * count
+	if buyout < 1 {
+		buyout = 1
+	}
+
+	// Ex-owner name only for records; Anonymous hides it on the block anyway.
+	sellerName := ``
+	if u := getUser(lot.ExOwnerUserId); u != nil {
+		sellerName = u.Character.Name
+	}
+
+	mod.auctionMgr.ActiveAuction = &AuctionItem{
+		ItemData:          lot.Item,
+		SellerUserId:      lot.ExOwnerUserId,
+		SellerName:        sellerName,
+		Anonymous:         true,
+		EndTime:           time.Now().Add(time.Second * time.Duration(durationSeconds)),
+		BuyoutPrice:       buyout,
+		MinimumBid:        reserveFrom(buyout, auctionReservePct),
+		HighestBid:        0,
+		HighestBidUserId:  0,
+		HighestBidderName: ``,
+		Seized:            true,
+		OwedLien:          lot.Owed,
+		SeizedCount:       count,
+	}
+}
+
+// resolveSeizedLot settles a seized lot at end-of-auction: deliver the stack to
+// the winner (player or NPC), recoup the lien and return the surplus to the
+// ex-owner, or dispose the item if it drew no bids. Mirrors the normal
+// resolution but with lien math, Count-aware delivery, and dispose-on-unsold.
+func (mod *AuctionsModule) resolveSeizedLot(a *AuctionItem) {
+	sold := a.HighestBidUserId > 0 || a.HighestBidIsNPC
+
+	if !sold {
+		// No bids — dispose (do NOT return to storage; that would re-trigger the debt).
+		if u := getUser(a.SellerUserId); u != nil {
+			u.Inbox.Add(users.Message{
+				FromName: `Auction System`,
+				Message:  fmt.Sprintf(`Your seized <ansi fg="item">%s</ansi> found no buyer at auction and was disposed.`, a.ItemData.DisplayName()),
+			})
+			u.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="yellow">Your seized <ansi fg="item">%s</ansi> found no buyer and was disposed.</ansi>`, a.ItemData.DisplayName()))
+		} else {
+			users.SearchOfflineUsers(func(u *users.UserRecord) bool {
+				if u.UserId == a.SellerUserId {
+					u.Inbox.Add(users.Message{
+						FromName: `Auction System`,
+						Message:  fmt.Sprintf(`Your seized %s found no buyer at auction and was disposed.`, a.ItemData.DisplayName()),
+					})
+					users.SaveUser(*u)
+					return false
+				}
+				return true
+			})
+		}
+		return
+	}
+
+	count := a.SeizedCount
+	if count < 1 {
+		count = 1
+	}
+
+	// Deliver Count units to a player winner (NPC winner: item sinks/relists below).
+	if a.HighestBidUserId > 0 {
+		if winner := getUser(a.HighestBidUserId); winner != nil {
+			// The winner already paid at bid time — never silently lose a unit.
+			// What fits goes to the backpack; anything over carry capacity is
+			// mailed instead (StoreItem returns false when over ~2x capacity).
+			mailed := 0
+			for i := 0; i < count; i++ {
+				if winner.Character.StoreItem(a.ItemData) {
+					events.AddToQueue(events.ItemOwnership{UserId: winner.UserId, Item: a.ItemData, Gained: true})
+					continue
+				}
+				itemCopy := a.ItemData
+				winner.Inbox.Add(users.Message{
+					FromName: `Auction System`,
+					Message:  fmt.Sprintf(`You won the auction for <ansi fg="item">%s</ansi>, but your pack was full — it was sent to your mailbox.`, a.ItemData.DisplayName()),
+					Item:     &itemCopy,
+				})
+				mailed++
+			}
+			if mailed < count {
+				winner.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="yellow">You have won the auction for <ansi fg="item">%s</ansi>! It has been added to your backpack.</ansi>`, a.ItemData.DisplayName()))
+			}
+		} else {
+			users.SearchOfflineUsers(func(u *users.UserRecord) bool {
+				if u.UserId == a.HighestBidUserId {
+					for i := 0; i < count; i++ {
+						itemCopy := a.ItemData
+						u.Inbox.Add(users.Message{
+							FromName: `Auction System`,
+							Message:  fmt.Sprintf(`You won the auction for <ansi fg="item">%s</ansi> while you were offline.`, a.ItemData.DisplayName()),
+							Item:     &itemCopy,
+						})
+					}
+					users.SaveUser(*u)
+					return false
+				}
+				return true
+			})
+		}
+	}
+
+	// Lien settlement: surplus after commission + lien returns to the ex-owner.
+	afterCommission := a.HighestBid - commissionFor(a.HighestBid, auctionCommissionPct)
+	lien := a.OwedLien
+	if lien > afterCommission {
+		lien = afterCommission
+	}
+	surplus := afterCommission - lien
+	if surplus > 0 {
+		if seller := getUser(a.SellerUserId); seller != nil {
+			seller.Character.Bank += surplus
+			events.AddToQueue(events.EquipmentChange{UserId: seller.UserId, BankChange: surplus})
+			seller.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="yellow">Your seized <ansi fg="item">%s</ansi> sold at auction. After the debt and the house's cut, <ansi fg="gold">%d gold</ansi> was returned to your account.</ansi>`, a.ItemData.DisplayName(), surplus))
+		} else {
+			users.SearchOfflineUsers(func(u *users.UserRecord) bool {
+				if u.UserId == a.SellerUserId {
+					u.Inbox.Add(users.Message{
+						FromName: `Auction System`,
+						Message:  fmt.Sprintf(`Your seized %s sold at auction. After the debt and the house's cut, %d gold was returned to your account.`, a.ItemData.DisplayName(), surplus),
+						Gold:     surplus,
+					})
+					users.SaveUser(*u)
+					return false
+				}
+				return true
+			})
+		}
+	}
+
+	// NPC winner takes the item out of circulation (or a shopkeeper relists it).
+	if a.HighestBidIsNPC {
+		if b := buyerByName(a.HighestBidderName); b != nil {
+			if r, ok := b.(auctionWinReceiver); ok {
+				r.Receive(a.ItemData)
+			}
+		}
+	}
 }
 
 func (am *AuctionManager) StartAuction(item items.Item, userId int, buyout int, durationSeconds int, anon bool) bool {
