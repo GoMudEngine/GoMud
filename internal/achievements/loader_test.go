@@ -18,6 +18,7 @@ func TestValidateDefinition(t *testing.T) {
 		{"stat missing param", Definition{Id: "x", Name: "n", Category: "progression", Trigger: Trigger{Type: "stat_reached", Threshold: 1}}, "x"},
 		{"bad stat name", Definition{Id: "x", Name: "n", Category: "progression", Trigger: Trigger{Type: "stat_reached", Stat: "wisdom", Threshold: 1}}, "x"},
 		{"quest missing token", Definition{Id: "x", Name: "n", Category: "quests", Trigger: Trigger{Type: "quest_completed"}}, "x"},
+		{"bad skill name", Definition{Id: "x", Name: "n", Category: "progression", Trigger: Trigger{Type: "skill_reached", Skill: "not-a-real-skill", Threshold: 25}}, "x"},
 		{"filename mismatch", Definition{Id: "x", Name: "n", Category: "combat", Trigger: Trigger{Type: "mob_kills", Threshold: 1}}, "y"},
 		{"negative points", Definition{Id: "x", Name: "n", Category: "combat", Points: -1, Trigger: Trigger{Type: "mob_kills", Threshold: 1}}, "x"},
 		{"threshold type zero", Definition{Id: "x", Name: "n", Category: "combat", Trigger: Trigger{Type: "mob_kills", Threshold: 0}}, "x"},

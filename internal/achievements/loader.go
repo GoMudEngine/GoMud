@@ -9,8 +9,22 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/skills"
 	"gopkg.in/yaml.v2"
 )
+
+// validSkill reports whether name is a real skill tag (or the "any" wildcard).
+func validSkill(name string) bool {
+	if name == "any" {
+		return true
+	}
+	for _, tag := range skills.GetAllSkillNames() {
+		if string(tag) == name {
+			return true
+		}
+	}
+	return false
+}
 
 var validStats = map[string]bool{
 	"strength": true, "dexterity": true, "perception": true,
@@ -64,6 +78,9 @@ func validateDefinition(d Definition, fileBase string) error {
 	case "skill_reached":
 		if d.Trigger.Skill == "" {
 			return fmt.Errorf("achievement %q: skill_reached needs a skill (or 'any')", d.Id)
+		}
+		if !validSkill(d.Trigger.Skill) {
+			return fmt.Errorf("achievement %q: skill_reached has unknown skill %q (use a real skill or 'any')", d.Id, d.Trigger.Skill)
 		}
 		if d.Trigger.Threshold <= 0 {
 			return fmt.Errorf("achievement %q: skill_reached needs threshold > 0", d.Id)
