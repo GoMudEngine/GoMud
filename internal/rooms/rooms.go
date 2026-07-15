@@ -1213,7 +1213,11 @@ func (r *Room) FindCorpse(searchName string) (Corpse, bool) {
 	mobCorpseLookup := map[string]int{}
 	mobCorpses := []string{}
 
-	for idx, c := range r.Corpses {
+	// Iterate newest-first (corpses are appended on death) so a same-name
+	// lookup keeps the most recent corpse and the generic-match candidate list
+	// is newest-first — `look/loot corpse` inspects the last thing that died.
+	for idx := len(r.Corpses) - 1; idx >= 0; idx-- {
+		c := r.Corpses[idx]
 
 		if c.Prunable {
 			continue
@@ -1267,7 +1271,11 @@ func (r *Room) FindCorpseIndex(searchName string) int {
 	mobCorpseLookup := map[string]int{}
 	mobCorpses := []string{}
 
-	for idx, c := range r.Corpses {
+	// Iterate newest-first (corpses are appended on death) so a same-name
+	// lookup keeps the most recent corpse and the generic-match candidate list
+	// is newest-first — `look/loot corpse` inspects the last thing that died.
+	for idx := len(r.Corpses) - 1; idx >= 0; idx-- {
+		c := r.Corpses[idx]
 
 		if c.Prunable {
 			continue
