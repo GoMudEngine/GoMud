@@ -36,12 +36,14 @@ buyer's attention.
    one-at-a-time block frees; survives restarts.
 3. **Unsold seized lot → dispose** (delete) after a fair auction, rather than returning it
    to storage (which would re-trigger the same debt endlessly).
-4. **Value floor (per unit).** A seized slot whose **per-unit** value (`spec.Value`) is
-   below `StorageSeizureMinValue` (default **250g**) is disposed immediately and never
-   reaches the block. Keying on per-unit (not stack) value deliberately avoids qualifying a
-   large pile of individually-cheap items, which would otherwise list as an un-sellable
-   mega-lot. In practice, qualifying slots are almost always non-stackable gear
-   (`Count == 1`).
+4. **Value floor (aggregate stack value).** A seized slot whose **aggregate** value
+   (`spec.Value × Count`) is below `StorageSeizureMinValue` (default **250g**) is disposed
+   immediately and never reaches the block. Keying on aggregate value means a large pile of
+   individually-cheap crafting components lists **as one stacked lot** when the pile is
+   collectively worth ≥ 250g — a real prize for the craftsperson NPC buyer (#2.2) or a
+   player stocking a workshop. The whole stack is delivered to the winner (§6). If such a
+   pile still attracts no bid it disposes after a fair shot (§ unsold path), so there is no
+   lingering un-sellable lot.
 
 ---
 
@@ -85,16 +87,16 @@ enough slots to cover the shortfall at `feePerSlot` per slot (existing selection
 
 The cheapest-first **selection order** is unchanged (still by `spec.Value × slot.Count`
 ascending — it decides *which* slots to grab to minimise player pain). The auction **floor**
-is evaluated separately, on **per-unit** value. For each **selected** slot, replace the
+is evaluated on that same **aggregate** stack value. For each **selected** slot, replace the
 unconditional delete with:
 
 ```
-unitValue   = spec.Value           // per unit, NOT stack value
-owedPortion = feePerSlot           // this slot's lien; disposed slots owe nothing
+stackValue  = spec.Value * slot.Count   // aggregate pile value
+owedPortion = feePerSlot                // this slot's lien; disposed slots owe nothing
 
 remove the slot from storage (as today)
 
-if !StorageSeizureAuctionEnabled OR unitValue < StorageSeizureMinValue:
+if !StorageSeizureAuctionEnabled OR stackValue < StorageSeizureMinValue:
     dispose the whole slot  (all Count units gone; owedPortion written off — as today)
     add slot name to the "disposed" list
 else:
@@ -103,8 +105,8 @@ else:
 ```
 
 A qualifying slot is seized as one whole stack (its `Count` carried on the event); the lot
-lists once and the winner receives all `Count` units (§6). Because only high-per-unit-value
-items qualify, `Count` is ~always 1 and a `unitValue × Count` buyout stays a fair price.
+lists once at a `spec.Value × Count` buyout and the winner receives all `Count` units (§6).
+A pile of cheap components thus lists as a single stacked lot priced at its aggregate value.
 
 **Debt apportionment:** each auctioned slot carries a flat `feePerSlot` lien; disposed
 sub-floor slots carry none (nothing sells, so their portion is written off — identical to
@@ -185,9 +187,10 @@ helper that sets the same fields plus `Seized`/`OwedLien`). Parameters:
 | `OwedLien`    | `SeizedLot.Owed`                                             |
 
 **Stack win-delivery.** Normal lots are single-item, so the existing win path grants one
-unit. A seized lot may carry `Count > 1`; the win-delivery gains a seized-only branch that
-grants all `Count` units (loop `StoreItem` / restore the stack; offline path attaches the
-stack to the inbox). `Count` is ~always 1, but this keeps stacks correct.
+unit. A seized lot may carry `Count > 1` (a seized component pile is a real case); the
+win-delivery gains a seized-only branch that grants all `Count` units (loop `StoreItem` /
+restore the stack; offline path attaches the stack to the inbox). This branch is what makes
+selling an aggregate component pile correct.
 
 **NPC buyers participate for free.** A seized lot is a normal `ActiveAuction`, so the
 collector / craftsperson / adventurer / shopkeeper bid logic in `newRoundHandler` already
@@ -244,10 +247,10 @@ Both defaulted in the shops-config validator. `StorageFeePerItem` and the module
 
 Unit tests (`modules/auctions/auctions_test.go`, plus a hook-level test for selection):
 
-- **Selection/floor:** per-unit value ≥ 250 → `StorageItemSeized` emitted; per-unit value
-  < 250 → disposed, no event. A many-unit stack of individually-cheap items (high *stack*
-  value, low *unit* value) → disposed, not listed. Toggle off → all seized slots disposed
-  (regression to old behavior).
+- **Selection/floor:** aggregate stack value (`spec.Value × Count`) ≥ 250 →
+  `StorageItemSeized` emitted; aggregate < 250 → disposed, no event. A many-unit pile of
+  individually-cheap components whose **aggregate** clears 250 → listed as one stacked lot
+  (not disposed). Toggle off → all seized slots disposed (regression to old behavior).
 - **Stack win-delivery:** a seized lot with `Count > 1` grants all `Count` units to the
   winner (online loop + offline inbox).
 - **Debt apportionment:** each auctioned slot's `Owed == feePerSlot`; a disposed sub-floor
