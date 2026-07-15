@@ -74,8 +74,14 @@ experience just passed a full feel-test — so the hill is shorter than it looks
       instance-safe) — folding #3 in so a shop never spends gold for nothing. `AuctionShopkeeperEnabled`
       toggle. Unit-tested + suite green + build clean. Followup noted: a min-auction-value floor on
       *listings* (keeps trivial items off the block / out of relist).
-    - ⬜ **#2.5 Official** (needs a new "restricted" flag — deferred/optional). An `NpcBuyer` impl
-      plugging into #2.1.
+    - ✅ **#2.5 Official** — DONE 2026-07-15 (local, unpushed; spec+plan
+      `2026-07-15-npc-auction-buyer-official-*`). "The Crown Assessor" — a fifth `NpcBuyer`
+      that bids a premium (1.25) from a deep 25k purse on items carrying the new
+      `ItemSpec.Restricted` flag, and **sinks** them (no `auctionWinReceiver`). Gated by
+      `AuctionOfficialEnabled` + `OfficialPremium`. Seeded the flag onto the six crash-ship
+      warden crafting components (40169/40171/40174/40191/40195/40196) so it's live on day one.
+      Unit-tested + full boot clean. **This closes the #2 NPC-buyer sub-arc** (all five
+      archetypes shipped).
   - ✅ **#3 Shopkeeper relisting** — DONE (folded into #2.4 above): a shopkeeper win routes the item
     into the bound shop's resale stock.
   - ✅ **#4 Bank-storage → auction** — DONE 2026-07-15 (local, unpushed; spec+plan

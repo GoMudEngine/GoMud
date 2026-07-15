@@ -1,5 +1,12 @@
 # DOGMud Patch Notes
 
+## 2026-07-15 — Auction buyers: the Crown takes an interest
+
+A new bidder watches the auction block: an agent of the Crown who buys up restricted goods —
+the strange salvage recovered from the wreck in the wastes among them — and spends freely to
+get them off the open market. Bring such a find to auction and you'll usually find a ready
+buyer, though a determined bidder can still outbid the Crown for something they mean to keep.
+
 ## 2026-07-15 — Auction house: the bank sells what you can't keep
 
 If your bank-storage rent goes unpaid and you don't have the coin to cover it, the bank no
