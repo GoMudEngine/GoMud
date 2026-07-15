@@ -163,11 +163,12 @@ func autoLootGold(playerDamage map[int]int, gold int) int {
 			return 0
 		}
 		p.AddGold(plan.amount)
-		for _, uid := range p.UserIds {
-			if u := users.GetByUserId(uid); u != nil {
-				u.SendText(messaging.CategoryLoot,
-					fmt.Sprintf(`<ansi fg="yellow-bold">%d gold</ansi> goes into the party pool.`, plan.amount))
-			}
+		// Tell just the killer their find pooled — messaging every member on
+		// every kill would spam a grinding party. The pool pays out on the next
+		// membership change or `party gold split`.
+		if u := users.GetByUserId(topDamager(playerDamage)); u != nil {
+			u.SendText(messaging.CategoryLoot,
+				fmt.Sprintf(`<ansi fg="yellow-bold">%d gold</ansi> goes into the party pool.`, plan.amount))
 		}
 		return plan.amount
 	}
