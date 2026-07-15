@@ -48,6 +48,35 @@ func TestCanWithdraw(t *testing.T) {
 	}
 }
 
+func TestRankTitle(t *testing.T) {
+	g := &Guild{}
+	if g.RankTitle(RankOfficer) != "officer" {
+		t.Errorf("nil map should fall back to default")
+	}
+	g.RankTitles = map[GuildRank]string{RankOfficer: "Lieutenant", RankMember: ""}
+	if g.RankTitle(RankOfficer) != "Lieutenant" {
+		t.Errorf("custom title not returned")
+	}
+	if g.RankTitle(RankMember) != "member" {
+		t.Errorf("empty-string title should fall back to default")
+	}
+}
+
+func TestValidRankTitle(t *testing.T) {
+	good := []string{"Lieutenant", "Storm Warden", "R2"}
+	for _, s := range good {
+		if err := validRankTitle(s); err != nil {
+			t.Errorf("%q should be valid: %v", s, err)
+		}
+	}
+	bad := []string{"A", "this title is far too long to accept", "Bad: Title", "semi;colon", "<ansi>x</ansi>", "   "}
+	for _, s := range bad {
+		if err := validRankTitle(s); err == nil {
+			t.Errorf("%q should be invalid", s)
+		}
+	}
+}
+
 func TestPermissions(t *testing.T) {
 	g := &Guild{Tag: "QC", LeaderUserId: 1, Members: []GuildMember{
 		{UserId: 1, Rank: RankLeader}, {UserId: 2, Rank: RankOfficer}, {UserId: 3, Rank: RankMember},

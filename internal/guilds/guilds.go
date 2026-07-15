@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"unicode"
+	"unicode/utf8"
 
 	"github.com/GoMudEngine/GoMud/internal/items"
 )
@@ -50,6 +52,38 @@ type Guild struct {
 	Treasury          int          `yaml:"treasury,omitempty"`
 	Vault             []items.Item `yaml:"vault,omitempty"`
 	TreasuryDelegated bool         `yaml:"treasurydelegated,omitempty"`
+
+	// RankTitles holds per-guild cosmetic overrides for the three rank names.
+	// Unset/empty falls back to the default rank string.
+	RankTitles map[GuildRank]string `yaml:"ranktitles,omitempty"`
+}
+
+// RankTitle returns the guild's custom title for rank, or the default rank name.
+func (g *Guild) RankTitle(rank GuildRank) string {
+	if t, ok := g.RankTitles[rank]; ok && t != "" {
+		return t
+	}
+	return string(rank)
+}
+
+// ValidRankTitle is the exported gate for command-layer validation before a
+// SetRankTitle call. See validRankTitle.
+func ValidRankTitle(title string) error { return validRankTitle(title) }
+
+// validRankTitle enforces a short, single-line, markup-free title: 2-20 runes of
+// letters, digits, and spaces only (excludes ':' and ';' — YAML/command gotchas —
+// and ANSI markup).
+func validRankTitle(title string) error {
+	title = strings.TrimSpace(title)
+	if n := utf8.RuneCountInString(title); n < 2 || n > 20 {
+		return fmt.Errorf("a rank title must be 2-20 characters")
+	}
+	for _, r := range title {
+		if !(unicode.IsLetter(r) || unicode.IsDigit(r) || r == ' ') {
+			return fmt.Errorf("a rank title may only contain letters, digits, and spaces")
+		}
+	}
+	return nil
 }
 
 func validGuildTag(tag string) error {
