@@ -1,5 +1,20 @@
 # DOGMud Patch Notes
 
+## 2026-07-15 — Loot & corpses: three fixes
+
+- **Coin is collected when you make the kill.** A slain creature's gold now comes
+  straight to you — into your own purse when you're on your own, or into the shared
+  party pool when you're grouped (where it's split evenly among whoever's in the party
+  when someone joins, leaves, or calls for a split). Its gear still waits in the corpse
+  to be looted as before.
+- **`look`/`loot corpse` reads the freshest kill.** With several bodies underfoot, a
+  bare "corpse" now refers to the most recent one to fall, not the first — so looting
+  by hand (and triggers that watch a corpse) follow the fight instead of lagging behind it.
+- **Clearer word when a raising fails.** Trying to raise the dead now tells you *why* it
+  won't take — those remains still hold loot (take it first), they were already animated
+  once, they're too faint, or you're simply sustaining as many servants as your will can
+  hold — instead of a blanket "no suitable remains."
+
 ## 2026-07-15 — Auction buyers: the Crown takes an interest
 
 A new bidder watches the auction block: an agent of the Crown who buys up restricted goods —
