@@ -42,6 +42,14 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 	if baseReserve <= 0 {
 		baseReserve = int(configs.GetBalanceConfig().CompanionReserveDefault)
 	}
+	// Count cap and conviction budget both fail CanAffordCompanion — report them
+	// separately so a player at their companion limit isn't wrongly told they
+	// lack conviction.
+	if len(ch.Companions) >= ch.GetMaxCompanions() {
+		user.SendText(messaging.CategorySpellManifestation,
+			"You are already sustaining as many companions as your will can hold.")
+		return false
+	}
 	reserve := ch.CalcCompanionReserve(baseReserve)
 	if !ch.CanAffordCompanion(reserve) {
 		user.SendText(messaging.CategorySpellManifestation,
@@ -70,55 +78,14 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 	corpseConsumed := false
 
 	if spellData.SummonRequiresCorpse {
-		targetIdx := -1
-		validCount := 0
-		for idx, c := range room.Corpses {
-			if c.Prunable {
-				continue
-			}
-			// Skip player corpses
-			if c.UserId != 0 {
-				continue
-			}
-			// Skip former companions
-			if c.WasCharmed {
-				continue
-			}
-			if c.HasLoot() {
-				continue // don't consume a corpse that still holds loot
-			}
-			// Name filter if spellRest is a specific mob name
-			if spellRest != "" && !strings.Contains(strings.ToLower(c.Character.Name), strings.ToLower(spellRest)) {
-				continue
-			}
-			// Check minimum corpse stat pool
-			pool := c.Character.Stats.Strength.Training +
-				c.Character.Stats.Dexterity.Training +
-				c.Character.Stats.Perception.Training +
-				c.Character.Stats.Vitality.Training +
-				c.Character.Stats.Willpower.Training +
-				c.Character.Stats.Charisma.Training
-
-			if spellData.SummonMinCorpsePool > 0 && pool < spellData.SummonMinCorpsePool {
-				continue
-			}
-
-			validCount++
-			if validCount == targetIndex {
-				targetIdx = idx
-				corpsePool = pool
-				break
-			}
-		}
-
+		targetIdx, pool, reason := selectRaiseCorpse(room.Corpses, spellRest, targetIndex, int(spellData.SummonMinCorpsePool))
 		if targetIdx < 0 {
-			if spellRest != "" {
-				user.SendText(messaging.CategorySpellManifestation, "You cannot find suitable remains matching that description.")
-			} else {
-				user.SendText(messaging.CategorySpellManifestation, "There are no suitable remains here to raise.")
-			}
+			// Specific, actionable message (e.g. "still holds loot") rather than
+			// a blanket "no suitable remains".
+			user.SendText(messaging.CategorySpellManifestation, raiseFailureMessage(reason, spellRest))
 			return false
 		}
+		corpsePool = pool
 
 		// Remove the corpse
 		room.Corpses = append(room.Corpses[:targetIdx], room.Corpses[targetIdx+1:]...)
@@ -192,4 +159,100 @@ func resolveCompanionSummon(user *users.UserRecord, spellData *spells.SpellData,
 	}
 
 	return true
+}
+
+// raiseSkipReason explains why no corpse could be raised, so the failure
+// message can be specific and actionable instead of a blanket "no remains".
+type raiseSkipReason int
+
+const (
+	raiseNoMatch    raiseSkipReason = iota // no name/type-matching corpse present
+	raiseWasCharmed                        // matched, but it was already a companion
+	raiseTooWeak                           // matched, but its essence is too faint
+	raiseHasLoot                           // matched, but it still holds loot
+)
+
+// raisePriority ranks reasons by how actionable they are; the most actionable
+// (HasLoot — just loot it and retry) wins when several near-matches apply.
+func raisePriority(r raiseSkipReason) int {
+	switch r {
+	case raiseHasLoot:
+		return 3
+	case raiseTooWeak:
+		return 2
+	case raiseWasCharmed:
+		return 1
+	default:
+		return 0
+	}
+}
+
+func worseReason(a, b raiseSkipReason) raiseSkipReason {
+	if raisePriority(b) > raisePriority(a) {
+		return b
+	}
+	return a
+}
+
+// corpseRaisePool is the stat metric the raise spell scores a corpse by — the
+// same Training sum `assess` reports, so the two agree on a corpse's worth.
+func corpseRaisePool(c rooms.Corpse) int {
+	s := c.Character.Stats
+	return s.Strength.Training + s.Dexterity.Training + s.Perception.Training +
+		s.Vitality.Training + s.Willpower.Training + s.Charisma.Training
+}
+
+// selectRaiseCorpse picks the targetIndex-th valid mob corpse to raise (1-based
+// among valid candidates). Returns (-1, 0, reason) when none qualifies, where
+// reason describes why the best name/type-matching corpse was rejected — so the
+// caller can show a helpful message. minPool <= 0 disables the stat-pool gate.
+func selectRaiseCorpse(corpses []rooms.Corpse, nameFilter string, targetIndex, minPool int) (idx int, pool int, reason raiseSkipReason) {
+	reason = raiseNoMatch
+	validCount := 0
+	for i, c := range corpses {
+		// Not a raisable mob corpse at all — never counts as a near-match.
+		if c.Prunable || c.UserId != 0 {
+			continue
+		}
+		// Name filter: a non-matching corpse isn't what the player asked for.
+		if nameFilter != "" && !strings.Contains(strings.ToLower(c.Character.Name), strings.ToLower(nameFilter)) {
+			continue
+		}
+		// From here the corpse matched name/type; rejections carry a reason.
+		if c.WasCharmed {
+			reason = worseReason(reason, raiseWasCharmed)
+			continue
+		}
+		if c.HasLoot() {
+			reason = worseReason(reason, raiseHasLoot)
+			continue
+		}
+		p := corpseRaisePool(c)
+		if minPool > 0 && p < minPool {
+			reason = worseReason(reason, raiseTooWeak)
+			continue
+		}
+		validCount++
+		if validCount == targetIndex {
+			return i, p, raiseNoMatch
+		}
+	}
+	return -1, 0, reason
+}
+
+// raiseFailureMessage renders the player-facing reason a raise found no corpse.
+func raiseFailureMessage(reason raiseSkipReason, nameFilter string) string {
+	switch reason {
+	case raiseHasLoot:
+		return "Those remains still hold spoils — clear the loot from them first, then raise what's left."
+	case raiseTooWeak:
+		return "Those remains are too faint to hold a bound spirit."
+	case raiseWasCharmed:
+		return "Those remains were already animated once; there is nothing left to raise."
+	default:
+		if nameFilter != "" {
+			return "You cannot find suitable remains matching that description."
+		}
+		return "There are no suitable remains here to raise."
+	}
 }
