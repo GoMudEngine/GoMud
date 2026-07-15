@@ -65,6 +65,7 @@ var userOnlyCommands = map[string]string{
 	"appraise":        "ui",
 	"auction":         "ui", // module: auctions
 	"bank":            "ui",
+	"achievements":    "ui",
 	"biome":           "ui",
 	"bug":             "ui",
 	"cancel":          "ui",
