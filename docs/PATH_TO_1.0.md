@@ -154,9 +154,11 @@ experience just passed a full feel-test — so the hill is shorter than it looks
   member/officer/leader ranks; invite-only join; `guild` command
   (create/info/list/invite/accept/decline/leave/kick/promote/demote/transfer/disband/motd);
   5000g founding fee from bank; MOTD greeting on login. Superseded the `internal/clans` stub.
-  **Remaining sub-projects:** guild chat (reuse `internal/channels`), guild treasury/vault,
-  guild perks/leaderboard; and a `who`-tag display follow-up (deferred — room-occupant display
-  is template-driven).
+  **Guild chat + who-tag DONE 2026-07-15** (spec+plan `2026-07-15-guild-chat-whotag-*`):
+  `guild chat`/`gc` members-only broadcast (party-chat pattern + Communication event) and a
+  `[TAG]` prefix on guilded players in the room "also here" line (`rooms.GetDetails`).
+  **Remaining sub-projects (user picked):** guild treasury/vault, guild ranks polish. (Guild
+  perks/leaderboard not selected.)
 - ✅ **Achievements / accolades** — DONE 2026-07-15 (local, unpushed; spec+plan
   `2026-07-15-achievements-*`). YAML-authored, boot-validated definitions (`internal/
   achievements`, fixed trigger vocabulary incl. `item_rarity` "acquire a pinnacle item");

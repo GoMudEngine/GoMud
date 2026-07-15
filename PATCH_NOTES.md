@@ -1,5 +1,12 @@
 # DOGMud Patch Notes
 
+## 2026-07-15 — Guilds: chat and colours
+
+Guilds now have their own private chat — <ansi fg="command">guild chat</ansi> (or just
+<ansi fg="command">gc</ansi>) sends a line heard only by your guildmates who are online. And
+your guild's tag now shows in brackets beside your name when others see you in a room, so a
+guild is something you wear as you travel.
+
 ## 2026-07-15 — Guilds: found a company of adventurers
 
 You can now band together in a lasting guild. Found one with <ansi fg="command">guild create</ansi>

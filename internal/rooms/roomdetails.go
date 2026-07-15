@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
+	"github.com/GoMudEngine/GoMud/internal/guilds"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mutators"
 	"github.com/GoMudEngine/GoMud/internal/term"
@@ -261,6 +262,9 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 
 				pName := player.Character.GetPlayerName(user.UserId, renderFlags...)
 				playerEntry := pName.String()
+				if tag := guilds.TagForUser(playerId); tag != "" {
+					playerEntry = fmt.Sprintf(`<ansi fg="cyan">[%s]</ansi> %s`, tag, playerEntry)
+				}
 				// Chunk 5 (Presence): read AFK status from canonical Presence machine.
 				if player.Character != nil && player.Character.Presence != nil {
 					if d, ok := player.Character.Presence.AFKData(); ok && d.Manual {
