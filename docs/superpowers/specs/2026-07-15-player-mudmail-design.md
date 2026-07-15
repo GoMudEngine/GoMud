@@ -31,7 +31,10 @@ to **one named recipient** (online or offline), paying real value out of the sen
    deliberate asymmetry: send from your pocket, it arrives secure.)
 4. **Item is removed from the sender's backpack** (consumed), unlike the admin copy.
 5. **Free** — no postage fee.
-6. **Fix the receive-side item-loss bug**: `inbox.go` ignores `StoreItem`'s return, so an
+6. **Per-sender send cooldown** (minimal anti-spam): a character may send at most one mail
+   every `MailSendCooldownRounds` (Balance config, default **10** rounds). Round-based, like
+   the engine's other cooldowns; the last-sent round is a persisted `Character` field.
+7. **Fix the receive-side item-loss bug**: `inbox.go` ignores `StoreItem`'s return, so an
    over-capacity recipient loses the attached item. Defer such a message (keep it unread)
    instead of destroying the item.
 
@@ -46,6 +49,12 @@ to `inbox`).
 
 `mail <recipient>` — the recipient name is the command argument (required). Then prompts:
 
+0. **Cooldown gate** (at command entry, before `StartPrompt`): if the sender sent mail within
+   the last `MailSendCooldownRounds`, reject: "You must wait a while before sending more mail."
+   The check reads `sender.Character.LastMailSentRound` vs `util.GetRoundCount()`. Because the
+   last-sent round is only stamped on a *successful* send (§ commit), a user mid-compose (who
+   hasn't sent yet) is never blocked on prompt re-entry — the cooldown only bites right after
+   an actual send.
 1. **Resolve recipient first** (before prompting for content — fail fast):
    - Online: `users.GetByCharacterName(name)` → live record.
    - Else offline: `users.CharacterNameSearch(name)` → `(userId, username)`; `userId == 0`
@@ -78,6 +87,7 @@ msg := users.Message{
 }
 
 deliver(recipient, msg)   // §4
+sender.Character.LastMailSentRound = util.GetRoundCount()  // start the cooldown
 sender is told: "Your mail to <recipient> is on its way."
 ```
 
@@ -138,8 +148,9 @@ the auction/seizure inbox items against the same loss.)
 - Gold `>= 0` and `<= sender's on-hand gold`.
 - Item optional; must be in the sender's backpack.
 - No self-mail; recipient must be a real character (online or offline).
-- No postage fee, no per-mail cap, no spam cooldown in v1 (free was a deliberate choice —
-  easy to add a `MailPostageFee` / cooldown later if abuse appears).
+- **Per-sender send cooldown** (`MailSendCooldownRounds`, default 10) is the only anti-spam
+  guard. No postage fee, no per-mail gold cap in v1 (free was a deliberate choice — easy to
+  add a `MailPostageFee` later if needed).
 - Player-facing text stays no-hard-numbers where it's *effect* description; gold amounts in a
   mail preview / "not carrying that much" are fine (money is explicitly numeric, like the
   bank/auction notices).
@@ -152,6 +163,10 @@ the auction/seizure inbox items against the same loss.)
   hit; unknown name → rejected; self-name → rejected. (Unit-test a small pure
   `resolveMailRecipient` helper that returns `(userId, online bool, ok bool)` over injectable
   lookups, so the command handler stays thin.)
+- **Cooldown:** a small pure helper `mailOnCooldown(lastSent, now, cooldownRounds) bool` —
+  true when `now < lastSent + cooldown` (and `lastSent > 0`, `cooldown > 0`); false when the
+  cooldown has elapsed or is disabled (0). The command gates on it and stamps
+  `LastMailSentRound` only on a successful send.
 - **Send debits sender:** on send, sender's on-hand gold drops by the attached amount and the
   attached item leaves their backpack; a zero-gold / no-item mail debits nothing.
 - **Insufficient funds / missing item:** rejected, nothing mutated.
@@ -167,7 +182,8 @@ Full suite green + boot clean.
 
 ## 8. Out of scope / deferred
 
-- Postage fee / gold sink, per-mail gold caps, anti-spam cooldown (v1 is free by choice).
+- Postage fee / gold sink, per-mail gold caps (v1 is free by choice; the send cooldown is the
+  only guard).
 - Making the recipient *receive* gold into their purse (kept as bank per the existing read
   path; the send-from-purse / receive-to-bank asymmetry is intentional).
 - Block/ignore lists, mail deletion of specific messages (only `inbox clear` exists), COD /
@@ -178,8 +194,10 @@ Full suite green + boot clean.
 ## 9. Files touched
 
 - `internal/usercommands/mail.go` (new) — the `mail` command + `resolveMailRecipient` +
-  `deliverMail` helpers.
+  `deliverMail` + `mailOnCooldown` helpers.
 - `internal/usercommands/usercommands.go` — register `` `mail` ``.
 - `internal/usercommands/inbox.go` — the item-loss-on-full-pack fix.
-- `internal/usercommands/mail_test.go` (new) — resolution + delivery + item-loss tests.
+- `internal/characters/character.go` — new persisted `LastMailSentRound uint64` field.
+- `internal/configs/config.balance.go` + a validator file — `MailSendCooldownRounds` (default 10).
+- `internal/usercommands/mail_test.go` (new) — resolution + cooldown + delivery + item-loss tests.
 - `PATCH_NOTES.md`, `docs/PATH_TO_1.0.md` (mark mudmail done) — at the end.
