@@ -1,0 +1,35 @@
+{{template "header" .}}
+
+<style>
+    table.leaderboard th:nth-child(1) { width:30%; }
+    table.leaderboard th:nth-child(2) { width:55%; }
+    table.leaderboard th:nth-child(3) { width:15%; }
+</style>
+
+<div class="overlay">
+
+    <h2>Accolades</h2>
+    <p>Milestones to chase as you play. You are told the moment you earn one; use
+       the <code>achievements</code> command in-game to track your progress.</p>
+
+    {{ range $cat := .categories }}
+    <h3>{{ $cat.Name }}</h3>
+    <table class="leaderboard">
+        <tr>
+            <th>Achievement</th>
+            <th>Description</th>
+            <th>Points</th>
+        </tr>
+        {{ range $a := $cat.Achievements }}
+            <tr>
+                <td>{{ $a.Name }}</td>
+                <td>{{ $a.Description }}</td>
+                <td>{{ $a.Points }}</td>
+            </tr>
+        {{ end }}
+    </table>
+    {{ end }}
+
+</div>
+
+{{template "footer" .}}
