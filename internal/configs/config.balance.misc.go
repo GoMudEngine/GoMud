@@ -346,6 +346,9 @@ func (b *Balance) validateMisc() {
 	if b.AchievementPollRounds <= 0 {
 		b.AchievementPollRounds = 10
 	}
+	if b.GuildFoundingCost <= 0 {
+		b.GuildFoundingCost = 5000
+	}
 	if b.ForagerLockboxCapacity <= 0 {
 		b.ForagerLockboxCapacity = 500
 	}

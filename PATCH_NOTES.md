@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-07-15 — Guilds: found a company of adventurers
+
+You can now band together in a lasting guild. Found one with <ansi fg="command">guild create</ansi>
+(for a founding fee from your bank), invite your friends, and organise them by rank — member,
+officer, and leader — each with their own privileges. Officers and leaders can invite and manage
+the roster; the leader can promote, hand off leadership, or disband. Set a message of the day
+that greets members when they log in, and see your whole roster with <ansi fg="command">guild</ansi>.
+Guild chat, a shared treasury, and guild perks are on the way.
+
 ## 2026-07-15 — Achievements: accolades to chase
 
 The realm now keeps a tally of your deeds. Land your first kill, amass a fortune, explore far

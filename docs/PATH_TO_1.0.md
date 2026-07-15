@@ -148,9 +148,15 @@ experience just passed a full feel-test — so the hill is shorter than it looks
 
 ## 3. Retention / stickiness
 
-- ⬜ **Player guilds / clans** — absent. One of the strongest "bring your friends /
-  reason to stay" drivers in the genre. Larger build; a real 1.0-vs-not
-  differentiator.
+- 🟡 **Player guilds / clans** — **membership core DONE 2026-07-15** (local, unpushed;
+  spec+plan `2026-07-15-guild-membership-core-*`). Social guilds (no territory/upkeep/PvP —
+  dropped the stub's territorial vision). `internal/guilds` durable per-guild YAML registry;
+  member/officer/leader ranks; invite-only join; `guild` command
+  (create/info/list/invite/accept/decline/leave/kick/promote/demote/transfer/disband/motd);
+  5000g founding fee from bank; MOTD greeting on login. Superseded the `internal/clans` stub.
+  **Remaining sub-projects:** guild chat (reuse `internal/channels`), guild treasury/vault,
+  guild perks/leaderboard; and a `who`-tag display follow-up (deferred — room-occupant display
+  is template-driven).
 - ✅ **Achievements / accolades** — DONE 2026-07-15 (local, unpushed; spec+plan
   `2026-07-15-achievements-*`). YAML-authored, boot-validated definitions (`internal/
   achievements`, fixed trigger vocabulary incl. `item_rarity` "acquire a pinnacle item");
