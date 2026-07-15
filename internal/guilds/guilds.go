@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/GoMudEngine/GoMud/internal/items"
 )
 
 type GuildRank string
@@ -42,6 +44,12 @@ type Guild struct {
 	PendingInvites []int         `yaml:"pendinginvites,omitempty"`
 	Motd           string        `yaml:"motd,omitempty"`
 	Created        time.Time     `yaml:"created"`
+
+	// Treasury/vault (guild slice 3): shared gold + items. Deposit is open to
+	// members; withdraw/take gate on CanWithdraw (leader, or officer when delegated).
+	Treasury          int          `yaml:"treasury,omitempty"`
+	Vault             []items.Item `yaml:"vault,omitempty"`
+	TreasuryDelegated bool         `yaml:"treasurydelegated,omitempty"`
 }
 
 func validGuildTag(tag string) error {
@@ -93,6 +101,15 @@ func (g *Guild) CanKick(actorId, targetId int) bool {
 		return false
 	}
 	return rankOrder(ar) > rankOrder(tr)
+}
+
+// CanWithdraw reports whether userId may withdraw gold / take vault items: the
+// leader always, and officers when treasury access is delegated.
+func (g *Guild) CanWithdraw(userId int) bool {
+	if g.IsLeader(userId) {
+		return true
+	}
+	return g.TreasuryDelegated && g.CanManage(userId)
 }
 
 func (g *Guild) HasInvite(userId int) bool {

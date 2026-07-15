@@ -349,6 +349,9 @@ func (b *Balance) validateMisc() {
 	if b.GuildFoundingCost <= 0 {
 		b.GuildFoundingCost = 5000
 	}
+	if b.GuildVaultCapacity <= 0 {
+		b.GuildVaultCapacity = 100
+	}
 	if b.ForagerLockboxCapacity <= 0 {
 		b.ForagerLockboxCapacity = 500
 	}

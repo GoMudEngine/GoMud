@@ -21,4 +21,16 @@ organise by rank. Members are ranked <ansi fg="white">member</ansi>,
   <ansi fg="command">guild motd <text></ansi>         - (officer+) Set the message of the day
   <ansi fg="command">guild disband</ansi>             - (leader) Disband the guild
 
+<ansi fg="yellow">Treasury & vault: </ansi>
+
+  <ansi fg="command">guild treasury</ansi>            - Show guild gold and vault contents
+  <ansi fg="command">guild deposit <amt|all></ansi>   - Deposit gold from your bank into the treasury
+  <ansi fg="command">guild donate <item></ansi>       - Donate an item into the guild vault
+  <ansi fg="command">guild withdraw <amt|all></ansi>  - (leader) Withdraw treasury gold to your bank
+  <ansi fg="command">guild take <item></ansi>         - (leader) Take an item from the vault
+  <ansi fg="command">guild treasury delegate</ansi>   - (leader) Toggle officer treasury access
+
+Any member may deposit gold and donate items. Withdrawing gold and taking items
+are the leader's privilege unless the leader delegates access to officers.
+
 A TAG is 2-4 letters or digits and is shown next to your name in <ansi fg="command">who</ansi>.

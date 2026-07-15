@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/guilds"
+	"github.com/GoMudEngine/GoMud/internal/items"
 )
 
 func TestGuildChatRecipients(t *testing.T) {
@@ -16,5 +17,22 @@ func TestGuildChatRecipients(t *testing.T) {
 	}
 	if len(guildChatRecipients(&guilds.Guild{}, 1)) != 0 {
 		t.Error("empty guild -> no recipients")
+	}
+}
+
+func TestFindVaultItem(t *testing.T) {
+	defer items.SeedItemsForTest(map[int]*items.ItemSpec{
+		101: {ItemId: 101, Name: "iron sword"},
+		102: {ItemId: 102, Name: "healing potion"},
+	})()
+	vault := []items.Item{items.New(101), items.New(102)}
+	if idx, ok := findVaultItem(vault, "healing potion"); !ok || idx != 1 {
+		t.Errorf("find = %d,%v, want 1,true", idx, ok)
+	}
+	if _, ok := findVaultItem(vault, "nonexistent"); ok {
+		t.Error("miss should return ok=false")
+	}
+	if _, ok := findVaultItem(nil, "x"); ok {
+		t.Error("empty vault -> not found")
 	}
 }

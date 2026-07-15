@@ -29,6 +29,25 @@ func TestValidGuildName(t *testing.T) {
 	}
 }
 
+func TestCanWithdraw(t *testing.T) {
+	g := &Guild{LeaderUserId: 1, Members: []GuildMember{
+		{UserId: 1, Rank: RankLeader}, {UserId: 2, Rank: RankOfficer}, {UserId: 3, Rank: RankMember},
+	}}
+	if !g.CanWithdraw(1) {
+		t.Error("leader always can withdraw")
+	}
+	if g.CanWithdraw(2) || g.CanWithdraw(3) {
+		t.Error("officer/member cannot withdraw when not delegated")
+	}
+	g.TreasuryDelegated = true
+	if !g.CanWithdraw(2) {
+		t.Error("delegated officer should be able to withdraw")
+	}
+	if g.CanWithdraw(3) {
+		t.Error("member still cannot withdraw even when delegated")
+	}
+}
+
 func TestPermissions(t *testing.T) {
 	g := &Guild{Tag: "QC", LeaderUserId: 1, Members: []GuildMember{
 		{UserId: 1, Rank: RankLeader}, {UserId: 2, Rank: RankOfficer}, {UserId: 3, Rank: RankMember},

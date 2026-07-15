@@ -3,11 +3,13 @@ package usercommands
 import (
 	"fmt"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/guilds"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -55,6 +57,16 @@ func Guild(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		guildSetMotd(user, remainder)
 	case "chat", "say", "gc":
 		guildChatSend(user, remainder)
+	case "deposit":
+		guildDeposit(user, remainder)
+	case "withdraw":
+		guildWithdraw(user, remainder)
+	case "donate":
+		guildDonate(user, remainder)
+	case "take":
+		guildTake(user, remainder)
+	case "treasury", "bank", "vault":
+		guildTreasury(user, remainder)
 	default:
 		user.SendText(messaging.CategorySystem, `Unknown guild command. Try <ansi fg="command">help guild</ansi>.`)
 	}
@@ -459,6 +471,216 @@ func guildChatSend(user *users.UserRecord, msg string) {
 func Gc(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 	guildChatSend(user, rest)
 	return true, nil
+}
+
+// findVaultItem fuzzy-matches a vault item by name and returns its index.
+func findVaultItem(vault []items.Item, name string) (int, bool) {
+	if strings.TrimSpace(name) == "" || len(vault) == 0 {
+		return 0, false
+	}
+	closeMatch, fullMatch := items.FindMatchIn(name, vault...)
+	target := fullMatch
+	if target.ItemId == 0 {
+		target = closeMatch
+	}
+	if target.ItemId == 0 {
+		return 0, false
+	}
+	for i, it := range vault {
+		if it.Equals(target) {
+			return i, true
+		}
+	}
+	return 0, false
+}
+
+// parseGoldAmount resolves an amount string ("all" or a positive integer). ok is
+// false for empty/non-positive/non-numeric input other than "all".
+func parseGoldAmount(s string, allValue int) (amount int, isAll, ok bool) {
+	s = strings.TrimSpace(strings.ToLower(s))
+	if s == "" {
+		return 0, false, false
+	}
+	if s == "all" {
+		return allValue, true, true
+	}
+	n, err := strconv.Atoi(s)
+	if err != nil || n < 1 {
+		return 0, false, false
+	}
+	return n, false, true
+}
+
+func guildDeposit(user *users.UserRecord, remainder string) {
+	g, ok := guilds.GetByUser(user.UserId)
+	if !ok {
+		user.SendText(messaging.CategorySystem, `You are not in a guild.`)
+		return
+	}
+	amount, _, ok := parseGoldAmount(remainder, user.Character.Bank)
+	if !ok {
+		user.SendText(messaging.CategorySystem, `Usage: <ansi fg="command">guild deposit <amount|all></ansi>  (gold comes from your bank).`)
+		return
+	}
+	if amount > user.Character.Bank {
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You only have <ansi fg="gold">%d gold</ansi> in the bank.`, user.Character.Bank))
+		return
+	}
+	if amount <= 0 {
+		user.SendText(messaging.CategorySystem, `Deposit a positive amount.`)
+		return
+	}
+	if err := guilds.DepositGold(g.Tag, amount); err != nil {
+		user.SendText(messaging.CategorySystem, `Cannot deposit: `+err.Error())
+		return
+	}
+	user.Character.Bank -= amount
+	events.AddToQueue(events.EquipmentChange{UserId: user.UserId, BankChange: -amount})
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`You deposit <ansi fg="gold">%d gold</ansi> into the guild treasury.`, amount))
+	announceGuild(g, fmt.Sprintf(`<ansi fg="username">%s</ansi> deposited <ansi fg="gold">%d gold</ansi> into the guild treasury.`, user.Character.Name, amount), user.UserId)
+}
+
+func guildWithdraw(user *users.UserRecord, remainder string) {
+	g, ok := guilds.GetByUser(user.UserId)
+	if !ok {
+		user.SendText(messaging.CategorySystem, `You are not in a guild.`)
+		return
+	}
+	if !g.CanWithdraw(user.UserId) {
+		user.SendText(messaging.CategorySystem, `Only the leader can withdraw (unless the leader has delegated treasury access to officers).`)
+		return
+	}
+	amount, _, ok := parseGoldAmount(remainder, g.Treasury)
+	if !ok {
+		user.SendText(messaging.CategorySystem, `Usage: <ansi fg="command">guild withdraw <amount|all></ansi>  (gold goes to your bank).`)
+		return
+	}
+	if amount <= 0 {
+		user.SendText(messaging.CategorySystem, `The treasury is empty.`)
+		return
+	}
+	// WithdrawGold rejects (without mutating) if amount exceeds the treasury.
+	if err := guilds.WithdrawGold(g.Tag, amount); err != nil {
+		user.SendText(messaging.CategorySystem, `Cannot withdraw: `+err.Error())
+		return
+	}
+	user.Character.Bank += amount
+	events.AddToQueue(events.EquipmentChange{UserId: user.UserId, BankChange: amount})
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`You withdraw <ansi fg="gold">%d gold</ansi> from the guild treasury to your bank.`, amount))
+	announceGuild(g, fmt.Sprintf(`<ansi fg="username">%s</ansi> withdrew <ansi fg="gold">%d gold</ansi> from the guild treasury.`, user.Character.Name, amount), user.UserId)
+}
+
+func guildDonate(user *users.UserRecord, remainder string) {
+	g, ok := guilds.GetByUser(user.UserId)
+	if !ok {
+		user.SendText(messaging.CategorySystem, `You are not in a guild.`)
+		return
+	}
+	name := strings.TrimSpace(remainder)
+	if name == "" {
+		user.SendText(messaging.CategorySystem, `Usage: <ansi fg="command">guild donate <item></ansi>`)
+		return
+	}
+	item, found := user.Character.FindInBackpack(name)
+	if !found {
+		user.SendText(messaging.CategorySystem, `You don't have that item.`)
+		return
+	}
+	itemName := item.DisplayName()
+	// DonateItem errors (without mutating) if the vault is full. Only strip the
+	// item from the donor after it has landed in the vault.
+	if err := guilds.DonateItem(g.Tag, item); err != nil {
+		user.SendText(messaging.CategorySystem, `Cannot donate: `+err.Error())
+		return
+	}
+	user.Character.RemoveItem(item)
+	events.AddToQueue(events.ItemOwnership{UserId: user.UserId, Item: item, Gained: false})
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`You donate %s to the guild vault.`, itemName))
+	announceGuild(g, fmt.Sprintf(`<ansi fg="username">%s</ansi> donated %s to the guild vault.`, user.Character.Name, itemName), user.UserId)
+}
+
+func guildTake(user *users.UserRecord, remainder string) {
+	g, ok := guilds.GetByUser(user.UserId)
+	if !ok {
+		user.SendText(messaging.CategorySystem, `You are not in a guild.`)
+		return
+	}
+	if !g.CanWithdraw(user.UserId) {
+		user.SendText(messaging.CategorySystem, `Only the leader can take from the vault (unless the leader has delegated treasury access to officers).`)
+		return
+	}
+	name := strings.TrimSpace(remainder)
+	idx, found := findVaultItem(g.Vault, name)
+	if !found {
+		user.SendText(messaging.CategorySystem, `No such item in the guild vault. See <ansi fg="command">guild treasury</ansi>.`)
+		return
+	}
+	// Item-loss guard: prove the item fits in the taker's pack BEFORE removing it
+	// from the vault, so a full pack never destroys a vault item.
+	it := g.Vault[idx]
+	if !user.Character.StoreItem(it) {
+		user.SendText(messaging.CategorySystem, `Your pack is too full to carry that.`)
+		return
+	}
+	itemName := it.DisplayName()
+	if _, err := guilds.TakeItem(g.Tag, idx); err != nil {
+		// Vault changed under us; undo the store so nothing is duplicated.
+		user.Character.RemoveItem(it)
+		user.SendText(messaging.CategorySystem, `Cannot take that item right now.`)
+		return
+	}
+	events.AddToQueue(events.ItemOwnership{UserId: user.UserId, Item: it, Gained: true})
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`You take %s from the guild vault.`, itemName))
+	announceGuild(g, fmt.Sprintf(`<ansi fg="username">%s</ansi> took %s from the guild vault.`, user.Character.Name, itemName), user.UserId)
+}
+
+func guildTreasury(user *users.UserRecord, remainder string) {
+	g, ok := guilds.GetByUser(user.UserId)
+	if !ok {
+		user.SendText(messaging.CategorySystem, `You are not in a guild.`)
+		return
+	}
+	// `guild treasury delegate [on|off]` — leader-only.
+	if fields := strings.Fields(strings.ToLower(remainder)); len(fields) > 0 && fields[0] == "delegate" {
+		if !g.IsLeader(user.UserId) {
+			user.SendText(messaging.CategorySystem, `Only the leader can delegate treasury access.`)
+			return
+		}
+		on := !g.TreasuryDelegated
+		if len(fields) > 1 {
+			switch fields[1] {
+			case "on", "yes", "true":
+				on = true
+			case "off", "no", "false":
+				on = false
+			}
+		}
+		guilds.SetTreasuryDelegated(g.Tag, on)
+		if on {
+			user.SendText(messaging.CategorySystem, `Officers may now withdraw gold and take items from the vault.`)
+			announceGuild(g, `The leader has granted officers treasury access.`, user.UserId)
+		} else {
+			user.SendText(messaging.CategorySystem, `Only you may now withdraw gold and take items from the vault.`)
+			announceGuild(g, `The leader has revoked officers' treasury access.`, user.UserId)
+		}
+		return
+	}
+
+	capacity := int(configs.GetBalanceConfig().GuildVaultCapacity)
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="yellow-bold">%s</ansi> treasury: <ansi fg="gold">%d gold</ansi>`, g.Name, g.Treasury))
+	if len(g.Vault) == 0 {
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`Vault: empty (0/%d).`, capacity))
+	} else {
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`Vault (%d/%d):`, len(g.Vault), capacity))
+		for i, it := range g.Vault {
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`  <ansi fg="black-bold">%2d.</ansi> %s`, i+1, it.DisplayName()))
+		}
+	}
+	if g.TreasuryDelegated {
+		user.SendText(messaging.CategorySystem, `Treasury access: leader and officers.`)
+	} else {
+		user.SendText(messaging.CategorySystem, `Treasury access: leader only.`)
+	}
 }
 
 func guildSetMotd(user *users.UserRecord, remainder string) {
