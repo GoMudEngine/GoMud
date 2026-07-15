@@ -20,6 +20,20 @@ func TestGuildChatRecipients(t *testing.T) {
 	}
 }
 
+func TestParseGuildRank(t *testing.T) {
+	cases := map[string]guilds.GuildRank{
+		"member": guilds.RankMember, "Officer": guilds.RankOfficer, "LEADER": guilds.RankLeader,
+	}
+	for in, want := range cases {
+		if got, ok := parseGuildRank(in); !ok || got != want {
+			t.Errorf("parseGuildRank(%q) = %v,%v want %v", in, got, ok, want)
+		}
+	}
+	if _, ok := parseGuildRank("captain"); ok {
+		t.Error("unknown rank should not parse")
+	}
+}
+
 func TestFindVaultItem(t *testing.T) {
 	defer items.SeedItemsForTest(map[int]*items.ItemSpec{
 		101: {ItemId: 101, Name: "iron sword"},

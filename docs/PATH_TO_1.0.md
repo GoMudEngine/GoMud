@@ -161,8 +161,11 @@ experience just passed a full feel-test — so the hill is shorter than it looks
   shared gold treasury + item vault persisted in the guild YAML; any member deposits gold (from
   bank) / donates items; leader withdraws/takes, and can `guild treasury delegate` to let officers
   too. `CanWithdraw` gate; `GuildVaultCapacity` config (default 100); item-loss-guarded `take`.
-  **Remaining sub-project (user picked):** guild ranks polish. (Guild perks/leaderboard not
-  selected.)
+  **Ranks polish (custom rank titles) DONE 2026-07-15** (spec+plan `2026-07-15-guild-rank-titles-*`):
+  leader `guild title <rank> <name>` renames the three ranks per-guild (validated, reset to
+  default with no name); shown in `guild info` + promote/demote notices. **✅ SOCIAL GUILDS ARC
+  COMPLETE** (membership + chat + who-tag + treasury/vault + custom rank titles). Guild
+  perks/leaderboard/achievements were not selected.
 - ✅ **Achievements / accolades** — DONE 2026-07-15 (local, unpushed; spec+plan
   `2026-07-15-achievements-*`). YAML-authored, boot-validated definitions (`internal/
   achievements`, fixed trigger vocabulary incl. `item_rarity` "acquire a pinnacle item");

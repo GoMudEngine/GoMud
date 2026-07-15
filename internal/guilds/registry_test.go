@@ -133,6 +133,27 @@ func TestRegistry_Vault(t *testing.T) {
 	}
 }
 
+func TestRegistry_RankTitle(t *testing.T) {
+	defer SetDataDirForTest(t.TempDir())()
+	resetRegistry()
+	if _, err := Create("RT", "Ranktitlers", 1, "L"); err != nil {
+		t.Fatal(err)
+	}
+	if err := SetRankTitle("RT", RankOfficer, "Lieutenant"); err != nil {
+		t.Fatal(err)
+	}
+	if g, _ := Get("RT"); g.RankTitle(RankOfficer) != "Lieutenant" {
+		t.Errorf("title not set")
+	}
+	// Reset (empty) removes the key -> default.
+	if err := SetRankTitle("RT", RankOfficer, ""); err != nil {
+		t.Fatal(err)
+	}
+	if g, _ := Get("RT"); g.RankTitle(RankOfficer) != "officer" {
+		t.Errorf("reset should restore default")
+	}
+}
+
 func TestRegistry_Invites(t *testing.T) {
 	defer SetDataDirForTest(t.TempDir())()
 	resetRegistry()
