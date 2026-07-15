@@ -126,6 +126,7 @@ var (
 		`knowledge`:       {Knowledge, true, true, true}, // Admin only
 		`history`:         {History, true, true, false},
 		`inbox`:           {Inbox, true, true, false},
+		`mail`:            {Mail, false, false, false},
 		`inventory`:       {Inventory, true, true, false},
 		`item`:            {Item, true, true, true}, // Admin only
 		`title`:           {Title, true, true, false},
