@@ -96,7 +96,7 @@ owedPortion = feePerSlot                // this slot's lien; disposed slots owe 
 
 remove the slot from storage (as today)
 
-if !StorageSeizureAuctionEnabled OR stackValue < StorageSeizureMinValue:
+if stackValue < StorageSeizureMinValue:
     dispose the whole slot  (all Count units gone; owedPortion written off — as today)
     add slot name to the "disposed" list
 else:
@@ -233,13 +233,17 @@ still attracts zero bids is gone.
 
 `internal/configs/config.balance.shops.go` (next to `StorageFeePerItem`):
 
-| Knob                            | Type / default | Meaning                                                        |
-|---------------------------------|----------------|----------------------------------------------------------------|
-| `StorageSeizureAuctionEnabled`  | bool, **true** | Master toggle. Off ⇒ old behavior (seized slots deleted).      |
-| `StorageSeizureMinValue`        | int, **250**   | Minimum stack value (`spec.Value × Count`) to auction rather than dispose. |
+| Knob                       | Type / default | Meaning                                                        |
+|----------------------------|----------------|----------------------------------------------------------------|
+| `StorageSeizureMinValue`   | int, **250**   | Minimum aggregate stack value (`spec.Value × Count`) to auction rather than dispose. |
 
-Both defaulted in the shops-config validator. `StorageFeePerItem` and the module
-`DurationSeconds` / reserve / commission knobs are reused unchanged.
+Defaulted in the shops-config validator (`if b.StorageSeizureMinValue <= 0 { = 250 }`).
+This single knob also serves as the kill-switch: set it absurdly high and every seized slot
+falls below the floor and is disposed — i.e. today's delete-on-forfeit behavior. (No separate
+boolean toggle: a default-true `ConfigBool` can't be disabled through the Balance validator's
+`if !bool(x) { x = true }` convention, so the numeric floor carries the off-switch instead.)
+`StorageFeePerItem` and the module `DurationSeconds` / reserve / commission knobs are reused
+unchanged.
 
 ---
 
@@ -250,7 +254,8 @@ Unit tests (`modules/auctions/auctions_test.go`, plus a hook-level test for sele
 - **Selection/floor:** aggregate stack value (`spec.Value × Count`) ≥ 250 →
   `StorageItemSeized` emitted; aggregate < 250 → disposed, no event. A many-unit pile of
   individually-cheap components whose **aggregate** clears 250 → listed as one stacked lot
-  (not disposed). Toggle off → all seized slots disposed (regression to old behavior).
+  (not disposed). Floor set above all values → every seized slot disposed (regression to old
+  behavior — the floor's kill-switch role).
 - **Stack win-delivery:** a seized lot with `Count > 1` grants all `Count` units to the
   winner (online loop + offline inbox).
 - **Debt apportionment:** each auctioned slot's `Owed == feePerSlot`; a disposed sub-floor
@@ -285,7 +290,7 @@ Full suite green + boot clean (pre-push SOP) before merge.
 - `modules/auctions/auctions.go` — `SeizedLot` + `SeizedQueue`, listener registration,
   drain in `newRoundHandler`, `Seized`/`OwedLien` on `AuctionItem`, seized-aware listing +
   lien settlement + unsold-dispose.
-- `internal/configs/config.balance.go` + `config.balance.shops.go` — two new knobs +
-  defaults.
+- `internal/configs/config.balance.go` (struct field) + `config.balance.shops.go`
+  (validator default) — one new knob `StorageSeizureMinValue`.
 - `modules/auctions/auctions_test.go` (+ a hook selection test) — coverage above.
 - `PATCH_NOTES.md`, `docs/PATH_TO_1.0.md` (mark #4 done) — at merge.
