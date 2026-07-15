@@ -1,6 +1,10 @@
 package guilds
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/GoMudEngine/GoMud/internal/items"
+)
 
 func TestRegistry_CreateAndLookup(t *testing.T) {
 	defer SetDataDirForTest(t.TempDir())()
@@ -57,6 +61,75 @@ func TestRegistry_CreateAndLookup(t *testing.T) {
 	Delete("QC")
 	if _, ok := Get("QC"); ok {
 		t.Error("guild should be gone after delete")
+	}
+}
+
+func TestRegistry_Treasury(t *testing.T) {
+	defer SetDataDirForTest(t.TempDir())()
+	resetRegistry()
+
+	if _, err := Create("TR", "Treasurers", 1, "Lead"); err != nil {
+		t.Fatalf("create: %v", err)
+	}
+
+	if err := DepositGold("TR", 500); err != nil {
+		t.Fatalf("deposit: %v", err)
+	}
+	if g, _ := Get("TR"); g.Treasury != 500 {
+		t.Errorf("treasury = %d, want 500", g.Treasury)
+	}
+	// Withdraw more than held should fail and not change the balance.
+	if err := WithdrawGold("TR", 900); err == nil {
+		t.Error("over-withdraw should fail")
+	}
+	if g, _ := Get("TR"); g.Treasury != 500 {
+		t.Errorf("treasury after failed withdraw = %d, want 500", g.Treasury)
+	}
+	if err := WithdrawGold("TR", 200); err != nil {
+		t.Fatalf("withdraw: %v", err)
+	}
+	if g, _ := Get("TR"); g.Treasury != 300 {
+		t.Errorf("treasury = %d, want 300", g.Treasury)
+	}
+
+	// Delegation toggle.
+	if err := SetTreasuryDelegated("TR", true); err != nil {
+		t.Fatalf("delegate: %v", err)
+	}
+	if g, _ := Get("TR"); !g.TreasuryDelegated {
+		t.Error("delegation flag not set")
+	}
+}
+
+func TestRegistry_Vault(t *testing.T) {
+	defer SetDataDirForTest(t.TempDir())()
+	resetRegistry()
+
+	if _, err := Create("VA", "Vaulters", 1, "Lead"); err != nil {
+		t.Fatalf("create: %v", err)
+	}
+
+	it := items.Item{ItemId: 1}
+	if err := DonateItem("VA", it); err != nil {
+		t.Fatalf("donate: %v", err)
+	}
+	if g, _ := Get("VA"); len(g.Vault) != 1 {
+		t.Fatalf("vault len = %d, want 1", len(g.Vault))
+	}
+	// Take index 0 back out.
+	taken, err := TakeItem("VA", 0)
+	if err != nil {
+		t.Fatalf("take: %v", err)
+	}
+	if taken.ItemId != 1 {
+		t.Errorf("taken item id = %d, want 1", taken.ItemId)
+	}
+	if g, _ := Get("VA"); len(g.Vault) != 0 {
+		t.Errorf("vault len after take = %d, want 0", len(g.Vault))
+	}
+	// Out-of-range take errors.
+	if _, err := TakeItem("VA", 0); err == nil {
+		t.Error("take from empty vault should fail")
 	}
 }
 

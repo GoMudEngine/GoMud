@@ -5,6 +5,9 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/items"
 )
 
 // Invariant: all guild mutations run on the single event-processing goroutine
@@ -258,6 +261,94 @@ func GuildWithInvite(userId int) (*Guild, bool) {
 		}
 	}
 	return nil, false
+}
+
+// DepositGold adds amount to the guild treasury and persists. The caller is
+// responsible for debiting the depositor's gold BEFORE calling (deposit is the
+// value-in half of the transfer; it never fails on balance).
+func DepositGold(tag string, amount int) error {
+	if amount <= 0 {
+		return fmt.Errorf("amount must be positive")
+	}
+	g, ok := Get(tag)
+	if !ok {
+		return fmt.Errorf("no such guild")
+	}
+	registryMu.Lock()
+	g.Treasury += amount
+	registryMu.Unlock()
+	return Save(g)
+}
+
+// WithdrawGold subtracts amount from the treasury and persists. Fails (without
+// mutating) if the treasury holds less than amount. The caller credits the
+// withdrawer only after this returns nil.
+func WithdrawGold(tag string, amount int) error {
+	if amount <= 0 {
+		return fmt.Errorf("amount must be positive")
+	}
+	g, ok := Get(tag)
+	if !ok {
+		return fmt.Errorf("no such guild")
+	}
+	registryMu.Lock()
+	if g.Treasury < amount {
+		registryMu.Unlock()
+		return fmt.Errorf("the treasury does not hold that much gold")
+	}
+	g.Treasury -= amount
+	registryMu.Unlock()
+	return Save(g)
+}
+
+// DonateItem appends an item to the guild vault and persists. Fails if the vault
+// is at capacity. The caller removes the item from the donor BEFORE calling.
+func DonateItem(tag string, item items.Item) error {
+	g, ok := Get(tag)
+	if !ok {
+		return fmt.Errorf("no such guild")
+	}
+	capLimit := int(configs.GetBalanceConfig().GuildVaultCapacity)
+	registryMu.Lock()
+	if len(g.Vault) >= capLimit {
+		registryMu.Unlock()
+		return fmt.Errorf("the guild vault is full")
+	}
+	g.Vault = append(g.Vault, item)
+	registryMu.Unlock()
+	return Save(g)
+}
+
+// TakeItem removes and returns the vault item at index idx, persisting the
+// result. Fails if idx is out of range. The caller gives the item to the taker
+// only after this returns nil.
+func TakeItem(tag string, idx int) (items.Item, error) {
+	g, ok := Get(tag)
+	if !ok {
+		return items.Item{}, fmt.Errorf("no such guild")
+	}
+	registryMu.Lock()
+	if idx < 0 || idx >= len(g.Vault) {
+		registryMu.Unlock()
+		return items.Item{}, fmt.Errorf("no such item in the vault")
+	}
+	item := g.Vault[idx]
+	g.Vault = append(g.Vault[:idx], g.Vault[idx+1:]...)
+	registryMu.Unlock()
+	return item, Save(g)
+}
+
+// SetTreasuryDelegated toggles whether officers may withdraw gold / take items
+// and persists.
+func SetTreasuryDelegated(tag string, delegated bool) error {
+	g, ok := Get(tag)
+	if !ok {
+		return fmt.Errorf("no such guild")
+	}
+	registryMu.Lock()
+	g.TreasuryDelegated = delegated
+	registryMu.Unlock()
+	return Save(g)
 }
 
 func removeInt(s []int, v int) []int {
