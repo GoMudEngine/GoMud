@@ -343,6 +343,9 @@ func (b *Balance) validateMisc() {
 	if b.MailSendCooldownRounds <= 0 {
 		b.MailSendCooldownRounds = 10
 	}
+	if b.AchievementPollRounds <= 0 {
+		b.AchievementPollRounds = 10
+	}
 	if b.ForagerLockboxCapacity <= 0 {
 		b.ForagerLockboxCapacity = 500
 	}

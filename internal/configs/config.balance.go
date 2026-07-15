@@ -526,6 +526,7 @@ type Balance struct {
 	StorageFeePerItem           ConfigInt   `yaml:"StorageFeePerItem"`                  // Gold charged per stored item per game month (default 1)
 	StorageSeizureMinValue      ConfigInt   `yaml:"StorageSeizureMinValue"`             // Min aggregate stack value (spec.Value*Count) for a seized slot to be auctioned vs. disposed (default 250). Set very high to disable seizure-auction (dispose all).
 	MailSendCooldownRounds      ConfigInt   `yaml:"MailSendCooldownRounds"`             // Rounds a player must wait between sending mail (anti-spam; default 10). Set to 1 for effectively no cooldown.
+	AchievementPollRounds       ConfigInt   `yaml:"AchievementPollRounds"`              // How often (rounds) the achievement poll evaluates online players (default 10).
 
 	// ── WAREHOUSES (Stage 3 ferry system) ────────────────────────────────────
 	WarehouseItemCap      ConfigInt `yaml:"WarehouseItemCap,omitempty"`      // Per-item stock cap in city warehouses (default 4,000,000 — effectively unbounded)
