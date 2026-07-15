@@ -96,7 +96,7 @@ func Mail(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	cmdPrompt, _ := user.StartPrompt(`mail`, rest)
+	cmdPrompt, isNew := user.StartPrompt(`mail`, rest)
 
 	// Recipient is the initial argument (or prompted for if omitted).
 	recipientName := rest
@@ -108,19 +108,20 @@ func Mail(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		recipientName = question.Response
 	}
 
-	rec, offlineUsername, ok := resolveMailRecipient(
-		recipientName, user.UserId,
-		users.GetByCharacterName,
-		users.CharacterNameSearch,
-	)
-	if !ok {
-		if recipientName != `` && users.GetByCharacterName(recipientName) != nil {
-			user.SendText(messaging.CategorySystem, `You can't mail yourself.`)
-		} else {
-			user.SendText(messaging.CategorySystem, `No adventurer by that name has ever been recorded.`)
+	// Fail-fast existence/self check — only on the first pass, since the offline
+	// lookup walks user files and we don't want to repeat it on every prompt
+	// step. The AUTHORITATIVE resolution + delivery happen after confirm (below),
+	// so a recipient who logs in or out mid-compose is still handled correctly.
+	if isNew && recipientName != `` {
+		if _, _, ok := resolveMailRecipient(recipientName, user.UserId, users.GetByCharacterName, users.CharacterNameSearch); !ok {
+			if users.GetByCharacterName(recipientName) != nil {
+				user.SendText(messaging.CategorySystem, `You can't mail yourself.`)
+			} else {
+				user.SendText(messaging.CategorySystem, `No adventurer by that name has ever been recorded.`)
+			}
+			user.ClearPrompt()
+			return true, nil
 		}
-		user.ClearPrompt()
-		return true, nil
 	}
 
 	msg := users.Message{
@@ -187,7 +188,18 @@ func Mail(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	// Commit: debit the sender, then deliver.
+	// Commit: DELIVER BEFORE DEBITING so nothing leaves the sender unless the
+	// mail actually lands in the recipient's inbox. Re-resolve the recipient
+	// fresh here — their online/offline status may have changed while composing,
+	// and a stale snapshot could drop the mail (deliver to a now-offline live
+	// record, or write a disk copy a now-online session would clobber).
+	rec, offlineUsername, ok := resolveMailRecipient(recipientName, user.UserId, users.GetByCharacterName, users.CharacterNameSearch)
+	if !ok || !deliverMail(rec, offlineUsername, msg) {
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`Your mail to <ansi fg="username">%s</ansi> could not be delivered — nothing was sent.`, recipientName))
+		return true, nil
+	}
+
+	// Delivered — now debit the sender and start the cooldown.
 	if gold > 0 {
 		user.Character.Gold -= gold
 		events.AddToQueue(events.EquipmentChange{UserId: user.UserId, GoldChange: -gold})
@@ -195,26 +207,30 @@ func Mail(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if attached != nil {
 		user.Character.RemoveItem(*attached)
 	}
-
-	deliverMail(rec, offlineUsername, msg)
 	user.Character.LastMailSentRound = util.GetRoundCount()
 
 	user.SendText(messaging.CategorySystem, fmt.Sprintf(`Your mail to <ansi fg="username">%s</ansi> is on its way.`, recipientName))
 	return true, nil
 }
 
-// deliverMail drops the message into the recipient's inbox. Online: notify.
-// Offline: load the detached disk record, add, and save (does not activate them).
-func deliverMail(rec mailRecipient, offlineUsername string, msg users.Message) {
+// deliverMail drops the message into the recipient's inbox and reports whether
+// it was actually delivered. Online: add to the live record + notify. Offline:
+// load the detached disk record, add, and save (does not activate them). Returns
+// false if the recipient couldn't be reached (e.g. logged off since resolve, or
+// the disk record failed to load) so the caller can avoid debiting the sender.
+func deliverMail(rec mailRecipient, offlineUsername string, msg users.Message) bool {
 	if rec.online {
 		if u := users.GetByUserId(rec.userId); u != nil {
 			u.Inbox.Add(msg)
 			u.Command(`inbox check`)
+			return true
 		}
-		return
+		return false
 	}
 	if ou, err := users.LoadUser(offlineUsername); err == nil && ou != nil {
 		ou.Inbox.Add(msg)
 		users.SaveUser(*ou)
+		return true
 	}
+	return false
 }
