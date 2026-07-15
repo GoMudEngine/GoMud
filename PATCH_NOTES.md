@@ -1,5 +1,13 @@
 # DOGMud Patch Notes
 
+## 2026-07-15 — Guilds: name your ranks
+
+A guild leader can now give their guild's three ranks their own names with
+<ansi fg="command">guild title <rank> <name></ansi> — call your officers Lieutenants, your
+newest members Initiates, or crown yourself Warden. The custom names show up in
+<ansi fg="command">guild</ansi> and when members are promoted or demoted. Omit the name to
+put a rank back to its plain title.
+
 ## 2026-07-15 — Guilds: a shared treasury and vault
 
 Your guild now has a common purse and a shared strongbox. Any member can
