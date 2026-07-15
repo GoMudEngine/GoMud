@@ -351,6 +351,26 @@ func SetTreasuryDelegated(tag string, delegated bool) error {
 	return Save(g)
 }
 
+// SetRankTitle sets (title != "") or clears (title == "") the custom title for
+// rank and persists. Caller validates non-empty titles first (ValidRankTitle).
+func SetRankTitle(tag string, rank GuildRank, title string) error {
+	g, ok := Get(tag)
+	if !ok {
+		return fmt.Errorf("no such guild")
+	}
+	registryMu.Lock()
+	if title == "" {
+		delete(g.RankTitles, rank)
+	} else {
+		if g.RankTitles == nil {
+			g.RankTitles = map[GuildRank]string{}
+		}
+		g.RankTitles[rank] = title
+	}
+	registryMu.Unlock()
+	return Save(g)
+}
+
 func removeInt(s []int, v int) []int {
 	out := s[:0]
 	for _, x := range s {
