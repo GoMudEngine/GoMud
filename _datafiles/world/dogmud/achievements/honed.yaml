@@ -1,0 +1,9 @@
+id: honed
+name: Honed
+description: Sharpen a talent to formidable heights.
+category: progression
+points: 10
+trigger:
+  type: stat_reached
+  stat: any
+  threshold: 130

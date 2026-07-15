@@ -1,0 +1,8 @@
+id: decorated
+name: Decorated
+description: Earn fifty achievement points.
+category: progression
+points: 15
+trigger:
+  type: achievement_points
+  threshold: 50

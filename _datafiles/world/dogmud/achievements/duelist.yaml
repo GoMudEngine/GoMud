@@ -1,0 +1,8 @@
+id: duelist
+name: Duelist
+description: Best ten rivals in single combat.
+category: combat
+points: 15
+trigger:
+  type: pvp_kills
+  threshold: 10

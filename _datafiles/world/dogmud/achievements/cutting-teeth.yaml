@@ -1,0 +1,8 @@
+id: cutting-teeth
+name: Cutting Teeth
+description: Cut down a hundred foes.
+category: combat
+points: 10
+trigger:
+  type: mob_kills
+  threshold: 100

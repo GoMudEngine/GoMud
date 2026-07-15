@@ -1,0 +1,8 @@
+id: coin-purse
+name: Coin Purse
+description: Amass a thousand gold.
+category: wealth
+points: 5
+trigger:
+  type: gold_total
+  threshold: 1000

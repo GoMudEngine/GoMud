@@ -1,0 +1,8 @@
+id: the-pinnacle
+name: The Pinnacle
+description: Acquire a piece of legendary gear.
+category: progression
+points: 40
+trigger:
+  type: item_rarity
+  threshold: 82

@@ -269,6 +269,7 @@ type Character struct {
 	MiscData                map[string]any                 `yaml:"miscdata,omitempty"`            // Any random other data that needs to be stored
 	Discoveries             map[int][]string               `yaml:"discoveries,omitempty"`         // Per-room hidden object discoveries
 	VisitedRooms            map[string][]int               `yaml:"visitedrooms,omitempty"`        // zone name -> visited roomIds (fog-of-war for the web map)
+	Achievements            map[string]uint64              `yaml:"achievements,omitempty"`        // achievement id -> round unlocked
 	MobMastery              MobMasteries                   `yaml:"mobmastery,omitempty"`          // Tracks particular masteries around a given mob
 	SkillUseCount           map[string]int                 `yaml:"skillusecount,omitempty"`       // Tracks how many times each skill has been used
 	StatUseCount            map[string]int                 `yaml:"statusecount,omitempty"`        // Tracks how many times each stat has been checked
@@ -510,6 +511,23 @@ func (c *Character) CancelAllScheduled() {
 	}
 	if c.Presence != nil {
 		c.Presence.CancelScheduled()
+	}
+}
+
+// HasAchievement reports whether this character has unlocked the given achievement.
+func (c *Character) HasAchievement(id string) bool {
+	_, ok := c.Achievements[id]
+	return ok
+}
+
+// GrantAchievement records an achievement unlock at the given round. Idempotent:
+// a re-grant keeps the original unlock round.
+func (c *Character) GrantAchievement(id string, round uint64) {
+	if c.Achievements == nil {
+		c.Achievements = make(map[string]uint64)
+	}
+	if _, ok := c.Achievements[id]; !ok {
+		c.Achievements[id] = round
 	}
 }
 

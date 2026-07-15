@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/GoMudEngine/GoMud/internal/achievements"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -82,10 +83,12 @@ type LeaderboardModule struct {
 
 	lastCalculated time.Time // When the LB's were last generated
 
-	LBSize       int
-	PowerEnabled bool
+	LBSize              int
+	PowerEnabled        bool
+	AchievementsEnabled bool
 
-	LB_Power leaderboardData `yaml:"LB_Power,omitempty"`
+	LB_Power        leaderboardData `yaml:"LB_Power,omitempty"`
+	LB_Achievements leaderboardData `yaml:"LB_Achievements,omitempty"`
 }
 
 func (l *LeaderboardModule) webLeaderboardData(r *http.Request) map[string]any {
@@ -104,6 +107,8 @@ func (l *LeaderboardModule) loadLBs() {
 
 	l.PowerEnabled = true
 	l.LB_Power = leaderboardData{Name: `Power`, ValueColor: `yellow-bold`}
+	l.AchievementsEnabled = true
+	l.LB_Achievements = leaderboardData{Name: `Achievements`, ValueColor: `green-bold`}
 }
 
 func (l *LeaderboardModule) saveLBs() {
@@ -154,6 +159,7 @@ func (l *LeaderboardModule) leaderboardCommand(rest string, user *users.UserReco
 
 func (l *LeaderboardModule) Reset(maxSize int) {
 	l.LB_Power.Reset(maxSize)
+	l.LB_Achievements.Reset(maxSize)
 }
 
 func (l *LeaderboardModule) RefreshConfig() {
@@ -165,6 +171,11 @@ func (l *LeaderboardModule) RefreshConfig() {
 
 	if powerEnabled, ok := l.plug.Config.Get(`PowerEnabled`).(bool); ok {
 		l.PowerEnabled = powerEnabled
+	}
+
+	l.AchievementsEnabled = true
+	if achEnabled, ok := l.plug.Config.Get(`AchievementsEnabled`).(bool); ok {
+		l.AchievementsEnabled = achEnabled
 	}
 }
 
@@ -190,6 +201,9 @@ func (l *LeaderboardModule) Update() {
 		if l.PowerEnabled {
 			l.LB_Power.Consider(u.UserId, *u.Character, int(combat.PowerScore(*u.Character)))
 		}
+		if l.AchievementsEnabled {
+			l.LB_Achievements.Consider(u.UserId, *u.Character, achievements.PointsFor(u.Character.Achievements))
+		}
 
 		for _, char := range characters.LoadAlts(u.UserId) {
 
@@ -198,6 +212,9 @@ func (l *LeaderboardModule) Update() {
 			if l.PowerEnabled {
 				char.RecalculateStats()
 				l.LB_Power.Consider(u.UserId, char, int(combat.PowerScore(char)))
+			}
+			if l.AchievementsEnabled {
+				l.LB_Achievements.Consider(u.UserId, char, achievements.PointsFor(char.Achievements))
 			}
 
 		}
@@ -219,6 +236,9 @@ func (l *LeaderboardModule) Update() {
 			u.Character.RecalculateStats()
 			l.LB_Power.Consider(u.UserId, *u.Character, int(combat.PowerScore(*u.Character)))
 		}
+		if l.AchievementsEnabled {
+			l.LB_Achievements.Consider(u.UserId, *u.Character, achievements.PointsFor(u.Character.Achievements))
+		}
 
 		for _, char := range characters.LoadAlts(u.UserId) {
 
@@ -227,6 +247,9 @@ func (l *LeaderboardModule) Update() {
 			if l.PowerEnabled {
 				char.RecalculateStats()
 				l.LB_Power.Consider(u.UserId, char, int(combat.PowerScore(char)))
+			}
+			if l.AchievementsEnabled {
+				l.LB_Achievements.Consider(u.UserId, char, achievements.PointsFor(char.Achievements))
 			}
 
 		}
@@ -267,6 +290,9 @@ func (l *LeaderboardModule) getCurrentLeaderboards() []leaderboardData {
 
 	if l.PowerEnabled {
 		ret = append(ret, l.LB_Power)
+	}
+	if l.AchievementsEnabled {
+		ret = append(ret, l.LB_Achievements)
 	}
 
 	return ret
