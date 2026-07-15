@@ -238,6 +238,20 @@ type ItemOwnership struct {
 
 func (i ItemOwnership) Type() string { return `ItemOwnership` }
 
+// StorageItemSeized is emitted by the storage-fee hook when a stored slot is
+// seized from a player who can't pay their bank-storage rent AND the slot's
+// aggregate value (spec.Value * Count) clears the StorageSeizureMinValue floor.
+// The auctions module listens and enqueues it onto the auction block. Sub-floor
+// slots are disposed by the hook and never emit this event.
+type StorageItemSeized struct {
+	UserId int        // ex-owner; surplus after the lien returns here
+	Item   items.Item // the seized item (a single representative of the stack)
+	Count  int        // stack count seized (>=1); the winner receives all Count units
+	Owed   int        // this lot's lien — unpaid rent to recoup from the sale before surplus
+}
+
+func (s StorageItemSeized) Type() string { return `StorageItemSeized` }
+
 // Triggered by a script
 type ScriptedEvent struct {
 	Name string
