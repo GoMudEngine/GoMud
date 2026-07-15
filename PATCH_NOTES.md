@@ -1,5 +1,16 @@
 # DOGMud Patch Notes
 
+## 2026-07-15 — Guilds: a shared treasury and vault
+
+Your guild now has a common purse and a shared strongbox. Any member can
+<ansi fg="command">guild deposit</ansi> gold from their bank or
+<ansi fg="command">guild donate</ansi> an item into the vault, and everyone can see the holdings
+with <ansi fg="command">guild treasury</ansi>. Spending the guild's wealth is the leader's
+privilege — <ansi fg="command">guild withdraw</ansi> and <ansi fg="command">guild take</ansi> —
+though the leader may share that trust with officers via
+<ansi fg="command">guild treasury delegate</ansi>. Build up a war chest for your company, or
+stock the vault with gear for the members who need it.
+
 ## 2026-07-15 — Guilds: chat and colours
 
 Guilds now have their own private chat — <ansi fg="command">guild chat</ansi> (or just
