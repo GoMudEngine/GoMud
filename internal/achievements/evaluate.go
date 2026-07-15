@@ -49,6 +49,34 @@ func Evaluate(t Trigger, c *characters.Character, earnedPoints int) bool {
 	return false
 }
 
+// Progress returns the character's current value toward a numeric trigger and its
+// target, plus whether a numeric progress bar applies. numeric is false for
+// triggers without a simple per-character running value (quest_completed,
+// item_rarity, achievement_points) — the caller shows "not yet" for those.
+func Progress(t Trigger, c *characters.Character) (current, target int, numeric bool) {
+	switch t.Type {
+	case "mob_kills":
+		return c.KD.TotalKills, t.Threshold, true
+	case "pvp_kills":
+		return c.KD.TotalPvpKills, t.Threshold, true
+	case "deaths":
+		return c.KD.TotalDeaths, t.Threshold, true
+	case "gold_total":
+		return c.Gold + c.Bank, t.Threshold, true
+	case "mutation_count":
+		return len(c.Mutations), t.Threshold, true
+	case "rooms_explored":
+		return roomsExplored(c), t.Threshold, true
+	case "quests_completed":
+		return completedQuestCount(c), t.Threshold, true
+	case "stat_reached":
+		return statValue(c, t.Stat), t.Threshold, true
+	case "skill_reached":
+		return skillValue(c, t.Skill), t.Threshold, true
+	}
+	return 0, 0, false
+}
+
 func roomsExplored(c *characters.Character) int {
 	total := 0
 	for _, ids := range c.VisitedRooms {

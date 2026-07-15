@@ -72,6 +72,20 @@ func TestEvaluate_AchievementPoints(t *testing.T) {
 	}
 }
 
+func TestProgress(t *testing.T) {
+	c := charWith(func(c *characters.Character) { c.KD.TotalKills = 42 })
+	cur, tgt, numeric := Progress(Trigger{Type: "mob_kills", Threshold: 100}, c)
+	if !numeric || cur != 42 || tgt != 100 {
+		t.Errorf("mob_kills progress = %d/%d numeric=%v, want 42/100 true", cur, tgt, numeric)
+	}
+	if _, _, numeric := Progress(Trigger{Type: "quest_completed", Token: "10-end"}, c); numeric {
+		t.Error("quest_completed should not report numeric progress")
+	}
+	if _, _, numeric := Progress(Trigger{Type: "item_rarity", Threshold: 82}, c); numeric {
+		t.Error("item_rarity should not report numeric progress")
+	}
+}
+
 func TestEvaluate_UnknownType(t *testing.T) {
 	if Evaluate(Trigger{Type: "nonsense", Threshold: 1}, &characters.Character{}, 0) {
 		t.Error("unknown trigger type should never satisfy")
