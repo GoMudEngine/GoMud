@@ -78,8 +78,17 @@ experience just passed a full feel-test — so the hill is shorter than it looks
       plugging into #2.1.
   - ✅ **#3 Shopkeeper relisting** — DONE (folded into #2.4 above): a shopkeeper win routes the item
     into the bound shop's resale stock.
-  - ⬜ **#4 Bank-storage → auction** — storage items whose owner can't pay go to the block instead
-    of being deleted.
+  - ✅ **#4 Bank-storage → auction** — DONE 2026-07-15 (local, unpushed; spec+plan
+    `2026-07-15-storage-seizure-auction-*`). When a player can't pay bank-storage rent, the fee hook
+    no longer deletes the cheapest slots — it seizes them (lien model). A slot whose aggregate value
+    (`spec.Value × Count`) clears `StorageSeizureMinValue` (default 250g) emits a `StorageItemSeized`
+    event; the auctions module enqueues it (persisted `SeizedQueue`) and drains one lot onto the block
+    per free round, listed **anonymously**. Existing NPC buyers (#2) bid on it for free. On a win the
+    house recoups the (tiny) owed rent and the surplus returns to the ex-owner; the winner receives all
+    `Count` units. A seized lot that draws no bids is **disposed** (not returned to storage — breaks the
+    seize→unsold→re-seize churn), and sub-floor junk is disposed at seizure without ever hitting the
+    block. The single floor knob doubles as the kill-switch (set very high ⇒ dispose all ⇒ old behavior).
+    Unit-tested (configs/events/hooks/auctions) + full boot clean.
 - 🟡 **Player-to-player mudmail** — the admin mass-mail + inbox exist, but there is NO player→player
   send (message + gold + item to a specific recipient, gold via bank). A real (moderate) build reusing
   the existing Message/Inbox infra. Deferred behind the econ-loop arc (user chose auction first).

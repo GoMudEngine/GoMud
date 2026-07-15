@@ -1,5 +1,15 @@
 # DOGMud Patch Notes
 
+## 2026-07-15 — Auction house: the bank sells what you can't keep
+
+If your bank-storage rent goes unpaid and you don't have the coin to cover it, the bank no
+longer simply throws out your goods. Anything genuinely valuable is seized and put up on the
+auction block instead — anonymously — where other players and the town's NPC buyers can bid
+on it. Whatever it fetches goes to settle what you owed, and any surplus is returned to your
+account. Only low-value oddments are disposed of outright, and an item nobody bids on is let
+go after its turn on the block. A seized pile of crafting materials worth enough all together
+will go up as a single lot.
+
 ## 2026-07-14 — Auction buyers: shopkeepers who restock from the block
 
 The town's shopkeepers now watch the auction house too. A merchant will bid on
