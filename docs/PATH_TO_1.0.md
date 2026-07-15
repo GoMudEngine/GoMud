@@ -72,8 +72,11 @@ experience just passed a full feel-test — so the hill is shorter than it looks
       `CanAfford/Spend/Refund` seam on `NpcBuyer`; `Wallet()` returns nil so it's skipped by the regen/
       persistence loops). A win **relists the item into that shop's stock** (`AddAffixedStock`,
       instance-safe) — folding #3 in so a shop never spends gold for nothing. `AuctionShopkeeperEnabled`
-      toggle. Unit-tested + suite green + build clean. Followup noted: a min-auction-value floor on
-      *listings* (keeps trivial items off the block / out of relist).
+      toggle. Unit-tested + suite green + build clean.
+  - ✅ **Min-auction-value floor on listings** — DONE 2026-07-15 (local, unpushed). `AuctionMinListValue`
+    plugin config (default 100g); the `auction` command rejects items whose intrinsic `spec.Value` is
+    below the floor (gates on value, not the seller's buyout), keeping trivia off the block and out of
+    the shopkeeper's relist. `tooTrivialToAuction` helper, unit-tested + boot clean.
     - ✅ **#2.5 Official** — DONE 2026-07-15 (local, unpushed; spec+plan
       `2026-07-15-npc-auction-buyer-official-*`). "The Crown Assessor" — a fifth `NpcBuyer`
       that bids a premium (1.25) from a deep 25k purse on items carrying the new

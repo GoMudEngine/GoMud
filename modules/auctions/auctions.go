@@ -177,6 +177,9 @@ func (mod *AuctionsModule) load() {
 	if v, ok := mod.plug.Config.Get(`AuctionShopkeeperEnabled`).(bool); ok {
 		shopkeeperEnabled = v
 	}
+	if v, ok := mod.plug.Config.Get(`AuctionMinListValue`).(int); ok && v >= 0 {
+		auctionMinListValue = v
+	}
 	if v, ok := mod.plug.Config.Get(`AuctionOfficialEnabled`).(bool); ok {
 		officialEnabled = v
 	}
@@ -355,6 +358,14 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 
 	if !found {
 		user.SendText(messaging.CategorySystem, fmt.Sprintf("You don't have a %s to auction.", rest))
+		return true, nil
+	}
+
+	// Trivial items can't be listed — keeps clutter (and cheap shopkeeper
+	// relists) off the block.
+	if tooTrivialToAuction(matchItem) {
+		user.SendText(messaging.CategorySystem,
+			fmt.Sprintf(`The <ansi fg="item">%s</ansi> is too trivial to interest the auction house.`, matchItem.DisplayName()))
 		return true, nil
 	}
 
@@ -760,7 +771,19 @@ var getUser = users.GetByUserId
 var (
 	auctionReservePct    = 0.25
 	auctionCommissionPct = 0.05
+	// auctionMinListValue is the minimum intrinsic item value (spec.Value) a
+	// player may list on the block; below it the item is too trivial to auction
+	// (also keeps trivia out of the shopkeeper's relist stock). 0 disables the
+	// floor. Overridden from AuctionMinListValue plugin config in load().
+	auctionMinListValue = 100
 )
+
+// tooTrivialToAuction reports whether an item's intrinsic value falls below the
+// minimum listable value. Gates on spec.Value (not the seller's buyout) so a
+// high buyout on junk can't bypass the floor.
+func tooTrivialToAuction(item items.Item) bool {
+	return auctionMinListValue > 0 && item.GetSpec().Value < auctionMinListValue
+}
 
 // reserveFrom derives the reserve / minimum bid from a buyout price. Floors at 1.
 func reserveFrom(buyout int, pct float64) int {

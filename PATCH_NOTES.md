@@ -1,5 +1,12 @@
 # DOGMud Patch Notes
 
+## 2026-07-15 — Auction house: no more junk on the block
+
+The auction house won't bother with trinkets. Items below a modest worth can no longer
+be listed for auction, so the block stays a place for gear and goods people actually want —
+which also keeps the town's shopkeepers from restocking their shelves with worthless odds
+and ends they won at auction.
+
 ## 2026-07-15 — Loot & corpses: three fixes
 
 - **Coin is collected when you make the kill.** A slain creature's gold now comes
