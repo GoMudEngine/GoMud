@@ -326,6 +326,7 @@ type ItemSpec struct {
 	VendorCategories      []string          `yaml:"vendor_categories,omitempty"`       // Disciplines that buy/sell this item; mirrors shops.ValidCraftSupports minus "general"
 	NotSalable            bool              `yaml:"not_salable,omitempty"`             // True for lore / flavor / legacy items excluded from vendor economy validation
 	NeverDrops            bool              `yaml:"never_drops,omitempty"`             // Equipped-only: this item is skipped entirely by mob death-loot drops (boss-only gear that must never reach players). Does not affect carried Character.Items — use a separate mechanism (loot_pool / character.items) for guaranteed loot on the same mob.
+	Restricted            bool              `yaml:"restricted,omitempty"`              // Contraband: bid on by the auction Official (The Crown Assessor, econ #2.5). Interest tag only — no other mechanics.
 
 	// YAML-driven use effects — replaces JS onUse/onCommand_use
 	OnUseTrainSkill  string `yaml:"on_use_train_skill,omitempty"`
