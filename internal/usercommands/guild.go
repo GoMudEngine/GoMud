@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // Guild is the player-facing guild command. It dispatches to subcommands; all
@@ -52,6 +53,8 @@ func Guild(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		guildTransfer(user, remainder, rest)
 	case "motd":
 		guildSetMotd(user, remainder)
+	case "chat", "say", "gc":
+		guildChatSend(user, remainder)
 	default:
 		user.SendText(messaging.CategorySystem, `Unknown guild command. Try <ansi fg="command">help guild</ansi>.`)
 	}
@@ -406,6 +409,56 @@ func guildTransfer(user *users.UserRecord, remainder, rest string) {
 	if g2, ok := guilds.Get(g.Tag); ok {
 		announceGuild(g2, fmt.Sprintf(`<ansi fg="username">%s</ansi> is now the guild leader.`, name), user.UserId)
 	}
+}
+
+// guildChatRecipients returns the member userIds to deliver a guild-chat line to
+// (all members except the sender). The caller filters offline members.
+func guildChatRecipients(g *guilds.Guild, senderId int) []int {
+	out := []int{}
+	for _, m := range g.Members {
+		if m.UserId != senderId {
+			out = append(out, m.UserId)
+		}
+	}
+	return out
+}
+
+// guildChatSend broadcasts a guild-chat line to online members, echoes to the
+// sender, and emits a Communication event for the web/GMCP comm tab.
+func guildChatSend(user *users.UserRecord, msg string) {
+	g, ok := guilds.GetByUser(user.UserId)
+	if !ok {
+		user.SendText(messaging.CategorySystem, `You are not in a guild.`)
+		return
+	}
+	if user.Muted {
+		user.SendText(messaging.CategoryWarning, `You are <ansi fg="alert-5">MUTED</ansi>.`)
+		return
+	}
+	msg = strings.TrimSpace(msg)
+	if msg == "" {
+		user.SendText(messaging.CategorySystem, `Usage: <ansi fg="command">guild chat &lt;message&gt;</ansi>  (or <ansi fg="command">gc &lt;message&gt;</ansi>)`)
+		return
+	}
+	for _, uid := range guildChatRecipients(g, user.UserId) {
+		if u := users.GetByUserId(uid); u != nil {
+			line := fmt.Sprintf(`<ansi fg="cyan">(guild)</ansi> <ansi fg="username">%s</ansi>: <ansi fg="white">%s</ansi>`, user.Character.Name, msg)
+			u.SendText(messaging.CategorySystem, util.SplitStringNL(line, 80))
+		}
+	}
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="cyan">(guild)</ansi> You: <ansi fg="white">%s</ansi>`, msg))
+	events.AddToQueue(events.Communication{
+		SourceUserId: user.UserId,
+		CommType:     `guild`,
+		Name:         user.Character.Name,
+		Message:      msg,
+	})
+}
+
+// Gc is the top-level guild-chat alias for `guild chat`.
+func Gc(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+	guildChatSend(user, rest)
+	return true, nil
 }
 
 func guildSetMotd(user *users.UserRecord, remainder string) {

@@ -7,6 +7,7 @@ organise by rank. Members are ranked <ansi fg="white">member</ansi>,
 <ansi fg="yellow">Usage: </ansi>
 
   <ansi fg="command">guild</ansi>                     - Your guild's roster and message of the day
+  <ansi fg="command">guild chat <message></ansi>      - Speak to your guild (shortcut: <ansi fg="command">gc</ansi>)
   <ansi fg="command">guild create <TAG> <name></ansi> - Found a guild (a founding fee is paid from your bank)
   <ansi fg="command">guild list</ansi>                - List all guilds
   <ansi fg="command">guild invite <player></ansi>     - (officer+) Invite an online player
