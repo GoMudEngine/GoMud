@@ -18,6 +18,7 @@ organise by rank. Members are ranked <ansi fg="white">member</ansi>,
   <ansi fg="command">guild promote <player></ansi>    - (leader) Promote a member to officer
   <ansi fg="command">guild demote <player></ansi>     - (leader) Demote an officer to member
   <ansi fg="command">guild transfer <player></ansi>   - (leader) Hand leadership to another member
+  <ansi fg="command">guild title <rank> <name></ansi>  - (leader) Rename a rank (member/officer/leader)
   <ansi fg="command">guild motd <text></ansi>         - (officer+) Set the message of the day
   <ansi fg="command">guild disband</ansi>             - (leader) Disband the guild
 

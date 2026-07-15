@@ -67,6 +67,8 @@ func Guild(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		guildTake(user, remainder)
 	case "treasury", "bank", "vault":
 		guildTreasury(user, remainder)
+	case "title":
+		guildSetTitle(user, remainder)
 	default:
 		user.SendText(messaging.CategorySystem, `Unknown guild command. Try <ansi fg="command">help guild</ansi>.`)
 	}
@@ -99,7 +101,7 @@ func guildInfo(user *users.UserRecord) {
 	for _, rank := range []guilds.GuildRank{guilds.RankLeader, guilds.RankOfficer, guilds.RankMember} {
 		for _, m := range g.Members {
 			if m.Rank == rank {
-				user.SendText(messaging.CategorySystem, fmt.Sprintf(`  <ansi fg="white">%-20s</ansi> <ansi fg="black-bold">%s</ansi>`, m.CharacterName, m.Rank))
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(`  <ansi fg="white">%-20s</ansi> <ansi fg="black-bold">%s</ansi>`, m.CharacterName, g.RankTitle(m.Rank)))
 			}
 		}
 	}
@@ -376,14 +378,14 @@ func guildSetRank(user *users.UserRecord, remainder string, promote bool) {
 			return
 		}
 		guilds.SetRank(g.Tag, targetId, guilds.RankOfficer)
-		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You promote <ansi fg="username">%s</ansi> to officer.`, name))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You promote <ansi fg="username">%s</ansi> to %s.`, name, g.RankTitle(guilds.RankOfficer)))
 	} else {
 		if cur != guilds.RankOfficer {
 			user.SendText(messaging.CategorySystem, `That member is not an officer.`)
 			return
 		}
 		guilds.SetRank(g.Tag, targetId, guilds.RankMember)
-		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You demote <ansi fg="username">%s</ansi> to member.`, name))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You demote <ansi fg="username">%s</ansi> to %s.`, name, g.RankTitle(guilds.RankMember)))
 	}
 	if tu := users.GetByUserId(targetId); tu != nil {
 		tu.SendText(messaging.CategorySystem, `Your guild rank has changed.`)
@@ -681,6 +683,53 @@ func guildTreasury(user *users.UserRecord, remainder string) {
 	} else {
 		user.SendText(messaging.CategorySystem, `Treasury access: leader only.`)
 	}
+}
+
+// parseGuildRank resolves a case-insensitive rank name to a GuildRank.
+func parseGuildRank(s string) (guilds.GuildRank, bool) {
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "member":
+		return guilds.RankMember, true
+	case "officer":
+		return guilds.RankOfficer, true
+	case "leader":
+		return guilds.RankLeader, true
+	}
+	return "", false
+}
+
+func guildSetTitle(user *users.UserRecord, remainder string) {
+	g, ok := guilds.GetByUser(user.UserId)
+	if !ok {
+		user.SendText(messaging.CategorySystem, `You are not in a guild.`)
+		return
+	}
+	if !g.IsLeader(user.UserId) {
+		user.SendText(messaging.CategorySystem, `Only the guild leader can rename ranks.`)
+		return
+	}
+	fields := strings.Fields(remainder)
+	if len(fields) == 0 {
+		user.SendText(messaging.CategorySystem, `Usage: <ansi fg="command">guild title <member|officer|leader> [new name]</ansi>  (omit the name to reset).`)
+		return
+	}
+	rank, ok := parseGuildRank(fields[0])
+	if !ok {
+		user.SendText(messaging.CategorySystem, `Name a rank: <ansi fg="white">member</ansi>, <ansi fg="white">officer</ansi>, or <ansi fg="white">leader</ansi>.`)
+		return
+	}
+	title := strings.TrimSpace(strings.Join(fields[1:], " "))
+	if title == "" {
+		guilds.SetRankTitle(g.Tag, rank, "")
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You reset the <ansi fg="white">%s</ansi> rank to its default name.`, rank))
+		return
+	}
+	if err := guilds.ValidRankTitle(title); err != nil {
+		user.SendText(messaging.CategorySystem, `Invalid title: `+err.Error())
+		return
+	}
+	guilds.SetRankTitle(g.Tag, rank, title)
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`Members of <ansi fg="white">%s</ansi> rank are now titled <ansi fg="cyan">%s</ansi>.`, rank, title))
 }
 
 func guildSetMotd(user *users.UserRecord, remainder string) {
