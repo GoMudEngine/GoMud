@@ -18,3 +18,4 @@ weight: 2.5
 value: 1600
 rarity_tier: 86
 is_component: true
+restricted: true
