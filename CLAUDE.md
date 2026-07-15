@@ -63,8 +63,11 @@ rm -rf _datafiles/world/dogmud/mobs.instances/* \
 
 Then restart the server. The engine will re-spawn mobs and re-build
 rooms from the (updated) templates. **Do NOT also wipe
-`_datafiles/world/dogmud/shops/`** — that's persistent living-economy
-state, not instance overrides (see Shop Persistence below).
+`_datafiles/world/dogmud/shops/` or `_datafiles/world/dogmud/guilds/`** —
+those are persistent living state (shop economy; player guilds), not
+instance overrides (see Shop Persistence below). Guild files are
+runtime-generated per-guild YAML (`guilds/<tag>.yaml`); a malformed one
+logs+skips at boot rather than panicking (unlike authored content).
 
 When making content changes you intend to smoke-test, run the wipe
 as part of your pre-smoke ritual before the user is involved. When
