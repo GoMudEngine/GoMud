@@ -65,6 +65,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
+	"github.com/GoMudEngine/GoMud/internal/achievements"
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/relationships"
 	"github.com/GoMudEngine/GoMud/internal/species"
@@ -1697,6 +1698,7 @@ func loadAllDataFiles(isReload bool) {
 	mudlog.Info("shop cache prewarmed (spawninfo)", "count", prewarmedFromSpawn)
 	pets.LoadDataFiles()
 	quests.LoadDataFiles()
+	achievements.LoadDataFiles()
 	ferry.LoadDataFiles()
 	warehouse.LoadAll()
 	questengine.LoadDataFiles()
