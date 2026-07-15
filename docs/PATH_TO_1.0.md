@@ -151,8 +151,15 @@ experience just passed a full feel-test — so the hill is shorter than it looks
 - ⬜ **Player guilds / clans** — absent. One of the strongest "bring your friends /
   reason to stay" drivers in the genre. Larger build; a real 1.0-vs-not
   differentiator.
-- ⬜ **Achievements / accolades** — goals + bragging rights for new players; plugs
-  into the leaderboards we already have.
+- ✅ **Achievements / accolades** — DONE 2026-07-15 (local, unpushed; spec+plan
+  `2026-07-15-achievements-*`). YAML-authored, boot-validated definitions (`internal/
+  achievements`, fixed trigger vocabulary incl. `item_rarity` "acquire a pinnacle item");
+  a `NewRound` poll (`internal/hooks`) evaluates online players and privately announces
+  unlocks; `achievements` command (earned + locked with progress); `Character.Achievements`
+  storage; an achievement-points board on `modules/leaderboards`; a web catalog page
+  (`modules/achievements`); and a 22-item starter set across five categories. Poll-based
+  (all triggers state-derivable). Unit-tested + boot clean. Event-driven instant unlocks,
+  hidden/tiered achievements, and a `/new-achievement` command are future enhancements.
 
 ---
 

@@ -1,5 +1,15 @@
 # DOGMud Patch Notes
 
+## 2026-07-15 — Achievements: accolades to chase
+
+The realm now keeps a tally of your deeds. Land your first kill, amass a fortune, explore far
+and wide, master a talent, complete quests, or get your hands on a piece of legendary gear —
+and you'll earn an accolade for it, announced the moment you do. The new
+<ansi fg="command">achievements</ansi> command shows what you've earned and what's still
+waiting, grouped by category with your point total, and the points feed a new achievements
+leaderboard so you can measure yourself against the realm. More accolades will be added over
+time.
+
 ## 2026-07-15 — Send mail to another adventurer
 
 You can now write to another player by name with the new <ansi fg="command">mail</ansi>
