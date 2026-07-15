@@ -98,9 +98,16 @@ experience just passed a full feel-test — so the hill is shorter than it looks
     seize→unsold→re-seize churn), and sub-floor junk is disposed at seizure without ever hitting the
     block. The single floor knob doubles as the kill-switch (set very high ⇒ dispose all ⇒ old behavior).
     Unit-tested (configs/events/hooks/auctions) + full boot clean.
-- 🟡 **Player-to-player mudmail** — the admin mass-mail + inbox exist, but there is NO player→player
-  send (message + gold + item to a specific recipient, gold via bank). A real (moderate) build reusing
-  the existing Message/Inbox infra. Deferred behind the econ-loop arc (user chose auction first).
+- ✅ **Player-to-player mudmail** — DONE 2026-07-15 (local, unpushed; spec+plan
+  `2026-07-15-player-mudmail-*`). New player `mail <recipient>` command (interactive prompts):
+  resolves a recipient by character name online *or* offline (`CharacterNameSearch`), deducts
+  **on-hand** gold + consumes an attached backpack item, delivers to the recipient's inbox
+  (online notify / offline load+save). The existing `inbox` read path credits gold→bank and
+  item→backpack. Per-sender **send cooldown** (`MailSendCooldownRounds`, default 10) is the
+  minimal anti-spam guard. Also fixed a latent inbox bug: an over-capacity reader used to
+  silently lose an attached item — now the message defers unread (no partial gold credit) until
+  they free space. Free postage. Pure-helper unit tests + boot clean. **This is the last
+  substantive econ-arc item — the living-marketplace arc is complete.**
 
 ---
 

@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-07-15 — Send mail to another adventurer
+
+You can now write to another player by name with the new <ansi fg="command">mail</ansi>
+command — attach a note, some coin from your purse, and even an item from your pack, and it
+will be waiting in their mailbox the next time they read their mail (the coin lands safely in
+their bank, the item in their pack). It reaches them whether they are online or away. There is
+a short wait between sendings to keep the mailboxes civil, and if someone's pack is too full
+for a parcel, it simply waits in the mail rather than being lost.
+
 ## 2026-07-15 — Auction house: no more junk on the block
 
 The auction house won't bother with trinkets. Items below a modest worth can no longer

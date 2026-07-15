@@ -1,0 +1,17 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">mail</ansi>
+
+The <ansi fg="command">mail</ansi> command sends a letter to another adventurer by
+name — with optional coin from your purse and an item from your pack. It reaches
+them whether they are online or away, and waits in their mailbox until they read
+it. Any coin lands in their bank and any item in their pack.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">mail <recipient></ansi> - Begin composing a letter to that adventurer
+
+You will be asked for a message, how much gold to attach (from what you are
+carrying), and an item to attach (or "none"). Nothing leaves you until you
+confirm the send.
+
+Read your own mail with the <ansi fg="command">inbox</ansi> command. There is a
+short wait between sendings.

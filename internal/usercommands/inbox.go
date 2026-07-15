@@ -48,17 +48,13 @@ func Inbox(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		user.SendText(messaging.CategorySystem, border)
 
 		if !msg.Read {
-			if msg.Gold > 0 {
-				user.Character.Bank += msg.Gold
-
-				events.AddToQueue(events.EquipmentChange{
-					UserId:     user.UserId,
-					BankChange: msg.Gold,
-				})
-
-			}
-			if msg.Item != nil {
-				user.Character.StoreItem(*msg.Item)
+			if !applyMailReceipt(user, &user.Inbox[idx]) {
+				// Attached item won't fit — keep the message unread so nothing is
+				// lost; the reader frees space and checks mail again. (The message
+				// body + border were already printed above this block.)
+				user.SendText(messaging.CategorySystem,
+					fmt.Sprintf(`Your pack is too full to receive the <ansi fg="item">%s</ansi> — free some space and check your mail again.`, msg.Item.DisplayName()))
+				continue
 			}
 		}
 
