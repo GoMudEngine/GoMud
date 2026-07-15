@@ -52,6 +52,9 @@ var (
 
 	shopkeeperEnabled = true // gated by AuctionShopkeeperEnabled config
 
+	officialEnabled = true // gated by AuctionOfficialEnabled config
+	officialPremium = 1.25 // deep-pockets premium over item value for restricted goods
+
 	// saveShopFn persists a shop after the shopkeeper mutates its gold/stock.
 	// Overridable in tests to avoid disk I/O.
 	saveShopFn = shops.SaveShop
@@ -127,6 +130,30 @@ func (a *adventurer) Spend(n int)          { a.wallet.Spend(n) }
 func (a *adventurer) Refund(n int)         { a.wallet.Refund(n) }
 func (a *adventurer) Wallet() *NpcWallet   { return a.wallet }
 func (a *adventurer) Flavor() string       { return "to gear up" }
+
+// ── Official archetype: buys restricted goods and sinks them (econ #2.5) ──
+// "The Crown Assessor" — a state authority that buys contraband off the block
+// at a premium from a deep purse and takes it out of circulation.
+type official struct {
+	name   string
+	wallet *NpcWallet
+}
+
+func (o *official) Name() string { return o.name }
+func (o *official) Interested(item items.Item) bool {
+	if !officialEnabled {
+		return false
+	}
+	return item.GetSpec().Restricted
+}
+func (o *official) MaxBid(item items.Item) int {
+	return int(float64(item.GetSpec().Value) * officialPremium)
+}
+func (o *official) CanAfford(n int) bool { return o.wallet.CanAfford(n) }
+func (o *official) Spend(n int)          { o.wallet.Spend(n) }
+func (o *official) Refund(n int)         { o.wallet.Refund(n) }
+func (o *official) Wallet() *NpcWallet   { return o.wallet }
+func (o *official) Flavor() string       { return "into the crown's vaults" }
 
 // reserveRatio returns the shop gold-reserve fraction from config (0.50 fallback).
 func reserveRatio() float64 {
@@ -263,6 +290,7 @@ var npcBuyers = []NpcBuyer{
 	&craftsperson{name: "Master Ordwin", wallet: &NpcWallet{Balance: 6000, Cap: 6000}},
 	&adventurer{name: "Sellsword Kest", wallet: &NpcWallet{Balance: 6000, Cap: 6000}},
 	&shopkeeper{name: "The Merchants' Guild"},
+	&official{name: "The Crown Assessor", wallet: &NpcWallet{Balance: 25000, Cap: 25000}},
 }
 
 func buyerByName(name string) NpcBuyer {

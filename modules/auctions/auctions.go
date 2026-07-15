@@ -177,6 +177,12 @@ func (mod *AuctionsModule) load() {
 	if v, ok := mod.plug.Config.Get(`AuctionShopkeeperEnabled`).(bool); ok {
 		shopkeeperEnabled = v
 	}
+	if v, ok := mod.plug.Config.Get(`AuctionOfficialEnabled`).(bool); ok {
+		officialEnabled = v
+	}
+	if v, ok := mod.plug.Config.Get(`OfficialPremium`).(float64); ok && v > 0 {
+		officialPremium = v
+	}
 }
 
 func (mod *AuctionsModule) save() {
