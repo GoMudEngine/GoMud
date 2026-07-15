@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -60,5 +61,50 @@ func TestResolveMailRecipient(t *testing.T) {
 	}
 	if _, _, ok := resolveMailRecipient("Offlinerecipient", 9, onlineByName, offlineSearch); ok {
 		t.Error("self-mail (offline) must be rejected")
+	}
+}
+
+func TestApplyMailReceipt_GoldOnly(t *testing.T) {
+	u := &users.UserRecord{UserId: 1, Character: &characters.Character{}}
+	msg := &users.Message{Gold: 250}
+	if !applyMailReceipt(u, msg) {
+		t.Fatal("gold-only receipt should commit")
+	}
+	if u.Character.Bank != 250 {
+		t.Errorf("bank = %d, want 250", u.Character.Bank)
+	}
+}
+
+func TestApplyMailReceipt_ItemFits(t *testing.T) {
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: 8001, Name: "ring", Type: items.Ring, Value: 100}) // weightless -> fits
+	u := &users.UserRecord{UserId: 1, Character: &characters.Character{}}
+	itm := items.New(8001)
+	msg := &users.Message{Gold: 50, Item: &itm}
+	if !applyMailReceipt(u, msg) {
+		t.Fatal("fitting item should commit")
+	}
+	if u.Character.Bank != 50 {
+		t.Errorf("bank = %d, want 50", u.Character.Bank)
+	}
+	if len(u.Character.Items) != 1 {
+		t.Errorf("backpack items = %d, want 1", len(u.Character.Items))
+	}
+}
+
+func TestApplyMailReceipt_OverCapacityDefers(t *testing.T) {
+	// A very heavy item can't fit a zero-stat character -> StoreItem fails.
+	items.RegisterTestItemSpec(&items.ItemSpec{ItemId: 8002, Name: "anvil", Type: items.Weapon, Value: 100, Weight: 100000})
+	u := &users.UserRecord{UserId: 1, Character: &characters.Character{}}
+	itm := items.New(8002)
+	msg := &users.Message{Gold: 999, Item: &itm}
+
+	if applyMailReceipt(u, msg) {
+		t.Fatal("over-capacity item receipt must defer (return false)")
+	}
+	if u.Character.Bank != 0 {
+		t.Errorf("bank = %d, want 0 (gold not credited when deferred)", u.Character.Bank)
+	}
+	if len(u.Character.Items) != 0 {
+		t.Errorf("backpack items = %d, want 0", len(u.Character.Items))
 	}
 }

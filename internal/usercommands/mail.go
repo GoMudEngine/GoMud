@@ -1,8 +1,33 @@
 package usercommands
 
 import (
+	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
+
+// applyMailReceipt credits an unread message's gold (to the reader's bank) and
+// stores its attached item (to the backpack). Returns false WITHOUT any mutation
+// when an attached item won't fit, so the message can stay unread and nothing is
+// lost or partially credited. Already-read messages are a no-op (return true).
+func applyMailReceipt(user *users.UserRecord, msg *users.Message) bool {
+	if msg.Read {
+		return true
+	}
+	// Try the item first: on failure, defer the whole message (no gold credit).
+	if msg.Item != nil {
+		if !user.Character.StoreItem(*msg.Item) {
+			return false
+		}
+	}
+	if msg.Gold > 0 {
+		user.Character.Bank += msg.Gold
+		events.AddToQueue(events.EquipmentChange{
+			UserId:     user.UserId,
+			BankChange: msg.Gold,
+		})
+	}
+	return true
+}
 
 // mailOnCooldown reports whether a sender who last sent at lastSent is still
 // within the cooldown window at round now. Disabled when cooldown <= 0 or the
