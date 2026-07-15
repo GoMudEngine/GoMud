@@ -68,6 +68,7 @@ func init() {
 	a.plug.Callbacks.SetOnSave(a.save)
 
 	events.RegisterListener(events.NewRound{}, a.newRoundHandler)
+	events.RegisterListener(events.StorageItemSeized{}, a.storageSeizedHandler)
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -403,6 +404,26 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 	return true, nil
 }
 
+// storageSeizedHandler enqueues a seized storage item for the auction block. It
+// runs on the event queue (same goroutine as newRoundHandler), so no locking.
+func (mod *AuctionsModule) storageSeizedHandler(e events.Event) events.ListenerReturn {
+	evt, ok := e.(events.StorageItemSeized)
+	if !ok {
+		return events.Continue
+	}
+	count := evt.Count
+	if count < 1 {
+		count = 1
+	}
+	mod.auctionMgr.SeizedQueue = append(mod.auctionMgr.SeizedQueue, SeizedLot{
+		Item:          evt.Item,
+		Count:         count,
+		ExOwnerUserId: evt.UserId,
+		Owed:          evt.Owed,
+	})
+	return events.Continue
+}
+
 func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn {
 
 	evt := e.(events.NewRound)
@@ -655,11 +676,22 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 	return events.Continue
 }
 
+// SeizedLot is a stored item seized from a player who couldn't pay bank-storage
+// rent, waiting for a free auction block. It lists anonymously; sale proceeds
+// settle a lien (Owed) with the surplus returning to the ex-owner.
+type SeizedLot struct {
+	Item          items.Item `yaml:"Item"`
+	Count         int        `yaml:"Count"`         // >=1; winner receives all Count units
+	ExOwnerUserId int        `yaml:"ExOwnerUserId"` // surplus after the lien returns here
+	Owed          int        `yaml:"Owed"`          // the lien — unpaid rent to recoup from the sale
+}
+
 type AuctionManager struct {
 	ActiveAuction   *AuctionItem `yaml:"ActiveAuction,omitempty"`
 	maxHistoryItems int
 	PastAuctions    []PastAuctionItem `yaml:"PastAuctions,omitempty"`
 	WalletBalances  map[string]int    `yaml:"WalletBalances,omitempty"` // NPC persona name -> wallet balance
+	SeizedQueue     []SeizedLot       `yaml:"SeizedQueue,omitempty"`    // storage seizures awaiting a free block
 }
 
 type AuctionItem struct {
