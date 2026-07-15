@@ -82,6 +82,7 @@ trigger:
 | `quest_completed`    | token       | `HasQuest(token)` (a specific quest's end token)               |
 | `quests_completed`   | threshold   | count of completed quests (`-end` tokens) `>= threshold`        |
 | `mutation_count`     | threshold   | `len(Mutations) >= threshold`                                  |
+| `item_rarity`        | threshold   | owns any **equipment** item (weapon/armor/wearable; NOT components/materials/potions) with `spec.RarityTier >= threshold`, scanning backpack + equipped + bank storage. Captures "acquired a pinnacle item" — the legendary BIS gear sits at rarity 82–90; the equipment filter excludes the high-rarity crafting reagents so a raw component doesn't count. |
 | `achievement_points` | threshold   | the player's current total earned points `>= threshold` (meta/tiered) |
 
 **Loader validation (panic at boot):** unknown `type`; duplicate `id`; missing required
@@ -168,7 +169,8 @@ A rounded set so new players have goals immediately. Sketch (final names/thresho
 - **Wealth:** Coin Purse (`gold_total` 1000), Well-Off (10000), Magnate (100000).
 - **Progression:** Honed (`stat_reached` any 130), Formidable (`stat_reached` any 160),
   Skilled (`skill_reached` any 25), Twice-Touched (`mutation_count` 2), Chimeric
-  (`mutation_count` 5).
+  (`mutation_count` 5), **The Pinnacle (`item_rarity` 82 — acquire a legendary/pinnacle
+  piece of gear; high points, ~40, it's a big deal)**.
 - **Quests:** Errand Runner (`quests_completed` 1), Adventurer (`quests_completed` 5),
   Hero of the Realm (`quests_completed` 15).
 - **Meta:** Decorated (`achievement_points` 50), Legend (`achievement_points` 150).
