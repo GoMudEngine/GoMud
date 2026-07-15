@@ -7,6 +7,11 @@ import (
 	"time"
 )
 
+// Invariant: all guild mutations run on the single event-processing goroutine
+// (command handlers + hooks). registryMu guards the maps; the *Guild pointers
+// returned by Get/All are only mutated on that goroutine, so command-layer reads
+// of g.Members are safe today. If a concurrent reader is ever added (e.g. a web
+// page goroutine like the leaderboards module has), snapshot under the lock.
 var (
 	registryMu sync.RWMutex
 	byTag      = map[string]*Guild{} // key: UPPERCASE tag
@@ -121,11 +126,34 @@ func AddMember(tag string, userId int, charName string) error {
 	}
 	registryMu.Lock()
 	g.Members = append(g.Members, GuildMember{UserId: userId, CharacterName: charName, Rank: RankMember, Joined: time.Now()})
-	g.PendingInvites = removeInt(g.PendingInvites, userId)
 	byUser[userId] = strings.ToUpper(g.Tag)
 	registryMu.Unlock()
+	// Clear this user's pending invite from EVERY guild (including this one), so a
+	// stale cross-guild invitation can't linger and let them later join a second
+	// guild off it without a fresh invitation.
+	clearInvitesEverywhere(userId)
 	return Save(g)
 }
+
+// clearInvitesEverywhere removes userId's pending invite from all guilds and
+// persists the ones it touched. Used on join and decline.
+func clearInvitesEverywhere(userId int) {
+	var touched []*Guild
+	registryMu.Lock()
+	for _, g := range byTag {
+		if g.HasInvite(userId) {
+			g.PendingInvites = removeInt(g.PendingInvites, userId)
+			touched = append(touched, g)
+		}
+	}
+	registryMu.Unlock()
+	for _, g := range touched {
+		_ = Save(g)
+	}
+}
+
+// ClearInvites removes every pending invite for userId (decline-all).
+func ClearInvites(userId int) { clearInvitesEverywhere(userId) }
 
 // RemoveMember removes userId and persists.
 func RemoveMember(tag string, userId int) error {

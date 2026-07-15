@@ -29,7 +29,7 @@ func rankOrder(r GuildRank) int {
 
 type GuildMember struct {
 	UserId        int       `yaml:"userid"`
-	CharacterName string    `yaml:"charactername"`
+	CharacterName string    `yaml:"charactername"` // name at join time (display only; may be stale after a rename)
 	Rank          GuildRank `yaml:"rank"`
 	Joined        time.Time `yaml:"joined"`
 }

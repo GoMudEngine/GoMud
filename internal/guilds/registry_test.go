@@ -82,3 +82,27 @@ func TestRegistry_Invites(t *testing.T) {
 		t.Error("invite should clear on join")
 	}
 }
+
+func TestRegistry_JoinClearsCrossGuildInvites(t *testing.T) {
+	defer SetDataDirForTest(t.TempDir())()
+	resetRegistry()
+
+	if _, err := Create("AA", "Alpha", 1, "L1"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Create("BB", "Beta", 2, "L2"); err != nil {
+		t.Fatal(err)
+	}
+	AddInvite("AA", 9)
+	AddInvite("BB", 9)
+
+	if err := AddMember("AA", 9, "Bob"); err != nil {
+		t.Fatal(err)
+	}
+	if g, _ := Get("BB"); g.HasInvite(9) {
+		t.Error("joining AA should clear BB's stale invite")
+	}
+	if _, ok := GuildWithInvite(9); ok {
+		t.Error("no pending invites should remain anywhere after joining")
+	}
+}

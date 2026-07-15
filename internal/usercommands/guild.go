@@ -296,13 +296,12 @@ func guildAcceptInvite(user *users.UserRecord) {
 }
 
 func guildDeclineInvite(user *users.UserRecord) {
-	g, ok := guilds.GuildWithInvite(user.UserId)
-	if !ok {
+	if _, ok := guilds.GuildWithInvite(user.UserId); !ok {
 		user.SendText(messaging.CategorySystem, `You have no pending guild invitation.`)
 		return
 	}
-	guilds.RemoveInvite(g.Tag, user.UserId)
-	user.SendText(messaging.CategorySystem, fmt.Sprintf(`You decline the invitation to <ansi fg="yellow-bold">%s</ansi>.`, g.Name))
+	guilds.ClearInvites(user.UserId) // clear every pending invite deterministically
+	user.SendText(messaging.CategorySystem, `You decline your pending guild invitation(s).`)
 }
 
 func guildKick(user *users.UserRecord, remainder string) {
