@@ -1,0 +1,8 @@
+id: cartographer
+name: Cartographer
+description: Chart two hundred and fifty rooms.
+category: exploration
+points: 20
+trigger:
+  type: rooms_explored
+  threshold: 250

@@ -1,0 +1,8 @@
+id: legend
+name: Legend
+description: Earn a hundred and fifty achievement points.
+category: progression
+points: 25
+trigger:
+  type: achievement_points
+  threshold: 150

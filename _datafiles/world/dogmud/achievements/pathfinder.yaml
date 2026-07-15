@@ -1,0 +1,8 @@
+id: pathfinder
+name: Pathfinder
+description: Explore a hundred rooms.
+category: exploration
+points: 10
+trigger:
+  type: rooms_explored
+  threshold: 100

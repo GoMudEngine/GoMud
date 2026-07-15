@@ -1,0 +1,8 @@
+id: first-blood
+name: First Blood
+description: Defeat your first foe.
+category: combat
+points: 5
+trigger:
+  type: mob_kills
+  threshold: 1

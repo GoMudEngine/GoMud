@@ -1,0 +1,9 @@
+id: formidable
+name: Formidable
+description: Push a talent past mortal limits.
+category: progression
+points: 20
+trigger:
+  type: stat_reached
+  stat: any
+  threshold: 160

@@ -1,0 +1,8 @@
+id: veteran
+name: Veteran
+description: Fell a thousand foes.
+category: combat
+points: 25
+trigger:
+  type: mob_kills
+  threshold: 1000

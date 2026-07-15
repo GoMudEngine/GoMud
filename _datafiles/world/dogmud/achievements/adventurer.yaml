@@ -1,0 +1,8 @@
+id: adventurer
+name: Adventurer
+description: Complete five quests.
+category: quests
+points: 15
+trigger:
+  type: quests_completed
+  threshold: 5

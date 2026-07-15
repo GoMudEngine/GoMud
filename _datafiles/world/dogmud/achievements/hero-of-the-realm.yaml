@@ -1,0 +1,8 @@
+id: hero-of-the-realm
+name: Hero of the Realm
+description: Complete fifteen quests.
+category: quests
+points: 30
+trigger:
+  type: quests_completed
+  threshold: 15

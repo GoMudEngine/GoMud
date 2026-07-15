@@ -1,0 +1,8 @@
+id: twice-touched
+name: Twice-Touched
+description: Bear two mutations.
+category: progression
+points: 10
+trigger:
+  type: mutation_count
+  threshold: 2

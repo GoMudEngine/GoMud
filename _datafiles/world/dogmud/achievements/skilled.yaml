@@ -1,0 +1,9 @@
+id: skilled
+name: Skilled
+description: Master a discipline.
+category: progression
+points: 15
+trigger:
+  type: skill_reached
+  skill: any
+  threshold: 25

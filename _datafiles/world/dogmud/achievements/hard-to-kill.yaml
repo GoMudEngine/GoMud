@@ -1,0 +1,8 @@
+id: hard-to-kill
+name: Hard to Kill
+description: Rise again after ten deaths.
+category: combat
+points: 10
+trigger:
+  type: deaths
+  threshold: 10
