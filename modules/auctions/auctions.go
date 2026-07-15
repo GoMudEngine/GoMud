@@ -861,11 +861,26 @@ func (mod *AuctionsModule) resolveSeizedLot(a *AuctionItem) {
 	// Deliver Count units to a player winner (NPC winner: item sinks/relists below).
 	if a.HighestBidUserId > 0 {
 		if winner := getUser(a.HighestBidUserId); winner != nil {
+			// The winner already paid at bid time — never silently lose a unit.
+			// What fits goes to the backpack; anything over carry capacity is
+			// mailed instead (StoreItem returns false when over ~2x capacity).
+			mailed := 0
 			for i := 0; i < count; i++ {
-				winner.Character.StoreItem(a.ItemData)
-				events.AddToQueue(events.ItemOwnership{UserId: winner.UserId, Item: a.ItemData, Gained: true})
+				if winner.Character.StoreItem(a.ItemData) {
+					events.AddToQueue(events.ItemOwnership{UserId: winner.UserId, Item: a.ItemData, Gained: true})
+					continue
+				}
+				itemCopy := a.ItemData
+				winner.Inbox.Add(users.Message{
+					FromName: `Auction System`,
+					Message:  fmt.Sprintf(`You won the auction for <ansi fg="item">%s</ansi>, but your pack was full — it was sent to your mailbox.`, a.ItemData.DisplayName()),
+					Item:     &itemCopy,
+				})
+				mailed++
 			}
-			winner.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="yellow">You have won the auction for <ansi fg="item">%s</ansi>! It has been added to your backpack.</ansi>`, a.ItemData.DisplayName()))
+			if mailed < count {
+				winner.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="yellow">You have won the auction for <ansi fg="item">%s</ansi>! It has been added to your backpack.</ansi>`, a.ItemData.DisplayName()))
+			}
 		} else {
 			users.SearchOfflineUsers(func(u *users.UserRecord) bool {
 				if u.UserId == a.HighestBidUserId {

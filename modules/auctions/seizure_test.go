@@ -160,6 +160,41 @@ func TestResolveSeizedLot_StackDeliversAllUnits(t *testing.T) {
 	}
 }
 
+func TestResolveSeizedLot_OverCapacityWinner_MailsNotLost(t *testing.T) {
+	// A very heavy item can't fit the winner's backpack -> StoreItem returns
+	// false. The paying winner must NOT lose it: it's mailed instead.
+	cleanup := items.SeedItemsForTest(map[int]*items.ItemSpec{
+		5005: {ItemId: 5005, Name: "anvil", Type: items.Weapon, Value: 1000, Weight: 100000},
+	})
+	defer cleanup()
+
+	winner := &users.UserRecord{UserId: 88, Character: &characters.Character{}}
+	exOwner := &users.UserRecord{UserId: 77, Character: &characters.Character{}}
+	defer fakeUsers(winner, exOwner)()
+
+	mod := &AuctionsModule{auctionMgr: AuctionManager{}}
+	mod.auctionMgr.ActiveAuction = &AuctionItem{
+		ItemData:         items.New(5005),
+		SellerUserId:     77,
+		HighestBid:       400,
+		HighestBidUserId: 88,
+		Seized:           true,
+		OwedLien:         1,
+		SeizedCount:      1,
+	}
+	mod.resolveSeizedLot(mod.auctionMgr.ActiveAuction)
+
+	if len(winner.Character.Items) != 0 {
+		t.Errorf("over-capacity item should not be in backpack; items=%d", len(winner.Character.Items))
+	}
+	if len(winner.Inbox) != 1 {
+		t.Fatalf("over-capacity item should be mailed; inbox=%d", len(winner.Inbox))
+	}
+	if winner.Inbox[0].Item == nil || winner.Inbox[0].Item.ItemId != 5005 {
+		t.Errorf("mailed message should carry the won item")
+	}
+}
+
 func TestResolveSeizedLot_Unsold_Disposed(t *testing.T) {
 	cleanup := items.SeedItemsForTest(map[int]*items.ItemSpec{
 		5001: {ItemId: 5001, Name: "gilded blade", Type: items.Weapon, Value: 1000},
