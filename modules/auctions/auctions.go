@@ -430,6 +430,13 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 
 	auctionNow := mod.auctionMgr.GetCurrentAuction()
 	if auctionNow == nil {
+		mod.drainSeizedQueue(mod.seizedLotDuration())
+		auctionNow = mod.auctionMgr.GetCurrentAuction()
+		if auctionNow == nil {
+			return events.Continue
+		}
+		// A freshly-listed seized lot; players see it via the normal reminder
+		// broadcast on subsequent rounds. Nothing else to do this tick.
 		return events.Continue
 	}
 
@@ -713,6 +720,12 @@ type AuctionItem struct {
 	NpcBoundMobId  int    `yaml:"NpcBoundMobId,omitempty"`
 	NpcBoundRoomId int    `yaml:"NpcBoundRoomId,omitempty"`
 	LastUpdate     time.Time
+	// Seized-lot fields (storage-seizure auction, econ #4). Seized lots list
+	// anonymously; the surplus after OwedLien settles to SellerUserId (ex-owner),
+	// and the winner receives SeizedCount units.
+	Seized      bool `yaml:"Seized,omitempty"`
+	OwedLien    int  `yaml:"OwedLien,omitempty"`
+	SeizedCount int  `yaml:"SeizedCount,omitempty"`
 }
 
 type PastAuctionItem struct {
@@ -751,6 +764,58 @@ func reserveFrom(buyout int, pct float64) int {
 // commissionFor is the house cut of a sale (a gold sink). Rounds down.
 func commissionFor(bid int, pct float64) int {
 	return int(float64(bid) * pct)
+}
+
+// seizedLotDuration is the block time for a seized lot — the same DurationSeconds
+// player lots use (default 60). Tolerates a nil plug for tests.
+func (mod *AuctionsModule) seizedLotDuration() int {
+	if mod.plug != nil {
+		if dur, ok := mod.plug.Config.Get(`DurationSeconds`).(int); ok && dur > 0 {
+			return dur
+		}
+	}
+	return 60
+}
+
+// drainSeizedQueue lists the front seized lot if the block is free. Lists
+// directly (not via StartAuction) because the ex-owner may be offline by now.
+func (mod *AuctionsModule) drainSeizedQueue(durationSeconds int) {
+	if mod.auctionMgr.ActiveAuction != nil || len(mod.auctionMgr.SeizedQueue) == 0 {
+		return
+	}
+	lot := mod.auctionMgr.SeizedQueue[0]
+	mod.auctionMgr.SeizedQueue = mod.auctionMgr.SeizedQueue[1:]
+
+	count := lot.Count
+	if count < 1 {
+		count = 1
+	}
+	buyout := lot.Item.GetSpec().Value * count
+	if buyout < 1 {
+		buyout = 1
+	}
+
+	// Ex-owner name only for records; Anonymous hides it on the block anyway.
+	sellerName := ``
+	if u := getUser(lot.ExOwnerUserId); u != nil {
+		sellerName = u.Character.Name
+	}
+
+	mod.auctionMgr.ActiveAuction = &AuctionItem{
+		ItemData:          lot.Item,
+		SellerUserId:      lot.ExOwnerUserId,
+		SellerName:        sellerName,
+		Anonymous:         true,
+		EndTime:           time.Now().Add(time.Second * time.Duration(durationSeconds)),
+		BuyoutPrice:       buyout,
+		MinimumBid:        reserveFrom(buyout, auctionReservePct),
+		HighestBid:        0,
+		HighestBidUserId:  0,
+		HighestBidderName: ``,
+		Seized:            true,
+		OwedLien:          lot.Owed,
+		SeizedCount:       count,
+	}
 }
 
 func (am *AuctionManager) StartAuction(item items.Item, userId int, buyout int, durationSeconds int, anon bool) bool {
