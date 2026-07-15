@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/justice"
+	"github.com/GoMudEngine/GoMud/internal/guilds"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -303,6 +304,11 @@ func HandleJoin(e events.Event) events.ListenerReturn {
 	if user.Character != nil && user.Character.Presence != nil {
 		_ = user.Character.Presence.TransitionTo(presence.Active,
 			state.TransitionReason{Trigger: presence.TriggerEnteredRoom})
+	}
+
+	// Guild message-of-the-day greeting for guilded players.
+	if g, ok := guilds.GetByUser(user.UserId); ok && g.Motd != "" {
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="cyan">[%s] %s</ansi>`, g.Tag, g.Motd))
 	}
 
 	return events.Continue
