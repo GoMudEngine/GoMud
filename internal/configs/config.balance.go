@@ -528,6 +528,7 @@ type Balance struct {
 	MailSendCooldownRounds      ConfigInt   `yaml:"MailSendCooldownRounds"`             // Rounds a player must wait between sending mail (anti-spam; default 10). Set to 1 for effectively no cooldown.
 	AchievementPollRounds       ConfigInt   `yaml:"AchievementPollRounds"`              // How often (rounds) the achievement poll evaluates online players (default 10).
 	GuildFoundingCost           ConfigInt   `yaml:"GuildFoundingCost"`                  // One-time gold cost (from bank) to found a guild (default 5000).
+	GuildVaultCapacity          ConfigInt   `yaml:"GuildVaultCapacity"`                 // Max items a guild vault holds (default 100).
 
 	// ── WAREHOUSES (Stage 3 ferry system) ────────────────────────────────────
 	WarehouseItemCap      ConfigInt `yaml:"WarehouseItemCap,omitempty"`      // Per-item stock cap in city warehouses (default 4,000,000 — effectively unbounded)
