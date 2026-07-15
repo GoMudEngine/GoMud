@@ -5,9 +5,11 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -65,6 +67,15 @@ func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 		}
 	}
 
+	// Auto-loot the mob's gold to the killer at death: a solo killer takes it
+	// straight to purse, a party pools it (settled/split on membership change or
+	// `party gold split`). Items are still looted manually, respecting loot mode.
+	// Removing the collected gold from `loot` keeps it out of the corpse / off
+	// the floor (no double-loot).
+	if collected := autoLootGold(m.Character.PlayerDamage, loot.Gold); collected > 0 {
+		loot.Gold -= collected
+	}
+
 	config := configs.GetGamePlayConfig()
 	if config.Death.CorpsesEnabled {
 		// Loot goes into the corpse container — nothing drops to the floor.
@@ -113,5 +124,62 @@ func dropMobLootAndSetCorpse(m *mobs.Mob, room *rooms.Room) {
 	if lootDropped && room.GetVisibility() < 1 {
 		room.SendText(messaging.CategoryLoot, `You hear something clatter to the ground.`)
 	}
+}
+
+// autoGoldPlan is the routing decision for a killed mob's gold: into the killer
+// party's shared pool, or straight to a solo killer's purse.
+type autoGoldPlan struct {
+	toPartyPool bool
+	userId      int // solo recipient (top damager) when !toPartyPool
+	amount      int
+}
+
+// planAutoLootGold decides where a killed mob's gold goes. Pure over the damage
+// map + the party registry: a killer in a party pools it; a solo killer takes it
+// to purse. Returns a zero plan when no player killed the mob or there's no gold.
+func planAutoLootGold(playerDamage map[int]int, gold int) autoGoldPlan {
+	if gold <= 0 || len(playerDamage) == 0 {
+		return autoGoldPlan{}
+	}
+	if killerParty(playerDamage) != nil {
+		return autoGoldPlan{toPartyPool: true, amount: gold}
+	}
+	return autoGoldPlan{userId: topDamager(playerDamage), amount: gold}
+}
+
+// autoLootGold applies planAutoLootGold: pools to the killer party (notifying
+// online members) or credits a solo killer's purse. Returns the amount actually
+// collected (0 if the recipient is offline/unloaded, so the gold stays in the
+// corpse rather than vanishing).
+func autoLootGold(playerDamage map[int]int, gold int) int {
+	plan := planAutoLootGold(playerDamage, gold)
+	if plan.amount <= 0 {
+		return 0
+	}
+
+	if plan.toPartyPool {
+		p := killerParty(playerDamage)
+		if p == nil {
+			return 0
+		}
+		p.AddGold(plan.amount)
+		for _, uid := range p.UserIds {
+			if u := users.GetByUserId(uid); u != nil {
+				u.SendText(messaging.CategoryLoot,
+					fmt.Sprintf(`<ansi fg="yellow-bold">%d gold</ansi> goes into the party pool.`, plan.amount))
+			}
+		}
+		return plan.amount
+	}
+
+	u := users.GetByUserId(plan.userId)
+	if u == nil {
+		return 0
+	}
+	u.Character.Gold += plan.amount
+	events.AddToQueue(events.EquipmentChange{UserId: plan.userId, GoldChange: plan.amount})
+	u.SendText(messaging.CategoryLoot,
+		fmt.Sprintf(`You collect <ansi fg="yellow-bold">%d gold</ansi>.`, plan.amount))
+	return plan.amount
 }
 
