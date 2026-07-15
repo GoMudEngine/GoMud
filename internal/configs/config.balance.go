@@ -524,6 +524,7 @@ type Balance struct {
 	BarterMaxDiscount           ConfigFloat `yaml:"BarterMaxDiscount,omitempty"`        // Max fractional price reduction a player can get via bartering (default 0.15)
 	BarterMaxBonus              ConfigFloat `yaml:"BarterMaxBonus,omitempty"`           // Max fractional sell-price bonus a player can get via bartering (default 0.15)
 	StorageFeePerItem           ConfigInt   `yaml:"StorageFeePerItem"`                  // Gold charged per stored item per game month (default 1)
+	StorageSeizureMinValue      ConfigInt   `yaml:"StorageSeizureMinValue"`             // Min aggregate stack value (spec.Value*Count) for a seized slot to be auctioned vs. disposed (default 250). Set very high to disable seizure-auction (dispose all).
 
 	// ── WAREHOUSES (Stage 3 ferry system) ────────────────────────────────────
 	WarehouseItemCap      ConfigInt `yaml:"WarehouseItemCap,omitempty"`      // Per-item stock cap in city warehouses (default 4,000,000 — effectively unbounded)

@@ -49,6 +49,9 @@ func (b *Balance) validateShops() {
 	if b.StorageFeePerItem < 0 {
 		b.StorageFeePerItem = 1
 	}
+	if b.StorageSeizureMinValue <= 0 {
+		b.StorageSeizureMinValue = 250
+	}
 
 	// ── WAREHOUSES (Stage 3 ferry system) ────────────────────────────────────
 	if b.WarehouseItemCap <= 0 {
