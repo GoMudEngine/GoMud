@@ -126,6 +126,7 @@ var userOnlyCommands = map[string]string{
 	"assist":     "player-mechanic",
 	"disenchant": "player-mechanic",
 	"fine":       "player-mechanic: jailed-player justice interaction (5.1)",
+	"guild":      "player-mechanic",
 	"offer":      "player-mechanic",
 	"payfine":    "player-mechanic: jailed-player justice interaction (5.1)",
 	"party":      "player-mechanic",

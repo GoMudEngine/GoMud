@@ -1,0 +1,23 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">guild</ansi>
+
+A guild is a lasting company of adventurers. Found one, invite your friends, and
+organise by rank. Members are ranked <ansi fg="white">member</ansi>,
+<ansi fg="white">officer</ansi>, and <ansi fg="white">leader</ansi>.
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">guild</ansi>                     - Your guild's roster and message of the day
+  <ansi fg="command">guild create <TAG> <name></ansi> - Found a guild (a founding fee is paid from your bank)
+  <ansi fg="command">guild list</ansi>                - List all guilds
+  <ansi fg="command">guild invite <player></ansi>     - (officer+) Invite an online player
+  <ansi fg="command">guild accept</ansi>              - Accept a pending invitation
+  <ansi fg="command">guild decline</ansi>             - Decline a pending invitation
+  <ansi fg="command">guild leave</ansi>               - Leave your guild
+  <ansi fg="command">guild kick <player></ansi>       - (officer+) Remove a lower-ranked member
+  <ansi fg="command">guild promote <player></ansi>    - (leader) Promote a member to officer
+  <ansi fg="command">guild demote <player></ansi>     - (leader) Demote an officer to member
+  <ansi fg="command">guild transfer <player></ansi>   - (leader) Hand leadership to another member
+  <ansi fg="command">guild motd <text></ansi>         - (officer+) Set the message of the day
+  <ansi fg="command">guild disband</ansi>             - (leader) Disband the guild
+
+A TAG is 2-4 letters or digits and is shown next to your name in <ansi fg="command">who</ansi>.
