@@ -106,7 +106,7 @@ IDs in forward order: **room 1 = 6258, room 2 = 6259, … room 5 = 6262, room 6 
 | 2 | **Knowing Yourself** | `status` (the six stats + three pools: health / stamina / conviction) → progression **teaser** ("these grow — but not the way you'd expect; I'll show you soon") |
 | 3 | **What You Carry** | `get <item>` (the grey token, existing `itemid: 2`) → `inventory` / `inv` → `help` (the "you'll forget, the game remembers" meta-lesson) |
 | 4 | **The World Speaks** | `say <text>` → `ask dewey <topic>` (NPCs answer; doubles as the curiosity/exploration hook) |
-| 5 | **The Proving** | `attack effigy` → `trip` → *feel the cooldown* (retry `trip` → real recover message) → `cooldowns` → **forced real progression tick (banner shown once)** → **progression primer** → `flee` (carries player to room 6) |
+| 5 | **The Proving** | `attack effigy` → `cast spike` → *feel the cooldown* (retry → recover message) → `cooldowns` → `trip` (body) → `warcry` (voice) [the "all playstyles valid" sampler; shared cooldown spaces them] → **forced real progression tick (banner shown once)** → **progression primer** → `flee` (carries player to room 6) |
 | 6 | **The Landing** | Dewey's handoff → vortex to the Awakening Pool (room 5200); quest 30 (the Awakening) begins with Cleric Hadwen |
 
 **Ordering rationale.** Progression is taught in room 5 — *after* the player has
@@ -139,30 +139,42 @@ Design direction per room (build authors the final prose):
 ## 6. Room 5 "The Proving" — detailed script & copy
 
 The pedagogically load-bearing room. Gated sub-step chain (per-instance state):
-`attacked` → `cast_spike` → `saw_cooldown` → `checked_cooldowns` →
-`progression_shown` → `primer_heard` → (exit via `flee`).
+`attacked` → `cast_spike` → `saw_cooldown` → `checked_cooldowns` → `tripped` →
+`warcried` → `progression_shown` → `primer_heard` → (exit via `flee`).
 
-**Why `cast spike`, not `bash`/`trip`.** `bash` requires a shield, which a fresh
-character (carrying only the grey token) does not have. A better demo is a
-**spell**: every new character starts with the spells `conviction-spike` (alias
-`spike`, a `harmsingle` damage spell), `chrysalis-glow`, and `identify`
-(`internal/characters/spells.go` `StarterSpells`). Casting `spike` at the effigy:
-(a) surfaces the entire **magic system**, which the tutorial otherwise never
-touches; (b) reinforces the **no-class** point — brand-new, you can already cast;
-(c) genuinely shares the special-move cooldown, so the lesson stays honest. `attack`
-still comes first for the "normal swings never tire" contrast; `cast spike` is the
-special that trips the cooldown. Martial specials (bash/trip/kick) get hands-on
-reinforcement from Drillmaster Vorn in Pothole Coulee. **Build-time check:**
-confirm a fresh character's conviction/stamina pool affords two casts of `spike`
-(`cost: 50`); if not, top the pool in-room or pick a cheaper starter spell.
+**Why a three-move sampler (spell + strike + shout), not `bash`.** `bash` requires
+a shield a fresh character (carrying only the grey token) lacks — excluded. But a
+single demo move over-indexes on one playstyle. To drive home DOGMud's core
+promise — **every playstyle is valid; no class locks you in** — room 5 samples one
+gear-free move from each major family, all sharing the *one* cooldown:
+
+- **`cast spike`** — *belief* (magic / Willpower). Every new character starts with
+  `conviction-spike` (alias `spike`, a `harmsingle` damage spell), `chrysalis-glow`,
+  and `identify` (`internal/characters/spells.go` `StarterSpells`). Surfaces the
+  magic system the tutorial otherwise never touches.
+- **`trip`** — *body* (martial / Dexterity). Bare-handed knockdown; vivid feedback.
+- **`warcry`** — *voice* (rhetoric / Charisma). Gear-free shout; visibly affects the
+  effigy. (`rally` — the self-steady panic-button — is a one-word swap if preferred.)
+
+This is also a *stronger* cooldown lesson: the player feels the same recovery gate
+whether they cast, strike, or shout, so "one well of focus for all your big moves"
+lands concretely. `attack` still comes first for the "normal swings never tire"
+contrast. The three families map cleanly onto the progression primer that follows
+(Willpower / Dexterity / Charisma). Deeper martial and rhetoric drill still happen
+with Drillmaster Vorn in Pothole Coulee. **Build-time checks:** (1) confirm `trip`
+and `warcry` have no weapon/skill prerequisite for a fresh character; (2) confirm
+the pool affords two casts of `spike` (`cost: 50`) plus the shout — top the pool
+in-room if tight. **Pacing note:** the shared cooldown (4 rounds) spaces the three
+moves; the effigy is harmless, so Dewey fills each wait ("keep swinging — you'll
+feel the readiness return") and the tree gates the next prompt on cooldown-ready.
 
 **The practice effigy (new mob).** The existing dummies
 (`pothole_coulee/9109-training_dummy`, `9163-practice_butt`, `9146-practice_mote`)
 are built for open-ended practice and are too tanky / wrong-purpose for a tight
 scripted micro-lesson. **Create a new, purpose-built "straw effigy"** for the
 antechamber:
-- Attackable and targetable by spells (so `attack` and `cast spike` work and
-  combat entry triggers).
+- Attackable and a valid target for spells, martial specials, and shouts (so
+  `attack`, `cast spike`, `trip`, and `warcry` all work and combat entry triggers).
 - Deals **zero** damage; never retaliates.
 - **Never flees** (no flee/courage behavior) — avoids the known Vorn-dummy-flee
   bug.
@@ -179,40 +191,58 @@ antechamber:
 > *(player attacks; auto-swings begin)*
 >
 > **Dewey:** "Good. Those steady swings are your *normal* attacks — they never
-> tire. But you woke with more than fists. You already carry a spell or two — try
-> one: type `cast spike` to drive a spike of raw conviction into it."
+> tire. But you woke with more than fists, and here's what's worth knowing early:
+> *no one way is the right way.* Let me show you three. First — belief. You already
+> carry a spell or two. Type `cast spike` to drive a spike of raw conviction into
+> it."
 >
 > *(player casts → the effigy takes the hit)*
 >
 > **Dewey:** "You felt that leave you. No robes, no order, no permission needed —
-> in Gaius, belief *is* the weapon. Now: try to `cast spike` again, right away."
+> in Gaius, belief *is* a weapon. Now: try to `cast spike` again, right away."
 >
 > *(player retries → real engine recovery message. Cast has two possible lines
 > here — the shared-cooldown "You need a moment before you can do that." or the
 > cast-init "Your mind is still recovering from the effort." Either demonstrates
 > the wait; build confirms which fires for a back-to-back recast.)*
 >
-> **Dewey:** "There it is. Your strongest moves — a spell like that, special
-> strikes, battle-shouts, the powers a mutation will one day grant you — all draw
-> from the same well of focus. Spend it and you need a few rounds before the next.
-> Your normal swings never wait, though, so you're never helpless. Want to see the
-> timer? Type `cooldowns`."
+> **Dewey:** "There it is — a moment's recovery. Your big moves all draw from one
+> well of focus; spend it and you wait a few rounds. Keep swinging normally
+> meanwhile — those never wait. Type `cooldowns` to watch it tick down."
 >
 > *(player checks cooldowns)*
+>
+> **Dewey:** "Now watch — that same wait covers *everything*, not just spells.
+> When it clears, try the *body's* way: get in close and take its legs. Type
+> `trip`."
+>
+> *(cooldown clears; player trips → the effigy topples)*
+>
+> **Dewey:** "Ha — down it goes. Same well, different hand. One more kind, and it's
+> the one people forget: your *voice*. When the well fills again, loose a `warcry`
+> and put fear into it."
+>
+> *(cooldown clears; player warcries → the effigy flinches)*
+>
+> **Dewey:** "Spell, strike, and shout — belief, body, and voice. All three drew
+> from the same well, and all three are *yours*. No class picks one and locks the
+> rest away. You'll lean where you like — and grow toward it. Which brings me to
+> the last thing worth understanding..."
 
 Then the **forced progression tick** fires — the player sees the *genuine* banner
 (e.g. `*** A moment of brilliance! Your spellcasting technique improves! ***`,
-matching the action they just took), and Dewey anchors the primer to it:
+naming one of the skills they just exercised), and Dewey anchors the primer to it:
 
 > **Dewey:** "See that? You just got *better* — not from any tally of kills or a
 > level you climbed. There are no levels here, and no class boxing you in. In
-> Gaius you grow by *doing*. Swing blades and your `Dexterity` sharpens; push
-> yourself to exhaustion and your `Strength` answers; bend others with words and
-> `Charisma` rises; loose arrows with a keen eye and `Perception` wakes. And over
-> a longer road, the way you fight quietly pulls change through you — mutations,
-> drawn from the Ring toward whatever you keep becoming. You never pick it. You
-> *earn* it. When you're curious, `help skills` and `help mutations` hold the
-> long version."
+> Gaius you grow by *doing*. Channel belief into a spell and your `Willpower`
+> deepens; close in with fist or blade and your `Dexterity` sharpens; push
+> yourself to exhaustion and your `Strength` answers; bend others with your voice
+> and `Charisma` rises; loose arrows with a keen eye and `Perception` wakes. And
+> over a longer road, the way you fight quietly pulls change through you —
+> mutations, drawn from the Ring toward whatever you keep becoming. You never pick
+> it. You *earn* it. When you're curious, `help skills` and `help mutations` hold
+> the long version."
 
 Then the flee beat, which transitions to room 6:
 
@@ -318,10 +348,11 @@ Coulee, routes 2 & 3.
   highlighted, the effigy cannot be killed and never flees, the cooldown message
   and `cooldowns` output appear, the forced progression banner shows exactly
   once, `flee` succeeds and lands in room 6, and the handoff drops the player at
-  room 5200 with quest 30 active. Also confirm `cast spike` lands on the effigy
-  and a fresh character's pool affords two casts, and that **every authored room
-  noun is examinable** (`look <noun>` returns its lore prose) — the examine lesson
-  in room 1 depends on it.
+  room 5200 with quest 30 active. Also confirm the full **playstyle sampler**
+  works on the effigy — `cast spike`, `trip`, and `warcry` each land and each is
+  gated by the shared cooldown — that a fresh character's pool affords the casts,
+  and that **every authored room noun is examinable** (`look <noun>` returns its
+  lore prose) — the examine lesson in room 1 depends on it.
 - **Playtest:** a naive-newbie `/playtest local feel-tester` pass focused on the
   antechamber, watching for confusion, dead-ends, or unhighlighted commands.
 
