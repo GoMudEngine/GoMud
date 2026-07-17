@@ -1,14 +1,29 @@
 roomid: 6262
 zone: Newcomer Antechamber
-title: The Landing
+title: The Proving
 description: >
-  A figure of grey light waits here. 'Last lesson, and the kindest --
-  you are not alone here. Out in the world, people and creatures answer
-  when you speak to them. Ask me about the world if you are curious, and
-  when you are ready, type  talk guide , and that same breath will carry
-  you through. The real world is waiting.'
+  A worn practice ring scuffed into the grey, and a straw effigy standing
+  quiet at its center. 'Last lessons, and the ones that keep you breathing,'
+  Dewey says. 'Before any fight, steel yourself -- type
+  <ansi fg="command">warcry</ansi> and let the sound harden your nerve.'
 biome: default
+exits:
+  north:
+    roomid: 6467
 spawninfo:
   - mobid: 9491
+  - mobid: 9614
+nouns:
+  effigy: >-
+    A man-shape of bound straw on a fixed post, charcoal smudges for eyes. It
+    will stand and take whatever you give it and never lift a hand back -- the
+    safest sparring partner you will ever have.
+  ring: >-
+    A rough circle scuffed into the grey floor by countless feet. Every soul
+    who came through here learned to throw a punch, a spell, a shout in this
+    same ring. The wear is oddly comforting.
+  dewey: >-
+    Dewey rolls both shoulders loose and nods you toward the effigy. 'No one
+    ever died against this fellow. Best place there is to make your mistakes.'
 idlemessages:
-  - Grey light pulses faintly around the waiting figure.
+  - The effigy sways on its post and settles, straw whispering.

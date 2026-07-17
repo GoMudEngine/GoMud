@@ -1,30 +1,299 @@
-# 6262 — final lesson: talk/ask the guide, then vortex to Awakening Pool (5200).
-#
-# We INTERCEPT the talk/ask/say command. Room behaviors fire BEFORE the command
-# runs, so move_player relocates the player to 5200 first; without intercept the
-# original talk/ask would then execute in 5200 (where the guide isn't) and emit
-# a spurious "not here". Intercept consumes it. The lesson (type talk -> a thing
-# happens) is satisfied and the player arrives at the pool via the auto-look.
-# No gate state needed: this is the terminus — the only path forward is the
-# lesson command.
+# 6262 The Proving — the combat primer. Sub-steps advance in strict order via
+# per-instance flags. No lesson branch intercepts, so each taught command runs
+# for real (including the deliberately-blocked recast). Only `flee` (after the
+# lesson) is intercepted, to hand off to room 6467. There are no compass exits,
+# so `flee` is the sole way out and is fully deterministic.
 
 tree:
   type: selector
   children:
 
+    # 1 ── warcry: applies the Warcry condition + starts the shared cooldown ──
     - type: sequence
       event: room_command
       children:
         - type: condition
           check: command_matches
-          commands: [talk, say]
+          commands: [warcry]
+        - type: condition
+          check: state_equals
+          key: warcried
+          value: ""
         - type: action
-          do: send_user_text
+          do: set_state
+          key: warcried
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
           text: >-
-            The guide inclines its head. 'That is the last of it --
-            and welcome to Gaius.' The grey dissolves around you...
+            Feel that lift? You just put an *effect* on yourself -- a good one.
+            We call those *conditions*: some raise you up like this, others drag
+            you down. Type <ansi fg="command">conditions</ansi> to see what's
+            riding on you, and how long it lasts.
+
+    # 2 ── conditions: inspect the buff just applied ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [conditions, cond, affects, buffs]
+        - type: condition
+          check: state_equals
+          key: warcried
+          value: "1"
+        - type: condition
+          check: state_equals
+          key: saw_conditions
+          value: ""
         - type: action
-          do: move_player
-          room_id: 5200
+          do: set_state
+          key: saw_conditions
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            There's your war cry, ticking down. But shouting spent something,
+            too -- your *focus*. Your biggest moves all draw from one well, and
+            it takes a few rounds to refill. Type
+            <ansi fg="command">cooldowns</ansi> to watch it come back.
+
+    # 3 ── cooldowns: see the shared special-move timer ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [cooldowns, cooldown, cd]
+        - type: condition
+          check: state_equals
+          key: saw_conditions
+          value: "1"
+        - type: condition
+          check: state_equals
+          key: checked_cooldowns
+          value: ""
+        - type: action
+          do: set_state
+          key: checked_cooldowns
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            Good. Now, with your blood up -- let's fight. Type
+            <ansi fg="command">attack effigy</ansi>. Your body swings on its own
+            each round, and those normal swings never tire, well or no well.
+
+    # 4 ── attack: enter combat with the effigy. Require "effigy" in the args so
+    #      the flag only advances on a real target (a bare `attack` starts no
+    #      combat, which would leave `cast spike` with nothing to hit).
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [attack, kill, k, hit]
+        - type: condition
+          check: command_rest_contains
+          keywords: [effigy]
+        - type: condition
+          check: state_equals
+          key: checked_cooldowns
+          value: "1"
+        - type: condition
+          check: state_equals
+          key: attacked
+          value: ""
+        - type: action
+          do: set_state
+          key: attacked
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            Good -- those steady swings are yours for free. Now spend your focus
+            on *belief*: type <ansi fg="command">cast spike</ansi> to drive a
+            spike of raw conviction into it. No robes, no order, no permission --
+            in Gaius, belief is a weapon.
+
+    # 5 ── cast spike (first cast): belief ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [cast, c]
+        - type: condition
+          check: command_rest_contains
+          keywords: [spike]
+        - type: condition
+          check: state_equals
+          key: attacked
+          value: "1"
+        - type: condition
+          check: state_equals
+          key: cast_spike
+          value: ""
+        - type: action
+          do: set_state
+          key: cast_spike
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            You felt that leave you. Now try <ansi fg="command">cast spike</ansi>
+            again, straightaway -- go on.
+
+    # 6 ── cast spike (immediate recast): blocked by the shared well ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [cast, c]
+        - type: condition
+          check: command_rest_contains
+          keywords: [spike]
+        - type: condition
+          check: state_equals
+          key: cast_spike
+          value: "1"
+        - type: condition
+          check: state_equals
+          key: recast_blocked
+          value: ""
+        - type: action
+          do: set_state
+          key: recast_blocked
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            See? Same well you felt with the war cry. Belief just drew it down,
+            so your next big move has to wait a breath. Let it fill -- then take
+            its legs the body's way: type <ansi fg="command">trip</ansi>.
+
+    # 7 ── trip: body move → prone (enemy condition) → progression + primer ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [trip]
+        - type: condition
+          check: state_equals
+          key: recast_blocked
+          value: "1"
+        - type: condition
+          check: state_equals
+          key: tripped
+          value: ""
+        - type: action
+          do: set_state
+          key: tripped
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          delay: 1.0
+          text: >-
+            Down it goes -- and now *it* wears a condition: knocked flat, easy
+            pickings. Conditions cut both ways. And look what you've done: voice,
+            belief, and body, all three, all from the same well. Every one of
+            them is *yours* -- no class picks one and locks the rest away.
+        - type: action
+          do: grant_progression
+          skill: spellcasting
+          delay: 2.5
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          delay: 3.5
+          text: >-
+            See that? You just got *better* -- not from any tally of kills or a
+            level you climbed. There are no levels here, and no class boxing you
+            in. You grow by *doing*: channel belief and your Willpower deepens;
+            close in with fist or blade and your Dexterity sharpens; bend others
+            with your voice and your Charisma rises. Over a longer road, the way
+            you fight even pulls mutations toward you. You never pick it -- you
+            earn it. <ansi fg="command">help skills</ansi> and
+            <ansi fg="command">help mutations</ansi> hold the long version.
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          delay: 5.0
+          text: >-
+            Last thing, and the most important: not every fight is worth
+            finishing. When one turns against you, don't die proving a point --
+            type <ansi fg="command">flee</ansi> to break away and run.
+
+    # 8 ── flee (after the lesson): the farewell. NOT intercepted — the real
+    #      flee command runs and carries the player out the room's only exit
+    #      (north → the instance's 6467), so it is instance-safe and needs no
+    #      move_player. The effigy is a floor-stat non-retaliator, so flee
+    #      succeeds reliably; if it ever fails, the player simply retries (or
+    #      walks north, which is now unblocked).
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [flee, run, escape]
+        - type: condition
+          check: state_equals
+          key: tripped
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            That's it -- running isn't losing. It's how you live long enough to
+            win the next one. Go on, then -- I'll see you through on the far side.
+
+    # 9 ── flee too early: block until the lesson is done ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [flee, run, escape]
+        - type: condition
+          check: state_equals
+          key: tripped
+          value: ""
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            Not yet -- finish the lesson and I'll teach you the smartest move
+            there is. Keep at the effigy.
+        - type: action
+          do: intercept
+
+    # 10 ── movement before the lesson is done: nudge + block. After `tripped`
+    #      is set this branch no longer matches, so `north` (and a successful
+    #      `flee`) carry the player forward to 6467.
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [north, n, go, south, s, east, e, west, w, up, u, down, d]
+        - type: condition
+          check: state_equals
+          key: tripped
+          value: ""
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            Not through here yet -- finish at the effigy first. When you're done,
+            I'll show you how to leave a fight the smart way.
         - type: action
           do: intercept
