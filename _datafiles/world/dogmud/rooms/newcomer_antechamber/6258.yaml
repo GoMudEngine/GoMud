@@ -1,12 +1,35 @@
 roomid: 6258
 zone: Newcomer Antechamber
-title: A Place Between
+title: The Threshold
 description: >
-  You are not quite awake -- grey light with no source, a floor you
-  cannot feel, and a calm voice that seems to come from the walls.
-  'Before the world, the words,' it says. 'Type  look  to take in
-  where you are.'
+  Grey light with no source, a floor you cannot quite feel -- and then, warm
+  and solid where nothing else is, someone waiting for you. 'There you are,'
+  Dewey says gently. 'You're waking up. First thing anyone learns here: type
+  <ansi fg="command">look</ansi> to take in wherever you stand. Go on.'
 biome: default
 exits:
   north:
     roomid: 6259
+spawninfo:
+  - mobid: 9491
+nouns:
+  hands: >-
+    You turn your hands over. They are half-there -- the grey light shows
+    through them at the edges, firming up even as you watch, as if you are
+    being remembered back into a body. Whatever this place is, you are not
+    finished arriving.
+  grey: >-
+    The grey has no walls and no distance; it simply is, in every direction.
+    Not death, Dewey will tell you, and not quite life yet either -- the
+    threshold between, where the newly-woken gather themselves before the
+    world.
+  stone: >-
+    A single worn threshold-stone sits underfoot, the one solid thing you can
+    feel. Its surface is polished to a shine, hollowed slightly at the center
+    by the passage of every soul who ever woke here and stepped through.
+  dewey: >-
+    Wiry, plain-dressed, patient -- and warm in a way nothing else here is.
+    Dewey watches you with the easy attention of someone who has done this
+    many times and still means it every time.
+idlemessages:
+  - The grey light pulses, slow and soundless, like a breath.
