@@ -39,7 +39,8 @@ needs the *most* structured handholding and gets the least.
   that reward reading, attention, and curiosity. Re-teaching concepts that
   Pothole Coulee also covers is **intended reinforcement, not redundancy**.
 - Teach the DOGMud-specific systems a newcomer will otherwise never discover in
-  guided form: the special-move cooldown and use-based progression.
+  guided form: the special-move cooldown, **conditions** (buffs/debuffs), and
+  use-based progression.
 - Fix the command-highlighting inconsistency.
 
 **Non-Goals**
@@ -106,7 +107,7 @@ IDs in forward order: **room 1 = 6258, room 2 = 6259, … room 5 = 6262, room 6 
 | 2 | **Knowing Yourself** | `status` (the six stats + three pools: health / stamina / conviction) → progression **teaser** ("these grow — but not the way you'd expect; I'll show you soon") |
 | 3 | **What You Carry** | `get <item>` (the grey token, existing `itemid: 2`) → `inventory` / `inv` → `help` (the "you'll forget, the game remembers" meta-lesson) |
 | 4 | **The World Speaks** | `say <text>` → `ask dewey <topic>` (NPCs answer; doubles as the curiosity/exploration hook) |
-| 5 | **The Proving** | `attack effigy` → `cast spike` → *feel the cooldown* (retry → recover message) → `cooldowns` → `trip` (body) → `warcry` (voice) [the "all playstyles valid" sampler; shared cooldown spaces them] → **forced real progression tick (banner shown once)** → **progression primer** → `flee` (carries player to room 6) |
+| 5 | **The Proving** | *Pre-combat:* `warcry` (steel yourself — *voice*, a self-buff) → `conditions` (see the buff → learn conditions) → `cooldowns` (the shout spent your focus → learn the shared well). *In combat:* `attack effigy` (normal swings) → `cast spike` (*belief*) → `trip` blocked, then lands (shared cooldown across families; trip knocks the effigy prone = an enemy condition) → **forced progression tick (banner once)** → **progression primer** → `flee` (carries player to room 6) |
 | 6 | **The Landing** | Dewey's handoff → vortex to the Awakening Pool (room 5200); quest 30 (the Awakening) begins with Cleric Hadwen |
 
 **Ordering rationale.** Progression is taught in room 5 — *after* the player has
@@ -139,34 +140,41 @@ Design direction per room (build authors the final prose):
 ## 6. Room 5 "The Proving" — detailed script & copy
 
 The pedagogically load-bearing room. Gated sub-step chain (per-instance state):
-`attacked` → `cast_spike` → `saw_cooldown` → `checked_cooldowns` → `tripped` →
-`warcried` → `progression_shown` → `primer_heard` → (exit via `flee`).
+`warcried` → `saw_conditions` → `checked_cooldowns` → `attacked` → `cast_spike` →
+`saw_block` → `tripped` → `progression_shown` → `primer_heard` → (exit via `flee`).
 
-**Why a three-move sampler (spell + strike + shout), not `bash`.** `bash` requires
-a shield a fresh character (carrying only the grey token) lacks — excluded. But a
-single demo move over-indexes on one playstyle. To drive home DOGMud's core
-promise — **every playstyle is valid; no class locks you in** — room 5 samples one
-gear-free move from each major family, all sharing the *one* cooldown:
+**Why this shape (conditions & cooldown taught pre-combat, then a belief+body
+sampler).** `bash` is excluded — it needs a shield a fresh character (carrying only
+the grey token) lacks. The room makes two points: (1) DOGMud's core promise that
+**every playstyle is valid; no class locks you in**, and (2) the existence of
+**conditions** (temporary effects) and the **shared cooldown**. It does this in two
+phases:
 
-- **`cast spike`** — *belief* (magic / Willpower). Every new character starts with
-  `conviction-spike` (alias `spike`, a `harmsingle` damage spell), `chrysalis-glow`,
-  and `identify` (`internal/characters/spells.go` `StarterSpells`). Surfaces the
-  magic system the tutorial otherwise never touches.
-- **`trip`** — *body* (martial / Dexterity). Bare-handed knockdown; vivid feedback.
-- **`warcry`** — *voice* (rhetoric / Charisma). Gear-free shout; visibly affects the
-  effigy. (`rally` — the self-steady panic-button — is a one-word swap if preferred.)
+- **Pre-combat.** The player opens with **`warcry`** — a gear-free rhetoric shout
+  (*voice*) that is a **self-buff**: it lands a real *condition* on the player (buff
+  79 "Warcry", a damage bonus, ~25 rounds) and, because it's a special move, starts
+  the shared cooldown. One shout teaches two systems: **`conditions`** shows the buff
+  it applied; **`cooldowns`** shows the focus it spent. (`rally` — a defensive
+  self-buff — is a one-word swap if you prefer the panic-button framing.)
+- **In-combat.** With blood up, the player fights: **`attack`** (normal swings,
+  never tire), then **`cast spike`** — *belief*, the starter `conviction-spike`
+  `harmsingle` spell (`internal/characters/spells.go` `StarterSpells`), surfacing the
+  magic system the tutorial otherwise never touches. Spike draws the well down, so an
+  immediate **`trip`** (*body*) is genuinely **blocked** (real "You need a moment to
+  recover…" message) before it lands — teaching the shared cooldown across
+  *different* families. Trip then knocks the effigy **prone** — a *condition on the
+  enemy* — so conditions land from both the buff and the debuff side.
 
-This is also a *stronger* cooldown lesson: the player feels the same recovery gate
-whether they cast, strike, or shout, so "one well of focus for all your big moves"
-lands concretely. `attack` still comes first for the "normal swings never tire"
-contrast. The three families map cleanly onto the progression primer that follows
-(Willpower / Dexterity / Charisma). Deeper martial and rhetoric drill still happen
-with Drillmaster Vorn in Pothole Coulee. **Build-time checks:** (1) confirm `trip`
-and `warcry` have no weapon/skill prerequisite for a fresh character; (2) confirm
-the pool affords two casts of `spike` (`cost: 50`) plus the shout — top the pool
-in-room if tight. **Pacing note:** the shared cooldown (4 rounds) spaces the three
-moves; the effigy is harmless, so Dewey fills each wait ("keep swinging — you'll
-feel the readiness return") and the tree gates the next prompt on cooldown-ready.
+Across the room the player uses voice, belief, and body — all from the one well —
+mapping onto the progression primer that follows (Charisma / Willpower / Dexterity).
+Deeper martial and rhetoric drill still happen with Drillmaster Vorn in Pothole
+Coulee. **Build-time checks:** (1) `warcry` and `trip` have no weapon/skill
+prerequisite for a fresh character; (2) the pool affords `warcry` + a cast of `spike`
+(`cost: 50`) — top the pool in-room if tight; (3) the tree gates each "now do X"
+prompt where the move must *succeed* on `GetCooldown("special-move")==0`, but
+deliberately prompts the `trip` *before* readiness returns to show the block message.
+**Pacing note:** the effigy is harmless, so Dewey narrates each short wait ("keep
+swinging — you'll feel the readiness return").
 
 **The practice effigy (new mob).** The existing dummies
 (`pothole_coulee/9109-training_dummy`, `9163-practice_butt`, `9146-practice_mote`)
@@ -185,49 +193,52 @@ antechamber:
 
 **Sample copy** (backticked words = `<ansi fg="command">` cyan highlight):
 
-> **Dewey:** "This straw fellow won't mind. Squaring off is simple — type
-> `attack effigy` and your body takes over, swinging on its own each round."
+> **Dewey:** "Before we spar — a fighter readies more than fists. Steel yourself
+> first: type `warcry` and let the sound harden your nerve."
+>
+> *(player warcries → gains the Warcry condition)*
+>
+> **Dewey:** "Feel that lift? You just put an *effect* on yourself — a good one. We
+> call those *conditions*. Some raise you up like this; others drag you down — a
+> poison, a fear, a leg swept out from under you. Type `conditions` to see what's
+> riding on you, and how long it lasts."
+>
+> *(player checks conditions → the Warcry condition is listed with its countdown)*
+>
+> **Dewey:** "There's your war cry, ticking down. But shouting like that spent
+> something too: your focus. Your biggest moves — shouts, spells, special strikes —
+> all draw from one well, and it takes a few rounds to refill. Type `cooldowns` to
+> watch it come back."
+>
+> *(player checks cooldowns → the special-move cooldown is ticking down)*
+>
+> **Dewey:** "Good. Now, with your blood up — let's fight. Type `attack effigy`.
+> Your body swings on its own each round, and those normal swings never tire, well
+> or no well."
 >
 > *(player attacks; auto-swings begin)*
 >
-> **Dewey:** "Good. Those steady swings are your *normal* attacks — they never
-> tire. But you woke with more than fists, and here's what's worth knowing early:
-> *no one way is the right way.* Let me show you three. First — belief. You already
-> carry a spell or two. Type `cast spike` to drive a spike of raw conviction into
-> it."
+> **Dewey:** "Once your focus returns, spend it on *belief* — type `cast spike` to
+> drive a spike of raw conviction into it. No robes, no order, no permission: in
+> Gaius, belief is a weapon."
 >
-> *(player casts → the effigy takes the hit)*
+> *(cooldown clear; player casts → the effigy takes the hit)*
 >
-> **Dewey:** "You felt that leave you. No robes, no order, no permission needed —
-> in Gaius, belief *is* a weapon. Now: try to `cast spike` again, right away."
+> **Dewey:** "Now try `trip` straightaway — go on, before your focus is back."
 >
-> *(player retries → real engine recovery message. Cast has two possible lines
-> here — the shared-cooldown "You need a moment before you can do that." or the
-> cast-init "Your mind is still recovering from the effort." Either demonstrates
-> the wait; build confirms which fires for a back-to-back recast.)*
+> *(player tries → real engine message: "You need a moment to recover before
+> attempting another special move.")*
 >
-> **Dewey:** "There it is — a moment's recovery. Your big moves all draw from one
-> well of focus; spend it and you wait a few rounds. Keep swinging normally
-> meanwhile — those never wait. Type `cooldowns` to watch it tick down."
->
-> *(player checks cooldowns)*
->
-> **Dewey:** "Now watch — that same wait covers *everything*, not just spells.
-> When it clears, try the *body's* way: get in close and take its legs. Type
-> `trip`."
+> **Dewey:** "See? Same well. That spell drew it down, so the `trip` has to wait —
+> just a breath. Let it fill, then sweep its legs."
 >
 > *(cooldown clears; player trips → the effigy topples)*
 >
-> **Dewey:** "Ha — down it goes. Same well, different hand. One more kind, and it's
-> the one people forget: your *voice*. When the well fills again, loose a `warcry`
-> and put fear into it."
->
-> *(cooldown clears; player warcries → the effigy flinches)*
->
-> **Dewey:** "Spell, strike, and shout — belief, body, and voice. All three drew
-> from the same well, and all three are *yours*. No class picks one and locks the
-> rest away. You'll lean where you like — and grow toward it. Which brings me to
-> the last thing worth understanding..."
+> **Dewey:** "Down it goes — and now *it* wears a condition: knocked flat, easy
+> pickings. Conditions cut both ways. And look what you've done — voice, belief, and
+> body, all three, all from the same well. Every one of them is *yours*; no class
+> picks one and locks the rest away. You lean where you like, and grow toward it.
+> Which brings me to the last thing worth understanding..."
 
 Then the **forced progression tick** fires — the player sees the *genuine* banner
 (e.g. `*** A moment of brilliance! Your spellcasting technique improves! ***`,
@@ -275,6 +286,14 @@ The progression copy must stay truthful to the engine:
   `fire` are NOT on it** — the copy's "normal swings never wait" is accurate. The
   real blocked message is *"You need a moment to recover before attempting
   another special move."* and the live status command is `cooldowns`.
+- **Conditions are real, inspectable state.** `warcry`/`rally` are **self-buffs**
+  that apply a combat *condition* to the actor with **no target or combat required**
+  (buff 79 "Warcry" — a damage bonus; buff 80 "Rally" — mitigation; ~25 rounds;
+  `internal/actions/combat_warcry.go` / `combat_rally.go`). The `conditions` command
+  (`internal/usercommands/conditions.go`) lists the player's active buffs + combat
+  conditions with **name, description, and rounds left**. `trip` applies a **prone**
+  condition to its *target* — the enemy-side example the copy uses. So "warcry →
+  `conditions` before combat" and "trip → an enemy condition" are both accurate.
 
 ### 6.2 Forced progression tick — implementation note
 
@@ -348,11 +367,14 @@ Coulee, routes 2 & 3.
   highlighted, the effigy cannot be killed and never flees, the cooldown message
   and `cooldowns` output appear, the forced progression banner shows exactly
   once, `flee` succeeds and lands in room 6, and the handoff drops the player at
-  room 5200 with quest 30 active. Also confirm the full **playstyle sampler**
-  works on the effigy — `cast spike`, `trip`, and `warcry` each land and each is
-  gated by the shared cooldown — that a fresh character's pool affords the casts,
-  and that **every authored room noun is examinable** (`look <noun>` returns its
-  lore prose) — the examine lesson in room 1 depends on it.
+  room 5200 with quest 30 active. In room 5 specifically: `warcry` applies the
+  **Warcry condition** and it appears in the `conditions` list with a countdown;
+  `cooldowns` shows the special-move timer after the shout; `cast spike` lands; the
+  immediate `trip` is **blocked** with the real recover message, then succeeds once
+  the cooldown clears and leaves the effigy **prone**; and a fresh character's pool
+  affords `warcry` + the cast. Also confirm **every authored room noun is
+  examinable** (`look <noun>` returns its lore prose) — the examine lesson in room 1
+  depends on it.
 - **Playtest:** a naive-newbie `/playtest local feel-tester` pass focused on the
   antechamber, watching for confusion, dead-ends, or unhighlighted commands.
 
