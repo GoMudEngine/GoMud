@@ -1299,8 +1299,9 @@ SpecialRooms:
   #   The first one on the list is the room they will be placed in when beginning
   #   Rooms 900-999 are a special range of RoomId's that tell GoMud the user is
   #   in a tutorial.
-  #   Sanctum Basin replaces the old tutorial zone; TutorialRooms is intentionally empty.
-  TutorialRooms: ["6258", "6259", "6260", "6261", "6262"]
+  #   The Newcomer Antechamber (rooms 6258-6262 + 6467) is the route-1 guided
+  #   tutorial. The first id is where a new "complete noob" player is placed.
+  TutorialRooms: ["6258", "6259", "6260", "6261", "6262", "6467"]
 
 ################################################################################
 #
