@@ -1,29 +1,35 @@
-# 6259 — gate: must status before leaving north.
-#
-# Branch 1: player types status/stat/st → mark lesson done + praise.
-# Branch 2: movement attempt while lesson not done → nudge + intercept.
+# 6259 Knowing Yourself — gate: status before leaving north.
+# The status branch also plants the progression teaser (paid off in room 5).
 
 tree:
   type: selector
   children:
 
-    # ── Lesson performed: mark done, praise ──
+    # ── status lesson ──
     - type: sequence
       event: room_command
       children:
         - type: condition
           check: command_matches
-          commands: [status, stat, st]
+          commands: [status, stat, st, score]
+        - type: condition
+          check: state_equals
+          key: lesson_done
+          value: ""
         - type: action
           do: set_state
           key: lesson_done
           value: "1"
         - type: action
-          do: send_user_text
+          do: mob_say
+          mob_id: 9491
           text: >-
-            That is you, whole on one page. North is open -- type  north.
+            There you are -- all of you, on one page. Those stats and pools
+            *grow*, but not the way you might expect: no levels, no experience
+            to grind. I'll show you how when we spar. For now, the way
+            <ansi fg="command">north</ansi> is open.
 
-    # ── Movement before lesson: block with a nudge ──
+    # ── movement before lesson: nudge + block ──
     - type: sequence
       event: room_command
       children:
@@ -35,8 +41,10 @@ tree:
           key: lesson_done
           value: ""
         - type: action
-          do: send_user_text
+          do: mob_say
+          mob_id: 9491
           text: >-
-            First, know yourself. Type  status , then go north.
+            Meet yourself first -- type <ansi fg="command">status</ansi>, then
+            go north.
         - type: action
           do: intercept
