@@ -2,10 +2,10 @@ roomid: 6261
 zone: Newcomer Antechamber
 title: The World Speaks
 description: >
-  Sound seeps into the silence here -- far voices, wind, the distant clatter
-  of a living world. 'You're almost through,' Dewey says. 'Out there, people
-  and creatures answer when you speak. Try it: <ansi fg="command">say hello</ansi>.
-  Then ask me something -- <ansi fg="command">ask dewey world</ansi>.'
+  Sound seeps into the silence here for the first time -- far voices, a breath
+  of wind, the clatter of a living world going about its business somewhere past
+  the grey. A ragged doorway of brighter light hangs in the air, and through it
+  you catch half-glimpses of rooftops and open sky. Dewey stands easy beside it.
 biome: default
 exits:
   north:

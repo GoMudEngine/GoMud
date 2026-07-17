@@ -1,0 +1,16 @@
+# Dewey (9491) per-mob behavior tree.
+#
+# This exists ONLY to override the noncombat_passive archetype's player_enter
+# reaction. That archetype emotes "pays you little mind." on every player entry,
+# which flatly contradicts Dewey's warm-mentor persona and fires right on top of
+# his room-tree greeting (2026-07-17 playtest finding). We keep the strategic
+# idle goal planner and simply drop the dismissive greeting emote -- Dewey's
+# actual teaching + arrival lines all live in the room behavior trees
+# (behaviors/rooms/newcomer_antechamber/), spoken by name via mob_say.
+
+tree:
+  type: selector
+  children:
+    - type: action
+      event: mob_idle
+      do: try_goal_planner

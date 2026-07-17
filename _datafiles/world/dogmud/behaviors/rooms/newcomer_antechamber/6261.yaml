@@ -5,6 +5,28 @@ tree:
   type: selector
   children:
 
+    # ── Dewey greets on arrival and gives the first instruction (fires once) ──
+    - type: sequence
+      event: room_enter
+      children:
+        - type: condition
+          check: state_equals
+          key: greeted
+          value: ""
+        - type: action
+          do: set_state
+          key: greeted
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          delay: 1.0
+          text: >-
+            You're nearly through. Out in the world, people and creatures answer
+            when you speak to them. Try it -- type
+            <ansi fg="command">say hello</ansi>. Then ask me something directly:
+            <ansi fg="command">ask dewey world</ansi>.
+
     # ── say ──
     - type: sequence
       event: room_command
@@ -24,7 +46,7 @@ tree:
           do: mob_say
           mob_id: 9491
           text: >-
-            Ha -- and the world will answer, out there. Now ask *me* something
+            Ha -- and the world will answer, out there. Now ask me something
             directly. Try <ansi fg="command">ask dewey world</ansi>, or ask
             about the pools, or how you'll grow.
 

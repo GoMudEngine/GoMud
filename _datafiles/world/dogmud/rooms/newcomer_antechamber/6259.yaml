@@ -2,10 +2,10 @@ roomid: 6259
 zone: Newcomer Antechamber
 title: Knowing Yourself
 description: >
-  The grey brightens over a wide, still surface, dark as poured glass. 'This
-  is where you meet yourself,' Dewey says. 'Type <ansi fg="command">status</ansi>
-  to read your six stats and the three pools beneath them -- health, stamina,
-  and conviction. Knowing yourself is the first armor.'
+  The grey brightens here over a wide, still surface, dark and smooth as poured
+  glass. It lies flat and silent, giving back the faint shape of whoever leans
+  over it, and something deeper glimmers far beneath. Dewey waits a step back
+  from the edge, unhurried, leaving you room to look.
 biome: default
 exits:
   north:

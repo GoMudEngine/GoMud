@@ -2,12 +2,10 @@ roomid: 6467
 zone: Newcomer Antechamber
 title: The Landing
 description: >
-  The grey thins to almost nothing here, and ahead a pale blue-green light
-  pools like the mouth of a well -- the real world, close enough to step into.
-  Dewey is already waiting, unhurried. 'See? Still breathing,' Dewey says,
-  smiling. 'You've got everything you need to start. When you're ready, type
-  <ansi fg="command">talk dewey</ansi> and I'll send you through. The world's
-  waiting.'
+  The grey thins to almost nothing here. Ahead, a pool of pale blue-green light
+  hangs where the between-place wears through into the real world -- close enough
+  now to step into. Dewey stands easy at the threshold, hands in pockets,
+  unhurried as ever.
 biome: default
 exits: {}
 spawninfo:

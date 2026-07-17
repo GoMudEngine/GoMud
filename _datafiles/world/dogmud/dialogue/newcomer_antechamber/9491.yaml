@@ -43,7 +43,7 @@ patterns:
 
   - keywords: ["grow", "growth", "level", "levels", "class", "progress", "mutation", "mutations"]
     responses:
-      - "No levels here, and no class to cage you. You grow by *doing* --
+      - "No levels here, and no class to cage you. You grow by doing --
           swing a blade and you sharpen, cast and you deepen, shout and you
           steady. Over time the way you fight even pulls mutations toward you.
           You never pick what you become. You earn it."

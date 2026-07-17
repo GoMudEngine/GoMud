@@ -2,10 +2,10 @@ roomid: 6260
 zone: Newcomer Antechamber
 title: What You Carry
 description: >
-  A shallow alcove of grey light, and a smooth token resting in it. 'Small
-  things matter out there,' Dewey says. 'Type <ansi fg="command">get token</ansi>
-  to pick it up, then <ansi fg="command">inventory</ansi> -- or just
-  <ansi fg="command">inv</ansi> -- to see what you're carrying.'
+  A shallow alcove worn into the grey, the kind of niche a traveler leaves
+  something in for whoever comes next. A single smooth token rests in it, cool
+  and pale, catching what little light there is. Dewey leans against nothing in
+  particular nearby, watching with a small, easy grin.
 biome: default
 exits:
   north:

@@ -6,6 +6,27 @@ tree:
   type: selector
   children:
 
+    # ── Dewey greets on arrival and gives the final instruction (fires once) ──
+    - type: sequence
+      event: room_enter
+      children:
+        - type: condition
+          check: state_equals
+          key: greeted
+          value: ""
+        - type: action
+          do: set_state
+          key: greeted
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          delay: 1.0
+          text: >-
+            See? Still breathing. You've got everything you need to begin. When
+            you're ready, type <ansi fg="command">talk dewey</ansi> and I'll send
+            you through -- the world's waiting for you.
+
     # ── handoff ──
     - type: sequence
       event: room_command
@@ -18,6 +39,17 @@ tree:
           mob_id: 9491
           text: >-
             That's the last of it -- and welcome to Gaius. Go on, now.
+        # Grant the Awakening quest (30-start) BEFORE the vortex. The hop to 5200
+        # is a move_player, which (like the Coulee onboarding vortex) bypasses the
+        # room_enter trigger the Awakening quest normally relies on -- so without
+        # this the newcomer lands at the pool with Cleric Hadwen but NO quest, and
+        # `ask hadwen begin` silently no-ops (2026-07-17 playtest). startInCoulee
+        # grants it explicitly for the other route; the antechamber route grants it
+        # here. Idempotent: the quest's own room_enter trigger is gated on
+        # missing:[30-start,30-end].
+        - type: action
+          do: grant_quest
+          quest: "30-start"
         - type: action
           do: move_player
           room_id: 5200

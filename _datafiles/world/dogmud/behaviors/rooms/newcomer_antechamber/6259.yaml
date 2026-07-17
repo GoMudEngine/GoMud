@@ -5,6 +5,28 @@ tree:
   type: selector
   children:
 
+    # ── Dewey greets on arrival and gives the first instruction (fires once) ──
+    - type: sequence
+      event: room_enter
+      children:
+        - type: condition
+          check: state_equals
+          key: greeted
+          value: ""
+        - type: action
+          do: set_state
+          key: greeted
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          delay: 1.0
+          text: >-
+            This is where you meet yourself. Type
+            <ansi fg="command">status</ansi> to read your six stats and the three
+            pools beneath them -- health, stamina, and conviction. Knowing
+            yourself is the first armor you'll ever wear.
+
     # ── status lesson ──
     - type: sequence
       event: room_command
@@ -25,7 +47,7 @@ tree:
           mob_id: 9491
           text: >-
             There you are -- all of you, on one page. Those stats and pools
-            *grow*, but not the way you might expect: no levels, no experience
+            grow, but not the way you might expect -- no levels, no experience
             to grind. I'll show you how when we spar. For now, the way
             <ansi fg="command">north</ansi> is open.
 

@@ -2,10 +2,11 @@ roomid: 6258
 zone: Newcomer Antechamber
 title: The Threshold
 description: >
-  Grey light with no source, a floor you cannot quite feel -- and then, warm
-  and solid where nothing else is, someone waiting for you. 'There you are,'
-  Dewey says gently. 'You're waking up. First thing anyone learns here: type
-  <ansi fg="command">look</ansi> to take in wherever you stand. Go on.'
+  Grey light with no source, and a floor you cannot quite feel underfoot. There
+  are no walls here and no far distance -- only a soft, formless hush, the pale
+  in-between of a place that is not yet anywhere. And you are not alone in it --
+  someone stands close by, warm and solid where all else is vapor, watching you
+  wake with patient, friendly eyes.
 biome: default
 exits:
   north:

@@ -2,10 +2,10 @@ roomid: 6262
 zone: Newcomer Antechamber
 title: The Proving
 description: >
-  A worn practice ring scuffed into the grey, and a straw effigy standing
-  quiet at its center. 'Last lessons, and the ones that keep you breathing,'
-  Dewey says. 'Before any fight, steel yourself -- type
-  <ansi fg="command">warcry</ansi> and let the sound harden your nerve.'
+  A rough practice ring is scuffed into the grey floor, worn smooth by the feet
+  of everyone who ever came through this way. At its center a straw effigy stands
+  quiet on a fixed post, faceless but for two charcoal smudges where eyes might
+  be. Dewey rolls both shoulders loose and nods you toward it.
 biome: default
 exits:
   north:
@@ -16,8 +16,9 @@ spawninfo:
 nouns:
   effigy: >-
     A man-shape of bound straw on a fixed post, charcoal smudges for eyes. It
-    will stand and take whatever you give it and never lift a hand back -- the
-    safest sparring partner you will ever have.
+    jerks and flails on its pivot when struck, but there is no strength behind
+    it -- it could never land a blow worth feeling. The safest sparring partner
+    you will ever have.
   ring: >-
     A rough circle scuffed into the grey floor by countless feet. Every soul
     who came through here learned to throw a punch, a spell, a shout in this

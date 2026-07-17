@@ -8,6 +8,28 @@ tree:
   type: selector
   children:
 
+    # ── Dewey greets on arrival and gives the first instruction (fires once) ──
+    - type: sequence
+      event: room_enter
+      children:
+        - type: condition
+          check: state_equals
+          key: greeted
+          value: ""
+        - type: action
+          do: set_state
+          key: greeted
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          delay: 1.0
+          text: >-
+            There you are -- waking up at last. Easy, now. Nothing here can harm
+            you. The first thing anyone learns in this world is how to take stock
+            of where they stand. Type <ansi fg="command">look</ansi> to take in
+            the room around you. Go on, try it.
+
     # ── examine a noun (requires plain look done first) ──
     - type: sequence
       event: room_command
@@ -58,7 +80,7 @@ tree:
           do: mob_say
           mob_id: 9491
           text: >-
-            Good. Now look *closer* at something -- your own
+            Good. Now look closer at something -- your own
             <ansi fg="command">look hands</ansi> will do. Descriptions here
             reward a second look.
 

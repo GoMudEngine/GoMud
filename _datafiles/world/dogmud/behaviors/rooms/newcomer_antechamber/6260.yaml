@@ -4,6 +4,28 @@ tree:
   type: selector
   children:
 
+    # ── Dewey greets on arrival and gives the first instruction (fires once) ──
+    - type: sequence
+      event: room_enter
+      children:
+        - type: condition
+          check: state_equals
+          key: greeted
+          value: ""
+        - type: action
+          do: set_state
+          key: greeted
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          delay: 1.0
+          text: >-
+            Small things matter out there. Type
+            <ansi fg="command">get token</ansi> to pick that one up, then
+            <ansi fg="command">inventory</ansi> -- or just
+            <ansi fg="command">inv</ansi> -- to see what you're carrying.
+
     # ── get the token ──
     - type: sequence
       event: room_command
