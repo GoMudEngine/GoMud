@@ -1,0 +1,20 @@
+mobid: 9491
+zone: Newcomer Antechamber
+behavior_archetype: noncombat_passive
+non_combatant: true
+charm_immune: true
+hostile: false
+statpool: 30
+maxwander: 0
+groups:
+  - humanoid
+character:
+  name: Dewey
+  description: |
+    A wiry figure with laugh-lines and patient eyes, dressed in plain,
+    travel-worn clothes. Unlike everything else in this grey place, Dewey
+    is solid and warm -- a person, not a trick of the light. Dewey came
+    through here once, frightened and brand-new, and never quite left the
+    threshold: someone has to catch the next ones as they wake.
+  speciesid: 1
+  level: 1
