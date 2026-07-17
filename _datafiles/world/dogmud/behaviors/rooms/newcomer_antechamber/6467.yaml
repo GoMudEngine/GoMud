@@ -1,0 +1,41 @@
+# 6467 The Landing — terminus. talk/say → farewell → vortex to the Awakening
+# Pool (5200), where quest 30 begins with Cleric Hadwen. Intercept so the
+# original talk/say doesn't re-run in 5200. Movement is caught and redirected.
+
+tree:
+  type: selector
+  children:
+
+    # ── handoff ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [talk, say]
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            That's the last of it -- and welcome to Gaius. Go on, now.
+        - type: action
+          do: move_player
+          room_id: 5200
+        - type: action
+          do: intercept
+
+    # ── movement: redirect to the handoff (catches `go <dir>` too) ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [north, n, go, south, s, east, e, west, w, up, u, down, d]
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            One step left, and it's not a walk -- type
+            <ansi fg="command">talk dewey</ansi> and I'll carry you through.
+        - type: action
+          do: intercept

@@ -1,0 +1,27 @@
+roomid: 6467
+zone: Newcomer Antechamber
+title: The Landing
+description: >
+  The grey thins to almost nothing here, and ahead a pale blue-green light
+  pools like the mouth of a well -- the real world, close enough to step into.
+  Dewey is already waiting, unhurried. 'See? Still breathing,' Dewey says,
+  smiling. 'You've got everything you need to start. When you're ready, type
+  <ansi fg="command">talk dewey</ansi> and I'll send you through. The world's
+  waiting.'
+biome: default
+exits: {}
+spawninfo:
+  - mobid: 9491
+nouns:
+  light: >-
+    A pool of steady blue-green light hangs where the grey gives out -- the
+    same glow you glimpsed under the still water, but whole and near now. It is
+    the Awakening Pool, and the world around it, waiting for you to arrive.
+  archway: >-
+    Not so much a door as a thinning, a place where this grey between-world
+    wears through into the real one. Step through it and you wake for good.
+  dewey: >-
+    Dewey stands easy at the threshold, hands in pockets. 'I stay here. There's
+    always another one waking up. But you -- you go on. You'll do fine.'
+idlemessages:
+  - The pool of light ahead pulses once, slow and warm, like a welcome.
