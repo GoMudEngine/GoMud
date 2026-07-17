@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
@@ -593,6 +594,19 @@ func handlePlayerFlee(user *users.UserRecord, uRoom *rooms.Room, userId int) boo
 
 		newRoom := rooms.LoadRoom(exitRoomId)
 		usercommands.Look(``, user, newRoom, events.CmdSecretly)
+
+		// Fire the room behavior tree's room_enter event for the destination,
+		// exactly as walked movement (go.go) does. Without this, fleeing INTO a
+		// room silently skips its on-entry effects — e.g. the newcomer tutorial's
+		// final room (6467), reached by fleeing the effigy, never delivered its
+		// guide's "talk to me" instruction, stranding the player (2026-07-17
+		// playtest). Correct in general: entering a room by any means should
+		// trigger its entry hooks.
+		behaviortree.TryRoomBehavior(exitRoomId, behaviortree.EventContext{
+			EventType: "room_enter",
+			UserId:    user.UserId,
+			RoomId:    exitRoomId,
+		})
 	}
 
 	return true

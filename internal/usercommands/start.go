@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
@@ -21,13 +22,12 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return false, errors.New(`only allowed in the void`)
 	}
 
-	// Get if already exists, otherwise create new
-	cmdPrompt, isNew := user.StartPrompt(`start`, rest)
-
-	if isNew {
-		user.SendText(messaging.CategorySystem, ``)
-		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You'll need to answer some questions.%s`, term.CRLFStr))
-	}
+	// Get if already exists, otherwise create new. (isNew is intentionally
+	// unused: the former "You'll need to answer some questions." banner was
+	// removed — it was an async line that flushed on top of the pending route
+	// question and forced an extra prompt redraw, re-printing the whole
+	// multi-line question. The question is self-explanatory on its own.)
+	cmdPrompt, _ := user.StartPrompt(`start`, rest)
 
 	if user.Character.SpeciesId == 0 {
 		// All players are human in Delusions of Grandeur
@@ -59,10 +59,6 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You will be known as <ansi fg="yellow-bold">%s</ansi>!%s`, user.Character.Name, term.CRLFStr))
 	}
 
-	user.EventLog.Add(`char`, fmt.Sprintf(`Created a new character: <ansi fg="username">%s</ansi>`, user.Character.Name))
-
-	events.AddToQueue(events.CharacterCreated{UserId: user.UserId, CharacterName: user.Character.Name})
-
 	question := cmdPrompt.Ask(
 		"How much of Gaius do you already know?\n"+
 			"  1) New to text MUDs       -- I'll teach you the basics first.\n"+
@@ -72,6 +68,18 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if !question.Done {
 		return true, nil
 	}
+
+	// Announce the new character and log its creation ONLY once the route
+	// question is answered (i.e. the player is actually entering the world).
+	// Start() is re-invoked once per prompt answer, and the CharacterCreated
+	// event drives the "X has entered the realm!" broadcast + a help hint. Firing
+	// it before/while the question is pending flushed that async output on top of
+	// the pending question — and because the question IS the command prompt, each
+	// flush forced a redraw that re-rendered the whole multi-line question (the
+	// 2026-07-17 "route question shows up twice" report). Deferring it past the
+	// answer both fixes the double-render and is semantically correct.
+	user.EventLog.Add(`char`, fmt.Sprintf(`Created a new character: <ansi fg="username">%s</ansi>`, user.Character.Name))
+	events.AddToQueue(events.CharacterCreated{UserId: user.UserId, CharacterName: user.Character.Name})
 
 	switch onboardingRoute(question.Response) {
 	case routeVeteran:
@@ -184,6 +192,16 @@ func startInAntechamber(user *users.UserRecord) bool {
 	if r := rooms.LoadRoom(created[first]); r != nil {
 		Look("", user, r, events.CmdSecretly)
 	}
+	// The player is PLACED here (not walked in via `go`), so the movement path's
+	// room_enter behavior dispatch never fires for room 1. Fire it explicitly so
+	// Dewey speaks his opening instruction on arrival, exactly as he does in the
+	// later rooms the player walks into. (Fired after the arrival Look so his
+	// delayed line lands just beneath the room description.)
+	behaviortree.TryRoomBehavior(created[first], behaviortree.EventContext{
+		EventType: "room_enter",
+		UserId:    user.UserId,
+		RoomId:    created[first],
+	})
 	return true
 }
 
