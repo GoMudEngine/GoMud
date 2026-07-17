@@ -1,29 +1,91 @@
-# 6260 — gate: must help before leaving north.
-#
-# Branch 1: player types help → mark lesson done + praise.
-# Branch 2: movement attempt while lesson not done → nudge + intercept.
+# 6260 What You Carry — gates: get token, then inventory, then help.
 
 tree:
   type: selector
   children:
 
-    # ── Lesson performed: mark done, praise ──
+    # ── get the token ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [get, take, g]
+        - type: condition
+          check: command_rest_contains
+          keywords: [token]
+        - type: condition
+          check: state_equals
+          key: got
+          value: ""
+        - type: action
+          do: set_state
+          key: got
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            Yours now. See what you're carrying -- type
+            <ansi fg="command">inventory</ansi>, or just
+            <ansi fg="command">inv</ansi>.
+
+    # ── inventory ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [inventory, inv, i]
+        - type: condition
+          check: state_equals
+          key: got
+          value: "1"
+        - type: condition
+          check: state_equals
+          key: invd
+          value: ""
+        - type: action
+          do: set_state
+          key: invd
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            There it is. And when you forget a command -- you will, everyone
+            does -- the game remembers for you. Type
+            <ansi fg="command">help</ansi> to see the whole index.
+
+    # ── help ──
     - type: sequence
       event: room_command
       children:
         - type: condition
           check: command_matches
           commands: [help]
+        - type: condition
+          check: state_equals
+          key: invd
+          value: "1"
+        - type: condition
+          check: state_equals
+          key: helped
+          value: ""
         - type: action
           do: set_state
-          key: lesson_done
+          key: helped
           value: "1"
         - type: action
-          do: send_user_text
+          do: mob_say
+          mob_id: 9491
           text: >-
-            The game will always answer. North is open -- type  north.
+            That list is always there -- <ansi fg="command">help</ansi> for the
+            index, <ansi fg="command">help</ansi> and a topic for one thing.
+            Never be afraid to use it. The way <ansi fg="command">north</ansi>
+            is open.
 
-    # ── Movement before lesson: block with a nudge ──
+    # ── movement before all three: nudge + block ──
     - type: sequence
       event: room_command
       children:
@@ -32,11 +94,14 @@ tree:
           commands: [north, n, go, south, s, east, e, west, w, up, u, down, d]
         - type: condition
           check: state_equals
-          key: lesson_done
+          key: helped
           value: ""
         - type: action
-          do: send_user_text
+          do: mob_say
+          mob_id: 9491
           text: >-
-            Try the game's memory first. Type  help  (or  help look ), then go north.
+            A few small things first: <ansi fg="command">get token</ansi>, then
+            <ansi fg="command">inv</ansi>, then <ansi fg="command">help</ansi>.
+            Then north.
         - type: action
           do: intercept
