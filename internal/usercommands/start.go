@@ -187,6 +187,14 @@ func startInAntechamber(user *users.UserRecord) bool {
 	if err != nil {
 		return false
 	}
+	// Start "New to text MUDs" players at medium combat verbosity (landed hits
+	// only). In the tutorial's practice fight this hides the harmless miss/whiff
+	// spam — the effigy deals no damage so it never lands a hit — while still
+	// showing the player's landed auto-swings and their spike/trip, so Dewey's
+	// teaching lines aren't buried in combat noise (2026-07-17 feedback). It's
+	// also a gentler default for a first-timer, who can `set combatverbosity
+	// full` whenever they want the firehose.
+	user.CombatVerbosity = "medium"
 	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="magenta">The grey takes you, gentle as sleep...</ansi>%s`, term.CRLFStr))
 	rooms.MoveToRoom(user.UserId, created[first])
 	if r := rooms.LoadRoom(created[first]); r != nil {

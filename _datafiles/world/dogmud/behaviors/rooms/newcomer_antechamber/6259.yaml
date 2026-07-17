@@ -47,8 +47,9 @@ tree:
           mob_id: 9491
           text: >-
             There you are -- all of you, on one page. Those stats and pools
-            grow, but not the way you might expect -- no levels, no experience
-            to grind. I'll show you how when we spar. For now, the way
+            grow, but not the way you might expect -- no levels to climb, no
+            experience bar to fill. You sharpen whatever you actually use, the
+            more you use it. I'll show you how when we spar. For now, the way
             <ansi fg="command">north</ansi> is open.
 
     # ── movement before lesson: nudge + block ──
