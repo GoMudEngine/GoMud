@@ -1,32 +1,61 @@
-# 6261 — gate: must inventory before leaving north.
-#
-# Branch 1: player types inventory/inv/i → mark lesson done + praise.
-# Branch 2: movement attempt while lesson not done → nudge + intercept.
+# 6261 The World Speaks — gates: say, then ask. Neither intercepts, so `say`
+# broadcasts and `ask dewey <topic>` still hits Dewey's dialogue tree.
 
 tree:
   type: selector
   children:
 
-    # ── Lesson performed: mark done, praise ──
+    # ── say ──
     - type: sequence
       event: room_command
       children:
         - type: condition
           check: command_matches
-          commands: [get, take, g]
+          commands: [say, '"', shout, yell]
         - type: condition
-          check: command_rest_contains
-          keywords: [token]
+          check: state_equals
+          key: said
+          value: ""
         - type: action
           do: set_state
-          key: lesson_done
+          key: said
           value: "1"
         - type: action
-          do: send_user_text
+          do: mob_say
+          mob_id: 9491
           text: >-
-            Good -- the token is yours. North is open -- type  north.
+            Ha -- and the world will answer, out there. Now ask *me* something
+            directly. Try <ansi fg="command">ask dewey world</ansi>, or ask
+            about the pools, or how you'll grow.
 
-    # ── Movement before lesson: block with a nudge ──
+    # ── ask ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [ask, talk]
+        - type: condition
+          check: state_equals
+          key: said
+          value: "1"
+        - type: condition
+          check: state_equals
+          key: asked
+          value: ""
+        - type: action
+          do: set_state
+          key: asked
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            That's how you'll learn half of what matters out there -- just ask.
+            One last thing before I let you go, and it's the one that keeps you
+            alive. The way <ansi fg="command">north</ansi> is open.
+
+    # ── movement before both: nudge + block ──
     - type: sequence
       event: room_command
       children:
@@ -35,11 +64,13 @@ tree:
           commands: [north, n, go, south, s, east, e, west, w, up, u, down, d]
         - type: condition
           check: state_equals
-          key: lesson_done
+          key: asked
           value: ""
         - type: action
-          do: send_user_text
+          do: mob_say
+          mob_id: 9491
           text: >-
-            Take the token first -- type  get token , then go north.
+            Speak first -- <ansi fg="command">say hello</ansi>, then
+            <ansi fg="command">ask dewey world</ansi>. Then north.
         - type: action
           do: intercept

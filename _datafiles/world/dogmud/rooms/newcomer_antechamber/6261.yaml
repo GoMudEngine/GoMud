@@ -1,12 +1,31 @@
 roomid: 6261
 zone: Newcomer Antechamber
-title: What You Carry
+title: The World Speaks
 description: >
-  'A smooth grey token rests on the ground. Type  get token  to take it,
-  then  inventory  -- or just  inv  -- to see what you now carry.'
+  Sound seeps into the silence here -- far voices, wind, the distant clatter
+  of a living world. 'You're almost through,' Dewey says. 'Out there, people
+  and creatures answer when you speak. Try it: <ansi fg="command">say hello</ansi>.
+  Then ask me something -- <ansi fg="command">ask dewey world</ansi>.'
 biome: default
 exits:
   north:
     roomid: 6262
-items:
-  - itemid: 2
+spawninfo:
+  - mobid: 9491
+nouns:
+  voices: >-
+    Faint and far, the sound of a whole world going about its business --
+    hawkers, footsteps, a snatch of song. That is Gaius, waiting just past this
+    last stretch of grey. It sounds busy. It sounds alive.
+  doorway: >-
+    A ragged doorway of brighter light hangs in the grey, and through it you
+    catch half-glimpses: a rooftop, a stretch of pale coulee wall, sky. The
+    real world, close enough now to smell on the wind.
+  wind: >-
+    A real breeze moves through, carrying dust and warmth and the green smell
+    of open country -- the first honest air since you woke.
+  dewey: >-
+    'Ask me anything while you can,' Dewey says. 'World, the pools, the Opened,
+    how you'll grow -- I've got a moment, and out there everyone's busy.'
+idlemessages:
+  - A gust carries a scrap of far-off laughter through the doorway of light.
