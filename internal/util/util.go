@@ -58,7 +58,12 @@ var (
 	// \w: alphanumeric
 	// \p{P}: punctuation
 	// \p{S}: symbol
-	wordRegex        = regexp.MustCompile(`(</?ansi[^>]*>|[\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]|\w+|[^\w<\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]+|<)`)
+	// \w+(?:['’]\w+)* keeps apostrophe contractions ("I'll", "don't", "you're")
+	// as a single token so word-wrapping never splits them across a line break
+	// (both straight and curly apostrophes). A trailing/leading apostrophe with
+	// no adjacent word char (e.g. a quote, or a plural possessive "dogs'") is
+	// still handled by the punctuation alternative, unchanged.
+	wordRegex        = regexp.MustCompile(`(</?ansi[^>]*>|[\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]|\w+(?:['’]\w+)*|[^\w<\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]+|<)`)
 	punctuationRegex = regexp.MustCompile(`[\p{P}]+`)
 	ansiTagRegex = regexp.MustCompile(`</?ansi[^>]*>`)
 
