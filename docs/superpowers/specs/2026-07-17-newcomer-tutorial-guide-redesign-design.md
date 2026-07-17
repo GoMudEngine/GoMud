@@ -106,7 +106,7 @@ IDs in forward order: **room 1 = 6258, room 2 = 6259, … room 5 = 6262, room 6 
 | 2 | **Knowing Yourself** | `status` (the six stats + three pools: health / stamina / conviction) → progression **teaser** ("these grow — but not the way you'd expect; I'll show you soon") |
 | 3 | **What You Carry** | `get <item>` (the grey token, existing `itemid: 2`) → `inventory` / `inv` → `help` (the "you'll forget, the game remembers" meta-lesson) |
 | 4 | **The World Speaks** | `say <text>` → `ask dewey <topic>` (NPCs answer; doubles as the curiosity/exploration hook) |
-| 5 | **The Proving** | `attack effigy` → `bash` → *feel the cooldown* (retry `bash` → real recover message) → `cooldowns` → **forced real progression tick (banner shown once)** → **progression primer** → `flee` (carries player to room 6) |
+| 5 | **The Proving** | `attack effigy` → `trip` → *feel the cooldown* (retry `trip` → real recover message) → `cooldowns` → **forced real progression tick (banner shown once)** → **progression primer** → `flee` (carries player to room 6) |
 | 6 | **The Landing** | Dewey's handoff → vortex to the Awakening Pool (room 5200); quest 30 (the Awakening) begins with Cleric Hadwen |
 
 **Ordering rationale.** Progression is taught in room 5 — *after* the player has
@@ -114,18 +114,55 @@ done something and seen a real change — not lectured in the abstract in room 2
 (room 2 only plants the teaser). Flee is the final combat beat and doubles as the
 transition into the handoff room.
 
+### 5.1 Room Atmosphere & Nouns
+
+The between-place is *not* a featureless grey void — each themed room has a
+distinct visual identity within the pre-Awakening dream logic, and each carries
+**2–4 examinable `nouns:`** that reward the examine lesson and seed worldbuilding
+(Gaius, the Opened, the pools, the Ring of Change). Room 1 especially must have
+rich nouns, because it *teaches* `look <thing>` — the first thing a player
+examines has to pay off, or the lesson lands flat. Nouns are authored
+un-hyphenated with spaces per the parser convention; noun prose obeys the 80-col
+wrap and the no-hard-numbers rule.
+
+Design direction per room (build authors the final prose):
+
+| # | Atmosphere | Example nouns (each seeds a little lore) |
+|---|-----------|------------------------------------------|
+| 1 **The Threshold** | Formless grey light slowly resolving into the first solid things; the player is becoming real. | **your hands** (half-there, firming as you wake); **the grey** (the between-place — "not death, not yet life"); **the threshold stone** underfoot (worn by every soul that ever woke here) |
+| 2 **Knowing Yourself** | A still, dark, mirror-smooth surface that shows the player their own shape — a foreshadow of the Awakening Pool. | **the still water** (shows *you*, and something waiting beneath); **the sixfold pattern** faint in the depths (the six stats motif); **three embers** — pale blue-green, steady (the health/stamina/conviction pools) |
+| 3 **What You Carry** | A quiet alcove of small kept things; the grey token rests here. | **the grey token** (the pickup, `itemid: 2`); **the alcove/shelf** (things the Opened leave behind for the next newcomer); **drifting motes** of the same pool-light |
+| 4 **The World Speaks** | Sound seeps into the silence — distant voices, wind, the first hint of the world beyond. | **the far voices** (echoes of Gaius, of the living world you're bound for); **a doorway of light** showing glimpsed rooftops/coulee walls; **the wind** (carries the smell of real air) |
+| 5 **The Proving** | A worn practice ring scuffed into the grey; the straw effigy stands ready. | **the straw effigy** (the target); **the scuffed ring** (countless newcomers have squared off here); **scattered straw** |
+| 6 **The Landing** | The edge of the between-place; ahead, the pool-light of the true Awakening Pool and the way through. | **the pool-light** ahead (the real world, the Awakening waiting); **the archway/vortex** (the way through); **Dewey** (a warm last look before you go) |
+
 ## 6. Room 5 "The Proving" — detailed script & copy
 
 The pedagogically load-bearing room. Gated sub-step chain (per-instance state):
-`attacked` → `bashed` → `saw_cooldown` → `checked_cooldowns` → `progression_shown`
-→ `primer_heard` → (exit via `flee`).
+`attacked` → `cast_spike` → `saw_cooldown` → `checked_cooldowns` →
+`progression_shown` → `primer_heard` → (exit via `flee`).
+
+**Why `cast spike`, not `bash`/`trip`.** `bash` requires a shield, which a fresh
+character (carrying only the grey token) does not have. A better demo is a
+**spell**: every new character starts with the spells `conviction-spike` (alias
+`spike`, a `harmsingle` damage spell), `chrysalis-glow`, and `identify`
+(`internal/characters/spells.go` `StarterSpells`). Casting `spike` at the effigy:
+(a) surfaces the entire **magic system**, which the tutorial otherwise never
+touches; (b) reinforces the **no-class** point — brand-new, you can already cast;
+(c) genuinely shares the special-move cooldown, so the lesson stays honest. `attack`
+still comes first for the "normal swings never tire" contrast; `cast spike` is the
+special that trips the cooldown. Martial specials (bash/trip/kick) get hands-on
+reinforcement from Drillmaster Vorn in Pothole Coulee. **Build-time check:**
+confirm a fresh character's conviction/stamina pool affords two casts of `spike`
+(`cost: 50`); if not, top the pool in-room or pick a cheaper starter spell.
 
 **The practice effigy (new mob).** The existing dummies
 (`pothole_coulee/9109-training_dummy`, `9163-practice_butt`, `9146-practice_mote`)
 are built for open-ended practice and are too tanky / wrong-purpose for a tight
 scripted micro-lesson. **Create a new, purpose-built "straw effigy"** for the
 antechamber:
-- Attackable (so `attack`/`bash` and combat entry work).
+- Attackable and targetable by spells (so `attack` and `cast spike` work and
+  combat entry triggers).
 - Deals **zero** damage; never retaliates.
 - **Never flees** (no flee/courage behavior) — avoids the known Vorn-dummy-flee
   bug.
@@ -142,27 +179,30 @@ antechamber:
 > *(player attacks; auto-swings begin)*
 >
 > **Dewey:** "Good. Those steady swings are your *normal* attacks — they never
-> tire. But you've got harder blows in you. Try one: type `bash` to throw your
-> shoulder into it."
+> tire. But you woke with more than fists. You already carry a spell or two — try
+> one: type `cast spike` to drive a spike of raw conviction into it."
 >
-> *(player bashes)*
+> *(player casts → the effigy takes the hit)*
 >
-> **Dewey:** "Ha! Felt that. Now — try to `bash` again, right away."
+> **Dewey:** "You felt that leave you. No robes, no order, no permission needed —
+> in Gaius, belief *is* the weapon. Now: try to `cast spike` again, right away."
 >
-> *(player retries → real engine message: "You need a moment to recover before
-> attempting another special move.")*
+> *(player retries → real engine recovery message. Cast has two possible lines
+> here — the shared-cooldown "You need a moment before you can do that." or the
+> cast-init "Your mind is still recovering from the effort." Either demonstrates
+> the wait; build confirms which fires for a back-to-back recast.)*
 >
-> **Dewey:** "There it is. Your strongest moves — special strikes like that,
-> spells, battle-shouts, the powers a mutation will one day grant you — all draw
-> from the same well of focus. Spend it and you need a few rounds before the next
-> one. Your normal swings never wait, though, so you're never helpless. Want to
-> see the timer? Type `cooldowns`."
+> **Dewey:** "There it is. Your strongest moves — a spell like that, special
+> strikes, battle-shouts, the powers a mutation will one day grant you — all draw
+> from the same well of focus. Spend it and you need a few rounds before the next.
+> Your normal swings never wait, though, so you're never helpless. Want to see the
+> timer? Type `cooldowns`."
 >
 > *(player checks cooldowns)*
 
 Then the **forced progression tick** fires — the player sees the *genuine* banner
-(e.g. `*** A moment of brilliance! Your unarmed-combat technique improves! ***`),
-and Dewey anchors the primer to it:
+(e.g. `*** A moment of brilliance! Your spellcasting technique improves! ***`,
+matching the action they just took), and Dewey anchors the primer to it:
 
 > **Dewey:** "See that? You just got *better* — not from any tally of kills or a
 > level you climbed. There are no levels here, and no class boxing you in. In
@@ -278,7 +318,10 @@ Coulee, routes 2 & 3.
   highlighted, the effigy cannot be killed and never flees, the cooldown message
   and `cooldowns` output appear, the forced progression banner shows exactly
   once, `flee` succeeds and lands in room 6, and the handoff drops the player at
-  room 5200 with quest 30 active.
+  room 5200 with quest 30 active. Also confirm `cast spike` lands on the effigy
+  and a fresh character's pool affords two casts, and that **every authored room
+  noun is examinable** (`look <noun>` returns its lore prose) — the examine lesson
+  in room 1 depends on it.
 - **Playtest:** a naive-newbie `/playtest local feel-tester` pass focused on the
   antechamber, watching for confusion, dead-ends, or unhighlighted commands.
 
