@@ -97,9 +97,11 @@ current guide mob 9491). Dewey re-themes the existing 9491 mob (renamed file per
 
 Six themed rooms, one-way corridor (each room's only open exit is forward, which
 also guarantees `flee` in room 5 can only carry the player onward). Rooms map to
-IDs in forward order: **room 1 = 6258, room 2 = 6259, … room 5 = 6262, room 6 =
-6263** (the new room). Every command word below is rendered with
-`<ansi fg="command">` cyan highlighting in-game.
+IDs in forward order: **room 1 = 6258, room 2 = 6259, room 3 = 6260, room 4 = 6261,
+room 5 = 6262, room 6 = 6467** (the new room — 6263 is already taken by
+`east_road_to_greenford`; 6467 is the next globally-free room ID per
+`id_inventory.py`). Every command word below is rendered with `<ansi fg="command">`
+cyan highlighting in-game.
 
 | # | Room (working title) | Gated sub-lessons, in order |
 |---|----------------------|------------------------------|
@@ -107,7 +109,7 @@ IDs in forward order: **room 1 = 6258, room 2 = 6259, … room 5 = 6262, room 6 
 | 2 | **Knowing Yourself** | `status` (the six stats + three pools: health / stamina / conviction) → progression **teaser** ("these grow — but not the way you'd expect; I'll show you soon") |
 | 3 | **What You Carry** | `get <item>` (the grey token, existing `itemid: 2`) → `inventory` / `inv` → `help` (the "you'll forget, the game remembers" meta-lesson) |
 | 4 | **The World Speaks** | `say <text>` → `ask dewey <topic>` (NPCs answer; doubles as the curiosity/exploration hook) |
-| 5 | **The Proving** | *Pre-combat:* `warcry` (steel yourself — *voice*, a self-buff) → `conditions` (see the buff → learn conditions) → `cooldowns` (the shout spent your focus → learn the shared well). *In combat:* `attack effigy` (normal swings) → `cast spike` (*belief*) → `trip` blocked, then lands (shared cooldown across families; trip knocks the effigy prone = an enemy condition) → **forced progression tick (banner once)** → **progression primer** → `flee` (carries player to room 6) |
+| 5 | **The Proving** | *Pre-combat:* `warcry` (steel yourself — *voice*, a self-buff) → `conditions` (see the buff → learn conditions) → `cooldowns` (the shout spent your focus → learn the shared well). *In combat:* `attack effigy` (normal swings) → `cast spike` (*belief*) → recast `cast spike` (blocked — the shared well is spent; real recover message) → `trip` after the well refills (lands, knocks the effigy prone = an enemy condition) → **forced progression tick (banner once)** → **progression primer** → `flee` (carries player to room 6) |
 | 6 | **The Landing** | Dewey's handoff → vortex to the Awakening Pool (room 5200); quest 30 (the Awakening) begins with Cleric Hadwen |
 
 **Ordering rationale.** Progression is taught in room 5 — *after* the player has
@@ -141,7 +143,16 @@ Design direction per room (build authors the final prose):
 
 The pedagogically load-bearing room. Gated sub-step chain (per-instance state):
 `warcried` → `saw_conditions` → `checked_cooldowns` → `attacked` → `cast_spike` →
-`saw_block` → `tripped` → `progression_shown` → `primer_heard` → (exit via `flee`).
+`recast_blocked` → `tripped` → `progression_shown` → `primer_heard` →
+(exit via `flee`).
+
+> **Authoring constraint (verified):** room behavior trees have **no condition to
+> read a player's cooldown or buffs** (only quest/item/gold/flag/spell/misc-data
+> player conditions exist). So the "blocked move" beat cannot branch on cooldown
+> state. We make it deterministic instead: the player **recasts `cast spike`
+> immediately**, which is reliably blocked (the first cast just spent the shared
+> well), then `trip` is prompted only after the well refills so it lands cleanly.
+> The tree drives purely off command detection + per-instance `set_state` flags.
 
 **Why this shape (conditions & cooldown taught pre-combat, then a belief+body
 sampler).** `bash` is excluded — it needs a shield a fresh character (carrying only
@@ -224,13 +235,14 @@ antechamber:
 >
 > *(cooldown clear; player casts → the effigy takes the hit)*
 >
-> **Dewey:** "Now try `trip` straightaway — go on, before your focus is back."
+> **Dewey:** "Now try `cast spike` again, straightaway — go on."
 >
-> *(player tries → real engine message: "You need a moment to recover before
-> attempting another special move.")*
+> *(player recasts immediately → real engine message: "You need a moment before you
+> can do that." — the shared well is spent)*
 >
-> **Dewey:** "See? Same well. That spell drew it down, so the `trip` has to wait —
-> just a breath. Let it fill, then sweep its legs."
+> **Dewey:** "See? Same well you felt with the war cry. Belief just drew it down, so
+> your next big move has to wait a breath. Let it fill — then take its legs the
+> body's way: type `trip`."
 >
 > *(cooldown clears; player trips → the effigy topples)*
 >
@@ -240,9 +252,11 @@ antechamber:
 > picks one and locks the rest away. You lean where you like, and grow toward it.
 > Which brings me to the last thing worth understanding..."
 
-Then the **forced progression tick** fires — the player sees the *genuine* banner
-(e.g. `*** A moment of brilliance! Your spellcasting technique improves! ***`,
-naming one of the skills they just exercised), and Dewey anchors the primer to it:
+Then the **forced progression tick** fires — the player sees the *genuine* boxed
+`SKILL ADVANCEMENT` banner for `spellcasting` (the standard `banner.Format(banner.
+Skill, ...)` output they'll see on real progression; **not** the separate
+critical-success "*** … technique improves! ***" string, which is a different code
+path), and Dewey anchors the primer to it:
 
 > **Dewey:** "See that? You just got *better* — not from any tally of kills or a
 > level you climbed. There are no levels here, and no class boxing you in. In
@@ -298,14 +312,18 @@ The progression copy must stay truthful to the engine:
 ### 6.2 Forced progression tick — implementation note
 
 A short tutorial cannot *rely* on a natural progression roll (~12% per stat check;
-~1 skill rank per 25 uses). To guarantee the player sees the real banner exactly
-once, the room 5 behavior tree must **force one genuine progression event** (a
-real skill/stat increment that emits the standard `banner.Format(banner.Skill,
-...)` / `*** ... technique improves! ***` output). If an existing behavior-tree
-action can grant a progression tick, reuse it; otherwise add a small new action
-(e.g. `grant_progression <skill>`). This is honest — the player *did* use the
-skill — and it teaches recognition of the message for when it fires naturally
-later.
+~1 skill rank per 25 uses). **No existing behavior-tree action grants a
+progression tick** (verified — nothing in `internal/behaviortree` or
+`internal/mobcommands` calls `progression.go`), so add a small new room action
+**`grant_progression`** (param `skill`). Cleanest guaranteed implementation:
+resolve the triggering player via `users.GetByUserId(ctx.Event.UserId)` and call
+`char.CheckSkillProgression(skill, userId, 1000.0)` — the chance clamps to 1.0
+(`progression.go:108-110`) so a large multiplier makes it certain, and that real
+path does the genuine `IncreaseSkill` + tier bookkeeping and emits the standard
+`banner.Format(banner.Skill, …)` banner via `events.AddToQueue`. Guard it to fire
+**once** with a room `set_state`/`state_equals` flag. This is honest — the player
+*did* use the skill — and it teaches recognition of the banner for later. (Gated
+on `UseSkillProgression`, which is `true` in prod.)
 
 ## 7. Command Highlighting
 
@@ -331,27 +349,39 @@ highlighting):**
   file is keyed by mob ID → stays `9491.yaml`)
 - `_datafiles/world/dogmud/goals/9491-*.yaml`
 
-**Create (new IDs):**
-- **Room 6263** `rooms/newcomer_antechamber/6263.yaml` (the 6th themed room) +
-  its behavior tree `behaviors/rooms/newcomer_antechamber/6263.yaml`
-- **Straw effigy** practice-dummy mob (new mob ID) + minimal goals/behavior
-  (stationary, zero-damage, non-fleeing, non-lethal), spawned in room 5
+**Create (new IDs — verified free via `id_inventory.py`):**
+- **Room 6467** `rooms/newcomer_antechamber/6467.yaml` (the 6th themed room, "The
+  Landing") + its behavior tree `behaviors/rooms/newcomer_antechamber/6467.yaml`.
+  (6263 is taken by `east_road_to_greenford`; 6467 is the next globally-free room.)
+- **Straw effigy** practice-dummy mob **9614** (next globally-free mob) + goals —
+  attackable but harmless (`behavior_archetype: combat_passive`, `hostile: false`,
+  `maxwander: 0`, high vitality so it survives the lesson), spawned in room 5
+  (6262). NOT `non_combatant` (that would make it unattackable). No engine
+  invulnerability flag exists, so non-lethality = high HP + zero base damage.
 
 **Reuse (no change):**
 - Grey token item `itemid: 2` (the existing antechamber token pickup; relocated
   to the room-3 "What You Carry" room, ID 6260)
 
 **Edit:**
-- `_datafiles/config.yaml` — add `6263` to `TutorialRooms`; fix the stale
+- `_datafiles/config.yaml` — add `6467` to `TutorialRooms`; fix the stale
   "Sanctum Basin replaces the old tutorial zone; TutorialRooms is intentionally
   empty" comment (it is contradicted by the populated array and the live code).
 
-**Code (two small tasks, flagged for the plan):**
-1. **Force-progression behavior action** (§6.2) — reuse or add a behavior-tree
-   action that grants one real progression tick with the standard banner.
-2. **Guaranteed tutorial flee** — room 5's `flee` must always succeed and can
-   only exit forward (single forward exit in room data; effigy does not contest
-   the flee). No failed-flee dead-end.
+**Code (one small task, flagged for the plan):**
+1. **`grant_progression` behavior action** (§6.2) — new room action calling
+   `CheckSkillProgression(skill, userId, 1000.0)`; guaranteed one real progression
+   banner.
+
+**Instancing note (drove a plan correction):** the antechamber runs as a private
+**ephemeral instance**, so in-instance room-to-room movement must use a **real
+`north` exit** (which the instance runtime remaps to the player's copy), never
+`move_player(templateId)` (that would pull the player into the shared template
+room). So room 5 (6262) has a real `north` exit to room 6 (6467); the `flee` lesson
+simply runs the real `flee`, which moves the player out that single forward exit.
+Only the final hop from room 6 to room 5200 (a real, non-instanced room) uses
+`move_player`, exactly as the old terminus did. The effigy's floor stats make flee
+reliably succeed; movement/`flee` are blocked only until the combat lesson is done.
 
 **Untouched:** `start.go` routing, quests 21/30/31, Cleric Hadwen, Pothole
 Coulee, routes 2 & 3.
@@ -370,11 +400,11 @@ Coulee, routes 2 & 3.
   room 5200 with quest 30 active. In room 5 specifically: `warcry` applies the
   **Warcry condition** and it appears in the `conditions` list with a countdown;
   `cooldowns` shows the special-move timer after the shout; `cast spike` lands; the
-  immediate `trip` is **blocked** with the real recover message, then succeeds once
-  the cooldown clears and leaves the effigy **prone**; and a fresh character's pool
-  affords `warcry` + the cast. Also confirm **every authored room noun is
-  examinable** (`look <noun>` returns its lore prose) — the examine lesson in room 1
-  depends on it.
+  **immediate recast** of `cast spike` is **blocked** with the real recover message;
+  `trip` then lands after the well refills and leaves the effigy **prone**; and a
+  fresh character's pool affords `warcry` + the casts. Also confirm **every authored
+  room noun is examinable** (`look <noun>` returns its lore prose) — the examine
+  lesson in room 1 depends on it.
 - **Playtest:** a naive-newbie `/playtest local feel-tester` pass focused on the
   antechamber, watching for confusion, dead-ends, or unhighlighted commands.
 
