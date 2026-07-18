@@ -168,7 +168,7 @@ func handlePlayerShieldDecay(user *users.UserRecord) {
 	if user.Character.HasCondition(characters.ConditionShield) {
 		if user.Character.GetConditionDuration(characters.ConditionShield) <= 1 {
 			user.Character.RemoveCondition(characters.ConditionShield)
-			user.SendText(messaging.CategoryBuffExpire, `<ansi fg="blue">Your Minor Shield dissipates.</ansi>`)
+			user.SendText(messaging.CategoryBuffExpire, `<ansi fg="cyan">Your Minor Shield dissipates.</ansi>`)
 		} else {
 			user.Character.DecrementCondition(characters.ConditionShield)
 		}
