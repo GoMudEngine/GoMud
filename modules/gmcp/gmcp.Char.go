@@ -607,7 +607,7 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 		payload.Quests = []GMCPCharModule_Payload_Quest{}
 
 		engine := questengine.GetEngine()
-		focusId := user.Character.LastQuestId
+		focusId := user.Character.GetFocusQuestId()
 
 		for questId, questStep := range user.Character.GetQuestProgress() {
 

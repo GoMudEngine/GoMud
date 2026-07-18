@@ -200,3 +200,44 @@ func miscDataToUint64(v any) uint64 {
 		return 0
 	}
 }
+
+// GetFocusQuestId returns the player's "focused" quest — the one hint (no arg),
+// the web Quests panel, and the minimap marker all resolve against. It is
+// LastQuestId when that quest is still in progress; otherwise (LastQuestId is
+// zero, or points at a quest that has since been removed from progress) it
+// falls back deterministically to the lowest-id quest still in progress that
+// is not yet complete, then to the lowest-id quest of any kind, then 0. The
+// determinism matters: the marker re-resolves on every emit, so a random
+// fallback would make the focus jitter between quests. Pure — never mutates.
+func (c *Character) GetFocusQuestId() int {
+	prog := c.GetQuestProgress()
+	if len(prog) == 0 {
+		return 0
+	}
+	// A still-valid explicit focus wins.
+	if c.LastQuestId != 0 {
+		if _, ok := prog[c.LastQuestId]; ok {
+			return c.LastQuestId
+		}
+	}
+	// Fallback: lowest-id quest still in progress and not at "end".
+	best := 0
+	for questId, step := range prog {
+		if step == "end" {
+			continue
+		}
+		if best == 0 || questId < best {
+			best = questId
+		}
+	}
+	if best != 0 {
+		return best
+	}
+	// Everything is complete: lowest-id quest, so hint can still report it.
+	for questId := range prog {
+		if best == 0 || questId < best {
+			best = questId
+		}
+	}
+	return best
+}
