@@ -78,8 +78,27 @@ func Start(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	// flush forced a redraw that re-rendered the whole multi-line question (the
 	// 2026-07-17 "route question shows up twice" report). Deferring it past the
 	// answer both fixes the double-render and is semantically correct.
-	user.EventLog.Add(`char`, fmt.Sprintf(`Created a new character: <ansi fg="username">%s</ansi>`, user.Character.Name))
-	events.AddToQueue(events.CharacterCreated{UserId: user.UserId, CharacterName: user.Character.Name})
+	//
+	// Guard so this fires exactly ONCE: the veteran route asks a second (confirm)
+	// question, which re-enters Start() with the route question still Done — so
+	// without the guard, veterans got a double "entered the realm" + double
+	// welcome message.
+	if _, announced := cmdPrompt.Recall(`entered`); !announced {
+		cmdPrompt.Store(`entered`, true)
+		user.EventLog.Add(`char`, fmt.Sprintf(`Created a new character: <ansi fg="username">%s</ansi>`, user.Character.Name))
+		events.AddToQueue(events.CharacterCreated{UserId: user.UserId, CharacterName: user.Character.Name})
+
+		// New eyes catch what ours miss, and Gaius is still being built — so ask
+		// every new player, once on the way in, to send bugs and ideas (Malia's
+		// 2026-07-18 feedback). Route-agnostic: runs for all three onboarding paths.
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
+			`%s<ansi fg="magenta-bold">One quick thing before you go.</ansi> Gaius is still being built, and your `+
+				`eyes are new -- that makes them valuable. If something breaks or reads `+
+				`wrong, type <ansi fg="command">bug</ansi> and tell us what happened. If you `+
+				`think of something that would make the world better, type `+
+				`<ansi fg="command">suggest</ansi>. We read every one.%s`,
+			term.CRLFStr, term.CRLFStr))
+	}
 
 	switch onboardingRoute(question.Response) {
 	case routeVeteran:
