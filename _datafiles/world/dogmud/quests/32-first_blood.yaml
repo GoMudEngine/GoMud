@@ -8,6 +8,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: 5227
     description: "Take your cudgel to the training dummy in the Drill
       Yard and learn by doing. Drillmaster Vorn keeps the yard."
     hint: "Type wield cudgel, then attack dummy to start your first
