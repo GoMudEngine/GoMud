@@ -13,10 +13,11 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/mapper"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
-	"github.com/GoMudEngine/GoMud/internal/quests"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -605,38 +606,55 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 
 		payload.Quests = []GMCPCharModule_Payload_Quest{}
 
+		engine := questengine.GetEngine()
+		focusId := user.Character.LastQuestId
+
 		for questId, questStep := range user.Character.GetQuestProgress() {
 
-			questToken := quests.PartsToToken(questId, questStep)
-
-			questInfo := quests.GetQuest(questToken)
-			if questInfo == nil {
+			qDef := engine.GetQuest(questId)
+			if qDef == nil {
 				continue
 			}
 
-			// Secret quests are not sent
-			if questInfo.Secret {
+			// Secret quests are not sent.
+			if qDef.Secret {
 				continue
 			}
 
 			completedSteps := 0
-			totalSteps := len(questInfo.Steps)
+			totalSteps := len(qDef.Steps)
 
 			questPayload := GMCPCharModule_Payload_Quest{
-				Name:        questInfo.Name,
+				Id:          questId,
+				Name:        qDef.Name,
+				Description: qDef.Description,
 				Completion:  0,
-				Description: questInfo.Description,
+				Focused:     questId == focusId,
 			}
 
-			for _, step := range questInfo.Steps {
+			for _, step := range qDef.Steps {
 				completedSteps++
 				if step.Id == questStep {
 					questPayload.Description = step.Description
+					questPayload.Hint = step.Hint
 					break
 				}
 			}
 
-			questPayload.Completion = int(math.Floor(float64(completedSteps)/float64(totalSteps)) * 100)
+			if totalSteps > 0 {
+				questPayload.Completion = int(math.Floor(float64(completedSteps)/float64(totalSteps)) * 100)
+			}
+
+			// Marker data is computed for the focused quest only.
+			if questPayload.Focused {
+				if target := engine.ResolveQuestTarget(questId, questStep); target != 0 {
+					questPayload.TargetRoom = target
+					if next, dir, ok := mapper.NextStep(user.Character.RoomId, target); ok {
+						questPayload.NextRoom = next
+						questPayload.NextDir = dir
+					}
+				}
+			}
 
 			// Add to the returned output
 			payload.Quests = append(payload.Quests, questPayload)
@@ -993,9 +1011,16 @@ type GMCPCharModule_Payload_Affect struct {
 // Char.Quests
 // /////////////////
 type GMCPCharModule_Payload_Quest struct {
+	Id          int    `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Completion  int    `json:"completion"`
+	Hint        string `json:"hint,omitempty"`
+	Focused     bool   `json:"focused,omitempty"`
+	// Focused quest only; omitted/zero when there is no resolvable target.
+	TargetRoom int    `json:"target_room,omitempty"`
+	NextRoom   int    `json:"next_room,omitempty"`
+	NextDir    string `json:"next_dir,omitempty"`
 }
 
 // /////////////////
