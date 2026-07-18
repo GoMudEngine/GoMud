@@ -227,6 +227,7 @@ class RoomGridSVG {
       // so a second coexisting map instance never collides on these ids.
       this._questBrassId = "questBrass" + this._iid;
       this._questHeadId = "questHead" + this._iid;
+      this._questArrowEl = null; // the single next-step arrow <line>, so we replace not accumulate
 
       // ── Build container ────────────────────────────────────────────────
       this.container = document.querySelector(selector);
@@ -443,49 +444,44 @@ class RoomGridSVG {
           }, /* deferEdges = */ true);
       });
 
-      // Pass 2: rebuild tokens + connectors/stubs/ticks + quest overlays.
-      this._renderAll();
+      // Pass 2: draw connectors/stubs/ticks for newly-seen rooms (edge dedup
+      // skips ones already drawn), then the quest next-step arrow on top.
+      // Tokens were already (re)built in Pass 1 — don't rebuild them again.
+      floor.forEach(r => this._drawEdgesForRoom(r.num));
+      this._drawQuestArrow();
+      this._applyZoom();
   }
 
   /**
    * Set (or clear) the focused-quest destination marker + next-step arrow.
-   * marker = {targetRoom, nextRoom, nextDir, name} or null.
+   * marker = {targetRoom, nextRoom, nextDir, name} or null. Only the room(s)
+   * whose marker actually changed are rebuilt — never the whole map.
    */
   setQuestMarker(marker) {
       marker = marker || null;
-      // Skip the (whole-map) re-render when the marker is structurally
-      // unchanged — a progress-percent tick on any quest still pushes
-      // Char.Quests, and moves are already redrawn via setZoneSnapshot.
       const a = this._questMarker, b = marker;
       const same = (!a && !b) || (!!a && !!b
           && a.targetRoom === b.targetRoom && a.nextRoom === b.nextRoom
           && a.nextDir === b.nextDir && a.name === b.name);
+      if (same) { return; }
+      const oldTarget = a ? a.targetRoom : 0;
       this._questMarker = marker;
-      if (!same) { this._renderAll(); }
+      const newTarget = marker ? marker.targetRoom : 0;
+      // Rebuild only the room tokens whose destination marker appears/clears.
+      if (oldTarget && oldTarget !== newTarget) { this._rebuildRoomToken(oldTarget); }
+      if (newTarget) { this._rebuildRoomToken(newTarget); }
+      // Redraw the next-step arrow (removes any prior arrow).
+      this._drawQuestArrow();
   }
 
-  /**
-   * Rebuild every room token and all connectors from the stored room set,
-   * then draw the quest next-step arrow on top. Shared by setZoneSnapshot
-   * (Pass 2) and setQuestMarker so quest overlays re-render on either change.
-   */
-  _renderAll() {
-      // Rebuild each room token (so quest destination markers appear/clear).
-      this.rooms.forEach((entry, id) => {
-          const isCurrent = (this.currentCenterId === id);
-          const svc = this._serviceFor(entry.room.tags);
-          while (entry.group.firstChild) entry.group.removeChild(entry.group.firstChild);
-          this._buildRoomTokenInGroup(entry.group, entry.room, isCurrent, svc);
-      });
-      // Redraw all connectors from scratch (reset dedup sets first).
-      this.connectionsGroup.innerHTML = '';
-      this.drawnEdges.clear();
-      this.drawnWrapStubs.clear();
-      this.drawnVerticalTicks.clear();
-      this.rooms.forEach((entry, id) => this._drawEdgesForRoom(id));
-      // Quest next-step arrow, drawn after edges so it sits on top.
-      this._drawQuestArrow();
-      this._applyZoom();
+  /** Rebuild a single room's token in place (e.g. to add/remove its marker). */
+  _rebuildRoomToken(id) {
+      const entry = this.rooms.get(id) || this.rooms.get(String(id)) || this.rooms.get(parseInt(id, 10));
+      if (!entry) { return; }
+      const isCurrent = (this.currentCenterId === entry.room.RoomId || this.currentCenterId === id);
+      const svc = this._serviceFor(entry.room.tags);
+      while (entry.group.firstChild) entry.group.removeChild(entry.group.firstChild);
+      this._buildRoomTokenInGroup(entry.group, entry.room, isCurrent, svc);
   }
 
   /**
@@ -494,6 +490,11 @@ class RoomGridSVG {
    * compass dir is supplied (next_room still fogged), draw a short stub.
    */
   _drawQuestArrow() {
+      // Replace, never accumulate: drop any prior arrow first.
+      if (this._questArrowEl && this._questArrowEl.parentNode) {
+          this._questArrowEl.parentNode.removeChild(this._questArrowEl);
+      }
+      this._questArrowEl = null;
       const qm = this._questMarker;
       if (!qm || this.currentCenterId == null || !qm.nextRoom) { return; }
       const fromE = this.rooms.get(this.currentCenterId);
@@ -516,12 +517,14 @@ class RoomGridSVG {
       const dx = to.x - from.x, dy = to.y - from.y, len = Math.hypot(dx, dy) || 1;
       const ux = dx / len, uy = dy / len;
       const L = RoomGridSVG.LEATHER;
-      this.connectionsGroup.appendChild(lEl("line", {
+      const arrow = lEl("line", {
           x1: from.x + ux * 9, y1: from.y + uy * 9,
           x2: to.x - ux * 6, y2: to.y - uy * 6,
           stroke: L.questGold, "stroke-width": 2.6, "stroke-linecap": "round",
           "marker-end": "url(#" + this._questHeadId + ")"
-      }));
+      });
+      this.connectionsGroup.appendChild(arrow);
+      this._questArrowEl = arrow;
   }
 
   /** Zoom out so the whole map fits in view. */

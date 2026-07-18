@@ -611,6 +611,12 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 
 		for questId, questStep := range user.Character.GetQuestProgress() {
 
+			// Completed quests aren't sent — the panel is a live list of what
+			// the player is working on, not a full history. Keeps it uncluttered.
+			if questStep == "end" {
+				continue
+			}
+
 			qDef := engine.GetQuest(questId)
 			if qDef == nil {
 				continue
