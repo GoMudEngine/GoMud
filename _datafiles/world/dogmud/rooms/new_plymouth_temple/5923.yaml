@@ -32,7 +32,7 @@ exits:
   west:
     roomid: 5914
 nouns:
-  repose-tree: A small tree of dense, slow-growing
+  repose tree: A small tree of dense, slow-growing
     habit occupying the garden's northeast corner —
     old enough that its trunk has gone grey and
     furrowed, its canopy kept to a roughly spherical
@@ -46,7 +46,7 @@ nouns:
     a warm yellow before falling. It does not do
     anything remarkable. It has been here for a
     very long time.
-  garden-bench: A stone bench facing the repose-
+  garden bench: A stone bench facing the repose-
     tree — plain, without back or inscription,
     wide enough for two people to sit with
     comfortable distance between them or one

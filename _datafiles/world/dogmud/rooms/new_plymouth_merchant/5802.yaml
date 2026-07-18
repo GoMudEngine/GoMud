@@ -41,7 +41,7 @@ exits:
   north:
     roomid: 5803
 nouns:
-  proclamation-post: A column of seasoned oak, perhaps
+  proclamation post: A column of seasoned oak, perhaps
     a foot and a half across, banded at intervals with
     iron rings that keep it from splitting in the
     weather. The surface is entirely covered in posted
@@ -54,7 +54,7 @@ nouns:
     city clerk removes what is outdated and posts what
     is new every third day and has done so for years
     without missing.
-  crossing-eye: A circle of pale limestone set flush
+  crossing eye: A circle of pale limestone set flush
     into the darker square paving, perhaps six feet
     across, marking the exact center of the two
     arteries' crossing. A compass rose was carved into

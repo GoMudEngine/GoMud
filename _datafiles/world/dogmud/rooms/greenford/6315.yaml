@@ -21,7 +21,7 @@ coord: {x: 21, y: -87, z: 2}
 exits:
   north: {roomid: 6314}
 nouns:
-  field-notes: >
+  field notes: >
     A retired surveyor's field papers spread across
     the table — terrain charts and route sketches
     in a close, careful hand, the ink faded but

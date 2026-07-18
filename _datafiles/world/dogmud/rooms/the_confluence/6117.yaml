@@ -15,7 +15,7 @@ exits:
   east: {roomid: 6107}
   south: {roomid: 6113}
 nouns:
-  the notice-board: >
+  the notice board: >
     A timber board propped against the well, covered in layers of
     postings. Tacked bills, chalked slates, rolled notices tied
     with twine. The older ones are faded or crossed out; the newer

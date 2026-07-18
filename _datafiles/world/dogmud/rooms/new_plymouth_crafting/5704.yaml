@@ -28,7 +28,7 @@ exits:
   east:
     roomid: 5800
 nouns:
-  lamp-post: An iron post topped with an oil-lantern
+  lamp post: An iron post topped with an oil-lantern
     housing, the arm angled to throw light onto the
     junction. The lantern glass is clean, the wick
     trimmed — someone maintains it with attention. The
@@ -37,7 +37,7 @@ nouns:
     weathered grey of the surrounding stone. At night
     this lamp marks the point where the Crafting Quarter
     ends.
-  paste-residue: The wall carries an uneven skin of
+  paste residue: The wall carries an uneven skin of
     broadsheet layers — notice over notice, some still
     legible and some reduced to papery substrate. Guild
     announcements, a militia call from two seasons back,

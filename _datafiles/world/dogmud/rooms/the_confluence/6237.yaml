@@ -32,7 +32,7 @@ spawninfo:
   - mobid: 9482
     respawnrate: "20 real minutes"
 nouns:
-  the notice-post: >
+  the notice post: >
     A worn post at the center of the market square,
     its surface too small for the amount posted to it
     — chalk boards overlapping, paper scraps pinned

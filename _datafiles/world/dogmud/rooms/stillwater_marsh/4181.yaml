@@ -31,34 +31,34 @@ exits:
   west:
     roomid: 4182
 nouns:
-  reed-wall: |
+  reed wall: |
     The reed-bed presses in tight enough on both sides of the
     trail that it reads as a wall of green — visually solid
     despite being a thousand individual stems, swaying in any
     breeze and giving up nothing of what lies beyond.
-  reed-bed: |
+  reed bed: |
     The largest single stand of reeds in the zone — perhaps an
     acre of head-high marsh-reed pressing in on the trail from
     every side, the green stems thick as a finger and dense
     enough that ten paces in is invisible from the track.
-  reed-beds: |
+  reed beds: |
     The largest single stand of reeds in the zone — perhaps an
     acre of head-high marsh-reed pressing in on the trail from
     every side, the green stems thick as a finger and dense
     enough that ten paces in is invisible from the track.
-  mud-bottom: |
+  mud bottom: |
     The trail is little more than packed mud here, soft enough
     that boots leave deep prints at every step. Off the trail
     the mud is bottomless — knee-deep at first, then suddenly
     deeper — hidden below standing water and reed roots that
     give no warning before they give way.
-  wind-rustle: |
+  wind rustle: |
     The reeds move continuously in any breath of air, a steady
     high rustle that fills the whole room and drowns out
     subtler sounds — bird-calls, water-sounds, footsteps a
     dozen paces away. The sound rises and falls with the wind
     but never quite stops.
-  lost-feel: |
+  lost feel: |
     The visual sameness of the reeds in every direction makes
     orientation difficult — the sky is the only landmark, and
     the trail itself is the only safe ground. Leaving it even

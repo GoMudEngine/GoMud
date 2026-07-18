@@ -35,7 +35,7 @@ exits:
   north:
     roomid: 6000
 nouns:
-  civic-lamps: Lantern standards of iron painted blue
+  civic lamps: Lantern standards of iron painted blue
     and silver, each one identical — clearly ordered in
     a single commission and installed in a single season.
     The housings are hinged for refilling and the hinges
@@ -46,7 +46,7 @@ nouns:
     be a form of civic pride or simply the habit of a
     person who does not know how to do anything
     carelessly.
-  guild-seals: Stone relief carvings set into the lintel
+  guild seals: Stone relief carvings set into the lintel
     above a heavy oak door — five of them, overlapping
     slightly, each representing a different merchant
     guild. The oldest is worn nearly flat; the newest

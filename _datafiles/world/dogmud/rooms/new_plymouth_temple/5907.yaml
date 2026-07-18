@@ -30,7 +30,7 @@ exits:
   east:
     roomid: 5906
 nouns:
-  intake-register: The current intake register —
+  intake register: The current intake register —
     an open book of ruled columns on heavy paper,
     bound in dark leather. The columns record
     arrival date, keeper name, purpose of visit,
@@ -45,7 +45,7 @@ nouns:
     and the notation beside it is a single letter
     that is not an abbreviation in the standard
     system.
-  register-shelf: A shelf of bound volumes running
+  register shelf: A shelf of bound volumes running
     the full width of the desk room's back wall —
     thirty years of intake registers, each labeled
     by year on the spine, each in the same leather

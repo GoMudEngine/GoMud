@@ -34,7 +34,7 @@ exits:
   south:
     roomid: 5910
 nouns:
-  bell-rope: The main bell-rope of the temple — a
+  bell rope: The main bell-rope of the temple — a
     length of thick braided hemp descending from the
     shaft overhead, its surface worn to a smooth near-
     polish at hand-height and rougher above and below
@@ -45,7 +45,7 @@ nouns:
     the bell above in motion; the sound it produces
     is felt in the chest before it is heard clearly,
     and it can be felt throughout the temple precinct.
-  tower-stair: A spiral stair cut from the tower's
+  tower stair: A spiral stair cut from the tower's
     inner wall — narrow, with no handrail, the treads
     worn concave at their centers from the daily
     ascent of the bell-keepers. The stair curves out

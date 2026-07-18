@@ -21,7 +21,7 @@ exits:
   east: {roomid: 6307}
   south: {roomid: 6306}
 nouns:
-  old-maps: >
+  old maps: >
     A wall of survey sheets covering the region and
     its margins, pinned in overlapping layers and
     annotated in Brennan's hand and in others'.

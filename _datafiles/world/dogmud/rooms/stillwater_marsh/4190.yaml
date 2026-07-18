@@ -27,7 +27,7 @@ exits:
   east:
     roomid: 4189
 nouns:
-  black-pool: |
+  black pool: |
     A small deep pool perhaps three paces across, cut into the
     marsh floor in a hollow of black peat. The water is dark
     with peat-stain and the bottom is invisible even in bright
@@ -35,14 +35,14 @@ nouns:
     it suggests it could be. The pool has no obvious inlet or
     outlet; it simply exists, cold and still and deeper than
     it has any right to be.
-  dark-water: |
+  dark water: |
     Water the colour of strong tea — stained by the surrounding
     peat, absorbing light rather than reflecting it. Not unsafe
     to drink in small amounts but not appealing; the foragers
     who work this pool by habit still fill their flasks from
     Heron Marsh. The surface is almost perfectly still; only
     the occasional bubble disturbs it.
-  mussel-bed: |
+  mussel bed: |
     A bed of freshwater mussels on the pool's bottom, visible
     only as a slightly darker patch in the dark water when the
     light is exactly right. These mussels occasionally produce
@@ -57,7 +57,7 @@ nouns:
     nothing of note; the pearls form perhaps once a season,
     in one mussel in ten, and there is no way to know which
     one without opening them all.
-  peat-rim: |
+  peat rim: |
     Thick black peat forms the pool's rim — soft enough to
     sink into if you step wrong, which would put you in the
     water fast. The foragers know to kneel at the firmest

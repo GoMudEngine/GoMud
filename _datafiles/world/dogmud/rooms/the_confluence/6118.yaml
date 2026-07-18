@@ -15,7 +15,7 @@ coord: {x: -3, y: -56, z: 0}
 exits:
   west: {roomid: 6111}
 nouns:
-  the mooring-stone: >
+  the mooring stone: >
     A single block of dark stone at the jetty's end, taller and
     squarer than the surrounding ironstone. The ring-bolt driven
     into its top is the most recent thing about it; the stone itself

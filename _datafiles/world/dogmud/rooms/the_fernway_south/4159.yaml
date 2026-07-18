@@ -27,19 +27,19 @@ exits:
   west:
     roomid: 4157
 nouns:
-  meadow-grass: |
+  meadow grass: |
     Pale-seeded meadow grass runs knee-high at the clearing's
     edge, the stems long and loose and bowing with any
     movement of air. Close to the ground the hare-paths have
     kept it cropped short and tight; only the margin stands
     tall.
-  hare-path: |
+  hare path: |
     A network of low cropped passages threads the grass from
     every direction — the work of small feet over a long time,
     the earth inside each run packed hard and smooth. Two or
     three of the runs converge near the meadow's centre
     before splitting again toward the treeline.
-  hare-paths: |
+  hare paths: |
     A network of low cropped passages threads the grass from
     every direction — the work of small feet over a long time,
     the earth inside each run packed hard and smooth. Two or
@@ -50,7 +50,7 @@ nouns:
     in the fresh-deposited way that means the animals passed
     recently. A few are placed with the pointed deliberateness
     of a territorial marker; most are simply dropped mid-run.
-  open-sky: |
+  open sky: |
     The first real break in the canopy since the forest closed
     in north of Fox Den — wide enough to show a proper stretch
     of sky and to let the light come in flat and whole rather

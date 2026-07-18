@@ -15,7 +15,7 @@ exits:
   north: {roomid: 6068}
   south: {roomid: 6070}
 nouns:
-  the fruit-loft: >
+  the fruit loft: >
     A small slat-walled store raised on stilts to keep the mice off, its door
     hanging on one hinge. Inside, on shallow racks, a few late apples have been
     laid out to keep — wrinkling now, going sweet and heavy and faintly
@@ -28,7 +28,7 @@ nouns:
     They should have been pulled out generations back. Instead the valley lets
     them stand, and every autumn they answer with one more crop, smaller and
     sweeter than the young trees' glut.
-  the side-path: >
+  the side path: >
     A foot-worn track turning east off the lane, dipping low under the heavy
     boughs so you'd duck to follow it. The grove it heads for is older and
     quieter than the orchard, the kind of green dark where people go to be

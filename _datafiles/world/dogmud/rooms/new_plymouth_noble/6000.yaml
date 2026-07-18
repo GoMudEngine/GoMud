@@ -31,7 +31,7 @@ exits:
   north:
     roomid: 6001
 nouns:
-  precinct-posts: Low iron standards capped in pale
+  precinct posts: Low iron standards capped in pale
     brass, placed to either side of the passage into
     the Noble Quarter at precisely the line where the
     paving changes character. They do not bar the way
@@ -40,7 +40,7 @@ nouns:
     reads clearly as a threshold. The brass caps are
     polished on a regular schedule — they catch what
     light there is without showing any fingerprints.
-  ward-cipher: A cartouche cut into the stone above
+  ward cipher: A cartouche cut into the stone above
     a doorway lintel — the Noble Quarter's
     administrative seal, which appears in the same
     form on every official communication and every

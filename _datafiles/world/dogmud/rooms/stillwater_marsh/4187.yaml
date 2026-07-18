@@ -29,36 +29,36 @@ exits:
   west:
     roomid: 4188
 nouns:
-  iron-tang: |
+  iron tang: |
     The faint metallic smell that hangs over the seep — strong
     enough to notice from several paces away when the wind is
     still, fading at the edges of the room. Smiths know it; so
     do the foragers who work the lake-iron beds.
-  iron-seep: |
+  iron seep: |
     A broad slow seep where mineral-rich water rises through the
     marsh peat and spreads across a low shelf of stone before
     draining south — the source of the lake-iron nodules
     concentrated downstream at Sluice Pond. The ground at the
     seep's edge is cold even in summer, and the iron-tang in the
     air is strong enough to notice from several paces away.
-  lake-iron: |
+  lake iron: |
     Dark heavy nodules cluster on the seep's stone bottom —
     each one the size of a knucklebone or smaller, dense enough
     in the hand to surprise you. These are the same nodules the
     foragers bring to the Stillwater smith, who pays a premium
     for a good sack and uses them in fine work where ordinary
     iron-stock will not serve.
-  rust-stain: |
+  rust stain: |
     Rust-orange stains mark every stone the seep-water has
     touched for any length of time — distinctive enough that
     a forager can find the seep by following the stained rocks
     south from the trail junction when the light is poor.
-  rust-stains: |
+  rust stains: |
     Rust-orange stains mark every stone the seep-water has
     touched for any length of time — distinctive enough that
     a forager can find the seep by following the stained rocks
     south from the trail junction when the light is poor.
-  mineral-water: |
+  mineral water: |
     The seep-water tastes faintly of iron and salt — drinkable
     in small amounts, though it stains a clay flask inside and
     out within a day. The foragers say it clears the head when

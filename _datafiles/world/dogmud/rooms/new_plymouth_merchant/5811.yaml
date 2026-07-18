@@ -28,7 +28,7 @@ exits:
   down:
     roomid: 5810
 nouns:
-  weapons-stand: A wooden rack in the east corner,
+  weapons stand: A wooden rack in the east corner,
     three pegs currently holding a short-blade in a
     plain scabbard, an off-hand buckler with a worn
     center-grip, and a longer piece — possibly a
@@ -36,7 +36,7 @@ nouns:
     at the throat twice and fits the blade well
     regardless. These are not shop stock. There is no
     price card, no lot number, no evaluation tag.
-  assay-notes: A stack of folded papers on the desk,
+  assay notes: A stack of folded papers on the desk,
     each carrying a brief written evaluation of a
     weapon brought in for assessment — condition,
     grade, estimated value, recommendation. The most

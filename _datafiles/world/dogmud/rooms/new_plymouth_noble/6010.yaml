@@ -36,7 +36,7 @@ exits:
   east:
     roomid: 6014
 nouns:
-  cutting-table: A table of hardwood at the
+  cutting table: A table of hardwood at the
     atelier's center, its surface marked by decades
     of chalk-line and pin-hole at the edges but
     kept clean at the active working area. The
@@ -48,7 +48,7 @@ nouns:
     for a specific person whose dimensions are noted
     on a card clipped to the near edge. The name
     on the card is not visible from where you stand.
-  modiste-mannequins: A row of adjustable forms
+  modiste mannequins: A row of adjustable forms
     along the north wall, each holding a garment
     at some stage of making. The commission in
     bloodline house-colors — blue-grey wool, silver

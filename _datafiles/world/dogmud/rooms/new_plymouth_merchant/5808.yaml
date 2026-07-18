@@ -36,7 +36,7 @@ exits:
   south:
     roomid: 6464
 nouns:
-  auction-block: A raised platform of dressed hardwood,
+  auction block: A raised platform of dressed hardwood,
     its surface worn pale at the presenter's position
     from years of standing and turning to face the
     crowd. The rail at the front edge has been gripped
@@ -46,7 +46,7 @@ nouns:
     closed. A lot-number placard sits face-down on
     the block surface, meaning the current interval
     is between sales.
-  property-roll: A ledger mounted in a glass-faced
+  property roll: A ledger mounted in a glass-faced
     frame bolted to the wall beside the block — the
     public record of sales, open to inspection by any
     party seeking to confirm a transaction. Most entries

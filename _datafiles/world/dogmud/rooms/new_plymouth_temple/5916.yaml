@@ -45,7 +45,7 @@ exits:
   north:
     roomid: 5920
 nouns:
-  precinct-board: A board of heavy planking fixed
+  precinct board: A board of heavy planking fixed
     to the archive wall, its surface carrying
     chalked notices in several hands — some
     official, some clearly appended without
@@ -59,7 +59,7 @@ nouns:
     board is wiped and rewritten each morning by
     the desk-keeper, but the morning's writing
     suggests familiarity with what was there before.
-  yard-well: The well at the courtyard's center is
+  yard well: The well at the courtyard's center is
     older than the precinct it serves — the stone
     of its coping is a different origin from the
     building stone around it, and the well-shaft

@@ -25,20 +25,20 @@ exits:
   north:
     roomid: 4180
 nouns:
-  shallow-creek: |
+  shallow creek: |
     The creek runs perhaps a hand's breadth deep over a flat
     stone bed, slow but clear, cold enough to numb a hand after
     a few seconds of immersion. The current is gentle — barely
     more than a drift — but it is moving water, not marsh-stand,
     and it carries a faint mineral clarity the standing water
     south of here lacks.
-  flat-stone: |
+  flat stone: |
     The creek-bed is paved with flat dark stones, visible through
     the shallow water and worn smooth by long slow current. A few
     of the larger ones break the surface just enough to step on
     without getting your boots wet — if you choose your footing
     carefully.
-  flat-stones: |
+  flat stones: |
     The creek-bed is paved with flat dark stones, visible through
     the shallow water and worn smooth by long slow current. A few
     of the larger ones break the surface just enough to step on
@@ -51,7 +51,7 @@ nouns:
     standing distance — the same kind that grows thick at
     Watercress Bend in Fernway South, abundant enough here to
     fill a sack if you had reason to.
-  peat-bank: |
+  peat bank: |
     The creek's banks are cool dark peat, springy underfoot where
     you step off the boards. The surface holds every print and
     every bootful of water; a line of old deer-slots marks where

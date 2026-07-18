@@ -31,7 +31,7 @@ exits:
   west:
     roomid: 5802
 nouns:
-  shop-fronts: Carved signs in aged dark wood, each
+  shop fronts: Carved signs in aged dark wood, each
     specific to its trade — a sheaf for the grain-
     merchant, a spool for the thread-merchant, a simple
     key that could belong to several businesses but is
@@ -41,7 +41,7 @@ nouns:
     the subject of quiet comment among the neighbors.
     Each front has a step worn into it and a door-handle
     bright from hands.
-  lamp-bracket: An iron bracket bolted to the corner
+  lamp bracket: An iron bracket bolted to the corner
     building's stone face at about twice head-height,
     holding an enclosed lantern that burns longer-oil
     from the eastern coast. You can identify the oil by

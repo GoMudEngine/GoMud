@@ -30,7 +30,7 @@ exits:
   up:
     roomid: 5710
 nouns:
-  banked-forge: A hearth of shaped firebrick and iron
+  banked forge: A hearth of shaped firebrick and iron
     plate, open at the working face, flanked by the
     bellows mount. The brick is blackened to glassy
     in the hottest section. The current charge has been
@@ -39,7 +39,7 @@ nouns:
     tuyere pipe runs below the floor; the stone around
     it is warm underfoot. This forge has not been cold
     in some time.
-  forge-scale: Flakes and scale from metalwork that
+  forge scale: Flakes and scale from metalwork that
     have built up in a dark ring around the forge base,
     accumulating over years of work. Flat and dull-dark,
     they scatter to the edges of the yard by degrees

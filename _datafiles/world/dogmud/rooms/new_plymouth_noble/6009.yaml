@@ -35,7 +35,7 @@ exits:
   east:
     roomid: 6007
 nouns:
-  old-canvases: Three paintings on the north wall,
+  old canvases: Three paintings on the north wall,
     each by a different hand, each predating the
     bloodline's Quarter by several generations. All
     three depict the same settlement from slightly
@@ -55,7 +55,7 @@ nouns:
     corresponds to a stretch of shore north of New
     Plymouth currently described in those surveys as
     uninhabited and always having been.
-  convergence-panel: The largest canvas in the wing —
+  convergence panel: The largest canvas in the wing —
     perhaps five feet wide, occupying most of the
     west wall. It shows a gathering of figures before
     the settlement's central structure at what the

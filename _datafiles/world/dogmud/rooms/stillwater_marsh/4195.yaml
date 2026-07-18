@@ -29,26 +29,26 @@ exits:
   north:
     roomid: 4194
 nouns:
-  upland-shoulder: |
+  upland shoulder: |
     A low shoulder of dry firm upland rising sharply from
     the bog edge — the transition is dramatic, a band
     perhaps two paces wide where wet quaking mat gives
     over to dry packed earth and grass. The ground here
     does not move underfoot. After the bog it feels
     remarkably solid.
-  pale-grass: |
+  pale grass: |
     Knee-high pale tan upland grass bends in the south
     wind, the blades moving in long even waves. It is the
     same grass the Dustwalk shows in its drier stretches —
     distinctly not marsh vegetation, adapted to exposure
     and wind rather than water and shade.
-  south-horizon: |
+  south horizon: |
     The horizon south is unbroken steppe — pale grass and
     scattered round stones stretching to a long line where
     land meets sky. The Dustwalk is somewhere out there
     beyond sight. You do not go that way today; the marsh
     path behind you leads back to Stillwater.
-  marsh-edge: |
+  marsh edge: |
     Looking back north the marsh ends sharply at the bog
     edge — green wet bog one moment, dry pale grass the
     next. The foragers say the change is older than the

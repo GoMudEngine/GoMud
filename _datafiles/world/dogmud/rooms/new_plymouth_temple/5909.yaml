@@ -31,7 +31,7 @@ exits:
   south:
     roomid: 5906
 nouns:
-  service-record: A hand-written sheet in a
+  service record: A hand-written sheet in a
     wooden frame above the warden's desk — a
     formal listing of duties by category with
     a column beside each for last-completion
@@ -47,7 +47,7 @@ nouns:
     not changed. Below the categories, a line
     of small text reading "service commenced" —
     followed by a date nineteen years prior.
-  warden-chair: The chair on the visitor's side
+  warden chair: The chair on the visitor's side
     of the desk is identical to the warden's own
     — same construction, same weight, same wear
     pattern on the legs. The warden has not

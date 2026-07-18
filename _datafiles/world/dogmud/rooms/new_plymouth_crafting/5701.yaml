@@ -24,7 +24,7 @@ exits:
   east:
     roomid: 5702
 nouns:
-  street-gutter: A shallow channel cut along the edge of
+  street gutter: A shallow channel cut along the edge of
     the paving, running grey today with water from somewhere
     uphill. It carries the waste of the craftsmen's morning
     — fine wood-shavings, a smear of oil, something that
@@ -32,7 +32,7 @@ nouns:
     sits empty and smells of hot stone; today it moves with
     quiet purpose. Someone has placed a stone across it at
     the corner to make a stepping point.
-  trade-board: A rough board nailed to the cooper's
+  trade board: A rough board nailed to the cooper's
     workshop wall, overlapping notices tacked over older
     ones in layers that read like archaeology. A journeyman
     seeks work. A supplier offers seasoned oak at winter

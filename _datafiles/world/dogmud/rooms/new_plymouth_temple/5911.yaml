@@ -33,7 +33,7 @@ exits:
   north:
     roomid: 5921
 nouns:
-  water-cabinet: A wooden cabinet against the
+  water cabinet: A wooden cabinet against the
     north wall, its shelves holding the healers'
     daily working materials in careful order —
     clean cloth folded in uniform squares, small
@@ -46,7 +46,7 @@ nouns:
     oiled, the cloth replaced regularly, the
     compounds dated. It smells of the medicinal
     herb and something astringent underneath.
-  recovery-notes: Small folded sheets tucked at
+  recovery notes: Small folded sheets tucked at
     the head of each occupied bed — the healers'
     instructions for the person in it. The notes
     are specific and practical — when to rise, what

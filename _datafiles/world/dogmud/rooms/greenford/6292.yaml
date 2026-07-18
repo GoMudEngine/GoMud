@@ -19,7 +19,7 @@ coord: {x: 23, y: -76, z: 2}
 exits:
   down: {roomid: 6291}
 nouns:
-  the lost-and-found shelf: >
+  the lost and found shelf: >
     A shallow shelf beside the corridor window,
     holding a row of unclaimed items: a leather glove
     missing its pair, a small compass in a cracked

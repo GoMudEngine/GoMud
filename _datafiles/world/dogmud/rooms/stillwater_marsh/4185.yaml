@@ -28,7 +28,7 @@ exits:
   south:
     roomid: 4189
 nouns:
-  otter-slide: |
+  otter slide: |
     A polished groove of hard mud curves from the bank-top down into
     the water — the otter's launching path, used so often the surface
     has gone slick and bright underneath. The slide is a body-length
@@ -40,18 +40,18 @@ nouns:
     water's surface. The peat holds the bank's shape well; the
     bank-face is firm underfoot where it has been packed by the
     otter's comings and goings.
-  fur-musk: |
+  fur musk: |
     A thin musky animal smell hangs around the slide and the
     bank-mouth — river otter, a warm oily scent that catches in
     the throat briefly before the marsh-smell swallows it again.
     Not unpleasant to those who know it; unmistakable once you do.
-  water-track: |
+  water track: |
     Wet paw-prints lead from the base of the slide a few paces
     along the bank-edge before disappearing into the water —
     webbed, four-toed, pressed clear in the soft mud. Fresh enough
     to show the individual toe-pads. The otter came through here
     recently.
-  water-tracks: |
+  water tracks: |
     Wet paw-prints lead from the base of the slide a few paces
     along the bank-edge before disappearing into the water —
     webbed, four-toed, pressed clear in the soft mud. Fresh enough

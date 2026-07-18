@@ -37,7 +37,7 @@ exits:
   up:
     roomid: 5913
 nouns:
-  canon-ledger: An open book on the canon's desk —
+  canon ledger: An open book on the canon's desk —
     the formal record of this office's two primary
     functions. The left-side columns record
     blessings administered by date, recipient
@@ -52,7 +52,7 @@ nouns:
     personal notation that is not quite a cipher
     but is not easily readable by anyone other
     than its author.
-  canon-volumes: A shelf of perhaps thirty volumes
+  canon volumes: A shelf of perhaps thirty volumes
     against the cell's east wall — all shelved
     spine-inward, their backs to the room. The
     shelf reveals only a row of page-edges —

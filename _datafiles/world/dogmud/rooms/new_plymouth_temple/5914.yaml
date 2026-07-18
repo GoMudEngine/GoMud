@@ -37,7 +37,7 @@ exits:
   east:
     roomid: 5923
 nouns:
-  novice-beds: Close-set narrow beds in two rows
+  novice beds: Close-set narrow beds in two rows
     down the dormitory's length — each with an
     identical undyed blanket folded and tucked
     with institutional precision, each with a
@@ -53,7 +53,7 @@ nouns:
     are tighter than others, and the novices
     nearest the door have learned that the
     difference matters.
-  pushed-slate: Visible under the bed near the
+  pushed slate: Visible under the bed near the
     garden window — a study-slate pushed far
     enough back that it is not immediately
     apparent and not far enough back that it

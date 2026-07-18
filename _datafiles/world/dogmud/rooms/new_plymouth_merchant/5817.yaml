@@ -39,7 +39,7 @@ exits:
   east:
     roomid: 5819
 nouns:
-  notice-board: A board covering the east wall, its
+  notice board: A board covering the east wall, its
     surface deep in layered notices — the current fee
     schedule pinned over an older one, permit categories
     reorganized twice in the last season, a set of new
@@ -50,7 +50,7 @@ nouns:
     adjusting the cost or difficulty of conducting
     business in this quarter. The board is updated
     regularly. The queue arrives regularly.
-  queue-rope: A velvet rope on brass posts — the same
+  queue rope: A velvet rope on brass posts — the same
     furniture used in better hotels, which may be
     coincidence or may be a deliberate choice about
     what this interaction is supposed to feel like.

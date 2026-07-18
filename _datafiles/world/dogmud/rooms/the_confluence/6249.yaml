@@ -29,7 +29,7 @@ exits:
   south:
     roomid: 6252
 nouns:
-  gate-arch: >
+  gate arch: >
     The arch in the city's east wall, dressed stone
     with the Confluence's crest at the keystone, wide
     enough for a laden cart. Through it the road

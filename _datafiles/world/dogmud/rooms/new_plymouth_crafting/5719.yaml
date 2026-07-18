@@ -25,7 +25,7 @@ exits:
   north:
     roomid: 5720
 nouns:
-  old-guild-mark: Painted directly on the plaster beside
+  old guild mark: Painted directly on the plaster beside
     the door — a barrel-stave crossed with a hammer.
     The paint is cracked and lifting, the original color
     a dark red that has gone to rust-brown. Below the
@@ -34,7 +34,7 @@ nouns:
     and the first letter of a name. The mark has not
     been removed, which is either because no one thought
     to or because someone decided they should not.
-  hoop-rack: A bracket of iron pegs mounted to the wall
+  hoop rack: A bracket of iron pegs mounted to the wall
     at head height, with three iron barrel hoops hanging
     from separate pegs. The hoops are weathered to deep
     rust but structurally sound — they have been there

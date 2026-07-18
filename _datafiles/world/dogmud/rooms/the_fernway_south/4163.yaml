@@ -36,26 +36,26 @@ exits:
   west:
     roomid: 4164
 nouns:
-  twin-beech: |
+  twin beech: |
     Two ancient beeches grown so close their trunks have
     fused at the base and their canopies long since merged
     overhead into one. The smooth silver-grey bark is clean
     except for a few carved initials — names and dates, the
     dates barely legible — worn to shallow grooves by weather
     and the slow expansion of the living wood.
-  beech-mast: |
+  beech mast: |
     The glade floor is thick with fallen beech-nuts and their
     spiny husks, layered over seasons of broad papery leaves
     — a deer larder in autumn and a comfortable browsing floor
     all year. The surface gives underfoot and releases a faint
     dry sweetness when turned over.
-  dappled-light: |
+  dappled light: |
     The fused canopy overhead filters sunlight into shifting
     green patches that move in slow patterns across the ground
     as the wind works through the leaves above. In places the
     light collects into something almost warm; in others the
     shade is deep enough that the moss stays damp.
-  path-junction: |
+  path junction: |
     Worn deer-tracks branch from the glade's edge in three
     directions — east, west, and south — beaten into the
     beech-mast by years of small regular feet. They run with

@@ -20,7 +20,7 @@ exits:
   south: {roomid: 6303}
   west: {roomid: 6307}
 nouns:
-  the reading-stands: >
+  the reading stands: >
     Fixed stands along the south wall, each angled
     for a folio at comfortable height. The stands
     are old and well-made — the joinery tight even
@@ -42,7 +42,7 @@ nouns:
     reader has laid out a surveying chart and is
     going through it methodically, a pencil behind
     one ear.
-  the lamp-brackets: >
+  the lamp brackets: >
     Iron brackets at regular intervals along both
     walls, each fitted with a glass-shaded oil
     lamp. The shades are smoked at the tops from

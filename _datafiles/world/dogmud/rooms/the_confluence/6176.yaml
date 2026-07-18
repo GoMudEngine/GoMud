@@ -26,7 +26,7 @@ exits:
   south:
     roomid: 6179
 nouns:
-  floor-mosaic: >
+  floor mosaic: >
     The floor is laid in a mosaic of dark and pale stone, the
     pattern a single broad river fanning out across flat country
     -- the Solt as it nears the lowland, losing its banks and

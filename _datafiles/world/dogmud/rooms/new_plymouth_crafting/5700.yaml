@@ -25,7 +25,7 @@ exits:
   north:
     roomid: 5702
 nouns:
-  canal-span: A modest arch of cut stone bridging a narrow
+  canal span: A modest arch of cut stone bridging a narrow
     canal cut, its brickwork stained green at the waterline
     where weed has taken hold over the years. The parapet
     is low enough to be a suggestion of safety rather than
@@ -34,7 +34,7 @@ nouns:
     someone has scratched the outline of a barge into the
     stone — rough, unhurried, old enough that the edges
     have weathered soft.
-  ward-post: A squat wooden post painted in the Crafting
+  ward post: A squat wooden post painted in the Crafting
     Quarter's rust-red and amber, standing at the exact
     line where the Docks end. A carved hand points north;
     below it a smaller inscription names the guilds'

@@ -22,7 +22,7 @@ exits:
   east:
     roomid: 6195
 nouns:
-  building-ledger: >
+  building ledger: >
     The oldest of the temple's construction ledgers, its
     early pages accounting for stone, labor, and coin
     through the years of the raising. The records are

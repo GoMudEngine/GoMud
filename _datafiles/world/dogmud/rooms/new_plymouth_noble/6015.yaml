@@ -37,7 +37,7 @@ exits:
   east:
     roomid: 6010
 nouns:
-  processional-paving: The pale stone underfoot is
+  processional paving: The pale stone underfoot is
     a different cut from the Noble Way — larger
     flags, tighter joints, fitted with a tolerance
     that does not permit settlement or weed. It has
@@ -48,7 +48,7 @@ nouns:
     Processional. Those summoned to the Palace
     arrive on foot, visible the entire length
     of the approach.
-  bloodline-cipher: The carved device above each
+  bloodline cipher: The carved device above each
     corner pilaster — a closed form in two
     concentric rings, the inner ring divided at
     intervals by short radial marks, the outer

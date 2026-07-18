@@ -31,7 +31,7 @@ spawninfo:
   - mobid: 9471
     respawnrate: "20 real minutes"
 nouns:
-  joined-channel: >
+  joined channel: >
     The channel is cut into the floor along the south
     side of the gallery -- wide enough that you could
     not step across it, deep enough that the lamplight

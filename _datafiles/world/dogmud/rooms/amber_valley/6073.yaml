@@ -16,7 +16,7 @@ coord: {x: -9, y: -36, z: 0}
 exits:
   east: {roomid: 6068}
 nouns:
-  the water share-board: >
+  the water share board: >
     A planed board nailed up by the well-house, ruled into columns: a record of
     how the channel's flow is meant to be split between the two farms. The old
     even division has been crossed through and rewritten in a firm hand to claim

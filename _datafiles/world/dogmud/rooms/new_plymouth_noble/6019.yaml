@@ -30,7 +30,7 @@ exits:
   east:
     roomid: 6016
 nouns:
-  gravel-paths: Fine pale stone chip, raked in
+  gravel paths: Fine pale stone chip, raked in
     straight parallel lines at a uniform depth
     across the garden's floor surface. The raking
     is directional — north-to-south along the main
@@ -40,7 +40,7 @@ nouns:
     There are no footprints in the gravel. You have
     not yet stepped off the border stones, and it
     is not clear you should.
-  formal-plantings: Box hedge, clipped topiary in
+  formal plantings: Box hedge, clipped topiary in
     geometric forms — sphere and cone and a stepped
     pyramid at the garden's center — and borders of
     a grey-leafed herb whose name is not immediately

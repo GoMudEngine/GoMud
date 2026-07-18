@@ -32,7 +32,7 @@ exits:
   east:
     roomid: 5717
 nouns:
-  cutting-bench: A long hardwood table, its surface
+  cutting bench: A long hardwood table, its surface
     built up with replaceable cutting-board layers
     that scar and are replaced. The current board is
     well-used — a grid of fine lines from the cutting
@@ -41,7 +41,7 @@ nouns:
     is pinned to the board, cut out in pieces arranged
     and rearranged. A chalk line marks where the next
     cut should go.
-  pattern-wall: The south wall is covered in a grid
+  pattern wall: The south wall is covered in a grid
     of small iron pegs, each holding a folded paper
     pattern on a labeled tag — garment type, reference
     number, and body measurements in a consistent hand.

@@ -29,38 +29,38 @@ exits:
   south:
     roomid: 4190
 nouns:
-  clam-bed: |
+  clam bed: |
     A wide flat bed of soft sand under a hand's depth of clear
     water, dimpled all across with the small ridges of buried
     freshwater clams pressing up from below. The clams are
     numerous enough that careful wading is worth it — a practiced
     forager can fill a pack-basket in a short morning here.
-  clam-beds: |
+  clam beds: |
     A wide flat bed of soft sand under a hand's depth of clear
     water, dimpled all across with the small ridges of buried
     freshwater clams pressing up from below. The clams are
     numerous enough that careful wading is worth it — a practiced
     forager can fill a pack-basket in a short morning here.
-  sand-bottom: |
+  sand bottom: |
     Fine pale sand, almost white, an unusual colour for the marsh
     interior where everything else is dark peat and silt. The
     foragers say it was washed down from somewhere upstream,
     accumulating over generations in this hollow where the current
     loses its energy. The texture is silky underfoot, firm enough
     to stand on without sinking.
-  clam-shell: |
+  clam shell: |
     Empty clam-shells lie in drifts at the bed's high-water edge
     — pale grey-blue, from thumbnail-size to the size of an open
     palm. The mussel-shells among them are prized by the carver
     in Stillwater for buttons and inlays; a pocketful is worth
     bringing back when gathering clams.
-  clam-shells: |
+  clam shells: |
     Empty clam-shells lie in drifts at the bed's high-water edge
     — pale grey-blue, from thumbnail-size to the size of an open
     palm. The mussel-shells among them are prized by the carver
     in Stillwater for buttons and inlays; a pocketful is worth
     bringing back when gathering clams.
-  egret-track: |
+  egret track: |
     Three-toed bird-tracks mark the wet sand near the southern
     edge — smaller and more delicate than the heron prints at
     Heron Marsh, each toe as thin as a reed-stem. A snowy egret

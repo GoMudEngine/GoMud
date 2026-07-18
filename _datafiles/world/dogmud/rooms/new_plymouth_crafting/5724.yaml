@@ -29,7 +29,7 @@ exits:
   south:
     roomid: 5704
 nouns:
-  hand-carts: Three hand-carts in various states of
+  hand carts: Three hand-carts in various states of
     use, parked without precision along the east wall
     — a large two-wheel freight cart, a smaller single-
     barrow with a rope handle, and a flat four-wheel
@@ -40,7 +40,7 @@ nouns:
     on it that have not been moved in some time. The
     trolley's pin-repair is clearly the work of someone
     who needed it today and had no time for more.
-  tally-post: A timber post of painted pine set in a
+  tally post: A timber post of painted pine set in a
     mortar block, standing about chest height. The chalk
     marks are today's — consignment references, weight
     estimates, recipient names and delivery windows —

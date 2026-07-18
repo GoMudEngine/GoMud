@@ -52,7 +52,7 @@ exits:
   south:
     roomid: 5905
 nouns:
-  nave-lamps: Rows of iron-chained lamps filling
+  nave lamps: Rows of iron-chained lamps filling
     the nave above head-height, each one a vessel
     of rendered tallow with a trimmed wick, replaced
     on a rotation by the temple's lamp-keepers
@@ -66,7 +66,7 @@ nouns:
     been burning in this space, in one form or
     another, without interruption for longer than
     the current building has stood.
-  threshold-stone: A circle of pale granite set
+  threshold stone: A circle of pale granite set
     flush into the nave floor at its center — perhaps
     ten feet across, its surface worn to a smoothness
     that catches light differently from the
@@ -79,7 +79,7 @@ nouns:
     — smoothest at the center, rougher toward the
     rim — as if the returning always begin at the
     same point, however they arrive.
-  processional-reliefs: A row of carved figures worked into the lower
+  processional reliefs: A row of carved figures worked into the lower
     courses of the nave wall, much older than the smooth plaster above
     them -- a slow procession, each figure's hands held in a particular
     posture. The postures are not the gestures of any rite still

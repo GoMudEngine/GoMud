@@ -20,7 +20,7 @@ exits:
   north: {roomid: 4014, zone: Marches Spur Road}
   south: {roomid: 6041}
 nouns:
-  finger-post: >
+  finger post: >
     A grey oak post with two arms. The arm pointing back north
     reads ASHWICK in deep-cut letters kept fresh by someone's knife. The
     arm pointing south reads only AMBER VALLEY, the paint long gone, the

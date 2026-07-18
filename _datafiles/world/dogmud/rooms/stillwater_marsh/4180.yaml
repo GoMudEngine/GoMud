@@ -28,7 +28,7 @@ exits:
   north:
     roomid: 4198
 nouns:
-  spring-pool: |
+  spring pool: |
     The creek's actual birth — a small deep pool perhaps four
     paces across, rising clear and cold from a fissure in the
     stone bed below. The water comes up continuously and silently;
@@ -36,27 +36,27 @@ nouns:
     where it enters. The depth is impossible to judge from the
     bank; the dark-fissure below reads as bottomless even in
     clear conditions.
-  pilgrim-stone: |
+  pilgrim stone: |
     Low standing-stones ring the pool's edge, each about knee-
     height and set with care into the peat at regular intervals.
     The tops are worn smooth and slightly concave where generations
     of hands have rested while drinking from the pool. They are
     older than the watermill below by an order of magnitude — older,
     perhaps, than any building in Stillwater.
-  pilgrim-stones: |
+  pilgrim stones: |
     Low standing-stones ring the pool's edge, each about knee-
     height and set with care into the peat at regular intervals.
     The tops are worn smooth and slightly concave where generations
     of hands have rested while drinking from the pool. They are
     older than the watermill below by an order of magnitude — older,
     perhaps, than any building in Stillwater.
-  cold-water: |
+  cold water: |
     The pool's water is cold enough to numb a hand within a count
     of ten — a deep-aquifer cold that the surface marsh never
     reaches and the creek loses within a few paces of leaving this
     place. Drinking it is a sharp, clean experience; there is no
     peat-taste, no mineral edge, only cold and clarity.
-  dark-fissure: |
+  dark fissure: |
     The pool's source is visible only as a deeper dark in the
     stone bed — a vertical crack from which the spring rises
     continuously and without sound. The fissure runs roughly

@@ -29,7 +29,7 @@ exits:
   east:
     roomid: 6005
 nouns:
-  waiting-bench: A bench of the same dressed stone
+  waiting bench: A bench of the same dressed stone
     as the walls, cut from a single piece and
     built into the north wall at seat height.
     There is no cushioning. The surface is smooth

@@ -35,7 +35,7 @@ spawninfo:
   - mobid: 9447
     respawnrate: "20 real minutes"
 nouns:
-  the notice-board: >
+  the notice board: >
     A worn wooden board covered in overlapping pegged
     notices: duty rosters for porter shifts, a schedule
     of Margin reading sessions in the Great Archive, a

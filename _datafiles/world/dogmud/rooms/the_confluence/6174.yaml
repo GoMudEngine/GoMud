@@ -27,7 +27,7 @@ exits:
   south:
     roomid: 6176
 nouns:
-  cold-channel: >
+  cold channel: >
     A shallow trough of stone running along the base of
     the relief wall, fed continuously from somewhere
     beneath the chapel floor. The water in it is cold --

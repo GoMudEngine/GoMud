@@ -32,7 +32,7 @@ exits:
   east:
     roomid: 6175
 nouns:
-  water-grate: >
+  water grate: >
     A grate of black iron bars set flush into the floor,
     wide as a cart is long. Through it the joined waters
     move close beneath -- you can feel the cool off them
@@ -43,7 +43,7 @@ nouns:
     Keepers say the temple was raised to honor this
     meeting of waters. The stone says only that it was
     here first.
-  offering-brazier: >
+  offering brazier: >
     A low iron stand holding dozens of small candle-ends
     and a scattering of woven rush braids left by those
     who paused here. The offerings are simple -- a candle

@@ -33,7 +33,7 @@ exits:
   north:
     roomid: 5918
 nouns:
-  reading-slope: A sloped reading surface fitted
+  reading slope: A sloped reading surface fitted
     to each desk — a piece of polished hardwood
     hinged at the back, its angle fixed by a small
     peg through a series of notch-holes so it can
@@ -46,7 +46,7 @@ nouns:
     that suggests whoever designed this room
     understood what extended reading actually
     requires.
-  access-rules: A printed card on heavy stock
+  access rules: A printed card on heavy stock
     mounted in a frame at the reading room's
     entrance — fourteen numbered rules for the
     use of the archive's general collection. The

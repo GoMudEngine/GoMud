@@ -28,7 +28,7 @@ exits:
   east:
     roomid: 6177
 nouns:
-  altar-flame: >
+  altar flame: >
     A small fire burning in a bronze dish on the altar
     stone -- not showy, not ceremonial in its size, but
     present. The Keepers tend it continuously; it has

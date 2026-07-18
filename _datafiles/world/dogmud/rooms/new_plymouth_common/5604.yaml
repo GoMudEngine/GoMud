@@ -34,7 +34,7 @@ exits:
   west:
     roomid: 5606
 nouns:
-  barrow-stalls: Handcarts converted to selling-platforms
+  barrow stalls: Handcarts converted to selling-platforms
     — boards laid across the cart-bed, goods arranged on
     them, the vendor standing behind or beside. They cluster
     and separate through the day as new vendors arrive and
@@ -43,7 +43,7 @@ nouns:
     neighbors' prices and shout corrections freely. The
     lane behind the densest cluster smells strongly of
     smoked fish.
-  weighing-beam: A simple steelyard on a forged hook, hung
+  weighing beam: A simple steelyard on a forged hook, hung
     from an iron post set into the cobbles with enough
     permanence that the post is the oldest thing in the
     market. The beam itself has been replaced twice; the

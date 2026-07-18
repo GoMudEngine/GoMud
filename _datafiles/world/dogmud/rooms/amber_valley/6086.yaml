@@ -20,7 +20,7 @@ exits:
   west: {roomid: 6085}
   east: {roomid: 6087}
 nouns:
-  lintel-stone:
+  lintel stone:
     >
     The stone is a single weathered span, gray gone soft with lichen along
     its top and rubbed pale and smooth beneath. No mortar holds it; it simply

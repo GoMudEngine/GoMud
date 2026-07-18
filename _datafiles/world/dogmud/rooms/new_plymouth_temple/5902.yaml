@@ -32,7 +32,7 @@ exits:
   west:
     roomid: 5901
 nouns:
-  altar-table: The altar is older than the building
+  altar table: The altar is older than the building
     around it — a single limestone slab, visibly
     pre-cut, that the current sanctuary was built
     to house rather than the other way around. Its
@@ -43,7 +43,7 @@ nouns:
     beneath the cloth has been seen by only the
     lamp-keepers and the priests who maintain it,
     and they do not describe what is on it.
-  dedicatory-panel: Three carved stone reliefs
+  dedicatory panel: Three carved stone reliefs
     mounted in a triptych behind the altar — left
     panel, central panel, right panel. The style
     is archaic, figures simplified into posture

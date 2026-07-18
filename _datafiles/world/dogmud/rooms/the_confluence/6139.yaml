@@ -31,7 +31,7 @@ exits:
   west:
     roomid: 6142
 nouns:
-  notice-board: >
+  notice board: >
     A board mounted on a square post at the corner,
     carrying notices in various stages of age: tide-
     table updates, an ordinance regarding cart-axle

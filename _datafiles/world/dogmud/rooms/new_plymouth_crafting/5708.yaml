@@ -23,7 +23,7 @@ exits:
   east:
     roomid: 5705
 nouns:
-  old-sign: A painted board above the boarded door, its
+  old sign: A painted board above the boarded door, its
     colors bleached by weather but the forms still clear
     — a compass rose with eight points, rendered with a
     cartographer's precision, and below it in heavy
@@ -35,7 +35,7 @@ nouns:
     a maker's mark, possibly neither. The sign has been
     here long enough to belong to the building, which is
     not comforting.
-  display-case: Visible through the gap in the boards —
+  display case: Visible through the gap in the boards —
     a glass-topped display case standing against the back
     wall of the dim interior, its contents arranged in a
     row with a care that does not look like accident.

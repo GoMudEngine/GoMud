@@ -30,7 +30,7 @@ exits:
   south:
     roomid: 6168
 nouns:
-  weathered-symbol: >
+  weathered symbol: >
     The four-ring orbital mark cut into the keystone
     above the great doors — one ring enclosing the
     next, the outermost nearly flush with the stone's
@@ -41,7 +41,7 @@ nouns:
     the Chrysalis truth — the sealed soul, the ringed
     cocoon — set here by the first Founders. The stone
     it is cut into does not volunteer the same date.
-  great-doors: >
+  great doors: >
     The great doors of the Confluence temple stand open
     through the day, folded back against the portico's
     inner wall so the cool of the nave reaches the top

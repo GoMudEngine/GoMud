@@ -19,7 +19,7 @@ exits:
   north: {roomid: 6043}
   south: {roomid: 6045}
 nouns:
-  inn-sign: >
+  inn sign: >
     A weather-blistered board painted with a still blue lake and,
     floating improbably upon it, an enormous wooden ladle. The joke is old
     and local: there is no lake within thirty miles, only the long thirst
@@ -37,7 +37,7 @@ nouns:
     pottage, bread and dripping, small beer, and — crossed through already,
     though the day is young — mutton. Below the list, smaller: "Beds in the
     loft. Pay the keeper. No boots on the tables."
-  common-room: >
+  common room: >
     A long dim room kept cool by thick stone walls, smelling of
     woodsmoke, spilled beer, and the wax of the tables. Trestle benches run
     its length, polished by years of travellers' elbows; a stair in the

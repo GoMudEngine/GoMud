@@ -25,7 +25,7 @@ exits:
   east:
     roomid: 6214
 nouns:
-  orbital-face: >
+  orbital face: >
     A carving that fills the wall: the night sky
     rendered as a set of nested rings about a central
     mark, precise as an instrument. Whoever cut it
@@ -34,7 +34,7 @@ nouns:
     teaches. The stone does not argue; it simply
     shows what it was cut to show, and lets the
     difference sit there in the dark.
-  ring-inscription: >
+  ring inscription: >
     Around the outermost ring, cut in a script that
     is not the temple's script: a line of marks the
     Keepers have transcribed but not translated. They

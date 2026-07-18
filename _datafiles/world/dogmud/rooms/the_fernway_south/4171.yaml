@@ -28,23 +28,23 @@ exits:
   south:
     roomid: 4176
 nouns:
-  old-oak: |
+  old oak: |
     Generation-old oaks, trunks thicker than three people could
     reach around, branches spreading wide enough to crowd out
     their neighbors. The nearest one shows no scar of storm or
     axe — it has simply grown, season after season, until it
     owns this piece of ground.
-  oak-bark: |
+  oak bark: |
     The bark is deeply furrowed and grey-brown, each ridge worn
     smooth in places by decades of weather. The tannin is thick
     in it — alchemists value bark from oaks this old for the
     compounds it yields.
-  deep-shade: |
+  deep shade: |
     Less light reaches this stand than anywhere else in the
     southern wood. The canopy closes too completely for sun to
     find a gap; the air underneath is cooler and feels older,
     the kind of shade that holds damp long into dry seasons.
-  root-throne: |
+  root throne: |
     The largest oak's exposed roots have curled and split over
     decades into a natural seat at the base of the trunk —
     wide enough to sit in, roots armresting on each side. The

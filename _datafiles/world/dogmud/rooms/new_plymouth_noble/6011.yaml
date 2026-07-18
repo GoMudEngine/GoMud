@@ -34,7 +34,7 @@ exits:
   east:
     roomid: 6012
 nouns:
-  lane-gate: Iron, solid-panel rather than barred —
+  lane gate: Iron, solid-panel rather than barred —
     you cannot see directly through it. The lock
     is a double-keyed deadbolt, its keyhole the
     only element that invites close inspection, and

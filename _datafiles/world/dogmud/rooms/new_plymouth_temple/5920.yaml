@@ -30,7 +30,7 @@ exits:
   south:
     roomid: 5916
 nouns:
-  pilgrims-cots: Narrow cots in close rows — each
+  pilgrims cots: Narrow cots in close rows — each
     with a straw mattress covered by a plain
     ticking, a folded wool blanket, and a small
     shelf at head height for personal effects.
@@ -44,7 +44,7 @@ nouns:
     but sound, the kind of thing that gets
     maintained because replacement would require
     a decision that no one has made yet.
-  hostel-window: A small window in the hostel's
+  hostel window: A small window in the hostel's
     south wall — a single pane of wavy glass
     in a wooden frame, looking down into the
     temple courtyard. From here the yard-well

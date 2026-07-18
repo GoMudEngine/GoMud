@@ -34,14 +34,14 @@ exits:
   west:
     roomid: 4162
 nouns:
-  burn-scar: |
+  burn scar: |
     The blackened stumps and char-streaked oaks that mark the
     old fire's reach are still clear if you know what you're
     looking at — dark wedges low on the bark where the heat
     climbed, and a few standing deadwood spars too burnt to
     host a beetle. The years have softened it; moss runs
     across the charred faces and the smell is almost gone.
-  downed-timber: |
+  downed timber: |
     Long grey logs lie across the clearing at the angles they
     fell, the bark long since gone and the wood going punky
     in patches where the ground is wet beneath them. Where

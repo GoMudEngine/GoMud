@@ -31,19 +31,19 @@ exits:
   south:
     roomid: 4183
 nouns:
-  board-trail: |
+  board trail: |
     Split-cedar boards laid two-wide across the soft marsh ground,
     the planks dark with old damp and some of the ends sunk a
     finger's depth into the peat. The trail is sound enough to
     walk without thinking, but steps to either side would put you
     ankle-deep before you caught yourself.
-  marsh-water: |
+  marsh water: |
     Standing water fills every depression off the trail's edges
     — peaty-brown and slow, cold to the touch even in mild weather.
     It reads as knee-deep at most but the bottom is soft enough
     that depth alone is not the risk; the peat underfoot shifts
     and holds at every step.
-  seed-heads: |
+  seed heads: |
     The pale brown seed-heads of the marsh-reeds nod at head height
     along the trail — single tassels splitting open at this season,
     releasing fine seed-fluff into any wind that finds the gap.
@@ -57,7 +57,7 @@ nouns:
     trail, the stems thick as a finger and the seed-heads pale
     brown and steady in the wind. Up close the reeds have a dry
     papery smell entirely unlike the peat-water beneath them.
-  creek-sound: |
+  creek sound: |
     East, just out of sight past the footbridge, the millstream
     runs its course from the sluice pond to the lake — a low
     constant water-murmur that reads as familiar from Stillwater

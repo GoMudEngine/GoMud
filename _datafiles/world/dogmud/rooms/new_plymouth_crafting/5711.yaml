@@ -39,7 +39,7 @@ exits:
   south:
     roomid: 5723
 nouns:
-  glassware-racks: Shelving of board-and-bracket
+  glassware racks: Shelving of board-and-bracket
     construction, each shelf padded with cloth along
     the front edge against breakage from vibration.
     The glassware is in all stages of use — clean,
@@ -49,7 +49,7 @@ nouns:
     colors, a code that makes sense to the person who
     built it. Nothing here is decorative; all of it
     earns its shelf-space.
-  main-bench: A long workbench of heavy timber, the
+  main bench: A long workbench of heavy timber, the
     surface bearing years of chemical and heat work
     — pale rings where flasks stood, dark scorches
     from runaway heat, a long discoloration along
@@ -59,7 +59,7 @@ nouns:
     At the center, the reagent-stone burner sits on
     a heat-brick platform, flame low, maintaining
     the covered flask at a precise temperature.
-  consignment-slip: A standing-order slip in a clerk's
+  consignment slip: A standing-order slip in a clerk's
     neat hand, the kind a third party leaves when the
     payment is already settled. The reagent named is a
     refined extract; the quantity, a full case; the

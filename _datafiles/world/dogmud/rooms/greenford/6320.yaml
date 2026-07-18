@@ -19,7 +19,7 @@ coord: {x: 20, y: -79, z: 1}
 exits:
   north: {roomid: 6318}
 nouns:
-  the shrine-post: >
+  the shrine post: >
     A squared oak post, its surface weathered to a grey-
     silver with the grain standing proud, the carved figure
     at the top worn down to broad forms — a cloaked figure
@@ -30,7 +30,7 @@ nouns:
     A small iron ring driven into the post's base holds an
     oil lamp in the wet months. The lamp is empty; summer
     needs no lamp.
-  the offering-box: >
+  the offering box: >
     A fitted wooden box mounted at the post's base — a
     proper piece of cabinetry, with a curved lid, a slot
     worn smooth by coin-edges, and a small lock. The slot

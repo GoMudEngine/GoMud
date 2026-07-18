@@ -27,7 +27,7 @@ exits:
   east:
     roomid: 6165
 nouns:
-  old-stonework: >
+  old stonework: >
     The base courses of the causeway crown are set
     differently from the span above — older stone,
     more darkly stained, the cut less precise but the

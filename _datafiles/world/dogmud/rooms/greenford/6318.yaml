@@ -21,7 +21,7 @@ exits:
   south: {roomid: 6320}
   west: {roomid: 6321}
 nouns:
-  stable-gate: >
+  stable gate: >
     A wide timber gate in the hedgerow north of the road,
     its bar lifted and swung back flat against the hedge —
     standing open for the morning traffic. Beyond it the

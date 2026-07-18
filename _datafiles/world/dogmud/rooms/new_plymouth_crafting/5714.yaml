@@ -27,7 +27,7 @@ exits:
   west:
     roomid: 5713
 nouns:
-  annealing-oven: A smaller box kiln built into the
+  annealing oven: A smaller box kiln built into the
     east end of the wall, its door a cast-iron panel
     with a simple latch. The interior is lined with
     ceramic fiber and carries a rack of shallow pads
@@ -37,7 +37,7 @@ nouns:
     carry the ghost-heat of a piece removed not long
     ago. The iron door's latch has been repaired with
     different-grade iron; the join shows in the color.
-  cooling-bench: The long soapstone surface of the
+  cooling bench: The long soapstone surface of the
     south wall has been in service since before the
     expansion — the older western half carries more
     accumulated work than the newer eastern end. Rings

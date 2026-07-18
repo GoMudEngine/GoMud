@@ -19,7 +19,7 @@ coord: {x: 20, y: -77, z: 1}
 exits:
   south: {roomid: 6318}
 nouns:
-  the coach-trunk: >
+  the coach trunk: >
     A heavy iron-banded trunk in the yard's center — dark
     wood, the iron straps riveted at each corner and buckled
     across the lid. The lock is a good one. The trunk bears
@@ -29,7 +29,7 @@ nouns:
     side has been rained on and is no longer legible. The
     trunk is waiting collection or forwarding; the ostler
     does not speculate on its contents.
-  the feed-bin: >
+  the feed bin: >
     Three low wooden bins against the north wall, their
     lids raised on pegs: the first holds oats, heaped and
     dry, smelling of summer; the second coarse chaff for

@@ -27,24 +27,24 @@ exits:
   south:
     roomid: 4171
 nouns:
-  bracken-wall: |
+  bracken wall: |
     Bracken-fern grown taller than head-height crowds both sides
     of the trail in a woven green mass — the fronds overlap and
     interlock so densely there is no seeing into the tangle more
     than an arm's length. The green is deep and uniform, the kind
     of color that swallows light.
-  narrow-trail: |
+  narrow trail: |
     The trail through the bracken is little more than a beaten
     dark line through the ferns — single-file, claustrophobic,
     the earth underfoot wet and soft where the fronds shade it
     from drying. A person walking without care will step off it
     and into the tangle before realizing.
-  fern-frond: |
+  fern frond: |
     The arching fern fronds catch at clothes and shoulders as
     you move through, leaving smears of moisture. Each one is
     a full arm-span or longer, green-black near the base and
     bright at the uncoiling tips.
-  insect-hum: |
+  insect hum: |
     A steady low hum rises from the bracken on both sides —
     flies and beetles and smaller things living in the fern-shade
     where the light never quite reaches. It is not loud but it

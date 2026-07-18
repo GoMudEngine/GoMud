@@ -22,7 +22,7 @@ exits:
   north:
     roomid: 6207
 nouns:
-  socket-base: >
+  socket base: >
     A shallow socket cut into the raised floor-stone,
     round and deep enough to seat the foot of a standing
     figure -- a base, like the one the Ward of the Deep

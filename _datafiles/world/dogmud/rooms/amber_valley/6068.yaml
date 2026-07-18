@@ -17,7 +17,7 @@ exits:
   east: {roomid: 6072}
   west: {roomid: 6073}
 nouns:
-  the head-gate: >
+  the head gate: >
     A heavy board sluice set into the channel's stone lip, raised or dropped on
     a wooden screw to send the water east or west. Right now it sits jammed
     hard over to the western course — the eastern channel below it runs to a
@@ -30,7 +30,7 @@ nouns:
     fork it runs brim-full and fast. Below the fork, only the western branch
     carries water; the eastern lies dry, its bed cracking pale in the sun. The
     line between green and dust is drawn right here, by a single board.
-  the splitting-stone: >
+  the splitting stone: >
     A great squared block set where the channel forks, its top scored with old
     measuring-marks for dividing the flow fairly between the two farms. The
     marks have been crossed out and recut more than once, in different hands.

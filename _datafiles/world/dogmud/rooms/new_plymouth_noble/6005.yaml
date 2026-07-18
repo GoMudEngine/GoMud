@@ -35,7 +35,7 @@ exits:
   north:
     roomid: 6007
 nouns:
-  central-worktable: A long table of dark hardwood
+  central worktable: A long table of dark hardwood
     running most of the office's east-west length,
     its surface worn to a flat polish by years of
     papers set down and lifted, seals pressed, and

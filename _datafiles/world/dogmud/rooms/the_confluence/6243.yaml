@@ -26,7 +26,7 @@ spawninfo:
   - mobid: 9478
     respawnrate: "20 real minutes"
 nouns:
-  the river-nets: >
+  the river nets: >
     A spread of fine-mesh river net, the kind used from
     a flat-bottomed punt to catch small fish in the
     calmer bends. Three tears in the mesh have been

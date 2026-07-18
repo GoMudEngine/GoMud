@@ -41,7 +41,7 @@ exits:
   south:
     roomid: 5914
 nouns:
-  healing-altar: A low stone table against the
+  healing altar: A low stone table against the
     chapel's east wall — pale limestone, its
     surface dressed smooth, its top covered in
     clean undyed cloth renewed on a regular
@@ -55,7 +55,7 @@ nouns:
     for light. It has been used for tending the
     sick in this room long enough that the stone
     edge is worn where hands grip it.
-  healer-list: A running log on the chapel wall —
+  healer list: A running log on the chapel wall —
     columns of dates, brief descriptions of
     the care given, and initials rather than
     names. The initials belong to the healers,

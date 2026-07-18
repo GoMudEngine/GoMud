@@ -15,14 +15,14 @@ coord: {x: -7, y: -37, z: 0}
 exits:
   north: {roomid: 6072}
 nouns:
-  the pressing-shed: >
+  the pressing shed: >
     An open-sided shed sheltering a great screw-press, its timber stained
     purple-black to the grain by years of vintage. The flagstone floor slopes
     to a channel and a catch-trough, sticky underfoot, loud with happy flies. A
     stack of empty baskets waits to be filled. The whole place smells of must
     and sun and the good kind of rot — of fruit turning, deliberately, into
     something better.
-  the vine-hollow: >
+  the vine hollow: >
     A cellar-cool recess dug into the shaded bank behind the shed, screened by
     a curtain of trailing vine. It is where the pressed juice is set to begin
     its work out of the heat. Tucked among the resting crocks you find a stowed

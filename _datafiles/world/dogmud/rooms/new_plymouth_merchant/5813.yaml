@@ -30,7 +30,7 @@ exits:
   down:
     roomid: 5812
 nouns:
-  pattern-shelf: A long shelf running the east wall,
+  pattern shelf: A long shelf running the east wall,
     holding a row of wooden sizing patterns — flat-cut
     outlines of chest and back plates in a range of
     forms, each labeled with a customer code in chalk
@@ -39,7 +39,7 @@ nouns:
     from scratch, so the shelf is treated with more
     care than it looks. Some patterns are newer, some
     older; the old ones are not discarded.
-  design-drawings: Technical drawings on the work-
+  design drawings: Technical drawings on the work-
     table in careful line work, with dimension
     annotations and material notes in the cramped
     hand of someone writing for themselves rather

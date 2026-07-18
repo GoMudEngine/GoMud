@@ -18,7 +18,7 @@ coord: {x: -7, y: -62, z: 0}
 exits:
   east: {roomid: 6131}
 nouns:
-  the foundation-stone: >
+  the foundation stone: >
     A block of dark stone at the base of the eastern wall, finer-
     cut than the surrounding building-stone and set at a slightly
     different angle. It predates the customs house; the mortar of

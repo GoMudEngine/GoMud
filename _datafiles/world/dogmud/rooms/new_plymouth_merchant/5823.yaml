@@ -41,7 +41,7 @@ exits:
   east:
     roomid: 5900
 nouns:
-  tally-post: A short bollard at the yard's center,
+  tally post: A short bollard at the yard's center,
     capped with a rotating wooden head carrying a
     chalkboard surface on each of its four faces.
     The current face shows today's incoming tally
@@ -52,7 +52,7 @@ nouns:
     and unintelligible without the key, which the
     tally-man carries in their head and has never
     been asked to write down.
-  hand-carts: A row of wooden hand-carts along the
+  hand carts: A row of wooden hand-carts along the
     east wall, their handles standardized to a single
     height and their beds designed for the boxes and
     crates that move through this yard regularly.

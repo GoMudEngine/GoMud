@@ -29,7 +29,7 @@ exits:
   west:
     roomid: 6016
 nouns:
-  guard-kit: Equipment racked along the barracks'
+  guard kit: Equipment racked along the barracks'
     south wall in columns corresponding to each
     guard's assigned post — ceremonial weapons
     cleaned and oiled, dress-uniform components
@@ -40,7 +40,7 @@ nouns:
     standard issue, no wear that has not been
     addressed. The kit exists to be put on and
     to look right when it is on.
-  duty-board: A board of hardwood mounted near
+  duty board: A board of hardwood mounted near
     the room's east wall, its surface carrying
     the current watch roster — names, posts,
     watch-times, relief schedules, all in a

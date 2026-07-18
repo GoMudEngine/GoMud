@@ -22,7 +22,7 @@ exits:
   north: {roomid: 6302}
   east: {roomid: 6304}
 nouns:
-  filed-survey: >
+  filed survey: >
     A survey of the eastern country filed under
     the standard field-report conventions: surveyor's
     route, terrain notes, resource classification.
@@ -48,7 +48,7 @@ nouns:
     goes in the old surveys, and that several
     scholars have looked without reaching an
     agreement about what it marks.
-  the reading-stand: >
+  the reading stand: >
     A heavy wood reading-stand before the south
     wall, its surface angled for a folio. The lamp
     above it is the best-placed in the archive —
@@ -58,7 +58,7 @@ nouns:
     consulting. The card-index to the archive's
     holdings is clipped to the stand's side
     bracket, in a hand consistent for twenty years.
-  the box-files: >
+  the box files: >
     Stiff card box-files in a uniform size and a
     faded brown, their labels in the archive's
     standard notation: zone, year, type. They hold

@@ -31,7 +31,7 @@ exits:
   east:
     roomid: 5921
 nouns:
-  tool-rack: A rack of iron hooks and wooden
+  tool rack: A rack of iron hooks and wooden
     pegs along the walk's inner wall, holding
     the sexton's working equipment in a fixed
     documented order — each peg and hook
@@ -47,7 +47,7 @@ nouns:
     "roof-hook" and the hook's absence is not
     recent — the label has faded as much as its
     neighbors.
-  water-barrel: A large wooden barrel on a
+  water barrel: A large wooden barrel on a
     low stand at the walk's east end, its iron
     spigot low enough for bucket-filling. The
     barrel is fed from a pipe coming through

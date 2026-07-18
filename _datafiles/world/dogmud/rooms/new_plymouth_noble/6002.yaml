@@ -30,7 +30,7 @@ exits:
   north:
     roomid: 6015
 nouns:
-  gated-frontages: Iron-railed gates set in high
+  gated frontages: Iron-railed gates set in high
     stone walls at regular intervals along both sides
     of the Way, each one the same height and finish,
     each closed. The iron is painted a deep green that
@@ -41,7 +41,7 @@ nouns:
     from the street — no garden-edge, no courtyard,
     no sign of domestic life above the wall-line —
     which is probably the point.
-  carriage-track: Two shallow grooves worn into the
+  carriage track: Two shallow grooves worn into the
     center of the Way's paving, perfectly parallel,
     the width of a coach's wheel-spacing. The wear
     runs the full visible length of the promenade in

@@ -34,7 +34,7 @@ exits:
   east:
     roomid: 5610
 nouns:
-  steam-room door: A thick plank door banded in iron at
+  steam room door: A thick plank door banded in iron at
     the top, middle, and bottom — the banding to hold the
     swelling wood flat and the heat in. Its face is dark
     with condensation that runs and dries and runs again,
@@ -44,7 +44,7 @@ nouns:
     the way people do when something warm and good is
     going to pass. Then it shuts again and the warmth
     retreats to the edges of the frame.
-  tally-slate: A rectangular slate mounted beside the
+  tally slate: A rectangular slate mounted beside the
     entrance on an iron bracket, with a row of wooden
     pegs below it holding copper disks — the bath tokens,
     each one stamped with a rough sunburst on one face.

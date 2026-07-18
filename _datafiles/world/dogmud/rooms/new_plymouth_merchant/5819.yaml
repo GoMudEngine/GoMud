@@ -36,7 +36,7 @@ exits:
   north:
     roomid: 5820
 nouns:
-  liveried-watcher: A figure in the bloodline's house-
+  liveried watcher: A figure in the bloodline's house-
     colors — a deep grey-and-blue that is not quite
     a uniform and is not quite civilian dress — standing
     at the lane's entrance without visible purpose.
@@ -45,7 +45,7 @@ nouns:
     a matter of judgment exercised without reference
     to anyone else. The eyes are attentive. The posture
     is permanent.
-  lane-wall: A wall of dressed stone at the lane's
+  lane wall: A wall of dressed stone at the lane's
     north end, perhaps eight feet high, with a
     wrought-iron gate set into it — closed, chained,
     and watched from inside by a second figure in

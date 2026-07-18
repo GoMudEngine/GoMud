@@ -31,7 +31,7 @@ exits:
   east:
     roomid: 5721
 nouns:
-  heading-knife: A wide curved blade in its bracket on
+  heading knife: A wide curved blade in its bracket on
     the wall above the east bench — the tool for shaping
     barrel-head stock. The blade is clean and oiled, the
     edge still sharp. Below it in the same bracket-row,
@@ -39,7 +39,7 @@ nouns:
     a very particular mind. Each bracket is labeled in
     a careful hand with the tool's name. The labels are
     old but the ink has been gone over more than once.
-  bench-inscription: Cut into the inside edge of the
+  bench inscription: Cut into the inside edge of the
     west planing bench where you would only see it if
     you were working here or looking for it — the name
     "Asha," and below it in smaller letters "Master
@@ -47,7 +47,7 @@ nouns:
     out; whatever was being added there is gone. The
     chisel-work is precise and unhurried. Below the
     inscription, the bench surface has been kept clean.
-  loose-floorboard: A single floorboard beside the cot sits a little proud
+  loose floorboard: A single floorboard beside the cot sits a little proud
     of the rest, the nails near one end backed out and re-seated more than
     once. It has been lifted before, and recently. Something is kept beneath
     it.

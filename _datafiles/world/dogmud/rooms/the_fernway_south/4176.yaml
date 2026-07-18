@@ -28,23 +28,23 @@ exits:
   south:
     roomid: 4174
 nouns:
-  bird-chorus: |
+  bird chorus: |
     A constant overlapping song from finches, chickadees, and
     warblers — the most birdsong anywhere in the zone, all of
     them calling at once in a cheerful clatter that fills the
     glade from edge to edge. The sound is louder than expected
     after the hush of the Old Stand to the north.
-  sun-patch: |
+  sun patch: |
     The clearing's center catches direct sun for much of the
     day — a warm bright circle where the canopy pulls back and
     the sky is actually visible. The grass there is drier and
     paler than in the shade.
-  fallen-log: |
+  fallen log: |
     An old beech that fell years ago lies across the clearing's
     edge, half-grown-over with moss and bracket fungus, the
     bark lifting in long dry sheets. The height is just right
     for sitting; the wood is solid under the outer rot.
-  long-grass: |
+  long grass: |
     Knee-high grass grows in the sun-patch where the canopy
     doesn't reach — dry and rustling in any breeze, the blades
     pale at the tips from full sun exposure.

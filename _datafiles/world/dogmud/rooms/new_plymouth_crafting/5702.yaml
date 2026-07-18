@@ -29,7 +29,7 @@ exits:
   north:
     roomid: 5705
 nouns:
-  direction-board: A painted board on an iron post, cut
+  direction board: A painted board on an iron post, cut
     into four compass arms — the Long Market east and west,
     the Inkwalk north, the bridge approach south. The
     lettering has been touched up recently; older paint
@@ -38,7 +38,7 @@ nouns:
     height where hands have steadied themselves, perhaps
     while reading, perhaps simply while waiting in the
     press of foot-traffic.
-  crossing-stones: The paving here is a mosaic of repairs
+  crossing stones: The paving here is a mosaic of repairs
     — original stone, then darker replacement stone, then
     lighter stone again, a column of maintenance decisions.
     The heaviest wear is in a rough circle around the

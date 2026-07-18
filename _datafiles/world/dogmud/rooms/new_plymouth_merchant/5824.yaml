@@ -36,7 +36,7 @@ exits:
   east:
     roomid: 5821
 nouns:
-  window-fronts: Glazed shop windows in a city that mostly
+  window fronts: Glazed shop windows in a city that mostly
     makes do with shutters — clear panes set in good frames,
     kept clean, the goods behind them laid out in considered
     arrangements rather than piled for volume. You cannot
@@ -44,7 +44,7 @@ nouns:
     seems to be the point. A window like this says the owner
     can afford to glaze it, and lets you draw the rest of the
     conclusion yourself.
-  paving-seam: A line running the center of the Walk
+  paving seam: A line running the center of the Walk
     where two eras of construction meet — older
     cobblestone to the east, newer dressed limestone
     flags to the west, the join filled with a mortar

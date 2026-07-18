@@ -20,7 +20,7 @@ exits:
   east: {roomid: 6295}
   west: {roomid: 6318}
 nouns:
-  distance-board: >
+  distance board: >
     A board of seasoned pine nailed to the south gatepost
     at eye height, the lettering painted in the road-
     warden's careful hand: COACHING STABLE, NORTH;

@@ -27,7 +27,7 @@ exits:
   down:
     roomid: 5808
 nouns:
-  bid-book: The current auction ledger — a hardbound
+  bid book: The current auction ledger — a hardbound
     volume open on the desk at a page of registered
     bids with their associated lot numbers and buyer
     codes. The codes are not names; they are a
@@ -36,7 +36,7 @@ nouns:
     second ledger whose location is not obvious from
     this desk. Some codes appear more frequently than
     the lot calendar would suggest coincidence.
-  lot-calendar: A ruled sheet mounted on a wooden
+  lot calendar: A ruled sheet mounted on a wooden
     backing, its columns laid out by week and its
     rows by lot sequence. Client codes appear in the
     margin beside items of interest to repeat buyers.

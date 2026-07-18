@@ -33,7 +33,7 @@ exits:
   east:
     roomid: 5814
 nouns:
-  stall-row: The stalls here are not temporary — they
+  stall row: The stalls here are not temporary — they
     have permanent wooden frameworks, hinged shutters
     that fold down to form display counters, and
     weathered paint that has been refreshed enough times
@@ -43,7 +43,7 @@ nouns:
     unfriendly; the stall-keepers know each other's
     names and each other's prices. On slow afternoons
     they talk across the gap.
-  red-awning: Canvas on a frame of bent iron pipe, faded
+  red awning: Canvas on a frame of bent iron pipe, faded
     from what was probably a vivid red to something more
     like dried clay, patched in three places — each patch
     a slightly different shade of not-quite-matching red

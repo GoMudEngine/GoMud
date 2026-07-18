@@ -36,7 +36,7 @@ exits:
   north:
     roomid: 5916
 nouns:
-  cloister-columns: Stone columns at regular intervals
+  cloister columns: Stone columns at regular intervals
     along the walk's open side, their capitals carved
     in the early style of the precinct — figures and
     patterns that have been worn by passing hands to
@@ -46,7 +46,7 @@ nouns:
     image is gone. The shafts themselves are smooth
     and cool to the touch, their stone a pale grey
     that goes warmer in strong afternoon light.
-  cloister-bench: A long stone bench set against the
+  cloister bench: A long stone bench set against the
     inner wall of the walk — flat-topped, wide enough
     to sit comfortably, running most of the walk's
     length without interruption. The sitting surface

@@ -34,7 +34,7 @@ exits:
   east:
     roomid: 5901
 nouns:
-  gate-arch: The arch over the precinct entrance is
+  gate arch: The arch over the precinct entrance is
     built from the same pale stone as the temple, its
     span wide enough for two carts to pass abreast
     though no cart has passed here in living memory.
@@ -45,7 +45,7 @@ nouns:
     Whether touching the keystone is a formal
     observance or a habit that became one, no one
     now distinguishes between the two.
-  alms-bench: A long flat stone at the arch's foot,
+  alms bench: A long flat stone at the arch's foot,
     broad enough to sit on from either side, set low
     in the traditional manner for almsgiving at a
     sacred threshold. The top surface is smooth and

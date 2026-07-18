@@ -29,7 +29,7 @@ spawninfo:
   - mobid: 9444
     respawnrate: "20 real minutes"
 nouns:
-  damaged-chart: >
+  damaged chart: >
     A harbor chart on heavy paper, water-damaged across
     its lower third where a brown stain has spread from
     one corner and consumed most of the inshore detail

@@ -26,7 +26,7 @@ exits:
   south:
     roomid: 6217
 nouns:
-  sealed-door: >
+  sealed door: >
     Fitted stone slabs set in a frame and secured by
     a locking bar of the same material -- a single
     piece of pre-Founding construction built to close

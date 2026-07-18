@@ -28,7 +28,7 @@ exits:
   north:
     roomid: 4191
 nouns:
-  hidden-spring: |
+  hidden spring: |
     A small clear spring rising silently in a pocket of
     bog-rim — perhaps a forearm deep at the source, the
     water visibly rising from a fissure in dark stone
@@ -47,13 +47,13 @@ nouns:
     edible and faintly sweet. A forager's reward for
     finding the pocket; the berries do not grow farther
     north in the wetter marsh.
-  bog-myrtle: |
+  bog myrtle: |
     A stand of bog-myrtle around the spring's edge,
     releasing a sweet aromatic smell when the leaves are
     brushed — used by the Stillwater brewer to flavour
     a particular season ale, and by the healer to ease
     the itching of bug-bites.
-  pocket-pool: |
+  pocket pool: |
     The small pool the spring forms at its source — perhaps
     two paces across at most, easy to miss in the reeds.
     Much smaller than the deeper Spring Pool to the north,

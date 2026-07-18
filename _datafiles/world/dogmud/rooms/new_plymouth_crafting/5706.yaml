@@ -27,7 +27,7 @@ exits:
   up:
     roomid: 5707
 nouns:
-  map-rack: A wooden rack of slotted channels on the
+  map rack: A wooden rack of slotted channels on the
     east wall, each slot holding a rolled chart in a
     loose linen wrapper. The wrappers are labelled in
     a small precise hand — regions, dates, scales, with
@@ -38,7 +38,7 @@ nouns:
     labels there have been rewritten over older labels
     in a way that suggests the old charts are gone and
     something is being waited for to fill the gap.
-  bound-volumes: Shelves of tightly packed books —
+  bound volumes: Shelves of tightly packed books —
     practical volumes mostly, the kind that get used
     rather than collected. Technical manuals for trades
     practiced in this district. City ledgers, some from

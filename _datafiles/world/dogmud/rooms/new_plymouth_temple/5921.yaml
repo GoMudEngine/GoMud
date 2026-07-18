@@ -33,7 +33,7 @@ exits:
   west:
     roomid: 5924
 nouns:
-  distribution-counter: A counter of heavy dark
+  distribution counter: A counter of heavy dark
     wood running the width of the almonry's east
     wall — old construction, the surface scored
     and worn from decades of daily use. The top
@@ -49,7 +49,7 @@ nouns:
     than its surroundings. The height of the
     counter is calibrated for standing exchange,
     not for seated transaction.
-  almonry-ledger: A bound volume at the counter's
+  almonry ledger: A bound volume at the counter's
     end — the almonry's running record of its
     distribution, kept in columns of date,
     number of individuals served, and quantity

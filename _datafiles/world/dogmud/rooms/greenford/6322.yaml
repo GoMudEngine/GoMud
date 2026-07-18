@@ -19,7 +19,7 @@ coord: {x: 18, y: -78, z: 1}
 exits:
   east: {roomid: 6321}
 nouns:
-  road-ahead: >
+  road ahead: >
     The road continues clearly west from the bend — the
     surface maintained, the drainage good, the verge-posts
     marking the county's responsibility at regular

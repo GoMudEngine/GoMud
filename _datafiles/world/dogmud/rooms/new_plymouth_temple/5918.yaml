@@ -33,7 +33,7 @@ exits:
   south:
     roomid: 5917
 nouns:
-  sealed-door: Iron-banded oak on reinforced stone
+  sealed door: Iron-banded oak on reinforced stone
     — the banding is old work, the bands running
     both horizontal and diagonal across the door's
     face, riveted into the wood at intervals. The

@@ -32,7 +32,7 @@ exits:
     roomid: 6403
     zone: New Plymouth Sewers
 nouns:
-  bark-vats: Six stone-lined tanning vats in a row,
+  bark vats: Six stone-lined tanning vats in a row,
     each holding a liquor of varying concentration.
     The progression from pale at the east end to dark
     and dense at the west represents the hide's journey
@@ -42,7 +42,7 @@ nouns:
     through its full depth in the older vats; in the
     newer ones, the staining is only surface-deep and
     will deepen in time.
-  rinsing-rack: A wooden frame of three poles with
+  rinsing rack: A wooden frame of three poles with
     crossbars at the south end of the yard, designed
     to hang hides at full stretch for draining. Four
     hides hang from it now in various stages, their

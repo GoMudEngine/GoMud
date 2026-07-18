@@ -29,7 +29,7 @@ exits:
   north:
     roomid: 5616
 nouns:
-  rent-board: A slate board in a glass-fronted case
+  rent board: A slate board in a glass-fronted case
     beside the front door, the entries kept in careful
     chalk — tenant name, room number, sum owed, sum
     paid, balance. Several names have been struck

@@ -31,43 +31,43 @@ exits:
   south:
     roomid: 4169
 nouns:
-  birch-trunk: |
+  birch trunk: |
     The birch trunks are pale silver-grey, the bark
     marked with thin horizontal lenticels — distinctive
     enough to identify from a distance. Close up the
     surface has a faint papery texture, cool and slightly
     smooth where it has not begun to peel.
-  birch-trunks: |
+  birch trunks: |
     The birch trunks are pale silver-grey, the bark
     marked with thin horizontal lenticels — distinctive
     enough to identify from a distance. Close up the
     surface has a faint papery texture, cool and slightly
     smooth where it has not begun to peel.
-  bark-strip: |
+  bark strip: |
     Long strips of birch bark peel from several trunks,
     curling outward from the living wood — flammable and
     useful, easy to pull free and tuck into a pack. The
     inner surface is cream-white and dry, the outer
     surface grey and marked with those thin dark lines.
-  bark-strips: |
+  bark strips: |
     Long strips of birch bark peel from several trunks,
     curling outward from the living wood — flammable and
     useful, easy to pull free and tuck into a pack. The
     inner surface is cream-white and dry, the outer
     surface grey and marked with those thin dark lines.
-  birch-sap: |
+  birch sap: |
     A few of the older trunks show dried amber rivulets
     where sap has seeped from old deer-rub wounds and
     run down the bark — sweet-smelling up close, the
     runs hardened now to thin sticky lines. Fresh sap
     would run clear in early spring, prized for drinking.
-  deer-rub: |
+  deer rub: |
     Smooth, pale-worn patches at antler height mark
     several birches where bucks have rubbed velvet from
     new antler growth — the bark worn away to bare smooth
     wood beneath, the height consistent from tree to
     tree, roughly chest-high on a person.
-  deer-rubs: |
+  deer rubs: |
     Smooth, pale-worn patches at antler height mark
     several birches where bucks have rubbed velvet from
     new antler growth — the bark worn away to bare smooth

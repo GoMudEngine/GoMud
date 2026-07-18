@@ -34,7 +34,7 @@ exits:
   north:
     roomid: 6012
 nouns:
-  loading-platform: A raised stone platform along
+  loading platform: A raised stone platform along
     the court's north wall, level with a cart's
     bed — the height at which things transfer from
     one surface to another without being set on the
@@ -43,7 +43,7 @@ nouns:
     crates dragged to the edge and lowered. The
     surface is swept clean. This is a working surface
     and is treated accordingly.
-  service-roster: A board in the alcove by the north
+  service roster: A board in the alcove by the north
     door, its current page the day's deliveries and
     their status — arrival times, supplier, description
     of goods, the initial of whoever received them.

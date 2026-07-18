@@ -31,7 +31,7 @@ exits:
   south:
     roomid: 6012
 nouns:
-  narrow-bed: An iron-framed bed just wide enough
+  narrow bed: An iron-framed bed just wide enough
     to sleep in without being wide enough to be
     comfortable about it, its mattress the household-
     issue straw tick topped with a blanket in the
@@ -43,7 +43,7 @@ nouns:
     variation, almost too subtle to notice, repeated
     at intervals. The blanket was made for someone,
     or by someone, before it was this bed's blanket.
-  letter-case: The folded cloth on the high shelf
+  letter case: The folded cloth on the high shelf
     serves as a holder for what it holds — folded
     papers whose edges are soft from being opened
     and refolded many times, and a dried flower head

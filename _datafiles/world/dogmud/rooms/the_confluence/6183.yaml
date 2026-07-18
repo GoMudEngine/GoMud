@@ -23,7 +23,7 @@ exits:
   east:
     roomid: 6184
 nouns:
-  warded-door: >
+  warded door: >
     A door of iron-bound timber, old and heavy, seated
     in an arch at the landing's east end. It opens east
     into the cloisters -- the deep interior of the temple,

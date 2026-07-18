@@ -33,7 +33,7 @@ exits:
   east:
     roomid: 5914
 nouns:
-  teaching-lectern: A standing lectern of heavy
+  teaching lectern: A standing lectern of heavy
     oak at the east end of the study hall, its
     reading surface worn smooth by decades of
     laid-open texts. The grip-points at the
@@ -48,7 +48,7 @@ nouns:
     the moment the lectern is empty. The text
     is in its locked case below, as it is
     between lessons.
-  question-scratch: A single horizontal line
+  question scratch: A single horizontal line
     cut into the wood of the second bench's
     middle section — perhaps an inch and a
     half long, narrow, made with a deliberate

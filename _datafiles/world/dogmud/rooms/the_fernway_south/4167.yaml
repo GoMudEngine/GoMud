@@ -29,13 +29,13 @@ exits:
   south:
     roomid: 4168
 nouns:
-  browse-line: |
+  browse line: |
     Every sapling and young tree at deer-reach height has
     been browsed to a flat line — no upward twig escapes
     the reach, and none below it is spared. The regularity
     of it is almost architectural, a living fence made by
     years of small careful mouths.
-  hoof-prints: |
+  hoof prints: |
     Cloven-hoof prints press clean and deep into the soft
     earth, narrower and smaller than the boar-sign north of
     here — roe deer, more than one, following the same

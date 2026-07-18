@@ -31,7 +31,7 @@ exits:
   north:
     roomid: 5801
 nouns:
-  ward-arch: Wrought iron, spanning the road at a height
+  ward arch: Wrought iron, spanning the road at a height
     that clears a loaded cart with room to spare. The
     scales in the crown are silver-painted and recently
     touched up — someone considers the arch's appearance
@@ -40,7 +40,7 @@ nouns:
     Merchants' Guild and the year of the arch's
     construction. The year is older than most of the
     buildings on this street.
-  threshold-stone: A flat slab set into the road's center,
+  threshold stone: A flat slab set into the road's center,
     the city crest carved into its face — the walled crown
     above three wavy lines. The relief is worn almost
     entirely smooth by the passage of feet, legible now

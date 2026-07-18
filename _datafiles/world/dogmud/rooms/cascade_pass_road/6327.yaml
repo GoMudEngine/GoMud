@@ -29,7 +29,7 @@ exits:
   north:
     roomid: 6326
 nouns:
-  cook-fire: >
+  cook fire: >
     Banked to a slow burn over a flat stone hearth — a
     working camp fire, not a comfort one. A tin pot sits
     near the coals, its contents long finished, left in
