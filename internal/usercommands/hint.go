@@ -27,15 +27,10 @@ func Hint(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	targetQuestId := 0
 
 	if rest == "" {
-		// Default: most recently progressed quest.
-		targetQuestId = user.Character.LastQuestId
-		if targetQuestId == 0 {
-			// Fall back to any quest in progress.
-			for qid := range allProgress {
-				targetQuestId = qid
-				break
-			}
-		}
+		// Default: the focused quest — LastQuestId when it's still in progress,
+		// else a deterministic fallback to an active quest (shared with the web
+		// Quests panel + minimap marker so all three agree on one focus).
+		targetQuestId = user.Character.GetFocusQuestId()
 		if _, ok := allProgress[targetQuestId]; !ok {
 			user.SendText(messaging.CategoryTip, `You don't have any active quests.`)
 			return true, nil

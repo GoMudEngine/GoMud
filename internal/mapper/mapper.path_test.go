@@ -91,3 +91,30 @@ func Test_GetPath_StartNotFound(t *testing.T) {
 	_, err := GetPath(999999)
 	assert.ErrorIs(t, err, ErrPathNotFound, "expected ErrPathNotFound for missing start")
 }
+
+func Test_firstHop(t *testing.T) {
+	n, dir, ok := firstHop([]pathStep{
+		{exitName: "east", roomId: 2},
+		{exitName: "south", roomId: 3},
+	})
+	require.True(t, ok)
+	assert.Equal(t, 2, n)
+	assert.Equal(t, "east", dir)
+
+	_, _, ok = firstHop(nil)
+	assert.False(t, ok)
+
+	_, _, ok = firstHop([]pathStep{})
+	assert.False(t, ok)
+}
+
+func Test_NextStep_SameRoom(t *testing.T) {
+	_, _, ok := NextStep(5, 5)
+	assert.False(t, ok, "same-room target yields no next step")
+}
+
+func Test_NextStep_NoPath(t *testing.T) {
+	// Unknown start room => GetPath errors => no next step.
+	_, _, ok := NextStep(999999, 4)
+	assert.False(t, ok)
+}

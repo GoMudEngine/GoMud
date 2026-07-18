@@ -446,6 +446,32 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 				sendActionResult(uid, req.Id, "rejected", result.Reason)
 			}
 
+		case `Char.Quests.Focus`:
+			var req struct {
+				Id int `json:"id"`
+			}
+			if err := json.Unmarshal(payload, &req); err != nil {
+				break
+			}
+			uid := userIdForConnection(connectionId)
+			if uid <= 0 {
+				break
+			}
+			u := users.GetByUserId(uid)
+			if u == nil {
+				break
+			}
+			// Only allow focusing an active quest.
+			if _, ok := u.Character.GetQuestProgress()[req.Id]; !ok {
+				break
+			}
+			u.Character.LastQuestId = req.Id
+			// Re-emit Char.Quests so the panel, marker, and `hint` all follow.
+			events.AddToQueue(GMCPCharUpdate{
+				UserId:     uid,
+				Identifier: `Char.Quests`,
+			})
+
 		// Handle Discord-related messages
 		default:
 			// Check if it's a Discord message
