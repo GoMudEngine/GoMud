@@ -56,6 +56,13 @@ func CheckAchievements(e events.Event) events.ListenerReturn {
 		if len(earned) == 0 {
 			continue
 		}
+		// First-ever achievement: the banner is meaningless without context (the
+		// player doesn't yet know what achievements are — 2026-07-18 feedback).
+		// Prime them once, before the banner, with a one-line explainer + pointer.
+		if len(u.Character.Achievements) == 0 {
+			u.SendText(messaging.CategorySystem,
+				`<ansi fg="white">(You just earned your first </ansi><ansi fg="yellow-bold">achievement</ansi><ansi fg="white"> -- a milestone you unlock simply by playing. Type </ansi><ansi fg="command">achievements</ansi><ansi fg="white"> anytime to see the ones you've earned and what else you can chase.)</ansi>`)
+		}
 		for _, d := range earned {
 			u.Character.GrantAchievement(d.Id, round)
 			u.SendText(messaging.CategorySystem,
