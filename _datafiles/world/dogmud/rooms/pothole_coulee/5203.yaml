@@ -3,7 +3,7 @@ zone: Pothole Coulee
 title: Hub Square
 description: >
   The town's heart opens out here across flat basalt slabs, worn smooth
-  by more feet than anyone has bothered to count. A weathered notice-post
+  by more feet than anyone has bothered to count. A weathered notice post
   stands square in the middle, its boards layered thick with the crier's
   latest word and a hundred older ones gone soft beneath. Even with not a
   soul about, the square does not feel empty -- it holds the kept-breath
@@ -34,7 +34,7 @@ nouns:
     trade a rumor, settle an argument, or simply be seen. Something about
     the worn ground tells you feet have stood here, waiting and talking,
     far longer than the houses around it have stood.
-  notice-post: &noticepost A stout post of grey driftwood stands at the
+  notice post: &noticepost A stout post of grey driftwood stands at the
     square's center, its broad face crusted with notices nailed one atop
     another. The crier pins the fresh word here -- work wanted, strangers
     expected, a warning or a wedding -- and nobody troubles to pull the old
@@ -51,5 +51,5 @@ nouns:
 spawninfo:
 - mobid: 9106
 idlemessages:
-- A loose notice lifts and flutters against the <ansi fg="itemname">notice-post</ansi>, then settles.
+- A loose notice lifts and flutters against the <ansi fg="itemname">notice post</ansi>, then settles.
 - Footsteps cross the empty <ansi fg="itemname">square</ansi> somewhere behind you and fade off into a side lane.

@@ -8,7 +8,7 @@ description: >
   morning's letters and sums. Desks crowd the floor in mismatched rows -- no two the
   same height, scavenged and mended and handed down -- their lids scarred
   by generations of restless penknives. By the door stands the
-  notice-board, shingled deep with pinned cards and curling hand-bills,
+  notice board, shingled deep with pinned cards and curling hand-bills,
   the busiest wall in the room. The air is warm and close and smells of
   chalk and lamp oil and the river-damp of children, an ordinary,
   patient, kindly sort of place for all its strange name.
@@ -25,8 +25,8 @@ exits:
   west:
     roomid: 5214
 nouns:
-  notice-board:
-    A broad notice-board fills the wall beside the door, shingled deep
+  notice board:
+    A broad notice board fills the wall beside the door, shingled deep
     with pinned notes, lesson-lists, and curling hand-bills. Pride of
     place goes to a single weathered card lettered in the schoolmaster's
     careful hand. It says that no question is too small or too strange,
@@ -54,5 +54,5 @@ nouns:
     A box of chalk nubs and a grey felt rag hang on a string within easy
     reach, ready for the next lesson to be written up.
 idlemessages:
-- A loose hand-bill lifts on a draft from the door and settles again on the notice-board.
+- A loose hand-bill lifts on a draft from the door and settles again on the notice board.
 - Chalk dust drifts in a bar of light, and the empty desks tick faintly as the room warms.

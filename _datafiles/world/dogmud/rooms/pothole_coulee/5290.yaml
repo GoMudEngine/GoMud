@@ -4,7 +4,7 @@ title: Hunter's Hollow
 description: >
   A natural hollow cups out of the bank here, sheltered from the
   prevailing wind on three sides. Someone has worked this camp for
-  seasons: a banked fire-pit ringed with flat stones, a drying-frame
+  seasons: a banked fire pit ringed with flat stones, a drying-frame
   of lashed poles strung with rawhide cord, a flat butchering-stone
   worn smooth with use and stained dark. The hollow holds the smell
   of old smoke and rendered fat. It is quiet, and nothing has
@@ -27,10 +27,10 @@ nouns:
     by the bank rising on three sides.
   camp: Fire-pit, drying-frame, butchering-stone — the bare essentials
     of a hunter working alone, far from town.
-  fire-pit: A ring of flat stones enclosing a deep bed of ash and
+  fire pit: A ring of flat stones enclosing a deep bed of ash and
     cold char, banked by a careful hand.
 idlemessages:
-- The ash in the fire-pit is cold, but the smoke-smell clings to
+- The ash in the fire pit is cold, but the smoke-smell clings to
   the hollow like a second skin.
 - Wind moves over the rim of the hollow without entering it, a
   steady mutter just overhead.
