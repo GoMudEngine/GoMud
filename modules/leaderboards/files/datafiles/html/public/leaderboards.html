@@ -1,34 +1,65 @@
 {{template "header" .}}
 
 <style>
-    table.leaderboard th:nth-child(1) { width:35%; }
-    table.leaderboard th:nth-child(2) { width:35%; }
-    table.leaderboard th:nth-child(3) { width:30%; }
+    /* Lay each leaderboard out as its own card, side by side, so the Power and
+       Achievement boards read as distinct sections (2026-07-18 feedback: stacked
+       tables with only a heading between them were hard to tell apart). Cards
+       wrap to a single column on narrow screens. */
+    .lb-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        align-items: flex-start;
+    }
+    .lb-card {
+        flex: 1 1 340px;
+        min-width: 300px;
+        background: var(--panel-bg, #201913);
+        border: 1px solid var(--antique-gold, #b89047);
+        border-radius: 8px;
+        padding: 0.75rem 1.25rem 1.25rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    }
+    .lb-card h3 {
+        margin: 0 0 0.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--panel-border, #3a2a18);
+        color: var(--title-gold, #e8d2a0);
+    }
+    .lb-card table.leaderboard {
+        width: 100%;
+    }
+    table.leaderboard th:nth-child(1) { width: 35%; }
+    table.leaderboard th:nth-child(2) { width: 35%; }
+    table.leaderboard th:nth-child(3) { width: 30%; }
 </style>
 
 <div class="overlay">
 
-    {{ range $idx, $lb := .leaderboards }}
-    <h3>{{ $lb.Name }} Leaderboard</h3>
-    <table class="leaderboard">
-        <tr>
-            <th>Name</th>
-            <th>Title</th>
-            <th>{{ $lb.Name }}</th>
-        </tr>
-        {{ range $idx, $entry := $lb.Top }}
-            {{ if eq $entry.ScoreValue 0 }}
-            {{ continue }}
-            {{ end }}
-            <tr>
-                <td>{{ $entry.CharacterName }}</td>
-                <td>{{ $entry.CharacterTitle }}</td>
-                <td>{{ $entry.ScoreValue }}</td>
-            </tr>
+    <div class="lb-grid">
+        {{ range $idx, $lb := .leaderboards }}
+        <div class="lb-card">
+            <h3>{{ $lb.Name }} Leaderboard</h3>
+            <table class="leaderboard">
+                <tr>
+                    <th>Name</th>
+                    <th>Title</th>
+                    <th>{{ $lb.Name }}</th>
+                </tr>
+                {{ range $idx, $entry := $lb.Top }}
+                    {{ if eq $entry.ScoreValue 0 }}
+                    {{ continue }}
+                    {{ end }}
+                    <tr>
+                        <td>{{ $entry.CharacterName }}</td>
+                        <td>{{ $entry.CharacterTitle }}</td>
+                        <td>{{ $entry.ScoreValue }}</td>
+                    </tr>
+                {{ end }}
+            </table>
+        </div>
         {{ end }}
-    </table>
-    {{ end }}
-
+    </div>
 
 </div>
 
