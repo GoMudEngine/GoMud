@@ -23,6 +23,7 @@ type QuestStep struct {
 	Id          string `yaml:"id"`
 	Description string `yaml:"description,omitempty"`
 	Hint        string `yaml:"hint,omitempty"`
+	MapTarget   int    `yaml:"map_target,omitempty"` // room the minimap marker points at during this step (0 = infer/none)
 }
 
 type QuestRewards struct {
