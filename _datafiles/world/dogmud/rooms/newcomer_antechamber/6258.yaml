@@ -14,6 +14,12 @@ exits:
 spawninfo:
   - mobid: 9491
 nouns:
+  guide: >-
+    Wiry, plain-dressed, patient -- and warm in a way nothing else here is. This
+    is Dewey, your guide, who came through this grey place once as frightened and
+    brand-new as you are now, and never quite left the threshold. Someone has to
+    catch the next ones as they wake. He watches you with the easy attention of
+    a person who has done this many times and still means every bit of it.
   hands: >-
     You turn your hands over. They are half-there -- the grey light shows
     through them at the edges, firming up even as you watch, as if you are

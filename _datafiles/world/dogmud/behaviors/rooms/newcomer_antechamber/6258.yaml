@@ -39,7 +39,7 @@ tree:
           commands: [look, l, examine, exam, x]
         - type: condition
           check: command_rest_contains
-          keywords: [hands, grey, stone, dewey]
+          keywords: [guide, hands, grey, stone, dewey]
         - type: condition
           check: state_equals
           key: looked
@@ -80,9 +80,9 @@ tree:
           do: mob_say
           mob_id: 9491
           text: >-
-            Good. Now look closer at something -- your own
-            <ansi fg="command">look hands</ansi> will do. Descriptions here
-            reward a second look.
+            Good. Now look closer at something in particular -- take a proper
+            look at me with <ansi fg="command">look guide</ansi>. Reading what's
+            in front of you is a habit worth keeping.
 
     # ── movement before both lessons: nudge + block ──
     - type: sequence
@@ -100,7 +100,7 @@ tree:
           mob_id: 9491
           text: >-
             Not yet. Type <ansi fg="command">look</ansi> to take the room in,
-            then <ansi fg="command">look hands</ansi> to read something closely.
+            then <ansi fg="command">look guide</ansi> to read something closely.
             Then north.
         - type: action
           do: intercept
