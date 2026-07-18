@@ -25,6 +25,11 @@ func Emote(rest string) EmoteResult {
 // FormatEmoteText formats an emote action for room display.
 // nameColor is "username" for players, "mobname" for mobs.
 func FormatEmoteText(name string, emoteText string, nameColor string) string {
-	msg := fmt.Sprintf(`<ansi fg="%s">%s</ansi> <ansi fg="20">%s</ansi>`, nameColor, name, emoteText)
+	// Emote body is a warm tan (256-color 137, #af875f) rather than the old
+	// dark navy (256-color 20, #0000d7). Blue-on-black is barely legible,
+	// especially on a laptop in a bright room (2026-07-18 accessibility report),
+	// and 137 is the palette's intended `mob-emote` tone that this formatter had
+	// never actually used.
+	msg := fmt.Sprintf(`<ansi fg="%s">%s</ansi> <ansi fg="137">%s</ansi>`, nameColor, name, emoteText)
 	return util.SplitStringNL(msg, 80)
 }
