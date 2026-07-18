@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/term"
@@ -168,6 +169,23 @@ func startInCoulee(user *users.UserRecord) {
 	if destRoom := rooms.LoadRoom(rooms.StartRoomIdAlias); destRoom != nil {
 		rooms.MoveToRoom(user.UserId, destRoom.RoomId)
 		Look(``, user, destRoom, events.CmdSecretly)
+		// The vortex is a MoveToRoom, not a walked entry, so the room's mobs never
+		// get the player_enter notification that greeters react to — a route-2
+		// player arrived to silence and had to wait for Cleric Hadwen's low-chance
+		// ambient backstop before learning to `ask hadwen begin` (2026-07-18
+		// feedback). Fire player_enter here, mirroring go.go, so the pool's cleric
+		// greets them and points at the rite right away.
+		for _, mobInstId := range destRoom.GetMobs(rooms.FindAll) {
+			mob := mobs.GetInstance(mobInstId)
+			if mob == nil || mob.Character.IsCharmed() {
+				continue
+			}
+			behaviortree.TryMobBehavior(mobInstId, behaviortree.EventContext{
+				EventType: "player_enter",
+				UserId:    user.UserId,
+				RoomId:    destRoom.RoomId,
+			})
+		}
 		// The onboarding vortex is a direct MoveToRoom, not a login/spawn, so it
 		// bypasses the HandleJoin room_enter notification that the Awakening
 		// quest's room-enter trigger relies on — leaving a brand-new player at
