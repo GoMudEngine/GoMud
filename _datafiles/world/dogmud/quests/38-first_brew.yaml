@@ -17,19 +17,19 @@
 questid: 38
 name: First Brew
 description: >-
-  Herbalist Birna keeps the drying-racks at the sheltered pool. She has
-  offered to teach you the first brew: buy a glass vial and a pair of
-  healer's roots from her stall, grind and steep them at the alchemy
-  bench into a healing salve, then drink it down.
+  Herbalist Birna keeps the drying-racks at the sheltered pool, and the
+  first brew waits there. Buy a glass vial and a pair of healer's roots
+  from her stall, grind and steep them at the alchemy bench into a
+  healing salve, then drink it down.
 secret: false
 linear: true
 
 steps:
   - id: start
     description: >-
-      Birna has pointed you at the bench. Buy a glass vial and two
-      healer's roots from her stall, then craft a healing salve at the
-      alchemy bench.
+      The alchemy bench at the sheltered pool is where brewing begins.
+      Buy a glass vial and two healer's roots from Birna's stall, then
+      craft a healing salve at the bench.
     hint: >-
       Type list at Birna's pool to browse her stock. A healing salve
       takes two roots and a vial -- type buy glass vial, then buy 2

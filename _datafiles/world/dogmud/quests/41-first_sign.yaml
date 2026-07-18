@@ -13,8 +13,8 @@
 questid: 41
 name: First Sign
 description: >-
-  Scout Tarn keeps watch over the scrub steppe south of the coulee. She
-  has offered to teach you to read the ground: pick up the trail of a
+  Scout Tarn keeps watch over the scrub steppe south of the coulee, and
+  the ground there is a book if you can read it. Pick up the trail of a
   steppe hare and track it, and forage the steppe for what it offers.
 secret: false
 linear: true
@@ -22,8 +22,9 @@ linear: true
 steps:
   - id: start
     description: >-
-      Tarn wants you to learn the ground. Track a steppe hare across the
-      open steppe, and forage the scrub for plants.
+      The steppe is your first lesson in reading the ground. Track a
+      steppe hare across the open steppe, and forage the scrub for
+      plants. Scout Tarn watches the steppe.
     hint: >-
       On the Open Steppe, type track hare to pick up its trail and
       follow it. Type forage on the steppe (the Open Steppe or the Sage

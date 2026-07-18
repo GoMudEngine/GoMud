@@ -1,15 +1,15 @@
 questid: 32
 name: First Blood
-description: Drillmaster Vorn has handed you a cudgel and pointed you at
-  the training dummy. Learn the four pillars of combat in the Drill Yard
-  before you take your bruises somewhere they can kill you.
+description: A cudgel, a training dummy, and Drillmaster Vorn's Drill Yard --
+  learn the four pillars of combat there before you take your bruises
+  somewhere they can kill you.
 secret: false
 linear: true
 
 steps:
   - id: start
-    description: "Drillmaster Vorn has given you a cudgel and set you
-      loose on the training dummy in the Drill Yard. Learn by doing."
+    description: "Take your cudgel to the training dummy in the Drill
+      Yard and learn by doing. Drillmaster Vorn keeps the yard."
     hint: "Type wield cudgel, then attack dummy to start your first
       fight."
   - id: strike

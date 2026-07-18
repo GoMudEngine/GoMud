@@ -16,18 +16,17 @@ questid: 44
 name: First Casting
 description: >-
   Adept Grieve keeps the ruined observatory where the Folding-adepts once
-  read the thin places. He has offered to teach you the first turning of the
-  mind: to cast a spell you already carry at the practice mark in the Star
-  Chamber.
+  read the thin places, and the first turning of the mind waits in the Star
+  Chamber. Cast a spell you already carry at the practice mark there.
 secret: false
 linear: true
 
 steps:
   - id: start
     description: >-
-      Grieve wants you to cast at the practice mark. Stand in the Star
-      Chamber and loose a spell you know at the practice mote --
-      conviction-spike, the attack you woke with, will serve.
+      The Star Chamber is where you first turn the mind. Stand there and
+      loose a spell you know at the practice mote -- conviction-spike, the
+      attack you woke with, will serve. Adept Grieve keeps the observatory.
     hint: >-
       Go north into the Star Chamber. Type cast conviction-spike mote to
       loose your starting attack spell at the practice mote. Then return to

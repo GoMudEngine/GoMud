@@ -1,16 +1,16 @@
 questid: 35
 name: First Heat
 description: >-
-  Smith Rusk has offered to show you the forge. Buy an iron ingot
-  and a leather strip from his stall, work them at the forge into
-  an iron dagger, and bring the finished blade back to him.
+  The coulee smithy's forge, and Smith Rusk to judge your work. Buy
+  an iron ingot and a leather strip from his stall, work them at the
+  forge into an iron dagger, and bring the finished blade back to him.
 secret: false
 linear: true
 
 steps:
   - id: start
-    description: "Rusk has pointed you at the forge. Buy an iron
-      ingot and a leather strip from his stall, then type craft
+    description: "The forge is where iron learns its shape. Buy an iron
+      ingot and a leather strip from Smith Rusk's stall, then type craft
       iron dagger at the forge."
     hint: "Type list at Rusk's stall to browse goods. Buy iron
       ingot and buy leather strip, then type craft iron dagger

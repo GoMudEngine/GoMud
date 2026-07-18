@@ -21,17 +21,17 @@ name: First Shot
 description: >-
   Marksman Iden keeps the shooting terraces above the coulee, where the
   bluff-folk learn to reach out and touch a thing from across a distance.
-  She has offered you a sling and a lesson: ready it, and put a stone into
-  the straw butt at the end of the range.
+  Ready your sling and put a stone into the straw butt at the end of the
+  range.
 secret: false
 linear: true
 
 steps:
   - id: start
     description: >-
-      Iden has given you a sling and wants you to learn to shoot it. Get a
-      pouch of shot from her, equip the sling, reload it, and loose a stone
-      at the practice butt down-range on the Long Terrace.
+      You have a sling -- equip it, get a pouch of shot, reload it, and
+      loose a stone at the practice butt down-range on the Long Terrace.
+      Marksman Iden keeps the range.
     hint: >-
       Type ask iden shot to get ammunition. Type equip sling to ready it,
       and reload to chamber a stone. Then go east to the Long Terrace and
