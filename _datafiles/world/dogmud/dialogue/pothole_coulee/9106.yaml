@@ -126,20 +126,21 @@ tree:
       questExcluded: ["31-end"]
       grantsQuest: "31-end"
       text: >-
-        And done! Slates, shelves, taps -- the whole hub in one walk.
-        Here, for your trouble. Now listen, because this is the part I
-        save for people who finish things: the coulee has seven
-        mouths. Seven breaks in the rim, and past every one, somebody
-        or something that will teach you what the town cannot. Fighters
-        in one, forge-smoke in another, green stink of potions, wild
-        country, the quiet arts, old stones that talk if you read
-        them, and a far hill where they put things down at distance.
-        When you are ready, pick a mouth. Any mouth.
+        And done! Slates, shelves, taps -- the whole hub in one walk. Now
+        listen, because this is the part I save for people who finish things.
+        The coulee has seven mouths -- seven breaks in the rim, and past every
+        one somebody or something that will teach you what the town cannot.
+        Fighting, forge-smoke, the green reek of potions, wild country, the
+        quiet folding art, old stones that talk if you read them, and a far
+        hill where they put things down at distance. I am marking all seven on
+        your slate right now. And here -- take these to start you off: a cudgel
+        for the drill yard, and a sling with a pouch of shot for the range. Go
+        find the seven teachers. Walk the mouths in any order your boots hold.
       hints: >-
-        Quest complete. The nearest mouth is the forge-smoke one: head
-        west off the square to the coulee smithy, where Smith Rusk will
-        teach you the forge. You could ask Toke about the seven mouths
-        whenever you want the longer tour.
+        Quest complete -- and seven new trails are on your quest log. Type
+        quests to see them all, or hint for a nudge on the nearest. The mouths
+        open off the shore and the square, and the map command shows what you
+        have found.
       moodChange: friendly
 
     - id: mouths

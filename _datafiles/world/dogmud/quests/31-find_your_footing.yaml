@@ -108,3 +108,29 @@ triggers:
           The keeper of the Drowned Lantern tips you a nod as you step in.
           "First one is on the house -- the coulee's welcome. Rest while it
           is still being gentle with you."
+
+  # ── FOOTING COMPLETE: open all seven coulee mouths at once ──
+  #    When Toke turns in the footing quest (grants 31-end), the quest_granted
+  #    chain fires this once (guard: `missing 32-start`). It grants all seven
+  #    trail-start tokens and hands over the two starter weapons the trailhead
+  #    NPCs would otherwise give — so the player leaves Toke with a full kit and
+  #    a quest log full of trails (Toke's scavenger hunt, 2026-07-18 feedback).
+  #    This is SAFE to grant early: each trail quest advances from its own step
+  #    triggers (mob_death / command / room_enter), not from its offer dialogue;
+  #    the offer nodes are `questExcluded` once the token is held, so they simply
+  #    stop re-offering. The five craft/lore/wild trails need no starter item.
+  - event: quest_granted
+    quest_token: 31-end
+    conditions:
+      missing: [32-start]
+    actions:
+      - grant: 32-start
+      - grant: 35-start
+      - grant: 38-start
+      - grant: 41-start
+      - grant: 44-start
+      - grant: 47-start
+      - grant: 50-start
+      - give_item: 10043
+      - give_item: 10038
+      - give_item: 30064
