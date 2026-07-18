@@ -101,8 +101,11 @@ tree:
         the coulee. Walk them in that order and come tell me what you
         saw. I will hear about it anyway, but I like it firsthand.
       hints: >-
-        Go north past the Awakening Pool and up the basalt stair to
-        the school hall. Type quests any time to see your place.
+        Go north past the Awakening Pool and up the basalt stair to the
+        school hall. Two commands keep you oriented from here on: type
+        <ansi fg="command">hint</ansi> any time for a nudge on what to do next
+        in your current quest, and <ansi fg="command">quests</ansi> to see
+        everything you've taken on.
       moodChange: friendly
 
     - id: footing_unopened
