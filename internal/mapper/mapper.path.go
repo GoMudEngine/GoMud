@@ -265,3 +265,27 @@ func GetPath(startRoomId int, endRoomId ...int) ([]pathStep, error) {
 
 	return finalPath, nil
 }
+
+// firstHop extracts the next room + exit direction from a computed path.
+func firstHop(path []pathStep) (nextRoomId int, exitName string, found bool) {
+	if len(path) == 0 {
+		return 0, "", false
+	}
+	return path[0].roomId, path[0].exitName, true
+}
+
+// NextStep returns the next room to head toward on the shortest in-zone path
+// from fromRoomId to toRoomId, and the compass exit name to take. found is
+// false when from == to, when the target is unreachable, or when the target is
+// in another zone (the per-zone mapper cannot route across zones — callers then
+// draw no arrow). Thin wrapper over the cached GetPath used by `pathto`.
+func NextStep(fromRoomId, toRoomId int) (nextRoomId int, exitName string, found bool) {
+	if fromRoomId == toRoomId {
+		return 0, "", false
+	}
+	path, err := GetPath(fromRoomId, toRoomId)
+	if err != nil {
+		return 0, "", false
+	}
+	return firstHop(path)
+}
