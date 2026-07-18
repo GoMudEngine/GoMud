@@ -265,6 +265,12 @@
           <div class="dash-panel-body"><div id="map-render" style="width:100%;height:100%"></div></div>
         </section>
 
+        <section class="dash-panel" id="panel-quests" data-panel="quests">
+          <div class="dash-panel-head"><span class="ph-title">Quests</span>
+            <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
+          <div class="dash-panel-body"><div id="quests-list"><div class="quests-empty">No active quests.</div></div></div>
+        </section>
+
         <section class="dash-panel" id="panel-vitals" data-panel="vitals">
           <div class="dash-panel-head"><span class="ph-title">Vitals</span>
             <span class="ph-btns"><span class="ph-btn ph-collapse">▾</span><span class="ph-btn ph-popout">⧉</span></span></div>
@@ -690,6 +696,18 @@
             "Char.Inventory": function() {
                 renderInventory();
             },
+            "Char.Quests": function() {
+                renderQuests();
+                if (gr && gr.setQuestMarker) {
+                    var data = (GMCPStructs.Char && GMCPStructs.Char.Quests) ? GMCPStructs.Char.Quests : [];
+                    var f = Array.isArray(data) ? data.filter(function (q) { return q.focused; })[0] : null;
+                    if (f && f.target_room) {
+                        gr.setQuestMarker({ targetRoom: f.target_room, nextRoom: f.next_room || 0, nextDir: f.next_dir || "", name: f.name || "" });
+                    } else {
+                        gr.setQuestMarker(null);
+                    }
+                }
+            },
             "Char.Automation": function() {
                 renderAutomation();
                 rebuildTickTimers();
@@ -821,6 +839,42 @@
                     ? window.itemIconSVG(item.type, item.subtype) : "";
                 if (svg) tile.insertAdjacentHTML("afterbegin", svg);
             }
+        }
+
+        function renderQuests() {
+            var host = document.getElementById("quests-list");
+            if (!host) { return; }
+            var data = (GMCPStructs.Char && GMCPStructs.Char.Quests) ? GMCPStructs.Char.Quests : null;
+            var quests = Array.isArray(data) ? data.slice() : []; // copy: don't sort shared GMCP state in place
+            if (!quests.length) {
+                host.innerHTML = '<div class="quests-empty">No active quests.</div>';
+                return;
+            }
+            quests.sort(function (a, b) {
+                if ((!!b.focused) - (!!a.focused)) { return (!!b.focused) - (!!a.focused); }
+                return (a.name || "").localeCompare(b.name || "");
+            });
+            var html = "";
+            quests.forEach(function (q) {
+                var focused = !!q.focused;
+                var pct = Math.max(0, Math.min(100, q.completion || 0));
+                html += '<div class="qrow' + (focused ? " focus" : "") + '" data-quest-id="' + Number(q.id) + '">'
+                      + '<span class="qdot">' + (focused ? "◉" : "◎") + '</span>'
+                      + '<span class="qname">' + escapeHTML(q.name || "") + '</span>'
+                      + '<span class="qbar"><i style="width:' + pct + '%"></i></span>'
+                      + '</div>';
+                if (focused && q.hint) {
+                    var mark = q.target_room ? ' <span class="qonmap">◆ marked on map</span>' : '';
+                    html += '<div class="qhint">' + escapeHTML(q.hint) + mark + '</div>';
+                }
+            });
+            host.innerHTML = html;
+            Array.prototype.forEach.call(host.querySelectorAll(".qrow"), function (row) {
+                row.addEventListener("click", function () {
+                    var id = parseInt(row.getAttribute("data-quest-id"), 10);
+                    if (!isNaN(id)) { SendGMCP("Char.Quests.Focus", { id: id }); }
+                });
+            });
         }
 
         function renderInventory() {

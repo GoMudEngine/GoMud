@@ -222,6 +222,11 @@ class RoomGridSVG {
       this._zone = null;
       this._z = null;
       this._party = {}; // keyed by roomId (number or string)
+      this._questMarker = null; // {targetRoom, nextRoom, nextDir, name} or null
+      // Instance-stable def IDs (mirror the +iid convention of the leather defs)
+      // so a second coexisting map instance never collides on these ids.
+      this._questBrassId = "questBrass" + this._iid;
+      this._questHeadId = "questHead" + this._iid;
 
       // ── Build container ────────────────────────────────────────────────
       this.container = document.querySelector(selector);
@@ -438,9 +443,85 @@ class RoomGridSVG {
           }, /* deferEdges = */ true);
       });
 
-      // Pass 2: draw connectors/stubs/ticks
-      floor.forEach(r => this._drawEdgesForRoom(r.num));
+      // Pass 2: rebuild tokens + connectors/stubs/ticks + quest overlays.
+      this._renderAll();
+  }
+
+  /**
+   * Set (or clear) the focused-quest destination marker + next-step arrow.
+   * marker = {targetRoom, nextRoom, nextDir, name} or null.
+   */
+  setQuestMarker(marker) {
+      marker = marker || null;
+      // Skip the (whole-map) re-render when the marker is structurally
+      // unchanged — a progress-percent tick on any quest still pushes
+      // Char.Quests, and moves are already redrawn via setZoneSnapshot.
+      const a = this._questMarker, b = marker;
+      const same = (!a && !b) || (!!a && !!b
+          && a.targetRoom === b.targetRoom && a.nextRoom === b.nextRoom
+          && a.nextDir === b.nextDir && a.name === b.name);
+      this._questMarker = marker;
+      if (!same) { this._renderAll(); }
+  }
+
+  /**
+   * Rebuild every room token and all connectors from the stored room set,
+   * then draw the quest next-step arrow on top. Shared by setZoneSnapshot
+   * (Pass 2) and setQuestMarker so quest overlays re-render on either change.
+   */
+  _renderAll() {
+      // Rebuild each room token (so quest destination markers appear/clear).
+      this.rooms.forEach((entry, id) => {
+          const isCurrent = (this.currentCenterId === id);
+          const svc = this._serviceFor(entry.room.tags);
+          while (entry.group.firstChild) entry.group.removeChild(entry.group.firstChild);
+          this._buildRoomTokenInGroup(entry.group, entry.room, isCurrent, svc);
+      });
+      // Redraw all connectors from scratch (reset dedup sets first).
+      this.connectionsGroup.innerHTML = '';
+      this.drawnEdges.clear();
+      this.drawnWrapStubs.clear();
+      this.drawnVerticalTicks.clear();
+      this.rooms.forEach((entry, id) => this._drawEdgesForRoom(id));
+      // Quest next-step arrow, drawn after edges so it sits on top.
+      this._drawQuestArrow();
       this._applyZoom();
+  }
+
+  /**
+   * Draw a gold arrow from the current room toward the focused quest's
+   * next step. If next_room is on the map, aim at its node; else, if a
+   * compass dir is supplied (next_room still fogged), draw a short stub.
+   */
+  _drawQuestArrow() {
+      const qm = this._questMarker;
+      if (!qm || this.currentCenterId == null || !qm.nextRoom) { return; }
+      const fromE = this.rooms.get(this.currentCenterId);
+      if (!fromE) { return; }
+      const sp = this.spacing;
+      const from = { x: fromE.room.x * sp, y: fromE.room.y * sp };
+      let to = null;
+      const toE = this.rooms.get(qm.nextRoom) || this.rooms.get(String(qm.nextRoom))
+                  || this.rooms.get(parseInt(qm.nextRoom, 10));
+      if (toE) {
+          to = { x: toE.room.x * sp, y: toE.room.y * sp };
+      } else if (qm.nextDir) {
+          const off = { north: [0, -1], south: [0, 1], east: [1, 0], west: [-1, 0], up: [0, 0], down: [0, 0] }[String(qm.nextDir).toLowerCase()];
+          if (off && (off[0] || off[1])) {
+              const stub = sp * 0.7;
+              to = { x: from.x + off[0] * stub, y: from.y + off[1] * stub };
+          }
+      }
+      if (!to) { return; }
+      const dx = to.x - from.x, dy = to.y - from.y, len = Math.hypot(dx, dy) || 1;
+      const ux = dx / len, uy = dy / len;
+      const L = RoomGridSVG.LEATHER;
+      this.connectionsGroup.appendChild(lEl("line", {
+          x1: from.x + ux * 9, y1: from.y + uy * 9,
+          x2: to.x - ux * 6, y2: to.y - uy * 6,
+          stroke: L.questGold, "stroke-width": 2.6, "stroke-linecap": "round",
+          "marker-end": "url(#" + this._questHeadId + ")"
+      }));
   }
 
   /** Zoom out so the whole map fits in view. */
@@ -482,6 +563,7 @@ class RoomGridSVG {
       const ov = this.overlayGroup;   // legend + compass float here, atop rooms
       const L = RoomGridSVG.LEATHER;
       const iid = this._iid;
+      const questBrassId = this._questBrassId, questHeadId = this._questHeadId;
 
       // Deterministic seed from zone+level string so fray/craquelure are
       // stable per zone-floor.
@@ -528,6 +610,21 @@ class RoomGridSVG {
       const cp = lEl("clipPath", { id: clipId });
       cp.appendChild(lEl("path", { d: hd }));
       defs.appendChild(cp);
+
+      // Quest brass radial gradient (destination marker ring / pin fill).
+      const qbrass = lEl("radialGradient", { id: questBrassId, cx: "34%", cy: "26%", r: "70%" });
+      [["0%", "#f4dd92"], ["46%", "#cb9f42"], ["100%", "#8a6620"]].forEach(function(s) {
+          qbrass.appendChild(lEl("stop", { offset: s[0], "stop-color": s[1] }));
+      });
+      defs.appendChild(qbrass);
+
+      // Quest next-step arrowhead marker.
+      const qhead = lEl("marker", {
+          id: questHeadId, markerWidth: 7, markerHeight: 7, refX: 5.2, refY: 3,
+          orient: "auto", markerUnits: "strokeWidth", viewBox: "0 0 6 6"
+      });
+      qhead.appendChild(lEl("path", { d: "M0,0.4 L6,3 L0,5.6 L1.7,3 Z", fill: "#e8b84a" }));
+      defs.appendChild(qhead);
 
       g.appendChild(defs);
 
@@ -585,7 +682,7 @@ class RoomGridSVG {
 
       // ── Legend card (bottom-right corner, floats atop rooms) ──────────
       // Rows: Party member | Bank/Shop/Store | Stairs | Road/trail/water
-      const lw = 104, lh = 50, lx = 188, ly = 221;
+      const lw = 104, lh = 68, lx = 188, ly = 221;
       ov.appendChild(lEl("rect", { x: lx, y: ly, width: lw, height: lh, rx: 3, fill: L.legendBg, stroke: L.ink, "stroke-width": 1, opacity: "0.92" }));
       ov.appendChild(lEl("rect", { x: lx + 2.5, y: ly + 2.5, width: lw - 5, height: lh - 5, rx: 2, fill: "none", stroke: L.ink, "stroke-width": 0.4 }));
       embText(ov, lx + lw / 2, ly + 11, {
@@ -597,7 +694,9 @@ class RoomGridSVG {
           ["party",  "Party member"],
           ["svc",    "Bank / Shop / Store"],
           ["stairs", "Stairs ▲▼"],
-          ["road",   "Road / trail / water"]
+          ["road",   "Road / trail / water"],
+          ["quest",  "Quest destination"],
+          ["qstep",  "Next step"]
       ];
       legendRows.forEach(function(rw, i) {
           var yy = ly + 20 + i * 8.5, sxc = lx + 11;
@@ -610,6 +709,13 @@ class RoomGridSVG {
               ov.appendChild(lTxt({ x: sxc, y: yy + 0.2, "text-anchor": "middle", "font-size": 4.4, "font-weight": "bold", fill: L.ink }, "$"));
           } else if (rw[0] === "stairs") {
               ov.appendChild(lTxt({ x: sxc, y: yy + 1, "text-anchor": "middle", "font-size": 7, "font-weight": "bold", fill: L.ink }, "▲"));
+          } else if (rw[0] === "quest") {
+              // Brass destination ring + patina core
+              ov.appendChild(lEl("circle", { cx: sxc, cy: yy - 2, r: 3.2, fill: L.roomFill, stroke: "url(#" + questBrassId + ")", "stroke-width": 1.4 }));
+              ov.appendChild(lEl("circle", { cx: sxc, cy: yy - 2, r: 1.2, fill: L.questPatina }));
+          } else if (rw[0] === "qstep") {
+              // Short gold next-step line with arrowhead
+              ov.appendChild(lEl("line", { x1: sxc - 5, y1: yy - 2, x2: sxc + 3, y2: yy - 2, stroke: L.questGold, "stroke-width": 1.4, "marker-end": "url(#" + questHeadId + ")" }));
           } else {
               // Road sample line
               ov.appendChild(lEl("line", { x1: sxc - 5, y1: yy - 2, x2: sxc + 5, y2: yy - 2, stroke: L.road, "stroke-width": 2.6 }));
@@ -686,6 +792,24 @@ class RoomGridSVG {
           g.appendChild(lEl("circle", { cx: mx, cy: my, r: 3.4, fill: "#1c2e2a", stroke: L.partyDk, "stroke-width": 0.6 }));
           g.appendChild(lEl("circle", { cx: mx, cy: my - 1.1, r: 1.25, fill: L.party }));
           g.appendChild(lEl("path", { d: "M" + (mx - 2) + "," + (my + 2.6) + " Q" + mx + "," + (my - 0.4) + " " + (mx + 2) + "," + (my + 2.6) + " Z", fill: L.party }));
+      }
+
+      // Focused-quest destination marker (brass ring + copper-patina glow +
+      // brass pin + italic name) on the target room.
+      const qm = this._questMarker;
+      if (qm && qm.targetRoom && (qm.targetRoom === id || qm.targetRoom === String(id))) {
+          g.appendChild(lEl("circle", { cx: cx, cy: cy, r: 12, fill: L.questPatina, opacity: "0.30" }));
+          g.appendChild(lEl("circle", { cx: cx, cy: cy, r: 8.5, fill: L.roomFill, stroke: "url(#" + this._questBrassId + ")", "stroke-width": 2.2 }));
+          g.appendChild(lEl("circle", { cx: cx, cy: cy, r: 3, fill: L.questPatina }));
+          g.appendChild(lEl("path", { d: "M" + cx + "," + (cy - 14) + " L" + cx + "," + (cy - 24), stroke: "#cb9f42", "stroke-width": 1.6 }));
+          g.appendChild(lEl("path", { d: "M" + cx + "," + (cy - 24) + " L" + (cx + 8) + "," + (cy - 21) + " L" + cx + "," + (cy - 18) + " Z", fill: "url(#" + this._questBrassId + ")" }));
+          if (qm.name) {
+              g.appendChild(lTxt({
+                  x: cx, y: cy + 21, "text-anchor": "middle",
+                  "font-family": "Georgia,serif", "font-size": "7.5",
+                  "font-style": "italic", fill: L.questPatina
+              }, qm.name));
+          }
       }
   }
 
@@ -1052,6 +1176,7 @@ RoomGridSVG.LEATHER = {
   label: "#e8d8b8", locked: "#d0633f", water: "#6f99c0", trail: "#a98a55",
   road: "#c9a86a", ridge: "#a98a55", plain: "#9c8048",
   legendBg: "#241810", party: "#6bb0a0", partyDk: "#243f3a",
+  questGold: "#e8b84a", questPatina: "#6bb0a0",
   emboss: 0.6, fray: 3.4, nickP: 0.08, crackStep: 24, crackJit: 9, vig: 0.5
 };
 

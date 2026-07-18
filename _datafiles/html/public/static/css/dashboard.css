@@ -146,6 +146,19 @@
    (grows with a long eq list — e.g. extra-arms — and scrolls only once the Map
    reaches its min). Vitals stays content-compact. */
 #panel-map    { flex: 1 1 0; min-height: 150px; }    /* fills / yields slack */
+#panel-quests { flex: 0 0 auto; }
+#panel-quests .dash-panel-body { max-height: 220px; overflow: auto; }
+.quests-empty { color: #5a4a32; font: italic 12px Georgia, serif; padding: 4px 2px; }
+.qrow { display:flex; align-items:center; gap:6px; padding:4px 4px; border-radius:4px; cursor:pointer; font:12px Georgia,serif; color:#d2c3a4; }
+.qrow:hover { background:rgba(201,168,106,.07); }
+.qrow.focus { background:rgba(203,159,66,.15); box-shadow:inset 2px 0 0 #cb9f42; color:#e8d2a0; }
+.qrow .qdot { width:14px; text-align:center; color:#5a4a32; }
+.qrow.focus .qdot { color:#cb9f42; }
+.qrow .qname { flex:1; }
+.qbar { width:46px; height:5px; background:#160e08; border:1px solid #3a2a18; border-radius:3px; overflow:hidden; }
+.qbar > i { display:block; height:100%; background:linear-gradient(#f4dd92,#cb9f42); }
+.qhint { padding:2px 6px 5px 26px; font:italic 11px Georgia,serif; color:#9a8a6a; }
+.qonmap { color:#6bb0a0; font-style:normal; }
 #panel-vitals { flex: 0 0 auto; }                    /* content-compact; grows with party rows */
 #panel-art    { flex: 0 1 auto; min-height: 120px; } /* inventory: content-sized, grows w/ eq list */
 #panel-chat   { flex: var(--f-chat, 1) 1 0; }

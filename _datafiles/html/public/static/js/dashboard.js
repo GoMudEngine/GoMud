@@ -8,11 +8,12 @@
 
 (function () {
 
-  var SIDE_PANELS = ["map", "vitals", "art", "chat", "status", "trig"];
+  var SIDE_PANELS = ["map", "quests", "vitals", "art", "chat", "status", "trig"];
 
   // Icons for the phone tab-bar (order matches SIDE_PANELS)
   var PANEL_ICONS = {
     map:    "🗺",
+    quests: "❖",
     vitals: "❤",
     art:    "🖼",
     chat:   "💬",
