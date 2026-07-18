@@ -113,6 +113,16 @@ func (c *Character) ClearQuestToken(questToken string) {
 	questId, _ := quests.TokenToParts(questToken)
 
 	delete(c.QuestProgress, questId)
+
+	// Don't leave the focus quest dangling at a quest we just removed. This
+	// fires on the common repeatable-quest-completion reset (and explicit quest
+	// removal): without it, LastQuestId keeps pointing at a quest no longer in
+	// progress, which broke hint (no arg) and leaves the web Quests panel /
+	// minimap marker with no focus. Clearing to 0 lets GetFocusQuestId / hint
+	// fall back deterministically to an active quest.
+	if c.LastQuestId == questId {
+		c.LastQuestId = 0
+	}
 }
 
 func (c *Character) SetQuestFlag(key, value string) {

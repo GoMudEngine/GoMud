@@ -34,3 +34,21 @@ func TestGetFocusQuestId_NoQuests(t *testing.T) {
 	c := &Character{LastQuestId: 87, QuestProgress: map[int]string{}}
 	assert.Equal(t, 0, c.GetFocusQuestId())
 }
+
+func TestClearQuestToken_ClearsStaleFocus(t *testing.T) {
+	// Repeatable-quest completion (or explicit removal) of the focused quest
+	// must not leave LastQuestId dangling at the removed quest.
+	c := &Character{LastQuestId: 87, QuestProgress: map[int]string{87: "start", 65: "discover"}}
+	c.ClearQuestToken("87-start")
+	_, still := c.QuestProgress[87]
+	assert.False(t, still, "quest 87 removed from progress")
+	assert.Equal(t, 0, c.LastQuestId, "LastQuestId cleared when it pointed at the removed quest")
+	assert.Equal(t, "discover", c.QuestProgress[65], "other quests untouched")
+}
+
+func TestClearQuestToken_KeepsUnrelatedFocus(t *testing.T) {
+	// Clearing a quest that is NOT the focus leaves the focus intact.
+	c := &Character{LastQuestId: 65, QuestProgress: map[int]string{87: "start", 65: "discover"}}
+	c.ClearQuestToken("87-start")
+	assert.Equal(t, 65, c.LastQuestId, "focus on a different quest is preserved")
+}
