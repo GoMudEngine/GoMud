@@ -1,5 +1,23 @@
 # DOGMud Patch Notes
 
+## 2026-07-17 — A warmer welcome for first-timers
+
+New to text MUDs? The opening tutorial has been rebuilt from the ground up. A
+guide named Dewey meets you the moment you wake and walks you through the
+essentials at your side, one at a time and in his own voice: how to
+<ansi fg="command">look</ansi> around and examine what catches your eye, how to move on,
+how to read yourself with <ansi fg="command">status</ansi>, how to pick things up and check
+your <ansi fg="command">inventory</ansi>, how to <ansi fg="command">say</ansi> a word and
+<ansi fg="command">ask</ansi> a question — and then, in a safe sparring ring against a straw
+effigy that cannot hurt you, how to fight with fist, spell, and shout, how
+conditions and the shared cooldown work, and when to <ansi fg="command">flee</ansi>. When
+you are ready, Dewey sends you on through to the Awakening Pool with everything
+you need to begin. First-timers also start with combat text at a gentler level;
+turn it up any time with <ansi fg="command">set combatverbosity full</ansi>.
+
+Also: a long-standing text-wrapping quirk that could split a word like "I'll"
+across two lines has been fixed everywhere.
+
 ## 2026-07-15 — Guilds: name your ranks
 
 A guild leader can now give their guild's three ranks their own names with

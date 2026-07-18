@@ -61,6 +61,7 @@ func init() {
 	actionRegistry["mob_emote"] = actMobEmote
 	actionRegistry["grant_mutation"] = actGrantMutation
 	actionRegistry["send_user_text"] = actSendUserText
+	actionRegistry["grant_progression"] = actGrantProgression
 	actionRegistry["send_room_text"] = actSendRoomText
 	actionRegistry["intercept"] = actIntercept
 	actionRegistry["remove_buff"] = actRemoveBuff

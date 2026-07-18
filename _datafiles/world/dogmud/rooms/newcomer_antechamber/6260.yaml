@@ -1,11 +1,31 @@
 roomid: 6260
 zone: Newcomer Antechamber
-title: The Open Hand
+title: What You Carry
 description: >
-  'You will forget commands. That is fine -- the game remembers
-  them for you. Type  help  to see the index, or  help topic  to
-  read about one thing. Try it now.'
+  A shallow alcove worn into the grey, the kind of niche a traveler leaves
+  something in for whoever comes next. A single smooth token rests in it, cool
+  and pale, catching what little light there is. Dewey leans against nothing in
+  particular nearby, watching with a small, easy grin.
 biome: default
 exits:
   north:
     roomid: 6261
+spawninfo:
+  - mobid: 9491
+items:
+  - itemid: 2
+nouns:
+  token: >-
+    A smooth grey disc, cool and featureless, no bigger than a coin. It has no
+    obvious use -- Dewey just wants you to hold something, so that picking a
+    thing up stops being a mystery before the world hands you things that
+    matter.
+  alcove: >-
+    A shallow niche worn into the grey, the sort of place a traveler leaves
+    something for whoever comes next. Others have stood exactly here, learning
+    exactly this.
+  dewey: >-
+    'Everyone drops something and forgets it eventually,' Dewey says with a
+    small grin. 'Better you learn where things go now, while it's only a token.'
+idlemessages:
+  - Motes of pale light drift through the alcove and wink out.

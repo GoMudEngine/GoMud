@@ -1,5 +1,25 @@
 # DOGMud - Claude Code Project Memory
 
+## Content Playtest-Review Gate (SOP)
+Any plan or task that authors **player-facing content** (rooms, mobs, items,
+quests, dialogue, tutorials, onboarding, room prose) MUST end with an **in-game
+adversarial playtest-harness review before the work is handed to the user to
+playtest**. This is a required final task on every content plan, not an
+optional extra.
+
+Boot-clean and "YAML parses" verify the *system*, never the *experience*.
+Content defects — instructions buried in room `description:` prose, confusing or
+double-rendered prompts, broken/mis-ordered lesson gates, dead-ends, awkward
+pacing, wrong NPC voice — are invisible to a boot test and to code reasoning.
+They only surface when something plays the content as a confused human would.
+
+Procedure: run the playtest harness (`/playtest local bug-finder`, or a
+route/feature-specific goals file) with an explicitly **critical, adversarial**
+mandate — spawn a fresh character, drive the real player flow end to end, read
+every line of in-game output, and report every usability problem bluntly. Fix
+what it finds, re-run if needed, and only then turn it over to the user. Do NOT
+claim content work "done" on the strength of a clean boot alone.
+
 ## Subagent Model Preference
 Pick the model that fits the task — don't reflexively pin everything to haiku.
 

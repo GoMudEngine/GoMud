@@ -1,0 +1,104 @@
+# 6467 The Landing — terminus. talk/say → farewell → vortex to the Awakening
+# Pool (5200), where quest 30 begins with Cleric Hadwen. Intercept so the
+# original talk/say doesn't re-run in 5200. Movement is caught and redirected.
+
+tree:
+  type: selector
+  children:
+
+    # ── Dewey greets on arrival and gives the final instruction (fires once) ──
+    - type: sequence
+      event: room_enter
+      children:
+        - type: condition
+          check: state_equals
+          key: greeted
+          value: ""
+        - type: action
+          do: set_state
+          key: greeted
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          delay: 1.0
+          text: >-
+            See? Still breathing. You've got everything you need to begin. When
+            you're ready, type <ansi fg="command">talk dewey</ansi> and I'll send
+            you through -- the world's waiting for you.
+
+    # ── handoff — a paced transition, not an instant teleport (2026-07-17
+    #    feedback: the old hop dumped the player at the pool and assigned the
+    #    quest with no sense of being transported). The `leaving` flag guards
+    #    against a second talk re-triggering the sequence mid-transition. The
+    #    farewell + two flavor beats play out, THEN the vortex fires, and the
+    #    Awakening quest is granted just after arrival so it reads as "you're
+    #    here, and here's your first task."
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [talk, say]
+        - type: condition
+          check: state_equals
+          key: leaving
+          value: ""
+        - type: action
+          do: set_state
+          key: leaving
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            That's the last of it. Steady, now -- this part feels strange the
+            first time, but it's gentle. I've got you.
+        - type: action
+          do: send_user_text
+          delay: 1.5
+          text: >-
+            Dewey rests a hand on your shoulder, and the grey begins to thin
+            around you -- unspooling like thread pulled loose, brightening from
+            the edges inward.
+        - type: action
+          do: send_user_text
+          delay: 3.0
+          text: >-
+            The pale blue-green light rises up to meet you. For a breath there is
+            only warmth and a weightless sense of falling upward into it -- and
+            then the world takes shape around you, solid and real and loud with
+            life.
+        # The hop to 5200 is a move_player, which (like the Coulee onboarding
+        # vortex) bypasses the room_enter trigger the Awakening quest normally
+        # relies on -- so grant 30-start here or the newcomer lands at the pool
+        # with Cleric Hadwen but NO quest and `ask hadwen begin` silently no-ops.
+        # Granted just AFTER the move so its banner lands in the pool room.
+        # Idempotent: the quest's own room_enter trigger is gated on
+        # missing:[30-start,30-end].
+        - type: action
+          do: move_player
+          room_id: 5200
+          delay: 4.0
+        - type: action
+          do: grant_quest
+          quest: "30-start"
+          delay: 4.5
+        - type: action
+          do: intercept
+
+    # ── movement: redirect to the handoff (catches `go <dir>` too) ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [north, n, go, south, s, east, e, west, w, up, u, down, d]
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            One step left, and it's not a walk -- type
+            <ansi fg="command">talk dewey</ansi> and I'll carry you through.
+        - type: action
+          do: intercept

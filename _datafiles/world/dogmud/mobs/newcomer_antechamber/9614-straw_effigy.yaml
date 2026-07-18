@@ -1,0 +1,34 @@
+mobid: 9614
+zone: Newcomer Antechamber
+behavior_archetype: combat_passive
+hostile: false
+maxwander: 0
+pack_flee_immune: true
+statpool: 3
+groups:
+  - construct
+activitylevel: 3
+idlecommands:
+  - 'emote sags on its post, straw whispering, then settles upright again'
+  - ''
+  - ''
+character:
+  name: Straw Effigy
+  description: |
+    A crude man-shape of bound straw and sackcloth lashed to a fixed post,
+    faceless but for two charcoal smudges where eyes might be. It does not
+    breathe and does not flinch until struck -- and it rights itself with a
+    dry rustle every time, no worse for the beating. A safe thing to learn
+    a fight against.
+  speciesid: 19
+  level: 1
+  gold: 0
+  stats:
+    # Species 19 (dummy) has base vitality 200 and zero base damage. Add a
+    # large vitality bump so the effigy cannot be killed during the lesson (no
+    # engine "invulnerable" flag exists; high HP is the mechanism). The
+    # 2026-07-17 playtest reached "badly wounded" at training:300 over ~15
+    # rounds, so this is raised to give a slow or lingering player wide margin.
+    # It deals no damage, so there is no time pressure on the player.
+    vitality:
+      training: 1000

@@ -344,6 +344,22 @@ func TestSplitString(t *testing.T) {
 	}
 }
 
+// Regression: the word-wrapper tokenized contractions like "I'll" as
+// "I" + "'" + "ll" and could break them across a line boundary ("...I'" /
+// "ll ..."), which showed up in NPC dialogue (2026-07-17 Dewey playtest).
+// A contraction must never be split by wrapping, at any width.
+func TestSplitString_KeepsContractionsWhole(t *testing.T) {
+	words := []string{"I'll", "don't", "you're", "it's", "won't", "there's"}
+	for _, w := range words {
+		input := "steady yourself now and " + w + " be just fine out there friend"
+		for width := 5; width <= 24; width++ {
+			joined := strings.Join(SplitString(input, width), " ")
+			assert.Truef(t, strings.Contains(joined, w),
+				"contraction %q was split at width %d: %q", w, width, joined)
+		}
+	}
+}
+
 func TestSplitStringNL(t *testing.T) {
 	type args struct {
 		input  string

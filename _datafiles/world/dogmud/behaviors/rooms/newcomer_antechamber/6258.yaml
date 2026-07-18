@@ -1,33 +1,90 @@
-# 6258 — gate: must look before leaving north.
-#
-# Branch 1: player types look/l → mark lesson done + praise.
-#   (Does NOT intercept, so the look command also runs normally.)
-# Branch 2: movement attempt while lesson not done → nudge + intercept.
-#   state_equals key:lesson_done value:"" is TRUE when the key is unset,
-#   FALSE once set_state sets it to "1". Per-instance state so each
-#   ephemeral copy tracks its own player's progress.
+# 6258 The Threshold — gates: look, then look <noun>, then north.
+# Branch order matters (selector = first success wins): the specific
+# examine branch precedes the plain-look branch so `look hands` advances
+# the examine step once `looked` is set. No branch intercepts a lesson
+# command, so look/examine still run normally.
 
 tree:
   type: selector
   children:
 
-    # ── Lesson performed: mark done, praise ──
+    # ── Dewey greets on arrival and gives the first instruction (fires once) ──
+    - type: sequence
+      event: room_enter
+      children:
+        - type: condition
+          check: state_equals
+          key: greeted
+          value: ""
+        - type: action
+          do: set_state
+          key: greeted
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          delay: 1.0
+          text: >-
+            There you are -- waking up at last. Easy, now. Nothing here can harm
+            you. The first thing anyone learns in this world is how to take stock
+            of where they stand. Type <ansi fg="command">look</ansi> to take in
+            the room around you. Go on, try it.
+
+    # ── examine a noun (requires plain look done first) ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [look, l, examine, exam, x]
+        - type: condition
+          check: command_rest_contains
+          keywords: [guide, hands, grey, stone, dewey]
+        - type: condition
+          check: state_equals
+          key: looked
+          value: "1"
+        - type: condition
+          check: state_equals
+          key: examined
+          value: ""
+        - type: action
+          do: set_state
+          key: examined
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            That's the whole trick of this world -- the ones who read what's
+            in front of them live longest. The way <ansi fg="command">north</ansi>
+            is open. Type <ansi fg="command">north</ansi> and I'll be right there
+            with you.
+
+    # ── plain look ──
     - type: sequence
       event: room_command
       children:
         - type: condition
           check: command_matches
           commands: [look, l]
+        - type: condition
+          check: state_equals
+          key: looked
+          value: ""
         - type: action
           do: set_state
-          key: lesson_done
+          key: looked
           value: "1"
         - type: action
-          do: send_user_text
+          do: mob_say
+          mob_id: 9491
           text: >-
-            Good. The way north is open now. Type  north  to move on.
+            Good. Now look closer at something in particular -- take a proper
+            look at me with <ansi fg="command">look guide</ansi>. Reading what's
+            in front of you is a habit worth keeping.
 
-    # ── Movement before lesson: block with a nudge ──
+    # ── movement before both lessons: nudge + block ──
     - type: sequence
       event: room_command
       children:
@@ -36,11 +93,14 @@ tree:
           commands: [north, n, go, south, s, east, e, west, w, up, u, down, d]
         - type: condition
           check: state_equals
-          key: lesson_done
+          key: examined
           value: ""
         - type: action
-          do: send_user_text
+          do: mob_say
+          mob_id: 9491
           text: >-
-            Not yet. Type  look  to take in where you are, then go north.
+            Not yet. Type <ansi fg="command">look</ansi> to take the room in,
+            then <ansi fg="command">look guide</ansi> to read something closely.
+            Then north.
         - type: action
           do: intercept

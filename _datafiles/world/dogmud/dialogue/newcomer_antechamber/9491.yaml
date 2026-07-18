@@ -1,59 +1,70 @@
 mobid: 9491
 zone: Newcomer Antechamber
-defaultMood: neutral
+defaultMood: friendly
 
 patterns:
-  - keywords: ["hello", "hi", "greet", "hey", "hail", "talk", "speak"]
+  - keywords: ["hello", "hi", "greet", "hey", "hail"]
     responses:
-      - "Welcome. Ask me about the world, your pools, how to find
-          help -- or just say you are ready and I will send you
-          through."
+      - "Hello yourself. Ask me anything while you've got me -- the world, the
+          pools, how you'll grow, or just tell me you're ready."
 
-  - keywords: ["world", "ready", "go", "leave", "through", "step"]
+  - keywords: ["world", "gaius", "outside", "beyond"]
     responses:
-      - "I am only a door, friend. Everything real is on the far
-          side of me. When you are ready, step through -- and
-          welcome to Gaius."
-      - "Beyond me is a city, a road, a whole world that changes
-          and breathes. When you feel ready, I will see you out."
+      - "Gaius. A whole living world -- a city, roads, people who lie and
+          help and everything between. It changes while you're not looking.
+          You'll love it and it'll scare you, both. That's right and proper."
 
-  - keywords: ["help", "command", "commands", "forget", "index"]
+  - keywords: ["pool", "pools", "health", "stamina", "conviction"]
     responses:
-      - "Type  help  from anywhere in the world to see the full
-          index. Type  help topic  to read about one specific
-          thing. The list is always there."
+      - "Three pools sit under your six stats: health, stamina, conviction.
+          Spend them and they refill with time and rest. Type
+          <ansi fg=\"command\">status</ansi> anytime to read them."
 
-  - keywords: ["look", "see", "sight", "eyes"]
+  - keywords: ["help", "command", "commands", "forget", "lost"]
     responses:
-      - "Look is the first word. Type it in any room and the world
-          will tell you what it sees fit to share. Some things only
-          appear when you look at them directly."
+      - "Forget a command and the game remembers for you. Type
+          <ansi fg=\"command\">help</ansi> for the whole index, or
+          <ansi fg=\"command\">help</ansi> and a topic for one thing. No shame
+          in it -- I still look things up."
 
-  - keywords: ["pool", "health", "stamina", "conviction", "stat", "status"]
+  - keywords: ["look", "see", "examine", "read"]
     responses:
-      - "You have three pools beneath your six stats: health,
-          stamina, and conviction. Type  status  to read all of
-          them. They restore over time -- rest if you need to."
+      - "Looking is the first skill and the last one you'll outgrow. Type
+          <ansi fg=\"command\">look</ansi> in any room, and
+          <ansi fg=\"command\">look</ansi> at anything that catches your eye.
+          This world hides its best parts in plain sight."
 
-  - keywords: ["who", "players", "others", "people", "alone"]
+  - keywords: ["condition", "conditions", "buff", "effect"]
     responses:
-      - "Type  who  to see who else walks the world right now. You
-          are not the first through here, and you will not be
-          the last."
+      - "Conditions are the temporary things riding on you -- a war cry
+          steadying your hand, a poison in your blood, a leg swept out from
+          under you. Good and bad both. Type
+          <ansi fg=\"command\">conditions</ansi> to see what's on you."
+
+  - keywords: ["grow", "growth", "level", "levels", "class", "progress", "mutation", "mutations"]
+    responses:
+      - "No levels here, and no class to cage you. You grow by doing --
+          swing a blade and you sharpen, cast and you deepen, shout and you
+          steady. Over time the way you fight even pulls mutations toward you.
+          You never pick what you become. You earn it."
+
+  - keywords: ["ready", "go", "leave", "through", "step", "done"]
+    responses:
+      - "Then don't let me keep you. Step on through when you reach the
+          landing -- and welcome to Gaius. I'll be right behind you in spirit."
 
   - keywords: [""]
     responses:
-      - "Ask me about the world, your pools, how to find help --
-          or tell me you are ready and I will send you through."
-      - "I am not much, but I am patient. Ask what you need."
+      - "Ask me about the world, the pools, conditions, how you'll grow -- or
+          tell me you're ready."
+      - "I'm patient, and I've got nowhere to be. Ask what you need."
 
 tree:
   root:
-    text: "Welcome. I am the last threshold before the world. Ask
-      me anything, or tell me you are ready and I will send you
-      on your way."
-    hints: "You could ask the guide about the world, your pools, or
-      how to find help. When ready, tell the guide and step through."
+    text: "Ask me anything -- the world, the pools, conditions, how you grow --
+      or tell me you're ready and I'll see you through."
+    hints: "You could ask Dewey about the world, the pools, conditions, or how
+      you'll grow. When you're ready, say so."
 
 memory:
   expiryPeriod: ""

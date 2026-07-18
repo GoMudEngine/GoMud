@@ -1,12 +1,33 @@
 roomid: 6259
 zone: Newcomer Antechamber
-title: A First Step
+title: Knowing Yourself
 description: >
-  The grey brightens a little. 'Good. This is you -- type  status
-  to read your stats. Six of them, all centered on 100, with three
-  pools beneath: health, stamina, and conviction. Knowing yourself
-  is the first armor.'
+  The grey brightens here over a wide, still surface, dark and smooth as poured
+  glass. It lies flat and silent, giving back the faint shape of whoever leans
+  over it, and something deeper glimmers far beneath. Dewey waits a step back
+  from the edge, unhurried, leaving you room to look.
 biome: default
 exits:
   north:
     roomid: 6260
+spawninfo:
+  - mobid: 9491
+nouns:
+  water: >-
+    The still surface shows you back to yourself -- and, far down beneath your
+    reflection, a faint blue-green glow, steady and patient. It is the same
+    light you'll one day find in the Awakening Pool. For now it only watches.
+  pattern: >-
+    Six faint points of light hang in the depths in a slow ring -- Strength,
+    Dexterity, Perception, Vitality, Willpower, Charisma. Every soul that wakes
+    here carries all six, each one centered on the same human measure. What you
+    *do* with them is what makes you different.
+  embers: >-
+    Three small embers drift beneath the surface: one red, one green, one gold
+    -- your health, your stamina, your conviction. They dim when you spend them
+    and warm again when you rest.
+  dewey: >-
+    Dewey stands a little back from the water, giving you room to look. 'Take
+    your time. There's no clock on you here.'
+idlemessages:
+  - The still surface trembles once, then settles glass-flat again.

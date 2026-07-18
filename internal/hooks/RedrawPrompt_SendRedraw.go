@@ -21,7 +21,21 @@ func RedrawPrompt_SendRedraw(e events.Event) events.ListenerReturn {
 
 		newCmdPrompt := user.GetCommandPrompt()
 
-		if evt.OnlyIfChanged {
+		// When an interactive question is pending (character creation, confirm
+		// prompts, password entry), the command prompt IS the full question text.
+		// Message/broadcast senders fire RedrawPrompt WITHOUT OnlyIfChanged, so
+		// every incidental line (join banners, periodic tips, channel chatter)
+		// would re-print the entire multi-line question — the "route question
+		// shows up twice/three times" report (2026-07-17). Re-rendering an
+		// UNCHANGED pending question is never desirable, so force the change-dedup
+		// in that case regardless of the event flag. Normal gameplay prompts are
+		// unaffected (no pending question → behaves exactly as before).
+		forceDedup := false
+		if p := user.GetPrompt(); p != nil && p.GetNextQuestion() != nil {
+			forceDedup = true
+		}
+
+		if evt.OnlyIfChanged || forceDedup {
 
 			oldCmdPrompt := user.GetTempData(`cmdprompt`)
 
