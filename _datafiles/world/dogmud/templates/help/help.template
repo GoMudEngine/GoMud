@@ -7,6 +7,11 @@ The <ansi fg="command">help</ansi> command looks up guidance on a command.
   <ansi fg="command">help say</ansi>
   Find help on the command <ansi fg="command">say</ansi>.
 
+Three kinds of thing show up in the lists below:
+  <ansi fg="command">Commands</ansi> are actions you can always take -- move, look, talk, fight.
+  <ansi fg="skill">Skills</ansi> are trades and knacks that sharpen the more you use them.
+  <ansi fg="spellname">Spells</ansi> are what you channel with <ansi fg="command">cast</ansi> -- type <ansi fg="command">spells</ansi> for the ones you know.
+
 Here are some <ansi fg="skill">skills</ansi> and <ansi fg="command">commands</ansi> to look up to get started:
 {{/* padRight 80 "" "-" */}}
 {{ if gt (len .Commands) 0 -}}
@@ -32,4 +37,4 @@ Admin:
 {{ $counter := 0 }}    {{ range $i, $cmdInfo := $commandList }}<ansi fg="{{ $cmdInfo.Type }}">{{ if $cmdInfo.Missing }}<ansi fg="red-bold">*</ansi>{{ else }} {{ end }}{{ padRight 17 $cmdInfo.Command " " }}</ansi> {{ if eq (mod $counter 4) 3 }}{{ if ne $i (sub (len $commandList) 1) }}{{ printf "\n    " }}{{ end }}{{ end }}{{ $counter = (add $counter 1) }}{{ end }}
 {{ end }}{{ end }}
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help dogmud</ansi>
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help dogmud</ansi>, and <ansi fg="command">achievements</ansi> to track the milestones you earn as you play.
