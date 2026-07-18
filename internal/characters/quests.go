@@ -224,9 +224,13 @@ func (c *Character) GetFocusQuestId() int {
 	if len(prog) == 0 {
 		return 0
 	}
-	// A still-valid explicit focus wins.
+	// A still-valid, still-ACTIVE explicit focus wins. We skip a LastQuestId
+	// that sits at "end": completing a quest sets LastQuestId to it, so without
+	// this a just-finished quest would stay the focus (hint/panel/marker) even
+	// when the player has moved on to another active quest — e.g. after the
+	// Two Roads bridge completes into Find Your Footing.
 	if c.LastQuestId != 0 {
-		if _, ok := prog[c.LastQuestId]; ok {
+		if step, ok := prog[c.LastQuestId]; ok && step != "end" {
 			return c.LastQuestId
 		}
 	}

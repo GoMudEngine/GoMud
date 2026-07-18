@@ -1,0 +1,64 @@
+# Quest 29 — Two Roads (Pothole Coulee, post-rite signpost)
+#
+# A short bridging quest that exists to give a freshly-Opened player a
+# PERSISTENT objective the instant the Awakening rite ends — instead of the old
+# dead spot where they held no active quest and had to guess "ask toke footing".
+#
+# Token flow:
+#   29-start — granted directly by Cleric Hadwen's behavior tree at the close of
+#              the rite (right after 30-end). It is NOT granted by a
+#              `quest_granted 30-end` trigger: behavior-tree grants pre-set the
+#              token and so do not fire the engine's quest_granted event
+#              (see internal/hooks/Quest_HandleQuestUpdate.go — the Notify is
+#              gated on freshlyGranted).
+#   29-end   — granted when the player commits to a road: asking Crier Toke for
+#              footing (dialogue grants 31-start, which DOES fire quest_granted)
+#              OR passing through Warden Esk's arch into Thornwall (room 468).
+#              Either way the signpost is done and drops out of the quest panel.
+#
+# map_target 5203 (Hub Square, where Crier Toke stands) aims the web minimap
+# marker at the recommended new-player road; the hint names both roads in words.
+
+questid: 29
+name: Two Roads
+description: >-
+  The pool has opened you. Two roads lead on from Pothole Coulee -- learn the
+  town with Crier Toke, or leave through Warden Esk's arch. Choose one.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    map_target: 5203
+    description: >-
+      Freshly Opened, you stand at a fork. Crier Toke waits in Hub Square, just
+      south of the pool, ready to teach you the town. Warden Esk keeps the arch
+      out of the coulee, south again through the market. Either road is yours.
+    hint: >-
+      New to Gaius? Go south to Hub Square and type ask toke footing, and Toke
+      will walk you through the town. Already know your way? Keep south through
+      the market to the Threshold House and type ask esk passage to leave the
+      coulee for the wider world.
+  - id: end
+    description: >-
+      You have chosen your road out of the coulee.
+
+triggers:
+  # ── TOKE'S ROAD: asking Toke for footing grants 31-start (via dialogue,
+  #    which fires quest_granted), closing the signpost and handing off to
+  #    "Find Your Footing".
+  - event: quest_granted
+    quest_token: 31-start
+    conditions:
+      has: [29-start]
+      missing: [29-end]
+    actions:
+      - grant: 29-end
+  # ── ESK'S ROAD: passing through the arch into Thornwall (468) closes it.
+  - event: room_enter
+    room: 468
+    conditions:
+      has: [29-start]
+      missing: [29-end]
+    actions:
+      - grant: 29-end

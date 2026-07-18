@@ -124,6 +124,16 @@ tree:
           do: grant_quest
           quest: "30-end"
           delay: 37.0
+        # Immediately hand the freshly-Opened player a persistent objective so
+        # they are never left adrift: "Two Roads" (quest 29) names both onward
+        # paths -- Crier Toke (learn the town) and Warden Esk (leave). Granted
+        # here rather than via a quest_granted 30-end trigger because
+        # behavior-tree grants pre-set the token and do not fire the engine's
+        # quest_granted event (see 29-two_roads.yaml header).
+        - type: action
+          do: grant_quest
+          quest: "29-start"
+          delay: 37.5
 
     # ── GREETING: an un-Opened player arrives (incl. FIRST SPAWN —
     #    HandleJoin emits player_enter once per brand-new character).
