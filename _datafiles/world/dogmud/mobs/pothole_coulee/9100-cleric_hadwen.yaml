@@ -11,12 +11,23 @@ groups:
   - humanoid
   - coulee_folk
 activitylevel: 12
+# Kept sparse on purpose: the empty entries are no-op idle ticks, so Hadwen
+# emotes only occasionally (~3 in 13 ticks) instead of every other tick. He is
+# a still, patient pool-tender -- once the rite is done he should mostly fade
+# into the background, not keep narrating himself at an Opened player.
 idlecommands:
   - 'emote kneels at the pool rim and trails two fingers in the cold water'
   - ''
+  - ''
+  - ''
   - 'emote turns his head to listen, the pale plates along his jaw catching the light'
   - ''
+  - ''
+  - ''
   - 'emote murmurs the welcome-words under his breath, the same ones, meaning them'
+  - ''
+  - ''
+  - ''
   - ''
 character:
   name: Cleric Hadwen
