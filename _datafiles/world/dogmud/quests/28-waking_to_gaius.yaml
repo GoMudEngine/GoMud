@@ -1,0 +1,80 @@
+questid: 28
+name: Waking to Gaius
+description: >-
+  You wake in the grey between-place with a guide named Dewey beside you.
+  Learn the first handful of things every soul needs before it steps into
+  the world -- one at a time, at your own pace.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: "You have woken, and Dewey has marked your path."
+    hint: "Type hint to see your next step -- or quests to see the whole journey."
+  - id: hinted
+    description: "You read your first hint. That command is your compass now."
+    hint: "Take stock of where you stand -- type look."
+  - id: looked
+    description: "You took in the room around you."
+    hint: "Look closer at one thing -- type look guide."
+  - id: examined
+    description: "You read the guide closely. Reading is the first survival skill."
+    hint: "The way north is open -- type north."
+  - id: status_prompt
+    description: "You stepped into the place where you meet yourself."
+    hint: "Read yourself -- type status."
+  - id: statused
+    description: "You read your six stats and three pools."
+    hint: "The way north is open -- type north."
+  - id: carry_prompt
+    description: "Small things matter out there."
+    hint: "Pick that up -- type get token."
+  - id: got
+    description: "The token is yours now."
+    hint: "See what you carry -- type inventory."
+  - id: invd
+    description: "You checked what you are carrying."
+    hint: "When you forget a command, the game remembers -- type help."
+  - id: helped
+    description: "You opened the help index -- your patient, permanent reference."
+    hint: "The way north is open -- type north."
+  - id: speaks_prompt
+    description: "Out in the world, people answer when you speak."
+    hint: "Speak up -- type say hello."
+  - id: said
+    description: "You spoke, and the world can hear you."
+    hint: "Ask me something directly -- type ask dewey world."
+  - id: asked
+    description: "You learned to ask -- half of what matters is learned that way."
+    hint: "The way north is open -- type north."
+  - id: proving_prompt
+    description: "The practice ring -- where you make your mistakes safely."
+    hint: "Steel yourself before a fight -- type warcry."
+  - id: warcried
+    description: "Your war cry steadied your nerve -- a condition, riding on you."
+    hint: "See what is riding on you -- type conditions."
+  - id: saw_conditions
+    description: "You read your conditions. They cut both ways, good and bad."
+    hint: "See which big moves are resting -- type cooldowns."
+  - id: checked_cooldowns
+    description: "You checked your cooldowns -- your big moves share one well."
+    hint: "Now fight -- type attack effigy."
+  - id: attacked
+    description: "You closed with the effigy. Your steady swings are free."
+    hint: "Drive belief into it -- type cast spike."
+  - id: cast_spike
+    description: "You loosed a spike of conviction. Belief is a weapon here."
+    hint: "Take its legs the body's way -- type trip."
+  - id: tripped
+    description: "You put the effigy down -- voice, belief, and body, all yours."
+    hint: "Not every fight is worth finishing -- type flee."
+  - id: fled
+    description: "You broke away. Running is how you live to win the next one."
+    hint: "One step left, and it is not a walk -- type talk dewey."
+  - id: end
+    description: "Dewey sent you through to the world. Gaius is waiting."
+
+rewards:
+  playermessage: >-
+    Dewey's voice stays with you a moment after the grey lets go -- steady,
+    warm, already a little proud. You are awake now, and the world is real.
