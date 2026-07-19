@@ -21,6 +21,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: 5284
     description: >-
       The steppe is your first lesson in reading the ground. Track a
       steppe hare across the open steppe, and forage the scrub for
@@ -30,6 +31,7 @@ steps:
       follow it. Type forage on the steppe (the Open Steppe or the Sage
       Flat) to gather plants. Then report back to Tarn.
   - id: track
+    map_target: 5284
     description: >-
       You picked up the hare's trail and followed it across the steppe.
       Forage the scrub if you have not yet.
@@ -37,6 +39,7 @@ steps:
       Type forage on the Open Steppe or the Sage Flat to gather plants,
       then report to Scout Tarn -- type ask tarn done.
   - id: forage
+    map_target: 5284
     description: >-
       You worked the steppe for forage. Track a hare if you have not yet.
     hint: >-

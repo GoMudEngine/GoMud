@@ -28,6 +28,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: 5351
     description: >-
       You have a sling -- equip it, get a pouch of shot, reload it, and
       loose a stone at the practice butt down-range on the Long Terrace.
@@ -38,6 +39,7 @@ steps:
       type shoot butt to drop the practice butt. Return west to Marksman
       Iden -- type ask iden done.
   - id: reload
+    map_target: 5351
     description: >-
       You chambered a stone. Now loose it at the practice butt down-range if
       you have not yet.
@@ -46,6 +48,7 @@ steps:
       butt with your chambered stone. Then report to Marksman Iden -- type
       ask iden done.
   - id: shoot
+    map_target: 5350
     description: >-
       You put a stone into the butt. Make sure you have worked the reload
       too -- a ranged weapon is empty after every shot.
