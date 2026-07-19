@@ -35,10 +35,10 @@ steps:
       south of the pool, ready to teach you the town. Warden Esk keeps the arch
       out of the coulee, south again through the market. Either road is yours.
     hint: >-
-      New to Gaius? Go south to Hub Square and type ask toke footing, and Toke
-      will walk you through the town. Already know your way? Keep south through
-      the market to the Threshold House and type ask esk passage to leave the
-      coulee for the wider world.
+      Two roads, both south from the pool. To learn the town, go south to Hub
+      Square, find Crier Toke at the notice post, and type ask toke footing. To
+      leave the coulee for the wider world, go south through the market to the
+      Threshold House, find Warden Esk at the arch, and type ask esk passage.
   - id: end
     description: >-
       You have chosen your road out of the coulee.
