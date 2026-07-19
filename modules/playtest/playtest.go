@@ -30,10 +30,12 @@ func init() {
 		panic(err)
 	}
 
-	// Admin web pages: a Config editor and a static About page.
-	// DOGMud's WebConfig uses WebPage() (no AdminPage method).
-	module.plug.Web.WebPage("Config", "playtest-config", "html/admin/playtest-config.html", true, nil)
-	module.plug.Web.WebPage("About", "playtest-about", "html/admin/playtest-about.html", true, nil)
+	// Admin web pages: a Config editor and a static About page. Registered
+	// WITHOUT a nav link (addToNav=false) — these are admin-gated dev pages, and
+	// adding them to the nav leaked "Config"/"About" 404s into the public site
+	// nav. Still reachable by URL (/playtest-config, /playtest-about) for admins.
+	module.plug.Web.WebPage("Config", "playtest-config", "html/admin/playtest-config.html", false, nil)
+	module.plug.Web.WebPage("About", "playtest-about", "html/admin/playtest-about.html", false, nil)
 
 	module.plug.Callbacks.SetOnLoad(module.onLoad)
 }

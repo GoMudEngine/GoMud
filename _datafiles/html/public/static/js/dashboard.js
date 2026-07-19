@@ -73,9 +73,53 @@
     // ---------------------------------------------------------------
     // Reset layout
     // ---------------------------------------------------------------
+    // Reset the dashboard to its default arrangement IN PLACE — no page reload,
+    // so the websocket (and the player's session) stays connected. Falls back to
+    // the old hard reload only if something unexpected throws.
     resetLayout: function () {
-      try { localStorage.removeItem("dogmud.dashboard.layout.v1"); } catch (e) {}
-      location.reload();
+      var self = this;
+      try {
+        // 1. Dock any popped-out panels (closing the WinBox re-docks via onclose).
+        if (this._popped) {
+          Object.keys(this._popped).forEach(function (name) {
+            var wb = self._popped[name];
+            if (wb && typeof wb.close === "function") wb.close();
+            else if (self.redock) self.redock(name);
+          });
+        }
+        // 2. Un-collapse every panel.
+        document.querySelectorAll(".dash-panel.collapsed").forEach(function (p) {
+          p.classList.remove("collapsed");
+        });
+        // 3. Re-home panels in default order (clear the saved arrangement first
+        //    so _enterWide uses the default SIDE_PANELS order, not the custom one).
+        this._savedArrange = null;
+        document.querySelectorAll(".dash-panel").forEach(function (p) { p.style.display = ""; });
+        if (this.mode === "rail" && this._enterRail) this._enterRail();
+        else if (this.mode === "phone" && this._enterPhone) this._enterPhone();
+        else if (this._enterWide) this._enterWide();
+        // 4. Forget the persisted layout so a later reload also starts clean.
+        try { localStorage.removeItem("dogmud.dashboard.layout.v1"); } catch (e) {}
+        // 5. Confirm — no disconnect this time.
+        this._toast("Layout reset to default.");
+      } catch (e) {
+        // Anything unexpected: fall back so the button always does *something*.
+        try { localStorage.removeItem("dogmud.dashboard.layout.v1"); } catch (e2) {}
+        location.reload();
+      }
+    },
+
+    // Brief, self-dismissing notification (bottom-center, leather-styled).
+    _toast: function (msg) {
+      var t = document.createElement("div");
+      t.className = "dash-toast";
+      t.textContent = msg;
+      document.body.appendChild(t);
+      requestAnimationFrame(function () { t.classList.add("show"); });
+      setTimeout(function () {
+        t.classList.remove("show");
+        setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 400);
+      }, 2600);
     },
 
     // ---------------------------------------------------------------

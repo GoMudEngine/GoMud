@@ -143,7 +143,6 @@ func serveTemplate(w http.ResponseWriter, r *http.Request) {
 			{`Home`, `/`},
 			{`Who's Online`, `/online`},
 			{`Web Client`, `/webclient`},
-			{`See Configuration`, `/viewconfig`},
 		},
 	}
 
@@ -178,11 +177,27 @@ func serveTemplate(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		// Sort plugin-added items alphabetically so tab order is stable
-		// (Go map iteration is non-deterministic)
+		// Order plugin-added items by an explicit priority so the tab order is
+		// stable (Go map iteration is non-deterministic) AND sensible — in
+		// particular Achievements and Leaderboards sit next to each other rather
+		// than being split apart by an alphabetical sort. Anything not listed
+		// falls in after the known items, alphabetically.
+		navOrder := map[string]int{
+			`Achievements`: 1,
+			`Leaderboards`: 2,
+			`Help`:         3,
+		}
 		if len(currentNav) > coreCount {
 			pluginNav := currentNav[coreCount:]
 			sort.Slice(pluginNav, func(i, j int) bool {
+				pi, iok := navOrder[pluginNav[i].Name]
+				pj, jok := navOrder[pluginNav[j].Name]
+				if iok && jok {
+					return pi < pj
+				}
+				if iok != jok {
+					return iok // known-order items come before unlisted ones
+				}
 				return pluginNav[i].Name < pluginNav[j].Name
 			})
 		}
