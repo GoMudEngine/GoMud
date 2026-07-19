@@ -1,83 +1,8 @@
-# 6261 The World Speaks — gates: say, then ask. Neither intercepts, so `say`
-# broadcasts and `ask dewey <topic>` still hits Dewey's dialogue tree.
-
+# 6261 The World Speaks — movement gate only. Lessons + Dewey's voice live in
+# quest 28. Block the exit until the room's lesson (28-asked) is done.
 tree:
   type: selector
   children:
-
-    # ── Dewey greets on arrival and gives the first instruction (fires once) ──
-    - type: sequence
-      event: room_enter
-      children:
-        - type: condition
-          check: state_equals
-          key: greeted
-          value: ""
-        - type: action
-          do: set_state
-          key: greeted
-          value: "1"
-        - type: action
-          do: mob_say
-          mob_id: 9491
-          delay: 1.0
-          text: >-
-            You're nearly through. Out in the world, people and creatures answer
-            when you speak to them. Try it -- type
-            <ansi fg="command">say hello</ansi>. Then ask me something directly:
-            <ansi fg="command">ask dewey world</ansi>.
-
-    # ── say ──
-    - type: sequence
-      event: room_command
-      children:
-        - type: condition
-          check: command_matches
-          commands: [say, '"', shout, yell]
-        - type: condition
-          check: state_equals
-          key: said
-          value: ""
-        - type: action
-          do: set_state
-          key: said
-          value: "1"
-        - type: action
-          do: mob_say
-          mob_id: 9491
-          text: >-
-            Ha -- and the world will answer, out there. Now ask me something
-            directly. Try <ansi fg="command">ask dewey world</ansi>, or ask
-            about the pools, or how you'll grow.
-
-    # ── ask ──
-    - type: sequence
-      event: room_command
-      children:
-        - type: condition
-          check: command_matches
-          commands: [ask, talk]
-        - type: condition
-          check: state_equals
-          key: said
-          value: "1"
-        - type: condition
-          check: state_equals
-          key: asked
-          value: ""
-        - type: action
-          do: set_state
-          key: asked
-          value: "1"
-        - type: action
-          do: mob_say
-          mob_id: 9491
-          text: >-
-            That's how you'll learn half of what matters out there -- just ask.
-            One last thing before I let you go, and it's the one that keeps you
-            alive. The way <ansi fg="command">north</ansi> is open.
-
-    # ── movement before both: nudge + block ──
     - type: sequence
       event: room_command
       children:
@@ -85,14 +10,13 @@ tree:
           check: command_matches
           commands: [north, n, go, south, s, east, e, west, w, up, u, down, d]
         - type: condition
-          check: state_equals
-          key: asked
-          value: ""
+          check: player_missing_quest
+          quest: "28-asked"
         - type: action
           do: mob_say
           mob_id: 9491
           text: >-
-            Speak first -- <ansi fg="command">say hello</ansi>, then
-            <ansi fg="command">ask dewey world</ansi>. Then north.
+            Not through yet -- if you have lost the thread, type
+            <ansi fg="command">hint</ansi> and it will point you at the next step.
         - type: action
           do: intercept
