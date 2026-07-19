@@ -202,11 +202,17 @@ type CritFailureResult struct {
 func HandleGrappleCritFailure(attacker *characters.Character, defender *characters.Character) CritFailureResult {
 	result := CritFailureResult{}
 
-	if err := attacker.Position.TransitionToProne(
-		position.ProneData{MinRecoveryRounds: 2},
-		state.TransitionReason{Trigger: position.TriggerKnockdownFaceForward},
-	); err != nil {
-		mudlog.Warn("HandleGrappleCritFailure: TransitionToProne failed", "err", err)
+	// Position can be nil on a mob instance that ResetForMobInstance() cleared
+	// and hasn't re-wired yet (same nil state CalculatePositionString guards).
+	// Skip the prone transition rather than panic — the fumble messaging below
+	// still conveys the crit failure.
+	if attacker.Position != nil {
+		if err := attacker.Position.TransitionToProne(
+			position.ProneData{MinRecoveryRounds: 2},
+			state.TransitionReason{Trigger: position.TriggerKnockdownFaceForward},
+		); err != nil {
+			mudlog.Warn("HandleGrappleCritFailure: TransitionToProne failed", "err", err)
+		}
 	}
 
 	// Defender gets grapple opportunity (reuse existing system from Stage 8.4)

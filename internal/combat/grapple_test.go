@@ -162,3 +162,17 @@ func TestAttemptGrapple_PositionTransition(t *testing.T) {
 	}
 	t.Log("Warning: did not get a successful grapple in 100 tries (statistical fluke)")
 }
+
+// Regression: HandleGrappleCritFailure must not panic when the attacker's
+// Position machine is nil. ResetForMobInstance() clears Position on a mob
+// instance until it is re-wired, so a not-yet-wired mob that rolls the ~2.3%
+// grapple crit-failure previously dereferenced a nil *position.Machine and
+// crashed (a flaky panic in TestAttackInCombat/grapple_in_combat on CI).
+func TestHandleGrappleCritFailure_NilAttackerPosition(t *testing.T) {
+	attacker := &characters.Character{} // Position is nil (zero-value pointer)
+	defender := &characters.Character{}
+	assert.NotPanics(t, func() {
+		res := HandleGrappleCritFailure(attacker, defender)
+		assert.NotEmpty(t, res.Message, "crit-failure messaging still produced without a Position machine")
+	})
+}
