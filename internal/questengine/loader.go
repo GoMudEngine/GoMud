@@ -40,6 +40,7 @@ func (q *QuestDef) Validate() error {
 		"room_enter": true, "item_give": true, "skill_use": true,
 		"mob_death": true, "command": true, "item_gain": true,
 		"dialogue": true, "quest_granted": true, "room_interact": true,
+		"command_issued": true,
 	}
 
 	for i, t := range q.Triggers {

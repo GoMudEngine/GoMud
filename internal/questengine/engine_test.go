@@ -394,3 +394,67 @@ func TestEngine_RegisterAndGetQuest(t *testing.T) {
 	assert.NotNil(t, e.GetQuest(3))
 	assert.Equal(t, "Test", e.GetQuest(3).Name)
 }
+
+// seedCommandIssuedQuest creates an Engine loaded with a two-step quest that
+// advances on the non-intercepting "command_issued" event — proving quests
+// can gate a step on "the player typed command X [noun]" without any
+// per-handler instrumentation.
+// Steps: 200-start, 200-look (Linear: false)
+// Triggers:
+//   - command_issued command "look" noun "guide" (requires 200-start,
+//     missing 200-look) → grants 200-look
+func seedCommandIssuedQuest() *Engine {
+	q := &QuestDef{
+		QuestId: 200,
+		Name:    "Command Issued Test Quest",
+		Linear:  false,
+		Steps: []QuestStep{
+			{Id: "200-start", Description: "Begin"},
+			{Id: "200-look", Description: "Look at the guide"},
+		},
+		Triggers: []TriggerDef{
+			{
+				Event:   "command_issued",
+				Command: "look",
+				Noun:    "guide",
+				Conditions: Conditions{
+					Has:     []string{"200-start"},
+					Missing: []string{"200-look"},
+				},
+				Actions: []ActionDef{
+					{Grant: "200-look"},
+				},
+			},
+		},
+	}
+
+	e := NewEngine()
+	e.RegisterQuest(q)
+	return e
+}
+
+func TestCommandIssuedTriggerMatchesNoun(t *testing.T) {
+	e := seedCommandIssuedQuest()
+	player := newFullMockPlayer(100)
+	player.quests["200-start"] = true // grant prior step first
+	ctx := newFullMockActionContext(1, player)
+
+	// Wrong noun should not advance the quest
+	result := e.Notify("command_issued", EventDetails{
+		UserId:  1,
+		Command: "look",
+		Noun:    "grey",
+	}, player, ctx)
+	assert.False(t, result.Handled)
+	assert.False(t, player.HasQuest("200-look"))
+
+	// Matching command + noun should advance the quest
+	ctx2 := newFullMockActionContext(1, player)
+	result = e.Notify("command_issued", EventDetails{
+		UserId:  1,
+		Command: "look",
+		Noun:    "guide",
+	}, player, ctx2)
+	assert.True(t, result.Handled)
+	assert.True(t, player.HasQuest("200-look"))
+}

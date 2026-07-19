@@ -1,113 +1,8 @@
-# 6260 What You Carry — gates: get token, then inventory, then help.
-
+# 6260 What You Carry — movement gate only. Lessons + Dewey's voice live in
+# quest 28. Block the exit until the room's lesson (28-helped) is done.
 tree:
   type: selector
   children:
-
-    # ── Dewey greets on arrival and gives the first instruction (fires once) ──
-    - type: sequence
-      event: room_enter
-      children:
-        - type: condition
-          check: state_equals
-          key: greeted
-          value: ""
-        - type: action
-          do: set_state
-          key: greeted
-          value: "1"
-        - type: action
-          do: mob_say
-          mob_id: 9491
-          delay: 1.0
-          text: >-
-            Small things matter out there. Type
-            <ansi fg="command">get token</ansi> to pick that one up, then
-            <ansi fg="command">inventory</ansi> -- or just
-            <ansi fg="command">inv</ansi> -- to see what you're carrying.
-
-    # ── get the token ──
-    - type: sequence
-      event: room_command
-      children:
-        - type: condition
-          check: command_matches
-          commands: [get, take, g]
-        - type: condition
-          check: command_rest_contains
-          keywords: [token]
-        - type: condition
-          check: state_equals
-          key: got
-          value: ""
-        - type: action
-          do: set_state
-          key: got
-          value: "1"
-        - type: action
-          do: mob_say
-          mob_id: 9491
-          text: >-
-            Yours now. See what you're carrying -- type
-            <ansi fg="command">inventory</ansi>, or just
-            <ansi fg="command">inv</ansi>.
-
-    # ── inventory ──
-    - type: sequence
-      event: room_command
-      children:
-        - type: condition
-          check: command_matches
-          commands: [inventory, inv, i]
-        - type: condition
-          check: state_equals
-          key: got
-          value: "1"
-        - type: condition
-          check: state_equals
-          key: invd
-          value: ""
-        - type: action
-          do: set_state
-          key: invd
-          value: "1"
-        - type: action
-          do: mob_say
-          mob_id: 9491
-          text: >-
-            There it is. And when you forget a command -- you will, everyone
-            does -- the game remembers for you. Type
-            <ansi fg="command">help</ansi> to see the whole index.
-
-    # ── help ──
-    - type: sequence
-      event: room_command
-      children:
-        - type: condition
-          check: command_matches
-          commands: [help]
-        - type: condition
-          check: state_equals
-          key: invd
-          value: "1"
-        - type: condition
-          check: state_equals
-          key: helped
-          value: ""
-        - type: action
-          do: set_state
-          key: helped
-          value: "1"
-        - type: action
-          do: mob_say
-          mob_id: 9491
-          text: >-
-            That list is always there -- <ansi fg="command">help</ansi> for the
-            index, <ansi fg="command">help</ansi> and a topic for one thing.
-            Never be afraid to use it. The way <ansi fg="command">north</ansi>
-            is open.
-
-    # ── movement before all three: nudge + block ──
     - type: sequence
       event: room_command
       children:
@@ -115,15 +10,13 @@ tree:
           check: command_matches
           commands: [north, n, go, south, s, east, e, west, w, up, u, down, d]
         - type: condition
-          check: state_equals
-          key: helped
-          value: ""
+          check: player_missing_quest
+          quest: "28-helped"
         - type: action
           do: mob_say
           mob_id: 9491
           text: >-
-            A few small things first: <ansi fg="command">get token</ansi>, then
-            <ansi fg="command">inv</ansi>, then <ansi fg="command">help</ansi>.
-            Then north.
+            Not through yet -- if you have lost the thread, type
+            <ansi fg="command">hint</ansi> and it will point you at the next step.
         - type: action
           do: intercept

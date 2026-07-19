@@ -280,11 +280,14 @@ func HandleJoin(e events.Event) events.ListenerReturn {
 	}
 
 	if room != nil {
-		// Quest engine: room_enter notification on login/spawn
+		// Quest engine: room_enter notification on login/spawn. Match the
+		// TEMPLATE id for an ephemeral room (OriginalRoomId is a no-op for
+		// normal rooms); the bridge keeps the real id for mob/exit resolution.
+		matchRoom, _ := rooms.OriginalRoomId(user.Character.RoomId)
 		bridge := questengine.NewGameBridge(user, user.Character.RoomId)
 		questengine.GetEngine().Notify("room_enter", questengine.EventDetails{
 			UserId: user.UserId,
-			RoomId: user.Character.RoomId,
+			RoomId: matchRoom,
 		}, bridge, bridge)
 
 		// First spawn only: a brand-new character materializing in the

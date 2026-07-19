@@ -1,0 +1,377 @@
+questid: 28
+name: Waking to Gaius
+description: >-
+  You wake in the grey between-place with a guide named Dewey beside you.
+  Learn the first handful of things every soul needs before it steps into
+  the world -- one at a time, at your own pace.
+secret: false
+linear: true
+
+steps:
+  - id: start
+    description: "You have woken, and Dewey has marked your path."
+    hint: "Type hint to see your next step -- or quests to see the whole journey."
+  - id: hinted
+    description: "You read your first hint. That command is your compass now."
+    hint: "Take stock of where you stand -- type look."
+  - id: looked
+    description: "You took in the room around you."
+    hint: "Look closer at one thing -- type look guide."
+  - id: examined
+    description: "You read the guide closely. Reading is the first survival skill."
+    hint: "The way north is open -- type north."
+  - id: status_prompt
+    description: "You stepped into the place where you meet yourself."
+    hint: "Read yourself -- type status."
+  - id: statused
+    description: "You read your six stats and three pools."
+    hint: "The way north is open -- type north."
+  - id: carry_prompt
+    description: "Small things matter out there."
+    hint: "Pick that up -- type get token."
+  - id: got
+    description: "The token is yours now."
+    hint: "See what you carry -- type inventory."
+  - id: invd
+    description: "You checked what you are carrying."
+    hint: "When you forget a command, the game remembers -- type help."
+  - id: helped
+    description: "You opened the help index -- your patient, permanent reference."
+    hint: "The way north is open -- type north."
+  - id: speaks_prompt
+    description: "Out in the world, people answer when you speak."
+    hint: "Speak up -- type say hello."
+  - id: said
+    description: "You spoke, and the world can hear you."
+    hint: "Ask me something directly -- type ask dewey world."
+  - id: asked
+    description: "You learned to ask -- half of what matters is learned that way."
+    hint: "The way north is open -- type north."
+  - id: proving_prompt
+    description: "The practice ring -- where you make your mistakes safely."
+    hint: "Steel yourself before a fight -- type warcry."
+  - id: warcried
+    description: "Your war cry steadied your nerve -- a condition, riding on you."
+    hint: "See what is riding on you -- type conditions."
+  - id: saw_conditions
+    description: "You read your conditions. They cut both ways, good and bad."
+    hint: "See which big moves are resting -- type cooldowns."
+  - id: checked_cooldowns
+    description: "You checked your cooldowns -- your big moves share one well."
+    hint: "Now fight -- type attack effigy."
+  - id: attacked
+    description: "You closed with the effigy. Your steady swings are free."
+    hint: "Drive belief into it -- type cast spike."
+  - id: cast_spike
+    description: "You loosed a spike of conviction. Belief is a weapon here."
+    hint: "Take its legs the body's way -- type trip."
+  - id: tripped
+    description: "You put the effigy down -- voice, belief, and body, all yours."
+    hint: "Not every fight is worth finishing -- type flee."
+  - id: fled
+    description: "You broke away. Running is how you live to win the next one."
+    hint: "One step left, and it is not a walk -- type talk dewey."
+  - id: end
+    description: "Dewey sent you through to the world. Gaius is waiting."
+
+rewards:
+  playermessage: >-
+    Dewey's voice stays with you a moment after the grey lets go -- steady,
+    warm, already a little proud. You are awake now, and the world is real.
+
+triggers:
+  # ── 6258 The Threshold: greet, hint, look, look guide, north ──
+  - event: room_enter
+    room: 6258
+    conditions:
+      missing: [28-start, 28-end]
+    actions:
+      - grant: 28-start
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 1, text: "There you are -- waking up at last. Easy, now.
+                Nothing here can harm you."}
+            - {delay: 3, text: "I have marked your path already. Type hint to
+                see your first step -- I will be right here."}
+
+  - event: command_issued
+    command: hint
+    conditions:
+      has: [28-start]
+      missing: [28-hinted]
+    actions:
+      - grant: 28-hinted
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 0, text: "Good -- now take stock of where you stand.
+                Type look."}
+
+  - event: command_issued
+    command: look
+    conditions:
+      has: [28-hinted]
+      missing: [28-looked]
+    actions:
+      - grant: 28-looked
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 0, text: "Good. Now look closer at one thing in
+                particular. Type look guide."}
+
+  - event: command_issued
+    command: look
+    noun: guide
+    conditions:
+      has: [28-looked]
+      missing: [28-examined]
+    actions:
+      - grant: 28-examined
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 0, text: "That's the whole trick of this world -- the
+                ones who read what's in front of them live longest. The way
+                north is open."}
+
+  # ── 6259 Knowing Yourself: status, north ──
+  - event: room_enter
+    room: 6259
+    conditions:
+      has: [28-examined]
+      missing: [28-status_prompt]
+    actions:
+      - grant: 28-status_prompt
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 1, text: "This is where you meet yourself. Type status
+                to read your six stats and the three pools beneath them."}
+
+  - event: command_issued
+    command: status
+    conditions:
+      has: [28-status_prompt]
+      missing: [28-statused]
+    actions:
+      - grant: 28-statused
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 0, text: "There you are -- all of you, on one page. You
+                grow by use, not by any level. The way north is open."}
+
+  # ── 6260 What You Carry: get token, inventory, help, north ──
+  - event: room_enter
+    room: 6260
+    conditions:
+      has: [28-statused]
+      missing: [28-carry_prompt]
+    actions:
+      - grant: 28-carry_prompt
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 1, text: "Small things matter out there. Type get token
+                to pick that one up."}
+
+  - event: command_issued
+    command: get
+    noun: token
+    conditions:
+      has: [28-carry_prompt]
+      missing: [28-got]
+    actions:
+      - grant: 28-got
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 0, text: "Yours now. See what you're carrying -- type
+                inventory."}
+
+  - event: command_issued
+    command: inventory
+    conditions:
+      has: [28-got]
+      missing: [28-invd]
+    actions:
+      - grant: 28-invd
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 0, text: "When you forget a command, the game remembers
+                for you. Type help."}
+
+  - event: command_issued
+    command: help
+    conditions:
+      has: [28-invd]
+      missing: [28-helped]
+    actions:
+      - grant: 28-helped
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 0, text: "That list is always there. The way north is
+                open."}
+
+  # ── 6261 The World Speaks: say, ask, north ──
+  - event: room_enter
+    room: 6261
+    conditions:
+      has: [28-helped]
+      missing: [28-speaks_prompt]
+    actions:
+      - grant: 28-speaks_prompt
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 1, text: "People answer when you speak to them out
+                there. Type say hello."}
+
+  - event: command_issued
+    command: say
+    conditions:
+      has: [28-speaks_prompt]
+      missing: [28-said]
+    actions:
+      - grant: 28-said
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 0, text: "Ha -- and the world will answer, out there.
+                Now ask me something directly. Type ask dewey world."}
+
+  - event: command_issued
+    command: ask
+    conditions:
+      has: [28-said]
+      missing: [28-asked]
+    actions:
+      - grant: 28-asked
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 0, text: "That's how you'll learn half of what matters
+                out there. The way north is open."}
+
+  # ── 6262 The Proving: warcry, conditions, cooldowns, attack, cast, trip,
+  #    flee ──
+  - event: room_enter
+    room: 6262
+    conditions:
+      has: [28-asked]
+      missing: [28-proving_prompt]
+    actions:
+      - grant: 28-proving_prompt
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 1, text: "The practice ring -- where you make your
+                mistakes safely. Steel yourself first. Type warcry."}
+
+  - event: command_issued
+    command: warcry
+    conditions:
+      has: [28-proving_prompt]
+      missing: [28-warcried]
+    actions:
+      - grant: 28-warcried
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 0, text: "Feel that lift? That's a condition, riding on
+                you. Type conditions to see it."}
+
+  - event: command_issued
+    command: conditions
+    conditions:
+      has: [28-warcried]
+      missing: [28-saw_conditions]
+    actions:
+      - grant: 28-saw_conditions
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 0, text: "Shouting spent focus from a shared well. Type
+                cooldowns to see what's resting."}
+
+  - event: command_issued
+    command: cooldowns
+    conditions:
+      has: [28-saw_conditions]
+      missing: [28-checked_cooldowns]
+    actions:
+      - grant: 28-checked_cooldowns
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 0, text: "Empty means you're rested. Now fight -- type
+                attack effigy."}
+
+  - event: command_issued
+    command: attack
+    noun: effigy
+    conditions:
+      has: [28-checked_cooldowns]
+      missing: [28-attacked]
+    actions:
+      - grant: 28-attacked
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 0, text: "Your steady swings are free. Now spend your
+                focus on belief. Type cast spike."}
+
+  - event: command_issued
+    command: cast
+    noun: spike
+    conditions:
+      has: [28-attacked]
+      missing: [28-cast_spike]
+    actions:
+      - grant: 28-cast_spike
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 0, text: "Belief spends from the same well. Now take
+                its legs the body's way. Type trip."}
+
+  - event: command_issued
+    command: trip
+    conditions:
+      has: [28-cast_spike]
+      missing: [28-tripped]
+    actions:
+      - grant: 28-tripped
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 1, text: "Down it goes, wearing a condition of its own
+                -- voice, belief, and body, all yours."}
+            - {delay: 4, text: "Out here you grow by doing. Belief deepens
+                your Willpower, blades sharpen your Dexterity -- you earn
+                it, you never pick it."}
+            - {delay: 8, text: "Last, and most important -- not every fight
+                is worth finishing. Type flee to break away and live."}
+
+  - event: command_issued
+    command: flee
+    conditions:
+      has: [28-tripped]
+      missing: [28-fled]
+    actions:
+      - grant: 28-fled
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 0, text: "Running isn't losing -- it's how you live to
+                win the next one. I'll see you through on the far side."}
+
+  # ── 6467 The Landing: the `talk dewey` handoff (farewell + teleport to the
+  #    Awakening Pool + grant of quest 30 + completion of 28-end) is handled by
+  #    the room's behavior tree, which INTERCEPTS the talk command so Dewey's
+  #    generic dialogue hint does not also fire. See
+  #    behaviors/rooms/newcomer_antechamber/6467.yaml.
