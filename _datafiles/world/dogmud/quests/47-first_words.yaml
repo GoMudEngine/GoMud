@@ -20,6 +20,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: 5324
     description: >-
       The way of the folk is mostly the way of asking. Hear Elder Wenna out
       about the folk and their ways, and learn to use the in-game help -- type
@@ -29,6 +30,7 @@ steps:
       her out. Then type help to open the in-game reference. Return to Wenna
       afterward -- ask wenna done.
   - id: help
+    map_target: 5324
     description: >-
       You opened the help reference -- your surest guide when memory fails.
       Return to Wenna.

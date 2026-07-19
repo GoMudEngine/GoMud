@@ -9,6 +9,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: 5245
     description: "The forge is where iron learns its shape. Buy an iron
       ingot and a leather strip from Smith Rusk's stall, then type craft
       iron dagger at the forge."
@@ -16,6 +17,7 @@ steps:
       ingot and buy leather strip, then type craft iron dagger
       while standing at the forge."
   - id: craft
+    map_target: 5245
     description: "You worked iron at the forge for the first time
       and turned raw materials into something that did not exist
       before. Bring it back to Rusk."

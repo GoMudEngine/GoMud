@@ -14,21 +14,25 @@ steps:
     hint: "Type wield cudgel, then attack dummy to start your first
       fight."
   - id: strike
+    map_target: 5227
     description: "You have traded blows with the training dummy and
       lived to tell it. The dummy did not fare as well."
     hint: "The dummy resets after it drops. On a fresh one, LEAD with
       kick dummy or trip dummy -- land the special before the killing blow."
   - id: special
+    map_target: 5227
     description: "You landed a special move on the dummy. Kicks and
       trips are tools, not tricks -- use them when the moment is right."
     hint: "Type consider dummy to read your opponent before the next
       round."
   - id: consider
+    map_target: 5227
     description: "You sized up the training dummy. Consider tells you
       what you are walking into before you commit."
     hint: "Tune your combat output -- type set combatverbosity full,
       medium, or light."
   - id: verbosity
+    map_target: 5227
     description: "You have tuned your combat output. The Drill Yard
       has taught you what it can. Report to Vorn."
     hint: "Tell Vorn you are done -- type ask vorn report."

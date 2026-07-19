@@ -26,6 +26,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: 5265
     description: >-
       The alchemy bench at the sheltered pool is where brewing begins.
       Buy a glass vial and two healer's roots from Birna's stall, then
@@ -36,12 +37,14 @@ steps:
       healers root. Stand at the alchemy bench and type craft healing
       salve. (Type craft list to see what you can make right now.)
   - id: brew
+    map_target: 5265
     description: >-
       You ground the root, steeped it, and sealed a healing salve in the
       vial. Now drink it -- a brew is only worth what it does.
     hint: >-
       Type drink healing salve to drink down what you just made.
   - id: drink
+    map_target: 5265
     description: >-
       The salve went to work, warm and steady. Tell Birna how it felt.
     hint: >-
