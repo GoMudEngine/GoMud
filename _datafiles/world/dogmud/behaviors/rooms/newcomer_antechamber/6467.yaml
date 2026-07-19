@@ -1,10 +1,74 @@
-# 6467 The Landing — movement gate only. The farewell + handoff (teleport to the
-# Awakening Pool 5200 and grant of quest 30) live in quest 28's `end` step, fired
-# on `talk dewey`. This tree blocks a plain walk and redirects the player to the
-# talk-handoff until the tutorial is complete (28-end).
+# 6467 The Landing — the terminus. Two jobs, both interception (quest 28 drives
+# everything else):
+#   1. The `talk dewey` handoff. We INTERCEPT talk/say so the command never
+#      reaches Dewey's dialogue tree (which would print a generic hint on top of
+#      the farewell). The tree plays the paced transition, teleports the player
+#      to the Awakening Pool (5200), grants quest 30, and completes 28-end.
+#   2. Block a plain walk and redirect the player to the talk-handoff.
+# The `leaving` flag guards against a second talk re-firing the sequence during
+# the ~4.5s transition (28-end is granted at the end, so gating on it alone would
+# leave a window).
 tree:
   type: selector
   children:
+
+    # ── the handoff (talk/say), intercepting so no dialogue hint fires ──
+    - type: sequence
+      event: room_command
+      children:
+        - type: condition
+          check: command_matches
+          commands: [talk, say]
+        - type: condition
+          check: player_missing_quest
+          quest: "28-end"
+        - type: condition
+          check: state_equals
+          key: leaving
+          value: ""
+        - type: action
+          do: set_state
+          key: leaving
+          value: "1"
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            That's the last of it. Steady, now -- this part feels strange the
+            first time, but it's gentle. I've got you.
+        - type: action
+          do: send_user_text
+          delay: 1.5
+          text: >-
+            Dewey rests a hand on your shoulder, and the grey begins to thin
+            around you -- unspooling like thread pulled loose, brightening from
+            the edges inward.
+        - type: action
+          do: send_user_text
+          delay: 3.0
+          text: >-
+            The pale blue-green light rises up to meet you. For a breath there is
+            only warmth and a weightless sense of falling upward into it -- and
+            then the world takes shape around you, solid and real and loud with
+            life.
+        - type: action
+          do: move_player
+          room_id: 5200
+          delay: 4.0
+        # Grant 28-end (completes the tutorial quest) and 30-start (the Awakening)
+        # just after arrival so both banners land in the pool room.
+        - type: action
+          do: grant_quest
+          quest: "28-end"
+          delay: 4.5
+        - type: action
+          do: grant_quest
+          quest: "30-start"
+          delay: 4.5
+        - type: action
+          do: intercept
+
+    # ── block a plain walk; redirect to the handoff ──
     - type: sequence
       event: room_command
       children:

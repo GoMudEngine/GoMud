@@ -370,20 +370,8 @@ triggers:
             - {delay: 0, text: "Running isn't losing -- it's how you live to
                 win the next one. I'll see you through on the far side."}
 
-  # ── 6467 The Landing: handoff to the Awakening Pool (quest 30) ──
-  - event: command_issued
-    command: talk
-    room: 6467
-    conditions:
-      has: [28-fled]
-      missing: [28-end]
-    actions:
-      - grant: 28-end
-      - npc_say:
-          mob: 9491
-          lines:
-            - {delay: 1, text: "That is the last of it. Steady now -- this
-                part feels strange the first time, but it is gentle. I
-                have you."}
-      - teleport: 5200
-      - grant: 30-start
+  # ── 6467 The Landing: the `talk dewey` handoff (farewell + teleport to the
+  #    Awakening Pool + grant of quest 30 + completion of 28-end) is handled by
+  #    the room's behavior tree, which INTERCEPTS the talk command so Dewey's
+  #    generic dialogue hint does not also fire. See
+  #    behaviors/rooms/newcomer_antechamber/6467.yaml.
