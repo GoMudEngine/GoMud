@@ -1,5 +1,43 @@
 # DOGMud Patch Notes
 
+## 2026-07-18 — A map that knows where you're going
+
+The web client has a new <ansi fg="command">Quests</ansi> panel in the left column. It lists
+the quests you are working on, shows how far along each is, and — click any one —
+makes it your focus. Your focused quest can now light up on the minimap too: when
+it points at a place, a brass marker sits on the destination and a gold arrow
+points the next step of the way, turn by turn. The <ansi fg="command">hint</ansi> command,
+the panel, and the marker all follow the same focus, so switching quests switches
+all three at once. (Completed quests no longer clutter the panel.)
+
+## 2026-07-18 — Clearer first steps
+
+New arrivals are no longer left wondering what to do after the Awakening. Once the
+rite is done you are handed a short signpost, <ansi fg="questname">Two Roads</ansi>, that
+spells out both paths in plain words — who to find, where, and exactly what to
+ask — so nothing you need is buried in passing dialogue. Finding Your Footing now
+walks you through buying and wearing your first piece of gear, and finishes by
+handing you a starter kit and opening all seven trails at once, pointing you at
+the Drill Yard to begin. A new <ansi fg="command">help</ansi> entry explains the difference
+between commands, skills, and spells, and your very first achievement comes with a
+word about what achievements are.
+
+## 2026-07-18 — Web client comfort
+
+Resetting your dashboard layout no longer disconnects you — it snaps the panels
+back to their defaults in place and stays connected, with a small confirmation.
+The top-of-page menu has been tidied: dead links removed, and Achievements and
+Leaderboards now sit together. The redundant Reconnect button is gone, since the
+disconnect banner already offers to reconnect. The Leaderboards page shows its
+boards side by side.
+
+## 2026-07-18 — Easier to read, easier to name things
+
+Some text that rendered dark-on-dark — emotes and a couple of combat lines — now
+uses warmer, higher-contrast colours that read on a bright screen. And you can
+refer to things in a room by their plain name: <ansi fg="command">look notice board</ansi>
+works as written, no guessing at hyphens.
+
 ## 2026-07-17 — A warmer welcome for first-timers
 
 New to text MUDs? The opening tutorial has been rebuilt from the ground up. A
