@@ -525,10 +525,15 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 			// handler. Fire only on a clean dispatch; ignore the result (the
 			// command already ran — this never intercepts).
 			if handled && err == nil {
+				// Match the TEMPLATE id for an ephemeral room so room-scoped
+				// command triggers work in the tutorial/dungeon instances
+				// (OriginalRoomId is a no-op for normal rooms); the bridge keeps
+				// the real id for mob/exit resolution.
+				matchRoom, _ := rooms.OriginalRoomId(room.RoomId)
 				bridge := questengine.NewGameBridge(user, room.RoomId)
 				questengine.GetEngine().Notify("command_issued", questengine.EventDetails{
 					UserId:  user.UserId,
-					RoomId:  room.RoomId,
+					RoomId:  matchRoom,
 					Command: cmd,
 					Noun:    strings.ToLower(rest),
 				}, bridge, bridge)
