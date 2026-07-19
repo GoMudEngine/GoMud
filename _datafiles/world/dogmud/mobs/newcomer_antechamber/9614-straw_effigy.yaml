@@ -26,9 +26,11 @@ character:
   stats:
     # Species 19 (dummy) has base vitality 200 and zero base damage. Add a
     # large vitality bump so the effigy cannot be killed during the lesson (no
-    # engine "invulnerable" flag exists; high HP is the mechanism). The
-    # 2026-07-17 playtest reached "badly wounded" at training:300 over ~15
-    # rounds, so this is raised to give a slow or lingering player wide margin.
-    # It deals no damage, so there is no time pressure on the player.
+    # engine "invulnerable" flag exists; high HP is the mechanism). The player
+    # is meant to practice on and FLEE it, never kill it -- a live target must
+    # remain for the cast-spike and trip steps of quest 28. Was 1000, which a
+    # slow, confused player auto-swinging for many rounds could still drop,
+    # stranding the fight (Malia's 2026-07-18 stuck-point). It deals no damage,
+    # so there is no time pressure -- make it effectively unkillable.
     vitality:
-      training: 1000
+      training: 100000
