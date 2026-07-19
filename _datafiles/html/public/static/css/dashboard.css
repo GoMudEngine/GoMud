@@ -149,16 +149,21 @@
 #panel-quests { flex: 0 0 auto; }
 #panel-quests .dash-panel-body { max-height: 220px; overflow: auto; }
 .quests-empty { color: #5a4a32; font: italic 12px Georgia, serif; padding: 4px 2px; }
-.qrow { display:flex; align-items:center; gap:6px; padding:4px 4px; border-radius:4px; cursor:pointer; font:12px Georgia,serif; color:#d2c3a4; }
+.qrow { display:flex; align-items:baseline; gap:7px; padding:5px 5px 4px; border-radius:4px; cursor:pointer; }
+.qrow + .qrow, .qhint + .qrow { margin-top:1px; }
 .qrow:hover { background:rgba(201,168,106,.07); }
-.qrow.focus { background:rgba(203,159,66,.15); box-shadow:inset 2px 0 0 #cb9f42; color:#e8d2a0; }
-.qrow .qdot { width:14px; text-align:center; color:#5a4a32; }
+.qrow.focus { background:rgba(203,159,66,.14); box-shadow:inset 2px 0 0 #cb9f42; }
+.qrow .qdot { flex:0 0 auto; width:13px; text-align:center; font-size:11px; color:#5a4a32; }
 .qrow.focus .qdot { color:#cb9f42; }
-.qrow .qname { flex:1; }
-.qbar { width:46px; height:5px; background:#160e08; border:1px solid #3a2a18; border-radius:3px; overflow:hidden; }
+/* Quest title: the prominent line — larger, bold, warm parchment. */
+.qrow .qname { flex:1; font-family:Georgia,serif; font-size:13px; font-weight:600; letter-spacing:.2px; line-height:1.25; color:#c9b184; }
+.qrow.focus .qname { color:#f0dcae; }
+.qbar { flex:0 0 auto; align-self:center; width:42px; height:4px; background:#160e08; border:1px solid #3a2a18; border-radius:3px; overflow:hidden; }
 .qbar > i { display:block; height:100%; background:linear-gradient(#f4dd92,#cb9f42); }
-.qhint { padding:2px 6px 5px 26px; font:italic 11px Georgia,serif; color:#9a8a6a; }
-.qonmap { color:#6bb0a0; font-style:normal; }
+/* Hint: clearly secondary — smaller italic, muted, indented under its title
+   with a thin brass rule tying it to the quest above. */
+.qhint { margin:0 0 5px 20px; padding:1px 0 1px 8px; border-left:1px solid rgba(203,159,66,.35); font:italic 11px Georgia,serif; line-height:1.4; color:#8a7a58; }
+.qonmap { color:#6bb0a0; font-style:normal; white-space:nowrap; }
 #panel-vitals { flex: 0 0 auto; }                    /* content-compact; grows with party rows */
 #panel-art    { flex: 0 1 auto; min-height: 120px; } /* inventory: content-sized, grows w/ eq list */
 #panel-chat   { flex: var(--f-chat, 1) 1 0; }
@@ -1021,3 +1026,15 @@
   border-color: var(--gold-rule, #c9a86a);
   box-shadow: 0 0 0 1px rgba(201, 168, 106, 0.25), 0 1px 4px rgba(0, 0, 0, 0.4);
 }
+
+/* Transient confirmation toast (e.g. "Layout reset to default"). */
+.dash-toast {
+  position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 12px);
+  background: linear-gradient(#2b231d, #1a110b); color: #e8d2a0;
+  border: 1px solid #b89047; border-radius: 6px; padding: 8px 16px;
+  font: 13px Georgia, serif; letter-spacing: .2px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.55), inset 0 1px 0 rgba(201,168,106,.12);
+  opacity: 0; pointer-events: none; z-index: 99999;
+  transition: opacity .28s ease, transform .28s ease;
+}
+.dash-toast.show { opacity: 1; transform: translate(-50%, 0); }

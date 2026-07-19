@@ -611,6 +611,12 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 
 		for questId, questStep := range user.Character.GetQuestProgress() {
 
+			// Completed quests aren't sent — the panel is a live list of what
+			// the player is working on, not a full history. Keeps it uncluttered.
+			if questStep == "end" {
+				continue
+			}
+
 			qDef := engine.GetQuest(questId)
 			if qDef == nil {
 				continue
@@ -642,7 +648,10 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 			}
 
 			if totalSteps > 0 {
-				questPayload.Completion = int(math.Floor(float64(completedSteps)/float64(totalSteps)) * 100)
+					// Scale THEN floor — the old `Floor(ratio) * 100` floored the 0..1
+				// ratio to 0 for anything under 100%, so every in-progress quest
+				// reported 0% (the panel's progress bars never filled).
+				questPayload.Completion = int(math.Floor(float64(completedSteps) / float64(totalSteps) * 100))
 			}
 
 			// Marker data is computed for the focused quest only.

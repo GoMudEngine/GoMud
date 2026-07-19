@@ -52,3 +52,11 @@ func TestClearQuestToken_KeepsUnrelatedFocus(t *testing.T) {
 	c.ClearQuestToken("87-start")
 	assert.Equal(t, 65, c.LastQuestId, "focus on a different quest is preserved")
 }
+
+func TestGetFocusQuestId_SkipsCompletedLastQuest(t *testing.T) {
+	// LastQuestId points at a quest that just completed ("end"). Focus must
+	// move to the active quest, not stay on the finished one (the Two Roads ->
+	// Find Your Footing handoff case).
+	c := &Character{LastQuestId: 29, QuestProgress: map[int]string{29: "end", 31: "start"}}
+	assert.Equal(t, 31, c.GetFocusQuestId())
+}

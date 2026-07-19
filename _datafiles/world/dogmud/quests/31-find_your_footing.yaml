@@ -124,13 +124,18 @@ triggers:
     conditions:
       missing: [32-start]
     actions:
-      - grant: 32-start
+      # First Blood (32) is granted LAST so it becomes the focus quest
+      # (LastQuestId = most recently granted). First Blood is the natural
+      # "start here" combat quest AND the one carrying a map_target (Drill
+      # Yard 5227), so the minimap marker points the newbie there right after
+      # the seven-quest dump instead of at an arbitrary last-in-list quest.
       - grant: 35-start
       - grant: 38-start
       - grant: 41-start
       - grant: 44-start
       - grant: 47-start
       - grant: 50-start
+      - grant: 32-start
       - give_item: 10043
       - give_item: 10038
       - give_item: 30064
