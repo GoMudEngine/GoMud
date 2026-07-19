@@ -1,5 +1,27 @@
 # DOGMud Patch Notes
 
+## 2026-07-19 — A guide who waits for you
+
+If you are brand new to text MUDs, the opening tutorial now takes you by the hand
+one step at a time. The moment you wake, you are given your very first quest — and
+the first thing your guide Dewey teaches you is the <ansi fg="command">hint</ansi>
+command, so you always have a way to ask "what do I do now?" From there he asks for
+exactly one thing at a time — <ansi fg="command">look</ansi>, then
+<ansi fg="command">status</ansi>, then a step further — and waits, patiently, for
+you to do it before he says another word. No more three-instructions-in-a-breath.
+Your <ansi fg="command">quests</ansi> log and the <ansi fg="command">hint</ansi>
+command track the whole path, so if you lose the thread you can always find it
+again. And the practice dummy in the sparring ring can no longer be knocked to
+pieces before the lesson is done.
+
+## 2026-07-19 — The first trails light the way
+
+The seven starter trails out of Pothole Coulee — blade, forge, brew, wild country,
+the Folding, old lore, and the bow — now light up the web minimap the way the
+larger quests do. Whichever trail you are following, a marker shows where to head
+next and an arrow points the way, step by step, so the coulee is a little less of
+a maze while you are still learning it.
+
 ## 2026-07-18 — A map that knows where you're going
 
 The web client has a new <ansi fg="command">Quests</ansi> panel in the left column. It lists
