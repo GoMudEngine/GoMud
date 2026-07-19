@@ -43,6 +43,15 @@ func TestQuestDef_Validate_TriggerNoEvent(t *testing.T) {
 	assert.Error(t, q.Validate())
 }
 
+func TestQuestDef_Validate_CommandIssuedEventValid(t *testing.T) {
+	q := &QuestDef{
+		QuestId: 1, Name: "Command Issued Trigger",
+		Steps:    []QuestStep{{Id: "start"}},
+		Triggers: []TriggerDef{{Event: "command_issued", Command: "look", Noun: "guide", Actions: []ActionDef{{Grant: "1-start"}}}},
+	}
+	assert.NoError(t, q.Validate())
+}
+
 func TestQuestDef_Validate_TriggerInvalidEvent(t *testing.T) {
 	q := &QuestDef{
 		QuestId: 1, Name: "Bad Event",

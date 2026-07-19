@@ -519,6 +519,20 @@ func TryCommand(cmd string, rest string, userId int, flags events.EventFlag) (bo
 
 			// Run the command here
 			handled, err := cmdInfo.Func(rest, user, room, flags)
+			// Quest engine: non-intercepting "command_issued" — the player typed
+			// this command (distinct from the action-success "command" event).
+			// Lets any quest gate a step on a command without instrumenting each
+			// handler. Fire only on a clean dispatch; ignore the result (the
+			// command already ran — this never intercepts).
+			if handled && err == nil {
+				bridge := questengine.NewGameBridge(user, room.RoomId)
+				questengine.GetEngine().Notify("command_issued", questengine.EventDetails{
+					UserId:  user.UserId,
+					RoomId:  room.RoomId,
+					Command: cmd,
+					Noun:    strings.ToLower(rest),
+				}, bridge, bridge)
+			}
 			return handled, err
 
 		}
