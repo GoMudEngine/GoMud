@@ -59,13 +59,13 @@ func factionShowUsage(user *users.UserRecord) {
 		user.SendText(messaging.CategorySystem, out)
 		return
 	}
-	user.SendText(messaging.CategorySystem, 
-		"Usage:\r\n" +
-			"  faction list\r\n" +
-			"  faction show <playerName>\r\n" +
-			"  faction show <factionId> <playerName>\r\n" +
-			"  faction set <factionId> <playerName> <rep>\r\n" +
-			"  faction bump <factionId> <playerName> <delta>\r\n" +
+	user.SendText(messaging.CategorySystem,
+		"Usage:\r\n"+
+			"  faction list\r\n"+
+			"  faction show <playerName>\r\n"+
+			"  faction show <factionId> <playerName>\r\n"+
+			"  faction set <factionId> <playerName> <rep>\r\n"+
+			"  faction bump <factionId> <playerName> <delta>\r\n"+
 			"  faction reset <factionId> <playerName>\r\n",
 	)
 }

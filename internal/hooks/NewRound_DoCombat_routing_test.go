@@ -78,7 +78,7 @@ func seedSecondMobInstance(t *testing.T) {
 		MobId:      m1.MobId,
 		InstanceId: 101,
 		HomeRoomId: m1.HomeRoomId,
-		AutoAggro: true,
+		AutoAggro:  true,
 		Groups:     m1.Groups,
 		Character: characters.Character{
 			Name:      "Skeleton2",

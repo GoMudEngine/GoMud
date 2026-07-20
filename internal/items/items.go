@@ -38,28 +38,28 @@ const (
 
 // Instance properties that may change
 type Item struct {
-	ItemId        int            `yaml:"itemid,omitempty"`
-	UUID          uuid.UUID      `yaml:"-"`                       // `yaml:"uuid,omitempty"`
-	Blob          string         `yaml:"blob,omitempty"`          // Does this item have a blob? Should be base64 encoded.
-	Uses          int            `yaml:"uses,omitempty"`          // How many uses it has left
-	Loaded        bool           `yaml:"loaded,omitempty"`        // Ranged weapons: projectile chambered/nocked
-	DropChance    int            `yaml:"dropchance,omitempty"`    // Per-instance drop chance 1-100 used by ShouldDrop. 0 = use caller's defaultChance.
-	LastUsedRound uint64         `yaml:"lastusedround,omitempty"` // Last round this item was used
+	ItemId           int            `yaml:"itemid,omitempty"`
+	UUID             uuid.UUID      `yaml:"-"`                           // `yaml:"uuid,omitempty"`
+	Blob             string         `yaml:"blob,omitempty"`              // Does this item have a blob? Should be base64 encoded.
+	Uses             int            `yaml:"uses,omitempty"`              // How many uses it has left
+	Loaded           bool           `yaml:"loaded,omitempty"`            // Ranged weapons: projectile chambered/nocked
+	DropChance       int            `yaml:"dropchance,omitempty"`        // Per-instance drop chance 1-100 used by ShouldDrop. 0 = use caller's defaultChance.
+	LastUsedRound    uint64         `yaml:"lastusedround,omitempty"`     // Last round this item was used
 	CraftedRound     uint64         `yaml:"crafted_round,omitempty"`     // Round when this item was crafted
 	CraftSkill       int            `yaml:"craft_skill,omitempty"`       // Crafter's skill level at craft time
 	BottleMultiplier float64        `yaml:"bottle_multiplier,omitempty"` // Aging speed from the bottle used during crafting
 	MakerName        string         `yaml:"maker_name,omitempty"`        // Cosmetic crafter attribution (skill 30+)
-	Spec          *ItemSpec      `yaml:"overrides,omitempty"`
-	Affixed       bool           `yaml:"affixed,omitempty"`      // Instance-loot affix-scaled item (sellable + value-scaled; distinct from enchanted)
-	Uncursed      bool           `yaml:"uncursed,omitempty"`     // Is this item uncursed?
-	Enchantments  uint8          `yaml:"enchantments,omitempty"` // Is this item enchanted?
-	Adjectives    []string       `yaml:"adjectives,omitempty"`   // Decorative text for the name of the item (e.g. "exploding")
-	EnchantTier   int            `yaml:"enchanttier,omitempty"`  // Current enchantment power tier (0+)
-	EnchantUses   int            `yaml:"enchantuses,omitempty"`  // Accumulated uses toward next tier
-	EnchantType   string         `yaml:"enchanttype,omitempty"`  // Enchantment type ID (links to enchantment def)
-	ReservePool   string         `yaml:"reservepool,omitempty"`  // "health", "stamina", or "conviction"
-	StashedBy     int            `yaml:"stashedby,omitempty"`    // userid of whoever stashed this item
-	tempDataStore map[string]any // Temporary data store for this item. Not saved to disk.
+	Spec             *ItemSpec      `yaml:"overrides,omitempty"`
+	Affixed          bool           `yaml:"affixed,omitempty"`      // Instance-loot affix-scaled item (sellable + value-scaled; distinct from enchanted)
+	Uncursed         bool           `yaml:"uncursed,omitempty"`     // Is this item uncursed?
+	Enchantments     uint8          `yaml:"enchantments,omitempty"` // Is this item enchanted?
+	Adjectives       []string       `yaml:"adjectives,omitempty"`   // Decorative text for the name of the item (e.g. "exploding")
+	EnchantTier      int            `yaml:"enchanttier,omitempty"`  // Current enchantment power tier (0+)
+	EnchantUses      int            `yaml:"enchantuses,omitempty"`  // Accumulated uses toward next tier
+	EnchantType      string         `yaml:"enchanttype,omitempty"`  // Enchantment type ID (links to enchantment def)
+	ReservePool      string         `yaml:"reservepool,omitempty"`  // "health", "stamina", or "conviction"
+	StashedBy        int            `yaml:"stashedby,omitempty"`    // userid of whoever stashed this item
+	tempDataStore    map[string]any // Temporary data store for this item. Not saved to disk.
 }
 
 // NewItemUUID mints a fresh per-instance item UUID. Used when handing an

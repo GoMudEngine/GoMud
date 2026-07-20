@@ -34,7 +34,7 @@ type TauntMessageGroup struct {
 	Options  map[TauntIntensity]*TauntMessages `yaml:"options"`
 }
 
-func (t *TauntMessageGroup) Id() string      { return t.OptionId }
+func (t *TauntMessageGroup) Id() string       { return t.OptionId }
 func (t *TauntMessageGroup) Filepath() string { return fmt.Sprintf("%s.yaml", t.OptionId) }
 func (t *TauntMessageGroup) Validate() error {
 	required := []TauntIntensity{TauntHit, TauntMiss, TauntCritical, TauntFumble}

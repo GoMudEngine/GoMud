@@ -36,7 +36,7 @@ func InverseType(t Type) Type {
 
 // Relation is one outgoing edge from a mob to another mob.
 type Relation struct {
-	Other   int    // mob template id of the other party
+	Other   int // mob template id of the other party
 	Type    Type
 	Subtype string // optional flavor; "" if unset
 }

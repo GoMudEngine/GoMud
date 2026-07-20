@@ -448,10 +448,10 @@ type FoldRoundResult struct {
 	CastComplete bool // folds complete; caller should resolve the spell
 
 	// Values the caller needs for messaging / resolution.
-	FoldDelta      int                   // folds simulated this round
-	ConvictionCost int                   // CP deducted from caster this round
-	SpellData      *spells.SpellData     // non-nil when SpellDataMissing==false
-	CastingData    activity.CastingData  // snapshot of casting state at decision time
+	FoldDelta      int                  // folds simulated this round
+	ConvictionCost int                  // CP deducted from caster this round
+	SpellData      *spells.SpellData    // non-nil when SpellDataMissing==false
+	CastingData    activity.CastingData // snapshot of casting state at decision time
 }
 
 // processFoldRound advances one round of fold casting for any caster character.

@@ -62,17 +62,17 @@ type MutatorSpec struct {
 	DescriptionModifier *TextModifier `yaml:"descriptionmodifier,omitempty"`
 	AlertModifier       *TextModifier `yaml:"alertmodifier,omitempty"` // These can only append.
 	// End text based changes
-	DecayIntoId   string                   `yaml:"decayintoid,omitempty"`   // Id of another Mutator that replaces this one when it decays. This can be a circular behavior.
-	PlayerBuffIds []int                    `yaml:"playerbuffids,omitempty"` // buffId's that apply conditionally TO PLAYERS AND PLAYER FOLLOWERS
-	MobBuffIds    []int                    `yaml:"mobbuffids,omitempty"`    // buffId's that apply conditionally TO MOBS
-	NativeBuffIds []int                    `yaml:"nativebuffids,omitempty"` // buffId's that apply conditionally TO MOBS THAT SPAWNED IN THIS ROOM
-	DecayRate     string                   `yaml:"decayrate,omitempty"`     // how long until it is gone
-	RespawnRate   string                   `yaml:"respawnrate,omitempty"`   // daily, weekly, 1 day, 3 day, monthly, etc.
-	LightMod      int                      `yaml:"lightmod,omitempty"`      //  -2 to 2 (change). If result is 0 = none. 1 = can see this room. 2 = can see this room and all exits
-	RegenMultiplier float64                `yaml:"regenmultiplier,omitempty"` // multiplies HP/SP/CP regen for any actor in the room (1.0 / 0 = no bonus)
-	Exits         map[string]exit.RoomExit `yaml:"exits,omitempty"`         // name/roomId pairs of exits only available while mutator is live.
-	Pvp           PvpOverride              `yaml:"pvp,omitempty"`           // optionally force room pvp attributes.
-	OutdoorOnly   bool                     `yaml:"outdooronly,omitempty"`   // skip this mutator's effects in indoor-biome rooms (weather etc.)
+	DecayIntoId     string                   `yaml:"decayintoid,omitempty"`     // Id of another Mutator that replaces this one when it decays. This can be a circular behavior.
+	PlayerBuffIds   []int                    `yaml:"playerbuffids,omitempty"`   // buffId's that apply conditionally TO PLAYERS AND PLAYER FOLLOWERS
+	MobBuffIds      []int                    `yaml:"mobbuffids,omitempty"`      // buffId's that apply conditionally TO MOBS
+	NativeBuffIds   []int                    `yaml:"nativebuffids,omitempty"`   // buffId's that apply conditionally TO MOBS THAT SPAWNED IN THIS ROOM
+	DecayRate       string                   `yaml:"decayrate,omitempty"`       // how long until it is gone
+	RespawnRate     string                   `yaml:"respawnrate,omitempty"`     // daily, weekly, 1 day, 3 day, monthly, etc.
+	LightMod        int                      `yaml:"lightmod,omitempty"`        //  -2 to 2 (change). If result is 0 = none. 1 = can see this room. 2 = can see this room and all exits
+	RegenMultiplier float64                  `yaml:"regenmultiplier,omitempty"` // multiplies HP/SP/CP regen for any actor in the room (1.0 / 0 = no bonus)
+	Exits           map[string]exit.RoomExit `yaml:"exits,omitempty"`           // name/roomId pairs of exits only available while mutator is live.
+	Pvp             PvpOverride              `yaml:"pvp,omitempty"`             // optionally force room pvp attributes.
+	OutdoorOnly     bool                     `yaml:"outdooronly,omitempty"`     // skip this mutator's effects in indoor-biome rooms (weather etc.)
 }
 
 func GetAllMutatorSpecs() []MutatorSpec {

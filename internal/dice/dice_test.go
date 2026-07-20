@@ -207,7 +207,7 @@ func TestRollDamage(t *testing.T) {
 
 func TestCriticalCheck(t *testing.T) {
 	iterations := 100000
-	critThreshold := 2.0  // ~2.5% chance
+	critThreshold := 2.0 // ~2.5% chance
 	fumbleThreshold := -2.0
 
 	critCount := 0

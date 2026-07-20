@@ -228,9 +228,9 @@ func TestGetEligibleBonuses_Armor(t *testing.T) {
 
 func TestGetEligibleBonuses_AllHaveStatsAndSkills(t *testing.T) {
 	configs := []struct {
-		name    string
-		weapon  bool
-		caster  bool
+		name   string
+		weapon bool
+		caster bool
 	}{
 		{"weapon", true, false},
 		{"caster weapon", true, true},

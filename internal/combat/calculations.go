@@ -209,8 +209,8 @@ func ChanceToTame(s *users.UserRecord, t *mobs.Mob) int {
 // Returns: chance out of 100 (e.g., 75 = 75% chance)
 func ChanceToSwitchTarget(c *characters.Character) int {
 	const baseChance float64 = 50.0
-	const skillWeight float64 = 0.3  // 0.3% per skill level
-	const dexWeight float64 = 0.2    // 0.2% per dex point
+	const skillWeight float64 = 0.3 // 0.3% per skill level
+	const dexWeight float64 = 0.2   // 0.2% per dex point
 
 	combatSkill := c.GetCombatSkillLevel()
 	dexterity := c.Stats.Dexterity.ValueAdj

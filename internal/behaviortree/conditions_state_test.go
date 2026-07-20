@@ -266,15 +266,15 @@ func TestCondTimeOfDay_Range_TakesPrecedenceOverPeriod(t *testing.T) {
 
 func TestParseHourRange_ValidCases(t *testing.T) {
 	cases := []struct {
-		input      string
-		wantStart  int
-		wantEnd    int
-		wantValid  bool
+		input     string
+		wantStart int
+		wantEnd   int
+		wantValid bool
 	}{
 		{"9-17", 9, 17, true},
 		{"0-24", 0, 24, true},
-		{"22-6", 22, 6, true},  // wrap-around
-		{"0-0", 0, 0, true},    // empty range (valid parse, Failure at eval)
+		{"22-6", 22, 6, true}, // wrap-around
+		{"0-0", 0, 0, true},   // empty range (valid parse, Failure at eval)
 		{"23-24", 23, 24, true},
 		{"0-1", 0, 1, true},
 	}
@@ -289,14 +289,14 @@ func TestParseHourRange_ValidCases(t *testing.T) {
 
 func TestParseHourRange_InvalidCases(t *testing.T) {
 	invalid := []string{
-		"abc",     // non-numeric
-		"9",       // missing end
-		"9-25",    // end out of range
-		"-1-17",   // negative start (SplitN["","1-17"], startStr="")
-		"1--17",   // negative end via double dash
-		"",        // empty
-		"9-",      // missing end value
-		"-9",      // only end
+		"abc",   // non-numeric
+		"9",     // missing end
+		"9-25",  // end out of range
+		"-1-17", // negative start (SplitN["","1-17"], startStr="")
+		"1--17", // negative end via double dash
+		"",      // empty
+		"9-",    // missing end value
+		"-9",    // only end
 	}
 	for _, s := range invalid {
 		_, _, valid := parseHourRange(s)

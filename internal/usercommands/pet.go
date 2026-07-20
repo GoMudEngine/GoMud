@@ -35,7 +35,7 @@ func Pet(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		newName := strings.Join(args[1:], ` `)
 
 		if err := users.ValidateActorName(newName, users.ValidateActorOpts{}); err != nil {
-			user.SendText(messaging.CategorySystem, `That name won't work: ` + err.Error())
+			user.SendText(messaging.CategorySystem, `That name won't work: `+err.Error())
 			return true, nil
 		}
 

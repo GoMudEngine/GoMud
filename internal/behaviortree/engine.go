@@ -11,16 +11,16 @@ import (
 
 // Engine manages behavior tree loading, caching, and evaluation.
 type Engine struct {
-	mu          sync.RWMutex
-	trees       map[int]Node    // mobId → compiled root node
-	noTree      map[int]bool    // mobId → no behavior file exists on disk
-	roomTrees   map[int]Node    // roomId → compiled root node
-	noRoomTree  map[int]bool    // roomId → no behavior file exists on disk
-	archetypes           map[string]Node                    // archetype name → compiled root node
-	noArchetype          map[string]bool                    // archetype name → no archetype file exists on disk
-	archetypeGoalWeights map[string]map[string]float64      // chunk 4.2 — per-archetype goal-type weight multipliers
-	archetypeDefaultGoals map[string][]GoalDefault           // chunk 4.3 — per-archetype default goals
-	queue                []DelayedAction
+	mu                    sync.RWMutex
+	trees                 map[int]Node                  // mobId → compiled root node
+	noTree                map[int]bool                  // mobId → no behavior file exists on disk
+	roomTrees             map[int]Node                  // roomId → compiled root node
+	noRoomTree            map[int]bool                  // roomId → no behavior file exists on disk
+	archetypes            map[string]Node               // archetype name → compiled root node
+	noArchetype           map[string]bool               // archetype name → no archetype file exists on disk
+	archetypeGoalWeights  map[string]map[string]float64 // chunk 4.2 — per-archetype goal-type weight multipliers
+	archetypeDefaultGoals map[string][]GoalDefault      // chunk 4.3 — per-archetype default goals
+	queue                 []DelayedAction
 }
 
 type DelayedAction struct {

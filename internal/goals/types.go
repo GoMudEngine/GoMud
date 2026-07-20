@@ -17,13 +17,13 @@ import (
 // Goal is one strategic intent owned by a mob template. Immutable once
 // added — "updates" go through Remove + Add.
 type Goal struct {
-	Id         string         `yaml:"id"`
-	OwnerMobId int            `yaml:"-"` // stamped at load time from MobGoals.MobId
-	Type       string         `yaml:"type"`
-	Priority   int            `yaml:"priority"`
-	Params     map[string]any `yaml:"params,omitempty"`
-	CreatedAt  time.Time      `yaml:"created_at"`
-	ExpiresAt  time.Time      `yaml:"expires_at,omitempty"`
+	Id                string         `yaml:"id"`
+	OwnerMobId        int            `yaml:"-"` // stamped at load time from MobGoals.MobId
+	Type              string         `yaml:"type"`
+	Priority          int            `yaml:"priority"`
+	Params            map[string]any `yaml:"params,omitempty"`
+	CreatedAt         time.Time      `yaml:"created_at"`
+	ExpiresAt         time.Time      `yaml:"expires_at,omitempty"`
 	DormantSinceRound uint64         `yaml:"dormant_since_round,omitempty"` // chunk 4.6 — round dormancy began; 0 = live
 }
 

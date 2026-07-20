@@ -136,9 +136,9 @@ func TestSnapshotFiltersVisitedAndClassifies(t *testing.T) {
 func TestSnapshotExitFlagsAndStubs(t *testing.T) {
 	nodes := map[int]*mapNode{
 		1: node(1, 0, 0, 0, map[string]nodeExit{
-			"north": {RoomId: 2, Direction: d(0, -1, 0)},                     // visited -> full edge
-			"east":  {RoomId: 3, Direction: d(1, 0, 0), LockDifficulty: 25},  // visited, locked
-			"south": {RoomId: 9, Direction: d(0, 1, 0)},                      // UNVISITED/uncrawled -> stub
+			"north": {RoomId: 2, Direction: d(0, -1, 0)},                    // visited -> full edge
+			"east":  {RoomId: 3, Direction: d(1, 0, 0), LockDifficulty: 25}, // visited, locked
+			"south": {RoomId: 9, Direction: d(0, 1, 0)},                     // UNVISITED/uncrawled -> stub
 			"up":    {RoomId: 4, Direction: d(0, 0, 1), Secret: true, OneWay: true, Gate: true},
 		}),
 		2: node(2, 0, -1, 0, map[string]nodeExit{}),

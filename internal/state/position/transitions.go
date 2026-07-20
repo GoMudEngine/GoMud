@@ -66,13 +66,13 @@ var validTransitions = state.TransitionTable[State]{
 		Standing,
 		Guard,
 		Mount, SideControl, // top passes
-		BackGround,         // bottom takes back via sweep
+		BackGround, // bottom takes back via sweep
 	},
 	Guard: {
 		Standing,
 		HalfGuard,
 		Mount, SideControl, NorthSouth, // top passes
-		BackGround,                     // bottom takes back
+		BackGround, // bottom takes back
 	},
 	Turtle: {
 		Standing,
@@ -107,7 +107,7 @@ const (
 	// Back-takes
 	TriggerBackTakeStanding = "back_take_standing" // Clinch → BackStanding
 	TriggerBackTakeGround   = "back_take_ground"   // various → BackGround
-	TriggerBackPullDown     = "back_pull_down"      // BackStanding → BackGround
+	TriggerBackPullDown     = "back_pull_down"     // BackStanding → BackGround
 
 	// Controller-initiated transitions within ground subgraph
 	TriggerPositionAdvance = "position_advance" // Mount ↔ SC ↔ KOB ↔ NS, etc.

@@ -33,16 +33,16 @@ const (
 	Rhetoric      SkillTag = `rhetoric`       // Conviction attacks — taunt, demoralize (Stage 34)
 
 	// DOG non-combat skills
-	Skullduggery SkillTag = `skullduggery` // Sneaking, stealing, lockpicking, surprise attacks
-	Search    SkillTag = `search`     // Finding hidden objects, creatures, and resources
-	Bartering SkillTag = `bartering`  // Trade prices, negotiation, appraisal
+	Skullduggery  SkillTag = `skullduggery`  // Sneaking, stealing, lockpicking, surprise attacks
+	Search        SkillTag = `search`        // Finding hidden objects, creatures, and resources
+	Bartering     SkillTag = `bartering`     // Trade prices, negotiation, appraisal
 	Blacksmithing SkillTag = `blacksmithing` // Metal weapons, armor, tools
 	Alchemy       SkillTag = `alchemy`       // Potions, salves, medicines
 	Tailoring     SkillTag = `tailoring`     // Cloth and leather goods
 	Cooking       SkillTag = `cooking`       // Food preparation, buffs from meals
 	Jewelcrafting SkillTag = `jewelcrafting` // Rings, pendants, gemwork
-	Enchanting    SkillTag = `enchanting`   // Imbuing items with magic (31.6)
-	Salvage       SkillTag = `salvage`     // Breaking down items for materials
+	Enchanting    SkillTag = `enchanting`    // Imbuing items with magic (31.6)
+	Salvage       SkillTag = `salvage`       // Breaking down items for materials
 	Manifestation SkillTag = `manifestation` // Companion summoning, charming, necromancy
 )
 
@@ -285,13 +285,13 @@ func hybridArchetype(stat1, stat2 string) string {
 	pairRev := stat2 + "+" + stat1
 
 	hybrids := map[string]string{
-		"Strength+Willpower":  "paladin",
-		"Strength+Vitality":   "juggernaut",
-		"Strength+Dexterity":  "duelist",
+		"Strength+Willpower":   "paladin",
+		"Strength+Vitality":    "juggernaut",
+		"Strength+Dexterity":   "duelist",
 		"Dexterity+Perception": "ranger",
-		"Willpower+Charisma":  "sage",
+		"Willpower+Charisma":   "sage",
 		"Perception+Willpower": "seer",
-		"Vitality+Willpower":  "stoic",
+		"Vitality+Willpower":   "stoic",
 	}
 
 	if name, ok := hybrids[pair]; ok {
@@ -365,8 +365,8 @@ var SkillProgressionMultipliers = map[SkillTag]float64{
 	// Companion management — moderate use frequency
 	Manifestation: 0.5,
 	// Utility skills — used infrequently
-	Search:    2.0,
-	Bartering: 2.0,
+	Search:        2.0,
+	Bartering:     2.0,
 	Skullduggery:  2.0,
 	Blacksmithing: 2.0,
 	Alchemy:       2.0,

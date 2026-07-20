@@ -44,13 +44,13 @@ func Remove(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		// since the shared action will actually remove the item.
 		if matchItem.IsCursed() && user.Character.Health > 0 {
 			if user.Character.GetSkillLevel(skills.Spellcasting) < 4 {
-				user.SendText(messaging.CategorySystem, 
+				user.SendText(messaging.CategorySystem,
 					fmt.Sprintf(`You can't seem to remove your <ansi fg="item">%s</ansi>... It's <ansi fg="red-bold">CURSED!</ansi>`, matchItem.DisplayName()),
 				)
 
 				return true, nil
 			} else {
-				user.SendText(messaging.CategorySystem, 
+				user.SendText(messaging.CategorySystem,
 					`It's <ansi fg="red-bold">CURSED</ansi> but luckily your <ansi fg="skillname">enchant</ansi> skill level allows you to remove it.`,
 				)
 			}
@@ -59,15 +59,15 @@ func Remove(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		result := actions.RemoveEquipment(actor, rest)
 
 		if result.Removed {
-			user.SendText(messaging.CategorySystem, 
+			user.SendText(messaging.CategorySystem,
 				fmt.Sprintf(`You remove your <ansi fg="item">%s</ansi> and return it to your backpack.`, result.Item.DisplayName()),
 			)
-			room.SendTextVisual(messaging.CategoryEquipment, 
+			room.SendTextVisual(messaging.CategoryEquipment,
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> removes their <ansi fg="item">%s</ansi> and stores it away.`, user.Character.Name, result.Item.DisplayName()),
 				user.UserId,
 			)
 		} else if result.Found {
-			user.SendText(messaging.CategorySystem, 
+			user.SendText(messaging.CategorySystem,
 				fmt.Sprintf(`You can't seem to remove your <ansi fg="item">%s</ansi>.`, matchItem.DisplayName()),
 			)
 		}

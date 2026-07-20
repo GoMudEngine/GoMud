@@ -97,8 +97,8 @@ func ExecuteTrip(actor Actor) TripResult {
 	// Tailsweep: actor has the tail mutation.
 	if _, ok := char.Mutations["tail"]; ok {
 		variant = TripTailsweep
-		damagePercent = 0.40  // Better than regular trip (0.25)
-		knockdownChance = 70  // Better than regular trip (60%)
+		damagePercent = 0.40 // Better than regular trip (0.25)
+		knockdownChance = 70 // Better than regular trip (60%)
 
 		// Apply tail equipment bonuses if a tail item is equipped.
 		if char.Equipment.Tail.ItemId > 0 {

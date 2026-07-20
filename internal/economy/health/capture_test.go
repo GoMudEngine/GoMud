@@ -38,8 +38,8 @@ func registerTestCaravanPatrolForCapture(t *testing.T) {
 			{Room: 4125, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},
 			{Room: 4126, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},
 			{Room: 4135, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},
-			{Room: 4143, DwellRounds: 5, ArrivalEvent: "caravan_vendor"}, // wp10
-			{Room: 4109, DwellRounds: 20, ArrivalEvent: "caravan_depot"}, // wp11
+			{Room: 4143, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},         // wp10
+			{Room: 4109, DwellRounds: 20, ArrivalEvent: "caravan_depot"},         // wp11
 			{Room: 4038, DwellRounds: 8, ArrivalEvent: "caravan_fernway_pickup"}, // wp12
 			{Room: 465, DwellRounds: 20, ArrivalEvent: "caravan_depot"},          // wp13
 			{Room: 464, DwellRounds: 5, ArrivalEvent: "caravan_vendor"},          // wp14
@@ -215,7 +215,7 @@ func TestCaptureSnapshot_Foragers(t *testing.T) {
 	forager.Character.Name = "TestTova"
 	forager.Character.Buffs = buffs.New()
 	forager.Character.RoomId = roomId
-	characters.ApplyMobOverrides(&forager.Character, 0, 0, 60) // 60lb capacity
+	characters.ApplyMobOverrides(&forager.Character, 0, 0, 60)                           // 60lb capacity
 	forager.Character.Items = append(forager.Character.Items, items.Item{ItemId: 40051}) // skitter-shrimp shell, "stillwater"
 
 	bs := behaviortree.NewBehaviorState()

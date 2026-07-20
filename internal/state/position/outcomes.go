@@ -19,10 +19,10 @@ const (
 
 // Z-score thresholds for outcome bucketing. Match spec §5.
 const (
-	holdThreshold     = 0.5
-	oneStepThreshold  = 1.0
-	twoStepThreshold  = 2.0
-	subWindowAlpha    = 1.5
+	holdThreshold    = 0.5
+	oneStepThreshold = 1.0
+	twoStepThreshold = 2.0
+	subWindowAlpha   = 1.5
 )
 
 // OutcomeTierFromAbsZ buckets a z-magnitude into an OutcomeTier per
@@ -175,11 +175,12 @@ func DegradeTarget(source State) (target State, hold bool) {
 // always swap (returned as `swap=true`). Two realism exceptions per
 // spec §6.3 land in a different position:
 //   - Mount        → Guard  (defender bridges up into former
-//                            controller's guard; former controller
-//                            is now the Guard-controlled top)
+//     controller's guard; former controller
+//     is now the Guard-controlled top)
 //   - BackGround   → Mount  (defender turns into former controller;
-//                            former controller is now Mount-controlled
-//                            bottom)
+//     former controller is now Mount-controlled
+//     bottom)
+//
 // All other sources return the same state with roles swapped.
 //
 // Caller is responsible for performing the role swap when applying

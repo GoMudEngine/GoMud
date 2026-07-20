@@ -73,7 +73,7 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	itemSpec := matchItem.GetSpec()
 
 	if itemSpec.Subtype != items.Drinkable {
-		user.SendText(messaging.CategorySystem, 
+		user.SendText(messaging.CategorySystem,
 			fmt.Sprintf(`You can't drink <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()),
 		)
 		return true, nil
@@ -111,7 +111,7 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`You drink the <ansi fg="itemname">%s</ansi>...`, matchItem.DisplayName()))
-		user.SendText(messaging.CategorySystem, 
+		user.SendText(messaging.CategorySystem,
 			`<ansi fg="red">The potion has gone bad! You retch as the foul liquid burns your throat.</ansi>`)
 		room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> drinks something and immediately gags.`,
@@ -124,7 +124,7 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		alchSkill := user.Character.GetSkillLevel(skills.Alchemy)
 		discoveryChance := 10.0 + float64(alchSkill)*0.5
 		if float64(util.Rand(100)) < discoveryChance {
-			user.SendText(messaging.CategorySystem, 
+			user.SendText(messaging.CategorySystem,
 				`<ansi fg="yellow">The foul taste teaches you something about how the ingredients interact...</ansi>`)
 		}
 

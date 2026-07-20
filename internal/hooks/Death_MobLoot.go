@@ -183,4 +183,3 @@ func autoLootGold(playerDamage map[int]int, gold int) int {
 		fmt.Sprintf(`You collect <ansi fg="yellow-bold">%d gold</ansi>.`, plan.amount))
 	return plan.amount
 }
-

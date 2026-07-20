@@ -274,13 +274,13 @@ func TestComputeShopDelta_NilOldReturnsZeroDeltas(t *testing.T) {
 
 func TestComputeCaravanDelta_LbsDelivered(t *testing.T) {
 	now := health.CaravanSnapshot{
-		InstId:       1001,
-		LbsDelivered: 500,
+		InstId:           1001,
+		LbsDelivered:     500,
 		DeliveriesByTier: map[int]int{50: 10},
 	}
 	old := health.CaravanSnapshot{
-		InstId:       1001,
-		LbsDelivered: 200,
+		InstId:           1001,
+		LbsDelivered:     200,
 		DeliveriesByTier: map[int]int{50: 5},
 	}
 	d := health.ComputeCaravanDelta(now, &old)
@@ -291,13 +291,13 @@ func TestComputeCaravanDelta_LbsDelivered(t *testing.T) {
 
 func TestComputeForagerDelta_LbsDelivered(t *testing.T) {
 	now := health.ForagerSnapshot{
-		MobId:        201,
-		LbsDelivered: 750,
+		MobId:            201,
+		LbsDelivered:     750,
 		DeliveriesByTier: map[int]int{50: 20},
 	}
 	old := health.ForagerSnapshot{
-		MobId:        201,
-		LbsDelivered: 400,
+		MobId:            201,
+		LbsDelivered:     400,
 		DeliveriesByTier: map[int]int{50: 12},
 	}
 	d := health.ComputeForagerDelta(now, &old)

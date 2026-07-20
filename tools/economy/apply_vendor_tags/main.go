@@ -3,7 +3,8 @@
 // This preserves existing formatting and comments (no YAML marshalling).
 //
 // Run:
-//   go run tools/economy/apply_vendor_tags/main.go
+//
+//	go run tools/economy/apply_vendor_tags/main.go
 //
 // Input: tools/economy/generate_vendor_tags/vendor_tag_proposal_reviewed - vendor_tag_proposal_reviewed.csv
 // Modified: _datafiles/world/dogmud/items/**/*.yaml
@@ -171,10 +172,11 @@ func indexItemYAMLs(dir string) (map[int]string, error) {
 // If existing vendor_categories block is present, replace it entirely.
 // If absent, insert after is_component: if present, else component_tag:, else name:.
 // Format:
-//   vendor_categories:
-//   - tag1
-//   - tag2
-//   ...
+//
+//	vendor_categories:
+//	- tag1
+//	- tag2
+//	...
 func applyTagsToYAML(path string, tags []string) error {
 	raw, err := os.ReadFile(path)
 	if err != nil {

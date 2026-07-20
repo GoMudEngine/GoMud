@@ -61,7 +61,6 @@ type MutationSpec struct {
 	// species.IsCanonicalBodyPart for the canonical set).
 	RequiresBodyParts []string `yaml:"requires_body_parts,omitempty"`
 
-
 	// Clusters lists the design-side playstyle clusters this mutation
 	// belongs to (empty = universal/generalist). Steers acquisition drift.
 	Clusters []string `yaml:"clusters,omitempty"`

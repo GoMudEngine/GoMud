@@ -30,32 +30,32 @@ const (
 )
 
 type Species struct {
-	SpeciesId        int              `yaml:"speciesid"`
-	Name             string
-	Description      string
-	BuffIds          []int // Permabuffs this species always has
-	Size             Size
-	UnarmedName      string
+	SpeciesId   int `yaml:"speciesid"`
+	Name        string
+	Description string
+	BuffIds     []int // Permabuffs this species always has
+	Size        Size
+	UnarmedName string
 	// NaturalAttack is the combat-message subtype an unarmed member of this
 	// species uses for BASIC attacks (e.g. items.Bite, items.Claws). Empty =>
 	// humanoid default (Unarmed -> generic). Must be a known items.ItemSubType
 	// with a loaded combat-message file (validated at load in a later task).
-	NaturalAttack    items.ItemSubType `yaml:"natural_attack,omitempty"`
-	Tameable         bool
-	Damage           items.Damage
-	DamageMultiplier float64          `yaml:"damage_multiplier,omitempty"` // Natural weapon power (0=use config default)
-	Selectable       bool
-	AngryCommands    []string         // randomly chosen to queue when they are angry/entering combat.
-	KnowsFirstAid    bool             // Whether they can apply aid to other players.
-	Stats            stats.Statistics // Base stats for this species.
-	NaturalArmor     int              `yaml:"naturalarmor,omitempty"` // Innate damage reduction (chitin, thick hide, etc.)
-	DisabledSlots    []string         `yaml:"disabledslots,omitempty"`
-	NaturalBash      bool             `yaml:"naturalbash,omitempty"`    // Can bash without a shield (elementals, golems)
-	LifeDrain        bool             `yaml:"lifedrain,omitempty"`      // Drains life on its `drain` special (vampires, parasites)
-	ReturnDamage     int              `yaml:"return_damage,omitempty"`  // % of melee damage returned to attacker (fire elemental, etc.)
-	GrappleImmune    bool             `yaml:"grapple_immune,omitempty"` // Cannot be grappled (ethereal, fire, etc.)
-	BodyParts        []string         `yaml:"body_parts,omitempty"`     // Set of canonical body-part tags this species has
-	IntrinsicMutations map[string]int `yaml:"intrinsic_mutations,omitempty"` // Maps mutation id -> baseline rank
+	NaturalAttack      items.ItemSubType `yaml:"natural_attack,omitempty"`
+	Tameable           bool
+	Damage             items.Damage
+	DamageMultiplier   float64 `yaml:"damage_multiplier,omitempty"` // Natural weapon power (0=use config default)
+	Selectable         bool
+	AngryCommands      []string         // randomly chosen to queue when they are angry/entering combat.
+	KnowsFirstAid      bool             // Whether they can apply aid to other players.
+	Stats              stats.Statistics // Base stats for this species.
+	NaturalArmor       int              `yaml:"naturalarmor,omitempty"` // Innate damage reduction (chitin, thick hide, etc.)
+	DisabledSlots      []string         `yaml:"disabledslots,omitempty"`
+	NaturalBash        bool             `yaml:"naturalbash,omitempty"`         // Can bash without a shield (elementals, golems)
+	LifeDrain          bool             `yaml:"lifedrain,omitempty"`           // Drains life on its `drain` special (vampires, parasites)
+	ReturnDamage       int              `yaml:"return_damage,omitempty"`       // % of melee damage returned to attacker (fire elemental, etc.)
+	GrappleImmune      bool             `yaml:"grapple_immune,omitempty"`      // Cannot be grappled (ethereal, fire, etc.)
+	BodyParts          []string         `yaml:"body_parts,omitempty"`          // Set of canonical body-part tags this species has
+	IntrinsicMutations map[string]int   `yaml:"intrinsic_mutations,omitempty"` // Maps mutation id -> baseline rank
 	// MutationImmune marks a species that never gains mutations — neither
 	// intrinsic kits nor in-combat acquisition. Machines/constructs (the
 	// Chrysalis is a biological phenomenon; it does not touch the mechanical).

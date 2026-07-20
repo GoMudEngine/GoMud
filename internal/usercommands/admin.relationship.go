@@ -48,14 +48,14 @@ func relationshipUsage(user *users.UserRecord) {
 		user.SendText(messaging.CategorySystem, out)
 		return
 	}
-	user.SendText(messaging.CategorySystem, 
-		"Usage:\r\n" +
-			"  relationship show <mobId>\r\n" +
-			"  relationship between <mobIdA> <mobIdB>\r\n" +
-			"  relationship add <mobIdA> <mobIdB> <type> [subtype]\r\n" +
-			"  relationship remove <mobIdA> <mobIdB> <type>\r\n" +
-			"  relationship list\r\n" +
-			"\r\n" +
+	user.SendText(messaging.CategorySystem,
+		"Usage:\r\n"+
+			"  relationship show <mobId>\r\n"+
+			"  relationship between <mobIdA> <mobIdB>\r\n"+
+			"  relationship add <mobIdA> <mobIdB> <type> [subtype]\r\n"+
+			"  relationship remove <mobIdA> <mobIdB> <type>\r\n"+
+			"  relationship list\r\n"+
+			"\r\n"+
 			"<type> ∈ family | friend | rival | lover | employer | employee\r\n",
 	)
 }

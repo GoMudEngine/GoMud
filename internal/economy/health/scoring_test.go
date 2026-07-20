@@ -73,9 +73,9 @@ func TestScore_PerShop_ClampsAndFloors(t *testing.T) {
 	// (c) Max <= 0 entries are skipped
 	shop := health.ShopSnapshot{
 		Stock: []health.StockSnapshot{
-			{ItemId: 1, RestockQty: 0, Current: 5, Max: 10},   // 50%, weight 1
-			{ItemId: 2, RestockQty: 1, Current: 15, Max: 10},  // clamp 100%, weight 1
-			{ItemId: 3, RestockQty: 99, Current: 99, Max: 0},  // skipped (Max<=0)
+			{ItemId: 1, RestockQty: 0, Current: 5, Max: 10},  // 50%, weight 1
+			{ItemId: 2, RestockQty: 1, Current: 15, Max: 10}, // clamp 100%, weight 1
+			{ItemId: 3, RestockQty: 99, Current: 99, Max: 0}, // skipped (Max<=0)
 		},
 	}
 	score, ok := health.PerShopScoreOpt(shop)
@@ -94,7 +94,7 @@ func TestScore_PerCraftSupport_EmptyTagRollsToBlankKey(t *testing.T) {
 	snap := health.Snapshot{
 		Shops: []health.ShopSnapshot{
 			{CraftSupport: "blacksmithing", Stock: []health.StockSnapshot{{RestockQty: 1, Current: 3, Max: 10}}}, // 30
-			{CraftSupport: "", Stock: []health.StockSnapshot{{RestockQty: 1, Current: 7, Max: 10}}},               // 70 → key ""
+			{CraftSupport: "", Stock: []health.StockSnapshot{{RestockQty: 1, Current: 7, Max: 10}}},              // 70 → key ""
 		},
 	}
 	scores := health.PerCraftSupportScores(snap)
@@ -111,7 +111,7 @@ func TestScore_PerCraftSupport_MeanOfShops(t *testing.T) {
 		Shops: []health.ShopSnapshot{
 			{CraftSupport: "blacksmithing", Stock: []health.StockSnapshot{{RestockQty: 1, Current: 4, Max: 10}}}, // 40
 			{CraftSupport: "blacksmithing", Stock: []health.StockSnapshot{{RestockQty: 1, Current: 8, Max: 10}}}, // 80
-			{CraftSupport: "cooking", Stock: []health.StockSnapshot{{RestockQty: 1, Current: 5, Max: 10}}},        // 50
+			{CraftSupport: "cooking", Stock: []health.StockSnapshot{{RestockQty: 1, Current: 5, Max: 10}}},       // 50
 		},
 	}
 	scores := health.PerCraftSupportScores(snap)
@@ -364,7 +364,7 @@ func TestInputRateScore_HighInputIsHigh(t *testing.T) {
 		},
 		Foragers: []health.ForagerSnapshot{
 			{MobId: 99, Territory: "stillwater", CargoCapacity: 10,
-				State: "resting",
+				State:            "resting",
 				DeliveriesByTier: map[int]int{50: 24}},
 		},
 	}
@@ -376,7 +376,7 @@ func TestInputRateScore_HighInputIsHigh(t *testing.T) {
 		},
 		Foragers: []health.ForagerSnapshot{
 			{MobId: 99, Territory: "stillwater", CargoCapacity: 10,
-				State: "resting",
+				State:            "resting",
 				DeliveriesByTier: map[int]int{50: 0}},
 		},
 	}
@@ -494,4 +494,3 @@ func TestShopGoldScore(t *testing.T) {
 		}
 	}
 }
-

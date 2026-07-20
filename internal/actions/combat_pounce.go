@@ -94,17 +94,17 @@ func ExecutePounce(actor Actor) PounceResult {
 	// KnockdownToSupine=true drives the target backward (face-up). No bleed:
 	// pounce is a knockdown opener, not a DoT.
 	result := combat.ExecuteSkillMove(combat.SkillMoveParams{
-		Attacker:        char,
-		Defender:        target.Char,
-		AttackStat:      char.GetEffectiveDexterity(),
-		AttackSkill:     char.GetSkillLevel(skills.UnarmedCombat),
-		DefenseStat:     target.Char.GetEffectiveDexterity(),
-		DefenseSkill:    target.Char.GetCombatSkillLevel(),
-		DamagePercent:   float64(cfg.BashDamagePercent),
-		KnockdownChance: int(cfg.BashKnockdownChance),
+		Attacker:          char,
+		Defender:          target.Char,
+		AttackStat:        char.GetEffectiveDexterity(),
+		AttackSkill:       char.GetSkillLevel(skills.UnarmedCombat),
+		DefenseStat:       target.Char.GetEffectiveDexterity(),
+		DefenseSkill:      target.Char.GetCombatSkillLevel(),
+		DamagePercent:     float64(cfg.BashDamagePercent),
+		KnockdownChance:   int(cfg.BashKnockdownChance),
 		KnockdownToSupine: true, // predator leaps and drives target backward
-		SkillRank:       char.GetSkillLevel(skills.UnarmedCombat),
-		DamageStat:      char.Stats.Strength.ValueAdj,
+		SkillRank:         char.GetSkillLevel(skills.UnarmedCombat),
+		DamageStat:        char.Stats.Strength.ValueAdj,
 	})
 
 	// Determine source/target types for analytics.

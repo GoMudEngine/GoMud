@@ -65,7 +65,7 @@ var (
 	// still handled by the punctuation alternative, unchanged.
 	wordRegex        = regexp.MustCompile(`(</?ansi[^>]*>|[\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]|\w+(?:['’]\w+)*|[^\w<\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]+|<)`)
 	punctuationRegex = regexp.MustCompile(`[\p{P}]+`)
-	ansiTagRegex = regexp.MustCompile(`</?ansi[^>]*>`)
+	ansiTagRegex     = regexp.MustCompile(`</?ansi[^>]*>`)
 
 	mudLock = sync.RWMutex{}
 )

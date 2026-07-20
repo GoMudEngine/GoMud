@@ -4,11 +4,11 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	_ "github.com/GoMudEngine/GoMud/internal/hooks" // wire init() observers
 	"github.com/GoMudEngine/GoMud/internal/state"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
 	"github.com/GoMudEngine/GoMud/internal/state/combatphase"
 	"github.com/GoMudEngine/GoMud/internal/state/life"
-	_ "github.com/GoMudEngine/GoMud/internal/hooks" // wire init() observers
 )
 
 // TestActivityCascadeOnLifeDead verifies that the activity_life_dead

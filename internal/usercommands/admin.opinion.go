@@ -58,12 +58,12 @@ func opinionShowUsage(user *users.UserRecord) {
 		user.SendText(messaging.CategorySystem, out)
 		return
 	}
-	user.SendText(messaging.CategorySystem, 
-		"Usage:\r\n" +
-			"  opinion show <playerName>\r\n" +
-			"  opinion show <mobName|mobId> <playerName>\r\n" +
-			"  opinion set <mobName|mobId> <playerName> <score>\r\n" +
-			"  opinion bump <mobName|mobId> <playerName> <delta>\r\n" +
+	user.SendText(messaging.CategorySystem,
+		"Usage:\r\n"+
+			"  opinion show <playerName>\r\n"+
+			"  opinion show <mobName|mobId> <playerName>\r\n"+
+			"  opinion set <mobName|mobId> <playerName> <score>\r\n"+
+			"  opinion bump <mobName|mobId> <playerName> <delta>\r\n"+
 			"  opinion reset <mobName|mobId> <playerName>\r\n",
 	)
 }

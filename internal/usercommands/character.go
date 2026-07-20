@@ -215,13 +215,13 @@ func cmdCharacterDelete(user *users.UserRecord, cmdPrompt *prompt.Prompt, altNam
 
 		user.EventLog.Add(`char`, `Deleted alt character: <ansi fg="username">`+match+`</ansi>`)
 
-		user.SendText(messaging.CategorySystem, `<ansi fg="username">` + match + `</ansi> <ansi fg="red">is deleted.</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="username">`+match+`</ansi> <ansi fg="red">is deleted.</ansi>`)
 		user.ClearPrompt()
 		return true, nil
 
 	}
 
-	user.SendText(messaging.CategorySystem, `<ansi fg="203">No character with the name <ansi fg="username">` + rawResponse + `</ansi> found.</ansi>`)
+	user.SendText(messaging.CategorySystem, `<ansi fg="203">No character with the name <ansi fg="username">`+rawResponse+`</ansi> found.</ansi>`)
 
 	user.ClearPrompt()
 	return true, nil
@@ -283,7 +283,7 @@ func cmdCharacterChange(user *users.UserRecord, room *rooms.Room, cmdPrompt *pro
 
 		user.EventLog.Add(`char`, `Changed from <ansi fg="username">`+oldName+`</ansi> to alt character: <ansi fg="username">`+char.Name+`</ansi>`)
 
-		user.SendText(messaging.CategorySystem, term.CRLFStr + `You dematerialize as <ansi fg="username">` + oldName + `</ansi>. and rematerialize as <ansi fg="username">` + char.Name + `</ansi>!` + term.CRLFStr)
+		user.SendText(messaging.CategorySystem, term.CRLFStr+`You dematerialize as <ansi fg="username">`+oldName+`</ansi>. and rematerialize as <ansi fg="username">`+char.Name+`</ansi>!`+term.CRLFStr)
 		room.SendTextVisual(messaging.CategoryMobEmote, `<ansi fg="username">`+oldName+`</ansi> vanishes, and <ansi fg="username">`+char.Name+`</ansi> appears in a shower of sparks!`, user.UserId)
 
 		user.ClearPrompt()
@@ -291,7 +291,7 @@ func cmdCharacterChange(user *users.UserRecord, room *rooms.Room, cmdPrompt *pro
 
 	}
 
-	user.SendText(messaging.CategorySystem, `<ansi fg="203">No character with the name <ansi fg="username">` + rawResponse + `</ansi> found.</ansi>`)
+	user.SendText(messaging.CategorySystem, `<ansi fg="203">No character with the name <ansi fg="username">`+rawResponse+`</ansi> found.</ansi>`)
 
 	user.ClearPrompt()
 	return true, nil
@@ -337,7 +337,7 @@ func cmdCharacterView(user *users.UserRecord, room *rooms.Room, cmdPrompt *promp
 
 	}
 
-	user.SendText(messaging.CategorySystem, `<ansi fg="203">No character with the name <ansi fg="username">` + rawResponse + `</ansi> found.</ansi>`)
+	user.SendText(messaging.CategorySystem, `<ansi fg="203">No character with the name <ansi fg="username">`+rawResponse+`</ansi> found.</ansi>`)
 
 	user.ClearPrompt()
 	return true, nil
@@ -428,7 +428,7 @@ func cmdCharacterHire(user *users.UserRecord, room *rooms.Room, cmdPrompt *promp
 
 		user.EventLog.Add(`char`, `Hired an alt character to help you out: <ansi fg="username">`+m.Character.Name+`</ansi>`)
 
-		user.SendText(messaging.CategorySystem, `<ansi fg="username">` + m.Character.Name + `</ansi> appears to help you out!`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="username">`+m.Character.Name+`</ansi> appears to help you out!`)
 		room.SendTextVisual(messaging.CategoryMobEmote, `<ansi fg="username">`+m.Character.Name+`</ansi> appears to help <ansi fg="username">`+user.Character.Name+`</ansi>!`, user.UserId)
 
 		m.Command(`emote waves sheepishly.`, 2)
@@ -438,7 +438,7 @@ func cmdCharacterHire(user *users.UserRecord, room *rooms.Room, cmdPrompt *promp
 
 	}
 
-	user.SendText(messaging.CategorySystem, `<ansi fg="203">No character with the name <ansi fg="username">` + rawResponse + `</ansi> found.</ansi>`)
+	user.SendText(messaging.CategorySystem, `<ansi fg="203">No character with the name <ansi fg="username">`+rawResponse+`</ansi> found.</ansi>`)
 
 	user.ClearPrompt()
 	return true, nil

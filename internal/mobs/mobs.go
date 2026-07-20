@@ -15,15 +15,15 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/conversations"
-	"github.com/GoMudEngine/GoMud/internal/state"
-	"github.com/GoMudEngine/GoMud/internal/state/perception"
-	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/facts"
 	"github.com/GoMudEngine/GoMud/internal/llm"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/relationships"
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/state/perception"
+	"github.com/GoMudEngine/GoMud/internal/state/presence"
 	"gopkg.in/yaml.v2"
 
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
@@ -80,25 +80,25 @@ type RelationshipYAMLEntry struct {
 }
 
 type Mob struct {
-	MobId           MobId
-	Zone            string   `yaml:"zone,omitempty"`
-	StatPool        int      `yaml:"statpool,omitempty"` // Stat points randomly distributed across stats on spawn
-	ItemDropChance  int      // chance in 100
-	LootPool        []int    `yaml:"loot_pool,omitempty"`     // Item IDs for instance loot generation
-	ActivityLevel   int      `yaml:"activitylevel,omitempty"` // 1-100%
-	InstanceId      int      `yaml:"-"`
-	HomeRoomId      int      `yaml:"-"`
+	MobId          MobId
+	Zone           string `yaml:"zone,omitempty"`
+	StatPool       int    `yaml:"statpool,omitempty"` // Stat points randomly distributed across stats on spawn
+	ItemDropChance int    // chance in 100
+	LootPool       []int  `yaml:"loot_pool,omitempty"`     // Item IDs for instance loot generation
+	ActivityLevel  int    `yaml:"activitylevel,omitempty"` // 1-100%
+	InstanceId     int    `yaml:"-"`
+	HomeRoomId     int    `yaml:"-"`
 	// LegacyHostile is the backward-compat YAML field. Loaders read `hostile:`
 	// and copy to AutoAggro in Validate(). New YAML should use `auto_aggro: true`.
 	// MUST stay exported: yaml unmarshal silently skips unexported fields — the
 	// b1145cdb6 sunset lowercased this and every `hostile:` mob silently
 	// stopped auto-aggroing until 2026-07-10.
-	LegacyHostile bool `yaml:"hostile,omitempty"`
-	PackFleeImmune  bool     `yaml:"pack_flee_immune,omitempty"` // if true, won't flee when packmates die
-	LastIdleCommand uint8    `yaml:"-"`                          // Track what hte last used idlecommand was
-	Groups          []string // What group do they identify with? Helps with teamwork
-	FoldAnchorRoom    int `yaml:"fold_anchor_room,omitempty"`    // Spawn-time fold-recall anchor (room ID)
-	StorageChestRoom  int `yaml:"storage_chest_room,omitempty"`  // Room ID of forager's personal lockbox (0 = none)
+	LegacyHostile    bool     `yaml:"hostile,omitempty"`
+	PackFleeImmune   bool     `yaml:"pack_flee_immune,omitempty"` // if true, won't flee when packmates die
+	LastIdleCommand  uint8    `yaml:"-"`                          // Track what hte last used idlecommand was
+	Groups           []string // What group do they identify with? Helps with teamwork
+	FoldAnchorRoom   int      `yaml:"fold_anchor_room,omitempty"`   // Spawn-time fold-recall anchor (room ID)
+	StorageChestRoom int      `yaml:"storage_chest_room,omitempty"` // Room ID of forager's personal lockbox (0 = none)
 	// Pack-combat routine (v2-ready — see docs/superpowers/specs/2026-04-22-pack-tactics-revamp-design.md).
 	// Freeform string compared with equality to other mobs' Routine for pack
 	// identification. Mobs without a routine don't participate in packs.
@@ -125,23 +125,23 @@ type Mob struct {
 	LLMProfile         *llm.LLMProfile `yaml:"llmprofile,omitempty"`          // Optional LLM-driven dialogue profile
 	Archetype          string          `yaml:"archetype,omitempty"`           // "fighting", "casting", or "" (default even distribution)
 	DefaultDisposition int             `yaml:"default_disposition,omitempty"` // Per-NPC starting disposition score on the [-100, +100] scale; 0 means neutral. Used by internal/opinions to seed first-time interactions and as the asymptote for decay.
-	CombatMemory   *CombatMemory `yaml:"-"` // Runtime combat memory (not persisted)
-	SpawnMutations          []string            `yaml:"spawnmutations,omitempty,flow"`     // Mutations always granted at spawn (Phase 24.3)
-	MutationChance          int                 `yaml:"mutationchance,omitempty"`          // % chance to gain 1 random bonus mutation on spawn (Phase 24.3)
-	CharmImmune             bool                `yaml:"charm_immune,omitempty"`            // If true, charm spells cannot affect this mob
-	NonCombatant            bool                `yaml:"non_combatant,omitempty"`           // If true, cannot be attacked, stolen from, or aggroed. Synced → Character.NonCombatant in Validate().
+	CombatMemory       *CombatMemory   `yaml:"-"`                             // Runtime combat memory (not persisted)
+	SpawnMutations     []string        `yaml:"spawnmutations,omitempty,flow"` // Mutations always granted at spawn (Phase 24.3)
+	MutationChance     int             `yaml:"mutationchance,omitempty"`      // % chance to gain 1 random bonus mutation on spawn (Phase 24.3)
+	CharmImmune        bool            `yaml:"charm_immune,omitempty"`        // If true, charm spells cannot affect this mob
+	NonCombatant       bool            `yaml:"non_combatant,omitempty"`       // If true, cannot be attacked, stolen from, or aggroed. Synced → Character.NonCombatant in Validate().
 	// AutoAggro indicates whether this mob auto-attacks players on sight.
 	// Replaces the conflated Hostile field's auto-attack semantic.
 	// Loaded from YAML field `auto_aggro:`; if absent, backward-compat
 	// copy from the legacy `hostile:` field in Validate() (sunset Task 18).
-	AutoAggro               bool                `yaml:"auto_aggro,omitempty"`
-	PlayerAttackImmune      bool                `yaml:"player_attack_immune,omitempty"`    // If true, players cannot attack this mob (but mob can still fight)
-	BuysGeneral             bool                `yaml:"buys_general,omitempty"`            // Whether this merchant buys misc goods
-	Crafter                 bool                `yaml:"crafter,omitempty"`                 // Whether this mob crafts autonomously (Stage 38.5.4)
-	CrafterSkill            string              `yaml:"crafterskill,omitempty"`            // Craft skill used (e.g. "blacksmithing")
-	CrafterRecipeIds        []string            `yaml:"crafterrecipeids,omitempty"`        // Recipe IDs this mob can craft
-	CrafterRestockMaterials []int               `yaml:"crafterrestockmaterials,omitempty"` // Item IDs restocked periodically
-	ShopCraftSupport        string              `yaml:"craft_support,omitempty"`           // Crafting discipline this shop supports (one of shops.ValidCraftSupports)
+	AutoAggro               bool     `yaml:"auto_aggro,omitempty"`
+	PlayerAttackImmune      bool     `yaml:"player_attack_immune,omitempty"`    // If true, players cannot attack this mob (but mob can still fight)
+	BuysGeneral             bool     `yaml:"buys_general,omitempty"`            // Whether this merchant buys misc goods
+	Crafter                 bool     `yaml:"crafter,omitempty"`                 // Whether this mob crafts autonomously (Stage 38.5.4)
+	CrafterSkill            string   `yaml:"crafterskill,omitempty"`            // Craft skill used (e.g. "blacksmithing")
+	CrafterRecipeIds        []string `yaml:"crafterrecipeids,omitempty"`        // Recipe IDs this mob can craft
+	CrafterRestockMaterials []int    `yaml:"crafterrestockmaterials,omitempty"` // Item IDs restocked periodically
+	ShopCraftSupport        string   `yaml:"craft_support,omitempty"`           // Crafting discipline this shop supports (one of shops.ValidCraftSupports)
 
 	// ── Stage 3.4: spawn-time overrides for special mobs (wagons, statues, etc.) ──
 	CarryCapacityOverride float64 `yaml:"carry_capacity,omitempty"`       // overrides Strength-derived calc when > 0
@@ -164,9 +164,9 @@ type Mob struct {
 	SurrenderPolicy         string `yaml:"surrender_policy,omitempty"`   // chunk 4d T12: override archetype default; "never"/"always"/"auto-tap-below <N>"
 	BTreeState              any    `yaml:"-"`                            // Behavior tree per-instance state (*behaviortree.BehaviorState)
 	tempDataStore           map[string]any
-	Path                    PathQueue        `yaml:"-"` // a pre-calculated path the mob is following.
-	lastCommandTurn         uint64           // The last turn a command was scheduled for
-	playersAttacked         map[int]struct{} // all players this mob has attacked at some point
+	Path                    PathQueue               `yaml:"-"` // a pre-calculated path the mob is following.
+	lastCommandTurn         uint64                  // The last turn a command was scheduled for
+	playersAttacked         map[int]struct{}        // all players this mob has attacked at some point
 	Relationships           []RelationshipYAMLEntry `yaml:"relationships,omitempty"` // Authored relationship edges; consumed by relationships.LoadFromMobs at startup.
 	KnowsFacts              []string                `yaml:"knows_facts,omitempty"`   // Fact IDs this mob knows at startup; consumed by facts.LoadFromMobs at startup.
 	// VisitedZones tracks zone names this instance has entered. Persisted

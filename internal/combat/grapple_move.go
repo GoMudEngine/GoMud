@@ -10,10 +10,10 @@ import (
 // Callers use these fields to dispatch messaging and analytics.
 type GrappleMoveResult struct {
 	GrappleResult
-	PositionDesc   string            // "clinched" or "grounded"
-	DisarmResult   *DisarmResult     // nil if no disarm triggered
+	PositionDesc   string             // "clinched" or "grounded"
+	DisarmResult   *DisarmResult      // nil if no disarm triggered
 	CritFailure    *CritFailureResult // nil if no crit failure
-	DefensePenalty bool              // true if z < 0.5 failure penalty applied
+	DefensePenalty bool               // true if z < 0.5 failure penalty applied
 }
 
 // ExecuteGrappleMove performs the full grapple command resolution:

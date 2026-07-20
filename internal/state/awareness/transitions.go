@@ -6,7 +6,7 @@ import "github.com/GoMudEngine/GoMud/internal/state"
 // Vetoes layer additional rules on top.
 var validTransitions = state.TransitionTable[State]{
 	Visible:    {Concealing},
-	Concealing: {Hidden, Visible}, // success vs failure
+	Concealing: {Hidden, Visible},    // success vs failure
 	Hidden:     {Revealing, Visible}, // Revealing for cascade; Visible for force (logout/death)
 	Revealing:  {Visible},
 }

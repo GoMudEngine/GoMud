@@ -8,7 +8,7 @@ import "sync"
 type Patrol struct {
 	Id             string           `yaml:"id"`
 	Description    string           `yaml:"description,omitempty"`
-	LoopShape      string           `yaml:"loop_shape,omitempty"`        // "strict" (default) | "yo-yo" | "oneshot" (chunk 3.8)
+	LoopShape      string           `yaml:"loop_shape,omitempty"`       // "strict" (default) | "yo-yo" | "oneshot" (chunk 3.8)
 	MaxPathRetries int              `yaml:"max_path_retries,omitempty"` // chunk 3.7: override global ScheduleMaxPathRetries; 0 = use global default
 	Waypoints      []PatrolWaypoint `yaml:"waypoints"`
 }

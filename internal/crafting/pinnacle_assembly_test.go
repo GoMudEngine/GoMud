@@ -158,8 +158,8 @@ func TestPinnacleAssemblyGate_RealData(t *testing.T) {
 
 	// Locate the two crafted-component ingredients this recipe consumes and
 	// grab their REAL specs from disk.
-	guard := specs[40210]  // hungering-guard
-	resin := specs[40211]  // obsidian-edge-resin
+	guard := specs[40210] // hungering-guard
+	resin := specs[40211] // obsidian-edge-resin
 	if guard == nil || resin == nil {
 		t.Fatalf("real component specs missing: guard=%v resin=%v", guard, resin)
 	}

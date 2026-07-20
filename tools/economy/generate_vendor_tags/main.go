@@ -3,7 +3,8 @@
 // reviews before the subagent applies it to YAMLs.
 //
 // Run:
-//   go run tools/economy/generate_vendor_tags/main.go
+//
+//	go run tools/economy/generate_vendor_tags/main.go
 //
 // Output: tools/economy/generate_vendor_tags/vendor_tag_proposal.csv
 package main

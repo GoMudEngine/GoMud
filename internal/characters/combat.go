@@ -68,10 +68,10 @@ func (c *Character) GetDefaultDistributionDamage() (attacks int, baseDamage floa
 //   - Additional additive bonuses (e.g., "Enhanced Strength" buff: +5 damage)
 //
 // To add a buff/condition/mutation that affects unarmed damage:
-//   1. Check for the buff/condition after base calculation
-//   2. Apply multipliers: baseDamage *= multiplier
-//   3. Apply additive bonuses: baseDamage += bonus
-//   4. Modify variance if needed: variance *= varianceMultiplier
+//  1. Check for the buff/condition after base calculation
+//  2. Apply multipliers: baseDamage *= multiplier
+//  3. Apply additive bonuses: baseDamage += bonus
+//  4. Modify variance if needed: variance *= varianceMultiplier
 func (c *Character) CalculateUnarmedDamage() (baseDamage float64, variance float64) {
 	b := configs.GetBalanceConfig()
 	baseValue := float64(b.UnarmedBaseDamage)

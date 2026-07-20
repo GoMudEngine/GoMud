@@ -67,14 +67,14 @@ func bountyAdminUsage(user *users.UserRecord) {
 		user.SendText(messaging.CategorySystem, out)
 		return
 	}
-	user.SendText(messaging.CategorySystem, 
-		"Usage:\r\n" +
-			"  bounty list [--all] [filter]\r\n" +
-			"  bounty show <id>\r\n" +
-			"  bounty declare <issuer-spec> <target-spec> [--gold N] [--rep N] [--expiry-rounds N] [--reason \"...\"]\r\n" +
-			"  bounty withdraw <id>\r\n" +
-			"  bounty prune-expired\r\n" +
-			"\r\n" +
+	user.SendText(messaging.CategorySystem,
+		"Usage:\r\n"+
+			"  bounty list [--all] [filter]\r\n"+
+			"  bounty show <id>\r\n"+
+			"  bounty declare <issuer-spec> <target-spec> [--gold N] [--rep N] [--expiry-rounds N] [--reason \"...\"]\r\n"+
+			"  bounty withdraw <id>\r\n"+
+			"  bounty prune-expired\r\n"+
+			"\r\n"+
 			"Issuer/target spec: <type>:<id>  e.g.  faction:thornwall_guards  player:17  mob:101  quest:14\r\n",
 	)
 }
@@ -84,11 +84,11 @@ func bountyUserUsage(user *users.UserRecord) {
 		user.SendText(messaging.CategorySystem, out)
 		return
 	}
-	user.SendText(messaging.CategorySystem, 
-		"Usage:\r\n" +
-			"  bounty list [filter]\r\n" +
-			"  bounty show <id>\r\n" +
-			"\r\n" +
+	user.SendText(messaging.CategorySystem,
+		"Usage:\r\n"+
+			"  bounty list [filter]\r\n"+
+			"  bounty show <id>\r\n"+
+			"\r\n"+
 			"Filter: mob, player, or a faction name (e.g. thornwall_guards)\r\n",
 	)
 }

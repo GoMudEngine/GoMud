@@ -16,8 +16,9 @@ import (
 // scores 0 via mutations.GearEffectivenessMultiplier (chunk 2.2a).
 //
 // Args: character - the character to check
-//       behaviorArchetype - the mob's behavior archetype (passed separately
-//                           since character has no such field)
+//
+//	behaviorArchetype - the mob's behavior archetype (passed separately
+//	                    since character has no such field)
 func CanEquipFromGive(character *characters.Character, behaviorArchetype string) bool {
 	if character == nil {
 		return false

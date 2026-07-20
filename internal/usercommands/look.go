@@ -523,12 +523,12 @@ func lookRoom(user *users.UserRecord, roomId int, secretLook bool) {
 		// Find the exit back
 		lookFromName := room.FindExitTo(user.Character.RoomId)
 		if lookFromName == "" {
-			room.SendTextVisual(messaging.CategoryMobEmote, 
+			room.SendTextVisual(messaging.CategoryMobEmote,
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking into the room from somewhere...`, user.Character.Name),
 				user.UserId,
 			)
 		} else {
-			room.SendTextVisual(messaging.CategoryMobEmote, 
+			room.SendTextVisual(messaging.CategoryMobEmote,
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> is looking into the room from the <ansi fg="exit">%s</ansi> exit`, user.Character.Name, lookFromName),
 				user.UserId,
 			)

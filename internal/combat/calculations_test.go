@@ -216,4 +216,3 @@ func TestPowerScore_ZeroValueNoPanic(t *testing.T) {
 //
 // Full Incorporeal integration (rank 4 fallback behavior) is covered by
 // Task 12 smoke tests, which load the mutation YAML and verify combat flow.
-

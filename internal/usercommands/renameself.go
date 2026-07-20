@@ -86,8 +86,8 @@ func RenameSelf(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 		`Renamed from <ansi fg="username">%s</ansi> to <ansi fg="username">%s</ansi>`,
 		oldName, newName))
 
-	user.SendText(messaging.CategorySystem, `The world ripples briefly — you are now known as <ansi fg="username">` + newName + `</ansi>.`)
-	room.SendTextVisual(messaging.CategoryMobEmote, 
+	user.SendText(messaging.CategorySystem, `The world ripples briefly — you are now known as <ansi fg="username">`+newName+`</ansi>.`)
+	room.SendTextVisual(messaging.CategoryMobEmote,
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> shimmers and is now known as <ansi fg="username">%s</ansi>.`,
 			oldName, newName),
 		user.UserId)

@@ -181,7 +181,7 @@ func TestBuyRules_InsufficientGoldRejected(t *testing.T) {
 	})
 	shop := baseShop()
 	shop.CraftSupport = CraftSupportAlchemy
-	shop.Gold = 50          // not enough
+	shop.Gold = 50           // not enough
 	shop.StartingGold = 1000 // reserve = 500 (50% default from config)
 	offer := EvaluateBuyRules(item, shop, "", false, DefaultPricingConfig(), nil)
 	assert.Equal(t, 0, offer.Price, "vendor must refuse if buying drops below gold reserve")
@@ -284,9 +284,9 @@ func TestBuyRules_DecliningPotion_Rejected(t *testing.T) {
 	}
 	// CraftedRound far in the past so we're well into Declining.
 	item := items.Item{
-		ItemId:       spec.ItemId,
-		Spec:         &spec,
-		CraftedRound: 1, // ancient
+		ItemId:           spec.ItemId,
+		Spec:             &spec,
+		CraftedRound:     1, // ancient
 		BottleMultiplier: 1.0,
 	}
 	// Set round count high enough to be in Declining phase.

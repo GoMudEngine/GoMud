@@ -727,11 +727,11 @@ func ShopGoldScore(s ShopSnapshot) float64 {
 // InputRateRow holds per-zone input-rate breakdown for the dashboard
 // input rate table.
 type InputRateRow struct {
-	Score        float64          `json:"score"`
-	ItemsPerDay  float64          `json:"items_per_day"`
-	FromForagers float64          `json:"from_foragers"`
-	FromRestock  float64          `json:"from_restock"`
-	TierMix      map[int]float64  `json:"tier_mix"` // tier → fractional item count (round at display)
+	Score        float64         `json:"score"`
+	ItemsPerDay  float64         `json:"items_per_day"`
+	FromForagers float64         `json:"from_foragers"`
+	FromRestock  float64         `json:"from_restock"`
+	TierMix      map[int]float64 `json:"tier_mix"` // tier → fractional item count (round at display)
 }
 
 // Scores is the bundle returned by Score(). Each per-entity score

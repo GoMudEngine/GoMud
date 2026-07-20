@@ -64,7 +64,7 @@ func Caravan(rest string, user *users.UserRecord, room *rooms.Room,
 		// Global reset — all caravan leaders.
 		count := behaviortree.ResetAllCaravanStates()
 		if count == 0 {
-			user.SendText(messaging.CategorySystem, 
+			user.SendText(messaging.CategorySystem,
 				`<ansi fg="yellow">No active caravan leaders found.</ansi>`,
 			)
 		} else {

@@ -45,12 +45,12 @@ func TestAdvancementTargetSimple(t *testing.T) {
 	// Source position, tier, defender posture → expected target.
 	// "Hold" means no position change (controller stays at source).
 	cases := []struct {
-		name           string
-		source         State
-		tier           OutcomeTier
+		name            string
+		source          State
+		tier            OutcomeTier
 		defenderPosture State // for Clinch's posture-based dispatch; irrelevant for others
-		wantTarget     State
-		wantHold       bool
+		wantTarget      State
+		wantHold        bool
 	}{
 		// BackStanding always advances toward BackGround
 		{"backstanding_1step", BackStanding, TierOneStep, Standing, BackGround, false},

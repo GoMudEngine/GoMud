@@ -30,7 +30,7 @@ func Eat(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		itemSpec := matchItem.GetSpec()
 
 		if itemSpec.Subtype != items.Edible {
-			user.SendText(messaging.CategorySystem, 
+			user.SendText(messaging.CategorySystem,
 				fmt.Sprintf(`You can't eat <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()),
 			)
 			return true, nil

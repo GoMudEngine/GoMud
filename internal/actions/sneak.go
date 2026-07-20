@@ -143,4 +143,3 @@ func Sneak(actor Actor) SneakResult {
 
 	return SneakResult{Success: true, RollHappened: rollHappened}
 }
-

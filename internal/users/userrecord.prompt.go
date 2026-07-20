@@ -119,7 +119,7 @@ func renderVitalBar(current, max, reserved int) string {
 	var barColor string
 	switch {
 	case effectivePct > 60:
-		barColor = "71"  // green ≈ vitals #4caf50
+		barColor = "71" // green ≈ vitals #4caf50
 	case effectivePct > 30:
 		barColor = "221" // gold/yellow ≈ vitals #ffeb3b
 	default:

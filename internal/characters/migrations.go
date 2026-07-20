@@ -126,14 +126,14 @@ func (c *Character) MigrateAlchemyRecipes() {
 	}
 
 	recipeMap := map[string]string{
-		"healing-poultice":        "healing-salve",
-		"stamina-draught":         "stamina-tonic",
-		"conviction-draught":      "conviction-draught",
-		"minor-antidote":          "stone-stomach",
-		"clarity-tonic":           "mindshield-elixir",
-		"fire-resistance-draught": "ironhide-brew",
+		"healing-poultice":         "healing-salve",
+		"stamina-draught":          "stamina-tonic",
+		"conviction-draught":       "conviction-draught",
+		"minor-antidote":           "stone-stomach",
+		"clarity-tonic":            "mindshield-elixir",
+		"fire-resistance-draught":  "ironhide-brew",
 		"greater-healing-poultice": "elixir-of-renewal",
-		"berserker-elixir":        "berserker-elixir",
+		"berserker-elixir":         "berserker-elixir",
 	}
 
 	if c.KnownRecipes != nil {

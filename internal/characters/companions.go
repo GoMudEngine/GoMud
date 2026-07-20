@@ -64,8 +64,8 @@ type CompanionInfo struct {
 	Mutations        map[string]int      `yaml:"mutations,omitempty"`
 	SpellBook        map[string]int      `yaml:"spellbook,omitempty"`
 	MutationProgress float64             `yaml:"mutation_progress,omitempty"`
-	CharmDuration    int                 `yaml:"charm_duration,omitempty"`  // Rounds until charm re-roll (0 = no timer)
-	CharmRerolls     int                 `yaml:"charm_rerolls,omitempty"`   // Number of times charm has been re-rolled
+	CharmDuration    int                 `yaml:"charm_duration,omitempty"` // Rounds until charm re-roll (0 = no timer)
+	CharmRerolls     int                 `yaml:"charm_rerolls,omitempty"`  // Number of times charm has been re-rolled
 	// Gear persistence — snapshotted at logout, restored on respawn.
 	Items     []items.Item `yaml:"items,omitempty"`     // Carried (backpack)
 	Equipment Worn         `yaml:"equipment,omitempty"` // Equipped/worn slots

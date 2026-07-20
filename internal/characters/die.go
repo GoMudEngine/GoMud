@@ -8,7 +8,9 @@ import (
 // Die routes a character through the Life machine death sequence.
 //
 // For players (UserId != 0) the full three-step cascade fires:
-//   Dead → Respawning → Alive
+//
+//	Dead → Respawning → Alive
+//
 // For mobs (UserId == 0) only the Dead transition fires; the
 // instance-cleanup observer (Death_MobInstanceCleanup.go) handles
 // despawn, and mobs never enter the Respawning state.

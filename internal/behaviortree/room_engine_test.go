@@ -179,7 +179,7 @@ func TestTryRoomBehavior_RoomCommand_ReturnsIntercepted(t *testing.T) {
 	// Both rooms must be seeded in a single SeedRoomsForTest call because each
 	// call replaces the global roomManager and would evict the previous room.
 	cleanRooms := rooms.SeedRoomsForTest(map[int]*rooms.Room{
-		interceptRoomId: {RoomId: interceptRoomId, Zone: zone, Title: "Test Intercept Room", Exits: map[string]exit.RoomExit{}},
+		interceptRoomId:   {RoomId: interceptRoomId, Zone: zone, Title: "Test Intercept Room", Exits: map[string]exit.RoomExit{}},
 		noInterceptRoomId: {RoomId: noInterceptRoomId, Zone: zone, Title: "Test No-Intercept Room", Exits: map[string]exit.RoomExit{}},
 	}, map[string]*rooms.ZoneConfig{})
 	defer cleanRooms()

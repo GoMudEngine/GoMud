@@ -13,7 +13,7 @@ import (
 type GrappleResult struct {
 	Success         bool
 	Margin          float64
-	IsGroundGrapple bool    // true when the new grapple position is a ground grapple (SideControl)
+	IsGroundGrapple bool // true when the new grapple position is a ground grapple (SideControl)
 	AttackScore     float64
 	DefenseScore    float64
 	AttackRoll      float64

@@ -35,7 +35,7 @@ func TestSnapshot_YAMLRoundTrip(t *testing.T) {
 			{
 				InstId: 88, Name: "Storekeeper Wulf",
 				Territory: "stillwater_marsh",
-				State: "foraging", StateEnteredRound: 12200, RoomId: 4520,
+				State:     "foraging", StateEnteredRound: 12200, RoomId: 4520,
 				CargoWeight: 14, CargoCapacity: 60,
 				CargoByBucket: map[string]int{"stillwater": 14},
 			},

@@ -173,7 +173,7 @@ var (
 		`pounce`:          {Pounce, false, true, false},
 		`rake`:            {Rake, false, true, false},
 		`read`:            {Read, false, true, false},
-		`reload`:          {Reload, false, true, false},      // All: ranged-weapon reload; admin subcommands reload data files
+		`reload`:          {Reload, false, true, false},     // All: ranged-weapon reload; admin subcommands reload data files
 		`relationship`:    {Relationship, true, true, true}, // Admin only
 		`rep`:             {Report, true, true, false},
 		`reply`:           {Reply, true, true, false},
@@ -202,8 +202,8 @@ var (
 		`skillset`:        {Skillset, false, true, true}, // Admin only
 		`shadow`:          {Shadow, false, false, false},
 		`sneak`:           {Sneak, false, false, false}, // Can't sneak in combat
-		`spawn`:           {Spawn, false, true, true}, // Admin only
-		`spell`:           {Spell, true, true, true},  // Admin only
+		`spawn`:           {Spawn, false, true, true},   // Admin only
+		`spell`:           {Spell, true, true, true},    // Admin only
 		`spells`:          {Spells, true, true, false},
 		`sort`:            {Sort, false, false, false},  // Can't sort items in combat
 		`stash`:           {Stash, false, false, false}, // Can't manipulate stash in combat

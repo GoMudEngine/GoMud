@@ -20,8 +20,8 @@ import (
 // Used when we want to bypass the registered-FS path and force OS fallback.
 type emptyFS struct{}
 
-func (emptyFS) Open(name string) (fs.File, error)          { return nil, fmt.Errorf("not found: %s", name) }
-func (emptyFS) ReadFile(name string) ([]byte, error)        { return nil, fmt.Errorf("not found: %s", name) }
+func (emptyFS) Open(name string) (fs.File, error)    { return nil, fmt.Errorf("not found: %s", name) }
+func (emptyFS) ReadFile(name string) ([]byte, error) { return nil, fmt.Errorf("not found: %s", name) }
 
 // dataFilesRoot is the relative path from this package dir to the default data files.
 const dataFilesRoot = `../../_datafiles/world/default`

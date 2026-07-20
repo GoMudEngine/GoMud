@@ -675,8 +675,8 @@ func TestStorage_GetItems_ExpandsCount(t *testing.T) {
 }
 
 func TestStorage_AddItem(t *testing.T) {
-	registerTestSpec(1, items.Weapon, false)  // non-stackable
-	registerTestSpec(2, items.Object, true)   // component — stackable
+	registerTestSpec(1, items.Weapon, false) // non-stackable
+	registerTestSpec(2, items.Object, true)  // component — stackable
 
 	t.Run("add valid non-stackable item", func(t *testing.T) {
 		s := &Storage{}
@@ -1123,10 +1123,10 @@ func TestRenderVitalBar(t *testing.T) {
 
 func TestTargetHealthDesc(t *testing.T) {
 	tests := []struct {
-		name     string
-		health   int
-		max      int
-		wantDesc string
+		name      string
+		health    int
+		max       int
+		wantDesc  string
 		wantClass string
 	}{
 		{"healthy", 90, 100, "healthy", "health-100"},

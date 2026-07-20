@@ -17,8 +17,8 @@ const (
 	StateOutboundFernwayPickup              // dwell at 4038, handoff if forager present
 	StateStillwaterRoute
 	StateStillwaterDwell
-	StateInboundTransit  // path to Fernway meeting point
-	StateInboundFernwayPickup              // dwell at 4038, handoff if forager present
+	StateInboundTransit       // path to Fernway meeting point
+	StateInboundFernwayPickup // dwell at 4038, handoff if forager present
 	StateThornwallRoute
 )
 

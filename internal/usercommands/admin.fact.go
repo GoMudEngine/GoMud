@@ -59,17 +59,17 @@ func factUsage(user *users.UserRecord) {
 		user.SendText(messaging.CategorySystem, out)
 		return
 	}
-	user.SendText(messaging.CategorySystem, 
-		"Usage:\r\n" +
-			"  fact list [--all]\r\n" +
-			"  fact show <factId>\r\n" +
-			"  fact declare <factId> [opts...] -- <description>\r\n" +
-			"  fact withdraw <factId>\r\n" +
-			"  fact expire <factId>\r\n" +
-			"  fact prune-expired\r\n" +
-			"  fact awareness <mobId>\r\n" +
-			"  fact teach <mobId> <factId> [--source S]\r\n" +
-			"  fact forget <mobId> <factId>\r\n" +
+	user.SendText(messaging.CategorySystem,
+		"Usage:\r\n"+
+			"  fact list [--all]\r\n"+
+			"  fact show <factId>\r\n"+
+			"  fact declare <factId> [opts...] -- <description>\r\n"+
+			"  fact withdraw <factId>\r\n"+
+			"  fact expire <factId>\r\n"+
+			"  fact prune-expired\r\n"+
+			"  fact awareness <mobId>\r\n"+
+			"  fact teach <mobId> <factId> [--source S]\r\n"+
+			"  fact forget <mobId> <factId>\r\n"+
 			"  fact forget-all <mobId>\r\n",
 	)
 }

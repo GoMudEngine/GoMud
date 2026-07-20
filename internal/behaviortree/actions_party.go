@@ -139,12 +139,12 @@ type npcActor struct {
 	mob *mobs.Mob
 }
 
-func (a *npcActor) IsPlayer() bool                             { return false }
-func (a *npcActor) GetUserId() int                             { return 0 }
-func (a *npcActor) GetMobInstanceId() int                      { return a.mob.InstanceId }
-func (a *npcActor) GetCharacter() *characters.Character        { return &a.mob.Character }
-func (a *npcActor) GetRoom() *rooms.Room                       { return rooms.LoadRoom(a.mob.Character.RoomId) }
-func (a *npcActor) GetName() string                            { return a.mob.Character.Name }
+func (a *npcActor) IsPlayer() bool                      { return false }
+func (a *npcActor) GetUserId() int                      { return 0 }
+func (a *npcActor) GetMobInstanceId() int               { return a.mob.InstanceId }
+func (a *npcActor) GetCharacter() *characters.Character { return &a.mob.Character }
+func (a *npcActor) GetRoom() *rooms.Room                { return rooms.LoadRoom(a.mob.Character.RoomId) }
+func (a *npcActor) GetName() string                     { return a.mob.Character.Name }
 
 // findMobInstanceByTemplateId scans all loaded mob instances and returns the
 // first one whose MobId matches the given template ID. Returns nil if no

@@ -113,10 +113,10 @@ func unregisterTestPairOverride(a, b int) {
 
 // Exported test helpers for cross-package tests (hooks package will
 // use these in T7's tests).
-func RegisterTestPool(p *Pool)                { registerTestPool(p) }
-func UnregisterTestPool(id string)            { unregisterTestPool(id) }
+func RegisterTestPool(p *Pool)                  { registerTestPool(p) }
+func UnregisterTestPool(id string)              { unregisterTestPool(id) }
 func RegisterTestPairOverride(po *PairOverride) { registerTestPairOverride(po) }
-func UnregisterTestPairOverride(a, b int)     { unregisterTestPairOverride(a, b) }
+func UnregisterTestPairOverride(a, b int)       { unregisterTestPairOverride(a, b) }
 
 // pickExchange picks an exchange uniformly from the union of:
 //   - the relationship-type pool's default exchanges (if registered)

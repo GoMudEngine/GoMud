@@ -91,8 +91,8 @@ func HandleJSON(input string) string {
 		return string(b)
 
 	case "linkzones":
-		zoneA, _ := req.Params["zone_a"].(string)   // comma-ok not needed: empty string caught below
-		zoneB, _ := req.Params["zone_b"].(string)    // comma-ok not needed: empty string caught below
+		zoneA, _ := req.Params["zone_a"].(string)        // comma-ok not needed: empty string caught below
+		zoneB, _ := req.Params["zone_b"].(string)        // comma-ok not needed: empty string caught below
 		direction, _ := req.Params["direction"].(string) // comma-ok not needed: empty string caught below
 		roomA := jsonInt(req.Params["room_a"])
 		roomB := jsonInt(req.Params["room_b"])
@@ -121,9 +121,9 @@ func HandleJSON(input string) string {
 			Success: true,
 			Action:  req.Action,
 			Result: map[string]any{
-				"swiftmoon_phase": swift,  // DEX/STR modifier source
-				"wanderer_phase":  wander, // VIT/WIL modifier source
-				"eye_phase":       eye,    // PER/CHA modifier source; mutation rate = 0.5 + eye
+				"swiftmoon_phase":          swift,  // DEX/STR modifier source
+				"wanderer_phase":           wander, // VIT/WIL modifier source
+				"eye_phase":                eye,    // PER/CHA modifier source; mutation rate = 0.5 + eye
 				"mutation_rate_multiplier": 0.5 + eye,
 			},
 		})

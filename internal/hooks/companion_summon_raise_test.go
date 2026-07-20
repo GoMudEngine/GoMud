@@ -32,7 +32,7 @@ func TestSelectRaiseCorpse_SkipsLootHolder_WithReason(t *testing.T) {
 
 func TestSelectRaiseCorpse_PicksValidAmongSkipped(t *testing.T) {
 	corpses := []rooms.Corpse{
-		mkRaiseCorpse("goblin", true, 0, 300),  // former companion -> skip
+		mkRaiseCorpse("goblin", true, 0, 300),   // former companion -> skip
 		mkRaiseCorpse("goblin", false, 10, 300), // still holds loot -> skip
 		mkRaiseCorpse("goblin", false, 0, 300),  // valid
 	}

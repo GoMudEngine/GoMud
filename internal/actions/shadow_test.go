@@ -151,7 +151,7 @@ func TestShadow_NoTarget(t *testing.T) {
 // succeeds and stores the target id in misc-data.
 func TestShadow_Success(t *testing.T) {
 	targetUser := users.NewTestUser(7002, "prey", "Prey", 0)
-	targetUser.Character.Stats.Perception.ValueAdj = 1  // nearly blind — won't detect
+	targetUser.Character.Stats.Perception.ValueAdj = 1 // nearly blind — won't detect
 	targetUser.Character.Stats.Dexterity.ValueAdj = 1
 	cleanup := users.SeedUsersForTest(map[int]*users.UserRecord{
 		7002: targetUser,

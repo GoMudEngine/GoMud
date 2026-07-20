@@ -19,11 +19,11 @@ func TestPickSocialEmote_ReturnsNonEmpty(t *testing.T) {
 
 func TestPickSocialEmote_ReturnsValidEmote(t *testing.T) {
 	valid := map[string]bool{
-		"emote nods":         true,
-		"emote bows":         true,
+		"emote nods":          true,
+		"emote bows":          true,
 		"emote smiles warmly": true,
-		"emote waves":        true,
-		"emote grins":        true,
+		"emote waves":         true,
+		"emote grins":         true,
 	}
 	for i := 0; i < 20; i++ {
 		got := pickSocialEmote()

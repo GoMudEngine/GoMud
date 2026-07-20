@@ -46,7 +46,7 @@ func Password(rest string, user *users.UserRecord, room *rooms.Room, flags event
 	}
 
 	if err := user.SetPassword(newPW); err != nil {
-		user.SendText(messaging.CategorySystem, `<ansi fg="alert-5">` + err.Error() + `</ansi>`)
+		user.SendText(messaging.CategorySystem, `<ansi fg="alert-5">`+err.Error()+`</ansi>`)
 		user.ClearPrompt()
 		return true, nil
 	}

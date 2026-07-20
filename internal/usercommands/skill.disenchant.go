@@ -72,11 +72,11 @@ func Disenchant(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 		reservePool,
 	)
 
-	user.SendText(messaging.CategorySystem, `<ansi fg="magenta">You pry the Chrysalis free. It comes away screaming — a ` +
-		`soundless wail that reverberates through your bones. The item ` +
+	user.SendText(messaging.CategorySystem, `<ansi fg="magenta">You pry the Chrysalis free. It comes away screaming — a `+
+		`soundless wail that reverberates through your bones. The item `+
 		`falls silent, stripped of its living power.</ansi>`)
-	user.SendText(messaging.CategorySystem, `<ansi fg="red">A sudden emptiness floods through you. Your body aches ` +
-		`for the connection it has lost. The withdrawal will pass... ` +
+	user.SendText(messaging.CategorySystem, `<ansi fg="red">A sudden emptiness floods through you. Your body aches `+
+		`for the connection it has lost. The withdrawal will pass... `+
 		`in time.</ansi>`)
 
 	return true, nil

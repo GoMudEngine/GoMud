@@ -42,7 +42,7 @@ func (si *StatInfo) Recalculate() {
 	si.Racial = si.Base
 	si.Value = si.Racial + si.Training + si.Mods
 	si.ValueAdj = si.Value
-	softCap := int(b.StatSoftCap)       // 150 — linear growth up to here
+	softCap := int(b.StatSoftCap)            // 150 — linear growth up to here
 	threshold := int(b.StatSoftCapThreshold) // 105 — below this, no adjustment
 	multiplier := float64(b.StatSoftCapMultiplier)
 

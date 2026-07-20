@@ -90,11 +90,11 @@ func Roll(mean, stdDev float64) RollResult {
 	percentile := normalCDF(zScore) * 100
 
 	return RollResult{
-		Value:      value,
-		Mean:       mean,
-		StdDev:     stdDev,
-		ZScore:     zScore,
-		Percentile: percentile,
+		Value:       value,
+		Mean:        mean,
+		StdDev:      stdDev,
+		ZScore:      zScore,
+		Percentile:  percentile,
 		Description: fmt.Sprintf("Normal(%.2f, %.2f)", mean, stdDev),
 	}
 }

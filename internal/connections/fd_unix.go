@@ -12,7 +12,6 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 )
 
-
 func (c *connectionsCopyoverContributor) CopyoverSave(enc *copyover.Encoder) error {
 	lock.Lock()
 	defer lock.Unlock()

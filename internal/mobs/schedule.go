@@ -13,11 +13,11 @@ type Schedule struct {
 // ScheduleSegment covers a contiguous hour range [Start, End). When Start > End
 // the segment wraps midnight (e.g. Start=22 End=6 covers 22-23 and 0-5).
 type ScheduleSegment struct {
-	Start        int      `yaml:"start"`                   // 0-23 inclusive
-	End          int      `yaml:"end"`                     // 1-24 inclusive
-	TargetRoom   int      `yaml:"target_room,omitempty"`   // room the mob should occupy; optional for activity: patrol
-	Activity     string   `yaml:"activity,omitempty"`      // "" | "craft" | "sleeping" | "patrol"
-	PatrolId     string   `yaml:"patrol_id,omitempty"`     // chunk 3.4: required when activity is "patrol"
+	Start        int      `yaml:"start"`                 // 0-23 inclusive
+	End          int      `yaml:"end"`                   // 1-24 inclusive
+	TargetRoom   int      `yaml:"target_room,omitempty"` // room the mob should occupy; optional for activity: patrol
+	Activity     string   `yaml:"activity,omitempty"`    // "" | "craft" | "sleeping" | "patrol"
+	PatrolId     string   `yaml:"patrol_id,omitempty"`   // chunk 3.4: required when activity is "patrol"
 	IdleCommands []string `yaml:"idlecommands,omitempty"`
 }
 

@@ -33,13 +33,13 @@ type Significance int
 
 const (
 	Local    Significance = iota // Routine — shown only in the origin zone
-	Regional                    // Notable — shown in zones sharing the same region
-	Global                      // Impressive — shown everywhere
+	Regional                     // Notable — shown in zones sharing the same region
+	Global                       // Impressive — shown everywhere
 )
 
 // WorldEvent captures a single notable occurrence in the game world.
 type WorldEvent struct {
-	Id           uint64         // Monotonically increasing event ID, assigned at emit time
+	Id           uint64 // Monotonically increasing event ID, assigned at emit time
 	Type         WorldEventType
 	Significance Significance
 	ZoneName     string // Origin zone display name

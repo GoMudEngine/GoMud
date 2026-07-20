@@ -18,13 +18,13 @@ func Bank(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	user.SendText(messaging.CategorySystem, ``)
 
 	if !room.IsBank {
-		user.SendText(messaging.CategorySystem, `You are not at a bank.` + term.CRLFStr)
+		user.SendText(messaging.CategorySystem, `You are not at a bank.`+term.CRLFStr)
 		return true, nil
 	}
 
 	if rest == `` {
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You have <ansi fg="gold">%d gold</ansi> on hand and <ansi fg="gold">%d gold</ansi> in the bank.`, user.Character.Gold, user.Character.Bank))
-		user.SendText(messaging.CategorySystem, `You can <ansi fg="command">deposit</ansi> to or <ansi fg="command">withdraw</ansi> from the bank.` + term.CRLFStr)
+		user.SendText(messaging.CategorySystem, `You can <ansi fg="command">deposit</ansi> to or <ansi fg="command">withdraw</ansi> from the bank.`+term.CRLFStr)
 		return true, nil
 	}
 
@@ -36,7 +36,7 @@ func Bank(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) < 2 || (args[0] != `deposit` && args[0] != `withdraw`) {
-		user.SendText(messaging.CategorySystem, `Try <ansi fg="command">help bank</ansi> for more information about banking.` + term.CRLFStr)
+		user.SendText(messaging.CategorySystem, `Try <ansi fg="command">help bank</ansi> for more information about banking.`+term.CRLFStr)
 		return true, nil
 	}
 

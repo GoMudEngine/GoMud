@@ -90,12 +90,12 @@ func ExecuteBash(actor Actor) BashResult {
 
 	// Execute the skill move.
 	result := combat.ExecuteSkillMove(combat.SkillMoveParams{
-		Attacker:        char,
-		Defender:        target.Char,
-		AttackStat:      char.Stats.Strength.ValueAdj,
-		AttackSkill:     char.GetSkillLevel(skills.WeaponCombat),
-		DefenseStat:     target.Char.GetEffectiveDexterity(),
-		DefenseSkill:    target.Char.GetCombatSkillLevel(),
+		Attacker:          char,
+		Defender:          target.Char,
+		AttackStat:        char.Stats.Strength.ValueAdj,
+		AttackSkill:       char.GetSkillLevel(skills.WeaponCombat),
+		DefenseStat:       target.Char.GetEffectiveDexterity(),
+		DefenseSkill:      target.Char.GetCombatSkillLevel(),
 		DamagePercent:     float64(cfg.BashDamagePercent),
 		KnockdownChance:   int(cfg.BashKnockdownChance),
 		SkillRank:         char.GetSkillLevel(skills.WeaponCombat),

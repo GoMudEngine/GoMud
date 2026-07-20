@@ -47,10 +47,10 @@ func Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 			containerName := room.SpawnTempContainer(spawnTarget, "3 rounds", 0)
 
-			user.SendText(messaging.CategorySystem, 
+			user.SendText(messaging.CategorySystem,
 				fmt.Sprintf(`You wave your hands around and <ansi fg="container">%s</ansi> appears from thin air and falls to the ground.`, containerName),
 			)
-			room.SendTextVisual(messaging.CategoryMobEmote, 
+			room.SendTextVisual(messaging.CategoryMobEmote,
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> waves their hands around and <ansi fg="container">%s</ansi> appears from thin air and falls to the ground.`, user.Character.Name, containerName),
 				user.UserId,
 			)
@@ -73,10 +73,10 @@ func Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 			room.Gold += goldAmt
 
-			user.SendText(messaging.CategorySystem, 
+			user.SendText(messaging.CategorySystem,
 				fmt.Sprintf(`You wave your hands around and <ansi fg="gold">%d gold</ansi> appears from thin air and falls to the ground.`, goldAmt),
 			)
-			room.SendTextVisual(messaging.CategoryMobEmote, 
+			room.SendTextVisual(messaging.CategoryMobEmote,
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> waves their hands around and <ansi fg="gold">%d gold</ansi> appears from thin air and falls to the ground.`, user.Character.Name, goldAmt),
 				user.UserId,
 			)
@@ -86,10 +86,10 @@ func Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 
 	}
 
-	user.SendText(messaging.CategorySystem, 
+	user.SendText(messaging.CategorySystem,
 		"You wave your hands around pathetically.",
 	)
-	room.SendTextVisual(messaging.CategoryMobEmote, 
+	room.SendTextVisual(messaging.CategoryMobEmote,
 		fmt.Sprintf(`<ansi fg="username">%s</ansi> waves their hands around pathetically.`, user.Character.Name),
 		user.UserId,
 	)

@@ -304,11 +304,11 @@ func TestGetEligibleSpells_QuestGatedExcluded(t *testing.T) {
 			// No QuestRequired → discoverable
 		},
 		"summon-steppe-spirit": {
-			SpellId:      "summon-steppe-spirit",
-			Name:         "Summon Steppe Spirit",
-			Type:         HelpSingle,
-			BaseFolds:    6,
-			Schools:      []string{SchoolManifestation},
+			SpellId:       "summon-steppe-spirit",
+			Name:          "Summon Steppe Spirit",
+			Type:          HelpSingle,
+			BaseFolds:     6,
+			Schools:       []string{SchoolManifestation},
 			QuestRequired: "12-end",
 			// Quest-gated → must NEVER appear in eligible list
 		},

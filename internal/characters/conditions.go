@@ -9,16 +9,16 @@ import (
 type ConditionType int
 
 const (
-	ConditionRecoveryPenalty  ConditionType = iota // Limits attacks to 1 this round (prone recovery)
-	ConditionDefensePenalty                        // Reduces defense this round (failed grapple exposure)
-	ConditionShield                                // Magical armor barrier (+physical armor, Stage 11.4)
-	ConditionRegen                                 // Regenerates HP each AutoHeal tick (heal spell, Stage 11.5)
-	ConditionBlinded                               // Reduces perception/dodge/accuracy (Phase 24.5)
-	ConditionPoisoned                              // DoT damage over time (Phase 24.5)
-	ConditionEnchantWithdrawal                     // Pool max penalty after disenchanting (Stage 31.6)
-	ConditionBleeding                              // Wounds seeping blood, taking damage over time (Stage 42.7)
-	ConditionWarcry                                // Physical damage multiplier from warcry shout
-	ConditionRally                                 // Defense score multiplier from rally shout
+	ConditionRecoveryPenalty   ConditionType = iota // Limits attacks to 1 this round (prone recovery)
+	ConditionDefensePenalty                         // Reduces defense this round (failed grapple exposure)
+	ConditionShield                                 // Magical armor barrier (+physical armor, Stage 11.4)
+	ConditionRegen                                  // Regenerates HP each AutoHeal tick (heal spell, Stage 11.5)
+	ConditionBlinded                                // Reduces perception/dodge/accuracy (Phase 24.5)
+	ConditionPoisoned                               // DoT damage over time (Phase 24.5)
+	ConditionEnchantWithdrawal                      // Pool max penalty after disenchanting (Stage 31.6)
+	ConditionBleeding                               // Wounds seeping blood, taking damage over time (Stage 42.7)
+	ConditionWarcry                                 // Physical damage multiplier from warcry shout
+	ConditionRally                                  // Defense score multiplier from rally shout
 )
 
 // CombatCondition represents a single active combat state on a character.

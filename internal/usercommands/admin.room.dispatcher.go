@@ -260,21 +260,21 @@ func adminRoom_Set(args []string, user *users.UserRecord, room *rooms.Room) (boo
 				user.SendText(messaging.CategorySystem, `  None.`)
 			}
 			for _, mut := range room.Mutators {
-				user.SendText(messaging.CategorySystem, `  <ansi fg="mutator">` + mut.MutatorId + `</ansi>`)
+				user.SendText(messaging.CategorySystem, `  <ansi fg="mutator">`+mut.MutatorId+`</ansi>`)
 			}
 			user.SendText(messaging.CategorySystem, ``)
 		} else {
 			user.SendText(messaging.CategorySystem, ``)
 			if !mutators.IsMutator(propertyValue) {
-				user.SendText(messaging.CategorySystem, `<ansi fg="table-title"><ansi fg="mutator">` + propertyValue + `</ansi> is an invalid mutator id.</ansi>`)
+				user.SendText(messaging.CategorySystem, `<ansi fg="table-title"><ansi fg="mutator">`+propertyValue+`</ansi> is an invalid mutator id.</ansi>`)
 				user.SendText(messaging.CategorySystem, `<ansi fg="table-title">  Here is a list of valid mutator id's:</ansi>`)
 				for _, name := range mutators.GetAllMutatorIds() {
-					user.SendText(messaging.CategorySystem, `    <ansi fg="mutator">` + name + `</ansi>`)
+					user.SendText(messaging.CategorySystem, `    <ansi fg="mutator">`+name+`</ansi>`)
 				}
 			} else if room.Mutators.Remove(propertyValue) {
-				user.SendText(messaging.CategorySystem, `<ansi fg="table-title">Mutator <ansi fg="mutator">` + propertyValue + `</ansi> Removed.</ansi>`)
+				user.SendText(messaging.CategorySystem, `<ansi fg="table-title">Mutator <ansi fg="mutator">`+propertyValue+`</ansi> Removed.</ansi>`)
 			} else if room.Mutators.Add(propertyValue) {
-				user.SendText(messaging.CategorySystem, `<ansi fg="table-title">Mutator <ansi fg="mutator">` + propertyValue + `</ansi> Added.</ansi>`)
+				user.SendText(messaging.CategorySystem, `<ansi fg="table-title">Mutator <ansi fg="mutator">`+propertyValue+`</ansi> Added.</ansi>`)
 			}
 			user.SendText(messaging.CategorySystem, ``)
 		}

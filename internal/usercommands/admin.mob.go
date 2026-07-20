@@ -200,10 +200,10 @@ func mob_Spawn(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		if mob := mobs.NewMobById(mobId, room.RoomId); mob != nil {
 			room.AddMob(mob.InstanceId)
 
-			user.SendText(messaging.CategorySystem, 
+			user.SendText(messaging.CategorySystem,
 				fmt.Sprintf(`You wave your hands around and <ansi fg="mobname">%s</ansi> appears in the air and falls to the ground.`, mob.Character.Name),
 			)
-			room.SendTextVisual(messaging.CategoryMobEmote, 
+			room.SendTextVisual(messaging.CategoryMobEmote,
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> waves their hands around and <ansi fg="mobname">%s</ansi> appears in the air and falls to the ground.`, user.Character.Name, mob.Character.Name),
 				user.UserId,
 			)

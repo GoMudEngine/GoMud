@@ -34,11 +34,11 @@ func Locate(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			return false, fmt.Errorf(`room %d not found`, locateUser.Character.RoomId)
 		}
 
-		user.SendText(messaging.CategorySystem, 
+		user.SendText(messaging.CategorySystem,
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> is in room #<ansi fg="yellow-bold">%d</ansi> - <ansi fg="magenta">%s</ansi> <ansi fg="red">【%s】</ansi>`, locateUser.Character.Name, room.RoomId, room.Title, locateUser.Character.Zone),
 		)
 
-		locateUser.SendText(messaging.CategorySystem, 
+		locateUser.SendText(messaging.CategorySystem,
 			`You get the feeling someone is looking for you...`,
 		)
 
@@ -168,7 +168,7 @@ func Locate(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return true, nil
 	}
 
-	user.SendText(messaging.CategorySystem, 
+	user.SendText(messaging.CategorySystem,
 		fmt.Sprintf("No user or mob found with the name %s", rest),
 	)
 

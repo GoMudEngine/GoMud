@@ -171,7 +171,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 					picked++
 				} else {
-					user.SendText(messaging.CategorySystem, 
+					user.SendText(messaging.CategorySystem,
 						fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
 					)
 					break
@@ -181,7 +181,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				user.SendText(messaging.CategorySystem, fmt.Sprintf(`You don't see any "%s" to pick up.`, itemName))
 			} else {
 				user.SendText(messaging.CategorySystem, fmt.Sprintf(`You pick up %d item(s).`, picked))
-				room.SendTextVisual(messaging.CategoryLoot, 
+				room.SendTextVisual(messaging.CategoryLoot,
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up some items.`, user.Character.Name),
 					user.UserId,
 				)
@@ -417,7 +417,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			if user.Character.Pet.RemoveItem(matchItem) {
 				if !user.Character.StoreItem(matchItem) {
 					user.Character.Pet.StoreItem(matchItem)
-					user.SendText(messaging.CategorySystem, 
+					user.SendText(messaging.CategorySystem,
 						fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
 					)
 				} else {
@@ -428,10 +428,10 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 						Gained: true,
 					})
 
-					user.SendText(messaging.CategorySystem, 
+					user.SendText(messaging.CategorySystem,
 						fmt.Sprintf(`You remove a <ansi fg="itemname">%s</ansi> from %s.`, matchItem.DisplayName(), user.Character.Pet.DisplayName()),
 					)
-					room.SendTextVisual(messaging.CategoryLoot, 
+					room.SendTextVisual(messaging.CategoryLoot,
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> removes a <ansi fg="itemname">%s</ansi> from %s...`, user.Character.Name, matchItem.DisplayName(), user.Character.Pet.DisplayName()),
 						user.UserId,
 					)
@@ -479,10 +479,10 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 					GoldChange: -goldAmt,
 				})
 
-				user.SendText(messaging.CategorySystem, 
+				user.SendText(messaging.CategorySystem,
 					fmt.Sprintf(`You pick up <ansi fg="gold">%d gold</ansi> from the <ansi fg="container">%s</ansi>.`, goldAmt, containerName),
 				)
-				room.SendTextVisual(messaging.CategoryLoot, 
+				room.SendTextVisual(messaging.CategoryLoot,
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up some <ansi fg="gold">gold</ansi> from the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName),
 					user.UserId,
 				)
@@ -512,10 +512,10 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				container.RemoveItem(matchItem)
 				room.Containers[containerName] = container
 
-				user.SendText(messaging.CategorySystem, 
+				user.SendText(messaging.CategorySystem,
 					fmt.Sprintf(`You take the <ansi fg="itemname">%s</ansi> from the <ansi fg="container">%s</ansi>.`, matchItem.DisplayName(), containerName),
 				)
-				room.SendTextVisual(messaging.CategoryLoot, 
+				room.SendTextVisual(messaging.CategoryLoot,
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up the <ansi fg="itemname">%s</ansi> from the <ansi fg="container">%s</ansi>...`, user.Character.Name, matchItem.DisplayName(), containerName),
 					user.UserId,
 				)
@@ -526,7 +526,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 				return true, nil
 
 			} else {
-				user.SendText(messaging.CategorySystem, 
+				user.SendText(messaging.CategorySystem,
 					fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
 				)
 			}
@@ -551,10 +551,10 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 						GoldChange: -goldAmt,
 					})
 
-					user.SendText(messaging.CategorySystem, 
+					user.SendText(messaging.CategorySystem,
 						fmt.Sprintf(`You pick up <ansi fg="gold">%d gold</ansi>.`, goldAmt),
 					)
-					room.SendTextVisual(messaging.CategoryLoot, 
+					room.SendTextVisual(messaging.CategoryLoot,
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up some <ansi fg="gold">gold</ansi>.`, user.Character.Name),
 						user.UserId,
 					)
@@ -583,7 +583,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 					found = true
 					if result.Err != nil {
 						// Capacity exceeded — item was rolled back to floor
-						user.SendText(messaging.CategorySystem, 
+						user.SendText(messaging.CategorySystem,
 							fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
 						)
 						return true, nil
@@ -602,7 +602,7 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 					found = true
 					matchItem = result.Item
 					if result.Err != nil {
-						user.SendText(messaging.CategorySystem, 
+						user.SendText(messaging.CategorySystem,
 							fmt.Sprintf(`You can't carry the <ansi fg="itemname">%s</ansi> - you're already overloaded!`, matchItem.DisplayName()),
 						)
 						return true, nil
@@ -623,18 +623,18 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			user.Character.CancelBuffsWithFlag(buffs.Hidden) // No longer sneaking
 
 			if getFromStash {
-				user.SendText(messaging.CategorySystem, 
+				user.SendText(messaging.CategorySystem,
 					fmt.Sprintf(`You dig out the <ansi fg="itemname">%s</ansi> from where it was stashed.`, matchItem.DisplayName()),
 				)
-				room.SendTextVisual(messaging.CategoryLoot, 
+				room.SendTextVisual(messaging.CategoryLoot,
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> digs around in the area and picks something up...`, user.Character.Name),
 					user.UserId,
 				)
 			} else {
-				user.SendText(messaging.CategorySystem, 
+				user.SendText(messaging.CategorySystem,
 					fmt.Sprintf(`You pick up the <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()),
 				)
-				room.SendTextVisual(messaging.CategoryLoot, 
+				room.SendTextVisual(messaging.CategoryLoot,
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> picks up the <ansi fg="itemname">%s</ansi>...`, user.Character.Name, matchItem.DisplayName()),
 					user.UserId,
 				)

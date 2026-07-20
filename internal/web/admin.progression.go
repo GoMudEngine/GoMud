@@ -34,14 +34,14 @@ type progressionAPIResponse struct {
 }
 
 type skillHealthJSON struct {
-	HealthScore      float64          `json:"health_score"`
-	AvgDeviation     float64          `json:"avg_deviation"`
-	WorstPlayer      string           `json:"worst_player"`
-	WorstDeviation   float64          `json:"worst_deviation"`
-	StallCount       int              `json:"stall_count"`
-	TotalWithUses    int              `json:"total_with_uses"`
-	Distribution     map[string]int   `json:"distribution"`
-	ClusteringScore  float64          `json:"clustering_score"`
+	HealthScore     float64        `json:"health_score"`
+	AvgDeviation    float64        `json:"avg_deviation"`
+	WorstPlayer     string         `json:"worst_player"`
+	WorstDeviation  float64        `json:"worst_deviation"`
+	StallCount      int            `json:"stall_count"`
+	TotalWithUses   int            `json:"total_with_uses"`
+	Distribution    map[string]int `json:"distribution"`
+	ClusteringScore float64        `json:"clustering_score"`
 }
 
 type statHealthJSON struct {
@@ -49,40 +49,40 @@ type statHealthJSON struct {
 }
 
 type spellHealthJSON struct {
-	Name                    string  `json:"name"`
-	School                  string  `json:"school"`
-	KnownCount              int     `json:"known_count"`
-	TotalPlayers            int     `json:"total_players"`
-	AvgActivityAtDiscovery  float64 `json:"avg_activity_at_discovery"`
-	Flag                    string  `json:"flag"`
+	Name                   string  `json:"name"`
+	School                 string  `json:"school"`
+	KnownCount             int     `json:"known_count"`
+	TotalPlayers           int     `json:"total_players"`
+	AvgActivityAtDiscovery float64 `json:"avg_activity_at_discovery"`
+	Flag                   string  `json:"flag"`
 }
 
 type recipeHealthJSON struct {
-	Name                    string  `json:"name"`
-	Skill                   string  `json:"skill"`
-	KnownCount              int     `json:"known_count"`
-	TotalPlayers            int     `json:"total_players"`
-	AvgActivityAtDiscovery  float64 `json:"avg_activity_at_discovery"`
-	Flag                    string  `json:"flag"`
+	Name                   string  `json:"name"`
+	Skill                  string  `json:"skill"`
+	KnownCount             int     `json:"known_count"`
+	TotalPlayers           int     `json:"total_players"`
+	AvgActivityAtDiscovery float64 `json:"avg_activity_at_discovery"`
+	Flag                   string  `json:"flag"`
 }
 
 type playerJSON struct {
-	Name          string                   `json:"name"`
-	TotalActivity int                      `json:"total_activity"`
+	Name          string                     `json:"name"`
+	TotalActivity int                        `json:"total_activity"`
 	Skills        map[string]playerSkillJSON `json:"skills"`
 	Stats         map[string]playerStatJSON  `json:"stats"`
-	SpellsKnown   int                      `json:"spells_known"`
-	SpellsTotal   int                      `json:"spells_total"`
-	RecipesKnown  int                      `json:"recipes_known"`
-	RecipesTotal  int                      `json:"recipes_total"`
+	SpellsKnown   int                        `json:"spells_known"`
+	SpellsTotal   int                        `json:"spells_total"`
+	RecipesKnown  int                        `json:"recipes_known"`
+	RecipesTotal  int                        `json:"recipes_total"`
 }
 
 type playerSkillJSON struct {
-	Rank               int     `json:"rank"`
-	Tier               string  `json:"tier"`
-	UseCount           int     `json:"use_count"`
-	VirtualRank        float64 `json:"virtual_rank"`
-	ProgressionChance  float64 `json:"progression_chance"`
+	Rank              int     `json:"rank"`
+	Tier              string  `json:"tier"`
+	UseCount          int     `json:"use_count"`
+	VirtualRank       float64 `json:"virtual_rank"`
+	ProgressionChance float64 `json:"progression_chance"`
 }
 
 type playerStatJSON struct {

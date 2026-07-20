@@ -315,17 +315,18 @@ func (c *Character) GetToxicityPenalties() (float64, float64, float64) {
 	case ratio >= 0.75:
 		return 0.80, 0.90, 0.90 // -20% regen, -10% Per, -10% Dex
 	case ratio >= 0.50:
-		return 0.90, 0.90, 1.0  // -10% regen, -10% Per
+		return 0.90, 0.90, 1.0 // -10% regen, -10% Per
 	default:
-		return 1.0, 1.0, 1.0   // no penalty
+		return 1.0, 1.0, 1.0 // no penalty
 	}
 }
 
 // ToxicityBand returns the toxicity severity band:
-//   0 = clear   (<50%)
-//   1 = queasy  (>=50%)
-//   2 = sick    (>=75%)
-//   3 = critical (>=90%)
+//
+//	0 = clear   (<50%)
+//	1 = queasy  (>=50%)
+//	2 = sick    (>=75%)
+//	3 = critical (>=90%)
 //
 // Thresholds mirror GetToxicityPenalties exactly.
 func (c *Character) ToxicityBand() int {

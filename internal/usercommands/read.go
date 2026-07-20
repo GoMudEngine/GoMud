@@ -45,12 +45,12 @@ func Read(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if len(foundItemName) == 0 {
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You don't have a "%s" that can be read.`, rest))
 	} else {
-		user.SendText(messaging.CategorySystem, 
+		user.SendText(messaging.CategorySystem,
 			fmt.Sprintf(`You look at <ansi fg="item">%s</ansi>...`, foundItemLongName),
 		)
 
 		if !isSneaking {
-			room.SendTextVisual(messaging.CategoryMobEmote, 
+			room.SendTextVisual(messaging.CategoryMobEmote,
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> looks at their <ansi fg="item">%s</ansi>...`, user.Character.Name, foundItemName),
 				user.UserId,
 			)

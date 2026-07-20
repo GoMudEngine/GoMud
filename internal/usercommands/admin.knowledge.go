@@ -46,12 +46,12 @@ func knowledgeUsage(user *users.UserRecord) {
 		user.SendText(messaging.CategorySystem, out)
 		return
 	}
-	user.SendText(messaging.CategorySystem, 
-		"Usage:\r\n" +
-			"  knowledge show <mobId>\r\n" +
-			"  knowledge show <mobId> <playerName>\r\n" +
-			"  knowledge show <mobId> mob <targetId>\r\n" +
-			"  knowledge frequented <mobId> <playerName> [topK]\r\n" +
+	user.SendText(messaging.CategorySystem,
+		"Usage:\r\n"+
+			"  knowledge show <mobId>\r\n"+
+			"  knowledge show <mobId> <playerName>\r\n"+
+			"  knowledge show <mobId> mob <targetId>\r\n"+
+			"  knowledge frequented <mobId> <playerName> [topK]\r\n"+
 			"  knowledge forget <mobId> <playerName> [fact]\r\n",
 	)
 }

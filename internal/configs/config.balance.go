@@ -276,9 +276,9 @@ type Balance struct {
 	MutationBodyConvictionDecayMax ConfigFloat `yaml:"MutationBodyConvictionDecayMax"` // max fraction of ConvictionMax lost to deep Body commitment (default 0.9)
 	MutationBeliefGearDecayMax     ConfigFloat `yaml:"MutationBeliefGearDecayMax"`     // max fraction of gear effectiveness lost to deep Belief commitment (default 0.9)
 	MutationPoleDecayRef           ConfigFloat `yaml:"MutationPoleDecayRef"`           // pole-depth at which decay reaches half its max (default 60.0)
-	MutationLevel2Multiplier     ConfigFloat `yaml:"MutationLevel2Multiplier"`     // Effect scaling at level 2 (default 1.5)
-	MutationLevel3Multiplier     ConfigFloat `yaml:"MutationLevel3Multiplier"`     // Effect scaling at level 3 (default 2.0)
-	MutationLevel4Multiplier     ConfigFloat `yaml:"MutationLevel4Multiplier"`     // Effect scaling at level 4 (default 2.5)
+	MutationLevel2Multiplier       ConfigFloat `yaml:"MutationLevel2Multiplier"`       // Effect scaling at level 2 (default 1.5)
+	MutationLevel3Multiplier       ConfigFloat `yaml:"MutationLevel3Multiplier"`       // Effect scaling at level 3 (default 2.0)
+	MutationLevel4Multiplier       ConfigFloat `yaml:"MutationLevel4Multiplier"`       // Effect scaling at level 4 (default 2.5)
 
 	// ── SPELLCASTING ─────────────────────────────────────────────────────
 	SpellDiscoveryBaseChance ConfigFloat `yaml:"SpellDiscoveryBaseChance"` // Base % to discover a new spell per successful cast (default 5.0)
@@ -535,9 +535,9 @@ type Balance struct {
 	WarehouseAccrualHours ConfigInt `yaml:"WarehouseAccrualHours,omitempty"` // Game-hours between ambient accrual ticks (default 2)
 
 	// ── LOOT ──────────────────────────────────────────────────────────────────
-	LootBudgetScalar ConfigFloat `yaml:"LootBudgetScalar"` // Multiplier for sqrt(goldPaid) loot budget (default 7.0)
-	GoldPerAffixPoint ConfigFloat `yaml:"GoldPerAffixPoint"` // Gold value per affix cost-point on instance/affixed loot (default 3.0)
-	ShopAffixedStockCap ConfigInt `yaml:"ShopAffixedStockCap"` // Max per-instance affixed items a shop resells before evicting oldest (default 8)
+	LootBudgetScalar    ConfigFloat `yaml:"LootBudgetScalar"`    // Multiplier for sqrt(goldPaid) loot budget (default 7.0)
+	GoldPerAffixPoint   ConfigFloat `yaml:"GoldPerAffixPoint"`   // Gold value per affix cost-point on instance/affixed loot (default 3.0)
+	ShopAffixedStockCap ConfigInt   `yaml:"ShopAffixedStockCap"` // Max per-instance affixed items a shop resells before evicting oldest (default 8)
 
 	// ── INSTANCES ────────────────────────────────────────────────────────────
 	InstanceStatPoolCap ConfigInt `yaml:"InstanceStatPoolCap"` // Max stat pool per mob in instances (default 50000, 0=uncapped)

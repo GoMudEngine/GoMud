@@ -78,7 +78,7 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			room.PlaySound(`change`, `other`)
 
 			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="container">%s</ansi>, and add it to your key ring for the future.`, itmSpec.Name, containerName))
-			room.SendTextVisual(messaging.CategoryMobEmote, 
+			room.SendTextVisual(messaging.CategoryMobEmote,
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="container">%s</ansi>.`, user.Character.Name, containerName),
 				user.UserId)
 		} else {
@@ -134,7 +134,7 @@ func Unlock(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			room.PlaySound(`change`, `other`)
 
 			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="exit">%s</ansi> exit, and add it to your key ring for the future.`, itmSpec.Name, exitName))
-			room.SendTextVisual(messaging.CategoryMobEmote, 
+			room.SendTextVisual(messaging.CategoryMobEmote,
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> lock`, user.Character.Name, exitName),
 				user.UserId)
 		} else {

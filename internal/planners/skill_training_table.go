@@ -6,10 +6,10 @@ package planners
 type SkillTrainingContext string
 
 const (
-	TrainingCombat       SkillTrainingContext = "combat"       // weapon/unarmed/spellcasting
-	TrainingCrafting     SkillTrainingContext = "crafting"     // blacksmithing/alchemy/etc.
-	TrainingForaging     SkillTrainingContext = "foraging"     // search (field exploration)
-	TrainingSocial       SkillTrainingContext = "social"       // rhetoric, bartering
+	TrainingCombat       SkillTrainingContext = "combat"   // weapon/unarmed/spellcasting
+	TrainingCrafting     SkillTrainingContext = "crafting" // blacksmithing/alchemy/etc.
+	TrainingForaging     SkillTrainingContext = "foraging" // search (field exploration)
+	TrainingSocial       SkillTrainingContext = "social"   // rhetoric, bartering
 	TrainingSkullduggery SkillTrainingContext = "skullduggery"
 	TrainingUnknown      SkillTrainingContext = "unknown"
 )
