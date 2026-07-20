@@ -43,6 +43,12 @@ func Put(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	container := room.Containers[containerName]
 
+	// A locked container accepts nothing, matching the player path
+	// (usercommands/put.go).
+	if container.Lock.IsLocked() {
+		return true, nil
+	}
+
 	if len(args) < 1 {
 		return true, nil
 	}
@@ -71,7 +77,14 @@ func Put(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
+	// A mob can only deposit gold it actually carries. Without this the
+	// container was credited while the mob was never debited, minting currency.
+	if goldAmt > mob.Character.Gold {
+		goldAmt = mob.Character.Gold
+	}
+
 	if goldAmt > 0 {
+		mob.Character.Gold -= goldAmt
 		container.Gold += goldAmt
 		room.SendTextVisual(messaging.CategoryLoot, fmt.Sprintf(`<ansi fg="mobname">%s</ansi> places some <ansi fg="gold">gold</ansi> into the <ansi fg="container">%s</ansi>`, mob.Character.Name, containerName))
 	}
