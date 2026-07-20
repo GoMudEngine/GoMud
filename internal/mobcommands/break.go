@@ -12,7 +12,7 @@ func Break(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	if mob.Character.IsInCombat() {
 		mob.Character.EndAggro()
-		sendRoomText(room, messaging.CategoryMobEmote,
+		room.SendTextVisual(messaging.CategoryMobEmote,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> breaks off combat.`, mob.Character.Name))
 	}
 

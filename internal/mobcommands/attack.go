@@ -92,7 +92,7 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					u.SendText(messaging.CategoryHitMelee, `Something prepares to fight you!`)
 				}
 
-				sendRoomText(room, messaging.CategoryHitMelee,
+				room.SendTextVisual(messaging.CategoryHitMelee,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to fight <ansi fg="username">%s</ansi>`, mob.Character.Name, u.Character.Name),
 					u.UserId)
 
@@ -121,7 +121,7 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			mob.Character.SetAggro(0, attackMobInstanceId, mobAggroType)
 
 			if !isSneaking {
-				sendRoomText(room, messaging.CategoryHitMelee,
+				room.SendTextVisual(messaging.CategoryHitMelee,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> prepares to fight <ansi fg="mobname">%s</ansi>`, mob.Character.Name, m.Character.Name))
 			}
 
@@ -131,7 +131,7 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	if !isSneaking {
-		sendRoomText(room, messaging.CategoryMobEmote,
+		room.SendTextVisual(messaging.CategoryMobEmote,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> looks confused and upset.`, mob.Character.Name))
 	}
 

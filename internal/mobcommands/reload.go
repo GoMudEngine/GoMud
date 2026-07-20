@@ -22,7 +22,7 @@ func Reload(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	sendRoomText(room, messaging.CategoryRoomDescription,
+	room.SendTextVisual(messaging.CategoryRoomDescription,
 		fmt.Sprintf(`<ansi fg="mobname">%s</ansi> readies their <ansi fg="itemname">%s</ansi>.`,
 			mob.Character.Name, res.WeaponName))
 

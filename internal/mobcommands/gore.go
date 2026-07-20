@@ -55,7 +55,7 @@ func Gore(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something charges into you with bone-jarring force, hurling you to the ground! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 				}
 			}
-			sendRoomText(room, messaging.CategoryHitNaturalSharp,
+			room.SendTextVisual(messaging.CategoryHitNaturalSharp,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges into <ansi fg="username">%s</ansi> and hurls them to the ground!`, mobName, target.Name),
 				target.UserId)
 		} else {
@@ -67,7 +67,7 @@ func Gore(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something drives into you with a powerful charge! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 				}
 			}
-			sendRoomText(room, messaging.CategoryHitNaturalSharp,
+			room.SendTextVisual(messaging.CategoryHitNaturalSharp,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> drives its horns into <ansi fg="username">%s</ansi>!`, mobName, target.Name),
 				target.UserId)
 		}
@@ -79,7 +79,7 @@ func Gore(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				targetUser.SendText(messaging.CategoryHitNaturalSharp, `Something charges at you, but you sidestep!`)
 			}
 		}
-		sendRoomText(room, messaging.CategoryHitNaturalSharp,
+		room.SendTextVisual(messaging.CategoryHitNaturalSharp,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges at <ansi fg="username">%s</ansi>, but misses!`, mobName, target.Name),
 			target.UserId)
 	}

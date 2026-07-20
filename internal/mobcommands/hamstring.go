@@ -47,7 +47,7 @@ func Hamstring(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				targetChar.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something rakes its fangs across your legs, opening deep wounds! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 			}
 		}
-		sendRoomText(room, messaging.CategoryHitNaturalSharp,
+		room.SendTextVisual(messaging.CategoryHitNaturalSharp,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> lunges low and rakes its fangs across <ansi fg="username">%s</ansi>'s legs!`, mobName, target.Name),
 			targetPlayerId)
 	} else {
@@ -58,7 +58,7 @@ func Hamstring(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				targetChar.SendText(messaging.CategoryHitNaturalSharp, `Something lunges at your legs, but you sidestep the attack!`)
 			}
 		}
-		sendRoomText(room, messaging.CategoryHitNaturalSharp,
+		room.SendTextVisual(messaging.CategoryHitNaturalSharp,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> lunges at <ansi fg="username">%s</ansi>'s legs, but misses!`, mobName, target.Name),
 			targetPlayerId)
 	}

@@ -61,12 +61,12 @@ func Shoot(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 	if !result.IsSneaking {
 		if !result.CrossRoom {
-			sendRoomText(room, messaging.CategoryHitRanged,
+			room.SendTextVisual(messaging.CategoryHitRanged,
 				fmt.Sprintf(`%s fires their %s at %s!`, mobName, weapon, targetColored),
 				result.TargetUserId)
 		} else {
 			// Shooter's room sees the shot leave.
-			sendRoomText(room, messaging.CategoryHitRanged,
+			room.SendTextVisual(messaging.CategoryHitRanged,
 				fmt.Sprintf(`%s fires their %s %sward.`, mobName, weapon, result.ExitName))
 			// Target's room sees it arrive.
 			if tr := rooms.LoadRoom(result.TargetRoomId); tr != nil {
@@ -79,7 +79,7 @@ func Shoot(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				if !hit {
 					verb = `and narrowly misses`
 				}
-				sendRoomText(tr, messaging.CategoryHitRanged,
+				tr.SendTextVisual(messaging.CategoryHitRanged,
 					fmt.Sprintf(`A shot streaks in %s %s %s!`, origin, verb, targetColored),
 					result.TargetUserId)
 			}

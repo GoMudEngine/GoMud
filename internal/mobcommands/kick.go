@@ -50,7 +50,7 @@ func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					targetUser.SendText(messaging.CategoryKick, fmt.Sprintf(`Something stomps on you while you're down! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 				}
 			}
-			sendRoomText(room, messaging.CategoryKick,
+			room.SendTextVisual(messaging.CategoryKick,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> stomps on the downed <ansi fg="username">%s</ansi>!`, mobName, target.Name),
 				target.UserId)
 
@@ -62,7 +62,7 @@ func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					targetUser.SendText(messaging.CategoryKick, fmt.Sprintf(`Something drives a knee into you! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 				}
 			}
-			sendRoomText(room, messaging.CategoryKick,
+			room.SendTextVisual(messaging.CategoryKick,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> drives a knee into <ansi fg="username">%s</ansi>!`, mobName, target.Name),
 				target.UserId)
 
@@ -75,7 +75,7 @@ func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 						targetUser.SendText(messaging.CategoryKick, fmt.Sprintf(`Something's powerful <ansi fg="yellow-bold">kick</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 					}
 				}
-				sendRoomText(room, messaging.CategoryKick,
+				room.SendTextVisual(messaging.CategoryKick,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> kicks <ansi fg="username">%s</ansi>, knocking them to the ground!`, mobName, target.Name),
 					target.UserId)
 			} else {
@@ -86,7 +86,7 @@ func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 						targetUser.SendText(messaging.CategoryKick, fmt.Sprintf(`Something kicks you hard! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 					}
 				}
-				sendRoomText(room, messaging.CategoryKick,
+				room.SendTextVisual(messaging.CategoryKick,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> kicks <ansi fg="username">%s</ansi>!`, mobName, target.Name),
 					target.UserId)
 			}
@@ -101,7 +101,7 @@ func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					targetUser.SendText(messaging.CategoryKick, `Something tries to stomp you, but you roll aside!`)
 				}
 			}
-			sendRoomText(room, messaging.CategoryKick,
+			room.SendTextVisual(messaging.CategoryKick,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to stomp <ansi fg="username">%s</ansi>, but misses!`, mobName, target.Name),
 				target.UserId)
 
@@ -113,7 +113,7 @@ func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					targetUser.SendText(messaging.CategoryKick, `Something tries to knee you, but you block it!`)
 				}
 			}
-			sendRoomText(room, messaging.CategoryKick,
+			room.SendTextVisual(messaging.CategoryKick,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to knee <ansi fg="username">%s</ansi>, but misses!`, mobName, target.Name),
 				target.UserId)
 
@@ -125,7 +125,7 @@ func Kick(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					targetUser.SendText(messaging.CategoryKick, `Something attempts to kick you, but misses!`)
 				}
 			}
-			sendRoomText(room, messaging.CategoryKick,
+			room.SendTextVisual(messaging.CategoryKick,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to kick <ansi fg="username">%s</ansi>, but misses!`, mobName, target.Name),
 				target.UserId)
 		}
