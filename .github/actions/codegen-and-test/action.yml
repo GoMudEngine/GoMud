@@ -28,5 +28,20 @@ runs:
       shell: bash
       run: go vet ./...
 
+    # Loads every YAML data file through the real boot path (the same
+    # loadAllDataFiles main() calls), so malformed content fails CI instead of
+    # only surfacing when someone remembers to boot the server before pushing —
+    # the manual step in CLAUDE.md's Pre-Push SOP.
+    #
+    # Its own step, opt-in via env var, and without -race: it takes ~20s and
+    # materially longer under the race detector, which buys nothing here since
+    # loading is single-threaded. The main suite below skips it automatically
+    # because the env var is unset there.
+    - name: Data-file boot smoke test
+      shell: bash
+      env:
+        DOGMUD_BOOT_SMOKE: "1"
+      run: go test -run TestSmoke_ServerBootsCleanWithRealData -timeout 300s .
+
     - run: go test -timeout 300s -race -coverprofile=coverage.out ./...
       shell: bash
