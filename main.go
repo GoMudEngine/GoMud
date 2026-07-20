@@ -626,6 +626,21 @@ func main() {
 
 func handleTelnetConnection(connDetails *connections.ConnectionDetails, wg *sync.WaitGroup) {
 	defer func() {
+		// This goroutine processes untrusted network input through the whole
+		// telnet/login/ANSI handler chain. Without recovery, a panic anywhere in
+		// that chain (e.g. the unchecked *PromptHandlerState assertion in
+		// inputhandlers/login_prompt_handler.go) killed the entire process
+		// rather than the one bad connection.
+		if r := recover(); r != nil {
+			mudlog.Error("Telnet",
+				"error", "panic in connection handler",
+				"connectionID", connDetails.ConnectionId(),
+				"panic", r,
+				"stack", string(debug.Stack()))
+
+			// Tear the connection down the same way the normal error path does.
+			connections.Remove(connDetails.ConnectionId())
+		}
 		wg.Done()
 	}()
 
@@ -1042,7 +1057,21 @@ func handleTelnetConnection(connDetails *connections.ConnectionDetails, wg *sync
 // pipe), so it wires the post-login input handlers, re-enters the world, and
 // runs the same read/handle/dispatch loop a normal connection uses.
 func resumeRestoredConnection(connDetails *connections.ConnectionDetails, userObject *users.UserRecord, wg *sync.WaitGroup) {
-	defer wg.Done()
+	defer func() {
+		// Same exposure as handleTelnetConnection: this drives the identical
+		// I/O loop for connections restored across a copyover.
+		if r := recover(); r != nil {
+			mudlog.Error("Copyover",
+				"error", "panic in resumed connection handler",
+				"connectionID", connDetails.ConnectionId(),
+				"userId", userObject.UserId,
+				"panic", r,
+				"stack", string(debug.Stack()))
+
+			connections.Remove(connDetails.ConnectionId())
+		}
+		wg.Done()
+	}()
 
 	mudlog.Info("Copyover", "resuming connection", connDetails.ConnectionId(), "userId", userObject.UserId)
 

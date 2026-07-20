@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"runtime/debug"
 	"sort"
 	"strconv"
 	"strings"
@@ -717,6 +718,27 @@ func (w *World) MainWorker(shutdown chan bool, wg *sync.WaitGroup) {
 
 	mudlog.Info("MainWorker", "state", "Started")
 	defer func() {
+		// Deliberately does NOT swallow the panic.
+		//
+		// Per-listener recovery in events.DoListeners covers the bulk of the
+		// gameplay surface, so what reaches here is a panic in the tick loop
+		// itself (room maintenance, saves, stats). If that is recovered and the
+		// loop exits, the process stays alive with a frozen world — players
+		// connected, nothing ticking — which is strictly worse than crashing,
+		// because a crash gets restarted by the supervisor.
+		//
+		// So: log the panic with a full stack for diagnosis, then re-panic so
+		// the process dies loudly instead of becoming a zombie.
+		if r := recover(); r != nil {
+			mudlog.Error("MainWorker",
+				"error", "panic in world tick loop — crashing rather than running a frozen world",
+				"panic", r,
+				"stack", string(debug.Stack()))
+			mudlog.Warn("MainWorker", "state", "Stopped")
+			wg.Done()
+			panic(r)
+		}
+
 		mudlog.Warn("MainWorker", "state", "Stopped")
 		wg.Done()
 	}()

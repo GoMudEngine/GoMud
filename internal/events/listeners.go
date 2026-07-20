@@ -1,6 +1,7 @@
 package events
 
 import (
+	"runtime/debug"
 	"sync"
 
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -148,6 +149,37 @@ func UnregisterListener(emptyEvent Event, id ListenerId) bool {
 
 }
 
+// invokeListenerSafely runs a single listener with panic recovery, so one
+// misbehaving handler cannot take down the process.
+//
+// DoListeners is the sole dispatch point for combat rounds, quest events,
+// command execution and mob AI — a surface spanning ~150 files — and neither it
+// nor anything above it (ProcessEvents, EventLoop, MainWorker) recovered. A nil
+// dereference or failed type assertion anywhere in that surface killed the
+// server and disconnected every player.
+//
+// A panicking listener is treated as Continue: the event proceeds to the
+// remaining listeners rather than being silently cancelled, so one broken
+// handler degrades to "that handler did nothing this round".
+//
+// This mirrors the recovery already applied to individual callbacks elsewhere
+// (behaviortree.invokePlannerSafely, goals.invokeContextScore).
+func invokeListenerSafely(lw ListenerWrapper, e Event) (ret ListenerReturn) {
+
+	defer func() {
+		if r := recover(); r != nil {
+			mudlog.Error(`DoListeners`,
+				`error`, `listener panicked`,
+				`event`, e.Type(),
+				`panic`, r,
+				`stack`, string(debug.Stack()))
+			ret = Continue
+		}
+	}()
+
+	return lw.listener(e)
+}
+
 func DoListeners(e Event) ListenerReturn {
 
 	listenerLock.Lock()
@@ -163,7 +195,7 @@ func DoListeners(e Event) ListenerReturn {
 		if vals, ok := eventListeners[`*`]; ok {
 			listenerFound = true
 			for _, lw := range vals {
-				if result := lw.listener(e); result != Continue {
+				if result := invokeListenerSafely(lw, e); result != Continue {
 					return result
 				}
 			}
@@ -174,7 +206,7 @@ func DoListeners(e Event) ListenerReturn {
 	if vals, ok := eventListeners[e.Type()]; ok {
 		listenerFound = true
 		for _, lw := range vals {
-			if result := lw.listener(e); result != Continue {
+			if result := invokeListenerSafely(lw, e); result != Continue {
 				return result
 			}
 		}
