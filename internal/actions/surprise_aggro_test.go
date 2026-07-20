@@ -54,3 +54,30 @@ func TestSurpriseAttackTriggeredContract(t *testing.T) {
 		assert.False(t, res.Triggered, "a missing target must not produce a surprise attack")
 	})
 }
+
+// TestEngageAggroType pins the rule that four call sites previously derived
+// themselves and got wrong in different directions (audit finding 0.5): the
+// engagement type must follow whether a surprise burst actually LANDED, not
+// merely whether the attacker was hidden.
+func TestEngageAggroType(t *testing.T) {
+	newActor := func() *recordingActor {
+		c := &characters.Character{Name: "Sneak"}
+		c.Validate()
+		return &recordingActor{char: c}
+	}
+
+	t.Run("not_hidden_is_a_default_attack", func(t *testing.T) {
+		a, target := newActor(), newActor()
+		require.False(t, a.char.IsHidden(), "precondition: attacker is not hidden")
+
+		assert.Equal(t, characters.DefaultAttack, EngageAggroType(a, target),
+			"an ordinary opener must not be typed as a surprise attack")
+	})
+
+	t.Run("no_target_is_a_default_attack", func(t *testing.T) {
+		a := newActor()
+
+		assert.Equal(t, characters.DefaultAttack, EngageAggroType(a, nil),
+			"a missing target cannot produce a surprise attack")
+	})
+}
