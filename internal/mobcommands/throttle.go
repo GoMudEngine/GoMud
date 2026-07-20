@@ -65,7 +65,7 @@ func Throttle(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				}
 			}
 		}
-		sendRoomText(room, messaging.CategoryHitNaturalSharp,
+		room.SendTextVisual(messaging.CategoryHitNaturalSharp,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> clamps crushing fangs around <ansi fg="username">%s</ansi>'s throat!`, mobName, target.Name),
 			target.UserId)
 	} else {
@@ -78,7 +78,7 @@ func Throttle(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					`Something snaps at your throat but misses!`)
 			}
 		}
-		sendRoomText(room, messaging.CategoryHitNaturalSharp,
+		room.SendTextVisual(messaging.CategoryHitNaturalSharp,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> lunges for <ansi fg="username">%s</ansi>'s throat but misses!`, mobName, target.Name),
 			target.UserId)
 	}

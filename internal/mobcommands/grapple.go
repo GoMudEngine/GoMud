@@ -46,7 +46,7 @@ func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				targetChar.SendText(messaging.CategoryGrappleFlow, fmt.Sprintf(`Something <ansi fg="yellow-bold">grapples</ansi> you, transitioning to <ansi fg="cyan">%s</ansi> position!`, result.PositionDesc))
 			}
 		}
-		sendRoomText(room, messaging.CategoryGrappleFlow,
+		room.SendTextVisual(messaging.CategoryGrappleFlow,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> <ansi fg="yellow-bold">grapples</ansi> <ansi fg="username">%s</ansi> into <ansi fg="cyan">%s</ansi> position!`, mobName, targetName, result.PositionDesc),
 			targetPlayerId)
 
@@ -55,7 +55,7 @@ func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			if targetChar != nil {
 				targetChar.SendText(messaging.CategoryGrappleFlow, result.DisarmResult.TargetMsg)
 			}
-			sendRoomText(room, messaging.CategoryGrappleFlow, result.DisarmResult.RoomMessage, targetPlayerId)
+			room.SendTextVisual(messaging.CategoryGrappleFlow, result.DisarmResult.RoomMessage, targetPlayerId)
 		}
 	} else {
 		if targetChar != nil {
@@ -65,7 +65,7 @@ func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				targetChar.SendText(messaging.CategoryGrappleFlow, `Something tries to grapple you, but you slip away!`)
 			}
 		}
-		sendRoomText(room, messaging.CategoryGrappleFlow,
+		room.SendTextVisual(messaging.CategoryGrappleFlow,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tries to grapple <ansi fg="username">%s</ansi>, but fails!`, mobName, targetName),
 			targetPlayerId)
 
@@ -74,7 +74,7 @@ func Grapple(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			if targetChar != nil {
 				targetChar.SendText(messaging.CategoryGrappleFlow, result.CritFailure.TargetMessage)
 			}
-			sendRoomText(room, messaging.CategoryGrappleFlow, result.CritFailure.RoomMessage, targetPlayerId)
+			room.SendTextVisual(messaging.CategoryGrappleFlow, result.CritFailure.RoomMessage, targetPlayerId)
 		}
 	}
 

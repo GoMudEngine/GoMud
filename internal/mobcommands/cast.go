@@ -139,7 +139,7 @@ func Cast(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		return true, nil
 	}
 
-	sendRoomText(room, messaging.CategorySpellFold, fmt.Sprintf(
+	room.SendTextVisual(messaging.CategorySpellFold, fmt.Sprintf(
 		`<ansi fg="mobname">%s</ansi> begins weaving a spell.`, mob.Character.Name))
 
 	// Initiate combat aggro immediately when targeting a player with an offensive spell.

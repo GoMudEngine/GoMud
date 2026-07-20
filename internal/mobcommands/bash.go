@@ -59,7 +59,7 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					targetUser.SendText(messaging.CategoryBash, fmt.Sprintf(`Something's <ansi fg="yellow-bold">%s</ansi> knocks you to the ground! (<ansi fg="damage">%s</ansi>)`, bashLabel, dmgDesc))
 				}
 			}
-			sendRoomText(room, messaging.CategoryBash,
+			room.SendTextVisual(messaging.CategoryBash,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi>'s <ansi fg="yellow-bold">%s</ansi> knocks <ansi fg="username">%s</ansi> to the ground!`, mobName, bashLabel, target.Name),
 				target.UserId)
 		} else {
@@ -70,7 +70,7 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					targetUser.SendText(messaging.CategoryBash, fmt.Sprintf(`Something's <ansi fg="yellow-bold">%s</ansi> strikes you! (<ansi fg="damage">%s</ansi>)`, bashLabel, dmgDesc))
 				}
 			}
-			sendRoomText(room, messaging.CategoryBash,
+			room.SendTextVisual(messaging.CategoryBash,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> %s <ansi fg="username">%s</ansi> %s!`, mobName, bashVerb, target.Name, bashWith),
 				target.UserId)
 		}
@@ -82,7 +82,7 @@ func Bash(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				targetUser.SendText(messaging.CategoryBash, fmt.Sprintf(`Something attempts a %s, but misses!`, bashLabel))
 			}
 		}
-		sendRoomText(room, messaging.CategoryBash,
+		room.SendTextVisual(messaging.CategoryBash,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to bash <ansi fg="username">%s</ansi>, but misses!`, mobName, target.Name),
 			target.UserId)
 	}

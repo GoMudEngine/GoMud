@@ -59,7 +59,7 @@ func Pounce(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something leaps at you and slams you to the ground! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 				}
 			}
-			sendRoomText(room, messaging.CategoryHitNaturalSharp,
+			room.SendTextVisual(messaging.CategoryHitNaturalSharp,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> leaps at <ansi fg="username">%s</ansi> and slams them to the ground!`, mobName, target.Name),
 				target.UserId)
 		} else {
@@ -71,7 +71,7 @@ func Pounce(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something springs at you and crashes into your body! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 				}
 			}
-			sendRoomText(room, messaging.CategoryHitNaturalSharp,
+			room.SendTextVisual(messaging.CategoryHitNaturalSharp,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> springs at <ansi fg="username">%s</ansi> and crashes into them!`, mobName, target.Name),
 				target.UserId)
 		}
@@ -83,7 +83,7 @@ func Pounce(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				targetUser.SendText(messaging.CategoryHitNaturalSharp, `Something leaps at you, but you sidestep!`)
 			}
 		}
-		sendRoomText(room, messaging.CategoryHitNaturalSharp,
+		room.SendTextVisual(messaging.CategoryHitNaturalSharp,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> leaps at <ansi fg="username">%s</ansi>, but misses!`, mobName, target.Name),
 			target.UserId)
 	}

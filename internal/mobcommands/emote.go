@@ -17,7 +17,7 @@ func Emote(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 	}
 
 	if len(rest) == 0 {
-		sendRoomText(room, messaging.CategoryMobEmote,
+		room.SendTextVisual(messaging.CategoryMobEmote,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> emotes.`, mob.Character.Name))
 		return true, nil
 	}
@@ -28,7 +28,7 @@ func Emote(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		emoteText = result.AliasText
 	}
 
-	sendRoomText(room, messaging.CategoryMobEmote, actions.FormatEmoteText(mob.Character.Name, emoteText, "mobname"))
+	room.SendTextVisual(messaging.CategoryMobEmote, actions.FormatEmoteText(mob.Character.Name, emoteText, "mobname"))
 
 	return true, nil
 }

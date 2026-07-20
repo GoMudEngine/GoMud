@@ -53,7 +53,7 @@ func Drain(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				targetUser.SendText(messaging.CategoryHitNaturalSharp, fmt.Sprintf(`Something plunges into you, sapping your vitality and leeching your life-force! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 			}
 		}
-		sendRoomText(room, messaging.CategoryHitNaturalSharp,
+		room.SendTextVisual(messaging.CategoryHitNaturalSharp,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> plunges into <ansi fg="username">%s</ansi> and leeches their vitality!`, mobName, target.Name),
 			target.UserId)
 
@@ -67,7 +67,7 @@ func Drain(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				targetUser.SendText(messaging.CategoryHitNaturalSharp, `Something reaches for you hungrily, but misses!`)
 			}
 		}
-		sendRoomText(room, messaging.CategoryHitNaturalSharp,
+		room.SendTextVisual(messaging.CategoryHitNaturalSharp,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> reaches for <ansi fg="username">%s</ansi> hungrily, but misses!`, mobName, target.Name),
 			target.UserId)
 	}

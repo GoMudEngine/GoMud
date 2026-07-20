@@ -51,7 +51,7 @@ func Trip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 						targetChar.SendText(messaging.CategoryTrip, fmt.Sprintf(`Something hammers you with a powerful sweep, sending you crashing to the ground! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 					}
 				}
-				sendRoomText(room, messaging.CategoryTrip,
+				room.SendTextVisual(messaging.CategoryTrip,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tailsweeps <ansi fg="username">%s</ansi>, sending them crashing to the ground!`, mobName, targetName),
 					targetPlayerId)
 			} else {
@@ -62,7 +62,7 @@ func Trip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 						targetChar.SendText(messaging.CategoryTrip, fmt.Sprintf(`Something sweeps at you powerfully, but you manage to stay upright! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 					}
 				}
-				sendRoomText(room, messaging.CategoryTrip,
+				room.SendTextVisual(messaging.CategoryTrip,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> tailsweeps <ansi fg="username">%s</ansi>, but they keep their footing!`, mobName, targetName),
 					targetPlayerId)
 			}
@@ -75,7 +75,7 @@ func Trip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 						targetChar.SendText(messaging.CategoryTrip, fmt.Sprintf(`Something sweeps your legs, sending you crashing to the ground! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 					}
 				}
-				sendRoomText(room, messaging.CategoryTrip,
+				room.SendTextVisual(messaging.CategoryTrip,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> trips <ansi fg="username">%s</ansi>, sending them crashing to the ground!`, mobName, targetName),
 					targetPlayerId)
 			} else {
@@ -86,7 +86,7 @@ func Trip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 						targetChar.SendText(messaging.CategoryTrip, fmt.Sprintf(`Something attempts to trip you, but you keep your footing! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 					}
 				}
-				sendRoomText(room, messaging.CategoryTrip,
+				room.SendTextVisual(messaging.CategoryTrip,
 					fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to trip <ansi fg="username">%s</ansi>, but they keep their footing!`, mobName, targetName),
 					targetPlayerId)
 			}
@@ -100,7 +100,7 @@ func Trip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					targetChar.SendText(messaging.CategoryTrip, `Something sweeps at you powerfully, but you avoid it!`)
 				}
 			}
-			sendRoomText(room, messaging.CategoryTrip,
+			room.SendTextVisual(messaging.CategoryTrip,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts a tailsweep on <ansi fg="username">%s</ansi>, but misses!`, mobName, targetName),
 				targetPlayerId)
 		} else {
@@ -111,7 +111,7 @@ func Trip(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					targetChar.SendText(messaging.CategoryTrip, `Something attempts to trip you, but you avoid it!`)
 				}
 			}
-			sendRoomText(room, messaging.CategoryTrip,
+			room.SendTextVisual(messaging.CategoryTrip,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> attempts to trip <ansi fg="username">%s</ansi>, but misses!`, mobName, targetName),
 				targetPlayerId)
 		}

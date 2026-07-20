@@ -52,7 +52,7 @@ func Charge(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					targetChar.SendText(messaging.CategoryTrip, fmt.Sprintf(`Something charges and slams into you, sending you sprawling! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 				}
 			}
-			sendRoomText(room, messaging.CategoryTrip,
+			room.SendTextVisual(messaging.CategoryTrip,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges and slams into <ansi fg="username">%s</ansi>, sending them sprawling!`, mobName, targetName),
 				targetPlayerId)
 		} else {
@@ -63,7 +63,7 @@ func Charge(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 					targetChar.SendText(messaging.CategoryTrip, fmt.Sprintf(`Something charges at you, but you keep your footing! (<ansi fg="damage">%s</ansi>)`, dmgDesc))
 				}
 			}
-			sendRoomText(room, messaging.CategoryTrip,
+			room.SendTextVisual(messaging.CategoryTrip,
 				fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges at <ansi fg="username">%s</ansi>, but they keep their footing!`, mobName, targetName),
 				targetPlayerId)
 		}
@@ -75,7 +75,7 @@ func Charge(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 				targetChar.SendText(messaging.CategoryTrip, `Something charges past you, missing entirely!`)
 			}
 		}
-		sendRoomText(room, messaging.CategoryTrip,
+		room.SendTextVisual(messaging.CategoryTrip,
 			fmt.Sprintf(`<ansi fg="mobname">%s</ansi> charges past <ansi fg="username">%s</ansi>, missing entirely!`, mobName, targetName),
 			targetPlayerId)
 	}
