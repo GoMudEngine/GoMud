@@ -4,8 +4,11 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime/debug"
+	"sort"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -13,6 +16,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/dialogue"
+	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/quests"
@@ -174,4 +178,125 @@ func TestSmoke_AllDialogueFilesParse(t *testing.T) {
 		t.Fatal("parsed 0 dialogue files — wrong path?")
 	}
 	t.Logf("dialogue files parsed cleanly: %d (failed: %d)", checked, failed)
+}
+
+// knownSilentlyIgnoredKeys is the accepted baseline of YAML keys that appear in
+// content files but map to no field on their target type, so the lenient
+// decoder discards them.
+//
+// This exists as a DRIFT GATE, not an approval. Flipping the loaders to strict
+// decoding outright would fail the boot with 3,213 violations, the vast bulk of
+// them benign: `coord` (2,459) is authored room data the engine abandoned in
+// favour of crawled exit-delta positions, `level` (612) is legacy from the
+// level/XP system being removed, and most quest entries are an artifact of quest
+// YAML being parsed by two type systems (the legacy `quests` package and the
+// newer `questengine`), each seeing the other's fields as unknown.
+//
+// Baselining the distinct field/type pairs means a NEW mistyped or unsupported
+// key — the `hostile:` failure mode, where an authored value silently does
+// nothing — fails CI immediately, without requiring the existing backlog to be
+// cleared first.
+//
+// Several entries below are genuine content bugs worth fixing, listed in the
+// audit doc rather than silently accepted:
+//   - `item_id` on quests.QuestReward: CLAUDE.md documents that reward keys are
+//     no-underscore (`itemid`); the snake_case form silently no-ops. This is a
+//     live instance of that footgun.
+//   - `scriptag` on mobs.Mob: almost certainly a typo for `scripttag`.
+//   - `visible` / `sequential` / `expireMessage` on buffs.BuffSpec.
+//   - `cooldown` on rooms.SpawnInfo (118x) and `zone` on exit.RoomExit (136x):
+//     authored values doing nothing.
+//
+// To clear an entry: fix the content (or add the field to the struct), confirm
+// the count drops, and delete the line.
+var knownSilentlyIgnoredKeys = map[string]bool{
+	"coord|rooms.Room":                       true,
+	"level|characters.Character":             true,
+	"zone|exit.RoomExit":                     true,
+	"cooldown|rooms.SpawnInfo":               true,
+	"triggers|quests.Quest":                  true,
+	"playermessage|questengine.QuestRewards": true,
+	"roommessage|questengine.QuestRewards":   true,
+	"linear|quests.Quest":                    true,
+	"itemid|questengine.QuestRewards":        true,
+	"skillinfo|questengine.QuestRewards":     true,
+	"map_target|quests.QuestStep":            true,
+	"items|mobs.Mob":                         true,
+	"rep_faction|questengine.QuestRewards":   true,
+	"rep_amount|questengine.QuestRewards":    true,
+	"repeatable|questengine.QuestDef":        true,
+	"cooldown_rounds|questengine.QuestDef":   true,
+	"tactics|characters.Character":           true,
+	"recipe_info|questengine.QuestRewards":   true,
+	"long|rooms.Container":                   true,
+	"item_info|questengine.QuestRewards":     true,
+	"triggers|quests.QuestStep":              true,
+	"triggers|questengine.QuestStep":         true,
+	"spellid|questengine.QuestRewards":       true,
+	"scriptag|mobs.Mob":                      true,
+	"allow_recall|rooms.Room":                true,
+	"visible|buffs.BuffSpec":                 true,
+	"sequential|buffs.BuffSpec":              true,
+	"item_id|quests.QuestReward":             true,
+	"expireMessage|buffs.BuffSpec":           true,
+	"experience|quests.QuestReward":          true,
+	"experience|questengine.QuestRewards":    true,
+	"buffid|questengine.QuestRewards":        true,
+}
+
+var unknownKeyRe = regexp.MustCompile(`field ([A-Za-z_0-9]+) not found in type ([A-Za-z_.]+)`)
+
+// TestSmoke_NoNewSilentlyIgnoredYAMLKeys fails when content introduces a YAML
+// key that maps to no field on its target type and is not already baselined.
+//
+// This closes the `hostile:` incident class going forward: an authored value
+// that silently does nothing now fails CI instead of shipping to production and
+// being discovered months later.
+func TestSmoke_NoNewSilentlyIgnoredYAMLKeys(t *testing.T) {
+	if os.Getenv(bootSmokeEnvVar) == `` {
+		t.Skipf("set %s=1 to run the unknown-YAML-key drift gate", bootSmokeEnvVar)
+	}
+
+	mudlog.SetupLogger(nil, `LOW`, ``, false)
+	if err := configs.ReloadConfig(); err != nil {
+		t.Fatalf("ReloadConfig failed: %v", err)
+	}
+
+	var mu sync.Mutex
+	found := map[string][]string{} // "field|type" -> example paths
+
+	fileloader.StrictDecodeProbe = func(path string, err error) {
+		mu.Lock()
+		defer mu.Unlock()
+		for _, m := range unknownKeyRe.FindAllStringSubmatch(err.Error(), -1) {
+			key := m[1] + "|" + m[2]
+			if len(found[key]) < 3 {
+				found[key] = append(found[key], path)
+			}
+		}
+	}
+	defer func() { fileloader.StrictDecodeProbe = nil }()
+
+	func() {
+		defer func() { _ = recover() }() // boot failures are the other test's job
+		loadAllDataFiles(false)
+	}()
+
+	var novel []string
+	for key := range found {
+		if !knownSilentlyIgnoredKeys[key] {
+			novel = append(novel, key)
+		}
+	}
+	sort.Strings(novel)
+
+	for _, key := range novel {
+		t.Errorf("new silently-ignored YAML key %q — this value is authored but does nothing, "+
+			"because no field on that type matches it. Fix the key, add the field, or (if "+
+			"deliberate) add it to knownSilentlyIgnoredKeys.\n    e.g. %v",
+			key, found[key])
+	}
+
+	t.Logf("distinct silently-ignored keys: %d (baselined: %d, new: %d)",
+		len(found), len(knownSilentlyIgnoredKeys), len(novel))
 }

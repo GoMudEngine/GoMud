@@ -42,6 +42,30 @@ const (
 	SaveCareful SaveOption = iota // Save a backup and rename vs. just overwriting
 )
 
+// StrictDecodeProbe, when non-nil, is invoked for every file whose contents
+// contain YAML keys that do not map to any field on the target type.
+//
+// Lenient decoding (yaml.Unmarshal) silently ignores such keys, which is how an
+// authored value can do nothing at all with no error anywhere — the failure mode
+// behind the `hostile:` incident, where a mistyped/unexported field cost two
+// months on production with zero signal.
+//
+// Production leaves this nil, so the cost is one nil comparison per file. The
+// boot smoke test sets it to detect drift; see boot_smoke_test.go.
+var StrictDecodeProbe func(path string, err error)
+
+// probeStrict reports unknown-key violations when a probe is installed. It never
+// affects loading — the lenient decode result stands either way.
+func probeStrict[T any](path string, data []byte) {
+	if StrictDecodeProbe == nil {
+		return
+	}
+	var probe T
+	if err := yaml.UnmarshalStrict(data, &probe); err != nil {
+		StrictDecodeProbe(path, err)
+	}
+}
+
 func LoadFlatFile[T LoadableSimple](path string) (T, error) {
 
 	var loaded T
@@ -68,6 +92,7 @@ func LoadFlatFile[T LoadableSimple](path string) (T, error) {
 	}
 
 	err = yaml.Unmarshal(bytes, &loaded)
+	probeStrict[T](path, bytes)
 	if err != nil {
 		return loaded, errors.Wrap(err, `filepath: `+path)
 	}
@@ -181,6 +206,7 @@ func LoadAllFlatFiles[K comparable, T Loadable[K]](basePath string, filePattern 
 		var loaded T
 
 		err = yaml.Unmarshal(bytes, &loaded)
+		probeStrict[T](path, bytes)
 		if err != nil {
 			return errors.Wrap(err, `filepath: `+path)
 		}
