@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -80,8 +81,8 @@ func (o MeleeTargetOpts) selfTargetMsg() string {
 //  1. Refuse if the actor is mid-activity (craft/salvage/cast).
 //  2. If already in combat, do nothing — the existing target stands.
 //  3. Otherwise require a target, resolve it, and reject self-targeting,
-//     non-combatants, attack-immune mobs, player companions (charmed), and
-//     PvP-disallowed players.
+//     non-combatants, attack-immune mobs, player companions (charmed),
+//     PvP-disallowed players, and the actor's own party members.
 //  4. Set aggro so the subsequent Execute* call has an engagement to act on.
 //
 // This was copy-pasted across 11 command files (bash, drain, gore, grapple,
@@ -143,6 +144,18 @@ func AcquireMeleeTarget(user *users.UserRecord, room *rooms.Room, rest string, o
 		user.SendText(messaging.CategorySystem, pvpErr.Error())
 		return true
 	}
+
+	// Party members are not valid targets. room.CanPvp does NOT cover this — it
+	// only checks fighting-allowed, PVP-enabled, the experience threshold and
+	// PVP-area — so without this an enabled-PvP area let a player bash, kick,
+	// grapple or trip their own party member, while `attack` and `shoot` both
+	// refused. Same bypass shape as the charmed-companion gate above.
+	if partyInfo := parties.Get(user.UserId); partyInfo != nil && partyInfo.IsMember(p.UserId) {
+		user.SendText(messaging.CategorySystem,
+			fmt.Sprintf(`<ansi fg="username">%s</ansi> is in your party!`, p.Character.Name))
+		return true
+	}
+
 	user.Character.SetAggro(p.UserId, 0, characters.DefaultAttack)
 	return false
 }
