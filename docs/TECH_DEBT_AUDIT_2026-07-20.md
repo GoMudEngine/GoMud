@@ -623,11 +623,31 @@ v3 is used in a scattered minority (`goals`, `facts`, `bounties`, `knowledge`, `
 > exactly why a malformed file could mute an NPC in production unnoticed. Verified to fail on the
 > documented bare-scalar case.
 >
-> **Still open, and the genuinely useful half of the original idea:** adopt
-> `yaml.UnmarshalStrict` (v2) in the content loaders so typo'd keys fail loudly instead of
-> silently no-op'ing. That addresses the `hostile:` incident family and requires no library change.
-> Expect it to surface existing extra/legacy keys across the content tree, so it needs its own
-> cleanup pass.
+> **The useful half — DONE, 2026-07-20, as a drift gate rather than a hard flip.**
+> Measuring first showed a blanket `UnmarshalStrict` would fail the boot with **3,213 violations
+> across 32 distinct field/type pairs**, the vast bulk benign: `coord` (2,459) is authored room
+> data the engine abandoned for crawled exit-delta positions, `level` (612) is legacy from the
+> level/XP removal, and most quest entries come from quest YAML being parsed by *two* type systems
+> (legacy `quests` and newer `questengine`), each seeing the other's fields as unknown.
+>
+> So instead of flipping loading to strict, `fileloader` gained a zero-cost
+> `StrictDecodeProbe` hook (nil in production) and `TestSmoke_NoNewSilentlyIgnoredYAMLKeys`
+> baselines today's 32 pairs. Any **new** unknown key fails CI — verified by injecting `hostiel:`
+> on a mob, which reproduces the original incident shape exactly. That closes the class going
+> forward without demanding the backlog be cleared first.
+>
+> **Content bugs the measurement surfaced, worth fixing separately** (all currently baselined, each
+> an authored value that does nothing):
+> - `item_id` on `quests.QuestReward` — a **live instance** of the documented "reward keys are
+>   no-underscore (`itemid`); snake_case silently no-ops" footgun.
+> - `scriptag` on `mobs.Mob` — almost certainly a typo for `scripttag`.
+> - `cooldown` on `rooms.SpawnInfo` (118 files) and `zone` on `exit.RoomExit` (136 files).
+> - `visible`, `sequential`, `expireMessage` on `buffs.BuffSpec`.
+> - `allow_recall` on `rooms.Room`, `long` on `rooms.Container`, `tactics` on
+>   `characters.Character`, `items` on `mobs.Mob`.
+>
+> Each is cleared by fixing the content (or adding the field) and deleting its line from
+> `knownSilentlyIgnoredKeys`.
 
 ### 5.2 Two copies of the same logging-rotation library
 ✅ **VERIFIED**

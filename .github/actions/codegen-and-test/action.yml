@@ -41,7 +41,7 @@ runs:
       shell: bash
       env:
         DOGMUD_BOOT_SMOKE: "1"
-      run: go test -run "TestSmoke_ServerBootsCleanWithRealData|TestSmoke_AllDialogueFilesParse" -timeout 300s .
+      run: go test -run "TestSmoke_ServerBootsCleanWithRealData|TestSmoke_AllDialogueFilesParse|TestSmoke_NoNewSilentlyIgnoredYAMLKeys" -timeout 300s .
 
     - run: go test -timeout 300s -race -coverprofile=coverage.out ./...
       shell: bash
