@@ -345,18 +345,27 @@ string/token logic that is trivially testable:
 `IsTokenAfter` and `TokenToParts` decide quest-step ordering across all quest content. They
 are ~50 lines of pure string manipulation with zero tests.
 
-### 4.2 ⚠️ `internal/enchantments`: 0% — and its helper ships to production
+### 4.2 ⚠️ `internal/enchantments`: 0% coverage
 
-Zero real tests. Its only non-source file is `test_helpers.go` — **which lacks the `_test.go`
-suffix**, so `SeedEnchantmentsForTest` compiles into the production binary.
+Zero real tests. Its only non-source file is `test_helpers.go`, holding
+`SeedEnchantmentsForTest`.
 
 This package is boot-critical (loaded at `main.go:62`) and drives
 `characters/migrate_enchantments.go`, `usercommands/skill.disenchant.go`,
 `hooks/NewRound_UserRoundTick.go`. Its `copyStatMods` function is exactly the
 shallow-copy-shared-pointer bug class already documented as a past incident.
 
-**Two actions:** rename to `helpers_test.go` (keeps it out of the binary), and test
-`copyStatMods` for genuine deep-copy independence.
+**Action:** test `copyStatMods` for genuine deep-copy independence.
+
+> **Correction (2026-07-20).** An earlier revision of this document called the
+> `test_helpers.go` filename a smell and recommended renaming it to `helpers_test.go`
+> so it would not compile into the production binary. **That recommendation was wrong
+> and would break the build.** `SeedEnchantmentsForTest` is consumed *across* packages —
+> e.g. `internal/characters/pool_reservation_pinnacle_test.go:99` — and Go does not
+> export identifiers from `_test.go` files to other packages. The non-`_test.go` name is
+> a deliberate, necessary trade-off, and it is the consistent convention across all 12
+> seed-helper packages. The observation that this code ships in the binary is true; the
+> conclusion drawn from it was not.
 
 ### 4.3 `internal/events` at 14.5% — the bus everything rides
 
@@ -456,8 +465,13 @@ state save/restore.
 **New — Pattern 9: the standardized `test_helpers.go` file.** Twelve packages now export a
 single `Seed<Package>ForTest(data) func()` returning a cleanup closure, with a consistent
 docstring. This is the repo-wide generalization of patterns 1 + 8 and is now more prescriptive
-than either. **Convention note:** name it `helpers_test.go`, not `test_helpers.go` — the
-latter lacks the `_test.go` suffix and compiles into the production binary (see §4.2).
+than either.
+
+**Convention note:** keep the `test_helpers.go` name (no `_test.go` suffix). That is
+deliberate, not an oversight: these seeders are imported by *other* packages' tests, and Go
+does not export identifiers from `_test.go` files across package boundaries. The cost is
+that the helper compiles into the production binary; the benefit is cross-package seeding,
+which is the entire point of the pattern. See the correction note in §4.2.
 
 ---
 

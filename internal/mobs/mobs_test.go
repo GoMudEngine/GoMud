@@ -5,11 +5,13 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
+	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v2"
 )
 
@@ -866,10 +868,24 @@ func TestRecentlyDiedMultiple(t *testing.T) {
 
 // ─── Sleep ─────────────────────────────────────────────────────────────────
 
+// TestSleep asserts Sleep actually schedules idle time rather than merely not
+// panicking. Sleep(n) queues a `noop` command delayed by n seconds, which
+// advances the mob's command scheduling cursor — previously this test had no
+// assertion at all and passed even if Sleep were a no-op.
 func TestSleep(t *testing.T) {
 	mob := &Mob{InstanceId: 42}
-	// Should not panic
-	mob.Sleep(1)
+	before := mob.lastCommandTurn
+
+	mob.Sleep(2)
+
+	assert.Greater(t, mob.lastCommandTurn, before,
+		"Sleep must push the mob's next-command turn into the future")
+
+	// A longer sleep must delay further than a shorter one.
+	other := &Mob{InstanceId: 43}
+	other.Sleep(1)
+	assert.Greater(t, mob.lastCommandTurn, other.lastCommandTurn,
+		"a longer sleep must schedule further out than a shorter one")
 }
 
 // ─── ItemTrade struct ──────────────────────────────────────────────────────
@@ -1027,10 +1043,28 @@ func TestGetSellPriceTooManyVarieties(t *testing.T) {
 
 // ─── AddBuff ──────────────────────────────────────────────────────────────
 
+// TestAddBuff asserts the buff event is actually queued with the right payload.
+// Previously this test had no assertion and passed even if AddBuff were a
+// no-op. Draining the queue via ProcessEvents lets a listener observe it.
 func TestAddBuff(t *testing.T) {
+	var got []events.Buff
+	id := events.RegisterListener(events.Buff{}, func(e events.Event) events.ListenerReturn {
+		if b, ok := e.(events.Buff); ok {
+			got = append(got, b)
+		}
+		return events.Continue
+	})
+	defer events.UnregisterListener(events.Buff{}, id)
+
 	mob := &Mob{InstanceId: 42}
-	// Should not panic — adds event to queue
-	mob.AddBuff(1, "test")
+	mob.AddBuff(7, "test-source")
+
+	events.ProcessEvents()
+
+	require.Len(t, got, 1, "AddBuff must queue exactly one Buff event")
+	assert.Equal(t, 42, got[0].MobInstanceId, "the buff must target this mob instance")
+	assert.Equal(t, 7, got[0].BuffId, "the queued buff id must match")
+	assert.Equal(t, "test-source", got[0].Source, "the queued source must match")
 }
 
 // ─── MobIdByName full coverage (prefix vs contains) ───────────────────────
