@@ -3,6 +3,8 @@ package combat
 import (
 	"math"
 	"testing"
+
+	"github.com/GoMudEngine/GoMud/internal/configs"
 )
 
 func TestSkillMultiplier(t *testing.T) {
@@ -199,25 +201,52 @@ func TestDamageScale(t *testing.T) {
 	}
 }
 
+// TestMitigationCap verifies each channel returns its OWN configured cap.
+//
+// This previously asserted only `0 < got <= 1.0` while its comment claimed to
+// check the configured value — so an implementation returning 0.99 for every
+// channel, or wiring Magical to the Physical cap, passed cleanly. The three
+// caps also default to the same number (0.75), so comparing against config
+// alone cannot detect cross-wiring either. The overrides below give each
+// channel a distinct value so a mix-up actually fails.
 func TestMitigationCap(t *testing.T) {
+	err := configs.AddOverlayOverrides(map[string]any{
+		"Balance.PhysicalMitigationCap":   0.61,
+		"Balance.MagicalMitigationCap":    0.62,
+		"Balance.ConvictionMitigationCap": 0.63,
+	})
+	if err != nil {
+		t.Fatalf("failed to override balance config: %v", err)
+	}
+
 	tests := []struct {
 		name    string
 		channel DamageChannel
+		want    float64
 	}{
-		{"Physical", ChannelPhysical},
-		{"Magical", ChannelMagical},
-		{"Conviction", ChannelConviction},
+		{"Physical", ChannelPhysical, 0.61},
+		{"Magical", ChannelMagical, 0.62},
+		{"Conviction", ChannelConviction, 0.63},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := MitigationCap(tt.channel)
-			// All should return the configured cap (default 0.75)
+			if math.Abs(got-tt.want) > 1e-9 {
+				t.Errorf("MitigationCap(%v) = %f, want %f (its own configured cap)", tt.channel, got, tt.want)
+			}
 			if got <= 0 || got > 1.0 {
-				t.Errorf("MitigationCap(%v) = %f, want 0 < cap <= 1.0", tt.channel, got)
+				t.Errorf("MitigationCap(%v) = %f, outside the sane range (0, 1.0]", tt.channel, got)
 			}
 		})
 	}
+
+	t.Run("UnknownChannel", func(t *testing.T) {
+		// Defensive default, deliberately not config-driven.
+		if got := MitigationCap(DamageChannel(99)); got != 0.75 {
+			t.Errorf("MitigationCap(unknown) = %f, want the 0.75 fallback", got)
+		}
+	})
 }
 
 func TestCalcRawDamage_EdgeCases(t *testing.T) {

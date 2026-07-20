@@ -50,14 +50,19 @@ func (s StatMods) Get(statName ...string) int {
 	return retAmt
 }
 
-func (s StatMods) Add(statName string, statVal int) {
-	if s == nil {
-		s = make(StatMods)
+// Add accumulates statVal onto statName, allocating the map if it is nil.
+//
+// The receiver is a pointer specifically so the nil case works. With a value
+// receiver, `s = make(StatMods)` assigned to the local parameter only — the new
+// map never escaped, so Add on a nil StatMods silently discarded the value with
+// no panic and no error. Every call site is an addressable field selector
+// (spec.StatMods.Add(...)), so Go takes the address automatically and no caller
+// needed changing.
+func (s *StatMods) Add(statName string, statVal int) {
+	if *s == nil {
+		*s = make(StatMods)
 	}
 
-	if oldVal, ok := s[statName]; ok {
-		s[statName] = oldVal + statVal
-	} else {
-		s[statName] = statVal
-	}
+	// Missing keys read as the zero value, so this covers both branches.
+	(*s)[statName] += statVal
 }
