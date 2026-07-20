@@ -2,6 +2,7 @@ package actions
 
 import (
 	"fmt"
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"math"
 
 	"github.com/GoMudEngine/GoMud/internal/combat"
@@ -344,4 +345,27 @@ func SurpriseAttack(actor Actor, opts SurpriseAttackOpts) SurpriseAttackResult {
 		Triggered:   true,
 		StrikeCount: strikeCount,
 	}
+}
+
+// EngageAggroType fires the pre-combat surprise burst and reports the Aggro
+// type the resulting engagement should carry.
+//
+// SurpriseAttack gates internally on both hidden state AND the special-move
+// cooldown, so "was a surprise attack actually landed?" is exactly its
+// Triggered flag — not IsHidden(). Callers must not pre-check IsHidden: a
+// hidden-but-on-cooldown opener lands no surprise strikes and is an ordinary
+// attack.
+//
+// This exists because the four engagement sites (usercommands/attack.go PvM and
+// PvP, mobcommands/attack.go vs-player and vs-mob) each derived the type
+// themselves, and they drifted: the player paths hardcoded DefaultAttack even
+// when opening from stealth, while the mob paths keyed off IsHidden alone. That
+// meant a player's stealth opener and a mob's produced different Aggro.Type
+// values for the same situation, and downstream combat code keys off that
+// field.
+func EngageAggroType(actor Actor, target Actor) characters.AggroType {
+	if res := SurpriseAttack(actor, SurpriseAttackOpts{Target: target}); res.Triggered {
+		return characters.SurpriseAttack
+	}
+	return characters.DefaultAttack
 }

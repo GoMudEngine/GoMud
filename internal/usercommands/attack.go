@@ -196,11 +196,10 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			// SurpriseAttack, matching the mob path.
 			aggroType := characters.DefaultAttack
 			if targetMob := mobs.GetInstance(attackMobInstanceId); targetMob != nil {
-				actor := actions.NewUserActorInRoom(user, room)
-				targetActor := actions.NewMobActorInRoom(targetMob, room)
-				if res := actions.SurpriseAttack(actor, actions.SurpriseAttackOpts{Target: targetActor}); res.Triggered {
-					aggroType = characters.SurpriseAttack
-				}
+				aggroType = actions.EngageAggroType(
+					actions.NewUserActorInRoom(user, room),
+					actions.NewMobActorInRoom(targetMob, room),
+				)
 			}
 
 			// Detect "fresh aggression" before SetAggro overwrites prior state:
@@ -292,11 +291,10 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			// SurpriseAttack gates on IsHidden() internally; call unconditionally.
 			pvpAggroType := characters.DefaultAttack
 			if targetUser := users.GetByUserId(attackPlayerId); targetUser != nil {
-				actor := actions.NewUserActorInRoom(user, room)
-				targetActor := actions.NewUserActorInRoom(targetUser, room)
-				if res := actions.SurpriseAttack(actor, actions.SurpriseAttackOpts{Target: targetActor}); res.Triggered {
-					pvpAggroType = characters.SurpriseAttack
-				}
+				pvpAggroType = actions.EngageAggroType(
+					actions.NewUserActorInRoom(user, room),
+					actions.NewUserActorInRoom(targetUser, room),
+				)
 			}
 
 			user.Character.SetAggro(attackPlayerId, 0, pvpAggroType)

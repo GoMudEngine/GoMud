@@ -69,16 +69,14 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			// merely from being hidden: SurpriseAttack also gates on the
 			// special-move cooldown, so a hidden-but-on-cooldown opener is an
 			// ordinary attack.
+			// EngageAggroType gates on hidden state internally, so no
+			// IsHidden pre-check here.
 			aggroType := characters.DefaultAttack
-			if mob.Character.IsHidden() {
-				// Pre-combat burst: fire per-weapon strikes from stealth.
-				if targetUser := users.GetByUserId(attackPlayerId); targetUser != nil {
-					mobActor := actions.NewMobActorInRoom(mob, room)
-					targetActor := actions.NewUserActorInRoom(targetUser, room)
-					if res := actions.SurpriseAttack(mobActor, actions.SurpriseAttackOpts{Target: targetActor}); res.Triggered {
-						aggroType = characters.SurpriseAttack
-					}
-				}
+			if targetUser := users.GetByUserId(attackPlayerId); targetUser != nil {
+				aggroType = actions.EngageAggroType(
+					actions.NewMobActorInRoom(mob, room),
+					actions.NewUserActorInRoom(targetUser, room),
+				)
 			}
 			// Only announce if not already fighting this target
 			alreadyFighting := mob.Character.IsInCombat() && mob.Character.CurrentCombatTarget().UserId == attackPlayerId
@@ -108,16 +106,15 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		if m != nil {
 
 			// See above: keyed off the result, not IsHidden alone.
-			mobAggroType := characters.DefaultAttack
+			// Validate refreshes buff-derived state before the hidden check
+			// inside EngageAggroType.
 			if mob.Character.IsHidden() {
 				mob.Character.Validate(true)
-				// Pre-combat burst: fire per-weapon strikes from stealth.
-				mobActor := actions.NewMobActorInRoom(mob, room)
-				targetActor := actions.NewMobActorInRoom(m, room)
-				if res := actions.SurpriseAttack(mobActor, actions.SurpriseAttackOpts{Target: targetActor}); res.Triggered {
-					mobAggroType = characters.SurpriseAttack
-				}
 			}
+			mobAggroType := actions.EngageAggroType(
+				actions.NewMobActorInRoom(mob, room),
+				actions.NewMobActorInRoom(m, room),
+			)
 			mob.Character.SetAggro(0, attackMobInstanceId, mobAggroType)
 
 			if !isSneaking {
