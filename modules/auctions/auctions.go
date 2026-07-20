@@ -204,7 +204,7 @@ func (mod *AuctionsModule) auctionCommand(rest string, user *users.UserRecord, r
 
 	if on := user.GetConfigOption(`auction`); on != nil && !on.(bool) {
 
-		user.SendText(messaging.CategorySystem, 
+		user.SendText(messaging.CategorySystem,
 			`Auctions are disabled. See <ansi fg="command">help set</ansi> for learn how to change this.`,
 		)
 

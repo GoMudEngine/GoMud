@@ -11,14 +11,14 @@ func TestBucketFor_KnownItems(t *testing.T) {
 		id     int
 		bucket string
 	}{
-		{40001, "base"},        // iron ingot
-		{40046, "fernway"},     // moonpetal
-		{40051, "stillwater"},  // skitter-shrimp shell
-		{40010, "thornwall"},   // chrysalis core
-		{40004, "overlap"},     // healer's root
-		{40062, "fernway"},     // oak bark (3.0b)
-		{40123, "confluence"},  // watercress
-		{99999, ""},            // unknown
+		{40001, "base"},       // iron ingot
+		{40046, "fernway"},    // moonpetal
+		{40051, "stillwater"}, // skitter-shrimp shell
+		{40010, "thornwall"},  // chrysalis core
+		{40004, "overlap"},    // healer's root
+		{40062, "fernway"},    // oak bark (3.0b)
+		{40123, "confluence"}, // watercress
+		{99999, ""},           // unknown
 	}
 	for _, c := range cases {
 		if got := BucketFor(c.id); got != c.bucket {

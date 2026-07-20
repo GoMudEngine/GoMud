@@ -251,7 +251,7 @@ func TestPinnacleMutationTick(t *testing.T) {
 	})()
 	// Exactly one qualifying (rarity >= floor) mutation → deterministic grant.
 	defer mutations.SeedMutationsForTest(map[string]*mutations.MutationSpec{
-		"third_eye": {MutationId: "third_eye", Name: "Third Eye", Rarity: 8},
+		"third_eye":   {MutationId: "third_eye", Name: "Third Eye", Rarity: 8},
 		"common_wart": {MutationId: "common_wart", Name: "Common Wart", Rarity: 2},
 	})()
 

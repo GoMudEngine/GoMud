@@ -92,7 +92,7 @@ func Mudmail(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		if itemAttached, found := user.Character.FindInBackpack(question.Response); found {
 			msg.Item = &itemAttached
 		} else {
-			user.SendText(messaging.CategorySystem, `Could not find item: ` + question.Response)
+			user.SendText(messaging.CategorySystem, `Could not find item: `+question.Response)
 			question.RejectResponse()
 			return true, nil
 		}

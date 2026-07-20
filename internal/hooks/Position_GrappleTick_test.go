@@ -219,14 +219,16 @@ func TestGrappleScore_NilCharacter(t *testing.T) {
 // range (not 80+ points behind).
 //
 // Stats from production YAML:
-//   quester0: Str.Base=103 + Training=13 = 116; Dex.Base=113 + Training=13 = 126
-//   quester0 skill: unarmed-combat=30
-//   steppe boar (typical spawn): Str≈149, Dex≈91, no skill
+//
+//	quester0: Str.Base=103 + Training=13 = 116; Dex.Base=113 + Training=13 = 126
+//	quester0 skill: unarmed-combat=30
+//	steppe boar (typical spawn): Str≈149, Dex≈91, no skill
 //
 // Quester0 grappling boar: quester0 is aggressor. Expected:
-//   atk = (0.7*116 + 0.3*126) + 2.2*30 = 119 + 66 = 185
-//   def = (0.7*149 + 0.3*91)  + 2.0*0  = 131.6 + 0 = 131.6
-//   margin = 53.4, z = 53.4/(185*0.15) ≈ +1.92 → 2-step advance.
+//
+//	atk = (0.7*116 + 0.3*126) + 2.2*30 = 119 + 66 = 185
+//	def = (0.7*149 + 0.3*91)  + 2.0*0  = 131.6 + 0 = 131.6
+//	margin = 53.4, z = 53.4/(185*0.15) ≈ +1.92 → 2-step advance.
 //
 // We don't roll the dice here (too flaky) — we just verify the
 // deterministic score components and the resulting margin.

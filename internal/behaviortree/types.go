@@ -33,13 +33,13 @@ type Node interface {
 
 // EvalContext bundles everything a node needs during evaluation.
 type EvalContext struct {
-	Event      EventContext
-	MobState   *BehaviorState
-	MobId      int    // Mob template ID
-	InstanceId int    // Mob instance ID
-	RoomId     int    // Current room
-	MobName    string // Mob's display name
-	Intercepted bool  // Whether the command was intercepted by a behavior tree
+	Event       EventContext
+	MobState    *BehaviorState
+	MobId       int    // Mob template ID
+	InstanceId  int    // Mob instance ID
+	RoomId      int    // Current room
+	MobName     string // Mob's display name
+	Intercepted bool   // Whether the command was intercepted by a behavior tree
 
 	// SoftTarget is a non-combat target slot used by archetypes
 	// that pick targets for skullduggery (steal/plant/shadow) WITHOUT

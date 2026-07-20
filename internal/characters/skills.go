@@ -287,14 +287,14 @@ func (c *Character) GetModifiedAttackCount(baseAttacks int, weaponSpeed float64,
 
 	// Apply skill modifier (small bonus, max ~10% at skill 50)
 	skillLevel := float64(c.GetCombatSkillLevel())
-	skillMod := 1.0 + (skillLevel / 50.0) * 0.1
+	skillMod := 1.0 + (skillLevel/50.0)*0.1
 	attacks *= skillMod
 
 	// If offhand, weapon-combat skill governs dual-wield effectiveness
 	if isOffhand {
 		wcLevel := float64(c.GetSkillLevel(skills.WeaponCombat))
 		// Significant modifier: 0.5 at skill 0, 1.0 at skill 25, 1.2 at skill 50
-		dualWieldMod := 0.5 + (wcLevel / 50.0) * 0.7
+		dualWieldMod := 0.5 + (wcLevel/50.0)*0.7
 		attacks *= dualWieldMod
 	}
 

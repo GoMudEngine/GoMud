@@ -122,9 +122,9 @@ func TestSalvage_CorpseNotEligible_SkippedSilently(t *testing.T) {
 
 	// Seed an "undead" prey spec — NOT in the salvage table.
 	undeadSpec := &mobs.Mob{
-		MobId:  51,
-		Zone:   "TestZone",
-		Groups: []string{"undead"},
+		MobId:     51,
+		Zone:      "TestZone",
+		Groups:    []string{"undead"},
 		Character: characters.Character{Name: "Zombie"},
 	}
 	foragerInstance := &mobs.Mob{

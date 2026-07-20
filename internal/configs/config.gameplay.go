@@ -11,8 +11,8 @@ type GamePlay struct {
 	// Alt chars
 	MaxAltCharacters ConfigInt `yaml:"MaxAltCharacters"` // How many characters beyond the default character can they create?
 	// PVP Restrictions
-	PVP             ConfigString `yaml:"PVP"`
-	PVPMinimumSkillRanks ConfigInt `yaml:"PVPMinimumSkillRanks"` // Minimum total skill ranks to engage in PVP
+	PVP                  ConfigString `yaml:"PVP"`
+	PVPMinimumSkillRanks ConfigInt    `yaml:"PVPMinimumSkillRanks"` // Minimum total skill ranks to engage in PVP
 
 	// Skill Progression
 	UseSkillProgression ConfigBool `yaml:"UseSkillProgression"` // Enable skill/stat progression checks on skill/stat use
@@ -32,21 +32,21 @@ type GamePlay struct {
 }
 
 type GameplayDeath struct {
-	EquipmentDropChance ConfigFloat  `yaml:"EquipmentDropChance"` // Chance a player will drop a given piece of equipment on death
-	AlwaysDropBackpack  ConfigBool   `yaml:"AlwaysDropBackpack"`  // If true, players will always drop their backpack items on death
-	ProtectionSkillRanks ConfigInt  `yaml:"ProtectionSkillRanks"` // Total skill ranks below which death penalties are waived
-	CorpsesEnabled      ConfigBool   `yaml:"CorpsesEnabled"`      // Whether corpses are left behind after mob/player deaths
-	CorpseDecayTime     ConfigString `yaml:"CorpseDecayTime"`     // How long until corpses decay to dust (go away)
-	CorpseLootTimeout   ConfigString `yaml:"CorpseLootTimeout"`   // Real-time duration a mob corpse's loot stays owner-locked (killer/party) before opening to free-for-all
+	EquipmentDropChance  ConfigFloat  `yaml:"EquipmentDropChance"`  // Chance a player will drop a given piece of equipment on death
+	AlwaysDropBackpack   ConfigBool   `yaml:"AlwaysDropBackpack"`   // If true, players will always drop their backpack items on death
+	ProtectionSkillRanks ConfigInt    `yaml:"ProtectionSkillRanks"` // Total skill ranks below which death penalties are waived
+	CorpsesEnabled       ConfigBool   `yaml:"CorpsesEnabled"`       // Whether corpses are left behind after mob/player deaths
+	CorpseDecayTime      ConfigString `yaml:"CorpseDecayTime"`      // How long until corpses decay to dust (go away)
+	CorpseLootTimeout    ConfigString `yaml:"CorpseLootTimeout"`    // Real-time duration a mob corpse's loot stays owner-locked (killer/party) before opening to free-for-all
 	// DOGMud death penalties (Stage 20.1)
-	StatDecayMin          ConfigInt `yaml:"StatDecayMin"`          // Min Training loss on death (default 1)
-	StatDecayMax          ConfigInt `yaml:"StatDecayMax"`          // Max Training loss on death (default 2)
-	SkillRustCount        ConfigInt `yaml:"SkillRustCount"`        // Number of skills to decay on death (default 1)
-	SkillRustAmount       ConfigInt `yaml:"SkillRustAmount"`       // Skill ranks lost per decayed skill (default 1)
-	SkillRecencyThreshold ConfigInt `yaml:"SkillRecencyThreshold"` // Use count above which skills are protected (default 50)
-	DeathsShadowBuffId    ConfigInt `yaml:"DeathsShadowBuffId"`    // Buff ID for Death's Shadow debuff (default 25)
-	RespawnPoolFraction   ConfigFloat `yaml:"RespawnPoolFraction"` // Fraction of max pools (Health/Stamina/Conviction) restored on respawn (default 0.05). Keeps "death run" strategies honest — players respawn weakened and have to recover before their next attempt.
-	RespawnGraceRounds    ConfigInt   `yaml:"RespawnGraceRounds"`  // Rounds of no-aggro-target protection after respawn (default 3). Set to 0 to disable grace period.
+	StatDecayMin          ConfigInt   `yaml:"StatDecayMin"`          // Min Training loss on death (default 1)
+	StatDecayMax          ConfigInt   `yaml:"StatDecayMax"`          // Max Training loss on death (default 2)
+	SkillRustCount        ConfigInt   `yaml:"SkillRustCount"`        // Number of skills to decay on death (default 1)
+	SkillRustAmount       ConfigInt   `yaml:"SkillRustAmount"`       // Skill ranks lost per decayed skill (default 1)
+	SkillRecencyThreshold ConfigInt   `yaml:"SkillRecencyThreshold"` // Use count above which skills are protected (default 50)
+	DeathsShadowBuffId    ConfigInt   `yaml:"DeathsShadowBuffId"`    // Buff ID for Death's Shadow debuff (default 25)
+	RespawnPoolFraction   ConfigFloat `yaml:"RespawnPoolFraction"`   // Fraction of max pools (Health/Stamina/Conviction) restored on respawn (default 0.05). Keeps "death run" strategies honest — players respawn weakened and have to recover before their next attempt.
+	RespawnGraceRounds    ConfigInt   `yaml:"RespawnGraceRounds"`    // Rounds of no-aggro-target protection after respawn (default 3). Set to 0 to disable grace period.
 }
 
 func (g *GamePlay) Validate() {

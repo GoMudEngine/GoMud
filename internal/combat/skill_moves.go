@@ -20,15 +20,15 @@ type SkillMoveResult struct {
 
 // SkillMoveParams configures a skill move (bash/kick/trip) execution.
 type SkillMoveParams struct {
-	Attacker        *characters.Character
-	Defender        *characters.Character
-	AttackStat      int     // stat value for attack score (e.g. Strength or Dexterity)
-	AttackSkill     int     // attacker's relevant skill level
-	DefenseStat     int     // defender's Dexterity
-	DefenseSkill    int     // defender's combat skill level
-	DamagePercent   float64 // config knob (e.g. BashDamagePercent)
-	KnockdownChance int     // config knob (e.g. BashKnockdownChance)
-	SkillRank       int     // for SkillMultiplier in damage calc
+	Attacker             *characters.Character
+	Defender             *characters.Character
+	AttackStat           int     // stat value for attack score (e.g. Strength or Dexterity)
+	AttackSkill          int     // attacker's relevant skill level
+	DefenseStat          int     // defender's Dexterity
+	DefenseSkill         int     // defender's combat skill level
+	DamagePercent        float64 // config knob (e.g. BashDamagePercent)
+	KnockdownChance      int     // config knob (e.g. BashKnockdownChance)
+	SkillRank            int     // for SkillMultiplier in damage calc
 	DamageStat           int     // stat for CalcRawDamage (always Strength)
 	MitigationMultiplier float64 // 1.0 = full, 0.5 = half mitigation (stomp)
 

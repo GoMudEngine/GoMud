@@ -41,13 +41,13 @@ const (
 // the final delivery string. Empty return means "don't deliver".
 //
 // Stage order:
-//   1. Compose (caller-provided in.Text)
-//   2. Normalize (normalize.go — wired in T8)
-//   3. Sight gate (visual channel only)
-//   4. Anonymize (infrared-only path; anonymize.go — wired in T6)
-//   5. Color (color.go — wired in T2 alongside this stub)
-//   6. Wrap (wrap.go — wired in T5)
-//   7. Deliver (caller does this; pipeline returns the string)
+//  1. Compose (caller-provided in.Text)
+//  2. Normalize (normalize.go — wired in T8)
+//  3. Sight gate (visual channel only)
+//  4. Anonymize (infrared-only path; anonymize.go — wired in T6)
+//  5. Color (color.go — wired in T2 alongside this stub)
+//  6. Wrap (wrap.go — wired in T5)
+//  7. Deliver (caller does this; pipeline returns the string)
 //
 // Each stub stage is a no-op until its task lands. Order is locked.
 func RenderForRecipient(in RenderInput) string {

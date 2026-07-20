@@ -44,7 +44,7 @@ func seedShiftSpecs(t *testing.T) {
 		"fangs": {MutationId: "fangs", Rarity: 5, Clusters: []string{"ravener"}},  // -> predator
 		"aura":  {MutationId: "aura", Rarity: 5, Clusters: []string{"zealot"}},    // -> defensive_caster
 		"zeal":  {MutationId: "zeal", Rarity: 9, Clusters: []string{"colossus"}},  // -> tank_taunter
-		"plain": {MutationId: "plain", Rarity: 10},                                 // zero-cluster: no pull, rarity must NOT matter
+		"plain": {MutationId: "plain", Rarity: 10},                                // zero-cluster: no pull, rarity must NOT matter
 	})
 	t.Cleanup(cleanup)
 }

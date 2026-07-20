@@ -26,7 +26,7 @@ func Prepare(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		room.Prepare(false) // we are preparing all rooms, no need to check adjacent rooms
 	}
 
-	user.SendText(messaging.CategorySystem, 
+	user.SendText(messaging.CategorySystem,
 		"All rooms have been Prepare()'ed",
 	)
 

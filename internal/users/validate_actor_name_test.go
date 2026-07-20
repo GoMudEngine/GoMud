@@ -82,7 +82,6 @@ func seedMobName(t *testing.T, name string) func() {
 func TestValidateActorName(t *testing.T) {
 	setupValidationConfig(t)
 
-
 	tests := []struct {
 		name      string
 		input     string

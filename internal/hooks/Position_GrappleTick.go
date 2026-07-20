@@ -737,9 +737,11 @@ func applyGrappleStaminaCost(controller, controlled *characters.Character, cfg c
 
 // applyControlShift updates both sides' ControlLevel state based on
 // drift roll outcome. Chunk 4b-fixup-2 T9 spec §5:
-//   |z| < 0.5      → no shift
-//   0.5 ≤ |z| < 1.5 → 1 step
-//   |z| ≥ 1.5      → 2 steps
+//
+//	|z| < 0.5      → no shift
+//	0.5 ≤ |z| < 1.5 → 1 step
+//	|z| ≥ 1.5      → 2 steps
+//
 // Winner shifts toward Controlling; loser shifts toward Controlled.
 func applyControlShift(controller, controlled *characters.Character, z float64) {
 	absZ := z

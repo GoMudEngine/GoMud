@@ -82,7 +82,7 @@ type stubActorWithId struct {
 	skillUseTotal   int            // total calls across all skills
 }
 
-func (a *stubActorWithId) IsPlayer() bool       { return a.isPlayer }
+func (a *stubActorWithId) IsPlayer() bool        { return a.isPlayer }
 func (a *stubActorWithId) GetUserId() int        { return a.userId }
 func (a *stubActorWithId) GetMobInstanceId() int { return a.mobInstanceId }
 

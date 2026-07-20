@@ -19,6 +19,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/dice"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/audio"
 	"github.com/GoMudEngine/GoMud/internal/behaviortree"
 	"github.com/GoMudEngine/GoMud/internal/bounties"
@@ -28,19 +29,17 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/configs"
-	"github.com/GoMudEngine/GoMud/internal/conversations"
-	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/connections"
+	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/copyover"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/factions"
 	"github.com/GoMudEngine/GoMud/internal/ferry"
 	"github.com/GoMudEngine/GoMud/internal/flags"
 	"github.com/GoMudEngine/GoMud/internal/forager"
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/goals"
 	_ "github.com/GoMudEngine/GoMud/internal/goals/catalog" // chunk 4.3 — fire type registrations
-	"github.com/GoMudEngine/GoMud/internal/planners"        // chunk 4.4 — fire planner init()s + expose ClearPlanState
-	"github.com/GoMudEngine/GoMud/internal/seeders"        // chunk 4.5 — rule init()s + Dispatch listener
-	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/GoMudEngine/GoMud/internal/hooks"
 	"github.com/GoMudEngine/GoMud/internal/inputhandlers"
 	"github.com/GoMudEngine/GoMud/internal/integrations/discord"
@@ -48,33 +47,34 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/itemvoices"
 	"github.com/GoMudEngine/GoMud/internal/keywords"
 	"github.com/GoMudEngine/GoMud/internal/language"
-	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/migration"
 	"github.com/GoMudEngine/GoMud/internal/mobcommands"
+	"github.com/GoMudEngine/GoMud/internal/planners" // chunk 4.4 — fire planner init()s + expose ClearPlanState
+	"github.com/GoMudEngine/GoMud/internal/seeders"  // chunk 4.5 — rule init()s + Dispatch listener
 	"github.com/GoMudEngine/GoMud/internal/usercommands"
 	"github.com/GoMudEngine/GoMud/internal/version"
 	"github.com/gorilla/websocket"
 
+	"github.com/GoMudEngine/GoMud/internal/achievements"
+	"github.com/GoMudEngine/GoMud/internal/crafting"
+	"github.com/GoMudEngine/GoMud/internal/economy/health"
+	"github.com/GoMudEngine/GoMud/internal/enchantments"
+	"github.com/GoMudEngine/GoMud/internal/guilds"
 	"github.com/GoMudEngine/GoMud/internal/mapper"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
-	"github.com/GoMudEngine/GoMud/internal/crafting"
-	"github.com/GoMudEngine/GoMud/internal/enchantments"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/mutators"
 	"github.com/GoMudEngine/GoMud/internal/pets"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
-	"github.com/GoMudEngine/GoMud/internal/achievements"
-	"github.com/GoMudEngine/GoMud/internal/guilds"
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/relationships"
-	"github.com/GoMudEngine/GoMud/internal/species"
-	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/sealedcrate"
 	"github.com/GoMudEngine/GoMud/internal/shops"
-	"github.com/GoMudEngine/GoMud/internal/economy/health"
+	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/suggestions"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -1513,7 +1513,7 @@ func loadAllDataFiles(isReload bool) {
 		return rooms.LoadRoom(roomId) != nil
 	})
 	rooms.RebuildZonePlayerCount() // build the zone → player-count index
-	buffs.LoadDataFiles() // Load buffs before items for cost calculation reasons
+	buffs.LoadDataFiles()          // Load buffs before items for cost calculation reasons
 	items.LoadDataFiles()
 	// Pinnacle Stage 1: sentient item voices. Must load AFTER items so the
 	// voice_id cross-validation can see every item's ItemSpec.

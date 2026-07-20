@@ -10,10 +10,10 @@ import (
 
 // wireMobCharmCleanup subscribes to Life Alive→Dead transitions on
 // mob characters and:
-//   1. Records the mob's instance ID in the recent-deaths registry
-//      (mobs.TrackRecentDeath) for spawn-throttle checks.
-//   2. Removes any active charm from the mob (RemoveCharm) and
-//      reverse-tracks the owning player's charmed-mob list.
+//  1. Records the mob's instance ID in the recent-deaths registry
+//     (mobs.TrackRecentDeath) for spawn-throttle checks.
+//  2. Removes any active charm from the mob (RemoveCharm) and
+//     reverse-tracks the owning player's charmed-mob list.
 //
 // Migrated from internal/mobcommands/suicide.go lines 35 and 40-44
 // as part of chunk-2 Task 10.

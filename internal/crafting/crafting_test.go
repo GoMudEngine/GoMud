@@ -107,13 +107,13 @@ func TestCalcSuccessChance(t *testing.T) {
 		skillMinimum int
 		want         int
 	}{
-		{0, 0, 50},   // skill == min → 50%
-		{9, 0, 95},   // min+9 → 50+45 = 95% (cap)
-		{10, 0, 95},  // above cap → still 95%
-		{-10, 0, 5},  // far below min → 5% floor
-		{-2, 0, 40},  // below min → 50-10 = 40%
-		{5, 5, 50},   // skill == min (non-zero) → 50%
-		{6, 5, 55},   // one above min → 55%
+		{0, 0, 50},  // skill == min → 50%
+		{9, 0, 95},  // min+9 → 50+45 = 95% (cap)
+		{10, 0, 95}, // above cap → still 95%
+		{-10, 0, 5}, // far below min → 5% floor
+		{-2, 0, 40}, // below min → 50-10 = 40%
+		{5, 5, 50},  // skill == min (non-zero) → 50%
+		{6, 5, 55},  // one above min → 55%
 	}
 	for _, tt := range tests {
 		got := CalcSuccessChance(tt.skillLevel, tt.skillMinimum)
@@ -329,4 +329,3 @@ func TestGetEligibleRecipes(t *testing.T) {
 		t.Errorf("all known: expected 0 eligible, got %d", len(eligible))
 	}
 }
-

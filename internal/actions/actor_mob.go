@@ -86,4 +86,3 @@ func (a *MobActor) OnCriticalSuccess(skillName string) {
 func (a *MobActor) OnCriticalFailure(skillName string) {
 	a.Mob.Character.OnCriticalFailure(skillName, 0)
 }
-

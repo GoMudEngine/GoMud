@@ -16,10 +16,10 @@ import (
 // incorrectly disabling the character. Only health <= 0 should disable.
 func TestRegression_IsDisabledOnlyChecksHealth(t *testing.T) {
 	testCases := []struct {
-		name       string
-		health     int
-		stamina    int
-		conviction int
+		name         string
+		health       int
+		stamina      int
+		conviction   int
 		wantDisabled bool
 	}{
 		{"all_resources_full", 100, 100, 100, false},

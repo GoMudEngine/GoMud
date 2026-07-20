@@ -568,9 +568,9 @@ func (g *GMCPMudletModule) partyUpdateHandler(e events.Event) events.ListenerRet
 func (g *GMCPMudletModule) handleToggleCommand(user *users.UserRecord, settingName string, value bool, enableMsg string, disableMsg string) {
 	user.SetConfigOption(settingName, value)
 	if value {
-		user.SendText(messaging.CategorySystem, "\n<ansi fg=\"green\">" + enableMsg + "</ansi>\n")
+		user.SendText(messaging.CategorySystem, "\n<ansi fg=\"green\">"+enableMsg+"</ansi>\n")
 	} else {
-		user.SendText(messaging.CategorySystem, "\n<ansi fg=\"yellow\">" + disableMsg + "</ansi>\n")
+		user.SendText(messaging.CategorySystem, "\n<ansi fg=\"yellow\">"+disableMsg+"</ansi>\n")
 	}
 
 	// Update Discord status if this was a Discord-related setting
@@ -584,7 +584,7 @@ func (g *GMCPMudletModule) sendUICommand(rest string, user *users.UserRecord, ro
 	// Only proceed if client is Mudlet
 	connId := user.ConnectionId()
 	if gmcpData, ok := gmcpModule.cache.Get(connId); !ok || !gmcpData.Client.IsMudlet {
-		user.SendText(messaging.CategorySystem, "\n<ansi fg=\"red\">This command is only available for Mudlet clients.</ansi> You are currently using: " + gmcpData.Client.Name + "\n")
+		user.SendText(messaging.CategorySystem, "\n<ansi fg=\"red\">This command is only available for Mudlet clients.</ansi> You are currently using: "+gmcpData.Client.Name+"\n")
 		return true, nil
 	}
 
@@ -602,9 +602,9 @@ func (g *GMCPMudletModule) sendUICommand(rest string, user *users.UserRecord, ro
 			promptStatus = "<ansi fg=\"green\">ENABLED</ansi>"
 		}
 
-		user.SendText(messaging.CategorySystem, "\n<ansi fg=\"cyan-bold\">" + mudName + " Mudlet UI Management</ansi>\n")
+		user.SendText(messaging.CategorySystem, "\n<ansi fg=\"cyan-bold\">"+mudName+" Mudlet UI Management</ansi>\n")
 		user.SendText(messaging.CategorySystem, "<ansi fg=\"yellow-bold\">Status:</ansi>\n")
-		user.SendText(messaging.CategorySystem, "  Login message display: " + promptStatus + "\n")
+		user.SendText(messaging.CategorySystem, "  Login message display: "+promptStatus+"\n")
 		user.SendText(messaging.CategorySystem, "<ansi fg=\"yellow-bold\">Available Commands:</ansi>\n")
 		user.SendText(messaging.CategorySystem, "  <ansi fg=\"command\">mudletui install</ansi> - Install the Mudlet UI package\n")
 		user.SendText(messaging.CategorySystem, "  <ansi fg=\"command\">mudletui remove</ansi>  - Remove the Mudlet UI package\n")
@@ -687,7 +687,7 @@ func (g *GMCPMudletModule) discordCommand(rest string, user *users.UserRecord, r
 	// Only proceed if client is Mudlet
 	connId := user.ConnectionId()
 	if gmcpData, ok := gmcpModule.cache.Get(connId); !ok || !gmcpData.Client.IsMudlet {
-		user.SendText(messaging.CategorySystem, "\n<ansi fg=\"red\">This command is only available for Mudlet clients.</ansi> You are currently using: " + gmcpData.Client.Name + "\n")
+		user.SendText(messaging.CategorySystem, "\n<ansi fg=\"red\">This command is only available for Mudlet clients.</ansi> You are currently using: "+gmcpData.Client.Name+"\n")
 		return true, nil
 	}
 

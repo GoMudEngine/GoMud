@@ -6,12 +6,13 @@
 // round-trip). Run with -dry to preview without writing.
 //
 // Safety gate (verified before adding each entry to targets):
-//   rooms  title:      display-only; rooms matched by ID.
-//   buffs  name:       display-only; buffs matched by integer BuffId.
-//   spells name:       FindSpellByName lowercases both sides (case-insensitive).
-//   mobs   name:       findMobByName/MobIdByName use stringMatch (ToLower both).
-//   items  name:       FindItemByName/NameMatch lower both sides (case-insensitive).
-//   items  displayname: display-only; not used in any matcher.
+//
+//	rooms  title:      display-only; rooms matched by ID.
+//	buffs  name:       display-only; buffs matched by integer BuffId.
+//	spells name:       FindSpellByName lowercases both sides (case-insensitive).
+//	mobs   name:       findMobByName/MobIdByName use stringMatch (ToLower both).
+//	items  name:       FindItemByName/NameMatch lower both sides (case-insensitive).
+//	items  displayname: display-only; not used in any matcher.
 package main
 
 import (
@@ -33,7 +34,7 @@ var targets = map[string][]string{
 	`_datafiles/world/dogmud/rooms`:  {"title"},
 	`_datafiles/world/dogmud/buffs`:  {"name"},
 	`_datafiles/world/dogmud/spells`: {"name"},
-	`_datafiles/world/dogmud/mobs`:   {"name"},  // only one name: per mob file (under character:)
+	`_datafiles/world/dogmud/mobs`:   {"name"}, // only one name: per mob file (under character:)
 	`_datafiles/world/dogmud/items`:  {"name", "displayname"},
 }
 

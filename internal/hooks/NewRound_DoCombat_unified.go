@@ -359,7 +359,6 @@ func applyCombatDamageBonuses(atk, def actions.Actor, res *combat.AttackResult) 
 		res.DamageToTarget += bonusDmg
 	}
 
-
 	// Return damage (species + equipment).
 	returnPct := defChar.StatMod("return_damage")
 	if sp := species.GetSpecies(defChar.SpeciesId); sp != nil {

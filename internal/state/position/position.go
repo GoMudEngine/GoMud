@@ -19,20 +19,20 @@ import (
 type State int
 
 const (
-	Standing State = iota
-	Prone        // face-down knockdown, alone
-	Supine       // face-up knockdown, alone
-	Clinch       // standing grapple, both upright
-	BackStanding // standing grapple, one has back of other
-	Mount        // ground top-dominant, controller on opponent's chest
-	SideControl  // ground top-dominant, perpendicular pin
-	KneeOnBelly  // ground top-dominant, knee crushing pin
-	NorthSouth   // ground top-dominant, head-to-toe
-	Crucifix     // ground top-dominant, opponent's arms isolated
-	BackGround   // ground top-dominant, rear mount on ground
-	HalfGuard    // ground transitional, one leg trapped
-	Guard        // ground bottom-active, legs around opponent
-	Turtle       // ground defensive, curled exposing back
+	Standing     State = iota
+	Prone              // face-down knockdown, alone
+	Supine             // face-up knockdown, alone
+	Clinch             // standing grapple, both upright
+	BackStanding       // standing grapple, one has back of other
+	Mount              // ground top-dominant, controller on opponent's chest
+	SideControl        // ground top-dominant, perpendicular pin
+	KneeOnBelly        // ground top-dominant, knee crushing pin
+	NorthSouth         // ground top-dominant, head-to-toe
+	Crucifix           // ground top-dominant, opponent's arms isolated
+	BackGround         // ground top-dominant, rear mount on ground
+	HalfGuard          // ground transitional, one leg trapped
+	Guard              // ground bottom-active, legs around opponent
+	Turtle             // ground defensive, curled exposing back
 )
 
 // String for logging / debugging.

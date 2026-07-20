@@ -129,7 +129,7 @@ func TestDrain_HealAndBleed(t *testing.T) {
 		// Reset state for each attempt: re-arm aggro + cooldowns.
 		char.Aggro = &characters.Aggro{MobInstanceId: targetMob.InstanceId}
 		char.Cooldowns = characters.Cooldowns{} // clear cooldown from previous attempt
-		char.Health = 150                        // reset HP so the heal delta is visible
+		char.Health = 150                       // reset HP so the heal delta is visible
 
 		res = ExecuteDrain(newStubActor(char, newTestRoom()))
 		if res.Executed && res.MoveResult.Hit {

@@ -35,7 +35,7 @@ func Skillset(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 		user.SendText(messaging.CategorySystem, `Skill Names:`)
 		for _, name := range skills.GetAllSkillNames() {
-			user.SendText(messaging.CategorySystem, `  <ansi fg="skill">` + string(name) + `</ansi>`)
+			user.SendText(messaging.CategorySystem, `  <ansi fg="skill">`+string(name)+`</ansi>`)
 		}
 
 		return true, nil
@@ -55,7 +55,7 @@ func Skillset(rest string, user *users.UserRecord, room *rooms.Room, flags event
 
 		user.SendText(messaging.CategorySystem, `Skill Names:`)
 		for _, name := range skills.GetAllSkillNames() {
-			user.SendText(messaging.CategorySystem, `  <ansi fg="skill">` + string(name) + `</ansi>`)
+			user.SendText(messaging.CategorySystem, `  <ansi fg="skill">`+string(name)+`</ansi>`)
 		}
 
 		return true, nil

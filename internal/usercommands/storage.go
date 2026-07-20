@@ -19,7 +19,7 @@ func Storage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 	if !room.IsStorage {
 
-		user.SendText(messaging.CategorySystem, `You are not at a storage location.` + term.CRLFStr)
+		user.SendText(messaging.CategorySystem, `You are not at a storage location.`+term.CRLFStr)
 
 		if len(room.Containers) > 0 {
 			cName := ``
@@ -27,7 +27,7 @@ func Storage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 				cName = k
 				break
 			}
-			user.SendText(messaging.CategorySystem, fmt.Sprintf(`Maybe you meant to use the <ansi fg="command">put</ansi> command to <ansi fg="command">put</ansi> something into the <ansi fg="container">%s</ansi>?`, cName) + term.CRLFStr)
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`Maybe you meant to use the <ansi fg="command">put</ansi> command to <ansi fg="command">put</ansi> something into the <ansi fg="container">%s</ansi>?`, cName)+term.CRLFStr)
 		}
 
 		return true, nil
@@ -54,14 +54,14 @@ func Storage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 	}
 
 	if rest == `add` {
-		user.SendText(messaging.CategorySystem, `add what?` + term.CRLFStr)
+		user.SendText(messaging.CategorySystem, `add what?`+term.CRLFStr)
 		return true, nil
 	}
 
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) < 2 || (args[0] != `add` && args[0] != `remove`) {
-		user.SendText(messaging.CategorySystem, `Try <ansi fg="command">help storage</ansi> for more information about storage.` + term.CRLFStr)
+		user.SendText(messaging.CategorySystem, `Try <ansi fg="command">help storage</ansi> for more information about storage.`+term.CRLFStr)
 		return true, nil
 	}
 
@@ -146,7 +146,7 @@ func Storage(rest string, user *users.UserRecord, room *rooms.Room, flags events
 
 		// storage add [N] iron-ore
 		if itemName == `` {
-			user.SendText(messaging.CategorySystem, `add what?` + term.CRLFStr)
+			user.SendText(messaging.CategorySystem, `add what?`+term.CRLFStr)
 			return true, nil
 		}
 

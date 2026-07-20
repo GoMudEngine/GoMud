@@ -27,11 +27,11 @@ type SearchStashedItem struct {
 
 // SearchResult is the structured outcome.
 type SearchResult struct {
-	HiddenExitsFound      []string           // Tier 1 — player flavor
-	HiddenContainersFound []string           // Tier 1 — player flavor
+	HiddenExitsFound      []string // Tier 1 — player flavor
+	HiddenContainersFound []string // Tier 1 — player flavor
 	StashedItemsFound     []SearchStashedItem
-	HiddenPlayersFound    []int // Tier 2 — user ids
-	HiddenMobsFound       []int // Tier 2 — mob instance ids
+	HiddenPlayersFound    []int    // Tier 2 — user ids
+	HiddenMobsFound       []int    // Tier 2 — mob instance ids
 	HiddenNounsFound      []string // Tier 3 — player flavor
 
 	OnCooldown bool

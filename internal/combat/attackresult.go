@@ -52,14 +52,14 @@ type TaggedMessage struct {
 }
 
 type AttackResult struct {
-	Hit                     bool  // defaults false
-	Crit                    bool  // defaults false
-	Fumble                  bool  // defaults false
-	DoubleFumble            bool  // defaults false
-	BuffSource              []int // defaults 0
-	BuffTarget              []int // defaults 0
-	DamageToTarget          int   // defaults 0
-	DamageToTargetReduction int   // defaults 0
+	Hit                     bool            // defaults false
+	Crit                    bool            // defaults false
+	Fumble                  bool            // defaults false
+	DoubleFumble            bool            // defaults false
+	BuffSource              []int           // defaults 0
+	BuffTarget              []int           // defaults 0
+	DamageToTarget          int             // defaults 0
+	DamageToTargetReduction int             // defaults 0
 	DamageToSource          int             // defaults 0
 	DamageToSourceReduction int             // defaults 0
 	DefenseUsed             DefenseType     // Which defense avoided the hit (Stage 7.1)

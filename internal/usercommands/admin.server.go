@@ -88,7 +88,7 @@ func Server(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				}
 				extraSpace := strings.Repeat(` `, longestKey-len(k))
 
-				user.SendText(messaging.CategorySystem, `<ansi fg="yellow-bold">` + nameColorized + displayName + `</ansi>: <ansi fg="red-bold">` + extraSpace + util.SplitStringNL(fmt.Sprintf(`%v`, cfgData[k]), lineLength, strings.Repeat(` `, longestKey+2)) + `</ansi>`)
+				user.SendText(messaging.CategorySystem, `<ansi fg="yellow-bold">`+nameColorized+displayName+`</ansi>: <ansi fg="red-bold">`+extraSpace+util.SplitStringNL(fmt.Sprintf(`%v`, cfgData[k]), lineLength, strings.Repeat(` `, longestKey+2))+`</ansi>`)
 
 			}
 
@@ -98,12 +98,12 @@ func Server(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		if args[0] == "day" {
 			gametime.SetToDay(-1)
 			gd := gametime.GetDate()
-			user.SendText(messaging.CategorySystem, `Time set to ` + gd.String())
+			user.SendText(messaging.CategorySystem, `Time set to `+gd.String())
 			return true, nil
 		} else if args[0] == "night" {
 			gametime.SetToNight(-1)
 			gd := gametime.GetDate()
-			user.SendText(messaging.CategorySystem, `Time set to ` + gd.String())
+			user.SendText(messaging.CategorySystem, `Time set to `+gd.String())
 			return true, nil
 		}
 
@@ -402,7 +402,7 @@ func server_Config(_ string, user *users.UserRecord, room *rooms.Room, flags eve
 
 	if fullPath != "" {
 		user.SendText(messaging.CategorySystem, ``)
-		user.SendText(messaging.CategorySystem, `   [<ansi fg="6">` + fullPath + `</ansi>]`)
+		user.SendText(messaging.CategorySystem, `   [<ansi fg="6">`+fullPath+`</ansi>]`)
 	}
 
 	tplTxt, _ := templates.Process("tables/numbered-list", menuOptions, user.UserId)

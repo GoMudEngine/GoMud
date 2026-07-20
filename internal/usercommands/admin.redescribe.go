@@ -45,10 +45,10 @@ func Redescribe(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 		user.Character.StoreItem(matchItem)
 
-		user.SendText(messaging.CategorySystem, 
+		user.SendText(messaging.CategorySystem,
 			fmt.Sprintf(`You chant softly and wave your hand over the <ansi fg="item">%s</ansi>. Success! It now has a new description!`, oldNameSimple),
 		)
-		room.SendTextVisual(messaging.CategoryMobEmote, 
+		room.SendTextVisual(messaging.CategoryMobEmote,
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> chants softly and waves their hand over <ansi fg="item">%s</ansi>, causing it to glow briefly.`, user.Character.Name, oldName),
 			user.UserId,
 		)

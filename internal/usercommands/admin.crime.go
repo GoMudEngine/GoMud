@@ -62,11 +62,11 @@ func crimeShowUsage(user *users.UserRecord) {
 		user.SendText(messaging.CategorySystem, out)
 		return
 	}
-	user.SendText(messaging.CategorySystem, 
-		"Usage:\r\n" +
-			"  crime list <factionId> [--all]\r\n" +
-			"  crime show <playerName> [--all]\r\n" +
-			"  crime resolve <factionId> <crimeId> <reason>\r\n" +
+	user.SendText(messaging.CategorySystem,
+		"Usage:\r\n"+
+			"  crime list <factionId> [--all]\r\n"+
+			"  crime show <playerName> [--all]\r\n"+
+			"  crime resolve <factionId> <crimeId> <reason>\r\n"+
 			"  crime prune-stale <factionId>\r\n",
 	)
 }

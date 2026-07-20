@@ -92,4 +92,3 @@ func seedLookoutMob(t *testing.T, instanceId int) (*mobs.Mob, func()) {
 	)
 	return m, cleanup
 }
-

@@ -17,9 +17,9 @@ import (
 
 // wireMobDeathBroadcast subscribes to Life Alive→Dead transitions on
 // mob characters and handles:
-//   1. Room broadcast "X has died."  (respects dark rooms / night vision)
-//   2. Guide mob (MobId 38) tempdata for respawn throttle
-//   3. worldevents.MobKilledByPlayer emission when a player got the kill
+//  1. Room broadcast "X has died."  (respects dark rooms / night vision)
+//  2. Guide mob (MobId 38) tempdata for respawn throttle
+//  3. worldevents.MobKilledByPlayer emission when a player got the kill
 //
 // Migrated from internal/mobcommands/suicide.go lines 66-114 as
 // part of chunk-2 Task 10.

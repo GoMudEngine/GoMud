@@ -21,8 +21,8 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/relationships"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/state"
-	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/state/activity"
+	"github.com/GoMudEngine/GoMud/internal/state/awareness"
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -192,7 +192,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 			if lockpickItm.ItemId > 0 && hasSequence {
 
 				user.SendText(messaging.CategorySystem, `You know this lock well, you quickly pick it.`)
-				room.SendTextVisual(messaging.CategoryMobEmote, 
+				room.SendTextVisual(messaging.CategoryMobEmote,
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> quickly picks the lock on the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
 					user.UserId)
 
@@ -203,7 +203,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 			} else if hasKey {
 				user.SendText(messaging.CategorySystem, fmt.Sprintf(`You use the key on your key ring to unlock the <ansi fg="exit">%s</ansi> exit.`, exitName))
-				room.SendTextVisual(messaging.CategoryMobEmote, 
+				room.SendTextVisual(messaging.CategoryMobEmote,
 					fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
 					user.UserId)
 
@@ -222,7 +222,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 					room.PlaySound(`change`, `other`)
 
 					user.SendText(messaging.CategorySystem, fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="exit">%s</ansi> exit, and add it to your key ring for the future.`, itmSpec.Name, exitName))
-					room.SendTextVisual(messaging.CategoryMobEmote, 
+					room.SendTextVisual(messaging.CategoryMobEmote,
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
 						user.UserId)
 
@@ -436,7 +436,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 				// Target-specific detection roll: does the mover sense pursuit?
 				if shadowDetectionRoll(shadowP, user, destRoom) {
-					user.SendText(messaging.CategorySystem, 
+					user.SendText(messaging.CategorySystem,
 						"You sense someone following close behind you.")
 				}
 			}
@@ -734,7 +734,7 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 			if !user.Character.IsHidden() {
 
-				room.SendTextVisual(messaging.CategoryMobEmote, 
+				room.SendTextVisual(messaging.CategoryMobEmote,
 					fmt.Sprintf(string(c.ExitRoomMessageWrapper),
 						fmt.Sprintf(`<ansi fg="username">%s</ansi> is bumping into walls.`, user.Character.Name),
 					),

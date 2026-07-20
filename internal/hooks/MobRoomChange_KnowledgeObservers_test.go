@@ -102,7 +102,7 @@ func TestMobRoomChange_KnowledgeObservers_NonForagerSilent(t *testing.T) {
 	room, cleanupRoom := seedHookRoom(t, roomId)
 	defer cleanupRoom()
 
-	regularTemplateId := 102 // non-forager mover
+	regularTemplateId := 102  // non-forager mover
 	observerTemplateId := 103 // non-forager bystander
 
 	regularSpec := &mobs.Mob{

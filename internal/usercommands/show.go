@@ -58,21 +58,21 @@ func Show(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		targetUser := target.(*actions.UserActor).User
 
 		// Tell the shower
-		user.SendText(messaging.CategorySystem, 
+		user.SendText(messaging.CategorySystem,
 			fmt.Sprintf(`You show the <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, showItem.DisplayName(), targetUser.Character.Name),
 		)
 
 		// Tell the Showee
-		targetUser.SendText(messaging.CategorySystem, 
+		targetUser.SendText(messaging.CategorySystem,
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> shows you their <ansi fg="item">%s</ansi>.`, user.Character.Name, showItem.DisplayName()),
 		)
 
-		targetUser.SendText(messaging.CategorySystem, 
-			"\n" + showItem.GetLongDescription() + "\n",
+		targetUser.SendText(messaging.CategorySystem,
+			"\n"+showItem.GetLongDescription()+"\n",
 		)
 
 		// Tell the rest of the room
-		room.SendTextVisual(messaging.CategoryMobEmote, 
+		room.SendTextVisual(messaging.CategoryMobEmote,
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="username">%s</ansi>.`, user.Character.Name, showItem.DisplayName(), targetUser.Character.Name),
 			targetUser.UserId,
 			user.UserId)
@@ -81,11 +81,11 @@ func Show(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		targetMob := target.(*actions.MobActor).Mob
 
-		user.SendText(messaging.CategorySystem, 
+		user.SendText(messaging.CategorySystem,
 			fmt.Sprintf(`You show the <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, showItem.DisplayName(), targetMob.Character.Name),
 		)
 
-		room.SendTextVisual(messaging.CategoryMobEmote, 
+		room.SendTextVisual(messaging.CategoryMobEmote,
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> shows their <ansi fg="item">%s</ansi> to <ansi fg="mobname">%s</ansi>.`, user.Character.Name, showItem.DisplayName(), targetMob.Character.Name),
 			user.UserId,
 		)

@@ -13,7 +13,7 @@ func TestParseSubmissionPolicy(t *testing.T) {
 		"subdue":  characters.PolicySubdue,
 		"cripple": characters.PolicyCripple,
 		"lethal":  characters.PolicyLethal,
-		"MERCY":   characters.PolicyMercy, // case-insensitive
+		"MERCY":   characters.PolicyMercy,  // case-insensitive
 		"":        characters.PolicySubdue, // default
 	}
 	for input, want := range cases {
@@ -50,16 +50,16 @@ func TestParseSurrenderPolicy(t *testing.T) {
 
 func TestDefaultSubmissionPolicyForArchetype(t *testing.T) {
 	cases := map[string]characters.SubmissionPolicy{
-		"predator":         characters.PolicySubdue,
-		"bandit":           characters.PolicySubdue,
-		"guard":            characters.PolicySubdue,
-		"defensive_caster": characters.PolicyMercy,
-		"tank_taunter":     characters.PolicySubdue,
-		"leader":           characters.PolicyCripple,
-		"generic_fighter":  characters.PolicySubdue,
-		"civilian":         characters.PolicyMercy,
-		"lookout":          characters.PolicySubdue,
-		"":                 characters.PolicySubdue, // unknown → default
+		"predator":          characters.PolicySubdue,
+		"bandit":            characters.PolicySubdue,
+		"guard":             characters.PolicySubdue,
+		"defensive_caster":  characters.PolicyMercy,
+		"tank_taunter":      characters.PolicySubdue,
+		"leader":            characters.PolicyCripple,
+		"generic_fighter":   characters.PolicySubdue,
+		"civilian":          characters.PolicyMercy,
+		"lookout":           characters.PolicySubdue,
+		"":                  characters.PolicySubdue, // unknown → default
 		"some_unrecognized": characters.PolicySubdue,
 	}
 	for arch, want := range cases {

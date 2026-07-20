@@ -37,9 +37,9 @@ type economyAPIResponse struct {
 
 type deltaSet struct {
 	UnixTs   int64                          `json:"unix_ts,omitempty"`
-	Shops    map[string]health.ShopDelta    `json:"shops"`     // key "{zone}/{mobId}/{roomId}"
-	Foragers map[string]health.ForagerDelta `json:"foragers"`  // key is mobId as string
-	Caravans map[string]health.CaravanDelta `json:"caravans"`  // key is instId as string
+	Shops    map[string]health.ShopDelta    `json:"shops"`    // key "{zone}/{mobId}/{roomId}"
+	Foragers map[string]health.ForagerDelta `json:"foragers"` // key is mobId as string
+	Caravans map[string]health.CaravanDelta `json:"caravans"` // key is instId as string
 }
 
 func economyAPI(w http.ResponseWriter, r *http.Request) {

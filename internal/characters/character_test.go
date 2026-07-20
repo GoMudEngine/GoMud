@@ -2094,7 +2094,7 @@ func TestCharacter_GetSkillLevel(t *testing.T) {
 			name: "Multiple skills, get correct one",
 			args: args{
 				skillsMap: map[string]int{
-					string(skills.Spellcasting):  2,
+					string(skills.Spellcasting): 2,
 					string(skills.WeaponCombat): 1,
 					string(skills.Search):       4,
 				},
@@ -2261,31 +2261,31 @@ func TestCharacter_GetAttackStaminaCost(t *testing.T) {
 
 func TestCharacter_DeductAttackStamina(t *testing.T) {
 	tests := []struct {
-		name            string
-		initialStamina  int
-		weaponId        int
-		expectedDeducted int
+		name              string
+		initialStamina    int
+		weaponId          int
+		expectedDeducted  int
 		expectedRemaining int
 	}{
 		{
-			name:            "Sufficient stamina - unarmed",
-			initialStamina:  100,
-			weaponId:        0,
-			expectedDeducted: 4,
+			name:              "Sufficient stamina - unarmed",
+			initialStamina:    100,
+			weaponId:          0,
+			expectedDeducted:  4,
 			expectedRemaining: 96,
 		},
 		{
-			name:            "Insufficient stamina",
-			initialStamina:  2,
-			weaponId:        0,
-			expectedDeducted: 2, // Deducts what's available
+			name:              "Insufficient stamina",
+			initialStamina:    2,
+			weaponId:          0,
+			expectedDeducted:  2, // Deducts what's available
 			expectedRemaining: 0,
 		},
 		{
-			name:            "Zero stamina",
-			initialStamina:  0,
-			weaponId:        0,
-			expectedDeducted: 0,
+			name:              "Zero stamina",
+			initialStamina:    0,
+			weaponId:          0,
+			expectedDeducted:  0,
 			expectedRemaining: 0,
 		},
 	}

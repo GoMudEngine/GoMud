@@ -70,10 +70,10 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			GoldChange: -dropAmt,
 		})
 
-		user.SendText(messaging.CategorySystem, 
+		user.SendText(messaging.CategorySystem,
 			fmt.Sprintf(`You drop <ansi fg="gold">%d gold</ansi> on the floor.`, dropAmt),
 		)
-		room.SendTextVisual(messaging.CategoryLoot, 
+		room.SendTextVisual(messaging.CategoryLoot,
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> drops <ansi fg="gold">%d gold</ansi>.`, user.Character.Name, dropAmt),
 			user.UserId,
 		)
@@ -98,7 +98,7 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You don't have any "%s" to drop.`, itemName))
 		} else {
 			user.SendText(messaging.CategorySystem, fmt.Sprintf(`You drop %d item(s).`, dropped))
-			room.SendTextVisual(messaging.CategoryLoot, 
+			room.SendTextVisual(messaging.CategoryLoot,
 				fmt.Sprintf(`<ansi fg="username">%s</ansi> drops some items.`, user.Character.Name),
 				user.UserId,
 			)
@@ -117,10 +117,10 @@ func Drop(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 		iSpec := result.Item.GetSpec()
 
-		user.SendText(messaging.CategorySystem, 
+		user.SendText(messaging.CategorySystem,
 			fmt.Sprintf(`You drop the <ansi fg="item">%s</ansi>.`, result.Item.DisplayName()),
 		)
-		room.SendTextVisual(messaging.CategoryLoot, 
+		room.SendTextVisual(messaging.CategoryLoot,
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> drops their <ansi fg="item">%s</ansi>...`, user.Character.Name, result.Item.DisplayName()),
 			user.UserId,
 		)

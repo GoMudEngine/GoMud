@@ -14,9 +14,9 @@ var (
 
 // PackBonus describes a single pack bonus award for external handling.
 type PackBonus struct {
-	GroupTag    string
-	MemberIds  []int  // Instance IDs of mobs that received bonuses
-	ReachedMax bool   // True if any member hit PackMaxBonus
+	GroupTag   string
+	MemberIds  []int // Instance IDs of mobs that received bonuses
+	ReachedMax bool  // True if any member hit PackMaxBonus
 }
 
 // TickPackSurvival checks all mob groups for pack survival bonuses.

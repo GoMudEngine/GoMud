@@ -45,7 +45,7 @@ func DeleteCharacter(rest string, user *users.UserRecord, room *rooms.Room, flag
 	oldName := user.Character.Name
 	user.EventLog.Add(`char`, `Account deleted by user.`)
 
-	room.SendTextVisual(messaging.CategoryMobEmote, 
+	room.SendTextVisual(messaging.CategoryMobEmote,
 		fmt.Sprintf(`<ansi fg="username">%s</ansi>'s form dissolves into shimmering dust.`, oldName),
 		user.UserId)
 	user.SendText(messaging.CategorySystem, fmt.Sprintf(

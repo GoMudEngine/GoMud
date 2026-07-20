@@ -30,7 +30,7 @@ func TestAttack_PlayerAttackImmune_RebuffsAttack(t *testing.T) {
 		MobId:              5,
 		InstanceId:         200,
 		HomeRoomId:         1,
-		AutoAggro: true,
+		AutoAggro:          true,
 		NonCombatant:       false,
 		PlayerAttackImmune: true,
 		Character: characters.Character{
@@ -106,7 +106,7 @@ func TestAttackBumpsOpinion(t *testing.T) {
 		MobId:      1,
 		InstanceId: 250,
 		HomeRoomId: 1,
-		AutoAggro: false,
+		AutoAggro:  false,
 		Character: characters.Character{
 			Name:      "Skeleton",
 			RoomId:    1,
@@ -150,7 +150,7 @@ func TestAttackOnSameTargetDoesNotDoubleBump(t *testing.T) {
 		MobId:      1,
 		InstanceId: 251,
 		HomeRoomId: 1,
-		AutoAggro: false,
+		AutoAggro:  false,
 		Character: characters.Character{
 			Name:      "Skeleton",
 			RoomId:    1,
@@ -286,7 +286,7 @@ enemies: []
 		MobId:      100,
 		InstanceId: 300,
 		HomeRoomId: 1,
-		AutoAggro: false,
+		AutoAggro:  false,
 		Groups:     []string{"thornwall_citizens"},
 		Character: characters.Character{
 			Name:      "city beggar",

@@ -127,4 +127,3 @@ func TestLookout_HeardCallforhelp_IssuesGoCommand(t *testing.T) {
 		t.Fatalf("expected `go south`; got: %q", cmd)
 	}
 }
-

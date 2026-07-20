@@ -330,8 +330,8 @@ func Cast(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				}
 			}
 			if anchorRoom <= 0 {
-				user.SendText(messaging.CategorySystem, `You reach for the Veil, but there is no anchor to ` +
-					`pull you. Set one first with ` +
+				user.SendText(messaging.CategorySystem, `You reach for the Veil, but there is no anchor to `+
+					`pull you. Set one first with `+
 					`<ansi fg="command">cast fold-anchor</ansi>.`)
 				blocked = true
 			} else if anchorRoom == currentRoomId {

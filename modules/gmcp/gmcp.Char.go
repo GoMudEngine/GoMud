@@ -363,10 +363,10 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 
 	if all || g.wantsGMCPPayload(`Char.Info`, gmcpModule) {
 		payload.Info = &GMCPCharModule_Payload_Info{
-			Account:   user.Username,
-			Name:      user.Character.Name,
-			Class:     skills.GetTitle(user.Character.Mutations, user.Character.GetAllSkillRanks(), user.Character.Stats),
-			Race:      casing.Title(user.Character.Species()),
+			Account: user.Username,
+			Name:    user.Character.Name,
+			Class:   skills.GetTitle(user.Character.Mutations, user.Character.GetAllSkillRanks(), user.Character.Stats),
+			Race:    casing.Title(user.Character.Species()),
 		}
 
 		if !all {
@@ -648,7 +648,7 @@ func (g *GMCPCharModule) GetCharNode(user *users.UserRecord, gmcpModule string) 
 			}
 
 			if totalSteps > 0 {
-					// Scale THEN floor — the old `Floor(ratio) * 100` floored the 0..1
+				// Scale THEN floor — the old `Floor(ratio) * 100` floored the 0..1
 				// ratio to 0 for anything under 100%, so every in-progress quest
 				// reported 0% (the panel's progress bars never filled).
 				questPayload.Completion = int(math.Floor(float64(completedSteps) / float64(totalSteps) * 100))
@@ -770,10 +770,10 @@ func conditionDurationLabel(rounds int) string {
 // Char.Info
 // /////////////////
 type GMCPCharModule_Payload_Info struct {
-	Account   string `json:"account,omitempty"`
-	Name      string `json:"name,omitempty"`
-	Class     string `json:"class,omitempty"`
-	Race      string `json:"race,omitempty"`
+	Account string `json:"account,omitempty"`
+	Name    string `json:"name,omitempty"`
+	Class   string `json:"class,omitempty"`
+	Race    string `json:"race,omitempty"`
 }
 
 // /////////////////
@@ -825,7 +825,7 @@ type GMCPCharModule_Payload_Inventory_Backpack_Summary struct {
 
 type GMCPCharModule_Payload_Inventory_Item struct {
 	Id      string   `json:"id"`
-	Handle  string   `json:"handle"`  // opaque per-instance target token (item UUID)
+	Handle  string   `json:"handle"` // opaque per-instance target token (item UUID)
 	Name    string   `json:"name"`
 	Type    string   `json:"type"`
 	SubType string   `json:"subtype"`

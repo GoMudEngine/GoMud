@@ -439,7 +439,7 @@ func TestGetDefense(t *testing.T) {
 	cleanup := seedRegistry()
 	defer cleanup()
 
-	item := Item{ItemId: 20001} // chain mail
+	item := Item{ItemId: 20001}           // chain mail
 	assert.Equal(t, 0, item.GetDefense()) // DamageReduction not set on chain mail
 
 	// Test with override spec
@@ -1057,9 +1057,9 @@ func TestGetDiceRoll(t *testing.T) {
 	// Item with spec
 	item2 := Item{ItemId: 1, Spec: &ItemSpec{
 		Damage: Damage{
-			Attacks:   2,
-			DiceCount: 3,
-			SideCount: 6,
+			Attacks:     2,
+			DiceCount:   3,
+			SideCount:   6,
 			BonusDamage: 4,
 			CritBuffIds: []int{10, 20},
 		},
@@ -1099,9 +1099,9 @@ func TestGetDistributionDamage(t *testing.T) {
 	// Legacy dice path (DiceCount/SideCount → converted)
 	item3 := Item{ItemId: 1, Spec: &ItemSpec{
 		Damage: Damage{
-			Attacks:   1,
-			DiceCount: 2,
-			SideCount: 6,
+			Attacks:     1,
+			DiceCount:   2,
+			SideCount:   6,
 			BonusDamage: 1,
 		},
 	}}

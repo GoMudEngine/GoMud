@@ -471,9 +471,9 @@ func seedMultipleEnemiesRoom(
 		specs[tid] = &mobs.Mob{
 			MobId: mobs.MobId(tid),
 			Character: characters.Character{
-				Name:  name,
+				Name:   name,
 				RoomId: roomId,
-				Buffs: buffs.New(),
+				Buffs:  buffs.New(),
 			},
 		}
 		instances[iid] = &mobs.Mob{

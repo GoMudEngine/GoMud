@@ -59,13 +59,13 @@ type DisengagingData struct {
 // function returns true if the transition is OK, false if
 // it should be vetoed.
 type vetoChain struct {
-	combatantSelf   func() bool                 // self.Combatant
-	activitySelf    func() bool                 // self.Activity == Free
-	lifeSelf        func() bool                 // self.Life == Alive
-	positionSelf    func() bool                 // self.Position == Standing (for flee only)
-	targetCombatant func(state.ActorRef) bool   // target.Combatant
-	targetLife      func(state.ActorRef) bool   // target.Life == Alive
-	targetPresence  func(state.ActorRef) bool   // target.Presence available
+	combatantSelf   func() bool               // self.Combatant
+	activitySelf    func() bool               // self.Activity == Free
+	lifeSelf        func() bool               // self.Life == Alive
+	positionSelf    func() bool               // self.Position == Standing (for flee only)
+	targetCombatant func(state.ActorRef) bool // target.Combatant
+	targetLife      func(state.ActorRef) bool // target.Life == Alive
+	targetPresence  func(state.ActorRef) bool // target.Presence available
 }
 
 // Machine wraps state.Machine[State] with Combat-Phase-specific
@@ -76,16 +76,16 @@ type vetoChain struct {
 // only establishes the type with empty data slots and the basic
 // State() / Inner() accessors.
 type Machine struct {
-	inner                    *state.Machine[State]
-	self                     state.ActorRef // own identity, set by RegisterMachine
-	engaging                 *EngagingData
-	engaged                  *EngagedData
-	disengaging              *DisengagingData
-	attackers                         []state.ActorRef // inbound attacker list
-	attackersChangeListeners          []func([]state.ActorRef)
-	vetoes                            vetoChain
-	endOfRoundIfSurpriseCallbacks     []func(state.TransitionReason)
-	tickEventListeners                []func(name string, r state.TransitionReason)
+	inner                         *state.Machine[State]
+	self                          state.ActorRef // own identity, set by RegisterMachine
+	engaging                      *EngagingData
+	engaged                       *EngagedData
+	disengaging                   *DisengagingData
+	attackers                     []state.ActorRef // inbound attacker list
+	attackersChangeListeners      []func([]state.ActorRef)
+	vetoes                        vetoChain
+	endOfRoundIfSurpriseCallbacks []func(state.TransitionReason)
+	tickEventListeners            []func(name string, r state.TransitionReason)
 }
 
 // NewMachine returns a Combat Phase machine in Idle.

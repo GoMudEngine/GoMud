@@ -173,4 +173,3 @@ func TestCastReadinessDrift(t *testing.T) {
 		})
 	}
 }
-

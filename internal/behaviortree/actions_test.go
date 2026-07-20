@@ -986,4 +986,3 @@ func TestActTrySpecialMove_NoAggroReturnsFailure(t *testing.T) {
 		t.Errorf("expected Failure (no aggro), got %v", result)
 	}
 }
-

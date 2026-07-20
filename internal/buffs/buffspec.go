@@ -85,7 +85,7 @@ const (
 	// these to avoid showing the same effect twice. Mirrors the Hidden filter.
 	ConditionMirror Flag = `condition-mirror`
 
-	Dampened        Flag = `dampened` // #22 crash-site: Chrysalis suppression — mutation/spell power scaled down
+	Dampened Flag = `dampened` // #22 crash-site: Chrysalis suppression — mutation/spell power scaled down
 
 	// Arbitrarily chosen round for calculating trigger round counts
 	validationRound = 1000000

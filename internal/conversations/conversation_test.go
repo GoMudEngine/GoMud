@@ -20,7 +20,7 @@ func TestGetPool_UnknownReturnsNil(t *testing.T) {
 
 func TestGetPairOverride_OrderIndependent(t *testing.T) {
 	registerTestPool(&Pool{
-		Id: "friend",
+		Id:        "friend",
 		Exchanges: []Exchange{{Lines: []ConversationLine{{Speaker: "A", Text: "x"}}}},
 	})
 	defer unregisterTestPool("friend")

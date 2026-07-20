@@ -55,7 +55,7 @@ func Paz(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 	}
 
-	user.SendText(messaging.CategorySystem, `You paz yourself with a ` + beamOfLight + `!`)
+	user.SendText(messaging.CategorySystem, `You paz yourself with a `+beamOfLight+`!`)
 	room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(`<ansi fg="username">%s</ansi> illuminates <ansi fg="username">%s</ansi> with a %s!`, user.Character.Name, user.Character.Name, beamOfLight), user.UserId)
 
 	if user.Character.Health != user.Character.HealthMax.Value || user.Character.Conviction != user.Character.ConvictionMax.Value {

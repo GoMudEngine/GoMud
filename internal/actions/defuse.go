@@ -21,9 +21,9 @@ type DefuseOptions struct {
 
 // DefuseResult is the structured outcome of a defuse attempt.
 type DefuseResult struct {
-	Succeeded      bool   // skill check passed and trap was removed
-	TrapName       string // display name of the targeted container/exit
-	KitConsumed    bool   // disarm kit was consumed (always true when a kit was
+	Succeeded   bool   // skill check passed and trap was removed
+	TrapName    string // display name of the targeted container/exit
+	KitConsumed bool   // disarm kit was consumed (always true when a kit was
 	//                       present and the attempt proceeded past the kit gate)
 	KitBonusUsed   int    // stat bonus contributed by the consumed kit
 	TriggeredTraps []int  // on failure, buff IDs of traps that fired

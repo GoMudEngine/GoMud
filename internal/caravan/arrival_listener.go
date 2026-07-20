@@ -98,13 +98,14 @@ func stampStateStartedRound(leader *mobs.Mob) {
 // the Stillwater vendor circuit.
 //
 // Also handles two safeties:
-//   5.2 (chunk 3.7 carryover): if the leader carries the
-//   patrol_fresh_respawn marker (just respawned at depot after a
-//   death), regroup any stranded crew via ForceRegroupCrew.
-//   5.3 (chunk 3.8): if Lars is co-located at the depot with cargo
-//   in his inventory and no active patrol (e.g., his oneshot
-//   home-fallback fired and never produced a PatrolCompleted),
-//   transfer his cargo back to the wagon now.
+//
+//	5.2 (chunk 3.7 carryover): if the leader carries the
+//	patrol_fresh_respawn marker (just respawned at depot after a
+//	death), regroup any stranded crew via ForceRegroupCrew.
+//	5.3 (chunk 3.8): if Lars is co-located at the depot with cargo
+//	in his inventory and no active patrol (e.g., his oneshot
+//	home-fallback fired and never produced a PatrolCompleted),
+//	transfer his cargo back to the wagon now.
 func handleDepotArrival(leader *mobs.Mob, arrival events.PatrolWaypointArrival) {
 	// 5.2 fresh-respawn regroup (chunk 3.7 carryover).
 	if arrival.WaypointIdx == 0 {

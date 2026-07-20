@@ -33,7 +33,7 @@ func Warcry(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	user.SendText(messaging.CategorySystem, `<ansi fg="red-bold">You let out a thunderous warcry that ignites the fighting spirit of your allies!</ansi>`)
-	room.SendTextVisual(messaging.CategoryWarcry, 
+	room.SendTextVisual(messaging.CategoryWarcry,
 		fmt.Sprintf(`<ansi fg="red-bold"><ansi fg="username">%s</ansi> lets out a thunderous warcry!</ansi>`, user.Character.Name),
 		user.UserId,
 	)
@@ -48,7 +48,7 @@ func Warcry(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 				if memberUser.Character.RoomId == user.Character.RoomId {
 					memberUser.Character.AddCondition(characters.ConditionWarcry, result.Duration, result.Bonus, "warcry")
 					memberUser.Character.AddBuff(79, false)
-					memberUser.SendText(messaging.CategorySystem, 
+					memberUser.SendText(messaging.CategorySystem,
 						fmt.Sprintf(`<ansi fg="red-bold"><ansi fg="username">%s</ansi>'s warcry stirs your blood!</ansi>`, user.Character.Name))
 
 					// Apply to this party member's companions in the room

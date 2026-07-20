@@ -15,17 +15,17 @@ func TestSelectPackAlpha_HighestStatPool(t *testing.T) {
 
 	mobInstances[200] = &Mob{
 		MobId: 1, InstanceId: 200, StatPool: 100,
-		Groups: []string{"canine"},
+		Groups:    []string{"canine"},
 		Character: characters.Character{Name: "Wolf A", RoomId: 10},
 	}
 	mobInstances[201] = &Mob{
 		MobId: 1, InstanceId: 201, StatPool: 150,
-		Groups: []string{"canine"},
+		Groups:    []string{"canine"},
 		Character: characters.Character{Name: "Wolf B", RoomId: 10},
 	}
 	mobInstances[202] = &Mob{
 		MobId: 1, InstanceId: 202, StatPool: 120,
-		Groups: []string{"canine"},
+		Groups:    []string{"canine"},
 		Character: characters.Character{Name: "Wolf C", RoomId: 10},
 	}
 
@@ -161,7 +161,7 @@ func TestScatterRoundsDecrement(t *testing.T) {
 	mob := &Mob{
 		MobId: 1, InstanceId: 200, Groups: []string{"canine"},
 		ScatterRounds: 3,
-		Character: characters.Character{Name: "Wolf", RoomId: 10},
+		Character:     characters.Character{Name: "Wolf", RoomId: 10},
 	}
 	mobInstances[200] = mob
 

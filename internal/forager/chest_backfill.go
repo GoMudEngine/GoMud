@@ -37,8 +37,10 @@ func chestPoolFromRooms(chestRooms []int) (pool map[int]int, nonEmpty []int) {
 	return pool, nonEmpty
 }
 
-func chestPoolForZone(zone string) (map[int]int, []int) { return chestPoolFromRooms(ChestRoomsForZone(zone)) }
-func chestPoolAll() (map[int]int, []int)               { return chestPoolFromRooms(ChestRoomsAll()) }
+func chestPoolForZone(zone string) (map[int]int, []int) {
+	return chestPoolFromRooms(ChestRoomsForZone(zone))
+}
+func chestPoolAll() (map[int]int, []int) { return chestPoolFromRooms(ChestRoomsAll()) }
 
 // BackfillVendorFromChests tops off vendorMob's shop from the global pool of
 // all forager chests (aggregated across every zone). Free supply handoff — no

@@ -760,7 +760,7 @@ loop:
 			if err := rooms.SaveAllRooms(); err != nil {
 				mudlog.Error("rooms.SaveAllRooms()", "error", err.Error())
 			}
-			users.SaveAllUsers() // Save all user data too.
+			users.SaveAllUsers()    // Save all user data too.
 			combat.FlushAnalytics() // Stage 30.1: Final flush on shutdown
 			util.UnlockMud()
 

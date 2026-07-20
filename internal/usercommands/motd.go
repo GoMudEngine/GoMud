@@ -37,8 +37,8 @@ func Motd(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	if lw < 20 {
 		lw = 20 // sanity floor; below this the box can't render
 	}
-	innerWidth := lw - 2  // chars between the ║ borders
-	padWidth := lw - 4    // ` ║ ` (3) + `║` (1) = 4 frame chars per line
+	innerWidth := lw - 2 // chars between the ║ borders
+	padWidth := lw - 4   // ` ║ ` (3) + `║` (1) = 4 frame chars per line
 	wrapWidth := padWidth - 1
 
 	wrapped := strings.Split(messaging.WrapAnsi(text, wrapWidth), "\n")
@@ -78,4 +78,3 @@ func Motd(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	return true, nil
 }
-

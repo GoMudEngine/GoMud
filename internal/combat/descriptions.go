@@ -9,6 +9,7 @@ import (
 //
 // This creates immersive combat text instead of showing raw numbers:
 //   - "Your slash causes moderate injuries to the guard"
+//
 // instead of:
 //   - "Your slash causes 12 damage to the guard"
 //

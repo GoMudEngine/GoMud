@@ -82,7 +82,7 @@ func Dismiss(rest string, user *users.UserRecord,
 			`You release <ansi fg="mobname">%s</ansi> — it dissolves back into the energies that shaped it.`,
 			compName,
 		))
-		room.SendTextVisual(messaging.CategoryMobEmote, 
+		room.SendTextVisual(messaging.CategoryMobEmote,
 			fmt.Sprintf(
 				`<ansi fg="username">%s</ansi> dismisses `+
 					`<ansi fg="mobname">%s</ansi>; it dissolves away.`,
@@ -107,7 +107,7 @@ func Dismiss(rest string, user *users.UserRecord,
 	))
 
 	// Room message (exclude the dismissing player — they already saw it).
-	room.SendTextVisual(messaging.CategoryMobEmote, 
+	room.SendTextVisual(messaging.CategoryMobEmote,
 		fmt.Sprintf(
 			`<ansi fg="username">%s</ansi> dismisses `+
 				`<ansi fg="mobname">%s</ansi>!`,
@@ -115,7 +115,7 @@ func Dismiss(rest string, user *users.UserRecord,
 		),
 		user.UserId,
 	)
-	room.SendTextVisual(messaging.CategoryMobEmote, 
+	room.SendTextVisual(messaging.CategoryMobEmote,
 		fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> turns hostile!`,
 			compName,

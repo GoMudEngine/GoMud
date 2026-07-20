@@ -13,7 +13,7 @@ type BonusCategory string
 const (
 	CategoryAny          BonusCategory = "any"
 	CategoryArmor        BonusCategory = "armor"
-	CategoryWeapon       BonusCategory = "weapon"       // non-caster weapons
+	CategoryWeapon       BonusCategory = "weapon"        // non-caster weapons
 	CategoryWeaponCaster BonusCategory = "weapon_caster" // wand/sceptre/staff
 )
 

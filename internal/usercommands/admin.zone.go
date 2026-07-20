@@ -221,7 +221,7 @@ func zone_Edit(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 			relativeString := configs.GetFilePathsConfig().WebCDNLocation.String()
 			if len(relativeString) > 0 {
-				user.SendText(messaging.CategorySystem, `   <ansi fg="red">Note:</ansi> Music file path must be relative to: <ansi fg="red">` + relativeString + `</ansi>`)
+				user.SendText(messaging.CategorySystem, `   <ansi fg="red">Note:</ansi> Music file path must be relative to: <ansi fg="red">`+relativeString+`</ansi>`)
 			}
 
 			question := cmdPrompt.Ask(`Zone music file path?`, []string{editZoneConfig.MusicFile}, editZoneConfig.MusicFile)

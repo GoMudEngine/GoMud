@@ -138,4 +138,3 @@ func lookupMachine(ref state.ActorRef) *Machine {
 	defer registryMu.Unlock()
 	return machineRegistry[ref]
 }
-

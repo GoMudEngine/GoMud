@@ -47,15 +47,15 @@ func newFakeActor(name string, statAdj, healthMax int, isPlayer bool) *fakeActor
 	}
 }
 
-func (a *fakeActor) GetCharacter() *characters.Character      { return a.char }
-func (a *fakeActor) GetRoom() *rooms.Room                     { return nil }
+func (a *fakeActor) GetCharacter() *characters.Character       { return a.char }
+func (a *fakeActor) GetRoom() *rooms.Room                      { return nil }
 func (a *fakeActor) SendText(_ messaging.Category, msg string) { a.sent = append(a.sent, msg) }
-func (a *fakeActor) SendRoomCommunication(msg string, _ bool) {}
-func (a *fakeActor) GetName() string                            { return a.name }
-func (a *fakeActor) IsPlayer() bool                             { return a.isPlayer }
-func (a *fakeActor) GetUserId() int                             { return 0 }
-func (a *fakeActor) GetMobInstanceId() int                      { return 0 }
-func (a *fakeActor) AddBuff(buffId int, source string)          {}
+func (a *fakeActor) SendRoomCommunication(msg string, _ bool)  {}
+func (a *fakeActor) GetName() string                           { return a.name }
+func (a *fakeActor) IsPlayer() bool                            { return a.isPlayer }
+func (a *fakeActor) GetUserId() int                            { return 0 }
+func (a *fakeActor) GetMobInstanceId() int                     { return 0 }
+func (a *fakeActor) AddBuff(buffId int, source string)         {}
 func (a *fakeActor) OnSkillUse(skillName string) bool {
 	a.statUses[skillName]++
 	return false

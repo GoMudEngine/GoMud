@@ -429,4 +429,3 @@ func resolveMobHelpMultiTargets(actor Actor, room *rooms.Room) ([]int, []int) {
 
 	return targetMobInstanceIds, targetUserIds
 }
-

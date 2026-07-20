@@ -54,11 +54,11 @@ func seedRegistry() func() {
 			},
 			"barrel": {},
 		},
-		Pvp:       true,
-		visitors:  make(map[VisitorType]map[int]uint64),
-		players:   []int{},
-		Signs:     []Sign{},
-		Biome:     "city",
+		Pvp:      true,
+		visitors: make(map[VisitorType]map[int]uint64),
+		players:  []int{},
+		Signs:    []Sign{},
+		Biome:    "city",
 	}
 
 	// Room 2: simple room

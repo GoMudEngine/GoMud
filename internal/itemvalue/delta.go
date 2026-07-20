@@ -336,11 +336,12 @@ func ItemValueDelta(char *characters.Character, profile WeightProfile, candidate
 // encumbranceTier returns a tier index 0..4 from a
 // carryWeight/capacity ratio. Higher index = worse.
 // Thresholds match userrecord.prompt.go:518-527.
-//   0 = light (ratio ≤ 0.25)
-//   1 = moderate (ratio ≤ 0.50)
-//   2 = heavy (ratio ≤ 0.75)
-//   3 = overburdened (ratio ≤ 1.00)
-//   4 = crushed (ratio > 1.00)
+//
+//	0 = light (ratio ≤ 0.25)
+//	1 = moderate (ratio ≤ 0.50)
+//	2 = heavy (ratio ≤ 0.75)
+//	3 = overburdened (ratio ≤ 1.00)
+//	4 = crushed (ratio > 1.00)
 func encumbranceTier(ratio float64) int {
 	switch {
 	case ratio <= 0.25:

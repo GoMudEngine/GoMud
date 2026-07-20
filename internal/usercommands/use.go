@@ -78,7 +78,7 @@ func Use(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		itemSpec := matchItem.GetSpec()
 
 		if itemSpec.Subtype != items.Usable {
-			user.SendText(messaging.CategorySystem, 
+			user.SendText(messaging.CategorySystem,
 				fmt.Sprintf(`You can't use <ansi fg="itemname">%s</ansi>.`, matchItem.DisplayName()))
 			return true, nil
 		}

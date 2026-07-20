@@ -429,9 +429,10 @@ func (c *Character) CheckRegenProgression(statName string, userId int, chance fl
 // Formula: chance = RegenProgressionBase × (1 - current/max) ^ RegenProgressionCurve
 //
 // Resource→stat mappings:
-//   Health    → vitality, willpower
-//   Stamina   → strength, vitality
-//   Conviction→ willpower, charisma
+//
+//	Health    → vitality, willpower
+//	Stamina   → strength, vitality
+//	Conviction→ willpower, charisma
 func (c *Character) OnRegenTick(current, max int, relatedStats []string, userId int) {
 	if !configs.GetGamePlayConfig().UseSkillProgression {
 		return

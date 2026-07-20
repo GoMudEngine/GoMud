@@ -18,20 +18,20 @@ func TestPositionReachRadius_AllStates(t *testing.T) {
 	groundR := float64(cfg.ReachGroundGrappleRadius)
 
 	cases := map[position.State]float64{
-		position.Standing:    0,
-		position.Prone:       0,
-		position.Supine:      0,
-		position.Turtle:      0,
-		position.Clinch:      standR,
+		position.Standing:     0,
+		position.Prone:        0,
+		position.Supine:       0,
+		position.Turtle:       0,
+		position.Clinch:       standR,
 		position.BackStanding: standR,
-		position.Mount:       groundR,
-		position.SideControl: groundR,
-		position.KneeOnBelly: groundR,
-		position.NorthSouth:  groundR,
-		position.Crucifix:    groundR,
-		position.BackGround:  groundR,
-		position.HalfGuard:   groundR,
-		position.Guard:       groundR,
+		position.Mount:        groundR,
+		position.SideControl:  groundR,
+		position.KneeOnBelly:  groundR,
+		position.NorthSouth:   groundR,
+		position.Crucifix:     groundR,
+		position.BackGround:   groundR,
+		position.HalfGuard:    groundR,
+		position.Guard:        groundR,
 	}
 	for s, want := range cases {
 		assert.Equal(t, want, PositionReachRadius(s), "state %s", s)

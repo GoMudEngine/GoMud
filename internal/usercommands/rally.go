@@ -34,7 +34,7 @@ func Rally(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	}
 
 	user.SendText(messaging.CategorySystem, `<ansi fg="cyan-bold">You rally your allies with an inspiring shout that steadies their resolve!</ansi>`)
-	room.SendTextVisual(messaging.CategoryRally, 
+	room.SendTextVisual(messaging.CategoryRally,
 		fmt.Sprintf(`<ansi fg="cyan-bold"><ansi fg="username">%s</ansi> rallies everyone with an inspiring shout!</ansi>`, user.Character.Name),
 		user.UserId,
 	)
@@ -51,7 +51,7 @@ func Rally(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 			}
 			memberUser.Character.AddCondition(characters.ConditionRally, result.Duration, result.Bonus, "rally")
 			memberUser.Character.AddBuff(80, false)
-			memberUser.SendText(messaging.CategorySystem, 
+			memberUser.SendText(messaging.CategorySystem,
 				fmt.Sprintf(`<ansi fg="cyan-bold"><ansi fg="username">%s</ansi>'s rallying cry steadies your nerves!</ansi>`, user.Character.Name))
 			applyRallyToCompanions(memberUser, room, result.Bonus, result.Duration)
 		}

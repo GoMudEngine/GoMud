@@ -28,7 +28,6 @@ import (
 
 // ─── Test Infrastructure ──────────────────────────────────────────────────────
 
-
 // setCombatPositionParallel sets the Position FSM to the given state. Seeds
 // Position if nil. Synthetic Partner ref for grapple states (FSM requires non-zero).
 func setCombatPositionParallel(c *characters.Character, pos position.State) {
@@ -99,7 +98,7 @@ func seedAllRegistries() func() {
 		1: {
 			MobId:         1,
 			Zone:          "TestZone",
-			AutoAggro: true,
+			AutoAggro:     true,
 			ActivityLevel: 50,
 			Groups:        []string{"undead"},
 			Character: characters.Character{
@@ -109,7 +108,7 @@ func seedAllRegistries() func() {
 		2: {
 			MobId:         2,
 			Zone:          "TestZone",
-			AutoAggro: false,
+			AutoAggro:     false,
 			ActivityLevel: 30,
 			Character: characters.Character{
 				Name: "Merchant",
@@ -121,7 +120,7 @@ func seedAllRegistries() func() {
 			MobId:      1,
 			InstanceId: 100,
 			HomeRoomId: 1,
-			AutoAggro: true,
+			AutoAggro:  true,
 			Groups:     []string{"undead"},
 			Character: characters.Character{
 				Name:      "Skeleton",
@@ -741,10 +740,10 @@ func TestStand_CancelsSleeping(t *testing.T) {
 	defer cleanupUsers()
 
 	room := &rooms.Room{
-		RoomId:  99,
-		Zone:    "TestZone",
-		Title:   "Test Room",
-		Biome:   "default",
+		RoomId: 99,
+		Zone:   "TestZone",
+		Title:  "Test Room",
+		Biome:  "default",
 	}
 	cleanupBiomes := rooms.SeedBiomesForTest(map[string]*rooms.BiomeInfo{
 		"default": {BiomeId: "default", Name: "Default", Symbol: ".", LitArea: true, MovementCost: 1.0},

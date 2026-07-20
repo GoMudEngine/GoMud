@@ -17,37 +17,37 @@ import (
 type SpellType string
 
 type SpellData struct {
-	SpellId     string     `yaml:"spellid,omitempty"`
-	Name        string     `yaml:"name,omitempty"`
-	Aliases     []string   `yaml:"aliases,omitempty"` // short single-word invocation forms (primary first)
-	Description string     `yaml:"description,omitempty"`
-	Type        SpellType  `yaml:"type,omitempty"`
-	Schools     []string   `yaml:"schools,omitempty"`    // Can have multiple school tags
-	Categories  []string   `yaml:"categories,omitempty"` // AI categorization: self_defense, self_offense, etc. Free-form strings.
-	Cost        int        `yaml:"cost,omitempty"`    // Conviction cost
-	HealthCost  int        `yaml:"healthcost,omitempty"` // Optional Health cost for life-force magic
-	WaitRounds  int        `yaml:"waitrounds,omitempty"`
-	Difficulty  int        `yaml:"difficulty,omitempty"` // Augments final success chance by this %
-	PrimaryStat         string `yaml:"primarystat,omitempty"`          // Stat used for spell rolls and progression
-	BaseFolds           int    `yaml:"base_folds,omitempty"`           // 0 = default to 4
-	TargetDefenseType   string `yaml:"target_defense_type,omitempty"`  // "physical", "mental", "" = none
-	ComponentTag        string `yaml:"component_tag,omitempty"`        // Required item component tag (e.g. "stone")
-	EffectType          string  `yaml:"effect_type,omitempty"`          // "damage"|"heal"|"buff"|"shield"|"dot"|"knockdown"|"charm"|"drain_area" (mob-cast only: area life-drain + self-heal, see resolveMobDrainArea)
-	EffectMagnitude     int     `yaml:"effect_magnitude,omitempty"`     // Legacy: base damage/heal amount
-	DamageMultiplier    float64 `yaml:"damage_multiplier,omitempty"`   // Spell damage multiplier for new pipeline (Stage 34)
-	EffectDuration      int    `yaml:"effect_duration,omitempty"`      // DoT tick count (default 0 = use 3)
-	BuffIds             []int  `yaml:"buff_ids,omitempty"`             // Buff IDs to apply (for "buff" effect type)
-	QuestRequired       string `yaml:"quest_required,omitempty"`       // Quest token required before spell can be discovered
-	NoDamageInterrupt   bool   `yaml:"no_damage_interrupt,omitempty"`  // Telegraphed casts: skip damage/position concentration-break (still interrupted by the disruptor system)
-	IgnoreMoveCooldown  bool   `yaml:"ignore_move_cooldown,omitempty"` // Scripted boss abilities: bypass the shared special-move cast cooldown (btree controls cadence)
+	SpellId            string    `yaml:"spellid,omitempty"`
+	Name               string    `yaml:"name,omitempty"`
+	Aliases            []string  `yaml:"aliases,omitempty"` // short single-word invocation forms (primary first)
+	Description        string    `yaml:"description,omitempty"`
+	Type               SpellType `yaml:"type,omitempty"`
+	Schools            []string  `yaml:"schools,omitempty"`    // Can have multiple school tags
+	Categories         []string  `yaml:"categories,omitempty"` // AI categorization: self_defense, self_offense, etc. Free-form strings.
+	Cost               int       `yaml:"cost,omitempty"`       // Conviction cost
+	HealthCost         int       `yaml:"healthcost,omitempty"` // Optional Health cost for life-force magic
+	WaitRounds         int       `yaml:"waitrounds,omitempty"`
+	Difficulty         int       `yaml:"difficulty,omitempty"`           // Augments final success chance by this %
+	PrimaryStat        string    `yaml:"primarystat,omitempty"`          // Stat used for spell rolls and progression
+	BaseFolds          int       `yaml:"base_folds,omitempty"`           // 0 = default to 4
+	TargetDefenseType  string    `yaml:"target_defense_type,omitempty"`  // "physical", "mental", "" = none
+	ComponentTag       string    `yaml:"component_tag,omitempty"`        // Required item component tag (e.g. "stone")
+	EffectType         string    `yaml:"effect_type,omitempty"`          // "damage"|"heal"|"buff"|"shield"|"dot"|"knockdown"|"charm"|"drain_area" (mob-cast only: area life-drain + self-heal, see resolveMobDrainArea)
+	EffectMagnitude    int       `yaml:"effect_magnitude,omitempty"`     // Legacy: base damage/heal amount
+	DamageMultiplier   float64   `yaml:"damage_multiplier,omitempty"`    // Spell damage multiplier for new pipeline (Stage 34)
+	EffectDuration     int       `yaml:"effect_duration,omitempty"`      // DoT tick count (default 0 = use 3)
+	BuffIds            []int     `yaml:"buff_ids,omitempty"`             // Buff IDs to apply (for "buff" effect type)
+	QuestRequired      string    `yaml:"quest_required,omitempty"`       // Quest token required before spell can be discovered
+	NoDamageInterrupt  bool      `yaml:"no_damage_interrupt,omitempty"`  // Telegraphed casts: skip damage/position concentration-break (still interrupted by the disruptor system)
+	IgnoreMoveCooldown bool      `yaml:"ignore_move_cooldown,omitempty"` // Scripted boss abilities: bypass the shared special-move cast cooldown (btree controls cadence)
 
 	// Companion summoning fields — replaces JS onMagic for summon spells
-	SummonMobId          int    `yaml:"summon_mob_id,omitempty"`
-	SummonBasePool       int    `yaml:"summon_base_pool,omitempty"`
-	SummonScalingDivisor int    `yaml:"summon_scaling_divisor,omitempty"`
-	SummonComponentId    int    `yaml:"summon_component_id,omitempty"`
-	SummonRequiresCorpse bool   `yaml:"summon_requires_corpse,omitempty"`
-	SummonMinCorpsePool  int    `yaml:"summon_min_corpse_pool,omitempty"`
+	SummonMobId          int  `yaml:"summon_mob_id,omitempty"`
+	SummonBasePool       int  `yaml:"summon_base_pool,omitempty"`
+	SummonScalingDivisor int  `yaml:"summon_scaling_divisor,omitempty"`
+	SummonComponentId    int  `yaml:"summon_component_id,omitempty"`
+	SummonRequiresCorpse bool `yaml:"summon_requires_corpse,omitempty"`
+	SummonMinCorpsePool  int  `yaml:"summon_min_corpse_pool,omitempty"`
 	// Ongoing Conviction reserved to maintain this companion (per summon type).
 	// 0 = fall back to CompanionReserveDefault at summon time.
 	SummonConvictionReserve int `yaml:"summon_conviction_reserve,omitempty"`

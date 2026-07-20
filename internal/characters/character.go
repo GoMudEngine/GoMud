@@ -275,10 +275,10 @@ type Character struct {
 	StatUseCount            map[string]int                 `yaml:"statusecount,omitempty"`        // Tracks how many times each stat has been checked
 	ClusterAffinity         map[string]float64             `yaml:"clusteraffinity,omitempty"`     // cluster -> mutation-graph drift affinity
 	combatDriftRound        map[string]uint64              // transient (not persisted): cluster -> last round we granted combat drift (once-per-round spam guard)
-	Pet                     pets.Pet                       `yaml:"pet,omitempty"`                 // Do they have a pet?
-	Companions              []CompanionInfo                `yaml:"companions,omitempty"`          // Active companions (manifestation system)
-	Created                 time.Time                      `yaml:"created"`                       // When this character was created
-	Timers                  map[string]gametime.RoundTimer `yaml:"timers,omitempty"`              // any special timers added to this character
+	Pet                     pets.Pet                       `yaml:"pet,omitempty"`        // Do they have a pet?
+	Companions              []CompanionInfo                `yaml:"companions,omitempty"` // Active companions (manifestation system)
+	Created                 time.Time                      `yaml:"created"`              // When this character was created
+	Timers                  map[string]gametime.RoundTimer `yaml:"timers,omitempty"`     // any special timers added to this character
 	roomHistory             []int                          // A stack FILO of the last X rooms the character has been in
 	PlayerDamage            map[int]int                    `yaml:"-"` // key = who, value = how much
 	LastPlayerDamage        uint64                         `yaml:"-"` // last round a player damaged this character

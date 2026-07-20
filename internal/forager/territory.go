@@ -18,11 +18,11 @@ type ForagerProfile struct {
 	Kind             ForagerKind
 	MobId            int
 	Name             string
-	SanctuaryRoom    int    // fold-recall anchor
-	TerritoryRooms   []int  // wandering range
-	PreyWhitelist    []int  // mobIds of legal engagement targets
-	VendorRooms      []int  // delivery route (Marsh + Steppe). Empty for Fernway.
-	MeetingRoom      int    // Fernway only: where caravan handoff happens. 0 for Marsh + Steppe.
+	SanctuaryRoom    int      // fold-recall anchor
+	TerritoryRooms   []int    // wandering range
+	PreyWhitelist    []int    // mobIds of legal engagement targets
+	VendorRooms      []int    // delivery route (Marsh + Steppe). Empty for Fernway.
+	MeetingRoom      int      // Fernway only: where caravan handoff happens. 0 for Marsh + Steppe.
 	Buckets          []string // supply buckets this forager fills
 	DeliveryPatrolId string   // chunk 3.8: oneshot patrol id for the Delivering state; empty = use legacy single-room handoff (Kessa)
 }

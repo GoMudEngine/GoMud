@@ -14,7 +14,7 @@ func Break(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	if user.Character.IsInCombat() {
 		user.Character.EndAggro()
 		user.SendText(messaging.CategorySystem, `You break off combat.`)
-		room.SendTextVisual(messaging.CategoryMobEmote, 
+		room.SendTextVisual(messaging.CategoryMobEmote,
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> breaks off combat.`, user.Character.Name),
 			user.UserId,
 		)

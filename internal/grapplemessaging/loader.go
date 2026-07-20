@@ -43,14 +43,14 @@ type GradientTriad struct {
 //   - Advancements:  "<source>_to_<target>" (e.g. "clinch_to_mount")
 //   - Degradations:  "<source>_to_<target>" (e.g. "mount_to_sidecontrol")
 //   - Reversals:     "<source>_reverse" for realism-exception sources;
-//                    "generic_reverse" as fallback.
+//     "generic_reverse" as fallback.
 //   - Escapes:       "generic_escape" (only key for now)
 //   - Holds:         "<context>_hold" (e.g. "clinch_hold",
-//                    "ground_hold_generic")
+//     "ground_hold_generic")
 //   - StrikingApex:  Single-speaker (no triad); "mount_strike_flavor"
-//                    is the only key currently.
+//     is the only key currently.
 //   - Gradients:     Boundary-crossing (ControlLevel transitions);
-//                    "upper_boundary_down/up", "lower_boundary_down/up"
+//     "upper_boundary_down/up", "lower_boundary_down/up"
 type Library struct {
 	Advancements map[string]TemplateTriad `yaml:"advancements"`
 	Degradations map[string]TemplateTriad `yaml:"degradations"`

@@ -23,7 +23,7 @@ func (g GMCPZoneUpdate) Type() string { return `GMCPZoneUpdate` }
 
 type GMCPZoneModule_Payload struct {
 	Zone     string                `json:"zone"`
-	CurrentZ int                   `json:"cz"`            // z-level (floor) of the player's current room
+	CurrentZ int                   `json:"cz"`              // z-level (floor) of the player's current room
 	Party    []int                 `json:"party,omitempty"` // room IDs currently holding party members
 	Rooms    []mapper.SnapshotRoom `json:"rooms"`
 }

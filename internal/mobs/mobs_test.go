@@ -32,7 +32,7 @@ func seedRegistry() func() {
 			Zone:          "Sanctum Basin",
 			StatPool:      100,
 			ActivityLevel: 50,
-			AutoAggro: true,
+			AutoAggro:     true,
 			Groups:        []string{"undead", "dungeon"},
 			Hates:         []string{"townfolk"},
 			IdleCommands:  []string{"emote lurks in the shadows.", "emote growls softly."},
@@ -48,7 +48,7 @@ func seedRegistry() func() {
 			Zone:          "Sanctum Basin",
 			StatPool:      120,
 			ActivityLevel: 30,
-			AutoAggro: false,
+			AutoAggro:     false,
 			Groups:        []string{"townfolk"},
 			Hates:         []string{},
 			IdleCommands:  []string{"emote hums a tune."},
@@ -66,7 +66,7 @@ func seedRegistry() func() {
 			Zone:          "Dark Forest",
 			StatPool:      80,
 			ActivityLevel: 70,
-			AutoAggro: true,
+			AutoAggro:     true,
 			Groups:        []string{"beasts"},
 			Hates:         []string{"*"},
 			IdleCommands:  []string{},
@@ -82,7 +82,7 @@ func seedRegistry() func() {
 			Zone:          "Sanctum Basin",
 			StatPool:      60,
 			ActivityLevel: 0, // should clamp to 10 on Validate
-			AutoAggro: false,
+			AutoAggro:     false,
 			Groups:        []string{"undead"},
 			Hates:         []string{"beasts"},
 			Character: characters.Character{
@@ -95,7 +95,7 @@ func seedRegistry() func() {
 			Zone:          "Sanctum Basin",
 			StatPool:      200,
 			ActivityLevel: 150, // should clamp to 100 on Validate
-			AutoAggro: true,
+			AutoAggro:     true,
 			Groups:        []string{},
 			Hates:         []string{},
 			Character: characters.Character{
@@ -383,7 +383,6 @@ func TestGetAngryCommand(t *testing.T) {
 }
 
 // ─── Hostility Tracking ────────────────────────────────────────────────────
-
 
 // ─── Player Attack Tracking ────────────────────────────────────────────────
 
@@ -1106,7 +1105,7 @@ func TestTickMobCraftInCombat(t *testing.T) {
 func TestPackBonusStruct(t *testing.T) {
 	pb := PackBonus{
 		GroupTag:   "undead",
-		MemberIds: []int{100, 101},
+		MemberIds:  []int{100, 101},
 		ReachedMax: true,
 	}
 	assert.Equal(t, "undead", pb.GroupTag)
@@ -1912,11 +1911,11 @@ func TestMobSpawn_CuratedGateSkipsIncompatibleMutation(t *testing.T) {
 	// Create a mob template with both mutations in SpawnMutations.
 	mobsMu.Lock()
 	mobs[999] = &Mob{
-		MobId:           999,
-		Zone:            "test",
-		StatPool:        100,
-		SpawnMutations:  []string{"extra-arms", "tough-skin"},
-		ActivityLevel:   50,
+		MobId:          999,
+		Zone:           "test",
+		StatPool:       100,
+		SpawnMutations: []string{"extra-arms", "tough-skin"},
+		ActivityLevel:  50,
 		Character: characters.Character{
 			Name:      "Test Canine",
 			SpeciesId: 999,
@@ -2018,8 +2017,8 @@ func TestNewMobById_SpentAllGold_RestoresZeroNotTemplate(t *testing.T) {
 	if seed == nil {
 		t.Fatal("NewMobById returned nil")
 	}
-	clearProgression(seed)       // isolate the gold path (no training/plan)
-	seed.Character.Gold = 0       // spent everything; template is 500
+	clearProgression(seed)  // isolate the gold path (no training/plan)
+	seed.Character.Gold = 0 // spent everything; template is 500
 	if err := SaveMobInstance(seed); err != nil {
 		t.Fatalf("seed SaveMobInstance: %v", err)
 	}

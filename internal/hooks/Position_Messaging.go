@@ -40,15 +40,15 @@ type submissionMsgTriple struct {
 }
 
 type submissionMessageBlock struct {
-	Opening            map[string]submissionMsgTriple `yaml:"opening"`
-	EscapeBad          submissionMsgTriple            `yaml:"escape_bad"`
-	Neutral            submissionMsgTriple            `yaml:"neutral"`
-	OutcomeMercy       submissionMsgTriple            `yaml:"outcome_mercy"`
-	OutcomeSubdue      submissionMsgTriple            `yaml:"outcome_subdue"`
-	OutcomeCrippleArm  submissionMsgTriple            `yaml:"outcome_cripple_arm"`
-	OutcomeCrippleShoulder submissionMsgTriple        `yaml:"outcome_cripple_shoulder"`
-	OutcomeLethal      submissionMsgTriple            `yaml:"outcome_lethal"`
-	CritFlag           submissionMsgTriple            `yaml:"crit_flag"`
+	Opening                map[string]submissionMsgTriple `yaml:"opening"`
+	EscapeBad              submissionMsgTriple            `yaml:"escape_bad"`
+	Neutral                submissionMsgTriple            `yaml:"neutral"`
+	OutcomeMercy           submissionMsgTriple            `yaml:"outcome_mercy"`
+	OutcomeSubdue          submissionMsgTriple            `yaml:"outcome_subdue"`
+	OutcomeCrippleArm      submissionMsgTriple            `yaml:"outcome_cripple_arm"`
+	OutcomeCrippleShoulder submissionMsgTriple            `yaml:"outcome_cripple_shoulder"`
+	OutcomeLethal          submissionMsgTriple            `yaml:"outcome_lethal"`
+	CritFlag               submissionMsgTriple            `yaml:"crit_flag"`
 }
 
 type positionMessageTemplates struct {
@@ -84,7 +84,6 @@ func loadPositionMessages() positionMessageTemplates {
 	})
 	return posMsgTemplates
 }
-
 
 // fireStaminaWarningIfLow fires a one-shot "getting gassed" beat
 // when c's stamina drops below the grapple-low threshold. Reuses the

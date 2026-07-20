@@ -137,7 +137,7 @@ func TestCanUseTrip(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		pos position.State
+		pos      position.State
 		cooldown bool
 		want     bool
 	}{
@@ -193,7 +193,7 @@ func TestCanUseGrapple(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		pos position.State
+		pos      position.State
 		cooldown bool
 		want     bool
 	}{

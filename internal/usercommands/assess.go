@@ -34,7 +34,7 @@ func Assess(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	}
 
 	if !user.Character.TryCooldown(`assess`, "6 rounds") {
-		user.SendText(messaging.CategorySystem, 
+		user.SendText(messaging.CategorySystem,
 			fmt.Sprintf("You need to wait %d more rounds before you can assess again.", user.Character.GetCooldown(`assess`)),
 		)
 		return true, nil
@@ -68,8 +68,8 @@ func Assess(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		essenceDesc = `barely a trace of essence`
 	}
 
-	user.SendText(messaging.CategorySystem, `You study the remains of <ansi fg="mob-corpse">` + corpse.Character.Name + `</ansi>.`)
-	user.SendText(messaging.CategorySystem, `You sense ` + essenceDesc + ` within.`)
+	user.SendText(messaging.CategorySystem, `You study the remains of <ansi fg="mob-corpse">`+corpse.Character.Name+`</ansi>.`)
+	user.SendText(messaging.CategorySystem, `You sense `+essenceDesc+` within.`)
 
 	// List which undead types this corpse could support.
 	var supported []string
@@ -95,7 +95,7 @@ func Assess(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 	if len(supported) == 0 {
 		user.SendText(messaging.CategorySystem, `The essence is too faint to animate any form.`)
 	} else {
-		user.SendText(messaging.CategorySystem, `It could sustain: ` + strings.Join(supported, `, `) + `.`)
+		user.SendText(messaging.CategorySystem, `It could sustain: `+strings.Join(supported, `, `)+`.`)
 	}
 
 	// Trigger manifestation skill progression.

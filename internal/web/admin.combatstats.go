@@ -12,22 +12,22 @@ import (
 
 // combatStatsAPIResponse is the JSON shape returned by the API endpoint.
 type combatStatsAPIResponse struct {
-	TotalEvents    int     `json:"totalEvents"`
-	Hits           int     `json:"hits"`
-	Misses         int     `json:"misses"`
-	Crits          int     `json:"crits"`
-	Fumbles        int     `json:"fumbles"`
-	Backfires      int     `json:"backfires"`
-	Fizzles        int     `json:"fizzles"`
-	TotalDamage    int     `json:"totalDamage"`
-	AvgDamagePerHit float64 `json:"avgDamagePerHit"`
-	AvgAttackZScore float64 `json:"avgAttackZScore"`
+	TotalEvents      int     `json:"totalEvents"`
+	Hits             int     `json:"hits"`
+	Misses           int     `json:"misses"`
+	Crits            int     `json:"crits"`
+	Fumbles          int     `json:"fumbles"`
+	Backfires        int     `json:"backfires"`
+	Fizzles          int     `json:"fizzles"`
+	TotalDamage      int     `json:"totalDamage"`
+	AvgDamagePerHit  float64 `json:"avgDamagePerHit"`
+	AvgAttackZScore  float64 `json:"avgAttackZScore"`
 	AvgDefenseZScore float64 `json:"avgDefenseZScore"`
 
 	ByAttackType map[string]attackTypeJSON `json:"byAttackType"`
 
-	Defense  defenseJSON  `json:"defense"`
-	Matchups matchupJSON  `json:"matchups"`
+	Defense  defenseJSON `json:"defense"`
+	Matchups matchupJSON `json:"matchups"`
 
 	PositionHitRates positionHitRatesJSON `json:"positionHitRates"`
 	GrappleHitRates  grappleHitRatesJSON  `json:"grappleHitRates"`

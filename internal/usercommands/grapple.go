@@ -98,7 +98,7 @@ func Grapple(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		if targetChar != nil {
 			targetChar.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> <ansi fg="yellow-bold">grapples</ansi> you, transitioning to <ansi fg="cyan">%s</ansi> position!`, user.Character.Name, result.PositionDesc))
 		}
-		room.SendTextVisual(messaging.CategoryGrappleFlow, 
+		room.SendTextVisual(messaging.CategoryGrappleFlow,
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> <ansi fg="yellow-bold">grapples</ansi> <ansi fg="mobname">%s</ansi> into <ansi fg="cyan">%s</ansi> position!`, user.Character.Name, targetName, result.PositionDesc),
 			user.UserId, targetPlayerId,
 		)
@@ -121,7 +121,7 @@ func Grapple(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		if targetChar != nil {
 			targetChar.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> tries to grapple you, but you slip away!`, user.Character.Name))
 		}
-		room.SendTextVisual(messaging.CategoryGrappleFlow, 
+		room.SendTextVisual(messaging.CategoryGrappleFlow,
 			fmt.Sprintf(`<ansi fg="username">%s</ansi> tries to grapple <ansi fg="mobname">%s</ansi>, but fails!`, user.Character.Name, targetName),
 			user.UserId, targetPlayerId,
 		)

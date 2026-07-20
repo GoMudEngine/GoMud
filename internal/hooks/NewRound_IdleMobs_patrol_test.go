@@ -76,7 +76,7 @@ func TestPatrolTickPlan_WantsHomeFallbackAfterMaxRetries(t *testing.T) {
 	registerTestPatrol(t)
 
 	mob := &mobs.Mob{}
-	mob.Character.RoomId = 999 // not at target
+	mob.Character.RoomId = 999                              // not at target
 	mob.Character.SetMiscData("patrol_path_fail_count", 99) // way past default 20
 
 	plan := patrolTickPlan(mob, "test_patrol")

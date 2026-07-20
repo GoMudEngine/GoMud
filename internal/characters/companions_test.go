@@ -184,39 +184,39 @@ func TestCalcCompanionStatPool(t *testing.T) {
 	//   ManifestStatScaleSkillFactor = 0.02 (zero-value triggers default)
 
 	tests := []struct {
-		name              string
-		baseStatPool      int
-		charisma          int
+		name               string
+		baseStatPool       int
+		charisma           int
 		manifestationSkill int
-		want              int
+		want               int
 	}{
 		{
 			// scale = 1.0 + 100/150 + 0*0.02 = 1.667  →  120 * 1.667 = 200
-			name: "wolf base cha=100 manifest=0",
+			name:         "wolf base cha=100 manifest=0",
 			baseStatPool: 120, charisma: 100, manifestationSkill: 0,
 			want: 200,
 		},
 		{
 			// scale = 1.0 + 100/150 + 25*0.02 = 1.0 + 0.667 + 0.5 = 2.167  →  120 * 2.167 = 260
-			name: "wolf base cha=100 manifest=25",
+			name:         "wolf base cha=100 manifest=25",
 			baseStatPool: 120, charisma: 100, manifestationSkill: 25,
 			want: 260,
 		},
 		{
 			// scale = 1.667 (same as first case)  →  18 * 1.667 = 30
-			name: "swarm base cha=100 manifest=0",
+			name:         "swarm base cha=100 manifest=0",
 			baseStatPool: 18, charisma: 100, manifestationSkill: 0,
 			want: 30,
 		},
 		{
 			// scale = 1.0 + 150/150 + 50*0.02 = 1.0 + 1.0 + 1.0 = 3.0  →  120 * 3.0 = 360
-			name: "wolf base cha=150 manifest=50",
+			name:         "wolf base cha=150 manifest=50",
 			baseStatPool: 120, charisma: 150, manifestationSkill: 50,
 			want: 360,
 		},
 		{
 			// scale = 1.0 + 0/150 + 0*0.02 = 1.0  →  120 * 1.0 = 120 (no charisma boost)
-			name: "cha=0 manifest=0 no boost",
+			name:         "cha=0 manifest=0 no boost",
 			baseStatPool: 120, charisma: 0, manifestationSkill: 0,
 			want: 120,
 		},

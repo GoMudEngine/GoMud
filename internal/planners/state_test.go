@@ -47,7 +47,7 @@ func TestClearPlanState_NilMob_NoOp(t *testing.T) {
 }
 
 func TestClearPlanState_NilMiscData_NoOp(t *testing.T) {
-	mob := &mobs.Mob{} // MiscData is nil
+	mob := &mobs.Mob{}  // MiscData is nil
 	ClearPlanState(mob) // must not panic
 }
 

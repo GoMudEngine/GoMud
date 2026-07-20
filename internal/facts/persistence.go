@@ -12,13 +12,13 @@ import (
 )
 
 var (
-	registry      *Registry
-	registryMu    sync.RWMutex
+	registry       *Registry
+	registryMu     sync.RWMutex
 	registrySaveMu sync.Mutex // serializes registry disk writes
 
-	awarenessCache    = make(map[int]*Awareness)
-	awarenessCacheMu  sync.RWMutex
-	awarenessSaveMu   sync.Mutex // serializes awareness disk writes
+	awarenessCache   = make(map[int]*Awareness)
+	awarenessCacheMu sync.RWMutex
+	awarenessSaveMu  sync.Mutex // serializes awareness disk writes
 )
 
 func registryFilePath() string {

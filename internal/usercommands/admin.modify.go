@@ -71,7 +71,7 @@ func Modify(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 				users.SaveUser(*u)
 
-				u.SendText(messaging.CategorySystem, `<ansi fg="alert-3">Your role has been set to: ` + newRole + `</ansi>`)
+				u.SendText(messaging.CategorySystem, `<ansi fg="alert-3">Your role has been set to: `+newRole+`</ansi>`)
 				break
 			}
 		}

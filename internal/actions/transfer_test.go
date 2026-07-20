@@ -43,8 +43,9 @@ func newTestItem(id int) items.Item {
 // carry capacity when Strength is set to 1.
 //
 // With Strength=1 and the default CarryCapacityMultiplier (0.65):
-//   capacity = 1 * 0.65 = 0.65
-//   StoreItem blocks when newWeight > capacity * 2.0 = 1.3
+//
+//	capacity = 1 * 0.65 = 0.65
+//	StoreItem blocks when newWeight > capacity * 2.0 = 1.3
 //
 // A single 2-pound item therefore triggers the capacity check.
 func newHeavyTestItem(id int) items.Item {

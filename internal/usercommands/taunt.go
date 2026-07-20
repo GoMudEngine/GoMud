@@ -127,17 +127,17 @@ func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		// Stoic resolve messaging
 		if result.CritDeflected {
 			if targetPlayer != nil {
-				targetPlayer.SendText(messaging.CategorySystem, 
+				targetPlayer.SendText(messaging.CategorySystem,
 					`<ansi fg="green">The words wash over you harmlessly — you are unmoved.</ansi>`)
 			}
-			user.SendText(messaging.CategorySystem, 
+			user.SendText(messaging.CategorySystem,
 				`<ansi fg="yellow">Your words have no effect — your target is completely unmoved!</ansi>`)
 		} else if result.Deflected {
 			if targetPlayer != nil {
-				targetPlayer.SendText(messaging.CategorySystem, 
+				targetPlayer.SendText(messaging.CategorySystem,
 					`<ansi fg="green">You steel yourself against the barrage of words.</ansi>`)
 			}
-			user.SendText(messaging.CategorySystem, 
+			user.SendText(messaging.CategorySystem,
 				`<ansi fg="yellow">Your words fail to fully penetrate your target's resolve!</ansi>`)
 		}
 

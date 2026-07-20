@@ -13,7 +13,7 @@
 package catalog
 
 import (
-	goals   "github.com/GoMudEngine/GoMud/internal/goals"
+	goals "github.com/GoMudEngine/GoMud/internal/goals"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	skillsPkg "github.com/GoMudEngine/GoMud/internal/skills"
 )

@@ -21,26 +21,26 @@ type StatIncreaseCall struct {
 
 // mockActionContext tracks all actions executed for test assertions.
 type mockActionContext struct {
-	granted          []string
-	consumedItems    []int
-	givenItems       []int
-	givenGold        int
-	gold             int
-	sentTexts        []string
-	roomTexts        []string
-	spawnedMobs      []SpawnDef
-	spawnedItems     []SpawnDef
-	taughtSpells     []string
-	appliedBuffs     []BuffDef
-	teleported       int
-	lockedExits      []ExitLock
-	unlockedExits    []ExitLock
-	npcSays          []NpcSayDef
-	sequences        []SequenceDef
-	bumpedRep        []BumpRepCall
-	increasedStats   []StatIncreaseCall
-	learnedRecipes   []string
-	userId           int
+	granted        []string
+	consumedItems  []int
+	givenItems     []int
+	givenGold      int
+	gold           int
+	sentTexts      []string
+	roomTexts      []string
+	spawnedMobs    []SpawnDef
+	spawnedItems   []SpawnDef
+	taughtSpells   []string
+	appliedBuffs   []BuffDef
+	teleported     int
+	lockedExits    []ExitLock
+	unlockedExits  []ExitLock
+	npcSays        []NpcSayDef
+	sequences      []SequenceDef
+	bumpedRep      []BumpRepCall
+	increasedStats []StatIncreaseCall
+	learnedRecipes []string
+	userId         int
 }
 
 func newMockActionContext(userId int) *mockActionContext {
@@ -51,8 +51,8 @@ func (m *mockActionContext) GrantQuest(token string) { m.granted = append(m.gran
 func (m *mockActionContext) ConsumeItem(itemId int) {
 	m.consumedItems = append(m.consumedItems, itemId)
 }
-func (m *mockActionContext) GiveItem(itemId int)  { m.givenItems = append(m.givenItems, itemId) }
-func (m *mockActionContext) GiveGold(amount int)  { m.givenGold += amount }
+func (m *mockActionContext) GiveItem(itemId int) { m.givenItems = append(m.givenItems, itemId) }
+func (m *mockActionContext) GiveGold(amount int) { m.givenGold += amount }
 func (m *mockActionContext) ChargeGold(amount int) {
 	if amount > m.gold {
 		amount = m.gold
@@ -75,14 +75,14 @@ func (m *mockActionContext) IncreaseStat(stat string, amount int) {
 func (m *mockActionContext) LearnRecipe(recipe string) {
 	m.learnedRecipes = append(m.learnedRecipes, recipe)
 }
-func (m *mockActionContext) ApplyBuff(b BuffDef) { m.appliedBuffs = append(m.appliedBuffs, b) }
-func (m *mockActionContext) Teleport(roomId int)                { m.teleported = roomId }
-func (m *mockActionContext) LockExits(e ExitLock)               { m.lockedExits = append(m.lockedExits, e) }
-func (m *mockActionContext) UnlockExits(e ExitLock)             { m.unlockedExits = append(m.unlockedExits, e) }
-func (m *mockActionContext) QueueNpcSay(n NpcSayDef)            { m.npcSays = append(m.npcSays, n) }
-func (m *mockActionContext) QueueSequence(s SequenceDef)        { m.sequences = append(m.sequences, s) }
-func (m *mockActionContext) GiveMutation()                      {}
-func (m *mockActionContext) SetQuestFlag(key, value string)     {}
+func (m *mockActionContext) ApplyBuff(b BuffDef)            { m.appliedBuffs = append(m.appliedBuffs, b) }
+func (m *mockActionContext) Teleport(roomId int)            { m.teleported = roomId }
+func (m *mockActionContext) LockExits(e ExitLock)           { m.lockedExits = append(m.lockedExits, e) }
+func (m *mockActionContext) UnlockExits(e ExitLock)         { m.unlockedExits = append(m.unlockedExits, e) }
+func (m *mockActionContext) QueueNpcSay(n NpcSayDef)        { m.npcSays = append(m.npcSays, n) }
+func (m *mockActionContext) QueueSequence(s SequenceDef)    { m.sequences = append(m.sequences, s) }
+func (m *mockActionContext) GiveMutation()                  {}
+func (m *mockActionContext) SetQuestFlag(key, value string) {}
 func (m *mockActionContext) BumpRep(factionId string, delta int) {
 	m.bumpedRep = append(m.bumpedRep, BumpRepCall{Faction: factionId, Delta: delta})
 }

@@ -45,7 +45,7 @@ func Map(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	}
 
 	if !user.Character.TryCooldown(`map`, "1 round") {
-		user.SendText(messaging.CategorySystem, 
+		user.SendText(messaging.CategorySystem,
 			`You can only create 1 map per round.`,
 		)
 		return true, errors.New(`you're doing that too often`)

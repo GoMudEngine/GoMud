@@ -35,9 +35,9 @@ func TestRestoreSkipTaggedFields(t *testing.T) {
 	// non-skip runtime state.
 	dst := &Room{
 		RoomId:      100,
-		Zone:        "corrupt_zone",   // skip-tagged; should be restored
-		Title:       "Corrupt Title",  // skip-tagged; should be restored
-		Description: "Corrupt.",       // skip-tagged; should be restored
+		Zone:        "corrupt_zone",  // skip-tagged; should be restored
+		Title:       "Corrupt Title", // skip-tagged; should be restored
+		Description: "Corrupt.",      // skip-tagged; should be restored
 		Exits: map[string]exit.RoomExit{
 			"east": {RoomId: 999}, // skip-tagged; should be restored
 		},

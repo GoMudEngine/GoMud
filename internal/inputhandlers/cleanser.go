@@ -29,7 +29,7 @@ func CleanserInputHandler(clientInput *connections.ClientInput, sharedState map[
 		// send backspace, space, backspace
 		if len(clientInput.Buffer) > 0 {
 			connections.SendTo([]byte{term.ASCII_BACKSPACE, term.ASCII_SPACE, term.ASCII_BACKSPACE}, clientInput.ConnectionId)
-			
+
 			// Handle UTF-8 properly by removing the last complete character (rune)
 			bufferStr := string(clientInput.Buffer)
 			if len(bufferStr) > 0 {

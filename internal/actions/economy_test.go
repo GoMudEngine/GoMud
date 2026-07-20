@@ -46,19 +46,19 @@ func newStubActor(char *characters.Character, room *rooms.Room) *stubActor {
 	return &stubActor{char: char, room: room}
 }
 
-func (a *stubActor) GetCharacter() *characters.Character    { return a.char }
-func (a *stubActor) GetRoom() *rooms.Room                   { return a.room }
+func (a *stubActor) GetCharacter() *characters.Character     { return a.char }
+func (a *stubActor) GetRoom() *rooms.Room                    { return a.room }
 func (a *stubActor) SendText(_ messaging.Category, _ string) {}
-func (a *stubActor) SendRoomCommunication(_ string, _ bool) {}
-func (a *stubActor) GetName() string                        { return "TestActor" }
-func (a *stubActor) IsPlayer() bool                         { return false }
-func (a *stubActor) GetUserId() int                         { return 0 }
-func (a *stubActor) GetMobInstanceId() int                  { return 0 }
-func (a *stubActor) AddBuff(_ int, _ string)                {}
-func (a *stubActor) OnSkillUse(_ string) bool               { return false }
-func (a *stubActor) OnStatUse(_ string) bool                { return false }
-func (a *stubActor) OnCriticalSuccess(_ string)             {}
-func (a *stubActor) OnCriticalFailure(_ string)             {}
+func (a *stubActor) SendRoomCommunication(_ string, _ bool)  {}
+func (a *stubActor) GetName() string                         { return "TestActor" }
+func (a *stubActor) IsPlayer() bool                          { return false }
+func (a *stubActor) GetUserId() int                          { return 0 }
+func (a *stubActor) GetMobInstanceId() int                   { return 0 }
+func (a *stubActor) AddBuff(_ int, _ string)                 {}
+func (a *stubActor) OnSkillUse(_ string) bool                { return false }
+func (a *stubActor) OnStatUse(_ string) bool                 { return false }
+func (a *stubActor) OnCriticalSuccess(_ string)              {}
+func (a *stubActor) OnCriticalFailure(_ string)              {}
 
 // ---------------------------------------------------------------------------
 // Item constructors for equip/remove tests

@@ -17,8 +17,8 @@ type ImportCircuit struct {
 // importCircuits is the registry of looping import circuits, keyed by patrol id.
 var importCircuits = map[string]ImportCircuit{
 	"np_docks_runner_circuit": {
-		PatrolId:        "np_docks_runner_circuit",
-		RunnerMobId:     9304, // Dobb
+		PatrolId:    "np_docks_runner_circuit",
+		RunnerMobId: 9304, // Dobb
 		DepotEvent:  "np_runner_depot",
 		VendorEvent: "np_runner_vendor",
 		// Must cover EVERY bucket the Crafting vendors sell from — in a

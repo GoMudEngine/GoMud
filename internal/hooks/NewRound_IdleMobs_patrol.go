@@ -19,8 +19,8 @@ type patrolPlan struct {
 	TargetRoom        int
 	WantsAdvance      bool // dwell expired (or 0); advance this tick
 	NextWaypointIdx   int
-	NextDirection     int // +1 / -1; only meaningful for yo-yo
-	NextDwellRounds   int // dwell for the new waypoint after advance
+	NextDirection     int  // +1 / -1; only meaningful for yo-yo
+	NextDwellRounds   int  // dwell for the new waypoint after advance
 	WantsHomeFallback bool // after MaxPathRetries
 	FailureMessage    string
 	WantsComplete     bool // chunk 3.8: oneshot patrol reached its terminal waypoint

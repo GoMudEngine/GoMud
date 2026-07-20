@@ -445,8 +445,8 @@ func (m MobAISignal) Type() string { return "MobAISignal" }
 // behavior trees can listen for this event to navigate to the
 // rally room.
 type PartyHelpRequested struct {
-	PartyId        int  // internal numeric ID; see parties.Party.PartyIdInternal()
-	CallerActorId  int  // user or mob instance ID; interpret via CallerIsPlayer
+	PartyId        int // internal numeric ID; see parties.Party.PartyIdInternal()
+	CallerActorId  int // user or mob instance ID; interpret via CallerIsPlayer
 	CallerIsPlayer bool
 	RallyRoomId    int
 }
