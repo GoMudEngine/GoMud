@@ -11,6 +11,23 @@ permissions:
   pull-requests: read
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      # Bug-finding linters (see .golangci.yml). only-new-issues grandfathers the
+      # ~107 pre-existing findings and gates only what a change introduces, so
+      # this can be enforcing without first clearing the backlog. Runs on PRs;
+      # `make lint` is the local equivalent for the direct-to-master workflow.
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.12.2
+          only-new-issues: true
+
   test:
     runs-on: ubuntu-latest
     steps:

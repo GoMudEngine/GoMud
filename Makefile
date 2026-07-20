@@ -195,6 +195,19 @@ mod:
 vet:
 	@go vet ./...
 
+# Bug-finding linters (config in .golangci.yml). `lint` gates only what your
+# branch introduced vs origin/master, matching the CI PR gate and grandfathering
+# the existing backlog — this is the one to run before pushing. `lint-all` shows
+# the full backlog to chip away at. Requires golangci-lint v2:
+#   go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
+.PHONY: lint
+lint:
+	@golangci-lint run --new-from-merge-base=origin/master ./...
+
+.PHONY: lint-all
+lint-all:
+	@golangci-lint run ./...
+
 .PHONY: set_gopath
 set_gopath:
 ifeq ($(OS),Windows_NT)

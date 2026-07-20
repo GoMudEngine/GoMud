@@ -1,0 +1,47 @@
+# golangci-lint v2 configuration.
+#
+# Scope is deliberately narrow: bug-finding linters only, no style/formatting
+# opinions beyond what `gofmt` and `go vet` (already gated in CI) enforce. This
+# is a 70k-LOC codebase that predates any linter, so a full styleset would bury
+# real findings under thousands of cosmetic ones.
+#
+# The existing tree has ~107 findings from these linters (see the tech-debt
+# audit, §6.4). They are NOT fixed here and this config does NOT gate them: CI
+# runs with --new-from-merge-base so only issues introduced by a change are
+# flagged. Run `make lint-all` to see the full backlog and chip away at it.
+
+version: "2"
+
+linters:
+  default: none
+  enable:
+    - govet        # already gated standalone in CI; folded in for one report surface
+    - staticcheck  # the real bug-finder; SA* checks only (see settings) to skip style
+    - errcheck     # unchecked errors — this codebase's error handling is uneven
+    - ineffassign  # dead assignments; cheap, catches copy/paste bugs
+    - unconvert    # unnecessary type conversions
+
+  settings:
+    staticcheck:
+      # SA* is staticcheck's bug/correctness category. ST* (style), S*
+      # (simplify) and QF* (quickfix) are intentionally excluded — they are
+      # noise on legacy code and duplicate gofmt's remit.
+      checks:
+        - "SA*"
+
+  exclusions:
+    # Generated/vendored/frozen trees the linters should never touch.
+    paths:
+      - vendor
+      - _datafiles
+      # Version-migration rewriters intentionally freeze old schema shapes and
+      # decode into map[string]interface{}; linting them fights their purpose.
+      - internal/migration
+    rules:
+      # Test code legitimately ignores errors from setup helpers (a failing
+      # setup surfaces via t.Fatal / a later assertion), so errcheck on tests is
+      # noise. staticcheck/govet/ineffassign still apply to tests — those catch
+      # real test bugs.
+      - path: _test\.go
+        linters:
+          - errcheck

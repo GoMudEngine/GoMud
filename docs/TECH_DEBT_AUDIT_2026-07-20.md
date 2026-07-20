@@ -823,12 +823,26 @@ Additional detail below:
 3. **Fix the `refs/tags/master` bug (0.8).** *Effort: trivial.*
 4. **Add `govulncheck ./...`**, non-blocking first, then gating. A MUD server on a public port is a
    reasonable target and there's zero vuln visibility today. *Effort: small.*
-5. **Introduce `.golangci.yml`** — start with `staticcheck`, `errcheck`, `ineffassign`, `unconvert`,
-   `misspell` gating; `revive` + `gocritic` warn-only. Exclude `internal/migration/` (frozen schema
-   snapshots — the `interface{}` there is deliberate). Skip `gocyclo`/`funlen`/`lll` entirely: this
-   codebase has long dispatch functions by design and those would fire hundreds of times for no
-   actionable gain. Use `new-from-rev` to gate only new code once a baseline exists.
-   *Effort: medium — first run will surface a backlog needing triage.*
+5. **Introduce `.golangci.yml`** — ✅ **DONE 2026-07-20.** Shipped with `govet`, `staticcheck`
+   (SA* bug checks only — ST/S/QF style excluded), `errcheck`, `ineffassign`, `unconvert`.
+   `internal/migration/`, `vendor/`, `_datafiles/` excluded; errcheck excluded on `_test.go`.
+   `misspell`/`revive`/`gocritic` were dropped from the original plan as style noise on a legacy
+   tree; `gocyclo`/`funlen`/`lll` likewise. Measured backlog: **107 findings** (errcheck 50,
+   ineffassign 32, staticcheck-SA 20, unconvert 3, govet 2) — grandfathered, not fixed. CI's
+   `run-tests.yml` runs `golangci-lint-action` with `only-new-issues: true` so only what a change
+   introduces gates; `make lint` (new-from-merge-base) is the local equivalent, `make lint-all`
+   shows the full backlog.
+
+   Reach caveat: the gate lives on the `pull_request` workflow, so under this project's
+   direct-push-to-master habit it only bites on actual PRs. `make lint` is the direct-push
+   developer's tool.
+
+   Notable items in the backlog worth a look (surfaced by staticcheck SA*, not gating):
+   - `internal/usercommands/look.go:437,445` — `mobCorpses`/`playerCorpses` built with `append`
+     then never read (SA4010); dead code, no wrong behaviour.
+   - `internal/usercommands/look.go:615` — `user != nil` checked after `user` is already
+     dereferenced at :608 (SA5011); either dead check or a latent nil-deref.
+   - `strings.Title` deprecated at `killstats.go:87`, `gmcp.Char.go:338`, `gmcp.Room.go:184` (SA1019).
 6. **Wire `js-lint` into CI** (`npx jshint` directly on the runner; no Docker needed).
    *Effort: small.*
 7. **Publish coverage delta as a PR comment** rather than only gating an absolute floor — a flat
