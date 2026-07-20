@@ -1183,7 +1183,9 @@ func (am *AuctionManager) GetAuctionHistory(totalItems int) []PastAuctionItem {
 		totalItems = len(am.PastAuctions)
 	}
 
-	return am.PastAuctions[len(am.PastAuctions)-totalItems : totalItems]
+	// High bound is the slice end, not totalItems: using totalItems produced
+	// an inverted range (e.g. [7:3] for totalItems=3 on a 10-item history).
+	return am.PastAuctions[len(am.PastAuctions)-totalItems:]
 }
 
 func (am *AuctionManager) GetLastAuction() PastAuctionItem {
