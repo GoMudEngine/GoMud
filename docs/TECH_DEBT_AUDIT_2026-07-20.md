@@ -214,8 +214,35 @@ the same to `handleTelnetConnection` so a bad connection disconnects one player 
 killing the server. This one change converts most of Tier 2 and 3's latent panics from
 "outage" to "one failed round."
 
-### 1.2 Unchecked type assertions across hooks and combat — a latent panic class
-🔍 **REPORTED** (two independent audits converged here)
+### 1.2 Unchecked type assertions across hooks and combat
+⚠️ **SEVERITY DISPROVEN — 2026-07-20.** The panic mechanism described below does not exist.
+
+> The claim was that ~14 unchecked `evt := e.(events.X)` assertions are "one uncomment away
+> from firing", because `internal/events/listeners.go` has a wildcard-listener facility and
+> `hooks.go` carries a commented-out `RegisterListener(nil, ...)` debug hook.
+>
+> **Tested empirically: enabling it would not affect them.** A nil/`*` registration lands in its
+> own `eventListeners["*"]` bucket, which `DoListeners` walks *separately* from
+> `eventListeners[e.Type()]`. A wildcard listener receives every event; type-specific listeners
+> keep receiving only their own type. Verified by registering both and dispatching a foreign
+> event: the wildcard saw it, the typed listener saw nothing. Pinned by
+> `TestDispatchRoutesOnlyMatchingTypes`.
+>
+> Independently, finding 1.1's fix means any panic that *did* occur is now caught and logged by
+> `invokeListenerSafely` rather than killing the server. The class is doubly mitigated.
+>
+> **The `Cancel` vs `Continue` sub-finding was also mis-stated.** It described
+> `RoomChange_LocationMusicChange.go` as diverging "from every sibling". It is not one outlier —
+> the split is roughly **18 `Cancel` vs 23 `Continue`** across 41 type-assertion branches. There
+> is no convention, rather than one file breaking it. Since the branch is unreachable, the
+> convention is now documented at the `ListenerReturn` declaration (use `Continue`) instead of
+> churning 32 files for a branch that cannot execute.
+>
+> **The 3.6 combinator refactor is therefore not carried out.** With no bug behind it, it reduces
+> to ~110 lines of boilerplate across 14 self-registering files — real, but not worth the churn
+> ahead of the items that fix actual defects.
+
+🔍 **REPORTED** (original text follows, retained for the file/line inventory)
 
 - 14 hook files use the unchecked `evt := e.(events.X)` form vs ~55 that use the checked
   `evt, ok := ...; if !ok { return }` form. Samples: `NewRound_AutoHeal.go:30`,
