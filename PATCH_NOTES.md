@@ -1,5 +1,27 @@
 # DOGMud Patch Notes
 
+## 2026-07-20 — A steadier world, and locks that mean it
+
+A large under-the-hood pass this round — most of it you will never see, which is
+the point: the server is markedly harder to crash. A single misbehaving mob, quest
+script, or bad connection used to be able to take the whole world down with it;
+now those failures are caught and contained, and the round keeps ticking.
+
+A few rules also got straightened out where they had drifted:
+
+- <ansi fg="command">Locked chests are locked.</ansi> You could previously
+  <ansi fg="command">get</ansi> the gold or items out of a locked container
+  without ever opening it. No longer — a locked chest keeps its contents until you
+  <ansi fg="command">pick</ansi> the lock or use a key, exactly like a locked door.
+- <ansi fg="command">No more hitting your own side.</ansi> Plain
+  <ansi fg="command">attack</ansi> already refused to target a charmed companion or
+  a member of your own party. Now the special moves —
+  <ansi fg="command">bash</ansi>, <ansi fg="command">kick</ansi>,
+  <ansi fg="command">grapple</ansi>, <ansi fg="command">trip</ansi> and the rest —
+  refuse them too, instead of quietly letting the blow land.
+- Opening a fight from stealth is now recorded as the surprise attack it is,
+  consistently, whether you are the one striking or the one being ambushed.
+
 ## 2026-07-19 — A guide who waits for you
 
 If you are brand new to text MUDs, the opening tutorial now takes you by the hand
