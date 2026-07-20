@@ -2,6 +2,8 @@ package questengine
 
 import (
 	"fmt"
+	"github.com/GoMudEngine/GoMud/internal/util"
+	"runtime/debug"
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -366,6 +368,30 @@ func (b *GameBridge) QueueNpcSay(n NpcSayDef) {
 // delay_between interval. Speaker lines become mob commands; non-speaker
 // lines are sent as delayed user messages. On-complete actions fire
 // after the longest delay plus a buffer.
+// recoverQuestSequence contains a panic in one of QueueSequence's timer
+// goroutines.
+//
+// These fire on bare timers rather than the tick loop, and their work is driven
+// by content — quest YAML — not code, so a malformed sequence is a far more
+// likely trigger than a code bug. Go cannot recover a child goroutine's panic
+// from its parent, so without this a bad quest definition killed the server.
+//
+// Known residual gap: neither goroutine checks for server shutdown, so a
+// sequence queued shortly before shutdown can still fire after users have been
+// saved, silently losing the mutation. Closing that needs a shutdown signal
+// reachable from this package (serverAlive lives in package main), or moving
+// sequence delivery onto the event queue with a ReadyTurn so it participates in
+// the tick loop.
+func recoverQuestSequence(what string) {
+	if r := recover(); r != nil {
+		mudlog.Error("GameBridge.QueueSequence",
+			"error", "panic in quest sequence goroutine",
+			"stage", what,
+			"panic", r,
+			"stack", string(debug.Stack()))
+	}
+}
+
 func (b *GameBridge) QueueSequence(s SequenceDef) {
 	// Lock player movement during the sequence if configured
 	if s.LockMessage != "" {
@@ -399,7 +425,15 @@ func (b *GameBridge) QueueSequence(s SequenceDef) {
 				text := line.Text
 				userId := b.user.UserId
 				go func() {
+					defer recoverQuestSequence("delayed dialogue line")
+
 					<-time.After(time.Duration(delay) * time.Second)
+
+					// Touching live user state from a timer goroutine, which
+					// never holds the world lock otherwise.
+					util.LockMud()
+					defer util.UnlockMud()
+
 					if u := users.GetByUserId(userId); u != nil {
 						u.SendText(messaging.CategoryNPCDialogue, text)
 					}
@@ -418,7 +452,17 @@ func (b *GameBridge) QueueSequence(s SequenceDef) {
 		onComplete := s.OnComplete
 		lockMsg := s.LockMessage
 		go func() {
+			defer recoverQuestSequence("on_complete actions")
+
 			time.Sleep(time.Duration(waitSeconds) * time.Second)
+
+			// ExecuteAction runs arbitrary content-authored quest actions —
+			// granting items, mutating the character, moving the player. Doing
+			// that from an unlocked timer goroutine raced the tick loop over
+			// the same objects.
+			util.LockMud()
+			defer util.UnlockMud()
+
 			u := users.GetByUserId(userId)
 			if u == nil {
 				return
