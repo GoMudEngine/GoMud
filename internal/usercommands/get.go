@@ -450,6 +450,16 @@ func Get(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	if containerName != `` {
 		container := room.Containers[containerName]
 
+		// A locked container surrenders nothing until it is unlocked or picked.
+		// Mirrors the gate every sibling command applies (look.go, put.go,
+		// lock.go, unlock.go, picklock.go).
+		if container.Lock.IsLocked() {
+			user.SendText(messaging.CategorySystem, ``)
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`The <ansi fg="container">%s</ansi> is locked.`, containerName))
+			user.SendText(messaging.CategorySystem, ``)
+			return true, nil
+		}
+
 		goldName := `gold`
 		if args[0] == goldName || (len(args[0]) < 5 && goldName[0:len(args[0])-1] == args[0]) {
 

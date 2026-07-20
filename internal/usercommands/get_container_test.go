@@ -3,6 +3,7 @@ package usercommands
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/gamelock"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/stretchr/testify/assert"
@@ -114,4 +115,76 @@ func TestGet_HiddenContainerGate_SingleWord(t *testing.T) {
 	assert.True(t, handled)
 	assert.NoError(t, err)
 	require.Len(t, user.Character.Items, 0, "an undiscovered hidden container must not be lootable")
+}
+
+// TestRegression_GetLockedContainerGate locks the fix for the 2026-07-20 audit
+// finding: get.go had no lock check at all, so a player could not `look` inside
+// a locked container but could `get` its contents — bypassing picklock/unlock
+// entirely. Every sibling command gates on Lock.IsLocked() (look.go:174,
+// put.go:60, lock.go:43, unlock.go:38, picklock.go:75); get.go did not.
+func TestRegression_GetLockedContainerGate(t *testing.T) {
+	cleanup := seedAllRegistries()
+	defer cleanup()
+	user, room := getTestUserAndRoom(t)
+
+	// Difficulty > 0 with UnlockedRound == 0 => IsLocked() is true.
+	seedLockedChest := func() {
+		room.Containers = map[string]rooms.Container{
+			"strongbox": {
+				Lock:  gamelock.Lock{Difficulty: 5},
+				Gold:  500,
+				Items: []items.Item{items.New(10001)}, // Iron Sword
+			},
+		}
+	}
+
+	t.Run("item_not_lootable", func(t *testing.T) {
+		seedLockedChest()
+		user.Character.Items = nil
+
+		handled, err := Get("sword strongbox", user, room, 0)
+		assert.True(t, handled)
+		assert.NoError(t, err)
+		assert.Len(t, user.Character.Items, 0, "a locked container must not surrender items")
+		assert.Len(t, room.Containers["strongbox"].Items, 1, "the item must remain in the locked container")
+	})
+
+	t.Run("gold_not_lootable", func(t *testing.T) {
+		seedLockedChest()
+		user.Character.Gold = 0
+
+		handled, err := Get("gold strongbox", user, room, 0)
+		assert.True(t, handled)
+		assert.NoError(t, err)
+		assert.Equal(t, 0, user.Character.Gold, "a locked container must not surrender gold")
+		assert.Equal(t, 500, room.Containers["strongbox"].Gold, "the gold must remain in the locked container")
+	})
+
+	// Guard the other direction: the gate must key off lock state, not simply
+	// refuse all container gets.
+	//
+	// NOTE: this uses an unlocked container (Difficulty 0) rather than calling
+	// SetUnlocked() on a locked one. IsLocked() decides relock via
+	// gametime.AddPeriod(), and gametime config is not seeded in unit tests —
+	// AddPeriod("1 hour") returns the current round unchanged, so a lock
+	// relocks instantly and SetUnlocked() can never be observed as unlocked
+	// here. Exercising the pick/unlock -> loot transition needs gametime
+	// seeding and belongs in an integration test.
+	t.Run("unlocked_container_still_lootable", func(t *testing.T) {
+		room.Containers = map[string]rooms.Container{
+			"strongbox": {
+				Lock:  gamelock.Lock{}, // Difficulty 0 => never locked
+				Items: []items.Item{items.New(10001)},
+			},
+		}
+		user.Character.Items = nil
+
+		require.False(t, room.Containers["strongbox"].Lock.IsLocked(),
+			"precondition: this container must read as unlocked")
+
+		handled, err := Get("sword strongbox", user, room, 0)
+		assert.True(t, handled)
+		assert.NoError(t, err)
+		assert.Len(t, user.Character.Items, 1, "an unlocked container must still be lootable")
+	})
 }
