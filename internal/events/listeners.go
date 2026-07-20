@@ -39,6 +39,18 @@ const (
 	//
 	// Event return codes
 	//
+	// Convention for the "wrong event type" branch: return Continue, not
+	// Cancel. A listener that cannot interpret an event has no business
+	// vetoing it for every other listener, which is what Cancel does.
+	//
+	// The codebase is currently split on this (roughly 18 Cancel vs 23
+	// Continue across the type-assertion branches in internal/hooks and
+	// world.go). The split is harmless today because that branch is
+	// unreachable — DoListeners dispatches by e.Type(), so a listener only ever
+	// receives the type it registered for, which TestDispatchRoutesOnlyMatchingTypes
+	// pins. New code should use Continue; existing sites are not worth churning
+	// for a branch that cannot execute.
+	//
 	// Allows the event to continu to the next listener
 	Continue ListenerReturn = 0b00000001
 	// Cancels any further processing of the event
