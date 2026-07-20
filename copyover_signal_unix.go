@@ -18,7 +18,7 @@ func startCopyoverSignalHandler() {
 	go func() {
 		for range sigCh {
 			mudlog.Info("SIGUSR1 received, initiating copyover")
-			if err := triggerCopyover(); err != nil {
+			if err := triggerCopyoverLocked(); err != nil {
 				mudlog.Error("copyover failed", "error", err)
 			}
 		}

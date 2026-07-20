@@ -229,7 +229,7 @@ func deliverMail(rec mailRecipient, offlineUsername string, msg users.Message) b
 	}
 	if ou, err := users.LoadUser(offlineUsername); err == nil && ou != nil {
 		ou.Inbox.Add(msg)
-		users.SaveUser(*ou)
+		users.SaveUser(ou)
 		return true
 	}
 	return false

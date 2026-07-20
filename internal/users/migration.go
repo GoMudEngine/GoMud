@@ -73,7 +73,7 @@ func DoQuestStepMigration() {
 
 		if changed {
 			migrated++
-			SaveUser(*u)
+			SaveUser(u)
 		}
 		return true
 	})

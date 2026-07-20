@@ -33,7 +33,7 @@ func (m *PlaytestModule) cmdAIFlag(rest string, user *users.UserRecord, room *ro
 		return true, nil
 	}
 	target.IsAI = on
-	if err := users.SaveUser(*target); err != nil {
+	if err := users.SaveUser(target); err != nil {
 		user.SendText(messaging.CategorySystem, "Failed to save: "+err.Error())
 		return true, nil
 	}

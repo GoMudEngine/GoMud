@@ -51,7 +51,7 @@ func Password(rest string, user *users.UserRecord, room *rooms.Room, flags event
 		return true, nil
 	}
 
-	users.SaveUser(*user)
+	users.SaveUser(user)
 
 	user.SendText(messaging.CategorySystem, `<ansi fg="alert-1">Your password has been changed!</ansi>`)
 

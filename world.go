@@ -302,7 +302,24 @@ Connected		+ InWorld  (non-zombie) 	No record in users.ZombieConnections								
 Disconnected	+ InWorld  (zombie)			Has record in users.ZombieConnections 								| has zombie flag		| user object in room
 */
 
+// GetAutoComplete builds tab-completion suggestions for a user's partial input.
+//
+// It runs on the per-connection goroutine (main.go, on every Tab keypress), not
+// on the tick loop, and walks a large amount of shared world state —
+// room.Exits, room.Containers, room.GetMobs(), mob and character fields, the
+// user's spellbook. None of those structs carry internal synchronisation, so
+// without a lock this raced against MainWorker mutating the same objects: e.g.
+// ranging over room.Exits while ephemeral-room cleanup writes to it is a
+// "concurrent map iteration and map write" fatal error.
+//
+// The lock is taken here rather than at the two call sites so no future caller
+// can forget it. It is a READ lock: this function only reads. That also makes
+// util.RLockMud live code — it was previously defined but never called
+// anywhere, leaving the RWMutex functioning as a plain Mutex.
 func (w *World) GetAutoComplete(userId int, inputText string) []string {
+
+	util.RLockMud()
+	defer util.RUnlockMud()
 
 	suggestions := []string{}
 

@@ -80,7 +80,7 @@ func RenameSelf(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 	}
 
 	user.LastRenameAt = time.Now()
-	users.SaveUser(*user)
+	users.SaveUser(user)
 
 	user.EventLog.Add(`char`, fmt.Sprintf(
 		`Renamed from <ansi fg="username">%s</ansi> to <ansi fg="username">%s</ansi>`,

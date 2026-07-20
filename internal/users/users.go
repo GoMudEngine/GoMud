@@ -361,7 +361,7 @@ func SaveAllUsers(isAutoSave ...bool) {
 	userManager.mu.RUnlock()
 
 	for _, u := range snapshot {
-		if err := SaveUser(*u, isAutoSave...); err != nil {
+		if err := SaveUser(u, isAutoSave...); err != nil {
 			mudlog.Error("SaveAllUsers()", "error", err.Error())
 		}
 	}
@@ -397,7 +397,7 @@ func LogOutUserByConnectionId(connectionId connections.ConnectionId) error {
 	// Validate + save outside lock (I/O and cross-package calls)
 	if u != nil {
 		u.Character.Validate()
-		SaveUser(*u)
+		SaveUser(u)
 
 		// Chunk 5 (Presence): fire Disconnected BEFORE the user is removed
 		// from the active maps so the T8 scheduler-cancel observer can still
@@ -446,7 +446,7 @@ func CreateUser(u *UserRecord) error {
 	idx := NewUserIndex()
 	idx.AddUser(u.UserId, u.Username)
 
-	if err := SaveUser(*u); err != nil {
+	if err := SaveUser(u); err != nil {
 		return err
 	}
 
@@ -484,7 +484,7 @@ func LoadUser(username string, skipValidation ...bool) (*UserRecord, error) {
 
 	if len(skipValidation) == 0 || !skipValidation[0] {
 		if err := loadedUser.Character.Validate(true); err == nil {
-			SaveUser(*loadedUser)
+			SaveUser(loadedUser)
 		}
 	}
 
@@ -652,7 +652,7 @@ func CompanionNameExists(name string) bool {
 	return found
 }
 
-func SaveUser(u UserRecord, isAutoSave ...bool) error {
+func SaveUser(u *UserRecord, isAutoSave ...bool) error {
 
 	fileWritten := false
 	tmpSaved := false
@@ -663,7 +663,7 @@ func SaveUser(u UserRecord, isAutoSave ...bool) error {
 		mudlog.Info("SaveUser()", "username", u.Username, "wrote-file", fileWritten, "tmp-file", tmpSaved, "tmp-copied", tmpCopied, "completed", completed)
 	}()
 
-	data, err := yaml.Marshal(&u)
+	data, err := yaml.Marshal(u)
 	if err != nil {
 		return err
 	}

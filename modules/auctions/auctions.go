@@ -515,7 +515,7 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 							Item:     &auctionNow.ItemData,
 						},
 					)
-					users.SaveUser(*user)
+					users.SaveUser(user)
 				}
 
 			}
@@ -558,7 +558,7 @@ func (mod *AuctionsModule) newRoundHandler(e events.Event) events.ListenerReturn
 								Gold:     payout,
 							},
 						)
-						users.SaveUser(*sellerUser)
+						users.SaveUser(sellerUser)
 					}
 
 				}
@@ -873,7 +873,7 @@ func (mod *AuctionsModule) resolveSeizedLot(a *AuctionItem) {
 						FromName: `Auction System`,
 						Message:  fmt.Sprintf(`Your seized %s found no buyer at auction and was disposed.`, a.ItemData.DisplayName()),
 					})
-					users.SaveUser(*u)
+					users.SaveUser(u)
 					return false
 				}
 				return true
@@ -921,7 +921,7 @@ func (mod *AuctionsModule) resolveSeizedLot(a *AuctionItem) {
 							Item:     &itemCopy,
 						})
 					}
-					users.SaveUser(*u)
+					users.SaveUser(u)
 					return false
 				}
 				return true
@@ -949,7 +949,7 @@ func (mod *AuctionsModule) resolveSeizedLot(a *AuctionItem) {
 						Message:  fmt.Sprintf(`Your seized %s sold at auction. After the debt and the house's cut, %d gold was returned to your account.`, a.ItemData.DisplayName(), surplus),
 						Gold:     surplus,
 					})
-					users.SaveUser(*u)
+					users.SaveUser(u)
 					return false
 				}
 				return true
@@ -1103,7 +1103,7 @@ func refundUser(userId int, amount int) {
 	users.SearchOfflineUsers(func(u *users.UserRecord) bool {
 		if u.UserId == userId {
 			u.Character.Bank += amount
-			users.SaveUser(*u)
+			users.SaveUser(u)
 			return false
 		}
 		return true
@@ -1129,7 +1129,7 @@ func returnUnsoldItem(sellerUserId int, item items.Item) {
 			})
 		}
 		if offline {
-			users.SaveUser(*u)
+			users.SaveUser(u)
 		}
 	}
 	if u := getUser(sellerUserId); u != nil {
