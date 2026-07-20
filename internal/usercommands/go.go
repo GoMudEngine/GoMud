@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/conversations"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
+	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -26,6 +27,27 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
+
+// unlockExit performs the shared tail of a successful exit unlock: it tells the
+// actor, narrates to the room, plays the unlock sound, and clears the lock on
+// both the caller's local exitInfo copy and the room's real exit.
+//
+// The three unlock paths in Go() (known lockpick sequence, key ring, and a
+// loose key in the backpack) each repeated this exact sequence, differing only
+// in the two messages — so a change to one, e.g. the sound or the SetExitLock
+// call, silently diverged the others.
+//
+// exitInfo is a pointer because GetExitInfo returns a copy and Lock.SetUnlocked
+// has a pointer receiver: the backpack path re-reads exitInfo.Lock.IsLocked()
+// afterwards to decide whether to show the failure message, so the local copy
+// must reflect the unlock.
+func unlockExit(user *users.UserRecord, room *rooms.Room, exitName string, exitInfo *exit.RoomExit, playerMsg, roomMsg string) {
+	user.SendText(messaging.CategorySystem, playerMsg)
+	room.SendTextVisual(messaging.CategoryMobEmote, roomMsg, user.UserId)
+	room.PlaySound(`change`, `other`)
+	exitInfo.Lock.SetUnlocked()
+	room.SetExitLock(exitName, false)
+}
 
 func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 
@@ -191,26 +213,15 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 
 			if lockpickItm.ItemId > 0 && hasSequence {
 
-				user.SendText(messaging.CategorySystem, `You know this lock well, you quickly pick it.`)
-				room.SendTextVisual(messaging.CategoryMobEmote,
-					fmt.Sprintf(`<ansi fg="username">%s</ansi> quickly picks the lock on the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
-					user.UserId)
-
-				room.PlaySound(`change`, `other`)
-
-				exitInfo.Lock.SetUnlocked()
-				room.SetExitLock(exitName, false)
+				unlockExit(user, room, exitName, &exitInfo,
+					`You know this lock well, you quickly pick it.`,
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> quickly picks the lock on the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName))
 
 			} else if hasKey {
-				user.SendText(messaging.CategorySystem, fmt.Sprintf(`You use the key on your key ring to unlock the <ansi fg="exit">%s</ansi> exit.`, exitName))
-				room.SendTextVisual(messaging.CategoryMobEmote,
-					fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
-					user.UserId)
 
-				room.PlaySound(`change`, `other`)
-
-				exitInfo.Lock.SetUnlocked()
-				room.SetExitLock(exitName, false)
+				unlockExit(user, room, exitName, &exitInfo,
+					fmt.Sprintf(`You use the key on your key ring to unlock the <ansi fg="exit">%s</ansi> exit.`, exitName),
+					fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName))
 
 			} else {
 
@@ -218,13 +229,6 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				if backpackKeyItm, hasBackpackKey := user.Character.FindKeyInBackpack(lockId); hasBackpackKey {
 
 					itmSpec := backpackKeyItm.GetSpec()
-
-					room.PlaySound(`change`, `other`)
-
-					user.SendText(messaging.CategorySystem, fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="exit">%s</ansi> exit, and add it to your key ring for the future.`, itmSpec.Name, exitName))
-					room.SendTextVisual(messaging.CategoryMobEmote,
-						fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName),
-						user.UserId)
 
 					// Key entries look like:
 					// "key-<roomid>-<exitname>": "<itemid>"
@@ -237,8 +241,9 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						Gained: false,
 					})
 
-					exitInfo.Lock.SetUnlocked()
-					room.SetExitLock(exitName, false)
+					unlockExit(user, room, exitName, &exitInfo,
+						fmt.Sprintf(`You use your <ansi fg="item">%s</ansi> to unlock the <ansi fg="exit">%s</ansi> exit, and add it to your key ring for the future.`, itmSpec.Name, exitName),
+						fmt.Sprintf(`<ansi fg="username">%s</ansi> uses a key to unlock the <ansi fg="exit">%s</ansi> exit.`, user.Character.Name, exitName))
 				}
 
 				if exitInfo.Lock.IsLocked() {
