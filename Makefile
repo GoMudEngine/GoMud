@@ -162,13 +162,17 @@ server.crt server.key:
 fmt:
 	@go fmt ./...
 
+# Reports unformatted files without rewriting them, matching the CI gate in
+# .github/actions/codegen-and-test. The previous implementation used
+# `go fmt ./...`, which silently REWROTE the tree and then failed — so a
+# "check" mutated your working copy. Use `make fmt` to actually apply changes.
 .PHONY: fmtcheck
 fmtcheck:
 	@set -e; \
-	unformatted=$$(go fmt ./...); \
+	unformatted=$$(git ls-files '*.go' | grep -v '^vendor/' | xargs -r gofmt -l); \
 	if [ ! -z "$$unformatted" ]; then \
-		echo Fixed inconsistent format in some files.; \
-		echo $$unformatted; \
+		echo "These files are not gofmt-clean. Fix with 'make fmt':"; \
+		echo "$$unformatted"; \
 		exit 1; \
 	fi
 
@@ -181,7 +185,7 @@ mod:
 
 .PHONY: vet
 vet:
-	@go vet -composites=false ./...           
+	@go vet ./...
 
 .PHONY: set_gopath
 set_gopath:

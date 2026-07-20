@@ -1,9 +1,32 @@
 name: "Codegen and Test"
-description: "Run go generate and go test"
+description: "Run go generate, the gofmt/vet gates, and go test"
 runs:
   using: "composite"
   steps:
     - run: go generate ./...
       shell: bash
+
+    # The format and vet gates run before the test suite on purpose: they fail
+    # in seconds, while `go test -race ./...` takes minutes. Both were
+    # previously Makefile-only (`make validate`) and no workflow invoked them,
+    # which is how 234 files drifted out of gofmt compliance unnoticed.
+    #
+    # gofmt -l (report) rather than go fmt (rewrite): CI must not mutate the
+    # tree and then pass.
+    - name: Check gofmt
+      shell: bash
+      run: |
+        unformatted=$(git ls-files '*.go' | grep -v '^vendor/' | xargs -r gofmt -l)
+        if [ -n "$unformatted" ]; then
+          echo "::error::These files are not gofmt-clean. Fix with: gofmt -w <file>"
+          echo "$unformatted"
+          exit 1
+        fi
+        echo "All tracked Go files are gofmt-clean."
+
+    - name: Run go vet
+      shell: bash
+      run: go vet ./...
+
     - run: go test -timeout 300s -race -coverprofile=coverage.out ./...
       shell: bash
