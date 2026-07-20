@@ -1,539 +1,568 @@
-# DOGMud Test Coverage Audit — Stage 40.1
+# DOGMud Test Coverage Audit
 
-Generated: 2026-02-28
-Baseline: `go test -coverprofile=coverage.out ./internal/...`
+**Last regenerated: 2026-07-20**
+**Baseline command:** `go test -coverprofile=cover.out ./...` (whole module, not just `./internal/...`)
+**Repo total: 42.3% of statements** · 4,880 test functions across 675 `*_test.go` files · 122 packages
 
----
+> **Previous revision was 2026-02-28 and had gone badly stale** — it described 57 packages
+> (the repo now has 122), listed two packages that no longer exist, and marked as TODO a
+> large amount of work that has since shipped. This is a full regeneration. See
+> §0 for what changed, because the delta is genuinely good news.
 
-## Section A: Coverage Baseline Table
-
-Sorted by tier, then coverage ascending (worst gaps first).
-
-| Package | Coverage | Tests? | Tier |
-|---------|----------|--------|------|
-| hooks | 0.0% | No | 1 |
-| items | 0.0% | No | 1 |
-| mobs | 0.0% | No | 1 |
-| spells | 0.0% | No | 1 |
-| combat | 3.3% | Yes | 1 |
-| characters | 27.3% | Yes | 1 |
-| crafting | 57.0% | Yes | 1 |
-| mutations | 52.1% | Yes | 1 |
-| dice | 69.7% | Yes | 1 |
-| buffs | 25.7% | Yes | 1 |
-| dialogue | 0.0% | No | 2 |
-| enchantments | 0.0% | No | 2 |
-| quests | 0.0% | No | 2 |
-| skills | 0.0% | No | 2 |
-| species | 0.0% | No | 2 |
-| rooms | 5.2% | Yes | 2 |
-| audio | 0.0% | No | 3 |
-| clans | — | No files | 3 |
-| colorpatterns | 0.0% | No | 3 |
-| configs | 3.3% | Yes | 3 |
-| connections | 0.0% | No | 3 |
-| conversations | 0.0% | No | 3 |
-| devtools | 43.3% | Yes | 3 |
-| events | 18.8% | Yes | 3 |
-| exit | 0.0% | No | 3 |
-| fileloader | 0.0% | No | 3 |
-| flags | 0.0% | No | 3 |
-| gamelock | 0.0% | No | 3 |
-| gametime | 0.0% | No tests | 3 |
-| inputhandlers | 3.7% | Yes | 3 |
-| language | 78.2% | Yes | 3 |
-| llm | 0.0% | No | 3 |
-| mapper | 14.8% | Yes | 3 |
-| markdown | 78.0% | Yes | 3 |
-| migration | 0.0% | No | 3 |
-| mobcommands | 0.0% | No | 3 |
-| mudlog | 0.0% | No | 3 |
-| mutators | 0.0% | No | 3 |
-| parties | 0.0% | No | 3 |
-| pets | 0.0% | No | 3 |
-| plugins | 0.0% | No | 3 |
-| prompt | 60.5% | Yes | 3 |
-| rooms | 5.2% | Yes | 3 |
-| scripting | 0.0% | No tests | 3 |
-| statmods | 0.0% | No | 3 |
-| stats | 0.0% | No | 3 |
-| suggestions | 0.0% | No | 3 |
-| templates | 16.2% | Yes | 3 |
-| term | 0.0% | No | 3 |
-| usercommands | 0.0% | No | 3 |
-| users | 12.3% | Yes | 3 |
-| util | 69.0% | Yes | 3 |
-| uuid | 72.1% | Yes | 3 |
-| version | 86.5% | Yes | 3 |
-| web | 0.0% | No | 3 |
-| worldevents | 0.0% | No | 3 |
-| badinputtracker | 100.0% | Yes | 3 |
-
-**Overall Tier 1 weighted average: ~24%** (critical gap).
+Companion document: [`TECH_DEBT_AUDIT_2026-07-20.md`](TECH_DEBT_AUDIT_2026-07-20.md) — the
+broader codebase audit. Testing findings there and here are cross-referenced.
 
 ---
 
-## Section B: Package Tier Classification
+## §0 — What changed since 2026-02-28
 
-### Tier 1 — Critical (Core Gameplay)
+Every Tier-1 package improved, most of them dramatically. The Feb doc's headline figure was
+"Tier 1 weighted average ~24% (critical gap)."
 
-| Package | Role |
-|---------|------|
-| combat | Damage pipeline, grapple, defense resolution, AI |
-| dice | All probabilistic rolls |
-| characters | Stats, progression, mitigation, defense |
-| mutations | Mutation effects, stacking, acquisition |
-| crafting | Recipe matching, ingredient checks |
-| spells | Spell lookup, cost calc, eligibility |
-| items | Item comparison, damage calc, enchantments |
-| mobs | Mob templates, AI idle/angry, relationships |
-| hooks | Spell resolution, combat round helpers |
-| buffs | Buff spec, stacking, duration |
+| Package | Feb 2026 | Jul 2026 | Δ |
+|---------|---------:|---------:|------:|
+| combat | 3.3% | **42.4%** | +39.1 |
+| dice | 69.7% | **83.9%** | +14.2 |
+| characters | 27.3% | **44.2%** | +16.9 |
+| mutations | 52.1% | **76.3%** | +24.2 |
+| crafting | 57.0% | **69.5%** | +12.5 |
+| spells | 0.0% | **50.3%** | +50.3 |
+| items | 0.0% | **65.9%** | +65.9 |
+| mobs | 0.0% | **59.1%** | +59.1 |
+| hooks | 0.0% | **45.1%** | +45.1 |
+| buffs | 25.7% | **67.5%** | +41.8 |
+| dialogue | 0.0% | **60.4%** | +60.4 |
+| skills | 0.0% | **54.2%** | +54.2 |
+| rooms | 5.2% | **43.7%** | +38.5 |
+| species | 0.0% | **25.0%** | +25.0 |
+| **quests** | 0.0% | **0.0%** | — |
+| **enchantments** | 0.0% | **0.0%** | — |
 
-### Tier 2 — Important (Gameplay Quality)
+**Tier 1 unweighted mean: 24% → 60.4%.** That is the single most important number in this
+document. The Feb plan worked.
 
-| Package | Role |
-|---------|------|
-| quests | Quest state tracking |
-| dialogue | NPC conversation trees |
-| enchantments | Item enchantment logic |
-| skills | Skill definitions |
-| species | Species traits, stat modifiers |
-| rooms | Room properties, exits |
+Also shipped since Feb:
+- **10 of 12** Stage 40.3 integration scenarios (all were TODO).
+- **6 of 10** Stage 40.4 items (mostly TODO).
+- The `seedRegistry` pattern spread from 2 packages to **12**.
+- CI now runs `-race` + coverage on every PR and master push (Feb doc listed this as TODO).
 
-### Tier 3 — Utility / Infrastructure
-Everything else: configs, events, templates, users, util, uuid,
-language, markdown, mapper, prompt, inputhandlers, connections,
-fileloader, web, etc.
-
----
-
-## Section C: Coverage Targets
-
-| Tier | Target | Rationale |
-|------|--------|-----------|
-| Tier 1 | **95%** | Core gameplay — bugs here are game-breaking. Most logic is pure math or state transitions. |
-| Tier 2 | **85%** | Important features. Some integration complexity but most logic is extractable. |
-| Tier 3 | **60%** | Utility/infra — test pure logic; skip raw I/O wrappers and network code. |
-
-### Per-Package Targets (Tier 1 Detail)
-
-| Package | Current | Target | Gap | Notes |
-|---------|---------|--------|-----|-------|
-| dice | 69.7% | 95% | 25pp | Almost all pure functions. Add wrapper tests. |
-| characters | 27.3% | 95% | 68pp | Progression, mitigation, defense all testable. 100+ tests exist as foundation. |
-| combat | 3.3% | 95% | 92pp | Pipeline tested. Grapple + defense are pure state machines. |
-| mutations | 52.1% | 95% | 43pp | seedRegistry pattern exists. Add remaining 16 effect getters. |
-| crafting | 57.0% | 90% | 33pp | Mostly pure. 2 missing functions trivial to test. |
-| buffs | 25.7% | 90% | 64pp | Spec lookup, stacking logic are pure. |
-| spells | 0.0% | 90% | 90pp | ~95% is pure data + lookups. Easiest zero-to-covered. |
-| items | 0.0% | 90% | 90pp | ~80% pure logic (matching, display, damage calc). |
-| mobs | 0.0% | 75% | 75pp | ~40% pure today (relationships, idle, stat dist). Rest needs refactoring. |
-| hooks | 0.0% | 60% | 60pp | Integration-heavy, but extractable pure logic can reach 60%. |
+Two Tier-2 packages did not move off zero: **`quests`** and **`enchantments`**. Both are
+addressed in §4.
 
 ---
 
-## Section D: Testability Barriers & Refactoring Options
+## §1 — Coverage by package (regenerated 2026-07-20)
 
-### Barrier 1: Global Singleton Registries
+Distribution across 122 packages:
 
-**Affected:** hooks, mobs, usercommands, mobcommands
+| Band | Count |
+|------|------:|
+| 0% | 31 |
+| 0–25% | 13 |
+| 25–50% | 23 |
+| 50–75% | 26 |
+| 75–100% | 29 |
 
-**Problem:** Functions call `mobs.GetInstance()`, `users.GetByUserId()`,
-`rooms.LoadRoom()` directly — global lookups that require the entire
-game state initialized.
+### 1a. Zero coverage — no test file at all
 
-**Already Solved By:** mutations and crafting packages use a
-`seedRegistry()` pattern — manually populate the in-memory map with
-test fixtures, bypassing file I/O entirely.
+Excludes `cmd/generate`, `tools/*`, and the root package (build/CLI utilities, out of scope).
 
-| Option | Effort | Pros | Cons |
-|--------|--------|------|------|
-| **A. seedRegistry pattern** | Low | No production code changes. Proven in mutations/crafting. | Global state; careful with parallel tests. |
-| **B. Interface injection** | Medium | Clean separation. Proper mocking. | ~50+ call-site signature changes in hooks. |
-| **C. Package-level test init** | Low | Simple setup per package. | Fragile if internals change. |
+**Tier 2 — should not be zero:**
+`internal/quests` ⚠️ (see §4.1 — has a test file that covers nothing) ·
+`internal/enchantments` ⚠️ (see §4.2)
 
-**Recommendation:** Option A immediately (proven pattern). Option B as
-follow-up only if hooks needs 80%+.
+**Tier 3 — infrastructure, ranked by risk:**
+`internal/connections` · `internal/plugins` · `internal/statmods` · `internal/fileloader` ·
+`internal/mudlog` · `internal/keywords` · `internal/conversationadapter` · `internal/llm` ·
+`internal/copyover` · `internal/mutators` · `internal/pets` · `internal/audio` ·
+`internal/colorpatterns` · `internal/exit` · `internal/flags` · `internal/stats` ·
+`internal/suggestions` · `internal/integrations/discord`
 
----
+**Modules (an entire tree the Feb doc never covered):**
+`modules/achievements` · `modules/leaderboards` · `modules/cleanup` · `modules/follow` ·
+`modules/time` · `modules/webhelp`
 
-### Barrier 2: Interleaved Logic and Side Effects
+> Note the split: `internal/achievements` (the logic) is at 39.4%, but `modules/achievements`
+> (the wiring that hooks it into the server) is at 0%. Same for leaderboards. The math is
+> tested; *whether it's actually plugged in* is not.
 
-**Affected:** hooks (spell_resolution.go, NewRound_DoCombat_helpers.go)
+### 1b. Under 25% — tested but thin
 
-**Problem:** Pure calculations (damage formulas, probability checks)
-mixed with side effects (HP mutation, message sending, aggro setting)
-in the same function body. Can't test math without triggering mutations.
+| Coverage | Package | Note |
+|---------:|---------|------|
+| 1.7% | `internal/web` | Admin dashboard backend; only `auth_test.go` exists |
+| 4.6% | `internal/gametime` | Calendar/clock math — pure logic, should be far higher |
+| 6.4% | `modules/gmcp` | Client protocol; touches every room move |
+| 11.6% | `modules/weather` | Root pkg thin; subpackages are 88–99% |
+| 11.7% | `internal/term` | Terminal/ANSI handling |
+| 14.5% | `internal/events` | **Core event bus** — see §4.3 |
+| 17.0% | `internal/inputhandlers` | Login/telnet state machine |
+| 18.5% | `internal/migration` | Version upgrade rewriters |
+| 18.8% | `internal/conversations` | NPC↔NPC exchange engine |
+| 18.8% | `modules/playtest` | Test harness beacons |
+| 19.3% | `internal/bountyhunter` | |
+| 24.4% | `internal/goals/catalog` | |
 
-**Example** — `resolveAgainstMob()` in spell_resolution.go:
-- Lines 77–79: Pure opposed roll (testable)
-- Lines 83–95: Backfire damage calc + HP mutation + message send (mixed)
+### 1c. 25–50%
 
-| Option | Effort | Pros | Cons |
-|--------|--------|------|------|
-| **A. Extract pure helpers** | Low | No signature changes. Each helper independently testable. | Doesn't test orchestration. |
-| **B. Return result structs** | Medium | Full orchestration testable. | Larger refactor; update all call sites. |
-| **C. Command pattern** | High | Full undo/replay. | Over-engineered for a MUD. |
+`species` 25.0 · `ferry` 26.3 · `gamelock` 30.8 · `state/perception` 30.8 ·
+`usercommands` 31.3 · `modules/weather/engine` 31.9 · `worldevents` 36.6 ·
+`modules/auctions` 37.2 · `state/activity` 38.3 · `mobcommands` 38.4 ·
+`achievements` 39.4 · `planners` 41.7 · `questengine` 42.1 · `combat` 42.4 ·
+`devtools` 43.3 · `rooms` 43.7 · `characters` 44.2 · `hooks` 45.1 · `actions` 47.4 ·
+`parties` 48.2 · `seeders` 48.3 · `users` 48.5 · `templates` 48.9
 
-**Recommendation:** Option A immediately (extract ~10 pure helpers).
-Option B for 3–4 most critical functions in a later stage.
+### 1d. 50–75%
 
----
+`spells` 50.3 · `state/life` 51.9 · `itemvalue` 53.8 · `skills` 54.2 · `itemvoices` 54.5 ·
+`state/awareness` 55.7 · `behaviortree` 57.7 · `mobs` 59.1 · `caravan` 59.8 ·
+`forager` 59.9 · `dialogue` 60.4 · `prompt` 60.5 · `state/position` 62.2 ⚠️ (see §3.2) ·
+`justice` 63.4 · `items` 65.9 · `buffs` 67.5 · `state/presence` 68.2 · `crafting` 69.5 ·
+`opinions` 70.6 · `textutil` 70.6 · `configs` 71.1 · `uuid` 72.1 · `parser` 72.6 ·
+`warehouse` 72.8 · `util` 73.0 · `shops` 74.1
 
-### Barrier 3: Embedded RNG
+### 1e. 75%+ — the healthy tail
 
-**Affected:** hooks, mobs (AI decisions), combat (grapple)
+`mutations` 76.3 · `markdown` 78.0 · `facts` 78.2 · `language` 78.2 · `economy/health` 80.1 ·
+`factions` 80.2 · `state/combatphase` 81.2 · `crimes` 83.5 · `dice` 83.9 ·
+`state/control` 84.7 · `version` 86.5 · `grapplemessaging` 86.7 · `banner` 87.5 ·
+`modules/weather/content` 87.8 · `sealedcrate` 88.9 · `goals` 89.0 · `messaging` 90.6 ·
+`state` 92.9 · `modules/weather/seasons` 93.0 · `casing` 94.1 · `modules/weather/sim` 94.1 ·
+`relationships` 95.0 · `modules/weather/crawler` 98.8 · `badinputtracker` 100 ·
+`channels` 100 · `economy` 100
 
-**Problem:** `util.Rand()` and `dice.Roll()` scattered inside business
-logic. Can't get deterministic test results.
+### 1f. Packages removed since Feb
 
-| Option | Effort | Pros | Cons |
-|--------|--------|------|------|
-| **A. Separate chance calc from roll** | Low | Test probability function. Already used in `CalcConcentrationChance`. | Can't test success/failure branches. |
-| **B. Inject RNG source** | Medium | Fully deterministic. | Changes function signatures throughout. |
-| **C. Statistical testing** | Low | Already proven in dice_test.go (10k iterations). | Slower; can't test specific edges. |
-
-**Recommendation:** Option A for most. Option C for end-to-end. Option B
-only if deterministic replay needed.
-
----
-
-### Barrier 4: File I/O in Constructors
-
-**Affected:** mobs (`LoadMobInstance`), items (`LoadDataFiles`), spells
-(`LoadSpellFiles`)
-
-**Problem:** Object creation requires reading YAML files from disk.
-
-| Option | Effort | Pros | Cons |
-|--------|--------|------|------|
-| **A. Construct test objects directly** | None | Already done in crafting (`makeItem()`). | Doesn't test loading code. |
-| **B. Test fixture files** | Low | Go convention (`testdata/`). | Must maintain fixtures. |
-| **C. `fs.FS` interface** | Medium | Clean. Tests use `fstest.MapFS`. | Loader signature changes. |
-
-**Recommendation:** Option A for unit tests. Option B for data validation.
-Option C deferred.
-
----
-
-### Package Testability Summary
-
-| Package | % Testable Today | After Refactoring | Key Refactoring |
-|---------|-----------------|-------------------|-----------------|
-| dice | 95% | 98% | Just add tests for wrapper functions |
-| spells | 90% | 95% | seedRegistry for global map |
-| crafting | 90% | 95% | Already well-structured |
-| items | 85% | 95% | Construct ItemSpec directly in tests |
-| characters | 80% | 95% | Character fixtures with equipped items |
-| mutations | 75% | 95% | seedRegistry exists; add remaining getters |
-| combat | 60% | 95% | Grapple = pure state machines; need char fixtures |
-| buffs | 70% | 90% | seedRegistry for buff specs |
-| mobs | 40% | 75% | seedRegistry + extract AI decision logic |
-| hooks | 20% | 60% | Extract ~10 pure helpers + seedRegistry |
+`internal/clans` (no Go files) · `internal/scripting` (deleted). Remove from any tracking.
 
 ---
 
-## Section E: Critical Functions Inventory
+## §2 — Tier classification (updated for 122 packages)
 
-### Dice (5 functions) — all unit testable today
+The Feb tier model still works conceptually. What was missing is that ~45 packages created
+since then were never sorted into it.
 
-| Function | File | Pure | Notes |
-|----------|------|------|-------|
-| `RollStat` | dice.go:432 | Yes | Auto-scaled spread |
-| `OpposedRollStat` | dice.go:443 | Yes | Contested stat checks |
-| `StdDevFor` | dice.go:416 | Yes | Derives stdDev from RollSpread |
-| `SuccessChance` | dice.go | Yes | Probability calculation |
-| `OpposedSuccessChance` | dice.go | Yes | Two-stat probability |
+### Tier 1 — Critical (core gameplay)
+Existing: `combat`, `dice`, `characters`, `mutations`, `crafting`, `spells`, `items`,
+`mobs`, `hooks`, `buffs`
 
-### Combat / Calculations (3) — unit testable
+**Newly classified Tier 1:**
+- **`internal/state`** (+ `position`, `control`, `activity`, `life`, `combatphase`,
+  `presence`, `awareness`, `perception`) — the authoritative combat-position/lifecycle state
+  machine. It *absorbed* functions the Feb doc listed under `combat/grapple.go`
+  (`CheckClinchProgression`, `CheckGroundedEscape`). Called from `combat`, `actions`,
+  `behaviortree`, `hooks`, `users`.
+- **`internal/behaviortree`** — the entire mob AI decision layer. At 57.7% with ~55 test
+  files, this is an undocumented success story rather than a gap.
+- **`internal/questengine`** — owns the quest state machine (triggers/conditions/actions).
+  Core to all quest content and the newcomer tutorial.
 
-| Function | File | Pure | Notes |
-|----------|------|------|-------|
-| `PowerRanking` | calculations.go:13 | Yes | Relative strength 0–1 |
-| `ChanceToTame` | calculations.go:49 | Yes | Taming success % |
-| `ChanceToSwitchTarget` | calculations.go:119 | Yes | Target-switch % |
+### Tier 2 — Important (gameplay quality)
+Existing: `quests`, `dialogue`, `enchantments`, `skills`, `species`, `rooms`
 
-### Combat / Grapple (7) — state machines, need char fixtures
+**Newly classified Tier 2:** `shops`, `economy`, `economy/health`, `warehouse`, `caravan`,
+`ferry` (living economy) · `guilds`, `achievements` (retention features) · `justice`,
+`bounties`, `bountyhunter`, `factions` (crime/reputation) · `goals`, `planners`, `seeders`
+(AI motivation layer) · `itemvalue` (upgrade scoring — took over from `items.IsBetterThan`) ·
+`modules/gmcp`, `modules/weather`
 
-| Function | File | Pure | Notes |
-|----------|------|------|-------|
-| `AttemptGrapple` | grapple.go:58 | No | Opposed roll, reads cooldowns |
-| `CheckClinchProgression` | grapple.go:144 | No | Auto-check for clinch |
-| `CheckGroundedEscape` | grapple.go:177 | No | Escape with armor mod |
-| `IsThirdPartyAttack` | grapple.go:249 | Yes | Pure check |
-| ~~`AttemptSubmission`~~ | ~~grapple.go:276~~ | — | **DELETED T18** — replaced by `RollSubmissionAttempt` + `ResolveSubmissionOutcome` in `submission.go`/`submission_outcome.go`. Tested via PB-301..PB-341 (T19). |
-| ~~`ApplySubmissionFailure`~~ | ~~grapple.go~~ | — | **DELETED T18** |
-| ~~`ApplySubmissionSuccess`~~ | ~~grapple.go~~ | — | **DELETED T18** |
+### Tier 3 — Utility / infrastructure
+Everything else, including `relationships`, `opinions`, `knowledge`, `facts`, `crimes`,
+`mutators`, `conversations`, `parser`, `messaging`, `textutil`, `casing`, and the remaining
+`modules/*`.
 
-### Combat / AI (8) — mostly pure scoring
+### Coverage targets
 
-| Function | File | Pure | Notes |
-|----------|------|------|-------|
-| `CanUseBash` | ai.go:151 | Yes | Viability check |
-| `CanUseTrip` | ai.go | Yes | Viability check |
-| `CanUseKick` | ai.go | Yes | Viability check |
-| `CanUseGrapple` | ai.go | Yes | Viability check |
-| `CanUseCast` | ai.go | Yes | Viability check |
-| `ScoreBash` | ai.go:213 | Yes | Score vs target |
-| `ScoreTrip` | ai.go | Yes | Score vs target |
-| `ScoreGrapple` | ai.go | Yes | Score vs target |
+| Tier | Target | Current mean | Rationale |
+|------|-------:|-------------:|-----------|
+| Tier 1 | 85% | **60.4%** | Bugs here are game-breaking. Mostly pure math/state transitions. *(Target lowered from Feb's 95% — see note.)* |
+| Tier 2 | 70% | ~45% | Important features; some integration complexity. *(Lowered from 85%.)* |
+| Tier 3 | 50% | varies | Test pure logic; skip raw I/O and network wrappers. *(Lowered from 60%.)* |
 
-### Combat / Pipeline (5) — trivial unit tests
-
-| Function | File | Pure | Notes |
-|----------|------|------|-------|
-| `SkillMultiplier` | damage_pipeline.go:21 | Yes | sqrt curve |
-| `DamageScale` | damage_pipeline.go:46 | Yes | Per-channel scale |
-| `CalcRawDamage` | damage_pipeline.go:69 | Yes | Unified formula |
-| `ApplyMitigation` | damage_pipeline.go:101 | Yes | % reduction |
-| `MitigationCap` | damage_pipeline.go:115 | Yes | Per-channel cap |
-| `ResourceMultiplier` | damage_pipeline.go:83 | Yes | Depletion penalty |
-
-### Combat / Defense (2) — needs character fixtures
-
-| Function | File | Pure | Notes |
-|----------|------|------|-------|
-| `runBestOfAllDefense` | combat_helpers.go:353 | No | Best-of-all resolution |
-| `resolveDefenseOutcome` | combat_helpers.go | No | Defense outcome |
-
-### Character / Mitigation (3) — needs equipped item fixtures
-
-| Function | File | Pure | Notes |
-|----------|------|------|-------|
-| `GetPhysicalMitigation` | character.go:962 | Yes | Sum equipment armor |
-| `GetMagicalMitigation` | character.go:996 | Yes | Sum magical resist |
-| `GetConvictionMitigation` | character.go:1022 | Yes | Sum conviction resist |
-
-### Character / Defense (3) — needs equipped item fixtures
-
-| Function | File | Pure | Notes |
-|----------|------|------|-------|
-| `GetDefenseScore` | character.go:1664 | Yes | Dodge/Parry/Block score |
-| `GetDefenseStaminaCost` | character.go:1703 | Yes | Cost per type |
-| `DeductDefenseStamina` | character.go:1731 | No | Mutates stamina |
-
-### Character / Progression (5) — needs config seeding
-
-| Function | File | Pure | Notes |
-|----------|------|------|-------|
-| `CalculateProgressionChance` | progression.go:43 | Yes | Exponential decay |
-| `CheckSkillProgression` | progression.go:67 | No | Rolls advancement |
-| `CheckStatProgression` | progression.go:138 | No | Rolls advancement |
-| `OnStatUse` | progression.go:204 | No | Tracks use |
-| `OnSkillUse` | progression.go:218 | No | Tracks use |
-
-### Mutations (16 untested getters) — unit testable with seedRegistry
-
-| Function | Pure | Notes |
-|----------|------|-------|
-| `GetMutationLoad` | Yes | Total load calculation |
-| `HasConflict` | Yes | Conflict detection |
-| `GetStaminaRegenMultiplier` | Yes | Stamina regen effect |
-| `GetNaturalWeaponBonus` | Yes | Unarmed bonus |
-| `GetConvictionResistance` | Yes | Conviction resist |
-| `HasMutationFlag` | Yes | Flag check |
-| `GetConditionalHealthRegen` | Yes | Conditional regen |
-| `GetHealthRegenMultiplier` | Yes | Regen multiplier |
-| `GetDodgeModifier` | Yes | Dodge bonus/penalty |
-| `GetDamageMultiplier` | Yes | Damage scaling |
-| `GetMovementSpeedModifier` | Yes | Speed effect |
-| `GetHealthRegen` | Yes | Base regen |
-| `GetSkillProgressionMultiplier` | Yes | Skill gain modifier |
-| `GetStatProgressionMultiplier` | Yes | Stat gain modifier |
-| `HasMutation` | Yes | Ownership check |
-| `GetMutationLevel` | Yes | Level query |
-
-### Crafting (2 untested) — trivial
-
-| Function | File | Pure | Notes |
-|----------|------|------|-------|
-| `FindTargetItem` | crafting.go:199 | Yes | Item matching |
-| `CalcSuccessChance` | crafting.go:221 | Yes | Success % calc |
-
-### Spells (7 untested) — all pure lookups
-
-| Function | File | Pure | Notes |
-|----------|------|------|-------|
-| `FindSpell` | spells.go:107 | Yes | Fuzzy name search |
-| `GetSpell` | spells.go:119 | Yes | By ID |
-| `FindSpellByName` | spells.go:126 | Yes | Exact match |
-| `GetAllSpells` | spells.go:147 | Yes | Full map |
-| `MaxFoldsForSkill` | spells.go:223 | Yes | Fold cap |
-| `GetEligibleSpells` | spells.go:249 | Yes | Filtered list |
-| `GetTotalConvictionCost` | spells.go | Yes | Cost calc |
-
-### Items (10 key untested) — mostly pure
-
-| Function | Pure | Notes |
-|----------|------|-------|
-| `IsBetterThan` | Yes | Item comparison |
-| `GetDiceRoll` | Yes | Weapon stats |
-| `GetDistributionDamage` | Yes | Damage distribution |
-| `GetDamage` | Yes | Damage struct |
-| `GetDefense` | Yes | Defense value |
-| `Equals` | Yes | Equality check |
-| `HasAdjective` | Yes | Adjective match |
-| `GetLongDescription` | Yes | Display text |
-| `IsEnchanted` | Yes | Enchant check |
-| `IsCursed` | Yes | Curse check |
-
-### Hooks / Spell Resolution (3+ extractable) — needs refactoring
-
-| Function | File | Pure | Notes |
-|----------|------|------|-------|
-| `spellDefenseValue` | spell_resolution.go:389 | Yes | Already pure |
-| `checkConcentrationBreak` | combat_shared_helpers.go:94 | Yes | Already pure |
-| `calcSpellDamageForCharacter` | combat_shared_helpers.go:27 | No | Needs extraction |
-
-**Total critical functions: ~75** (expanded from initial ~45 estimate
-after thorough inventory).
+> **On lowering the targets:** the Feb targets (95/85/60) were aspirational and never had a
+> path to being met. A 95% target on `hooks` is not achievable without restructuring the
+> event system. Targets that are permanently missed stop functioning as targets. These
+> numbers are set where sustained progress is realistic — raise them once hit.
 
 ---
 
-## Section F: Existing Test Patterns to Reuse
+## §3 — Test suite quality
 
-### 1. seedRegistry() — Global Map Population
-**Used in:** mutations_test.go, crafting_test.go
-**Pattern:** Populate package-level map with hand-crafted test specs.
-Call `Validate()` on each to migrate legacy fields. No disk I/O needed.
-**Reuse for:** spells, items, mobs, buffs.
+Coverage percentage measures *statements executed*, not *behavior verified*. This section
+covers what the percentage can't see. **This is the most actionable part of the document.**
 
-### 2. makeItem(tag) / buildOwned(pairs...) — Factory Helpers
-**Used in:** crafting_test.go, mutations_test.go
-**Pattern:** Lightweight constructors for test objects. `makeItem`
-creates an `items.Item` with just a `ComponentTag`. `buildOwned` builds
-`map[string]int` from alternating key-value pairs.
-**Reuse for:** characters (with equipment), rooms, mobs.
+### 3.1 Skipped tests: 211 skip sites across 4,880 test functions (4.3%)
 
-### 3. testify/assert — Assertion Library
-**Used in:** characters, buffs, util test files
-**Pattern:** `assert.Equal(t, expected, actual)` for cleaner output.
-**Standard:** Use `testify/assert` for all new tests.
+Concentration is extreme — three files hold 60% of all skips:
 
-### 4. Statistical Verification — N Iterations
-**Used in:** dice_test.go (10k–100k iterations)
-**Pattern:** Run many iterations, verify mean/stddev/percentiles within
-tolerance. Also: empirical validation (compare calculated vs observed
-probability with 3% tolerance).
-**Reuse for:** progression, combat outcomes, grapple win rates.
+| File | Test funcs | Skips | % skipped |
+|------|-----------:|------:|----------:|
+| `internal/state/position/position_test.go` | 124 | **87** | 70% |
+| `internal/state/activity/activity_test.go` | — | 22 | — |
+| `internal/state/life/life_test.go` | — | 15 | — |
 
-### 5. Table-Driven Tests — Standard Go Pattern
-**Used in:** nearly all existing test files
-**Pattern:** `tests := []struct{...}{{...},{...}}` with `t.Run()`.
-**Standard:** Mandate for all new tests.
+**Classification:**
 
-### 6. Float Tolerance — Epsilon Comparisons
-**Used in:** mutations, dice, combat pipeline tests
-**Patterns:**
-- Tight: `math.Abs(got-expected) < 1e-9` (exact math)
-- Relative: `math.Abs(got-expected) < expected*0.05` (statistical)
-- Absolute: `math.Abs(got-expected) < 0.01` (general purpose)
-**Standard:** Use `math.Abs` with appropriate epsilon; never `==` for
-floats.
+**(a) Migration-checklist shells (~130 sites) — the dominant category.** Empty test bodies
+that skip with a pointer to where the behavior was allegedly verified during a migration:
+`t.Skip("integration test — verified in Task 5 cascade tests")`. These were a plan tracker
+rendered as test functions. They inflate the apparent test count and make
+`internal/state/position` look tested when 70% of that file asserts nothing.
+**Recommendation: delete them.** The migration is finished; a skipped test is worse than no
+test because it reads as coverage. Keep any that name a *specific, existing* test elsewhere.
 
-### 7. Monotonicity / Curve Verification
-**Used in:** damage_pipeline_test.go, progression_test.go
-**Pattern:** Verify function is monotonically increasing/decreasing
-without knowing exact values. Catches formula bugs.
+**(b) ⚠️ False assurance — VERIFIED PROBLEM.** 15 skip messages say
+`"covered by control_test.go:TestX (add if missing)"`. **I checked all 8 distinct referenced
+tests. Every one is missing:**
 
-### 8. Global State Save/Restore
-**Used in:** buffspec_test.go
-**Pattern:** `orig := globalVar; defer func() { globalVar = orig }()`
-**Standard:** Always restore global state in tests that modify it.
+```
+MISSING: TestInitialControlForPair_HalfGuard      MISSING: TestInitialControlForPair_NorthSouth
+MISSING: TestInitialControlForPair_BackStanding   MISSING: TestInitialControlForPair_Crucifix
+MISSING: TestInitialControlForPair_SideControl    MISSING: TestInitialControlForPair_Turtle
+MISSING: TestInitialControlForPair_KneeOnBelly    MISSING: TestInitialControlForPair_BackGround
+```
+
+Eight grapple positions — half guard, back standing, side control, knee-on-belly,
+north-south, crucifix, turtle, back-ground — have **no control-initialization test anywhere
+in the repo**, while the skip messages assert they are covered. The "(add if missing)"
+phrasing shows the author never confirmed. This is the highest-value finding in §3.
+
+**(c) Legitimate-permanent.** Genuine constraints — keep, no action:
+- `internal/actions/actions_test.go:238` — real import cycle (usercommands and mobcommands
+  both import actions).
+- `internal/migration/reclassify_test.go:21` — skips when `_archive/prod-users` absent.
+- `internal/templates/process_test.go` (7 sites) — skips when a template file isn't on disk.
+
+**(d) Fixture-blocked — the real backlog.** Tests that would work if fixtures existed:
+- `internal/characters/godfunc_refactor_test.go:289–318` (5 sites) — all
+  `"BLOCKED: requires items.LoadDataFiles() which needs configs init"`. Fixing the configs-init
+  seam unblocks 5 tests at once.
+- `internal/itemvalue/delta_test.go` (6 sites) — needs global item registry + balance config.
+- `internal/mobcommands/gearup_test.go` (3), `internal/usercommands/suicide_cleanup_test.go` (4).
+
+**(e) Probabilistic self-skip — a hidden flake class.** Six sites in
+`internal/actions/combat_drain_test.go`, `combat_throttle_test.go`, and
+`internal/hooks/spell_drainarea_test.go` read:
+`t.Skip("no hit observed in 100 attempts — probabilistic test; re-run if flaky")`.
+These **silently pass when the RNG doesn't cooperate**. If a change made the hit rate zero,
+these tests would skip rather than fail — the exact scenario they exist to catch.
+**Recommendation:** raise the attempt count until the miss probability is negligible, or
+seed the RNG deterministically, and make exhaustion a `t.Fatal` rather than a skip.
+
+**(f) Stale-debt — cheap wins with a paper trail.**
+- `internal/hooks/Death_PlayerRespawn_test.go:55` — *"Die() now revives userId-0 characters;
+  the soft-lock discriminator changed — re-audit new-player death."* Honestly flagged,
+  unaudited since. Either the revival is correct (assert it) or it's a new-player-death bug.
+- `internal/behaviortree/conditions_state_test.go:77` — *"NightHours=0 in test environment —
+  IsNight() always false, nothing to assert."* The test environment defeats the test; seed
+  the config instead.
+
+### 3.2 Tests that cannot fail
+
+All quoted below were read and verified during this audit.
+
+**Zero assertions** — `internal/mobs/mobs_test.go:869, :1030`:
+```go
+func TestSleep(t *testing.T) {
+	mob := &Mob{InstanceId: 42}
+	// Should not panic
+	mob.Sleep(1)
+}
+```
+Passes if `Sleep` is a no-op or corrupts state. `TestAddBuff` is identical in shape — nothing
+verifies a buff event was queued.
+
+**Assertion unreachable behind `recover()`** — `internal/mobs/mobs_test.go:1057`:
+```go
+defer func() { recover() }()
+result := TickMobCraft(mob)
+assert.Nil(t, result)      // never reached if TickMobCraft panics
+```
+A panicking implementation passes exactly as cleanly as a correct one. (Narrow — only 2 sites
+repo-wide, also `TestGetAngryCommand`'s no-species subtest at `:370`.)
+
+**Tests the thing it isn't named after** — `internal/rooms/corpse_test.go:173`,
+`TestCorpseUpdate_GametimeIntegration`. Never constructs a `Corpse` or calls `Update()`. Its
+own comments are leftover scaffolding: *"If you have a need to test how gametime transforms
+RoundCreated + decayRate, you might do something like..."* Provides zero coverage of the type
+it's filed under.
+
+**Name promises more than the assertion delivers** — `internal/mobs/mobs_test.go:777`,
+`TestValidateCallsCharacterValidate` only checks `assert.NoError`. Delete the delegation call
+entirely and it still passes.
+
+**Comment contradicts the assertion** — `internal/combat/damage_pipeline_test.go:202`,
+`TestMitigationCap` says it verifies the cap equals 0.75 but only asserts `0 < got <= 1.0`.
+An implementation returning 0.99 for every channel — breaking the per-channel-configurable
+contract — passes.
+
+### 3.3 What's genuinely strong
+
+Worth stating plainly, because it sets the bar:
+- `internal/dice/dice_test.go` — Monte Carlo distribution tests (10k–100k iterations) against
+  expected mean/stdDev/crit-rate with explicit tolerances, plus `Example*` funcs and benchmarks.
+- `internal/characters/regression_test.go` — each test names the stage/bug it guards;
+  `TestRegression_AlignmentFullyRemoved` uses reflection to assert a field stayed deleted.
+- `internal/questengine/engine_test.go` — asserts exact granted-quest sets, gold amounts, and
+  `Handled` results across chained triggers, with a circular-dependency guard.
+- `internal/behaviortree`, `internal/goals`, `internal/items`, `modules/auctions` — sampled
+  broadly, no weak tests found; exact value assertions throughout.
+
+### 3.4 Parallelism — deliberately absent, and correctly so
+
+`t.Parallel()` appears in exactly **1** file — and that file documents why it's unsafe
+(`internal/goals/prune_test.go:10-14`: *"package-global driven by serial tests via
+defer-restore. Do NOT mark tests in this file t.Parallel() while this global exists"*).
+
+Given the package-global architecture, broad `t.Parallel()` adoption would be unsafe without
+the dependency-injection refactor described in the tech-debt audit §4.6. **This is the right
+trade-off, not a gap.** If wall-time becomes a problem, parallelize *across* packages
+(`go test ./...` already does) rather than within them.
 
 ---
 
-## Section G: Stage 40.2–40.4 Checklist
+## §4 — Specific gaps worth acting on
 
-### Stage 40.2 — Core Unit Tests (~55 functions)
+### 4.1 ⚠️ `internal/quests`: a passing test suite that covers 0.0%
 
-| # | Function | Package | Tier | Type | Status |
-|---|----------|---------|------|------|--------|
-| 1 | RollStat | dice | 1 | unit | DONE (40.2) |
-| 2 | OpposedRollStat | dice | 1 | unit | DONE (40.2) |
-| 3 | StdDevFor | dice | 1 | unit | DONE (40.2) |
-| 4 | SuccessChance | dice | 1 | unit | DONE (pre-existing) |
-| 5 | OpposedSuccessChance | dice | 1 | unit | DONE (pre-existing) |
-| 6 | PowerRanking | combat | 1 | unit | DONE (40.2) |
-| 7 | ChanceToTame | combat | 1 | unit | DEFERRED (integration-heavy) |
-| 8 | ChanceToSwitchTarget | combat | 1 | unit | DONE (40.2) |
-| 9 | SkillMultiplier | combat | 1 | unit | DONE (pre-existing) |
-| 10 | DamageScale | combat | 1 | unit | DONE (40.2) |
-| 11 | CalcRawDamage | combat | 1 | unit | DONE (40.2) |
-| 12 | ApplyMitigation | combat | 1 | unit | DONE (40.2) |
-| 13 | MitigationCap | combat | 1 | unit | DONE (40.2) |
-| 14 | ResourceMultiplier | combat | 1 | unit | DONE (pre-existing) |
-| 15 | IsThirdPartyAttack | combat | 1 | unit | DONE (40.2) |
-| 16 | CanUseBash | combat | 1 | unit | DONE (40.2) |
-| 17 | CanUseTrip | combat | 1 | unit | DONE (40.2) |
-| 18 | CanUseKick | combat | 1 | unit | DONE (40.2) |
-| 19 | CanUseGrapple | combat | 1 | unit | DONE (40.2) |
-| 20 | CanUseCast | combat | 1 | unit | DONE (40.2) |
-| 21 | ScoreBash | combat | 1 | unit | DONE (40.2) |
-| 22 | ScoreTrip | combat | 1 | unit | DONE (40.2) |
-| 23 | ScoreGrapple | combat | 1 | unit | DONE (40.2) |
-| 24 | GetPhysicalMitigation | characters | 1 | unit | DONE (40.2) |
-| 25 | GetMagicalMitigation | characters | 1 | unit | DONE (40.2) |
-| 26 | GetConvictionMitigation | characters | 1 | unit | DONE (40.2) |
-| 27 | GetDefenseScore | characters | 1 | unit | DONE (40.2) |
-| 28 | GetDefenseStaminaCost | characters | 1 | unit | DONE (40.2) |
-| 29 | CalculateProgressionChance | characters | 1 | unit | DONE (pre-existing) |
-| 30 | GetMutationLoad | mutations | 1 | unit | DONE (40.2) |
-| 31 | HasConflict | mutations | 1 | unit | DONE (40.2) |
-| 32 | GetStaminaRegenMultiplier | mutations | 1 | unit | DONE (40.2) |
-| 33 | GetNaturalWeaponBonus | mutations | 1 | unit | DONE (40.2) |
-| 34 | GetConvictionResistance | mutations | 1 | unit | DONE (40.2) |
-| 35 | HasMutationFlag | mutations | 1 | unit | DONE (40.2) |
-| 36 | GetConditionalHealthRegen | mutations | 1 | unit | DONE (40.2) |
-| 37 | GetHealthRegenMultiplier | mutations | 1 | unit | DONE (40.2) |
-| 38 | GetDodgeModifier | mutations | 1 | unit | DONE (40.2) |
-| 39 | GetDamageMultiplier | mutations | 1 | unit | DONE (40.2) |
-| 40 | GetMovementSpeedModifier | mutations | 1 | unit | DONE (40.2) |
-| 41 | GetHealthRegen | mutations | 1 | unit | DONE (40.2) |
-| 42 | GetSkillProgressionMult | mutations | 1 | unit | DONE (40.2) |
-| 43 | GetStatProgressionMult | mutations | 1 | unit | DONE (40.2) |
-| 44 | HasMutation | mutations | 1 | unit | DONE (40.2) |
-| 45 | GetMutationLevel | mutations | 1 | unit | DONE (40.2) |
-| 46 | FindTargetItem | crafting | 1 | unit | DONE (40.2) |
-| 47 | CalcSuccessChance | crafting | 1 | unit | DONE (pre-existing) |
-| 48 | FindSpell / GetSpell | spells | 1 | unit | DONE (40.2) |
-| 49 | MaxFoldsForSkill | spells | 1 | unit | DONE (40.2) |
-| 50 | GetTotalConvictionCost | spells | 1 | unit | DONE (40.2) |
-| 51 | IsBetterThan | items | 1 | unit | DONE (40.2) |
-| 52 | GetDiceRoll | items | 1 | unit | DONE (40.2) |
-| 53 | GetDistributionDamage | items | 1 | unit | DONE (40.2) |
-| 54 | Equals | items | 1 | unit | DONE (40.2) |
-| 55 | HasAdjective | items | 1 | unit | DONE (40.2) |
+`quests_test.go` **runs and passes** (`ok internal/quests 1.015s`) yet reports **0.0% of
+statements**. The three tests unmarshal YAML into `Quest`/`QuestReward` structs — that
+executes `gopkg.in/yaml.v2` library code, not `quests.go`.
 
-### Stage 40.3 — Integration & Scenario Tests (~12 scenarios)
+**Those tests are good and should stay.** They are struct-tag regression guards — precisely
+the class that would have caught the documented `hostile:` incident (a yaml tag on an
+unexported field silently no-op'd for two months on prod).
 
-| # | Scenario | Packages | Type | Status |
-|---|----------|----------|------|--------|
-| 1 | Full melee attack round | combat+characters | integration | TODO |
-| 2 | Spell cast → resolve → damage | hooks+spells+combat | integration | TODO |
-| 3 | Grapple sequence (clinch→ground→submit) | combat | integration | TODO |
-| 4 | Defense resolution (best-of-all) | combat+characters | integration | TODO |
-| 5 | Resource depletion → penalty curve | combat+characters | integration | TODO |
-| 6 | Skill progression over N uses | characters | statistical | TODO |
-| 7 | Stat progression over N uses | characters | statistical | TODO |
-| 8 | Crafting loop (check → consume → result) | crafting+items | integration | TODO |
-| 9 | Mutation acquisition + stacking | mutations | integration | TODO |
-| 10 | Buff application + expiry | buffs+characters | integration | TODO |
-| 11 | Item comparison chain | items | integration | TODO |
-| 12 | Mob AI move selection | combat | integration | TODO |
+**The lesson: coverage % is the wrong metric for schema packages.** Don't "fix" this by
+deleting the tests.
 
-### Stage 40.4 — Regression, Refactoring & CI (~10 items)
+**The actual gap:** all 14 exported functions in `quests.go` are untested, including pure
+string/token logic that is trivially testable:
+`IsTokenAfter` (:103) · `PartsToToken` (:153) · `TokenToParts` (:157) · `GetQuest` (:173) ·
+`ValidateFlag` (:219) · `GetQuestCt` (:93) · `GetFlagRegistry` (:235)
 
-| # | Task | Type | Status |
-|---|------|------|--------|
-| 1 | Extract pure helpers from hooks (Barrier 2 Option A) | refactor | TODO |
-| 2 | Add hooks unit tests for extracted helpers | test | TODO |
-| 3 | seedRegistry for spells package | test infra | DONE (40.2) |
-| 4 | seedRegistry for items package | test infra | N/A (inline Spec) |
-| 5 | seedRegistry for mobs package | test infra | TODO |
-| 6 | Regression test: damage pipeline edge cases | test | DONE (40.2) |
-| 7 | Regression test: mitigation cap enforcement | test | DONE (40.2) |
-| 8 | Regression test: defense floor (MinDefenseChance) | test | TODO |
-| 9 | CI coverage gate (fail if Tier 1 < 90%) | CI | TODO |
-| 10 | Smoke test: `go build && go test ./...` in CI | CI | TODO |
+`IsTokenAfter` and `TokenToParts` decide quest-step ordering across all quest content. They
+are ~50 lines of pure string manipulation with zero tests.
+
+### 4.2 ⚠️ `internal/enchantments`: 0% — and its helper ships to production
+
+Zero real tests. Its only non-source file is `test_helpers.go` — **which lacks the `_test.go`
+suffix**, so `SeedEnchantmentsForTest` compiles into the production binary.
+
+This package is boot-critical (loaded at `main.go:62`) and drives
+`characters/migrate_enchantments.go`, `usercommands/skill.disenchant.go`,
+`hooks/NewRound_UserRoundTick.go`. Its `copyStatMods` function is exactly the
+shallow-copy-shared-pointer bug class already documented as a past incident.
+
+**Two actions:** rename to `helpers_test.go` (keeps it out of the binary), and test
+`copyStatMods` for genuine deep-copy independence.
+
+### 4.3 `internal/events` at 14.5% — the bus everything rides
+
+Per the tech-debt audit §1.1, `DoListeners` is the single dispatch point for every combat
+round, quest event, and command execution — with no panic recovery. It is 14.5% covered.
+
+### 4.4 Regression guards for documented past incidents
+
+| Incident | Guarded? |
+|---|---|
+| yaml tag on unexported field (`hostile:`, 2 months on prod) | ✅ `internal/mobs/legacy_hostile_test.go` — `TestLegacyHostileYAMLBackcompat` |
+| shallow-copy shared pointers on mob spawn | ⚠️ Partial — `internal/mutations/opposition_test.go` touches it; no guard on `newMobByIdInternal`'s copy |
+| quest reward YAML keys are no-underscore (`itemid` not `item_id`) | ✅ `internal/quests/quests_test.go` (the 0%-coverage suite from §4.1 — it's doing real work) |
+| filename must match name field (startup panic) | ⚠️ Indirect only, via `ConvertForFilename` tests in `util`/`caravan`/`warehouse` |
+| **dialogue bare-scalar list field mutes whole NPC** (`questRequired: "X"` vs `["X"]` → yaml.v2 nils the entire file) | ❌ **UNGUARDED** — zero test files mention `questRequired` |
+
+The last row is the highest-priority missing regression test in the repo: the failure is
+**silent**, kills an entire NPC's dialogue, and lazy-loading hides it from the boot test.
+See tech-debt audit §5.1 — migrating to yaml.v3 with `KnownFields(true)` would catch this
+class structurally, but a regression test should land regardless.
+
+### 4.5 Untested code where a live defect was already found
+
+Four of the eight Tier-0 bugs in the tech-debt audit sit in code with **zero test coverage**.
+That is the concrete argument for this document:
+
+| Bug | Location | Package coverage |
+|-----|----------|-----------------:|
+| Players loot locked containers | `usercommands/get.go:451` | 31.3% (this path: 0) |
+| Mobs mint gold via `put` | `mobcommands/put.go:74` | 38.4% (this path: 0) |
+| `GetAuctionHistory` slice panic | `modules/auctions/auctions.go:1183` | 37.2% (this method: 0) |
+| Instant crafts skip skill progression | `usercommands/craft.go:121` | 31.3% (this path: 0) |
+
+Two further landmines found in zero-coverage code during the same sweep:
+- **`statmods.StatMods.Add`** (`statmods.go:53`) — `if s == nil { s = make(StatMods) }`
+  reassigns the local parameter, so it never escapes to the caller. `Add` on a nil map is a
+  **silent no-op**; the bonus vanishes with no panic. All current callers happen to
+  pre-allocate, but nothing enforces that for the next enchant/affix feature. Worse,
+  `items_test.go:242` (`TestEnchantUnEnchant`) calls this exact path and only asserts
+  `Damage.BaseDamage` — never the resulting stat bonus — so the test **masks** the landmine.
+- **`connections.Kick` vs `Remove`** (`connections.go:107-149`) — `Kick` (used on `/quit`,
+  duplicate-login, admin kick) closes the connection but never `delete()`s it from
+  `netConnections`, unlike `Remove`. Zero test files in the package, so nothing guards the
+  asymmetry; stale entries linger until an unrelated failed read/write cleans them up.
+
+### 4.6 Large source files with no proportional test presence
+
+| File | Lines | Package coverage |
+|------|------:|-----------------:|
+| `internal/rooms/rooms.go` | 2,762 | 43.7% |
+| `internal/hooks/spell_resolution.go` | 1,478 | 45.1% |
+| `internal/mapper/mapper.go` | 1,189 | 24.9% |
+| `modules/gmcp/gmcp.Char.go` | 1,042 | 6.4% |
+| `internal/util/util.go` | 1,076 | 73.0% |
+| `modules/auctions/auctions.go` | 1,195 | 37.2% |
+
+`modules/gmcp` at 6.4% is the standout: `GetCharNode` is a 356-line branch-by-string function
+that builds every GMCP payload the web client consumes, and it fires on every room move.
+
+---
+
+## §5 — Testability barriers (status update)
+
+### Barrier 1: Global singleton registries — ✅ SOLVED
+The Feb recommendation (Option A, `seedRegistry`) didn't just get adopted, it became house
+style. `Seed<X>ForTest` helpers now exist in **12 packages**: mutations, crafting, spells,
+items, buffs, mobs, enchantments, rooms, species, keywords, mutators, users — exceeding the
+original ask (spells/items/mobs/buffs) by four.
+
+### Barrier 2: Interleaved logic and side effects — ✅ MOSTLY SOLVED
+The "extract ~10 pure helpers" recommendation was followed almost literally.
+`internal/hooks/combat_shared_helpers.go` now has exactly 10 top-level helpers
+(`calcSpellDamageForCharacter`, `checkConcentrationBreak`, `tryWeaponBreak`,
+`applyCritEffects`, `simulateFoldRound`, `calcFoldConvictionCost`, `clearCastingActivity`,
+`cancelCraftOrSalvageOnDamage`, `cancelDamageBuffs`, `processFoldRound`), several individually
+tested. Caveat: `spell_resolution.go` has *grown* to 1,478 lines despite the extraction.
+
+### Barrier 3: Embedded RNG — ⚠️ STILL TRUE
+No RNG-injection refactor. Option C (statistical testing) remains dominant and works well
+(`TestAttemptGrapple_Statistical`). **But see §3.1(e)** — the probabilistic self-skip pattern
+is the failure mode of relying on RNG without seeding.
+
+### Barrier 4: File I/O in constructors — ⚠️ STILL TRUE
+Option A (construct test objects directly) remains standard, now reinforced by the
+seedRegistry spread. Note this is what blocks the 5 `godfunc_refactor_test.go` tests
+(§3.1(d)) — `items.LoadDataFiles()` requires configs init.
+
+---
+
+## §6 — Test patterns in use
+
+Patterns 1–8 from the Feb revision are all still active and correct: `seedRegistry`, factory
+helpers (`makeItem`/`buildOwned`), `testify/assert`, statistical N-iteration verification,
+table-driven tests, float-epsilon comparison, monotonicity/curve verification, and global
+state save/restore.
+
+**New — Pattern 9: the standardized `test_helpers.go` file.** Twelve packages now export a
+single `Seed<Package>ForTest(data) func()` returning a cleanup closure, with a consistent
+docstring. This is the repo-wide generalization of patterns 1 + 8 and is now more prescriptive
+than either. **Convention note:** name it `helpers_test.go`, not `test_helpers.go` — the
+latter lacks the `_test.go` suffix and compiles into the production binary (see §4.2).
+
+---
+
+## §7 — Stage 40.x checklist status
+
+### 40.3 — Integration scenarios: 10 of 12 DONE (all were TODO)
+
+| # | Scenario | Status |
+|---|----------|--------|
+| 1 | Full melee attack round | ✅ `TestIntegration_CombatLifecycle` (combat/integration_combat_test.go:21) |
+| 2 | Spell cast → resolve → damage | ✅ `TestCalcSpellDamage_SpellPowerAmplifies` + hooks_test.go battery |
+| 3 | Grapple sequence | ✅ combat/submission_test.go, grapple_test.go — **note:** clinch/ground progression moved to `internal/state/position` |
+| 4 | Defense resolution (best-of-all) | ✅ `TestIntegration_DefenseAndMitigation` (:162) |
+| 5 | Resource depletion → penalty curve | ✅ `TestIntegration_CombatStaminaDepletion` (:72) |
+| 6 | Skill progression over N uses | ✅ `TestIntegration_SkillProgressionSimulated` |
+| 7 | Stat progression over N uses | ✅ `TestIntegration_StatProgressionSimulated` |
+| 8 | Crafting loop | ✅ `TestIntegration_CraftingFullLoop` |
+| 9 | Mutation acquisition + stacking | ◐ Acquisition covered (`TestRollAcquisition`); stacking only via unit-tested `GetMutationLoad`/`HasConflict` |
+| 10 | Buff application + expiry | ✅ buffs/buffs_test.go:303,757,831 |
+| 11 | Item comparison chain | ◐ `TestIsBetterThan` only — richer logic moved to `internal/itemvalue` |
+| 12 | Mob AI move selection | ◐ Dispatch covered; deeper logic migrated to `internal/behaviortree` |
+
+### 40.4 — Regression / refactor / CI
+
+| # | Task | Status |
+|---|------|--------|
+| 1 | Extract pure helpers from hooks | ✅ 10 helpers in combat_shared_helpers.go |
+| 2 | Hooks unit tests for extracted helpers | ✅ 60+ test files in hooks/ |
+| 3 | seedRegistry for spells | ✅ |
+| 4 | seedRegistry for items | ✅ (Feb doc said "N/A" — now exists) |
+| 5 | seedRegistry for mobs | ✅ `mobs.SeedMobsForTest` |
+| 6 | Regression: damage pipeline edge cases | ✅ |
+| 7 | Regression: mitigation cap enforcement | ⚠️ Exists but is weak — see §3.2 |
+| 8 | Regression: defense floor | ✅ `TestRegression_DefenseFloorAlwaysApplies` |
+| 9 | CI coverage gate (Tier 1 < 90%) | ⚠️ **Shipped differently** — global **28%** floor on total repo, no per-tier logic |
+| 10 | Smoke test in CI | ✅ `go test ./...` on every PR + master push |
+
+**On #9:** the shipped gate is a flat 28% repo-wide floor. With the repo now at 42.3%, that
+floor is 14 points of slack — it cannot detect a significant regression. It also soft-passes
+(`exit 0`) if `coverage.out` is missing. Options: raise the floor to ~40% to match reality,
+or implement the per-tier gate as originally specified. The former is a two-character change
+and captures most of the value.
+
+### 40.2 — Still deferred
+`ChanceToTame` (combat/calculations.go:140) remains untested. **`PowerRanking` no longer
+exists** — replaced by `PowerScore` (calculations.go:19), a full redesign consuming the real
+damage pipeline. Section E of the old doc referenced several deleted functions; all
+file:line references in this document were re-verified on 2026-07-20.
+
+---
+
+## §8 — Next 16 tests to write
+
+Ranked by risk-prevented ÷ effort. Each is actionable without further investigation.
+
+The first four are **fix-plus-test**, not test-only: the audits turned up live defects in
+untested code, and writing the test without the fix leaves a red suite. Full diagnosis for
+each is in the tech-debt audit's Tier 0.
+
+| # | Target | Why | Assert | Effort |
+|---|--------|-----|--------|:-----:|
+| 1 | **`usercommands.Get` container lock check** (`get.go:451`) | **LIVE, PLAYER-REACHABLE BUG** — `get.go` has zero lock checks while every sibling command has one; players loot locked chests without picking (tech-debt §0.6) | Locked container rejects `get gold/item from` with an "is locked" message; balances and contents unchanged | S |
+| 2 | `mobcommands.Put` gold path | **Live bug** — credits container without debiting mob, skips lock check (tech-debt §0.1) | Mob gold decreases by exactly the deposited amount; locked container refuses | S |
+| 3 | `auctions.GetAuctionHistory` (`auctions.go:1183`) | **Latent panic** — `PastAuctions[len-n : n]` is `[7:3]` for n=3, len=10. Dormant only because the sole caller passes 0 (tech-debt §0.7) | `GetAuctionHistory(3)` on a 10-item history returns the last 3 without panicking | S |
+| 4 | `statmods.StatMods.Add` nil-receiver (`statmods.go:53`) | `if s == nil { s = make(...) }` reassigns the local param — `Add` on a nil map is a **silent no-op**, bonus vanishes. 0% coverage | Either fix (return the map / require pre-allocation) or test-document the no-op; also assert `items_test.go:242`'s enchant actually applies a stat bonus, which it never checks today | S |
+| 5 | The 8 missing `TestInitialControlForPair_*` (§3.1b) | Skip messages claim coverage that doesn't exist; 8 grapple positions unverified | Correct initial control value per position (half guard, back standing, side control, knee-on-belly, north-south, crucifix, turtle, back-ground) | S |
+| 6 | `dialogue` bare-scalar regression (§4.4) | Only documented incident with **no** guard; silent, kills whole NPC file | Walk real `_datafiles/**/dialogue/*.yaml` asserting zero unmarshal errors; plus a unit case feeding `questRequired: 34-end` (bare scalar) asserting it errors rather than nilling the file | S |
+| 7 | `quests.IsTokenAfter` / `TokenToParts` / `PartsToToken` (§4.1) | Pure string logic gating quest-step ordering for all quest content; 0% | Round-trip `PartsToToken`↔`TokenToParts`; ordering incl. malformed tokens and skip-ahead/backward rejection | S |
+| 8 | Un-skip `usercommands/suicide_cleanup_test.go` (4 tests) | Cheapest win in the audit — the file's own header says to use `seedAllRegistries()`, which **already exists unused in the same package** at `usercommands_test.go:76` | Death/respawn cleanup correctness | S |
+| 9 | Un-skip `characters/godfunc_refactor_test.go` `TestWear_*` (5 tests) | Blocked on `items.LoadDataFiles()`, but `items.SeedItemsForTest` already exists and is unused here. Equip-slot logic has zero coverage | Empty-slot, slot-swap, 2H-displaces-offhand, wrong-type rejection, multi-arm routing | S |
+| 10 | `enchantments.copyStatMods` (§4.2) | Boot-critical, 0%, known shallow-copy bug class | Mutating the copy does not mutate the source | S |
+| 11 | `statmods.Get` | 0%, pure logic, feeds the combat-math stack | Multi-stat sum; unknown name returns 0, not panic | S |
+| 12 | Fix `TestMitigationCap` (§3.2) | Existing test can't catch the bug it names | Each channel returns its *configured* cap, not merely 0<x≤1 | S |
+| 13 | Replace zero-assertion `TestSleep`/`TestAddBuff` (§3.2) | Currently pass if methods are no-ops | Sleep sets the buff flag; AddBuff queues the expected event | S |
+| 14 | `hooks.transferPartialGold` credit side (`Death_PlayerCorpse.go:70`) | Debit half is tested; **credit half never executes** — the only test passes a zero `ActorRef{}`, so conservation was never checked. Fires on every subdue/cripple death | Killer's gold increases by exactly `loss` for both the player-killer and mob-killer branches | M |
+| 15 | `connections` registry concurrency | Every player session; concurrency-heavy → real `-race` beneficiary. Note `Kick` never `delete()`s from the map while `Remove` does — no guard on that asymmetry | Add/Get/Remove round-trip; concurrent Add+Remove doesn't corrupt the registry | M |
+| 16 | Data-file boot test (tech-debt §6.2) | Automates the manual Pre-Push SOP; prerequisite for the yaml.v3 migration | `mobs`/`quests`/`rooms`/`dialogue` loaders return zero errors and `loadedCount > 0` against real `_datafiles` | M |
+
+**Deliberately ranked lower** (high blast radius, but genuinely large effort):
+`applyControlShift` (`hooks/Position_GrappleTick.go:744`) fires every round of every grapple
+and has no direct test — but the 35 dead skip references pointing at it must be untangled
+first, and the fixture pattern needs establishing from `TestProcessGrapplePair_StashesDriftSnapshot`.
+Real **L** effort. Same for `modules/gmcp.GetCharNode` (6.4% package coverage, 356-line
+function on every room move) and `internal/hooks/spell_resolution.go`, which has **no dedicated
+test file at all** despite `hooks` having 58 other test files.
+
+**Also do (not tests, but test-suite hygiene):**
+- Delete the ~130 migration-checklist skip shells (§3.1a) — they misrepresent coverage.
+- Fix the 6 probabilistic self-skips (§3.1e) — seed the RNG; make exhaustion fail, not skip.
+- Rename `internal/enchantments/test_helpers.go` → `helpers_test.go` (§4.2).
+- Raise the CI coverage floor from 28% to ~40% (§7 #9) and make a missing `coverage.out`
+  a failure rather than a pass.
+
+---
+
+## Appendix — how this document was generated
+
+Coverage: `go test -coverprofile ./...` run 2026-07-20 on the full module; per-package
+figures extracted from the run log. Suite green (exit 0). `-race` could not be run locally
+(no C toolchain — `-race` requires cgo); CI runs it on Linux.
+
+Every file:line in this document was re-verified on 2026-07-20. Skip counts, the 8 missing
+`TestInitialControlForPair_*` tests, the `quests` 0%-with-passing-tests anomaly, the
+zero-assertion tests, and the `enchantments` helper-suffix issue were each confirmed by
+direct inspection rather than inference.
+
+**Regenerate §1 whenever this doc is revisited** — it is a snapshot and will drift. The
+qualitative sections (§3–§6) age much more slowly.
