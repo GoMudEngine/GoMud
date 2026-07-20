@@ -237,10 +237,7 @@ var knownSilentlyIgnoredKeys = map[string]bool{
 	"allow_recall|rooms.Room":                true,
 	"visible|buffs.BuffSpec":                 true,
 	"sequential|buffs.BuffSpec":              true,
-	"item_id|quests.QuestReward":             true,
 	"expireMessage|buffs.BuffSpec":           true,
-	"experience|quests.QuestReward":          true,
-	"experience|questengine.QuestRewards":    true,
 	"buffid|questengine.QuestRewards":        true,
 }
 
