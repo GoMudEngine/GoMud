@@ -585,13 +585,49 @@ v3 is used in a scattered minority (`goals`, `facts`, `bounties`, `knowledge`, `
   causes yaml.v2 to nil the **entire file**, and lazy-loading hides it from the boot test.
   `internal/dialogue/loader.go` is a **yaml.v2** consumer.
 
-yaml.v3 supports `KnownFields(true)` strict decoding, which catches unknown/mistyped keys at load
-time — the same defect family. v2 has no clean equivalent.
-
-**Fix:** standardize content loading on yaml.v3 and add a `KnownFields(true)` pass, or a
-reflection-based boot validator asserting every yaml-tagged field is exported.
-**Risk: needs judgment** — v2 and v3 differ on some numeric/type decoding edge cases, so this
-requires a full data-file boot test after the swap (see 6.2), not just `go build`.
+> ## ⚠️ RECOMMENDATION WITHDRAWN — 2026-07-20, after measurement
+>
+> The original recommendation ("standardize content loading on yaml.v3 and add a
+> `KnownFields(true)` pass") **should not be carried out.** Three claims behind it were tested
+> against the real content tree and did not hold:
+>
+> **1. "v2 nils the entire file, v3 would catch it" — false.** Both decoders produce a *byte
+> identical* error on the bare-scalar case, and both still populate the rest of the struct.
+> Discarding the whole file is not a library behaviour: `internal/dialogue/loader.go:48-53`
+> throws away the partial result and permanently caches `nilSentinel[key] = true` on any error.
+> **The bug is in the loader, not in yaml.v2.** Migrating would not have fixed the incident.
+>
+> **2. "v2 has no clean equivalent to `KnownFields`" — false.** `yaml.v2.UnmarshalStrict`
+> produces the same "field X not found in type Y" error. Strict decoding needs no migration.
+>
+> **3. "v2 and v3 differ on some edge cases" — true but misleading.** Decoding all 6,111 data
+> files with both libraries showed **1,302 files differing** — which sounds alarming, and is why
+> this needed measuring rather than assuming. The dominant cause (2,460 occurrences across 1,230
+> files) is YAML 1.1 implicit typing on *map keys*: v2 reads the key `y` in `coord: {x:, y:}` as
+> boolean `true`, v3 reads it as the string `"y"`.
+>
+> **But that difference vanishes under typed decoding.** Decoding into structs, `map[string]string`
+> and `[]string` — which is what all content loaders actually do — v2 and v3 agree exactly,
+> including on `n`/`y`/`yes`/`no`. The 1,302 differences are an artifact of decoding into
+> `interface{}`.
+>
+> So the migration is *mostly* safe and *entirely* pointless — high blast radius across 79 files,
+> no benefit. Worse, the places that genuinely would change behaviour are the untyped decode sites:
+> `internal/migration/0.1x.0.go` does raw `map[string]interface{}` surgery on **user save files**.
+> That is the one place where key retyping could corrupt player data, and it is the last place a
+> "mechanical" migration should touch.
+>
+> **What was done instead**, closing the actual incident class at a fraction of the risk:
+> `TestSmoke_AllDialogueFilesParse` eagerly parses all 302 dialogue files in CI. Dialogue is the
+> one major content type `loadAllDataFiles` does not cover — it is lazy-loaded per mob, which is
+> exactly why a malformed file could mute an NPC in production unnoticed. Verified to fail on the
+> documented bare-scalar case.
+>
+> **Still open, and the genuinely useful half of the original idea:** adopt
+> `yaml.UnmarshalStrict` (v2) in the content loaders so typo'd keys fail loudly instead of
+> silently no-op'ing. That addresses the `hostile:` incident family and requires no library change.
+> Expect it to surface existing extra/legacy keys across the content tree, so it needs its own
+> cleanup pass.
 
 ### 5.2 Two copies of the same logging-rotation library
 ✅ **VERIFIED**

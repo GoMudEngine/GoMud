@@ -1,19 +1,24 @@
 package main
 
 import (
+	"io/fs"
 	"os"
+	"path/filepath"
 	"runtime/debug"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
+	"github.com/GoMudEngine/GoMud/internal/dialogue"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/spells"
+	yaml "gopkg.in/yaml.v2"
 )
 
 // bootSmokeEnvVar gates the boot smoke test.
@@ -107,4 +112,66 @@ func TestSmoke_ServerBootsCleanWithRealData(t *testing.T) {
 		}
 		t.Logf("%-18s %d loaded", c.name, c.count)
 	}
+}
+
+// TestSmoke_AllDialogueFilesParse eagerly parses every dialogue file.
+//
+// Dialogue is the one major content type loadAllDataFiles does NOT cover: it is
+// lazy-loaded per mob on first interaction (dialogue.Load). That laziness is
+// what made the documented "bare-scalar list field mutes a whole NPC" incident
+// so expensive — internal/dialogue/loader.go discards the ENTIRE file on any
+// unmarshal error and permanently caches a nil sentinel, so a single malformed
+// field silently mutes that NPC for the life of the process, and nothing at
+// boot or in CI notices. It only surfaces when a player talks to them.
+//
+// Parsing every file up front turns that from a silent production failure into
+// a CI failure. Note this deliberately checks parsing only, mirroring exactly
+// what dialogue.Load does — it is not a semantic validation of the content.
+func TestSmoke_AllDialogueFilesParse(t *testing.T) {
+	if os.Getenv(bootSmokeEnvVar) == `` {
+		t.Skipf("set %s=1 to run the dialogue parse sweep", bootSmokeEnvVar)
+	}
+
+	root := filepath.Join(`_datafiles`, `world`, `dogmud`, `dialogue`)
+	if _, err := os.Stat(root); err != nil {
+		t.Fatalf("dialogue directory not found at %s: %v", root, err)
+	}
+
+	var checked, failed int
+
+	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() || !strings.HasSuffix(path, `.yaml`) {
+			return nil
+		}
+
+		raw, readErr := os.ReadFile(path)
+		if readErr != nil {
+			t.Errorf("%s: unreadable: %v", path, readErr)
+			failed++
+			return nil
+		}
+
+		var df dialogue.DialogueFile
+		if unmarshalErr := yaml.Unmarshal(raw, &df); unmarshalErr != nil {
+			// This is exactly the condition that mutes an NPC at runtime.
+			t.Errorf("%s: would mute this NPC at runtime — dialogue.Load discards the whole "+
+				"file and caches a nil sentinel on this error:\n    %v", path, unmarshalErr)
+			failed++
+			return nil
+		}
+
+		checked++
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("walking dialogue tree: %v", err)
+	}
+
+	if checked == 0 {
+		t.Fatal("parsed 0 dialogue files — wrong path?")
+	}
+	t.Logf("dialogue files parsed cleanly: %d (failed: %d)", checked, failed)
 }
