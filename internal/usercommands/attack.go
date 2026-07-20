@@ -192,10 +192,15 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			// Surprise attack from stealth — fires before normal combat begins.
 			// SurpriseAttack gates on IsHidden() internally; call unconditionally.
+			// Tag the engagement from the result so a stealth opener is typed
+			// SurpriseAttack, matching the mob path.
+			aggroType := characters.DefaultAttack
 			if targetMob := mobs.GetInstance(attackMobInstanceId); targetMob != nil {
 				actor := actions.NewUserActorInRoom(user, room)
 				targetActor := actions.NewMobActorInRoom(targetMob, room)
-				actions.SurpriseAttack(actor, actions.SurpriseAttackOpts{Target: targetActor})
+				if res := actions.SurpriseAttack(actor, actions.SurpriseAttackOpts{Target: targetActor}); res.Triggered {
+					aggroType = characters.SurpriseAttack
+				}
 			}
 
 			// Detect "fresh aggression" before SetAggro overwrites prior state:
@@ -206,7 +211,7 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 			isFreshAggro := user.Character.Aggro == nil ||
 				user.Character.Aggro.MobInstanceId != attackMobInstanceId
 
-			user.Character.SetAggro(0, attackMobInstanceId, characters.DefaultAttack)
+			user.Character.SetAggro(0, attackMobInstanceId, aggroType)
 
 			// Chunk 4.5: notify seeders that a player engaged a mob.
 			// Fires on every attack commitment, not just fresh aggro,
@@ -285,13 +290,16 @@ func Attack(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 			// Surprise attack from stealth — fires before normal combat begins.
 			// SurpriseAttack gates on IsHidden() internally; call unconditionally.
+			pvpAggroType := characters.DefaultAttack
 			if targetUser := users.GetByUserId(attackPlayerId); targetUser != nil {
 				actor := actions.NewUserActorInRoom(user, room)
 				targetActor := actions.NewUserActorInRoom(targetUser, room)
-				actions.SurpriseAttack(actor, actions.SurpriseAttackOpts{Target: targetActor})
+				if res := actions.SurpriseAttack(actor, actions.SurpriseAttackOpts{Target: targetActor}); res.Triggered {
+					pvpAggroType = characters.SurpriseAttack
+				}
 			}
 
-			user.Character.SetAggro(attackPlayerId, 0, characters.DefaultAttack)
+			user.Character.SetAggro(attackPlayerId, 0, pvpAggroType)
 
 			user.SendText(messaging.CategoryHitMelee,
 				fmt.Sprintf(`You prepare to enter into mortal combat with <ansi fg="username">%s</ansi>.`, p.Character.Name),
