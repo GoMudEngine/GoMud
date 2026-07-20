@@ -70,7 +70,7 @@ func CheckAchievements(e events.Event) events.ListenerReturn {
 			u.SendText(messaging.CategorySystem,
 				fmt.Sprintf(`<ansi fg="white">%s  (+%d points)</ansi>`, d.Description, d.Points))
 		}
-		users.SaveUser(*u)
+		users.SaveUser(u)
 	}
 	return events.Continue
 }

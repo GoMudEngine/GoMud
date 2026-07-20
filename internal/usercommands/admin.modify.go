@@ -69,7 +69,7 @@ func Modify(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 				u.Role = newRole
 
-				users.SaveUser(*u)
+				users.SaveUser(u)
 
 				u.SendText(messaging.CategorySystem, `<ansi fg="alert-3">Your role has been set to: `+newRole+`</ansi>`)
 				break
@@ -96,7 +96,7 @@ func Modify(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 
 					u.Role = newRole
 
-					users.SaveUser(*u)
+					users.SaveUser(u)
 
 					return false
 				}

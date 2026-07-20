@@ -279,7 +279,7 @@ func cmdCharacterChange(user *users.UserRecord, room *rooms.Room, cmdPrompt *pro
 		// add to new room
 		newRoom.AddPlayer(user.UserId)
 
-		users.SaveUser(*user)
+		users.SaveUser(user)
 
 		user.EventLog.Add(`char`, `Changed from <ansi fg="username">`+oldName+`</ansi> to alt character: <ansi fg="username">`+char.Name+`</ansi>`)
 

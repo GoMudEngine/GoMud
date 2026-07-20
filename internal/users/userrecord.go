@@ -7,6 +7,7 @@ import (
 	"math"
 	"math/big"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/audio"
@@ -58,14 +59,23 @@ type UserRecord struct {
 	LastMusic       string                `yaml:"-"`                         // Keeps track of the last music that was played
 	LastWhisperFrom int                   `yaml:"-"`                         // UserId of last person who whispered to us (don't save)
 	connectionId    uint64
-	unsentText      string
-	suggestText     string
-	connectionTime  time.Time
-	lastInputRound  uint64
-	tempDataStore   map[string]any
-	activePrompt    *prompt.Prompt
-	isZombie        bool // are they a zombie currently?
-	inputBlocked    bool // Whether input is currently intentionally turned off (for a certain category of commands)
+	// sessionMu guards unsentText, suggestText, tempDataStore and activePrompt
+	// — the only UserRecord state written from BOTH the per-connection
+	// goroutine (main.go's read loop, which never takes util.LockMud) and the
+	// tick loop (world.go processInput, hooks/RedrawPrompt_SendRedraw, which
+	// always does). tempDataStore in particular is a map, and a concurrent map
+	// read+write is a hard runtime panic, not a benign race.
+	//
+	// Unexported, so yaml marshalling ignores it.
+	sessionMu      sync.Mutex
+	unsentText     string
+	suggestText    string
+	connectionTime time.Time
+	lastInputRound uint64
+	tempDataStore  map[string]any
+	activePrompt   *prompt.Prompt
+	isZombie       bool // are they a zombie currently?
+	inputBlocked   bool // Whether input is currently intentionally turned off (for a certain category of commands)
 }
 
 // UserTick is a user-defined real-time-second timer that fires commands from
@@ -469,6 +479,9 @@ func (u *UserRecord) SendWebClientCommand(txt string) {
 
 func (u *UserRecord) SetTempData(key string, value any) {
 
+	u.sessionMu.Lock()
+	defer u.sessionMu.Unlock()
+
 	if u.tempDataStore == nil {
 		u.tempDataStore = make(map[string]any)
 	}
@@ -481,6 +494,10 @@ func (u *UserRecord) SetTempData(key string, value any) {
 }
 
 func (u *UserRecord) GetTempData(key string) any {
+
+	// A full Lock rather than RLock: this "getter" lazily allocates the map.
+	u.sessionMu.Lock()
+	defer u.sessionMu.Unlock()
 
 	if u.tempDataStore == nil {
 		u.tempDataStore = make(map[string]any)
@@ -589,11 +606,17 @@ func (u *UserRecord) RoundTick() {
 // There is probably a better way.
 func (u *UserRecord) SetUnsentText(t string, suggest string) {
 
+	u.sessionMu.Lock()
+	defer u.sessionMu.Unlock()
+
 	u.unsentText = t
 	u.suggestText = suggest
 }
 
 func (u *UserRecord) GetUnsentText() (unsent string, suggestion string) {
+
+	u.sessionMu.Lock()
+	defer u.sessionMu.Unlock()
 
 	return u.unsentText, u.suggestText
 }
@@ -665,6 +688,9 @@ func (u *UserRecord) ConnectionId() uint64 {
 // Prompt related functionality
 func (u *UserRecord) StartPrompt(command string, rest string) (*prompt.Prompt, bool) {
 
+	u.sessionMu.Lock()
+	defer u.sessionMu.Unlock()
+
 	if u.activePrompt != nil {
 		// If it's the same prompt, return the existing one
 		if u.activePrompt.Command == command && u.activePrompt.Rest == rest {
@@ -680,10 +706,16 @@ func (u *UserRecord) StartPrompt(command string, rest string) (*prompt.Prompt, b
 
 func (u *UserRecord) GetPrompt() *prompt.Prompt {
 
+	u.sessionMu.Lock()
+	defer u.sessionMu.Unlock()
+
 	return u.activePrompt
 }
 
 func (u *UserRecord) ClearPrompt() {
+	u.sessionMu.Lock()
+	defer u.sessionMu.Unlock()
+
 	u.activePrompt = nil
 }
 
@@ -784,7 +816,7 @@ func (u *UserRecord) SwapToAlt(targetAltName string) bool {
 	// Replace the current character (has already been written to alts)
 	u.Character = &selectedChar
 
-	SaveUser(*u)
+	SaveUser(u)
 
 	events.AddToQueue(events.CharacterChanged{UserId: u.UserId, LastCharacterName: retiredCharName, CharacterName: u.Character.Name})
 

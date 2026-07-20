@@ -158,7 +158,7 @@ func HandleLeave(e events.Event) events.ListenerReturn {
 		}
 	}
 
-	users.SaveUser(*user)
+	users.SaveUser(user)
 
 	return events.Continue
 }

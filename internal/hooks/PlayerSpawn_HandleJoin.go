@@ -221,7 +221,7 @@ func HandleJoin(e events.Event) events.ListenerReturn {
 			user.IsAI = true
 			// Persist so offline leaderboard exclusion works even on an unclean
 			// disconnect. Fires once per account (the !user.IsAI guard above).
-			if err := users.SaveUser(*user); err != nil {
+			if err := users.SaveUser(user); err != nil {
 				mudlog.Error("HandleJoin", "auto-flag save failed", user.Username, "error", err)
 			}
 			mudlog.Info("HandleJoin", "auto-flagged AI account", user.Username)
