@@ -11,9 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
-	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Rally(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -89,12 +87,8 @@ func Rally(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		applyWarcryToCompanions(user, room, wb, wd)
 	}
 
-	// Rhetoric skill progression.
-	if user.Character.IsInCombat() {
-		user.Character.OnSkillUse(string(skills.Rhetoric), user.UserId)
-	} else if util.Rand(100) < 50 {
-		user.Character.OnSkillUse(string(skills.Rhetoric), user.UserId)
-	}
+	// Rhetoric progression is awarded inside actions.ExecuteRally,
+	// so the mob wrapper gets it too.
 
 	return true, nil
 }

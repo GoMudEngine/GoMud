@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/skills"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // CalcSneakScore computes a sneak score with light-conditional modifier.
@@ -60,4 +61,18 @@ func CalcSneakScoreVsObserver(sneaker, observer *characters.Character, room *roo
 func CalcSearchScore(c *characters.Character) float64 {
 	return float64(c.Stats.Perception.ValueAdj) +
 		combat.SkillMultiplier(c.GetSkillLevel(skills.Search))*25.0
+}
+
+// awardRhetoricUse grants Rhetoric progression for a shout-style special move
+// (warcry, rally). In combat it always fires; out of combat it fires 50% of the
+// time, a soft incentive against spamming it for free progression.
+//
+// This lives in actions/ so every Actor implementation gets it. Warcry and rally
+// previously left progression to their callers — the player wrappers implemented
+// it and the mob wrappers did not, so mobs never built Rhetoric from either
+// verb.
+func awardRhetoricUse(actor Actor, c *characters.Character) {
+	if c.IsInCombat() || util.Rand(100) < 50 {
+		actor.OnSkillUse(string(skills.Rhetoric))
+	}
 }

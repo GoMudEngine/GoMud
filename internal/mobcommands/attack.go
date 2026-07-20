@@ -65,14 +65,19 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			// Don't clear the Hidden buff here — leave it for the combat
 			// loop's CancelIfCombat pass so the surprise attack resolves
 			// with the mob still hidden (backstab crit bonus).
+			// Type the engagement from whether the burst actually fired, not
+			// merely from being hidden: SurpriseAttack also gates on the
+			// special-move cooldown, so a hidden-but-on-cooldown opener is an
+			// ordinary attack.
 			aggroType := characters.DefaultAttack
 			if mob.Character.IsHidden() {
-				aggroType = characters.SurpriseAttack
 				// Pre-combat burst: fire per-weapon strikes from stealth.
 				if targetUser := users.GetByUserId(attackPlayerId); targetUser != nil {
 					mobActor := actions.NewMobActorInRoom(mob, room)
 					targetActor := actions.NewUserActorInRoom(targetUser, room)
-					actions.SurpriseAttack(mobActor, actions.SurpriseAttackOpts{Target: targetActor})
+					if res := actions.SurpriseAttack(mobActor, actions.SurpriseAttackOpts{Target: targetActor}); res.Triggered {
+						aggroType = characters.SurpriseAttack
+					}
 				}
 			}
 			// Only announce if not already fighting this target
@@ -102,14 +107,16 @@ func Attack(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
 		if m != nil {
 
+			// See above: keyed off the result, not IsHidden alone.
 			mobAggroType := characters.DefaultAttack
 			if mob.Character.IsHidden() {
-				mobAggroType = characters.SurpriseAttack
 				mob.Character.Validate(true)
 				// Pre-combat burst: fire per-weapon strikes from stealth.
 				mobActor := actions.NewMobActorInRoom(mob, room)
 				targetActor := actions.NewMobActorInRoom(m, room)
-				actions.SurpriseAttack(mobActor, actions.SurpriseAttackOpts{Target: targetActor})
+				if res := actions.SurpriseAttack(mobActor, actions.SurpriseAttackOpts{Target: targetActor}); res.Triggered {
+					mobAggroType = characters.SurpriseAttack
+				}
 			}
 			mob.Character.SetAggro(0, attackMobInstanceId, mobAggroType)
 

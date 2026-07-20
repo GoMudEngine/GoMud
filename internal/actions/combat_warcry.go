@@ -62,6 +62,12 @@ func ExecuteWarcry(actor Actor) WarcryResult {
 		char.Aggro.RoundsWaiting = 1
 	}
 
+	// Rhetoric progression lives here rather than in the callers, matching the
+	// other migrated special moves. It was previously caller-owned, and the mob
+	// wrapper never implemented it — so mobs could warcry forever without ever
+	// building Rhetoric. In combat: always. Out of combat: 50% (soft incentive).
+	awardRhetoricUse(actor, char)
+
 	return WarcryResult{
 		Executed: true,
 		Bonus:    bonus,

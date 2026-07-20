@@ -62,6 +62,10 @@ func ExecuteRally(actor Actor) RallyResult {
 		char.Aggro.RoundsWaiting = 1
 	}
 
+	// See ExecuteWarcry: progression is owned here, not by the callers, so both
+	// Actor implementations get it. The mob wrapper previously had none.
+	awardRhetoricUse(actor, char)
+
 	return RallyResult{
 		Executed: true,
 		Bonus:    bonus,
