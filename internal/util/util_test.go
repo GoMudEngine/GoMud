@@ -2,8 +2,6 @@ package util
 
 import (
 	"bytes"
-	"math"
-	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -617,23 +615,7 @@ func TestHash(t *testing.T) {
 }
 
 // TestHashBytes checks HashBytes against known length (SHA-256).
-func TestHashBytes(t *testing.T) {
-	input := []byte("hello")
-	got := HashBytes(input)
-	if len(got) != 64 {
-		t.Errorf("HashBytes(%q) length = %d, want 64", input, len(got))
-	}
-}
-
 // TestMd5 checks the MD5 function for non-empty output.
-func TestMd5(t *testing.T) {
-	input := "hello"
-	got := Md5(input)
-	if len(got) == 0 {
-		t.Errorf("Md5(%q) returned empty string", input)
-	}
-}
-
 // TestGetLockSequence ensures the sequence is the correct length, contains only 'U' and 'D',
 // and is deterministic for the same inputs.
 func TestGetLockSequence(t *testing.T) {
@@ -746,17 +728,6 @@ func TestEncodeDecode(t *testing.T) {
 
 // TestGetMyIP is a very basic check; it will do an actual HTTP request.
 // You might skip or mock this test in CI if external calls are unwanted.
-func TestGetMyIP(t *testing.T) {
-	// Overwrite default transport or skip if you want to avoid real calls.
-	http.DefaultTransport.(*http.Transport).DisableKeepAlives = true
-
-	ip := GetMyIP()
-	if ip == "" {
-		t.Error("GetMyIP() returned an empty string")
-	}
-	// We won't parse or validate the IP because different environments respond differently.
-}
-
 // TestProgressBar checks the generated bar pieces.
 func TestProgressBar(t *testing.T) {
 	full, empty := ProgressBar(0.5, 10)
@@ -1022,24 +993,6 @@ func TestConvertColorShortTags(t *testing.T) {
 }
 
 // TestPercentOfTotal checks the simple calculation.
-func TestPercentOfTotal(t *testing.T) {
-	tests := []struct {
-		val1, val2 int
-		want       float64
-	}{
-		{0, 100, 0},
-		{1, 1, 2},    // (1+1)/1 = 2
-		{5, 5, 2},    // (5+5)/5 = 2
-		{10, 5, 1.5}, // (10+5)/10 = 1.5
-	}
-	for _, tt := range tests {
-		got := PercentOfTotal(tt.val1, tt.val2)
-		if math.Abs(got-tt.want) > 1e-9 {
-			t.Errorf("PercentOfTotal(%d,%d) = %f, want %f", tt.val1, tt.val2, got, tt.want)
-		}
-	}
-}
-
 // TestConvertForFilename ensures special chars are replaced with underscores, lowercased, etc.
 func TestConvertForFilename(t *testing.T) {
 	in := "Hello! This's a Test? 123"

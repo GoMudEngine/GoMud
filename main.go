@@ -1454,6 +1454,15 @@ func TelnetListenOnPort(hostname string, portNum int, wg *sync.WaitGroup, maxCon
 		return nil
 	}
 
+	// Record the bound address for the admin `server` command. Without this,
+	// util.GetServerAddress() returned its "Unknown" default forever, so the
+	// admin IP/Port readout was permanently wrong. Uses the actual listener
+	// address rather than a public-IP lookup — the old util.GetMyIP did that by
+	// calling a third-party service, and is not worth reintroducing.
+	if cType == connections.ConnHuman {
+		util.SetServerAddress(server.Addr().String())
+	}
+
 	// Start a goroutine to accept incoming connections, so that we can use a signal to stop the server
 	go func() {
 

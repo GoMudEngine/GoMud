@@ -5,12 +5,10 @@ import (
 	"compress/gzip"
 	"crypto/sha256"
 	"encoding/base64"
-	"encoding/hex"
 	"fmt"
 	"io"
 	"math"
 	"math/rand"
-	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -420,17 +418,6 @@ func Hash(input string) string {
 	return fmt.Sprintf("%x", sha256.Sum256([]byte(input)))
 }
 
-func HashBytes(input []byte) string {
-	return fmt.Sprintf("%x", sha256.Sum256(input))
-}
-
-func Md5(input string) string {
-	hasher := md5.New()
-	hasher.Write([]byte([]byte(input)))
-	hashInBytes := hasher.Sum(nil)
-	return hex.EncodeToString(hashInBytes)
-}
-
 func Md5Bytes(input []byte) []byte {
 	hasher := md5.New()
 	hasher.Write([]byte(input))
@@ -524,33 +511,6 @@ func Decode(base64str string) []byte {
 	// base64 encode the bytes
 	b, _ := base64.StdEncoding.DecodeString(base64str)
 	return b
-}
-
-func GetMyIP() string {
-
-	url := `https://api.ipify.org/?format=txt`
-
-	resp, err := http.Get(url)
-	if err != nil {
-		return err.Error()
-	}
-
-	defer resp.Body.Close()
-	// handle the error if there is one
-	if err != nil {
-		return err.Error()
-	}
-
-	// do this now so it won't be forgotten
-	defer resp.Body.Close()
-	// reads html as a slice of bytes
-	html, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return err.Error()
-	}
-
-	// show the HTML code as a string %s
-	return string(html)
 }
 
 func ProgressBar(complete float64, maxBarSize int, barParts ...string) (fullBar string, emptyBar string) {
@@ -805,13 +765,6 @@ func ConvertColorShortTags(input string) string {
 	}
 
 	return input
-}
-
-func PercentOfTotal(value1 int, value2 int) float64 {
-	if value1 == 0 {
-		return 0
-	}
-	return (float64(value1) + float64(value2)) / float64(value1)
 }
 
 // Make everything lowercase
