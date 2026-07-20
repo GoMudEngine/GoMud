@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -119,6 +120,14 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 
 	case result.ImmediateComplete:
+		// InitiateCraft leaves skill progression to the caller (see its doc
+		// comment), and every other completion path awards it: the multi-round
+		// player path (NewRound_UserRoundTick.go), the multi-round mob path
+		// (NewRound_MobRoundTick.go), and the mob immediate path
+		// (mobcommands/craft.go). This one was missed, so instant recipes gave
+		// players no crafting progression while mobs got it.
+		craftBonus := 1.0 + float64(result.SkillMinimum)*float64(configs.GetBalanceConfig().CraftDifficultyProgressionScale)
+		user.Character.OnSkillUseScaled(result.SkillName, user.UserId, craftBonus)
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="green">%s</ansi>`, result.SuccessMsg))
 		return true, nil
 

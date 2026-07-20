@@ -11,9 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/parties"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
-	"github.com/GoMudEngine/GoMud/internal/skills"
 	"github.com/GoMudEngine/GoMud/internal/users"
-	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Warcry(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -90,14 +88,8 @@ func Warcry(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		applyRallyToCompanions(user, room, rb, rd)
 	}
 
-	// Skill and stat progression
-	// OnSkillUse handles rhetoric progression + charisma stat use internally.
-	// In combat: always fire. Out of combat: 50% chance (soft incentive).
-	if user.Character.IsInCombat() {
-		user.Character.OnSkillUse(string(skills.Rhetoric), user.UserId)
-	} else if util.Rand(100) < 50 {
-		user.Character.OnSkillUse(string(skills.Rhetoric), user.UserId)
-	}
+	// Rhetoric progression is awarded inside actions.ExecuteWarcry,
+	// so the mob wrapper gets it too.
 
 	return true, nil
 }
