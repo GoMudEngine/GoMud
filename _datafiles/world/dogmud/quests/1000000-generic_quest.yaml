@@ -23,11 +23,14 @@ steps:
 # All of the following reward settings are optional and can be left out.
 #
 rewards:
-  playermessage: "Congratulations, here's some stuff!" # Message the player see's when they complete the quest
-  roommessage: "A Generic Quest has been completed!"   # Message the room see's when the quest is completed
-  experience: 500                                      # Give them 500 experience as a reward
+  # LOADER GOTCHA (see internal/quests QuestReward): reward keys are
+  # NO-underscore. itemid/skillinfo/buffid/playermessage/roommessage/roomid/
+  # spellid/questid load correctly; the snake_case forms (item_id, skill_info,
+  # ...) silently do NOTHING. Copy these exact keys.
+  playermessage: "Congratulations, here's some stuff!" # Message the player sees when they complete the quest
+  roommessage: "A Generic Quest has been completed!"   # Message the room sees when the quest is completed
   gold: 10                                             # Give them the gold back as a reward
-  item_id: 10001                                       # Give them the items back as a reward
+  itemid: 10001                                        # Give them item 10001 as a reward
   skillinfo: "map:1"                                   # Give them the map skill at level 1 as a reward
   buffid: 4                                            # Apply buff 4 to them (healing) as a reward
   # questid: "1234-start"                              # Give another quest as a reward?
