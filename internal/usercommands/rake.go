@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/actions"
-	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/combat"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
@@ -14,46 +13,10 @@ import (
 )
 
 func Rake(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
-	if user.Character.IsActing() {
-		user.SendText(messaging.CategorySystem, `<ansi fg="red">You can't rake while focused on your work. Finish or be interrupted first.</ansi>`)
+	if actions.AcquireMeleeTarget(user, room, rest, actions.MeleeTargetOpts{
+		Verb: "rake",
+	}) {
 		return true, nil
-	}
-
-	// Must be in combat or specify a target to use rake.
-	if !user.Character.IsInCombat() {
-		if rest == "" {
-			user.SendText(messaging.CategorySystem, "Rake whom?")
-			return true, nil
-		}
-
-		target, err := actions.ResolveTargetActor(room, rest, actions.ResolveTargetOptions{
-			ExcludeUserId: user.UserId,
-		})
-		if err != nil {
-			// Self-exclusion collapses to NotFound; pre-check for self-targeting message.
-			if pId, _ := room.FindByName(rest); pId == user.UserId {
-				user.SendText(messaging.CategorySystem, "You can't rake yourself.")
-				return true, nil
-			}
-			user.SendText(messaging.CategorySystem, "You don't see them here.")
-			return true, nil
-		}
-
-		if !target.IsPlayer() {
-			mob := target.(*actions.MobActor).Mob
-			if mob.IsNonCombatant() || mob.PlayerAttackImmune {
-				user.SendText(messaging.CategorySystem, fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, mob.Character.Name))
-				return true, nil
-			}
-			user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)
-		} else {
-			p := target.(*actions.UserActor).User
-			if pvpErr := room.CanPvp(user, p); pvpErr != nil {
-				user.SendText(messaging.CategorySystem, pvpErr.Error())
-				return true, nil
-			}
-			user.Character.SetAggro(p.UserId, 0, characters.DefaultAttack)
-		}
 	}
 
 	// Delegate core resolution to the shared action.
