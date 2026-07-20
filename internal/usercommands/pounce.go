@@ -17,6 +17,7 @@ func Pounce(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		Verb:          "pounce",
 		PromptMsg:     "Pounce on whom?",
 		SelfTargetMsg: "You can't pounce on yourself.",
+		CharmedMsg:    "You can't pounce on a companion.",
 	}) {
 		return true, nil
 	}

@@ -15,8 +15,7 @@ import (
 
 func Taunt(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
 	if actions.AcquireMeleeTarget(user, room, rest, actions.MeleeTargetOpts{
-		Verb:       "taunt",
-		CharmedMsg: `You can't taunt a companion.`,
+		Verb: "taunt",
 	}) {
 		return true, nil
 	}

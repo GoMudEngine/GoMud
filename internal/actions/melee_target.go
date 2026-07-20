@@ -31,15 +31,8 @@ type MeleeTargetOpts struct {
 	// Defaults to "You can't <Verb> yourself." `pounce` adds "on".
 	SelfTargetMsg string
 
-	// CharmedMsg, when non-empty, rejects charmed mobs (player companions) with
-	// this message.
-	//
-	// Only `taunt` sets it, which is an inconsistency inherited from the
-	// pre-extraction code rather than a deliberate rule: `attack` also refuses
-	// charmed targets ("%s is someone's companion!"), but bash/kick/grapple/etc
-	// do not — so a companion can currently be bashed but not taunted or
-	// attacked. Preserved verbatim here; unifying it is a behaviour change and
-	// belongs in its own commit.
+	// CharmedMsg overrides the charmed-target (player companion) rejection.
+	// Defaults to "You can't <Verb> a companion." `pounce` adds "on".
 	CharmedMsg string
 }
 
@@ -62,6 +55,13 @@ func (o MeleeTargetOpts) promptMsg() string {
 	return strings.ToUpper(o.Verb[:1]) + o.Verb[1:] + " whom?"
 }
 
+func (o MeleeTargetOpts) charmedMsg() string {
+	if o.CharmedMsg != "" {
+		return o.CharmedMsg
+	}
+	return fmt.Sprintf("You can't %s a companion.", o.Verb)
+}
+
 func (o MeleeTargetOpts) selfTargetMsg() string {
 	if o.SelfTargetMsg != "" {
 		return o.SelfTargetMsg
@@ -80,7 +80,8 @@ func (o MeleeTargetOpts) selfTargetMsg() string {
 //  1. Refuse if the actor is mid-activity (craft/salvage/cast).
 //  2. If already in combat, do nothing — the existing target stands.
 //  3. Otherwise require a target, resolve it, and reject self-targeting,
-//     non-combatants, attack-immune mobs, and PvP-disallowed players.
+//     non-combatants, attack-immune mobs, player companions (charmed), and
+//     PvP-disallowed players.
 //  4. Set aggro so the subsequent Execute* call has an engagement to act on.
 //
 // This was copy-pasted across 11 command files (bash, drain, gore, grapple,
@@ -125,8 +126,12 @@ func AcquireMeleeTarget(user *users.UserRecord, room *rooms.Room, rest string, o
 				fmt.Sprintf(`You can't attack <ansi fg="mobname">%s</ansi>.`, mob.Character.Name))
 			return true
 		}
-		if opts.CharmedMsg != "" && mob.Character.IsCharmed() {
-			user.SendText(messaging.CategorySystem, opts.CharmedMsg)
+		// Player companions are off-limits to every melee special move, the
+		// same way `attack` already refuses them. Before this was centralised,
+		// only taunt enforced it, so a companion could be bashed/kicked/
+		// grappled/tripped with no message at all.
+		if mob.Character.IsCharmed() {
+			user.SendText(messaging.CategorySystem, opts.charmedMsg())
 			return true
 		}
 		user.Character.SetAggro(0, mob.InstanceId, characters.DefaultAttack)

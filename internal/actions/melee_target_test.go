@@ -17,6 +17,7 @@ func TestMeleeTargetOpts_MessagesMatchPreExtraction(t *testing.T) {
 		crafting string
 		prompt   string
 		self     string
+		charmed  string
 	}{
 		{
 			name:     "bash",
@@ -24,6 +25,7 @@ func TestMeleeTargetOpts_MessagesMatchPreExtraction(t *testing.T) {
 			crafting: `<ansi fg="red">You can't bash while focused on your work. Finish or be interrupted first.</ansi>`,
 			prompt:   "Bash whom?",
 			self:     "You can't bash yourself.",
+			charmed:  "You can't bash a companion.",
 		},
 		{
 			name:     "drain",
@@ -31,6 +33,7 @@ func TestMeleeTargetOpts_MessagesMatchPreExtraction(t *testing.T) {
 			crafting: `<ansi fg="red">You can't drain while focused on your work. Finish or be interrupted first.</ansi>`,
 			prompt:   "Drain whom?",
 			self:     "You can't drain yourself.",
+			charmed:  "You can't drain a companion.",
 		},
 		{
 			name:     "gore",
@@ -38,6 +41,7 @@ func TestMeleeTargetOpts_MessagesMatchPreExtraction(t *testing.T) {
 			crafting: `<ansi fg="red">You can't gore while focused on your work. Finish or be interrupted first.</ansi>`,
 			prompt:   "Gore whom?",
 			self:     "You can't gore yourself.",
+			charmed:  "You can't gore a companion.",
 		},
 		{
 			name:     "grapple",
@@ -45,6 +49,7 @@ func TestMeleeTargetOpts_MessagesMatchPreExtraction(t *testing.T) {
 			crafting: `<ansi fg="red">You can't grapple while focused on your work. Finish or be interrupted first.</ansi>`,
 			prompt:   "Grapple whom?",
 			self:     "You can't grapple yourself.",
+			charmed:  "You can't grapple a companion.",
 		},
 		{
 			name:     "kick",
@@ -52,6 +57,7 @@ func TestMeleeTargetOpts_MessagesMatchPreExtraction(t *testing.T) {
 			crafting: `<ansi fg="red">You can't kick while focused on your work. Finish or be interrupted first.</ansi>`,
 			prompt:   "Kick whom?",
 			self:     "You can't kick yourself.",
+			charmed:  "You can't kick a companion.",
 		},
 		{
 			name:     "maul",
@@ -59,6 +65,7 @@ func TestMeleeTargetOpts_MessagesMatchPreExtraction(t *testing.T) {
 			crafting: `<ansi fg="red">You can't maul while focused on your work. Finish or be interrupted first.</ansi>`,
 			prompt:   "Maul whom?",
 			self:     "You can't maul yourself.",
+			charmed:  "You can't maul a companion.",
 		},
 		{
 			// pounce differs on BOTH the prompt and the self message.
@@ -67,10 +74,12 @@ func TestMeleeTargetOpts_MessagesMatchPreExtraction(t *testing.T) {
 				Verb:          "pounce",
 				PromptMsg:     "Pounce on whom?",
 				SelfTargetMsg: "You can't pounce on yourself.",
+				CharmedMsg:    "You can't pounce on a companion.",
 			},
 			crafting: `<ansi fg="red">You can't pounce while focused on your work. Finish or be interrupted first.</ansi>`,
 			prompt:   "Pounce on whom?",
 			self:     "You can't pounce on yourself.",
+			charmed:  "You can't pounce on a companion.",
 		},
 		{
 			name:     "rake",
@@ -78,6 +87,7 @@ func TestMeleeTargetOpts_MessagesMatchPreExtraction(t *testing.T) {
 			crafting: `<ansi fg="red">You can't rake while focused on your work. Finish or be interrupted first.</ansi>`,
 			prompt:   "Rake whom?",
 			self:     "You can't rake yourself.",
+			charmed:  "You can't rake a companion.",
 		},
 		{
 			name:     "taunt",
@@ -85,6 +95,7 @@ func TestMeleeTargetOpts_MessagesMatchPreExtraction(t *testing.T) {
 			crafting: `<ansi fg="red">You can't taunt while focused on your work. Finish or be interrupted first.</ansi>`,
 			prompt:   "Taunt whom?",
 			self:     "You can't taunt yourself.",
+			charmed:  "You can't taunt a companion.",
 		},
 		{
 			name:     "throttle",
@@ -92,6 +103,7 @@ func TestMeleeTargetOpts_MessagesMatchPreExtraction(t *testing.T) {
 			crafting: `<ansi fg="red">You can't throttle while focused on your work. Finish or be interrupted first.</ansi>`,
 			prompt:   "Throttle whom?",
 			self:     "You can't throttle yourself.",
+			charmed:  "You can't throttle a companion.",
 		},
 		{
 			// trip's crafting message says "trip someone", not just "trip".
@@ -100,6 +112,7 @@ func TestMeleeTargetOpts_MessagesMatchPreExtraction(t *testing.T) {
 			crafting: `<ansi fg="red">You can't trip someone while focused on your work. Finish or be interrupted first.</ansi>`,
 			prompt:   "Trip whom?",
 			self:     "You can't trip yourself.",
+			charmed:  "You can't trip a companion.",
 		},
 	}
 
@@ -108,6 +121,7 @@ func TestMeleeTargetOpts_MessagesMatchPreExtraction(t *testing.T) {
 			assert.Equal(t, tt.crafting, tt.opts.craftingMsg(), "crafting-guard message changed")
 			assert.Equal(t, tt.prompt, tt.opts.promptMsg(), "empty-target prompt changed")
 			assert.Equal(t, tt.self, tt.opts.selfTargetMsg(), "self-target message changed")
+			assert.Equal(t, tt.charmed, tt.opts.charmedMsg(), "charmed-target message changed")
 		})
 	}
 }
