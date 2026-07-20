@@ -624,10 +624,16 @@ present bug — treat the `%w` backfill as opportunistic, not a project.
 - **Index loops:** 25 sites across 18 production files use `for i := 0; i < len(s); i++` for plain
   scans. A handful genuinely need the index (comparing `i` to `i±1`) and should stay.
   **Zero adoption of Go 1.22's `for range n`.**
-- **One real missing timeout:** `internal/integrations/discord/client.go:140` posts a webhook via
-  bare `http.NewRequest` with no context and no explicit client timeout — that goroutine can hang
-  indefinitely. (This is the *only* genuine `context.Context` gap; this is not a
-  "context is missing everywhere" codebase, and most I/O here is local disk where ctx adds nothing.)
+- **~~One real missing timeout~~ — CORRECTED 2026-07-20, this finding was overstated.**
+  The original text claimed `internal/integrations/discord/client.go:140` posts a webhook "with no
+  context and no explicit client timeout — that goroutine can hang indefinitely." **That is wrong.**
+  Reading the code, the client already sets per-phase transport timeouts (dial 3s, TLS handshake 3s,
+  response-header 3s, expect-continue 1s) and the goroutine has a `recover()`. The request is
+  bounded and cannot hang indefinitely. The only genuine residual gap was the absence of an overall
+  `http.Client.Timeout` covering body transfer — a minor defence-in-depth item, since this code
+  never reads the response body. Fixed by adding `Timeout: 10 * time.Second`.
+  This codebase is genuinely not a "context is missing everywhere" one; most I/O is local disk where
+  ctx adds nothing.
 - **One real logging bypass:** `internal/web/web.go:286` uses `log.Println("WebSocket upgrade
   failed:", err)` instead of mudlog, inside the actual request path. The other `log.*` uses are
   legitimate (bootstrap before the logger exists; a `go:generate` build tool).

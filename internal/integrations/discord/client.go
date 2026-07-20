@@ -145,6 +145,11 @@ func send(marshalled []byte) {
 		request.Header.Set("Content-Type", "application/json; charset=UTF-8")
 
 		client := &http.Client{
+			// Overall bound on the whole request. The per-phase transport
+			// timeouts below already cover dial, TLS and time-to-headers; this
+			// is the belt-and-braces ceiling that also covers body transfer, so
+			// no single call can outlive it regardless of which phase stalls.
+			Timeout: 10 * time.Second,
 			Transport: &http.Transport{
 				Dial: (&net.Dialer{
 					Timeout:   3 * time.Second,

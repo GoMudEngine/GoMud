@@ -4,8 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"log"
-	"log/slog"
 	"net"
 	"net/http"
 	"os"
@@ -264,7 +262,7 @@ func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn)) {
 	networkConfig := configs.GetNetworkConfig()
 
 	if networkConfig.HttpPort == 0 && networkConfig.HttpsPort == 0 {
-		slog.Error(`Web`, "error", "No ports defined. No web server will be started.")
+		mudlog.Error(`Web`, "error", "No ports defined. No web server will be started.")
 		return
 	}
 
@@ -283,7 +281,7 @@ func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn)) {
 
 		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
-			log.Println("WebSocket upgrade failed:", err)
+			mudlog.Error("Web", "action", "websocket upgrade", "error", err)
 			return
 		}
 		defer conn.Close()

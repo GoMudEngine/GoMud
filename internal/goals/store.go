@@ -3,6 +3,7 @@ package goals
 import (
 	"errors"
 	"fmt"
+	"slices"
 	"sort"
 	"sync"
 	"time"
@@ -240,11 +241,11 @@ func isConflict(newType, existingType string, newMeta GoalTypeMeta) bool {
 	if newType == existingType {
 		return true
 	}
-	if sliceContains(newMeta.ConflictsWith, existingType) {
+	if slices.Contains(newMeta.ConflictsWith, existingType) {
 		return true
 	}
 	if existingMeta, ok := lookupMeta(existingType); ok {
-		if sliceContains(existingMeta.ConflictsWith, newType) {
+		if slices.Contains(existingMeta.ConflictsWith, newType) {
 			return true
 		}
 	}

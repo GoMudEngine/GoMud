@@ -610,7 +610,7 @@ func buildInputRateRow(zone string, score float64, cur *Snapshot, history []*Sna
 		// divide evenly into the item count (e.g. 10 restocks / 7 items).
 		for _, e := range s.Stock {
 			if e.Tier > 0 {
-				row.TierMix[e.Tier] += float64(delta) / float64(max1(len(s.Stock)))
+				row.TierMix[e.Tier] += float64(delta) / float64(max(1, len(s.Stock)))
 			}
 		}
 	}
@@ -646,13 +646,6 @@ func buildInputRateRow(zone string, score float64, cur *Snapshot, history []*Sna
 
 // max1 returns the maximum of n and 1, used to avoid divide-by-zero
 // when distributing restock counts across items in a shop.
-func max1(n int) int {
-	if n < 1 {
-		return 1
-	}
-	return n
-}
-
 // ── LogisticsHealth ─────────────────────────────────────────────────────────
 
 // LogisticsArgs is the input bundle for LogisticsHealth, decoupled from
