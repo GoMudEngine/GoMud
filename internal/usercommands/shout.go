@@ -48,35 +48,10 @@ func Shout(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		room.SendTextCommunication(util.SplitStringNL(msg, 80), user.UserId)
 	}
 
-	for _, roomInfo := range room.Exits {
-		if otherRoom := rooms.LoadRoom(roomInfo.RoomId); otherRoom != nil {
-			if sourceExit := otherRoom.FindExitTo(room.RoomId); sourceExit != `` {
-				otherRoom.SendTextCommunication(fmt.Sprintf(`Someone shouts from the <ansi fg="exit">%s</ansi> direction, "<ansi fg="yellow">%s</ansi>"`, sourceExit, rest), user.UserId)
-			}
-		}
-	}
-
-	for _, roomInfo := range room.ExitsTemp {
-		if otherRoom := rooms.LoadRoom(roomInfo.RoomId); otherRoom != nil {
-			if sourceExit := otherRoom.FindExitTo(room.RoomId); sourceExit != `` {
-				otherRoom.SendTextCommunication(fmt.Sprintf(`Someone shouts from the <ansi fg="exit">%s</ansi> direction, "<ansi fg="yellow">%s</ansi>"`, sourceExit, rest), user.UserId)
-			}
-		}
-	}
-
-	for mut := range room.ActiveMutators {
-		spec := mut.GetSpec()
-		if len(spec.Exits) == 0 {
-			continue
-		}
-		for _, exitInfo := range spec.Exits {
-			if otherRoom := rooms.LoadRoom(exitInfo.RoomId); otherRoom != nil {
-				if sourceExit := otherRoom.FindExitTo(room.RoomId); sourceExit != `` {
-					otherRoom.SendTextCommunication(fmt.Sprintf(`Someone shouts from the <ansi fg="exit">%s</ansi> direction, "<ansi fg="yellow">%s</ansi>"`, sourceExit, rest), user.UserId)
-				}
-			}
-		}
-	}
+	// Standard, temporary, and mutator-added exits, each neighbour once.
+	room.ForEachAdjacentRoom(func(otherRoom *rooms.Room, sourceExit string) {
+		otherRoom.SendTextCommunication(fmt.Sprintf(`Someone shouts from the <ansi fg="exit">%s</ansi> direction, "<ansi fg="yellow">%s</ansi>"`, sourceExit, rest), user.UserId)
+	})
 
 	selfMsg := fmt.Sprintf(`You shout, "<ansi fg="yellow">%s</ansi>"`, rest)
 	user.SendText(messaging.CategoryShout, util.SplitStringNL(selfMsg, 80))

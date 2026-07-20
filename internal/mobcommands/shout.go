@@ -26,13 +26,12 @@ func Shout(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 			util.SplitStringNL(namedMsg, 80))
 	}
 
-	for _, roomInfo := range room.Exits {
-		if otherRoom := rooms.LoadRoom(roomInfo.RoomId); otherRoom != nil {
-			if sourceExit := otherRoom.FindExitTo(room.RoomId); sourceExit != `` {
-				otherRoom.SendText(messaging.CategoryShout, fmt.Sprintf(`Someone is shouting from the <ansi fg="exit">%s</ansi> direction.`, sourceExit))
-			}
-		}
-	}
+	// Walks standard, temporary, and mutator-added exits. Previously this only
+	// walked room.Exits, so a mob alarm in a room connected by a temporary or
+	// mutator exit failed to reach neighbours a player shout would have.
+	room.ForEachAdjacentRoom(func(otherRoom *rooms.Room, sourceExit string) {
+		otherRoom.SendText(messaging.CategoryShout, fmt.Sprintf(`Someone is shouting from the <ansi fg="exit">%s</ansi> direction.`, sourceExit))
+	})
 
 	// Chunk 3.3: mob shout wakes sleepers in the same room. Same-room only —
 	// adjacent-room sound propagation is out of scope.
