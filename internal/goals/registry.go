@@ -2,6 +2,7 @@ package goals
 
 import (
 	"fmt"
+	"slices"
 	"sync"
 
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -54,7 +55,7 @@ func ValidateSymmetry() []string {
 				// type — not a symmetry issue, but worth noting.
 				continue
 			}
-			if !sliceContains(dstMeta.ConflictsWith, srcType) {
+			if !slices.Contains(dstMeta.ConflictsWith, srcType) {
 				warnings = append(warnings, fmt.Sprintf(
 					"goals: conflict %q→%q is one-sided (%q has no reverse declaration)",
 					srcType, dstType, dstType))
@@ -62,15 +63,6 @@ func ValidateSymmetry() []string {
 		}
 	}
 	return warnings
-}
-
-func sliceContains(s []string, needle string) bool {
-	for _, x := range s {
-		if x == needle {
-			return true
-		}
-	}
-	return false
 }
 
 // LookupGoalType returns the registered metadata for a goal type and
