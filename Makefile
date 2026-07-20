@@ -127,7 +127,7 @@ test-smoke: ### Run smoke test suite
 # the whole world (~20s) and populates every package global.
 .PHONY: boot-check
 boot-check: ### Verify every data file loads (replaces the manual pre-push boot)
-	@DOGMUD_BOOT_SMOKE=1 go test -run TestSmoke_ServerBootsCleanWithRealData -v -timeout 300s .
+	@DOGMUD_BOOT_SMOKE=1 go test -run "TestSmoke_ServerBootsCleanWithRealData|TestSmoke_AllDialogueFilesParse" -v -timeout 300s .
 
 .PHONY: coverage
 coverage: 
