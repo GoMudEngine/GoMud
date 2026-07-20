@@ -121,6 +121,14 @@ test-regression: ### Run regression test suite
 test-smoke: ### Run smoke test suite
 	@go test -run "TestSmoke_" -v ./...
 
+# Automates the Pre-Push SOP step "boot the server locally and confirm it starts
+# cleanly past data-file loading". Loads every YAML data file through the real
+# boot path and fails on malformed content. Opt-in via env var because it loads
+# the whole world (~20s) and populates every package global.
+.PHONY: boot-check
+boot-check: ### Verify every data file loads (replaces the manual pre-push boot)
+	@DOGMUD_BOOT_SMOKE=1 go test -run TestSmoke_ServerBootsCleanWithRealData -v -timeout 300s .
+
 .PHONY: coverage
 coverage: 
 	@mkdir -p bin/covdatafiles && \
