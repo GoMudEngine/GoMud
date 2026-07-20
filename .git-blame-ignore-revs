@@ -1,0 +1,12 @@
+# Revisions to skip in `git blame`. These are bulk mechanical rewrites with no
+# behaviour change, which would otherwise mask the real author of every line
+# they touch.
+#
+# Enable locally with:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+#
+# GitHub honours this file automatically in its blame view.
+
+# chore: gofmt the tree (2026-07-20) — gofmt -w across 234 files; import
+# sorting, blank lines, and doc-comment reindentation only.
+2dfbf5d493b3f6d0004a53e88d6e420112dc44dd

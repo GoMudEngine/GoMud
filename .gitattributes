@@ -1,0 +1,15 @@
+# Go source must stay LF in the working tree on every platform.
+#
+# gofmt always emits LF. With core.autocrlf=true (the Windows default), a
+# checkout rewrites .go files to CRLF, and gofmt then reports every one of them
+# as unformatted even when the content is byte-for-byte correct — so
+# `make fmtcheck` and `make validate` fail on a clean tree, and `gofmt -l`
+# output becomes useless noise.
+#
+# Pinning eol=lf keeps gofmt, `make fmtcheck`, and any future golangci-lint
+# gate behaving identically on Windows, macOS, Linux, and CI.
+*.go text eol=lf
+
+# Same reasoning for the Go module files, which the toolchain rewrites.
+go.mod text eol=lf
+go.sum text eol=lf
