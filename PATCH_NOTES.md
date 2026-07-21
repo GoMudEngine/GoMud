@@ -1,5 +1,27 @@
 # DOGMud Patch Notes
 
+## 2026-07-21 — The map remembers where you're going
+
+Your quest marker now keeps up with you. While you are working a quest, the
+minimap shows where to head next -- and as you finish each step, the marker
+moves on to the next objective instead of sitting where you started. Every
+quest in the world was gone through by hand so the marker points somewhere
+useful, or is deliberately left off for the "hunt them down wherever they
+roam" sort of task. A few fetch-and-carry quests were split into clearer steps,
+so the marker walks you to the thing first and then back to whoever wanted it.
+
+Two quests also got unstuck along the way:
+
+- <ansi fg="command">First Blood</ansi> -- the training-dummy drill no longer
+  strands you. The step that asks for a <ansi fg="command">kick</ansi> or a
+  <ansi fg="command">trip</ansi> now credits the attempt, so a dummy that drops
+  before your special lands cannot leave you swinging at nothing.
+- <ansi fg="command">The Warden's Report</ansi> -- this one could be started
+  but never finished. It runs end to end now.
+
+And a small polish: handing an item to a townsperson who has no use for it no
+longer tells you they handed it back twice.
+
 ## 2026-07-21 — Steadier still
 
 A short follow-on to yesterday's stability pass. A rare botched grapple — the kind
