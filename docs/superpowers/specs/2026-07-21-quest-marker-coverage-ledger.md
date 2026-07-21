@@ -1,19 +1,19 @@
 # Quest Minimap-Marker Coverage Ledger
 
-Generated 2026-07-21 (Phase 2a). Cells: `step→room` explicit, `step→N(inf)` room_enter
-inference, `step→∅` deliberate `-1`. `end` omitted.
+Generated 2026-07-21 (Phase 2 wave 2). Cells: `step→room` explicit, `step→N(inf)` inference,
+`step→∅` deliberate `-1`. `end` omitted.
 
-Totals: **108 explicit targets · 7 inferred · 83 deliberate ∅** across 78 quests.
+Totals: **118 explicit targets · 7 inferred · 76 deliberate ∅** across 78 quests.
 
 | Quest | Steps (step→marker) |
 |-------|---------------------|
 | 2 The Warren Compact | start→∅ |
-| 4 The Warden's Report | start→∅ · investigate→∅ · evidence→405 |
-| 5 The Innkeeper's Complaint | start→∅ |
+| 4 The Warden's Report | start→408 · investigate→408 · evidence→405 |
+| 5 The Innkeeper's Complaint | start→421 · deliver→423 |
 | 6 The Collector's Burden | start→476 · report→421 |
-| 7 The Fallow Field | start→∅ |
+| 7 The Fallow Field | start→444 · deliver→442 |
 | 8 The City Watch's Missing Person | start→477 · found→473 |
-| 9 The Temple's Tithe Audit | start→∅ |
+| 9 The Temple's Tithe Audit | start→476 · deliver→468 |
 | 10 The Drowning Post's Debt | start→473 · report→472 |
 | 11 The Windwarden's Dilemma | start→∅ |
 | 12 The Warden's Covenant | start→3115 · ritual→∅ |
@@ -67,11 +67,11 @@ Totals: **108 explicit targets · 7 inferred · 83 deliberate ∅** across 78 qu
 | 67 The Bloom Trail | start→5523 · front→5808 · lintel→6013 · delivery→6029 · source→6031 · witness→5525 · report→∅ |
 | 68 The Cooperage Circle | start→5719 · evidence→∅ · choice→∅ |
 | 69 The Gallery Cipher | start→5901 · rubbing→5916 · gallery→6007 · reading→5916 |
-| 70 The Pre-Founding Web | start→∅ · witness→5706 |
+| 70 The Pre-Founding Web | start→6037 · witness→5706 |
 | 71 The Tribute | start→5817 · vell→5820 · horst→5815 · ledger→5810 |
 | 72 The Water Dispute | start→∅ |
 | 73 The Margin Notation | start→6226 · chart→6131 · scrivener→6143 · map→6220 |
-| 74 The Undercroft | start→∅ · ledger→6188 · record→6198 · survey→6189 · descent→6215 · reveal→∅ |
+| 74 The Undercroft | start→6189 · ledger→6188 · record→6198 · survey→6189 · descent→6215 · reveal→∅ |
 | 75 The Surveyor's Report | start→6303 · survey→6305 · intro→6315 · testimony→∅ |
 | 76 The Disc | start→4023 · journal→∅ · attune→∅ |
 | 77 The Truth |  |

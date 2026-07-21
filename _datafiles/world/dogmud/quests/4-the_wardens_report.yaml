@@ -6,7 +6,7 @@ secret: false
 
 steps:
   - id: start
-    map_target: -1  # -1: no single resolved destination (near [405]); Phase 2 review
+    map_target: 408  # the Bandit Hollow (search the camp)
     description: "Road Warden Tessara at the Warden's Post on Dustwalk Road has asked\
       \ you to investigate a bandit camp in the gullies to the south. Search the\
       \ abandoned campsite and the hollow beyond for evidence of their operations."
@@ -18,7 +18,7 @@ steps:
         grants: 4-investigate
 
   - id: investigate
-    map_target: -1  # -1: no single resolved destination; Phase 2 review
+    map_target: 408  # the Bandit Hollow — find the purse here
     description: "You have reached the bandit camp. Search the Bandit Hollow for\
       \ evidence -- a purse containing incriminating documents should prove the\
       \ scope of their operation."

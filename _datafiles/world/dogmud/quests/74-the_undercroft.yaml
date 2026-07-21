@@ -10,7 +10,7 @@ secret: false
 
 steps:
   - id: start
-    map_target: -1  # -1: return-to-giver / in-place (start room 6189); Phase 2 split review
+    map_target: 6189  # the Archive — examine the first construction record
     description: "Brother Cael has set you to examine three of the temple's
       construction records that disagree with its founding story."
     hint: "Examine the building-ledger in the Archive, the consecration-record

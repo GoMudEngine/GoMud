@@ -10,7 +10,7 @@ secret: false
 
 steps:
   - id: start
-    map_target: -1  # -1: bundled objectives, rooms [6037, 6038]; Phase 2 split review
+    map_target: 6037  # the Buried Lintel — take a rubbing
     description: >-
       Gritta asked you to go deeper -- to see the Buried Lintel and the
       sealed Deep Canal with your own eyes, take a rubbing of the lintel
