@@ -6,7 +6,7 @@ description: You have chosen to help Geomancer Rhett extract windstone
 secret: false
 steps:
   - id: start
-    map_target: -1  # -1: return-to-giver / in-place (start room 3030); Phase 2 split review
+    map_target: 3030  # travel to Rhett at the Ridge Approach
     description: "Travel to Geomancer Rhett at the rocky shelf and
       help him begin the windstone extraction."
     hint: "Geomancer Rhett is at the Ridge Approach. From Thornwall's

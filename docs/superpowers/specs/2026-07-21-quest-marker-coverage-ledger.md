@@ -1,11 +1,9 @@
 # Quest Minimap-Marker Coverage Ledger
 
-Generated 2026-07-21 (Phase 1). One row per quest; each cell is `step→room`, `step→N(inf)`
-(room_enter inference), or `step→∅` (deliberate `-1`, no marker). `end` steps omitted.
+Generated 2026-07-21 (Phase 2a). Cells: `step→room` explicit, `step→N(inf)` room_enter
+inference, `step→∅` deliberate `-1`. `end` omitted.
 
-Totals: **104 explicit targets · 7 inferred · 87 deliberate ∅** across 78 quests.
-The ∅ steps carry an inline reason in the quest YAML; those tagged "Phase 2 split review"
-are candidates for step-splitting (see `phase2_candidates` / the plan).
+Totals: **108 explicit targets · 7 inferred · 83 deliberate ∅** across 78 quests.
 
 | Quest | Steps (step→marker) |
 |-------|---------------------|
@@ -18,8 +16,8 @@ are candidates for step-splitting (see `phase2_candidates` / the plan).
 | 9 The Temple's Tithe Audit | start→∅ |
 | 10 The Drowning Post's Debt | start→473 · report→472 |
 | 11 The Windwarden's Dilemma | start→∅ |
-| 12 The Warden's Covenant | start→∅ · ritual→∅ |
-| 13 The Prospector's Gambit | start→∅ · extraction→∅ |
+| 12 The Warden's Covenant | start→3115 · ritual→∅ |
+| 13 The Prospector's Gambit | start→3030 · extraction→∅ |
 | 14 The Undertow | start→∅ · explore→498(inf) · confront→∅ · evidence→∅ · report→∅ |
 | 15 The Peddler's Overdue Freight | start→∅ |
 | 16 The Herbalist's Shortage | start→∅ · forager→4027 |
@@ -30,7 +28,7 @@ are candidates for step-splitting (see `phase2_candidates` / the plan).
 | 21 Newcomer's Path | start→5203 |
 | 28 Waking to Gaius | start→∅ · hinted→∅ · looked→∅ · examined→6259(inf) · status_prompt→∅ · statused→6260(inf) · carry_prompt→∅ · got→∅ · invd→∅ · helped→6261(inf) · speaks_prompt→∅ · said→∅ · asked→6262(inf) · proving_prompt→∅ · warcried→∅ · saw_conditions→∅ · checked_cooldowns→∅ · attacked→∅ · cast_spike→∅ · tripped→∅ · fled→∅ |
 | 29 Two Roads | start→5203 |
-| 30 The Awakening | start→∅ |
+| 30 The Awakening | start→5200 |
 | 31 Find Your Footing | start→5213(inf) · school→5207 · shop→∅ · equip→5205(inf) · lantern→5203 |
 | 32 First Blood | start→5227 · strike→5227 · special→5227 · consider→5227 · verbosity→5227 |
 | 33 Hold the Wash | start→∅ · scout→∅ · squatter→5234 |
@@ -57,7 +55,7 @@ are candidates for step-splitting (see `phase2_candidates` / the plan).
 | 54 Back to the Forge | start→5245 |
 | 55 Another Brew | start→5265 · brew→∅ |
 | 56 Running Game | start→∅ · hunt→5284 |
-| 57 Tending the Grove | start→∅ |
+| 57 Tending the Grove | start→5309 |
 | 58 Reading the Stones | start→5343 |
 | 59 Range Practice | start→5354 · shoot→5356 |
 | 60 The Long Road | start→5409 · waybill→5445 · manifest→5471 |
