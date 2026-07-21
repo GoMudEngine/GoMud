@@ -6,38 +6,51 @@ import (
 	"github.com/GoMudEngine/GoMud/modules/weather/sim"
 )
 
-// onSeasonChanged turns a per-zone season flip into a GLOBAL season splash
+// onSeasonChanged turns a season flip into ONE GLOBAL season splash per track
 // (a season turn is world-scale flavor, so everyone sees it — per the design).
+//
+// resolveSeasons queues WeatherSeasonChanged once PER ZONE, and every zone on a
+// track flips on the same calendar day. Without coalescing, a single turn would
+// broadcast the full-screen splash to every player dozens of times. We announce
+// the track's turn once and suppress the rest until that track flips again.
 func (m *weatherModule) onSeasonChanged(e events.Event) events.ListenerReturn {
 	evt, ok := e.(WeatherSeasonChanged)
 	if !ok {
 		return events.Continue
 	}
+	if m.lastSeasonSplash == nil {
+		m.lastSeasonSplash = map[string]string{}
+	}
+	if m.lastSeasonSplash[evt.Track] == evt.To {
+		return events.Continue // already announced this track's flip to this season
+	}
+	m.lastSeasonSplash[evt.Track] = evt.To
+
 	events.AddToQueue(splash.Splash{
 		SceneId: "season_" + evt.Track + "_" + evt.To, // e.g. season_temperate_winter
-		Caption: seasonCaption(evt.To, evt.Zone),
+		Caption: seasonCaption(evt.To),
 		Target:  splash.TargetGlobal,
-		Data:    map[string]any{"zone": evt.Zone},
+		Data:    map[string]any{"zone": "the land"}, // track-wide announcement, not one zone
 	})
 	return events.Continue
 }
 
-func seasonCaption(season, zone string) string {
+func seasonCaption(season string) string {
 	switch season {
 	case "winter":
-		return "Winter descends on " + zone + "."
+		return "Winter descends on the land."
 	case "spring":
-		return "Spring returns to " + zone + "."
+		return "Spring returns to the land."
 	case "summer":
-		return "Summer settles over " + zone + "."
+		return "Summer settles over the land."
 	case "autumn":
-		return "Autumn comes to " + zone + "."
+		return "Autumn comes to the land."
 	case "wet":
-		return "The wet season breaks over " + zone + "."
+		return "The wet season breaks over the land."
 	case "dry":
-		return "The dry season sets in over " + zone + "."
+		return "The dry season sets in over the land."
 	}
-	return capitalize(season) + " comes to " + zone + "."
+	return capitalize(season) + " comes to the land."
 }
 
 // severeScene maps the three severe weather types to their splash scene ids.

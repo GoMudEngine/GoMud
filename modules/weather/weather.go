@@ -36,6 +36,11 @@ type weatherModule struct {
 	tracks         seasons.Tracks
 	zoneSeasons    map[sim.ZoneId]seasons.ZoneSeason
 	seasonalTables content.SeasonalTables
+
+	// lastSeasonSplash coalesces the per-zone WeatherSeasonChanged events into a
+	// single global season splash per track flip: track name -> last season we
+	// splashed for it. See onSeasonChanged.
+	lastSeasonSplash map[string]string
 }
 
 var module weatherModule
@@ -60,6 +65,7 @@ func (m *weatherModule) onLoad() {
 		return
 	}
 	m.plug.Callbacks.SetOnSave(m.onSave)
+	m.lastSeasonSplash = map[string]string{}
 	events.RegisterListener(events.NewRound{}, m.onNewRound)
 	events.RegisterListener(WeatherSeasonChanged{}, m.onSeasonChanged)
 }
