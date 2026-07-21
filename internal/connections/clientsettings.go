@@ -12,7 +12,6 @@ type ClientSettings struct {
 	MSPEnabled        bool // Do they accept sound in their client?
 	SendTelnetGoAhead bool // Defaults false, should we send a IAC GA after prompts?
 	AsciiMode         bool // Convert UTF-8 decorative chars to ASCII equivalents?
-	IsWebConnection   bool // True for websocket (web client) connections; read by splash delivery.
 }
 
 func (c ClientSettings) IsMsp() bool {

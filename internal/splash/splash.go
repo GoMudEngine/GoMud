@@ -33,13 +33,8 @@ type Splash struct {
 
 func (Splash) Type() string { return "Splash" }
 
-// Recipients resolves the users a splash should reach. Deterministic; callers
-// (the terminal + gmcp listeners) partition by client type afterward.
-//
-// Exactly-once delivery relies on: (a) event dispatch being synchronous and
-// single-threaded, so the two listeners run back-to-back, and (b) the
-// IsWebConnection flag being write-once at connect. Both hold today; anyone
-// parallelizing listener dispatch would need to revisit this.
+// Recipients resolves the users a splash should reach (the delivery hook then
+// renders the scene per recipient).
 func Recipients(s Splash) []*users.UserRecord {
 	switch s.Target {
 	case TargetUser:
