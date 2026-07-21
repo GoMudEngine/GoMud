@@ -38,24 +38,28 @@ func Petition(rest string, user *users.UserRecord, room *rooms.Room, flags event
 		return true, nil
 	}
 
-	// Anti-spam cooldown.
+	// Anti-spam cooldown (checked here, recorded only after a successful file
+	// so a failed Add doesn't lock the player out of retrying).
 	cd := uint64(gp.PetitionCooldownRounds)
 	nowRound := util.GetRoundCount()
 	petitionCooldownMu.Lock()
 	last, seen := lastPetitionRound[user.UserId]
-	if seen && cd > 0 && nowRound-last < cd {
-		petitionCooldownMu.Unlock()
+	onCooldown := seen && cd > 0 && nowRound-last < cd
+	petitionCooldownMu.Unlock()
+	if onCooldown {
 		user.SendText(messaging.CategorySystem, `<ansi fg="yellow">You've just sent a petition — give the staff a moment before sending another.</ansi>`)
 		return true, nil
 	}
-	lastPetitionRound[user.UserId] = nowRound
-	petitionCooldownMu.Unlock()
 
 	p, err := moderation.Add(user.Username, user.Character.RoomId, user.Character.Zone, rest)
 	if err != nil {
 		user.SendText(messaging.CategorySystem, `<ansi fg="red">Your petition could not be filed. Please try again or find an admin.</ansi>`)
 		return true, nil
 	}
+
+	petitionCooldownMu.Lock()
+	lastPetitionRound[user.UserId] = nowRound
+	petitionCooldownMu.Unlock()
 
 	user.SendText(messaging.CategorySystem, `<ansi fg="green">Your petition has been sent to the staff. They'll review it as soon as they can.</ansi>`)
 

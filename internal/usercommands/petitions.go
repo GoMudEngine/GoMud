@@ -52,7 +52,7 @@ func Petitions(rest string, user *users.UserRecord, room *rooms.Room, flags even
 			user.SendText(messaging.CategorySystem, `<ansi fg="red">That is not a valid petition id.</ansi>`)
 			return true, nil
 		}
-		note := strings.TrimSpace(strings.TrimPrefix(rest, fields[0]+" "+fields[1]))
+		note := strings.Join(fields[2:], " ") // everything after "resolve <id>"
 		if err := moderation.Resolve(id, user.Username, note); err != nil {
 			user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="red">%s</ansi>`, err.Error()))
 			return true, nil
@@ -83,8 +83,9 @@ func Petitions(rest string, user *users.UserRecord, room *rooms.Room, flags even
 
 func petitionSnippet(s string, max int) string {
 	s = strings.ReplaceAll(s, "\n", " ")
-	if len(s) > max {
-		return s[:max-1] + "…"
+	r := []rune(s) // rune-slice so a cut never splits a multibyte character
+	if len(r) > max {
+		return string(r[:max-1]) + "…"
 	}
 	return s
 }

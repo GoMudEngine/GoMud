@@ -28,7 +28,7 @@ func Ban(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	// IP ban subcommand.
 	if strings.ToLower(fields[0]) == "ip" && len(fields) >= 2 {
 		targetArg := fields[1]
-		reason := strings.TrimSpace(strings.TrimPrefix(rest, fields[0]+" "+targetArg))
+		reason := strings.Join(fields[2:], " ") // everything after "ip <target>"
 		if reason == "" {
 			reason = "banned by staff"
 		}
@@ -59,18 +59,29 @@ func Ban(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 
 	// Account ban.
 	name := fields[0]
-	reason := strings.TrimSpace(strings.TrimPrefix(rest, name))
+	reason := strings.Join(fields[1:], " ")
 	if reason == "" {
 		reason = "banned by staff"
 	}
-	_ = moderation.BanAccount(name, reason, user.Username)
 
-	// Boot if online.
-	if target := users.GetByCharacterName(name); target != nil {
+	// Prefer the canonical username when the target is online, so the stored ban
+	// record matches the account rather than whatever casing was typed. (The
+	// moderation layer normalizes the key case-insensitively regardless.)
+	target := users.GetByCharacterName(name)
+	banName := name
+	if target != nil {
+		banName = target.Username
+	}
+	_ = moderation.BanAccount(banName, reason, user.Username)
+
+	if target != nil {
+		// Boot the online session.
 		target.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="alert-5">You have been banned.</ansi> %s`, reason))
 		connections.Kick(target.ConnectionId(), "Banned by staff: "+reason)
+	} else if !users.Exists(name) {
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="yellow">Note: no account named "%s" is currently known — the name is banned and will apply if it is ever registered.</ansi>`, name))
 	}
 
-	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> has been <ansi fg="alert-5">banned</ansi>. Reason: %s`, name, reason))
+	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> has been <ansi fg="alert-5">banned</ansi>. Reason: %s`, banName, reason))
 	return true, nil
 }

@@ -9,4 +9,8 @@ Bans persist across restarts and are enforced at login.
 An IP ban also blocks that address from registering a new account, which helps
 against ban evasion. Use <ansi fg="command">unban</ansi> to lift a ban.
 
+Note: IP bans key on the connection's address. For players on the web client
+that address is the shared web proxy, so an IP ban there affects the proxy, not
+one person — prefer an account ban for web-client users.
+
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help unban</ansi>, <ansi fg="command">help boot</ansi>

@@ -22,7 +22,7 @@ func Boot(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 	name := fields[0]
-	reason := strings.TrimSpace(strings.TrimPrefix(rest, name))
+	reason := strings.Join(fields[1:], " ")
 	if reason == "" {
 		reason = "disconnected by staff"
 	}
