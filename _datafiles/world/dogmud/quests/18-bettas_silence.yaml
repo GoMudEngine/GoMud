@@ -12,6 +12,7 @@ flags:
 
 steps:
   - id: start
+    map_target: -1  # -1: return-to-giver / in-place (start room 4049); Phase 2 split review
     description: "Betta has asked you to keep quiet about the
       girl who slept in her barn."
     hint: "A bloodline agent is patrolling the north road,

@@ -25,6 +25,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: -1  # -1: bundled objectives, rooms [5311, 5312, 5313]; Phase 2 split review
     description: >-
       Orrin wants you to fight in the grove and cast while you do it. Put
       down a veil-warped creature, and loose a spell in the thick of the
@@ -35,6 +36,7 @@ steps:
       conviction-spike to loose a spell mid-combat -- a hit can break the
       casting, so push through. Then report to Orrin -- type ask orrin done.
   - id: kill
+    map_target: -1  # -1: bundled objectives, rooms [5311, 5312, 5313]; Phase 2 split review
     description: >-
       You put down a veil-warped creature. Cast in the thick of the grove if
       you have not yet.
@@ -43,6 +45,7 @@ steps:
       Grove Heart), type cast conviction-spike to loose a spell mid-fight.
       Then report to Keeper Orrin -- type ask orrin done.
   - id: cast
+    map_target: 5309
     description: >-
       You held a casting together while the grove worked at you. Put down a
       veil-warped creature if you have not yet.

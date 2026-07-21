@@ -18,12 +18,14 @@ cooldown_rounds: 300
 
 steps:
   - id: start
+    map_target: -1  # -1: no single resolved destination (near [5234]); Phase 2 review
     description: >-
       Garve has asked you to thin out the squatters in the wash again.
     hint: >-
       Head east into the wash. Put down a bandit scout and a bandit
       squatter, then come back to Garve.
   - id: firstkill
+    map_target: -1  # -1: no single resolved destination; Phase 2 review
     description: "One squatter down. One more should satisfy Garve."
     hint: "Find and kill one more bandit in the wash."
   - id: end

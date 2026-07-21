@@ -30,6 +30,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: -1  # -1: bundled objectives, rooms [5270, 5273]; Phase 2 split review
     description: >-
       Falv has handed you a firebomb and set you loose in the marsh. Put
       down a marsh leech, throw the firebomb at something in a fight, and
@@ -43,6 +44,7 @@ steps:
       gather herbs. If the fight turns bad, type flee -- you wake at the
       Mending Hut, not in the mud.
   - id: leech
+    map_target: -1  # -1: no single resolved destination; Phase 2 review
     description: >-
       One marsh leech is down. Now learn the firebomb: get into a fight
       and throw it.
@@ -51,6 +53,7 @@ steps:
       mudflat. Get into the fight, then type throw firebomb. (Throw,
       cast, and special moves share one cooldown.)
   - id: throw
+    map_target: -1  # -1: bundled objectives, rooms [5270, 5273]; Phase 2 split review
     description: >-
       The firebomb burst exactly where you wanted it. Now forage the
       marsh herbs Falv asked for.
@@ -59,6 +62,7 @@ steps:
       black pool grow the best herbs -- to gather cattail, willow-bark,
       and mint.
   - id: forage
+    map_target: 5271
     description: >-
       You have blooded yourself, thrown the firebomb, and worked the
       marsh for herbs. Report back to Falv at his camp.

@@ -7,6 +7,7 @@ secret: false
 
 steps:
   - id: start
+    map_target: 477
     description: "Guard Captain Velk at the barracks has asked you to locate a missing
       person -- a young woman named Elara, reported missing by her family. Search the
       residential wards north of the market for any sign of her."
@@ -14,6 +15,7 @@ steps:
       2 into the Residential Ward. Look for Elara there. Try speaking with her -- she
       may respond to calm, reassuring words."
   - id: found
+    map_target: 473
     description: "You have found Elara hiding in the residential ward. She is running
       from an arranged marriage and does not want to be returned. You must decide what
       to tell the guard captain."

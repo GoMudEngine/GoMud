@@ -166,3 +166,30 @@ func TestHandleQuestUpdate_DoesNotDoubleFireQuestengineInitiatedGrant(t *testing
 		"a questengine-pre-set (non-fresh) grant must NOT re-fire the quest_granted "+
 			"trigger a second time — this is the double-fire guard")
 }
+
+// TestHandleQuestUpdate_MarkerOnlyIsNoOp proves a MarkerOnly event is a no-op in
+// HandleQuestUpdate. questengine GrantQuest queues one on every start/progress
+// step purely so the GMCP quest-progress handler (a separate listener) refreshes
+// the Char.Quests minimap marker mid-quest. HandleQuestUpdate must NOT grant the
+// token, fire triggers, or send a banner for it — the questengine already did all
+// of that synchronously, so acting again would double the progress banner.
+func TestHandleQuestUpdate_MarkerOnlyIsNoOp(t *testing.T) {
+	cleanupQuest := setupBridgeTestQuest(t)
+	defer cleanupQuest()
+
+	u := users.NewTestUser(503, "bridgeuser3", "BridgeUser3", 5003)
+	cleanupUsers := users.SeedUsersForTest(map[int]*users.UserRecord{503: u})
+	defer cleanupUsers()
+
+	result := HandleQuestUpdate(events.Quest{
+		UserId:     503,
+		QuestToken: "999001-start",
+		MarkerOnly: true,
+	})
+
+	require.Equal(t, events.Continue, result)
+	require.False(t, u.Character.HasQuest("999001-start"),
+		"MarkerOnly must NOT grant the token — the questengine already did, synchronously")
+	require.Equal(t, "", u.Character.GetQuestFlag("999001-fired-start"),
+		"MarkerOnly must NOT fire the quest_granted trigger")
+}

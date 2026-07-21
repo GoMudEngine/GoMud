@@ -1,269 +1,125 @@
-# Quest Minimap-Marker Audit Implementation Plan
+# Quest Minimap-Marker Audit Implementation Plan (phased, revised 2026-07-21)
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans (inline, chosen by the user) to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax.
 
-**Goal:** Give every quest step either a minimap marker or an explicit audited "no marker" (`map_target: -1`) decision, and add a CI gate so no future quest step ships un-audited.
+**Goal:** Every quest step has a deliberate minimap-marker decision — a real forward marker or an audited `-1` no-marker — with a CI gate enforcing it; and coarse "bundled" steps are split into concrete markable steps where that adds a genuinely useful marker.
 
-**Architecture:** Reuse the per-step `map_target int` field with a new `-1` = deliberate-none sentinel. Fix `ResolveQuestTarget` so `-1` yields no marker and suppresses inference. Add an engine accessor to iterate all quests, then a `TestSmoke_*` gate asserting every non-`end` step resolves a marker or is `-1`. Then audit all 79 quest YAMLs to satisfy the gate, recording each step's disposition in a coverage ledger.
+**Architecture:** `map_target int` per step: `>0` = room, `-1` = deliberate none, `0` = undecided (gate rejects). A `TestSmoke_*` gate asserts every step resolves `>0` or is `-1`. The audit is a three-way decision (target / split-then-target / `-1`), executed in phases so the safe state lands first and marker quality improves incrementally, **each phase playtested**.
 
-**Tech Stack:** Go 1.25, `internal/questengine`, `boot_smoke_test.go` (package main), YAML content under `_datafiles/world/dogmud/quests/`.
+**Tech Stack:** Go 1.25, `internal/questengine`, `boot_smoke_test.go`, quest YAML under `_datafiles/world/dogmud/quests/`, the `mudagent` playtest harness.
 
 Spec: `docs/superpowers/specs/2026-07-21-quest-minimap-marker-audit-design.md`
+Branch: `feature/quest-marker-audit`. Mob→room lookup table already built at `scratchpad/mob2room.txt` (611 mobs).
 
 ---
 
-## File structure
+## Phase 0 — Mechanism (DONE)
 
-- `internal/questengine/map_target.go` — modify `ResolveQuestTarget` for the `-1` sentinel.
-- `internal/questengine/map_target_test.go` — add the sentinel unit test.
-- `internal/questengine/engine.go` — add `AllQuests()` iterator accessor.
-- `boot_smoke_test.go` (repo root) — add `TestSmoke_EveryQuestStepHasMarkerDecision`.
-- `_datafiles/world/dogmud/quests/*.yaml` — the audit edits.
-- `docs/superpowers/specs/2026-07-21-quest-minimap-marker-audit-design.md` — append the coverage ledger.
+- [x] Resolver `-1` sentinel (`map_target.go`) + unit test (`map_target_test.go`). Committed.
+- [x] `Engine.AllQuests()` accessor (`engine.go`) — *uncommitted, lands with Phase 1's gate commit.*
+- [x] `TestSmoke_EveryQuestStepHasMarkerDecision` gate (`boot_smoke_test.go`) — *uncommitted; currently RED, produced the 170-step worklist.*
 
 ---
 
-### Task 1: `-1` sentinel in the resolver
+## Phase 1 — Two-way audit → gate green (playtested)
 
-**Files:**
-- Modify: `internal/questengine/map_target.go:26-34`
-- Test: `internal/questengine/map_target_test.go`
+Every one of the 170 undecided steps gets a decision. Split candidates are **deferred**
+here: they get a temporary `-1` with a `# split candidate — <what to split>` reason so the
+gate goes green and Phase 2+ has a worklist.
 
-- [ ] **Step 1: Write the failing test**
+### Task 1.1: Classify + edit every undecided step (batched by quest id)
 
-Add to `internal/questengine/map_target_test.go`:
+**Files:** `_datafiles/world/dogmud/quests/*.yaml` (all in the worklist).
 
-```go
-// A step with map_target -1 means "deliberately no marker" — it must resolve to
-// 0 (no marker) AND suppress room_enter inference, so a stray inferable target
-// does not re-introduce a marker the author explicitly removed.
-func TestResolveQuestTarget_DeliberateNoneSentinel(t *testing.T) {
-	e := NewEngine()
-	e.RegisterQuest(&QuestDef{
-		QuestId: 9998,
-		Steps:   []QuestStep{{Id: "nowhere", MapTarget: -1}},
-		Triggers: []TriggerDef{
-			// A room_enter gated on the step that WOULD infer room 4242 —
-			// proves -1 overrides inference.
-			{Event: "room_enter", Room: 4242, Conditions: Conditions{Has: []string{"9998-nowhere"}}},
-		},
-	})
-	if got := e.ResolveQuestTarget(9998, "nowhere"); got != 0 {
-		t.Fatalf("map_target -1 must resolve to 0 (no marker, inference suppressed); got %d", got)
-	}
-}
-```
+Per quest (id order), for each undecided step read its **advancing trigger** (the trigger
+whose `conditions.has` includes this step's token) and decide:
 
-- [ ] **Step 2: Run test to verify it fails**
+- **Concrete forward destination** — the advancing trigger references a room directly
+  (`room_enter`/`room_interact` `room:`) or a single-spawn mob (`ask`/`item_give`/`mob_death`
+  `mob:` → look up `mob2room.txt`), and it's a place the player must *travel to*. →
+  `map_target: <room>`.
+- **Directionless** — `skill_use`/`command` demo, kill/gather a common mob anywhere,
+  report to the giver you started beside, tutorial command step. → `map_target: -1` with a
+  one-line reason comment.
+- **Bundled** — folds fetch + return or several destinations. → `map_target: -1` with a
+  `# split candidate — <objectives>` comment (Phase 2+ will split it).
 
-Run: `go test ./internal/questengine/ -run TestResolveQuestTarget_DeliberateNoneSentinel -v`
-Expected: FAIL — current code returns `-1` (the `!= 0` branch) or `4242` (inference), not `0`.
+- [ ] **Step 1: Process quests in id-range batches** (e.g. 2–13, 14–21, 28–43, 45–63, 65–87).
+  Read each quest; apply the decision to each undecided step; verify room ids against
+  `mob2room.txt` / the room file.
+- [ ] **Step 2: After each batch, re-run the gate** to watch the count fall:
+  `DOGMUD_BOOT_SMOKE=1 go test . -run TestSmoke_EveryQuestStepHasMarkerDecision 2>&1 | grep -E "quest step|marker decision" | tail -3`
+- [ ] **Step 3: Fill the coverage ledger** (spec appendix): one row per quest listing each
+  step's disposition (`target N` / `inferred` / `-1: reason` / `-1 SPLIT: what`).
+- [ ] **Step 4: Commit each batch** (`content(quests): marker audit phase 1 — <id range>`).
 
-- [ ] **Step 3: Implement the resolver change**
+### Task 1.2: Land the gate + boot test
 
-In `internal/questengine/map_target.go`, replace the step-1 block (currently
-`if step.MapTarget != 0 { return step.MapTarget }`) with:
+- [ ] **Step 1:** Gate green: `DOGMUD_BOOT_SMOKE=1 go test . -run TestSmoke_EveryQuestStepHasMarkerDecision -v` → PASS.
+- [ ] **Step 2:** Full boot smoke: `DOGMUD_BOOT_SMOKE=1 go test . -run TestSmoke_ServerBootsCleanWithRealData -v` → PASS (loadedCount=79, no panic).
+- [ ] **Step 3:** `gofmt -l` + `go vet ./internal/questengine/ .` clean; `go test ./internal/questengine/ -count=1` PASS.
+- [ ] **Step 4:** Commit accessor + gate + ledger: `test(quests): gate every quest step on a marker decision`.
 
-```go
-	// 1. Explicit map_target on the current step.
-	for _, step := range q.Steps {
-		if step.Id == currentStep {
-			if step.MapTarget > 0 {
-				return step.MapTarget
-			}
-			if step.MapTarget == -1 {
-				return 0 // deliberate no-marker: do NOT fall through to inference
-			}
-			break // map_target == 0 → fall through to room_enter inference
-		}
-	}
-```
+### Task 1.3: Phase-1 playtest (content gate)
 
-Update the doc comment's resolution-order list to note: "`-1` = deliberate no
-marker (returns 0, suppresses inference)."
+- [ ] **Step 1:** Start the server; drive a local `mudagent` session (reuse the pre-position
+  technique: edit a test user's `roomid`/`questprogress`, restore after). For **2–3 quests
+  that got new explicit targets**, confirm `Char.Quests` `target_room` matches the room set.
+- [ ] **Step 2:** For **2–3 `-1` steps**, confirm `Char.Quests` emits no `target_room` (no marker).
+- [ ] **Step 3:** Record findings; fix any wrong room id; re-run the gate. Write a report to
+  `tools/playtest/reports/`.
 
-- [ ] **Step 4: Run test to verify it passes**
-
-Run: `go test ./internal/questengine/ -run 'TestResolveQuestTarget' -v`
-Expected: PASS (new test + existing `TestResolveQuestTarget_*` all green).
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add internal/questengine/map_target.go internal/questengine/map_target_test.go
-git commit -m "feat(questengine): map_target -1 = deliberate no-marker sentinel"
-```
+**End of Phase 1: gate green, every step decided, split-candidate worklist produced.**
 
 ---
 
-### Task 2: Engine iterator + the CI gate (produces the audit worklist)
+## Phase 2..N — Split bundled steps, then mark (per batch, each playtested)
 
-**Files:**
-- Modify: `internal/questengine/engine.go` (add `AllQuests`)
-- Modify: `boot_smoke_test.go` (add the gate)
+Batches are enumerated from Phase 1's split-candidate list (unknown until Phase 1 runs —
+this is the repeatable template for each batch). Keep batches small (≈3–6 quests) so each
+playtest is tractable. **The gate stays green throughout** (replacing a `-1` with target
+steps only adds markers).
 
-- [ ] **Step 1: Add the `AllQuests` accessor**
+### Task 2.x: Split-and-mark one batch of quests
 
-In `internal/questengine/engine.go`, after `GetQuest`:
+For each split-candidate quest in the batch:
 
-```go
-// AllQuests returns every registered quest (unordered). For audits/gates.
-func (e *Engine) AllQuests() []*QuestDef {
-	out := make([]*QuestDef, 0, len(e.quests))
-	for _, q := range e.quests {
-		out = append(out, q)
-	}
-	return out
-}
-```
+- [ ] **Step 1: Design the split.** Identify the sub-objectives and the room each points at.
+  E.g. quest 5 "start" → `find_ledger` (tollhouse room) + `return` (Tolva, mob 84 → room 423).
+- [ ] **Step 2: Rewrite the steps.** Replace the bundled step with the ordered concrete
+  steps (each with `id`, `description`, `hint`, `map_target: <room>`).
+- [ ] **Step 3: Rewire the triggers.** Add the intermediate trigger(s) that advance
+  sub-step→sub-step (e.g. an `item_gain`/`room_enter` that grants the mid token), and update
+  every affected trigger's `conditions.has`/`missing` so the chain flows in order. Preserve
+  the final completion trigger.
+- [ ] **Step 4: Token-reference safety sweep.** Grep for the quest's tokens outside this file
+  — dialogue `questRequired`/`questExcluded`/`grantsQuest`, chain-quest `chain_quest`, other
+  quests' `conditions`. A renamed/removed token that another file references is a break:
+  `grep -rn "{questId}-{oldStep}" _datafiles/world/dogmud/dialogue/ _datafiles/world/dogmud/quests/`
+  Keep the original step ids where they're externally referenced; only *add* new intermediate
+  ids. (If an external ref forces it, keep the old id as the final sub-step.)
+- [ ] **Step 5: Remove the temporary `-1`** and update the ledger rows for these quests.
+- [ ] **Step 6: Boot + gate green** (`DOGMUD_BOOT_SMOKE=1 go test . -run 'TestSmoke_EveryQuestStepHasMarkerDecision|TestSmoke_ServerBootsCleanWithRealData'`).
+- [ ] **Step 7: Playtest each split quest END TO END** in the harness — the split changes the
+  play flow (new intermediate step advance), so this is the content playtest gate, not
+  optional. Confirm each new sub-step advances and its marker points at the right room.
+- [ ] **Step 8: Commit the batch** (`content(quests): split bundled steps for markers — <quests>`).
 
-(Confirm the map field name is `e.quests` — it is, per `map_target.go:21`.)
-
-- [ ] **Step 2: Write the gate**
-
-First read `boot_smoke_test.go` and reuse the SAME data-load setup its sibling
-`TestSmoke_*` gates use (they load the real `_datafiles` tree via the loaders /
-a shared helper). Then add:
-
-```go
-func TestSmoke_EveryQuestStepHasMarkerDecision(t *testing.T) {
-	// <mirror the sibling gates' real-data load here so questengine is populated>
-	eng := questengine.GetEngine()
-	var violations []string
-	for _, q := range eng.AllQuests() {
-		if q.QuestId == 1000000 {
-			continue // generic reference template, not live content
-		}
-		for _, step := range q.Steps {
-			if step.Id == "end" {
-				continue // resolver returns 0 for "end" by design
-			}
-			if step.MapTarget == -1 {
-				continue // audited deliberate no-marker
-			}
-			if eng.ResolveQuestTarget(q.QuestId, step.Id) > 0 {
-				continue // explicit or inferred marker
-			}
-			violations = append(violations, fmt.Sprintf(
-				"  quest %d %q step %q: no marker (map_target 0, no room_enter inference) — set a room target or -1 with a reason comment",
-				q.QuestId, q.Name, step.Id))
-		}
-	}
-	if len(violations) > 0 {
-		t.Fatalf("%d quest step(s) have no marker decision:\n%s",
-			len(violations), strings.Join(violations, "\n"))
-	}
-}
-```
-
-Add `fmt`/`strings`/`questengine` imports if not already present.
-
-- [ ] **Step 3: Run the gate to produce the worklist**
-
-Run: `go test . -run TestSmoke_EveryQuestStepHasMarkerDecision -v 2>&1 | tee /tmp/marker_worklist.txt`
-Expected: FAIL, listing every undecided step. **This list is the Task 3 worklist.**
-Do NOT commit yet — the gate is red until Task 3 finishes.
+**Repeat until the split-candidate list is exhausted.**
 
 ---
 
-### Task 3: The audit pass (judgment; batched by quest id)
+## Finish
 
-This is content classification, not codegen — no pre-written YAML here. For each
-quest (id order, all 79 except `1000000-generic_quest.yaml`), read its `steps` and
-`triggers` and classify **each step**:
-
-- **Already resolves** — explicit `map_target > 0`, OR a `room_enter` trigger whose
-  `conditions.has` includes `"{questId}-{stepId}"`. → leave as-is. **Do NOT add a
-  redundant explicit `map_target`.**
-- **Markable but unresolved** — a single clear destination the mechanism can't infer
-  (talk to NPC X / deliver to Z / kill the boss in room Y). → add `map_target: <room>`.
-  **Verify the room id** against where that NPC/target/room actually is (grep the mob's
-  room in `rooms/*` spawninfo, or the room file) before writing it.
-- **Genuinely un-markable** — kill-N-anywhere, gather-from-many, learn-a-command
-  tutorial step, or deliberately spoiler-hidden. → `map_target: -1` with an inline
-  `# map_target: -1 — <reason>` comment.
-
-- [ ] **Step 1: Work the worklist in id-order batches**
-
-Process in batches (e.g. quests 1–20, 21–46, 48–79). For each quest: read it,
-classify every step, apply edits. Record each step in the ledger (Step 3).
-
-- [ ] **Step 2: Re-run the gate after each batch**
-
-Run: `go test . -run TestSmoke_EveryQuestStepHasMarkerDecision 2>&1 | tail -20`
-Track the shrinking violation count until it reaches 0.
-
-- [ ] **Step 3: Fill the coverage ledger**
-
-Append to the spec's "Coverage ledger" section, one row per quest:
-`| questId name | step: disposition (target N / inferred / -1: reason) | ... |`
-so every intentional blank is visible and auditable.
-
-- [ ] **Step 4: Commit the audit edits (safe, additive) in batches**
-
-```bash
-git add _datafiles/world/dogmud/quests/<batch>.yaml docs/superpowers/specs/2026-07-21-quest-minimap-marker-audit-design.md
-git commit -m "content(quests): minimap-marker audit — <id range>"
-```
-
-(Master stays green through these: the gate is not in the suite yet.)
-
----
-
-### Task 4: Turn the gate green + boot test + land the gate
-
-**Files:** Modify: `boot_smoke_test.go`, `internal/questengine/engine.go`
-
-- [ ] **Step 1: Confirm the gate is green**
-
-Run: `go test . -run TestSmoke_EveryQuestStepHasMarkerDecision -v`
-Expected: PASS (0 violations).
-
-- [ ] **Step 2: Full data-file boot test**
-
-Run the built server against the real tree (nuke instance saves first), confirm
-zero panics + `quests`/`questengine LoadDataFiles loadedCount=79` + `ValidateZone
-errors=0`. (Marker edits are load-bearing YAML — a typo'd `map_target` would still
-parse, but a broken step id would not; the boot + gate together catch it.)
-
-- [ ] **Step 3: Commit the accessor + gate + ledger**
-
-```bash
-git add internal/questengine/engine.go boot_smoke_test.go docs/superpowers/specs/2026-07-21-quest-minimap-marker-audit-design.md
-git commit -m "test(quests): gate every quest step on a marker decision (target or -1)"
-```
-
-- [ ] **Step 4: Run the full affected suites**
-
-Run: `go test ./internal/questengine/ . -count=1`
-Expected: PASS. Also `gofmt -l` + `go vet ./internal/questengine/ .` clean.
-
----
-
-### Task 5: Adversarial harness spot-check (content playtest gate)
-
-Marker DATA is server-side; the SVG render is the user's browser check. Verify the
-data half for a couple of freshly-marked quests.
-
-- [ ] **Step 1: Drive a local harness session** past a quest whose step got a new
-  explicit `map_target`, and capture the `Char.Quests` GMCP — confirm the focused
-  quest's `target_room` matches the room we set, and updates as steps advance.
-
-- [ ] **Step 2: Confirm a `-1` step emits no target** — on a step marked `-1`,
-  `Char.Quests` `target_room` should be 0/absent (no marker), not a stray room.
-
-- [ ] **Step 3: Note findings**; fix any mismatched room id and re-run the gate.
-
----
+After the last phase: `superpowers:finishing-a-development-branch` — verify the full affected
+suites, then merge `feature/quest-marker-audit` to master `--no-ff` (not pushed; user pushes).
 
 ## Self-review
 
-- **Spec coverage:** sentinel (Task 1), resolver change (Task 1), CI gate (Tasks 2/4),
-  per-step audit with inference-leaning rule (Task 3), scope/exclusions (Task 2 gate +
-  Task 3 rules), coverage ledger (Task 3), harness spot-check (Task 5). All covered.
-- **Placeholder scan:** the only non-literal is Task 2 Step 2's "mirror the sibling
-  gates' load setup" — unavoidable without duplicating the existing helper here; the
-  gate body itself is exact. Task 3 is judgment content, procedure given.
-- **Type consistency:** `QuestDef.QuestId`, `QuestStep.Id`/`.MapTarget`, `Conditions.Has`,
-  `Engine.AllQuests()`/`.ResolveQuestTarget()`, `e.quests` — all match the verified source.
-```
+- **Spec coverage:** three-way decision (Task 1.1 + Phase 2 template), gate (Phase 0 + Task 1.2),
+  scope exclusions (gate code), ledger (Task 1.3 rows), token-safety on splits (Task 2.x Step 4),
+  playtest per phase (Tasks 1.3, 2.x Step 7). Covered.
+- **Placeholder scan:** Phase 2+ batch list is intentionally derived from Phase 1 output (can't
+  be enumerated earlier); the per-split procedure is exact. No other TBDs.
+- **Type consistency:** `map_target`, `conditions.has/missing`, `mob2room.txt`, `Char.Quests
+  target_room`, gate/resolver names — all match Phase 0's built code.

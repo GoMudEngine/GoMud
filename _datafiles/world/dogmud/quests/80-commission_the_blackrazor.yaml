@@ -5,6 +5,7 @@ description: >-
   the parts by your own hand, and forge the blade at her stations.
 steps:
   - id: start
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "Veyra has taken the commission. Gather the reagents and
       forge the parts by your own hand."
   - id: end

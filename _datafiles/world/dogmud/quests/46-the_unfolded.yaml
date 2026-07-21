@@ -24,6 +24,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: 5320
     description: >-
       Orrin has set you against the Unfolded. Cross the scabland east and
       up, through the warped and the unraveling ground, and defeat the

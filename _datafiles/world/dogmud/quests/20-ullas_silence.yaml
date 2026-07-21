@@ -14,6 +14,7 @@ flags:
 
 steps:
   - id: start
+    map_target: 4138
     description: "Ulla has asked you to look through her late husband
       Elgar's things in the workshop above her parlor. She cannot bring
       herself to do it. She wants to know what was on his mind in the
@@ -23,6 +24,7 @@ steps:
       years. Look at the bench, the tools, the unfinished carving in
       the vise."
   - id: workshop_carving
+    map_target: 4123
     description: "Beneath the cast-iron handle of Elgar's bench-vise,
       a long tight spiral inside an outer circle has been scratched
       into the metal. Old work. Older than the cottage. Whoever
@@ -31,6 +33,7 @@ steps:
       pillars carry the same design -- speak to the temple priest, or
       examine the pillars yourself."
   - id: temple_pillars
+    map_target: 4124
     description: "The four pillars at the corners of the Temple of
       Stillwater each carry the same spiral motif as Elgar's workshop.
       Priest Seren confirms the symbol predates the present Chrysalis
@@ -39,18 +42,21 @@ steps:
     hint: "Search the temple garden for the buried marker beneath the
       crab-apple tree."
   - id: garden_marker
+    map_target: 4144
     description: "The marker beneath the crab-apple tree carries the
       same spiral. Older than the temple. The carving points westward
       -- toward the old chapel ruin and the wardstone circle beyond."
     hint: "Walk west to the old chapel ruin and the wardstone circle.
       The spiral motif appears at both."
   - id: chapel_altar
+    map_target: 4145
     description: "The chapel altar stone bears the same spiral, framed
       by the lake-side compass directions. The old chapel stood on
       this spot before the temple was built in town."
     hint: "Continue west to the wardstone circle. The spiral connects
       the sites in a line."
   - id: wardstone_altar
+    map_target: 4130
     description: "The wardstone circle's central altar slab carries
       the spiral too -- and a worn line, almost a channel, pointing
       east toward the lake. The four sites form a line across the
@@ -59,6 +65,7 @@ steps:
       system can reach. Search the bone shoals in the lake caves for
       what Elgar found."
   - id: bone_shoals_cache
+    map_target: 4106
     description: "Elgar's cache lay where he hid it before going
       deeper: an oilskin pouch with a folded note to Brindle the
       smith, a small Stillwater Black Pearl, and a curl of waxed
@@ -70,6 +77,7 @@ steps:
     hint: "Speak to Smith Brindle. He needs to know you found this.
       Ask him about the quest at the smithy in town."
   - id: brindle_confession
+    map_target: 4140
     description: "Brindle was Elgar's friend and was supposed to descend
       with him. He didn't go that day. He has been finishing Elgar's
       hook-spear ever since, never quite able to give it to anyone. He
@@ -79,6 +87,7 @@ steps:
       parlor. Look first at Elgar's grave at the cemetery -- there is
       something buried there for whoever knows to look."
   - id: kingfisher_found
+    map_target: -1  # -1: bundled objectives, rooms [4136, 4140]; Phase 2 split review
     description: "Beneath Elgar's empty marker, Vella buried a small
       wooden box with a single carved kingfisher and a note in her
       own hand reading 'He was your brother.' The kingfisher is
@@ -86,6 +95,7 @@ steps:
     hint: "Bring the carved kingfisher to Vella Thorne at the healer's
       cottage. She is the one the note is for."
   - id: vella_journal
+    map_target: 4137
     description: "Vella has accepted the kingfisher and entrusted you
       with Elgar's last journal entry -- the page he wrote the
       morning before he descended. The page records what he expected

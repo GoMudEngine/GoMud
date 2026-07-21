@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -19,6 +20,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/spells"
@@ -296,4 +298,59 @@ func TestSmoke_NoNewSilentlyIgnoredYAMLKeys(t *testing.T) {
 
 	t.Logf("distinct silently-ignored keys: %d (baselined: %d, new: %d)",
 		len(found), len(knownSilentlyIgnoredKeys), len(novel))
+}
+
+// TestSmoke_EveryQuestStepHasMarkerDecision asserts that every quest step has a
+// deliberate minimap-marker decision: it either resolves a marker room (explicit
+// map_target > 0, or a room_enter trigger the resolver infers) or is explicitly
+// map_target: -1 ("no marker", audited). A step that is neither — map_target 0
+// with nothing to infer — is undecided, and fails.
+//
+// Since a marker is now an expectation, a marker-less step must be a choice, not
+// an oversight. This gate makes that choice mandatory: a new quest step that is
+// neither markable-and-resolved nor explicitly -1 fails CI until someone eyeballs
+// it. See docs/superpowers/specs/2026-07-21-quest-minimap-marker-audit-design.md.
+func TestSmoke_EveryQuestStepHasMarkerDecision(t *testing.T) {
+	if os.Getenv(bootSmokeEnvVar) == `` {
+		t.Skipf("set %s=1 to run the quest-marker decision gate", bootSmokeEnvVar)
+	}
+
+	mudlog.SetupLogger(nil, `LOW`, ``, false)
+	if err := configs.ReloadConfig(); err != nil {
+		t.Fatalf("ReloadConfig failed: %v", err)
+	}
+
+	func() {
+		defer func() { _ = recover() }() // boot failures are the boot test's job
+		loadAllDataFiles(false)
+	}()
+
+	eng := questengine.GetEngine()
+	var violations []string
+	for _, q := range eng.AllQuests() {
+		if q.QuestId == 1000000 {
+			continue // generic reference template, not live content
+		}
+		for _, step := range q.Steps {
+			if step.Id == "end" {
+				continue // resolver returns 0 for "end" by design
+			}
+			if step.MapTarget == -1 {
+				continue // audited deliberate no-marker
+			}
+			if eng.ResolveQuestTarget(q.QuestId, step.Id) > 0 {
+				continue // explicit or inferred marker
+			}
+			violations = append(violations, fmt.Sprintf(
+				"  quest %d %q step %q: no marker (map_target 0, no room_enter inference) — "+
+					"set a room target or -1 with a reason comment", q.QuestId, q.Name, step.Id))
+		}
+	}
+	sort.Strings(violations)
+
+	if len(violations) > 0 {
+		t.Fatalf("%d quest step(s) have no marker decision:\n%s",
+			len(violations), strings.Join(violations, "\n"))
+	}
+	t.Logf("all quest steps have a marker decision")
 }

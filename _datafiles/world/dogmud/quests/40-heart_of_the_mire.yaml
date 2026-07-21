@@ -28,6 +28,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: 5280
     description: >-
       Falv has set you on the mire. Descend the poison swamp past the
       miasma edge, drop into the sunken hollow, and defeat the spirit of

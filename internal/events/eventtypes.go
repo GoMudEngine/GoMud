@@ -46,6 +46,12 @@ func (a AutomationChanged) Type() string { return `AutomationChanged` }
 type Quest struct {
 	UserId     int
 	QuestToken string
+	// MarkerOnly signals that this event exists solely to refresh the
+	// Char.Quests GMCP minimap marker after a mid-quest step advance. The grant,
+	// banner, and rewards were already applied synchronously by questengine
+	// GrantQuest, so HandleQuestUpdate skips it (avoiding a double banner) while
+	// the GMCP quest-progress handler still refreshes the marker.
+	MarkerOnly bool
 }
 
 func (q Quest) Type() string { return `Quest` }

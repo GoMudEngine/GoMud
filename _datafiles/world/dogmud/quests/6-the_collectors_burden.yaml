@@ -7,12 +7,14 @@ secret: false
 
 steps:
   - id: start
+    map_target: 476
     description: "Toll collector Harn at the tollhouse has given you a maintenance
       report documenting the bridge's structural problems. He needs it delivered to
       Clerk Pell in the Records Office in Thornwall."
     hint: "Deliver the maintenance report to Records Clerk Pell in Thornwall City.
       From Watchers Crossing, head north along the road to reach the city."
   - id: report
+    map_target: 421
     description: "Clerk Pell has filed Harn's maintenance report with the magistrate.
       Return to Harn at Watchers Crossing and tell him the report has been delivered."
     hint: "Return to Toll Collector Harn at Watchers Crossing and tell him the report

@@ -25,6 +25,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: 5364
     description: >-
       Bryn has set you against Bowmaster Skell. Climb the chimney at the
       canyon's head to the raider overlook, fight up through the raider

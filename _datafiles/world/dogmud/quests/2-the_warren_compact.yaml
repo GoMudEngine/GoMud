@@ -6,6 +6,7 @@ secret: false
 
 steps:
   - id: start
+    map_target: -1  # -1: flexible-source fetch (salve buyable from Yenna or craftable) + return to giver; no single forward destination
     description: "The Tunnel Shaman has asked you to bring a healing
       salve as proof of good intent. Obtain one and bring it to the
       shaman in the Low Junction."

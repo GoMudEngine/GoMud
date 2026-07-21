@@ -14,6 +14,7 @@ flags:
 
 steps:
   - id: start
+    map_target: -1  # -1: branching investigation — hear two farmers, then one of three resolution rooms (mediate/restore 6078/record 6060); no single destination
     description: >-
       Amber Valley's two dryside farms are feuding over a cut irrigation
       channel. Hear both sides, and find a way to settle it.

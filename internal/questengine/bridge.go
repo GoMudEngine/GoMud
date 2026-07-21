@@ -120,6 +120,18 @@ func (b *GameBridge) GrantQuest(token string) {
 		b.user.SendText(messaging.CategorySystem, questUpTxt)
 		b.user.EventLog.Add("quest", bannerMsg)
 	}
+
+	// Refresh the Char.Quests minimap marker on start/progress steps too. The
+	// marker is driven by the GMCP quest-progress handler listening on
+	// events.Quest; the "end" path above already queues one, but without this a
+	// mid-quest step advance leaves the marker frozen on whatever step the
+	// player loaded on. MarkerOnly so HandleQuestUpdate skips it — the banner
+	// above is the single authoritative one (a plain events.Quest would double it).
+	events.AddToQueue(events.Quest{
+		UserId:     b.user.UserId,
+		QuestToken: token,
+		MarkerOnly: true,
+	})
 }
 
 // ConsumeItem removes the first matching item from the player's inventory.

@@ -24,6 +24,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: 5260
     description: "Survivor Ovell has set you on the mine. Cast chrysalis-glow to light the dark, descend past the workings, and defeat the stone-blooded beast in the Den at the bottom."
     hint: "Head down the mine mouth. The deep workings are pitch black -- type cast chrysalis-glow to see. Fight your way down to the Den and defeat the stone-blooded beast. Type consider on a foe first to size it up."
   - id: end

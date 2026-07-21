@@ -23,6 +23,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: 5335
     description: >-
       Hale wants the standoff on the mustering green broken. Young Garrow has
       squared up against old Ferd and will not be reasoned down -- so do not
@@ -32,6 +33,7 @@ steps:
       the belligerent farmhand down with words alone. Then return to Loresinger
       Hale at the stone circle -- ask hale done.
   - id: taunt
+    map_target: 5333
     description: >-
       Your words did what reason could not -- Garrow's bluster broke and he quit
       the green. Return to Hale.

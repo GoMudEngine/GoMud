@@ -17,6 +17,7 @@ cooldown_rounds: 300
 
 steps:
   - id: start
+    map_target: 5245
     description: >-
       Ovell has asked you to return to the forge and put your
       blacksmithing to work once more.

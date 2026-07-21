@@ -8,6 +8,7 @@ secret: false
 
 steps:
   - id: start
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "Marek at the Drowning Post has been hearing noises from his
       cellar -- scraping, voices, the sound of things being moved. The old
       drainage tunnels run beneath the tavern. He has given you a lantern and
@@ -22,6 +23,7 @@ steps:
     hint: "Follow the tunnels south. The chalk arrows point toward whoever is
       in charge of the operation."
   - id: confront
+    map_target: -1  # -1: return-to-giver / in-place (start room 498); Phase 2 split review
     description: "You have reached the operations room at the heart of the
       smuggling tunnels. A man named Torvan Cresk runs the whole operation from
       here. A locked strongbox beneath his table likely holds the real
@@ -29,12 +31,14 @@ steps:
     hint: "Torvan Cresk has the key to the strongbox. Fight him, take the
       key, and open the strongbox."
   - id: evidence
+    map_target: -1  # -1: bundled objectives, rooms [473, 498]; Phase 2 split review
     description: "You have obtained a bribe ledger from the strongbox -- it
       names corrupt city officials taking payments to look the other way.
       Guard Captain Velk needs to see this."
     hint: "Bring the bribe ledger to Guard Captain Velk at the barracks in
       the city centre."
   - id: report
+    map_target: -1  # -1: return-to-giver / in-place (start room 473); Phase 2 split review
     description: "Guard Captain Velk has the bribe ledger and is reviewing the
       names. He is ready to act."
     hint: "Speak with Velk to close the case."

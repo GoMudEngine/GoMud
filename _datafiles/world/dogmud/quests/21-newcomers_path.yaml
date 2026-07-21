@@ -6,6 +6,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: 5203
     description: "You are finding your way in Gaius."
   - id: end
     description: "You have found your footing in Gaius."

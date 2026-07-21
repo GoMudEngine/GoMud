@@ -11,6 +11,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: -1  # -1: bundled objectives, rooms [5376, 5395]; Phase 2 split review
     description: >-
       Goodwife Pemberton asked you to clear the two preying on the road
       north: a hedgerow bandit that works the hedges, and a Reach-Touched
@@ -20,6 +21,7 @@ steps:
       hedges, and the Reach-Touched out in the Empty Reach beyond. Come
       back and tell Pemberton at the Lake & Ladle when both are down.
   - id: bandit
+    map_target: 5395
     description: >-
       The hedgerow bandit that worked the road north is dead. The
       Reach-Touched still haunts the Empty Reach beyond.
@@ -27,6 +29,7 @@ steps:
       Push on north into the Empty Reach and put down the Reach-Touched,
       then report to Pemberton.
   - id: reach
+    map_target: 5378
     description: >-
       The Reach-Touched is down. Both road-preyers are dead -- report
       back to Pemberton at the Lake & Ladle.

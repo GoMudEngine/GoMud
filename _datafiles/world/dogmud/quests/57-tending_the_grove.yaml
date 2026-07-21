@@ -18,6 +18,7 @@ cooldown_rounds: 300
 
 steps:
   - id: start
+    map_target: 5309  # the Whispering Grove
     description: >-
       Orrin has asked you to go into the grove and put down one of
       the veil-warped things that wanders back in.

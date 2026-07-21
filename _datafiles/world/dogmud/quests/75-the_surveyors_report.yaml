@@ -12,20 +12,24 @@ secret: false
 
 steps:
   - id: start
+    map_target: 6303
     description: "Brennan has set you to read the survey Reth filed on the
       eastern country -- the one that says nothing."
     hint: "Examine the filed-survey in the university Archive, then return
       to Brennan."
   - id: survey
+    map_target: 6305
     description: "You found Reth's filed survey: a mineral deposit entry,
       conspicuously empty -- a man who saw something out there and chose
       not to write it down."
     hint: "Return to Brennan with what you found."
   - id: intro
+    map_target: 6315
     description: "Brennan, convinced, has given you his introduction to
       Reth, who lives retired in the quiet end of the residential streets."
     hint: "Seek out Reth in the residential streets."
   - id: testimony
+    map_target: -1  # -1: return-to-giver / in-place (start room 6315); Phase 2 split review
     description: "You found Reth, and with Brennan's word he told you
       what he saw in the east: directions and landmarks toward the hill --
       and that whatever is out there is not natural. He marked it for you."

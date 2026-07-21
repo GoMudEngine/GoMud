@@ -36,6 +36,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: -1  # -1: bundled objectives, rooms [5250, 5252]; Phase 2 split review
     description: >-
       Ovell needs the slope cleared. A scree scavenger works the
       lower rock field; a talus lurker waits in the ore pocket and
@@ -49,6 +50,7 @@ steps:
       Then type forage on the scree field to pull basalt-iron from
       the vein. Come back to Ovell when all three are done.
   - id: scavenger
+    map_target: -1  # -1: no single resolved destination; Phase 2 review
     description: >-
       One scree scavenger is down. The talus lurker still holds the
       ore pocket and the high shoulder.
@@ -56,6 +58,7 @@ steps:
       Push higher up the slope to find the talus lurker in the ore
       pocket or on the high shoulder. Type flee if the fight turns.
   - id: lurker
+    map_target: -1  # -1: bundled objectives, rooms [5250, 5252]; Phase 2 split review
     description: >-
       The talus lurker is down. Forage the basalt-iron vein in the
       scree field before reporting back to Ovell.
@@ -64,6 +67,7 @@ steps:
       basalt-iron from the exposed vein. Then walk back down to
       Ovell in the Collapsed Cut.
   - id: ore
+    map_target: 5251
     description: >-
       You worked the basalt-iron vein and pulled ore from the rock --
       the slope is cleared and the seam is proven. Report back to

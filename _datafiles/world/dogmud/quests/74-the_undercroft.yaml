@@ -10,34 +10,40 @@ secret: false
 
 steps:
   - id: start
+    map_target: 6189  # the Archive — examine the first construction record
     description: "Brother Cael has set you to examine three of the temple's
       construction records that disagree with its founding story."
     hint: "Examine the building-ledger in the Archive, the consecration-record
       in the Chapter House, and the mason's survey in the older east corridor.
       Then return to Cael."
   - id: ledger
+    map_target: 6188
     description: "The building-ledger accounts for the temple's raising in
       meticulous detail -- and is oddly silent on the oldest, lowest courses,
       as if the foundation were received, not built."
     hint: "Now examine the consecration-record in the Chapter House, and the
       mason's survey in the older east corridor. Then return to Cael."
   - id: record
+    map_target: 6198
     description: "The consecration-record's own wording gives it away: the
       Founders consecrated the site -- language that assumes something was
       already standing there to consecrate."
     hint: "Now examine the mason's survey in the older east corridor, by the
       descent stair. Then return to Cael in the Archive."
   - id: survey
+    map_target: 6189
     description: "The mason's survey is plainest of all: the lower courses are
       older work, cut by hands the temple's records do not name. Three records,
       one conclusion -- the temple was raised on something older."
     hint: "Return to Brother Cael in the Archive with what you found."
   - id: descent
+    map_target: 6215
     description: "Cael has heard you out, and Aldric -- reluctantly -- has
       granted a supervised descent. The stair down lies in the older east
       corridor. Go down when you are ready."
     hint: "Descend the stair in the older east corridor when you are ready."
   - id: reveal
+    map_target: -1  # -1: bundled objectives, rooms [6167, 6188]; Phase 2 split review
     description: "In a sealed chamber beneath the temple you found the old sky
       carved in four rings, where the temple above teaches three -- and took a
       rubbing of it. There was a fourth. What you do with the proof is yours to

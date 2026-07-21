@@ -9,6 +9,7 @@ secret: false
 
 steps:
   - id: start
+    map_target: 5901
     description: >-
       Dross needs a rubbing of the hand-position cipher worked into the
       processional relief figures in the Grand Temple nave.
@@ -16,6 +17,7 @@ steps:
       In the Grand Temple sanctuary, examine the processional reliefs to
       take a rubbing, then bring it to Dross in the temple courtyard.
   - id: rubbing
+    map_target: 5916
     description: >-
       You took the cipher rubbing from the reliefs. Dross can read part of
       it, but the key to the full sequence is in the Noble Quarter gallery.
@@ -23,6 +25,7 @@ steps:
       Take the rubbing to Dross, then go to the Noble Quarter art gallery
       and find the key to the cipher.
   - id: gallery
+    map_target: 6007
     description: >-
       Dross sent you to the gallery. The guide, Ferrol, steers visitors to
       the bloodline portraits and away from the older paintings -- and away
@@ -31,6 +34,7 @@ steps:
       In the gallery, get past Ferrol's tour to Keeper Lysha. Ask her about
       the third panel from the left.
   - id: reading
+    map_target: 5916
     description: >-
       Keeper Lysha read the third panel against your rubbing: the
       eight-pointed structure stands at a site inland of the present docks.

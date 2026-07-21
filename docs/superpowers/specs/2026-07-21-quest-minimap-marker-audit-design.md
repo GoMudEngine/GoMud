@@ -80,19 +80,45 @@ Because this pass audits every existing quest first, the gate starts **fully gre
 no grandfathered baseline** (unlike the yaml-key gate). Thereafter, a new quest step that
 is neither markable-and-resolved nor explicitly `-1` fails CI until someone eyeballs it.
 
-### 4. The audit pass (per step)
+### 4. The audit pass (per step) — a three-way decision
 
-For each step, classify into exactly one of:
+**Revised 2026-07-21** after the first quest surfaced that the real blocker is step
+*granularity*: a coarse step that bundles two objectives (quest 5's "start" =
+*fetch the ledger from the tollhouse* **and** *return it to Tolva*) can't carry a
+clean marker for either. So the decision is three-way, not two:
 
 - **Already resolves** — explicit `>0`, or a `room_enter` trigger gated on the step.
   → leave as-is. **Do not** add a redundant explicit `map_target` where inference already
-  works (avoids two sources of truth and keeps the diff minimal).
-- **Markable but unresolved** — a clear single destination the mechanism doesn't infer
-  (talk to NPC X, deliver to Z, kill the boss in room Y). → add `map_target: <room>`.
-  Verify the room id against the NPC's/target's actual location before writing it.
+  works.
+- **Concrete + markable** — one clear forward destination the mechanism doesn't infer
+  (talk to distant NPC X, deliver to Z, kill the boss in room Y, examine the altar in
+  room W). → add `map_target: <room>`, room id verified against the actual location.
+- **Bundled → split, then mark** — a step folding multiple sub-objectives, each with its
+  own destination. → split into finer concrete steps (new tokens + an intermediate
+  trigger + updated `has`/`missing` gating), then `map_target` each. This is a
+  trigger-chain refactor, so it carries the token-reference safety sweep + per-quest
+  playtest (see phasing). Only split where the payoff (a real, forward marker) justifies
+  the surgery.
 - **Genuinely un-markable** — no single destination (kill-N-anywhere, gather-from-many,
-  learn-a-command tutorial steps, deliberately spoiler-hidden). → `map_target: -1` + reason
-  comment.
+  learn-a-command tutorial steps, report-to-the-giver-you're-next-to, spoiler-hidden).
+  → `map_target: -1` + reason comment.
+
+A marker that points **backwards** (at the giver you start beside) is worse than none —
+prefer `-1` over a misleading target.
+
+### Phasing (revised 2026-07-21)
+
+Because splitting is real surgery, the work is phased so the safe/auditable state lands
+first and marker *quality* improves incrementally, each phase playtested:
+
+- **Phase 0 — Mechanism (done):** resolver `-1` sentinel, `AllQuests`, the gate.
+- **Phase 1 — Two-way audit, gate green:** every step gets `map_target: <room>` (concrete)
+  or `-1` (directionless **or** bundled-not-yet-split, flagged as a split candidate in the
+  ledger). Land the gate; boot test; playtest a representative sample.
+- **Phase 2..N — Split-and-mark, per batch:** take the split candidates in batches, do the
+  trigger-chain refactor + token-reference sweep, replace their `-1` with real markers,
+  **playtest each split quest end-to-end**, commit. The gate stays green throughout (a `-1`
+  becoming target steps only adds markers).
 
 ### 5. Scope & edge cases
 

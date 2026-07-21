@@ -7,18 +7,21 @@ secret: false
 
 steps:
   - id: start
+    map_target: 5409
     description: "Toller Garrick has entrusted you with a sealed dispatch
       bound for New Plymouth. Carry it north to Severin Pell, the ferry
       agent at Hartcharn, who handles the first stage of the post relay."
     hint: "Take the sealed dispatch north up the road to Hartcharn and give
       it to Severin Pell, the ferry agent."
   - id: waybill
+    map_target: 5445
     description: "Severin Pell counter-signed the dispatch and made out a
       manifest. Carry it onward to Tithe-Clerk Verrold at Kingsbarrow Vale,
       who must enter it in the capital's ledger."
     hint: "Continue north to Kingsbarrow Vale and give the manifest to
       Tithe-Clerk Verrold."
   - id: manifest
+    map_target: 5471
     description: "Verrold entered the manifest in the tithe ledger and sealed
       it into a capital packet. Deliver it to the East Gate guard at New
       Plymouth -- the last leg of the road."

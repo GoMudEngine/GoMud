@@ -7,17 +7,30 @@ secret: false
 
 steps:
   - id: start
-    description: "Innkeeper Tolva at the Crossing Inn has asked you to investigate the bridge toll. She believes it is unauthorized and wants proof. Find the crossing ledger at the tollhouse and bring it back to her."
-    hint: "Get the crossing ledger from the Tollhouse. From the Crossing Inn, the Tollhouse is nearby — check the rooms around the crossing. Bring the ledger back to Innkeeper Tolva."
+    map_target: 421  # the Tollhouse — find the crossing ledger
+    description: "Innkeeper Tolva at the Crossing Inn has asked you to investigate the bridge toll. She believes it is unauthorized and wants proof. Find the crossing ledger at the tollhouse."
+    hint: "Get the crossing ledger from the Tollhouse. From the Crossing Inn, the Tollhouse is nearby — check the rooms around the crossing."
+  - id: deliver
+    map_target: 423  # Innkeeper Tolva at the Crossing Inn
+    description: "You have the crossing ledger. Bring it back to Innkeeper Tolva at the Crossing Inn."
+    hint: "Return to Innkeeper Tolva at the Crossing Inn with the crossing ledger."
   - id: end
     description: "You delivered the ledger to Tolva. She will use the records to petition Thornwall for an official review of the toll."
 
 triggers:
+  # Pick up the ledger at the Tollhouse -> advance to the deliver step.
+  - event: item_gain
+    item: 21
+    conditions:
+      has: [5-start]
+      missing: [5-deliver]
+    actions:
+      - grant: 5-deliver
   - event: item_give
     mob: 84
     item: 21
     conditions:
-      has: [5-start]
+      has: [5-deliver]
       missing: [5-end]
     actions:
       - grant: 5-end

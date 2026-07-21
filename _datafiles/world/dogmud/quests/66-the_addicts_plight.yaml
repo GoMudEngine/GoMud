@@ -15,6 +15,7 @@ flags:
 
 steps:
   - id: start
+    map_target: 5620
     description: >-
       Teels, a Bloom addict on the Lower Wharf, begged you for help.
       They pressed a spent wax wrapper into your hands -- the copper-flower
@@ -25,6 +26,7 @@ steps:
       in the Common Quarter. She asks no questions and she will know what
       the smell means.
   - id: escort
+    map_target: -1  # -1: return-to-giver / in-place (start room 5620); Phase 2 split review
     description: >-
       Ysolde took the wrapper, looked at the wax, and recognized the
       copper-flower note at once. She has seen this kind of sickness more
@@ -33,6 +35,7 @@ steps:
       Hear what Ysolde has to say -- about the wrapper, about Teels, and
       about what a purge can and cannot do.
   - id: detox
+    map_target: -1  # -1: no single resolved destination (near [5620]); Phase 2 review
     description: >-
       Ysolde can purge the Bloom from Teels' system. She made something
       plain -- the detox holds only until the craving returns, and the
