@@ -231,23 +231,42 @@ fights** got a first-pass fix (2026-07-13, master `9a6606a3d`) — needs live pl
   here" yet still advanced the quest; full chain (strike→special→consider→verbosity→end)
   completes. Report: `tools/playtest/reports/2026-07-21-local-feature-tester-first-blood.md`.
   Minor cosmetic residual (not blocking): the miss line shows one line above "made progress".
-- ⬜ **Ephemeral room id `1000000000` for The Mending Hut** shows alongside the real 5209 on
-  `Zone.Map` (minor mapper quirk; instance-room id leaking into the snapshot).
+- ✅ **Ephemeral room id `1000000000` for The Mending Hut** leaking onto `Zone.Map` — **fixed
+  2026-07-21 at the root (feeder) sites.** The render-layer symptom was already guarded
+  (`mapper.snapshot.go` ephemeral skip, `35851764a`), but the underlying defect was that map/fog
+  feeders recorded the *raw instance id* instead of translating to the template id via
+  `rooms.OriginalRoomId` (as the quest engine already does at `go.go:306`). Two feeders fixed:
+  `go.go:314` `MarkRoomVisited` now stores the template id (was permanently baking instance ids
+  into saved `Character.VisitedRooms`), and the `gmcp.Zone.go` party-array now translates a party
+  member's room id (latent leak when a member stands in an instance). Build + full suite green;
+  existing `TestSnapshotSkipsEphemeralRooms` guard retained as defense-in-depth.
 - ~~ASCII charset "gap"~~ — **NOT a game bug.** `set charset` is a client-mode toggle;
   the testers just didn't converge to ASCII (a harness-driver step, documented in the
   engine profile). No server change needed; ensure future testers converge.
-- ⬜ **Inconsistent item-name capitalization** (2026-07-14, Meirok screenshot) — the SAME item
-  shows both cases in the equipment list (`drowned claws` vs `Drowned Claws`, `storm bracer` vs
-  `Storm Bracer`), all with the same `(Masterwork)` adjective. Not a render bug — it's baked
-  per-instance: `Item.DisplayName()` returns `spec.Name` merged with per-instance `overrides`,
-  and some crafted/affixed copies carry a Title-Cased `name` override while base copies keep the
-  lowercase template name. Seam: affix/masterwork generation (`internal/items/affixgen.go`) and
-  `Item.Rename`. Cleanest fix is likely to normalize casing at the render layer (`DisplayName`
-  Title-cases or sentence-cases consistently) so stored inconsistency stops mattering. LOW pri.
-- ⬜ **GMCP `Char.Stats` transient spike** (LOW) — right after "STATISTIC INCREASED"
-  the wire feed briefly reports a stale `ValueAdj` (pre-softcap-recompute), reverting
-  next round. ASCII `status` is fine; only a rich/web client flashes it. Deferred —
-  needs the stat-increase → recompute → GMCP-update ordering tightened.
+- ✅ **Inconsistent item-name capitalization** (2026-07-14, Meirok screenshot) — **fixed
+  2026-07-21.** Root cause: affixed/boss-drop instances snapshot the template `Name` into a
+  per-instance `overrides.name` at mint time (`affixgen.go`), and the one-time casing sweep
+  (`320592539`) Title-Cased item *templates* but skipped the `users/` tree — so pre-sweep
+  instances kept `drowned claws` while templates + newer instances hold `Drowned Claws`. (The
+  `(Masterwork)` adjective lives separately in `Adjectives`, hence it rides on both casings.) Fix:
+  `Item.DisplayName()` now routes the bare `spec.Name` through `casing.Title` (the single source
+  of truth for display casing) — idempotent → no-op on canonical templates, self-heals every stale
+  snapshot (present + future template renames), touches no player saves; authored `DisplayName`
+  overrides remain verbatim. Failing test written first (`TestItem_DisplayName_CasingNormalization`);
+  full `internal/items` suite green.
+- ⬜ **GMCP `Char.Stats` transient spike** (LOW, DEFERRED) — right after "STATISTIC INCREASED"
+  the wire feed briefly reports a stale `ValueAdj`, reverting next round. ASCII `status` is fine;
+  only a rich/web client flashes it. **2026-07-21 investigation: the "ordering" hypothesis is
+  DISPROVEN.** The softcap recompute is *eager* — it runs inside `IncreaseStat` →
+  `Validate` → `RecalculateStats` → `StatInfo.Recalculate()` (`stats.go`) and strictly precedes
+  both the "STATISTIC INCREASED" message and the `CharacterStatsChanged` event that drives the
+  GMCP push, so the progression-path GMCP read (`gmcp.Char.go:485`) is always current. The only
+  real seam is a *different* Char/Char.Stats push (e.g. from `UserRoundTick`/`MobRoundTick`, which
+  run before `DoCombat` in `hooks.go`) reading live `ValueAdj` earlier in the same round drain —
+  a value that is correct at that instant and merely about to change. That is a low-value cosmetic
+  timing artifact, not a stale read; a responsible fix needs a live repro + instrumentation to
+  confirm the emitter and whether it's worth coalescing round-drain Char pushes. Left deferred
+  rather than blind-patched.
 - Plus existing backlog (Vitalis Bandolier potion-rot, etc.).
 
 ### 5c. Content / onboarding polish

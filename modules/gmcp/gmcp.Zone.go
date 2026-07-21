@@ -92,7 +92,11 @@ func (g *GMCPZoneModule) buildAndSend(e events.Event) events.ListenerReturn {
 				continue
 			}
 			if mu := users.GetByUserId(uId); mu != nil {
-				rid := mu.Character.RoomId
+				// Translate an ephemeral instance id to its template id so a
+				// party member standing in an instance (tutorial/dungeon) does
+				// not leak the raw instance id onto the map; no-op for normal
+				// rooms.
+				rid, _ := rooms.OriginalRoomId(mu.Character.RoomId)
 				if !seen[rid] {
 					seen[rid] = true
 					party = append(party, rid)

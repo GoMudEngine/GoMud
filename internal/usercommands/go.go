@@ -310,8 +310,13 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 				RoomId: matchRoom,
 			}, bridge, bridge)
 
-			// Record this room as visited for fog-of-war web map.
-			user.Character.MarkRoomVisited(destRoom.Zone, destRoom.RoomId)
+			// Record this room as visited for fog-of-war web map. Use the
+			// TEMPLATE id (matchRoom) for ephemeral rooms -- otherwise the raw,
+			// unauthorable instance id (e.g. 1000000000) is permanently baked
+			// into the saved VisitedRooms set and leaks onto the Zone.Map
+			// snapshot. OriginalRoomId returns the room's own id for
+			// non-ephemeral rooms, so this is a no-op there.
+			user.Character.MarkRoomVisited(destRoom.Zone, matchRoom)
 
 			// Tell the player they are moving
 			if isSneaking {
