@@ -8,6 +8,7 @@ import (
 
 	"math"
 
+	"github.com/GoMudEngine/GoMud/internal/casing"
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -541,14 +542,21 @@ func (i *Item) DisplayName() string {
 	}
 
 	spec := i.GetSpec()
+	// Normalize the bare template name to canonical smart Title case. This is a
+	// no-op on canonical templates (casing.Title is idempotent) but self-heals
+	// stale per-instance name snapshots baked before the one-time template
+	// casing sweep — e.g. an affixed drop minted as "drowned claws" renders as
+	// "Drowned Claws" to match its (now Title-cased) template. An authored
+	// DisplayName override is deliberate (and may carry ansi tags), so it is
+	// rendered verbatim.
 	if spec.DisplayName != `` {
 		if spec.DisplayName[0:1] == `:` {
-			return prefix + colorpatterns.ApplyColorPattern(spec.Name, spec.DisplayName[1:]) + suffix
+			return prefix + colorpatterns.ApplyColorPattern(casing.Title(spec.Name), spec.DisplayName[1:]) + suffix
 		} else {
 			return prefix + spec.DisplayName + suffix
 		}
 	}
-	return prefix + spec.Name + suffix
+	return prefix + casing.Title(spec.Name) + suffix
 }
 
 func (i *Item) Name() string {

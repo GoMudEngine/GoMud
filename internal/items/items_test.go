@@ -717,6 +717,49 @@ func TestItem_DisplayName(t *testing.T) {
 	})
 }
 
+// ─── Item.DisplayName casing normalization ──────────────────────────────────
+
+// DisplayName must render spec.Name through canonical smart Title casing so
+// that stale pre-sweep per-instance name snapshots (e.g. an affixed boss drop
+// minted before the one-time template casing sweep) render identically to
+// their canonical template. See the casing package (single source of truth for
+// player-visible display casing).
+func TestItem_DisplayName_CasingNormalization(t *testing.T) {
+	cleanup := seedRegistry()
+	defer cleanup()
+
+	t.Run("stale lowercase instance snapshot is Title-cased", func(t *testing.T) {
+		item := Item{ItemId: 10001, Spec: &ItemSpec{Name: "drowned claws"}}
+		name := item.DisplayName()
+		assert.Contains(t, name, "Drowned Claws")
+		assert.NotContains(t, name, "drowned claws")
+	})
+
+	t.Run("canonical Title Case is unchanged (idempotent)", func(t *testing.T) {
+		item := Item{ItemId: 10001, Spec: &ItemSpec{Name: "Storm Bracer"}}
+		assert.Contains(t, item.DisplayName(), "Storm Bracer")
+	})
+
+	t.Run("interior minor words stay lowercase", func(t *testing.T) {
+		item := Item{ItemId: 10001, Spec: &ItemSpec{Name: "vial of oil"}}
+		assert.Contains(t, item.DisplayName(), "Vial of Oil")
+	})
+
+	t.Run("adjective suffix rides on Title-cased base", func(t *testing.T) {
+		item := Item{ItemId: 10001, Spec: &ItemSpec{Name: "drowned claws"}, Adjectives: []string{"Masterwork"}}
+		name := item.DisplayName()
+		assert.Contains(t, name, "Drowned Claws")
+		assert.Contains(t, name, "Masterwork")
+	})
+
+	t.Run("authored DisplayName override is rendered verbatim", func(t *testing.T) {
+		// A deliberately-authored display name (may carry ansi tags) must not
+		// be re-cased — only the bare spec.Name fallback is normalized.
+		item := Item{ItemId: 10001, Spec: &ItemSpec{Name: "iron sword", DisplayName: "the singing blade"}}
+		assert.Contains(t, item.DisplayName(), "the singing blade")
+	})
+}
+
 // ─── Item.NameComplex ───────────────────────────────────────────────────────
 
 func TestItem_NameComplex(t *testing.T) {
