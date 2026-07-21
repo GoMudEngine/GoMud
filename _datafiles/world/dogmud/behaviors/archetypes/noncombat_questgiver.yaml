@@ -28,11 +28,8 @@ tree:
       do: emote
       text: "raises an eyebrow but says nothing."
 
-    - type: sequence
+    # return_item already emits "<name> hands back the <item>." — a second
+    # "declines politely and hands it back." emote here just doubled the message.
+    - type: action
       event: player_give
-      children:
-        - type: action
-          do: emote
-          text: "declines politely and hands it back."
-        - type: action
-          do: return_item
+      do: return_item
