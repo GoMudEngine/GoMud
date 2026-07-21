@@ -303,10 +303,19 @@ goal — cheap wins that make the world feel crafted.
   toast/modal with the illustration + flavor, degrading gracefully to a richer text
   flourish on terminal clients. Brainstorm the style lock + GMCP shape before
   generating anything.
-- ⬜ **Celestial splash screens** — improve the moon-phase / sunrise / sunset splash
-  art & messaging. The events already fire; this is a presentation pass (better
-  ASCII/art, evocative copy, maybe a web-client visual treatment) so day/night and
-  the lunar cycle feel like events, not log lines.
+- ✅ **Splash pipeline (celestial + season + severe weather)** — SHIPPED 2026-07-21
+  (spec+plan `2026-07-21-splash-pipeline-*`). A reusable `internal/splash` event +
+  scene registry + a single delivery hook renders a full-width refined-ASCII scene
+  inline in the output feed (shaded-gradient discs replacing the old block sprites).
+  Consumers: sunrise/sunset + moon phases (migrated off raw Broadcast, de-pixelated),
+  **season turns** (global) and **severe-weather onset** (storm/blizzard/dust,
+  per-zone) — the latter two are new (`WeatherSeasonChanged` was previously
+  unconsumed). 17 scenes authored; screen-reader users get a caption. **Design
+  change:** the web client is xterm.js (no DOM feed), so scenes render as the same
+  refined ASCII on web, not SVG — a dedicated web "scene panel" (real SVG via a GMCP
+  push) is a possible future enhancement. Mutation-acquisition is a designed-for
+  (`SplashUser`) consumer, still to be wired in §5d's mutation-art item below.
+  Remaining weather UX (contrast, pacing, indoor/outdoor prose) is sub-project A.
 
 ---
 

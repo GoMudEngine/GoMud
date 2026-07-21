@@ -4,6 +4,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/forager"
+	"github.com/GoMudEngine/GoMud/internal/splash"
 )
 
 // Register hooks here...
@@ -11,6 +12,9 @@ func RegisterListeners() {
 
 	// Buffs
 	events.RegisterListener(events.Buff{}, ApplyBuffs)
+
+	// Splash scenes (terminal + screen-reader delivery; web goes via gmcp module)
+	events.RegisterListener(splash.Splash{}, Splash_Deliver)
 
 	// RoomChange Listeners
 	events.RegisterListener(events.RoomChange{}, LocationMusicChange)

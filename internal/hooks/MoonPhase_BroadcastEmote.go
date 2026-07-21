@@ -4,12 +4,12 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
-	"github.com/GoMudEngine/GoMud/internal/templates"
+	"github.com/GoMudEngine/GoMud/internal/splash"
 )
 
 //
-// Listens for MoonPhase events and broadcasts atmospheric messages
-// to all players when a Witness crosses a new-moon or full-moon boundary.
+// Listens for MoonPhase events and fires a global splash scene when a Witness
+// crosses a new-moon or full-moon boundary.
 //
 
 func BroadcastMoonPhase(e events.Event) events.ListenerReturn {
@@ -18,17 +18,14 @@ func BroadcastMoonPhase(e events.Event) events.ListenerReturn {
 		return events.Cancel
 	}
 
-	// Build template key: "generic/moon_<moonslug>_<phase>"
-	// e.g. "The Wanderer" + "full" -> "generic/moon_wanderer_full"
-	moonSlug := moonNameToSlug(evt.MoonName)
-	templatePath := "generic/moon_" + moonSlug + "_" + evt.PhaseName
+	// Scene id: "moon_<moonslug>_<phase>" e.g. "The Wanderer"+"full" ->
+	// "moon_wanderer_full" (the delivery hook prefixes "generic/splash/").
+	sceneId := "moon_" + moonNameToSlug(evt.MoonName) + "_" + evt.PhaseName
 
-	txt, _ := templates.Process(templatePath, nil)
-	srTxt, _ := templates.Process(templatePath, nil, templates.ForceScreenReaderUserId)
-
-	events.AddToQueue(events.Broadcast{
-		Text:             txt,
-		TextScreenReader: srTxt,
+	events.AddToQueue(splash.Splash{
+		SceneId: sceneId,
+		Caption: evt.MoonName + " is " + evt.PhaseName + ".",
+		Target:  splash.TargetGlobal,
 	})
 
 	return events.Continue
