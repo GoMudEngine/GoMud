@@ -108,6 +108,18 @@ quantity. Config knobs: `ShopBuyRatio`, `ShopPriceFloor`, `ShopPriceCeiling`,
 `ShopAbundanceThreshold`, `ShopMaterialReserve`, `ShopGoldReserveRatio`,
 `BarterMaxDiscount`, `BarterMaxBonus`.
 
+## Moderation Persistence
+Player-moderation state lives in `_datafiles/moderation/` — `petitions.yaml`
+(the `petition` queue: player→staff reports, open/resolved) and `bans.yaml`
+(permanent account + IP bans). Like `shops/` and `guilds/`, this is persistent
+living state: it is `.gitignore`d, kept on the prod droplet, and must **NOT** be
+wiped by the instance-save smoke-test SOP. A malformed file logs + skips at boot
+(does not panic), mirroring the guilds loader. Commands: `petition` (player),
+`petitions`/`boot`/`ban`/`unban` (admin), and globally-targetable `mute`/`deafen`.
+Account/IP ban rejection happens in `FinalizeLoginOrCreate`
+(`internal/inputhandlers/login.go`). Config: `PetitionCooldownRounds`,
+`PetitionMaxLen` (GamePlay block).
+
 Non-combatant mobs (`non_combatant: true` in YAML) cannot be attacked,
 stolen from, or targeted by harm spells.
 
