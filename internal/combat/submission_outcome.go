@@ -114,6 +114,9 @@ func applyBadTier(attempter, recipient *characters.Character) {
 			"attempter", attempter.Name, "err", err)
 		return
 	}
+	// No nil-guard needed here: TransitionPair above returns an error (and
+	// we return) when either Position is nil, so this line is only reached
+	// with a non-nil attempter.Position.
 	_ = attempter.Position.TransitionToProne(
 		position.ProneData{MinRecoveryRounds: 2},
 		state.TransitionReason{Trigger: position.TriggerKnockdownFaceForward},
