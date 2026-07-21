@@ -113,3 +113,6 @@ _archive/prod-users.tgz
 
 # Stray screenshots dropped in the repo root (see memory)
 Screenshot *.png
+
+# Moderation living state (petition queue + ban lists) — persist on prod, never commit
+_datafiles/moderation/
