@@ -164,6 +164,15 @@ func HandleQuestUpdate(e events.Event) events.ListenerReturn {
 		return events.Cancel
 	}
 
+	// MarkerOnly events refresh the Char.Quests minimap marker on a mid-quest
+	// step advance and nothing else — the token, banner, and rewards were all
+	// handled synchronously by questengine GrantQuest. Doing any of that work
+	// again here would double the progress banner, so bail (the GMCP
+	// quest-progress handler, a separate listener, still refreshes the marker).
+	if evt.MarkerOnly {
+		return events.Continue
+	}
+
 	//mudlog.Debug(`Event`, `type`, evt.Type(), `UserId`, evt.UserId, `QuestToken`, evt.QuestToken)
 
 	// Give them a token
