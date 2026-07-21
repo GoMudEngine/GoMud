@@ -1,5 +1,27 @@
 # DOGMud Patch Notes
 
+## 2026-07-21 — The sky puts on a show
+
+Dawn and dusk look the part now. The sunrise and sunset that mark each day have
+been redrawn -- a soft, glowing sun over rippled water in place of the old blocky
+sketch -- and each of the three moons gets its own moment when it turns full or
+new. New to the world besides: the seasons announce themselves. When winter
+descends or the wet season breaks, the whole land is told. And when severe
+weather rolls in -- a storm, a blizzard, a dust storm -- the sky over that region
+makes it plain. Screen-reader users get a clear one-line telling of each event;
+everyone else gets the full scene, drawn to fit a terminal or the web client
+alike.
+
+If you ever need a real person, the new <ansi fg="command">petition</ansi>
+command sends a message straight to the staff -- someone harassing you, a griefer,
+a quest you're stuck on, anything a human should look at. It goes into a queue the
+staff can review even if none happened to be online when you sent it. Send one at
+a time and they'll get to it.
+
+Two quiet fixes rode along: an item that showed its name in two different
+capitalizations depending on which copy you were holding now reads the same
+everywhere, and a stray tutorial-room marker no longer lingers on your map.
+
 ## 2026-07-21 — The map remembers where you're going
 
 Your quest marker now keeps up with you. While you are working a quest, the
