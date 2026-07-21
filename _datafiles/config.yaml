@@ -344,6 +344,12 @@ GamePlay:
   # Master toggle for item proc firing (on_hit/on_block/on_kill/etc.).
   ItemProcsEnabled: true
 
+  # - Moderation -
+  # PetitionCooldownRounds: min rounds between a player's petitions (anti-spam).
+  # PetitionMaxLen: max characters accepted in a petition message.
+  PetitionCooldownRounds: 50
+  PetitionMaxLen: 500
+
 ################################################################################
 #
 #   BALANCE

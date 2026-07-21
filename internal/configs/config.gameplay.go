@@ -29,6 +29,10 @@ type GamePlay struct {
 
 	PinnacleItemsEnabled ConfigBool `yaml:"PinnacleItemsEnabled"` // Master toggle: sentient/ambient/hunger/mutation item ticks
 	ItemProcsEnabled     ConfigBool `yaml:"ItemProcsEnabled"`     // Toggle: item proc firing (on_hit/on_block/etc.)
+
+	// Moderation
+	PetitionCooldownRounds ConfigInt `yaml:"PetitionCooldownRounds"` // Min rounds between a player's petitions (anti-spam, default 50)
+	PetitionMaxLen         ConfigInt `yaml:"PetitionMaxLen"`         // Max characters in a petition message (default 500)
 }
 
 type GameplayDeath struct {
@@ -129,6 +133,13 @@ func (g *GamePlay) Validate() {
 		// valid
 	default:
 		g.MapConsistencyEnforce = "warn"
+	}
+
+	if g.PetitionCooldownRounds < 0 {
+		g.PetitionCooldownRounds = 50
+	}
+	if g.PetitionMaxLen < 1 {
+		g.PetitionMaxLen = 500
 	}
 
 }
