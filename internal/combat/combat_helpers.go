@@ -671,13 +671,20 @@ var doubleFumbleMessages = []struct {
 
 // handleDoubleFumble applies prone to both combatants and sends comedy text.
 func handleDoubleFumble(result *AttackResult, sourceChar *characters.Character, targetChar *characters.Character) {
-	// Both go prone via FSM.
+	// Both go prone via FSM. Position can be nil on a pre-Validate()
+	// Character (mirrors the guard in HandleGrappleCritFailure); prod
+	// combatants are always Validated, so this only shields the
+	// under-initialized-fixture case rather than any live path.
 	r := state.TransitionReason{Trigger: position.TriggerKnockdownFaceForward}
-	if err := sourceChar.Position.TransitionToProne(position.ProneData{}, r); err != nil {
-		mudlog.Warn("handleDoubleFumble: source TransitionToProne failed", "err", err)
+	if sourceChar.Position != nil {
+		if err := sourceChar.Position.TransitionToProne(position.ProneData{}, r); err != nil {
+			mudlog.Warn("handleDoubleFumble: source TransitionToProne failed", "err", err)
+		}
 	}
-	if err := targetChar.Position.TransitionToProne(position.ProneData{}, r); err != nil {
-		mudlog.Warn("handleDoubleFumble: target TransitionToProne failed", "err", err)
+	if targetChar.Position != nil {
+		if err := targetChar.Position.TransitionToProne(position.ProneData{}, r); err != nil {
+			mudlog.Warn("handleDoubleFumble: target TransitionToProne failed", "err", err)
+		}
 	}
 
 	// Pick a random comedy message

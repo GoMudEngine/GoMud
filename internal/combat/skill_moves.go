@@ -101,7 +101,14 @@ func ExecuteSkillMove(p SkillMoveParams) SkillMoveResult {
 		// writes. If the FSM transition fails (e.g. target was
 		// already grappling and not in Standing), the legacy fields
 		// are NOT updated either so the two views stay consistent.
-		if result.KnockedDown {
+		if result.KnockedDown && p.Defender.Position == nil {
+			// A pre-Validate() Character has no Position FSM and can't be
+			// knocked down. Prod combatants are always Validated (this
+			// mirrors the guard in HandleGrappleCritFailure); treat it like
+			// a failed transition and don't narrate a knockdown that the
+			// FSM never recorded.
+			result.KnockedDown = false
+		} else if result.KnockedDown {
 			var fsmErr error
 			if p.KnockdownToSupine {
 				fsmErr = p.Defender.Position.TransitionToSupine(
