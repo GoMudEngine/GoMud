@@ -60,10 +60,11 @@ Legend: ✅ done · ◐ partial (intentionally scoped down) · ⏸️ withdrawn/
 - ⏸️ 3.4 `attack` → `actions/` full migration — **descoped.** The aggro-type drift (0.5) was
   fixed and engagement-aggro typing centralised (`b23d34a15`); the ~480-line mechanical
   migration was not judged worth the churn.
-- ▶️ **3.3 `messaging.SendCombatExchange` darkness gating — the one Phase-3 item still on the
-  table.** Player melee combat text still bypasses room-visibility gating (info leak in dark
-  rooms); the mob side was routed through the shared pipeline (`b3fc97aaa`), but usercommands
-  never adopted it.
+- ✅ 3.3 combat-text darkness gating — **already resolved; premise disproven 2026-07-21**
+  (see §3.3). The whole combat-text surface (usercommand special moves — 40 gated calls, zero
+  raw broadcasts — plus the auto-attack round) already routes room narration through the
+  visibility-gated `SendTextVisual` pipeline, with a dark-room "you hear fighting" fallback.
+  The proposed `SendCombatExchange` helper is obsolete. No code needed.
 - ⏸️ 3.6 hook combinators — withdrawn; premise disproven (see §1.2; `01e985be9`).
 - ⏸️ 4.2 `internal/util` split — **descoped.** The cheap, clearly-right part was done:
   `GetMyIP` / `net/http` + dead code dropped (`25132e6e5`). The larger dice /
@@ -77,9 +78,9 @@ Legend: ✅ done · ◐ partial (intentionally scoped down) · ⏸️ withdrawn/
 **Beyond the original plan:** generic quest reward-key fix (`3f390ca0e`); grapple crit-failure
 flake + sibling knockdown nil-guards (2026-07-21).
 
-**Still open / carried forward:** 3.3 (combat-text darkness gating) · 2.4 (`RLockMud` dead
-code) · everything under "Explicitly deferred" at the end of this document (4.6 DI, 4.5
-file-naming, doc-comment backfill, 5.3 `%w` backfill, `t.Parallel()`).
+**Still open / carried forward:** 2.4 (`RLockMud` dead code) · everything under "Explicitly
+deferred" at the end of this document (4.6 DI, 4.5 file-naming, doc-comment backfill, 5.3 `%w`
+backfill, `t.Parallel()`). With 3.3 disproven, no Tier 3/4 structural work remains scheduled.
 
 ---
 
@@ -476,7 +477,30 @@ collapses to 3–4 lines. Also removes a redundant room scan per invocation.
 See **0.1**. ~230 lines duplicated; contains the gold-dupe and lock-bypass.
 
 ### 3.3 Combat messaging duplicated in `usercommands`, missing darkness gating
-🔍 **REPORTED** — ~150–200 lines, **and a real information leak**
+✅ **RESOLVED — premise disproven on re-verification, 2026-07-21.** The "information leak" half
+of this finding does not hold, and likely didn't when the audit was written (a 🔍 REPORTED item
+the specialist never runtime-verified). The messaging-pipeline refactor already closed it:
+
+> - Every combat/special-move room broadcast in `internal/usercommands/` — **40 calls across 15
+>   files** (`attack`, `trip`, `taunt`, `grapple`, `bash`, `kick`, `gore`, `maul`, `pounce`,
+>   `rake`, `throttle`, `drain`, `shoot`, `warcry`, `rally`) — goes through the visibility-gated
+>   `room.SendTextVisual`. A full sweep found **zero** raw `room.SendText` calls in any combat
+>   file (the only raw calls in the whole package are non-combat: merchant speech, room redesc).
+> - `SendTextVisual` → `messaging.RenderForRecipient` with `ChannelVisual` returns `""` for a
+>   `SightNone` recipient (`pipeline.go:62-63`), so a sightless observer is fully suppressed —
+>   the opposite of over-shared.
+> - The auto-attack round is gated identically: `AttackResult` room messages flush via
+>   `sendVisualRoomText` → `SendTextVisual` and `drainSpectatorLines` → `SendTextVisualToUser`,
+>   plus a deliberate `sendDarkRoomCombatFallback` that sends "You hear the sounds of fighting
+>   nearby" to sightless observers instead of the combat detail.
+>
+> The proposed fix (`messaging.SendCombatExchange` porting `mobcommands/darkness.go`) is
+> therefore obsolete — the darkness logic now lives in the messaging pipeline, not in
+> `mobcommands`. The *duplication* half (each command hand-rolls the three-way
+> attacker/defender/room send) is real but minor, shares 3.1's spirit, and isn't worth a
+> dedicated helper on its own. **No action.**
+
+🔍 **REPORTED** (original text follows, retained for context) — ~150–200 lines, **and a real information leak**
 
 Every hit/miss/crit branch across ~10 usercommand files hand-rolls "tell attacker / tell
 defender / tell room" as three separate `SendText` calls (`trip.go:95-157`, `taunt.go:130-217`, etc.).
@@ -958,8 +982,9 @@ summary and commit references.**
    change), and it establishes the seam that 3.4 and 3.3 both want to sit next to.
 10. ⏸️ **Migrate `attack` (3.4) — DESCOPED** (see §3.4). The aggro-type drift it would have fixed
     was addressed directly (0.5); the mechanical migration wasn't judged worth the churn.
-11. ▶️ **`messaging.SendCombatExchange` (3.3) — REMAINING.** The one un-started Phase-3 item —
-    ports darkness gating and closes the player-combat-text info leak.
+11. ✅ **`messaging.SendCombatExchange` (3.3) — RESOLVED, premise disproven** (see §3.3). The
+    combat-text surface already routes room broadcasts through the gated `SendTextVisual`
+    pipeline; the info leak was closed by the messaging refactor. No new helper needed.
 12. ⏸️ **Hook combinators (3.6) — WITHDRAWN** (premise disproven, see §1.2).
 13. ⏸️ **Split `internal/util` (4.2) — DESCOPED** (see §4.2). The `GetMyIP`/`net/http`/dead-code
     removal was done; the larger relocation was judged not worth the blast radius.
