@@ -27,6 +27,62 @@ that correlation is the argument for the coverage work, not a coincidence.
 
 ---
 
+## Execution status — 2026-07-21
+
+This audit was executed over 2026-07-20 – 07-21. **This ledger is the source of truth for
+what actually happened**; the per-item sections and the "Recommended sequence" at the bottom
+are tagged to match it. When they disagree, this table wins.
+
+Legend: ✅ done · ◐ partial (intentionally scoped down) · ⏸️ withdrawn/descoped by decision
+(rationale in the linked section) · ▶️ remaining.
+
+**Phase 1 — Stop the bleeding — ✅ complete**
+- ✅ 1.1 panic recovery in the listener dispatch loop (`c4ab3f50e`).
+- ✅ 0.1–0.8 all eight Tier-0 correctness bugs (`52a766f50`), plus a bonus statmods nil-map
+  fix (`446d211ab`).
+- ✅ 6.4 #1 `go vet` + `gofmt` gates in CI (`e044a5424`, `2dfbf5d49`, `c508d5933`).
+- ✅ Mechanical cleanups: lumberjack dedup (5.2); `sliceContains`/`max1` removal, Discord
+  client timeout, web.go mudlog bypass (5.4) (`733d691c7`).
+
+**Phase 2 — Make the invariants enforceable — ✅ mostly complete**
+- ✅ 6.2 data-file boot smoke test in CI (`c6f19296e`).
+- ✅ 2.1 / 2.2 / 2.3 concurrency locking — copyover, autocomplete, per-session user state
+  (`4799200f7`, `b61bf45cf`).
+- ▶️ 2.4 `RLockMud` — **still open.** Autocomplete (2.2) was locked with the exclusive
+  `LockMud`, so the intended first read-lock customer never materialized; `RLockMud`/
+  `RUnlockMud` remain dead code and `mudLock` is still effectively a `Mutex`. Minor.
+- ✅ 1.3 quest-sequence goroutine hardening (`b92692859`).
+- ⏸️ 5.1 yaml.v2 → v3 — **withdrawn after measurement** (see §5.1). Replaced by a dialogue
+  parse gate (`685953f80`) + a silently-ignored-key drift gate (`769ab4fcc`).
+
+**Phase 3 — Pay down structure — partially done; several items descoped by decision**
+- ✅ 3.1 `AcquireMeleeTarget` melee-preamble extraction (`ef93d2d17`).
+- ⏸️ 3.4 `attack` → `actions/` full migration — **descoped.** The aggro-type drift (0.5) was
+  fixed and engagement-aggro typing centralised (`b23d34a15`); the ~480-line mechanical
+  migration was not judged worth the churn.
+- ▶️ **3.3 `messaging.SendCombatExchange` darkness gating — the one Phase-3 item still on the
+  table.** Player melee combat text still bypasses room-visibility gating (info leak in dark
+  rooms); the mob side was routed through the shared pipeline (`b3fc97aaa`), but usercommands
+  never adopted it.
+- ⏸️ 3.6 hook combinators — withdrawn; premise disproven (see §1.2; `01e985be9`).
+- ⏸️ 4.2 `internal/util` split — **descoped.** The cheap, clearly-right part was done:
+  `GetMyIP` / `net/http` + dead code dropped (`25132e6e5`). The larger dice /
+  `GetLockSequence` / fileutil / term split was judged not worth the blast radius.
+- ✅ 4.3 wiring-seam documentation (`c713cdede`).
+- ⏸️ 4.1 break up `Go()` / `Get()` — **descoped.** The highest-value `unlockExit` extraction
+  landed (`dec87613b`); the full god-function breakup was left alone to avoid churning
+  heavily-trafficked code for modest gain.
+- ✅ 6.4 #5 `.golangci.yml` gate (`ee4d435d5`; see §6.4).
+
+**Beyond the original plan:** generic quest reward-key fix (`3f390ca0e`); grapple crit-failure
+flake + sibling knockdown nil-guards (2026-07-21).
+
+**Still open / carried forward:** 3.3 (combat-text darkness gating) · 2.4 (`RLockMud` dead
+code) · everything under "Explicitly deferred" at the end of this document (4.6 DI, 4.5
+file-naming, doc-comment backfill, 5.3 `%w` backfill, `t.Parallel()`).
+
+---
+
 ## 0. Baseline health — what is already right
 
 Establishing this matters, because several items below are "keep it that way" rather than
@@ -435,6 +491,12 @@ information to sightless observers in dark rooms.
 **Fix:** `messaging.SendCombatExchange(...)` porting the mobcommands darkness logic.
 
 ### 3.4 `attack` never migrated to `actions/`
+⏸️ **DESCOPED BY DECISION — 2026-07-21.** The drift bug behind this (0.5, the stealth-opener
+aggro type) was fixed and engagement-aggro typing was centralised in one place
+(`b23d34a15`), which removes the correctness argument. The remaining ~480-line mechanical
+migration is pure structure with no behavior change, and was judged not worth the churn now.
+Reopen if a future combat change needs `attack` to sit behind the `Actor` seam.
+
 See **0.5**. ~480 lines across the two callers; only target resolution (~90 lines) was extracted.
 This is the last large architectural gap in combat.
 
@@ -475,6 +537,12 @@ and `actions.CheckSpecialMoveCooldown(char)`.
 ## Tier 4 — Architecture and readability
 
 ### 4.1 God functions
+◐ **PARTIAL — full breakup DESCOPED BY DECISION, 2026-07-21.** The highest-value extraction
+called out below (the `Go()` exit-lock ladder → `unlockExit`) was done (`dec87613b`). The
+broader breakup of `Go()`/`Get()`/etc. was consciously left alone: these are heavily-trafficked
+paths, the gain is readability rather than correctness, and characterization-test coverage
+would have to come first. Pick individual extractions up opportunistically, not as a project.
+
 ✅ **VERIFIED** (measured across the tree)
 
 Longest functions in the codebase:
@@ -507,6 +575,14 @@ successful-unlock branches each repeat an identical
 text. One `unlockExit(...)` helper collapses all three.
 
 ### 4.2 `internal/util` is a genuine junk drawer
+◐ **PARTIAL — full split DESCOPED BY DECISION, 2026-07-21.** The clearly-right, zero-judgment
+part was done: `GetMyIP` and the `net/http` dependency it dragged in were removed along with
+other dead code (`25132e6e5`). The larger relocation — dice functions → `internal/dice`,
+`GetLockSequence` → lock/container code, `SafeSave`/`FilePath` → `internal/fileutil`,
+display helpers → `internal/term` — was judged not worth the blast radius (touches many
+importers for a mental-model gain, no behavior change). The dice/`GetLockSequence` symbols
+still live in `util` today.
+
 🔍 **REPORTED** — 1076 lines, 99 symbols, ~8 unrelated concerns
 
 Contains: global mutex primitives, a turn/round counter singleton, a generic time-tracking
@@ -853,40 +929,44 @@ Additional detail below:
 
 ## Recommended sequence
 
-Ordered so that each step de-risks the next.
+Ordered so that each step de-risks the next. **Status tags added 2026-07-21 reflect what was
+actually executed — see the "Execution status" ledger near the top for the authoritative
+summary and commit references.**
 
 **Phase 1 — Stop the bleeding (days, low risk, high payoff)**
-1. **Panic recovery in `DoListeners` + `handleTelnetConnection` (1.1).** Single highest-leverage
+1. ✅ **Panic recovery in `DoListeners` + `handleTelnetConnection` (1.1).** Single highest-leverage
    change in this document: converts most latent panics from "server outage" to "one failed round."
-2. **Tier 0 correctness bugs (0.1–0.8).** Small, surgical, independent of any refactor. Fix the
+2. ✅ **Tier 0 correctness bugs (0.1–0.8).** Small, surgical, independent of any refactor. Fix the
    locked-container `get` bypass (0.6) first — it is player-reachable today — then the `put`
    gold dupe (0.1) and the `refs/tags/master` CI bug (0.8), both trivial.
-3. **`go vet` + `gofmt` in CI (6.4 #1).** Two lines.
-4. **Lumberjack dedup (5.2), `sliceContains`/`max1` deletion (5.4), Discord timeout + web.go logging
+3. ✅ **`go vet` + `gofmt` in CI (6.4 #1).** Two lines.
+4. ✅ **Lumberjack dedup (5.2), `sliceContains`/`max1` deletion (5.4), Discord timeout + web.go logging
    bypass (5.4).** Mechanical cleanups, no judgment required.
 
 **Phase 2 — Make the invariants enforceable (weeks)**
-5. **Data-file boot test in CI (6.2).** Automates the manual SOP; **prerequisite for step 8.**
-6. **Concurrency fixes (2.1, 2.2, 2.3).** Do 2.3 (copyover locking) **before** the pending droplet
-   hot-reboot validation — it's the exact failure mode that test will hit. Resolve 2.4 (`RLockMud`)
-   as part of 2.2, since autocomplete is the natural first read-lock customer.
-7. **Quest-sequence goroutine hardening (1.3).** Content-driven, so higher real-world trigger
+5. ✅ **Data-file boot test in CI (6.2).** Automates the manual SOP; **prerequisite for step 8.**
+6. ◐ **Concurrency fixes (2.1, 2.2, 2.3).** Done. ▶️ **2.4 (`RLockMud`) remains open** — 2.2
+   was locked with the exclusive `LockMud`, so the read-lock customer never appeared and the
+   `RLockMud`/`RUnlockMud` pair is still dead code.
+7. ✅ **Quest-sequence goroutine hardening (1.3).** Content-driven, so higher real-world trigger
    probability than its line count suggests.
-8. **yaml.v2 → v3 consolidation + `KnownFields(true)` (5.1).** Gated on step 5. Directly retires two
-   documented production-incident classes.
+8. ⏸️ **yaml.v2 → v3 consolidation + `KnownFields(true)` (5.1) — WITHDRAWN after measurement.**
+   Replaced with a dialogue parse gate + a silently-ignored-key drift gate (see §5.1).
 
 **Phase 3 — Pay down structure (opportunistic, incremental)**
-9. **`actions.AcquireMeleeTarget` (3.1)** — largest, lowest-risk extraction (~400 lines, no behavior
+9. ✅ **`actions.AcquireMeleeTarget` (3.1)** — largest, lowest-risk extraction (~400 lines, no behavior
    change), and it establishes the seam that 3.4 and 3.3 both want to sit next to.
-10. **Migrate `attack` (3.4)**, reusing step 9's helper; fixes the aggro-type drift as a side effect.
-11. **`messaging.SendCombatExchange` (3.3)** — ports darkness gating and closes the info leak.
-12. **Hook combinators (3.6)** — independent track, no dependency on 9–11; also retires 1.2's
-    unchecked asserts and the `Cancel`/`Continue` inconsistency.
-13. **Split `internal/util` (4.2)** — mechanical, compiler-checked, improves everyone's mental model.
-14. **Document the wiring seams (4.3)** — an afternoon, zero risk.
-15. **Break up `Go()` and `Get()` (4.1)**, starting with the `unlockExit` extraction. Read
-    `internal/characters/godfunc_refactor_test.go` first.
-16. **Introduce `.golangci.yml` (6.4 #5)** last in this phase, so the first run isn't fighting code
+10. ⏸️ **Migrate `attack` (3.4) — DESCOPED** (see §3.4). The aggro-type drift it would have fixed
+    was addressed directly (0.5); the mechanical migration wasn't judged worth the churn.
+11. ▶️ **`messaging.SendCombatExchange` (3.3) — REMAINING.** The one un-started Phase-3 item —
+    ports darkness gating and closes the player-combat-text info leak.
+12. ⏸️ **Hook combinators (3.6) — WITHDRAWN** (premise disproven, see §1.2).
+13. ⏸️ **Split `internal/util` (4.2) — DESCOPED** (see §4.2). The `GetMyIP`/`net/http`/dead-code
+    removal was done; the larger relocation was judged not worth the blast radius.
+14. ✅ **Document the wiring seams (4.3)** — an afternoon, zero risk.
+15. ⏸️ **Break up `Go()` and `Get()` (4.1) — full breakup DESCOPED** (see §4.1); the highest-value
+    `unlockExit` extraction was done.
+16. ✅ **Introduce `.golangci.yml` (6.4 #5)** last in this phase, so the first run isn't fighting code
     that's actively being restructured.
 
 **Explicitly deferred (documented, not scheduled)**
