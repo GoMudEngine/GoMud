@@ -8,13 +8,15 @@ secret: false
 
 steps:
   - id: start
-    map_target: -1  # -1: return-to-giver / in-place (start room 442); Phase 2 split review
+    map_target: 444  # the Pest Fields — kill pests for a sample
     description: "Farmer Dorn has asked you to clear the crop pests
       from the south fields and bring back a sample."
-    hint: "Kill crop pests and collect a sample for Farmer Dorn.
-      From Dorn's farm, go east 1 to the fallow field, then south
-      1 to the pest fields. Kill pests until one drops a sample,
-      then bring it back to Dorn."
+    hint: "Kill crop pests until one drops a sample. From Dorn's farm,
+      go east 1 to the fallow field, then south 1 to the pest fields."
+  - id: deliver
+    map_target: 442  # Farmer Dorn's farm
+    description: "You have a pest sample. Bring it back to Farmer Dorn."
+    hint: "Return to Farmer Dorn with the pest sample."
   - id: end
     description: "You reported back to Dorn. The pest problem is
       under control for now."
@@ -37,11 +39,19 @@ rewards:
 
 triggers:
   # Item delivery via give command
+  # A pest drops a sample -> advance to the deliver step.
+  - event: item_gain
+    item: 24
+    conditions:
+      has: [7-start]
+      missing: [7-deliver]
+    actions:
+      - grant: 7-deliver
   - event: item_give
     mob: 89
     item: 24
     conditions:
-      has: [7-start]
+      has: [7-deliver]
       missing: [7-end]
     actions:
       - grant: 7-end

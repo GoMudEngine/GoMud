@@ -7,13 +7,18 @@ secret: false
 
 steps:
   - id: start
-    map_target: -1  # -1: return-to-giver / in-place (start room 468); Phase 2 split review
+    map_target: 476  # the Records Office — find the tithe ledger
     description: "Temple Priest Olen has asked you to investigate discrepancies in
       the tithe records. He suspects merchants in the market are under-reporting
       their income to avoid full tithes. Find the tithe ledger in the Records
       Office."
     hint: "Visit the Records Office north of Market Square. Search the shelves
       for the tithe ledger."
+  - id: deliver
+    map_target: 468  # Temple Priest Olen at the temple
+    description: "You have the tithe ledger. Take it to Temple Priest Olen — the
+      contents damn both the merchants and the temple."
+    hint: "Return to Temple Priest Olen with the tithe ledger."
   - id: end
     description: "The tithe dispute is in other hands now. Neither side is
       entirely clean."
@@ -32,11 +37,19 @@ rewards:
 
 triggers:
   # Ledger delivery to Olen via give command
+  # Pick up the ledger in the Records Office -> advance to the deliver step.
+  - event: item_gain
+    item: 29
+    conditions:
+      has: ["9-start"]
+      missing: ["9-deliver"]
+    actions:
+      - grant: "9-deliver"
   - event: item_give
     mob: 95
     item: 29
     conditions:
-      has: ["9-start"]
+      has: ["9-deliver"]
       missing: ["9-end"]
     actions:
       - grant: "9-end"
