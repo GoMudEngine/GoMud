@@ -216,12 +216,21 @@ fights** got a first-pass fix (2026-07-13, master `9a6606a3d`) — needs live pl
 - ✅ **Drillmaster Vorn flees when you `attack dummy`** (master `7ae6ff68e`) — fixed via
   the broader **witness-response faction gate**: attacking a factionless target (dummy/
   wildlife/monster) no longer triggers bystander alarm/revenge, mirroring the crime record.
-- ⬜ **Duplicate/respawning quest "notice" items** (retest) — end up carrying 2-3 copies of
-  "Protection Notice" (room pickup + dialogue `givesItem` + a floor respawn). Room-reset-vs-
-  givesItem dedup gap.
-- ⬜ **First Blood "kick/trip dummy" step nearly unhittable** (retest) — after the quest's own
-  grind step, auto-attack 1-2-shots the respawned dummy, so the special-move window closes
-  before you can land kick/trip (~10 failed attempts). Dummy scales but not fast enough.
+- ✅ **Duplicate/respawning quest "notice" items** — **already resolved** (2026-07-21 retest):
+  the duplicate source was the respawning floor copy in room 472, removed in content (see the
+  comment in `rooms/thornwall_city/472.yaml`); the notice is now handed out only by Marek's
+  dialogue. Residual corner case (not fixed, no clean fix): the `lost_notice` recovery node
+  re-gives on a keyword re-ask without checking possession — dialogue has `requiresItem`
+  (require+consume) but no "hide if player already has item" condition. Low risk (requires
+  deliberately re-asking about the notice while carrying one).
+- ✅ **First Blood "kick/trip dummy" step nearly unhittable** — **fixed 2026-07-21**
+  (`quests/32-first_blood.yaml`). The `32-special` (kick/trip) and `32-consider` triggers now
+  use `command_issued` (credits the typed command) instead of `command` (needs a landed hit on
+  a live target), so the fragile one-shot-able dummy no longer closes the window. Playtest-
+  verified end to end: `kick dummy` on a dead/respawning dummy returned "You don't see them
+  here" yet still advanced the quest; full chain (strike→special→consider→verbosity→end)
+  completes. Report: `tools/playtest/reports/2026-07-21-local-feature-tester-first-blood.md`.
+  Minor cosmetic residual (not blocking): the miss line shows one line above "made progress".
 - ⬜ **Ephemeral room id `1000000000` for The Mending Hut** shows alongside the real 5209 on
   `Zone.Map` (minor mapper quirk; instance-room id leaking into the snapshot).
 - ~~ASCII charset "gap"~~ — **NOT a game bug.** `set charset` is a client-mode toggle;
