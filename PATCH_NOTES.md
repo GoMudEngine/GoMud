@@ -1,5 +1,17 @@
 # DOGMud Patch Notes
 
+## 2026-07-21 — Steadier still
+
+A short follow-on to yesterday's stability pass. A rare botched grapple — the kind
+of fumble that only turns up a couple of times in a hundred — could, in the wrong
+circumstances, trip over its own feet behind the scenes. That path and its close
+cousins (fumbled bashes, trips, and takedowns that leave everyone sprawled in a
+heap) are now fully shored up. You will not notice anything different in normal
+play, which is exactly the point: fewer sharp edges for an unlucky roll to catch.
+
+The rest of the round was housekeeping — bringing the engine's internal maintenance
+records in line with work already done. Nothing that touches the game itself.
+
 ## 2026-07-20 — A steadier world, and locks that mean it
 
 A large under-the-hood pass this round — most of it you will never see, which is
