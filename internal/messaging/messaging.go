@@ -89,6 +89,7 @@ const (
 	CategoryRoomExit
 	CategoryWeather
 	CategoryTimeOfDay
+	CategorySplash
 
 	// Other.
 	CategoryLoot
@@ -214,6 +215,8 @@ func (c Category) String() string {
 		return "weather"
 	case CategoryTimeOfDay:
 		return "time-of-day"
+	case CategorySplash:
+		return "splash"
 	case CategoryLoot:
 		return "loot"
 	case CategoryEquipment:

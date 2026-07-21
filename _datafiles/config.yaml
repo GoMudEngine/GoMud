@@ -350,6 +350,11 @@ GamePlay:
   PetitionCooldownRounds: 50
   PetitionMaxLen: 500
 
+  # - SplashesEnabled -
+  # Master toggle for scene splashes (sunrise/sunset/moon, season turns, severe
+  # weather). Rendered as inline SVG on the web client, refined ASCII on terminal.
+  SplashesEnabled: true
+
 ################################################################################
 #
 #   BALANCE

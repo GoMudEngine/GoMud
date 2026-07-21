@@ -25,7 +25,7 @@ const (
 func skipStages(cat Category) normalizeStage {
 	switch cat {
 	case CategoryRoomDescription, CategoryRoomEntry, CategoryRoomExit,
-		CategoryWeather, CategoryTimeOfDay,
+		CategoryWeather, CategoryTimeOfDay, CategorySplash,
 		CategoryNPCDialogue, CategoryDialogueHint,
 		CategoryMobIdle, CategoryMobEmote,
 		CategorySpeech, CategoryWhisper, CategoryShout, CategoryEmote,
