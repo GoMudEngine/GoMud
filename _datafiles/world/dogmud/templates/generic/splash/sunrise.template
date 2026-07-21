@@ -1,0 +1,17 @@
+ <ansi fg="239">┌─────────────────────────────────────────────────────────────────────────┐</ansi>
+
+                   <ansi fg="94">·          ˙      ✦          ·         ˙   </ansi>
+                   <ansi fg="220">                ░▒▓▓▒░                </ansi>
+                   <ansi fg="222">              ░▒▓█████▓▒░              </ansi>
+                   <ansi fg="229">             ▒▓███████████▓▒             </ansi>
+                   <ansi fg="222">              ░▒▓█████▓▒░              </ansi>
+                   <ansi fg="74">▂▃▄▅▆▇</ansi><ansi fg="222">▆▅▄▃▄▅▆</ansi><ansi fg="74">▇▆▅▄▃▂▃▄▅▆▇▆▅▄▃▂▃▄▅▆</ansi>
+                   <ansi fg="38">≈≋≈  ≋ </ansi><ansi fg="179">≈≋ ≈ ≋≈</ansi><ansi fg="38"> ≋ ≈≋≈  ≋  ≈≋ ≈ ≋≈ ≈</ansi>
+                   <ansi fg="31">  ≈   ≋≈    ≋    ≈  ≋ ≈   ≋   ≈ ≋  ≈ </ansi>
+                   <ansi fg="230">              The sun rises.            </ansi>
+
+                       It is <ansi fg="230">day {{ .Day }}</ansi> of <ansi fg="230">year {{ .Year }}</ansi>.
+                       The month is <ansi fg="230">{{ month .Month }}</ansi>.
+                       It is the year of the <ansi fg="230">{{ zodiac .Year }}</ansi>.
+
+ <ansi fg="239">└─────────────────────────────────────────────────────────────────────────┘</ansi>

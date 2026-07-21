@@ -3,12 +3,11 @@ package hooks
 import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/gametime"
-	"github.com/GoMudEngine/GoMud/internal/templates"
+	"github.com/GoMudEngine/GoMud/internal/splash"
 )
 
 //
-// Watches the rounds go by
-// Spawns the loot goblin every so often
+// Fires a global sunrise/sunset splash scene each day-night boundary.
 //
 
 func NotifySunriseSunset(e events.Event) events.ListenerReturn {
@@ -18,24 +17,20 @@ func NotifySunriseSunset(e events.Event) events.ListenerReturn {
 	}
 
 	if evt.IsSunrise {
-
-		sunriseTxt, _ := templates.Process("generic/sunrise", gametime.GetDate())
-		sunriseTxtSR, _ := templates.Process("generic/sunrise", gametime.GetDate(), templates.ForceScreenReaderUserId)
-
-		events.AddToQueue(events.Broadcast{
-			Text:             sunriseTxt,
-			TextScreenReader: sunriseTxtSR,
+		events.AddToQueue(splash.Splash{
+			SceneId: "sunrise",
+			Caption: "The sun rises.",
+			Target:  splash.TargetGlobal,
+			Data:    gametime.GetDate(),
 		})
 		return events.Continue
 	}
 
-	sunsetTxt, _ := templates.Process("generic/sunset", nil)
-	sunsetTxtSR, _ := templates.Process("generic/sunset", nil, templates.ForceScreenReaderUserId)
-
-	events.AddToQueue(events.Broadcast{
-		Text:             sunsetTxt,
-		TextScreenReader: sunsetTxtSR,
+	events.AddToQueue(splash.Splash{
+		SceneId: "sunset",
+		Caption: "The sun sets. Night draws in.",
+		Target:  splash.TargetGlobal,
+		Data:    gametime.GetDate(),
 	})
-
 	return events.Continue
 }
