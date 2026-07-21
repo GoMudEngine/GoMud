@@ -109,7 +109,7 @@ quantity. Config knobs: `ShopBuyRatio`, `ShopPriceFloor`, `ShopPriceCeiling`,
 `BarterMaxDiscount`, `BarterMaxBonus`.
 
 ## Moderation Persistence
-Player-moderation state lives in `_datafiles/moderation/` — `petitions.yaml`
+Player-moderation state lives in `_datafiles/world/dogmud/moderation/` — `petitions.yaml`
 (the `petition` queue: player→staff reports, open/resolved) and `bans.yaml`
 (permanent account + IP bans). Like `shops/` and `guilds/`, this is persistent
 living state: it is `.gitignore`d, kept on the prod droplet, and must **NOT** be

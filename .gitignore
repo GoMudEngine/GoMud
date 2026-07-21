@@ -115,4 +115,4 @@ _archive/prod-users.tgz
 Screenshot *.png
 
 # Moderation living state (petition queue + ban lists) — persist on prod, never commit
-_datafiles/moderation/
+_datafiles/world/dogmud/moderation/
