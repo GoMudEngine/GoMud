@@ -65,6 +65,9 @@ var (
 		`bash`:            {Bash, false, true, false},
 		`bug`:             {Bug, true, true, false},
 		`biome`:           {Biome, true, true, false},
+		`ban`:             {Ban, true, true, true},   // Admin only — account/IP ban
+		`boot`:            {Boot, true, true, true},  // Admin only — force-disconnect a player by name
+		`unban`:           {Unban, true, true, true}, // Admin only — lift a ban
 		`broadcast`:       {Broadcast, true, true, false},
 		`chat`:            {Chat, true, true, false},
 		`newbie`:          {Newbie, true, true, false},
@@ -154,6 +157,8 @@ var (
 		`password`:        {Password, true, true, false},
 		`paz`:             {Paz, true, true, true}, // Admin only
 		`pet`:             {Pet, false, true, false},
+		`petition`:        {Petition, true, true, false},  // Player — contact staff into the moderation queue
+		`petitions`:       {Petitions, true, true, true}, // Admin only — review the petition queue
 		`picklock`:        {Picklock, false, true, false},
 		`steal`:           {Steal, false, true, false},
 		`plant`:           {Plant, false, true, false},

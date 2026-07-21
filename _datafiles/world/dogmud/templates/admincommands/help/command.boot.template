@@ -1,0 +1,10 @@
+The <ansi fg="command">boot</ansi> command force-disconnects an online player. It resolves the
+target by character name server-wide — you do not need to be in the same room.
+
+<ansi fg="command">boot [name]</ansi> - Disconnect a player
+<ansi fg="command">boot [name] [reason]</ansi> - Disconnect a player, showing them the reason
+
+A booted player may reconnect (like any dropped connection). To keep someone
+out, use <ansi fg="command">ban</ansi> — a banned account is rejected at login even if it reconnects.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help ban</ansi>

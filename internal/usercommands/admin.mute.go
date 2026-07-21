@@ -3,7 +3,6 @@ package usercommands
 import (
 	"fmt"
 
-	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -24,13 +23,11 @@ func Mute(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
-	target, err := actions.ResolveTargetActor(room, rest)
-	if err != nil || !target.IsPlayer() {
+	u := resolveModTarget(room, rest)
+	if u == nil {
 		user.SendText(messaging.CategorySystem, "Could not find user.")
 		return true, nil
 	}
-
-	u := target.(*actions.UserActor).User
 	u.Muted = true
 
 	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-5">MUTED</ansi>`, u.Username, u.Character.Name))
@@ -46,13 +43,11 @@ func UnMute(rest string, user *users.UserRecord, room *rooms.Room, flags events.
 		return true, nil
 	}
 
-	target, err := actions.ResolveTargetActor(room, rest)
-	if err != nil || !target.IsPlayer() {
+	u := resolveModTarget(room, rest)
+	if u == nil {
 		user.SendText(messaging.CategorySystem, "Could not find user.")
 		return true, nil
 	}
-
-	u := target.(*actions.UserActor).User
 	u.Muted = false
 
 	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="username">%s</ansi> (<ansi fg="username">%s</ansi>) has been <ansi fg="alert-1">UNMUTED</ansi>`, u.Username, u.Character.Name))

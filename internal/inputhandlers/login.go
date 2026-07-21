@@ -4,10 +4,12 @@ import (
 	// ... other imports
 
 	"fmt"
+	"net"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/language"
+	"github.com/GoMudEngine/GoMud/internal/moderation"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/templates"
@@ -17,6 +19,21 @@ import (
 
 // FinalizeLoginOrCreate is called after all prompts are successfully answered.
 func FinalizeLoginOrCreate(results map[string]string, sharedState map[string]any, clientInput *connections.ClientInput) bool {
+
+	// IP ban: reject (and block re-registration) before any account work. Skip
+	// local/loopback connections so an admin can never lock themselves out.
+	if connDetails := connections.Get(clientInput.ConnectionId); connDetails != nil && !connDetails.IsLocal() {
+		host, _, err := net.SplitHostPort(connDetails.RemoteAddr().String())
+		if err != nil {
+			host = connDetails.RemoteAddr().String()
+		}
+		if reason, banned := moderation.IsIPBanned(host); banned {
+			connections.SendTo([]byte("Your connection has been banned. Reason: "+reason), clientInput.ConnectionId)
+			connections.SendTo(term.CRLF, clientInput.ConnectionId)
+			connections.Remove(clientInput.ConnectionId)
+			return false
+		}
+	}
 
 	username := results["username"]
 	password := results["password"]
@@ -60,6 +77,16 @@ func FinalizeLoginOrCreate(results map[string]string, sharedState map[string]any
 				connections.SendTo(term.CRLF, clientInput.ConnectionId)
 				connections.Remove(clientInput.ConnectionId)
 				return false // Indicate failure, connection removed
+			}
+
+			// Account ban: reject a banned account after the password is verified
+			// (so it can't be used to probe which accounts exist) and before the
+			// character enters the world.
+			if reason, banned := moderation.IsAccountBanned(username); banned {
+				connections.SendTo([]byte("This account has been banned. Reason: "+reason), clientInput.ConnectionId)
+				connections.SendTo(term.CRLF, clientInput.ConnectionId)
+				connections.Remove(clientInput.ConnectionId)
+				return false
 			}
 
 			loggedInUser, msg, err := users.LoginUser(tmpUser, clientInput.ConnectionId)

@@ -60,6 +60,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/economy/health"
 	"github.com/GoMudEngine/GoMud/internal/enchantments"
 	"github.com/GoMudEngine/GoMud/internal/guilds"
+	"github.com/GoMudEngine/GoMud/internal/moderation"
 	"github.com/GoMudEngine/GoMud/internal/mapper"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
@@ -1739,6 +1740,7 @@ func loadAllDataFiles(isReload bool) {
 	quests.LoadDataFiles()
 	achievements.LoadDataFiles()
 	guilds.LoadDataFiles()
+	moderation.LoadDataFiles()
 	ferry.LoadDataFiles()
 	warehouse.LoadAll()
 	questengine.LoadDataFiles()

@@ -1,0 +1,10 @@
+The <ansi fg="command">petitions</ansi> command reviews the player petition queue (the reports
+players file with <ansi fg="command">petition</ansi>). Petitions persist, so nothing is lost when
+no staff were online at the time.
+
+<ansi fg="command">petitions</ansi> - List the open petitions
+<ansi fg="command">petitions all</ansi> - List every petition, open and resolved
+<ansi fg="command">petitions [id]</ansi> - Show the full detail of one petition
+<ansi fg="command">petitions resolve [id] [note]</ansi> - Mark a petition resolved (with an optional note)
+
+New petitions also ping any staff who are online at the time.

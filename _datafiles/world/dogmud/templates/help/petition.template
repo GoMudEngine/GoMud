@@ -1,0 +1,19 @@
+<ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">petition</ansi>
+
+The <ansi fg="command">petition</ansi> command sends a message straight to the staff — use it
+for harassment, a player griefing others, a quest you're stuck on, or anything
+you need a human to look at. Your name, location, and the time are attached
+automatically.
+
+<ansi fg="yellow">Usage:</ansi>
+
+  <ansi fg="command">petition <message></ansi>
+
+  Examples:
+    <ansi fg="command">petition A player named Grum keeps following and insulting me.</ansi>
+    <ansi fg="command">petition I'm stuck — the gate north won't open after the quest step.</ansi>
+
+Petitions go into a queue the staff review, even if none are online right now.
+Please send one at a time.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help bug</ansi>

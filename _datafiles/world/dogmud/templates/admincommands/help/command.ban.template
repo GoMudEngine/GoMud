@@ -1,0 +1,16 @@
+The <ansi fg="command">ban</ansi> command permanently bans a player account, or an IP address.
+Bans persist across restarts and are enforced at login.
+
+<ansi fg="command">ban [name] [reason]</ansi> - Ban an account by name. If the player is online they are
+                        disconnected immediately. They cannot log back in.
+<ansi fg="command">ban ip [name] [reason]</ansi> - Ban the IP address of an online player (found by name).
+<ansi fg="command">ban ip [address] [reason]</ansi> - Ban a literal IP address.
+
+An IP ban also blocks that address from registering a new account, which helps
+against ban evasion. Use <ansi fg="command">unban</ansi> to lift a ban.
+
+Note: IP bans key on the connection's address. For players on the web client
+that address is the shared web proxy, so an IP ban there affects the proxy, not
+one person — prefer an account ban for web-client users.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help unban</ansi>, <ansi fg="command">help boot</ansi>

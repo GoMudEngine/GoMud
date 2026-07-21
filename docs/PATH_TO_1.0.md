@@ -180,11 +180,21 @@ experience just passed a full feel-test — so the hill is shorter than it looks
 
 ## 4. Trust / moderation (once strangers interact)
 
-- 🟡 **Player-vs-player report + moderation queue** — we have admin `mute` and a
-  `report` command; verify it handles harassment reporting into an admin queue for
-  a stranger crowd.
+- ✅ **Player-vs-player report + moderation queue** — **SHIPPED 2026-07-21**
+  (spec+plan `2026-07-21-moderation-reporting-enforcement-*`). Investigation found
+  the `report` command was a **vital-bar utility**, not moderation — there was no
+  reporting path, queue, ban, or admin kick-player. Built a new `internal/moderation`
+  package (durable `petitions.yaml` + `bans.yaml`, gitignored living state): a
+  player `petition <message>` command → durable admin-reviewable queue + online-staff
+  ping; admin `petitions` (list/detail/resolve), `boot` (global disconnect), `ban`/
+  `unban` (perm account + optional IP); account/IP ban rejection at login; and
+  `mute`/`deafen` extended to global-by-name targeting. Unit-tested + reviewed.
 - 🟡 **Link-death / reconnection grace mid-combat** — zombie handling exists;
-  verify a dropped connection in a fight is graceful.
+  verify a dropped connection in a fight is graceful. **Investigated 2026-07-21:
+  NOT graceful** — a mid-fight disconnect leaves a "zombie" that stays in combat,
+  keeps taking hits, and can die link-dead (Presence stays Active, so the existing
+  Disconnected-target veto never fires). This is sub-project B of §4, deferred to a
+  follow-up build (reconnect itself is clean).
 
 ---
 
