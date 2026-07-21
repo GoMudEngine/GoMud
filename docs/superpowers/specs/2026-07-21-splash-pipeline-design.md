@@ -6,6 +6,18 @@
 is sub-project **B** of the weather/seasons work; sub-project **A** (readability +
 pacing) follows.
 
+> **Design change (2026-07-21, during implementation):** the web client is
+> **xterm.js**, which renders ANSI/Unicode text — it has no DOM output feed, so
+> **inline SVG scenes in the output scroll are not feasible**. Decision: render
+> the refined **ASCII art on all clients** (xterm displays it identically to
+> telnet). This *removes* the per-client SVG path, the GMCP `Event.Splash`
+> package, the client-side SVG scene library, and the `IsWebConnection` flag from
+> the sections below — the single terminal delivery hook renders the ASCII scene
+> to every client (caption for screen readers). Everything else (the `Splash`
+> event, recipient targeting, consumers, the refined ASCII art, the 17-scene
+> catalog) stands. A dedicated web "scene panel" showing real SVG remains a
+> possible future enhancement (would re-introduce a GMCP push).
+
 ## Problem
 
 DOGMud already prints full-screen ASCII "splash" art for a few celestial events

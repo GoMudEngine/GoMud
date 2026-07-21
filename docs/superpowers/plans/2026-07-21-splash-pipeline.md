@@ -10,6 +10,16 @@
 
 **Spec:** `docs/superpowers/specs/2026-07-21-splash-pipeline-design.md`
 
+> **Design change (2026-07-21, mid-execution):** the web client is xterm.js (no
+> DOM feed) → inline SVG isn't feasible. We render the refined **ASCII on all
+> clients**. This **drops Task 2 (IsWebConnection), Task 5 (gmcp web delivery),
+> Task 7 (web SVG handler/scene library), and all SVG-builder work in Task 11** —
+> those were done then reverted. The single delivery hook (Task 4) renders ASCII
+> to every client. Remaining work: Tasks 8 (moon), 9 (season), 10 (weather
+> onset), 11 (author the remaining ASCII scenes — **templates only, no SVG**),
+> 12 (docs), 13 (verify). Screen-reader `.screenreader.template` files are NOT
+> needed either — the `Caption` field is the SR line.
+
 ---
 
 ## Grounded facts (verified — reference while implementing)
