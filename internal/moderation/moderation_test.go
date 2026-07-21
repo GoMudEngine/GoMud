@@ -35,6 +35,62 @@ func TestPetitionQueue(t *testing.T) {
 	assert.Error(t, Resolve(999, "x", ""))
 }
 
+func TestAccountBans(t *testing.T) {
+	restore := SetDataDirForTest(t.TempDir())
+	defer restore()
+	resetForTest()
+
+	assert.NoError(t, BanAccount("Griefer", "spamming slurs", "AdminZoe"))
+	reason, banned := IsAccountBanned("griefer") // case-insensitive
+	assert.True(t, banned)
+	assert.Equal(t, "spamming slurs", reason)
+
+	_, banned = IsAccountBanned("SomeoneElse")
+	assert.False(t, banned)
+
+	assert.NoError(t, Unban("GRIEFER"))
+	_, banned = IsAccountBanned("Griefer")
+	assert.False(t, banned)
+}
+
+func TestIPBans(t *testing.T) {
+	restore := SetDataDirForTest(t.TempDir())
+	defer restore()
+	resetForTest()
+
+	assert.NoError(t, BanIP("203.0.113.7", "evasion", "AdminZoe"))
+	reason, banned := IsIPBanned("203.0.113.7")
+	assert.True(t, banned)
+	assert.Equal(t, "evasion", reason)
+
+	_, banned = IsIPBanned("198.51.100.1")
+	assert.False(t, banned)
+
+	assert.NoError(t, UnbanIP("203.0.113.7"))
+	_, banned = IsIPBanned("203.0.113.7")
+	assert.False(t, banned)
+}
+
+func TestBanPersistenceRoundTrip(t *testing.T) {
+	dir := t.TempDir()
+	restore := SetDataDirForTest(dir)
+	resetForTest()
+	_ = BanAccount("Griefer", "grief", "Zoe")
+	_ = BanIP("203.0.113.7", "evasion", "Zoe")
+	restore()
+
+	// Use the unexported loaders directly (LoadDataFiles logs via mudlog, which
+	// is only initialized at real server boot).
+	restore2 := SetDataDirForTest(dir)
+	defer restore2()
+	resetForTest()
+	loadBans()
+	_, a := IsAccountBanned("griefer")
+	_, i := IsIPBanned("203.0.113.7")
+	assert.True(t, a)
+	assert.True(t, i)
+}
+
 func TestPetitionPersistenceRoundTrip(t *testing.T) {
 	dir := t.TempDir()
 	restore := SetDataDirForTest(dir)

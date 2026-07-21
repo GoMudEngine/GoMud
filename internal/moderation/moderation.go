@@ -32,21 +32,22 @@ func SetDataDirForTest(dir string) func() {
 	return func() { dataDirOverride = prev }
 }
 
-// resetForTest clears all in-memory state (test-only). Task 2 extends this to
-// also clear the ban maps.
+// resetForTest clears all in-memory state (test-only).
 func resetForTest() {
 	mu.Lock()
 	defer mu.Unlock()
 	petitions = nil
 	nextPetitionId = 1
+	accountBans = map[string]AccountBan{}
+	ipBans = map[string]IPBan{}
 }
 
 // LoadDataFiles loads the moderation stores into memory at boot. Missing or
 // malformed files are logged + skipped (runtime state must not crash boot).
-// Task 2 extends this to also call loadBans().
 func LoadDataFiles() {
 	loadPetitions()
-	mudlog.Info("moderation.LoadDataFiles()", "petitions", len(petitions))
+	loadBans()
+	mudlog.Info("moderation.LoadDataFiles()", "petitions", len(petitions), "accountBans", len(accountBans), "ipBans", len(ipBans))
 }
 
 // now is overridable in tests if deterministic timestamps are ever needed.
