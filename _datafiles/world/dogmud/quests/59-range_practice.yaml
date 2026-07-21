@@ -20,6 +20,7 @@ cooldown_rounds: 300
 
 steps:
   - id: start
+    map_target: 5354
     description: >-
       Bryn has sent you to put a cross-canyon shot through the slot
       and then bring down whatever comes charging.
@@ -28,6 +29,7 @@ steps:
       Finish the scout when it charges. Come back to Bryn when
       it is done.
   - id: shoot
+    map_target: 5356
     description: >-
       The shot crossed the slot. Stand your ground and finish the
       target when it reaches you.

@@ -27,6 +27,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: -1  # -1: bundled objectives, rooms [5354, 5356]; Phase 2 split review
     description: >-
       Bryn wants you to take the canyon scout posted on the sounding floor --
       and to do it the hard way, with a shot from the chamber below before it
@@ -38,12 +39,14 @@ steps:
       the exit. It will charge in -- stand and finish it. Then report to Scout
       Bryn -- type ask bryn done.
   - id: shoot
+    map_target: 5356
     description: >-
       Your shot crossed the gap and bit. The scout is coming -- put it down.
     hint: >-
       The canyon scout is charging you. Finish the fight (shoot it again or
       cut it down), then report to Scout Bryn -- type ask bryn done.
   - id: kill
+    map_target: 5353
     description: >-
       The scout is down. If you have not yet made the cross-room shot the
       lesson is incomplete -- but the way is open.

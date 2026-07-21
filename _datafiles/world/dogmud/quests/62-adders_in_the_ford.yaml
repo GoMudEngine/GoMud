@@ -9,6 +9,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: 5423
     description: >-
       Tamsin Reed asked you to kill the marsh adder that lairs in the
       reeds on the south approach to the ford -- it keeps striking her
@@ -17,6 +18,7 @@ steps:
       Head south into the reeds before the ford and kill the marsh adder.
       Come back and tell Tamsin at the ford landing when it is dead.
   - id: adder
+    map_target: 5425
     description: >-
       The marsh adder that lairs in the reeds is dead. Report back to
       Tamsin at the ford landing.

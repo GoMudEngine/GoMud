@@ -26,6 +26,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: 5298
     description: >-
       Delk has set you on the pack. Press south into their territory,
       fight through the hounds, and defeat the alpha pack-leader in the

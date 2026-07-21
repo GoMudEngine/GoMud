@@ -10,6 +10,7 @@ secret: false
 
 steps:
   - id: start
+    map_target: -1  # -1: bundled objectives, rooms [6037, 6038]; Phase 2 split review
     description: >-
       Gritta asked you to go deeper -- to see the Buried Lintel and the
       sealed Deep Canal with your own eyes, take a rubbing of the lintel
@@ -18,6 +19,7 @@ steps:
       Go west and deeper to the Buried Lintel. Examine the symbol carved
       on its underside to take a rubbing. Mind the canal -- it is not empty.
   - id: witness
+    map_target: 5706
     description: >-
       You stood beneath the Buried Lintel and took a rubbing of the
       eight-pointed symbol -- the original the gallery's oldest painting

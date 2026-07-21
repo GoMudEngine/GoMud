@@ -7,6 +7,7 @@ secret: false
 
 steps:
   - id: start
+    map_target: -1  # -1: bundled objectives, rooms [4027, 4031]; Phase 2 split review
     description: "Delia, the herbalist in Ashwick, cannot
       restock her supplies. Someone has been taking the
       wild herbs from the forest before she can harvest
@@ -16,6 +17,7 @@ steps:
       of Ashwick. Look for signs of who has been taking
       the herbs."
   - id: forager
+    map_target: 4027
     description: "You found a forager living in the woods
       who has been harvesting Delia's herbs. They have
       agreed to work with Delia if you vouch for them.

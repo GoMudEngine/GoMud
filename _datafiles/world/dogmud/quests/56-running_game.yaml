@@ -19,6 +19,7 @@ cooldown_rounds: 300
 
 steps:
   - id: start
+    map_target: -1  # -1: no single resolved destination (near [5290]); Phase 2 review
     description: >-
       Delk wants you to bring down a pronghorn and forage the fringe
       before you lose the feel for the country.
@@ -27,6 +28,7 @@ steps:
       type forage at the camp to finish. Come back to Delk when
       both are done.
   - id: hunt
+    map_target: 5284
     description: >-
       One pronghorn down. Now forage the fringe at the camp to
       finish what Delk sent you out for.

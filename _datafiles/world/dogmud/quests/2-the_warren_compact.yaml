@@ -6,6 +6,7 @@ secret: false
 
 steps:
   - id: start
+    map_target: -1  # -1: return-to-giver / in-place (start room 301); Phase 2 split review
     description: "The Tunnel Shaman has asked you to bring a healing
       salve as proof of good intent. Obtain one and bring it to the
       shaman in the Low Junction."

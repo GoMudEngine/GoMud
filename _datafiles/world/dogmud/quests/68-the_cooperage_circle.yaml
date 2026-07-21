@@ -15,6 +15,7 @@ flags:
 
 steps:
   - id: start
+    map_target: 5719
     description: >-
       Orin asked you to visit the shuttered cooperage and find Toby -- to
       see whether anyone still tends the place, and bring back proof.
@@ -22,6 +23,7 @@ steps:
       Go to the abandoned cooperage north of Craftwell Square and speak with
       Toby. Bring Orin proof the place is still kept.
   - id: evidence
+    map_target: -1  # -1: bundled objectives, rooms [5706, 5720]; Phase 2 split review
     description: >-
       Toby keeps the cooperage's tools oiled and its master's bench-mark
       clean, and gave you a rubbing of it. He says Edvar's hidden survey is
@@ -32,6 +34,7 @@ steps:
       Examine the loose floorboard on the cooperage floor to find Edvar's
       map-fragment, then take what you have back to Orin.
   - id: choice
+    map_target: -1  # -1: bundled objectives, rooms [5719, 5817]; Phase 2 split review
     description: >-
       Orin laid out the choice: help the circle hold the cooperage, or take
       Edvar's survey to Clerk Vell and be paid for it.

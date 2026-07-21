@@ -27,6 +27,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: -1  # -1: return-to-giver / in-place (start room 5290); Phase 2 split review
     description: >-
       Delk has given you salt and set you hunting. Bring down a
       pronghorn on the fringe, sleep in the field to recover, and cook
@@ -38,6 +39,7 @@ steps:
       (you carry the salt; the meat comes off the kill). Do all three,
       then report to Delk.
   - id: hunt
+    map_target: -1  # -1: no single resolved destination; Phase 2 review
     description: >-
       You brought a pronghorn down and took its meat. Rest in the field
       and cook if you have not.
@@ -45,6 +47,7 @@ steps:
       Type sleep to rest in the field; type craft grilled meat at Delk's
       camp fire. Then report -- ask delk report.
   - id: rest
+    map_target: 5290
     description: >-
       You slept rough and woke stronger -- the field's own medicine.
       Hunt and cook if you have not.
@@ -52,6 +55,7 @@ steps:
       Hunt a pronghorn for meat; type craft grilled meat at the camp
       fire. Then report to Delk -- ask delk report.
   - id: cook
+    map_target: -1  # -1: return-to-giver / in-place (start room 5290); Phase 2 split review
     description: >-
       You cooked the kill over the fire. Hunt and rest if you have not.
     hint: >-

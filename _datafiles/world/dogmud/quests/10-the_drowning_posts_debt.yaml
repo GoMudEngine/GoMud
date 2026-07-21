@@ -7,12 +7,14 @@ secret: false
 
 steps:
   - id: start
+    map_target: 473
     description: "Tavern keeper Marek at the Drowning Post gave you a protection
       notice as evidence of the racket squeezing his business. Take it to Guard
       Captain Velk at the barracks."
     hint: "Bring the protection notice to Guard Captain Velk at the city
       barracks."
   - id: report
+    map_target: 472
     description: "Guard Captain Velk has seen the evidence and will act on it.
       Return to Marek with the good news."
     hint: "Go back to the Drowning Post tavern and tell Marek the guard

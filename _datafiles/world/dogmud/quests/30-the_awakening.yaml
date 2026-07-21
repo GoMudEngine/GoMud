@@ -20,6 +20,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: -1  # -1: no single resolved destination (near [5200]); Phase 2 review
     description: "Cleric Hadwen will open the pool for you when you are ready. Type ask hadwen begin at the pool to start the rite."
     hint: "Stand at the Awakening Pool and type ask hadwen begin when you are ready."
   - id: end

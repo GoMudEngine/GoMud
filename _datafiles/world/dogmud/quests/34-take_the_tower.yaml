@@ -35,6 +35,7 @@ flags:
 
 steps:
   - id: start
+    map_target: 5242
     description: "Garve has set you on the tower. Climb the wash to the ruined watchtower and defeat the bandit captain in the watch room at the top."
     hint: "Head east up the wash past the cistern to the broken gate, then climb the tower stairs to the watch room. Defeat the bandit captain. Type consider on a foe first if you want to size it up."
   - id: end

@@ -7,6 +7,7 @@ secret: false
 
 steps:
   - id: start
+    map_target: -1  # -1: return-to-giver / in-place (start room 4003); Phase 2 split review
     description: "Peddler Malk has been waiting on a freight
       shipment for days. He suspects bandits intercepted it. Find
       the missing freight crate."

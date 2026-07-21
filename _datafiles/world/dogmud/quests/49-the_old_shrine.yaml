@@ -27,6 +27,7 @@ linear: true
 
 steps:
   - id: start
+    map_target: 5343
     description: >-
       Sere wants you to find what lies beneath the shrine. In the Reliquary, the
       deepest back-chamber, the flagstone floor has cracked and heaved over
@@ -37,6 +38,7 @@ steps:
       search again if the first try turns up nothing. Then look at what you find,
       and return to Sere -- ask sere done.
   - id: find
+    map_target: 5341
     description: >-
       You worked a disc of pale, impossible metal free of the floor -- a thing
       older than the folk, marked with a sign even the loresingers cannot read.

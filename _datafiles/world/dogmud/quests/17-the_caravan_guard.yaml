@@ -12,6 +12,7 @@ flags:
 
 steps:
   - id: start
+    map_target: -1  # -1: bundled objectives, rooms [4042, 4052]; Phase 2 split review
     description: "The caravan master has asked you to deal with
       the bandit threat on the north road."
     hint: "The bandits have a camp west of the north road, past

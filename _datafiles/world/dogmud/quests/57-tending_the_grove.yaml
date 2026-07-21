@@ -18,6 +18,7 @@ cooldown_rounds: 300
 
 steps:
   - id: start
+    map_target: -1  # -1: no single resolved destination (near [5309]); Phase 2 review
     description: >-
       Orrin has asked you to go into the grove and put down one of
       the veil-warped things that wanders back in.

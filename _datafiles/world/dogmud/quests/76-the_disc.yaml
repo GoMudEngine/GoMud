@@ -8,18 +8,21 @@ description: >-
 secret: false
 steps:
   - id: start
+    map_target: 4023
     description: "Brennan believes the disc is a key that must be woken, and
       that the man who knew how left his work in an Ashwick cottage."
     hint: "You will need the disc itself — it lies in the old Reliquary at
       Pothole Coulee, worked into the floor. Then seek the abandoned
       cottage in Ashwick."
   - id: journal
+    map_target: -1  # -1: return-to-giver / in-place (start room 4023); Phase 2 split review
     description: "You read the father's journal — a life spent chasing a
       buried thing in the east, and the method he worked out for waking
       the disc."
     hint: "Follow his method at the marked hearth in the cottage, with the
       disc in hand."
   - id: attune
+    map_target: -1  # -1: return-to-giver / in-place (start room 4023); Phase 2 split review
     description: "You followed his method at the hearth, and the disc woke
       — the lines hold warmth now, and the mark keeps the light."
     hint: "The disc is a key now. It knows the shape of its lock, east."

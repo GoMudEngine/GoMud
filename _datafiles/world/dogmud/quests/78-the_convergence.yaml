@@ -15,6 +15,7 @@ flags:
 
 steps:
   - id: start
+    map_target: -1  # -1: no single resolved destination (near [6438]); Phase 2 review
     description: >-
       You have shown Veyra a piece of your own making. She will hear a
       commission now.

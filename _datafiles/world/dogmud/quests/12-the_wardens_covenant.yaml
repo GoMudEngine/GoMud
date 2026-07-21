@@ -6,6 +6,7 @@ description: You have chosen to support Windwarden Sylara and protect
 secret: false
 steps:
   - id: start
+    map_target: -1  # -1: return-to-giver / in-place (start room 3115); Phase 2 split review
     description: "Windwarden Sylara has offered to teach you the
       ancient covenant. Travel to her at the stone circle and tell
       her you are ready for the ritual."
@@ -13,6 +14,7 @@ steps:
       to the ridge trail junction, then east 1 into the stone circle.
       Try: ask sylara ritual"
   - id: ritual
+    map_target: -1  # -1: return-to-giver / in-place (start room 3115); Phase 2 split review
     description: "Sylara has begun the binding ritual at the stone
       circle. Open yourself to the spirits of the steppe and complete
       the binding."

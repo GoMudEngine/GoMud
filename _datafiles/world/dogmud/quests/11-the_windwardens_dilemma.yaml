@@ -11,6 +11,7 @@ flags:
     description: "Which NPC the player sided with"
 steps:
   - id: start
+    map_target: -1  # -1: bundled objectives, rooms [3030, 3115]; Phase 2 split review
     description: "A conflict is brewing on the Ironwind Steppe. Visit
       Windwarden Sylara at the stone circle or Geomancer Rhett at the
       ridge approach and choose a side."

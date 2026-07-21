@@ -7,6 +7,7 @@ secret: false
 
 steps:
   - id: start
+    map_target: -1  # -1: return-to-giver / in-place (start room 468); Phase 2 split review
     description: "Temple Priest Olen has asked you to investigate discrepancies in
       the tithe records. He suspects merchants in the market are under-reporting
       their income to avoid full tithes. Find the tithe ledger in the Records

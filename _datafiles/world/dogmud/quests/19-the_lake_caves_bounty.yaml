@@ -14,24 +14,28 @@ flags:
 
 steps:
   - id: start
+    map_target: -1  # -1: no single resolved destination (near [4110]); Phase 2 review
     description: "Constable Drunn has posted a bounty on the lake-cave creatures.
       Clear the shallows of shrimp swarms, deal with at least one drowned
       hunter, then come back to the constabulary for further instructions."
     hint: "Take a light source -- your chrysalis-glow spell or a lantern. The
       caves are dark. The cave mouth is east of the fishing docks."
   - id: shrimp
+    map_target: -1  # -1: no single resolved destination; Phase 2 review
     description: "You have cleared a swarm of skitter-shrimp from the cave
       shallows. The fishing nets will hold longer."
     hint: "A drowned hunter still lurks deeper in the cave system. Clear at
       least one, then walk back to Constable Drunn at the constabulary and
       ask him about the quest to report."
   - id: hunter
+    map_target: 4110
     description: "You have killed a drowned hunter. The shallows are
       meaningfully safer."
     hint: "Walk back to Constable Drunn at the constabulary and ask him about
       the quest to report. (If you have not cleared a shrimp swarm yet, do
       that first.)"
   - id: signed
+    map_target: -1  # -1: bundled objectives, rooms [4110, 4116]; Phase 2 split review
     description: "Drunn has signed the upgraded bounty. The constabulary will
       pay handsomely for proof that the deepest threat in the sump has been
       put down -- but the warrant is now yours to pursue or to walk away

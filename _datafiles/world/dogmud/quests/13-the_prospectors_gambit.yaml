@@ -6,12 +6,14 @@ description: You have chosen to help Geomancer Rhett extract windstone
 secret: false
 steps:
   - id: start
+    map_target: -1  # -1: return-to-giver / in-place (start room 3030); Phase 2 split review
     description: "Travel to Geomancer Rhett at the rocky shelf and
       help him begin the windstone extraction."
     hint: "Geomancer Rhett is at the Ridge Approach. From Thornwall's
       eastern gate, go east 7 times to reach him. Tell him you are
       ready to help with the extraction (ask about 'work' or 'gambit')."
   - id: extraction
+    map_target: -1  # -1: return-to-giver / in-place (start room 3030); Phase 2 split review
     description: "Assist Rhett with the delicate extraction process.
       The crystal must be removed without shattering."
     hint: "Rhett is at the Ridge Approach (east 7 from Thornwall's

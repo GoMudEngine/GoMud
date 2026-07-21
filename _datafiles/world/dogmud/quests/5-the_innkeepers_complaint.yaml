@@ -7,6 +7,7 @@ secret: false
 
 steps:
   - id: start
+    map_target: -1  # -1: return-to-giver / in-place (start room 423); Phase 2 split review
     description: "Innkeeper Tolva at the Crossing Inn has asked you to investigate the bridge toll. She believes it is unauthorized and wants proof. Find the crossing ledger at the tollhouse and bring it back to her."
     hint: "Get the crossing ledger from the Tollhouse. From the Crossing Inn, the Tollhouse is nearby — check the rooms around the crossing. Bring the ledger back to Innkeeper Tolva."
   - id: end

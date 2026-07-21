@@ -15,6 +15,7 @@ flags:
 
 steps:
   - id: start
+    map_target: 5523
     description: >-
       Trace the Bloom to its source. It starts with a clean little
       draper's shop on the docks.
@@ -22,6 +23,7 @@ steps:
       Find the draper Teels mentioned -- Marn, down the dock streets --
       and get into his back room.
   - id: front
+    map_target: 5808
     description: >-
       You got past Marn's front. The supply comes up from an address in
       the Old Quarter -- 215 Lintel Street -- routed through people who
@@ -30,6 +32,7 @@ steps:
       Ask the auctioneer Falk in the Merchant Quarter about the Lintel
       Street address.
   - id: lintel
+    map_target: 6013
     description: >-
       Falk knows the Lintel Street address as a quiet property held
       through nominal owners.
@@ -37,6 +40,7 @@ steps:
       The deliveries pass through the Noble Quarter. Ask the servant
       Wenna about the unmarked crates she has seen.
   - id: delivery
+    map_target: 6029
     description: >-
       Wenna confirmed the delivery house -- unmarked goods at odd hours,
       under the bloodline office's eye.
@@ -44,6 +48,7 @@ steps:
       Go down into the Old Quarter to 215 Lintel Street, and confront
       Deren about the source to his face.
   - id: source
+    map_target: 6031
     description: >-
       You found 215 Lintel Street -- the production room, the apparatus,
       and Deren, exposed but untouchable, the bloodline office at his
@@ -52,6 +57,7 @@ steps:
       Find a witness. The lamplighter Quill walks these canals -- ask
       him for his account of what passes the iron door.
   - id: witness
+    map_target: 5525
     description: >-
       Quill gave his account. With the wrapper, the address, the
       delivery note, and the testimony, you have a case the watch
@@ -59,6 +65,7 @@ steps:
     hint: >-
       Take the case-file to the Dock Constable.
   - id: report
+    map_target: -1  # -1: return-to-giver / in-place (start room 5525); Phase 2 split review
     description: >-
       The Dock Constable has the case-file. The trade will be disrupted
       -- but Deren himself stays beyond her reach.

@@ -8,6 +8,7 @@ secret: false
 
 steps:
   - id: start
+    map_target: -1  # -1: return-to-giver / in-place (start room 442); Phase 2 split review
     description: "Farmer Dorn has asked you to clear the crop pests
       from the south fields and bring back a sample."
     hint: "Kill crop pests and collect a sample for Farmer Dorn.

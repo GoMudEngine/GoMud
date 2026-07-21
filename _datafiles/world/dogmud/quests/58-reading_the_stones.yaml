@@ -18,6 +18,7 @@ cooldown_rounds: 300
 
 steps:
   - id: start
+    map_target: 5343
     description: >-
       Sere has asked you to return to the Reliquary and search the
       old stones again.

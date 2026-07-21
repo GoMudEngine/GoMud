@@ -19,6 +19,7 @@ cooldown_rounds: 300
 
 steps:
   - id: start
+    map_target: 5265
     description: >-
       Falv wants you to brew at the alchemy bench and drink what you
       make.
@@ -26,6 +27,7 @@ steps:
       Go to the alchemy bench and type craft to make a brew. Then type
       drink to take it. Come back to Falv when you are done.
   - id: brew
+    map_target: -1  # action step (command/skill) — no travel destination
     description: >-
       You made the brew. Now drink it down before you report back.
     hint: "Type drink to drink what you just brewed."

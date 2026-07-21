@@ -9,66 +9,83 @@ linear: true
 
 steps:
   - id: start
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "You have woken, and Dewey has marked your path."
     hint: "Type hint to see your next step -- or quests to see the whole journey."
   - id: hinted
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "You read your first hint. That command is your compass now."
     hint: "Take stock of where you stand -- type look."
   - id: looked
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "You took in the room around you."
     hint: "Look closer at one thing -- type look guide."
   - id: examined
     description: "You read the guide closely. Reading is the first survival skill."
     hint: "The way north is open -- type north."
   - id: status_prompt
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "You stepped into the place where you meet yourself."
     hint: "Read yourself -- type status."
   - id: statused
     description: "You read your six stats and three pools."
     hint: "The way north is open -- type north."
   - id: carry_prompt
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "Small things matter out there."
     hint: "Pick that up -- type get token."
   - id: got
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "The token is yours now."
     hint: "See what you carry -- type inventory."
   - id: invd
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "You checked what you are carrying."
     hint: "When you forget a command, the game remembers -- type help."
   - id: helped
     description: "You opened the help index -- your patient, permanent reference."
     hint: "The way north is open -- type north."
   - id: speaks_prompt
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "Out in the world, people answer when you speak."
     hint: "Speak up -- type say hello."
   - id: said
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "You spoke, and the world can hear you."
     hint: "Ask me something directly -- type ask dewey world."
   - id: asked
     description: "You learned to ask -- half of what matters is learned that way."
     hint: "The way north is open -- type north."
   - id: proving_prompt
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "The practice ring -- where you make your mistakes safely."
     hint: "Steel yourself before a fight -- type warcry."
   - id: warcried
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "Your war cry steadied your nerve -- a condition, riding on you."
     hint: "See what is riding on you -- type conditions."
   - id: saw_conditions
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "You read your conditions. They cut both ways, good and bad."
     hint: "See which big moves are resting -- type cooldowns."
   - id: checked_cooldowns
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "You checked your cooldowns -- your big moves share one well."
     hint: "Now fight -- type attack effigy."
   - id: attacked
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "You closed with the effigy. Your steady swings are free."
     hint: "Drive belief into it -- type cast spike."
   - id: cast_spike
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "You loosed a spike of conviction. Belief is a weapon here."
     hint: "Take its legs the body's way -- type trip."
   - id: tripped
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "You put the effigy down -- voice, belief, and body, all yours."
     hint: "Not every fight is worth finishing -- type flee."
   - id: fled
+    map_target: -1  # -1: no single resolved destination; Phase 2 review
     description: "You broke away. Running is how you live to win the next one."
     hint: "One step left, and it is not a walk -- type talk dewey."
   - id: end

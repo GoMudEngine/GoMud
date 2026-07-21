@@ -37,6 +37,16 @@ func (e *Engine) GetQuest(questId int) *QuestDef {
 	return e.quests[questId]
 }
 
+// AllQuests returns every registered quest (unordered). For audits and gates
+// that need to walk the whole quest set, e.g. the marker-decision smoke gate.
+func (e *Engine) AllQuests() []*QuestDef {
+	out := make([]*QuestDef, 0, len(e.quests))
+	for _, q := range e.quests {
+		out = append(out, q)
+	}
+	return out
+}
+
 // Notify is the main entry point. It evaluates all triggers matching the given
 // event type and returns a result indicating whether anything fired and whether
 // an item should be consumed.

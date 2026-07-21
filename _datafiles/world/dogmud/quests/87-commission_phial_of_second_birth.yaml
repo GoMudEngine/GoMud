@@ -15,6 +15,7 @@ repeatable: true
 cooldown_rounds: 0
 steps:
   - id: start
+    map_target: -1  # action step (command/skill) — no travel destination
     description: "Veyra has taken the commission. Gather the reagents and
       craft the base by your own hand."
   - id: end

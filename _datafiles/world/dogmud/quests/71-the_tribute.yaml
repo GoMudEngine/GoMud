@@ -10,6 +10,7 @@ secret: false
 
 steps:
   - id: start
+    map_target: 5817
     description: >-
       Dame Ostry is squeezed by Clerk Vell's audit and a held surety
       deposit. She asked you to find out what the tribute pays for and
@@ -18,6 +19,7 @@ steps:
       Ask Clerk Vell at the Civic Permit Office about the tribute and the
       audit on Ostry's shop.
   - id: vell
+    map_target: 5820
     description: >-
       Vell says the rate is set by charter and is not negotiable. The
       charter derives from the founding -- and you may know more about the
@@ -26,6 +28,7 @@ steps:
       The tribute runs upward, past the clerk. Get to Horst at the Gilt
       Threshold gate and learn where it goes.
   - id: horst
+    map_target: 5815
     description: >-
       Horst gatekeeps the bloodline's private business and told you, in so
       many words, that the tribute funnels up and discretion is the whole
@@ -34,6 +37,7 @@ steps:
       Examine the papers in the Gilt Threshold parlor for evidence of where
       the tribute goes.
   - id: ledger
+    map_target: 5810
     description: >-
       You lifted a page of the tribute ledger -- vendor sums all routed to
       one unnamed account, with a note to hold filings until permits clear.
