@@ -3,6 +3,7 @@ package weather
 import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/splash"
+	"github.com/GoMudEngine/GoMud/modules/weather/sim"
 )
 
 // onSeasonChanged turns a per-zone season flip into a GLOBAL season splash
@@ -37,6 +38,54 @@ func seasonCaption(season, zone string) string {
 		return "The dry season sets in over " + zone + "."
 	}
 	return capitalize(season) + " comes to " + zone + "."
+}
+
+// severeScene maps the three severe weather types to their splash scene ids.
+// Only these trigger a splash (per design — not rain/fog/heatwave/etc).
+func severeScene(w sim.WeatherType) (string, bool) {
+	switch w {
+	case "storm":
+		return "weather_storm", true
+	case "blizzard":
+		return "weather_blizzard", true
+	case "dust":
+		return "weather_dust", true
+	}
+	return "", false
+}
+
+func severeCaption(w sim.WeatherType, zone string) string {
+	switch w {
+	case "storm":
+		return "A storm breaks over " + zone + "."
+	case "blizzard":
+		return "A blizzard howls across " + zone + "."
+	case "dust":
+		return "A dust storm scours " + zone + "."
+	}
+	return "The weather turns violent over " + zone + "."
+}
+
+// emitSevereOnsets fires one ZONE-scoped splash when a zone TRANSITIONS INTO a
+// severe weather type. It does not re-announce while the weather persists, and
+// says nothing when it clears.
+func (m *weatherModule) emitSevereOnsets(prev map[sim.ZoneId]sim.WeatherType) {
+	for zone, w := range m.state.Weather {
+		scene, severe := severeScene(w)
+		if !severe {
+			continue
+		}
+		if prev[zone] == w {
+			continue // already this severe type last tick — no re-announce
+		}
+		events.AddToQueue(splash.Splash{
+			SceneId: scene,
+			Caption: severeCaption(w, zone),
+			Target:  splash.TargetZone,
+			Zone:    zone, // ZoneId is the zone name
+			Data:    map[string]any{"zone": zone},
+		})
+	}
 }
 
 func capitalize(s string) string {

@@ -147,10 +147,17 @@ func (m *weatherModule) tick(round uint64) {
 		// is unchanged and agnostic to the table varying tick-to-tick.
 		climate = seasons.EffectiveClimate(m.climate, m.tracks, engine.CalendarNow())
 	}
+	// Snapshot the pre-step weather so we can detect severe-weather onsets
+	// (a zone transitioning INTO storm/blizzard/dust) after the step.
+	prev := make(map[sim.ZoneId]sim.WeatherType, len(m.state.Weather))
+	for z, w := range m.state.Weather {
+		prev[z] = w
+	}
 	next, diff := sim.Step(m.state, m.graph, climate, m.simCfg, sim.Clock{Round: round})
 	m.state = next
 	_ = diff // per-zone changes are implied by the reconcile below
 	engine.Reconcile(m.state.Weather)
+	m.emitSevereOnsets(prev)
 	if m.seasonsOn {
 		m.resolveSeasons()
 	}
