@@ -148,6 +148,12 @@ func (g *GMCPModule) onNetConnect(n plugins.NetConnection) {
 		setting.GMCPAccepted = true
 		setting.HelloReceived = true // WebSocket clients bypass telnet negotiation
 		g.cache.Add(n.ConnectionId(), setting)
+
+		// Also flag the low-level connection so non-gmcp code (splash delivery)
+		// can tell web clients apart without importing the gmcp module.
+		cs := connections.GetClientSettings(n.ConnectionId())
+		cs.IsWebConnection = true
+		connections.OverwriteClientSettings(n.ConnectionId(), cs)
 		return
 	}
 
