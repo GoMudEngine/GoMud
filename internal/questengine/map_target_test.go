@@ -45,6 +45,25 @@ func TestResolveQuestTarget_NoTarget(t *testing.T) {
 	}
 }
 
+// A step with map_target -1 means "deliberately no marker" — it must resolve to
+// 0 (no marker) AND suppress room_enter inference, so a stray inferable target
+// does not re-introduce a marker the author explicitly removed.
+func TestResolveQuestTarget_DeliberateNoneSentinel(t *testing.T) {
+	e := NewEngine()
+	e.RegisterQuest(&QuestDef{
+		QuestId: 9998,
+		Steps:   []QuestStep{{Id: "nowhere", MapTarget: -1}},
+		Triggers: []TriggerDef{
+			// A room_enter gated on the step that WOULD infer room 4242 —
+			// proves -1 overrides inference.
+			{Event: "room_enter", Room: 4242, Conditions: Conditions{Has: []string{"9998-nowhere"}}},
+		},
+	})
+	if got := e.ResolveQuestTarget(9998, "nowhere"); got != 0 {
+		t.Fatalf("map_target -1 must resolve to 0 (no marker, inference suppressed); got %d", got)
+	}
+}
+
 func TestResolveQuestTarget_TerminalAndUnknown(t *testing.T) {
 	e := newTargetTestEngine()
 	if got := e.ResolveQuestTarget(32, "end"); got != 0 {

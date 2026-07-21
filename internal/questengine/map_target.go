@@ -10,7 +10,9 @@ import (
 // no resolvable target (the client then draws no marker — no guessing).
 //
 // Resolution order:
-//  1. The current step's explicit map_target.
+//  1. The current step's explicit map_target: >0 is that room; -1 is a
+//     deliberate "no marker" (returns 0 and suppresses inference); 0 falls
+//     through to inference.
 //  2. Inference: a room_enter trigger gated on the current step token
 //     (conditions.has contains "{questId}-{currentStep}") — its room.
 //  3. 0.
@@ -26,10 +28,13 @@ func (e *Engine) ResolveQuestTarget(questId int, currentStep string) int {
 	// 1. Explicit map_target on the current step.
 	for _, step := range q.Steps {
 		if step.Id == currentStep {
-			if step.MapTarget != 0 {
+			if step.MapTarget > 0 {
 				return step.MapTarget
 			}
-			break
+			if step.MapTarget == -1 {
+				return 0 // deliberate no-marker: do NOT fall through to inference
+			}
+			break // map_target == 0 → fall through to room_enter inference
 		}
 	}
 
