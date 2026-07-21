@@ -69,7 +69,13 @@ triggers:
           trip dummy."
 
   # ── SPECIAL MOVE: kick (room 5227) ────────────────────
-  - event: command
+  # command_issued (not command): credit the ATTEMPT, not a landed hit.
+  # The dummy (mob 9109) is deliberately fragile (~15 vitality) so the
+  # 32-strike kill is quick, which means auto-attack often drops the
+  # respawned dummy before a kick/trip can land — leaving the player
+  # whiffing "no target" repeatedly. Gating on the typed command teaches
+  # the move without fighting the dummy's HP or a lucky crit.
+  - event: command_issued
     command: kick
     conditions:
       has: ["32-start"]
@@ -78,7 +84,7 @@ triggers:
       - grant: "32-special"
 
   # ── SPECIAL MOVE: trip (room 5227) ────────────────────
-  - event: command
+  - event: command_issued
     command: trip
     conditions:
       has: ["32-start"]
@@ -87,7 +93,12 @@ triggers:
       - grant: "32-special"
 
   # ── CONSIDER (room 5227) ──────────────────────────────
-  - event: command
+  # command_issued: same reasoning as kick/trip — `consider dummy` needs a
+  # live target, and the fragile dummy may be dead/mid-respawn when the
+  # player types it. Credit the attempt. (combatverbosity below stays on
+  # `command`: it is reached via `set combatverbosity`, which fires a
+  # logical "combatverbosity" command event by hand — see set.go.)
+  - event: command_issued
     command: consider
     conditions:
       has: ["32-start"]
