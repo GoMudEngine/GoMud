@@ -1,0 +1,6 @@
+The <ansi fg="command">unban</ansi> command lifts a ban previously set with <ansi fg="command">ban</ansi>.
+
+<ansi fg="command">unban [name]</ansi> - Lift an account ban by name
+<ansi fg="command">unban ip [address]</ansi> - Lift an IP ban
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help ban</ansi>
