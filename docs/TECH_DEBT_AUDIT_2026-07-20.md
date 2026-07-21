@@ -48,9 +48,11 @@ Legend: ✅ done · ◐ partial (intentionally scoped down) · ⏸️ withdrawn/
 - ✅ 6.2 data-file boot smoke test in CI (`c6f19296e`).
 - ✅ 2.1 / 2.2 / 2.3 concurrency locking — copyover, autocomplete, per-session user state
   (`4799200f7`, `b61bf45cf`).
-- ▶️ 2.4 `RLockMud` — **still open.** Autocomplete (2.2) was locked with the exclusive
-  `LockMud`, so the intended first read-lock customer never materialized; `RLockMud`/
-  `RUnlockMud` remain dead code and `mudLock` is still effectively a `Mutex`. Minor.
+- ✅ 2.4 `RLockMud` — **resolved as part of 2.2** (see §2.4). `GetAutoComplete` (`world.go:319`)
+  takes `RLockMud` — a genuine read-only path — so the pair is live code and `mudLock` is a
+  real `RWMutex`, exactly the "autocomplete is the first read-lock customer" outcome the plan
+  called for. (An earlier draft of this ledger wrongly marked it open — the verifying grep was
+  scoped to `internal/` and missed the caller in root-level `world.go`.)
 - ✅ 1.3 quest-sequence goroutine hardening (`b92692859`).
 - ⏸️ 5.1 yaml.v2 → v3 — **withdrawn after measurement** (see §5.1). Replaced by a dialogue
   parse gate (`685953f80`) + a silently-ignored-key drift gate (`769ab4fcc`).
@@ -78,9 +80,10 @@ Legend: ✅ done · ◐ partial (intentionally scoped down) · ⏸️ withdrawn/
 **Beyond the original plan:** generic quest reward-key fix (`3f390ca0e`); grapple crit-failure
 flake + sibling knockdown nil-guards (2026-07-21).
 
-**Still open / carried forward:** 2.4 (`RLockMud` dead code) · everything under "Explicitly
-deferred" at the end of this document (4.6 DI, 4.5 file-naming, doc-comment backfill, 5.3 `%w`
-backfill, `t.Parallel()`). With 3.3 disproven, no Tier 3/4 structural work remains scheduled.
+**Still open / carried forward:** only the "Explicitly deferred" list at the end of this
+document (4.6 DI, 4.5 file-naming, doc-comment backfill, 5.3 `%w` backfill, `t.Parallel()`).
+With 3.3 disproven and 2.4 resolved, **no scheduled Tier 0–4 or Phase 1–3 work remains** — the
+audit is fully worked through.
 
 ---
 
@@ -430,11 +433,22 @@ process re-execs, so a failed save is invisible.
 the failure mode that test would hit.
 
 ### 2.4 `RLockMud`/`RUnlockMud` are dead code — the RWMutex is really a Mutex
-✅ **VERIFIED** (grep: zero non-test call sites)
+✅ **RESOLVED — and the original finding was factually wrong, 2026-07-21.** The "zero non-test
+call sites" claim was a **grep-scope error**: the search only covered `internal/`, but the
+caller is in root-level `world.go`. `GetAutoComplete` (`world.go:319`) takes `util.RLockMud()`
+on a genuinely read-only path (it walks room/mob/character state to build tab-completions and
+mutates nothing), which is precisely the "make it live by using it on the autocomplete read
+path" resolution the fix below and the Phase-2 sequence both recommended. `RLockMud`/`RUnlockMud`
+are live code and `mudLock` is a real `RWMutex`. Nothing to do; downgrading to `sync.Mutex`
+would be a regression (it was attempted 2026-07-21 and the build immediately flagged the
+`world.go` caller).
 
-`internal/util/util.go:90-96` defines `RLockMud`/`RUnlockMud`; the only references anywhere are
-the definitions themselves and `internal/util/util_test.go:37-38`. Every real caller uses the
-exclusive `LockMud()`.
+> Original finding below is retained but **superseded** — its `✅ VERIFIED` tag was the grep-scope
+> mistake, a caution that "verified" is only as good as the search that backed it.
+
+🔍 **Original text:** `internal/util/util.go:90-96` defines `RLockMud`/`RUnlockMud`; the only
+references anywhere are the definitions themselves and `internal/util/util_test.go:37-38`. Every
+real caller uses the exclusive `LockMud()`.
 
 **Impact:** read-only operations (admin dashboard GETs, autocomplete) needlessly serialize
 against each other, and the type signals a read-concurrency capability the codebase doesn't have.
@@ -969,9 +983,9 @@ summary and commit references.**
 
 **Phase 2 — Make the invariants enforceable (weeks)**
 5. ✅ **Data-file boot test in CI (6.2).** Automates the manual SOP; **prerequisite for step 8.**
-6. ◐ **Concurrency fixes (2.1, 2.2, 2.3).** Done. ▶️ **2.4 (`RLockMud`) remains open** — 2.2
-   was locked with the exclusive `LockMud`, so the read-lock customer never appeared and the
-   `RLockMud`/`RUnlockMud` pair is still dead code.
+6. ✅ **Concurrency fixes (2.1, 2.2, 2.3, 2.4).** Done — including 2.4: 2.2 was fixed by having
+   `GetAutoComplete` take `RLockMud` (a read-only path), which resolved 2.4 by making the
+   read-lock live exactly as this step intended.
 7. ✅ **Quest-sequence goroutine hardening (1.3).** Content-driven, so higher real-world trigger
    probability than its line count suggests.
 8. ⏸️ **yaml.v2 → v3 consolidation + `KnownFields(true)` (5.1) — WITHDRAWN after measurement.**
@@ -1016,7 +1030,8 @@ Tooling run directly during this audit:
   confirmation step for 2.1 and 2.2.**
 
 Counts verified directly: yaml.v2 79 files / yaml.v3 13 files; `pkg/errors` 19 files; dual
-lumberjack imports; `RLockMud` zero non-test callers; `t.Parallel()` 1 file; `t.Skip` 43 files;
+lumberjack imports; ~~`RLockMud` zero non-test callers~~ (**wrong — grep was scoped to
+`internal/` and missed the `world.go` caller; see §2.4**); `t.Parallel()` 1 file; `t.Skip` 43 files;
 TODO/FIXME/HACK/XXX 29 total; function lengths in 4.1; `put.go` gold/lock divergence;
 `DoListeners`/`MainWorker` recover absence; `GetAutoComplete` call sites unlocked.
 
