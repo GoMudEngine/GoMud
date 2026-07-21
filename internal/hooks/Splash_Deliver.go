@@ -24,22 +24,19 @@ func Splash_Deliver(e events.Event) events.ListenerReturn {
 		return events.Continue
 	}
 
-	tmpl := splashTemplatePath(evt.SceneId)
+	// Render the art once — the template output is identical for every terminal
+	// recipient (per-recipient line wrapping happens later in SendText).
+	text, terr := templates.Process(splashTemplatePath(evt.SceneId), evt.Data)
+	artOK := terr == nil && text != ""
 
 	for _, u := range splash.Recipients(evt) {
 		if connections.GetClientSettings(u.ConnectionId()).IsWebConnection {
-			continue // gmcp listener handles web recipients
+			continue // gmcp listener handles web recipients (SVG scene)
 		}
-		if u.ScreenReader {
+		// Screen-reader users get the caption only — never the art.
+		if u.ScreenReader || !artOK {
 			if evt.Caption != "" {
 				u.SendText(messaging.CategorySplash, evt.Caption)
-			}
-			continue
-		}
-		text, err := templates.Process(tmpl, evt.Data)
-		if err != nil || text == "" {
-			if evt.Caption != "" {
-				u.SendText(messaging.CategorySplash, evt.Caption) // fallback
 			}
 			continue
 		}

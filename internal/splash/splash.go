@@ -5,7 +5,6 @@
 package splash
 
 import (
-	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -36,6 +35,11 @@ func (Splash) Type() string { return "Splash" }
 
 // Recipients resolves the users a splash should reach. Deterministic; callers
 // (the terminal + gmcp listeners) partition by client type afterward.
+//
+// Exactly-once delivery relies on: (a) event dispatch being synchronous and
+// single-threaded, so the two listeners run back-to-back, and (b) the
+// IsWebConnection flag being write-once at connect. Both hold today; anyone
+// parallelizing listener dispatch would need to revisit this.
 func Recipients(s Splash) []*users.UserRecord {
 	switch s.Target {
 	case TargetUser:
@@ -44,29 +48,21 @@ func Recipients(s Splash) []*users.UserRecord {
 		}
 		return nil
 	case TargetZone:
-		return usersInZone(s.Zone)
+		// Resolve occupancy from the (small) online-player set, NOT by loading
+		// the zone's rooms — loading rooms would disk-read + cache every empty
+		// room in the zone just to find nobody.
+		return filterByZone(users.GetAllActiveUsers(), s.Zone)
 	default: // TargetGlobal
 		return users.GetAllActiveUsers()
 	}
 }
 
-// usersInZone returns online users currently in any room of zone.
-func usersInZone(zone string) []*users.UserRecord {
+// filterByZone returns the users whose current zone matches zone.
+func filterByZone(all []*users.UserRecord, zone string) []*users.UserRecord {
 	out := []*users.UserRecord{}
-	seen := map[int]bool{}
-	for _, roomId := range rooms.GetAllZoneRoomsIds(zone) {
-		room := rooms.LoadRoom(roomId)
-		if room == nil {
-			continue
-		}
-		for _, uid := range room.GetPlayers() {
-			if seen[uid] {
-				continue
-			}
-			if u := users.GetByUserId(uid); u != nil {
-				seen[uid] = true
-				out = append(out, u)
-			}
+	for _, u := range all {
+		if u != nil && u.Character != nil && u.Character.Zone == zone {
+			out = append(out, u)
 		}
 	}
 	return out
