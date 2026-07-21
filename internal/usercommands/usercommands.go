@@ -154,7 +154,8 @@ var (
 		`password`:        {Password, true, true, false},
 		`paz`:             {Paz, true, true, true}, // Admin only
 		`pet`:             {Pet, false, true, false},
-		`petition`:        {Petition, true, true, false}, // Player — contact staff into the moderation queue
+		`petition`:        {Petition, true, true, false},  // Player — contact staff into the moderation queue
+		`petitions`:       {Petitions, true, true, true}, // Admin only — review the petition queue
 		`picklock`:        {Picklock, false, true, false},
 		`steal`:           {Steal, false, true, false},
 		`plant`:           {Plant, false, true, false},
