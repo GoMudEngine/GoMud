@@ -51,7 +51,9 @@ func Add(reporter string, roomId int, zone, message string) (Petition, error) {
 	}
 	petitions = append(petitions, p)
 	nextPetitionId++
-	savePetitionsLocked()
+	if err := savePetitionsLocked(); err != nil {
+		return p, err
+	}
 	return p, nil
 }
 
@@ -64,7 +66,7 @@ func ListOpen() []Petition {
 			out = append(out, p)
 		}
 	}
-	sort.Slice(out, func(i, j int) bool { return out[i].Id < out[j].Id })
+	sort.Slice(out, func(i, j int) bool { return out[i].Id < out[j].Id }) // defensive: keep Id-ascending regardless of insert order
 	return out
 }
 
@@ -73,7 +75,7 @@ func ListAll() []Petition {
 	defer mu.Unlock()
 	out := make([]Petition, len(petitions))
 	copy(out, petitions)
-	sort.Slice(out, func(i, j int) bool { return out[i].Id < out[j].Id })
+	sort.Slice(out, func(i, j int) bool { return out[i].Id < out[j].Id }) // defensive: keep Id-ascending regardless of insert order
 	return out
 }
 
@@ -100,45 +102,48 @@ func Resolve(id int, by, note string) error {
 			petitions[i].ResolvedBy = by
 			petitions[i].ResolvedAt = now()
 			petitions[i].Note = note
-			savePetitionsLocked()
-			return nil
+			return savePetitionsLocked()
 		}
 	}
 	return fmt.Errorf("no petition with id %d", id)
 }
 
-func savePetitionsLocked() {
+func savePetitionsLocked() error {
 	if err := os.MkdirAll(moderationDir(), 0755); err != nil {
 		mudlog.Error("moderation.savePetitions", "error", err.Error())
-		return
+		return err
 	}
 	b, err := yaml.Marshal(petitions)
 	if err != nil {
 		mudlog.Error("moderation.savePetitions", "error", err.Error())
-		return
+		return err
 	}
 	if err := os.WriteFile(petitionsPath(), b, 0644); err != nil {
 		mudlog.Error("moderation.savePetitions", "error", err.Error())
+		return err
 	}
+	return nil
 }
 
-func loadPetitions() {
+// loadPetitions returns the number of petitions loaded.
+func loadPetitions() int {
 	mu.Lock()
 	defer mu.Unlock()
 	petitions = nil
 	nextPetitionId = 1
 	b, err := os.ReadFile(petitionsPath())
 	if err != nil {
-		return // no file yet — fine
+		return 0 // no file yet — fine
 	}
 	if err := yaml.Unmarshal(b, &petitions); err != nil {
 		mudlog.Error("moderation.loadPetitions", "error", err.Error())
 		petitions = nil
-		return
+		return 0
 	}
 	for _, p := range petitions {
 		if p.Id >= nextPetitionId {
 			nextPetitionId = p.Id + 1
 		}
 	}
+	return len(petitions)
 }

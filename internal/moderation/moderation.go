@@ -45,9 +45,11 @@ func resetForTest() {
 // LoadDataFiles loads the moderation stores into memory at boot. Missing or
 // malformed files are logged + skipped (runtime state must not crash boot).
 func LoadDataFiles() {
-	loadPetitions()
-	loadBans()
-	mudlog.Info("moderation.LoadDataFiles()", "petitions", len(petitions), "accountBans", len(accountBans), "ipBans", len(ipBans))
+	// Use the loaders' returned counts for the log line rather than reading the
+	// package slices/maps unlocked after the loaders release the mutex.
+	nPetitions := loadPetitions()
+	nAccountBans := loadBans()
+	mudlog.Info("moderation.LoadDataFiles()", "petitions", nPetitions, "accountBans", nAccountBans)
 }
 
 // now is overridable in tests if deterministic timestamps are ever needed.

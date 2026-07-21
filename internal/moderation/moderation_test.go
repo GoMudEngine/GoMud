@@ -33,6 +33,8 @@ func TestPetitionQueue(t *testing.T) {
 	assert.Equal(t, "AdminZoe", r.ResolvedBy)
 
 	assert.Error(t, Resolve(999, "x", ""))
+	// Already-resolved guard: re-resolving #1 must error.
+	assert.Error(t, Resolve(1, "AdminZoe", "again"))
 }
 
 func TestAccountBans(t *testing.T) {
@@ -51,6 +53,25 @@ func TestAccountBans(t *testing.T) {
 	assert.NoError(t, Unban("GRIEFER"))
 	_, banned = IsAccountBanned("Griefer")
 	assert.False(t, banned)
+}
+
+// Guards against the key-normalization drift between store and reload: a
+// username banned with surrounding whitespace must still match after a restart.
+func TestAccountBanWhitespaceRoundTrip(t *testing.T) {
+	dir := t.TempDir()
+	restore := SetDataDirForTest(dir)
+	resetForTest()
+	assert.NoError(t, BanAccount(" Bob ", "grief", "Zoe"))
+	_, banned := IsAccountBanned("bob")
+	assert.True(t, banned, "trimmed+lowered lookup should match pre-reload")
+	restore()
+
+	restore2 := SetDataDirForTest(dir)
+	defer restore2()
+	resetForTest()
+	loadBans()
+	_, banned = IsAccountBanned("BOB")
+	assert.True(t, banned, "lookup must still match after reload")
 }
 
 func TestIPBans(t *testing.T) {
@@ -110,4 +131,10 @@ func TestPetitionPersistenceRoundTrip(t *testing.T) {
 	assert.Len(t, all, 1)
 	assert.Equal(t, StatusResolved, all[0].Status)
 	assert.Equal(t, "Alice", all[0].Reporter)
+	assert.False(t, all[0].Timestamp.IsZero(), "timestamp should survive the round-trip")
+
+	// nextPetitionId must be restored from the max loaded Id so a post-reload
+	// Add does not collide (regression guard for loadPetitions' id scan).
+	p, _ := Add("Dan", 1, "Town", "next id check")
+	assert.Equal(t, 2, p.Id)
 }

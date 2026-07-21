@@ -37,27 +37,32 @@ var (
 
 func bansPath() string { return filepath.Join(moderationDir(), "bans.yaml") }
 
+// normAccountKey is the single source of truth for the account-ban map key, so
+// the store, lookup, and reload paths can never drift (a drift would silently
+// break bans across a restart).
+func normAccountKey(username string) string {
+	return strings.ToLower(strings.TrimSpace(username))
+}
+
 func BanAccount(username, reason, by string) error {
 	mu.Lock()
 	defer mu.Unlock()
-	key := strings.ToLower(strings.TrimSpace(username))
-	accountBans[key] = AccountBan{Username: username, Reason: reason, BannedBy: by, Timestamp: now()}
-	saveBansLocked()
-	return nil
+	trimmed := strings.TrimSpace(username)
+	accountBans[normAccountKey(trimmed)] = AccountBan{Username: trimmed, Reason: reason, BannedBy: by, Timestamp: now()}
+	return saveBansLocked()
 }
 
 func Unban(username string) error {
 	mu.Lock()
 	defer mu.Unlock()
-	delete(accountBans, strings.ToLower(strings.TrimSpace(username)))
-	saveBansLocked()
-	return nil
+	delete(accountBans, normAccountKey(username))
+	return saveBansLocked()
 }
 
 func IsAccountBanned(username string) (reason string, banned bool) {
 	mu.Lock()
 	defer mu.Unlock()
-	if b, ok := accountBans[strings.ToLower(strings.TrimSpace(username))]; ok {
+	if b, ok := accountBans[normAccountKey(username)]; ok {
 		return b.Reason, true
 	}
 	return "", false
@@ -68,16 +73,14 @@ func BanIP(ip, reason, by string) error {
 	defer mu.Unlock()
 	ip = strings.TrimSpace(ip)
 	ipBans[ip] = IPBan{IP: ip, Reason: reason, BannedBy: by, Timestamp: now()}
-	saveBansLocked()
-	return nil
+	return saveBansLocked()
 }
 
 func UnbanIP(ip string) error {
 	mu.Lock()
 	defer mu.Unlock()
 	delete(ipBans, strings.TrimSpace(ip))
-	saveBansLocked()
-	return nil
+	return saveBansLocked()
 }
 
 func IsIPBanned(host string) (reason string, banned bool) {
@@ -89,10 +92,10 @@ func IsIPBanned(host string) (reason string, banned bool) {
 	return "", false
 }
 
-func saveBansLocked() {
+func saveBansLocked() error {
 	if err := os.MkdirAll(moderationDir(), 0755); err != nil {
 		mudlog.Error("moderation.saveBans", "error", err.Error())
-		return
+		return err
 	}
 	bf := banFile{}
 	for _, b := range accountBans {
@@ -104,31 +107,35 @@ func saveBansLocked() {
 	out, err := yaml.Marshal(bf)
 	if err != nil {
 		mudlog.Error("moderation.saveBans", "error", err.Error())
-		return
+		return err
 	}
 	if err := os.WriteFile(bansPath(), out, 0644); err != nil {
 		mudlog.Error("moderation.saveBans", "error", err.Error())
+		return err
 	}
+	return nil
 }
 
-func loadBans() {
+// loadBans returns the number of account bans loaded.
+func loadBans() int {
 	mu.Lock()
 	defer mu.Unlock()
 	accountBans = map[string]AccountBan{}
 	ipBans = map[string]IPBan{}
 	b, err := os.ReadFile(bansPath())
 	if err != nil {
-		return
+		return 0
 	}
 	var bf banFile
 	if err := yaml.Unmarshal(b, &bf); err != nil {
 		mudlog.Error("moderation.loadBans", "error", err.Error())
-		return
+		return 0
 	}
 	for _, a := range bf.Accounts {
-		accountBans[strings.ToLower(a.Username)] = a
+		accountBans[normAccountKey(a.Username)] = a
 	}
 	for _, i := range bf.IPs {
 		ipBans[i.IP] = i
 	}
+	return len(accountBans)
 }
