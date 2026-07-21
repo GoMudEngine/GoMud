@@ -119,13 +119,19 @@ func seedAllRegistries() func() {
 			AutoAggro:  true,
 			Groups:     []string{"undead"},
 			Character: characters.Character{
-				Name:          "Skeleton",
-				RoomId:        1,
-				Health:        50,
-				Buffs:         buffs.New(),
-				Cooldowns:     map[string]int{},
-				Awareness:     awareness.NewMachine(),
-				Life:          life.NewMachine(),
+				Name:      "Skeleton",
+				RoomId:    1,
+				Health:    50,
+				Buffs:     buffs.New(),
+				Cooldowns: map[string]int{},
+				Awareness: awareness.NewMachine(),
+				Life:      life.NewMachine(),
+				// Position seeded to mirror a production mob, which gets its
+				// Position FSM from Validate(). Struct-literal fixtures skip
+				// New()/Validate(), so without this the machine is nil and
+				// randomness-gated combat paths (e.g. the ~2.3% grapple
+				// crit-failure) nil-panic. See getTestMobAndRoom.
+				Position:      position.NewMachine(),
 				MobInstanceId: 100,
 				IsMob:         true,
 			},
@@ -143,6 +149,7 @@ func seedAllRegistries() func() {
 				Cooldowns:     map[string]int{},
 				Awareness:     awareness.NewMachine(),
 				Life:          life.NewMachine(),
+				Position:      position.NewMachine(),
 				MobInstanceId: 200,
 				IsMob:         true,
 			},
@@ -1059,34 +1066,35 @@ func TestAttackInCombat(t *testing.T) {
 	// Set mob in combat
 	mob.Character.Aggro = &characters.Aggro{UserId: 1}
 
+	// These drive each combat verb end-to-end against a live mob. The
+	// outcome varies with the dice, but no verb should error or panic — in
+	// particular the ~2.3% grapple crit-failure path must not nil-deref the
+	// mob's Position machine (regression: the seeded fixture now supplies it;
+	// see the Position field in seedAllRegistries and
+	// TestHandleGrappleCritFailure_Outcome in internal/combat).
 	t.Run("attack_while_in_combat", func(t *testing.T) {
-		handled, err := Attack("bobrick", mob, room)
-		_ = handled
-		_ = err
+		_, err := Attack("bobrick", mob, room)
+		assert.NoError(t, err)
 	})
 
 	t.Run("bash_in_combat", func(t *testing.T) {
-		handled, err := Bash("", mob, room)
-		_ = handled
-		_ = err
+		_, err := Bash("", mob, room)
+		assert.NoError(t, err)
 	})
 
 	t.Run("grapple_in_combat", func(t *testing.T) {
-		handled, err := Grapple("", mob, room)
-		_ = handled
-		_ = err
+		_, err := Grapple("", mob, room)
+		assert.NoError(t, err)
 	})
 
 	t.Run("kick_in_combat", func(t *testing.T) {
-		handled, err := Kick("", mob, room)
-		_ = handled
-		_ = err
+		_, err := Kick("", mob, room)
+		assert.NoError(t, err)
 	})
 
 	t.Run("trip_in_combat", func(t *testing.T) {
-		handled, err := Trip("", mob, room)
-		_ = handled
-		_ = err
+		_, err := Trip("", mob, room)
+		assert.NoError(t, err)
 	})
 
 	mob.Character.Aggro = nil
