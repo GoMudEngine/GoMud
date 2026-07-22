@@ -472,6 +472,90 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 				Identifier: `Char.Quests`,
 			})
 
+		// ---- admin web room-builder (admin web-building 1b) ----
+		// Each Build.* package is RoleAdmin-gated: non-admins are silently
+		// refused. On success the handler echoes a Build.Result and re-pushes an
+		// unfogged Zone.Map for the admin's zone so the canvas re-renders.
+		case `Build.Room.Create`:
+			uid, ok := requireAdmin(connectionId)
+			if !ok {
+				break
+			}
+			var req roomCreateReq
+			if err := json.Unmarshal(payload, &req); err != nil {
+				sendBuildResult(uid, buildErr("bad Build.Room.Create payload"))
+				break
+			}
+			sendBuildResult(uid, buildRoomCreate(realBuildDeps(), req.FromRoomId, req.Dir, req.Plane, req.X, req.Y, req.Z))
+			sendZoneMapFull(uid, zoneForUser(uid))
+
+		case `Build.Room.Update`:
+			uid, ok := requireAdmin(connectionId)
+			if !ok {
+				break
+			}
+			var req roomUpdateReq
+			if err := json.Unmarshal(payload, &req); err != nil {
+				sendBuildResult(uid, buildErr("bad Build.Room.Update payload"))
+				break
+			}
+			sendBuildResult(uid, buildRoomUpdate(realBuildDeps(), req))
+			sendZoneMapFull(uid, zoneForUser(uid))
+
+		case `Build.Room.Delete`:
+			uid, ok := requireAdmin(connectionId)
+			if !ok {
+				break
+			}
+			var req roomDeleteReq
+			if err := json.Unmarshal(payload, &req); err != nil {
+				sendBuildResult(uid, buildErr("bad Build.Room.Delete payload"))
+				break
+			}
+			sendBuildResult(uid, buildRoomDelete(realBuildDeps(), req.RoomId))
+			sendZoneMapFull(uid, zoneForUser(uid))
+
+		case `Build.Exit.Add`:
+			uid, ok := requireAdmin(connectionId)
+			if !ok {
+				break
+			}
+			var req exitAddReq
+			if err := json.Unmarshal(payload, &req); err != nil {
+				sendBuildResult(uid, buildErr("bad Build.Exit.Add payload"))
+				break
+			}
+			sendBuildResult(uid, buildExitAdd(realBuildDeps(), req))
+			sendZoneMapFull(uid, zoneForUser(uid))
+
+		case `Build.Exit.Remove`:
+			uid, ok := requireAdmin(connectionId)
+			if !ok {
+				break
+			}
+			var req exitRemoveReq
+			if err := json.Unmarshal(payload, &req); err != nil {
+				sendBuildResult(uid, buildErr("bad Build.Exit.Remove payload"))
+				break
+			}
+			sendBuildResult(uid, buildExitRemove(realBuildDeps(), req.RoomId, req.ExitName))
+			sendZoneMapFull(uid, zoneForUser(uid))
+
+		case `Build.Map.Request`:
+			uid, ok := requireAdmin(connectionId)
+			if !ok {
+				break
+			}
+			var req mapRequestReq
+			if err := json.Unmarshal(payload, &req); err != nil {
+				req = mapRequestReq{}
+			}
+			zone := req.Zone
+			if zone == "" {
+				zone = zoneForUser(uid)
+			}
+			sendZoneMapFull(uid, zone)
+
 		// Handle Discord-related messages
 		default:
 			// Check if it's a Discord message
