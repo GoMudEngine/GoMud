@@ -878,6 +878,7 @@ func (r *mapper) getMapNode(roomId int) *mapNode {
 
 	mNode := &mapNode{
 		RoomId:      room.RoomId,
+		Plane:       room.Plane,
 		Exits:       make(map[string]nodeExit, 2), // assume there will be on average 2 exits per room
 		SecretExits: make(map[string]struct{}),
 	}

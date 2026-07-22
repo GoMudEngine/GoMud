@@ -8,6 +8,7 @@ type mapNode struct {
 	Exits       map[string]nodeExit
 	SecretExits map[string]struct{} // Just a flag for whether an exit key is secret
 	Pos         positionDelta       // Its x/y/z position relative to the root node
+	Plane       int                 // coordinate-space id (0 = overworld); copied from Room.Plane
 }
 
 type nodeExit struct {
