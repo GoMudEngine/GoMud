@@ -10,10 +10,8 @@ description: The sagebrush flats begin to rise gently toward the east,
   close now, its rocky crest visible as a jagged line.
 biome: land
 exits:
-  west:
+  north:
     roomid: 3016
-  south:
-    roomid: 3018
 nouns:
   outcrops: Dark, angular stone breaking through the steppe soil --
     the first exposed bedrock of the ridge system. The rock is
@@ -29,5 +27,5 @@ idlemessages:
 - Pine needles hiss in the wind, a sound like distant rain.
 - A hawk perches on a rocky outcrop, surveying the flats below.
 - Small stones clatter down a rock face, dislodged by the wind.
-x: 23
-y: 5
+x: 25
+y: 6

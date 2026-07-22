@@ -21,6 +21,8 @@ exits:
     roomid: 3031
   south:
     roomid: 3032
+  east:
+    roomid: 3016
 nouns:
   scree: Loose, broken stone covering the slope in a treacherous
     layer. Each step sends small rocks clattering downhill.

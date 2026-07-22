@@ -11,17 +11,9 @@ description: A broad, open stretch of the sagebrush flats where the
 biome: land
 exits:
   west:
-    roomid: 3014
-  north:
-    roomid: 3012
+    roomid: 3030
   south:
-    roomid: 3013
-  east:
     roomid: 3017
-  northeast:
-    roomid: 3032
-  southwest:
-    roomid: 3045
 nouns:
   boulder: An enormous grey boulder, taller than a person, sitting
     alone on the flat steppe. Its surface is covered with pale
@@ -35,5 +27,5 @@ idlemessages:
 - The boulder casts a shifting shadow across the flattened grass.
 - Two wolves trot across the distant flats, grey shapes against grey grass.
 - The wind carries a faint, eerie whistle from the ridge to the east.
-x: 22
+x: 25
 y: 5
