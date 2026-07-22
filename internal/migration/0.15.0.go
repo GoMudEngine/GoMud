@@ -1,6 +1,7 @@
 package migration
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -344,35 +345,36 @@ func countCollisions(coords map[int][3]int) int {
 
 // --- order-preserving write-back ---
 
+// writeCoordsPreservingOrder appends the nonzero coord keys as top-level YAML
+// lines at the END of the file — a plain TEXT append that touches nothing above,
+// so all existing prose wrapping, quoting, and line endings are preserved (a
+// re-marshal would reflow every description/nouns block). Matches the file's
+// existing EOL. Rooms are only processed when they carry no coords yet
+// (idempotency guard upstream), so there are never existing coord keys to
+// duplicate. An origin room (all-zero on plane 0) writes nothing.
 func writeCoordsPreservingOrder(path string, raw []byte, x, y, z, plane int) error {
-	var ms yaml.MapSlice
-	if err := yaml.Unmarshal(raw, &ms); err != nil {
-		return err
+	nl := "\n"
+	if bytes.Contains(raw, []byte("\r\n")) {
+		nl = "\r\n"
 	}
-	// Drop any existing coord keys, then append the nonzero ones (omitempty parity).
-	out := ms[:0]
-	for _, item := range ms {
-		if k, ok := item.Key.(string); ok {
-			switch k {
-			case "x", "y", "z", "plane":
-				continue
-			}
-		}
-		out = append(out, item)
-	}
+	var add strings.Builder
 	appendIf := func(k string, v int) {
 		if v != 0 {
-			out = append(out, yaml.MapItem{Key: k, Value: v})
+			fmt.Fprintf(&add, "%s: %d%s", k, v, nl)
 		}
 	}
 	appendIf("x", x)
 	appendIf("y", y)
 	appendIf("z", z)
 	appendIf("plane", plane)
-
-	b, err := yaml.Marshal(out)
-	if err != nil {
-		return err
+	if add.Len() == 0 {
+		return nil
 	}
-	return os.WriteFile(path, b, 0644)
+
+	body := raw
+	if len(body) > 0 && !bytes.HasSuffix(body, []byte("\n")) {
+		body = append(body, []byte(nl)...)
+	}
+	body = append(body, []byte(add.String())...)
+	return os.WriteFile(path, body, 0644)
 }
