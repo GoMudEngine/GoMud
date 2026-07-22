@@ -197,12 +197,11 @@ experience just passed a full feel-test — so the hill is shorter than it looks
   ping; admin `petitions` (list/detail/resolve), `boot` (global disconnect), `ban`/
   `unban` (perm account + optional IP); account/IP ban rejection at login; and
   `mute`/`deafen` extended to global-by-name targeting. Unit-tested + reviewed.
-- 🟡 **Link-death / reconnection grace mid-combat** — zombie handling exists;
-  verify a dropped connection in a fight is graceful. **Investigated 2026-07-21:
-  NOT graceful** — a mid-fight disconnect leaves a "zombie" that stays in combat,
-  keeps taking hits, and can die link-dead (Presence stays Active, so the existing
-  Disconnected-target veto never fires). This is sub-project B of §4, deferred to a
-  follow-up build (reconnect itself is clean).
+- ❌ **Link-death / reconnection grace mid-combat** — **DESCOPED 2026-07-22** (user
+  decision: not doing it). Investigated 2026-07-21: a mid-fight disconnect leaves a
+  "zombie" that stays in combat and can die link-dead (Presence stays Active, so the
+  Disconnected-target veto never fires); reconnect itself is clean. Left as-is —
+  not a 1.0 blocker. (Recorded here so it isn't re-surfaced as pending work.)
 
 ---
 
