@@ -30,7 +30,7 @@ func TestBuildConfigDefaults(t *testing.T) {
 	if cfg.TickEveryGameHours != 1 || cfg.MaxActiveFronts != 8 || cfg.SpawnRateScale != 1.0 {
 		t.Errorf("sim defaults wrong: %+v", cfg)
 	}
-	if cfg.EmoteMode != "module" || cfg.EmoteEveryRounds != 20 {
+	if cfg.EmoteMode != "module" || cfg.EmoteEveryRounds != 24 {
 		t.Errorf("emote defaults wrong: %+v", cfg)
 	}
 	if !cfg.BuffsEnabled || !cfg.Persist || cfg.Seed != 0 {
@@ -106,5 +106,24 @@ func TestBuildConfigClampsFrontBudgetAndSeed(t *testing.T) {
 	}
 	if cfg.Seed != 0 {
 		t.Errorf("negative Seed must clamp to 0 (derive-from-world): %d", cfg.Seed)
+	}
+}
+
+func TestBuildConfig_EmoteChanceKnobs(t *testing.T) {
+	// Defaults when unset.
+	c := buildConfig(func(string) any { return nil })
+	if c.EmoteMildChancePct != 30 || c.EmoteStrongChancePct != 100 {
+		t.Errorf("defaults: got mild=%d strong=%d, want 30/100",
+			c.EmoteMildChancePct, c.EmoteStrongChancePct)
+	}
+	if c.EmoteEveryRounds != 24 {
+		t.Errorf("EmoteEveryRounds default: got %d, want 24", c.EmoteEveryRounds)
+	}
+	// Out-of-range clamps to 0..100.
+	over := map[string]any{"EmoteMildChancePct": 250, "EmoteStrongChancePct": -40}
+	c = buildConfig(func(k string) any { return over[k] })
+	if c.EmoteMildChancePct != 100 || c.EmoteStrongChancePct != 0 {
+		t.Errorf("clamp: got mild=%d strong=%d, want 100/0",
+			c.EmoteMildChancePct, c.EmoteStrongChancePct)
 	}
 }

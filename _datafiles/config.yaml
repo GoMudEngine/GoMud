@@ -1443,7 +1443,9 @@ Modules:
     MaxActiveFronts: 8
     SpawnRateScale: 1.0
     EmoteMode: module
-    EmoteEveryRounds: 20
+    EmoteEveryRounds: 24
+    EmoteMildChancePct: 30
+    EmoteStrongChancePct: 100
     BuffsEnabled: false
     Persist: true
     IncludeSecretExits: true

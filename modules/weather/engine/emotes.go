@@ -13,6 +13,19 @@ import (
 // weather (spec S-R1). Promote to config only if play feel demands.
 const seasonalEmoteOneIn = 3
 
+// emitChance maps a zone's felt weather intensity (0..1) to the percent chance
+// that an ambient weather line fires this pass: mildPct at felt<=0 rising
+// linearly to strongPct at felt>=1. Calm weather whispers; severe weather
+// speaks steadily. The felt scale is clamp01 (see sim.Coverage.Effective).
+func emitChance(mildPct, strongPct int, felt float64) int {
+	if felt < 0 {
+		felt = 0
+	} else if felt > 1 {
+		felt = 1
+	}
+	return mildPct + int(float64(strongPct-mildPct)*felt)
+}
+
 // EmitAmbient sends at most ONE ambient line per occupied room per pass. When
 // the room's zone has non-calm weather it sends the weather line (season-
 // variant aware, indoor intensity-banded by the front's felt intensity); in a
@@ -25,7 +38,8 @@ const seasonalEmoteOneIn = 3
 // fall to the mild/silent band).
 func EmitAmbient(g *sim.Graph, fronts []sim.Front, simCfg sim.Config,
 	weather map[sim.ZoneId]sim.WeatherType, zoneSeasons map[sim.ZoneId]seasons.ZoneSeason,
-	tables content.Tables, seasonal content.SeasonalTables, roll func(int) int) int {
+	tables content.Tables, seasonal content.SeasonalTables,
+	mildChancePct, strongChancePct int, roll func(int) int) int {
 
 	sent := 0
 	felt := map[sim.ZoneId]float64{}
@@ -52,6 +66,11 @@ func EmitAmbient(g *sim.Graph, fronts []sim.Front, simCfg sim.Config,
 					}
 				}
 				felt[room.Zone] = f
+			}
+			// Intensity-scaled cadence: a skipped pass is silence — non-clear
+			// weather still owns the room (no seasonal fallback).
+			if roll(100) >= emitChance(mildChancePct, strongChancePct, f) {
+				continue
 			}
 			season := ""
 			if hasSeason {
