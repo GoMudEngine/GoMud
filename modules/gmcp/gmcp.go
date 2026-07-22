@@ -66,6 +66,8 @@ func init() {
 
 	events.RegisterListener(GMCPOut{}, gmcpModule.dispatchGMCP)
 	events.RegisterListener(events.PlayerSpawn{}, gmcpModule.handlePlayerJoin)
+	// Build.* room-builder ops are handled on MainWorker (see handleBuildOp).
+	events.RegisterListener(GMCPBuildOp{}, gmcpModule.handleBuildOp)
 
 }
 
@@ -473,111 +475,19 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 			})
 
 		// ---- admin web room-builder (admin web-building 1b) ----
-		// Each Build.* package is RoleAdmin-gated: non-admins are silently
-		// refused. On success the handler echoes a Build.Result and re-pushes an
-		// unfogged Zone.Map for the admin's zone so the canvas re-renders.
-		case `Build.Room.Create`:
-			uid, ok := requireAdmin(connectionId)
-			if !ok {
-				break
-			}
-			var req roomCreateReq
-			if err := json.Unmarshal(payload, &req); err != nil {
-				sendBuildResult(uid, buildErr("bad Build.Room.Create payload"))
-				break
-			}
-			// Refresh the zone the new room lives in (the source room's zone),
-			// which may differ from the zone the admin is standing in.
-			refreshZone := zoneOfRoom(req.FromRoomId, uid)
-			sendBuildResult(uid, buildRoomCreate(realBuildDeps(), req.FromRoomId, req.Dir, req.Plane, req.X, req.Y, req.Z))
-			sendZoneMapFull(uid, refreshZone)
-
-		case `Build.Room.Update`:
-			uid, ok := requireAdmin(connectionId)
-			if !ok {
-				break
-			}
-			var req roomUpdateReq
-			if err := json.Unmarshal(payload, &req); err != nil {
-				sendBuildResult(uid, buildErr("bad Build.Room.Update payload"))
-				break
-			}
-			refreshZone := zoneOfRoom(req.RoomId, uid)
-			sendBuildResult(uid, buildRoomUpdate(realBuildDeps(), req))
-			sendZoneMapFull(uid, refreshZone)
-
-		case `Build.Room.Delete`:
-			uid, ok := requireAdmin(connectionId)
-			if !ok {
-				break
-			}
-			var req roomDeleteReq
-			if err := json.Unmarshal(payload, &req); err != nil {
-				sendBuildResult(uid, buildErr("bad Build.Room.Delete payload"))
-				break
-			}
-			refreshZone := zoneOfRoom(req.RoomId, uid) // capture before the room is gone
-			sendBuildResult(uid, buildRoomDelete(realBuildDeps(), req.RoomId))
-			sendZoneMapFull(uid, refreshZone)
-
-		case `Build.Exit.Add`:
-			uid, ok := requireAdmin(connectionId)
-			if !ok {
-				break
-			}
-			var req exitAddReq
-			if err := json.Unmarshal(payload, &req); err != nil {
-				sendBuildResult(uid, buildErr("bad Build.Exit.Add payload"))
-				break
-			}
-			refreshZone := zoneOfRoom(req.RoomId, uid)
-			sendBuildResult(uid, buildExitAdd(realBuildDeps(), req))
-			sendZoneMapFull(uid, refreshZone)
-
-		case `Build.Exit.Remove`:
-			uid, ok := requireAdmin(connectionId)
-			if !ok {
-				break
-			}
-			var req exitRemoveReq
-			if err := json.Unmarshal(payload, &req); err != nil {
-				sendBuildResult(uid, buildErr("bad Build.Exit.Remove payload"))
-				break
-			}
-			refreshZone := zoneOfRoom(req.RoomId, uid)
-			sendBuildResult(uid, buildExitRemove(realBuildDeps(), req.RoomId, req.ExitName))
-			sendZoneMapFull(uid, refreshZone)
-
-		case `Build.Room.Get`:
-			uid, ok := requireAdmin(connectionId)
-			if !ok {
-				break
-			}
-			var req roomGetReq
-			if err := json.Unmarshal(payload, &req); err != nil {
-				sendBuildResult(uid, buildErr("bad Build.Room.Get payload"))
-				break
-			}
-			if detail, found := buildRoomGet(realBuildDeps(), req.RoomId); found {
-				sendRoomDetail(uid, detail)
-			} else {
-				sendBuildResult(uid, buildErr("room %d not found", req.RoomId))
-			}
-
-		case `Build.Map.Request`:
-			uid, ok := requireAdmin(connectionId)
-			if !ok {
-				break
-			}
-			var req mapRequestReq
-			if err := json.Unmarshal(payload, &req); err != nil {
-				req = mapRequestReq{}
-			}
-			zone := req.Zone
-			if zone == "" {
-				zone = zoneForUser(uid)
-			}
-			sendZoneMapFull(uid, zone)
+		// Build.* mutates rooms and rebuilds mappers, which write the shared
+		// room manager. HandleIAC runs on the per-connection goroutine, so doing
+		// that work here would race the world tick (concurrent map writes ->
+		// fatal). Defer to MainWorker via an event; handleBuildOp does the admin
+		// gate + mutation + replies. Copy the payload — it aliases the IAC read
+		// buffer, which is reused after HandleIAC returns.
+		case `Build.Room.Create`, `Build.Room.Update`, `Build.Room.Delete`,
+			`Build.Exit.Add`, `Build.Exit.Remove`, `Build.Room.Get`, `Build.Map.Request`:
+			events.AddToQueue(GMCPBuildOp{
+				ConnectionId: connectionId,
+				Command:      command,
+				Payload:      append([]byte(nil), payload...),
+			})
 
 		// Handle Discord-related messages
 		default:

@@ -11,6 +11,7 @@ package gmcp
 // wires the seam to the live rooms/mapper packages.
 
 import (
+	"encoding/json"
 	"fmt"
 	"sort"
 	"strings"
@@ -182,6 +183,111 @@ func reciprocalCompass(dir string) string { return compassOpposite[dir] }
 
 func roleIsAdmin(u *users.UserRecord) bool {
 	return u != nil && u.Role == users.RoleAdmin
+}
+
+// GMCPBuildOp carries a Build.* request from the connection goroutine to
+// MainWorker, where all room/mapper mutation must happen (the room manager is
+// not safe for concurrent access with the world tick).
+type GMCPBuildOp struct {
+	ConnectionId uint64
+	Command      string
+	Payload      []byte
+}
+
+func (e GMCPBuildOp) Type() string { return `GMCPBuildOp` }
+
+// handleBuildOp processes a deferred Build.* request on the MainWorker
+// goroutine: it resolves + admin-gates the requester, dispatches to the build
+// core, and replies with a Build.Result / Build.Room plus a refreshed unfogged
+// Zone.Map for the affected zone.
+func (g *GMCPModule) handleBuildOp(e events.Event) events.ListenerReturn {
+	evt, ok := e.(GMCPBuildOp)
+	if !ok {
+		return events.Cancel
+	}
+	uid, ok := requireAdmin(evt.ConnectionId)
+	if !ok {
+		return events.Continue // non-admins are silently refused
+	}
+	d := realBuildDeps()
+
+	switch evt.Command {
+	case `Build.Room.Create`:
+		var req roomCreateReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Room.Create payload"))
+			break
+		}
+		// Refresh the zone the new room lives in (the source room's zone),
+		// which may differ from the zone the admin is standing in.
+		refreshZone := zoneOfRoom(req.FromRoomId, uid)
+		sendBuildResult(uid, buildRoomCreate(d, req.FromRoomId, req.Dir, req.Plane, req.X, req.Y, req.Z))
+		sendZoneMapFull(uid, refreshZone)
+
+	case `Build.Room.Update`:
+		var req roomUpdateReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Room.Update payload"))
+			break
+		}
+		refreshZone := zoneOfRoom(req.RoomId, uid)
+		sendBuildResult(uid, buildRoomUpdate(d, req))
+		sendZoneMapFull(uid, refreshZone)
+
+	case `Build.Room.Delete`:
+		var req roomDeleteReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Room.Delete payload"))
+			break
+		}
+		refreshZone := zoneOfRoom(req.RoomId, uid) // capture before the room is gone
+		sendBuildResult(uid, buildRoomDelete(d, req.RoomId))
+		sendZoneMapFull(uid, refreshZone)
+
+	case `Build.Exit.Add`:
+		var req exitAddReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Exit.Add payload"))
+			break
+		}
+		refreshZone := zoneOfRoom(req.RoomId, uid)
+		sendBuildResult(uid, buildExitAdd(d, req))
+		sendZoneMapFull(uid, refreshZone)
+
+	case `Build.Exit.Remove`:
+		var req exitRemoveReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Exit.Remove payload"))
+			break
+		}
+		refreshZone := zoneOfRoom(req.RoomId, uid)
+		sendBuildResult(uid, buildExitRemove(d, req.RoomId, req.ExitName))
+		sendZoneMapFull(uid, refreshZone)
+
+	case `Build.Room.Get`:
+		var req roomGetReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Room.Get payload"))
+			break
+		}
+		if detail, found := buildRoomGet(d, req.RoomId); found {
+			sendRoomDetail(uid, detail)
+		} else {
+			sendBuildResult(uid, buildErr("room %d not found", req.RoomId))
+		}
+
+	case `Build.Map.Request`:
+		var req mapRequestReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			req = mapRequestReq{}
+		}
+		zone := req.Zone
+		if zone == "" {
+			zone = zoneForUser(uid)
+		}
+		sendZoneMapFull(uid, zone)
+	}
+	return events.Continue
 }
 
 // requireAdmin resolves the connection's active user and returns its id iff the
