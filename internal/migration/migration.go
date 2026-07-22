@@ -74,6 +74,15 @@ func doAllMigrations(lastConfigVersion version.Version) error {
 		}
 	}
 
+	if lastConfigVersion.IsOlderThan(version.New(0, 15, 0)) {
+		// Authored coordinate model: backfill x/y/z/plane onto every non-instance
+		// room by crawling spatial exit deltas per connected component. Datafiles
+		// are backed up by Run() before this and restored on error.
+		if err := migrate_BackfillCoords(false); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
