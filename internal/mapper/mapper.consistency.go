@@ -141,12 +141,16 @@ func (r *mapper) CheckConsistency(zone string, nonCartesian bool) []Finding {
 
 			srcNonEuclid := nonCartesian || reg.IsNonEuclidean(src.Plane)
 			if !srcNonEuclid {
-				if isSpatialExit(e.Direction) && dst.Plane != src.Plane {
+				crossPlane := dst.Plane != src.Plane
+				if isSpatialExit(e.Direction) && crossPlane && !reg.IsNonEuclidean(dst.Plane) {
+					// Crossing to a DIFFERENT Euclidean plane is a bug — use a
+					// portal. (Crossing into a non-Euclidean plane — a maze/warped
+					// area — is a legitimate boundary and allowed.)
 					findings = append(findings, Finding{
 						Severity: "error", Kind: "deltamismatch", Zone: zone, RoomId: srcId, ExitName: exitName,
-						Detail: fmt.Sprintf("spatial exit crosses planes (%d -> %d); use a portal/door exit for cross-plane links", src.Plane, dst.Plane),
+						Detail: fmt.Sprintf("spatial exit crosses Euclidean planes (%d -> %d); use a portal/door exit", src.Plane, dst.Plane),
 					})
-				} else if !samePos(e.Direction, actual) {
+				} else if !crossPlane && !samePos(e.Direction, actual) {
 					findings = append(findings, Finding{
 						Severity: "error", Kind: "deltamismatch", Zone: zone, RoomId: srcId, ExitName: exitName,
 						Detail: fmt.Sprintf("nominal delta (%d,%d,%d) != actual (%d,%d,%d) — wrap exit in a Cartesian plane; fix the geometry or move the zone to a non-Euclidean plane",

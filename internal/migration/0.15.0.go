@@ -56,7 +56,8 @@ func backfillCoordsInDir(roomsDir string, dryRun bool) error {
 	if err != nil {
 		return err
 	}
-	coords, planes, collisions, mixed := crawlAndAssign(rms)
+	nonCart := loadNonCartesianZones(roomsDir)
+	coords, planes, collisions, mixed := crawlAndAssign(rms, nonCart)
 
 	planeSet := map[int]bool{}
 	for _, p := range planes {
@@ -160,9 +161,35 @@ func loadCoordRooms(roomsDir string) (map[int]*coordRoom, error) {
 
 // --- crawl + plane assignment ---
 
+// loadNonCartesianZones returns the set of zone folder names flagged
+// non_cartesian in their zone-config.yaml.
+func loadNonCartesianZones(roomsDir string) map[string]bool {
+	out := map[string]bool{}
+	zoneDirs, err := os.ReadDir(roomsDir)
+	if err != nil {
+		return out
+	}
+	for _, zd := range zoneDirs {
+		if !zd.IsDir() {
+			continue
+		}
+		raw, err := os.ReadFile(filepath.Join(roomsDir, zd.Name(), "zone-config.yaml"))
+		if err != nil {
+			continue
+		}
+		var zc struct {
+			NonCartesian bool `yaml:"non_cartesian"`
+		}
+		if yaml.Unmarshal(raw, &zc) == nil && zc.NonCartesian {
+			out[zd.Name()] = true
+		}
+	}
+	return out
+}
+
 // crawlAndAssign returns per-room {x,y,z}, per-room plane, the count of overlapping
-// cells on Euclidean planes, and the count of components mixing zone kinds.
-func crawlAndAssign(rms map[int]*coordRoom) (map[int][3]int, map[int]int, int, int) {
+// cells on EUCLIDEAN planes only, and the count of components mixing zone kinds.
+func crawlAndAssign(rms map[int]*coordRoom, nonCart map[string]bool) (map[int][3]int, map[int]int, int, int) {
 	// Union-find over SPATIAL edges only (portals don't merge components).
 	parent := map[int]int{}
 	var find func(int) int
@@ -179,12 +206,21 @@ func crawlAndAssign(rms map[int]*coordRoom) (map[int][3]int, map[int]int, int, i
 	for id, r := range rms {
 		find(id)
 		for _, e := range r.edges {
-			if _, ok := rms[e.to]; !ok {
+			dst, ok := rms[e.to]
+			if !ok {
 				continue // dangling exit target
 			}
-			if mapper.IsValidExitDirection(e.dir) {
-				union(id, e.to)
+			if !mapper.IsValidExitDirection(e.dir) {
+				continue // portal: never merges components
 			}
+			// A spatial exit across a normal<->non_cartesian boundary does NOT
+			// merge planes: the non-Euclidean area (maze/warped space) keeps its
+			// own plane so it can't drag a normal plane non-Euclidean. You still
+			// walk through the boundary at runtime (it's a cross-plane exit).
+			if nonCart[r.zoneDir] != nonCart[dst.zoneDir] {
+				continue
+			}
+			union(id, e.to)
 		}
 	}
 
@@ -218,9 +254,19 @@ func crawlAndAssign(rms map[int]*coordRoom) (map[int][3]int, map[int]int, int, i
 			coords[id] = c
 			planes[id] = plane
 		}
-		collisions += countCollisions(compCoords)
-		if componentIsMixed(rms, members) {
-			mixed++
+		nc, normal := false, false
+		for _, id := range members {
+			if nonCart[rms[id].zoneDir] {
+				nc = true
+			} else {
+				normal = true
+			}
+		}
+		if !nc {
+			collisions += countCollisions(compCoords) // overlaps only matter on Euclidean planes
+		}
+		if nc && normal {
+			mixed++ // a non_cartesian zone spatially bleeding into a normal plane
 		}
 	}
 	return coords, planes, collisions, mixed
@@ -228,7 +274,30 @@ func crawlAndAssign(rms map[int]*coordRoom) (map[int][3]int, map[int]int, int, i
 
 // crawlComponent BFS-walks a component from its lowest room id at the origin,
 // combining spatial deltas (first-visit-wins), then re-bases to the lowest id.
+// Traversal is UNDIRECTED over spatial edges (each A->B edge also yields B->A
+// with the negated delta) so that every component member is positioned — a
+// member reachable only via an incoming edge would otherwise default to the
+// origin and produce a false collision. In a consistent Cartesian component a
+// room's position is path-independent, so this matches the mapper's directed
+// crawl for every Euclidean plane.
 func crawlComponent(rms map[int]*coordRoom, members []int) map[int][3]int {
+	memberSet := make(map[int]bool, len(members))
+	for _, id := range members {
+		memberSet[id] = true
+	}
+	type nbr struct{ to, dx, dy, dz int }
+	adj := map[int][]nbr{}
+	for _, id := range members {
+		for _, e := range rms[id].edges {
+			if !memberSet[e.to] || !mapper.IsValidExitDirection(e.dir) {
+				continue
+			}
+			dx, dy, dz := mapper.GetDelta(e.dir)
+			adj[id] = append(adj[id], nbr{e.to, dx, dy, dz})
+			adj[e.to] = append(adj[e.to], nbr{id, -dx, -dy, -dz})
+		}
+	}
+
 	lowest := members[0] // members is sorted ascending
 	pos := map[int][3]int{lowest: {0, 0, 0}}
 	queue := []int{lowest}
@@ -236,19 +305,19 @@ func crawlComponent(rms map[int]*coordRoom, members []int) map[int][3]int {
 		cur := queue[0]
 		queue = queue[1:]
 		base := pos[cur]
-		for _, e := range rms[cur].edges {
-			if _, ok := rms[e.to]; !ok {
+		for _, n := range adj[cur] {
+			if _, seen := pos[n.to]; seen {
 				continue
 			}
-			if _, seen := pos[e.to]; seen {
-				continue
-			}
-			if !mapper.IsValidExitDirection(e.dir) {
-				continue // portal: doesn't place a neighbor spatially
-			}
-			dx, dy, dz := mapper.GetDelta(e.dir)
-			pos[e.to] = [3]int{base[0] + dx, base[1] + dy, base[2] + dz}
-			queue = append(queue, e.to)
+			pos[n.to] = [3]int{base[0] + n.dx, base[1] + n.dy, base[2] + n.dz}
+			queue = append(queue, n.to)
+		}
+	}
+	// Any member still unpositioned (disconnected via spatial edges — e.g. joined
+	// only by a portal that union-find shouldn't have merged) falls to the origin.
+	for _, id := range members {
+		if _, ok := pos[id]; !ok {
+			pos[id] = [3]int{0, 0, 0}
 		}
 	}
 	// Re-base to the lowest id (already at origin here, but keep explicit for parity).
@@ -271,34 +340,6 @@ func countCollisions(coords map[int][3]int) int {
 		}
 	}
 	return n
-}
-
-func componentIsMixed(rms map[int]*coordRoom, members []int) bool {
-	sawNormal, sawWeird := false, false
-	// Heuristic during migration: we don't load zone configs per member here;
-	// mixing is reported so a human reviews. A component is "mixed" if it spans
-	// >1 zone dir AND at least one looks maze/instance-like. Cheap signal only.
-	zones := map[string]bool{}
-	for _, id := range members {
-		zones[rms[id].zoneDir] = true
-	}
-	for z := range zones {
-		if isLikelyNonCartesianDir(z) {
-			sawWeird = true
-		} else {
-			sawNormal = true
-		}
-	}
-	return sawNormal && sawWeird
-}
-
-func isLikelyNonCartesianDir(zoneDir string) bool {
-	for _, s := range []string{"labyrinth", "foldweave", "trashheap", "oasis", "crash_site_interior", "antechamber", "ferries"} {
-		if strings.Contains(zoneDir, s) {
-			return true
-		}
-	}
-	return false
 }
 
 // --- order-preserving write-back ---
