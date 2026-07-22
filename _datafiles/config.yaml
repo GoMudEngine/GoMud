@@ -1439,9 +1439,13 @@ Modules:
   weather:
     Enabled: true
     Seed: 0
-    TickEveryGameHours: 1
+    # Weather steps once per this many game-hours (~20 min real at 8); high so
+    # weather reads as a rare, stable atmospheric event, not minute-to-minute
+    # flicker. If weather feels too sparse, raise SpawnRateScale first.
+    TickEveryGameHours: 8
     MaxActiveFronts: 8
-    SpawnRateScale: 1.0
+    # Thin spawns for more clear-sky stretches between systems.
+    SpawnRateScale: 0.7
     EmoteMode: module
     EmoteEveryRounds: 24
     EmoteMildChancePct: 30
