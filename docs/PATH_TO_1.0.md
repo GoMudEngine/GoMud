@@ -43,7 +43,15 @@ experience just passed a full feel-test — so the hill is shorter than it looks
   edit exits, etc. Highest-value *build* item — massively raises content velocity
   and lets non-coders contribute. Biggest scope here; worth its own spec.
 - 🟡 **Weather / seasons polish** — the systems exist (`modules/weather/`); finish
-  and polish. Scope the specific gaps before committing.
+  and polish. **Sub-project A DONE 2026-07-22** (merged to master `8d2dd32cb`,
+  spec+plan `2026-07-22-weather-ux-polish-*`): six threads — charset-safe
+  decorative glyphs (ASCII-mode mojibake fix), intensity-scaled emote cadence,
+  indoor prose coverage, calm-cold `frost` weather type, slowed tempo (tick
+  1→8, spawn 0.7), and a WCAG contrast recolor of 8 low-legibility readable
+  ANSI aliases. Adversarial playtest passed (frost + indoor prose render
+  distinctly; glyphs convert in ASCII mode). **Owed before/at prod push:** user
+  web-client eyeball of the recolors (Thread 6) + slowed-tempo feel (Thread 5) —
+  the harness strips color and tempo is a long-session feel. Not yet on prod.
 - 🟡 **Econ loop — a 4-part living-marketplace arc** (bigger than the original "NPC bidders +
   mudmail verify"; the exploration found mudmail's player-to-player send doesn't exist and the
   auction house had a gold-faucet bug). Sub-projects, in order:
@@ -315,7 +323,8 @@ goal — cheap wins that make the world feel crafted.
   refined ASCII on web, not SVG — a dedicated web "scene panel" (real SVG via a GMCP
   push) is a possible future enhancement. Mutation-acquisition is a designed-for
   (`SplashUser`) consumer, still to be wired in §5d's mutation-art item below.
-  Remaining weather UX (contrast, pacing, indoor/outdoor prose) is sub-project A.
+  Remaining weather UX (contrast, pacing, indoor/outdoor prose) was sub-project A
+  — **DONE 2026-07-22** (see §1 Weather / seasons polish).
 
 ---
 
