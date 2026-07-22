@@ -85,7 +85,7 @@ func DefaultClimate() Climate {
 			Track:       "temperate",
 		},
 		"mountain": {
-			Weather:     map[WeatherType]float64{"overcast": 4, "snow": 4, "storm": 2, "fog": 3},
+			Weather:     map[WeatherType]float64{"overcast": 4, "snow": 4, "storm": 2, "fog": 3, "frost": 2},
 			Influence:   WeatherInfluence{IntensityDelta: -0.15, MoistureDelta: -0.10, MovementResistance: 0.5},
 			SpawnWeight: 0.8,
 			Track:       "temperate",
@@ -97,7 +97,7 @@ func DefaultClimate() Climate {
 			// desert: unbound (no seasonal cycle) — matches the standalone.
 		},
 		"tundra": {
-			Weather:     map[WeatherType]float64{"clear": 5, "overcast": 4, "snow": 6, "blizzard": 2, "fog": 2},
+			Weather:     map[WeatherType]float64{"clear": 5, "overcast": 4, "snow": 6, "blizzard": 2, "fog": 2, "frost": 3},
 			Influence:   WeatherInfluence{IntensityDelta: -0.05, MoistureDelta: -0.02, MovementResistance: 0.2},
 			SpawnWeight: 1.0,
 			Track:       "temperate",
@@ -120,19 +120,19 @@ func DefaultClimate() Climate {
 		// (mountains/cliffs/snow/shore/water/farmland/land/road/city), not the
 		// archetype keys above. Bound to "temperate" except indoor/desert.
 		"mountains": { // = mountain archetype
-			Weather:     map[WeatherType]float64{"overcast": 4, "snow": 4, "storm": 2, "fog": 3},
+			Weather:     map[WeatherType]float64{"overcast": 4, "snow": 4, "storm": 2, "fog": 3, "frost": 2},
 			Influence:   WeatherInfluence{IntensityDelta: -0.15, MoistureDelta: -0.10, MovementResistance: 0.5},
 			SpawnWeight: 0.8,
 			Track:       "temperate",
 		},
 		"cliffs": { // exposed high ground: mountain-lite, windier storms
-			Weather:     map[WeatherType]float64{"clear": 3, "overcast": 4, "storm": 3, "fog": 3},
+			Weather:     map[WeatherType]float64{"clear": 3, "overcast": 4, "storm": 3, "fog": 3, "frost": 2},
 			Influence:   WeatherInfluence{IntensityDelta: -0.08, MoistureDelta: -0.04, MovementResistance: 0.3},
 			SpawnWeight: 0.9,
 			Track:       "temperate",
 		},
 		"snow": { // = tundra archetype
-			Weather:     map[WeatherType]float64{"clear": 5, "overcast": 4, "snow": 6, "blizzard": 2, "fog": 2},
+			Weather:     map[WeatherType]float64{"clear": 5, "overcast": 4, "snow": 6, "blizzard": 2, "fog": 2, "frost": 3},
 			Influence:   WeatherInfluence{IntensityDelta: -0.05, MoistureDelta: -0.02, MovementResistance: 0.2},
 			SpawnWeight: 1.0,
 			Track:       "temperate",

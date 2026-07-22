@@ -1,0 +1,23 @@
+weather: frost
+outdoor:
+  default:
+    - "A hard frost has seized the world; every surface wears a fur of rime."
+    - "The cold is absolute and windless, and your breath hangs in white clouds."
+    - "Ice-ferns spread across stone and puddle, crackling faintly as they grow."
+    - "A low freezing mist clings to the ground, riming all that it touches."
+  forest:
+    - "Every twig and needle is sheathed in glittering white, still as glass."
+    - "The frozen wood is silent but for the tick of ice tightening its grip."
+  city:
+    - "Rime whitens the eaves and doorframes; the streets ring hard underfoot."
+    - "Freezing mist pools between the buildings, haloing each cold lantern."
+  water:
+    - "A skin of ice creeps out from the banks, thin and clear as held breath."
+    - "Frozen mist drifts across the still water, leaving rime on the reeds."
+indoor:
+  default:
+    mild: []
+    strong:
+      - "Cold seeps through the walls; frost-ferns bloom on the inner glass."
+      - "Your breath fogs indoors, and the very nails in the wood feel like ice."
+      - "The quiet outside is glassy and total, the cold pressing at every seam."
