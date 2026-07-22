@@ -1007,6 +1007,10 @@ func PreCacheMaps() {
 		GetMapper(roomId)
 	}
 
+	// Build the plane registry (which planes are non-Euclidean) before the
+	// consistency pass consults it.
+	rooms.RebuildPlaneRegistry()
+
 	ValidateZoneConsistency()
 }
 
