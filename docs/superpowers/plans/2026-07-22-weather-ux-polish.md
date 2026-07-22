@@ -4,7 +4,7 @@
 
 **Goal:** Polish the weather system for 1.0 — fix ASCII-mode glyph mojibake, make ambient emotes intensity-scaled, slow the weather tempo, fill indoor prose, and add a calm-cold `frost` condition.
 
-**Architecture:** Five independent threads. Thread 1 is a central display-layer fix in `util.ConvertToAscii`. Thread 2 adds an intensity-gated emit chance inside the existing `EmitAmbient` pass, driven by a pure `emitChance` helper. Thread 3 & 4 are content (emote YAML). Thread 5 is config-only. Each task is a self-contained, committable unit. Weather is atmospheric only (`BuffsEnabled: false`), so no mechanics change.
+**Architecture:** Six independent threads. Thread 1 is a central display-layer fix in `util.ConvertToAscii`. Thread 2 adds an intensity-gated emit chance inside the existing `EmitAmbient` pass, driven by a pure `emitChance` helper. Thread 3 & 4 are content (emote YAML). Thread 5 is config-only. Thread 6 recolors low-contrast readable ANSI aliases against the dark web terminal. Each task is a self-contained, committable unit. Weather is atmospheric only (`BuffsEnabled: false`), so no mechanics change.
 
 **Tech Stack:** Go (GoMud fork), YAML data files, `go test`, config in `_datafiles/config.yaml`.
 
@@ -27,6 +27,7 @@
 - `modules/weather/sim/climate.go` — add `frost` to five cold climate maps. (Thread 4)
 - `_datafiles/world/dogmud/weather/emotes/frost.yaml` — new emote table. (Thread 4)
 - `modules/weather/content/shipped_emotes_test.go` — table count 8 → 9. (Thread 4)
+- `_datafiles/world/dogmud/ansi-aliases.yaml` — recolor 8 low-contrast readable aliases. (Thread 6)
 
 ---
 
@@ -530,7 +531,75 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 
 ---
 
-## Task 6: Boot smoke + adversarial playtest (content gate — REQUIRED)
+## Task 6: Category color contrast recolor (Thread 6)
+
+**Files:**
+- Modify: `_datafiles/world/dogmud/ansi-aliases.yaml`
+
+Recolor only the low-contrast **readable-text** aliases (verified ≥4.5:1 against
+the web terminal bg `#0c0c0d`). Leave intentional de-emphasis (the `8`/237/240/
+`*-downed` families, `suggested-text`, `item-nothing`) and the already-passing
+`weather` (75) / `time-of-day` (179) untouched.
+
+- [ ] **Step 1: Apply the recolors.** In `_datafiles/world/dogmud/ansi-aliases.yaml`, change exactly these values (do NOT touch other aliases that share the old numeric value — e.g. `mobname-downed: 124` stays 124, downed mobs are meant to be faint):
+
+  - `night: 19` → `night: 153`   (the `☾` prompt moon glyph; 1.5→13.0:1)
+  - `holy: 21` → `holy: 111`   (2.3→8.9:1)
+  - `zone: 124` → `zone: 167`   (2.6→5.3:1)
+  - `room-zone: 124` → `room-zone: 167`   (2.6→5.3:1)
+  - `username-aggro: 124` → `username-aggro: 196`   (2.6→4.9:1; aggro should pop)
+  - `spell-harmful: 124` → `spell-harmful: 203`   (2.6→6.6:1)
+  - `room-title: 128` → `room-title: 170`   (3.5→6.1:1)
+  - `item-cursed: 54` → `item-cursed: 133`   (1.7→4.7:1)
+
+  Note there are two `room-zone` entries in the file (lines ~36 and ~114, both `124`) — change both, and the `zone: 124` at line ~36. Search the file for `: 124` and `: 128`/`: 54`/`: 21`/`: 19` to confirm you catch exactly the eight aliases above and nothing else.
+
+- [ ] **Step 2: Verify no readable alias remains below 4.5:1.** Re-run the audit script (from the plan header of this task set — reproduced here) and confirm the eight aliases now clear 4.5 and nothing new regressed:
+
+```bash
+python3 - <<'PY'
+import re
+def xr(i):
+    if i<=231:
+        i-=16; s=[0,95,135,175,215,255]; return (s[i//36%6],s[i//6%6],s[i%6])
+    g=8+(i-232)*10; return (g,g,g)
+def lum(c):
+    def f(x):
+        x/=255; return x/12.92 if x<=0.03928 else ((x+0.055)/1.055)**2.4
+    r,g,b=c; return .2126*f(r)+.7152*f(g)+.0722*f(b)
+BG=lum((12,12,13))
+def con(i):
+    L=lum(xr(i)); a,b=max(L,BG),min(L,BG); return (a+.05)/(b+.05)
+for a,i in [("night",153),("holy",111),("zone",167),("room-zone",167),
+            ("username-aggro",196),("spell-harmful",203),("room-title",170),
+            ("item-cursed",133)]:
+    print(f"{a:16s} {i:3d} {con(i):4.1f}:1", "OK" if con(i)>=4.5 else "LOW")
+PY
+```
+Expected: every line prints `OK`.
+
+- [ ] **Step 3: Build sanity (YAML loads)**
+
+Run: `go build ./...`
+Expected: clean. (Runtime load of the alias file is confirmed by the boot-smoke in Task 7.)
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add _datafiles/world/dogmud/ansi-aliases.yaml
+git commit -m "fix(color): raise contrast on low-legibility readable aliases
+
+Recolor night(moon)/holy/zone/room-zone/username-aggro/spell-harmful/
+room-title/item-cursed from sub-4.5:1 to >=4.5:1 against the web dark
+terminal (also helps telnet). Intentional de-emphasis colors and the
+already-legible weather/time-of-day left unchanged.
+
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
+```
+
+---
+
+## Task 7: Boot smoke + adversarial playtest (content gate — REQUIRED)
 
 **Files:** none (verification only)
 
@@ -554,6 +623,7 @@ Expected: server boots past data-file loading with NO panic; watch for the weath
   3. Confirm weather *changes* feel slow/systemic (Thread 5) — and specifically that weather still appears often enough to notice at all; if it reads dead, note it (first dial-back = raise `SpawnRateScale`).
   4. Enter an indoor room during weather; confirm indoor prose lands and reads distinctly from outdoor.
   5. `weather spawn frost <cold-zone> 0.8`; confirm frost reads distinctly from snow and fog (still, crystalline, freezing mist), outdoor + indoor.
+  6. On the WEB client (dark terminal), spot-check the Thread 6 recolors: a zone header, the night `☾` prompt moon glyph, an aggro mob name, a harmful spell, a room title, a cursed item — all now clearly legible; and confirm de-emphasis text (system messages, dead/downed mobs, secret exits) still reads as intentionally subdued, not washed out.
   Read every line as a confused human would. Fix anything it surfaces, re-run if needed, and only then hand to the user.
 
 - [ ] **Step 4: Report.** Summarize the playtest findings + any fixes. Do NOT claim the work done on a clean boot alone.
@@ -562,8 +632,9 @@ Expected: server boots past data-file loading with NO panic; watch for the weath
 
 ## Self-Review notes
 
-- **Spec coverage:** Thread 1 → Task 1; Thread 2 → Task 2; Thread 3 → Task 4; Thread 4 → Task 5; Thread 5 → Task 3; content gate → Task 6. All five threads + testing covered.
+- **Spec coverage:** Thread 1 → Task 1; Thread 2 → Task 2; Thread 3 → Task 4; Thread 4 → Task 5; Thread 5 → Task 3; Thread 6 → Task 6; content gate → Task 7. All six threads + testing covered.
 - **Config table (spec) vs plan:** `EmoteMildChancePct` 30, `EmoteStrongChancePct` 100, `EmoteEveryRounds` 24, `TickEveryGameHours` 8, `SpawnRateScale` 0.7 — all present (Tasks 2 & 3).
+- **Thread 6 recolors:** 8 aliases (night/holy/zone/room-zone/username-aggro/spell-harmful/room-title/item-cursed), each verified ≥4.5:1 by the Task 6 Step 2 script; de-emphasis and weather/time-of-day deliberately excluded.
 - **Type consistency:** `emitChance(mildPct, strongPct int, felt float64) int` defined in Task 2 Step 3, called with the same arg order in Step 5 and tested in Step 1; `EmitAmbient` signature extended once (Step 5) and the sole caller updated (Step 6). `unicodeToAscii` type change (Task 1) has exactly one consumer (`ConvertToAscii`), updated in the same task.
 - **Ordering:** Task 4 (count still 8) before or after Task 5 (count → 9) both fine — the count assertion is only touched in Task 5. If executed out of order, run Task 5 Step 3 before re-running the content test.
 ```

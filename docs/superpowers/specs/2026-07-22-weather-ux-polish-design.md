@@ -15,7 +15,8 @@ emotes fire at a flat cadence regardless of conditions, weather *changes* too
 fast to read as slow atmospheric systems, indoor prose is thin, and there is no
 calm-cold condition (cold currently = snow/blizzard precipitation only).
 
-Five independent threads. Each can ship on its own; they share one final
+Six independent threads (Thread 6 added 2026-07-22 from user contrast
+feedback). Each can ship on its own; they share one final
 in-game playtest.
 
 ---
@@ -175,6 +176,44 @@ of them. Lowering the tick is the second lever.
 
 ---
 
+## Thread 6 — Category color contrast (added 2026-07-22)
+
+**Origin.** User reported ambient text hard to read on the web client's dark
+terminal (`#0c0c0d`). Investigation: the web theme
+(`webclient-pure.html:391`) overrides only the **base-16** ANSI palette (a warm
+"leather" set); all category colors use **256-color indices**, which fall
+through to xterm's *standard* 256 palette. A WCAG contrast audit of every alias
+in `_datafiles/world/dogmud/ansi-aliases.yaml` against `#0c0c0d` (script in the
+plan) found the reported atmosphere colors are actually fine — `weather` (75)
+≈ 9:1, `time-of-day` (179) ≈ 7:1 — but a distinct set of **readable-text**
+aliases sit well below the 4.5:1 AA floor.
+
+**Design principle.** Fix only colors for text meant to be *read*. Leave
+intentional de-emphasis (system chatter, dead/downed entities, secret/hidden,
+ghosted suggestions — the `8`/237/240/`*-downed` families) dim by design;
+flattening them would destroy the semantic hierarchy. No font-size change
+(`MIN_FS=10` guarantees 80-col fit on small screens — raising it breaks wrap).
+Weather/time-of-day left unchanged (they pass).
+
+**Recolors** (all verified ≥4.5:1 against `#0c0c0d`; hue preserved):
+
+| Alias | old → new | old:1 → new:1 |
+|-------|-----------|---------------|
+| `night` (the `☾` prompt moon glyph) | 19 → 153 | 1.5 → 13.0 |
+| `holy` | 21 → 111 | 2.3 → 8.9 |
+| `zone` | 124 → 167 | 2.6 → 5.3 |
+| `room-zone` | 124 → 167 | 2.6 → 5.3 |
+| `username-aggro` | 124 → 196 | 2.6 → 4.9 |
+| `spell-harmful` | 124 → 203 | 2.6 → 6.6 |
+| `room-title` | 128 → 170 | 3.5 → 6.1 |
+| `item-cursed` | 54 → 133 | 1.7 → 4.7 |
+
+One file, no code. Helps telnet (also dark-bg) as well as web. If the user still
+finds weather/time dim after this, the fallback (out of scope now) is bumping
+75/179 too, since the residual there is small-font AA, not WCAG contrast.
+
+---
+
 ## Testing & the content gate
 
 - **Unit:** `ConvertToAscii` widening (incl. FE0F drop + multi-rune emoji);
@@ -192,6 +231,10 @@ of them. Lowering the tick is the second lever.
   3. weather changes feel slow/systemic (Thread 5);
   4. indoor prose lands when sheltering (Thread 3);
   5. frost reads distinctly from snow and fog (Thread 4).
+  6. the recolored aliases (Thread 6) read clearly on the web dark terminal —
+     spot-check a zone header, the night `☾` prompt glyph, an aggro mob name,
+     and a harmful spell; confirm de-emphasis text (system/dead/secret) still
+     reads as intentionally subdued.
   Read every line as a confused human would; fix what it finds; re-run if needed
   before handing to the user.
 
