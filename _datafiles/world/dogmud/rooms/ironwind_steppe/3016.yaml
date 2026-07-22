@@ -1,13 +1,14 @@
 roomid: 3016
 zone: Ironwind Steppe
-title: Central Sagebrush Flats
-description: A broad, open stretch of the sagebrush flats where the
-  terrain is almost perfectly level. The horizon is a clean line in
-  every direction except northeast, where the dark mass of Ironwind
-  Ridge breaks the skyline. The wind is steady and warm, bending
-  the grass in continuous rolling waves. A large boulder sits
-  incongruously in the middle of the flats, dropped here by some
-  ancient glacial force.
+title: Ridgefoot Flats
+description: The open sagebrush flats narrow here at the foot of the
+  ridge. To the west the level grassland runs on toward the ridge
+  approach, while to the east and north the dark mass of Ironwind
+  Ridge breaks the skyline and the ground begins to climb. The wind
+  is steady and warm, bending the grass in continuous rolling waves.
+  A large boulder sits at the flats' edge, dropped here by some
+  ancient glacial force. Southward the soil thins and the ground
+  breaks into rock.
 biome: land
 exits:
   west:

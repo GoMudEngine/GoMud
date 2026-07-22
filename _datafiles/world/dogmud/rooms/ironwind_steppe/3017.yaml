@@ -1,13 +1,13 @@
 roomid: 3017
 zone: Ironwind Steppe
-title: Eastern Sagebrush Flats
-description: The sagebrush flats begin to rise gently toward the east,
-  the first sign of the elevated terrain ahead. The grass grows
-  sparser as rocky outcrops start to break through the soil --
-  dark stone poking through the earth like bones through skin. A
-  few scrubby pines cling to the lee side of the larger outcrops,
-  their needles dark green against the pale grass. The ridge is
-  close now, its rocky crest visible as a jagged line.
+title: The Broken Rise
+description: The flats give out here against the rising ground. Rocky
+  outcrops break through the thinning soil -- dark stone poking
+  through the earth like bones through skin. A few scrubby pines
+  cling to the lee side of the larger outcrops, their needles dark
+  green against the pale grass. The ridge crowds close on nearly
+  every side, and only northward does the ground fall away again
+  into open flats.
 biome: land
 exits:
   north:
