@@ -256,6 +256,46 @@ func TestBuildExitRemove_RemovesReciprocal(t *testing.T) {
 	}
 }
 
+func TestBuildRoomGet_MapsFieldsAndClassifiesExits(t *testing.T) {
+	w := newFakeWorld()
+	w.put(&rooms.Room{
+		RoomId: 7, Zone: "Over", Plane: 0, X: 1, Y: 2, Z: 0,
+		Title: "Hall", Description: "A hall.", Biome: "city",
+		MapSymbol: "H", MapLegend: "Hall", MusicFile: "hall.mp3",
+		IsBank: true, Pvp: true,
+		Nouns:        map[string]string{"banner": "A red banner."},
+		IdleMessages: []string{"Torches gutter."},
+		Exits: map[string]exit.RoomExit{
+			"north":     {RoomId: 8},
+			"enter inn": {RoomId: 9, ExitMessage: "You duck inside.", Secret: true},
+		},
+	})
+
+	detail, ok := buildRoomGet(w.deps(), 7)
+	if !ok {
+		t.Fatal("expected room 7 to be found")
+	}
+	if detail.Title != "Hall" || detail.Biome != "city" || detail.Symbol != "H" || detail.Music != "hall.mp3" {
+		t.Errorf("fields not mapped: %+v", detail)
+	}
+	if !detail.Bank || !detail.Pvp {
+		t.Errorf("flags not mapped: %+v", detail)
+	}
+	if detail.Plane != 0 || detail.X != 1 || detail.Y != 2 {
+		t.Errorf("coords not mapped: %+v", detail)
+	}
+	byName := map[string]buildExitDetail{}
+	for _, e := range detail.Exits {
+		byName[e.Name] = e
+	}
+	if e := byName["north"]; e.Dir != "north" || e.ToRoomId != 8 {
+		t.Errorf("spatial exit misclassified: %+v", e)
+	}
+	if e := byName["enter inn"]; e.Dir != "" || e.ToRoomId != 9 || e.Message != "You duck inside." || !e.Secret {
+		t.Errorf("portal exit misclassified: %+v", e)
+	}
+}
+
 func TestBuildRoomDelete_CleansInboundExits(t *testing.T) {
 	w := newFakeWorld()
 	w.put(&rooms.Room{RoomId: 1, Zone: "Over", Plane: 0, X: 0, Y: 0, Z: 0,

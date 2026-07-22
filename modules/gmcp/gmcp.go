@@ -541,6 +541,22 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 			sendBuildResult(uid, buildExitRemove(realBuildDeps(), req.RoomId, req.ExitName))
 			sendZoneMapFull(uid, zoneForUser(uid))
 
+		case `Build.Room.Get`:
+			uid, ok := requireAdmin(connectionId)
+			if !ok {
+				break
+			}
+			var req roomGetReq
+			if err := json.Unmarshal(payload, &req); err != nil {
+				sendBuildResult(uid, buildErr("bad Build.Room.Get payload"))
+				break
+			}
+			if detail, found := buildRoomGet(realBuildDeps(), req.RoomId); found {
+				sendRoomDetail(uid, detail)
+			} else {
+				sendBuildResult(uid, buildErr("room %d not found", req.RoomId))
+			}
+
 		case `Build.Map.Request`:
 			uid, ok := requireAdmin(connectionId)
 			if !ok {

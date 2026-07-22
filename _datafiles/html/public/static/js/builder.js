@@ -127,6 +127,18 @@
     return false;
   };
 
+  // roomIdAt returns the room id occupying an exact (plane,x,y,z) cell, or 0.
+  BuilderCanvas.prototype.roomIdAt = function (plane, x, y, z) {
+    for (var i = 0; i < this.rooms.length; i++) {
+      var r = this.rooms[i];
+      if ((r.plane || 0) === plane && r.x === x && r.y === y && (r.z || 0) === z) return r.num;
+    }
+    return 0;
+  };
+
+  // DIRS exposed for the inspector's spatial-exit resolution.
+  BuilderCanvas.DIRS = DIRS;
+
   function cx(r) { return r.x * CELL + RW / 2; }
   function cy(r) { return r.y * CELL + RH / 2; }
 

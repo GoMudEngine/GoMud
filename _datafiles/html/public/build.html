@@ -69,7 +69,32 @@
     background: var(--panel); padding: 12px;
   }
   #inspector h2 { margin: 0 0 8px; color: var(--gold); font-size: 15px; }
+  #inspector h3 { margin: 14px 0 6px; color: var(--gold-dim); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; border-bottom: 1px solid var(--tooled); padding-bottom: 3px; }
   #inspector .empty { color: var(--gold-dim); font-style: italic; }
+  #inspector label { display: block; margin: 8px 0 2px; font-size: 11px; color: var(--gold-dim); }
+  #inspector input[type=text], #inspector textarea, #inspector select {
+    width: 100%; padding: 5px 7px; font: inherit; font-size: 13px;
+    background: var(--ink); color: var(--parch);
+    border: 1px solid var(--tooled); border-radius: 4px;
+  }
+  #inspector textarea { resize: vertical; min-height: 70px; }
+  #inspector input:focus, #inspector textarea:focus, #inspector select:focus { outline: none; border-color: var(--gold); }
+  #inspector .row { display: flex; gap: 6px; }
+  #inspector .row > * { flex: 1 1 auto; min-width: 0; }
+  #inspector .flags label { display: inline-flex; align-items: center; gap: 5px; margin: 4px 10px 4px 0; font-size: 12px; color: var(--parch); }
+  #inspector .flags input { width: auto; }
+  #inspector .kv { display: flex; gap: 5px; margin: 4px 0; align-items: center; }
+  #inspector .kv input { flex: 1 1 auto; }
+  #inspector .exit { display: flex; align-items: center; gap: 6px; padding: 4px 0; border-bottom: 1px dotted var(--tooled); font-size: 12px; }
+  #inspector .exit .grow { flex: 1 1 auto; }
+  #inspector .exit .tag { color: var(--gold-dim); font-size: 10px; }
+  #inspector button.mini { background: var(--panel); color: var(--parch); border: 1px solid var(--tooled); border-radius: 4px; padding: 2px 7px; font: inherit; font-size: 12px; cursor: pointer; }
+  #inspector button.mini:hover { border-color: var(--gold); }
+  #inspector button.rm { color: var(--danger); border-color: transparent; padding: 2px 6px; }
+  #inspector .save-row { position: sticky; bottom: 0; background: var(--panel); padding: 10px 0 4px; margin-top: 10px; }
+  #inspector .save-row button { width: 100%; padding: 8px; background: var(--gold); color: var(--ink); font-weight: bold; border: none; border-radius: 4px; cursor: pointer; }
+  #inspector .save-row button:disabled { opacity: .45; cursor: default; }
+  #addexit { border: 1px solid var(--tooled); border-radius: 5px; padding: 8px; margin-top: 6px; }
 
   /* ---- login overlay ---- */
   #login {
@@ -184,21 +209,23 @@
   window.Builder.onGMCP = function (ns, obj) {
     if (ns === "Build.Result") {
       if (obj && obj.ok) {
-        if (obj.roomId) pendingCreatedId = obj.roomId;
-        toast(obj.roomId ? "Saved." : "Done.", false);
+        if (deletingRoomId) { deletingRoomId = 0; clearInspector(); toast("Room deleted.", false); }
+        else if (inspectorDirtySaving) { inspectorDirtySaving = false; setDirty(false); toast("Saved.", false); }
+        else if (refetchRoomId) { var rid = refetchRoomId; refetchRoomId = 0; sendGMCP("Build.Room.Get", { roomId: rid }); toast("Applied.", false); }
+        else { if (obj.roomId) pendingCreatedId = obj.roomId; toast("Done.", false); }
       } else {
+        inspectorDirtySaving = false; refetchRoomId = 0; deletingRoomId = 0;
         toast((obj && obj.error) || "Build error", true);
       }
+    } else if (ns === "Build.Room") {
+      renderInspector(obj);
     }
   };
 
-  // Room selection -> inspector (Task 5 fills this in; placeholder for now).
+  // Selecting a room fetches its full editable detail; deselect clears the form.
   window.Builder.onRoomSelected = function (room) {
-    var empty = document.getElementById("insp-empty");
-    if (!empty) return;
-    empty.textContent = room
-      ? ("Room #" + room.num + " — " + (room.name || "Untitled") + " (inspector: Task 5)")
-      : "Select a room on the map to edit it.";
+    if (!room) { clearInspector(); return; }
+    sendGMCP("Build.Room.Get", { roomId: room.num });
   };
 
   // Minimal toast in the toolbar conn slot (replaced by a real toast in Task 5).
@@ -356,9 +383,272 @@
     }
   });
 
+  // ---- inspector ----------------------------------------------------------
+  var insp = document.getElementById("inspector");
+  var current = null;             // the Build.Room detail currently loaded
+  var dirty = false;
+  var inspectorDirtySaving = false; // a Save is in flight (distinguish from create toasts)
+  var refetchRoomId = 0;          // re-fetch this room's detail after the next ok result (exit ops)
+  var deletingRoomId = 0;         // a room delete is in flight
+  var saveBtn = document.getElementById("tb-save");
+
+  function ce(tag, attrs, kids) {
+    var e = document.createElement(tag);
+    if (attrs) for (var k in attrs) {
+      if (k === "text") e.textContent = attrs[k];
+      else if (k === "html") e.innerHTML = attrs[k];
+      else e.setAttribute(k, attrs[k]);
+    }
+    (kids || []).forEach(function (c) { if (c) e.appendChild(c); });
+    return e;
+  }
+
+  function setDirty(d) {
+    dirty = d;
+    if (saveBtn) saveBtn.disabled = !d;
+    var s = document.getElementById("insp-save");
+    if (s) s.disabled = !d;
+  }
+
+  function clearInspector() {
+    current = null;
+    setDirty(false);
+    insp.innerHTML = "";
+    insp.appendChild(ce("h2", { text: "Inspector" }));
+    insp.appendChild(ce("div", { "class": "empty", text: "Select a room on the map to edit it." }));
+  }
+
+  function field(labelText, input) {
+    return ce("div", {}, [ce("label", { text: labelText }), input]);
+  }
+
+  function textInput(val) { var i = ce("input", { type: "text" }); i.value = val || ""; i.addEventListener("input", function () { setDirty(true); }); return i; }
+
+  function renderInspector(d) {
+    current = d;
+    insp.innerHTML = "";
+    insp.appendChild(ce("h2", { text: "Room #" + d.roomId }));
+    insp.appendChild(ce("div", { "class": "tag", "style": "color:var(--gold-dim);font-size:11px;margin-bottom:4px;",
+      text: "plane " + d.plane + " · (" + d.x + "," + d.y + "," + d.z + ")" }));
+
+    // Title
+    var title = textInput(d.title); insp.appendChild(field("Title", title));
+    // Description
+    var desc = ce("textarea", {}); desc.value = d.description || ""; desc.addEventListener("input", function () { setDirty(true); });
+    insp.appendChild(field("Description", desc));
+    // Biome dropdown
+    var biome = ce("select", {});
+    (d.biomes || []).forEach(function (b) {
+      var o = ce("option", { value: b, text: b }); if (b === d.biome) o.selected = true; biome.appendChild(o);
+    });
+    if (d.biome && (d.biomes || []).indexOf(d.biome) === -1) { var o = ce("option", { value: d.biome, text: d.biome }); o.selected = true; biome.appendChild(o); }
+    biome.addEventListener("change", function () { setDirty(true); });
+    insp.appendChild(field("Biome", biome));
+    // Symbol + legend
+    var sym = textInput(d.symbol), leg = textInput(d.legend);
+    var symRow = ce("div", { "class": "row" }, [field("Map symbol", sym), field("Legend", leg)]);
+    insp.appendChild(symRow);
+    // Music
+    var music = textInput(d.music); insp.appendChild(field("Music file", music));
+
+    // Flags
+    insp.appendChild(ce("h3", { text: "Flags" }));
+    var flags = ce("div", { "class": "flags" });
+    function flag(name, val) {
+      var cb = ce("input", { type: "checkbox" }); cb.checked = !!val; cb.addEventListener("change", function () { setDirty(true); });
+      flags.appendChild(ce("label", {}, [cb, ce("span", { text: name })]));
+      return cb;
+    }
+    var fBank = flag("Bank", d.bank), fStore = flag("Storage", d.storage), fPvp = flag("PvP", d.pvp), fChar = flag("Char-room", d.characterRoom);
+    insp.appendChild(flags);
+
+    // Nouns
+    insp.appendChild(ce("h3", { text: "Nouns" }));
+    var nounsBox = ce("div", {});
+    function nounRow(k, v) {
+      var kk = ce("input", { type: "text", placeholder: "noun" }); kk.value = k || "";
+      var vv = ce("input", { type: "text", placeholder: "description" }); vv.value = v || "";
+      kk.addEventListener("input", function () { setDirty(true); }); vv.addEventListener("input", function () { setDirty(true); });
+      var rm = ce("button", { "class": "mini rm", text: "✕", title: "remove" });
+      var row = ce("div", { "class": "kv" }, [kk, vv, rm]);
+      rm.addEventListener("click", function () { nounsBox.removeChild(row); setDirty(true); });
+      row._k = kk; row._v = vv;
+      return row;
+    }
+    var nn = d.nouns || {};
+    Object.keys(nn).forEach(function (k) { nounsBox.appendChild(nounRow(k, nn[k])); });
+    insp.appendChild(nounsBox);
+    var addNoun = ce("button", { "class": "mini", text: "+ noun" });
+    addNoun.addEventListener("click", function () { nounsBox.appendChild(nounRow("", "")); setDirty(true); });
+    insp.appendChild(addNoun);
+
+    // Idle messages
+    insp.appendChild(ce("h3", { text: "Idle messages" }));
+    var idleBox = ce("div", {});
+    function idleRow(v) {
+      var vv = ce("input", { type: "text", placeholder: "idle message" }); vv.value = v || "";
+      vv.addEventListener("input", function () { setDirty(true); });
+      var rm = ce("button", { "class": "mini rm", text: "✕" });
+      var row = ce("div", { "class": "kv" }, [vv, rm]);
+      rm.addEventListener("click", function () { idleBox.removeChild(row); setDirty(true); });
+      row._v = vv;
+      return row;
+    }
+    (d.idleMessages || []).forEach(function (m) { idleBox.appendChild(idleRow(m)); });
+    insp.appendChild(idleBox);
+    var addIdle = ce("button", { "class": "mini", text: "+ message" });
+    addIdle.addEventListener("click", function () { idleBox.appendChild(idleRow("")); setDirty(true); });
+    insp.appendChild(addIdle);
+
+    // Exits
+    renderExits(d);
+
+    // Save + delete row
+    var save = ce("button", { id: "insp-save", text: "Save Room", disabled: "disabled" });
+    save.addEventListener("click", doSave);
+    var del = ce("button", { "class": "mini rm", text: "Delete room", "style": "width:100%;margin-top:6px;padding:6px;" });
+    del.addEventListener("click", function () {
+      if (!current) return;
+      if (window.confirm("Delete room #" + current.roomId + "? This removes it and all exits pointing to it.")) {
+        deletingRoomId = current.roomId;
+        sendGMCP("Build.Room.Delete", { roomId: current.roomId });
+      }
+    });
+    insp.appendChild(ce("div", { "class": "save-row" }, [save, del]));
+
+    // gather fn for save
+    current._gather = function () {
+      var nouns = {};
+      Array.prototype.forEach.call(nounsBox.children, function (r) {
+        var k = r._k.value.trim(); if (k) nouns[k] = r._v.value;
+      });
+      var idle = [];
+      Array.prototype.forEach.call(idleBox.children, function (r) {
+        var v = r._v.value.trim(); if (v) idle.push(v);
+      });
+      return {
+        roomId: d.roomId, title: title.value, description: desc.value,
+        biome: biome.value, symbol: sym.value, legend: leg.value, music: music.value,
+        bank: fBank.checked, storage: fStore.checked, pvp: fPvp.checked, characterRoom: fChar.checked,
+        nouns: nouns, idleMessages: idle
+      };
+    };
+    setDirty(false);
+  }
+
+  function doSave() {
+    if (!current || !current._gather) return;
+    inspectorDirtySaving = true;
+    sendGMCP("Build.Room.Update", current._gather());
+  }
+
+  function renderExits(d) {
+    insp.appendChild(ce("h3", { text: "Exits" }));
+    var list = ce("div", {});
+    (d.exits || []).forEach(function (e) {
+      var tag = e.dir ? ("spatial " + e.dir) : "portal";
+      var flags = [];
+      if (e.secret) flags.push("secret");
+      if (e.oneway) flags.push("one-way");
+      if (e.lock) flags.push("lock " + e.lock);
+      var lbl = ce("span", { "class": "grow", html:
+        "<b>" + escapeHtml(e.name) + "</b> → " + e.toRoomId +
+        " <span class='tag'>" + tag + (flags.length ? " · " + flags.join(", ") : "") + "</span>" });
+      var rm = ce("button", { "class": "mini rm", text: "✕", title: "remove exit" });
+      rm.addEventListener("click", function () { refetchRoomId = d.roomId; sendGMCP("Build.Exit.Remove", { roomId: d.roomId, exitName: e.name }); });
+      list.appendChild(ce("div", { "class": "exit" }, [lbl, rm]));
+    });
+    insp.appendChild(list);
+    insp.appendChild(buildAddExit(d));
+  }
+
+  function buildAddExit(d) {
+    var box = ce("div", { id: "addexit" });
+    box.appendChild(ce("div", { "style": "font-size:11px;color:var(--gold-dim);margin-bottom:4px;", text: "Add exit" }));
+
+    // kind toggle
+    var kind = ce("select", {});
+    kind.appendChild(ce("option", { value: "spatial", text: "Spatial (direction)" }));
+    kind.appendChild(ce("option", { value: "portal", text: "Portal (named)" }));
+    box.appendChild(kind);
+
+    // spatial: direction dropdown limited to open directions with an adjacent room
+    var dirSel = ce("select", {});
+    var DIRS = window.Builder.BuilderCanvas.DIRS;
+    var haveDir = {};
+    (d.exits || []).forEach(function (e) { if (e.dir) haveDir[e.dir] = true; });
+    var spatialTargets = {};
+    for (var dir in DIRS) {
+      if (haveDir[dir]) continue;
+      var nx = d.x + DIRS[dir][0], ny = d.y + DIRS[dir][1];
+      var target = canvas ? canvas.roomIdAt(d.plane, nx, ny, d.z) : 0;
+      if (target) { spatialTargets[dir] = target; dirSel.appendChild(ce("option", { value: dir, text: dir + " → " + target })); }
+    }
+    if (!dirSel.children.length) dirSel.appendChild(ce("option", { value: "", text: "(no adjacent rooms)" }));
+
+    // portal: name + target id (datalist of snapshot rooms)
+    var pName = ce("input", { type: "text", placeholder: "exit name e.g. enter inn" });
+    var pTarget = ce("input", { type: "text", placeholder: "target room id" });
+
+    // flags
+    var fSecret = ce("input", { type: "checkbox" });
+    var fOneway = ce("input", { type: "checkbox" });
+    var fLock = ce("input", { type: "text", placeholder: "lock diff (0)" }); fLock.style.width = "80px";
+    var fMsg = ce("input", { type: "text", placeholder: "exit message (optional)" });
+
+    var spatialWrap = ce("div", {}, [ce("label", { text: "Direction" }), dirSel]);
+    var portalWrap = ce("div", {}, [
+      ce("label", { text: "Name" }), pName,
+      ce("label", { text: "Target room id" }), pTarget
+    ]);
+    portalWrap.style.display = "none";
+    kind.addEventListener("change", function () {
+      var sp = kind.value === "spatial";
+      spatialWrap.style.display = sp ? "" : "none";
+      portalWrap.style.display = sp ? "none" : "";
+    });
+    box.appendChild(spatialWrap);
+    box.appendChild(portalWrap);
+
+    var flagRow = ce("div", { "class": "flags", "style": "margin-top:6px;" }, [
+      ce("label", {}, [fSecret, ce("span", { text: "secret" })]),
+      ce("label", {}, [fOneway, ce("span", { text: "one-way" })])
+    ]);
+    box.appendChild(flagRow);
+    box.appendChild(ce("div", { "class": "row", "style": "margin-top:4px;" }, [fLock, fMsg]));
+
+    var addBtn = ce("button", { "class": "mini", text: "+ add exit", "style": "margin-top:6px;" });
+    addBtn.addEventListener("click", function () {
+      var req = { roomId: d.roomId, secret: fSecret.checked, oneway: fOneway.checked,
+        lock: parseInt(fLock.value, 10) || 0, message: fMsg.value };
+      if (kind.value === "spatial") {
+        var dir = dirSel.value;
+        if (!dir || !spatialTargets[dir]) { toast("Pick an adjacent direction", true); return; }
+        req.dir = dir; req.toRoomId = spatialTargets[dir];
+      } else {
+        var name = pName.value.trim(); var tid = parseInt(pTarget.value, 10) || 0;
+        if (!name || !tid) { toast("Portal needs a name and target id", true); return; }
+        req.portalName = name; req.toRoomId = tid;
+      }
+      refetchRoomId = d.roomId;
+      sendGMCP("Build.Exit.Add", req);
+    });
+    box.appendChild(addBtn);
+    return box;
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+
+  clearInspector();
+
   // ---- canvas + toolbar wiring -------------------------------------------
   var planeSel = document.getElementById("tb-plane");
   var floorEl = document.getElementById("tb-floor");
+  if (saveBtn) saveBtn.addEventListener("click", doSave);
 
   if (window.Builder.BuilderCanvas) {
     canvas = new window.Builder.BuilderCanvas(document.getElementById("canvas"));

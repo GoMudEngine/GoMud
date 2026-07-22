@@ -12,6 +12,7 @@ package gmcp
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -82,6 +83,46 @@ type exitRemoveReq struct {
 
 type mapRequestReq struct {
 	Zone string `json:"zone"` // optional; defaults to the admin's current zone
+}
+
+type roomGetReq struct {
+	RoomId int `json:"roomId"`
+}
+
+// ---- server -> client room detail (Build.Room) -------------------------------
+// The Zone.Map snapshot only carries map-rendering fields; the inspector needs
+// the full editable template, fetched per room via Build.Room.Get.
+
+type buildExitDetail struct {
+	Name     string `json:"name"`
+	ToRoomId int    `json:"toRoomId"`
+	Dir      string `json:"dir,omitempty"` // set when the exit is spatial (compass)
+	Secret   bool   `json:"secret,omitempty"`
+	OneWay   bool   `json:"oneway,omitempty"`
+	Lock     int    `json:"lock,omitempty"`
+	Message  string `json:"message,omitempty"`
+}
+
+type buildRoomDetail struct {
+	RoomId        int               `json:"roomId"`
+	Title         string            `json:"title"`
+	Description   string            `json:"description"`
+	Biome         string            `json:"biome"`
+	Symbol        string            `json:"symbol"`
+	Legend        string            `json:"legend"`
+	Music         string            `json:"music"`
+	Bank          bool              `json:"bank"`
+	Storage       bool              `json:"storage"`
+	Pvp           bool              `json:"pvp"`
+	CharacterRoom bool              `json:"characterRoom"`
+	Nouns         map[string]string `json:"nouns"`
+	IdleMessages  []string          `json:"idleMessages"`
+	Exits         []buildExitDetail `json:"exits"`
+	Plane         int               `json:"plane"`
+	X             int               `json:"x"`
+	Y             int               `json:"y"`
+	Z             int               `json:"z"`
+	Biomes        []string          `json:"biomes,omitempty"` // valid biome ids for the dropdown
 }
 
 // ---- dependency seam ---------------------------------------------------------
@@ -251,6 +292,34 @@ func buildRoomDelete(d buildDeps, roomId int) BuildResult {
 	return BuildResult{Ok: true, RoomId: roomId}
 }
 
+// buildRoomGet builds the full editable detail for a room (the inspector's
+// data source). Exits are classified spatial (Dir set) vs portal by whether
+// the exit key is a compass direction.
+func buildRoomGet(d buildDeps, roomId int) (buildRoomDetail, bool) {
+	r := d.loadTemplate(roomId)
+	if r == nil {
+		return buildRoomDetail{}, false
+	}
+	detail := buildRoomDetail{
+		RoomId: r.RoomId, Title: r.Title, Description: r.Description,
+		Biome: r.Biome, Symbol: r.MapSymbol, Legend: r.MapLegend, Music: r.MusicFile,
+		Bank: r.IsBank, Storage: r.IsStorage, Pvp: r.Pvp, CharacterRoom: r.IsCharacterRoom,
+		Nouns: r.Nouns, IdleMessages: r.IdleMessages,
+		Plane: r.Plane, X: r.X, Y: r.Y, Z: r.Z,
+	}
+	for name, e := range r.Exits {
+		ed := buildExitDetail{
+			Name: name, ToRoomId: e.RoomId, Secret: e.Secret, OneWay: e.OneWay,
+			Lock: int(e.Lock.Difficulty), Message: e.ExitMessage,
+		}
+		if d.isCompass(name) {
+			ed.Dir = name
+		}
+		detail.Exits = append(detail.Exits, ed)
+	}
+	return detail, true
+}
+
 // buildExitAdd adds an exit from req.RoomId. A spatial (compass-direction) exit
 // must lead to the adjacent same-plane cell (or into a non-Euclidean plane) and
 // auto-wires a reciprocal unless one-way; crossing between two Euclidean planes
@@ -375,6 +444,23 @@ func applyExit(d buildDeps, roomId int, exitName string, ex exit.RoomExit) Build
 // sendBuildResult emits a Build.Result to the admin.
 func sendBuildResult(uid int, res BuildResult) {
 	events.AddToQueue(GMCPOut{UserId: uid, Module: "Build.Result", Payload: res})
+}
+
+// sendRoomDetail emits a Build.Room (full editable detail) to the admin, with
+// the valid biome list attached for the inspector's dropdown.
+func sendRoomDetail(uid int, detail buildRoomDetail) {
+	detail.Biomes = validBiomeIds()
+	events.AddToQueue(GMCPOut{UserId: uid, Module: "Build.Room", Payload: detail})
+}
+
+func validBiomeIds() []string {
+	bs := rooms.GetAllBiomes()
+	out := make([]string, 0, len(bs))
+	for _, b := range bs {
+		out = append(out, b.BiomeId)
+	}
+	sort.Strings(out)
+	return out
 }
 
 // sendZoneMapFull rebuilds the given zone's mapper and pushes an UNFOGGED
