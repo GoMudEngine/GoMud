@@ -4,7 +4,7 @@ colors:
   table-title: 2
   userid: black
   username: 153       # cool light blue (was 11 / bright yellow)
-  username-aggro: 124
+  username-aggro: 196
   username-downed: 8 # Bright black
   mobname:  180       # warm tan (was 51 / bright cyan)
   mobname-aggro: 9 # Bright red
@@ -33,7 +33,7 @@ colors:
   container: 12 # Bright blue
   exit: 10 # Bright green
   secret-exit: 8 # Bright black
-  zone: 124
+  zone: 167
   map-shop: 2
   map-bank: 10
   map-you: 14
@@ -94,7 +94,7 @@ colors:
   shop-pet-type: 215
   shop-enchantment: 147
   uses-left: 8 # Bright black
-  holy: 21
+  holy: 111
   good: 27
   virtuous: 39
   lawful: 51
@@ -106,12 +106,12 @@ colors:
   item-nothing: 237 # darkish black
   item-flags: 7 # light gray
   item-enchanted: 147
-  item-cursed: 54
+  item-cursed: 133
   item-bonus-damage: 49
   name-flags-wrapper: 240
   name-flag: 246
-  room-title: 128
-  room-zone: 124
+  room-title: 170
+  room-zone: 167
   health-100: 46
   health-90: 82
   health-80: 118
@@ -136,14 +136,14 @@ colors:
   mana-10: 202
   mana-0: 196
   suggested-text: 8
-  night: 19
+  night: 153
   day: 228
   day-dusk: 214
   enters-message: 8
   leaves-message: 8
   spell-neutral: white
   spell-helpful: 2
-  spell-harmful: 124
+  spell-harmful: 203
   questflag: 187
   highlight: 238
   saytext: 13
