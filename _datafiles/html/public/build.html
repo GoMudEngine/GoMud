@@ -108,6 +108,10 @@
     <span class="zone" id="tb-zone">—</span>
     <label for="tb-plane">Plane</label>
     <select id="tb-plane"><option value="">—</option></select>
+    <label for="tb-floor">Floor</label>
+    <button id="tb-floor-dn" title="Down a floor">▼</button>
+    <span id="tb-floor" style="min-width:1.5em;text-align:center;">0</span>
+    <button id="tb-floor-up" title="Up a floor">▲</button>
     <div class="spacer"></div>
     <span id="conn">● connecting…</span>
     <button id="tb-save" disabled>Save Room</button>
@@ -143,6 +147,7 @@
   </div>
 </div>
 
+<script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/builder.js"></script>
 <script>
 "use strict";
 (function () {
@@ -161,22 +166,50 @@
     connEl.className = cls || "";
   }
 
-  // GMCP snapshot store; builder.js (Tasks 4/5) reads/overrides these hooks.
+  // GMCP snapshot store + hooks.
   window.Builder = window.Builder || {};
   window.Builder.gmcp = {};
-  // Overridable hooks — replaced by builder.js once the canvas exists.
-  window.Builder.onZoneMap = window.Builder.onZoneMap || function (payload) {
-    console.log("[Build] Zone.Map:", payload);
-    var ph = document.getElementById("canvas-ph");
-    if (ph) {
-      ph.textContent = "Zone.Map received: " + (payload.zone || "?") +
-        " (" + ((payload.rooms || []).length) + " rooms). Canvas lands in Task 4.";
-    }
+
+  // The editor canvas (builder.js). Instantiated below.
+  var canvas = null;
+  var pendingCreatedId = 0; // set from Build.Result, consumed on the next Zone.Map
+
+  window.Builder.onZoneMap = function (payload) {
     document.getElementById("tb-zone").textContent = payload.zone || "—";
+    if (!canvas) return;
+    canvas.setSnapshot(payload);
+    if (pendingCreatedId) { canvas.afterRefresh(pendingCreatedId); pendingCreatedId = 0; }
   };
-  window.Builder.onGMCP = window.Builder.onGMCP || function (ns, obj) {
-    // Default: no-op for namespaces the builder doesn't consume yet.
+
+  window.Builder.onGMCP = function (ns, obj) {
+    if (ns === "Build.Result") {
+      if (obj && obj.ok) {
+        if (obj.roomId) pendingCreatedId = obj.roomId;
+        toast(obj.roomId ? "Saved." : "Done.", false);
+      } else {
+        toast((obj && obj.error) || "Build error", true);
+      }
+    }
   };
+
+  // Room selection -> inspector (Task 5 fills this in; placeholder for now).
+  window.Builder.onRoomSelected = function (room) {
+    var empty = document.getElementById("insp-empty");
+    if (!empty) return;
+    empty.textContent = room
+      ? ("Room #" + room.num + " — " + (room.name || "Untitled") + " (inspector: Task 5)")
+      : "Select a room on the map to edit it.";
+  };
+
+  // Minimal toast in the toolbar conn slot (replaced by a real toast in Task 5).
+  function toast(msg, isErr) {
+    var c = document.getElementById("conn");
+    if (!c) return;
+    var prev = c.textContent, prevCls = c.className;
+    c.textContent = (isErr ? "✕ " : "✓ ") + msg;
+    c.className = isErr ? "bad" : "ok";
+    setTimeout(function () { c.textContent = prev; c.className = prevCls; }, 2000);
+  }
 
   // Send a client->server GMCP frame as BINARY so the 0xFF IAC byte survives
   // (a text frame would UTF-8-mangle it). Mirrors webclient-pure.html.
@@ -229,6 +262,8 @@
     var ov = document.getElementById("login");
     if (ov) ov.style.display = "none";
     setConn("● connected", "ok");
+    // The login pushed a fogged Zone.Map; pull the full unfogged builder map.
+    sendGMCP("Build.Map.Request", {});
   }
 
   function loginFailed(msg) {
@@ -320,6 +355,35 @@
       connect();
     }
   });
+
+  // ---- canvas + toolbar wiring -------------------------------------------
+  var planeSel = document.getElementById("tb-plane");
+  var floorEl = document.getElementById("tb-floor");
+
+  if (window.Builder.BuilderCanvas) {
+    canvas = new window.Builder.BuilderCanvas(document.getElementById("canvas"));
+    canvas.onPlanes = function (planes, curPlane, floors, curFloor) {
+      // Rebuild the plane dropdown.
+      planeSel.innerHTML = "";
+      for (var i = 0; i < planes.length; i++) {
+        var o = document.createElement("option");
+        o.value = String(planes[i]);
+        o.textContent = "Plane " + planes[i] + (planes[i] === 0 ? " (overworld)" : "");
+        if (planes[i] === curPlane) o.selected = true;
+        planeSel.appendChild(o);
+      }
+      floorEl.textContent = String(curFloor);
+    };
+    planeSel.addEventListener("change", function () {
+      if (canvas) canvas.setPlane(parseInt(planeSel.value, 10) || 0);
+    });
+    document.getElementById("tb-floor-up").addEventListener("click", function () {
+      if (canvas) { canvas.setFloor(canvas.floor + 1); floorEl.textContent = String(canvas.floor); }
+    });
+    document.getElementById("tb-floor-dn").addEventListener("click", function () {
+      if (canvas) { canvas.setFloor(canvas.floor - 1); floorEl.textContent = String(canvas.floor); }
+    });
+  }
 
   // Open the socket immediately so the username prompt is waiting by the time
   // the admin submits; the form submit supplies the credentials.
