@@ -16,8 +16,8 @@ func TestShippedDogmudEmoteTables(t *testing.T) {
 	if err != nil {
 		t.Fatalf("LoadEmotes: %v", err)
 	}
-	if len(tables) != 8 {
-		t.Fatalf("expected 8 emote tables, got %d", len(tables))
+	if len(tables) != 9 {
+		t.Fatalf("expected 9 emote tables, got %d", len(tables))
 	}
 
 	for wt, table := range tables {

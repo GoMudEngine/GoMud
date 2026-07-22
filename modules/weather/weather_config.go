@@ -23,15 +23,17 @@ type Config struct {
 	IncludeSecretExits bool
 	RebuildGraphOnBoot bool
 
-	Seed               uint64  // 0 = derive a stable seed from the world's zone names
-	TickEveryGameHours int     // weather-simulation cadence in game hours (>= 1)
-	MaxActiveFronts    int     // global front budget (>= 1)
-	SpawnRateScale     float64 // multiplier on the default spawn chance
-	EmoteMode          string  // EmoteModeModule | EmoteModeTagOnly
-	EmoteEveryRounds   int     // ambient emote cadence in rounds (jittered ±25%, >= 5)
-	BuffsEnabled       bool    // false strips buff ids from weather mutator specs
-	Persist            bool    // save/restore fronts + RNG across reboots
-	SeasonsEnabled     bool    // false runs exactly as v1 weather (no season layer)
+	Seed                 uint64  // 0 = derive a stable seed from the world's zone names
+	TickEveryGameHours   int     // weather-simulation cadence in game hours (>= 1)
+	MaxActiveFronts      int     // global front budget (>= 1)
+	SpawnRateScale       float64 // multiplier on the default spawn chance
+	EmoteMode            string  // EmoteModeModule | EmoteModeTagOnly
+	EmoteEveryRounds     int     // ambient emote cadence in rounds (jittered ±25%, >= 5)
+	EmoteMildChancePct   int     // ambient emit chance (%) at felt intensity 0
+	EmoteStrongChancePct int     // ambient emit chance (%) at felt intensity 1
+	BuffsEnabled         bool    // false strips buff ids from weather mutator specs
+	Persist              bool    // save/restore fronts + RNG across reboots
+	SeasonsEnabled       bool    // false runs exactly as v1 weather (no season layer)
 }
 
 // getter abstracts plugin.Config.Get for testability.
@@ -98,15 +100,17 @@ func buildConfig(get getter) Config {
 		IncludeSecretExits: boolOr(get("IncludeSecretExits"), true),
 		RebuildGraphOnBoot: asBool(get("RebuildGraphOnBoot")),
 
-		Seed:               uint64(seed),
-		TickEveryGameHours: intOr(get("TickEveryGameHours"), 1),
-		MaxActiveFronts:    intOr(get("MaxActiveFronts"), 8),
-		SpawnRateScale:     floatOr(get("SpawnRateScale"), 1.0),
-		EmoteMode:          strings.ToLower(stringOr(get("EmoteMode"), EmoteModeModule)),
-		EmoteEveryRounds:   intOr(get("EmoteEveryRounds"), 20),
-		BuffsEnabled:       boolOr(get("BuffsEnabled"), true),
-		Persist:            boolOr(get("Persist"), true),
-		SeasonsEnabled:     boolOr(get("SeasonsEnabled"), true),
+		Seed:                 uint64(seed),
+		TickEveryGameHours:   intOr(get("TickEveryGameHours"), 1),
+		MaxActiveFronts:      intOr(get("MaxActiveFronts"), 8),
+		SpawnRateScale:       floatOr(get("SpawnRateScale"), 1.0),
+		EmoteMode:            strings.ToLower(stringOr(get("EmoteMode"), EmoteModeModule)),
+		EmoteEveryRounds:     intOr(get("EmoteEveryRounds"), 24),
+		EmoteMildChancePct:   intOr(get("EmoteMildChancePct"), 30),
+		EmoteStrongChancePct: intOr(get("EmoteStrongChancePct"), 100),
+		BuffsEnabled:         boolOr(get("BuffsEnabled"), true),
+		Persist:              boolOr(get("Persist"), true),
+		SeasonsEnabled:       boolOr(get("SeasonsEnabled"), true),
 	}
 	if c.TickEveryGameHours < 1 {
 		c.TickEveryGameHours = 1
@@ -119,6 +123,18 @@ func buildConfig(get getter) Config {
 	}
 	if c.SpawnRateScale < 0 {
 		c.SpawnRateScale = 0
+	}
+	if c.EmoteMildChancePct < 0 {
+		c.EmoteMildChancePct = 0
+	}
+	if c.EmoteMildChancePct > 100 {
+		c.EmoteMildChancePct = 100
+	}
+	if c.EmoteStrongChancePct < 0 {
+		c.EmoteStrongChancePct = 0
+	}
+	if c.EmoteStrongChancePct > 100 {
+		c.EmoteStrongChancePct = 100
 	}
 	if c.EmoteMode != EmoteModeModule && c.EmoteMode != EmoteModeTagOnly {
 		c.EmoteMode = EmoteModeModule

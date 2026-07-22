@@ -1204,6 +1204,11 @@ func TestConvertToAscii(t *testing.T) {
 		{"mixed ansi and unicode", "\x1b[33m┌─┐\x1b[0m", "\x1b[33m+-+\x1b[0m"},
 		{"status template chars", " ┌─ Attributes ─┐\n └──────────────┘", " +- Attributes -+\n +--------------+"},
 		{"motd chars", "╔══╗\n║hi║\n╚══╝", "+==+\n|hi|\n+==+"},
+		{"sun glyph with variation selector", "☀️", "*"},
+		{"moon glyph", "☾", "("},
+		{"weather glyphs", "⚡❄", "!*"},
+		{"map glyphs", "▲▼≈⌂", "^v~#"},
+		{"unmapped high rune passthrough", "café", "café"},
 	}
 
 	for _, tt := range tests {
