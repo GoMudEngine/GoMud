@@ -44,3 +44,5 @@ spawninfo:
 - mobid: 9112
 idlemessages:
 - Something shifts in the <ansi fg="itemname">recess</ansi> behind the wreckage, settles, and goes still again.
+x: 51
+y: 19

@@ -43,3 +43,6 @@ idlemessages:
 - Somewhere in the <ansi fg="green">grove</ansi> to the north, a branch moves without any wind to explain it.
 - The view from the <ansi fg="cyan">rim</ansi> is very wide -- you can see the shadow of cloud moving across the marsh far below.
 - The light inside the grove does something at the edge of your vision that it doesn't do when you look directly at it.
+x: 42
+y: 15
+z: 2

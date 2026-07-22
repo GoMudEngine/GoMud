@@ -66,3 +66,5 @@ idlemessages:
 spawninfo:
 - mobid: 337
   cooldown: 600 rounds
+x: -9
+y: 1

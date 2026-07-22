@@ -112,3 +112,5 @@ spawninfo:
   cooldown: 600 rounds
 - mobid: 334
   cooldown: 300 rounds
+x: -9
+y: 2

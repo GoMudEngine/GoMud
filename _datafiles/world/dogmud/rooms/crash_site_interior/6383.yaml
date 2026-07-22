@@ -38,3 +38,6 @@ idlemessages:
 mutators:
 - mutatorid: hull_suppression
 - mutatorid: hull_discharge_deep
+x: 6
+z: -1
+plane: 2

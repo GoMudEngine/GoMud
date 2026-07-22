@@ -54,3 +54,5 @@ spawninfo:
 idlemessages:
 - A loose plate in the <ansi fg="itemname">rubble</ansi> tips and resettles with a low grinding sound, then the pocket goes quiet.
 - The wind drops into the <ansi fg="itemname">pocket</ansi> and swirls, carrying the chalky mineral smell of fresh-broken <ansi fg="itemname">ore</ansi> up from the heap.
+x: 36
+y: 19

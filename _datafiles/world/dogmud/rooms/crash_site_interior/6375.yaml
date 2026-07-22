@@ -35,3 +35,5 @@ idlemessages:
 - Through the open way east, the grey runs on, lit and silent and patient.
 mutators:
 - mutatorid: hull_suppression
+x: 2
+plane: 2

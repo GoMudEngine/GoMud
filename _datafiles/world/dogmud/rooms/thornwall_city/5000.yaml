@@ -20,3 +20,6 @@ exits:
 spawninfo:
   - mobid: 315
     respawnrate: "1s"
+x: 12
+y: 4
+z: -1

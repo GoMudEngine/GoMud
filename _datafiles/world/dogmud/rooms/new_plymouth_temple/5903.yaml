@@ -76,3 +76,5 @@ spawninfo:
     respawnrate: "10 real minutes"
   - mobid: 9391
     respawnrate: "10 real minutes"
+x: 3
+y: -84

@@ -68,3 +68,6 @@ spawninfo:
 - mobid: 330
   message: A small swarm of skitter-shrimp washes in from the water and disperses across the wet stone.
   respawnrate: 3 real minutes
+x: -4
+y: -1
+z: -1

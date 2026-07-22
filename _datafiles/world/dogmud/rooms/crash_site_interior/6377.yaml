@@ -32,3 +32,5 @@ idlemessages:
 - Nothing has been taken from here. Nothing has been added. It waits.
 mutators:
 - mutatorid: hull_suppression
+x: 4
+plane: 2

@@ -34,3 +34,5 @@ nouns:
 idlemessages:
 - The <ansi fg="itemname">fringe</ansi> is quiet, but the quiet has a different quality than the open steppe behind you.
 - Wind moves through the low scrub to the south, setting it rustling in a way the <ansi fg="itemname">bone</ansi> at your feet cannot account for.
+x: 42
+y: 24

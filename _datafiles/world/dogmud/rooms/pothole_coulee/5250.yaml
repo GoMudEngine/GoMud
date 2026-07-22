@@ -48,3 +48,5 @@ spawninfo:
 idlemessages:
 - A cluster of <ansi fg="itemname">rock</ansi> plates lets go somewhere to the south and the clatter echoes off the bluff before it dies.
 - Wind drives across the open field and the orange stain below the <ansi fg="itemname">vein</ansi> glitters with mica dust shaken loose.
+x: 36
+y: 18

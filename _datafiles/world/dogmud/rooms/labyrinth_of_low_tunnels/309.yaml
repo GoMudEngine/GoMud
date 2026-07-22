@@ -35,3 +35,7 @@ idlemessages:
 - The bone patterns on the floor crunch faintly underfoot despite your best efforts.
 - The stillness here feels intentional, as though the passage itself is holding its breath.
 - A sweet, cloying smell drifts up from the crack leading down.
+x: 1
+y: 2
+z: -1
+plane: 4

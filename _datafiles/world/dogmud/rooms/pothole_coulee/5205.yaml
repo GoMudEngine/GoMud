@@ -48,3 +48,5 @@ spawninfo:
 idlemessages:
 - The peat <ansi fg="itemname">fire</ansi> settles with a soft collapse and sends up a curl of brown smoke.
 - The <ansi fg="itemname">lantern</ansi> sways a hand's width on its chain and the watery light slides across the tables.
+x: 43
+y: 21

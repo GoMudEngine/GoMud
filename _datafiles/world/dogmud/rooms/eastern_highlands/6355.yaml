@@ -67,3 +67,6 @@ idlemessages:
   flatness the stinging in the air is the only thing that moves.
 mutators:
 - mutatorid: hull_discharge
+x: 17
+y: -54
+z: 3

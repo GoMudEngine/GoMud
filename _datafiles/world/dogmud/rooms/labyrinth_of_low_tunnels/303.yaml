@@ -32,3 +32,6 @@ idlemessages:
 - Your shoulder scrapes the wall and dislodges a flake of stone from the scratched surface.
 - The passage ahead is perfectly silent. That feels worse than noise.
 - A faint breeze pushes through from the south, carrying the smell of old meat.
+x: 1
+z: -1
+plane: 4

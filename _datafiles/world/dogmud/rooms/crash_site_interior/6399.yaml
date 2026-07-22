@@ -58,3 +58,6 @@ idlemessages:
 - Three fixed marks keep station where nothing should; the array knew what.
 mutators:
 - mutatorid: hull_suppression
+x: 6
+y: -5
+plane: 2

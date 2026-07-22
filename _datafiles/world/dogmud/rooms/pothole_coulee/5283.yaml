@@ -37,3 +37,5 @@ nouns:
 idlemessages:
 - A raptor hangs above the <ansi fg="itemname">rise</ansi>, riding the updraft without moving its wings.
 - The <ansi fg="itemname">trails</ansi> below shift in the wind as the grass leans, then settle again.
+x: 42
+y: 22

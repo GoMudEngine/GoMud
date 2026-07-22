@@ -35,3 +35,6 @@ idlemessages:
 - The hum sits lower here, patient, rising from further down than seems right.
 mutators:
 - mutatorid: hull_suppression
+x: 6
+y: 1
+plane: 2

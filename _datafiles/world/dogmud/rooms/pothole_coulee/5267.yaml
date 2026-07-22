@@ -39,3 +39,5 @@ nouns:
 idlemessages:
 - A breeze stirs through the hollow and the herb bundles on the <ansi fg="itemname">racks</ansi> sway together, releasing a sharp green smell.
 - One of the <ansi fg="itemname">bottles</ansi> catches the light at an angle, throwing a small amber patch across the stone wall.
+x: 45
+y: 23

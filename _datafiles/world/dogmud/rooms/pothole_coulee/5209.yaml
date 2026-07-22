@@ -55,3 +55,5 @@ spawninfo:
 idlemessages:
 - The banked fire settles with a soft tick, and the hung <ansi fg="itemname">herbs</ansi> sway and go still.
 - Somewhere a kettle ticks as it cools, the only sound in the warm hush of the hut.
+x: 46
+y: 19

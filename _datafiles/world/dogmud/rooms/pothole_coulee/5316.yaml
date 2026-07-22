@@ -42,3 +42,6 @@ idlemessages:
   rather than away from the light.
 - The <ansi fg="cyan">ground</ansi> beneath one foot briefly feels very far below you, then solid
   again, without moving.
+x: 40
+y: 10
+z: 3

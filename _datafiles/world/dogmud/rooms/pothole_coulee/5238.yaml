@@ -53,3 +53,5 @@ spawninfo:
   respawnrate: 5 real minutes
 idlemessages:
 - Loose stone shifts somewhere in the slumped <ansi fg="itemname">gatehouse</ansi> and settles, and the quiet comes back heavier.
+x: 55
+y: 18

@@ -55,3 +55,6 @@ mutators:
 spawninfo:
   - mobid: 9550
     respawnrate: "20 real minutes"
+x: 24
+y: -48
+z: 3

@@ -72,3 +72,6 @@ spawninfo:
 - mobid: 332
   message: A massive shape lifts from the black sump-pool — the sump dweller surfaces.
   respawnrate: 4 real hours
+x: -4
+y: -3
+z: -1

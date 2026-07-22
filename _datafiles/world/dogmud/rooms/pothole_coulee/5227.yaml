@@ -45,3 +45,5 @@ spawninfo:
   respawnrate: 1 real minute
 idlemessages:
 - A breath of wind sets the <ansi fg="itemname">dummy</ansi> turning slow on its pivot, then stills it again.
+x: 48
+y: 19

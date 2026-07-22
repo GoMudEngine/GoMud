@@ -52,3 +52,5 @@ spawninfo:
 idlemessages:
 - A settled creak moves through the <ansi fg="itemname">timbers</ansi> in the heap and a thin trickle of grit sifts down from above.
 - The <ansi fg="itemname">hand</ansi> shifts slightly in the rubble -- not a reach, not a signal, just the body reminding itself it is still there.
+x: 37
+y: 19

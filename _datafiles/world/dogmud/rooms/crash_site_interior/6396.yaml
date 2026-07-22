@@ -50,3 +50,6 @@ idlemessages:
 - Nothing keeps this room now; it waits only to be walked and understood.
 mutators:
 - mutatorid: hull_suppression
+x: 7
+y: -4
+plane: 2

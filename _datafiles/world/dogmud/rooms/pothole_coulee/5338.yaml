@@ -48,3 +48,5 @@ idlemessages:
 - Wind moves through the fallen blocks of the <ansi fg="cyan">ruin</ansi> and makes
   no sound at all, as though the structure still knows how to
   hold the air.
+x: 42
+y: 8

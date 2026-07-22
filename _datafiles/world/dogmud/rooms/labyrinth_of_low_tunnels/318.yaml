@@ -35,3 +35,7 @@ idlemessages:
 - The close walls press in from every side. The air is stale and dead.
 - Something glints faintly in the cache pit, catching the thin light from the passage behind you.
 - You can hear your own breathing echoing off the walls, inches away.
+x: -1
+y: 5
+z: -2
+plane: 4

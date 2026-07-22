@@ -53,3 +53,5 @@ spawninfo:
 idlemessages:
 - A loose notice lifts and flutters against the <ansi fg="itemname">notice post</ansi>, then settles.
 - Footsteps cross the empty <ansi fg="itemname">square</ansi> somewhere behind you and fade off into a side lane.
+x: 44
+y: 20

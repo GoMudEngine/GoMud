@@ -52,3 +52,6 @@ idlemessages:
   settles, patient, still armed.
 mutators:
 - mutatorid: hull_discharge
+x: 26
+y: -49
+z: 3

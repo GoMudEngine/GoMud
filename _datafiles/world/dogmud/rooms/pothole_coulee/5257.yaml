@@ -41,3 +41,6 @@ spawninfo:
 idlemessages:
 - A single drop falls from the ceiling into the <ansi fg="itemname">sump</ansi> and the ripple crosses the whole surface before it dies.
 - The <ansi fg="itemname">water</ansi> stirs faintly, as if something below it shifted, and then goes still.
+x: 32
+y: 18
+z: -1

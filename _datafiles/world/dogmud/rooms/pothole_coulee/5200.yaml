@@ -48,3 +48,5 @@ spawninfo:
 idlemessages:
 - The <ansi fg="itemname">pool</ansi> surface barely moves, but a deep chill rises off the water.
 - The <ansi fg="itemname">light</ansi> below pulses once, faint and slow, then steadies.
+x: 44
+y: 19

@@ -36,3 +36,5 @@ nouns:
 idlemessages:
 - Something moved through here recently — the <ansi fg="itemname">tracks</ansi> still have sharp edges.
 - A gust skims the <ansi fg="itemname">dust</ansi>, softening the older prints at the margins.
+x: 42
+y: 23
