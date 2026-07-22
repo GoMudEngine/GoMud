@@ -134,6 +134,29 @@ func TestBuildRoomCreate_WiresReciprocalExits(t *testing.T) {
 	if e, ok := nr.Exits["south"]; !ok || e.RoomId != 1 {
 		t.Errorf("new room should have a south exit back to 1, got %+v", nr.Exits)
 	}
+	// A created room must be valid on reload — Room.Validate() rejects blank
+	// title/description, which would brick the room's own Get/Update.
+	if nr.Title == "" || nr.Description == "" {
+		t.Errorf("new room must have non-empty title AND description, got title=%q desc=%q", nr.Title, nr.Description)
+	}
+	if err := nr.Validate(); err != nil {
+		t.Errorf("new room should pass Room.Validate(), got: %v", err)
+	}
+}
+
+func TestBuildRoomUpdate_RejectsEmptyTitleOrDescription(t *testing.T) {
+	w := newFakeWorld()
+	w.put(&rooms.Room{RoomId: 5, Zone: "Testville", Title: "Old", Description: "Old desc."})
+
+	if res := buildRoomUpdate(w.deps(), roomUpdateReq{RoomId: 5, Title: "", Description: "d"}); res.Ok {
+		t.Error("empty title must be rejected")
+	}
+	if res := buildRoomUpdate(w.deps(), roomUpdateReq{RoomId: 5, Title: "t", Description: "   "}); res.Ok {
+		t.Error("blank description must be rejected")
+	}
+	if len(w.saved) != 0 {
+		t.Errorf("no save should happen when validation fails, got %d", len(w.saved))
+	}
 }
 
 func TestBuildRoomUpdate_RoundTripsFieldsPreservingStructure(t *testing.T) {

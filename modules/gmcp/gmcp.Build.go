@@ -24,6 +24,13 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
+// Placeholders for a freshly ghost-created room. Both fields must be non-empty
+// or Room.Validate() rejects the room on its next load.
+const (
+	untitledRoomTitle          = "Untitled Room"
+	placeholderRoomDescription = "This room is under construction and has not yet been described."
+)
+
 // BuildResult is echoed to the client after every mutation (as Build.Result).
 type BuildResult struct {
 	Ok     bool   `json:"ok"`
@@ -88,6 +95,13 @@ type mapRequestReq struct {
 
 type roomGetReq struct {
 	RoomId int `json:"roomId"`
+}
+
+type zoneCreateReq struct {
+	Name         string `json:"name"`
+	Biome        string `json:"biome"`
+	Region       string `json:"region"`
+	NonCartesian bool   `json:"nonCartesian"`
 }
 
 // ---- server -> client room detail (Build.Room) -------------------------------
@@ -276,6 +290,19 @@ func (g *GMCPModule) handleBuildOp(e events.Event) events.ListenerReturn {
 			sendBuildResult(uid, buildErr("room %d not found", req.RoomId))
 		}
 
+	case `Build.Zone.Create`:
+		var req zoneCreateReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Zone.Create payload"))
+			break
+		}
+		res := buildZoneCreate(req)
+		sendBuildResult(uid, res)
+		if res.Ok {
+			// Jump the builder to the new zone.
+			sendZoneMapFull(uid, strings.TrimSpace(req.Name))
+		}
+
 	case `Build.Map.Request`:
 		var req mapRequestReq
 		if json.Unmarshal(evt.Payload, &req) != nil {
@@ -325,8 +352,12 @@ func buildRoomCreate(d buildDeps, fromRoomId int, dir string, plane, x, y, z int
 
 	nr := d.newRoom(from.Zone) // inherit the source room's zone
 	nr.X, nr.Y, nr.Z, nr.Plane = x, y, z, plane
-	nr.Title = "Untitled"
-	nr.Description = ""
+	// Title and Description must be non-empty: Room.Validate() rejects blanks on
+	// load, so a room saved with an empty description can never be read back
+	// (it would break its own Get/Update). Seed valid placeholders for the
+	// admin to overwrite in the inspector.
+	nr.Title = untitledRoomTitle
+	nr.Description = placeholderRoomDescription
 	if err := d.save(*nr); err != nil {
 		return buildErr("could not save new room: %s", err.Error())
 	}
@@ -347,6 +378,14 @@ func buildRoomCreate(d buildDeps, fromRoomId int, dir string, plane, x, y, z int
 // structure. Always routing through save is what fixes the historical
 // biome/other-field non-persistence gaps.
 func buildRoomUpdate(d buildDeps, req roomUpdateReq) BuildResult {
+	// Room.Validate() rejects blank title/description on load, so refuse to save
+	// a room into an unreadable state — surface the error in the inspector.
+	if strings.TrimSpace(req.Title) == "" {
+		return buildErr("title cannot be empty")
+	}
+	if strings.TrimSpace(req.Description) == "" {
+		return buildErr("description cannot be empty")
+	}
 	r := d.loadTemplate(req.RoomId)
 	if r == nil {
 		return buildErr("room %d not found", req.RoomId)
@@ -367,6 +406,56 @@ func buildRoomUpdate(d buildDeps, req roomUpdateReq) BuildResult {
 		return buildErr("could not save room %d: %s", req.RoomId, err.Error())
 	}
 	return BuildResult{Ok: true, RoomId: req.RoomId}
+}
+
+// buildZoneCreate creates a brand-new zone: a folder + zone-config + a single
+// valid entrance room placed on a FRESH authored plane (so its origin cell does
+// not collide with the overworld or another zone), then applies the requested
+// zone-config options. Returns the entrance room id so the builder can jump to
+// it. Runs on MainWorker (via handleBuildOp).
+func buildZoneCreate(req zoneCreateReq) BuildResult {
+	name := strings.TrimSpace(req.Name)
+	if len(name) < 2 {
+		return buildErr("zone name must be at least 2 characters")
+	}
+
+	// CreateZone makes the zone folder, a zone-config, and a first valid room
+	// (non-empty title/description), returning its id. Rejects a duplicate name.
+	roomId, err := rooms.CreateZone(name)
+	if err != nil {
+		return buildErr("%s", err.Error())
+	}
+
+	// Put the new zone on its own plane so its (0,0,0) origin can't collide with
+	// plane 0's origin at cartcheck. A non-Euclidean zone is exempt from the
+	// collision check but still gets a distinct plane for clean rendering.
+	plane := rooms.NextFreeAuthoredPlane()
+	if r := rooms.LoadRoomTemplate(roomId); r != nil {
+		r.Plane = plane
+		r.X, r.Y, r.Z = 0, 0, 0
+		r.Title = name + " — Entrance"
+		r.Description = placeholderRoomDescription
+		if req.Biome != "" {
+			r.Biome = req.Biome
+		}
+		rooms.SaveRoomTemplate(*r)
+	}
+
+	if cfg := rooms.GetZoneConfig(name); cfg != nil {
+		// CreateZone leaves the zone-config root RoomId unset, so GetZoneRoot
+		// (used by the map refresh) would return 0 and render an empty zone.
+		// Point it at the entrance room.
+		cfg.RoomId = roomId
+		cfg.DefaultBiome = req.Biome
+		cfg.Region = req.Region
+		cfg.NonCartesian = req.NonCartesian
+		cfg.DefaultPlane = plane
+		rooms.SaveZoneConfig(cfg)
+	}
+	// Register the new plane's Euclidean-ness for ValidatePlacement / mapper.
+	rooms.GetPlaneRegistry().Mark(plane, req.NonCartesian, name)
+
+	return BuildResult{Ok: true, RoomId: roomId}
 }
 
 // buildRoomDelete removes a room after cleaning every exit that points at it,
@@ -597,9 +686,10 @@ func sendZoneMapFull(uid int, zone string) {
 	sort.Strings(zoneNames)
 
 	payload := GMCPZoneModule_Payload{
-		Zone:  zone,
-		Rooms: m.Snapshot(visited),
-		Zones: zoneNames, // let the builder switch to any zone
+		Zone:   zone,
+		Rooms:  m.Snapshot(visited),
+		Zones:  zoneNames,       // let the builder switch to any zone
+		Biomes: validBiomeIds(), // for the new-zone / inspector biome dropdowns
 	}
 	events.AddToQueue(GMCPOut{UserId: uid, Module: "Zone.Map", Payload: payload})
 }

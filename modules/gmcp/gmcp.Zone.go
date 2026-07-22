@@ -26,7 +26,8 @@ type GMCPZoneModule_Payload struct {
 	CurrentZ int                   `json:"cz"`               // z-level (floor) of the player's current room
 	Party    []int                 `json:"party,omitempty"`  // room IDs currently holding party members
 	Rooms    []mapper.SnapshotRoom `json:"rooms"`
-	Zones    []string              `json:"zones,omitempty"` // all zone names (builder zone-switcher only; empty for the play client)
+	Zones    []string              `json:"zones,omitempty"`  // all zone names (builder zone-switcher only; empty for the play client)
+	Biomes   []string              `json:"biomes,omitempty"` // valid biome ids (builder new-zone form; empty for the play client)
 }
 
 func init() {

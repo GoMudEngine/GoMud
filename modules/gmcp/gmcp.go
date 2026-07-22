@@ -482,7 +482,8 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 		// gate + mutation + replies. Copy the payload — it aliases the IAC read
 		// buffer, which is reused after HandleIAC returns.
 		case `Build.Room.Create`, `Build.Room.Update`, `Build.Room.Delete`,
-			`Build.Exit.Add`, `Build.Exit.Remove`, `Build.Room.Get`, `Build.Map.Request`:
+			`Build.Exit.Add`, `Build.Exit.Remove`, `Build.Room.Get`, `Build.Map.Request`,
+			`Build.Zone.Create`:
 			events.AddToQueue(GMCPBuildOp{
 				ConnectionId: connectionId,
 				Command:      command,

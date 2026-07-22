@@ -44,6 +44,21 @@ var planeRegistry = NewPlaneRegistry()
 // ValidatePlacement).
 func GetPlaneRegistry() *PlaneRegistry { return planeRegistry }
 
+// NextFreeAuthoredPlane returns an unused authored plane id — the maximum
+// authored plane currently in use (below the instance-plane base) plus one.
+// The web builder stamps this on a newly created zone so its rooms occupy a
+// fresh coordinate space and never collide with the overworld (plane 0) or
+// another zone in the shared (plane,x,y,z) placement check.
+func NextFreeAuthoredPlane() int {
+	maxPlane := 0
+	for _, roomId := range GetAllRoomIds() {
+		if room := LoadRoom(roomId); room != nil && room.Plane < instancePlaneBase && room.Plane > maxPlane {
+			maxPlane = room.Plane
+		}
+	}
+	return maxPlane + 1
+}
+
 // RebuildPlaneRegistry walks every loaded room and marks its plane
 // non-Euclidean when the room's zone is non_cartesian. Call after all rooms +
 // zone configs are loaded (from the same boot pass that runs PreCacheMaps).

@@ -132,6 +132,7 @@
     <span class="brand">⚒ World Builder</span>
     <label for="tb-zone-sel">Zone</label>
     <select id="tb-zone-sel"><option value="">—</option></select>
+    <button id="tb-new-zone" title="Create a new zone">+ Zone</button>
     <label for="tb-plane">Plane</label>
     <select id="tb-plane"><option value="">—</option></select>
     <label for="tb-floor">Floor</label>
@@ -201,6 +202,8 @@
   var pendingCreatedId = 0; // set from Build.Result, consumed on the next Zone.Map
 
   window.Builder.onZoneMap = function (payload) {
+    // Cache the valid biome list for the new-zone / inspector dropdowns.
+    if (payload.biomes && payload.biomes.length) window.Builder.biomes = payload.biomes;
     // Populate the zone switcher from the full zone list (builder-only field).
     var zsel = document.getElementById("tb-zone-sel");
     if (zsel && payload.zones && payload.zones.length) {
@@ -222,13 +225,16 @@
   window.Builder.onGMCP = function (ns, obj) {
     if (ns === "Build.Result") {
       if (obj && obj.ok) {
-        if (deletingRoomId) { deletingRoomId = 0; clearInspector(); toast("Room deleted.", false); }
+        if (creatingZone) { creatingZone = false; clearInspector(); toast("Zone created.", false); }
+        else if (deletingRoomId) { deletingRoomId = 0; clearInspector(); toast("Room deleted.", false); }
         else if (inspectorDirtySaving) { inspectorDirtySaving = false; setDirty(false); toast("Saved.", false); }
         else if (refetchRoomId) { var rid = refetchRoomId; refetchRoomId = 0; sendGMCP("Build.Room.Get", { roomId: rid }); toast("Applied.", false); }
         else { if (obj.roomId) pendingCreatedId = obj.roomId; toast("Done.", false); }
       } else {
+        var msg = (obj && obj.error) || "Build error";
+        if (creatingZone) { creatingZone = false; var fe = document.getElementById("nz-err"); if (fe) fe.textContent = msg; }
         inspectorDirtySaving = false; refetchRoomId = 0; deletingRoomId = 0;
-        toast((obj && obj.error) || "Build error", true);
+        toast(msg, true);
       }
     } else if (ns === "Build.Room") {
       renderInspector(obj);
@@ -403,6 +409,7 @@
   var inspectorDirtySaving = false; // a Save is in flight (distinguish from create toasts)
   var refetchRoomId = 0;          // re-fetch this room's detail after the next ok result (exit ops)
   var deletingRoomId = 0;         // a room delete is in flight
+  var creatingZone = false;       // a Build.Zone.Create is in flight
   var saveBtn = document.getElementById("tb-save");
 
   function ce(tag, attrs, kids) {
@@ -656,6 +663,46 @@
     });
   }
 
+  // New-zone form, rendered into the inspector side panel.
+  function renderNewZoneForm() {
+    insp.innerHTML = "";
+    insp.appendChild(ce("h2", { text: "New Zone" }));
+    insp.appendChild(ce("div", { "class": "tag", "style": "color:var(--gold-dim);font-size:11px;margin-bottom:6px;",
+      text: "Creates a zone on its own plane with one entrance room." }));
+
+    var name = ce("input", { type: "text", placeholder: "e.g. Sunken Crypt" });
+    insp.appendChild(field("Zone name", name));
+
+    var biome = ce("select", {});
+    biome.appendChild(ce("option", { value: "", text: "(default)" }));
+    (window.Builder.biomes || []).forEach(function (b) { biome.appendChild(ce("option", { value: b, text: b })); });
+    insp.appendChild(field("Default biome", biome));
+
+    var region = ce("input", { type: "text", placeholder: "e.g. Thornwall Region (optional)" });
+    insp.appendChild(field("Region", region));
+
+    var nc = ce("input", { type: "checkbox" });
+    var ncWrap = ce("div", { "class": "flags", "style": "margin-top:8px;" }, [
+      ce("label", {}, [nc, ce("span", { text: "Non-Cartesian (maze / toroidal — skips grid checks)" })])
+    ]);
+    insp.appendChild(ncWrap);
+
+    insp.appendChild(ce("div", { id: "nz-err", "class": "err", "style": "color:var(--danger);font-size:12px;min-height:1em;margin-top:8px;" }));
+
+    var create = ce("button", { text: "Create zone" });
+    create.addEventListener("click", function () {
+      var n = name.value.trim();
+      if (n.length < 2) { document.getElementById("nz-err").textContent = "Zone name must be at least 2 characters."; return; }
+      document.getElementById("nz-err").textContent = "";
+      creatingZone = true;
+      sendGMCP("Build.Zone.Create", { name: n, biome: biome.value, region: region.value.trim(), nonCartesian: nc.checked });
+    });
+    var cancel = ce("button", { "class": "mini", text: "Cancel", "style": "width:100%;margin-top:6px;padding:6px;" });
+    cancel.addEventListener("click", clearInspector);
+    insp.appendChild(ce("div", { "class": "save-row" }, [create, cancel]));
+    name.focus();
+  }
+
   clearInspector();
 
   // ---- canvas + toolbar wiring -------------------------------------------
@@ -666,6 +713,8 @@
   if (zoneSel) zoneSel.addEventListener("change", function () {
     if (zoneSel.value) { clearInspector(); sendGMCP("Build.Map.Request", { zone: zoneSel.value }); }
   });
+  var newZoneBtn = document.getElementById("tb-new-zone");
+  if (newZoneBtn) newZoneBtn.addEventListener("click", renderNewZoneForm);
 
   if (window.Builder.BuilderCanvas) {
     canvas = new window.Builder.BuilderCanvas(document.getElementById("canvas"));
