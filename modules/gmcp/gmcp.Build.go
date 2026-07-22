@@ -144,6 +144,11 @@ type buildDeps struct {
 
 func realBuildDeps() buildDeps {
 	return buildDeps{
+		// LoadRoomTemplate returns authoritative authored coords: the 0.15.0
+		// migration wrote flat x/y only for non-origin rooms and re-derives
+		// origin rooms as (0,0,0), so a coord-only file always means position
+		// (0,0,0). Any inconsistency would fail the panic-mode cartcheck at
+		// boot, so a bootable world's template coords are always correct.
 		loadTemplate:   rooms.LoadRoomTemplate,
 		save:           rooms.SaveRoomTemplate,
 		deleteTemplate: rooms.DeleteRoomTemplate,
