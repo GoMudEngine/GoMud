@@ -739,12 +739,17 @@ func CreateZone(zoneName string) (roomId int, err error) {
 
 	zoneInfo := NewZoneConfig(zoneName)
 
-	zoneFolder := util.FilePath(configs.GetFilePathsConfig().DataFiles.String(), "/", "rooms", "/", ZoneToFolder(zoneName))
+	roomsRoot := util.FilePath(configs.GetFilePathsConfig().DataFiles.String(), "/", "rooms")
+	zoneFolder := util.FilePath(roomsRoot, "/", ZoneToFolder(zoneName))
 	if err := os.Mkdir(zoneFolder, 0755); err != nil {
 		return 0, err
 	}
 
-	if err := fileloader.SaveFlatFile[*ZoneConfig](zoneFolder, zoneInfo); err != nil {
+	// SaveFlatFile joins basePath with zoneInfo.Filepath() (which already
+	// includes the zone subfolder), so the base must be the rooms ROOT — passing
+	// zoneFolder here double-nests to rooms/<zone>/<zone>/zone-config.yaml, which
+	// then boots as a duplicate zone id. Matches SaveZoneConfig's base.
+	if err := fileloader.SaveFlatFile[*ZoneConfig](roomsRoot, zoneInfo); err != nil {
 		return 0, err
 	}
 
