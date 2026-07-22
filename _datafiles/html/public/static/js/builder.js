@@ -80,6 +80,8 @@
   };
 
   BuilderCanvas.prototype.setSnapshot = function (payload) {
+    var zoneChanged = this.zone !== (payload.zone || "");
+    var first = this.zone === "";
     this.zone = payload.zone || "";
     this.rooms = (payload.rooms || []).slice();
     this.byId = {};
@@ -95,7 +97,29 @@
     if (typeof this.onPlanes === "function") this.onPlanes(planes, this.plane, floors, this.floor);
     // Keep the selected room highlighted if it survived a refresh.
     if (this.selectedId && !this.byId[this.selectedId]) this.selectedId = 0;
+    // On first load or a zone switch, frame the rooms — authored coords can be
+    // far from the origin (e.g. y=-84), so the default pan would show blank space.
+    if (first || zoneChanged) this._recenter();
     this.render();
+  };
+
+  // _recenter fits the current plane/floor's rooms into the viewport.
+  BuilderCanvas.prototype._recenter = function () {
+    var vis = this.visibleRooms();
+    if (!vis.length) { this.tx = 40; this.ty = 40; this.scale = 1; return; }
+    var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (var i = 0; i < vis.length; i++) {
+      var r = vis[i];
+      if (r.x < minX) minX = r.x; if (r.x > maxX) maxX = r.x;
+      if (r.y < minY) minY = r.y; if (r.y > maxY) maxY = r.y;
+    }
+    var wpx = (maxX - minX + 1) * CELL, hpx = (maxY - minY + 1) * CELL;
+    var vw = this.svg.clientWidth || 800, vh = this.svg.clientHeight || 600;
+    var s = Math.min((vw - 80) / wpx, (vh - 80) / hpx, 1);
+    s = Math.max(0.25, Math.min(1, s));
+    this.scale = s;
+    this.tx = (vw - wpx * s) / 2 - minX * CELL * s;
+    this.ty = (vh - hpx * s) / 2 - minY * CELL * s;
   };
 
   BuilderCanvas.prototype.setPlane = function (plane) {
@@ -103,6 +127,7 @@
     var floors = this.floorsForPlane(plane);
     if (floors.indexOf(this.floor) === -1) this.floor = floors.length ? floors[0] : 0;
     if (typeof this.onPlanes === "function") this.onPlanes(this.planesPresent(), this.plane, floors, this.floor);
+    this._recenter();
     this.render();
   };
 
@@ -315,36 +340,65 @@
     }
   };
 
+  BuilderCanvas.prototype._applyTransform = function () {
+    this.world.setAttribute("transform",
+      "translate(" + this.tx + "," + this.ty + ") scale(" + this.scale + ")");
+  };
+
   BuilderCanvas.prototype._wirePanZoom = function () {
-    var self = this, dragging = false, lx = 0, ly = 0;
+    var self = this, down = false, moved = false, sx = 0, sy = 0, lx = 0, ly = 0;
+    var THRESH = 4; // px of movement before a press counts as a drag (not a click)
+
+    // NOTE: deliberately NO setPointerCapture here. Capturing the pointer to the
+    // <svg> root re-targets the following `click` to the svg, so the room/ghost
+    // <g> click handlers never fire (you couldn't select or create). Instead we
+    // track drag state manually and suppress the click only after an actual pan.
     this.svg.addEventListener("pointerdown", function (e) {
-      dragging = true; lx = e.clientX; ly = e.clientY;
-      self.svg.setPointerCapture(e.pointerId);
+      if (e.button !== 0) return; // left button only
+      down = true; moved = false; sx = lx = e.clientX; sy = ly = e.clientY;
     });
-    this.svg.addEventListener("pointermove", function (e) {
-      if (!dragging) return;
-      self.tx += (e.clientX - lx); self.ty += (e.clientY - ly);
+    window.addEventListener("pointermove", function (e) {
+      if (!down) return;
+      if (!moved && Math.abs(e.clientX - sx) + Math.abs(e.clientY - sy) > THRESH) moved = true;
+      if (moved) {
+        self.tx += e.clientX - lx; self.ty += e.clientY - ly;
+        self._applyTransform();
+      }
       lx = e.clientX; ly = e.clientY;
-      self.world.setAttribute("transform", "translate(" + self.tx + "," + self.ty + ") scale(" + self.scale + ")");
     });
-    function stop(e) { dragging = false; try { self.svg.releasePointerCapture(e.pointerId); } catch (x) {} }
-    this.svg.addEventListener("pointerup", stop);
-    this.svg.addEventListener("pointercancel", stop);
+    window.addEventListener("pointerup", function () {
+      if (!down) return;
+      down = false;
+      // A drag ends with a synthetic click on whatever is under the cursor;
+      // flag it so the capture-phase handler below swallows it (no accidental
+      // select/create/clear after panning).
+      if (moved) self._suppressClick = true;
+    });
+
+    // Capture phase (runs before room/ghost handlers): swallow a post-drag click.
+    this.svg.addEventListener("click", function (e) {
+      if (self._suppressClick) { self._suppressClick = false; e.stopPropagation(); e.preventDefault(); }
+    }, true);
+
     this.svg.addEventListener("wheel", function (e) {
       e.preventDefault();
       var rect = self.svg.getBoundingClientRect();
       var mx = e.clientX - rect.left, my = e.clientY - rect.top;
       var factor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
       var ns = Math.max(0.25, Math.min(3, self.scale * factor));
-      // zoom toward the cursor
       self.tx = mx - (mx - self.tx) * (ns / self.scale);
       self.ty = my - (my - self.ty) * (ns / self.scale);
       self.scale = ns;
-      self.world.setAttribute("transform", "translate(" + self.tx + "," + self.ty + ") scale(" + self.scale + ")");
+      self._applyTransform();
     }, { passive: false });
-    // click on empty canvas clears selection
+
+    // A genuine click that reaches the svg background (not stopped by a room or
+    // ghost) clears the current selection.
     this.svg.addEventListener("click", function () {
-      if (self.selectedId) { self.selectedId = 0; self.render(); if (typeof window.Builder.onRoomSelected === "function") window.Builder.onRoomSelected(null); }
+      if (self.selectedId) {
+        self.selectedId = 0; self.render();
+        if (typeof window.Builder.onRoomSelected === "function") window.Builder.onRoomSelected(null);
+      }
     });
   };
 

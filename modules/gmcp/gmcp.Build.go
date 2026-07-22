@@ -487,9 +487,13 @@ func sendZoneMapFull(uid int, zone string) {
 			visited[id] = struct{}{}
 		}
 	}
+	zoneNames := rooms.GetAllZoneNames()
+	sort.Strings(zoneNames)
+
 	payload := GMCPZoneModule_Payload{
 		Zone:  zone,
 		Rooms: m.Snapshot(visited),
+		Zones: zoneNames, // let the builder switch to any zone
 	}
 	events.AddToQueue(GMCPOut{UserId: uid, Module: "Zone.Map", Payload: payload})
 }
@@ -504,4 +508,14 @@ func zoneForUser(uid int) string {
 		return r.Zone
 	}
 	return ""
+}
+
+// zoneOfRoom returns the zone a room belongs to, falling back to the admin's
+// current zone. The builder can view/edit a zone other than the one the admin
+// is standing in, so refreshes must target the EDITED room's zone.
+func zoneOfRoom(roomId, uid int) string {
+	if r := rooms.LoadRoom(roomId); r != nil && r.Zone != "" {
+		return r.Zone
+	}
+	return zoneForUser(uid)
 }

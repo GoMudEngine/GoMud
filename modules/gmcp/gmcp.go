@@ -486,8 +486,11 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 				sendBuildResult(uid, buildErr("bad Build.Room.Create payload"))
 				break
 			}
+			// Refresh the zone the new room lives in (the source room's zone),
+			// which may differ from the zone the admin is standing in.
+			refreshZone := zoneOfRoom(req.FromRoomId, uid)
 			sendBuildResult(uid, buildRoomCreate(realBuildDeps(), req.FromRoomId, req.Dir, req.Plane, req.X, req.Y, req.Z))
-			sendZoneMapFull(uid, zoneForUser(uid))
+			sendZoneMapFull(uid, refreshZone)
 
 		case `Build.Room.Update`:
 			uid, ok := requireAdmin(connectionId)
@@ -499,8 +502,9 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 				sendBuildResult(uid, buildErr("bad Build.Room.Update payload"))
 				break
 			}
+			refreshZone := zoneOfRoom(req.RoomId, uid)
 			sendBuildResult(uid, buildRoomUpdate(realBuildDeps(), req))
-			sendZoneMapFull(uid, zoneForUser(uid))
+			sendZoneMapFull(uid, refreshZone)
 
 		case `Build.Room.Delete`:
 			uid, ok := requireAdmin(connectionId)
@@ -512,8 +516,9 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 				sendBuildResult(uid, buildErr("bad Build.Room.Delete payload"))
 				break
 			}
+			refreshZone := zoneOfRoom(req.RoomId, uid) // capture before the room is gone
 			sendBuildResult(uid, buildRoomDelete(realBuildDeps(), req.RoomId))
-			sendZoneMapFull(uid, zoneForUser(uid))
+			sendZoneMapFull(uid, refreshZone)
 
 		case `Build.Exit.Add`:
 			uid, ok := requireAdmin(connectionId)
@@ -525,8 +530,9 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 				sendBuildResult(uid, buildErr("bad Build.Exit.Add payload"))
 				break
 			}
+			refreshZone := zoneOfRoom(req.RoomId, uid)
 			sendBuildResult(uid, buildExitAdd(realBuildDeps(), req))
-			sendZoneMapFull(uid, zoneForUser(uid))
+			sendZoneMapFull(uid, refreshZone)
 
 		case `Build.Exit.Remove`:
 			uid, ok := requireAdmin(connectionId)
@@ -538,8 +544,9 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 				sendBuildResult(uid, buildErr("bad Build.Exit.Remove payload"))
 				break
 			}
+			refreshZone := zoneOfRoom(req.RoomId, uid)
 			sendBuildResult(uid, buildExitRemove(realBuildDeps(), req.RoomId, req.ExitName))
-			sendZoneMapFull(uid, zoneForUser(uid))
+			sendZoneMapFull(uid, refreshZone)
 
 		case `Build.Room.Get`:
 			uid, ok := requireAdmin(connectionId)

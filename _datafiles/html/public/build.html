@@ -130,7 +130,8 @@
 <div id="app">
   <div id="toolbar">
     <span class="brand">⚒ World Builder</span>
-    <span class="zone" id="tb-zone">—</span>
+    <label for="tb-zone-sel">Zone</label>
+    <select id="tb-zone-sel"><option value="">—</option></select>
     <label for="tb-plane">Plane</label>
     <select id="tb-plane"><option value="">—</option></select>
     <label for="tb-floor">Floor</label>
@@ -200,7 +201,19 @@
   var pendingCreatedId = 0; // set from Build.Result, consumed on the next Zone.Map
 
   window.Builder.onZoneMap = function (payload) {
-    document.getElementById("tb-zone").textContent = payload.zone || "—";
+    // Populate the zone switcher from the full zone list (builder-only field).
+    var zsel = document.getElementById("tb-zone-sel");
+    if (zsel && payload.zones && payload.zones.length) {
+      zsel.innerHTML = "";
+      for (var zi = 0; zi < payload.zones.length; zi++) {
+        var zo = document.createElement("option");
+        zo.value = payload.zones[zi]; zo.textContent = payload.zones[zi];
+        if (payload.zones[zi] === payload.zone) zo.selected = true;
+        zsel.appendChild(zo);
+      }
+    } else if (zsel && payload.zone) {
+      zsel.value = payload.zone;
+    }
     if (!canvas) return;
     canvas.setSnapshot(payload);
     if (pendingCreatedId) { canvas.afterRefresh(pendingCreatedId); pendingCreatedId = 0; }
@@ -648,7 +661,11 @@
   // ---- canvas + toolbar wiring -------------------------------------------
   var planeSel = document.getElementById("tb-plane");
   var floorEl = document.getElementById("tb-floor");
+  var zoneSel = document.getElementById("tb-zone-sel");
   if (saveBtn) saveBtn.addEventListener("click", doSave);
+  if (zoneSel) zoneSel.addEventListener("change", function () {
+    if (zoneSel.value) { clearInspector(); sendGMCP("Build.Map.Request", { zone: zoneSel.value }); }
+  });
 
   if (window.Builder.BuilderCanvas) {
     canvas = new window.Builder.BuilderCanvas(document.getElementById("canvas"));
