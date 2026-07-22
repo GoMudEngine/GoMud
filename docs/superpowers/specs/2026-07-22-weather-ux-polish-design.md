@@ -153,15 +153,25 @@ gated on building sim season-biasing of weather selection.
 atmospheric, so slower is safe; the only risk is *too* still (playtest catches).
 
 All levers already exist as config — **zero code**:
-- `TickEveryGameHours` **1 → 3**. The sim steps once per this many game-hours;
-  each step is when fronts move one hop, spawn, and decay. Tripling it makes a
-  zone's condition hold ~7.5 min (was ~2.5), fronts drift a third as fast, and
-  systems last ~3× longer in real-time. `FrontHardAge` is in ticks, so front
-  lifetime stretches automatically — no separate change.
+- `TickEveryGameHours` **1 → 8**. The sim steps once per this many game-hours;
+  each step is when fronts move one hop, spawn, and decay. At 8 (≈20 min real
+  per tick, given `RoundsPerDay=900` and 4s rounds) a zone's condition holds at
+  least ~20 min (was ~2.5), fronts drift one zone-hop per ~20 min, and systems
+  span hours in real-time. `FrontHardAge` is in ticks (48), so the hard-age
+  backstop stretches to ~16 real hours automatically — but fronts normally die
+  well before that via intensity decay, so no separate change is needed.
 - `SpawnRateScale` **1.0 → 0.7**. Fewer fronts are born → more clear-sky
   stretches *between* systems. Net "quiet most of the time, weather is an event".
 
 **Set in** `_datafiles/config.yaml` weather block. Document the rationale inline.
+
+**Sparseness risk + first dial-back.** Tick 8 and the thinned spawn rate
+compound: weather becomes genuinely rare across the world. This is the intended
+"weather is an event" feel, but the playtest must confirm weather appears
+**often enough to be noticed at all** in a normal session. If it reads as dead,
+the first lever is to raise `SpawnRateScale` back toward 1.0 (more events) while
+keeping the slow tick — so each event stays slow and stable, there are just more
+of them. Lowering the tick is the second lever.
 
 ---
 
@@ -192,7 +202,7 @@ All levers already exist as config — **zero code**:
 | `EmoteMildChancePct` (new) | — | 30 | 2 |
 | `EmoteStrongChancePct` (new) | — | 100 | 2 |
 | `EmoteEveryRounds` | 20 | 24 | 2 |
-| `TickEveryGameHours` | 1 | 3 | 5 |
+| `TickEveryGameHours` | 1 | 8 | 5 |
 | `SpawnRateScale` | 1.0 | 0.7 | 5 |
 
 All defaults are playtest-tunable; none is load-bearing for correctness.
