@@ -58,8 +58,12 @@ func backfillCoordsInDir(roomsDir string, dryRun bool) error {
 	}
 	coords, planes, collisions, mixed := crawlAndAssign(rms)
 
+	planeSet := map[int]bool{}
+	for _, p := range planes {
+		planeSet[p] = true
+	}
 	mudlog.Info("Migration 0.15.0 coords", "mode", mode, "rooms", len(rms),
-		"collisions", collisions, "mixedComponents", mixed)
+		"planes", len(planeSet), "collisions", collisions, "mixedComponents", mixed)
 	if collisions > 0 {
 		mudlog.Warn("Migration 0.15.0 coords",
 			"message", "pre-existing overlaps on a Euclidean plane — mark the zone non_cartesian or fix geometry",
