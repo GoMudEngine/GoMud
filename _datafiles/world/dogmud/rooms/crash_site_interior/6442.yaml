@@ -29,3 +29,6 @@ idlemessages:
 - The vent-mouths sit dark and quiet, waiting on a charge that hasn't come.
 mutators:
 - mutatorid: hull_suppression
+x: 6
+y: -3
+plane: 2

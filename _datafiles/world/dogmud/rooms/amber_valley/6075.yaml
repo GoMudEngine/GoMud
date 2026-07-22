@@ -39,3 +39,5 @@ idlemessages:
 spawninfo:
   - mobid: 9407
     respawnrate: "10 real minutes"
+x: 1
+y: 44

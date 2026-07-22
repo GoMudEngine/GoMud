@@ -44,3 +44,6 @@ idlemessages:
 - A fragment of stone the size of a thumbnail lets go of the dome's edge and clicks across the floor.
 - The strip of sky visible through the <ansi fg="cyan">dome</ansi>'s crack shifts from pale gray to a clearer blue.
 - The fallen <ansi fg="yellow">telescope</ansi> creaks once, very faintly, as the structure settles around it.
+x: 42
+y: 16
+z: 2

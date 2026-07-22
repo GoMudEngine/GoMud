@@ -48,3 +48,6 @@ idlemessages:
 - There is a way off the world in this room, and it does not open. Not yet.
 mutators:
 - mutatorid: hull_suppression
+x: 7
+y: -5
+plane: 2

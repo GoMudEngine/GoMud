@@ -43,3 +43,6 @@ idlemessages:
 - The weight of the stone above seems to press down. The ceiling is very low and very close.
 - Smoke pools against the ceiling in a thick, undulating layer that barely clears your head.
 - Something in the shadows behind the stone slab shifts. A glint of eyes, watching.
+y: 5
+z: -2
+plane: 4

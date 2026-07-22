@@ -9,3 +9,5 @@ exits:
     roomid: 1002
   south:
     roomid: 1020
+y: 1
+plane: 1

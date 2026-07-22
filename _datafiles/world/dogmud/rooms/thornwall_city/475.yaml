@@ -30,3 +30,5 @@ idlemessages:
 - The viewing slot in the reinforced door clicks open, then shut.
 - A cat picks its way along the top of the crate stack, tail held high.
 - Footsteps echo from somewhere in the alley, then fade.
+x: 16
+y: 6

@@ -25,3 +25,4 @@ idlemessages:
 spawninfo:
   - mobid: 9574
     respawnrate: "15 real minutes"
+plane: 10

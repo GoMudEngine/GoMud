@@ -45,3 +45,5 @@ spawninfo:
   respawnrate: 5 real minutes
 idlemessages:
 - A pebble clicks loose somewhere up the <ansi fg="itemname">wash</ansi>, then nothing, as if something thought better of moving.
+x: 51
+y: 18

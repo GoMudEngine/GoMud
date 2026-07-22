@@ -46,3 +46,5 @@ spawninfo:
   respawnrate: 5 real minutes
 idlemessages:
 - The brackish <ansi fg="itemname">water</ansi> shivers once where a drip falls from the cracked stone, then lies flat.
+x: 52
+y: 19

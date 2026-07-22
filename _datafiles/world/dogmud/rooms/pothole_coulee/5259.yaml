@@ -39,3 +39,6 @@ nouns:
 idlemessages:
 - The <ansi fg="itemname">gallery</ansi> catches a sound from the west -- slow, deep, and patient -- and sends it back to you changed into something larger.
 - In the <ansi fg="itemname">dark</ansi> ahead something shifts its weight and the fractured floor transmits it as a low grinding vibration under your feet.
+x: 32
+y: 18
+z: -2

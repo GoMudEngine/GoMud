@@ -75,3 +75,6 @@ spawninfo:
 - mobid: 331
   message: A pale shimmer in the deeper water resolves into the unblinking eyes of a drowned hunter.
   respawnrate: 8 real minutes
+x: -4
+y: -2
+z: -1

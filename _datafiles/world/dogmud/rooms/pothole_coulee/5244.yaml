@@ -36,3 +36,5 @@ nouns:
     vanishes.
 idlemessages:
 - A breath of forge-smoke drifts down the <ansi fg="itemname">path</ansi>, warm against the cold rock smell.
+x: 40
+y: 19

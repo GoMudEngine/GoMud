@@ -43,3 +43,5 @@ spawninfo:
   respawnrate: 5 real minutes
 idlemessages:
 - Loose <ansi fg="itemname">scree</ansi> trickles down the inner wall with a dry whisper and settles again.
+x: 52
+y: 18

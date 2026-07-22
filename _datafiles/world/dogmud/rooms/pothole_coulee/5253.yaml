@@ -56,3 +56,5 @@ spawninfo:
 idlemessages:
 - The cold <ansi fg="itemname">draft</ansi> off the mine mouth stirs the <ansi fg="itemname">drift</ansi> debris along the shoulder and raises the smell of deep stone.
 - A scavenger's iron pick lies wedged in the <ansi fg="itemname">shoulder</ansi> rocks -- left because the handle cracked, or because the one who left it did not come back.
+x: 35
+y: 18

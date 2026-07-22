@@ -38,3 +38,5 @@ spawninfo:
   respawnrate: 1 real minute
 idlemessages:
 - The canvas of the <ansi fg="itemname">lean-to</ansi> bellies and snaps once in the dry wind.
+x: 49
+y: 19

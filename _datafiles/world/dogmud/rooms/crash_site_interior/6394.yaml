@@ -39,3 +39,6 @@ idlemessages:
 - North the grey opens on a vault too large for the light to fill.
 mutators:
 - mutatorid: hull_suppression
+x: 7
+y: -2
+plane: 2

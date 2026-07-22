@@ -85,3 +85,5 @@ idlemessages:
 - The ground squelches near the
   <ansi fg="itemname">clay pits</ansi> where quench-water has run
   between the rows and pooled in the red mud.
+x: -8
+y: -64

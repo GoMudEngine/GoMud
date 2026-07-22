@@ -31,3 +31,4 @@ idlemessages:
 - Somewhere deeper in the grey, a sound almost happens, and does not.
 mutators:
 - mutatorid: hull_suppression
+plane: 2

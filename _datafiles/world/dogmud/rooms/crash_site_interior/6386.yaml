@@ -46,3 +46,7 @@ idlemessages:
 - The way west stands open and quiet; the way east keeps its coiled bargain.
 mutators:
 - mutatorid: hull_suppression
+x: 8
+y: 1
+z: -1
+plane: 2

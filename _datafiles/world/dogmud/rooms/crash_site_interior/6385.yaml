@@ -35,3 +35,7 @@ idlemessages:
 - Dust lies undisturbed on the shelves, older than any dust should be.
 mutators:
 - mutatorid: hull_suppression
+x: 7
+y: -1
+z: -1
+plane: 2

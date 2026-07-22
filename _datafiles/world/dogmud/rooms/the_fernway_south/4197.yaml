@@ -77,3 +77,5 @@ containers:
       relockinterval: 24 hours
       rotationseed: 1
     items: []
+x: -6
+y: 23

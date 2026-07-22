@@ -77,3 +77,6 @@ spawninfo:
 - mobid: 331
   message: A drowned hunter slides up from beneath the bone-shoal's wet gravel.
   respawnrate: 10 real minutes
+x: -5
+y: -1
+z: -1

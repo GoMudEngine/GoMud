@@ -43,3 +43,6 @@ spawninfo:
     statpool: 1
   - mobid: 9556
     statpool: 1
+x: 5
+y: 1
+plane: 2

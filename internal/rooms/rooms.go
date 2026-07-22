@@ -87,6 +87,10 @@ type Room struct {
 	MapSymbol         string                            `yaml:"mapsymbol,omitempty" instance:"skip"`       // The symbol to use when generating a map of the zone
 	MapLegend         string                            `yaml:"maplegend,omitempty" instance:"skip"`       // The text to display in the legend for this room. Should be one word.
 	Biome             string                            `yaml:"biome,omitempty" instance:"skip"`           // The biome of the room. Used for weather generation.
+	X                 int                               `yaml:"x,omitempty" instance:"skip"`               // authored grid coordinate within Plane
+	Y                 int                               `yaml:"y,omitempty" instance:"skip"`               // authored grid coordinate within Plane (engine frame: north = y-1)
+	Z                 int                               `yaml:"z,omitempty" instance:"skip"`               // vertical level (up = z+1, down = z-1)
+	Plane             int                               `yaml:"plane,omitempty" instance:"skip"`           // coordinate-space id; 0 = overworld
 	Containers        map[string]Container              `yaml:"containers,omitempty"`                      // If this room has a chest, what is in it?
 	Exits             map[string]exit.RoomExit          `yaml:"exits" instance:"skip"`                     // Exits to other rooms
 	ExitsTemp         map[string]exit.TemporaryRoomExit `yaml:"-"`                                         // Temporary exits that will be removed after a certain time. Don't bother saving on sever shutting down.

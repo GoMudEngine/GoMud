@@ -36,3 +36,7 @@ idlemessages:
 - A bone crunches underfoot. The sound carries further than you would like.
 - The grease on the floor makes every step uncertain.
 - Something in the walls makes a rhythmic grinding sound, then stops.
+x: 1
+y: 1
+z: -1
+plane: 4

@@ -47,3 +47,6 @@ idlemessages:
 - The drifting marks sit just past understanding, and will not quite come.
 mutators:
 - mutatorid: hull_suppression
+x: 8
+y: -4
+plane: 2

@@ -51,3 +51,5 @@ spawninfo:
   respawnrate: 5 real minutes
 idlemessages:
 - Wind crosses the open <ansi fg="itemname">wash</ansi> and worries the grey brush of the lean-to with a dry rattle.
+x: 53
+y: 18

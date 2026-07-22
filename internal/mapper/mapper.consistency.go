@@ -32,6 +32,13 @@ func samePos(a, b positionDelta) bool {
 	return a.x == b.x && a.y == b.y && a.z == b.z
 }
 
+// isSpatialExit reports whether a direction carries a real coordinate delta
+// (compass/vertical). A zero delta means a portal/named exit (non-spatial),
+// which may legitimately connect rooms across planes.
+func isSpatialExit(d positionDelta) bool {
+	return d.x != 0 || d.y != 0 || d.z != 0
+}
+
 // classifyKind decides the render/consistency kind from nominal vs actual delta.
 func classifyKind(nominal, actual positionDelta) ExitKind {
 	if !samePos(nominal, actual) {
@@ -46,11 +53,12 @@ func classifyKind(nominal, actual positionDelta) ExitKind {
 	return ExitNormal
 }
 
-// findCollisions returns groups of >=2 roomIds that share the same (x,y,z).
+// findCollisions returns groups of >=2 roomIds that share the same
+// (plane,x,y,z) — coordinates only collide within the same plane.
 func findCollisions(nodes map[int]*mapNode) [][]int {
-	byCell := map[[3]int][]int{}
+	byCell := map[[4]int][]int{}
 	for id, n := range nodes {
-		key := [3]int{n.Pos.x, n.Pos.y, n.Pos.z}
+		key := [4]int{n.Plane, n.Pos.x, n.Pos.y, n.Pos.z}
 		byCell[key] = append(byCell[key], id)
 	}
 	groups := [][]int{}
@@ -103,14 +111,21 @@ func roomCrawlable(roomId int) bool {
 // (the zone is intentionally non-Euclidean); the long-crossing warning still runs.
 func (r *mapper) CheckConsistency(zone string, nonCartesian bool) []Finding {
 	findings := []Finding{}
+	reg := rooms.GetPlaneRegistry()
 
-	if !nonCartesian {
-		for _, group := range findCollisions(r.crawledRooms) {
-			findings = append(findings, Finding{
-				Severity: "error", Kind: "collision", Zone: zone, RoomId: group[0],
-				Detail: fmt.Sprintf("rooms %v occupy the same coordinate", group),
-			})
+	for _, group := range findCollisions(r.crawledRooms) {
+		n := r.crawledRooms[group[0]]
+		if nonCartesian || (n != nil && reg.IsNonEuclidean(n.Plane)) {
+			continue // non-Euclidean plane/zone: overlap is allowed by design
 		}
+		plane := 0
+		if n != nil {
+			plane = n.Plane
+		}
+		findings = append(findings, Finding{
+			Severity: "error", Kind: "collision", Zone: zone, RoomId: group[0],
+			Detail: fmt.Sprintf("rooms %v occupy the same coordinate on plane %d", group, plane),
+		})
 	}
 
 	for srcId, src := range r.crawledRooms {
@@ -124,11 +139,21 @@ func (r *mapper) CheckConsistency(zone string, nonCartesian bool) []Finding {
 			}
 			actual := positionDelta{x: dst.Pos.x - src.Pos.x, y: dst.Pos.y - src.Pos.y, z: dst.Pos.z - src.Pos.z}
 
-			if !nonCartesian {
-				if !samePos(e.Direction, actual) {
+			srcNonEuclid := nonCartesian || reg.IsNonEuclidean(src.Plane)
+			if !srcNonEuclid {
+				crossPlane := dst.Plane != src.Plane
+				if isSpatialExit(e.Direction) && crossPlane && !reg.IsNonEuclidean(dst.Plane) {
+					// Crossing to a DIFFERENT Euclidean plane is a bug — use a
+					// portal. (Crossing into a non-Euclidean plane — a maze/warped
+					// area — is a legitimate boundary and allowed.)
 					findings = append(findings, Finding{
 						Severity: "error", Kind: "deltamismatch", Zone: zone, RoomId: srcId, ExitName: exitName,
-						Detail: fmt.Sprintf("nominal delta (%d,%d,%d) != actual (%d,%d,%d) — wrap exit detected in a Cartesian zone; set non_cartesian: true on the zone or fix the geometry",
+						Detail: fmt.Sprintf("spatial exit crosses Euclidean planes (%d -> %d); use a portal/door exit", src.Plane, dst.Plane),
+					})
+				} else if !crossPlane && !samePos(e.Direction, actual) {
+					findings = append(findings, Finding{
+						Severity: "error", Kind: "deltamismatch", Zone: zone, RoomId: srcId, ExitName: exitName,
+						Detail: fmt.Sprintf("nominal delta (%d,%d,%d) != actual (%d,%d,%d) — wrap exit in a Cartesian plane; fix the geometry or move the zone to a non-Euclidean plane",
 							e.Direction.x, e.Direction.y, e.Direction.z, actual.x, actual.y, actual.z),
 					})
 				}
@@ -163,12 +188,16 @@ func (r *mapper) longSpanCrossesRoom(start, delta positionDelta, srcId, dstId in
 		return 0
 	}
 	sx, sy := sign(delta.x), sign(delta.y)
-	byCell := map[[3]int]int{}
+	planeOf := 0
+	if n := r.crawledRooms[srcId]; n != nil {
+		planeOf = n.Plane
+	}
+	byCell := map[[4]int]int{}
 	for id, n := range r.crawledRooms {
-		byCell[[3]int{n.Pos.x, n.Pos.y, n.Pos.z}] = id
+		byCell[[4]int{n.Plane, n.Pos.x, n.Pos.y, n.Pos.z}] = id
 	}
 	for i := 1; i < steps; i++ {
-		cell := [3]int{start.x + sx*i, start.y + sy*i, start.z}
+		cell := [4]int{planeOf, start.x + sx*i, start.y + sy*i, start.z}
 		if id, ok := byCell[cell]; ok && id != srcId && id != dstId {
 			return id
 		}

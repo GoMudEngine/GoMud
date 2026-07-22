@@ -83,6 +83,10 @@ func CreateEphemeralRoomIds(roomIds ...int) (map[int]int, error) {
 		}
 	}
 
+	// Each live instance gets its own coordinate plane so its ephemeral rooms
+	// never collide with the template or with sibling instances.
+	instancePlane := nextInstancePlane()
+
 	ephemeralRoomIds := []int{}
 	for idx, roomId := range roomIds {
 		// Load only data from the template
@@ -97,6 +101,8 @@ func CreateEphemeralRoomIds(roomIds ...int) (map[int]int, error) {
 		}
 
 		room.RoomId = ephemeralRoomIdMinimum + (chunkId * ephemeralChunkSize) + idx
+		room.Plane = instancePlane
+		GetPlaneRegistry().Mark(instancePlane, IsZoneNonCartesian(room.Zone), room.Zone)
 
 		// Save the original room ID in case we need it at some point
 		originalRoomIdLookups[room.RoomId] = roomId

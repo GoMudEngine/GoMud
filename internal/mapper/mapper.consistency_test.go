@@ -66,6 +66,18 @@ func TestFindCollisions(t *testing.T) {
 	}
 }
 
+func TestFindCollisions_PlaneAware(t *testing.T) {
+	nodes := map[int]*mapNode{
+		1: {RoomId: 1, Pos: d(0, 0, 0), Plane: 0},
+		2: {RoomId: 2, Pos: d(0, 0, 0), Plane: 1}, // same xyz, different plane — NOT a collision
+		3: {RoomId: 3, Pos: d(0, 0, 0), Plane: 0}, // same xyz + plane as 1 — collision
+	}
+	groups := findCollisions(nodes)
+	if len(groups) != 1 || len(groups[0]) != 2 || groups[0][0] != 1 || groups[0][1] != 3 {
+		t.Errorf("expected one collision {1,3}, got %v", groups)
+	}
+}
+
 // helper: build a minimal *mapper with hand-placed nodes (no crawl).
 func mkMapper(nodes map[int]*mapNode) *mapper {
 	return &mapper{crawledRooms: nodes}

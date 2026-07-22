@@ -48,3 +48,6 @@ idlemessages:
 - Something went wrong here, long ago. The display has never stopped saying so.
 mutators:
 - mutatorid: hull_suppression
+x: 3
+y: 1
+plane: 2

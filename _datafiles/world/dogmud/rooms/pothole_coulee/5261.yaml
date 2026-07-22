@@ -41,3 +41,6 @@ nouns:
 idlemessages:
 - The <ansi fg="itemname">vein</ansi> catches whatever faint light reaches it and throws back a slow glitter, color shifting as the shadows move.
 - Somewhere in the unbroken rock west of the working face the <ansi fg="itemname">seam</ansi> pops once -- thermal stress, or pressure, or the mountain settling into itself.
+x: 30
+y: 18
+z: -2

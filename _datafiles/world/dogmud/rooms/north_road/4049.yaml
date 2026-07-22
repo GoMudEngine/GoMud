@@ -43,3 +43,5 @@ idlemessages:
 - Smoke from the chimney shifts direction as the wind changes.
 spawninfo:
   - mobid: 277
+x: -10
+y: 14

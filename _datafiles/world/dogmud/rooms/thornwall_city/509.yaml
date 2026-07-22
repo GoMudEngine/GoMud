@@ -64,3 +64,6 @@ idlemessages:
   than it is.
 - The lock mechanism ticks faintly as its tumblers settle -- a sound like
   a slow clock with only one note.
+x: 12
+y: 11
+z: -4

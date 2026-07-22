@@ -36,3 +36,6 @@ idlemessages:
 - Light arrives through the <ansi fg="cyan">gaps</ansi> from below, matching the light above perfectly.
 - The stone underfoot tilts one degree, corrects, tilts again -- you widen
   your stance without meaning to.
+x: 40
+y: 11
+z: 3

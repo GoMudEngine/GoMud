@@ -32,3 +32,7 @@ idlemessages:
 - The blind turn blocks your sightline in every direction. You can only see a few steps ahead.
 - A faint clicking sound comes from the east, regular and deliberate. It stops when you shift your weight.
 - Your shadow swings wildly across the cramped walls as you move.
+x: -1
+y: 1
+z: -2
+plane: 4

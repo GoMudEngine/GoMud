@@ -51,3 +51,6 @@ idlemessages:
   of air, then returns to its background level.
 - Somewhere in the stack, a crate settles with a faint tick
   that could be temperature change or something inside shifting.
+x: -8
+y: -81
+z: -1

@@ -45,3 +45,7 @@ mutators:
 spawninfo:
   - mobid: 9558
     statpool: 1
+x: 9
+y: 1
+z: -1
+plane: 2

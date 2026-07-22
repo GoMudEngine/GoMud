@@ -7,3 +7,4 @@ exits:
     roomid: 1003
   south:
     roomid: 1011
+plane: 1

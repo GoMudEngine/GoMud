@@ -45,3 +45,5 @@ nouns:
     whole way to anything looking down.
 idlemessages:
 - A pebble works loose somewhere up the <ansi fg="itemname">stair</ansi> and rattles down through the dark to the floor.
+x: 55
+y: 17

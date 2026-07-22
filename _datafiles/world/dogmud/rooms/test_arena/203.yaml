@@ -16,3 +16,6 @@ spawninfo:
 idlemessages:
 - An arrow thuds into a distant target with a satisfying thwack.
 - Straw drifts lazily from a battered target dummy.
+x: 1
+y: 1
+plane: 7

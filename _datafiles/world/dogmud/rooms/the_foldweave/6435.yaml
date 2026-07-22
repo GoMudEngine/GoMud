@@ -62,3 +62,6 @@ spawninfo:
 
 mutators:
 - mutatorid: foldweave-glow
+y: 1
+z: -5
+plane: 5

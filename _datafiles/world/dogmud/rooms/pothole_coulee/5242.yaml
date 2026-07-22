@@ -60,3 +60,6 @@ spawninfo:
   respawnrate: 10 real minutes
 idlemessages:
 - Wind pours through the <ansi fg="itemname">breach</ansi> and stirs the chalked stones on the table, nudging one a hair across the map.
+x: 55
+y: 17
+z: 2

@@ -51,3 +51,5 @@ spawninfo:
 - mobid: 9103
 idlemessages:
 - The heavy door settles a fraction on its hinges with a low groan of iron, and the cool air does not stir.
+x: 45
+y: 20

@@ -15,3 +15,6 @@ coord:
 exits:
   down:
     roomid: 470
+x: 13
+y: 6
+z: 1

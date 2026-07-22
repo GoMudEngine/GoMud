@@ -40,3 +40,5 @@ idlemessages:
 - Wind moves through the scrub trees with a dry rattle.
 spawninfo:
   - mobid: 283
+x: -8
+y: 15

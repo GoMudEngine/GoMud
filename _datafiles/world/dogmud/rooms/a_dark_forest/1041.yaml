@@ -11,3 +11,6 @@ exits:
     roomid: 1050
   west:
     roomid: 1040
+x: 3
+y: 4
+plane: 1

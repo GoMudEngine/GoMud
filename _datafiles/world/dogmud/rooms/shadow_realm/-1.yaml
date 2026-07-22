@@ -11,3 +11,4 @@ exits:
 idlemessages:
 - Type <ansi fg="command">look</ansi> to look around.
 - Type <ansi fg="command">help</ansi> to see help topics.
+plane: 8

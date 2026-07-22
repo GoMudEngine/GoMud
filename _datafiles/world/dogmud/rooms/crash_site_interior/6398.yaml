@@ -54,3 +54,6 @@ idlemessages:
 - It is not this world's sky, and you cannot yet say what that means.
 mutators:
 - mutatorid: hull_suppression
+x: 6
+y: -4
+plane: 2

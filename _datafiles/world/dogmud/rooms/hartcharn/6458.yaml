@@ -29,3 +29,5 @@ idlemessages:
 spawninfo:
   - mobid: 9603
     cooldown: 600 rounds
+x: -11
+y: -30

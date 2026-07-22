@@ -46,3 +46,5 @@ spawninfo:
 idlemessages:
 - The <ansi fg="itemname">forge</ansi> ticks and breathes, coals settling with a soft crunch.
 - Heat shimmer makes the rack of <ansi fg="itemname">tongs</ansi> and hammers ripple like a reflection in water.
+x: 39
+y: 19

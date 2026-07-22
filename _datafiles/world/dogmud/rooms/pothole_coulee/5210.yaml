@@ -56,3 +56,5 @@ spawninfo:
 idlemessages:
 - The wickerwork walls creak and settle as the wind leans on the cottage, then ease.
 - A <ansi fg="itemname">charm</ansi> turns on its thread in the hearth-draft and taps softly against another.
+x: 42
+y: 19
