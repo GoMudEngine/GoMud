@@ -71,7 +71,7 @@ func (gd GameDate) String(symbolOnly ...bool) string {
 		if gd.Night {
 			return `<ansi fg="night">☾</ansi>` // •
 		}
-		return fmt.Sprintf(`<ansi fg="%s">☀️</ansi>`, dayNight) //
+		return fmt.Sprintf(`<ansi fg="%s">☀</ansi>`, dayNight) //
 	}
 
 	return fmt.Sprintf("<ansi fg=\"%s\">%d:%02d%s</ansi>", dayNight, gd.Hour, gd.Minute, gd.AmPm)

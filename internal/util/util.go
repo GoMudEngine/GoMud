@@ -985,8 +985,8 @@ func ConvertToAscii(s string) string {
 	b.Grow(len(s))
 
 	for _, r := range s {
-		if ascii, ok := unicodeToAscii[r]; ok {
-			b.WriteByte(ascii)
+		if repl, ok := unicodeToAscii[r]; ok {
+			b.WriteString(repl)
 		} else {
 			b.WriteRune(r)
 		}
@@ -994,28 +994,39 @@ func ConvertToAscii(s string) string {
 	return b.String()
 }
 
-// unicodeToAscii maps decorative Unicode runes to ASCII byte equivalents.
-var unicodeToAscii = map[rune]byte{
+// unicodeToAscii maps decorative Unicode runes to ASCII string equivalents.
+// String values (not bytes) so a rune can drop to "" (e.g. variation selectors)
+// or expand to multiple chars. Applied per-recipient in AsciiMode (see
+// ConvertToAscii); never alters output for UTF-8-capable clients.
+var unicodeToAscii = map[rune]string{
 	// Box-drawing: light
-	'─': '-', '│': '|',
-	'┌': '+', '┐': '+', '└': '+', '┘': '+',
-	'├': '+', '┤': '+', '┬': '+', '┴': '+', '┼': '+',
+	'─': "-", '│': "|",
+	'┌': "+", '┐': "+", '└': "+", '┘': "+",
+	'├': "+", '┤': "+", '┬': "+", '┴': "+", '┼': "+",
 	// Box-drawing: double
-	'═': '=', '║': '|',
-	'╔': '+', '╗': '+', '╚': '+', '╝': '+',
-	'╠': '+', '╣': '+', '╦': '+', '╩': '+', '╬': '+',
+	'═': "=", '║': "|",
+	'╔': "+", '╗': "+", '╚': "+", '╝': "+",
+	'╠': "+", '╣': "+", '╦': "+", '╩': "+", '╬': "+",
 	// Box-drawing: mixed single/double
-	'╒': '+', '╕': '+', '╘': '+', '╛': '+',
-	'╞': '+', '╡': '+', '╤': '+', '╧': '+', '╪': '+',
-	'╓': '+', '╖': '+', '╙': '+', '╜': '+',
-	'╟': '+', '╢': '+', '╥': '+', '╨': '+', '╫': '+',
+	'╒': "+", '╕': "+", '╘': "+", '╛': "+",
+	'╞': "+", '╡': "+", '╤': "+", '╧': "+", '╪': "+",
+	'╓': "+", '╖': "+", '╙': "+", '╜': "+",
+	'╟': "+", '╢': "+", '╥': "+", '╨': "+", '╫': "+",
 	// Block elements
-	'█': '#', '▓': '#', '▒': ':', '░': '.',
-	'▄': '-', '▀': '_', '▌': '|', '▐': '|',
+	'█': "#", '▓': "#", '▒': ":", '░': ".",
+	'▄': "-", '▀': "_", '▌': "|", '▐': "|",
 	// Bullet / misc
-	'•': '*',
+	'•': "*",
 	// Diagonal lines
-	'╲': '\\', '╱': '/',
+	'╲': "\\", '╱': "/",
+	// Sun / moon / weather (prompt + splash glyphs)
+	'☀': "*", '☾': "(", '☽': ")",
+	'\uFE0F': "", // emoji variation selector — drop (the "trailing bytes" leak)
+	'\uFE0E': "", // text-presentation selector — drop too, for safety
+	'⚡': "!", '❄': "*", '✦': "*", '✧': "*", '❆': "*", '❅': "*",
+	// Map / directional
+	'▲': "^", '▼': "v", '△': "^", '▽': "v",
+	'≈': "~", '⌂': "#", '◆': "*", '●': "o", '○': "o",
 }
 
 // Server start time, stamped once from main() so MSSP (and anything else) can
