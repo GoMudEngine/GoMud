@@ -375,6 +375,12 @@ func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn)) {
 		doBasicAuth(roomData),
 	))
 
+	// Admin room-builder page (admin web-building 1b). Admin-gated by
+	// doBasicAuth (RoleAdmin). NOT wrapped in RunWithMUDLocked — the page
+	// itself is static/template-only; all world mutations happen later over
+	// the page's own Build.* GMCP session, which runs on MainWorker.
+	http.HandleFunc("GET /build", doBasicAuth(serveBuildPage))
+
 	//
 	// Https server start up
 	//

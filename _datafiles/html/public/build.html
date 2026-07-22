@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DOGMud — World Builder</title>
+<style>
+  :root {
+    --leather:   #2b1d12;
+    --leather2:  #3a2818;
+    --tooled:    #5c4326;
+    --gold:      #c9a24b;
+    --gold-dim:  #8a7038;
+    --parch:     #e7d9b8;
+    --ink:       #1c130a;
+    --panel:     #241811;
+    --danger:    #b5533a;
+    --ok:        #6f9a4a;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; height: 100%;
+    background: var(--leather);
+    color: var(--parch);
+    font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    font-size: 14px;
+  }
+  #app { display: flex; flex-direction: column; height: 100vh; }
+
+  /* ---- toolbar ---- */
+  #toolbar {
+    flex: 0 0 auto;
+    display: flex; align-items: center; gap: 14px;
+    padding: 8px 14px;
+    background: linear-gradient(#3a2818, #2b1d12);
+    border-bottom: 2px solid var(--tooled);
+    box-shadow: 0 2px 6px rgba(0,0,0,.5);
+  }
+  #toolbar .brand { font-weight: bold; color: var(--gold); letter-spacing: .5px; }
+  #toolbar .zone  { color: var(--parch); opacity: .85; }
+  #toolbar label  { color: var(--gold-dim); font-size: 12px; }
+  #toolbar select, #toolbar button {
+    background: var(--panel); color: var(--parch);
+    border: 1px solid var(--tooled); border-radius: 4px;
+    padding: 4px 8px; font: inherit;
+  }
+  #toolbar button { cursor: pointer; }
+  #toolbar button:hover { border-color: var(--gold); }
+  #toolbar .spacer { flex: 1 1 auto; }
+  #conn { font-size: 12px; color: var(--gold-dim); }
+  #conn.ok    { color: var(--ok); }
+  #conn.bad   { color: var(--danger); }
+
+  /* ---- body split ---- */
+  #main { flex: 1 1 auto; display: flex; min-height: 0; }
+  #canvas {
+    flex: 1 1 auto; position: relative; overflow: hidden;
+    background:
+      radial-gradient(ellipse at 30% 20%, #34241680 0%, #00000000 60%),
+      var(--leather2);
+    border-right: 2px solid var(--tooled);
+  }
+  #canvas .placeholder {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    color: var(--gold-dim); font-style: italic; text-align: center; padding: 20px;
+  }
+  #inspector {
+    flex: 0 0 260px; overflow-y: auto;
+    background: var(--panel); padding: 12px;
+  }
+  #inspector h2 { margin: 0 0 8px; color: var(--gold); font-size: 15px; }
+  #inspector .empty { color: var(--gold-dim); font-style: italic; }
+
+  /* ---- login overlay ---- */
+  #login {
+    position: fixed; inset: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(15,10,5,.86);
+  }
+  #login .card {
+    background: linear-gradient(#3a2818, #241811);
+    border: 2px solid var(--tooled); border-radius: 8px;
+    padding: 24px 26px; width: 320px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.6);
+  }
+  #login h1 { margin: 0 0 4px; color: var(--gold); font-size: 20px; }
+  #login p  { margin: 0 0 16px; color: var(--gold-dim); font-size: 12px; }
+  #login label { display: block; margin: 10px 0 4px; font-size: 12px; color: var(--gold-dim); }
+  #login input {
+    width: 100%; padding: 7px 9px; font: inherit;
+    background: var(--ink); color: var(--parch);
+    border: 1px solid var(--tooled); border-radius: 4px;
+  }
+  #login input:focus { outline: none; border-color: var(--gold); }
+  #login button {
+    margin-top: 18px; width: 100%; padding: 9px;
+    background: var(--gold); color: var(--ink); font: inherit; font-weight: bold;
+    border: none; border-radius: 4px; cursor: pointer;
+  }
+  #login button:disabled { opacity: .5; cursor: default; }
+  #login .err { margin-top: 12px; color: var(--danger); font-size: 12px; min-height: 1em; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="toolbar">
+    <span class="brand">⚒ World Builder</span>
+    <span class="zone" id="tb-zone">—</span>
+    <label for="tb-plane">Plane</label>
+    <select id="tb-plane"><option value="">—</option></select>
+    <div class="spacer"></div>
+    <span id="conn">● connecting…</span>
+    <button id="tb-save" disabled>Save Room</button>
+  </div>
+  <div id="main">
+    <div id="canvas">
+      <div class="placeholder" id="canvas-ph">Waiting for the world map…</div>
+    </div>
+    <aside id="inspector">
+      <h2>Inspector</h2>
+      <div class="empty" id="insp-empty">Select a room on the map to edit it.</div>
+    </aside>
+  </div>
+</div>
+
+<!-- Login overlay: the page is admin-gated by HTTP Basic-Auth, but the
+     WebSocket/GMCP session still needs an in-band character login. Basic-Auth
+     credentials aren't exposed to JS, so the admin logs their character in
+     once here; the standard username -> password prompt flow is driven off the
+     server's TEXTMASK signals. -->
+<div id="login">
+  <div class="card">
+    <h1>World Builder</h1>
+    <p>Log in with your admin character to open a build session.</p>
+    <form id="login-form" autocomplete="off">
+      <label for="lg-user">Character name</label>
+      <input id="lg-user" type="text" autocomplete="username" autofocus>
+      <label for="lg-pass">Password</label>
+      <input id="lg-pass" type="password" autocomplete="current-password">
+      <button type="submit" id="lg-btn">Open build session</button>
+      <div class="err" id="lg-err"></div>
+    </form>
+  </div>
+</div>
+
+<script>
+"use strict";
+(function () {
+  // ---- connection + GMCP state -------------------------------------------
+  var socket = null;
+  var loggedIn = false;
+  var creds = { u: "", p: "" };
+  var credsReady = false; // set true only once the admin submits the form
+  // login phase tracks the server's prompt sequence:
+  //   'idle' -> 'await_user' -> 'await_pass' -> 'await_kick'
+  var phase = "idle";
+
+  var connEl = document.getElementById("conn");
+  function setConn(txt, cls) {
+    connEl.textContent = txt;
+    connEl.className = cls || "";
+  }
+
+  // GMCP snapshot store; builder.js (Tasks 4/5) reads/overrides these hooks.
+  window.Builder = window.Builder || {};
+  window.Builder.gmcp = {};
+  // Overridable hooks — replaced by builder.js once the canvas exists.
+  window.Builder.onZoneMap = window.Builder.onZoneMap || function (payload) {
+    console.log("[Build] Zone.Map:", payload);
+    var ph = document.getElementById("canvas-ph");
+    if (ph) {
+      ph.textContent = "Zone.Map received: " + (payload.zone || "?") +
+        " (" + ((payload.rooms || []).length) + " rooms). Canvas lands in Task 4.";
+    }
+    document.getElementById("tb-zone").textContent = payload.zone || "—";
+  };
+  window.Builder.onGMCP = window.Builder.onGMCP || function (ns, obj) {
+    // Default: no-op for namespaces the builder doesn't consume yet.
+  };
+
+  // Send a client->server GMCP frame as BINARY so the 0xFF IAC byte survives
+  // (a text frame would UTF-8-mangle it). Mirrors webclient-pure.html.
+  function sendGMCP(pkg, obj) {
+    if (!socket || socket.readyState !== WebSocket.OPEN) return false;
+    var body = pkg + " " + JSON.stringify(obj);
+    var bodyBytes = new TextEncoder().encode(body);
+    var frame = new Uint8Array(bodyBytes.length + 5);
+    frame[0] = 255; frame[1] = 250; frame[2] = 201;               // IAC SB GMCP
+    frame.set(bodyBytes, 3);
+    frame[frame.length - 2] = 255; frame[frame.length - 1] = 240; // IAC SE
+    socket.send(frame);
+    return true;
+  }
+  window.Builder.sendGMCP = sendGMCP;
+
+  function sendLine(s) {
+    if (socket && socket.readyState === WebSocket.OPEN) socket.send(s);
+  }
+
+  // ---- login state machine, driven by the server's TEXTMASK signals ------
+  // The server sends TEXTMASK:false before an unmasked prompt (username, or the
+  // "kick them?" y/n) and TEXTMASK:true before the masked password prompt. We
+  // never send the username until the admin has submitted the form (credsReady).
+  function onTextMask(masked) {
+    if (loggedIn) return;
+    if (!masked) {
+      if (!credsReady) return; // username prompt is waiting; hold for the form
+      if (phase === "await_user") {
+        sendLine(creds.u);
+        phase = "await_pass";
+      } else if (phase === "await_kick") {
+        // "User is already connected. Kick them?" — take over the session.
+        sendLine("y");
+      }
+    } else { // masked = password prompt
+      if (phase === "await_pass") {
+        sendLine(creds.p);
+        phase = "await_kick";
+      } else if (phase === "await_kick") {
+        // A second password prompt means the first was rejected.
+        loginFailed("Login failed — check your character name and password.");
+      }
+    }
+  }
+
+  function loginSucceeded() {
+    if (loggedIn) return;
+    loggedIn = true;
+    var ov = document.getElementById("login");
+    if (ov) ov.style.display = "none";
+    setConn("● connected", "ok");
+  }
+
+  function loginFailed(msg) {
+    phase = "idle";
+    var btn = document.getElementById("lg-btn");
+    if (btn) btn.disabled = false;
+    var err = document.getElementById("lg-err");
+    if (err) err.textContent = msg;
+  }
+
+  // ---- websocket wiring ---------------------------------------------------
+  function connect() {
+    var proto = location.protocol === "https:" ? "wss://" : "ws://";
+    socket = new WebSocket(proto + location.host + "/ws");
+    socket.onopen = function () {
+      setConn("● authenticating…", "");
+      phase = "await_user";
+    };
+    socket.onclose = function () {
+      setConn("● disconnected", "bad");
+      if (!loggedIn) loginFailed("Connection closed before login completed.");
+    };
+    socket.onerror = function () { setConn("● connection error", "bad"); };
+    socket.onmessage = onMessage;
+  }
+
+  function onMessage(event) {
+    var data = event.data;
+    if (typeof data !== "string") return; // builder consumes only text + GMCP text frames
+
+    // Copyover reconnect token — ignore (builder sessions don't persist it).
+    if (data.indexOf("RELOGTKN:") === 0) return;
+
+    // Webclient control commands are an 8-char tag followed by ':' at index 8.
+    if (data.length > 9 && data.charAt(8) === ":") {
+      if (data.substring(0, 9) === "TEXTMASK:") {
+        onTextMask(data.substring(9).indexOf("true") === 0);
+        return;
+      }
+      // Other webclient commands are irrelevant to the builder.
+      return;
+    }
+
+    // GMCP frames arrive as  !!GMCP(Namespace {json})
+    if (data.slice(0, 7) === "!!GMCP(") {
+      var payload = data.trim().slice(7, data.length - 1).trim();
+      var jsonIndex = payload.charAt(payload.length - 1) === "}"
+        ? payload.indexOf("{")
+        : payload.indexOf("[");
+      if (jsonIndex === -1) return;
+      var ns = payload.slice(0, jsonIndex).trim();
+      var obj;
+      try { obj = JSON.parse(payload.slice(jsonIndex).trim()); }
+      catch (e) { return; }
+
+      window.Builder.gmcp[ns] = obj;
+      // Any GMCP push means the login burst has started — we're in the world.
+      loginSucceeded();
+
+      if (ns === "Zone.Map") {
+        window.Builder.onZoneMap(obj);
+      } else {
+        window.Builder.onGMCP(ns, obj);
+      }
+      return;
+    }
+
+    // Everything else is login-flow / MOTD text — not needed by the builder.
+  }
+
+  // ---- login form ---------------------------------------------------------
+  document.getElementById("login-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var u = document.getElementById("lg-user").value.trim();
+    var p = document.getElementById("lg-pass").value;
+    if (!u || !p) { loginFailed("Enter your character name and password."); return; }
+    creds.u = u; creds.p = p; credsReady = true;
+    document.getElementById("lg-err").textContent = "";
+    document.getElementById("lg-btn").disabled = true;
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      // The socket has been open since page load, so the username prompt has
+      // already arrived (phase 'await_user'); send the name now. If it somehow
+      // hasn't, the pending TEXTMASK:false will send it (credsReady is set).
+      if (phase === "await_user") {
+        sendLine(creds.u);
+        phase = "await_pass";
+      }
+    } else {
+      connect();
+    }
+  });
+
+  // Open the socket immediately so the username prompt is waiting by the time
+  // the admin submits; the form submit supplies the credentials.
+  connect();
+})();
+</script>
+</body>
+</html>
