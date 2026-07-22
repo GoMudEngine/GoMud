@@ -246,12 +246,132 @@ func (r *mapper) CrawledRoomIds() []int {
 	return roomIds
 }
 
+// Start builds the zone map. It reads each reachable room's *authored*
+// coordinates (Room.X/Y/Z/Plane, set during the 1a coordinate migration) and
+// places nodes at those stored positions, so a room the builder creates or
+// moves shows at its authored cell immediately and rooms on different planes
+// keep independent coordinate frames. If the discovered rooms don't form a
+// collision-free authored layout — an un-migrated straggler defaulting to the
+// origin, or two rooms authored into the same cell — it falls back to
+// startByCrawl(), which positions rooms by exit-delta from the root as the
+// engine historically did.
 func (r *mapper) Start() {
 
 	// Don't redo.
 	if len(r.crawledRooms) > 0 {
 		return
 	}
+
+	// Discover the reachable room set + exits. getMapNode seeds each node's
+	// Pos from the room's authored coordinates and Plane from Room.Plane.
+	r.discover()
+
+	if r.authoredLayoutClean() {
+		r.placeByAuthoredCoords()
+		return
+	}
+
+	// Straggler / cell-collision: the authored layout can't be trusted, so
+	// rebuild positions the historical way (exit-delta crawl from the root).
+	mudlog.Warn(`mapper`, `detail`, fmt.Sprintf(`zone root %d lacks a clean authored layout; falling back to exit-delta crawl`, r.rootRoomId))
+	r.crawledRooms = make(map[int]*mapNode, 100)
+	r.startByCrawl()
+}
+
+// discover performs a breadth-first walk from the root over the exit graph,
+// recording each reachable room's mapNode (with authored Pos + Plane) in
+// crawledRooms. It does not compute positions — placement is decided by the
+// caller based on whether the authored layout is clean.
+func (r *mapper) discover() {
+	queue := []int{r.rootRoomId}
+	for len(queue) > 0 {
+		roomId := queue[0]
+		queue = queue[1:]
+
+		if _, ok := r.crawledRooms[roomId]; ok {
+			continue
+		}
+
+		node := r.getMapNode(roomId)
+		if node == nil {
+			continue
+		}
+		r.crawledRooms[node.RoomId] = node
+
+		for _, exitInfo := range node.Exits {
+			if _, ok := r.crawledRooms[exitInfo.RoomId]; !ok {
+				queue = append(queue, exitInfo.RoomId)
+			}
+		}
+	}
+}
+
+// authoredLayoutClean reports whether every discovered room occupies a distinct
+// (plane, x, y, z) cell. A duplicated cell is the signature of an un-migrated
+// straggler (multiple rooms defaulting to the origin) or an authoring mistake;
+// either way the authored coordinates can't be trusted for placement and the
+// caller should fall back to the exit-delta crawl.
+func (r *mapper) authoredLayoutClean() bool {
+	seen := make(map[[4]int]struct{}, len(r.crawledRooms))
+	for _, n := range r.crawledRooms {
+		key := [4]int{n.Plane, n.Pos.x, n.Pos.y, n.Pos.z}
+		if _, dup := seen[key]; dup {
+			return false
+		}
+		seen[key] = struct{}{}
+	}
+	return true
+}
+
+// placeByAuthoredCoords sizes the RoomGrid from the discovered nodes' authored
+// coordinates and files each node at its stored Pos. Unlike the crawl, it never
+// rewrites node.Pos — the authored coordinate is authoritative, so the snapshot
+// and GetRoomId report the same cell the room YAML declares.
+func (r *mapper) placeByAuthoredCoords() {
+	if len(r.crawledRooms) == 0 {
+		r.roomGrid.initialize(0, 0, 0, 0, 0, 0)
+		return
+	}
+
+	minX, maxX, minY, maxY, minZ, maxZ := 0, 0, 0, 0, 0, 0
+	first := true
+	for _, n := range r.crawledRooms {
+		if first {
+			minX, maxX = n.Pos.x, n.Pos.x
+			minY, maxY = n.Pos.y, n.Pos.y
+			minZ, maxZ = n.Pos.z, n.Pos.z
+			first = false
+			continue
+		}
+		if n.Pos.x < minX {
+			minX = n.Pos.x
+		} else if n.Pos.x > maxX {
+			maxX = n.Pos.x
+		}
+		if n.Pos.y < minY {
+			minY = n.Pos.y
+		} else if n.Pos.y > maxY {
+			maxY = n.Pos.y
+		}
+		if n.Pos.z < minZ {
+			minZ = n.Pos.z
+		} else if n.Pos.z > maxZ {
+			maxZ = n.Pos.z
+		}
+	}
+
+	r.roomGrid.initialize(minX, maxX, minY, maxY, minZ, maxZ)
+	for _, node := range r.crawledRooms {
+		r.roomGrid.addNode(node)
+	}
+}
+
+// startByCrawl is the legacy positioning path: a breadth-first crawl from the
+// root that assigns each room a position by accumulating exit deltas, then
+// normalizes so the lowest-id room sits near the origin. It is the fallback for
+// zones whose authored coordinates are missing or collide, and remains the
+// engine's migration/validation reference frame.
+func (r *mapper) startByCrawl() {
 
 	minX, maxX, minY, maxY, minZ, maxZ := 0, 0, 0, 0, 0, 0
 
@@ -879,7 +999,8 @@ func (r *mapper) getMapNode(roomId int) *mapNode {
 	mNode := &mapNode{
 		RoomId:      room.RoomId,
 		Plane:       room.Plane,
-		Exits:       make(map[string]nodeExit, 2), // assume there will be on average 2 exits per room
+		Pos:         positionDelta{x: room.X, y: room.Y, z: room.Z}, // authored coords; startByCrawl overwrites when it falls back
+		Exits:       make(map[string]nodeExit, 2),                   // assume there will be on average 2 exits per room
 		SecretExits: make(map[string]struct{}),
 	}
 
