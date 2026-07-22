@@ -274,6 +274,32 @@ func SaveRoomTemplate(roomTpl Room) error {
 	return nil
 }
 
+// DeleteRoomTemplate removes a room's authored template entirely: it deletes
+// the room's YAML file from disk and purges the room from the in-memory manager
+// (rooms map, zone registry, and caches, via ClearRoomCache). It is the web
+// builder's (1b) room-delete primitive.
+//
+// Callers are responsible for first removing any exits that point AT this room
+// — the builder scans and cleans inbound exits before calling this. Ephemeral
+// (instance) rooms have no template and are rejected.
+func DeleteRoomTemplate(roomId int) error {
+	if roomId >= ephemeralRoomIdMinimum {
+		return errors.New(`ephemeral rooms have no template to delete`)
+	}
+
+	if filename := roomManager.GetFilePath(roomId); filename != `` {
+		roomFilePath := util.FilePath(configs.GetFilePathsConfig().DataFiles.String(), `/rooms/`, filename)
+		if err := os.Remove(roomFilePath); err != nil && !os.IsNotExist(err) {
+			return err
+		}
+	}
+
+	// Drop from memory/caches. ClearRoomCache returns an error only when the
+	// room isn't cached, which is fine here (the file is already gone).
+	ClearRoomCache(roomId)
+	return nil
+}
+
 // See: D. SAVING ROOMS INSTANCES
 func SaveRoomInstance(r Room) error {
 

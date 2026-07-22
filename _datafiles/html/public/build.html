@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DOGMud — World Builder</title>
+<style>
+  :root {
+    --leather:   #2b1d12;
+    --leather2:  #3a2818;
+    --tooled:    #5c4326;
+    --gold:      #c9a24b;
+    --gold-dim:  #8a7038;
+    --parch:     #e7d9b8;
+    --ink:       #1c130a;
+    --panel:     #241811;
+    --danger:    #b5533a;
+    --ok:        #6f9a4a;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; height: 100%;
+    background: var(--leather);
+    color: var(--parch);
+    font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    font-size: 14px;
+  }
+  #app { display: flex; flex-direction: column; height: 100vh; }
+
+  /* ---- toolbar ---- */
+  #toolbar {
+    flex: 0 0 auto;
+    display: flex; align-items: center; gap: 14px;
+    padding: 8px 14px;
+    background: linear-gradient(#3a2818, #2b1d12);
+    border-bottom: 2px solid var(--tooled);
+    box-shadow: 0 2px 6px rgba(0,0,0,.5);
+  }
+  #toolbar .brand { font-weight: bold; color: var(--gold); letter-spacing: .5px; }
+  #toolbar .zone  { color: var(--parch); opacity: .85; }
+  #toolbar label  { color: var(--gold-dim); font-size: 12px; }
+  #toolbar select, #toolbar button {
+    background: var(--panel); color: var(--parch);
+    border: 1px solid var(--tooled); border-radius: 4px;
+    padding: 4px 8px; font: inherit;
+  }
+  #toolbar button { cursor: pointer; }
+  #toolbar button:hover { border-color: var(--gold); }
+  #toolbar .spacer { flex: 1 1 auto; }
+  #conn { font-size: 12px; color: var(--gold-dim); }
+  #conn.ok    { color: var(--ok); }
+  #conn.bad   { color: var(--danger); }
+
+  /* ---- body split ---- */
+  #main { flex: 1 1 auto; display: flex; min-height: 0; }
+  #canvas {
+    flex: 1 1 auto; position: relative; overflow: hidden;
+    background:
+      radial-gradient(ellipse at 30% 20%, #34241680 0%, #00000000 60%),
+      var(--leather2);
+    border-right: 2px solid var(--tooled);
+  }
+  #canvas .placeholder {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    color: var(--gold-dim); font-style: italic; text-align: center; padding: 20px;
+  }
+  #inspector {
+    flex: 0 0 260px; overflow-y: auto;
+    background: var(--panel); padding: 12px;
+  }
+  #inspector h2 { margin: 0 0 8px; color: var(--gold); font-size: 15px; }
+  #inspector h3 { margin: 14px 0 6px; color: var(--gold-dim); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; border-bottom: 1px solid var(--tooled); padding-bottom: 3px; }
+  #inspector .empty { color: var(--gold-dim); font-style: italic; }
+  #inspector label { display: block; margin: 8px 0 2px; font-size: 11px; color: var(--gold-dim); }
+  #inspector input[type=text], #inspector textarea, #inspector select {
+    width: 100%; padding: 5px 7px; font: inherit; font-size: 13px;
+    background: var(--ink); color: var(--parch);
+    border: 1px solid var(--tooled); border-radius: 4px;
+  }
+  #inspector textarea { resize: vertical; min-height: 70px; }
+  #inspector input:focus, #inspector textarea:focus, #inspector select:focus { outline: none; border-color: var(--gold); }
+  #inspector .row { display: flex; gap: 6px; }
+  #inspector .row > * { flex: 1 1 auto; min-width: 0; }
+  #inspector .flags label { display: inline-flex; align-items: center; gap: 5px; margin: 4px 10px 4px 0; font-size: 12px; color: var(--parch); }
+  #inspector .flags input { width: auto; }
+  #inspector .kv { display: flex; gap: 5px; margin: 4px 0; align-items: center; }
+  #inspector .kv input { flex: 1 1 auto; }
+  #inspector .exit { display: flex; align-items: center; gap: 6px; padding: 4px 0; border-bottom: 1px dotted var(--tooled); font-size: 12px; }
+  #inspector .exit .grow { flex: 1 1 auto; }
+  #inspector .exit .tag { color: var(--gold-dim); font-size: 10px; }
+  #inspector button.mini { background: var(--panel); color: var(--parch); border: 1px solid var(--tooled); border-radius: 4px; padding: 2px 7px; font: inherit; font-size: 12px; cursor: pointer; }
+  #inspector button.mini:hover { border-color: var(--gold); }
+  #inspector button.rm { color: var(--danger); border-color: transparent; padding: 2px 6px; }
+  #inspector .save-row { position: sticky; bottom: 0; background: var(--panel); padding: 10px 0 4px; margin-top: 10px; }
+  #inspector .save-row button { width: 100%; padding: 8px; background: var(--gold); color: var(--ink); font-weight: bold; border: none; border-radius: 4px; cursor: pointer; }
+  #inspector .save-row button:disabled { opacity: .45; cursor: default; }
+  #addexit { border: 1px solid var(--tooled); border-radius: 5px; padding: 8px; margin-top: 6px; }
+
+  /* ---- login overlay ---- */
+  #login {
+    position: fixed; inset: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(15,10,5,.86);
+  }
+  #login .card {
+    background: linear-gradient(#3a2818, #241811);
+    border: 2px solid var(--tooled); border-radius: 8px;
+    padding: 24px 26px; width: 320px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.6);
+  }
+  #login h1 { margin: 0 0 4px; color: var(--gold); font-size: 20px; }
+  #login p  { margin: 0 0 16px; color: var(--gold-dim); font-size: 12px; }
+  #login label { display: block; margin: 10px 0 4px; font-size: 12px; color: var(--gold-dim); }
+  #login input {
+    width: 100%; padding: 7px 9px; font: inherit;
+    background: var(--ink); color: var(--parch);
+    border: 1px solid var(--tooled); border-radius: 4px;
+  }
+  #login input:focus { outline: none; border-color: var(--gold); }
+  #login button {
+    margin-top: 18px; width: 100%; padding: 9px;
+    background: var(--gold); color: var(--ink); font: inherit; font-weight: bold;
+    border: none; border-radius: 4px; cursor: pointer;
+  }
+  #login button:disabled { opacity: .5; cursor: default; }
+  #login .err { margin-top: 12px; color: var(--danger); font-size: 12px; min-height: 1em; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="toolbar">
+    <span class="brand">⚒ World Builder</span>
+    <span class="zone" id="tb-zone">—</span>
+    <label for="tb-plane">Plane</label>
+    <select id="tb-plane"><option value="">—</option></select>
+    <label for="tb-floor">Floor</label>
+    <button id="tb-floor-dn" title="Down a floor">▼</button>
+    <span id="tb-floor" style="min-width:1.5em;text-align:center;">0</span>
+    <button id="tb-floor-up" title="Up a floor">▲</button>
+    <div class="spacer"></div>
+    <span id="conn">● connecting…</span>
+    <button id="tb-save" disabled>Save Room</button>
+  </div>
+  <div id="main">
+    <div id="canvas">
+      <div class="placeholder" id="canvas-ph">Waiting for the world map…</div>
+    </div>
+    <aside id="inspector">
+      <h2>Inspector</h2>
+      <div class="empty" id="insp-empty">Select a room on the map to edit it.</div>
+    </aside>
+  </div>
+</div>
+
+<!-- Login overlay: the page is admin-gated by HTTP Basic-Auth, but the
+     WebSocket/GMCP session still needs an in-band character login. Basic-Auth
+     credentials aren't exposed to JS, so the admin logs their character in
+     once here; the standard username -> password prompt flow is driven off the
+     server's TEXTMASK signals. -->
+<div id="login">
+  <div class="card">
+    <h1>World Builder</h1>
+    <p>Log in with your admin character to open a build session.</p>
+    <form id="login-form" autocomplete="off">
+      <label for="lg-user">Character name</label>
+      <input id="lg-user" type="text" autocomplete="username" autofocus>
+      <label for="lg-pass">Password</label>
+      <input id="lg-pass" type="password" autocomplete="current-password">
+      <button type="submit" id="lg-btn">Open build session</button>
+      <div class="err" id="lg-err"></div>
+    </form>
+  </div>
+</div>
+
+<script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/builder.js"></script>
+<script>
+"use strict";
+(function () {
+  // ---- connection + GMCP state -------------------------------------------
+  var socket = null;
+  var loggedIn = false;
+  var creds = { u: "", p: "" };
+  var credsReady = false; // set true only once the admin submits the form
+  // login phase tracks the server's prompt sequence:
+  //   'idle' -> 'await_user' -> 'await_pass' -> 'await_kick'
+  var phase = "idle";
+
+  var connEl = document.getElementById("conn");
+  function setConn(txt, cls) {
+    connEl.textContent = txt;
+    connEl.className = cls || "";
+  }
+
+  // GMCP snapshot store + hooks.
+  window.Builder = window.Builder || {};
+  window.Builder.gmcp = {};
+
+  // The editor canvas (builder.js). Instantiated below.
+  var canvas = null;
+  var pendingCreatedId = 0; // set from Build.Result, consumed on the next Zone.Map
+
+  window.Builder.onZoneMap = function (payload) {
+    document.getElementById("tb-zone").textContent = payload.zone || "—";
+    if (!canvas) return;
+    canvas.setSnapshot(payload);
+    if (pendingCreatedId) { canvas.afterRefresh(pendingCreatedId); pendingCreatedId = 0; }
+  };
+
+  window.Builder.onGMCP = function (ns, obj) {
+    if (ns === "Build.Result") {
+      if (obj && obj.ok) {
+        if (deletingRoomId) { deletingRoomId = 0; clearInspector(); toast("Room deleted.", false); }
+        else if (inspectorDirtySaving) { inspectorDirtySaving = false; setDirty(false); toast("Saved.", false); }
+        else if (refetchRoomId) { var rid = refetchRoomId; refetchRoomId = 0; sendGMCP("Build.Room.Get", { roomId: rid }); toast("Applied.", false); }
+        else { if (obj.roomId) pendingCreatedId = obj.roomId; toast("Done.", false); }
+      } else {
+        inspectorDirtySaving = false; refetchRoomId = 0; deletingRoomId = 0;
+        toast((obj && obj.error) || "Build error", true);
+      }
+    } else if (ns === "Build.Room") {
+      renderInspector(obj);
+    }
+  };
+
+  // Selecting a room fetches its full editable detail; deselect clears the form.
+  window.Builder.onRoomSelected = function (room) {
+    if (!room) { clearInspector(); return; }
+    sendGMCP("Build.Room.Get", { roomId: room.num });
+  };
+
+  // Minimal toast in the toolbar conn slot (replaced by a real toast in Task 5).
+  function toast(msg, isErr) {
+    var c = document.getElementById("conn");
+    if (!c) return;
+    var prev = c.textContent, prevCls = c.className;
+    c.textContent = (isErr ? "✕ " : "✓ ") + msg;
+    c.className = isErr ? "bad" : "ok";
+    setTimeout(function () { c.textContent = prev; c.className = prevCls; }, 2000);
+  }
+
+  // Send a client->server GMCP frame as BINARY so the 0xFF IAC byte survives
+  // (a text frame would UTF-8-mangle it). Mirrors webclient-pure.html.
+  function sendGMCP(pkg, obj) {
+    if (!socket || socket.readyState !== WebSocket.OPEN) return false;
+    var body = pkg + " " + JSON.stringify(obj);
+    var bodyBytes = new TextEncoder().encode(body);
+    var frame = new Uint8Array(bodyBytes.length + 5);
+    frame[0] = 255; frame[1] = 250; frame[2] = 201;               // IAC SB GMCP
+    frame.set(bodyBytes, 3);
+    frame[frame.length - 2] = 255; frame[frame.length - 1] = 240; // IAC SE
+    socket.send(frame);
+    return true;
+  }
+  window.Builder.sendGMCP = sendGMCP;
+
+  function sendLine(s) {
+    if (socket && socket.readyState === WebSocket.OPEN) socket.send(s);
+  }
+
+  // ---- login state machine, driven by the server's TEXTMASK signals ------
+  // The server sends TEXTMASK:false before an unmasked prompt (username, or the
+  // "kick them?" y/n) and TEXTMASK:true before the masked password prompt. We
+  // never send the username until the admin has submitted the form (credsReady).
+  function onTextMask(masked) {
+    if (loggedIn) return;
+    if (!masked) {
+      if (!credsReady) return; // username prompt is waiting; hold for the form
+      if (phase === "await_user") {
+        sendLine(creds.u);
+        phase = "await_pass";
+      } else if (phase === "await_kick") {
+        // "User is already connected. Kick them?" — take over the session.
+        sendLine("y");
+      }
+    } else { // masked = password prompt
+      if (phase === "await_pass") {
+        sendLine(creds.p);
+        phase = "await_kick";
+      } else if (phase === "await_kick") {
+        // A second password prompt means the first was rejected.
+        loginFailed("Login failed — check your character name and password.");
+      }
+    }
+  }
+
+  function loginSucceeded() {
+    if (loggedIn) return;
+    loggedIn = true;
+    var ov = document.getElementById("login");
+    if (ov) ov.style.display = "none";
+    setConn("● connected", "ok");
+    // The login pushed a fogged Zone.Map; pull the full unfogged builder map.
+    sendGMCP("Build.Map.Request", {});
+  }
+
+  function loginFailed(msg) {
+    phase = "idle";
+    var btn = document.getElementById("lg-btn");
+    if (btn) btn.disabled = false;
+    var err = document.getElementById("lg-err");
+    if (err) err.textContent = msg;
+  }
+
+  // ---- websocket wiring ---------------------------------------------------
+  function connect() {
+    var proto = location.protocol === "https:" ? "wss://" : "ws://";
+    socket = new WebSocket(proto + location.host + "/ws");
+    socket.onopen = function () {
+      setConn("● authenticating…", "");
+      phase = "await_user";
+    };
+    socket.onclose = function () {
+      setConn("● disconnected", "bad");
+      if (!loggedIn) loginFailed("Connection closed before login completed.");
+    };
+    socket.onerror = function () { setConn("● connection error", "bad"); };
+    socket.onmessage = onMessage;
+  }
+
+  function onMessage(event) {
+    var data = event.data;
+    if (typeof data !== "string") return; // builder consumes only text + GMCP text frames
+
+    // Copyover reconnect token — ignore (builder sessions don't persist it).
+    if (data.indexOf("RELOGTKN:") === 0) return;
+
+    // Webclient control commands are an 8-char tag followed by ':' at index 8.
+    if (data.length > 9 && data.charAt(8) === ":") {
+      if (data.substring(0, 9) === "TEXTMASK:") {
+        onTextMask(data.substring(9).indexOf("true") === 0);
+        return;
+      }
+      // Other webclient commands are irrelevant to the builder.
+      return;
+    }
+
+    // GMCP frames arrive as  !!GMCP(Namespace {json})
+    if (data.slice(0, 7) === "!!GMCP(") {
+      var payload = data.trim().slice(7, data.length - 1).trim();
+      var jsonIndex = payload.charAt(payload.length - 1) === "}"
+        ? payload.indexOf("{")
+        : payload.indexOf("[");
+      if (jsonIndex === -1) return;
+      var ns = payload.slice(0, jsonIndex).trim();
+      var obj;
+      try { obj = JSON.parse(payload.slice(jsonIndex).trim()); }
+      catch (e) { return; }
+
+      window.Builder.gmcp[ns] = obj;
+      // Any GMCP push means the login burst has started — we're in the world.
+      loginSucceeded();
+
+      if (ns === "Zone.Map") {
+        window.Builder.onZoneMap(obj);
+      } else {
+        window.Builder.onGMCP(ns, obj);
+      }
+      return;
+    }
+
+    // Everything else is login-flow / MOTD text — not needed by the builder.
+  }
+
+  // ---- login form ---------------------------------------------------------
+  document.getElementById("login-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var u = document.getElementById("lg-user").value.trim();
+    var p = document.getElementById("lg-pass").value;
+    if (!u || !p) { loginFailed("Enter your character name and password."); return; }
+    creds.u = u; creds.p = p; credsReady = true;
+    document.getElementById("lg-err").textContent = "";
+    document.getElementById("lg-btn").disabled = true;
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      // The socket has been open since page load, so the username prompt has
+      // already arrived (phase 'await_user'); send the name now. If it somehow
+      // hasn't, the pending TEXTMASK:false will send it (credsReady is set).
+      if (phase === "await_user") {
+        sendLine(creds.u);
+        phase = "await_pass";
+      }
+    } else {
+      connect();
+    }
+  });
+
+  // ---- inspector ----------------------------------------------------------
+  var insp = document.getElementById("inspector");
+  var current = null;             // the Build.Room detail currently loaded
+  var dirty = false;
+  var inspectorDirtySaving = false; // a Save is in flight (distinguish from create toasts)
+  var refetchRoomId = 0;          // re-fetch this room's detail after the next ok result (exit ops)
+  var deletingRoomId = 0;         // a room delete is in flight
+  var saveBtn = document.getElementById("tb-save");
+
+  function ce(tag, attrs, kids) {
+    var e = document.createElement(tag);
+    if (attrs) for (var k in attrs) {
+      if (k === "text") e.textContent = attrs[k];
+      else if (k === "html") e.innerHTML = attrs[k];
+      else e.setAttribute(k, attrs[k]);
+    }
+    (kids || []).forEach(function (c) { if (c) e.appendChild(c); });
+    return e;
+  }
+
+  function setDirty(d) {
+    dirty = d;
+    if (saveBtn) saveBtn.disabled = !d;
+    var s = document.getElementById("insp-save");
+    if (s) s.disabled = !d;
+  }
+
+  function clearInspector() {
+    current = null;
+    setDirty(false);
+    insp.innerHTML = "";
+    insp.appendChild(ce("h2", { text: "Inspector" }));
+    insp.appendChild(ce("div", { "class": "empty", text: "Select a room on the map to edit it." }));
+  }
+
+  function field(labelText, input) {
+    return ce("div", {}, [ce("label", { text: labelText }), input]);
+  }
+
+  function textInput(val) { var i = ce("input", { type: "text" }); i.value = val || ""; i.addEventListener("input", function () { setDirty(true); }); return i; }
+
+  function renderInspector(d) {
+    current = d;
+    insp.innerHTML = "";
+    insp.appendChild(ce("h2", { text: "Room #" + d.roomId }));
+    insp.appendChild(ce("div", { "class": "tag", "style": "color:var(--gold-dim);font-size:11px;margin-bottom:4px;",
+      text: "plane " + d.plane + " · (" + d.x + "," + d.y + "," + d.z + ")" }));
+
+    // Title
+    var title = textInput(d.title); insp.appendChild(field("Title", title));
+    // Description
+    var desc = ce("textarea", {}); desc.value = d.description || ""; desc.addEventListener("input", function () { setDirty(true); });
+    insp.appendChild(field("Description", desc));
+    // Biome dropdown
+    var biome = ce("select", {});
+    (d.biomes || []).forEach(function (b) {
+      var o = ce("option", { value: b, text: b }); if (b === d.biome) o.selected = true; biome.appendChild(o);
+    });
+    if (d.biome && (d.biomes || []).indexOf(d.biome) === -1) { var o = ce("option", { value: d.biome, text: d.biome }); o.selected = true; biome.appendChild(o); }
+    biome.addEventListener("change", function () { setDirty(true); });
+    insp.appendChild(field("Biome", biome));
+    // Symbol + legend
+    var sym = textInput(d.symbol), leg = textInput(d.legend);
+    var symRow = ce("div", { "class": "row" }, [field("Map symbol", sym), field("Legend", leg)]);
+    insp.appendChild(symRow);
+    // Music
+    var music = textInput(d.music); insp.appendChild(field("Music file", music));
+
+    // Flags
+    insp.appendChild(ce("h3", { text: "Flags" }));
+    var flags = ce("div", { "class": "flags" });
+    function flag(name, val) {
+      var cb = ce("input", { type: "checkbox" }); cb.checked = !!val; cb.addEventListener("change", function () { setDirty(true); });
+      flags.appendChild(ce("label", {}, [cb, ce("span", { text: name })]));
+      return cb;
+    }
+    var fBank = flag("Bank", d.bank), fStore = flag("Storage", d.storage), fPvp = flag("PvP", d.pvp), fChar = flag("Char-room", d.characterRoom);
+    insp.appendChild(flags);
+
+    // Nouns
+    insp.appendChild(ce("h3", { text: "Nouns" }));
+    var nounsBox = ce("div", {});
+    function nounRow(k, v) {
+      var kk = ce("input", { type: "text", placeholder: "noun" }); kk.value = k || "";
+      var vv = ce("input", { type: "text", placeholder: "description" }); vv.value = v || "";
+      kk.addEventListener("input", function () { setDirty(true); }); vv.addEventListener("input", function () { setDirty(true); });
+      var rm = ce("button", { "class": "mini rm", text: "✕", title: "remove" });
+      var row = ce("div", { "class": "kv" }, [kk, vv, rm]);
+      rm.addEventListener("click", function () { nounsBox.removeChild(row); setDirty(true); });
+      row._k = kk; row._v = vv;
+      return row;
+    }
+    var nn = d.nouns || {};
+    Object.keys(nn).forEach(function (k) { nounsBox.appendChild(nounRow(k, nn[k])); });
+    insp.appendChild(nounsBox);
+    var addNoun = ce("button", { "class": "mini", text: "+ noun" });
+    addNoun.addEventListener("click", function () { nounsBox.appendChild(nounRow("", "")); setDirty(true); });
+    insp.appendChild(addNoun);
+
+    // Idle messages
+    insp.appendChild(ce("h3", { text: "Idle messages" }));
+    var idleBox = ce("div", {});
+    function idleRow(v) {
+      var vv = ce("input", { type: "text", placeholder: "idle message" }); vv.value = v || "";
+      vv.addEventListener("input", function () { setDirty(true); });
+      var rm = ce("button", { "class": "mini rm", text: "✕" });
+      var row = ce("div", { "class": "kv" }, [vv, rm]);
+      rm.addEventListener("click", function () { idleBox.removeChild(row); setDirty(true); });
+      row._v = vv;
+      return row;
+    }
+    (d.idleMessages || []).forEach(function (m) { idleBox.appendChild(idleRow(m)); });
+    insp.appendChild(idleBox);
+    var addIdle = ce("button", { "class": "mini", text: "+ message" });
+    addIdle.addEventListener("click", function () { idleBox.appendChild(idleRow("")); setDirty(true); });
+    insp.appendChild(addIdle);
+
+    // Exits
+    renderExits(d);
+
+    // Save + delete row
+    var save = ce("button", { id: "insp-save", text: "Save Room", disabled: "disabled" });
+    save.addEventListener("click", doSave);
+    var del = ce("button", { "class": "mini rm", text: "Delete room", "style": "width:100%;margin-top:6px;padding:6px;" });
+    del.addEventListener("click", function () {
+      if (!current) return;
+      if (window.confirm("Delete room #" + current.roomId + "? This removes it and all exits pointing to it.")) {
+        deletingRoomId = current.roomId;
+        sendGMCP("Build.Room.Delete", { roomId: current.roomId });
+      }
+    });
+    insp.appendChild(ce("div", { "class": "save-row" }, [save, del]));
+
+    // gather fn for save
+    current._gather = function () {
+      var nouns = {};
+      Array.prototype.forEach.call(nounsBox.children, function (r) {
+        var k = r._k.value.trim(); if (k) nouns[k] = r._v.value;
+      });
+      var idle = [];
+      Array.prototype.forEach.call(idleBox.children, function (r) {
+        var v = r._v.value.trim(); if (v) idle.push(v);
+      });
+      return {
+        roomId: d.roomId, title: title.value, description: desc.value,
+        biome: biome.value, symbol: sym.value, legend: leg.value, music: music.value,
+        bank: fBank.checked, storage: fStore.checked, pvp: fPvp.checked, characterRoom: fChar.checked,
+        nouns: nouns, idleMessages: idle
+      };
+    };
+    setDirty(false);
+  }
+
+  function doSave() {
+    if (!current || !current._gather) return;
+    inspectorDirtySaving = true;
+    sendGMCP("Build.Room.Update", current._gather());
+  }
+
+  function renderExits(d) {
+    insp.appendChild(ce("h3", { text: "Exits" }));
+    var list = ce("div", {});
+    (d.exits || []).forEach(function (e) {
+      var tag = e.dir ? ("spatial " + e.dir) : "portal";
+      var flags = [];
+      if (e.secret) flags.push("secret");
+      if (e.oneway) flags.push("one-way");
+      if (e.lock) flags.push("lock " + e.lock);
+      var lbl = ce("span", { "class": "grow", html:
+        "<b>" + escapeHtml(e.name) + "</b> → " + e.toRoomId +
+        " <span class='tag'>" + tag + (flags.length ? " · " + flags.join(", ") : "") + "</span>" });
+      var rm = ce("button", { "class": "mini rm", text: "✕", title: "remove exit" });
+      rm.addEventListener("click", function () { refetchRoomId = d.roomId; sendGMCP("Build.Exit.Remove", { roomId: d.roomId, exitName: e.name }); });
+      list.appendChild(ce("div", { "class": "exit" }, [lbl, rm]));
+    });
+    insp.appendChild(list);
+    insp.appendChild(buildAddExit(d));
+  }
+
+  function buildAddExit(d) {
+    var box = ce("div", { id: "addexit" });
+    box.appendChild(ce("div", { "style": "font-size:11px;color:var(--gold-dim);margin-bottom:4px;", text: "Add exit" }));
+
+    // kind toggle
+    var kind = ce("select", {});
+    kind.appendChild(ce("option", { value: "spatial", text: "Spatial (direction)" }));
+    kind.appendChild(ce("option", { value: "portal", text: "Portal (named)" }));
+    box.appendChild(kind);
+
+    // spatial: direction dropdown limited to open directions with an adjacent room
+    var dirSel = ce("select", {});
+    var DIRS = window.Builder.BuilderCanvas.DIRS;
+    var haveDir = {};
+    (d.exits || []).forEach(function (e) { if (e.dir) haveDir[e.dir] = true; });
+    var spatialTargets = {};
+    for (var dir in DIRS) {
+      if (haveDir[dir]) continue;
+      var nx = d.x + DIRS[dir][0], ny = d.y + DIRS[dir][1];
+      var target = canvas ? canvas.roomIdAt(d.plane, nx, ny, d.z) : 0;
+      if (target) { spatialTargets[dir] = target; dirSel.appendChild(ce("option", { value: dir, text: dir + " → " + target })); }
+    }
+    if (!dirSel.children.length) dirSel.appendChild(ce("option", { value: "", text: "(no adjacent rooms)" }));
+
+    // portal: name + target id (datalist of snapshot rooms)
+    var pName = ce("input", { type: "text", placeholder: "exit name e.g. enter inn" });
+    var pTarget = ce("input", { type: "text", placeholder: "target room id" });
+
+    // flags
+    var fSecret = ce("input", { type: "checkbox" });
+    var fOneway = ce("input", { type: "checkbox" });
+    var fLock = ce("input", { type: "text", placeholder: "lock diff (0)" }); fLock.style.width = "80px";
+    var fMsg = ce("input", { type: "text", placeholder: "exit message (optional)" });
+
+    var spatialWrap = ce("div", {}, [ce("label", { text: "Direction" }), dirSel]);
+    var portalWrap = ce("div", {}, [
+      ce("label", { text: "Name" }), pName,
+      ce("label", { text: "Target room id" }), pTarget
+    ]);
+    portalWrap.style.display = "none";
+    kind.addEventListener("change", function () {
+      var sp = kind.value === "spatial";
+      spatialWrap.style.display = sp ? "" : "none";
+      portalWrap.style.display = sp ? "none" : "";
+    });
+    box.appendChild(spatialWrap);
+    box.appendChild(portalWrap);
+
+    var flagRow = ce("div", { "class": "flags", "style": "margin-top:6px;" }, [
+      ce("label", {}, [fSecret, ce("span", { text: "secret" })]),
+      ce("label", {}, [fOneway, ce("span", { text: "one-way" })])
+    ]);
+    box.appendChild(flagRow);
+    box.appendChild(ce("div", { "class": "row", "style": "margin-top:4px;" }, [fLock, fMsg]));
+
+    var addBtn = ce("button", { "class": "mini", text: "+ add exit", "style": "margin-top:6px;" });
+    addBtn.addEventListener("click", function () {
+      var req = { roomId: d.roomId, secret: fSecret.checked, oneway: fOneway.checked,
+        lock: parseInt(fLock.value, 10) || 0, message: fMsg.value };
+      if (kind.value === "spatial") {
+        var dir = dirSel.value;
+        if (!dir || !spatialTargets[dir]) { toast("Pick an adjacent direction", true); return; }
+        req.dir = dir; req.toRoomId = spatialTargets[dir];
+      } else {
+        var name = pName.value.trim(); var tid = parseInt(pTarget.value, 10) || 0;
+        if (!name || !tid) { toast("Portal needs a name and target id", true); return; }
+        req.portalName = name; req.toRoomId = tid;
+      }
+      refetchRoomId = d.roomId;
+      sendGMCP("Build.Exit.Add", req);
+    });
+    box.appendChild(addBtn);
+    return box;
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+
+  clearInspector();
+
+  // ---- canvas + toolbar wiring -------------------------------------------
+  var planeSel = document.getElementById("tb-plane");
+  var floorEl = document.getElementById("tb-floor");
+  if (saveBtn) saveBtn.addEventListener("click", doSave);
+
+  if (window.Builder.BuilderCanvas) {
+    canvas = new window.Builder.BuilderCanvas(document.getElementById("canvas"));
+    canvas.onPlanes = function (planes, curPlane, floors, curFloor) {
+      // Rebuild the plane dropdown.
+      planeSel.innerHTML = "";
+      for (var i = 0; i < planes.length; i++) {
+        var o = document.createElement("option");
+        o.value = String(planes[i]);
+        o.textContent = "Plane " + planes[i] + (planes[i] === 0 ? " (overworld)" : "");
+        if (planes[i] === curPlane) o.selected = true;
+        planeSel.appendChild(o);
+      }
+      floorEl.textContent = String(curFloor);
+    };
+    planeSel.addEventListener("change", function () {
+      if (canvas) canvas.setPlane(parseInt(planeSel.value, 10) || 0);
+    });
+    document.getElementById("tb-floor-up").addEventListener("click", function () {
+      if (canvas) { canvas.setFloor(canvas.floor + 1); floorEl.textContent = String(canvas.floor); }
+    });
+    document.getElementById("tb-floor-dn").addEventListener("click", function () {
+      if (canvas) { canvas.setFloor(canvas.floor - 1); floorEl.textContent = String(canvas.floor); }
+    });
+  }
+
+  // Open the socket immediately so the username prompt is waiting by the time
+  // the admin submits; the form submit supplies the credentials.
+  connect();
+})();
+</script>
+</body>
+</html>

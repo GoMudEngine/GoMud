@@ -23,6 +23,7 @@ type SnapshotRoom struct {
 	X      int            `json:"x"`
 	Y      int            `json:"y"`
 	Z      int            `json:"z"`
+	Plane  int            `json:"plane"` // coordinate-space id; the builder filters/renders one plane at a time
 	Symbol string         `json:"symbol"`
 	Biome  string         `json:"biome"`
 	Name   string         `json:"name"`           // room title (client tooltip / identify)
@@ -61,6 +62,7 @@ func (r *mapper) Snapshot(visited map[int]struct{}) []SnapshotRoom {
 			X:      n.Pos.x,
 			Y:      n.Pos.y,
 			Z:      n.Pos.z,
+			Plane:  n.Plane,
 			Symbol: string(sym),
 		}
 		// Biome name comes from the room's biome (not n.Legend, which may hold a
