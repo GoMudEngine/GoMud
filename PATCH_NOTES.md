@@ -1,5 +1,21 @@
 # DOGMud Patch Notes
 
+## 2026-07-22 — A builder's table (staff)
+
+Behind the curtain, world-building steps out of the text prompts and onto a
+proper drawing table. Staff with admin rights can open a new **`/build`** page
+and see the world as an editable map: click a room to edit its every field,
+click a glowing cross to lay a new room down beside it, and wire exits — plain
+compass doors or named portals that reach clear across to another plane — from a
+side panel. Everything saves straight to the world and re-draws live, no restart.
+Whole new areas can be raised from nothing: name a zone, give it a biome, and a
+first room appears on its own fresh stretch of map, ready to grow. Players won't
+see the workshop, but they'll walk the rooms that come out of it.
+
+Under the floorboards, rooms now carry their own authored coordinates rather
+than having their positions guessed from the exits between them — steadier maps,
+and the groundwork the builder stands on.
+
 ## 2026-07-21 — The sky puts on a show
 
 Dawn and dusk look the part now. The sunrise and sunset that mark each day have
