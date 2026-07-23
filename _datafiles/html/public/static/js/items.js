@@ -254,7 +254,7 @@
     });
     F.vendorCategories = function () { return vcChecks.filter(function (x) { return x.cb.checked; }).map(function (x) { return x.cat; }); };
     insp.appendChild(ce("div", {}, [ce("label", { text: "Vendor categories" }), vcBox,
-      ce("div", { style: "font-size:10px;color:var(--gold-dim);margin-top:2px;", text: "salable items need ≥1 (else check not-salable)" })]));
+      ce("div", { style: "font-size:10px;color:var(--gold-dim);margin-top:2px;", text: "Shop disciplines that stock this item. A salable item needs at least one — otherwise check “not-salable” below." })]));
     var flags = ce("div", { "class": "flags" }, [
       checkField("not-salable", "notSalable", detail.notSalable),
       checkField("never-drops", "neverDrops", detail.neverDrops),
@@ -262,6 +262,7 @@
       checkField("cursed", "cursed", detail.cursed)
     ]);
     insp.appendChild(flags);
+    insp.appendChild(ce("div", { style: "font-size:10px;color:var(--gold-dim);margin-top:2px;", text: "not-salable: never stocked by shops (quest items, drops, unique gear) — exempt from the vendor-category requirement." }));
     insp.appendChild(textField("Quest token", "questToken", detail.questToken));
 
     // StatMods
