@@ -34,7 +34,10 @@ func mobsBasePath() string {
 // CanonicalizeMobName normalizes the mob's player-visible name to the Title
 // casing LoadDataFiles' casing.AssertCanonical demands at boot — a single
 // non-canonical save (or an unedited "new mob" stub) bricks the NEXT boot.
-// Every write path must run this first.
+// Every write path must run this first. Unlike items.CanonicalizeItemNames,
+// there is no color-tag guard here: mob names are never color-tagged (a
+// tagged mob name would already fail casing.AssertCanonical at boot today),
+// so unconditionally Title()-ing is safe.
 func CanonicalizeMobName(m *Mob) {
 	m.Character.Name = casing.Title(m.Character.Name)
 }
@@ -181,6 +184,15 @@ func equippedItemIds(w characters.Worn) []int {
 // map (locked) before mobNameCache is updated, or "old" and "new" would
 // already be identical. A stale duplicate must never linger to boot as a
 // second copy of the mob.
+//
+// Invariant: a failed save must leave the caches consistent with disk (and
+// with the mobs map, which is only updated after a successful write). The
+// items seam (SaveItemSpec) gets this for free by writing to disk BEFORE
+// touching its cache; this function can't use that ordering because
+// fileloader.SaveFlatFile calls m.Filepath(), which reads mobNameCache — the
+// NEW name must already be in the cache at write time. So the name-cache
+// write happens first and is rolled back (via restoreCache) on any later
+// failure, rather than reordered.
 func SaveMobSpec(m Mob) error {
 	CanonicalizeMobName(&m)
 	if err := ValidateMobSpec(&m); err != nil {
@@ -198,13 +210,26 @@ func SaveMobSpec(m Mob) error {
 
 	// Update the name cache BEFORE computing the new path — Filename() reads
 	// mobNameCache, so the new path must be computed against the new name.
+	// Capture the prior state so a later failure can roll this back.
 	mobNameCacheMu.Lock()
+	prevName, hadPrev := mobNameCache[m.MobId]
 	mobNameCache[m.MobId] = m.Character.Name
 	mobNameCacheMu.Unlock()
+
+	restoreCache := func() {
+		mobNameCacheMu.Lock()
+		if hadPrev {
+			mobNameCache[m.MobId] = prevName
+		} else {
+			delete(mobNameCache, m.MobId)
+		}
+		mobNameCacheMu.Unlock()
+	}
 
 	newRel := m.Filepath()
 	if existed && oldRel != newRel {
 		if err := os.Remove(filepath.Join(base, filepath.FromSlash(oldRel))); err != nil && !os.IsNotExist(err) {
+			restoreCache()
 			return err
 		}
 	}
@@ -214,6 +239,7 @@ func SaveMobSpec(m Mob) error {
 		saveModes = append(saveModes, fileloader.SaveCareful)
 	}
 	if err := fileloader.SaveFlatFile[*Mob](base, &m, saveModes...); err != nil {
+		restoreCache()
 		return err
 	}
 

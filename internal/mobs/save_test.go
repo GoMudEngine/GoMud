@@ -98,6 +98,10 @@ func TestSaveMobSpec_RelocatesFileOnRename(t *testing.T) {
 		t.Errorf("new file %s should exist: %v", newPath, err)
 	}
 
+	// Bare reads of mobs/mobNameCache below (here and throughout this file)
+	// skip mobsMu/mobNameCacheMu: safe only because this test binary has no
+	// concurrent writers (no t.Parallel, no server goroutines touching these
+	// maps during `go test`).
 	if mobNameCache[99901] != "Test Bruiser" {
 		t.Errorf("name cache not updated: %q", mobNameCache[99901])
 	}
@@ -177,6 +181,33 @@ func TestDeleteMobSpec_RemovesFileAndCaches(t *testing.T) {
 		t.Error("template cache entry should be gone")
 	}
 	if _, ok := mobNameCache[99903]; ok {
+		t.Error("name cache entry should be gone")
+	}
+}
+
+// DeleteMobSpec must still succeed (and clear both caches) when the on-disk
+// file is already gone — e.g. a prior manual cleanup, or a delete retried
+// after a partial failure. os.Remove's IsNotExist case must be swallowed.
+func TestDeleteMobSpec_IdempotentWhenFileMissing(t *testing.T) {
+	dir := t.TempDir()
+	pointMobDataFilesAt(t, dir)
+	m := seedMob(t, 99905, "Already Gone")
+
+	if err := SaveMobSpec(m); err != nil {
+		t.Fatal(err)
+	}
+	p := filepath.Join(dir, "mobs", "testzone", "99905-already_gone.yaml")
+	if err := os.Remove(p); err != nil {
+		t.Fatalf("manual pre-removal: %v", err)
+	}
+
+	if err := DeleteMobSpec(99905); err != nil {
+		t.Fatalf("delete should succeed even when the file is already gone: %v", err)
+	}
+	if _, ok := mobs[99905]; ok {
+		t.Error("template cache entry should be gone")
+	}
+	if _, ok := mobNameCache[99905]; ok {
 		t.Error("name cache entry should be gone")
 	}
 }
