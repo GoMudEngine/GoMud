@@ -52,6 +52,49 @@ func TestSaveItemSpec_RelocatesFileOnRename(t *testing.T) {
 	}
 }
 
+// A non-canonical name must be normalized on save, or LoadDataFiles() panics
+// on the next boot (AssertCanonical). This is the bug that bricked the server
+// after the web editor created a "new item" and saved a lowercase rename.
+func TestSaveItemSpec_CanonicalizesName(t *testing.T) {
+	dir := t.TempDir()
+	pointItemsAt(t, dir)
+
+	spec := ItemSpec{ItemId: 10003, Name: "iron war hammer", Type: Weapon,
+		DisplayName: "runed iron war hammer", Description: "A hammer.", Hands: 2, DamageMultiplier: 1.1}
+	items[spec.ItemId] = &spec
+	t.Cleanup(func() { delete(items, 10003) })
+
+	if err := SaveItemSpec(spec); err != nil {
+		t.Fatalf("save: %v", err)
+	}
+	got := items[10003]
+	if got.Name != "Iron War Hammer" {
+		t.Errorf("name not canonicalized: %q", got.Name)
+	}
+	if got.DisplayName != "Runed Iron War Hammer" {
+		t.Errorf("display name not canonicalized: %q", got.DisplayName)
+	}
+	// A color-tagged display name must round-trip unchanged (Title() would
+	// mangle it), so re-saving never corrupts a tagged name.
+	tagged := ItemSpec{ItemId: 10004, Name: "Ember Blade", DisplayName: `<ansi fg="red">ember blade</ansi>`, Type: Weapon, Description: "d", Hands: 1, DamageMultiplier: 0.9}
+	items[tagged.ItemId] = &tagged
+	t.Cleanup(func() { delete(items, 10004) })
+	if err := SaveItemSpec(tagged); err != nil {
+		t.Fatalf("tagged save: %v", err)
+	}
+	if items[10004].DisplayName != `<ansi fg="red">ember blade</ansi>` {
+		t.Errorf("color-tagged display name should be left untouched, got %q", items[10004].DisplayName)
+	}
+}
+
+func TestCanonicalizeItemNames_PreservesMinorWords(t *testing.T) {
+	s := ItemSpec{Name: "ring of the elephant"}
+	CanonicalizeItemNames(&s)
+	if s.Name != "Ring of the Elephant" {
+		t.Errorf("smart title case wrong: %q", s.Name)
+	}
+}
+
 func TestDeleteItemSpec_RemovesFileAndCache(t *testing.T) {
 	dir := t.TempDir()
 	pointItemsAt(t, dir)

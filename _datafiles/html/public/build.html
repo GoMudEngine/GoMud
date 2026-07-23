@@ -275,14 +275,36 @@
     sendGMCP("Build.Room.Get", { roomId: room.num });
   };
 
-  // Minimal toast in the toolbar conn slot (replaced by a real toast in Task 5).
+  // Floating in-window toast (top-center). Also mirrors to the toolbar conn slot
+  // so a glance at the header confirms the last action.
   function toast(msg, isErr) {
+    var host = document.getElementById("toast-host");
+    if (!host) {
+      host = document.createElement("div");
+      host.id = "toast-host";
+      host.style.cssText = "position:fixed;top:14px;left:50%;transform:translateX(-50%);" +
+        "z-index:9999;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none;";
+      document.body.appendChild(host);
+    }
+    var t = document.createElement("div");
+    t.textContent = (isErr ? "✕ " : "✓ ") + msg;
+    t.style.cssText = "font:600 13px/1.4 system-ui,sans-serif;padding:8px 16px;border-radius:6px;" +
+      "box-shadow:0 4px 14px rgba(0,0,0,.45);color:#fff;opacity:0;transition:opacity .18s;max-width:80vw;" +
+      "background:" + (isErr ? "#8a1f1f" : "#1f6b34") + ";border:1px solid " + (isErr ? "#c94b4b" : "#3fae63") + ";";
+    host.appendChild(t);
+    requestAnimationFrame(function () { t.style.opacity = "1"; });
+    setTimeout(function () {
+      t.style.opacity = "0";
+      setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 250);
+    }, isErr ? 4200 : 2400);
+
     var c = document.getElementById("conn");
-    if (!c) return;
-    var prev = c.textContent, prevCls = c.className;
-    c.textContent = (isErr ? "✕ " : "✓ ") + msg;
-    c.className = isErr ? "bad" : "ok";
-    setTimeout(function () { c.textContent = prev; c.className = prevCls; }, 2000);
+    if (c) {
+      var prev = c.textContent, prevCls = c.className;
+      c.textContent = (isErr ? "✕ " : "✓ ") + msg;
+      c.className = isErr ? "bad" : "ok";
+      setTimeout(function () { c.textContent = prev; c.className = prevCls; }, 2000);
+    }
   }
   window.Builder.toast = toast;
 

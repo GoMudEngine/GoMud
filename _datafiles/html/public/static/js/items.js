@@ -355,7 +355,14 @@
     var refsEl = document.getElementById("item-refs");
     if (obj && obj.ok) {
       if (this.deleting) { this.deleting = false; this.detail = null; this.selectedId = 0; clearItemInspector(); toast("Item deleted.", false); return; }
-      if (this.saving) { this.saving = false; this.setDirty(false); toast("Saved.", false); return; }
+      if (this.saving) {
+        this.saving = false; this.setDirty(false); toast("Saved.", false);
+        // Reload the persisted spec so the form reflects exactly what was
+        // stored (e.g. a name the server canonicalized) — visible proof the
+        // save took, not just a fire-and-forget confirmation.
+        if (this.selectedId) gmcp("Build.Item.Get", { itemId: this.selectedId });
+        return;
+      }
       if (obj.itemId) { this.pendingSelect = obj.itemId; toast("Created.", false); } // create → auto-select on next list
     } else {
       this.saving = false; this.deleting = false;

@@ -240,7 +240,9 @@ func buildItemCreate(d itemDeps, itemType string) BuildResult {
 	if itemType == "" {
 		return buildErr("choose an item type")
 	}
-	seed := items.ItemSpec{Type: items.ItemType(itemType), Name: "new item", Description: "An unfinished item.", Hands: 1}
+	// Name must be canonical Title casing or the item loader panics on the next
+	// boot (CanonicalizeItemNames in the items package enforces this on save too).
+	seed := items.ItemSpec{Type: items.ItemType(itemType), Name: "New Item", Description: "An unfinished item.", Hands: 1}
 	id, err := d.create(seed)
 	if err != nil {
 		return buildErr("%s", err.Error())

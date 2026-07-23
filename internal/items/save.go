@@ -4,10 +4,26 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/casing"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 )
+
+// CanonicalizeItemNames normalizes the player-visible name fields to the Title
+// casing the item loader demands. LoadDataFiles() hard-panics via
+// casing.AssertCanonical on any non-canonical Name/DisplayName, so a single
+// non-canonical save (or an unedited "new item" seed) bricks the NEXT boot.
+// Every write path must run this first. Color-tagged display names are left
+// alone: Title() would split on the tag's whitespace and mangle it, and such
+// names are already accepted by the loader.
+func CanonicalizeItemNames(spec *ItemSpec) {
+	spec.Name = casing.Title(spec.Name)
+	if spec.DisplayName != "" && !strings.Contains(spec.DisplayName, "<") {
+		spec.DisplayName = casing.Title(spec.DisplayName)
+	}
+}
 
 // itemsBasePath is the root SaveFlatFile joins with ItemSpec.Filepath(). It is a
 // package var so tests can point it at a temp dir without touching the config
@@ -22,6 +38,7 @@ var itemsBasePath = func() string {
 // path — the OLD file is removed first so a stale duplicate can't linger (and
 // boot as a second copy).
 func SaveItemSpec(spec ItemSpec) error {
+	CanonicalizeItemNames(&spec)
 	if err := spec.Validate(); err != nil {
 		return err
 	}
