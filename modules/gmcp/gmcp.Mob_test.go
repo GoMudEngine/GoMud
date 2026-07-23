@@ -385,10 +385,11 @@ func TestScanMobReferences_DedupsAndCoversMercAndConversation(t *testing.T) {
 	if len(refs) != 2 {
 		t.Fatalf("expected exactly 2 refs (one merc-shop, one conversation; the duplicate id must not double-count), got %+v", refs)
 	}
-	if refs[0].Kind != "merc-shop" || refs[0].Id != "mob 9601 (Traveling Slaver) sells it" {
-		t.Errorf("wrong merc-shop ref: %+v", refs[0])
+	// scanMobReferencesWith emits in iterator order: convPairs before mercShops.
+	if refs[0].Kind != "conversation" || refs[0].Id != "conversations/pairs/9538_9600.yaml" {
+		t.Errorf("wrong conversation ref: %+v", refs[0])
 	}
-	if refs[1].Kind != "conversation" || refs[1].Id != "conversations/pairs/9538_9600.yaml" {
-		t.Errorf("wrong conversation ref: %+v", refs[1])
+	if refs[1].Kind != "merc-shop" || refs[1].Id != "mob 9601 (Traveling Slaver) sells it" {
+		t.Errorf("wrong merc-shop ref: %+v", refs[1])
 	}
 }
