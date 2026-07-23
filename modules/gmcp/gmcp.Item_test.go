@@ -4,7 +4,25 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/itemvoices"
 )
+
+func TestBuildItemGet_ShipsAdvancedEnums(t *testing.T) {
+	restore := itemvoices.SeedVoicesForTest(map[string]*itemvoices.VoiceSpec{"blackrazor": {VoiceId: "blackrazor"}})
+	defer restore()
+	w := newFakeItemWorld()
+	w.specs[10005] = &items.ItemSpec{ItemId: 10005, Name: "Sword", Type: items.Weapon}
+	d, ok := buildItemGet(w.deps(), 10005)
+	if !ok {
+		t.Fatal("expected found")
+	}
+	if len(d.ProcTriggers) == 0 || len(d.ProcEffects) == 0 {
+		t.Error("detail must ship proc trigger/effect enums")
+	}
+	if len(d.Voices) == 0 || d.Voices[0] != "blackrazor" {
+		t.Errorf("detail must ship the voice list, got %v", d.Voices)
+	}
+}
 
 // fakeItemWorld is an in-memory stand-in for the items package.
 type fakeItemWorld struct {

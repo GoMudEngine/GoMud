@@ -11,6 +11,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/itemvoices"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 )
@@ -120,6 +121,9 @@ type itemDetail struct {
 	Elements      []string              `json:"elements"`
 	Stats         []string              `json:"stats"`
 	VendorCats    []string              `json:"vendorCats"`       // valid vendor categories for the checkboxes
+	ProcTriggers  []string              `json:"procTriggers"`     // valid proc trigger ids for the dropdown
+	ProcEffects   []string              `json:"procEffects"`      // valid proc effect ids for the dropdown
+	Voices        []string              `json:"voices"`           // valid sentient voice ids
 	Ranges        map[string][2]float64 `json:"ranges,omitempty"` // observed min–max per numeric field, across items of this type
 }
 
@@ -216,10 +220,15 @@ func buildItemGet(d itemDeps, itemId int) (itemDetail, bool) {
 	return itemDetail{
 		itemUpdateReq: specToReq(s),
 		Types:         itemTypeIds(), Subtypes: itemSubtypeIds(), Elements: itemElementIds(), Stats: statModNames(),
-		VendorCats: shops.ValidVendorCategories,
-		Ranges:     ranges,
+		VendorCats:   shops.ValidVendorCategories,
+		ProcTriggers: procTriggerIds(), ProcEffects: procEffectIds(), Voices: itemVoiceIds(),
+		Ranges: ranges,
 	}, true
 }
+
+func procTriggerIds() []string { return items.ValidProcTriggers() }
+func procEffectIds() []string  { return items.ValidProcEffects() }
+func itemVoiceIds() []string   { return itemvoices.AllVoiceIds() }
 
 // reqToSpec starts from the loaded spec so fields the form does NOT cover
 // (procs, reserves, worn-buffs, mutation drip, etc.) survive a Save untouched.
