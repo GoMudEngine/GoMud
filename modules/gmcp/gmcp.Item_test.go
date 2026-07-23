@@ -64,6 +64,36 @@ func TestBuildItemUpdate_RoundTripsFields(t *testing.T) {
 	}
 }
 
+func TestBuildItemUpdate_RoundTripsAdvancedFields(t *testing.T) {
+	w := newFakeItemWorld()
+	w.specs[10001] = &items.ItemSpec{ItemId: 10001, Name: "Old", Type: items.Weapon, Hands: 2}
+	res := buildItemUpdate(w.deps(), itemUpdateReq{
+		ItemId: 10001, Name: "Blackrazor", Type: "weapon", Description: "d", NotSalable: true,
+		Procs: []procRow{{Trigger: "on_hit", Effect: "lifesteal", Chance: 100, CooldownRounds: 2,
+			Params: map[string]float64{"ratio": 0.25}}},
+		ReserveHealthPct: 0.25, VoiceId: "blackrazor", TauntPull: true,
+		HungerRounds: 50, HungerDrainPct: 0.01,
+		MutationTickInterval: 10, MutationTickChance: 5, MutationRarityFloor: 3,
+		WornBuffIds: []int{7, 9},
+	})
+	if !res.Ok {
+		t.Fatalf("update should succeed, got %+v", res)
+	}
+	got := w.saved[0]
+	if len(got.Procs) != 1 || got.Procs[0].Trigger != "on_hit" || got.Procs[0].Effect != "lifesteal" ||
+		got.Procs[0].Chance != 100 || got.Procs[0].CooldownRounds != 2 || got.Procs[0].Params["ratio"] != 0.25 {
+		t.Errorf("proc not round-tripped: %+v", got.Procs)
+	}
+	if got.ReserveHealthPct != 0.25 || got.VoiceId != "blackrazor" || !got.TauntPull ||
+		got.HungerRounds != 50 || got.HungerDrainPct != 0.01 ||
+		got.MutationTickInterval != 10 || got.MutationTickChance != 5 || got.MutationRarityFloor != 3 {
+		t.Errorf("advanced scalars not round-tripped: %+v", got)
+	}
+	if len(got.WornBuffIds) != 2 || got.WornBuffIds[0] != 7 {
+		t.Errorf("worn buffs not round-tripped: %+v", got.WornBuffIds)
+	}
+}
+
 func TestBuildItemUpdate_RejectsEmptyNameOrType(t *testing.T) {
 	w := newFakeItemWorld()
 	w.specs[10001] = &items.ItemSpec{ItemId: 10001, Name: "X", Type: items.Weapon}
@@ -80,16 +110,16 @@ func TestBuildItemUpdate_RejectsEmptyNameOrType(t *testing.T) {
 
 func TestBuildItemUpdate_PreservesUncoveredFields(t *testing.T) {
 	w := newFakeItemWorld()
-	// Reserve/voice fields aren't in the form payload — they must survive a Save.
+	// Bandolier/break fields still aren't in the form payload — they must survive a Save.
 	w.specs[10001] = &items.ItemSpec{ItemId: 10001, Name: "Old", Type: items.Weapon, Hands: 1,
-		ReserveConvictionPct: 0.25, VoiceId: "aegis"}
+		PreservesContents: true, BreakChance: 12}
 	res := buildItemUpdate(w.deps(), itemUpdateReq{ItemId: 10001, Name: "New", Type: "weapon", Description: "d", NotSalable: true})
 	if !res.Ok {
 		t.Fatal(res)
 	}
 	got := w.saved[0]
-	if got.ReserveConvictionPct != 0.25 || got.VoiceId != "aegis" {
-		t.Errorf("form-omitted fields must survive Save, got reserve=%v voice=%q", got.ReserveConvictionPct, got.VoiceId)
+	if !got.PreservesContents || got.BreakChance != 12 {
+		t.Errorf("form-omitted fields must survive Save, got preserves=%v break=%v", got.PreservesContents, got.BreakChance)
 	}
 }
 

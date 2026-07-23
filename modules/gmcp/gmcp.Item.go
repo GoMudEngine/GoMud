@@ -32,6 +32,14 @@ type itemSalvageRow struct {
 	Quantity int    `json:"quantity"`
 }
 
+type procRow struct {
+	Trigger        string             `json:"trigger"`
+	Effect         string             `json:"effect"`
+	Chance         int                `json:"chance"`
+	CooldownRounds int                `json:"cooldownRounds"`
+	Params         map[string]float64 `json:"params"`
+}
+
 // itemUpdateReq is both the Save payload and (embedded) the echoed detail.
 type itemUpdateReq struct {
 	ItemId           int            `json:"itemId"`
@@ -89,6 +97,19 @@ type itemUpdateReq struct {
 	SalvageReturns  []itemSalvageRow `json:"salvageReturns"`
 	// key
 	KeyLockId string `json:"keyLockId"`
+	// advanced / pinnacle
+	Procs                []procRow `json:"procs"`
+	ReserveHealthPct     float64   `json:"reserveHealthPct"`
+	ReserveStaminaPct    float64   `json:"reserveStaminaPct"`
+	ReserveConvictionPct float64   `json:"reserveConvictionPct"`
+	VoiceId              string    `json:"voiceId"`
+	TauntPull            bool      `json:"tauntPull"`
+	HungerRounds         int       `json:"hungerRounds"`
+	HungerDrainPct       float64   `json:"hungerDrainPct"`
+	MutationTickInterval int       `json:"mutationTickInterval"`
+	MutationTickChance   int       `json:"mutationTickChance"`
+	MutationRarityFloor  int       `json:"mutationRarityFloor"`
+	WornBuffIds          []int     `json:"wornBuffIds"`
 }
 
 // ---- server -> client detail (Build.Item) ----
@@ -172,6 +193,14 @@ func specToReq(s *items.ItemSpec) itemUpdateReq {
 	for _, sr := range s.SalvageReturns {
 		req.SalvageReturns = append(req.SalvageReturns, itemSalvageRow{sr.ItemTag, sr.Quantity})
 	}
+	req.ReserveHealthPct, req.ReserveStaminaPct, req.ReserveConvictionPct = s.ReserveHealthPct, s.ReserveStaminaPct, s.ReserveConvictionPct
+	req.VoiceId, req.TauntPull = s.VoiceId, s.TauntPull
+	req.HungerRounds, req.HungerDrainPct = s.HungerRounds, s.HungerDrainPct
+	req.MutationTickInterval, req.MutationTickChance, req.MutationRarityFloor = s.MutationTickInterval, s.MutationTickChance, s.MutationRarityFloor
+	req.WornBuffIds = s.WornBuffIds
+	for _, p := range s.Procs {
+		req.Procs = append(req.Procs, procRow{Trigger: p.Trigger, Effect: p.Effect, Chance: p.Chance, CooldownRounds: p.CooldownRounds, Params: p.Params})
+	}
 	return req
 }
 
@@ -217,6 +246,18 @@ func reqToSpec(base *items.ItemSpec, req itemUpdateReq) items.ItemSpec {
 		if r.ItemTag != "" {
 			s.SalvageReturns = append(s.SalvageReturns, items.SalvageReturn{ItemTag: r.ItemTag, Quantity: r.Quantity})
 		}
+	}
+	s.ReserveHealthPct, s.ReserveStaminaPct, s.ReserveConvictionPct = req.ReserveHealthPct, req.ReserveStaminaPct, req.ReserveConvictionPct
+	s.VoiceId, s.TauntPull = req.VoiceId, req.TauntPull
+	s.HungerRounds, s.HungerDrainPct = req.HungerRounds, req.HungerDrainPct
+	s.MutationTickInterval, s.MutationTickChance, s.MutationRarityFloor = req.MutationTickInterval, req.MutationTickChance, req.MutationRarityFloor
+	s.WornBuffIds = req.WornBuffIds
+	s.Procs = nil
+	for _, p := range req.Procs {
+		if p.Trigger == "" && p.Effect == "" {
+			continue // skip blank rows the form may emit
+		}
+		s.Procs = append(s.Procs, items.ItemProc{Trigger: p.Trigger, Chance: p.Chance, CooldownRounds: p.CooldownRounds, Effect: p.Effect, Params: p.Params})
 	}
 	return s
 }
