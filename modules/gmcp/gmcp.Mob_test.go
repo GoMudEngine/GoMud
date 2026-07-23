@@ -288,3 +288,82 @@ func TestBuildMobUpdate_ChangedItemIdDropsOldCustomization(t *testing.T) {
 		t.Errorf("a changed carried-item id must not carry over the old instance's customization, got %+v", carried)
 	}
 }
+
+// ---- Build.Mob.Delete + reference scan (Task 3) ----
+
+func TestBuildMobDelete_BlocksWhenReferenced(t *testing.T) {
+	w := newFakeMobWorld()
+	m := &mobs.Mob{MobId: 90010, Zone: "Testzone"}
+	m.Character.Name = "Referenced Mob"
+	w.specs[90010] = m
+	d := w.deps()
+	d.references = func(id int) []mobRefEntry {
+		return []mobRefEntry{{Kind: "room-spawn", Id: "room 101"}}
+	}
+	res := buildMobDelete(d, 90010)
+	if res.Ok {
+		t.Fatal("delete should be blocked when referenced")
+	}
+	if len(w.deleted) != 0 {
+		t.Error("nothing should be deleted when blocked")
+	}
+	if len(res.MobRefs) != 1 || res.MobRefs[0].Id != "room 101" {
+		t.Errorf("blocked result must carry references, got %+v", res.MobRefs)
+	}
+}
+
+func TestBuildMobDelete_DeletesWhenClean(t *testing.T) {
+	w := newFakeMobWorld()
+	m := &mobs.Mob{MobId: 90011, Zone: "Testzone"}
+	m.Character.Name = "Unused Mob"
+	w.specs[90011] = m
+	res := buildMobDelete(w.deps(), 90011)
+	if !res.Ok {
+		t.Fatalf("clean delete should succeed, got %+v", res)
+	}
+	if len(w.deleted) != 1 || w.deleted[0] != 90011 {
+		t.Errorf("expected delete of 90011, got %+v", w.deleted)
+	}
+}
+
+func TestScanMobReferences_FindsSpawnAndRelationship(t *testing.T) {
+	refs := scanMobReferencesWith(9538, mobRefIterators{
+		roomSpawns: func(yield func(roomId int, mobIds []int)) {
+			yield(101, []int{9538})
+			yield(102, []int{1})
+		},
+		mobRelationships: func(yield func(fromMobId int, name string, toIds []int)) {
+			yield(9600, "Gossip Gert", []int{9538})
+		},
+	})
+	if len(refs) != 2 {
+		t.Fatalf("expected 2 refs, got %+v", refs)
+	}
+	if refs[0].Kind != "room-spawn" || refs[1].Kind != "relationship" {
+		t.Errorf("wrong kinds: %+v", refs)
+	}
+}
+
+// TestScanMobReferences_FindsQuestRef covers the quest iterator: verified via
+// codegraph that internal/quests.Quest carries no mob-id fields at all (it's
+// the legacy simple-reward model), but the real quest CONTENT authored in
+// internal/questengine's expanded QuestDef DOES carry structured mob-id
+// references (TriggerDef.Mob, NpcSay.Mob/.Lines[].Speaker, SpawnMob.Id,
+// DeclareBounty.Target.Id when Target.Type=="mob") — scanMobReferences (the
+// real wiring) collects those per quest. This test exercises the injected
+// iterator only (not real quest data), matching the pure-function contract of
+// scanMobReferencesWith.
+func TestScanMobReferences_FindsQuestRef(t *testing.T) {
+	refs := scanMobReferencesWith(9538, mobRefIterators{
+		quests: func(yield func(questToken string, mobIds []int)) {
+			yield("76 (Disc Questline)", []int{9538})
+			yield("22 (Unrelated Quest)", []int{1})
+		},
+	})
+	if len(refs) != 1 {
+		t.Fatalf("expected 1 ref, got %+v", refs)
+	}
+	if refs[0].Kind != "quest" || refs[0].Id != "quest 76 (Disc Questline)" {
+		t.Errorf("wrong quest ref: %+v", refs[0])
+	}
+}

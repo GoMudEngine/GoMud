@@ -33,12 +33,13 @@ const (
 
 // BuildResult is echoed to the client after every mutation (as Build.Result).
 type BuildResult struct {
-	Ok     bool      `json:"ok"`
-	Error  string    `json:"error,omitempty"`
-	RoomId int       `json:"roomId,omitempty"` // e.g. the newly created room, or the affected room
-	ItemId int       `json:"itemId,omitempty"` // e.g. the created/updated item
-	Refs   []itemRef `json:"refs,omitempty"`   // Build.Item.Delete: what still references a blocked item
-	MobId  int       `json:"mobId,omitempty"`  // e.g. the created/updated/spawned mob
+	Ok      bool          `json:"ok"`
+	Error   string        `json:"error,omitempty"`
+	RoomId  int           `json:"roomId,omitempty"`  // e.g. the newly created room, or the affected room
+	ItemId  int           `json:"itemId,omitempty"`  // e.g. the created/updated item
+	Refs    []itemRef     `json:"refs,omitempty"`    // Build.Item.Delete: what still references a blocked item
+	MobId   int           `json:"mobId,omitempty"`   // e.g. the created/updated/spawned mob
+	MobRefs []mobRefEntry `json:"mobRefs,omitempty"` // Build.Mob.Delete: what still references a blocked mob
 }
 
 func buildErr(format string, args ...any) BuildResult {
@@ -391,7 +392,18 @@ func (g *GMCPModule) handleBuildOp(e events.Event) events.ListenerReturn {
 		}
 		sendBuildResult(uid, buildMobUpdate(realMobDeps(), req))
 		sendMobList(uid)
-		// Build.Mob.Delete — Task 3; Build.Mob.Spawn — Task 4
+	case `Build.Mob.Delete`:
+		var req mobDeleteReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Mob.Delete payload"))
+			break
+		}
+		res := buildMobDelete(realMobDeps(), req.MobId)
+		sendBuildResult(uid, res)
+		if res.Ok {
+			sendMobList(uid)
+		}
+		// Build.Mob.Spawn — Task 4
 	}
 	return events.Continue
 }

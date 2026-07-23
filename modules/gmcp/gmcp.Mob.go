@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -29,6 +30,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/llm"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/species"
@@ -187,8 +189,8 @@ type mobDeps struct {
 	del        func(id int) error
 	create     func(zone string) (int, error)
 	zoneExists func(zone string) bool
-	// references and spawn are stubbed by realMobDeps() below; Task 3 (delete
-	// reference scan) and Task 4 (test-spawn) fill in the real implementations.
+	// references is wired to scanMobReferences (below) by realMobDeps(). spawn
+	// is still stubbed here — Task 4 (test-spawn) fills in spawnMobInRoom.
 	references func(id int) []mobRefEntry
 	spawn      func(mobId, roomId int) (string, error)
 }
@@ -203,10 +205,7 @@ func realMobDeps() mobDeps {
 			return int(id), err
 		},
 		zoneExists: func(zone string) bool { return rooms.GetZoneConfig(zone) != nil },
-		// Task 3 placeholder: no references reported yet, so Build.Mob.Delete
-		// (added in Task 3) would never be blocked. scanMobReferences replaces
-		// this once the reference scan lands.
-		references: func(int) []mobRefEntry { return nil },
+		references: scanMobReferences,
 		// Task 4 placeholder: spawning isn't wired yet. spawnMobInRoom replaces
 		// this once Build.Mob.Spawn lands.
 		spawn: func(int, int) (string, error) { return "", fmt.Errorf("not implemented") },
@@ -423,6 +422,229 @@ func buildMobCreate(d mobDeps, zone string) BuildResult {
 		return buildErr("%s", err.Error())
 	}
 	return BuildResult{Ok: true, MobId: id}
+}
+
+// buildMobDelete rejects deletion of a mob template that's still referenced
+// anywhere in the world (the reference scan below), returning those
+// references so the admin can go clean them up first, rather than leaving
+// dangling room-spawns/relationships/dialogue/etc. pointing at a vanished
+// template.
+func buildMobDelete(d mobDeps, mobId int) BuildResult {
+	if d.load(mobId) == nil {
+		return buildErr("mob %d not found", mobId)
+	}
+	if refs := d.references(mobId); len(refs) > 0 {
+		return BuildResult{Error: "mob is still referenced — remove these first", MobRefs: refs}
+	}
+	if err := d.del(mobId); err != nil {
+		return buildErr("could not delete mob %d: %s", mobId, err.Error())
+	}
+	return BuildResult{Ok: true, MobId: mobId}
+}
+
+// ---- reference scan (Build.Mob.Delete) ----
+//
+// mobRefIterators is the injected-iterator seam behind scanMobReferencesWith
+// so the pure matching logic (does mobId appear in this candidate's id list)
+// is unit-testable without touching the rooms/mobs/questengine/conversations
+// package globals. scanMobReferences (below) wires it to the real world.
+type mobRefIterators struct {
+	roomSpawns       func(yield func(roomId int, mobIds []int))
+	mobRelationships func(yield func(fromMobId int, name string, toIds []int))
+	quests           func(yield func(questToken string, mobIds []int))
+	convPairs        func(yield func(pairFile string, mobIds []int))
+	mercShops        func(yield func(sellerMobId int, name string, mobIds []int))
+}
+
+func scanMobReferencesWith(mobId int, it mobRefIterators) []mobRefEntry {
+	out := []mobRefEntry{}
+	if it.roomSpawns != nil {
+		it.roomSpawns(func(roomId int, ids []int) {
+			if containsInt(ids, mobId) {
+				out = append(out, mobRefEntry{Kind: "room-spawn", Id: fmt.Sprintf("room %d", roomId)})
+			}
+		})
+	}
+	if it.mobRelationships != nil {
+		it.mobRelationships(func(fromId int, name string, ids []int) {
+			if containsInt(ids, mobId) {
+				out = append(out, mobRefEntry{Kind: "relationship", Id: fmt.Sprintf("mob %d (%s)", fromId, name)})
+			}
+		})
+	}
+	if it.quests != nil {
+		it.quests(func(token string, ids []int) {
+			if containsInt(ids, mobId) {
+				out = append(out, mobRefEntry{Kind: "quest", Id: "quest " + token})
+			}
+		})
+	}
+	if it.convPairs != nil {
+		it.convPairs(func(file string, ids []int) {
+			if containsInt(ids, mobId) {
+				out = append(out, mobRefEntry{Kind: "conversation", Id: file})
+			}
+		})
+	}
+	if it.mercShops != nil {
+		it.mercShops(func(sellerId int, name string, ids []int) {
+			if containsInt(ids, mobId) {
+				out = append(out, mobRefEntry{Kind: "merc-shop", Id: fmt.Sprintf("mob %d (%s) sells it", sellerId, name)})
+			}
+		})
+	}
+	return out
+}
+
+// scanMobReferences wires scanMobReferencesWith to the real world:
+//
+//   - roomSpawns: every loaded room's SpawnInfo entries (SpawnInfo.MobId).
+//   - mobRelationships: every OTHER mob template's Relationships (RelationshipYAMLEntry.To).
+//   - mercShops: every OTHER mob template's Character.Shop rows with MobId > 0
+//     (mercenary-for-sale rows — see characters.ShopItem.MobId).
+//   - quests: verified via codegraph — internal/quests.Quest/QuestStep carry NO
+//     mob-id fields at all (that package is the legacy simple-reward quest
+//     model: QuestId/Name/Description/Steps/Rewards/Flags, and QuestStep is
+//     just Id/Description/Hint). The real quest CONTENT that names mob ids
+//     lives in the separate internal/questengine package's expanded QuestDef
+//     (loaded from _datafiles/world/dogmud/quests/*.yaml, registered on
+//     questengine.GetEngine(), enumerable via (*Engine).AllQuests()).
+//     QuestDef.Triggers ([]TriggerDef) carries mob ids in several places:
+//     TriggerDef.Mob (the mob-death/etc. filter), ActionDef.NpcSay.Mob +
+//     .Lines[].Speaker (which mob speaks), ActionDef.SpawnMob.Id (mob to
+//     spawn — SpawnDef is shared with SpawnItem, so only SpawnMob is scanned,
+//     never SpawnItem), and ActionDef.DeclareBounty.Target.Id when
+//     Target.Type == "mob". All of these are collected per quest below.
+//   - convPairs: verified via internal/conversations/loader.go + conversation.go
+//     — pair overrides are loaded from {DataFiles}/conversations/pairs/*.yaml,
+//     filename convention "<lowerMobId>_<higherMobId>.yaml" (loader.go enforces
+//     this on load), registered in an unexported `pairs` map keyed by a
+//     normalized pair, with no exported "list all" accessor — only
+//     GetPairOverride(mobA, mobB) for a KNOWN pair. Since the ids to scan for
+//     aren't known ahead of time, this reads the pairs directory directly and
+//     parses both mob ids straight out of each filename (the same convention
+//     the loader validates against), rather than going through the package.
+//   - dialogue: a single file check (not an iterator) — dialogue files are
+//     keyed "{DataFiles}/dialogue/{ZoneNameSanitize(zone)}/{mobId}.yaml"
+//     (dialogue/loader.go:34) — appended after the generic iterators since it
+//     needs the mob's OWN zone rather than scanning other mobs/rooms/quests.
+func scanMobReferences(mobId int) []mobRefEntry {
+	dataRoot := configs.GetFilePathsConfig().DataFiles.String()
+	m := mobs.GetMobSpec(mobs.MobId(mobId))
+	refs := scanMobReferencesWith(mobId, mobRefIterators{
+		roomSpawns: func(yield func(int, []int)) {
+			for _, roomId := range rooms.GetAllRoomIds() {
+				r := rooms.LoadRoom(roomId)
+				if r == nil {
+					continue
+				}
+				ids := []int{}
+				for _, si := range r.SpawnInfo {
+					if si.MobId > 0 {
+						ids = append(ids, si.MobId)
+					}
+				}
+				if len(ids) > 0 {
+					yield(roomId, ids)
+				}
+			}
+		},
+		mobRelationships: func(yield func(int, string, []int)) {
+			for _, other := range mobs.AllMobTemplates() {
+				if int(other.MobId) == mobId {
+					continue
+				}
+				ids := []int{}
+				for _, rel := range other.Relationships {
+					ids = append(ids, rel.To)
+				}
+				if len(ids) > 0 {
+					yield(int(other.MobId), other.Character.Name, ids)
+				}
+			}
+		},
+		quests: func(yield func(string, []int)) {
+			for _, q := range questengine.GetEngine().AllQuests() {
+				ids := []int{}
+				for _, t := range q.Triggers {
+					if t.Mob > 0 {
+						ids = append(ids, t.Mob)
+					}
+					for _, a := range t.Actions {
+						if a.NpcSay != nil {
+							if a.NpcSay.Mob > 0 {
+								ids = append(ids, a.NpcSay.Mob)
+							}
+							for _, line := range a.NpcSay.Lines {
+								if line.Speaker > 0 {
+									ids = append(ids, line.Speaker)
+								}
+							}
+						}
+						if a.SpawnMob != nil && a.SpawnMob.Id > 0 {
+							ids = append(ids, a.SpawnMob.Id)
+						}
+						if a.DeclareBounty != nil && a.DeclareBounty.Target != nil &&
+							a.DeclareBounty.Target.Type == "mob" && a.DeclareBounty.Target.Id > 0 {
+							ids = append(ids, a.DeclareBounty.Target.Id)
+						}
+					}
+				}
+				if len(ids) > 0 {
+					yield(fmt.Sprintf("%d (%s)", q.QuestId, q.Name), ids)
+				}
+			}
+		},
+		mercShops: func(yield func(int, string, []int)) {
+			for _, other := range mobs.AllMobTemplates() {
+				ids := []int{}
+				for _, si := range other.Character.Shop {
+					if si.MobId > 0 {
+						ids = append(ids, si.MobId)
+					}
+				}
+				if len(ids) > 0 {
+					yield(int(other.MobId), other.Character.Name, ids)
+				}
+			}
+		},
+		convPairs: func(yield func(string, []int)) {
+			dir := dataRoot + `/conversations/pairs`
+			entries, err := os.ReadDir(dir)
+			if err != nil {
+				return // no pairs directory — nothing to scan (optional content)
+			}
+			for _, en := range entries {
+				if en.IsDir() {
+					continue
+				}
+				base, ok := strings.CutSuffix(en.Name(), ".yaml")
+				if !ok {
+					continue
+				}
+				parts := strings.SplitN(base, "_", 2)
+				if len(parts) != 2 {
+					continue
+				}
+				a, errA := strconv.Atoi(parts[0])
+				b, errB := strconv.Atoi(parts[1])
+				if errA != nil || errB != nil {
+					continue
+				}
+				yield("conversations/pairs/"+en.Name(), []int{a, b})
+			}
+		},
+	})
+	// Dialogue file keyed by this mob's own id/zone — checked separately since
+	// it needs the mob's own zone, not another mob/room/quest's data.
+	if m != nil {
+		zone := mobs.ZoneNameSanitize(m.Zone)
+		p := dataRoot + `/dialogue/` + zone + `/` + strconv.Itoa(mobId) + `.yaml`
+		if _, err := os.Stat(p); err == nil {
+			refs = append(refs, mobRefEntry{Kind: "dialogue", Id: fmt.Sprintf("dialogue/%s/%d.yaml", zone, mobId)})
+		}
+	}
+	return refs
 }
 
 // ---- enum providers ----
