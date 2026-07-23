@@ -483,7 +483,8 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 		// buffer, which is reused after HandleIAC returns.
 		case `Build.Room.Create`, `Build.Room.Update`, `Build.Room.Delete`,
 			`Build.Exit.Add`, `Build.Exit.Remove`, `Build.Room.Get`, `Build.Map.Request`,
-			`Build.Zone.Create`:
+			`Build.Zone.Create`,
+			`Build.Item.List`, `Build.Item.Get`, `Build.Item.Create`, `Build.Item.Update`, `Build.Item.Delete`:
 			events.AddToQueue(GMCPBuildOp{
 				ConnectionId: connectionId,
 				Command:      command,

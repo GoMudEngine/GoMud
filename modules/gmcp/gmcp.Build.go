@@ -33,9 +33,11 @@ const (
 
 // BuildResult is echoed to the client after every mutation (as Build.Result).
 type BuildResult struct {
-	Ok     bool   `json:"ok"`
-	Error  string `json:"error,omitempty"`
-	RoomId int    `json:"roomId,omitempty"` // e.g. the newly created room, or the affected room
+	Ok     bool      `json:"ok"`
+	Error  string    `json:"error,omitempty"`
+	RoomId int       `json:"roomId,omitempty"` // e.g. the newly created room, or the affected room
+	ItemId int       `json:"itemId,omitempty"` // e.g. the created/updated item
+	Refs   []itemRef `json:"refs,omitempty"`   // Build.Item.Delete: what still references a blocked item
 }
 
 func buildErr(format string, args ...any) BuildResult {
@@ -313,6 +315,48 @@ func (g *GMCPModule) handleBuildOp(e events.Event) events.ListenerReturn {
 			zone = zoneForUser(uid)
 		}
 		sendZoneMapFull(uid, zone)
+
+	// ---- item editor (admin web-building 2) ----
+	case `Build.Item.List`:
+		sendItemList(uid)
+	case `Build.Item.Get`:
+		var req itemGetReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Item.Get payload"))
+			break
+		}
+		if detail, ok := buildItemGet(realItemDeps(), req.ItemId); ok {
+			sendItemDetail(uid, detail)
+		} else {
+			sendBuildResult(uid, buildErr("item %d not found", req.ItemId))
+		}
+	case `Build.Item.Create`:
+		var req itemCreateReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Item.Create payload"))
+			break
+		}
+		sendBuildResult(uid, buildItemCreate(realItemDeps(), req.Type))
+		sendItemList(uid)
+	case `Build.Item.Update`:
+		var req itemUpdateReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Item.Update payload"))
+			break
+		}
+		sendBuildResult(uid, buildItemUpdate(realItemDeps(), req))
+		sendItemList(uid)
+	case `Build.Item.Delete`:
+		var req itemDeleteReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Item.Delete payload"))
+			break
+		}
+		res := buildItemDelete(realItemDeps(), req.ItemId)
+		sendBuildResult(uid, res)
+		if res.Ok {
+			sendItemList(uid)
+		}
 	}
 	return events.Continue
 }
