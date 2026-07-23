@@ -52,7 +52,7 @@
   #mode-toggle .mode-btn.active { background: var(--gold); color: var(--ink); font-weight: bold; }
   #room-tools { display: inline-flex; align-items: center; gap: 14px; }
   /* ---- item list (Items mode) ---- */
-  #itemlist { flex: 0 0 340px; overflow-y: auto; background: var(--leather2); border-right: 2px solid var(--tooled); padding: 8px; }
+  #itemlist { flex: 0 0 auto; width: 340px; min-width: 220px; max-width: 60vw; resize: horizontal; overflow: auto; background: var(--leather2); border-right: 2px solid var(--tooled); padding: 8px; }
   #itemlist .filters { display: flex; gap: 6px; margin-bottom: 8px; position: sticky; top: 0; background: var(--leather2); padding-bottom: 6px; }
   #itemlist .filters input, #itemlist .filters select { flex: 1 1 auto; min-width: 0; padding: 5px 7px; font: inherit; font-size: 12px; background: var(--ink); color: var(--parch); border: 1px solid var(--tooled); border-radius: 4px; }
   #itemlist .newitem { width: 100%; margin-bottom: 8px; padding: 7px; background: var(--gold); color: var(--ink); font-weight: bold; border: none; border-radius: 4px; cursor: pointer; }
@@ -68,7 +68,7 @@
   /* ---- body split ---- */
   #main { flex: 1 1 auto; display: flex; min-height: 0; }
   #canvas {
-    flex: 1 1 auto; position: relative; overflow: hidden;
+    flex: 1 1 auto; min-width: 0; position: relative; overflow: hidden;
     background:
       radial-gradient(ellipse at 30% 20%, #34241680 0%, #00000000 60%),
       var(--leather2);
@@ -79,7 +79,8 @@
     color: var(--gold-dim); font-style: italic; text-align: center; padding: 20px;
   }
   #inspector {
-    flex: 0 0 260px; overflow-y: auto;
+    flex: 0 0 auto; width: 260px; min-width: 220px; max-width: 60vw;
+    resize: horizontal; overflow: auto;
     background: var(--panel); padding: 12px;
   }
   #inspector h2 { margin: 0 0 8px; color: var(--gold); font-size: 15px; }
