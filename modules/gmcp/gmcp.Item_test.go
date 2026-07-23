@@ -123,3 +123,67 @@ func TestBuildItemGet_MapsFieldsAndEnums(t *testing.T) {
 		t.Error("missing item should return not-found")
 	}
 }
+
+func TestBuildItemDelete_BlocksWhenReferenced(t *testing.T) {
+	w := newFakeItemWorld()
+	w.specs[10001] = &items.ItemSpec{ItemId: 10001, Name: "Used Sword", Type: items.Weapon}
+	d := w.deps()
+	d.references = func(id int) []itemRef { return []itemRef{{Kind: "mob", Id: "mob 9538"}} }
+	res := buildItemDelete(d, 10001)
+	if res.Ok {
+		t.Fatal("delete should be blocked when referenced")
+	}
+	if len(w.deleted) != 0 {
+		t.Error("nothing should be deleted when blocked")
+	}
+	if len(res.Refs) != 1 || res.Refs[0].Id != "mob 9538" {
+		t.Errorf("blocked result must carry the references, got %+v", res.Refs)
+	}
+}
+
+func TestBuildItemDelete_DeletesWhenClean(t *testing.T) {
+	w := newFakeItemWorld()
+	w.specs[10002] = &items.ItemSpec{ItemId: 10002, Name: "Unused", Type: items.Weapon}
+	res := buildItemDelete(w.deps(), 10002) // fake references returns nil
+	if !res.Ok {
+		t.Fatalf("clean delete should succeed, got %+v", res)
+	}
+	if len(w.deleted) != 1 || w.deleted[0] != 10002 {
+		t.Errorf("expected delete of 10002, got %+v", w.deleted)
+	}
+}
+
+func TestScanItemReferencesWith_FindsMatchingSources(t *testing.T) {
+	refs := scanItemReferencesWith(40163, refIterators{
+		mobs: func(yield func(mobRef)) {
+			yield(mobRef{id: 9538, name: "a wolf", ids: []int{40163}}) // match
+			yield(mobRef{id: 9999, name: "other", ids: []int{111}})    // no match
+		},
+		recipes: func(yield func(string, int)) {
+			yield("iron-dagger", 10001) // no match
+		},
+		quests: func(yield func(int, []int)) {
+			yield(10, []int{40163}) // match
+		},
+		containers: func(yield func(int, []int)) {
+			yield(5901, []int{222}) // no match
+		},
+	})
+	if len(refs) != 2 {
+		t.Fatalf("expected 2 refs (mob 9538 + quest 10), got %+v", refs)
+	}
+	kinds := map[string]bool{}
+	for _, r := range refs {
+		kinds[r.Kind] = true
+	}
+	if !kinds["mob"] || !kinds["quest"] {
+		t.Errorf("expected mob + quest kinds, got %+v", refs)
+	}
+}
+
+func TestParseItemInfoIds(t *testing.T) {
+	got := parseItemInfoIds("40163:2, 10001 ,junk,:5")
+	if len(got) != 2 || got[0] != 40163 || got[1] != 10001 {
+		t.Errorf("parseItemInfoIds wrong: %+v", got)
+	}
+}

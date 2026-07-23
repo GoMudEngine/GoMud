@@ -294,8 +294,3 @@ func sendItemList(uid int) {
 func sendItemDetail(uid int, d itemDetail) {
 	events.AddToQueue(GMCPOut{UserId: uid, Module: "Build.Item", Payload: d})
 }
-
-// scanItemReferences returns everything that references an item id. Implemented
-// in Task 3 (gmcp.Item_refs.go); a nil-return placeholder keeps create/update
-// compiling until then.
-func scanItemReferences(itemId int) []itemRef { return nil }
