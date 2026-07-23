@@ -1,9 +1,9 @@
 "use strict";
 /*
- * mobs.js — the mob-template list (admin web-building 3), a third mode of the
- * /build page. Consumes Build.Mobs (list) GMCP and drives Build.Mob.Get /
- * Build.Mob.Create. The sectioned mob form (Build.Mob detail, Save/Delete) is
- * Task 6; the test-spawn control is Task 7 — this file is list-only for now.
+ * mobs.js — the mob-template editor (admin web-building 3), a third mode of
+ * the /build page. Consumes Build.Mobs (list) + Build.Mob (detail) GMCP and
+ * drives Build.Mob.Create/Update/Delete. Mirrors items.js's field/hint/dirty-
+ * tracking helpers and its collapsible-Advanced pattern.
  */
 (function () {
   function ce(tag, attrs, kids) {
@@ -17,6 +17,22 @@
     return e;
   }
   function gmcp(pkg, obj) { if (window.Builder && window.Builder.sendGMCP) window.Builder.sendGMCP(pkg, obj); }
+  function toast(m, e) { if (window.Builder && window.Builder.toast) window.Builder.toast(m, e); }
+
+  function field(labelText, input, hint) {
+    var kids = [ce("label", { text: labelText }), input];
+    if (hint) kids.push(ce("div", { style: "font-size:10px;color:var(--gold-dim);margin-top:2px;", text: hint }));
+    return ce("div", {}, kids);
+  }
+  function sectionTitle(t) { return ce("h3", { text: t }); }
+  function labelWrap(text, input) {
+    var d = document.createElement("div"); d.style.flex = "1 1 auto"; d.style.minWidth = "0";
+    var l = document.createElement("label"); l.textContent = text; d.appendChild(l); d.appendChild(input); return d;
+  }
+  function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+  function markDirty() { Panel.setDirty(true); }
+
+  var STAT_KEYS = ["strength", "dexterity", "perception", "vitality", "willpower", "charisma"];
 
   var Panel = {
     rows: [],
@@ -25,6 +41,14 @@
     zones: [],       // distinct zones observed across the current rows
     selectedId: 0,
     listBody: null,
+    detail: null,
+    dirty: false,
+    fields: null,    // gather closures for the current form
+    saving: false,
+    deleting: false,
+    creating: false,
+    advancedOpen: false,
+    _advMobId: 0,
   };
 
   // ---- list ----
@@ -87,6 +111,7 @@
   };
 
   Panel.selectItem = function (id) {
+    if (this.dirty && !window.confirm("Discard unsaved changes to this mob?")) return;
     this.selectedId = id;
     this.drawRows();
     gmcp("Build.Mob.Get", { mobId: id });
@@ -99,6 +124,7 @@
     if (!z) return;
     z = z.trim();
     if (!z) return;
+    Panel.creating = true;
     gmcp("Build.Mob.Create", { zone: z });
   }
   function distinctZones() {
@@ -107,9 +133,528 @@
     return Object.keys(d).sort();
   }
 
+  // ---- form ----
+  Panel.renderForm = function (detail) {
+    this.detail = detail;
+    this.selectedId = detail.mobId;
+    this.drawRows();
+    var insp = document.getElementById("inspector");
+    insp.innerHTML = "";
+    this.fields = {};
+    var F = this.fields;
+    var enums = detail.enums || {};
+
+    insp.appendChild(ce("h2", { text: "Mob #" + detail.mobId }));
+
+    // ---- field builders bound to this render's F/markDirty closure ----
+    function textField(label, key, val, hint) {
+      var i = ce("input", { type: "text" }); i.value = val == null ? "" : val;
+      i.addEventListener("input", markDirty);
+      F[key] = function () { return i.value; };
+      return field(label, i, hint);
+    }
+    function textAreaField(label, key, val, hint) {
+      var t = ce("textarea", {}); t.value = val || "";
+      t.addEventListener("input", markDirty);
+      F[key] = function () { return t.value; };
+      return field(label, t, hint);
+    }
+    function numField(label, key, val, step) {
+      // Integer fields snap to a whole number on blur (Go rejects a fractional
+      // number into an int field and fails the WHOLE Save payload) — same
+      // discipline as items.js.
+      var isInt = !step || step === "1";
+      var i = ce("input", { type: "number", step: step || "1" }); i.value = (val === 0 ? "0" : (val || ""));
+      i.addEventListener("input", markDirty);
+      if (isInt) i.addEventListener("blur", function () {
+        if (i.value !== "") i.value = String(Math.round(parseFloat(i.value) || 0));
+      });
+      F[key] = function () { var n = parseFloat(i.value) || 0; return isInt ? Math.round(n) : n; };
+      return field(label, i);
+    }
+    function checkField(label, key, val) {
+      var cb = ce("input", { type: "checkbox" }); cb.checked = !!val; cb.addEventListener("change", markDirty);
+      F[key] = function () { return cb.checked; };
+      return ce("label", { "class": "chk" }, [cb, ce("span", { text: " " + label })]);
+    }
+    function selectField(label, key, val, opts, asInt) {
+      var s = ce("select", {});
+      opts.forEach(function (o) {
+        var ov = (typeof o === "object") ? o.v : o, ot = (typeof o === "object") ? o.t : o;
+        var op = ce("option", { value: ov, text: (ot === "" || ot == null) ? "(none)" : ot });
+        if (String(ov) === String(val)) op.selected = true;
+        s.appendChild(op);
+      });
+      s.addEventListener("change", markDirty);
+      F[key] = function () { return asInt ? (parseInt(s.value, 10) || 0) : s.value; };
+      return field(label, s);
+    }
+
+    // Chip editor for string-array fields (adjectives, groups, routineLinks,
+    // hates, knowsFacts, questFlags, spawnMutations, crafterRecipeIds). An
+    // optional datalist gives autocomplete suggestions (e.g. observed groups).
+    function chipsField(label, key, vals, hint, datalistOpts) {
+      var wrap = ce("div", {});
+      wrap.appendChild(ce("label", { text: label }));
+      var chipBox = ce("div", { "class": "chips" });
+      var current = (vals || []).slice();
+      function redraw() {
+        chipBox.innerHTML = "";
+        current.forEach(function (v, idx) {
+          var chip = ce("span", { "class": "chip" }, [document.createTextNode(v)]);
+          var rm = ce("button", { type: "button", "class": "chip-rm", text: "✕" });
+          rm.addEventListener("click", function () { current.splice(idx, 1); redraw(); markDirty(); });
+          chip.appendChild(rm);
+          chipBox.appendChild(chip);
+        });
+      }
+      redraw();
+      wrap.appendChild(chipBox);
+      var inputRow = ce("div", { "class": "row" });
+      var inp = ce("input", { type: "text", placeholder: "add value, press Enter" });
+      if (datalistOpts && datalistOpts.length) {
+        var dlid = "dl-" + key;
+        var dl = ce("datalist", { id: dlid });
+        datalistOpts.forEach(function (o) { dl.appendChild(ce("option", { value: o })); });
+        wrap.appendChild(dl);
+        inp.setAttribute("list", dlid);
+      }
+      function addFromInput() {
+        var v = inp.value.trim();
+        if (!v) return;
+        current.push(v);
+        inp.value = "";
+        redraw();
+        markDirty();
+      }
+      inp.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); addFromInput(); } });
+      var addBtn = ce("button", { type: "button", "class": "mini", text: "+ add" });
+      addBtn.addEventListener("click", addFromInput);
+      inputRow.appendChild(inp); inputRow.appendChild(addBtn);
+      wrap.appendChild(inputRow);
+      if (hint) wrap.appendChild(ce("div", { style: "font-size:10px;color:var(--gold-dim);margin-top:2px;", text: hint }));
+      F[key] = function () { return current.slice(); };
+      return wrap;
+    }
+
+    // Repeatable numeric-id rows (lootPool, carriedItems, buffIds,
+    // crafterRestockMaterials) — the "picker" is a bare id input in v1.
+    function idRowsField(label, key, vals, hint) {
+      var wrap = ce("div", {});
+      wrap.appendChild(ce("label", { text: label }));
+      var box = ce("div", {});
+      var rows = [];
+      function addRow(v) {
+        var i = ce("input", { type: "number", step: "1", placeholder: "item id" });
+        i.value = (v || v === 0) ? v : "";
+        i.addEventListener("input", markDirty);
+        i.addEventListener("blur", function () { if (i.value !== "") i.value = String(Math.round(parseFloat(i.value) || 0)); });
+        var rm = ce("button", { type: "button", "class": "mini rm", text: "✕" });
+        var row = ce("div", { "class": "kv" }, [i, rm]);
+        rm.addEventListener("click", function () { box.removeChild(row); rows.splice(rows.indexOf(row), 1); markDirty(); });
+        row._i = i;
+        rows.push(row); box.appendChild(row);
+      }
+      (vals || []).forEach(addRow);
+      wrap.appendChild(box);
+      var addBtn = ce("button", { type: "button", "class": "mini", text: "+ id" });
+      addBtn.addEventListener("click", function () { addRow(0); markDirty(); });
+      wrap.appendChild(addBtn);
+      if (hint) wrap.appendChild(ce("div", { style: "font-size:10px;color:var(--gold-dim);margin-top:2px;", text: hint }));
+      F[key] = function () {
+        return rows.map(function (r) { return parseInt(r._i.value, 10) || 0; }).filter(function (n) { return n > 0; });
+      };
+      return wrap;
+    }
+
+    // Flavor command-list rows (idle/combat/angry). Blank rows are real
+    // "do nothing" pool entries and are PRESERVED (not filtered) — only an
+    // explicit ✕ removes a row. Up/down reorder in place.
+    function commandListField(label, key, vals, hint) {
+      var wrap = ce("div", {});
+      wrap.appendChild(ce("label", { text: label }));
+      var box = ce("div", {});
+      var rows = [];
+      function addRow(v) {
+        var i = ce("input", { type: "text" }); i.value = v == null ? "" : v;
+        i.addEventListener("input", markDirty);
+        var up = ce("button", { type: "button", "class": "mini", text: "↑" });
+        var down = ce("button", { type: "button", "class": "mini", text: "↓" });
+        var rm = ce("button", { type: "button", "class": "mini rm", text: "✕" });
+        var row = ce("div", { "class": "kv" }, [i, up, down, rm]);
+        up.addEventListener("click", function () {
+          var idx = rows.indexOf(row);
+          if (idx <= 0) return;
+          var prev = rows[idx - 1];
+          box.insertBefore(row, prev);
+          rows[idx] = prev; rows[idx - 1] = row;
+          markDirty();
+        });
+        down.addEventListener("click", function () {
+          var idx = rows.indexOf(row);
+          if (idx === -1 || idx >= rows.length - 1) return;
+          var next = rows[idx + 1];
+          box.insertBefore(next, row);
+          rows[idx] = next; rows[idx + 1] = row;
+          markDirty();
+        });
+        rm.addEventListener("click", function () { box.removeChild(row); rows.splice(rows.indexOf(row), 1); markDirty(); });
+        row._i = i;
+        rows.push(row); box.appendChild(row);
+      }
+      (vals || []).forEach(function (v) { addRow(v); });
+      wrap.appendChild(box);
+      var addBtn = ce("button", { type: "button", "class": "mini", text: "+ line" });
+      addBtn.addEventListener("click", function () { addRow(""); markDirty(); });
+      wrap.appendChild(addBtn);
+      if (hint) wrap.appendChild(ce("div", { style: "font-size:10px;color:var(--gold-dim);margin-top:2px;", text: hint }));
+      F[key] = function () { return rows.map(function (r) { return r._i.value; }); }; // blanks preserved intentionally
+      return wrap;
+    }
+
+    // Shop inventory rows (Commerce).
+    function shopRowsField(label, key, vals, hint) {
+      var wrap = ce("div", {});
+      wrap.appendChild(ce("label", { text: label }));
+      var box = ce("div", {});
+      var rows = [];
+      function addRow(r) {
+        r = r || { itemId: 0, quantityMax: 0, price: 0 };
+        var iid = ce("input", { type: "number", step: "1", placeholder: "item id" }); iid.value = r.itemId || "";
+        var qty = ce("input", { type: "number", step: "1", placeholder: "qty max" }); qty.value = r.quantityMax || "";
+        var price = ce("input", { type: "number", step: "1", placeholder: "price" }); price.value = r.price || "";
+        [iid, qty, price].forEach(function (el) { el.addEventListener("input", markDirty); });
+        var rm = ce("button", { type: "button", "class": "mini rm", text: "✕" });
+        var row = ce("div", { "class": "kv" }, [iid, qty, price, rm]);
+        rm.addEventListener("click", function () { box.removeChild(row); rows.splice(rows.indexOf(row), 1); markDirty(); });
+        row._iid = iid; row._qty = qty; row._price = price;
+        rows.push(row); box.appendChild(row);
+      }
+      (vals || []).forEach(addRow);
+      wrap.appendChild(box);
+      var addBtn = ce("button", { type: "button", "class": "mini", text: "+ shop item" });
+      addBtn.addEventListener("click", function () { addRow(); markDirty(); });
+      wrap.appendChild(addBtn);
+      if (hint) wrap.appendChild(ce("div", { style: "font-size:10px;color:var(--gold-dim);margin-top:2px;", text: hint }));
+      F[key] = function () {
+        return rows.map(function (r) {
+          return { itemId: parseInt(r._iid.value, 10) || 0, quantityMax: parseInt(r._qty.value, 10) || 0, price: parseInt(r._price.value, 10) || 0 };
+        }).filter(function (row) { return row.itemId > 0; });
+      };
+      return wrap;
+    }
+
+    // Relationship rows (Aliveness).
+    function relRowsField(label, key, vals, hint) {
+      var wrap = ce("div", {});
+      wrap.appendChild(ce("label", { text: label }));
+      var box = ce("div", {});
+      var rows = [];
+      function addRow(r) {
+        r = r || { to: 0, type: "", subtype: "" };
+        var to = ce("input", { type: "number", step: "1", placeholder: "mob id" }); to.value = r.to || "";
+        var type = ce("input", { type: "text", placeholder: "type" }); type.value = r.type || "";
+        var subtype = ce("input", { type: "text", placeholder: "subtype" }); subtype.value = r.subtype || "";
+        [to, type, subtype].forEach(function (el) { el.addEventListener("input", markDirty); });
+        var rm = ce("button", { type: "button", "class": "mini rm", text: "✕" });
+        var row = ce("div", { "class": "kv" }, [to, type, subtype, rm]);
+        rm.addEventListener("click", function () { box.removeChild(row); rows.splice(rows.indexOf(row), 1); markDirty(); });
+        row._to = to; row._type = type; row._subtype = subtype;
+        rows.push(row); box.appendChild(row);
+      }
+      (vals || []).forEach(addRow);
+      wrap.appendChild(box);
+      var addBtn = ce("button", { type: "button", "class": "mini", text: "+ relationship" });
+      addBtn.addEventListener("click", function () { addRow(); markDirty(); });
+      wrap.appendChild(addBtn);
+      if (hint) wrap.appendChild(ce("div", { style: "font-size:10px;color:var(--gold-dim);margin-top:2px;", text: hint }));
+      F[key] = function () {
+        return rows.map(function (r) {
+          return { to: parseInt(r._to.value, 10) || 0, type: r._type.value.trim(), subtype: r._subtype.value.trim() };
+        }).filter(function (row) { return row.to > 0; });
+      };
+      return wrap;
+    }
+
+    // Equipment: one numeric item-id input per worn slot (v1 — no searchable
+    // item picker; see Task 6 plan note).
+    function equipmentField(slots, equipMap) {
+      var wrap = ce("div", {});
+      var rows = [];
+      var equip = equipMap || {};
+      for (var i = 0; i < slots.length; i += 2) {
+        var rowSlots = slots.slice(i, i + 2);
+        var cols = rowSlots.map(function (s) {
+          var inp = ce("input", { type: "number", step: "1", placeholder: "item id" });
+          inp.value = equip[s] || "";
+          inp.addEventListener("input", markDirty);
+          rows.push({ slot: s, input: inp });
+          return labelWrap(s, inp);
+        });
+        wrap.appendChild(ce("div", { "class": "row" }, cols));
+      }
+      F.equipment = function () {
+        var out = {};
+        rows.forEach(function (r) {
+          var v = parseInt(r.input.value, 10) || 0;
+          if (v > 0) out[r.slot] = v;
+        });
+        return out;
+      };
+      return wrap;
+    }
+
+    // ---- Identity ----
+    insp.appendChild(sectionTitle("Identity"));
+    insp.appendChild(textField("Name", "name", detail.name));
+    insp.appendChild(textAreaField("Description", "description", detail.description, "shown to players — wraps at ~78 chars"));
+    insp.appendChild(selectField("Zone", "zone", detail.zone, enums.zones || []));
+    var speciesOpts = Object.keys(enums.species || {}).map(function (id) { return { v: id, t: enums.species[id] }; });
+    insp.appendChild(selectField("Species", "speciesId", detail.speciesId, speciesOpts, true));
+    insp.appendChild(chipsField("Adjectives", "adjectives", detail.adjectives));
+    insp.appendChild(chipsField("Groups", "groups", detail.groups, "", enums.groups || []));
+
+    // ---- Stats & Combat ----
+    insp.appendChild(sectionTitle("Stats & Combat"));
+    insp.appendChild(numField("Stat pool", "statPool", detail.statPool));
+    var st = detail.statTraining || {};
+    var statRows = [];
+    for (var si = 0; si < STAT_KEYS.length; si += 2) {
+      var pair = STAT_KEYS.slice(si, si + 2);
+      var statCols = pair.map(function (sk) {
+        var inp = ce("input", { type: "number", step: "1" }); inp.value = st[sk] || 0;
+        inp.addEventListener("input", markDirty);
+        inp.addEventListener("blur", function () { if (this.value !== "") this.value = String(Math.round(parseFloat(this.value) || 0)); });
+        statRows.push({ key: sk, input: inp });
+        return labelWrap(cap(sk) + " training", inp);
+      });
+      insp.appendChild(ce("div", { "class": "row" }, statCols));
+    }
+    F.statTraining = function () {
+      var out = {};
+      statRows.forEach(function (r) { out[r.key] = parseInt(r.input.value, 10) || 0; });
+      return out;
+    };
+    insp.appendChild(selectField("Archetype", "archetype", detail.archetype, enums.archetypes || [""]));
+    insp.appendChild(checkField("Auto-aggro", "autoAggro", detail.autoAggro));
+    insp.appendChild(selectField("AI profile", "aiProfile", detail.aiProfile, enums.aiProfiles || [""]));
+    insp.appendChild(ce("div", { "class": "row" }, [
+      numField("Special move %", "specialMoveChance", detail.specialMoveChance),
+      numField("Activity level", "activityLevel", detail.activityLevel)]));
+    insp.appendChild(ce("div", { "class": "row" }, [
+      numField("Max wander", "maxWander", detail.maxWander),
+      textField("Routine", "routine", detail.routine)]));
+    insp.appendChild(chipsField("Routine links", "routineLinks", detail.routineLinks));
+    insp.appendChild(chipsField("Hates", "hates", detail.hates));
+    insp.appendChild(selectField("Submission policy", "submissionPolicy", detail.submissionPolicy, enums.submissionPolicies || [""]));
+    insp.appendChild(textField("Surrender policy", "surrenderPolicy", detail.surrenderPolicy,
+      'never | always | "auto-tap-below N"'));
+    insp.appendChild(checkField("Pack flee immune", "packFleeImmune", detail.packFleeImmune));
+
+    // ---- Equipment ----
+    insp.appendChild(sectionTitle("Equipment"));
+    insp.appendChild(equipmentField(enums.wornSlots || [], detail.equipment || {}));
+    insp.appendChild(idRowsField("Carried items", "carriedItems", detail.carriedItems, "item ids the mob carries in inventory"));
+
+    // ---- Flavor ----
+    insp.appendChild(sectionTitle("Flavor"));
+    insp.appendChild(commandListField("Idle commands", "idleCommands", detail.idleCommands,
+      "blank rows are intentional “do nothing” pool entries — don't delete them to tidy up"));
+    insp.appendChild(commandListField("Combat commands", "combatCommands", detail.combatCommands));
+    insp.appendChild(commandListField("Angry commands", "angryCommands", detail.angryCommands));
+
+    // ---- Loot ----
+    insp.appendChild(sectionTitle("Loot"));
+    insp.appendChild(numField("Item drop chance %", "itemDropChance", detail.itemDropChance));
+    insp.appendChild(idRowsField("Loot pool", "lootPool", detail.lootPool));
+    insp.appendChild(numField("Gold", "gold", detail.gold));
+
+    // ---- Advanced (collapsible) ----
+    var H = {
+      field: field, sectionTitle: sectionTitle, textField: textField, textAreaField: textAreaField,
+      numField: numField, checkField: checkField, selectField: selectField, chipsField: chipsField,
+      idRowsField: idRowsField, shopRowsField: shopRowsField, relRowsField: relRowsField
+    };
+    this.buildAdvancedSection(insp, detail, F, H);
+
+    // ---- Save + delete ----
+    var save = ce("button", { id: "mob-save", text: "Save Mob", disabled: "disabled" });
+    save.addEventListener("click", function () { Panel.save(); });
+    var del = ce("button", { "class": "mini rm", text: "Delete mob", "style": "width:100%;margin-top:6px;padding:6px;" });
+    del.addEventListener("click", function () { Panel.del(); });
+    insp.appendChild(ce("div", { "class": "save-row" }, [save, del]));
+    insp.appendChild(ce("div", { id: "mob-refs", "style": "color:var(--danger);font-size:11px;margin-top:6px;" }));
+
+    this.setDirty(false);
+  };
+
+  Panel.buildAdvancedSection = function (insp, detail, F, H) {
+    var self = this;
+    var enums = detail.enums || {};
+    var hasAdv = detail.scheduleId || detail.patrolId || (detail.shop && detail.shop.length) ||
+      detail.crafter || (detail.relationships && detail.relationships.length) ||
+      (detail.buffIds && detail.buffIds.length) || detail.scriptTag || detail.llmProfileJson ||
+      detail.carryCapacity || detail.healthMax || detail.staminaMax || detail.nonCombatant;
+    // Recompute open state only when a different mob is selected; preserve the
+    // author's toggle across same-mob re-renders (e.g. the post-save re-Get).
+    if (detail.mobId !== this._advMobId) { this.advancedOpen = !!hasAdv; this._advMobId = detail.mobId; }
+
+    function headText() { return (self.advancedOpen ? "▾ " : "▸ ") + "Advanced"; }
+    var head = ce("h3", { text: headText() });
+    head.style.cursor = "pointer";
+    var body = ce("div", {});
+    body.style.display = this.advancedOpen ? "" : "none";
+    head.addEventListener("click", function () {
+      self.advancedOpen = !self.advancedOpen;
+      body.style.display = self.advancedOpen ? "" : "none";
+      head.textContent = headText();
+    });
+    insp.appendChild(head);
+    insp.appendChild(body);
+
+    // Commerce
+    body.appendChild(H.sectionTitle("Commerce"));
+    body.appendChild(H.shopRowsField("Shop inventory", "shop", detail.shop));
+    body.appendChild(H.checkField("Buys general goods", "buysGeneral", detail.buysGeneral));
+    body.appendChild(H.numField("Stock multiplier", "stockMultiplier", detail.stockMultiplier, "0.05"));
+    body.appendChild(H.selectField("Craft support", "craftSupport", detail.craftSupport, [""].concat(enums.craftSupports || [])));
+    body.appendChild(H.checkField("Crafter", "crafter", detail.crafter));
+    body.appendChild(H.textField("Crafter skill", "crafterSkill", detail.crafterSkill));
+    body.appendChild(H.chipsField("Crafter recipe ids", "crafterRecipeIds", detail.crafterRecipeIds));
+    body.appendChild(H.idRowsField("Crafter restock materials", "crafterRestockMaterials", detail.crafterRestockMaterials));
+
+    // Aliveness
+    body.appendChild(H.sectionTitle("Aliveness"));
+    body.appendChild(H.selectField("Schedule", "scheduleId", detail.scheduleId, [""].concat(enums.scheduleIds || [])));
+    body.appendChild(H.selectField("Patrol", "patrolId", detail.patrolId, [""].concat(enums.patrolIds || [])));
+    body.appendChild(H.relRowsField("Relationships", "relationships", detail.relationships));
+    body.appendChild(H.chipsField("Knows facts", "knowsFacts", detail.knowsFacts));
+    body.appendChild(ce("div", { "class": "row" }, [
+      H.numField("Default disposition", "defaultDisposition", detail.defaultDisposition),
+      H.numField("Fold anchor room", "foldAnchorRoom", detail.foldAnchorRoom)]));
+    body.appendChild(H.numField("Storage chest room", "storageChestRoom", detail.storageChestRoom));
+
+    // Hooks
+    body.appendChild(H.sectionTitle("Hooks"));
+    body.appendChild(H.textField("Script tag", "scriptTag", detail.scriptTag));
+    body.appendChild(H.selectField("Behavior archetype", "behaviorArchetype", detail.behaviorArchetype, [""].concat(enums.behaviorArchetypes || [])));
+    body.appendChild(H.idRowsField("Buff ids", "buffIds", detail.buffIds));
+    body.appendChild(H.chipsField("Quest flags", "questFlags", detail.questFlags));
+    body.appendChild(H.chipsField("Spawn mutations", "spawnMutations", detail.spawnMutations));
+    body.appendChild(H.numField("Mutation chance %", "mutationChance", detail.mutationChance));
+    body.appendChild(H.textAreaField("LLM profile (raw JSON)", "llmProfileJson", detail.llmProfileJson,
+      "advanced — raw JSON; leave empty for none"));
+
+    // Overrides & flags
+    body.appendChild(H.sectionTitle("Overrides & flags"));
+    body.appendChild(ce("div", { "class": "row" }, [
+      H.numField("Carry capacity", "carryCapacity", detail.carryCapacity, "0.05"),
+      H.numField("Health max", "healthMax", detail.healthMax)]));
+    body.appendChild(H.numField("Stamina max", "staminaMax", detail.staminaMax));
+    body.appendChild(H.textField("Corpse name", "corpseName", detail.corpseName));
+    body.appendChild(H.textAreaField("Corpse description", "corpseDescription", detail.corpseDescription));
+    body.appendChild(ce("div", { "class": "flags" }, [
+      H.checkField("Hide equipment slots", "hideEquipmentSlots", detail.hideEquipmentSlots),
+      H.checkField("Charm immune", "charmImmune", detail.charmImmune),
+      H.checkField("Non-combatant", "nonCombatant", detail.nonCombatant),
+      H.checkField("Player-attack immune", "playerAttackImmune", detail.playerAttackImmune)]));
+  };
+
+  Panel.setDirty = function (d) {
+    this.dirty = d;
+    var s = document.getElementById("mob-save");
+    if (s) s.disabled = !d;
+  };
+
+  // ---- mutations ----
+  // Any mobUpdateReq field the form doesn't expose a control for (e.g.
+  // movePreferences) falls back to the value the server sent, so a save never
+  // silently blanks a field the UI can't edit yet.
+  Panel.gather = function () {
+    var F = this.fields || {};
+    var d = this.detail || {};
+    function g(k, dflt) { return F[k] ? F[k]() : (d[k] !== undefined ? d[k] : dflt); }
+    return {
+      mobId: d.mobId,
+      zone: g("zone", d.zone || ""),
+      name: g("name", ""), description: g("description", ""),
+      adjectives: g("adjectives", []), speciesId: g("speciesId", 0), gold: g("gold", 0),
+      statTraining: g("statTraining", {}), equipment: g("equipment", {}),
+      carriedItems: g("carriedItems", []), shop: g("shop", []),
+      statPool: g("statPool", 0), archetype: g("archetype", ""), autoAggro: g("autoAggro", false),
+      aiProfile: g("aiProfile", ""), specialMoveChance: g("specialMoveChance", 0),
+      movePreferences: g("movePreferences", {}), activityLevel: g("activityLevel", 0),
+      maxWander: g("maxWander", 0), routine: g("routine", ""), routineLinks: g("routineLinks", []),
+      hates: g("hates", []), groups: g("groups", []), submissionPolicy: g("submissionPolicy", ""),
+      surrenderPolicy: g("surrenderPolicy", ""), packFleeImmune: g("packFleeImmune", false),
+      idleCommands: g("idleCommands", []), combatCommands: g("combatCommands", []), angryCommands: g("angryCommands", []),
+      itemDropChance: g("itemDropChance", 0), lootPool: g("lootPool", []),
+      buysGeneral: g("buysGeneral", false), stockMultiplier: g("stockMultiplier", 0),
+      craftSupport: g("craftSupport", ""), crafter: g("crafter", false), crafterSkill: g("crafterSkill", ""),
+      crafterRecipeIds: g("crafterRecipeIds", []), crafterRestockMaterials: g("crafterRestockMaterials", []),
+      scheduleId: g("scheduleId", ""), patrolId: g("patrolId", ""),
+      relationships: g("relationships", []), knowsFacts: g("knowsFacts", []),
+      defaultDisposition: g("defaultDisposition", 0), foldAnchorRoom: g("foldAnchorRoom", 0), storageChestRoom: g("storageChestRoom", 0),
+      scriptTag: g("scriptTag", ""), behaviorArchetype: g("behaviorArchetype", ""),
+      buffIds: g("buffIds", []), questFlags: g("questFlags", []), spawnMutations: g("spawnMutations", []),
+      mutationChance: g("mutationChance", 0), llmProfileJson: g("llmProfileJson", ""),
+      carryCapacity: g("carryCapacity", 0), healthMax: g("healthMax", 0), staminaMax: g("staminaMax", 0),
+      corpseName: g("corpseName", ""), corpseDescription: g("corpseDescription", ""),
+      hideEquipmentSlots: g("hideEquipmentSlots", false), charmImmune: g("charmImmune", false),
+      nonCombatant: g("nonCombatant", false), playerAttackImmune: g("playerAttackImmune", false)
+    };
+  };
+
+  Panel.save = function () {
+    if (!this.detail) return;
+    var req = this.gather();
+    if (!req.name) { toast("Name is required", true); return; }
+    if (!req.zone) { toast("Zone is required", true); return; }
+    this.saving = true;
+    gmcp("Build.Mob.Update", req);
+  };
+  Panel.del = function () {
+    if (!this.detail) return;
+    if (!window.confirm("Delete mob #" + this.detail.mobId + "?")) return;
+    this.deleting = true;
+    gmcp("Build.Mob.Delete", { mobId: this.detail.mobId });
+  };
+
+  // Build.Result routing from build.html (mode === "mobs").
+  Panel.onResult = function (obj) {
+    if (obj && obj.ok) {
+      if (this.deleting) {
+        this.deleting = false; this.detail = null; this.selectedId = 0; this.clear();
+        toast("Mob deleted.", false);
+        return;
+      }
+      if (this.saving) {
+        this.saving = false; this.setDirty(false); toast("Saved.", false);
+        // Reload the persisted spec so the form reflects exactly what was
+        // stored (e.g. a name the server canonicalized).
+        if (this.selectedId) gmcp("Build.Mob.Get", { mobId: this.selectedId });
+        return;
+      }
+      if (this.creating) {
+        this.creating = false;
+        toast("Created.", false);
+        if (obj.mobId) { this.selectedId = obj.mobId; gmcp("Build.Mob.Get", { mobId: obj.mobId }); }
+        return;
+      }
+    } else {
+      this.saving = false; this.deleting = false; this.creating = false;
+      if (obj && obj.mobRefs && obj.mobRefs.length) this.showDeleteRefs(obj.mobRefs);
+      toast((obj && obj.error) || "Mob error", true);
+    }
+  };
+
+  Panel.showDeleteRefs = function (refs) {
+    var el = document.getElementById("mob-refs");
+    if (!el) return;
+    el.textContent = "Still referenced: " + refs.map(function (r) { return r.kind + " " + r.id; }).join(", ") + " — remove these first.";
+  };
+
   // ---- inspector placeholder ----
-  // The sectioned mob form (Build.Mob detail) is Task 6; until then, entering
-  // Mobs mode or clicking a row just clears the inspector to a placeholder.
   function clearMobInspector() {
     var insp = document.getElementById("inspector");
     if (!insp) return;
@@ -117,7 +662,10 @@
     insp.appendChild(ce("h2", { text: "Mobs" }));
     insp.appendChild(ce("div", { "class": "empty", text: "Select a mob on the left, or + New Mob." }));
   }
-  Panel.clear = clearMobInspector;
+  Panel.clear = function () {
+    this.detail = null; this.fields = null; this.dirty = false;
+    clearMobInspector();
+  };
 
   window.Builder = window.Builder || {};
   window.Builder.MobsPanel = Panel;

@@ -106,6 +106,9 @@
   #inspector .flags input { width: auto; }
   #inspector .kv { display: flex; gap: 5px; margin: 4px 0; align-items: center; }
   #inspector .kv input { flex: 1 1 auto; }
+  #inspector .chips { display: flex; flex-wrap: wrap; gap: 5px; margin: 4px 0; }
+  #inspector .chip { display: inline-flex; align-items: center; gap: 4px; background: var(--ink); border: 1px solid var(--tooled); border-radius: 12px; padding: 2px 8px; font-size: 11px; color: var(--parch); }
+  #inspector .chip-rm { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 11px; padding: 0; line-height: 1; }
   #inspector .exit { display: flex; align-items: center; gap: 6px; padding: 4px 0; border-bottom: 1px dotted var(--tooled); font-size: 12px; }
   #inspector .exit .grow { flex: 1 1 auto; }
   #inspector .exit .tag { color: var(--gold-dim); font-size: 10px; }
@@ -264,8 +267,10 @@
     if (ns === "Build.Items") { if (IP) { IP.render(obj); IP.afterListRefresh(); } return; }
     if (ns === "Build.Item") { if (IP) IP.renderForm(obj); return; }
     if (ns === "Build.Result" && window.Builder.mode === "items") { if (IP) IP.onResult(obj); return; }
-    // ---- mob list (Mobs mode) — detail form (Build.Mob) is Task 6 ----
+    // ---- mob editor (Mobs mode) ----
     if (ns === "Build.Mobs") { if (MP) MP.render(obj); return; }
+    if (ns === "Build.Mob") { if (MP) MP.renderForm(obj); return; }
+    if (ns === "Build.Result" && window.Builder.mode === "mobs") { if (MP) MP.onResult(obj); return; }
     // ---- room editor (Rooms mode) ----
     if (ns === "Build.Result") {
       if (obj && obj.ok) {
