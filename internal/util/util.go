@@ -1023,7 +1023,7 @@ var unicodeToAscii = map[rune]string{
 	'☀': "*", '☾': "(", '☽': ")",
 	'\uFE0F': "", // emoji variation selector — drop (the "trailing bytes" leak)
 	'\uFE0E': "", // text-presentation selector — drop too, for safety
-	'⚡': "!", '❄': "*", '✦': "*", '✧': "*", '❆': "*", '❅': "*",
+	'⚡':      "!", '❄': "*", '✦': "*", '✧': "*", '❆': "*", '❅': "*",
 	// Map / directional
 	'▲': "^", '▼': "v", '△': "^", '▽': "v",
 	'≈': "~", '⌂': "#", '◆': "*", '●': "o", '○': "o",
