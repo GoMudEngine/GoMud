@@ -1,5 +1,29 @@
 # DOGMud Patch Notes
 
+## 2026-07-23 — The bestiary drawer (staff)
+
+The builder's table grows a third drawer: **Mobs**. Staff can now browse every
+creature and townsperson in the world from a searchable, zone-filtered list and
+author them whole from the web — name and description, species and stats,
+temperament and combat instincts, the emotes they idle with, the loot they
+carry, the wares they sell, the schedules they keep, the friends and rivals
+they gossip about, right down to the gear on their backs. A collapsible
+Advanced drawer holds the strange machinery: behavior archetypes, script
+hooks, spawn mutations, corpse overrides, even a talking-profile for the rare
+chatty one.
+
+The dangerous references are all picked from lists the server itself supplies —
+a schedule, a patrol, a species — so a typo can't brick the next boot; and the
+few raw numbers that remain are checked at save with a plain explanation when
+they don't resolve. Deleting a mob is guarded the same way items are: if a room
+still spawns it, a quest still names it, another mob still gossips about it, or
+a dialogue file still answers for it, the delete says so and points at each one.
+
+Best of all, a **test spawn** control drops one live copy of a template into
+any zone and room you pick — no need to be logged into the game — so a freshly
+authored bruiser can be walked to, looked at, and fought seconds after it's
+saved.
+
 ## 2026-07-23 — The armory drawer (staff)
 
 The builder's table gains a second drawer. Staff can flip **`/build`** from
