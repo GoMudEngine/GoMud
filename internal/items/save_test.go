@@ -95,6 +95,23 @@ func TestCanonicalizeItemNames_PreservesMinorWords(t *testing.T) {
 	}
 }
 
+// SaveItemSpec calls Validate(), which rejects an invalid proc — so a bad proc
+// from the web editor returns an error (red toast) instead of persisting. If
+// this ever fails, SaveItemSpec has stopped validating.
+func TestSaveItemSpec_RejectsInvalidProc(t *testing.T) {
+	dir := t.TempDir()
+	pointItemsAt(t, dir)
+	spec := ItemSpec{ItemId: 10009, Name: "Bad Blade", Type: Weapon, Description: "d", Hands: 1,
+		NotSalable: true, DamageMultiplier: 1.0,
+		Procs: []ItemProc{{Trigger: "on_wobble", Effect: "lifesteal", Chance: 50}}, // bad trigger
+	}
+	items[spec.ItemId] = &spec
+	t.Cleanup(func() { delete(items, 10009) })
+	if err := SaveItemSpec(spec); err == nil {
+		t.Fatal("expected SaveItemSpec to reject an invalid proc trigger")
+	}
+}
+
 func TestDeleteItemSpec_RemovesFileAndCache(t *testing.T) {
 	dir := t.TempDir()
 	pointItemsAt(t, dir)
