@@ -7,9 +7,11 @@ package gmcp
 
 import (
 	"sort"
+	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/statmods"
 )
 
@@ -91,11 +93,13 @@ type itemUpdateReq struct {
 
 // ---- server -> client detail (Build.Item) ----
 type itemDetail struct {
-	itemUpdateReq          // same field set, echoed back
-	Types         []string `json:"types"`
-	Subtypes      []string `json:"subtypes"`
-	Elements      []string `json:"elements"`
-	Stats         []string `json:"stats"`
+	itemUpdateReq                       // same field set, echoed back
+	Types         []string              `json:"types"`
+	Subtypes      []string              `json:"subtypes"`
+	Elements      []string              `json:"elements"`
+	Stats         []string              `json:"stats"`
+	VendorCats    []string              `json:"vendorCats"`       // valid vendor categories for the checkboxes
+	Ranges        map[string][2]float64 `json:"ranges,omitempty"` // observed min–max per numeric field, across items of this type
 }
 
 // itemListRow is one row of Build.Items.
@@ -119,6 +123,7 @@ type itemDeps struct {
 	del        func(id int) error
 	create     func(s items.ItemSpec) (int, error)
 	references func(id int) []itemRef
+	ranges     func(itemType string) map[string][2]float64
 }
 
 func realItemDeps() itemDeps {
@@ -128,6 +133,7 @@ func realItemDeps() itemDeps {
 		del:        items.DeleteItemSpec,
 		create:     items.CreateNewItemFile,
 		references: scanItemReferences,
+		ranges:     itemRangesForType,
 	}
 }
 
@@ -174,9 +180,15 @@ func buildItemGet(d itemDeps, itemId int) (itemDetail, bool) {
 	if s == nil {
 		return itemDetail{}, false
 	}
+	var ranges map[string][2]float64
+	if d.ranges != nil {
+		ranges = d.ranges(string(s.Type))
+	}
 	return itemDetail{
 		itemUpdateReq: specToReq(s),
 		Types:         itemTypeIds(), Subtypes: itemSubtypeIds(), Elements: itemElementIds(), Stats: statModNames(),
+		VendorCats: shops.ValidVendorCategories,
+		Ranges:     ranges,
 	}, true
 }
 
@@ -217,6 +229,19 @@ func buildItemUpdate(d itemDeps, req itemUpdateReq) BuildResult {
 	if req.Name == "" || req.Type == "" {
 		return buildErr("name and type are required")
 	}
+	// A salable item (not marked not-salable, no quest token) with no valid
+	// vendor category bricks the server at its next boot (ValidateVendorCategories
+	// panics), so refuse to save it into that state — surface the fix instead.
+	if !req.NotSalable && req.QuestToken == "" {
+		if len(req.VendorCategories) == 0 {
+			return buildErr("a salable item needs at least one vendor category (%s) — or mark it not-salable", strings.Join(shops.ValidVendorCategories, ", "))
+		}
+		for _, c := range req.VendorCategories {
+			if !shops.IsValidVendorCategory(c) {
+				return buildErr("unknown vendor category %q; valid: %s", c, strings.Join(shops.ValidVendorCategories, ", "))
+			}
+		}
+	}
 	if err := d.save(reqToSpec(base, req)); err != nil {
 		return buildErr("could not save item %d: %s", req.ItemId, err.Error())
 	}
@@ -242,12 +267,85 @@ func buildItemCreate(d itemDeps, itemType string) BuildResult {
 	}
 	// Name must be canonical Title casing or the item loader panics on the next
 	// boot (CanonicalizeItemNames in the items package enforces this on save too).
-	seed := items.ItemSpec{Type: items.ItemType(itemType), Name: "New Item", Description: "An unfinished item.", Hands: 1}
+	// NotSalable so a freshly-created stub (no vendor categories yet) can't brick
+	// the next boot via ValidateVendorCategories — the author clears it once the
+	// item is categorized and ready to sell.
+	seed := items.ItemSpec{Type: items.ItemType(itemType), Name: "New Item", Description: "An unfinished item.", Hands: 1, NotSalable: true}
 	id, err := d.create(seed)
 	if err != nil {
 		return buildErr("%s", err.Error())
 	}
 	return BuildResult{Ok: true, ItemId: id}
+}
+
+// ---- observed value ranges ----
+
+// numericRangeFields are the numeric item fields the editor annotates with the
+// min–max observed across other items of the SAME type, so an author sees what
+// values are normal (e.g. weapon damage multipliers 0.30–3.50). Keys match the
+// form field keys. Zero values are skipped so a range reflects items that
+// actually use the field, not the many that leave it unset.
+var numericRangeFields = []struct {
+	key string
+	get func(*items.ItemSpec) float64
+}{
+	{"value", func(s *items.ItemSpec) float64 { return float64(s.Value) }},
+	{"weight", func(s *items.ItemSpec) float64 { return s.Weight }},
+	{"damageMultiplier", func(s *items.ItemSpec) float64 { return s.DamageMultiplier }},
+	{"spellDamageMultiplier", func(s *items.ItemSpec) float64 { return s.SpellDamageMultiplier }},
+	{"speedMultiplier", func(s *items.ItemSpec) float64 { return s.SpeedMultiplier }},
+	{"parryRating", func(s *items.ItemSpec) float64 { return float64(s.ParryRating) }},
+	{"blockRating", func(s *items.ItemSpec) float64 { return float64(s.BlockRating) }},
+	{"reach", func(s *items.ItemSpec) float64 { return s.Reach }},
+	{"grappleModifier", func(s *items.ItemSpec) float64 { return s.GrappleModifier }},
+	{"escapeModifier", func(s *items.ItemSpec) float64 { return s.EscapeModifier }},
+	{"physicalMitigation", func(s *items.ItemSpec) float64 { return float64(s.PhysicalMitigation) }},
+	{"magicalMitigation", func(s *items.ItemSpec) float64 { return float64(s.MagicalMitigation) }},
+	{"convictionMitigation", func(s *items.ItemSpec) float64 { return float64(s.ConvictionMitigation) }},
+	{"staminaCost", func(s *items.ItemSpec) float64 { return float64(s.StaminaCost) }},
+	{"waitRounds", func(s *items.ItemSpec) float64 { return float64(s.WaitRounds) }},
+	{"minStrength", func(s *items.ItemSpec) float64 { return float64(s.MinStrength) }},
+	{"toxicity", func(s *items.ItemSpec) float64 { return float64(s.Toxicity) }},
+	{"weightReduction", func(s *items.ItemSpec) float64 { return s.WeightReduction }},
+	{"bagCapacity", func(s *items.ItemSpec) float64 { return float64(s.BagCapacity) }},
+	{"bandolierCapacity", func(s *items.ItemSpec) float64 { return float64(s.BandolierCapacity) }},
+}
+
+func itemRangesForType(itemType string) map[string][2]float64 {
+	type mm struct {
+		min, max float64
+	}
+	acc := map[string]*mm{}
+	for _, s := range items.GetAllItemSpecs() {
+		if string(s.Type) != itemType {
+			continue
+		}
+		sp := s // loop-copy address is fine within the iteration
+		for _, f := range numericRangeFields {
+			v := f.get(&sp)
+			if v == 0 {
+				continue
+			}
+			if a := acc[f.key]; a == nil {
+				acc[f.key] = &mm{v, v}
+			} else {
+				if v < a.min {
+					a.min = v
+				}
+				if v > a.max {
+					a.max = v
+				}
+			}
+		}
+	}
+	if len(acc) == 0 {
+		return nil
+	}
+	out := make(map[string][2]float64, len(acc))
+	for k, a := range acc {
+		out[k] = [2]float64{a.min, a.max}
+	}
+	return out
 }
 
 // ---- enum providers ----

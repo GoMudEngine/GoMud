@@ -171,6 +171,21 @@
     this.fields = {};
     var F = this.fields;
 
+    // Compose a field's hint: its static description plus, when the server sent
+    // an observed min–max for this field across items of the same type, a
+    // "seen 0.30–3.50" span so the author knows what values are normal.
+    var RANGES = detail.ranges || {};
+    function fmtNum(n, isInt) { return isInt ? String(Math.round(n)) : String(Math.round(n * 100) / 100); }
+    function hintFor(key, isInt) {
+      var base = HINTS[key] || "";
+      var r = RANGES[key];
+      if (r && r.length === 2) {
+        var span = "seen " + fmtNum(r[0], isInt) + "–" + fmtNum(r[1], isInt);
+        base = base ? base + " · " + span : span;
+      }
+      return base;
+    }
+
     insp.appendChild(ce("h2", { text: "Item #" + detail.itemId }));
 
     // helpers bound to F
@@ -178,7 +193,7 @@
       var i = ce("input", { type: "text" }); i.value = val == null ? "" : val;
       i.addEventListener("input", markDirty);
       F[key] = function () { return i.value; };
-      return field(label, i, key);
+      return field(label, i, hintFor(key, false));
     }
     function numField(label, key, val, step) {
       // Fields created without a fractional step are integer-typed on the
@@ -194,7 +209,7 @@
         if (i.value !== "") i.value = String(Math.round(parseFloat(i.value) || 0));
       });
       F[key] = function () { var n = parseFloat(i.value) || 0; return isInt ? Math.round(n) : n; };
-      return field(label, i, key);
+      return field(label, i, hintFor(key, isInt));
     }
     function checkField(label, key, val) {
       var cb = ce("input", { type: "checkbox" }); cb.checked = !!val; cb.addEventListener("change", markDirty);
@@ -212,7 +227,7 @@
       s.addEventListener("change", markDirty);
       if (key === "type") s.addEventListener("change", function () { rerenderTypeSections(s.value); });
       F[key] = function () { var v = s.value; return v; };
-      return field(label, s, key);
+      return field(label, s, hintFor(key, false));
     }
 
     // Common
@@ -222,15 +237,24 @@
     insp.appendChild(textField("Simple name", "nameSimple", detail.nameSimple));
     var desc = ce("textarea", {}); desc.value = detail.description || ""; desc.addEventListener("input", markDirty);
     F.description = function () { return desc.value; };
-    insp.appendChild(field("Description", desc, "description"));
+    insp.appendChild(field("Description", desc, hintFor("description", false)));
     insp.appendChild(selectField("Type", "type", detail.type, detail.types || []));
     insp.appendChild(selectField("Subtype", "subtype", detail.subtype, [""].concat(detail.subtypes || [])));
     insp.appendChild(ce("div", { "class": "row" }, [numField("Value", "value", detail.value), numField("Weight", "weight", detail.weight, "0.1")]));
     insp.appendChild(ce("div", { "class": "row" }, [numField("Uses", "uses", detail.uses), selectField("Rarity", "rarityTier", detail.rarityTier, RARITY)]));
-    var vc = ce("input", { type: "text", placeholder: "comma-separated" }); vc.value = (detail.vendorCategories || []).join(", ");
-    vc.addEventListener("input", markDirty);
-    F.vendorCategories = function () { return vc.value.split(",").map(function (s) { return s.trim(); }).filter(Boolean); };
-    insp.appendChild(field("Vendor categories", vc, "vendorCategories"));
+    // Vendor categories as checkboxes from the valid set — a salable item needs
+    // at least one, and a bad value would brick the server at boot, so no free text.
+    var vcSel = {}; (detail.vendorCategories || []).forEach(function (c) { vcSel[c] = true; });
+    var vcChecks = [];
+    var vcBox = ce("div", { "class": "flags" });
+    (detail.vendorCats || []).forEach(function (c) {
+      var cb = ce("input", { type: "checkbox" }); cb.checked = !!vcSel[c]; cb.addEventListener("change", markDirty);
+      vcBox.appendChild(ce("label", {}, [cb, ce("span", { text: " " + c })]));
+      vcChecks.push({ cat: c, cb: cb });
+    });
+    F.vendorCategories = function () { return vcChecks.filter(function (x) { return x.cb.checked; }).map(function (x) { return x.cat; }); };
+    insp.appendChild(ce("div", {}, [ce("label", { text: "Vendor categories" }), vcBox,
+      ce("div", { style: "font-size:10px;color:var(--gold-dim);margin-top:2px;", text: "salable items need ≥1 (else check not-salable)" })]));
     var flags = ce("div", { "class": "flags" }, [
       checkField("not-salable", "notSalable", detail.notSalable),
       checkField("never-drops", "neverDrops", detail.neverDrops),
@@ -271,7 +295,7 @@
     this.typeSections = ce("div", {});
     insp.appendChild(this.typeSections);
     var self = this;
-    function rerenderTypeSections(type) { self.buildTypeSections(self.typeSections, type, detail, F, markDirty, field, numField, textField, checkField, selectField); }
+    function rerenderTypeSections(type) { self.buildTypeSections(self.typeSections, type, detail, F, markDirty, field, numField, textField, checkField, selectField, hintFor); }
     rerenderTypeSections(detail.type);
 
     // Save + delete row
@@ -285,10 +309,9 @@
     this.setDirty(false);
   };
 
-  function field(labelText, input, hintKey) {
+  function field(labelText, input, hint) {
     var kids = [ce("label", { text: labelText }), input];
-    var h = hintKey && HINTS[hintKey];
-    if (h) kids.push(ce("div", { style: "font-size:10px;color:var(--gold-dim);margin-top:2px;", text: h }));
+    if (hint) kids.push(ce("div", { style: "font-size:10px;color:var(--gold-dim);margin-top:2px;", text: hint }));
     return ce("div", {}, kids);
   }
   function sectionTitle(t) { return ce("h3", { text: t }); }
@@ -299,7 +322,7 @@
     if (s) s.disabled = !d;
   };
 
-  Panel.buildTypeSections = function (host, type, detail, F, markDirty, field, numField, textField, checkField, selectField) {
+  Panel.buildTypeSections = function (host, type, detail, F, markDirty, field, numField, textField, checkField, selectField, hintFor) {
     host.innerHTML = "";
     var isArmor = ARMOR_SLOTS.indexOf(type) !== -1;
     var isConsum = CONSUMABLE.indexOf(type) !== -1;
@@ -325,7 +348,7 @@
       var bf = ce("input", { type: "text", placeholder: "comma buff ids" }); bf.value = (detail.buffIds || []).join(", ");
       bf.addEventListener("input", markDirty);
       F.buffIds = function () { return bf.value.split(",").map(function (s) { return parseInt(s.trim(), 10); }).filter(function (n) { return !isNaN(n); }); };
-      host.appendChild(field("Buff ids", bf, "buffIds"));
+      host.appendChild(field("Buff ids", bf, hintFor("buffIds", false)));
       host.appendChild(ce("div", { "class": "row" }, [numField("Toxicity", "toxicity", detail.toxicity), numField("Bottle aging ×", "bottleAgingMultiplier", detail.bottleAgingMultiplier, "0.05")]));
       host.appendChild(sectionTitle("Aging (rounds)"));
       host.appendChild(ce("div", { "class": "row" }, [numField("Ferment", "fermentRounds", detail.fermentRounds), numField("Peak", "peakRounds", detail.peakRounds)]));

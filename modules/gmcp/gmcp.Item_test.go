@@ -36,6 +36,7 @@ func (w *fakeItemWorld) deps() itemDeps {
 			return s.ItemId, nil
 		},
 		references: func(id int) []itemRef { return nil },
+		ranges:     func(string) map[string][2]float64 { return map[string][2]float64{"damageMultiplier": {0.3, 3.5}} },
 	}
 }
 
@@ -45,7 +46,8 @@ func TestBuildItemUpdate_RoundTripsFields(t *testing.T) {
 	res := buildItemUpdate(w.deps(), itemUpdateReq{
 		ItemId: 10001, Name: "Keen Blade", Type: string(items.Weapon), Description: "Sharp.",
 		Value: 55, Weight: 3, DamageMultiplier: 0.9, Hands: 1, RarityTier: 30,
-		StatMods: map[string]int{"strength": 2},
+		VendorCategories: []string{"blacksmithing"},
+		StatMods:         map[string]int{"strength": 2},
 	})
 	if !res.Ok {
 		t.Fatalf("update should succeed, got %+v", res)
@@ -81,13 +83,39 @@ func TestBuildItemUpdate_PreservesUncoveredFields(t *testing.T) {
 	// Reserve/voice fields aren't in the form payload — they must survive a Save.
 	w.specs[10001] = &items.ItemSpec{ItemId: 10001, Name: "Old", Type: items.Weapon, Hands: 1,
 		ReserveConvictionPct: 0.25, VoiceId: "aegis"}
-	res := buildItemUpdate(w.deps(), itemUpdateReq{ItemId: 10001, Name: "New", Type: "weapon", Description: "d"})
+	res := buildItemUpdate(w.deps(), itemUpdateReq{ItemId: 10001, Name: "New", Type: "weapon", Description: "d", NotSalable: true})
 	if !res.Ok {
 		t.Fatal(res)
 	}
 	got := w.saved[0]
 	if got.ReserveConvictionPct != 0.25 || got.VoiceId != "aegis" {
 		t.Errorf("form-omitted fields must survive Save, got reserve=%v voice=%q", got.ReserveConvictionPct, got.VoiceId)
+	}
+}
+
+// A salable item with no valid vendor category bricks the next boot
+// (ValidateVendorCategories panics), so the editor must refuse to save it.
+func TestBuildItemUpdate_GuardsVendorCategories(t *testing.T) {
+	w := newFakeItemWorld()
+	w.specs[10001] = &items.ItemSpec{ItemId: 10001, Name: "X", Type: items.Weapon}
+
+	// Salable, no categories -> rejected, nothing saved.
+	if res := buildItemUpdate(w.deps(), itemUpdateReq{ItemId: 10001, Name: "Blade", Type: "weapon", Description: "d"}); res.Ok {
+		t.Error("salable item with no vendor category must be rejected")
+	}
+	// Salable, unknown category -> rejected.
+	if res := buildItemUpdate(w.deps(), itemUpdateReq{ItemId: 10001, Name: "Blade", Type: "weapon", Description: "d", VendorCategories: []string{"wizardry"}}); res.Ok {
+		t.Error("unknown vendor category must be rejected")
+	}
+	if len(w.saved) != 0 {
+		t.Errorf("no save on validation failure, got %d", len(w.saved))
+	}
+	// Not-salable OR a valid category -> allowed.
+	if res := buildItemUpdate(w.deps(), itemUpdateReq{ItemId: 10001, Name: "Blade", Type: "weapon", Description: "d", NotSalable: true}); !res.Ok {
+		t.Errorf("not-salable item should be allowed without categories: %+v", res)
+	}
+	if res := buildItemUpdate(w.deps(), itemUpdateReq{ItemId: 10001, Name: "Blade", Type: "weapon", Description: "d", VendorCategories: []string{"blacksmithing"}}); !res.Ok {
+		t.Errorf("valid category should be allowed: %+v", res)
 	}
 }
 
@@ -118,6 +146,9 @@ func TestBuildItemGet_MapsFieldsAndEnums(t *testing.T) {
 	}
 	if len(d.Types) == 0 || len(d.Subtypes) == 0 || len(d.Stats) == 0 {
 		t.Error("detail must ship enum lists for the dropdowns")
+	}
+	if r, ok := d.Ranges["damageMultiplier"]; !ok || r[0] != 0.3 || r[1] != 3.5 {
+		t.Errorf("detail must ship observed value ranges, got %+v", d.Ranges)
 	}
 	if _, ok := buildItemGet(w.deps(), 99999); ok {
 		t.Error("missing item should return not-found")
