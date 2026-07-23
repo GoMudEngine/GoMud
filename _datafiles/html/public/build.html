@@ -109,7 +109,9 @@
   #inspector button.mini { background: var(--panel); color: var(--parch); border: 1px solid var(--tooled); border-radius: 4px; padding: 2px 7px; font: inherit; font-size: 12px; cursor: pointer; }
   #inspector button.mini:hover { border-color: var(--gold); }
   #inspector button.rm { color: var(--danger); border-color: transparent; padding: 2px 6px; }
-  #inspector .save-row { position: sticky; bottom: 0; background: var(--panel); padding: 10px 0 4px; margin-top: 10px; }
+  /* Not sticky: a bottom-pinned action bar hid the Component/Bag and Advanced
+     sections behind it. The form scrolls to Save/Delete at its natural end. */
+  #inspector .save-row { background: var(--panel); padding: 10px 0 4px; margin-top: 14px; border-top: 1px solid var(--tooled); }
   #inspector .save-row button { width: 100%; padding: 8px; background: var(--gold); color: var(--ink); font-weight: bold; border: none; border-radius: 4px; cursor: pointer; }
   #inspector .save-row button:disabled { opacity: .45; cursor: default; }
   #addexit { border: 1px solid var(--tooled); border-radius: 5px; padding: 8px; margin-top: 6px; }
