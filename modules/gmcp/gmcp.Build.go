@@ -38,6 +38,7 @@ type BuildResult struct {
 	RoomId int       `json:"roomId,omitempty"` // e.g. the newly created room, or the affected room
 	ItemId int       `json:"itemId,omitempty"` // e.g. the created/updated item
 	Refs   []itemRef `json:"refs,omitempty"`   // Build.Item.Delete: what still references a blocked item
+	MobId  int       `json:"mobId,omitempty"`  // e.g. the created/updated/spawned mob
 }
 
 func buildErr(format string, args ...any) BuildResult {
@@ -357,6 +358,40 @@ func (g *GMCPModule) handleBuildOp(e events.Event) events.ListenerReturn {
 		if res.Ok {
 			sendItemList(uid)
 		}
+
+	// ---- mob editor (admin web-building 3) ----
+	case `Build.Mob.List`:
+		sendMobList(uid)
+	case `Build.Mob.Get`:
+		var req mobGetReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Mob.Get payload"))
+			break
+		}
+		if d, ok := buildMobGet(realMobDeps(), req.MobId); ok {
+			sendMobDetail(uid, d)
+		} else {
+			sendBuildResult(uid, buildErr("mob %d not found", req.MobId))
+		}
+	case `Build.Mob.Create`:
+		var req mobCreateReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Mob.Create payload"))
+			break
+		}
+		res := buildMobCreate(realMobDeps(), req.Zone)
+		sendBuildResult(uid, res)
+		sendMobList(uid)
+	case `Build.Mob.Update`:
+		var req mobUpdateReq
+		req.LLMProfileJSON = "-" // sentinel: field absent from the payload = leave profile untouched
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Mob.Update payload"))
+			break
+		}
+		sendBuildResult(uid, buildMobUpdate(realMobDeps(), req))
+		sendMobList(uid)
+		// Build.Mob.Delete — Task 3; Build.Mob.Spawn — Task 4
 	}
 	return events.Continue
 }
