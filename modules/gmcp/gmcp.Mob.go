@@ -34,6 +34,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/shops"
 	"github.com/GoMudEngine/GoMud/internal/species"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // ---- client -> server payloads ----
@@ -597,6 +598,9 @@ func scanMobReferences(mobId int) []mobRefEntry {
 		},
 		mercShops: func(yield func(int, string, []int)) {
 			for _, other := range mobs.AllMobTemplates() {
+				if int(other.MobId) == mobId {
+					continue
+				}
 				ids := []int{}
 				for _, si := range other.Character.Shop {
 					if si.MobId > 0 {
@@ -609,7 +613,7 @@ func scanMobReferences(mobId int) []mobRefEntry {
 			}
 		},
 		convPairs: func(yield func(string, []int)) {
-			dir := dataRoot + `/conversations/pairs`
+			dir := util.FilePath(dataRoot, `/`, `conversations`, `/`, `pairs`)
 			entries, err := os.ReadDir(dir)
 			if err != nil {
 				return // no pairs directory — nothing to scan (optional content)
@@ -639,7 +643,7 @@ func scanMobReferences(mobId int) []mobRefEntry {
 	// it needs the mob's own zone, not another mob/room/quest's data.
 	if m != nil {
 		zone := mobs.ZoneNameSanitize(m.Zone)
-		p := dataRoot + `/dialogue/` + zone + `/` + strconv.Itoa(mobId) + `.yaml`
+		p := util.FilePath(dataRoot, `/`, `dialogue`, `/`, zone, `/`, strconv.Itoa(mobId)+`.yaml`)
 		if _, err := os.Stat(p); err == nil {
 			refs = append(refs, mobRefEntry{Kind: "dialogue", Id: fmt.Sprintf("dialogue/%s/%d.yaml", zone, mobId)})
 		}

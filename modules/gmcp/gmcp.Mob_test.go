@@ -367,3 +367,28 @@ func TestScanMobReferences_FindsQuestRef(t *testing.T) {
 		t.Errorf("wrong quest ref: %+v", refs[0])
 	}
 }
+
+// TestScanMobReferences_DedupsAndCoversMercAndConversation exercises the two
+// mobRefIterators kinds not covered by the other scan tests (merc-shop,
+// conversation), and confirms a source whose yielded id list contains the
+// target mob id TWICE still produces exactly one ref — containsInt is a
+// membership check, not a counter, so a source can't double-report.
+func TestScanMobReferences_DedupsAndCoversMercAndConversation(t *testing.T) {
+	refs := scanMobReferencesWith(9538, mobRefIterators{
+		mercShops: func(yield func(sellerMobId int, name string, mobIds []int)) {
+			yield(9601, "Traveling Slaver", []int{9538, 9538}) // duplicate id from one source
+		},
+		convPairs: func(yield func(pairFile string, mobIds []int)) {
+			yield("conversations/pairs/9538_9600.yaml", []int{9538, 9600})
+		},
+	})
+	if len(refs) != 2 {
+		t.Fatalf("expected exactly 2 refs (one merc-shop, one conversation; the duplicate id must not double-count), got %+v", refs)
+	}
+	if refs[0].Kind != "merc-shop" || refs[0].Id != "mob 9601 (Traveling Slaver) sells it" {
+		t.Errorf("wrong merc-shop ref: %+v", refs[0])
+	}
+	if refs[1].Kind != "conversation" || refs[1].Id != "conversations/pairs/9538_9600.yaml" {
+		t.Errorf("wrong conversation ref: %+v", refs[1])
+	}
+}
