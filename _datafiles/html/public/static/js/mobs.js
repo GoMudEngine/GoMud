@@ -47,6 +47,9 @@
     saving: false,
     deleting: false,
     creating: false,
+    spawning: false,          // a Build.Mob.Spawn is in flight
+    spawnCheckPending: false, // a Build.Room.Get triggered by the test-spawn "Check" button is in flight
+    _spawnUI: null,           // { roomInput, spawnBtn, statusEl, checkedRoomId } for the current form
     advancedOpen: false,
     _advMobId: 0,
   };
@@ -134,6 +137,85 @@
     return Object.keys(d).sort();
   }
 
+  // ---- test spawn (Task 7) ----
+  // A "Test spawn" row at the top of the form: pick a zone (defaults to the
+  // mob's own) + type a room id, Check it (Build.Room.Get) to confirm the
+  // target before Spawn is enabled, then Build.Mob.Spawn it in. The
+  // buildRoomDetail payload (Build.Room) carries only roomId/title/etc — no
+  // zone field — so the zone dropdown is informational only in this v1; a
+  // successful Check just shows the room's title and enables Spawn (no
+  // zone-match gate, since the payload doesn't support one).
+  Panel.buildTestSpawnRow = function (detail, enums) {
+    var self = this;
+    var wrap = ce("div", { style: "border:1px solid var(--tooled);border-radius:5px;padding:8px;margin-bottom:12px;" });
+    wrap.appendChild(ce("h3", { text: "Test spawn", style: "margin-top:0;" }));
+
+    var zoneSel = ce("select", {});
+    (enums.zones || []).forEach(function (z) {
+      var o = ce("option", { value: z, text: z });
+      if (z === detail.zone) o.selected = true;
+      zoneSel.appendChild(o);
+    });
+
+    var roomInput = ce("input", { type: "number", step: "1", placeholder: "room id" });
+    var checkBtn = ce("button", { type: "button", "class": "mini", text: "Check" });
+    var spawnBtn = ce("button", { type: "button", text: "Spawn", disabled: "disabled" });
+    spawnBtn.style.cssText = "background:var(--gold);color:var(--ink);font-weight:bold;" +
+      "border:none;border-radius:4px;padding:4px 12px;cursor:pointer;";
+    var statusEl = ce("span", { style: "font-size:11px;color:var(--gold-dim);" });
+
+    var ui = { roomInput: roomInput, spawnBtn: spawnBtn, statusEl: statusEl, checkedRoomId: 0 };
+    this._spawnUI = ui;
+
+    function resetCheck() {
+      ui.checkedRoomId = 0;
+      spawnBtn.disabled = true;
+      statusEl.textContent = "";
+    }
+    // Editing the room id after a successful Check invalidates it — Spawn
+    // must not fire against a stale/never-checked room.
+    roomInput.addEventListener("input", resetCheck);
+
+    checkBtn.addEventListener("click", function () {
+      var roomId = parseInt(roomInput.value, 10);
+      if (!roomId || roomId <= 0) { toast("Enter a room id to check", true); return; }
+      resetCheck();
+      statusEl.textContent = "checking…";
+      self.spawnCheckPending = true;
+      gmcp("Build.Room.Get", { roomId: roomId });
+    });
+
+    spawnBtn.addEventListener("click", function () {
+      if (!ui.checkedRoomId || !detail.mobId) return;
+      var roomId = ui.checkedRoomId;
+      self.spawning = true;
+      spawnBtn.disabled = true;
+      gmcp("Build.Mob.Spawn", { mobId: detail.mobId, roomId: roomId });
+      // No accidental double-spawn: hold the button disabled for 2s regardless
+      // of when/whether the result arrives. Only re-enable if the checked room
+      // is still the one this click fired for (the input wasn't edited away).
+      setTimeout(function () {
+        if (ui.checkedRoomId === roomId) spawnBtn.disabled = false;
+      }, 2000);
+    });
+
+    wrap.appendChild(ce("div", { "class": "row" }, [labelWrap("Zone", zoneSel), labelWrap("Room id", roomInput)]));
+    wrap.appendChild(ce("div", { style: "margin-top:6px;display:flex;align-items:center;gap:8px;" },
+      [checkBtn, spawnBtn, statusEl]));
+    return wrap;
+  };
+
+  // Build.Room arriving while mode==="mobs" (routed here by build.html instead
+  // of the room inspector) is the test-spawn Check response.
+  Panel.onRoomCheck = function (obj) {
+    this.spawnCheckPending = false;
+    var ui = this._spawnUI;
+    if (!ui || !obj || !obj.roomId) return;
+    ui.checkedRoomId = obj.roomId;
+    ui.statusEl.textContent = "#" + obj.roomId + " " + (obj.title || "(untitled)");
+    ui.spawnBtn.disabled = false;
+  };
+
   // ---- form ----
   Panel.renderForm = function (detail) {
     this.detail = detail;
@@ -146,6 +228,7 @@
     var enums = detail.enums || {};
 
     insp.appendChild(ce("h2", { text: "Mob #" + detail.mobId }));
+    insp.appendChild(this.buildTestSpawnRow(detail, enums));
 
     // ---- field builders bound to this render's F/markDirty closure ----
     function textField(label, key, val, hint) {
@@ -648,8 +731,23 @@
         if (obj.mobId) { this.selectedId = obj.mobId; gmcp("Build.Mob.Get", { mobId: obj.mobId }); }
         return;
       }
+      if (this.spawning) {
+        this.spawning = false;
+        toast(obj.message || "Mob spawned.", false);
+        return;
+      }
     } else {
-      this.saving = false; this.deleting = false; this.creating = false;
+      this.saving = false; this.deleting = false; this.creating = false; this.spawning = false;
+      if (this.spawnCheckPending) {
+        this.spawnCheckPending = false;
+        if (this._spawnUI) {
+          this._spawnUI.checkedRoomId = 0;
+          this._spawnUI.spawnBtn.disabled = true;
+          this._spawnUI.statusEl.textContent = "room not found";
+        }
+        toast((obj && obj.error) || "Room check failed", true);
+        return;
+      }
       if (obj && obj.mobRefs && obj.mobRefs.length) this.showDeleteRefs(obj.mobRefs);
       toast((obj && obj.error) || "Mob error", true);
     }
@@ -671,6 +769,7 @@
   }
   Panel.clear = function () {
     this.detail = null; this.fields = null; this.dirty = false;
+    this._spawnUI = null; this.spawning = false; this.spawnCheckPending = false;
     clearMobInspector();
   };
 

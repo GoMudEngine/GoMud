@@ -271,6 +271,9 @@
     if (ns === "Build.Mobs") { if (MP) MP.render(obj); return; }
     if (ns === "Build.Mob") { if (MP) MP.renderForm(obj); return; }
     if (ns === "Build.Result" && window.Builder.mode === "mobs") { if (MP) MP.onResult(obj); return; }
+    // Build.Room while in Mobs mode is the test-spawn "Check" response
+    // (Build.Room.Get), not the room inspector's detail — route it there.
+    if (ns === "Build.Room" && window.Builder.mode === "mobs") { if (MP) MP.onRoomCheck(obj); return; }
     // ---- room editor (Rooms mode) ----
     if (ns === "Build.Result") {
       if (obj && obj.ok) {
