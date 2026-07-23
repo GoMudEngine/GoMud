@@ -1172,8 +1172,21 @@ func (m *Mob) Filename() string {
 	return fmt.Sprintf("%d-%s.yaml", m.Id(), filename)
 }
 
+// Filepath returns the mob's storage path relative to the mobs/ base dir:
+// "<zoneFolder>/<filename>". A mob authored with no home zone (a summon-only
+// template, or a new-mob stub not yet placed anywhere) sanitizes to an empty
+// zone folder — routed instead to the fixed "unzoned" folder, so it doesn't
+// collide with a bare filename at the mobs/ root. This is safe to introduce:
+// no existing mob has an empty Zone (every boot-loaded template carries an
+// authored zone), so there is no pre-existing on-disk "unzoned/" folder this
+// could collide with. Load/save stay consistent for zoneless mobs exactly as
+// for zoned ones, since the fileloader derives its expected on-disk path FROM
+// this method rather than the other way around.
 func (m *Mob) Filepath() string {
 	zone := ZoneNameSanitize(m.Zone)
+	if zone == "" {
+		zone = "unzoned"
+	}
 	return util.FilePath(zone, `/`, m.Filename())
 }
 

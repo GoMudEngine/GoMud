@@ -33,6 +33,9 @@
   function markDirty() { Panel.setDirty(true); }
 
   var STAT_KEYS = ["strength", "dexterity", "perception", "vitality", "willpower", "charisma"];
+  // Sentinel option value for the mob-list zone filter's "(unzoned)" bucket —
+  // distinct from "" (which the filter select already uses for "all zones").
+  var UNZONED_FILTER = " unzoned";
 
   var Panel = {
     rows: [],
@@ -47,9 +50,8 @@
     saving: false,
     deleting: false,
     creating: false,
-    spawning: false,          // a Build.Mob.Spawn is in flight
-    spawnCheckPending: false, // a Build.Room.Get triggered by the test-spawn "Check" button is in flight
-    _spawnUI: null,           // { roomInput, spawnBtn, statusEl, checkedRoomId } for the current form
+    spawning: false, // a Build.Mob.Spawn is in flight
+    _spawnUI: null,  // { zoneSel, roomSel, spawnBtn, statusEl, pendingZone } for the current form
     advancedOpen: false,
     _advMobId: 0,
   };
@@ -62,8 +64,11 @@
     host.innerHTML = "";
 
     var distinct = {};
-    this.rows.forEach(function (r) { distinct[r.zone] = true; });
-    this.zones = Object.keys(distinct).sort();
+    this.rows.forEach(function (r) { distinct[r.zone || ""] = true; });
+    // Real zone names only — the "(unzoned)" bucket (zone === "") is a fixed
+    // option added separately below, not sorted in among real zone names.
+    this.zones = Object.keys(distinct).filter(function (z) { return z; }).sort();
+    var hasUnzoned = !!distinct[""];
 
     var newBtn = ce("button", { "class": "newitem", text: "+ New Mob" });
     newBtn.addEventListener("click", promptNewMob);
@@ -80,6 +85,11 @@
       if (z === Panel.zoneFilter) o.selected = true;
       zoneSel.appendChild(o);
     });
+    if (hasUnzoned) {
+      var uo = ce("option", { value: UNZONED_FILTER, text: "(unzoned)" });
+      if (Panel.zoneFilter === UNZONED_FILTER) uo.selected = true;
+      zoneSel.appendChild(uo);
+    }
     zoneSel.addEventListener("change", function () { Panel.zoneFilter = zoneSel.value; Panel.drawRows(); });
     filters.appendChild(search);
     filters.appendChild(zoneSel);
@@ -97,13 +107,14 @@
     var zf = this.zoneFilter;
     var shown = 0;
     this.rows.forEach(function (r) {
-      if (zf && r.zone !== zf) return;
+      if (zf === UNZONED_FILTER) { if (r.zone) return; }
+      else if (zf && r.zone !== zf) return;
       if (q && String(r.id).indexOf(q) === -1 && (r.name || "").toLowerCase().indexOf(q) === -1) return;
       shown++;
       var row = ce("div", { "class": "irow" + (r.id === Panel.selectedId ? " sel" : "") });
       row.appendChild(ce("span", { "class": "iid", text: "#" + r.id + " " }));
       row.appendChild(document.createTextNode(r.name || "(unnamed)"));
-      row.appendChild(ce("span", { "class": "mzone", text: "  " + r.zone + " · pool " + r.statPool }));
+      row.appendChild(ce("span", { "class": "mzone", text: "  " + (r.zone || "(unzoned)") + " · pool " + r.statPool }));
       if (r.nonCombatant) row.appendChild(ce("span", { "class": "mbadge", text: "non-combatant" }));
       if (r.hasSchedule) row.appendChild(ce("span", { "class": "mbadge", text: "schedule" }));
       if (r.hasShop) row.appendChild(ce("span", { "class": "mbadge", text: "shop" }));
@@ -123,28 +134,32 @@
   function promptNewMob() {
     if (Panel.dirty && !window.confirm("Discard unsaved changes to this mob?")) return;
     var zones = Panel.zones.length ? Panel.zones : distinctZones();
-    var dflt = Panel.zoneFilter || (zones.length ? zones[0] : "");
-    var z = window.prompt("New mob — which zone?\n(" + zones.join(", ") + ")", dflt);
-    if (!z) return;
+    var dflt = (Panel.zoneFilter && Panel.zoneFilter !== UNZONED_FILTER)
+      ? Panel.zoneFilter
+      : (Panel.zoneFilter === UNZONED_FILTER ? "" : (zones.length ? zones[0] : ""));
+    // window.prompt returns null on Cancel but "" on OK with an empty field —
+    // the latter is a deliberate "(no zone)" choice (a summon-only / not-yet-
+    // placed template) and must NOT be treated as a cancel.
+    var z = window.prompt("New mob — which zone? Leave blank for (no zone).\n(" + zones.join(", ") + ")", dflt);
+    if (z === null) return;
     z = z.trim();
-    if (!z) return;
     Panel.creating = true;
     gmcp("Build.Mob.Create", { zone: z });
   }
   function distinctZones() {
     var d = {};
-    Panel.rows.forEach(function (r) { d[r.zone] = true; });
+    Panel.rows.forEach(function (r) { if (r.zone) d[r.zone] = true; });
     return Object.keys(d).sort();
   }
 
-  // ---- test spawn (Task 7) ----
+  // ---- test spawn (Task 7; reworked in the browser-eyeball fix round) ----
   // A "Test spawn" row at the top of the form: pick a zone (defaults to the
-  // mob's own) + type a room id, Check it (Build.Room.Get) to confirm the
-  // target before Spawn is enabled, then Build.Mob.Spawn it in. Build.Room
-  // now carries the room's zone (buildRoomDetail.Zone), so Check only enables
-  // Spawn when the room's actual zone matches the dropdown's selection at the
-  // moment Check was clicked — a bogus room id, or a room id from the wrong
-  // zone, is caught here before it can spawn anywhere silently.
+  // mob's own, or the first available zone for a zoneless mob template, which
+  // has none of its own to preselect) and a room from that zone's own
+  // dropdown, then Build.Mob.Spawn it in. The room list (Build.Room.List ->
+  // Build.Rooms) is scoped to the selected zone and existence-guaranteed by
+  // construction, so there is nothing left to "Check" — picking a room from
+  // the list is itself the confirmation a raw typed room id used to need.
   Panel.buildTestSpawnRow = function (detail, enums) {
     var self = this;
     var wrap = ce("div", { style: "border:1px solid var(--tooled);border-radius:5px;padding:8px;margin-bottom:12px;" });
@@ -157,74 +172,71 @@
       zoneSel.appendChild(o);
     });
 
-    var roomInput = ce("input", { type: "number", step: "1", placeholder: "room id" });
-    var checkBtn = ce("button", { type: "button", "class": "mini", text: "Check" });
+    var roomSel = ce("select", {});
     var spawnBtn = ce("button", { type: "button", text: "Spawn", disabled: "disabled" });
     spawnBtn.style.cssText = "background:var(--gold);color:var(--ink);font-weight:bold;" +
       "border:none;border-radius:4px;padding:4px 12px;cursor:pointer;";
     var statusEl = ce("span", { style: "font-size:11px;color:var(--gold-dim);" });
 
-    var ui = { roomInput: roomInput, spawnBtn: spawnBtn, statusEl: statusEl, checkedRoomId: 0, checkZone: "" };
+    var ui = { zoneSel: zoneSel, roomSel: roomSel, spawnBtn: spawnBtn, statusEl: statusEl, pendingZone: "" };
     this._spawnUI = ui;
 
-    function resetCheck() {
-      ui.checkedRoomId = 0;
+    function fillRoomPlaceholder(text) {
+      roomSel.innerHTML = "";
+      roomSel.appendChild(ce("option", { value: "", text: text, disabled: "disabled", selected: "selected" }));
+    }
+
+    // Re-requests the room list whenever the zone changes (and once on first
+    // render below). pendingZone guards against a stale Build.Rooms response
+    // (from a since-abandoned zone selection) repopulating the dropdown.
+    function requestRooms() {
       spawnBtn.disabled = true;
       statusEl.textContent = "";
+      if (!zoneSel.value) { fillRoomPlaceholder("(no zone selected)"); ui.pendingZone = ""; return; }
+      ui.pendingZone = zoneSel.value;
+      fillRoomPlaceholder("loading rooms…");
+      gmcp("Build.Room.List", { zone: zoneSel.value });
     }
-    // Editing the room id after a successful Check invalidates it — Spawn
-    // must not fire against a stale/never-checked room.
-    roomInput.addEventListener("input", resetCheck);
-
-    checkBtn.addEventListener("click", function () {
-      var roomId = parseInt(roomInput.value, 10);
-      if (!roomId || roomId <= 0) { toast("Enter a room id to check", true); return; }
-      resetCheck();
-      statusEl.textContent = "checking…";
-      self.spawnCheckPending = true;
-      ui.checkZone = zoneSel.value; // the zone selected AT check-time is what the response is validated against
-      gmcp("Build.Room.Get", { roomId: roomId });
-    });
+    zoneSel.addEventListener("change", requestRooms);
+    roomSel.addEventListener("change", function () { spawnBtn.disabled = !roomSel.value; });
 
     spawnBtn.addEventListener("click", function () {
-      if (!ui.checkedRoomId || !detail.mobId) return;
-      var roomId = ui.checkedRoomId;
+      var roomId = parseInt(roomSel.value, 10);
+      if (!roomId || !detail.mobId) return;
       self.spawning = true;
       spawnBtn.disabled = true;
       gmcp("Build.Mob.Spawn", { mobId: detail.mobId, roomId: roomId });
       // No accidental double-spawn: hold the button disabled for 2s regardless
-      // of when/whether the result arrives. Only re-enable if the checked room
-      // is still the one this click fired for (the input wasn't edited away).
+      // of when/whether the result arrives. Only re-enable if the picked room
+      // is still the one this click fired for (the dropdown wasn't changed).
       setTimeout(function () {
-        if (ui.checkedRoomId === roomId) spawnBtn.disabled = false;
+        if (parseInt(roomSel.value, 10) === roomId) spawnBtn.disabled = false;
       }, 2000);
     });
 
-    wrap.appendChild(ce("div", { "class": "row" }, [labelWrap("Zone", zoneSel), labelWrap("Room id", roomInput)]));
+    wrap.appendChild(ce("div", { "class": "row" }, [labelWrap("Zone", zoneSel), labelWrap("Room", roomSel)]));
     wrap.appendChild(ce("div", { style: "margin-top:6px;display:flex;align-items:center;gap:8px;" },
-      [checkBtn, spawnBtn, statusEl]));
+      [spawnBtn, statusEl]));
+    fillRoomPlaceholder("— pick a room —");
+    requestRooms();
     return wrap;
   };
 
-  // Build.Room arriving while mode==="mobs" (routed here by build.html instead
-  // of the room inspector) is the test-spawn Check response. Spawn is enabled
-  // ONLY when the room's zone matches the zone selected at Check time —
-  // otherwise the title is still shown but Spawn stays disabled, with a
-  // message naming the actual zone so the mismatch is obvious.
-  Panel.onRoomCheck = function (obj) {
-    this.spawnCheckPending = false;
+  // Build.Rooms (from Build.Room.List), routed here by build.html — populates
+  // the test-spawn room dropdown for the currently-selected zone.
+  Panel.onRoomList = function (rows) {
     var ui = this._spawnUI;
-    if (!ui || !obj || !obj.roomId) return;
-    var title = obj.title || "(untitled)";
-    if (obj.zone && ui.checkZone && obj.zone !== ui.checkZone) {
-      ui.checkedRoomId = 0;
-      ui.spawnBtn.disabled = true;
-      ui.statusEl.textContent = "#" + obj.roomId + " " + title + " — room is in " + obj.zone + ", not " + ui.checkZone;
-      return;
-    }
-    ui.checkedRoomId = obj.roomId;
-    ui.statusEl.textContent = "#" + obj.roomId + " " + title;
-    ui.spawnBtn.disabled = false;
+    if (!ui) return;
+    // A response for a zone the admin has since changed away from — drop it
+    // rather than repopulating the dropdown with the wrong zone's rooms.
+    if (ui.pendingZone !== ui.zoneSel.value) return;
+    ui.roomSel.innerHTML = "";
+    ui.roomSel.appendChild(ce("option", { value: "", text: "— pick a room —", disabled: "disabled", selected: "selected" }));
+    (rows || []).forEach(function (r) {
+      ui.roomSel.appendChild(ce("option", { value: String(r.id), text: "#" + r.id + " — " + (r.title || "(untitled)") }));
+    });
+    ui.spawnBtn.disabled = true;
+    ui.statusEl.textContent = (rows || []).length ? "" : "no rooms in this zone";
   };
 
   // ---- form ----
@@ -509,7 +521,10 @@
     insp.appendChild(sectionTitle("Identity"));
     insp.appendChild(textField("Name", "name", detail.name));
     insp.appendChild(textAreaField("Description", "description", detail.description, "shown to players — wraps at ~78 chars"));
-    insp.appendChild(selectField("Zone", "zone", detail.zone, enums.zones || []));
+    // "(no zone)" is a summon-only / not-yet-placed template — a legal state
+    // the server accepts (Filepath() routes it to the unzoned/ folder).
+    var zoneOpts = [{ v: "", t: "(no zone)" }].concat(enums.zones || []);
+    insp.appendChild(selectField("Zone", "zone", detail.zone, zoneOpts));
     var speciesOpts = Object.keys(enums.species || {}).map(function (id) { return { v: id, t: enums.species[id] }; });
     insp.appendChild(selectField("Species", "speciesId", detail.speciesId, speciesOpts, true));
     insp.appendChild(chipsField("Adjectives", "adjectives", detail.adjectives));
@@ -710,7 +725,8 @@
     if (!this.detail) return;
     var req = this.gather();
     if (!req.name) { toast("Name is required", true); return; }
-    if (!req.zone) { toast("Zone is required", true); return; }
+    // Zone is intentionally NOT required — a mob template can be authored
+    // with no home zone (a summon-only kind, or a not-yet-placed new mob).
     this.saving = true;
     gmcp("Build.Mob.Update", req);
   };
@@ -748,21 +764,6 @@
         return;
       }
     } else {
-      // A failed Check (Build.Room.Get, routed here as a Build.Result error)
-      // must consume ONLY its own spawnCheckPending state and return — it must
-      // NOT fall into the blanket saving/deleting/creating/spawning reset
-      // below, or a Check that fails while e.g. a Save is in flight would
-      // silently swallow the Save's own (still-pending) result.
-      if (this.spawnCheckPending) {
-        this.spawnCheckPending = false;
-        if (this._spawnUI) {
-          this._spawnUI.checkedRoomId = 0;
-          this._spawnUI.spawnBtn.disabled = true;
-          this._spawnUI.statusEl.textContent = "room not found";
-        }
-        toast((obj && obj.error) || "Room check failed", true);
-        return;
-      }
       this.saving = false; this.deleting = false; this.creating = false; this.spawning = false;
       if (obj && obj.mobRefs && obj.mobRefs.length) this.showDeleteRefs(obj.mobRefs);
       toast((obj && obj.error) || "Mob error", true);
@@ -786,7 +787,7 @@
   Panel.clear = function () {
     this.detail = null; this.fields = null; this.dirty = false; this.selectedId = 0;
     this.saving = false; this.deleting = false; this.creating = false;
-    this._spawnUI = null; this.spawning = false; this.spawnCheckPending = false;
+    this._spawnUI = null; this.spawning = false;
     clearMobInspector();
   };
 

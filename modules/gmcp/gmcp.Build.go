@@ -102,6 +102,19 @@ type roomGetReq struct {
 	RoomId int `json:"roomId"`
 }
 
+type roomListReq struct {
+	Zone string `json:"zone"`
+}
+
+// buildRoomListRow is one row of Build.Rooms — the test-spawn room picker's
+// data source (admin web-building 3 fix round). Deliberately minimal (id +
+// title only): it exists so the mob editor's test-spawn control can offer a
+// per-zone room dropdown instead of asking the admin to type a raw room id.
+type buildRoomListRow struct {
+	Id    int    `json:"id"`
+	Title string `json:"title"`
+}
+
 type zoneCreateReq struct {
 	Name         string `json:"name"`
 	Biome        string `json:"biome"`
@@ -295,6 +308,14 @@ func (g *GMCPModule) handleBuildOp(e events.Event) events.ListenerReturn {
 		} else {
 			sendBuildResult(uid, buildErr("room %d not found", req.RoomId))
 		}
+
+	case `Build.Room.List`:
+		var req roomListReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Room.List payload"))
+			break
+		}
+		sendRoomList(uid, req.Zone)
 
 	case `Build.Zone.Create`:
 		var req zoneCreateReq
@@ -619,6 +640,24 @@ func buildRoomGet(d buildDeps, roomId int) (buildRoomDetail, bool) {
 	return detail, true
 }
 
+// buildRoomList returns every room in zone as {id, title}, sorted by id — the
+// test-spawn room picker's data source (mobs.js buildTestSpawnRow). Read-only;
+// unlike sendZoneMapFull it does not crawl the mapper or care about
+// reachability/foreign-room bleed, since the picker only needs a flat,
+// existence-guaranteed list of rooms the admin can choose to spawn into.
+func buildRoomList(zone string) []buildRoomListRow {
+	out := []buildRoomListRow{}
+	for _, id := range rooms.GetAllRoomIds() {
+		r := rooms.LoadRoom(id)
+		if r == nil || r.Zone != zone {
+			continue
+		}
+		out = append(out, buildRoomListRow{Id: r.RoomId, Title: r.Title})
+	}
+	sort.Slice(out, func(i, j int) bool { return out[i].Id < out[j].Id })
+	return out
+}
+
 // buildExitAdd adds an exit from req.RoomId. A spatial (compass-direction) exit
 // must lead to the adjacent same-plane cell (or into a non-Euclidean plane) and
 // auto-wires a reciprocal unless one-way; crossing between two Euclidean planes
@@ -750,6 +789,11 @@ func sendBuildResult(uid int, res BuildResult) {
 func sendRoomDetail(uid int, detail buildRoomDetail) {
 	detail.Biomes = validBiomeIds()
 	events.AddToQueue(GMCPOut{UserId: uid, Module: "Build.Room", Payload: detail})
+}
+
+// sendRoomList emits a Build.Rooms to the admin (the test-spawn room picker).
+func sendRoomList(uid int, zone string) {
+	events.AddToQueue(GMCPOut{UserId: uid, Module: "Build.Rooms", Payload: buildRoomList(zone)})
 }
 
 func validBiomeIds() []string {

@@ -16,6 +16,11 @@ type fakeMobWorld struct {
 	saved   []mobs.Mob
 	deleted []int
 	nextId  int
+	// zoneExistsCalls records every zone string zoneExists was consulted
+	// with, so a test can assert an empty zone is accepted WITHOUT ever
+	// reaching the zoneExists call (buildMobCreate/buildMobUpdate must
+	// short-circuit on "" before consulting it).
+	zoneExistsCalls []string
 }
 
 func newFakeMobWorld() *fakeMobWorld {
@@ -39,7 +44,7 @@ func (w *fakeMobWorld) deps() mobDeps {
 			w.specs[w.nextId] = &m
 			return w.nextId, nil
 		},
-		zoneExists: func(z string) bool { return z == "Testzone" },
+		zoneExists: func(z string) bool { w.zoneExistsCalls = append(w.zoneExistsCalls, z); return z == "Testzone" },
 		references: func(id int) []mobRefEntry { return nil },
 		spawn:      func(mobId, roomId int) (string, error) { return "", nil },
 	}
@@ -83,6 +88,48 @@ func TestBuildMobCreate_RejectsUnknownZone(t *testing.T) {
 	res := buildMobCreate(w.deps(), "Testzone")
 	if !res.Ok || res.MobId == 0 {
 		t.Fatalf("create should return an id, got %+v", res)
+	}
+}
+
+// TestBuildMobCreate_EmptyZoneAllowedWithoutConsultingZoneExists covers the
+// browser-eyeball fix round's zoneless-mob feature: a summon-only / not-yet-
+// placed template can be created with no zone at all. The empty string must
+// be accepted WITHOUT ever reaching zoneExists (only a non-empty, unknown
+// zone like "Nowhere" above is rejected).
+func TestBuildMobCreate_EmptyZoneAllowedWithoutConsultingZoneExists(t *testing.T) {
+	w := newFakeMobWorld()
+	res := buildMobCreate(w.deps(), "")
+	if !res.Ok || res.MobId == 0 {
+		t.Fatalf("create with an empty zone should succeed, got %+v", res)
+	}
+	for _, z := range w.zoneExistsCalls {
+		if z == "" {
+			t.Error("zoneExists must not be consulted for an empty zone")
+		}
+	}
+}
+
+// TestBuildMobUpdate_AllowsEmptyZoneWithoutConsultingZoneExists is the Update
+// counterpart: clearing an existing mob's zone (or saving a mob that already
+// has none) must succeed and must not consult zoneExists for "".
+func TestBuildMobUpdate_AllowsEmptyZoneWithoutConsultingZoneExists(t *testing.T) {
+	w := newFakeMobWorld()
+	base := &mobs.Mob{MobId: 90018, Zone: "Testzone"}
+	base.Character.Name = "Old Name"
+	w.specs[90018] = base
+
+	req := mobUpdateReq{MobId: 90018, Zone: "", Name: "Old Name", Description: "d", SpeciesId: 1}
+	res := buildMobUpdate(w.deps(), req)
+	if !res.Ok {
+		t.Fatalf("update clearing the zone should succeed, got %+v", res)
+	}
+	if w.saved[0].Zone != "" {
+		t.Errorf("expected zone cleared, got %q", w.saved[0].Zone)
+	}
+	for _, z := range w.zoneExistsCalls {
+		if z == "" {
+			t.Error("zoneExists must not be consulted for an empty zone")
+		}
 	}
 }
 

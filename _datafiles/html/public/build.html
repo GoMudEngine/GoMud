@@ -31,12 +31,19 @@
   #toolbar {
     flex: 0 0 auto;
     display: flex; align-items: center; gap: 14px;
+    /* Narrow windows (~600px and below) can't fit the brand + mode toggle +
+       zone/plane/floor controls + save button on one line. Let the toolbar
+       wrap onto extra rows instead of squeezing/truncating its children —
+       #toolbar has flex:0 0 auto inside #app's column layout, so a taller
+       toolbar just pushes #main (flex:1 1 auto, min-height:0) down/shrinks
+       it; it never overlaps the panels below. */
+    flex-wrap: wrap; row-gap: 8px;
     padding: 8px 14px;
     background: linear-gradient(#3a2818, #2b1d12);
     border-bottom: 2px solid var(--tooled);
     box-shadow: 0 2px 6px rgba(0,0,0,.5);
   }
-  #toolbar .brand { font-weight: bold; color: var(--gold); letter-spacing: .5px; }
+  #toolbar .brand { font-weight: bold; color: var(--gold); letter-spacing: .5px; white-space: nowrap; flex: 0 0 auto; }
   #toolbar .zone  { color: var(--parch); opacity: .85; }
   #toolbar label  { color: var(--gold-dim); font-size: 12px; }
   #toolbar select, #toolbar button {
@@ -46,11 +53,25 @@
   }
   #toolbar button { cursor: pointer; }
   #toolbar button:hover { border-color: var(--gold); }
-  #toolbar .spacer { flex: 1 1 auto; }
-  #mode-toggle { display: inline-flex; border: 1px solid var(--tooled); border-radius: 5px; overflow: hidden; }
+  #toolbar .spacer { flex: 1 1 auto; min-width: 0; }
+  #mode-toggle {
+    display: inline-flex; border: 1px solid var(--tooled); border-radius: 5px; overflow: hidden;
+    white-space: nowrap; flex: 0 0 auto;
+  }
   #mode-toggle .mode-btn { border: none; border-radius: 0; padding: 5px 12px; background: var(--panel); }
   #mode-toggle .mode-btn.active { background: var(--gold); color: var(--ink); font-weight: bold; }
-  #room-tools { display: inline-flex; align-items: center; gap: 14px; }
+  /* room-tools is allowed to shrink (unlike its nowrap siblings above) so it
+     absorbs the squeeze; once its box is narrower than its own children's
+     combined width, its OWN flex-wrap reflows the zone/plane/floor controls
+     onto additional lines within that space, rather than the browser
+     shrinking an individual <select> down to a sliver of truncated text. */
+  #room-tools { display: inline-flex; align-items: center; gap: 14px; flex: 1 1 auto; min-width: 0; flex-wrap: wrap; row-gap: 6px; }
+  /* Each label+control group (e.g. "Zone" + its <select> + "+ Zone") wraps
+     as one atomic unit, so a line break never strands a label away from the
+     control it describes. */
+  .tb-field { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; white-space: nowrap; }
+  #conn { flex: 0 0 auto; white-space: nowrap; }
+  #tb-save { flex: 0 0 auto; }
   /* ---- item list (Items mode) / mob list (Mobs mode) ---- */
   #itemlist { flex: 0 0 auto; width: 340px; overflow-y: auto; background: var(--leather2); border-right: 2px solid var(--tooled); padding: 8px; }
   #moblist { padding: 8px; }
@@ -162,15 +183,21 @@
       <button id="tb-mode-mobs" class="mode-btn">Mobs</button>
     </span>
     <span id="room-tools">
-      <label for="tb-zone-sel">Zone</label>
-      <select id="tb-zone-sel"><option value="">—</option></select>
-      <button id="tb-new-zone" title="Create a new zone">+ Zone</button>
-      <label for="tb-plane">Plane</label>
-      <select id="tb-plane"><option value="">—</option></select>
-      <label for="tb-floor">Floor</label>
-      <button id="tb-floor-dn" title="Down a floor">▼</button>
-      <span id="tb-floor" style="min-width:1.5em;text-align:center;">0</span>
-      <button id="tb-floor-up" title="Up a floor">▲</button>
+      <span class="tb-field">
+        <label for="tb-zone-sel">Zone</label>
+        <select id="tb-zone-sel"><option value="">—</option></select>
+        <button id="tb-new-zone" title="Create a new zone">+ Zone</button>
+      </span>
+      <span class="tb-field">
+        <label for="tb-plane">Plane</label>
+        <select id="tb-plane"><option value="">—</option></select>
+      </span>
+      <span class="tb-field">
+        <label for="tb-floor">Floor</label>
+        <button id="tb-floor-dn" title="Down a floor">▼</button>
+        <span id="tb-floor" style="min-width:1.5em;text-align:center;">0</span>
+        <button id="tb-floor-up" title="Up a floor">▲</button>
+      </span>
     </span>
     <div class="spacer"></div>
     <span id="conn">● connecting…</span>
@@ -271,9 +298,10 @@
     if (ns === "Build.Mobs") { if (MP) MP.render(obj); return; }
     if (ns === "Build.Mob") { if (MP) MP.renderForm(obj); return; }
     if (ns === "Build.Result" && window.Builder.mode === "mobs") { if (MP) MP.onResult(obj); return; }
-    // Build.Room while in Mobs mode is the test-spawn "Check" response
-    // (Build.Room.Get), not the room inspector's detail — route it there.
-    if (ns === "Build.Room" && window.Builder.mode === "mobs") { if (MP) MP.onRoomCheck(obj); return; }
+    // Build.Rooms is the test-spawn room picker's per-zone room list
+    // (Build.Room.List), routed to the mob panel rather than the room
+    // inspector.
+    if (ns === "Build.Rooms" && window.Builder.mode === "mobs") { if (MP) MP.onRoomList(obj); return; }
     // ---- room editor (Rooms mode) ----
     if (ns === "Build.Result") {
       if (obj && obj.ok) {

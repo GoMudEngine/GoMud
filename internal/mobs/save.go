@@ -87,9 +87,10 @@ func ValidateMobSpec(m *Mob) error {
 	if strings.TrimSpace(m.Character.Name) == "" {
 		return fmt.Errorf("name is required")
 	}
-	if m.Zone == "" {
-		return fmt.Errorf("zone is required")
-	}
+	// Zone is intentionally NOT required: a mob template can be authored with
+	// no home zone (a summon-only kind, or a new-mob stub not yet placed
+	// anywhere). Filepath() routes an empty zone to the fixed "unzoned"
+	// folder, so an empty zone is a fully boot-safe, loadable state.
 	if m.ScheduleId != "" && GetSchedule(m.ScheduleId) == nil {
 		return fmt.Errorf("schedule_id %q does not resolve; valid: %s", m.ScheduleId, strings.Join(AllScheduleIds(), ", "))
 	}
@@ -272,15 +273,12 @@ func DeleteMobSpec(mobId MobId) error {
 	return nil
 }
 
-// CreateNewMobFile seeds a boot-safe stub mob in the given zone at the next
-// free mob id (template-cache max + 1 — the cache mirrors the filesystem at
-// boot and every builder save keeps it fresh) and persists it via
-// SaveMobSpec.
+// CreateNewMobFile seeds a boot-safe stub mob in the given zone (or with no
+// zone at all, for a summon-only / not-yet-placed template — see
+// (*Mob).Filepath) at the next free mob id (template-cache max + 1 — the
+// cache mirrors the filesystem at boot and every builder save keeps it
+// fresh) and persists it via SaveMobSpec.
 func CreateNewMobFile(zone string) (MobId, error) {
-	if zone == "" {
-		return 0, fmt.Errorf("zone is required")
-	}
-
 	mobsMu.RLock()
 	nextId := 0
 	for id := range mobs {

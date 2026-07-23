@@ -241,11 +241,70 @@ func TestCreateNewMobFile_StubIsBootSafe(t *testing.T) {
 	}
 }
 
-func TestCreateNewMobFile_RejectsEmptyZone(t *testing.T) {
+// An empty zone is a legal, boot-safe state (a summon-only kind, or a new-mob
+// stub not yet placed anywhere) — CreateNewMobFile("") must succeed and land
+// the stub in the fixed "unzoned/" folder rather than at the mobs/ root.
+func TestCreateNewMobFile_EmptyZoneLandsInUnzoned(t *testing.T) {
 	dir := t.TempDir()
 	pointMobDataFilesAt(t, dir)
 
-	if _, err := CreateNewMobFile(""); err == nil {
-		t.Error("expected rejection of an empty zone")
+	id, err := CreateNewMobFile("")
+	if err != nil {
+		t.Fatalf("create with no zone should succeed, got: %v", err)
+	}
+	t.Cleanup(func() {
+		mobsMu.Lock()
+		delete(mobs, int(id))
+		mobsMu.Unlock()
+		mobNameCacheMu.Lock()
+		delete(mobNameCache, id)
+		mobNameCacheMu.Unlock()
+	})
+
+	tmpl := GetMobSpec(id)
+	if tmpl == nil {
+		t.Fatal("stub not in cache")
+	}
+	if tmpl.Zone != "" {
+		t.Errorf("expected empty zone, got %q", tmpl.Zone)
+	}
+	if err := ValidateMobSpec(tmpl); err != nil {
+		t.Errorf("a zoneless stub must be boot-safe, got: %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(dir, "mobs", "unzoned", tmpl.Filename())); err != nil {
+		t.Errorf("stub file missing from unzoned/: %v", err)
+	}
+}
+
+// SaveMobSpec must relocate a mob's file out of its old zone folder and into
+// unzoned/ when the zone is cleared — mirroring the rename-relocation
+// behavior TestSaveMobSpec_RelocatesFileOnRename covers for a name change.
+func TestSaveMobSpec_RelocatesToUnzonedOnZoneCleared(t *testing.T) {
+	dir := t.TempDir()
+	pointMobDataFilesAt(t, dir)
+	m := seedMob(t, 99906, "Wandering Summon")
+
+	if err := SaveMobSpec(m); err != nil {
+		t.Fatalf("initial save: %v", err)
+	}
+	oldPath := filepath.Join(dir, "mobs", "testzone", "99906-wandering_summon.yaml")
+	if _, err := os.Stat(oldPath); err != nil {
+		t.Fatalf("expected %s to exist: %v", oldPath, err)
+	}
+
+	cleared := m
+	cleared.Zone = ""
+	if err := SaveMobSpec(cleared); err != nil {
+		t.Fatalf("zone-clear save: %v", err)
+	}
+	if _, err := os.Stat(oldPath); !os.IsNotExist(err) {
+		t.Errorf("old file %s should be gone after the zone was cleared", oldPath)
+	}
+	newPath := filepath.Join(dir, "mobs", "unzoned", "99906-wandering_summon.yaml")
+	if _, err := os.Stat(newPath); err != nil {
+		t.Errorf("new file %s should exist in unzoned/: %v", newPath, err)
+	}
+	if mobs[99906].Zone != "" {
+		t.Errorf("template cache not updated: %q", mobs[99906].Zone)
 	}
 }

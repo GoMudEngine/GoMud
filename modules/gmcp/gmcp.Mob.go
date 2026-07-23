@@ -388,7 +388,9 @@ func buildMobUpdate(d mobDeps, req mobUpdateReq) BuildResult {
 	if req.Name == "" {
 		return buildErr("name is required")
 	}
-	if !d.zoneExists(req.Zone) {
+	// Empty zone is legal (a summon-only / not-yet-placed template) and is
+	// NOT run through zoneExists — only a non-empty, UNKNOWN zone is rejected.
+	if req.Zone != "" && !d.zoneExists(req.Zone) {
 		return buildErr("zone %q does not exist", req.Zone)
 	}
 	if req.CraftSupport != "" && !shops.IsValidCraftSupport(req.CraftSupport) {
@@ -414,7 +416,10 @@ func buildMobUpdate(d mobDeps, req mobUpdateReq) BuildResult {
 }
 
 func buildMobCreate(d mobDeps, zone string) BuildResult {
-	if !d.zoneExists(zone) {
+	// Empty zone is legal (a summon-only / not-yet-placed template) and skips
+	// the zoneExists check entirely — only a non-empty, UNKNOWN zone is
+	// rejected.
+	if zone != "" && !d.zoneExists(zone) {
 		return buildErr("zone %q does not exist", zone)
 	}
 	id, err := d.create(zone)
@@ -676,8 +681,11 @@ func scanMobReferences(mobId int) []mobRefEntry {
 		},
 	})
 	// Dialogue file keyed by this mob's own id/zone — checked separately since
-	// it needs the mob's own zone, not another mob/room/quest's data.
-	if m != nil {
+	// it needs the mob's own zone, not another mob/room/quest's data. Skipped
+	// entirely for a zoneless mob: dialogue files are zone-keyed
+	// ("dialogue/{zone}/{mobId}.yaml"), so a zoneless template can never have
+	// one and the os.Stat would only add a pointless zero-zone lookup.
+	if m != nil && m.Zone != "" {
 		zone := mobs.ZoneNameSanitize(m.Zone)
 		p := util.FilePath(dataRoot, `/`, `dialogue`, `/`, zone, `/`, strconv.Itoa(mobId)+`.yaml`)
 		if _, err := os.Stat(p); err == nil {
