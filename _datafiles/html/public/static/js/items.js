@@ -16,6 +16,46 @@
   ];
   var CASTER = { wand: 1, sceptre: 1, staff: 1 };
 
+  // Per-field hints (units + whether it's a whole number, a multiplier, a
+  // percent, etc.) so the editor makes the field's meaning obvious instead of
+  // presenting a bare number box. Keyed by the form field key.
+  var HINTS = {
+    value: "gold value — whole number (auto-set if left 0)",
+    weight: "pounds (decimals ok)",
+    uses: "charges — whole number (0 = unlimited)",
+    description: "shown to players — wraps at ~78 chars",
+    vendorCategories: "comma-separated shop categories",
+    // weapon
+    damageMultiplier: "multiplier — 1.0 = baseline",
+    spellDamageMultiplier: "multiplier — 1.0 = baseline",
+    speedMultiplier: "multiplier — 1.0 = baseline",
+    hands: "1 or 2 — whole number",
+    parryRating: "flat parry bonus — whole number",
+    staminaCost: "per swing — whole number",
+    waitRounds: "extra rounds — whole number",
+    minStrength: "whole number",
+    reach: "meters (e.g. 1.0)",
+    grappleModifier: "additive modifier (decimals ok)",
+    // armor
+    physicalMitigation: "percent — whole number (0–75)",
+    magicalMitigation: "percent — whole number (0–75)",
+    convictionMitigation: "percent — whole number (0–75)",
+    blockRating: "flat block bonus — whole number",
+    escapeModifier: "additive modifier (decimals ok)",
+    // consumable
+    buffIds: "comma-separated buff ids applied on use",
+    toxicity: "whole number",
+    bottleAgingMultiplier: "multiplier",
+    fermentRounds: "rounds — whole number",
+    peakRounds: "rounds — whole number",
+    decayRounds: "rounds — whole number",
+    spoilRounds: "rounds — whole number",
+    bandolierCapacity: "whole number",
+    // component
+    weightReduction: "fraction 0–1 (0.30 = 30% lighter)",
+    bagCapacity: "whole number",
+  };
+
   function ce(tag, attrs, kids) {
     var e = document.createElement(tag);
     if (attrs) for (var k in attrs) {
@@ -138,18 +178,23 @@
       var i = ce("input", { type: "text" }); i.value = val == null ? "" : val;
       i.addEventListener("input", markDirty);
       F[key] = function () { return i.value; };
-      return field(label, i);
+      return field(label, i, key);
     }
     function numField(label, key, val, step) {
       // Fields created without a fractional step are integer-typed on the
       // server (parryRating, hands, mitigations, ...). Go's json rejects a
-      // fractional number into an int field and fails the WHOLE Save payload
-      // ("bad Build.Item.Update payload"), so round integer fields here.
+      // fractional number into an int field and fails the WHOLE Save payload,
+      // so integer fields snap to a whole number on blur — visible, next to a
+      // "whole number" hint — instead of a silent gather-time surprise. Gather
+      // rounds again as a final guard.
       var isInt = !step || step === "1";
       var i = ce("input", { type: "number", step: step || "1" }); i.value = (val === 0 ? "0" : (val || ""));
       i.addEventListener("input", markDirty);
+      if (isInt) i.addEventListener("blur", function () {
+        if (i.value !== "") i.value = String(Math.round(parseFloat(i.value) || 0));
+      });
       F[key] = function () { var n = parseFloat(i.value) || 0; return isInt ? Math.round(n) : n; };
-      return field(label, i);
+      return field(label, i, key);
     }
     function checkField(label, key, val) {
       var cb = ce("input", { type: "checkbox" }); cb.checked = !!val; cb.addEventListener("change", markDirty);
@@ -167,7 +212,7 @@
       s.addEventListener("change", markDirty);
       if (key === "type") s.addEventListener("change", function () { rerenderTypeSections(s.value); });
       F[key] = function () { var v = s.value; return v; };
-      return field(label, s);
+      return field(label, s, key);
     }
 
     // Common
@@ -177,7 +222,7 @@
     insp.appendChild(textField("Simple name", "nameSimple", detail.nameSimple));
     var desc = ce("textarea", {}); desc.value = detail.description || ""; desc.addEventListener("input", markDirty);
     F.description = function () { return desc.value; };
-    insp.appendChild(field("Description", desc));
+    insp.appendChild(field("Description", desc, "description"));
     insp.appendChild(selectField("Type", "type", detail.type, detail.types || []));
     insp.appendChild(selectField("Subtype", "subtype", detail.subtype, [""].concat(detail.subtypes || [])));
     insp.appendChild(ce("div", { "class": "row" }, [numField("Value", "value", detail.value), numField("Weight", "weight", detail.weight, "0.1")]));
@@ -185,7 +230,7 @@
     var vc = ce("input", { type: "text", placeholder: "comma-separated" }); vc.value = (detail.vendorCategories || []).join(", ");
     vc.addEventListener("input", markDirty);
     F.vendorCategories = function () { return vc.value.split(",").map(function (s) { return s.trim(); }).filter(Boolean); };
-    insp.appendChild(field("Vendor categories", vc));
+    insp.appendChild(field("Vendor categories", vc, "vendorCategories"));
     var flags = ce("div", { "class": "flags" }, [
       checkField("not-salable", "notSalable", detail.notSalable),
       checkField("never-drops", "neverDrops", detail.neverDrops),
@@ -240,7 +285,12 @@
     this.setDirty(false);
   };
 
-  function field(labelText, input) { return ce("div", {}, [ce("label", { text: labelText }), input]); }
+  function field(labelText, input, hintKey) {
+    var kids = [ce("label", { text: labelText }), input];
+    var h = hintKey && HINTS[hintKey];
+    if (h) kids.push(ce("div", { style: "font-size:10px;color:var(--gold-dim);margin-top:2px;", text: h }));
+    return ce("div", {}, kids);
+  }
   function sectionTitle(t) { return ce("h3", { text: t }); }
   function markDirty() { Panel.setDirty(true); }
   Panel.setDirty = function (d) {
@@ -275,7 +325,7 @@
       var bf = ce("input", { type: "text", placeholder: "comma buff ids" }); bf.value = (detail.buffIds || []).join(", ");
       bf.addEventListener("input", markDirty);
       F.buffIds = function () { return bf.value.split(",").map(function (s) { return parseInt(s.trim(), 10); }).filter(function (n) { return !isNaN(n); }); };
-      host.appendChild(field("Buff ids", bf));
+      host.appendChild(field("Buff ids", bf, "buffIds"));
       host.appendChild(ce("div", { "class": "row" }, [numField("Toxicity", "toxicity", detail.toxicity), numField("Bottle aging ×", "bottleAgingMultiplier", detail.bottleAgingMultiplier, "0.05")]));
       host.appendChild(sectionTitle("Aging (rounds)"));
       host.appendChild(ce("div", { "class": "row" }, [numField("Ferment", "fermentRounds", detail.fermentRounds), numField("Peak", "peakRounds", detail.peakRounds)]));
