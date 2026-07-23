@@ -4,9 +4,16 @@ package gmcp
 // editor (admin web-building 3). Mirrors gmcp.Item.go: RoleAdmin-gated (at
 // dispatch, in gmcp.go / handleBuildOp), deferred to MainWorker via
 // GMCPBuildOp (mob templates live in a shared package map + on disk, so
-// mutating them off the connection goroutine would race the world tick), and
-// the core funcs are pure(ish) — a mobDeps seam in, a BuildResult out — so
-// they're unit-testable against a fake world.
+// mutating them off the connection goroutine would race the world tick).
+// The mutating core funcs (buildMobList/Get/Create/Update) take a mobDeps
+// seam in and return a BuildResult, so they're unit-testable against a fake
+// world for load/save/create/zone-check behavior. buildMobGet's attached
+// Enums, however, come from collectMobEnums(), which reads the mobs/species/
+// rooms/shops package globals directly rather than through mobDeps — that
+// data is read-only reference/dropdown content (valid archetypes, species,
+// zones, schedule/patrol ids...), not world state a test needs to fake, so it
+// is intentionally un-injected. A test asserting on Enums exercises the real
+// registries, not a fake.
 
 import (
 	"encoding/json"
@@ -288,19 +295,38 @@ func reqToMob(base *mobs.Mob, req mobUpdateReq) mobs.Mob {
 	m.Zone = req.Zone
 	m.Character.Name, m.Character.Description = req.Name, req.Description
 	m.Character.Adjectives, m.Character.SpeciesId, m.Character.Gold = req.Adjectives, req.SpeciesId, req.Gold
-	m.Character.Stats.Strength.Training = req.StatTraining["strength"]
-	m.Character.Stats.Dexterity.Training = req.StatTraining["dexterity"]
-	m.Character.Stats.Perception.Training = req.StatTraining["perception"]
-	m.Character.Stats.Vitality.Training = req.StatTraining["vitality"]
-	m.Character.Stats.Willpower.Training = req.StatTraining["willpower"]
-	m.Character.Stats.Charisma.Training = req.StatTraining["charisma"]
-	m.Character.Equipment = mapToWorn(req.Equipment)
-	m.Character.Items = nil
-	for _, iid := range req.CarriedItems {
-		if iid > 0 {
-			m.Character.Items = append(m.Character.Items, items.New(iid))
-		}
+	// The form always submits all six stat keys together — but apply each
+	// key only if present, rather than unconditionally reading the map (which
+	// would silently zero a stat's Training on any partial/malformed payload
+	// instead of leaving the base value alone).
+	if v, ok := req.StatTraining["strength"]; ok {
+		m.Character.Stats.Strength.Training = v
 	}
+	if v, ok := req.StatTraining["dexterity"]; ok {
+		m.Character.Stats.Dexterity.Training = v
+	}
+	if v, ok := req.StatTraining["perception"]; ok {
+		m.Character.Stats.Perception.Training = v
+	}
+	if v, ok := req.StatTraining["vitality"]; ok {
+		m.Character.Stats.Vitality.Training = v
+	}
+	if v, ok := req.StatTraining["willpower"]; ok {
+		m.Character.Stats.Willpower.Training = v
+	}
+	if v, ok := req.StatTraining["charisma"]; ok {
+		m.Character.Stats.Charisma.Training = v
+	}
+	// Equipment/carried items are base-aware: an id that matches what the base
+	// template already had in that slot (or already held in inventory) keeps
+	// the EXISTING item instance — preserving EnchantType/EnchantTier,
+	// Adjectives, non-default Uses, Blob, and any Spec override authored on
+	// that specific instance. items.New(id) (a bare spec-default instance) is
+	// only used for an id that is new or changed in that slot/list. Without
+	// this, saving any unrelated field on a mob with an enchanted boss weapon
+	// would silently revert that weapon to a spec-default instance.
+	m.Character.Equipment = mapToWornPreserving(base.Character.Equipment, req.Equipment)
+	m.Character.Items = mergeCarriedItems(base.Character.Items, req.CarriedItems)
 	m.Character.Shop = nil
 	for _, row := range req.Shop {
 		if row.ItemId > 0 {
@@ -456,10 +482,10 @@ func listBehaviorArchetypeFiles() []string {
 }
 
 // ---- Worn slot mapping ----
-// wornToMap / mapToWorn / wornSlotNames all derive from characters.Worn's
-// AllSlots() — the package's single source of truth for the equipment slot
-// list (24 slots as of Extra Arms/Tail/ComponentBag: weapon, offhand,
-// extraarm1-4, head, neck, shoulders, body, back, belt, wrist1/2,
+// wornToMap / mapToWornPreserving / wornSlotNames all derive from
+// characters.Worn's AllSlots() — the package's single source of truth for the
+// equipment slot list (24 slots as of Extra Arms/Tail/ComponentBag: weapon,
+// offhand, extraarm1-4, head, neck, shoulders, body, back, belt, wrist1/2,
 // extrawrist1-4, gloves, ring, ring2, legs, feet, tail, componentbag).
 // internal/mobs/save.go's equippedItemIds validator already iterates
 // AllSlots() for the same reason: a slot added later is picked up here
@@ -483,14 +509,63 @@ func wornToMap(w characters.Worn) map[string]int {
 	return out
 }
 
-func mapToWorn(m map[string]int) characters.Worn {
+// mapToWornPreserving rebuilds a Worn from the submitted slot->itemId map,
+// base-aware: when the submitted id for a slot matches what base already had
+// equipped there, the EXISTING item instance is carried forward unchanged
+// (preserving EnchantType/EnchantTier, Adjectives, non-default Uses, Blob,
+// and any per-instance Spec override — all real yaml fields on items.Item
+// that a bare items.New(id) would discard). items.New(id) is used only when
+// the slot's id is new or has changed. A slot the form clears (id <= 0)
+// is left at the Worn zero value (empty), even if base had something there.
+func mapToWornPreserving(base characters.Worn, submitted map[string]int) characters.Worn {
+	baseByKey := make(map[string]*items.Item, 24)
+	for _, s := range base.AllSlots() {
+		baseByKey[s.Key] = s.Item
+	}
+
 	var w characters.Worn
 	for _, s := range w.AllSlots() {
-		if id := m[s.Key]; id > 0 {
-			*s.Item = items.New(id)
+		id := submitted[s.Key]
+		if id <= 0 {
+			continue
 		}
+		if baseItem := baseByKey[s.Key]; baseItem != nil && baseItem.ItemId == id {
+			*s.Item = *baseItem
+			continue
+		}
+		*s.Item = items.New(id)
 	}
 	return w
+}
+
+// mergeCarriedItems rebuilds the carried-items list from the submitted ids,
+// base-aware in the same spirit as mapToWornPreserving: a submitted id that
+// matches an item the base template already carried reuses that EXACT
+// instance (so its customization survives) rather than manufacturing a fresh
+// spec-default one. Duplicate ids are handled correctly — each base instance
+// is consumed at most once, so if the base carries two of the same item and
+// the submission repeats that id twice, both original instances are reused
+// (not the same one twice); a third repeat of that id falls through to
+// items.New. Ids no longer present in the submission are simply dropped.
+func mergeCarriedItems(base []items.Item, ids []int) []items.Item {
+	pool := make(map[int][]items.Item, len(base))
+	for _, it := range base {
+		pool[it.ItemId] = append(pool[it.ItemId], it)
+	}
+
+	out := make([]items.Item, 0, len(ids))
+	for _, id := range ids {
+		if id <= 0 {
+			continue
+		}
+		if q := pool[id]; len(q) > 0 {
+			out = append(out, q[0])
+			pool[id] = q[1:]
+			continue
+		}
+		out = append(out, items.New(id))
+	}
+	return out
 }
 
 // ---- LLM profile JSON round-trip ----
