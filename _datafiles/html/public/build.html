@@ -51,20 +51,23 @@
   #mode-toggle .mode-btn { border: none; border-radius: 0; padding: 5px 12px; background: var(--panel); }
   #mode-toggle .mode-btn.active { background: var(--gold); color: var(--ink); font-weight: bold; }
   #room-tools { display: inline-flex; align-items: center; gap: 14px; }
-  /* ---- item list (Items mode) ---- */
+  /* ---- item list (Items mode) / mob list (Mobs mode) ---- */
   #itemlist { flex: 0 0 auto; width: 340px; overflow-y: auto; background: var(--leather2); border-right: 2px solid var(--tooled); padding: 8px; }
+  #moblist { padding: 8px; }
   /* Full-height drag divider between the left area and the inspector. */
   #gutter { flex: 0 0 7px; cursor: col-resize; background: var(--tooled); opacity: .45; align-self: stretch; }
   #gutter:hover, #gutter.drag { opacity: 1; }
   #gutter::after { content: "⋮"; display: block; text-align: center; color: var(--leather2); font-size: 11px; margin-top: 40vh; }
-  #itemlist .filters { display: flex; gap: 6px; margin-bottom: 8px; position: sticky; top: 0; background: var(--leather2); padding-bottom: 6px; }
-  #itemlist .filters input, #itemlist .filters select { flex: 1 1 auto; min-width: 0; padding: 5px 7px; font: inherit; font-size: 12px; background: var(--ink); color: var(--parch); border: 1px solid var(--tooled); border-radius: 4px; }
-  #itemlist .newitem { width: 100%; margin-bottom: 8px; padding: 7px; background: var(--gold); color: var(--ink); font-weight: bold; border: none; border-radius: 4px; cursor: pointer; }
-  #itemlist .irow { padding: 5px 7px; border-bottom: 1px dotted var(--tooled); cursor: pointer; font-size: 12px; }
-  #itemlist .irow:hover { background: rgba(201,162,75,.12); }
-  #itemlist .irow.sel { background: rgba(201,162,75,.22); }
-  #itemlist .irow .iid { color: var(--gold); font-family: monospace; }
+  #itemlist .filters, #moblist .filters { display: flex; gap: 6px; margin-bottom: 8px; position: sticky; top: 0; background: var(--leather2); padding-bottom: 6px; }
+  #itemlist .filters input, #itemlist .filters select, #moblist .filters input, #moblist .filters select { flex: 1 1 auto; min-width: 0; padding: 5px 7px; font: inherit; font-size: 12px; background: var(--ink); color: var(--parch); border: 1px solid var(--tooled); border-radius: 4px; }
+  #itemlist .newitem, #moblist .newitem { width: 100%; margin-bottom: 8px; padding: 7px; background: var(--gold); color: var(--ink); font-weight: bold; border: none; border-radius: 4px; cursor: pointer; }
+  #itemlist .irow, #moblist .irow { padding: 5px 7px; border-bottom: 1px dotted var(--tooled); cursor: pointer; font-size: 12px; }
+  #itemlist .irow:hover, #moblist .irow:hover { background: rgba(201,162,75,.12); }
+  #itemlist .irow.sel, #moblist .irow.sel { background: rgba(201,162,75,.22); }
+  #itemlist .irow .iid, #moblist .irow .iid { color: var(--gold); font-family: monospace; }
   #itemlist .irow .ity { color: var(--gold-dim); font-size: 10px; }
+  #moblist .irow .mzone { color: var(--gold-dim); font-size: 10px; }
+  #moblist .irow .mbadge { display: inline-block; font-size: 9px; padding: 1px 5px; margin-left: 4px; border-radius: 8px; border: 1px solid var(--tooled); color: var(--gold-dim); }
   #conn { font-size: 12px; color: var(--gold-dim); }
   #conn.ok    { color: var(--ok); }
   #conn.bad   { color: var(--danger); }
@@ -103,6 +106,9 @@
   #inspector .flags input { width: auto; }
   #inspector .kv { display: flex; gap: 5px; margin: 4px 0; align-items: center; }
   #inspector .kv input { flex: 1 1 auto; }
+  #inspector .chips { display: flex; flex-wrap: wrap; gap: 5px; margin: 4px 0; }
+  #inspector .chip { display: inline-flex; align-items: center; gap: 4px; background: var(--ink); border: 1px solid var(--tooled); border-radius: 12px; padding: 2px 8px; font-size: 11px; color: var(--parch); }
+  #inspector .chip-rm { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 11px; padding: 0; line-height: 1; }
   #inspector .exit { display: flex; align-items: center; gap: 6px; padding: 4px 0; border-bottom: 1px dotted var(--tooled); font-size: 12px; }
   #inspector .exit .grow { flex: 1 1 auto; }
   #inspector .exit .tag { color: var(--gold-dim); font-size: 10px; }
@@ -153,6 +159,7 @@
     <span id="mode-toggle">
       <button id="tb-mode-rooms" class="mode-btn active">Rooms</button>
       <button id="tb-mode-items" class="mode-btn">Items</button>
+      <button id="tb-mode-mobs" class="mode-btn">Mobs</button>
     </span>
     <span id="room-tools">
       <label for="tb-zone-sel">Zone</label>
@@ -174,6 +181,7 @@
       <div class="placeholder" id="canvas-ph">Waiting for the world map…</div>
     </div>
     <div id="itemlist" style="display:none;"></div>
+    <div id="moblist" style="display:none;flex:0 0 320px;overflow-y:auto;background:var(--leather2);border-right:2px solid var(--tooled);"></div>
     <div id="gutter" title="Drag to resize"></div>
     <aside id="inspector">
       <h2>Inspector</h2>
@@ -204,6 +212,7 @@
 
 <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/builder.js"></script>
 <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/items.js"></script>
+<script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/mobs.js"></script>
 <script>
 "use strict";
 (function () {
@@ -253,10 +262,18 @@
 
   window.Builder.onGMCP = function (ns, obj) {
     var IP = window.Builder.ItemsPanel;
+    var MP = window.Builder.MobsPanel;
     // ---- item editor (Items mode) ----
     if (ns === "Build.Items") { if (IP) { IP.render(obj); IP.afterListRefresh(); } return; }
     if (ns === "Build.Item") { if (IP) IP.renderForm(obj); return; }
     if (ns === "Build.Result" && window.Builder.mode === "items") { if (IP) IP.onResult(obj); return; }
+    // ---- mob editor (Mobs mode) ----
+    if (ns === "Build.Mobs") { if (MP) MP.render(obj); return; }
+    if (ns === "Build.Mob") { if (MP) MP.renderForm(obj); return; }
+    if (ns === "Build.Result" && window.Builder.mode === "mobs") { if (MP) MP.onResult(obj); return; }
+    // Build.Room while in Mobs mode is the test-spawn "Check" response
+    // (Build.Room.Get), not the room inspector's detail — route it there.
+    if (ns === "Build.Room" && window.Builder.mode === "mobs") { if (MP) MP.onRoomCheck(obj); return; }
     // ---- room editor (Rooms mode) ----
     if (ns === "Build.Result") {
       if (obj && obj.ok) {
@@ -765,30 +782,38 @@
 
   // ---- resizable inspector (drag the #gutter divider) --------------------
   // The inspector is the panel authors want wider. In rooms mode the map is the
-  // flex filler and the inspector is a fixed, draggable width; in items mode the
-  // item list is the fixed/draggable column and the inspector fills the rest —
-  // so the one gutter resizes the inspector in rooms and the list in items.
+  // flex filler and the inspector is a fixed, draggable width; in items/mobs
+  // mode the list (item list or mob list) is the fixed/draggable column and the
+  // inspector fills the rest — so the one gutter resizes the inspector in rooms
+  // and the visible list in items/mobs. Items and mobs share one width value
+  // since only one of the two lists is ever visible at a time.
   var inspW = 300, listW = 340;
+  function activeListEl() {
+    return window.Builder.mode === "mobs" ? document.getElementById("moblist") : document.getElementById("itemlist");
+  }
   function applyLayout() {
-    var isItems = window.Builder.mode === "items";
+    var isListMode = window.Builder.mode === "items" || window.Builder.mode === "mobs";
     var insp = document.getElementById("inspector");
-    var list = document.getElementById("itemlist");
-    if (isItems) {
+    var itemlistEl = document.getElementById("itemlist");
+    var moblistEl = document.getElementById("moblist");
+    if (isListMode) {
+      var list = activeListEl();
       list.style.flex = "0 0 auto"; list.style.width = listW + "px";
       insp.style.flex = "1 1 auto"; insp.style.width = "";
     } else {
       insp.style.flex = "0 0 auto"; insp.style.width = inspW + "px";
-      list.style.flex = ""; list.style.width = "";
+      itemlistEl.style.flex = ""; itemlistEl.style.width = "";
+      moblistEl.style.flex = ""; moblistEl.style.width = "";
     }
   }
   (function wireGutter() {
     var g = document.getElementById("gutter");
     var dragging = false, startX = 0, startW = 0, grow = 1, target = "insp";
     g.addEventListener("pointerdown", function (e) {
-      var isItems = window.Builder.mode === "items";
-      target = isItems ? "list" : "insp";
-      grow = isItems ? 1 : -1; // items: drag right widens the list; rooms: drag left widens the inspector
-      startX = e.clientX; startW = isItems ? listW : inspW;
+      var isListMode = window.Builder.mode === "items" || window.Builder.mode === "mobs";
+      target = isListMode ? "list" : "insp";
+      grow = isListMode ? 1 : -1; // items/mobs: drag right widens the list; rooms: drag left widens the inspector
+      startX = e.clientX; startW = isListMode ? listW : inspW;
       dragging = true; g.classList.add("drag"); g.setPointerCapture(e.pointerId); e.preventDefault();
     });
     g.addEventListener("pointermove", function (e) {
@@ -803,27 +828,35 @@
     g.addEventListener("pointercancel", end);
   })();
 
-  // ---- mode toggle (Rooms | Items) ---------------------------------------
+  // ---- mode toggle (Rooms | Items | Mobs) --------------------------------
   window.Builder.mode = "rooms";
   function setMode(mode) {
     window.Builder.mode = mode;
     var isItems = mode === "items";
-    document.getElementById("canvas").style.display = isItems ? "none" : "";
+    var isMobs = mode === "mobs";
+    var isRooms = mode === "rooms";
+    document.getElementById("canvas").style.display = isRooms ? "" : "none";
     document.getElementById("itemlist").style.display = isItems ? "" : "none";
-    document.getElementById("room-tools").style.display = isItems ? "none" : "";
+    document.getElementById("moblist").style.display = isMobs ? "" : "none";
+    document.getElementById("room-tools").style.display = isRooms ? "" : "none";
     applyLayout();
-    var sb = document.getElementById("tb-save"); if (sb) sb.style.display = isItems ? "none" : "";
-    document.getElementById("tb-mode-rooms").classList.toggle("active", !isItems);
+    var sb = document.getElementById("tb-save"); if (sb) sb.style.display = isRooms ? "" : "none";
+    document.getElementById("tb-mode-rooms").classList.toggle("active", isRooms);
     document.getElementById("tb-mode-items").classList.toggle("active", isItems);
+    document.getElementById("tb-mode-mobs").classList.toggle("active", isMobs);
     if (isItems) {
       window.Builder.ItemsPanel.clear();
       sendGMCP("Build.Item.List", {});
+    } else if (isMobs) {
+      if (window.Builder.MobsPanel) window.Builder.MobsPanel.clear();
+      sendGMCP("Build.Mob.List", {});
     } else {
       clearInspector();
     }
   }
   document.getElementById("tb-mode-rooms").addEventListener("click", function () { setMode("rooms"); });
   document.getElementById("tb-mode-items").addEventListener("click", function () { setMode("items"); });
+  document.getElementById("tb-mode-mobs").addEventListener("click", function () { setMode("mobs"); });
   applyLayout(); // sync initial (rooms) layout
 
   // ---- canvas + toolbar wiring -------------------------------------------

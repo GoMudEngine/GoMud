@@ -212,6 +212,26 @@ enabling the button) → `Build.Mob.Spawn` → toast with result.
 - **Owed to user before prod:** browser visual/UX eyeball of the mob panel
   (I cannot drive a browser), same as 1b and 2.
 
+## Divergences as shipped (2026-07-23, final-review traceability)
+
+Three deliberate v1 scope choices diverge from the sections above:
+
+1. **Numeric range hints (§2) — dropped.** No mob equivalent of the item
+   editor's ranges mechanism shipped; the enums payload is the load-bearing
+   guardrail. Approved in the plan's self-review ("drop-if-not-cheap").
+2. **Enum pickers (§5) — partial.** Schedule/patrol/species/zone/archetype/
+   AI-profile/craft-support/policy fields are dropdown-fed as specified, but
+   buff/loot/shop/carried-item ids, crafter recipe ids, restock materials,
+   and relationship to-mob ids are bare numeric inputs in v1. Safe — the
+   server rejects dangling ids with field-naming errors — just less
+   ergonomic. `crafterSkill` is additionally unvalidated server-side (an
+   invalid value is a silent no-op crafter at runtime, not a boot-brick).
+3. **Next-id allocation (§1) — cache-max+1, not a filesystem scan.** The
+   template cache mirrors the filesystem at boot and every builder save
+   keeps it fresh; a malformed mob file panics at boot so cannot hide from
+   the cache. Only an out-of-band manual YAML drop during a live session
+   could collide.
+
 ## Out of scope
 
 - Spawn lists / room `spawninfo` editing — **sub-project 4**.

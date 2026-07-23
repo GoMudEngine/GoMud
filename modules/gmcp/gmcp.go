@@ -484,7 +484,8 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 		case `Build.Room.Create`, `Build.Room.Update`, `Build.Room.Delete`,
 			`Build.Exit.Add`, `Build.Exit.Remove`, `Build.Room.Get`, `Build.Map.Request`,
 			`Build.Zone.Create`,
-			`Build.Item.List`, `Build.Item.Get`, `Build.Item.Create`, `Build.Item.Update`, `Build.Item.Delete`:
+			`Build.Item.List`, `Build.Item.Get`, `Build.Item.Create`, `Build.Item.Update`, `Build.Item.Delete`,
+			`Build.Mob.List`, `Build.Mob.Get`, `Build.Mob.Create`, `Build.Mob.Update`, `Build.Mob.Delete`, `Build.Mob.Spawn`:
 			events.AddToQueue(GMCPBuildOp{
 				ConnectionId: connectionId,
 				Command:      command,

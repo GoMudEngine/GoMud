@@ -33,11 +33,14 @@ const (
 
 // BuildResult is echoed to the client after every mutation (as Build.Result).
 type BuildResult struct {
-	Ok     bool      `json:"ok"`
-	Error  string    `json:"error,omitempty"`
-	RoomId int       `json:"roomId,omitempty"` // e.g. the newly created room, or the affected room
-	ItemId int       `json:"itemId,omitempty"` // e.g. the created/updated item
-	Refs   []itemRef `json:"refs,omitempty"`   // Build.Item.Delete: what still references a blocked item
+	Ok      bool          `json:"ok"`
+	Error   string        `json:"error,omitempty"`
+	RoomId  int           `json:"roomId,omitempty"`  // e.g. the newly created room, or the affected room
+	ItemId  int           `json:"itemId,omitempty"`  // e.g. the created/updated item
+	Refs    []itemRef     `json:"refs,omitempty"`    // Build.Item.Delete: what still references a blocked item
+	MobId   int           `json:"mobId,omitempty"`   // e.g. the created/updated/spawned mob
+	MobRefs []mobRefEntry `json:"mobRefs,omitempty"` // Build.Mob.Delete: what still references a blocked mob
+	Message string        `json:"message,omitempty"` // e.g. Build.Mob.Spawn's "<name> spawned in room <id>"
 }
 
 func buildErr(format string, args ...any) BuildResult {
@@ -124,6 +127,7 @@ type buildRoomDetail struct {
 	RoomId        int               `json:"roomId"`
 	Title         string            `json:"title"`
 	Description   string            `json:"description"`
+	Zone          string            `json:"zone"`
 	Biome         string            `json:"biome"`
 	Symbol        string            `json:"symbol"`
 	Legend        string            `json:"legend"`
@@ -357,6 +361,57 @@ func (g *GMCPModule) handleBuildOp(e events.Event) events.ListenerReturn {
 		if res.Ok {
 			sendItemList(uid)
 		}
+
+	// ---- mob editor (admin web-building 3) ----
+	case `Build.Mob.List`:
+		sendMobList(uid)
+	case `Build.Mob.Get`:
+		var req mobGetReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Mob.Get payload"))
+			break
+		}
+		if d, ok := buildMobGet(realMobDeps(), req.MobId); ok {
+			sendMobDetail(uid, d)
+		} else {
+			sendBuildResult(uid, buildErr("mob %d not found", req.MobId))
+		}
+	case `Build.Mob.Create`:
+		var req mobCreateReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Mob.Create payload"))
+			break
+		}
+		res := buildMobCreate(realMobDeps(), req.Zone)
+		sendBuildResult(uid, res)
+		sendMobList(uid)
+	case `Build.Mob.Update`:
+		var req mobUpdateReq
+		req.LLMProfileJSON = "-" // sentinel: field absent from the payload = leave profile untouched
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Mob.Update payload"))
+			break
+		}
+		sendBuildResult(uid, buildMobUpdate(realMobDeps(), req))
+		sendMobList(uid)
+	case `Build.Mob.Delete`:
+		var req mobDeleteReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Mob.Delete payload"))
+			break
+		}
+		res := buildMobDelete(realMobDeps(), req.MobId)
+		sendBuildResult(uid, res)
+		if res.Ok {
+			sendMobList(uid)
+		}
+	case `Build.Mob.Spawn`:
+		var req mobSpawnReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Mob.Spawn payload"))
+			break
+		}
+		sendBuildResult(uid, buildMobSpawn(realMobDeps(), req))
 	}
 	return events.Continue
 }
@@ -545,7 +600,7 @@ func buildRoomGet(d buildDeps, roomId int) (buildRoomDetail, bool) {
 		return buildRoomDetail{}, false
 	}
 	detail := buildRoomDetail{
-		RoomId: r.RoomId, Title: r.Title, Description: r.Description,
+		RoomId: r.RoomId, Title: r.Title, Description: r.Description, Zone: r.Zone,
 		Biome: r.Biome, Symbol: r.MapSymbol, Legend: r.MapLegend, Music: r.MusicFile,
 		Bank: r.IsBank, Storage: r.IsStorage, Pvp: r.Pvp, CharacterRoom: r.IsCharacterRoom,
 		Nouns: r.Nouns, IdleMessages: r.IdleMessages,
