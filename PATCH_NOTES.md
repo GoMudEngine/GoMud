@@ -1,5 +1,28 @@
 # DOGMud Patch Notes
 
+## 2026-07-23 — The armory drawer (staff)
+
+The builder's table gains a second drawer. Staff can flip **`/build`** from
+Rooms to **Items** and work the whole armory from a searchable list: spin up a
+weapon, a suit of armor, a potion, a crafting reagent — each opening the fields
+that actually matter for its kind — then tune it and save straight to the world.
+Every field carries a plain-language note (a multiplier versus a flat bonus, a
+percentage, pounds, a fraction) and quietly shows the range the rest of the
+world already uses, so a new blade lands in sensible territory. Delete is
+guarded: an item still spoken for by a mob, a quest, a recipe, or a chest says
+so rather than leaving a dangling reference. The panels pull wider when the work
+needs room.
+
+For the rare and the strange, an **Advanced** drawer folds open on its own when
+an item already carries a soul — the on-hit hungers and lifesteals, a sentient
+voice, the health it reserves from its bearer, the pull of a taunt. Pinnacle
+gear like the Blackrazor can now be forged and re-forged from the table instead
+of by hand.
+
+Two traps that used to sink a restart are now sprung at the desk: an item saved
+with an off-kilter name, or one put up for sale with no shop to sell it, is
+caught and explained on the spot instead of felling the server at its next boot.
+
 ## 2026-07-22 — A builder's table (staff)
 
 Behind the curtain, world-building steps out of the text prompts and onto a
