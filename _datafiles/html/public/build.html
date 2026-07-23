@@ -52,7 +52,11 @@
   #mode-toggle .mode-btn.active { background: var(--gold); color: var(--ink); font-weight: bold; }
   #room-tools { display: inline-flex; align-items: center; gap: 14px; }
   /* ---- item list (Items mode) ---- */
-  #itemlist { flex: 0 0 auto; width: 340px; min-width: 220px; max-width: 60vw; resize: horizontal; overflow: auto; background: var(--leather2); border-right: 2px solid var(--tooled); padding: 8px; }
+  #itemlist { flex: 0 0 auto; width: 340px; overflow-y: auto; background: var(--leather2); border-right: 2px solid var(--tooled); padding: 8px; }
+  /* Full-height drag divider between the left area and the inspector. */
+  #gutter { flex: 0 0 7px; cursor: col-resize; background: var(--tooled); opacity: .45; align-self: stretch; }
+  #gutter:hover, #gutter.drag { opacity: 1; }
+  #gutter::after { content: "⋮"; display: block; text-align: center; color: var(--leather2); font-size: 11px; margin-top: 40vh; }
   #itemlist .filters { display: flex; gap: 6px; margin-bottom: 8px; position: sticky; top: 0; background: var(--leather2); padding-bottom: 6px; }
   #itemlist .filters input, #itemlist .filters select { flex: 1 1 auto; min-width: 0; padding: 5px 7px; font: inherit; font-size: 12px; background: var(--ink); color: var(--parch); border: 1px solid var(--tooled); border-radius: 4px; }
   #itemlist .newitem { width: 100%; margin-bottom: 8px; padding: 7px; background: var(--gold); color: var(--ink); font-weight: bold; border: none; border-radius: 4px; cursor: pointer; }
@@ -79,8 +83,7 @@
     color: var(--gold-dim); font-style: italic; text-align: center; padding: 20px;
   }
   #inspector {
-    flex: 0 0 auto; width: 260px; min-width: 220px; max-width: 60vw;
-    resize: horizontal; overflow: auto;
+    flex: 0 0 auto; width: 300px; overflow: auto;
     background: var(--panel); padding: 12px;
   }
   #inspector h2 { margin: 0 0 8px; color: var(--gold); font-size: 15px; }
@@ -169,6 +172,7 @@
       <div class="placeholder" id="canvas-ph">Waiting for the world map…</div>
     </div>
     <div id="itemlist" style="display:none;"></div>
+    <div id="gutter" title="Drag to resize"></div>
     <aside id="inspector">
       <h2>Inspector</h2>
       <div class="empty" id="insp-empty">Select a room on the map to edit it.</div>
@@ -757,6 +761,46 @@
 
   clearInspector();
 
+  // ---- resizable inspector (drag the #gutter divider) --------------------
+  // The inspector is the panel authors want wider. In rooms mode the map is the
+  // flex filler and the inspector is a fixed, draggable width; in items mode the
+  // item list is the fixed/draggable column and the inspector fills the rest —
+  // so the one gutter resizes the inspector in rooms and the list in items.
+  var inspW = 300, listW = 340;
+  function applyLayout() {
+    var isItems = window.Builder.mode === "items";
+    var insp = document.getElementById("inspector");
+    var list = document.getElementById("itemlist");
+    if (isItems) {
+      list.style.flex = "0 0 auto"; list.style.width = listW + "px";
+      insp.style.flex = "1 1 auto"; insp.style.width = "";
+    } else {
+      insp.style.flex = "0 0 auto"; insp.style.width = inspW + "px";
+      list.style.flex = ""; list.style.width = "";
+    }
+  }
+  (function wireGutter() {
+    var g = document.getElementById("gutter");
+    var dragging = false, startX = 0, startW = 0, grow = 1, target = "insp";
+    g.addEventListener("pointerdown", function (e) {
+      var isItems = window.Builder.mode === "items";
+      target = isItems ? "list" : "insp";
+      grow = isItems ? 1 : -1; // items: drag right widens the list; rooms: drag left widens the inspector
+      startX = e.clientX; startW = isItems ? listW : inspW;
+      dragging = true; g.classList.add("drag"); g.setPointerCapture(e.pointerId); e.preventDefault();
+    });
+    g.addEventListener("pointermove", function (e) {
+      if (!dragging) return;
+      var w = startW + grow * (e.clientX - startX);
+      w = Math.max(220, Math.min(window.innerWidth * 0.7, w));
+      if (target === "list") listW = w; else inspW = w;
+      applyLayout();
+    });
+    function end(e) { if (!dragging) return; dragging = false; g.classList.remove("drag"); try { g.releasePointerCapture(e.pointerId); } catch (x) {} }
+    g.addEventListener("pointerup", end);
+    g.addEventListener("pointercancel", end);
+  })();
+
   // ---- mode toggle (Rooms | Items) ---------------------------------------
   window.Builder.mode = "rooms";
   function setMode(mode) {
@@ -765,6 +809,7 @@
     document.getElementById("canvas").style.display = isItems ? "none" : "";
     document.getElementById("itemlist").style.display = isItems ? "" : "none";
     document.getElementById("room-tools").style.display = isItems ? "none" : "";
+    applyLayout();
     var sb = document.getElementById("tb-save"); if (sb) sb.style.display = isItems ? "none" : "";
     document.getElementById("tb-mode-rooms").classList.toggle("active", !isItems);
     document.getElementById("tb-mode-items").classList.toggle("active", isItems);
@@ -777,6 +822,7 @@
   }
   document.getElementById("tb-mode-rooms").addEventListener("click", function () { setMode("rooms"); });
   document.getElementById("tb-mode-items").addEventListener("click", function () { setMode("items"); });
+  applyLayout(); // sync initial (rooms) layout
 
   // ---- canvas + toolbar wiring -------------------------------------------
   var planeSel = document.getElementById("tb-plane");
