@@ -127,6 +127,7 @@ type buildRoomDetail struct {
 	RoomId        int               `json:"roomId"`
 	Title         string            `json:"title"`
 	Description   string            `json:"description"`
+	Zone          string            `json:"zone"`
 	Biome         string            `json:"biome"`
 	Symbol        string            `json:"symbol"`
 	Legend        string            `json:"legend"`
@@ -599,7 +600,7 @@ func buildRoomGet(d buildDeps, roomId int) (buildRoomDetail, bool) {
 		return buildRoomDetail{}, false
 	}
 	detail := buildRoomDetail{
-		RoomId: r.RoomId, Title: r.Title, Description: r.Description,
+		RoomId: r.RoomId, Title: r.Title, Description: r.Description, Zone: r.Zone,
 		Biome: r.Biome, Symbol: r.MapSymbol, Legend: r.MapLegend, Music: r.MusicFile,
 		Bank: r.IsBank, Storage: r.IsStorage, Pvp: r.Pvp, CharacterRoom: r.IsCharacterRoom,
 		Nouns: r.Nouns, IdleMessages: r.IdleMessages,

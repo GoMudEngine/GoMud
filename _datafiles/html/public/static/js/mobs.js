@@ -140,11 +140,11 @@
   // ---- test spawn (Task 7) ----
   // A "Test spawn" row at the top of the form: pick a zone (defaults to the
   // mob's own) + type a room id, Check it (Build.Room.Get) to confirm the
-  // target before Spawn is enabled, then Build.Mob.Spawn it in. The
-  // buildRoomDetail payload (Build.Room) carries only roomId/title/etc — no
-  // zone field — so the zone dropdown is informational only in this v1; a
-  // successful Check just shows the room's title and enables Spawn (no
-  // zone-match gate, since the payload doesn't support one).
+  // target before Spawn is enabled, then Build.Mob.Spawn it in. Build.Room
+  // now carries the room's zone (buildRoomDetail.Zone), so Check only enables
+  // Spawn when the room's actual zone matches the dropdown's selection at the
+  // moment Check was clicked — a bogus room id, or a room id from the wrong
+  // zone, is caught here before it can spawn anywhere silently.
   Panel.buildTestSpawnRow = function (detail, enums) {
     var self = this;
     var wrap = ce("div", { style: "border:1px solid var(--tooled);border-radius:5px;padding:8px;margin-bottom:12px;" });
@@ -164,7 +164,7 @@
       "border:none;border-radius:4px;padding:4px 12px;cursor:pointer;";
     var statusEl = ce("span", { style: "font-size:11px;color:var(--gold-dim);" });
 
-    var ui = { roomInput: roomInput, spawnBtn: spawnBtn, statusEl: statusEl, checkedRoomId: 0 };
+    var ui = { roomInput: roomInput, spawnBtn: spawnBtn, statusEl: statusEl, checkedRoomId: 0, checkZone: "" };
     this._spawnUI = ui;
 
     function resetCheck() {
@@ -182,6 +182,7 @@
       resetCheck();
       statusEl.textContent = "checking…";
       self.spawnCheckPending = true;
+      ui.checkZone = zoneSel.value; // the zone selected AT check-time is what the response is validated against
       gmcp("Build.Room.Get", { roomId: roomId });
     });
 
@@ -206,13 +207,23 @@
   };
 
   // Build.Room arriving while mode==="mobs" (routed here by build.html instead
-  // of the room inspector) is the test-spawn Check response.
+  // of the room inspector) is the test-spawn Check response. Spawn is enabled
+  // ONLY when the room's zone matches the zone selected at Check time —
+  // otherwise the title is still shown but Spawn stays disabled, with a
+  // message naming the actual zone so the mismatch is obvious.
   Panel.onRoomCheck = function (obj) {
     this.spawnCheckPending = false;
     var ui = this._spawnUI;
     if (!ui || !obj || !obj.roomId) return;
+    var title = obj.title || "(untitled)";
+    if (obj.zone && ui.checkZone && obj.zone !== ui.checkZone) {
+      ui.checkedRoomId = 0;
+      ui.spawnBtn.disabled = true;
+      ui.statusEl.textContent = "#" + obj.roomId + " " + title + " — room is in " + obj.zone + ", not " + ui.checkZone;
+      return;
+    }
     ui.checkedRoomId = obj.roomId;
-    ui.statusEl.textContent = "#" + obj.roomId + " " + (obj.title || "(untitled)");
+    ui.statusEl.textContent = "#" + obj.roomId + " " + title;
     ui.spawnBtn.disabled = false;
   };
 
@@ -737,7 +748,11 @@
         return;
       }
     } else {
-      this.saving = false; this.deleting = false; this.creating = false; this.spawning = false;
+      // A failed Check (Build.Room.Get, routed here as a Build.Result error)
+      // must consume ONLY its own spawnCheckPending state and return — it must
+      // NOT fall into the blanket saving/deleting/creating/spawning reset
+      // below, or a Check that fails while e.g. a Save is in flight would
+      // silently swallow the Save's own (still-pending) result.
       if (this.spawnCheckPending) {
         this.spawnCheckPending = false;
         if (this._spawnUI) {
@@ -748,6 +763,7 @@
         toast((obj && obj.error) || "Room check failed", true);
         return;
       }
+      this.saving = false; this.deleting = false; this.creating = false; this.spawning = false;
       if (obj && obj.mobRefs && obj.mobRefs.length) this.showDeleteRefs(obj.mobRefs);
       toast((obj && obj.error) || "Mob error", true);
     }
@@ -768,7 +784,8 @@
     insp.appendChild(ce("div", { "class": "empty", text: "Select a mob on the left, or + New Mob." }));
   }
   Panel.clear = function () {
-    this.detail = null; this.fields = null; this.dirty = false;
+    this.detail = null; this.fields = null; this.dirty = false; this.selectedId = 0;
+    this.saving = false; this.deleting = false; this.creating = false;
     this._spawnUI = null; this.spawning = false; this.spawnCheckPending = false;
     clearMobInspector();
   };
