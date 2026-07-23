@@ -141,9 +141,14 @@
       return field(label, i);
     }
     function numField(label, key, val, step) {
+      // Fields created without a fractional step are integer-typed on the
+      // server (parryRating, hands, mitigations, ...). Go's json rejects a
+      // fractional number into an int field and fails the WHOLE Save payload
+      // ("bad Build.Item.Update payload"), so round integer fields here.
+      var isInt = !step || step === "1";
       var i = ce("input", { type: "number", step: step || "1" }); i.value = (val === 0 ? "0" : (val || ""));
       i.addEventListener("input", markDirty);
-      F[key] = function () { return parseFloat(i.value) || 0; };
+      F[key] = function () { var n = parseFloat(i.value) || 0; return isInt ? Math.round(n) : n; };
       return field(label, i);
     }
     function checkField(label, key, val) {
