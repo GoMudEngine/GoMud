@@ -676,18 +676,65 @@ func sendZoneMapFull(uid int, zone string) {
 	if m == nil {
 		return
 	}
+	crawled := m.CrawledRoomIds()
+
+	// Pass 1: the current zone's rooms + their per-plane bounding box.
+	type bbox struct{ minX, maxX, minY, maxY int }
+	boxes := map[int]*bbox{}
 	visited := map[int]struct{}{}
-	for _, id := range m.CrawledRoomIds() {
-		if r := rooms.LoadRoom(id); r != nil && r.Zone == zone {
-			visited[id] = struct{}{}
+	for _, id := range crawled {
+		r := rooms.LoadRoom(id)
+		if r == nil || r.Zone != zone {
+			continue
+		}
+		visited[id] = struct{}{}
+		if b := boxes[r.Plane]; b == nil {
+			boxes[r.Plane] = &bbox{r.X, r.X, r.Y, r.Y}
+		} else {
+			b.minX, b.maxX = min(b.minX, r.X), max(b.maxX, r.X)
+			b.minY, b.maxY = min(b.minY, r.Y), max(b.maxY, r.Y)
 		}
 	}
+
+	// Pass 2: foreign rooms (other zones, same plane) within the zone's bounding
+	// box plus a small margin — added as dimmed context so cross-zone overlaps
+	// are visible and ghost cells don't invite building into an occupied
+	// neighbour. Same-plane zones share one coordinate frame (the 0.15.0
+	// migration keeps a connected component on one plane), so this is exactly
+	// the set ValidatePlacement would reject.
+	const margin = 2
+	for _, id := range crawled {
+		if _, ok := visited[id]; ok {
+			continue
+		}
+		r := rooms.LoadRoom(id)
+		if r == nil || r.Zone == zone {
+			continue
+		}
+		b := boxes[r.Plane]
+		if b == nil {
+			continue // current zone doesn't occupy this plane
+		}
+		if r.X < b.minX-margin || r.X > b.maxX+margin || r.Y < b.minY-margin || r.Y > b.maxY+margin {
+			continue
+		}
+		visited[id] = struct{}{}
+	}
+
+	snap := m.Snapshot(visited)
+	for i := range snap {
+		if r := rooms.LoadRoom(snap[i].RoomId); r != nil && r.Zone != zone {
+			snap[i].Foreign = true
+			snap[i].OwnerZone = r.Zone
+		}
+	}
+
 	zoneNames := rooms.GetAllZoneNames()
 	sort.Strings(zoneNames)
 
 	payload := GMCPZoneModule_Payload{
 		Zone:   zone,
-		Rooms:  m.Snapshot(visited),
+		Rooms:  snap,
 		Zones:  zoneNames,       // let the builder switch to any zone
 		Biomes: validBiomeIds(), // for the new-zone / inspector biome dropdowns
 	}

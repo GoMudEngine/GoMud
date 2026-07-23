@@ -29,6 +29,11 @@ type SnapshotRoom struct {
 	Name   string         `json:"name"`           // room title (client tooltip / identify)
 	Tags   []string       `json:"tags,omitempty"` // service tags: bank | storage | trainer | shop
 	Exits  []SnapshotExit `json:"exits"`
+	// Builder-only: set for rooms that belong to a DIFFERENT zone than the one
+	// being edited, but sit on the same plane near its edge — drawn as dimmed
+	// context so the builder can see (and not collide with) a neighbour.
+	Foreign   bool   `json:"foreign,omitempty"`
+	OwnerZone string `json:"ozone,omitempty"`
 }
 
 // Snapshot returns the visited rooms of this zone with classified exits. Exits

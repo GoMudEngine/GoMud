@@ -716,6 +716,14 @@
   var newZoneBtn = document.getElementById("tb-new-zone");
   if (newZoneBtn) newZoneBtn.addEventListener("click", renderNewZoneForm);
 
+  // Clicking a dimmed foreign (neighbouring-zone) room switches to that zone.
+  window.Builder.onZoneJump = function (zoneName) {
+    if (!zoneName) return;
+    if (zoneSel) zoneSel.value = zoneName;
+    clearInspector();
+    sendGMCP("Build.Map.Request", { zone: zoneName });
+  };
+
   if (window.Builder.BuilderCanvas) {
     canvas = new window.Builder.BuilderCanvas(document.getElementById("canvas"));
     canvas.onPlanes = function (planes, curPlane, floors, curFloor) {

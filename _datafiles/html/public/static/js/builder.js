@@ -181,8 +181,8 @@
       for (var j = 0; j < exits.length; j++) this._drawExit(r, exits[j]);
     }
 
-    // ---- ghost cells ----
-    for (i = 0; i < vis.length; i++) this._drawGhosts(vis[i]);
+    // ---- ghost cells (only around THIS zone's rooms, never foreign context) ----
+    for (i = 0; i < vis.length; i++) if (!vis[i].foreign) this._drawGhosts(vis[i]);
 
     // ---- room nodes ----
     for (i = 0; i < vis.length; i++) this._drawRoom(vis[i]);
@@ -289,6 +289,10 @@
 
   BuilderCanvas.prototype._drawRoom = function (r) {
     var self = this;
+    // Foreign rooms (a neighbouring zone) are drawn dimmed as context, labelled
+    // with their zone, and click through to switch to that zone rather than
+    // opening the inspector (you can't edit another zone's room from here).
+    if (r.foreign) { this._drawForeign(r); return; }
     var g = el("g", { style: "cursor:pointer" });
     var rect = el("rect", {
       x: r.x * CELL, y: r.y * CELL, width: RW, height: RH, rx: 8,
@@ -322,7 +326,43 @@
     this.world.appendChild(g);
   };
 
+  BuilderCanvas.prototype._drawForeign = function (r) {
+    var g = el("g", { style: "cursor:pointer", opacity: "0.42" });
+    g.appendChild(el("rect", {
+      x: r.x * CELL, y: r.y * CELL, width: RW, height: RH, rx: 8,
+      fill: biomeFill(r.biome), stroke: "#6f5a34", "stroke-width": 1,
+      "stroke-dasharray": "3 3"
+    }));
+    var idT = el("text", {
+      x: cx(r), y: r.y * CELL + 17, "text-anchor": "middle",
+      "font-family": "monospace", "font-size": 9, fill: "#b9a066"
+    });
+    idT.textContent = r.num;
+    g.appendChild(idT);
+    var zn = el("text", {
+      x: cx(r), y: r.y * CELL + 30, "text-anchor": "middle",
+      "font-family": "Georgia,serif", "font-size": 7, "font-style": "italic", fill: "#9c8048"
+    });
+    var oz = r.ozone || "";
+    zn.textContent = oz.length > 13 ? oz.slice(0, 12) + "…" : oz;
+    g.appendChild(zn);
+    var title = el("title");
+    title.textContent = (r.name || ("#" + r.num)) + " — " + oz + " (click to edit that zone)";
+    g.appendChild(title);
+    g.addEventListener("click", function (ev) {
+      ev.stopPropagation();
+      if (oz && typeof window.Builder.onZoneJump === "function") window.Builder.onZoneJump(oz);
+    });
+    this.world.appendChild(g);
+  };
+
   BuilderCanvas.prototype.select = function (roomId) {
+    // Foreign context rooms aren't editable from this zone.
+    var room = this.byId[roomId];
+    if (room && room.foreign) {
+      if (room.ozone && typeof window.Builder.onZoneJump === "function") window.Builder.onZoneJump(room.ozone);
+      return;
+    }
     this.selectedId = roomId;
     this.render();
     if (typeof window.Builder.onRoomSelected === "function") {
