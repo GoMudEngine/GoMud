@@ -118,6 +118,7 @@
   };
 
   function promptNewMob() {
+    if (Panel.dirty && !window.confirm("Discard unsaved changes to this mob?")) return;
     var zones = Panel.zones.length ? Panel.zones : distinctZones();
     var dflt = Panel.zoneFilter || (zones.length ? zones[0] : "");
     var z = window.prompt("New mob — which zone?\n(" + zones.join(", ") + ")", dflt);
@@ -233,7 +234,13 @@
       inputRow.appendChild(inp); inputRow.appendChild(addBtn);
       wrap.appendChild(inputRow);
       if (hint) wrap.appendChild(ce("div", { style: "font-size:10px;color:var(--gold-dim);margin-top:2px;", text: hint }));
-      F[key] = function () { return current.slice(); };
+      // Text typed into the add-box but never committed via Enter/+add would
+      // otherwise be silently lost on Save — flush it in as if the add
+      // routine had been called (this also updates the visible chip list).
+      F[key] = function () {
+        if (inp.value.trim()) addFromInput();
+        return current.slice();
+      };
       return wrap;
     }
 
