@@ -1,6 +1,7 @@
 package gmcp
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/items"
@@ -391,5 +392,58 @@ func TestScanMobReferences_DedupsAndCoversMercAndConversation(t *testing.T) {
 	}
 	if refs[1].Kind != "merc-shop" || refs[1].Id != "mob 9601 (Traveling Slaver) sells it" {
 		t.Errorf("wrong merc-shop ref: %+v", refs[1])
+	}
+}
+
+// ---- Build.Mob.Spawn (Task 4) ----
+
+func TestBuildMobSpawn_ValidatesAndSpawns(t *testing.T) {
+	w := newFakeMobWorld()
+	m := &mobs.Mob{MobId: 90020, Zone: "Testzone"}
+	m.Character.Name = "Spawnling"
+	w.specs[90020] = m
+	d := w.deps()
+	spawned := []int{}
+	d.spawn = func(mobId, roomId int) (string, error) {
+		spawned = append(spawned, roomId)
+		return "Spawnling", nil
+	}
+	res := buildMobSpawn(d, mobSpawnReq{MobId: 90020, RoomId: 101})
+	if !res.Ok || res.MobId != 90020 {
+		t.Fatalf("spawn should succeed, got %+v", res)
+	}
+	if res.Message != "Spawnling spawned in room 101" {
+		t.Errorf("expected a descriptive success message, got %q", res.Message)
+	}
+	if len(spawned) != 1 || spawned[0] != 101 {
+		t.Errorf("expected spawn in room 101, got %+v", spawned)
+	}
+	if res := buildMobSpawn(d, mobSpawnReq{MobId: 424242, RoomId: 101}); res.Ok {
+		t.Error("unknown mob must be rejected")
+	}
+	if len(spawned) != 1 {
+		t.Error("d.spawn must not be called for an unknown mob")
+	}
+}
+
+// TestBuildMobSpawn_SurfacesSpawnError covers the other half of buildMobSpawn:
+// a KNOWN mob whose d.spawn call itself fails (bad room id, instantiation
+// failure, etc.) must come back as a non-Ok result naming the problem, not a
+// silent success.
+func TestBuildMobSpawn_SurfacesSpawnError(t *testing.T) {
+	w := newFakeMobWorld()
+	m := &mobs.Mob{MobId: 90021, Zone: "Testzone"}
+	m.Character.Name = "Unspawnable"
+	w.specs[90021] = m
+	d := w.deps()
+	d.spawn = func(mobId, roomId int) (string, error) {
+		return "", fmt.Errorf("room %d not found", roomId)
+	}
+	res := buildMobSpawn(d, mobSpawnReq{MobId: 90021, RoomId: 999999})
+	if res.Ok {
+		t.Fatal("a spawn error from d.spawn must not report success")
+	}
+	if res.Error == "" {
+		t.Error("expected a non-empty error message")
 	}
 }

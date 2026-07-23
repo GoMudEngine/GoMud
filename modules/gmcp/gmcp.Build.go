@@ -40,6 +40,7 @@ type BuildResult struct {
 	Refs    []itemRef     `json:"refs,omitempty"`    // Build.Item.Delete: what still references a blocked item
 	MobId   int           `json:"mobId,omitempty"`   // e.g. the created/updated/spawned mob
 	MobRefs []mobRefEntry `json:"mobRefs,omitempty"` // Build.Mob.Delete: what still references a blocked mob
+	Message string        `json:"message,omitempty"` // e.g. Build.Mob.Spawn's "<name> spawned in room <id>"
 }
 
 func buildErr(format string, args ...any) BuildResult {
@@ -403,7 +404,13 @@ func (g *GMCPModule) handleBuildOp(e events.Event) events.ListenerReturn {
 		if res.Ok {
 			sendMobList(uid)
 		}
-		// Build.Mob.Spawn — Task 4
+	case `Build.Mob.Spawn`:
+		var req mobSpawnReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Mob.Spawn payload"))
+			break
+		}
+		sendBuildResult(uid, buildMobSpawn(realMobDeps(), req))
 	}
 	return events.Continue
 }

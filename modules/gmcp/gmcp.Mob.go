@@ -29,6 +29,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/llm"
+	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -190,8 +191,8 @@ type mobDeps struct {
 	del        func(id int) error
 	create     func(zone string) (int, error)
 	zoneExists func(zone string) bool
-	// references is wired to scanMobReferences (below) by realMobDeps(). spawn
-	// is still stubbed here — Task 4 (test-spawn) fills in spawnMobInRoom.
+	// references is wired to scanMobReferences (below) by realMobDeps(); spawn
+	// is wired to spawnMobInRoom (below) — the test-spawn control (Task 4).
 	references func(id int) []mobRefEntry
 	spawn      func(mobId, roomId int) (string, error)
 }
@@ -207,9 +208,7 @@ func realMobDeps() mobDeps {
 		},
 		zoneExists: func(zone string) bool { return rooms.GetZoneConfig(zone) != nil },
 		references: scanMobReferences,
-		// Task 4 placeholder: spawning isn't wired yet. spawnMobInRoom replaces
-		// this once Build.Mob.Spawn lands.
-		spawn: func(int, int) (string, error) { return "", fmt.Errorf("not implemented") },
+		spawn:      spawnMobInRoom,
 	}
 }
 
@@ -441,6 +440,43 @@ func buildMobDelete(d mobDeps, mobId int) BuildResult {
 		return buildErr("could not delete mob %d: %s", mobId, err.Error())
 	}
 	return BuildResult{Ok: true, MobId: mobId}
+}
+
+// buildMobSpawn test-spawns a mob template into an admin-chosen room — the web
+// equivalent of the in-game `mob spawn` admin command. Rejects an unknown
+// template before touching the world; any spawn-time failure (bad room id,
+// instantiation failure) surfaces as a non-Ok result naming the problem.
+func buildMobSpawn(d mobDeps, req mobSpawnReq) BuildResult {
+	if d.load(req.MobId) == nil {
+		return buildErr("mob %d not found", req.MobId)
+	}
+	name, err := d.spawn(req.MobId, req.RoomId)
+	if err != nil {
+		return buildErr("could not spawn: %s", err.Error())
+	}
+	return BuildResult{Ok: true, MobId: req.MobId, Message: fmt.Sprintf("%s spawned in room %d", name, req.RoomId)}
+}
+
+// spawnMobInRoom mirrors the in-game `mob spawn` admin command
+// (internal/usercommands/admin.mob.go:200-209): NewMobById + room.AddMob + a
+// room announce. Build.Mob.Spawn is dispatched via GMCPBuildOp and processed
+// by handleBuildOp on MainWorker, so mutating the shared room/mob world state
+// here is safe (no connection-goroutine race).
+func spawnMobInRoom(mobId, roomId int) (string, error) {
+	room := rooms.LoadRoom(roomId)
+	if room == nil {
+		return "", fmt.Errorf("room %d not found", roomId)
+	}
+	mob := mobs.NewMobById(mobs.MobId(mobId), roomId)
+	if mob == nil {
+		return "", fmt.Errorf("mob %d could not be instantiated", mobId)
+	}
+	room.AddMob(mob.InstanceId)
+	// excludeUserIds left empty (no player performed this in-room) — 0 isn't
+	// needed since SendTextVisual only excludes uids present in r.GetPlayers().
+	room.SendTextVisual(messaging.CategoryMobEmote,
+		fmt.Sprintf(`<ansi fg="mobname">%s</ansi> appears in the air and falls to the ground.`, mob.Character.Name))
+	return mob.Character.Name, nil
 }
 
 // ---- reference scan (Build.Mob.Delete) ----
