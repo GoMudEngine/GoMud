@@ -47,6 +47,20 @@
   #toolbar button { cursor: pointer; }
   #toolbar button:hover { border-color: var(--gold); }
   #toolbar .spacer { flex: 1 1 auto; }
+  #mode-toggle { display: inline-flex; border: 1px solid var(--tooled); border-radius: 5px; overflow: hidden; }
+  #mode-toggle .mode-btn { border: none; border-radius: 0; padding: 5px 12px; background: var(--panel); }
+  #mode-toggle .mode-btn.active { background: var(--gold); color: var(--ink); font-weight: bold; }
+  #room-tools { display: inline-flex; align-items: center; gap: 14px; }
+  /* ---- item list (Items mode) ---- */
+  #itemlist { flex: 0 0 340px; overflow-y: auto; background: var(--leather2); border-right: 2px solid var(--tooled); padding: 8px; }
+  #itemlist .filters { display: flex; gap: 6px; margin-bottom: 8px; position: sticky; top: 0; background: var(--leather2); padding-bottom: 6px; }
+  #itemlist .filters input, #itemlist .filters select { flex: 1 1 auto; min-width: 0; padding: 5px 7px; font: inherit; font-size: 12px; background: var(--ink); color: var(--parch); border: 1px solid var(--tooled); border-radius: 4px; }
+  #itemlist .newitem { width: 100%; margin-bottom: 8px; padding: 7px; background: var(--gold); color: var(--ink); font-weight: bold; border: none; border-radius: 4px; cursor: pointer; }
+  #itemlist .irow { padding: 5px 7px; border-bottom: 1px dotted var(--tooled); cursor: pointer; font-size: 12px; }
+  #itemlist .irow:hover { background: rgba(201,162,75,.12); }
+  #itemlist .irow.sel { background: rgba(201,162,75,.22); }
+  #itemlist .irow .iid { color: var(--gold); font-family: monospace; }
+  #itemlist .irow .ity { color: var(--gold-dim); font-size: 10px; }
   #conn { font-size: 12px; color: var(--gold-dim); }
   #conn.ok    { color: var(--ok); }
   #conn.bad   { color: var(--danger); }
@@ -130,15 +144,21 @@
 <div id="app">
   <div id="toolbar">
     <span class="brand">⚒ World Builder</span>
-    <label for="tb-zone-sel">Zone</label>
-    <select id="tb-zone-sel"><option value="">—</option></select>
-    <button id="tb-new-zone" title="Create a new zone">+ Zone</button>
-    <label for="tb-plane">Plane</label>
-    <select id="tb-plane"><option value="">—</option></select>
-    <label for="tb-floor">Floor</label>
-    <button id="tb-floor-dn" title="Down a floor">▼</button>
-    <span id="tb-floor" style="min-width:1.5em;text-align:center;">0</span>
-    <button id="tb-floor-up" title="Up a floor">▲</button>
+    <span id="mode-toggle">
+      <button id="tb-mode-rooms" class="mode-btn active">Rooms</button>
+      <button id="tb-mode-items" class="mode-btn">Items</button>
+    </span>
+    <span id="room-tools">
+      <label for="tb-zone-sel">Zone</label>
+      <select id="tb-zone-sel"><option value="">—</option></select>
+      <button id="tb-new-zone" title="Create a new zone">+ Zone</button>
+      <label for="tb-plane">Plane</label>
+      <select id="tb-plane"><option value="">—</option></select>
+      <label for="tb-floor">Floor</label>
+      <button id="tb-floor-dn" title="Down a floor">▼</button>
+      <span id="tb-floor" style="min-width:1.5em;text-align:center;">0</span>
+      <button id="tb-floor-up" title="Up a floor">▲</button>
+    </span>
     <div class="spacer"></div>
     <span id="conn">● connecting…</span>
     <button id="tb-save" disabled>Save Room</button>
@@ -147,6 +167,7 @@
     <div id="canvas">
       <div class="placeholder" id="canvas-ph">Waiting for the world map…</div>
     </div>
+    <div id="itemlist" style="display:none;"></div>
     <aside id="inspector">
       <h2>Inspector</h2>
       <div class="empty" id="insp-empty">Select a room on the map to edit it.</div>
@@ -175,6 +196,7 @@
 </div>
 
 <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/builder.js"></script>
+<script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/items.js"></script>
 <script>
 "use strict";
 (function () {
@@ -223,6 +245,12 @@
   };
 
   window.Builder.onGMCP = function (ns, obj) {
+    var IP = window.Builder.ItemsPanel;
+    // ---- item editor (Items mode) ----
+    if (ns === "Build.Items") { if (IP) { IP.render(obj); IP.afterListRefresh(); } return; }
+    if (ns === "Build.Item") { if (IP) IP.renderForm(obj); return; }
+    if (ns === "Build.Result" && window.Builder.mode === "items") { if (IP) IP.onResult(obj); return; }
+    // ---- room editor (Rooms mode) ----
     if (ns === "Build.Result") {
       if (obj && obj.ok) {
         if (creatingZone) { creatingZone = false; clearInspector(); toast("Zone created.", false); }
@@ -256,6 +284,7 @@
     c.className = isErr ? "bad" : "ok";
     setTimeout(function () { c.textContent = prev; c.className = prevCls; }, 2000);
   }
+  window.Builder.toast = toast;
 
   // Send a client->server GMCP frame as BINARY so the 0xFF IAC byte survives
   // (a text frame would UTF-8-mangle it). Mirrors webclient-pure.html.
@@ -704,6 +733,27 @@
   }
 
   clearInspector();
+
+  // ---- mode toggle (Rooms | Items) ---------------------------------------
+  window.Builder.mode = "rooms";
+  function setMode(mode) {
+    window.Builder.mode = mode;
+    var isItems = mode === "items";
+    document.getElementById("canvas").style.display = isItems ? "none" : "";
+    document.getElementById("itemlist").style.display = isItems ? "" : "none";
+    document.getElementById("room-tools").style.display = isItems ? "none" : "";
+    var sb = document.getElementById("tb-save"); if (sb) sb.style.display = isItems ? "none" : "";
+    document.getElementById("tb-mode-rooms").classList.toggle("active", !isItems);
+    document.getElementById("tb-mode-items").classList.toggle("active", isItems);
+    if (isItems) {
+      window.Builder.ItemsPanel.clear();
+      sendGMCP("Build.Item.List", {});
+    } else {
+      clearInspector();
+    }
+  }
+  document.getElementById("tb-mode-rooms").addEventListener("click", function () { setMode("rooms"); });
+  document.getElementById("tb-mode-items").addEventListener("click", function () { setMode("items"); });
 
   // ---- canvas + toolbar wiring -------------------------------------------
   var planeSel = document.getElementById("tb-plane");
