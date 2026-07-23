@@ -6,6 +6,7 @@ package itemvoices
 
 import (
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -81,6 +82,17 @@ func GetVoice(id string) *VoiceSpec {
 		return nil
 	}
 	return allVoices[id]
+}
+
+// AllVoiceIds returns every loaded voice id, sorted — for the item editor's
+// sentient-voice dropdown (so only resolvable voices are offered).
+func AllVoiceIds() []string {
+	out := make([]string, 0, len(allVoices))
+	for id := range allVoices {
+		out = append(out, id)
+	}
+	sort.Strings(out)
+	return out
 }
 
 // SeedVoicesForTest swaps the registry for a test-supplied map, returning a

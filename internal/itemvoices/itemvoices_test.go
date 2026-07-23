@@ -1,6 +1,20 @@
 package itemvoices
 
-import "testing"
+import (
+	"slices"
+	"testing"
+)
+
+func TestAllVoiceIds(t *testing.T) {
+	defer SeedVoicesForTest(map[string]*VoiceSpec{
+		"blackrazor": {VoiceId: "blackrazor"},
+		"aegis":      {VoiceId: "aegis"},
+	})()
+	got := AllVoiceIds()
+	if !slices.Equal(got, []string{"aegis", "blackrazor"}) {
+		t.Errorf("want sorted [aegis blackrazor], got %v", got)
+	}
+}
 
 func TestVoiceLineSelection(t *testing.T) {
 	defer SeedVoicesForTest(map[string]*VoiceSpec{

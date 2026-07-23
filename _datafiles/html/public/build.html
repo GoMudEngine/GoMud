@@ -47,6 +47,24 @@
   #toolbar button { cursor: pointer; }
   #toolbar button:hover { border-color: var(--gold); }
   #toolbar .spacer { flex: 1 1 auto; }
+  #mode-toggle { display: inline-flex; border: 1px solid var(--tooled); border-radius: 5px; overflow: hidden; }
+  #mode-toggle .mode-btn { border: none; border-radius: 0; padding: 5px 12px; background: var(--panel); }
+  #mode-toggle .mode-btn.active { background: var(--gold); color: var(--ink); font-weight: bold; }
+  #room-tools { display: inline-flex; align-items: center; gap: 14px; }
+  /* ---- item list (Items mode) ---- */
+  #itemlist { flex: 0 0 auto; width: 340px; overflow-y: auto; background: var(--leather2); border-right: 2px solid var(--tooled); padding: 8px; }
+  /* Full-height drag divider between the left area and the inspector. */
+  #gutter { flex: 0 0 7px; cursor: col-resize; background: var(--tooled); opacity: .45; align-self: stretch; }
+  #gutter:hover, #gutter.drag { opacity: 1; }
+  #gutter::after { content: "⋮"; display: block; text-align: center; color: var(--leather2); font-size: 11px; margin-top: 40vh; }
+  #itemlist .filters { display: flex; gap: 6px; margin-bottom: 8px; position: sticky; top: 0; background: var(--leather2); padding-bottom: 6px; }
+  #itemlist .filters input, #itemlist .filters select { flex: 1 1 auto; min-width: 0; padding: 5px 7px; font: inherit; font-size: 12px; background: var(--ink); color: var(--parch); border: 1px solid var(--tooled); border-radius: 4px; }
+  #itemlist .newitem { width: 100%; margin-bottom: 8px; padding: 7px; background: var(--gold); color: var(--ink); font-weight: bold; border: none; border-radius: 4px; cursor: pointer; }
+  #itemlist .irow { padding: 5px 7px; border-bottom: 1px dotted var(--tooled); cursor: pointer; font-size: 12px; }
+  #itemlist .irow:hover { background: rgba(201,162,75,.12); }
+  #itemlist .irow.sel { background: rgba(201,162,75,.22); }
+  #itemlist .irow .iid { color: var(--gold); font-family: monospace; }
+  #itemlist .irow .ity { color: var(--gold-dim); font-size: 10px; }
   #conn { font-size: 12px; color: var(--gold-dim); }
   #conn.ok    { color: var(--ok); }
   #conn.bad   { color: var(--danger); }
@@ -54,7 +72,7 @@
   /* ---- body split ---- */
   #main { flex: 1 1 auto; display: flex; min-height: 0; }
   #canvas {
-    flex: 1 1 auto; position: relative; overflow: hidden;
+    flex: 1 1 auto; min-width: 0; position: relative; overflow: hidden;
     background:
       radial-gradient(ellipse at 30% 20%, #34241680 0%, #00000000 60%),
       var(--leather2);
@@ -65,7 +83,7 @@
     color: var(--gold-dim); font-style: italic; text-align: center; padding: 20px;
   }
   #inspector {
-    flex: 0 0 260px; overflow-y: auto;
+    flex: 0 0 auto; width: 300px; overflow: auto;
     background: var(--panel); padding: 12px;
   }
   #inspector h2 { margin: 0 0 8px; color: var(--gold); font-size: 15px; }
@@ -91,7 +109,9 @@
   #inspector button.mini { background: var(--panel); color: var(--parch); border: 1px solid var(--tooled); border-radius: 4px; padding: 2px 7px; font: inherit; font-size: 12px; cursor: pointer; }
   #inspector button.mini:hover { border-color: var(--gold); }
   #inspector button.rm { color: var(--danger); border-color: transparent; padding: 2px 6px; }
-  #inspector .save-row { position: sticky; bottom: 0; background: var(--panel); padding: 10px 0 4px; margin-top: 10px; }
+  /* Not sticky: a bottom-pinned action bar hid the Component/Bag and Advanced
+     sections behind it. The form scrolls to Save/Delete at its natural end. */
+  #inspector .save-row { background: var(--panel); padding: 10px 0 4px; margin-top: 14px; border-top: 1px solid var(--tooled); }
   #inspector .save-row button { width: 100%; padding: 8px; background: var(--gold); color: var(--ink); font-weight: bold; border: none; border-radius: 4px; cursor: pointer; }
   #inspector .save-row button:disabled { opacity: .45; cursor: default; }
   #addexit { border: 1px solid var(--tooled); border-radius: 5px; padding: 8px; margin-top: 6px; }
@@ -130,15 +150,21 @@
 <div id="app">
   <div id="toolbar">
     <span class="brand">⚒ World Builder</span>
-    <label for="tb-zone-sel">Zone</label>
-    <select id="tb-zone-sel"><option value="">—</option></select>
-    <button id="tb-new-zone" title="Create a new zone">+ Zone</button>
-    <label for="tb-plane">Plane</label>
-    <select id="tb-plane"><option value="">—</option></select>
-    <label for="tb-floor">Floor</label>
-    <button id="tb-floor-dn" title="Down a floor">▼</button>
-    <span id="tb-floor" style="min-width:1.5em;text-align:center;">0</span>
-    <button id="tb-floor-up" title="Up a floor">▲</button>
+    <span id="mode-toggle">
+      <button id="tb-mode-rooms" class="mode-btn active">Rooms</button>
+      <button id="tb-mode-items" class="mode-btn">Items</button>
+    </span>
+    <span id="room-tools">
+      <label for="tb-zone-sel">Zone</label>
+      <select id="tb-zone-sel"><option value="">—</option></select>
+      <button id="tb-new-zone" title="Create a new zone">+ Zone</button>
+      <label for="tb-plane">Plane</label>
+      <select id="tb-plane"><option value="">—</option></select>
+      <label for="tb-floor">Floor</label>
+      <button id="tb-floor-dn" title="Down a floor">▼</button>
+      <span id="tb-floor" style="min-width:1.5em;text-align:center;">0</span>
+      <button id="tb-floor-up" title="Up a floor">▲</button>
+    </span>
     <div class="spacer"></div>
     <span id="conn">● connecting…</span>
     <button id="tb-save" disabled>Save Room</button>
@@ -147,6 +173,8 @@
     <div id="canvas">
       <div class="placeholder" id="canvas-ph">Waiting for the world map…</div>
     </div>
+    <div id="itemlist" style="display:none;"></div>
+    <div id="gutter" title="Drag to resize"></div>
     <aside id="inspector">
       <h2>Inspector</h2>
       <div class="empty" id="insp-empty">Select a room on the map to edit it.</div>
@@ -175,6 +203,7 @@
 </div>
 
 <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/builder.js"></script>
+<script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/items.js"></script>
 <script>
 "use strict";
 (function () {
@@ -223,6 +252,12 @@
   };
 
   window.Builder.onGMCP = function (ns, obj) {
+    var IP = window.Builder.ItemsPanel;
+    // ---- item editor (Items mode) ----
+    if (ns === "Build.Items") { if (IP) { IP.render(obj); IP.afterListRefresh(); } return; }
+    if (ns === "Build.Item") { if (IP) IP.renderForm(obj); return; }
+    if (ns === "Build.Result" && window.Builder.mode === "items") { if (IP) IP.onResult(obj); return; }
+    // ---- room editor (Rooms mode) ----
     if (ns === "Build.Result") {
       if (obj && obj.ok) {
         if (creatingZone) { creatingZone = false; clearInspector(); toast("Zone created.", false); }
@@ -247,15 +282,38 @@
     sendGMCP("Build.Room.Get", { roomId: room.num });
   };
 
-  // Minimal toast in the toolbar conn slot (replaced by a real toast in Task 5).
+  // Floating in-window toast (top-center). Also mirrors to the toolbar conn slot
+  // so a glance at the header confirms the last action.
   function toast(msg, isErr) {
+    var host = document.getElementById("toast-host");
+    if (!host) {
+      host = document.createElement("div");
+      host.id = "toast-host";
+      host.style.cssText = "position:fixed;top:14px;left:50%;transform:translateX(-50%);" +
+        "z-index:9999;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none;";
+      document.body.appendChild(host);
+    }
+    var t = document.createElement("div");
+    t.textContent = (isErr ? "✕ " : "✓ ") + msg;
+    t.style.cssText = "font:600 13px/1.4 system-ui,sans-serif;padding:8px 16px;border-radius:6px;" +
+      "box-shadow:0 4px 14px rgba(0,0,0,.45);color:#fff;opacity:0;transition:opacity .18s;max-width:80vw;" +
+      "background:" + (isErr ? "#8a1f1f" : "#1f6b34") + ";border:1px solid " + (isErr ? "#c94b4b" : "#3fae63") + ";";
+    host.appendChild(t);
+    requestAnimationFrame(function () { t.style.opacity = "1"; });
+    setTimeout(function () {
+      t.style.opacity = "0";
+      setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 250);
+    }, isErr ? 4200 : 2400);
+
     var c = document.getElementById("conn");
-    if (!c) return;
-    var prev = c.textContent, prevCls = c.className;
-    c.textContent = (isErr ? "✕ " : "✓ ") + msg;
-    c.className = isErr ? "bad" : "ok";
-    setTimeout(function () { c.textContent = prev; c.className = prevCls; }, 2000);
+    if (c) {
+      var prev = c.textContent, prevCls = c.className;
+      c.textContent = (isErr ? "✕ " : "✓ ") + msg;
+      c.className = isErr ? "bad" : "ok";
+      setTimeout(function () { c.textContent = prev; c.className = prevCls; }, 2000);
+    }
   }
+  window.Builder.toast = toast;
 
   // Send a client->server GMCP frame as BINARY so the 0xFF IAC byte survives
   // (a text frame would UTF-8-mangle it). Mirrors webclient-pure.html.
@@ -704,6 +762,69 @@
   }
 
   clearInspector();
+
+  // ---- resizable inspector (drag the #gutter divider) --------------------
+  // The inspector is the panel authors want wider. In rooms mode the map is the
+  // flex filler and the inspector is a fixed, draggable width; in items mode the
+  // item list is the fixed/draggable column and the inspector fills the rest —
+  // so the one gutter resizes the inspector in rooms and the list in items.
+  var inspW = 300, listW = 340;
+  function applyLayout() {
+    var isItems = window.Builder.mode === "items";
+    var insp = document.getElementById("inspector");
+    var list = document.getElementById("itemlist");
+    if (isItems) {
+      list.style.flex = "0 0 auto"; list.style.width = listW + "px";
+      insp.style.flex = "1 1 auto"; insp.style.width = "";
+    } else {
+      insp.style.flex = "0 0 auto"; insp.style.width = inspW + "px";
+      list.style.flex = ""; list.style.width = "";
+    }
+  }
+  (function wireGutter() {
+    var g = document.getElementById("gutter");
+    var dragging = false, startX = 0, startW = 0, grow = 1, target = "insp";
+    g.addEventListener("pointerdown", function (e) {
+      var isItems = window.Builder.mode === "items";
+      target = isItems ? "list" : "insp";
+      grow = isItems ? 1 : -1; // items: drag right widens the list; rooms: drag left widens the inspector
+      startX = e.clientX; startW = isItems ? listW : inspW;
+      dragging = true; g.classList.add("drag"); g.setPointerCapture(e.pointerId); e.preventDefault();
+    });
+    g.addEventListener("pointermove", function (e) {
+      if (!dragging) return;
+      var w = startW + grow * (e.clientX - startX);
+      w = Math.max(220, Math.min(window.innerWidth * 0.7, w));
+      if (target === "list") listW = w; else inspW = w;
+      applyLayout();
+    });
+    function end(e) { if (!dragging) return; dragging = false; g.classList.remove("drag"); try { g.releasePointerCapture(e.pointerId); } catch (x) {} }
+    g.addEventListener("pointerup", end);
+    g.addEventListener("pointercancel", end);
+  })();
+
+  // ---- mode toggle (Rooms | Items) ---------------------------------------
+  window.Builder.mode = "rooms";
+  function setMode(mode) {
+    window.Builder.mode = mode;
+    var isItems = mode === "items";
+    document.getElementById("canvas").style.display = isItems ? "none" : "";
+    document.getElementById("itemlist").style.display = isItems ? "" : "none";
+    document.getElementById("room-tools").style.display = isItems ? "none" : "";
+    applyLayout();
+    var sb = document.getElementById("tb-save"); if (sb) sb.style.display = isItems ? "none" : "";
+    document.getElementById("tb-mode-rooms").classList.toggle("active", !isItems);
+    document.getElementById("tb-mode-items").classList.toggle("active", isItems);
+    if (isItems) {
+      window.Builder.ItemsPanel.clear();
+      sendGMCP("Build.Item.List", {});
+    } else {
+      clearInspector();
+    }
+  }
+  document.getElementById("tb-mode-rooms").addEventListener("click", function () { setMode("rooms"); });
+  document.getElementById("tb-mode-items").addEventListener("click", function () { setMode("items"); });
+  applyLayout(); // sync initial (rooms) layout
 
   // ---- canvas + toolbar wiring -------------------------------------------
   var planeSel = document.getElementById("tb-plane");

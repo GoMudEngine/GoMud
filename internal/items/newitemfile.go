@@ -14,6 +14,8 @@ func CreateNewItemFile(newItemInfo ItemSpec) (int, error) {
 		return 0, errors.New(`Could not find a new item id to assign.`)
 	}
 
+	CanonicalizeItemNames(&newItemInfo)
+
 	if err := newItemInfo.Validate(); err != nil {
 		return 0, err
 	}
