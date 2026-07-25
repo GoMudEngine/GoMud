@@ -337,3 +337,13 @@ func buildZoneUpdate(d zoneDeps, req zoneUpdateReq) BuildResult {
 	}
 	return BuildResult{Ok: true, Message: "zone " + req.Name + " saved"}
 }
+
+// ---- senders ----
+
+func sendZoneList(uid int) {
+	sendGMCP(uid, `Build.Zones`, buildZoneList(realZoneDeps()))
+}
+
+func sendZoneDetail(uid int, d zoneDetail) {
+	sendGMCP(uid, `Build.Zone`, d)
+}

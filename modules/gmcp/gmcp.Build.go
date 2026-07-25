@@ -333,6 +333,41 @@ func (g *GMCPModule) handleBuildOp(e events.Event) events.ListenerReturn {
 			sendZoneMapFull(uid, strings.TrimSpace(req.Name))
 		}
 
+	case `Build.Zone.List`:
+		sendZoneList(uid)
+	case `Build.Zone.Get`:
+		var req zoneGetReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Zone.Get payload"))
+			break
+		}
+		if d, ok := buildZoneGet(realZoneDeps(), req.Zone); ok {
+			sendZoneDetail(uid, d)
+		} else {
+			sendBuildResult(uid, buildErr("zone %q not found", req.Zone))
+		}
+	case `Build.Zone.Update`:
+		var req zoneUpdateReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Zone.Update payload"))
+			break
+		}
+		sendBuildResult(uid, buildZoneUpdate(realZoneDeps(), req))
+		sendZoneList(uid)
+	case `Build.Zone.Delete`:
+		var req zoneDeleteReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Zone.Delete payload"))
+			break
+		}
+		res := buildZoneDelete(realZoneDeps(), req.Zone)
+		if res.Ok {
+			// rooms cannot import mapper, so cache invalidation happens here.
+			mapper.ClearCache()
+		}
+		sendBuildResult(uid, res)
+		sendZoneList(uid)
+
 	case `Build.Map.Request`:
 		var req mapRequestReq
 		if json.Unmarshal(evt.Payload, &req) != nil {
