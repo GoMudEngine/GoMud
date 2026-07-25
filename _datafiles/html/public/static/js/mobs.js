@@ -635,7 +635,7 @@
     body.appendChild(H.numField("Stock multiplier", "stockMultiplier", detail.stockMultiplier, "0.05"));
     body.appendChild(H.selectField("Craft support", "craftSupport", detail.craftSupport, [""].concat(enums.craftSupports || [])));
     body.appendChild(H.checkField("Crafter", "crafter", detail.crafter));
-    body.appendChild(H.textField("Crafter skill", "crafterSkill", detail.crafterSkill));
+    body.appendChild(H.selectField("Crafter skill", "crafterSkill", detail.crafterSkill, [""].concat(enums.crafterSkills || [])));
     body.appendChild(H.chipsField("Crafter recipe ids", "crafterRecipeIds", detail.crafterRecipeIds));
     body.appendChild(H.idRowsField("Crafter restock materials", "crafterRestockMaterials", detail.crafterRestockMaterials));
 

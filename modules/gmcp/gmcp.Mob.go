@@ -152,6 +152,7 @@ type mobEnums struct {
 	ScheduleIds        []string          `json:"scheduleIds"`
 	PatrolIds          []string          `json:"patrolIds"`
 	CraftSupports      []string          `json:"craftSupports"`
+	CrafterSkills      []string          `json:"crafterSkills"` // recipe disciplines; excludes "general"
 	SubmissionPolicies []string          `json:"submissionPolicies"`
 	WornSlots          []string          `json:"wornSlots"`
 	Groups             []string          `json:"groups"` // observed values across existing mobs, as suggestions
@@ -395,6 +396,14 @@ func buildMobUpdate(d mobDeps, req mobUpdateReq) BuildResult {
 	}
 	if req.CraftSupport != "" && !shops.IsValidCraftSupport(req.CraftSupport) {
 		return buildErr("craft_support %q invalid; valid: %s", req.CraftSupport, strings.Join(shops.ValidCraftSupports, ", "))
+	}
+	// CrafterSkill is matched verbatim against recipe.Skill (mobs.pickEligibleRecipe)
+	// and passed to shops.EvaluateBuyRules, so a typo fails SILENTLY — the mob just
+	// never crafts and its buy rules stop matching. Validate against the discipline
+	// set (ValidVendorCategories), NOT ValidCraftSupports: "general" is a legal shop
+	// support but is never a recipe skill, so a "general" crafter matches nothing.
+	if req.CrafterSkill != "" && !shops.IsValidVendorCategory(req.CrafterSkill) {
+		return buildErr("crafter_skill %q invalid; valid: %s", req.CrafterSkill, strings.Join(shops.ValidVendorCategories, ", "))
 	}
 	if len(req.CrafterRecipeIds) > 0 {
 		all := crafting.GetAll()
@@ -704,6 +713,7 @@ func collectMobEnums() mobEnums {
 		ScheduleIds:        mobs.AllScheduleIds(),
 		PatrolIds:          mobs.AllPatrolIds(),
 		CraftSupports:      shops.ValidCraftSupports,
+		CrafterSkills:      shops.ValidVendorCategories,
 		SubmissionPolicies: []string{"", "mercy", "subdue", "cripple", "lethal"},
 		WornSlots:          wornSlotNames(),
 		Species:            map[string]string{},

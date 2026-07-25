@@ -494,3 +494,40 @@ func TestBuildMobSpawn_SurfacesSpawnError(t *testing.T) {
 		t.Error("expected a non-empty error message")
 	}
 }
+
+// A crafter mob's CrafterSkill is compared verbatim against recipe.Skill in
+// mobs.pickEligibleRecipe and handed to shops.EvaluateBuyRules on every sell.
+// A typo there fails SILENTLY: the mob simply never crafts and its buy rules
+// stop matching, with no panic and no log line. The editor must reject an
+// unknown skill the same way it already rejects an unknown craft_support.
+func TestBuildMobUpdate_GuardsCrafterSkill(t *testing.T) {
+	w := newFakeMobWorld()
+	base := &mobs.Mob{MobId: 90030, Zone: "Testzone"}
+	base.Character.Name = "Smith"
+	w.specs[90030] = base
+
+	req := func(skill string) mobUpdateReq {
+		return mobUpdateReq{MobId: 90030, Zone: "Testzone", Name: "Smith",
+			Description: "d", SpeciesId: 1, Crafter: true, CrafterSkill: skill}
+	}
+
+	if res := buildMobUpdate(w.deps(), req("blacksmithng")); res.Ok {
+		t.Error("typo'd crafter skill must be rejected")
+	}
+	// "general" is a shop craft_support but never a recipe skill, so a
+	// "general" crafter would match no recipe at all.
+	if res := buildMobUpdate(w.deps(), req("general")); res.Ok {
+		t.Error(`"general" is not a recipe skill and must be rejected for a crafter`)
+	}
+	if len(w.saved) != 0 {
+		t.Errorf("no save on validation failure, got %d", len(w.saved))
+	}
+	if res := buildMobUpdate(w.deps(), req("blacksmithing")); !res.Ok {
+		t.Errorf("valid crafter skill should be allowed: %+v", res)
+	}
+	// A non-crafter with no skill set stays legal.
+	if res := buildMobUpdate(w.deps(), mobUpdateReq{MobId: 90030, Zone: "Testzone",
+		Name: "Smith", Description: "d", SpeciesId: 1}); !res.Ok {
+		t.Errorf("empty crafter skill should be allowed: %+v", res)
+	}
+}
