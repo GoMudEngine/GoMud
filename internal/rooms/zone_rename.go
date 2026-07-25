@@ -1,6 +1,10 @@
 package rooms
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+	"strings"
+)
 
 // zoneRenameSources injects the world lookups the rename guard needs, so the
 // policy is testable without a loaded world.
@@ -38,4 +42,40 @@ func ZoneRenameBlockers(zone string) []ZoneBlocker {
 			return out
 		},
 	})
+}
+
+// ValidateZoneRename checks a proposed new zone name against the existing set.
+//
+// The folder check matters as much as the name check: ZoneNameSanitize only
+// lowercases and turns spaces into underscores, so "Amber Valley" and
+// "Amber_Valley" are different display names occupying the SAME directory.
+// Renaming onto a live zone's folder would collide on disk.
+func ValidateZoneRename(oldName, newName string, existing []string) error {
+	newName = strings.TrimSpace(newName)
+	if len(newName) < 2 {
+		return errors.New("zone name must be at least 2 characters")
+	}
+	if err := ValidateZoneName(newName); err != nil {
+		return err
+	}
+	if newName == oldName {
+		return errors.New("new name is the same as the current name")
+	}
+	for _, z := range existing {
+		if z == newName {
+			return fmt.Errorf("zone %q already exists", newName)
+		}
+	}
+	// Exclude the zone being renamed: its own folder is the one moving, so
+	// re-casing a name (Stillwater -> StillWater) is legal.
+	others := make([]string, 0, len(existing))
+	for _, z := range existing {
+		if z != oldName {
+			others = append(others, z)
+		}
+	}
+	if clash := ZoneFolderCollision(newName, others); clash != "" {
+		return fmt.Errorf("zone folder %q is already used by zone %q", ZoneNameSanitize(newName), clash)
+	}
+	return nil
 }
