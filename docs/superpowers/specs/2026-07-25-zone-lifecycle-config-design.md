@@ -246,23 +246,27 @@ Editor rules:
 4. The panel states plainly that the zone will occupy its own coordinate
    space and be exempt from Cartesian checks.
 
-## Prerequisite: fix the live plane-0 contamination first
+## Prerequisite: ✅ DONE — plane-0 contamination fixed (`af565b1f0`)
 
-Phase 1 should not land on top of a world where overworld enforcement is
-silently off — the editor's own validation would be measured against a
-poisoned baseline.
+`Instance Planar Oasis` rooms 5003/5004/5005 were assigned **plane 13** (next
+free; the other six `non_cartesian` zones hold 2–6 and 10–12). The 0.15.0
+coord migration had never given them a plane because it crawls spatial exits
+per connected component and this instance zone is portal-reached, so it formed
+no component.
 
-Fix: give `Instance Planar Oasis` rooms 5003/5004/5005 a dedicated authored
-plane (the other six `non_cartesian` zones already have their own: 2, 3, 4, 5,
-6, and 10–12).
+Triage outcome, run in `warn` mode before restoring `panic`:
 
-**Do this in `warn` mode first.** `MapConsistencyEnforce` is currently
-`panic`, and enforcement for the whole overworld has been suppressed for an
-unknown length of time. Re-enabling it may surface real pre-existing
-collisions that would panic the boot. Sequence: set `warn`, fix the planes,
-run `cartcheck` world-wide, triage whatever appears, and only then restore
-`panic`. Treat this as its own task with its own findings, not a line item
-inside Phase 1.
+- Boot probe: `IsNonEuclidean(0)` is now **false**; zero `non_cartesian` rooms
+  remain on plane 0.
+- With enforcement genuinely live for the first time in an unknown stretch,
+  the world validates **clean** — `errors=0 warnings=0` — and boots without
+  panic under the prod setting.
+- **No collisions had accumulated** behind the suppression, so Phase 1 starts
+  from a trustworthy baseline.
+
+Note for future work: `_datafiles/config.yaml` carries git **skip-worktree**,
+so local `MapConsistencyEnforce` changes never appear in `git status` and
+cannot be committed by accident. The committed (and prod) value is `panic`.
 
 ## 6. Web UI
 
