@@ -123,3 +123,53 @@ func (g *GMCPZoneModule) buildAndSend(e events.Event) events.ListenerReturn {
 	mudlog.Debug("gmcp.Zone", "userId", evt.UserId, "zone", room.Zone, "rooms", len(payload.Rooms))
 	return events.Continue
 }
+
+// ---- Build.Zone.* (admin web-building 4) --------------------------------
+//
+// Build.Zone.* GMCP packages — the server side of the admin web zone editor.
+// Handlers take a zoneDeps so they unit-test against a fake world; realZoneDeps
+// wires the live engine.
+
+type zoneDeps struct {
+	load      func(zone string) *rooms.ZoneConfig
+	save      func(cfg rooms.ZoneConfig) error
+	del       func(zone string) error
+	blockers  func(zone string) []rooms.ZoneBlocker
+	zoneNames func() []string
+	roomIds   func(zone string) []int
+}
+
+func realZoneDeps() zoneDeps {
+	return zoneDeps{
+		load:      rooms.GetZoneConfig,
+		save:      func(cfg rooms.ZoneConfig) error { return rooms.SaveZoneConfig(&cfg) },
+		del:       rooms.DeleteZone,
+		blockers:  rooms.ZoneDeletionBlockers,
+		zoneNames: rooms.GetAllZoneNames,
+		roomIds: func(zone string) []int {
+			out := []int{}
+			for _, id := range rooms.GetAllRoomIds() {
+				if r := rooms.LoadRoomTemplate(id); r != nil && r.Zone == zone {
+					out = append(out, id)
+				}
+			}
+			return out
+		},
+	}
+}
+
+func buildZoneDelete(d zoneDeps, zone string) BuildResult {
+	if d.load(zone) == nil {
+		return buildErr("zone %q not found", zone)
+	}
+	if b := d.blockers(zone); len(b) > 0 {
+		return BuildResult{
+			Error:    "zone is not empty — remove these first",
+			ZoneRefs: b,
+		}
+	}
+	if err := d.del(zone); err != nil {
+		return buildErr("could not delete zone %q: %s", zone, err.Error())
+	}
+	return BuildResult{Ok: true, Message: "zone " + zone + " deleted"}
+}

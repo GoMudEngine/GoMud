@@ -33,14 +33,15 @@ const (
 
 // BuildResult is echoed to the client after every mutation (as Build.Result).
 type BuildResult struct {
-	Ok      bool          `json:"ok"`
-	Error   string        `json:"error,omitempty"`
-	RoomId  int           `json:"roomId,omitempty"`  // e.g. the newly created room, or the affected room
-	ItemId  int           `json:"itemId,omitempty"`  // e.g. the created/updated item
-	Refs    []itemRef     `json:"refs,omitempty"`    // Build.Item.Delete: what still references a blocked item
-	MobId   int           `json:"mobId,omitempty"`   // e.g. the created/updated/spawned mob
-	MobRefs []mobRefEntry `json:"mobRefs,omitempty"` // Build.Mob.Delete: what still references a blocked mob
-	Message string        `json:"message,omitempty"` // e.g. Build.Mob.Spawn's "<name> spawned in room <id>"
+	Ok       bool                `json:"ok"`
+	Error    string              `json:"error,omitempty"`
+	RoomId   int                 `json:"roomId,omitempty"`   // e.g. the newly created room, or the affected room
+	ItemId   int                 `json:"itemId,omitempty"`   // e.g. the created/updated item
+	Refs     []itemRef           `json:"refs,omitempty"`     // Build.Item.Delete: what still references a blocked item
+	MobId    int                 `json:"mobId,omitempty"`    // e.g. the created/updated/spawned mob
+	MobRefs  []mobRefEntry       `json:"mobRefs,omitempty"`  // Build.Mob.Delete: what still references a blocked mob
+	ZoneRefs []rooms.ZoneBlocker `json:"zoneRefs,omitempty"` // Build.Zone.Delete: what blocks a delete
+	Message  string              `json:"message,omitempty"`  // e.g. Build.Mob.Spawn's "<name> spawned in room <id>"
 }
 
 func buildErr(format string, args ...any) BuildResult {
