@@ -66,6 +66,5 @@ idlemessages:
 - Outside, a wagon creaks past on the road — the driver does not stop.
 spawninfo:
 - mobid: 341
-  cooldown: 600 rounds
 x: -8
 y: 1

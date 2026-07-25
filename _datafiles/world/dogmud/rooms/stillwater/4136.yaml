@@ -79,5 +79,4 @@ idlemessages:
 - The hearth-fire shifts and a small puff of fragrant smoke threads up through the chimney.
 spawninfo:
 - mobid: 355
-  cooldown: 600 rounds
 x: -10

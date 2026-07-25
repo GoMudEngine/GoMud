@@ -26,7 +26,6 @@ nouns:
     lid rattling faint whenever whatever is inside comes near a boil.
 spawninfo:
   - mobid: 9608
-    cooldown: 600 rounds
 idlemessages:
 - The kettle lid rattles once over a rolling boil.
 - Woodsmoke curls up and away through the tin chimney hood.

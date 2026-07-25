@@ -74,6 +74,5 @@ idlemessages:
 - Flour-dust drifts visibly across a beam of sun coming through the open door.
 spawninfo:
 - mobid: 348
-  cooldown: 600 rounds
 x: -10
 y: 3

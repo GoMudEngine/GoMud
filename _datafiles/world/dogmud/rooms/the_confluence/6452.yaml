@@ -35,7 +35,6 @@ nouns:
     precise hand.
 spawninfo:
   - mobid: 9597
-    cooldown: 600 rounds
 idlemessages:
 - The chalk circle is redrawn with slow, deliberate care.
 - A chrysalis shard is lifted to the lamplight and turned

@@ -96,6 +96,5 @@ idlemessages:
 - the wind moves through the pines with a low whisper
 spawninfo:
 - mobid: 364
-  cooldown: 1200 rounds
 x: -3
 y: 21

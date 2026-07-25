@@ -48,7 +48,6 @@ nouns:
     account numbers.
 spawninfo:
   - mobid: 9595
-    cooldown: 600 rounds
 idlemessages:
 - The clerk turns a page of the ledger, smoothing the crease
   with a practised thumb.

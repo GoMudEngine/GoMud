@@ -65,6 +65,5 @@ idlemessages:
 - a single ripple expands from where the slide meets the water and goes still
 spawninfo:
 - mobid: 366
-  cooldown: 600 rounds
 x: -13
 y: 5

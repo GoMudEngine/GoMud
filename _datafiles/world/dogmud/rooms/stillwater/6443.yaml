@@ -22,7 +22,6 @@ exits:
     roomid: 4107
 spawninfo:
 - mobid: 9588
-  cooldown: 600 rounds
 x: -10
 y: 1
 z: -1

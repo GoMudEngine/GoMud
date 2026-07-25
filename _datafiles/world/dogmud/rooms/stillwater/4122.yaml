@@ -68,6 +68,5 @@ idlemessages:
 - A faint chant carries briefly from inside the temple, then fades.
 spawninfo:
 - mobid: 345
-  cooldown: 300 rounds
 x: -5
 y: 2

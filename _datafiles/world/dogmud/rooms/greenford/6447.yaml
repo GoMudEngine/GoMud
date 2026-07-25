@@ -32,7 +32,6 @@ nouns:
     sits beside them, sorted smallest to largest.
 spawninfo:
   - mobid: 9592
-    cooldown: 600 rounds
 idlemessages:
 - A mortar grinds something to powder with a slow, steady scrape.
 - The brass scales tip and settle as a measure is weighed out.

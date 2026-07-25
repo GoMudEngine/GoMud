@@ -34,6 +34,5 @@ idlemessages:
 - The shuttle clacks across the warp and back again.
 spawninfo:
   - mobid: 9600
-    cooldown: 600 rounds
 x: -10
 y: -31

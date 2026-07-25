@@ -66,6 +66,5 @@ idlemessages:
 - Through the southern doorway the font's steady trickle is briefly louder.
 spawninfo:
 - mobid: 338
-  cooldown: 600 rounds
 x: -4
 y: 1

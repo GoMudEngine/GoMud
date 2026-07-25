@@ -43,6 +43,5 @@ idlemessages:
   daylight onto the workbench.
 spawninfo:
   - mobid: 9610
-    cooldown: 600 rounds
 x: -6
 y: -86

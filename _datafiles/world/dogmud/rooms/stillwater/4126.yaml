@@ -79,7 +79,6 @@ idlemessages:
 - A finished piece on the bench is turned in the light, examined, and set down again.
 spawninfo:
 - mobid: 340
-  cooldown: 600 rounds
 x: -4
 y: 2
 z: 1

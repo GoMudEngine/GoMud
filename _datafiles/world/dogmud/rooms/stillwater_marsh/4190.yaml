@@ -65,7 +65,6 @@ nouns:
     edge. The peat smells of deep time and cold water.
 spawninfo:
 - mobid: 379
-  cooldown: 2400 rounds
 idlemessages:
 - a single small bubble breaks the dark surface and is gone
 - ''

@@ -33,7 +33,6 @@ nouns:
     that never quite gets swept away.
 spawninfo:
   - mobid: 9591
-    cooldown: 600 rounds
 idlemessages:
 - The loom's shuttle clicks back and forth in a steady rhythm.
 - A skein of dyed wool is lifted to the light and turned over once.

@@ -44,6 +44,5 @@ idlemessages:
   no matter how many people are waiting at the counter.
 spawninfo:
   - mobid: 9609
-    cooldown: 600 rounds
 x: -1
 y: -82

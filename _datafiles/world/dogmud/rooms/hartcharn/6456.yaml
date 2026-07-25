@@ -34,6 +34,5 @@ idlemessages:
 - Dried herbs rustle faintly as the draft moves through the rafters.
 spawninfo:
   - mobid: 9601
-    cooldown: 600 rounds
 x: -11
 y: -31

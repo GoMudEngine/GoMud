@@ -96,7 +96,6 @@ idlemessages:
 - A faint scrape of file-on-stone carries down from the upper room.
 spawninfo:
 - mobid: 344
-  cooldown: 600 rounds
 containers:
   lockbox:
     lock:

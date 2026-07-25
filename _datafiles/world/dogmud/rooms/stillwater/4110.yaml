@@ -108,5 +108,4 @@ idlemessages:
 - A piece of straw drifts across the cell's floor in a draft from the window.
 spawninfo:
 - mobid: 335
-  cooldown: 600 rounds
 x: -7

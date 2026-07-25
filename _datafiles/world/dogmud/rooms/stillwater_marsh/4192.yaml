@@ -71,6 +71,5 @@ idlemessages:
 - two dragonflies tangle briefly over territory and separate
 spawninfo:
 - mobid: 368
-  cooldown: 600 rounds
 x: -12
 y: 7
