@@ -113,19 +113,51 @@ func ClearCache() {
 }
 
 // This is a useful function to help enforce map coherence when building
-func GetReciprocalExit(exitDirection string) string {
-	// first validate the exitName
-	if deltas, ok := posDeltas[exitDirection]; ok {
+// compassOpposites is the opposite of each BASE direction name (the part
+// before any "-x2"/"-gap" variant suffix).
+var compassOpposites = map[string]string{
+	"north":     "south",
+	"south":     "north",
+	"east":      "west",
+	"west":      "east",
+	"northeast": "southwest",
+	"southwest": "northeast",
+	"northwest": "southeast",
+	"southeast": "northwest",
+	"up":        "down",
+	"down":      "up",
+}
 
-		// Assign values to search for
-		x, y, z := deltas.x*-1, deltas.y*-1, deltas.z*-1
-		for name, d := range posDeltas {
-			if d.x == x && d.y == y && d.z == z {
-				return name
-			}
-		}
+// GetReciprocalExit returns the opposite of a direction name, preserving its
+// variant suffix ("north-x2" -> "south-x2", "north-gap" -> "south-gap"), or
+// "" if the name is not a known direction.
+//
+// This deliberately does NOT search posDeltas for a matching inverse delta:
+// every horizontal direction shares its delta with a "-gap" twin ("south" and
+// "south-gap" are both {0,1,0}), so a delta search returns whichever name Go's
+// randomized map iteration reaches first. That made `build room north` (the
+// admin shorthand, which derives the return exit from this function) persist
+// mapdirection "south-gap" about half the time, and a gap renders as a BLANK
+// connector — the two rooms looked unconnected on the ASCII map.
+func GetReciprocalExit(exitDirection string) string {
+	if _, ok := posDeltas[exitDirection]; !ok {
+		return ""
 	}
-	return ""
+	base, suffix := exitDirection, ""
+	if i := strings.Index(exitDirection, `-`); i >= 0 {
+		base, suffix = exitDirection[:i], exitDirection[i:]
+	}
+	opposite, ok := compassOpposites[base]
+	if !ok {
+		return ""
+	}
+	// Guard against a suffix that exists on one direction but not its
+	// opposite, so the table can never hand back an unmappable name.
+	reciprocal := opposite + suffix
+	if _, ok := posDeltas[reciprocal]; !ok {
+		return ""
+	}
+	return reciprocal
 }
 
 func GetDelta(exitName string) (x, y, z int) {

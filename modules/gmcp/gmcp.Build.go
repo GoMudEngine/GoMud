@@ -198,12 +198,14 @@ func realBuildDeps() buildDeps {
 
 // ---- admin gate --------------------------------------------------------------
 
-// compassOpposite is the deterministic reciprocal for each spatial direction.
-// We deliberately do NOT use mapper.GetReciprocalExit here: it scans posDeltas
-// for a matching inverse delta and returns whichever the (randomly-ordered) map
-// iteration hits first, so for e.g. "north" it can return "south-gap" instead
-// of "south". Spatial builder exits are always plain compass names, so a fixed
-// table is both correct and stable.
+// compassOpposite is the reciprocal for each spatial direction.
+//
+// mapper.GetReciprocalExit is deterministic as of the 2026-07-25 fix, but this
+// table is deliberately NARROWER: it covers only the ten plain compass names
+// the builder's grid model can create, and returns "" for everything else.
+// buildExitRemove calls reciprocal() UNGATED on whatever exit name it is given,
+// so widening this to the mapper's full vocabulary would start deleting
+// "-x2"/"-gap" return legs that the builder never authored. Keep it narrow.
 var compassOpposite = map[string]string{
 	"north": "south", "south": "north",
 	"east": "west", "west": "east",

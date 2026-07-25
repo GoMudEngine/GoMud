@@ -8,10 +8,12 @@ import (
 )
 
 // reciprocalDir maps each standard exit direction to its opposite.
-// We use a hard-coded table rather than mapper.GetReciprocalExit because that
-// function iterates over a map whose entries share duplicate (x,y,z) deltas
-// (e.g. "east" and "east-gap" both have delta {1,0,0}), producing a
-// non-deterministic result.
+//
+// mapper.GetReciprocalExit is deterministic as of the 2026-07-25 fix, but this
+// table stays deliberately narrower: LinkRooms accepts only plain cardinal
+// directions and reports "not a supported cardinal direction" for anything
+// else, and the mapper's full vocabulary ("north-x2", "east-gap") would
+// silently widen that contract.
 var reciprocalDir = map[string]string{
 	"north":     "south",
 	"south":     "north",
