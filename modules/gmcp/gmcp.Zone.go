@@ -285,3 +285,55 @@ func zoneBiomeNames() []string {
 	sort.Strings(out)
 	return out
 }
+
+func buildZoneUpdate(d zoneDeps, req zoneUpdateReq) BuildResult {
+	cfg := d.load(req.Name)
+	if cfg == nil {
+		return buildErr("zone %q not found", req.Name)
+	}
+
+	// A non_cartesian zone marks its plane non-Euclidean, and PlaneRegistry.Mark
+	// accumulates with a sticky OR — so on plane 0 it marks the ENTIRE overworld
+	// non-Euclidean and silently disables collision + reciprocity enforcement
+	// world-wide. Never allow that combination to be saved.
+	if req.NonCartesian && req.DefaultPlane == 0 {
+		return buildErr("a non-Cartesian zone needs its own plane — plane 0 is the overworld, " +
+			"and flagging it non-Euclidean disables map consistency checks for the whole world")
+	}
+
+	if req.DeathPolicy != "" && req.DeathPolicy != "rejoin" && req.DeathPolicy != "ejected" {
+		return buildErr("death_policy %q invalid; valid: rejoin, ejected", req.DeathPolicy)
+	}
+
+	inZone := map[int]bool{}
+	for _, id := range d.roomIds(req.Name) {
+		inZone[id] = true
+	}
+	if req.EntryRoom != 0 && !inZone[req.EntryRoom] {
+		return buildErr("entry room %d is not in zone %q", req.EntryRoom, req.Name)
+	}
+	if req.RoomId != 0 && !inZone[req.RoomId] {
+		return buildErr("root room %d is not in zone %q", req.RoomId, req.Name)
+	}
+
+	// Copy the editable fields onto the loaded config so anything the form does
+	// not carry (RoomIds, Mutators) survives the save.
+	out := *cfg
+	out.RoomId = req.RoomId
+	out.DefaultBiome = req.DefaultBiome
+	out.Region = req.Region
+	out.MusicFile = req.MusicFile
+	out.IdleMessages = req.IdleMessages
+	out.Instanced = req.Instanced
+	out.DeathPolicy = req.DeathPolicy
+	out.PortalDuration = req.PortalDuration
+	out.EntryRoom = req.EntryRoom
+	out.AllowRecall = req.AllowRecall
+	out.NonCartesian = req.NonCartesian
+	out.DefaultPlane = req.DefaultPlane
+
+	if err := d.save(out); err != nil {
+		return buildErr("could not save zone %q: %s", req.Name, err.Error())
+	}
+	return BuildResult{Ok: true, Message: "zone " + req.Name + " saved"}
+}

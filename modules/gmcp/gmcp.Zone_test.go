@@ -116,3 +116,75 @@ func TestBuildZoneGet_UnknownZone(t *testing.T) {
 		t.Error("unknown zone must not return detail")
 	}
 }
+
+func baseZoneReq() zoneUpdateReq {
+	return zoneUpdateReq{
+		Name: "Testzone", RoomId: 100, DefaultBiome: "land",
+		DeathPolicy: "rejoin", DefaultPlane: 7,
+	}
+}
+
+// A non_cartesian zone on plane 0 marks plane 0 (the overworld) non-Euclidean
+// via the sticky OR in PlaneRegistry.Mark, disabling collision and reciprocity
+// enforcement for the ENTIRE world. Refuse to save that combination.
+func TestBuildZoneUpdate_RejectsNonCartesianOnOverworldPlane(t *testing.T) {
+	w := newFakeZoneWorld()
+	req := baseZoneReq()
+	req.NonCartesian = true
+	req.DefaultPlane = 0
+
+	if res := buildZoneUpdate(w.deps(), req); res.Ok {
+		t.Error("non_cartesian with plane 0 must be rejected")
+	}
+	if len(w.saved) != 0 {
+		t.Errorf("nothing may be saved on validation failure, got %d", len(w.saved))
+	}
+}
+
+func TestBuildZoneUpdate_AllowsNonCartesianOnOwnPlane(t *testing.T) {
+	w := newFakeZoneWorld()
+	req := baseZoneReq()
+	req.NonCartesian = true
+	req.DefaultPlane = 7
+
+	if res := buildZoneUpdate(w.deps(), req); !res.Ok {
+		t.Errorf("non_cartesian on its own plane should save: %+v", res)
+	}
+}
+
+func TestBuildZoneUpdate_RejectsUnknownDeathPolicy(t *testing.T) {
+	w := newFakeZoneWorld()
+	req := baseZoneReq()
+	req.DeathPolicy = "vaporize"
+	if res := buildZoneUpdate(w.deps(), req); res.Ok {
+		t.Error("unknown death policy must be rejected")
+	}
+}
+
+func TestBuildZoneUpdate_RoundTripsFields(t *testing.T) {
+	w := newFakeZoneWorld()
+	req := baseZoneReq()
+	req.Region = "Windward Marches"
+	req.MusicFile = "theme.mp3"
+	req.Instanced = true
+	req.EntryRoom = 100
+
+	if res := buildZoneUpdate(w.deps(), req); !res.Ok {
+		t.Fatalf("update should succeed: %+v", res)
+	}
+	got := w.saved[0]
+	if got.Region != "Windward Marches" || got.MusicFile != "theme.mp3" ||
+		!got.Instanced || got.EntryRoom != 100 {
+		t.Errorf("fields not round-tripped: %+v", got)
+	}
+}
+
+func TestBuildZoneUpdate_RejectsEntryRoomOutsideZone(t *testing.T) {
+	w := newFakeZoneWorld() // roomIds returns only [100]
+	req := baseZoneReq()
+	req.Instanced = true
+	req.EntryRoom = 999
+	if res := buildZoneUpdate(w.deps(), req); res.Ok {
+		t.Error("entry room outside the zone must be rejected")
+	}
+}
