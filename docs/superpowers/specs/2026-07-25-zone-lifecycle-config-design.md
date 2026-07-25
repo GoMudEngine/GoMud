@@ -198,8 +198,8 @@ renders read-only with a pointer to the rename action.
 | `MusicFile` | text | — |
 | `IdleMessages` | list editor | — |
 | `Mutators` | list editor | known mutator ids |
-| `NonCartesian` | checkbox + warning | disables Cartesian enforcement |
-| `DefaultPlane` | number | — |
+| `NonCartesian` | checkbox + warning | **forces a non-overworld plane** — see §5.1 |
+| `DefaultPlane` | number | must be non-zero when `NonCartesian` |
 | `Instanced` | checkbox, reveals block below | — |
 | `EntryRoom` | room picker, zone-scoped | must be a room in this zone |
 | `PortalDuration` | text | parseable duration |
@@ -210,9 +210,59 @@ Dangerous references are picked from server-supplied lists rather than typed,
 the same rule the mob editor follows — a typo must not be able to brick the
 next boot.
 
-`NonCartesian` gets an explicit in-panel warning: it marks the zone's plane
-non-Euclidean and skips collision/reciprocity enforcement. It is the one
-field here that can silently degrade world integrity.
+### 5.1 `NonCartesian` must force a non-overworld plane
+
+**This is a hard rule, not a warning.** A `non_cartesian` zone is almost
+always an instance or a special case; left on the overworld plane it corrupts
+map enforcement for the entire world.
+
+The mechanism (`internal/rooms/planes.go`): `RebuildPlaneRegistry` walks every
+loaded room and calls `reg.Mark(room.Plane, IsZoneNonCartesian(room.Zone), …)`,
+and `Mark` accumulates with a **sticky OR**
+(`cur.NonEuclidean = cur.NonEuclidean || nonEuclidean`). So a *single* room of
+a `non_cartesian` zone sitting on plane 0 marks **plane 0 — the whole
+overworld — non-Euclidean**. Everything downstream then suppresses itself:
+`mapper.consistency.go` skips collision and reciprocity checks for every
+overworld room, and `rooms.ValidatePlacement` skips the overlap check. The
+symptom is not an error; it is `cartcheck` reporting a suspiciously clean
+world.
+
+**This is not hypothetical — it is the live state of the world as of
+2026-07-25.** Rooms 5003/5004/5005 (`Instance Planar Oasis`, flagged
+`non_cartesian: true`) carry no `plane:` field, so they default to 0, and a
+boot-time probe confirms `IsNonEuclidean(0) == true`. See "Prerequisite" below.
+
+Editor rules:
+
+1. Ticking `NonCartesian` on a zone whose `DefaultPlane` is 0 **auto-assigns**
+   a fresh plane via the existing `rooms.NextFreeAuthoredPlane()` — a helper
+   written for exactly this purpose ("so its rooms occupy a fresh coordinate
+   space and never collide with the overworld").
+2. `Build.Zone.Update` **refuses** to save `NonCartesian: true` together with
+   `DefaultPlane: 0`.
+3. It also refuses when any **room in the zone** is still on plane 0, listing
+   them — `DefaultPlane` is only a builder default; each room's own `plane` is
+   authoritative, so a correct config with stale rooms still poisons plane 0.
+4. The panel states plainly that the zone will occupy its own coordinate
+   space and be exempt from Cartesian checks.
+
+## Prerequisite: fix the live plane-0 contamination first
+
+Phase 1 should not land on top of a world where overworld enforcement is
+silently off — the editor's own validation would be measured against a
+poisoned baseline.
+
+Fix: give `Instance Planar Oasis` rooms 5003/5004/5005 a dedicated authored
+plane (the other six `non_cartesian` zones already have their own: 2, 3, 4, 5,
+6, and 10–12).
+
+**Do this in `warn` mode first.** `MapConsistencyEnforce` is currently
+`panic`, and enforcement for the whole overworld has been suppressed for an
+unknown length of time. Re-enabling it may surface real pre-existing
+collisions that would panic the boot. Sequence: set `warn`, fix the planes,
+run `cartcheck` world-wide, triage whatever appears, and only then restore
+`panic`. Treat this as its own task with its own findings, not a line item
+inside Phase 1.
 
 ## 6. Web UI
 
