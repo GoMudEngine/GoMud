@@ -1,5 +1,29 @@
 # DOGMud Patch Notes
 
+## 2026-07-25 — Peopling a room (staff)
+
+The room inspector gains a **Spawns** panel, and with it the last piece of the
+builder: what actually lives in a place. Creatures, items and coin can now be
+placed into a room from the map you are already looking at — each entry naming
+what appears, how long it waits before returning, what the room is told when it
+arrives, and, for the strange ones, a drawer of per-spawn overrides that let a
+single guard differ from every other guard cut from the same cloth.
+
+Each entry commits to being one thing — a creature, an item, or coin — so the
+old possibility of writing an entry that claimed to be two and behaved like
+neither is simply gone. Items and coin may be routed into a chest, chosen from
+the containers that room actually has rather than typed hopefully. Entries can
+be reordered and removed, and they save with the room.
+
+A quiet correction underneath. Respawn timings written as a **cooldown** were
+never read by anything — the engine looks for a differently-named setting, and
+had been falling back to its own default for as long as those lines have
+existed. Fifty-nine of them across the world were removed rather than switched
+on: they were written in combat rounds while every working timing is in real
+minutes, and honouring them now would have made those creatures markedly
+scarcer in exactly the regions newcomers walk through first. Nothing changes
+about how often anything returns; the files simply stop claiming otherwise.
+
 ## 2026-07-25 — Renaming the map (staff)
 
 A zone can now be **renamed** from the surveyor's drawer. It is a larger act
