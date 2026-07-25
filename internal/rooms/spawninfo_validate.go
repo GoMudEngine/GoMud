@@ -11,14 +11,19 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 )
 
-// spawnValidators injects the existence checks so the spawn policy is
+// SpawnValidators injects the existence checks so the spawn policy is
 // testable without a loaded world.
-type spawnValidators struct {
-	mobExists  func(id int) bool
-	itemExists func(id int) bool
-	buffExists func(id int) bool
-	periodOK   func(period string) bool
-	containers map[string]struct{} // container nouns present in THIS room
+//
+// Exported because modules/gmcp builds one from its own buildDeps seam: that
+// package's unit tests run with no world loaded, so the real registries would
+// report every mob and item as non-existent and every valid-list test would
+// fail for the wrong reason.
+type SpawnValidators struct {
+	MobExists  func(id int) bool
+	ItemExists func(id int) bool
+	BuffExists func(id int) bool
+	PeriodOK   func(period string) bool
+	Containers map[string]struct{} // container nouns present in THIS room
 }
 
 // ValidateSpawnEntry enforces the spawn-entry rules an author can get wrong.
@@ -26,7 +31,7 @@ type spawnValidators struct {
 // A spawn entry spawns exactly ONE of: a mob, an item, or gold. The YAML
 // shape allows all three at once, which behaves unpredictably; reject it at
 // save so a contradictory entry cannot reach a room file.
-func ValidateSpawnEntry(s SpawnInfo, v spawnValidators) error {
+func ValidateSpawnEntry(s SpawnInfo, v SpawnValidators) error {
 	kinds := 0
 	if s.MobId != 0 {
 		kinds++
@@ -44,10 +49,10 @@ func ValidateSpawnEntry(s SpawnInfo, v spawnValidators) error {
 		return fmt.Errorf("a spawn entry must spawn exactly one of mob / item / gold")
 	}
 
-	if s.MobId != 0 && !v.mobExists(s.MobId) {
+	if s.MobId != 0 && !v.MobExists(s.MobId) {
 		return fmt.Errorf("mob %d does not exist", s.MobId)
 	}
-	if s.ItemId != 0 && !v.itemExists(s.ItemId) {
+	if s.ItemId != 0 && !v.ItemExists(s.ItemId) {
 		return fmt.Errorf("item %d does not exist", s.ItemId)
 	}
 
@@ -55,13 +60,13 @@ func ValidateSpawnEntry(s SpawnInfo, v spawnValidators) error {
 		if s.MobId != 0 {
 			return fmt.Errorf("a mob cannot spawn into a container")
 		}
-		if _, ok := v.containers[s.Container]; !ok {
+		if _, ok := v.Containers[s.Container]; !ok {
 			return fmt.Errorf("this room has no container named %q", s.Container)
 		}
 	}
 
 	for _, b := range s.BuffIds {
-		if !v.buffExists(b) {
+		if !v.BuffExists(b) {
 			return fmt.Errorf("buff %d does not exist", b)
 		}
 	}
@@ -70,7 +75,7 @@ func ValidateSpawnEntry(s SpawnInfo, v spawnValidators) error {
 	// not fail, it falls through to a failover that treats the quantity as
 	// rounds — so a typo yields a spawn returning in about four seconds, and
 	// nobody notices until the world feels wrong. See RealPeriodOK.
-	if s.RespawnRate != "" && !v.periodOK(s.RespawnRate) {
+	if s.RespawnRate != "" && !v.PeriodOK(s.RespawnRate) {
 		return fmt.Errorf("respawn rate %q is not a period the engine understands (e.g. \"5 real minutes\")", s.RespawnRate)
 	}
 	return nil
@@ -142,11 +147,11 @@ func ValidateSpawnEntryLive(s SpawnInfo, containers map[string]Container) error 
 	for name := range containers {
 		set[name] = struct{}{}
 	}
-	return ValidateSpawnEntry(s, spawnValidators{
-		mobExists:  func(id int) bool { return mobs.GetMobSpec(mobs.MobId(id)) != nil },
-		itemExists: func(id int) bool { return items.GetItemSpec(id) != nil },
-		buffExists: func(id int) bool { return buffs.GetBuffSpec(id) != nil },
-		periodOK:   RealPeriodOK,
-		containers: set,
+	return ValidateSpawnEntry(s, SpawnValidators{
+		MobExists:  func(id int) bool { return mobs.GetMobSpec(mobs.MobId(id)) != nil },
+		ItemExists: func(id int) bool { return items.GetItemSpec(id) != nil },
+		BuffExists: func(id int) bool { return buffs.GetBuffSpec(id) != nil },
+		PeriodOK:   RealPeriodOK,
+		Containers: set,
 	})
 }

@@ -77,6 +77,11 @@ func (w *fakeWorld) deps() buildDeps {
 		delta:          mapper.GetDelta,           // real (pure)
 		isCompass:      mapper.IsCompassDirection, // real (pure)
 		isNonEuclidean: func(plane int) bool { return w.nonEuclid[plane] },
+		// The registries are empty in unit tests; the fake says every
+		// reference exists so spawn tests exercise the POLICY, not data loading.
+		mobExists:  func(int) bool { return true },
+		itemExists: func(int) bool { return true },
+		buffExists: func(int) bool { return true },
 	}
 }
 
@@ -359,5 +364,67 @@ func TestBuildRoomDelete_CleansInboundExits(t *testing.T) {
 	}
 	if _, ok := w.rooms[1].Exits["north"]; ok {
 		t.Error("inbound exit from room 1 should be cleaned")
+	}
+}
+
+func TestBuildRoomUpdate_SavesSpawnsAndValidates(t *testing.T) {
+	w := newFakeWorld()
+	r := &rooms.Room{RoomId: 100, Title: "T", Description: "D"}
+	r.Containers = map[string]rooms.Container{"chest": {}}
+	w.rooms[100] = r
+
+	base := func() roomUpdateReq {
+		return roomUpdateReq{RoomId: 100, Title: "T", Description: "D"}
+	}
+
+	// Valid list saves and preserves order.
+	req := base()
+	req.Spawns = []rooms.SpawnInfo{{MobId: 1}, {ItemId: 2, Container: "chest"}}
+	res := buildRoomUpdate(w.deps(), req)
+	if !res.Ok {
+		t.Fatalf("valid spawn list should save: %+v", res)
+	}
+	saved := w.saved[len(w.saved)-1]
+	if len(saved.SpawnInfo) != 2 || saved.SpawnInfo[0].MobId != 1 || saved.SpawnInfo[1].ItemId != 2 {
+		t.Errorf("spawn list not saved in order: %+v", saved.SpawnInfo)
+	}
+
+	// A contradictory entry is refused and nothing is saved.
+	before := len(w.saved)
+	bad := base()
+	bad.Spawns = []rooms.SpawnInfo{{MobId: 1, ItemId: 2}}
+	if res := buildRoomUpdate(w.deps(), bad); res.Ok {
+		t.Error("an entry spawning both a mob and an item must be rejected")
+	}
+	if len(w.saved) != before {
+		t.Error("nothing may be saved when a spawn entry is invalid")
+	}
+
+	// A container that is not in this room is refused.
+	bad2 := base()
+	bad2.Spawns = []rooms.SpawnInfo{{ItemId: 2, Container: "barrel"}}
+	if res := buildRoomUpdate(w.deps(), bad2); res.Ok {
+		t.Error("a container absent from the room must be rejected")
+	}
+}
+
+// InstanceId/DespawnedRound are runtime tracking the client never holds
+// meaningfully. A save must not let a client blank them, or the engine loses
+// track of an already-spawned mob and spawns a duplicate.
+func TestBuildRoomUpdate_PreservesSpawnRuntimeTracking(t *testing.T) {
+	w := newFakeWorld()
+	r := &rooms.Room{RoomId: 100, Title: "T", Description: "D"}
+	r.SpawnInfo = []rooms.SpawnInfo{{MobId: 1, InstanceId: 4242, DespawnedRound: 99}}
+	w.rooms[100] = r
+
+	req := roomUpdateReq{RoomId: 100, Title: "T", Description: "D",
+		Spawns: []rooms.SpawnInfo{{MobId: 1}}} // client sends no tracking
+
+	if res := buildRoomUpdate(w.deps(), req); !res.Ok {
+		t.Fatalf("update should succeed: %+v", res)
+	}
+	saved := w.saved[len(w.saved)-1]
+	if saved.SpawnInfo[0].InstanceId != 4242 || saved.SpawnInfo[0].DespawnedRound != 99 {
+		t.Errorf("runtime tracking must be preserved from the template, got %+v", saved.SpawnInfo[0])
 	}
 }

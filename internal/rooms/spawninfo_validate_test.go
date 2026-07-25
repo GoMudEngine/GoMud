@@ -8,12 +8,12 @@ import (
 )
 
 func TestValidateSpawnEntry_KindIsExclusive(t *testing.T) {
-	known := spawnValidators{
-		mobExists:  func(int) bool { return true },
-		itemExists: func(int) bool { return true },
-		buffExists: func(int) bool { return true },
-		periodOK:   func(string) bool { return true },
-		containers: map[string]struct{}{"chest": {}},
+	known := SpawnValidators{
+		MobExists:  func(int) bool { return true },
+		ItemExists: func(int) bool { return true },
+		BuffExists: func(int) bool { return true },
+		PeriodOK:   func(string) bool { return true },
+		Containers: map[string]struct{}{"chest": {}},
 	}
 
 	assert.NoError(t, ValidateSpawnEntry(SpawnInfo{MobId: 1}, known))
@@ -27,12 +27,12 @@ func TestValidateSpawnEntry_KindIsExclusive(t *testing.T) {
 }
 
 func TestValidateSpawnEntry_ContainerRules(t *testing.T) {
-	known := spawnValidators{
-		mobExists:  func(int) bool { return true },
-		itemExists: func(int) bool { return true },
-		buffExists: func(int) bool { return true },
-		periodOK:   func(string) bool { return true },
-		containers: map[string]struct{}{"chest": {}},
+	known := SpawnValidators{
+		MobExists:  func(int) bool { return true },
+		ItemExists: func(int) bool { return true },
+		BuffExists: func(int) bool { return true },
+		PeriodOK:   func(string) bool { return true },
+		Containers: map[string]struct{}{"chest": {}},
 	}
 
 	assert.NoError(t, ValidateSpawnEntry(SpawnInfo{ItemId: 1, Container: "chest"}, known))
@@ -43,20 +43,20 @@ func TestValidateSpawnEntry_ContainerRules(t *testing.T) {
 }
 
 func TestValidateSpawnEntry_UnknownReferences(t *testing.T) {
-	none := spawnValidators{
-		mobExists:  func(int) bool { return false },
-		itemExists: func(int) bool { return false },
-		buffExists: func(int) bool { return false },
-		periodOK:   func(string) bool { return true },
+	none := SpawnValidators{
+		MobExists:  func(int) bool { return false },
+		ItemExists: func(int) bool { return false },
+		BuffExists: func(int) bool { return false },
+		PeriodOK:   func(string) bool { return true },
 	}
 	assert.Error(t, ValidateSpawnEntry(SpawnInfo{MobId: 999}, none))
 	assert.Error(t, ValidateSpawnEntry(SpawnInfo{ItemId: 999}, none))
 
-	badBuff := spawnValidators{
-		mobExists:  func(int) bool { return true },
-		itemExists: func(int) bool { return true },
-		buffExists: func(int) bool { return false },
-		periodOK:   func(string) bool { return true },
+	badBuff := SpawnValidators{
+		MobExists:  func(int) bool { return true },
+		ItemExists: func(int) bool { return true },
+		BuffExists: func(int) bool { return false },
+		PeriodOK:   func(string) bool { return true },
 	}
 	assert.Error(t, ValidateSpawnEntry(SpawnInfo{MobId: 1, BuffIds: []int{404}}, badBuff))
 }
@@ -65,11 +65,11 @@ func TestValidateSpawnEntry_UnknownReferences(t *testing.T) {
 // the caller's own round number, so the mob respawns IMMEDIATELY. Catch it
 // here, where an author can still see it.
 func TestValidateSpawnEntry_RespawnRateMustParse(t *testing.T) {
-	v := spawnValidators{
-		mobExists:  func(int) bool { return true },
-		itemExists: func(int) bool { return true },
-		buffExists: func(int) bool { return true },
-		periodOK:   func(p string) bool { return p == "5 real minutes" },
+	v := SpawnValidators{
+		MobExists:  func(int) bool { return true },
+		ItemExists: func(int) bool { return true },
+		BuffExists: func(int) bool { return true },
+		PeriodOK:   func(p string) bool { return p == "5 real minutes" },
 	}
 	assert.NoError(t, ValidateSpawnEntry(SpawnInfo{MobId: 1, RespawnRate: "5 real minutes"}, v))
 	assert.NoError(t, ValidateSpawnEntry(SpawnInfo{MobId: 1, RespawnRate: ""}, v), "empty means the 15-minute default")
