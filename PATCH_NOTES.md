@@ -1,5 +1,26 @@
 # DOGMud Patch Notes
 
+## 2026-07-25 — Renaming the map (staff)
+
+A zone can now be **renamed** from the surveyor's drawer. It is a larger act
+than it sounds: a region's name is written into the name of every folder that
+holds its rooms, its creatures, their conversations, their routes and their
+foraging grounds, and again inside each of those files. Renaming carries the
+whole estate across in one motion.
+
+It refuses while anyone is standing in the zone, and says who — the ground is
+moving under their feet, and that is not a thing to do to a player mid-step.
+Before anything is touched it checks that every destination is clear, so a
+rename that cannot finish never starts. If a move fails partway it puts back
+what it moved, and in the unlikely event it cannot, it says exactly what was
+left where rather than reporting a success it did not achieve.
+
+Two cautions worth knowing. A name that merely *looks* different but resolves
+to the same folder on disk is refused, since it would land on a living zone's
+files. And players' explored-map history is recorded against the old name, so
+a renamed region will look unexplored to them again until re-walked — expected,
+not a fault.
+
 ## 2026-07-25 — The surveyor's drawer (staff)
 
 The builder's table gains a fourth drawer: **Zones**. Every region of the world
