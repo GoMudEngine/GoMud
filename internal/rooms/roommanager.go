@@ -737,6 +737,12 @@ func CreateZone(zoneName string) (roomId int, err error) {
 		return zoneInfo.RoomId, errors.New("zone already exists")
 	}
 
+	// Two display names can sanitize onto one folder; without this the
+	// os.Mkdir below lands on a live zone's directory.
+	if clash := ZoneFolderCollision(zoneName, GetAllZoneNames()); clash != "" {
+		return 0, fmt.Errorf("zone folder %q is already used by zone %q", ZoneNameSanitize(zoneName), clash)
+	}
+
 	zoneInfo := NewZoneConfig(zoneName)
 
 	roomsRoot := util.FilePath(configs.GetFilePathsConfig().DataFiles.String(), "/", "rooms")
