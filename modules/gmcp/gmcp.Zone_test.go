@@ -15,7 +15,12 @@ type fakeZoneWorld struct {
 
 func newFakeZoneWorld() *fakeZoneWorld {
 	return &fakeZoneWorld{
-		cfgs:     map[string]*rooms.ZoneConfig{"Testzone": {Name: "Testzone", RoomId: 100}},
+		// RoomIds mirrors the live engine, which populates this per-zone lookup
+		// as rooms load. buildZoneList reads RoomCount from it rather than
+		// rescanning every room in the world.
+		cfgs: map[string]*rooms.ZoneConfig{
+			"Testzone": {Name: "Testzone", RoomId: 100, RoomIds: map[int]struct{}{100: {}}},
+		},
 		blockers: map[string][]rooms.ZoneBlocker{},
 	}
 }
@@ -186,5 +191,44 @@ func TestBuildZoneUpdate_RejectsEntryRoomOutsideZone(t *testing.T) {
 	req.EntryRoom = 999
 	if res := buildZoneUpdate(w.deps(), req); res.Ok {
 		t.Error("entry room outside the zone must be rejected")
+	}
+}
+
+// buildZoneList used to derive RoomCount from the roomIds dep, whose real
+// wiring rescans EVERY room in the world with a disk read per room — once per
+// zone. Measured on the live world: 49 zones x 1384 rooms = 67,816
+// LoadRoomTemplate calls, ~10s, for a list the author expects instantly.
+//
+// ZoneConfig.RoomIds is the engine's own per-zone room lookup, kept current as
+// rooms load and only pruned by a genuine delete (idle-room unloading does not
+// touch it). The count must come from there, and the expensive scan must not
+// run at all.
+func TestBuildZoneList_DoesNotRescanEveryRoom(t *testing.T) {
+	w := newFakeZoneWorld()
+	w.cfgs["Testzone"] = &rooms.ZoneConfig{
+		Name:   "Testzone",
+		RoomId: 100,
+		RoomIds: map[int]struct{}{
+			100: {}, 101: {}, 102: {}, 103: {},
+		},
+	}
+
+	d := w.deps()
+	roomIdsCalls := 0
+	d.roomIds = func(z string) []int {
+		roomIdsCalls++
+		return []int{100} // deliberately wrong count; must not be used
+	}
+
+	got := buildZoneList(d)
+
+	if len(got.Zones) != 1 {
+		t.Fatalf("expected 1 zone, got %d", len(got.Zones))
+	}
+	if got.Zones[0].RoomCount != 4 {
+		t.Errorf("RoomCount = %d, want 4 (from ZoneConfig.RoomIds)", got.Zones[0].RoomCount)
+	}
+	if roomIdsCalls != 0 {
+		t.Errorf("buildZoneList called the full-room-scan dep %d times; it must not call it at all", roomIdsCalls)
 	}
 }

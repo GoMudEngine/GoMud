@@ -225,16 +225,26 @@ type zoneDeleteReq struct {
 	Zone string `json:"zone"`
 }
 
+// buildZoneList reads RoomCount from ZoneConfig.RoomIds — the engine's own
+// per-zone room lookup, populated as rooms load and pruned only by a genuine
+// delete (idle-room unloading drops the room from roomManager.rooms but leaves
+// RoomIds intact, so the count stays right as the server ages).
+//
+// It deliberately does NOT use the roomIds dep here. That dep's real wiring
+// rescans every room in the world with a disk read + YAML parse per room, and
+// calling it once per zone made this list cost 49 x 1384 = 67,816 template
+// loads (~10s measured) to render a handful of numbers. RoomIds gives the same
+// counts — verified identical across all 49 zones — for free.
 func buildZoneList(d zoneDeps) zoneListPayload {
 	out := zoneListPayload{Zones: []zoneListRow{}}
 	for _, z := range d.zoneNames() {
 		cfg := d.load(z)
-		instanced := cfg != nil && cfg.Instanced
-		out.Zones = append(out.Zones, zoneListRow{
-			Zone:      z,
-			RoomCount: len(d.roomIds(z)),
-			Instanced: instanced,
-		})
+		row := zoneListRow{Zone: z}
+		if cfg != nil {
+			row.Instanced = cfg.Instanced
+			row.RoomCount = len(cfg.RoomIds)
+		}
+		out.Zones = append(out.Zones, row)
 	}
 	return out
 }
