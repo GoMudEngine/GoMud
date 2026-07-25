@@ -1,5 +1,34 @@
 # DOGMud Patch Notes
 
+## 2026-07-25 — The surveyor's drawer (staff)
+
+The builder's table gains a fourth drawer: **Zones**. Every region of the world
+is listed with the number of rooms standing in it, and selecting one opens its
+settings — the biome its rooms default to, the region it belongs to, the music
+that plays there, the idle murmurs it falls back on, and the coordinate space
+it occupies. Zones that exist as instances open a further set: where the portal
+sets travellers down, how long it holds, whether recall reaches inside, and what
+becomes of the dead.
+
+Zones can now be **removed** from the same drawer, but only when they are truly
+empty. A zone still holding rooms, creatures, conversations, schedules, caravans
+or foraging grounds refuses to go, and says exactly what is holding it — right
+down to naming any passage leading in from a neighbouring region, the sort of
+thread that is easy to forget and ugly to leave dangling. Anyone standing in the
+zone counts too.
+
+One setting is guarded more firmly than the rest. A zone declared non-Cartesian
+— a maze, a fold in space, somewhere the compass is not to be trusted — must
+occupy its own coordinate space. Left in the overworld's, it quietly persuades
+the mapmaker that the whole world is untrustworthy, and the surveying checks
+that keep the map honest stop reporting anything at all. The editor now refuses
+that combination outright and explains why.
+
+Beneath all this, a long-standing flaw: a newly raised zone never recorded which
+of its rooms was the entrance. Zones made through the builder papered over it;
+zones raised with the older building command did not, and could never afterwards
+be torn down. Now recorded at the source.
+
 ## 2026-07-25 — Repairs beneath the floorboards (staff)
 
 Three quiet fixes, none of them visible from the road.

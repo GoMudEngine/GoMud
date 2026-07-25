@@ -33,14 +33,15 @@ const (
 
 // BuildResult is echoed to the client after every mutation (as Build.Result).
 type BuildResult struct {
-	Ok      bool          `json:"ok"`
-	Error   string        `json:"error,omitempty"`
-	RoomId  int           `json:"roomId,omitempty"`  // e.g. the newly created room, or the affected room
-	ItemId  int           `json:"itemId,omitempty"`  // e.g. the created/updated item
-	Refs    []itemRef     `json:"refs,omitempty"`    // Build.Item.Delete: what still references a blocked item
-	MobId   int           `json:"mobId,omitempty"`   // e.g. the created/updated/spawned mob
-	MobRefs []mobRefEntry `json:"mobRefs,omitempty"` // Build.Mob.Delete: what still references a blocked mob
-	Message string        `json:"message,omitempty"` // e.g. Build.Mob.Spawn's "<name> spawned in room <id>"
+	Ok       bool                `json:"ok"`
+	Error    string              `json:"error,omitempty"`
+	RoomId   int                 `json:"roomId,omitempty"`   // e.g. the newly created room, or the affected room
+	ItemId   int                 `json:"itemId,omitempty"`   // e.g. the created/updated item
+	Refs     []itemRef           `json:"refs,omitempty"`     // Build.Item.Delete: what still references a blocked item
+	MobId    int                 `json:"mobId,omitempty"`    // e.g. the created/updated/spawned mob
+	MobRefs  []mobRefEntry       `json:"mobRefs,omitempty"`  // Build.Mob.Delete: what still references a blocked mob
+	ZoneRefs []rooms.ZoneBlocker `json:"zoneRefs,omitempty"` // Build.Zone.Delete: what blocks a delete
+	Message  string              `json:"message,omitempty"`  // e.g. Build.Mob.Spawn's "<name> spawned in room <id>"
 }
 
 func buildErr(format string, args ...any) BuildResult {
@@ -331,6 +332,41 @@ func (g *GMCPModule) handleBuildOp(e events.Event) events.ListenerReturn {
 			// Jump the builder to the new zone.
 			sendZoneMapFull(uid, strings.TrimSpace(req.Name))
 		}
+
+	case `Build.Zone.List`:
+		sendZoneList(uid)
+	case `Build.Zone.Get`:
+		var req zoneGetReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Zone.Get payload"))
+			break
+		}
+		if d, ok := buildZoneGet(realZoneDeps(), req.Zone); ok {
+			sendZoneDetail(uid, d)
+		} else {
+			sendBuildResult(uid, buildErr("zone %q not found", req.Zone))
+		}
+	case `Build.Zone.Update`:
+		var req zoneUpdateReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Zone.Update payload"))
+			break
+		}
+		sendBuildResult(uid, buildZoneUpdate(realZoneDeps(), req))
+		sendZoneList(uid)
+	case `Build.Zone.Delete`:
+		var req zoneDeleteReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Zone.Delete payload"))
+			break
+		}
+		res := buildZoneDelete(realZoneDeps(), req.Zone)
+		if res.Ok {
+			// rooms cannot import mapper, so cache invalidation happens here.
+			mapper.ClearCache()
+		}
+		sendBuildResult(uid, res)
+		sendZoneList(uid)
 
 	case `Build.Map.Request`:
 		var req mapRequestReq

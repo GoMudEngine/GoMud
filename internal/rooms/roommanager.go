@@ -737,6 +737,12 @@ func CreateZone(zoneName string) (roomId int, err error) {
 		return zoneInfo.RoomId, errors.New("zone already exists")
 	}
 
+	// Two display names can sanitize onto one folder; without this the
+	// os.Mkdir below lands on a live zone's directory.
+	if clash := ZoneFolderCollision(zoneName, GetAllZoneNames()); clash != "" {
+		return 0, fmt.Errorf("zone folder %q is already used by zone %q", ZoneNameSanitize(zoneName), clash)
+	}
+
 	zoneInfo := NewZoneConfig(zoneName)
 
 	roomsRoot := util.FilePath(configs.GetFilePathsConfig().DataFiles.String(), "/", "rooms")
@@ -770,6 +776,18 @@ func CreateZone(zoneName string) (roomId int, err error) {
 
 	// save to the flat file
 	SaveRoomTemplate(*newRoom)
+
+	// Point the zone-config at its entrance room. Without this the zone's root
+	// RoomId stays 0, so GetZoneRoot returns 0 and nothing in the zone is ever
+	// recognised as its root — which makes the starter room look like ordinary
+	// content and leaves the zone permanently undeletable. The web zone-create
+	// path patched this up after the fact; the in-game `build zone` command did
+	// not, so it belongs here.
+	zoneInfo.RoomId = newRoom.RoomId
+	if err := fileloader.SaveFlatFile[*ZoneConfig](roomsRoot, zoneInfo); err != nil {
+		return 0, err
+	}
+	roomManager.zones[zoneName] = zoneInfo
 
 	// write room to the folder under the new ID
 	return newRoom.RoomId, nil
