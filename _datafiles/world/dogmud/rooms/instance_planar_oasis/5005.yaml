@@ -15,3 +15,4 @@ exits:
 spawninfo:
   - mobid: 320
     statpool: 4
+plane: 13

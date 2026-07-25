@@ -21,3 +21,4 @@ spawninfo:
   - mobid: 319
     statpool: 1
     respawnrate: "1h"
+plane: 13

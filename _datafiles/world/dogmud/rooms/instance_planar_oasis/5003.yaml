@@ -12,3 +12,4 @@ exits:
   north:
     roomid: 5004
     mapdirection: north
+plane: 13
