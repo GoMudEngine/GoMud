@@ -974,9 +974,19 @@
     // gather fn for save
     current._gather = function () {
       var nouns = {};
+      // A row with a description but no noun used to be dropped in silence —
+      // clear a key by accident and the description was destroyed on save with
+      // nothing said. Refuse instead: losing authored prose must never be the
+      // quiet outcome. An entirely blank row is just an unused row, so it is
+      // skipped without complaint.
+      var namelessNoun = false;
       Array.prototype.forEach.call(nounsBox.children, function (r) {
-        var k = r._k.value.trim(); if (k) nouns[k] = r._v.value;
+        var k = r._k.value.trim();
+        var v = r._v.value.trim();
+        if (k) { nouns[k] = r._v.value; return; }
+        if (v) namelessNoun = true;
       });
+      if (namelessNoun) return { _refuse: "A noun has a description but no name. Name it, or clear the description to drop it." };
       var idle = [];
       Array.prototype.forEach.call(idleBox.children, function (r) {
         var v = r._v.value.trim(); if (v) idle.push(v);
@@ -994,8 +1004,11 @@
 
   function doSave() {
     if (!current || !current._gather) return;
+    var payload = current._gather();
+    // _gather refuses rather than silently dropping authored content.
+    if (payload && payload._refuse) { toast(payload._refuse, true); return; }
     inspectorDirtySaving = true;
-    sendGMCP("Build.Room.Update", current._gather());
+    sendGMCP("Build.Room.Update", payload);
   }
 
   function renderExits(d) {

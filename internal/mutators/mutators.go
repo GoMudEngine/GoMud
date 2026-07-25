@@ -193,8 +193,14 @@ func (m *Mutator) Removable() bool {
 	if m.Live() {
 		return false
 	}
+	// An unknown id means we cannot know whether it respawns. Never delete
+	// authored content on the strength of a missing spec.
+	spec := m.GetSpec()
+	if spec == nil {
+		return false
+	}
 	// If it might respawn, don't remove
-	if m.GetSpec().RespawnRate != `` {
+	if spec.RespawnRate != `` {
 		return false
 	}
 
@@ -209,6 +215,12 @@ func (m *Mutator) GetSpec() *MutatorSpec {
 // Returns true if it has changed somehow?
 func (m *Mutator) Update(currentRound uint64) {
 	spec := m.GetSpec()
+	// An unknown mutator id yields a nil spec. Dereferencing it panics the
+	// server on a content typo, and Removable() would otherwise decide the
+	// mutator is disposable and DELETE it from the room. Leave it alone.
+	if spec == nil {
+		return
+	}
 
 	//
 	// If it hasn't been initialized yet

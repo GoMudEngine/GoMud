@@ -585,6 +585,15 @@ func buildRoomUpdate(d buildDeps, req roomUpdateReq) BuildResult {
 	}
 	r.Title = req.Title
 	r.Description = req.Description
+	// Snapshot the fields this editor does NOT manage. A room save must never
+	// be the reason authored content disappears, and on 2026-07-25 a live save
+	// of room 468 lost a mutator and a noun that no code path here could be
+	// shown to touch. Rather than trust the reasoning, assert it: if anything
+	// unmanaged changed between load and save, refuse and say so.
+	mutatorsBefore := len(r.Mutators)
+	containersBefore := len(r.Containers)
+	stashBefore := len(r.Stash)
+
 	r.Biome = req.Biome
 	r.MapSymbol = req.Symbol
 	r.MapLegend = req.Legend
@@ -604,6 +613,15 @@ func buildRoomUpdate(d buildDeps, req roomUpdateReq) BuildResult {
 		}
 	}
 	r.SpawnInfo = preserveSpawnTracking(r.SpawnInfo, req.Spawns)
+
+	if len(r.Mutators) != mutatorsBefore ||
+		len(r.Containers) != containersBefore ||
+		len(r.Stash) != stashBefore {
+		return buildErr("refusing to save room %d: it would drop content this editor does not manage "+
+			"(mutators %d->%d, containers %d->%d, stash %d->%d) — report this, it is a bug",
+			req.RoomId, mutatorsBefore, len(r.Mutators), containersBefore, len(r.Containers),
+			stashBefore, len(r.Stash))
+	}
 
 	if err := d.save(*r); err != nil {
 		return buildErr("could not save room %d: %s", req.RoomId, err.Error())

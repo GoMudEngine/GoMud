@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/mapper"
+	"github.com/GoMudEngine/GoMud/internal/mutators"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -426,5 +427,40 @@ func TestBuildRoomUpdate_PreservesSpawnRuntimeTracking(t *testing.T) {
 	saved := w.saved[len(w.saved)-1]
 	if saved.SpawnInfo[0].InstanceId != 4242 || saved.SpawnInfo[0].DespawnedRound != 99 {
 		t.Errorf("runtime tracking must be preserved from the template, got %+v", saved.SpawnInfo[0])
+	}
+}
+
+// A room save must never be the reason authored content disappears.
+//
+// On 2026-07-25 a live builder save of room 468 lost a sanctuary mutator and a
+// noun. The loss could not be reproduced on any constructed path — fake world,
+// real disk, or full world with the room prepared — so rather than trust that
+// reasoning, buildRoomUpdate now asserts that fields it does not manage are
+// unchanged between load and save, and this pins the behaviour.
+func TestBuildRoomUpdate_PreservesUnmanagedContent(t *testing.T) {
+	w := newFakeWorld()
+	r := &rooms.Room{RoomId: 468, Title: "Temple", Description: "D"}
+	r.Mutators = mutators.MutatorList{{MutatorId: "sanctuary"}}
+	r.Containers = map[string]rooms.Container{"chest": {}}
+	r.Nouns = map[string]string{"altar": "a", "pillars": "p", "candles": "c"}
+	w.rooms[468] = r
+
+	req := roomUpdateReq{
+		RoomId: 468, Title: "Temple", Description: "D",
+		Nouns: map[string]string{"altar": "a", "pillars": "p", "candles": "c"},
+	}
+	if res := buildRoomUpdate(w.deps(), req); !res.Ok {
+		t.Fatalf("save should succeed: %+v", res)
+	}
+	saved := w.saved[len(w.saved)-1]
+
+	if len(saved.Mutators) != 1 {
+		t.Errorf("mutators must survive a room save: 1 -> %d", len(saved.Mutators))
+	}
+	if len(saved.Containers) != 1 {
+		t.Errorf("containers must survive a room save: 1 -> %d", len(saved.Containers))
+	}
+	if len(saved.Nouns) != 3 {
+		t.Errorf("all nouns must survive when the client sends them: 3 -> %d", len(saved.Nouns))
 	}
 }
