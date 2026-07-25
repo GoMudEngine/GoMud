@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -118,4 +120,72 @@ func TestPlanZoneRename_SkipsAbsentTreesAndDetectsCollision(t *testing.T) {
 	}
 	_, err = planZoneRename(base, "Old Zone", "New Zone")
 	assert.Error(t, err, "an occupied target path must abort before anything moves")
+}
+
+func TestRenameZone_MovesRewritesAndRekeys(t *testing.T) {
+	if os.Getenv(`DOGMUD_BOOT_SMOKE`) == `` {
+		t.Skip("set DOGMUD_BOOT_SMOKE=1 to run the filesystem rename test")
+	}
+	// Test binaries run with CWD = their own package dir; ReloadConfig reads
+	// _datafiles/config.yaml relative to CWD. Same dance as
+	// internal/web/auth_test.go and TestDeleteZone_RemovesEveryTree.
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	repoRoot := filepath.Clean(filepath.Join(wd, "..", ".."))
+	if err := os.Chdir(repoRoot); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(wd) })
+	if err := configs.ReloadConfig(); err != nil {
+		t.Fatal(err)
+	}
+
+	const oldName = "Rename Probe Zone"
+	const newName = "Renamed Probe Zone"
+
+	// Scrub BOTH names before and after. Not belt-and-braces: a leftover
+	// TARGET directory makes planZoneRename correctly abort the rename, and
+	// this test would then fail while reporting nothing about the real cause.
+	// (Verified by planting a stale target dir — the guard fires exactly as
+	// designed and every downstream assertion collapses.)
+	scrub := func() {
+		base := configs.GetFilePathsConfig().DataFiles.String()
+		for _, d := range zoneAllDirs() {
+			_ = os.RemoveAll(util.FilePath(base, "/", d, "/", ZoneNameSanitize(oldName)))
+			_ = os.RemoveAll(util.FilePath(base, "/", d, "/", ZoneNameSanitize(newName)))
+		}
+		delete(roomManager.zones, oldName)
+		delete(roomManager.zones, newName)
+	}
+	scrub()
+	t.Cleanup(scrub)
+
+	roomId, err := CreateZone(oldName)
+	assert.NoError(t, err)
+
+	assert.NoError(t, RenameZone(oldName, newName))
+
+	base := configs.GetFilePathsConfig().DataFiles.String()
+	oldDir := util.FilePath(base, "/", "rooms", "/", ZoneNameSanitize(oldName))
+	newDir := util.FilePath(base, "/", "rooms", "/", ZoneNameSanitize(newName))
+	_, oldErr := os.Stat(oldDir)
+	assert.True(t, os.IsNotExist(oldErr), "old rooms dir must be gone")
+	_, newErr := os.Stat(newDir)
+	assert.NoError(t, newErr, "new rooms dir must exist")
+
+	// Content rewritten.
+	r := LoadRoomTemplate(roomId)
+	assert.NotNil(t, r)
+	if r != nil {
+		assert.Equal(t, newName, r.Zone, "room zone: must be rewritten")
+	}
+
+	// Caches rekeyed.
+	assert.NotContains(t, GetAllZoneNames(), oldName)
+	assert.Contains(t, GetAllZoneNames(), newName)
+	if cfg := GetZoneConfig(newName); assert.NotNil(t, cfg) {
+		assert.Equal(t, newName, cfg.Name)
+	}
 }

@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
@@ -170,4 +171,95 @@ func reverseZoneMoves(done []zoneMove) []string {
 		}
 	}
 	return stuck
+}
+
+// contentZoneDirs are the trees whose FILES store the zone name in a top-level
+// `zone:` key. The other five trees a zone owns are folder-only, so moving the
+// directory is all they need. Verified against the live world 2026-07-25.
+func contentZoneDirs() []string {
+	return []string{"rooms", "mobs", "dialogue", "caravans", "foragers"}
+}
+
+// RenameZone moves every directory a zone owns, rewrites the zone name inside
+// the files that store it, and rekeys the in-memory caches.
+//
+// Order is validate -> plan -> move -> rewrite -> rekey. The plan verifies all
+// target paths are free first, so an impossible rename changes nothing. If a
+// move fails partway the completed moves are reversed; if a reversal ALSO
+// fails the error names the directories left stranded, because a half-renamed
+// zone must never be reported as success.
+//
+// The caller is responsible for mapper.ClearCache() afterwards; internal/rooms
+// cannot import internal/mapper.
+func RenameZone(oldName, newName string) error {
+	cfg, ok := roomManager.zones[oldName]
+	if !ok {
+		return fmt.Errorf("zone %q does not exist", oldName)
+	}
+	if err := ValidateZoneRename(oldName, newName, GetAllZoneNames()); err != nil {
+		return err
+	}
+	if b := ZoneRenameBlockers(oldName); len(b) > 0 {
+		return fmt.Errorf("zone %q cannot be renamed right now (%d blockers)", oldName, len(b))
+	}
+
+	// Collect the zone's rooms BEFORE the move — LoadRoomTemplate reads from
+	// disk, so afterwards the old paths are gone.
+	roomIds := []int{}
+	for _, id := range GetAllRoomIds() {
+		if r := LoadRoomTemplate(id); r != nil && r.Zone == oldName {
+			roomIds = append(roomIds, id)
+		}
+	}
+
+	base := configs.GetFilePathsConfig().DataFiles.String()
+	planned, err := planZoneRename(base, oldName, newName)
+	if err != nil {
+		return err
+	}
+	done, err := applyZoneMoves(planned)
+	if err != nil {
+		if stuck := reverseZoneMoves(done); len(stuck) > 0 {
+			return fmt.Errorf("%w; ALSO FAILED TO REVERSE, these directories are stranded: %v", err, stuck)
+		}
+		return err
+	}
+
+	// Rewrite the zone name inside every file that stores it.
+	newFolder := ZoneNameSanitize(newName)
+	for _, d := range contentZoneDirs() {
+		dir := util.FilePath(base, "/", d, "/", newFolder)
+		entries, readErr := os.ReadDir(dir)
+		if readErr != nil {
+			continue
+		}
+		for _, e := range entries {
+			if e.IsDir() || !strings.HasSuffix(e.Name(), ".yaml") {
+				continue
+			}
+			if err := rewriteZoneField(util.FilePath(dir, "/", e.Name()), newName); err != nil {
+				return fmt.Errorf("rewriting %s: %w (directories are already moved — the zone is half-renamed)", e.Name(), err)
+			}
+		}
+	}
+
+	// Rekey in-memory state.
+	cfg.Name = newName
+	delete(roomManager.zones, oldName)
+	roomManager.zones[newName] = cfg
+
+	oldFolder := ZoneNameSanitize(oldName)
+	for _, id := range roomIds {
+		if r, ok := roomManager.rooms[id]; ok && r != nil {
+			r.Zone = newName
+		}
+		// roomIdToFileCache stores "<zoneFolder>/<id>.yaml"; a stale entry
+		// points at the pre-move path. GetFilePath would self-heal by walking
+		// the whole rooms tree, but rewriting the prefix is cheap and exact.
+		if p, ok := roomManager.roomIdToFileCache[id]; ok {
+			roomManager.roomIdToFileCache[id] = strings.Replace(p, oldFolder, newFolder, 1)
+		}
+	}
+
+	return SaveZoneConfig(cfg)
 }
