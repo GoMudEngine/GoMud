@@ -1,6 +1,12 @@
 package rooms
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+
+	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/util"
+)
 
 // ZoneFolderCollision reports the first zone in existing whose sanitized
 // folder name matches newName's, or "" when the folder is free.
@@ -64,4 +70,126 @@ func ZoneDeletionBlockersWith(zone string, src zoneBlockerSources) []ZoneBlocker
 		out = append(out, ZoneBlocker{Kind: "player", Id: p})
 	}
 	return out
+}
+
+// zoneContentDirs are the trees holding AUTHORED zone content. Presence of any
+// file here blocks deletion.
+func zoneContentDirs() []string {
+	return []string{"mobs", "dialogue", "behaviors", "schedules", "caravans", "foragers"}
+}
+
+// zoneAllDirs is every tree a zone owns, including regenerable living state
+// (shops + the two .instances trees). Deletion removes all of them.
+func zoneAllDirs() []string {
+	return append(zoneContentDirs(), "rooms", "rooms.instances", "mobs.instances", "shops")
+}
+
+// ZoneDeletionBlockers is the production wiring of the scan.
+func ZoneDeletionBlockers(zone string) []ZoneBlocker {
+	return ZoneDeletionBlockersWith(zone, zoneBlockerSources{
+		roomIdsInZone: func(z string) []int {
+			out := []int{}
+			for _, id := range GetAllRoomIds() {
+				if r := LoadRoomTemplate(id); r != nil && r.Zone == z {
+					out = append(out, id)
+				}
+			}
+			return out
+		},
+		zoneRootRoomId: func(z string) int {
+			id, _ := GetZoneRoot(z)
+			return id
+		},
+		contentFiles: func(z string) []string {
+			out := []string{}
+			base := configs.GetFilePathsConfig().DataFiles.String()
+			for _, d := range zoneContentDirs() {
+				dir := util.FilePath(base, "/", d, "/", ZoneNameSanitize(z))
+				entries, err := os.ReadDir(dir)
+				if err != nil {
+					continue // tree absent for this zone
+				}
+				for _, e := range entries {
+					if !e.IsDir() {
+						out = append(out, d+"/"+ZoneNameSanitize(z)+"/"+e.Name())
+					}
+				}
+			}
+			return out
+		},
+		inboundExits: func(z string) []string {
+			out := []string{}
+			for _, id := range GetAllRoomIds() {
+				src := LoadRoomTemplate(id)
+				if src == nil || src.Zone == z {
+					continue // same-zone exits die with the zone
+				}
+				for name, ex := range src.Exits {
+					dst := LoadRoomTemplate(ex.RoomId)
+					if dst != nil && dst.Zone == z {
+						out = append(out, fmt.Sprintf("room %d (%s) %s", id, src.Zone, name))
+					}
+				}
+			}
+			return out
+		},
+		playersInZone: func(z string) []string {
+			out := []string{}
+			for _, id := range GetAllRoomIds() {
+				r := LoadRoomTemplate(id)
+				if r == nil || r.Zone != z {
+					continue
+				}
+				if n := len(r.GetPlayers()); n > 0 {
+					out = append(out, fmt.Sprintf("%d player(s) in room %d", n, id))
+				}
+			}
+			return out
+		},
+	})
+}
+
+// DeleteZone removes every directory a zone owns and drops it from the room
+// manager. It re-checks the blockers itself — never trust the caller.
+//
+// The caller is responsible for invalidating the mapper cache afterwards;
+// internal/rooms cannot import internal/mapper (mapper imports rooms).
+func DeleteZone(zone string) error {
+	if _, ok := roomManager.zones[zone]; !ok {
+		return fmt.Errorf("zone %q does not exist", zone)
+	}
+	if b := ZoneDeletionBlockers(zone); len(b) > 0 {
+		return fmt.Errorf("zone %q is not empty (%d blockers)", zone, len(b))
+	}
+
+	// Collect the zone's rooms BEFORE touching the filesystem. LoadRoomTemplate
+	// reads from DISK (loadRoomFromFile), so once the directories are gone it
+	// returns nil for every room and the cache purge below would silently do
+	// nothing, leaving stale rooms in roomManager.
+	doomed := []int{}
+	for _, id := range GetAllRoomIds() {
+		if r := LoadRoomTemplate(id); r != nil && r.Zone == zone {
+			doomed = append(doomed, id)
+		}
+	}
+
+	base := configs.GetFilePathsConfig().DataFiles.String()
+	folder := ZoneNameSanitize(zone)
+	for _, d := range zoneAllDirs() {
+		dir := util.FilePath(base, "/", d, "/", folder)
+		if err := os.RemoveAll(dir); err != nil {
+			return fmt.Errorf("removing %s: %w", dir, err)
+		}
+	}
+
+	// ClearRoomCache purges rooms, roomsWithUsers, roomsWithMobs AND
+	// roomIdToFileCache — the last matters because GetAllRoomIds iterates that
+	// map, so a stale entry would keep reporting a deleted room forever. It
+	// errors when the room was never cached in memory, which is fine here.
+	for _, id := range doomed {
+		_ = ClearRoomCache(id)
+		delete(roomManager.roomIdToFileCache, id)
+	}
+	delete(roomManager.zones, zone)
+	return nil
 }

@@ -55,3 +55,15 @@ func TestZoneDeletionBlockers_CleanZoneIsEmpty(t *testing.T) {
 	}
 	assert.Empty(t, ZoneDeletionBlockersWith("Testzone", src))
 }
+
+func TestZoneContentDirs_CoversAllAuthoredTrees(t *testing.T) {
+	dirs := zoneContentDirs()
+	assert.ElementsMatch(t,
+		[]string{"mobs", "dialogue", "behaviors", "schedules", "caravans", "foragers"},
+		dirs,
+		"authored content trees scanned for delete blockers")
+}
+
+func TestZoneAllDirs_CoversAllTenTrees(t *testing.T) {
+	assert.Len(t, zoneAllDirs(), 10, "a zone owns ten directories")
+}
