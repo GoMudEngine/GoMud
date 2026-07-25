@@ -1,6 +1,8 @@
 package gmcp
 
 import (
+	"sort"
+
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/mapper"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
@@ -172,4 +174,114 @@ func buildZoneDelete(d zoneDeps, zone string) BuildResult {
 		return buildErr("could not delete zone %q: %s", zone, err.Error())
 	}
 	return BuildResult{Ok: true, Message: "zone " + zone + " deleted"}
+}
+
+// ---- server -> client payloads ----
+
+type zoneListRow struct {
+	Zone      string `json:"zone"`
+	RoomCount int    `json:"roomCount"`
+	Instanced bool   `json:"instanced"`
+}
+
+type zoneListPayload struct {
+	Zones []zoneListRow `json:"zones"`
+}
+
+type zoneEnums struct {
+	Biomes        []string `json:"biomes"`
+	DeathPolicies []string `json:"deathPolicies"`
+	Regions       []string `json:"regions"` // observed values, as suggestions
+}
+
+// zoneUpdateReq is both the client->server update payload and the editable
+// half of zoneDetail. Name is NOT editable here — renaming is Phase 2.
+type zoneUpdateReq struct {
+	Name           string   `json:"name"`
+	RoomId         int      `json:"roomId"`
+	DefaultBiome   string   `json:"defaultBiome"`
+	Region         string   `json:"region"`
+	MusicFile      string   `json:"musicFile"`
+	IdleMessages   []string `json:"idleMessages"`
+	Instanced      bool     `json:"instanced"`
+	DeathPolicy    string   `json:"deathPolicy"`
+	PortalDuration string   `json:"portalDuration"`
+	EntryRoom      int      `json:"entryRoom"`
+	AllowRecall    bool     `json:"allowRecall"`
+	NonCartesian   bool     `json:"nonCartesian"`
+	DefaultPlane   int      `json:"defaultPlane"`
+}
+
+type zoneDetail struct {
+	zoneUpdateReq
+	Enums zoneEnums `json:"enums"`
+}
+
+type zoneGetReq struct {
+	Zone string `json:"zone"`
+}
+
+type zoneDeleteReq struct {
+	Zone string `json:"zone"`
+}
+
+func buildZoneList(d zoneDeps) zoneListPayload {
+	out := zoneListPayload{Zones: []zoneListRow{}}
+	for _, z := range d.zoneNames() {
+		cfg := d.load(z)
+		instanced := cfg != nil && cfg.Instanced
+		out.Zones = append(out.Zones, zoneListRow{
+			Zone:      z,
+			RoomCount: len(d.roomIds(z)),
+			Instanced: instanced,
+		})
+	}
+	return out
+}
+
+func buildZoneGet(d zoneDeps, zone string) (zoneDetail, bool) {
+	cfg := d.load(zone)
+	if cfg == nil {
+		return zoneDetail{}, false
+	}
+	return zoneDetail{
+		zoneUpdateReq: zoneUpdateReq{
+			Name: cfg.Name, RoomId: cfg.RoomId,
+			DefaultBiome: cfg.DefaultBiome, Region: cfg.Region,
+			MusicFile: cfg.MusicFile, IdleMessages: cfg.IdleMessages,
+			Instanced: cfg.Instanced, DeathPolicy: cfg.DeathPolicy,
+			PortalDuration: cfg.PortalDuration, EntryRoom: cfg.EntryRoom,
+			AllowRecall: cfg.AllowRecall, NonCartesian: cfg.NonCartesian,
+			DefaultPlane: cfg.DefaultPlane,
+		},
+		Enums: collectZoneEnums(d),
+	}, true
+}
+
+func collectZoneEnums(d zoneDeps) zoneEnums {
+	regions := []string{}
+	seen := map[string]bool{}
+	for _, z := range d.zoneNames() {
+		if cfg := d.load(z); cfg != nil && cfg.Region != "" && !seen[cfg.Region] {
+			seen[cfg.Region] = true
+			regions = append(regions, cfg.Region)
+		}
+	}
+	return zoneEnums{
+		Biomes:        zoneBiomeNames(),
+		DeathPolicies: []string{"rejoin", "ejected"},
+		Regions:       regions,
+	}
+}
+
+// zoneBiomeNames returns every biome id the engine knows, for the editor's
+// dropdown. Server-supplied so a typo cannot reach zone-config.
+func zoneBiomeNames() []string {
+	out := []string{}
+	for _, b := range rooms.GetAllBiomes() {
+		bi := b
+		out = append(out, bi.Id())
+	}
+	sort.Strings(out)
+	return out
 }

@@ -77,3 +77,42 @@ func TestBuildZoneDelete_UnknownZone(t *testing.T) {
 		t.Error("unknown zone must not report success")
 	}
 }
+
+func TestBuildZoneList_ReportsRoomCounts(t *testing.T) {
+	w := newFakeZoneWorld()
+	rowsAny := buildZoneList(w.deps())
+	if len(rowsAny.Zones) != 1 {
+		t.Fatalf("expected 1 zone, got %d", len(rowsAny.Zones))
+	}
+	row := rowsAny.Zones[0]
+	if row.Zone != "Testzone" || row.RoomCount != 1 {
+		t.Errorf("unexpected row: %+v", row)
+	}
+}
+
+func TestBuildZoneGet_MapsFieldsAndEnums(t *testing.T) {
+	w := newFakeZoneWorld()
+	w.cfgs["Testzone"] = &rooms.ZoneConfig{
+		Name: "Testzone", RoomId: 100, DefaultBiome: "land",
+		Region: "Windward Marches", Instanced: true, DeathPolicy: "ejected",
+		NonCartesian: true, DefaultPlane: 7,
+	}
+	d, ok := buildZoneGet(w.deps(), "Testzone")
+	if !ok {
+		t.Fatal("expected zone detail")
+	}
+	if d.Name != "Testzone" || d.DefaultBiome != "land" || !d.Instanced ||
+		d.DeathPolicy != "ejected" || !d.NonCartesian || d.DefaultPlane != 7 {
+		t.Errorf("fields not mapped: %+v", d)
+	}
+	if len(d.Enums.DeathPolicies) == 0 {
+		t.Error("death policy enum must be server-supplied")
+	}
+}
+
+func TestBuildZoneGet_UnknownZone(t *testing.T) {
+	w := newFakeZoneWorld()
+	if _, ok := buildZoneGet(w.deps(), "Nowhere"); ok {
+		t.Error("unknown zone must not return detail")
+	}
+}
