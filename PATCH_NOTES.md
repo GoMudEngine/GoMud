@@ -1,5 +1,29 @@
 # DOGMud Patch Notes
 
+## 2026-07-25 — Repairs beneath the floorboards (staff)
+
+Three quiet fixes, none of them visible from the road.
+
+A crafting NPC's trade is now chosen from a list rather than typed. A
+misspelling there used to fail in perfect silence: the smith would simply never
+work another recipe, and the goods he was willing to buy quietly stopped
+matching his trade, with nothing anywhere to say why. The editor now declines a
+trade it doesn't recognize and names the ones it does.
+
+The building shorthand that raises a room in a given direction has to invent the
+passage back, and it had been inventing inconsistently — roughly half the time
+it recorded the return as the mapmaker's blank variety, drawn with no line at
+all, so two perfectly joined rooms looked like strangers on the map. It now
+works the return out properly and keeps whatever distance the outbound passage
+carried. No room in the world had caught the bad guess yet; the cartography is
+clean.
+
+Finally, the last timbers of skill-training came out. It belonged to the age of
+levels and experience, both long gone from these lands, and no room had used it
+in a very long time — but any room that did would still have advised a visitor
+to "type train", a word the game no longer answers to. The setting, its marker
+on the map, and its corner of the staff editor are all gone.
+
 ## 2026-07-23 — The bestiary drawer (staff)
 
 The builder's table grows a third drawer: **Mobs**. Staff can now browse every
