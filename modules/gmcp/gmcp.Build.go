@@ -158,6 +158,10 @@ type buildRoomDetail struct {
 	Y             int               `json:"y"`
 	Z             int               `json:"z"`
 	Biomes        []string          `json:"biomes,omitempty"` // valid biome ids for the dropdown
+	// Spawns is the room's spawn list. SpawnInfo's two runtime-tracking fields
+	// are yaml:"-" and travel to the client harmlessly; they are NOT trusted on
+	// the way back in — buildRoomUpdate carries them over from the template.
+	Spawns []rooms.SpawnInfo `json:"spawns"`
 }
 
 // ---- dependency seam ---------------------------------------------------------
@@ -677,6 +681,7 @@ func buildRoomGet(d buildDeps, roomId int) (buildRoomDetail, bool) {
 		Bank: r.IsBank, Storage: r.IsStorage, Pvp: r.Pvp, CharacterRoom: r.IsCharacterRoom,
 		Nouns: r.Nouns, IdleMessages: r.IdleMessages,
 		Plane: r.Plane, X: r.X, Y: r.Y, Z: r.Z,
+		Spawns: r.SpawnInfo,
 	}
 	for name, e := range r.Exits {
 		ed := buildExitDetail{

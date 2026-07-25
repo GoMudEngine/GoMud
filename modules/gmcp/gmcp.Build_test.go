@@ -319,6 +319,30 @@ func TestBuildRoomGet_MapsFieldsAndClassifiesExits(t *testing.T) {
 	}
 }
 
+func TestBuildRoomGet_CarriesSpawnList(t *testing.T) {
+	w := newFakeWorld()
+	r := &rooms.Room{RoomId: 100, Title: "T", Description: "D"}
+	r.SpawnInfo = []rooms.SpawnInfo{
+		{MobId: 336, RespawnRate: "5 real minutes", Message: "A guard arrives."},
+		{ItemId: 40001, Container: "chest"},
+	}
+	w.rooms[100] = r
+
+	d, ok := buildRoomGet(w.deps(), 100)
+	if !ok {
+		t.Fatal("expected room detail")
+	}
+	if len(d.Spawns) != 2 {
+		t.Fatalf("expected 2 spawns, got %d", len(d.Spawns))
+	}
+	if d.Spawns[0].MobId != 336 || d.Spawns[0].RespawnRate != "5 real minutes" {
+		t.Errorf("mob spawn not mapped: %+v", d.Spawns[0])
+	}
+	if d.Spawns[1].ItemId != 40001 || d.Spawns[1].Container != "chest" {
+		t.Errorf("item spawn not mapped: %+v", d.Spawns[1])
+	}
+}
+
 func TestBuildRoomDelete_CleansInboundExits(t *testing.T) {
 	w := newFakeWorld()
 	w.put(&rooms.Room{RoomId: 1, Zone: "Over", Plane: 0, X: 0, Y: 0, Z: 0,
