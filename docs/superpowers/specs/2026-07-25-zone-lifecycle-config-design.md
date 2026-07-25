@@ -111,7 +111,7 @@ Client → server:
 |------|---------|-------|
 | `Build.Zone.List` | — | zone names + room counts + instanced flag |
 | `Build.Zone.Get` | `{zone}` | full config detail + enums |
-| `Build.Zone.Create` | `{name}` | delegates to `CreateZone` |
+| `Build.Zone.Create` | `{name, biome, region, nonCartesian}` | **ALREADY SHIPS** — see §2.1 |
 | `Build.Zone.Update` | full config, minus name | validate → `SaveZoneConfig` |
 | `Build.Zone.Delete` | `{zone}` | guarded; returns blockers on refusal |
 | `Build.Zone.Rename` | `{zone, newName}` | **Phase 2** |
@@ -119,6 +119,27 @@ Client → server:
 Server → client: `Build.Zones` (list), `Build.Zone` (detail + enums),
 and the shared `BuildResult` (`{ok, error, refs}`) already used by item and
 mob delete.
+
+### 2.1 Zone **create** already exists (scope correction)
+
+Discovered during pre-plan verification: `Build.Zone.Create` is already
+implemented (`gmcp.Build.go:322`, handler `buildZoneCreate`), already routed
+and admin-gated (`gmcp.go:486`), and already has a client form in
+`build.html:801` with name / biome / region / non-cartesian inputs.
+
+It is also **already correct on the §5.1 plane rule**: it calls
+`rooms.NextFreeAuthoredPlane()`, stamps the plane on the entrance room and on
+`cfg.DefaultPlane`, and calls `GetPlaneRegistry().Mark(plane, nonCartesian, …)`.
+Web-created zones therefore never land on plane 0 — the contamination fixed in
+`af565b1f0` came from hand-authored content, not from this path.
+
+**The only create-side gap is the folder-collision guard** (§1): `CreateZone`
+rejects a duplicate *display* name but not a duplicate *sanitized folder*, so
+`Amber_Valley` beside an existing `Amber Valley` reaches `os.Mkdir` on the live
+zone's folder and fails with a raw filesystem error.
+
+Phase 1 therefore covers: **collision guard + delete + config editing.** Create
+needs no rebuild.
 
 Handlers sit behind a `zoneDeps` struct — `load`, `save`, `create`, `del`,
 `blockers`, `zoneExists`, `roomsInZone`, `playersInZone` — so every handler
