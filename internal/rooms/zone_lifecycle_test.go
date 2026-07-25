@@ -1,8 +1,12 @@
 package rooms
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -66,4 +70,61 @@ func TestZoneContentDirs_CoversAllAuthoredTrees(t *testing.T) {
 
 func TestZoneAllDirs_CoversAllTenTrees(t *testing.T) {
 	assert.Len(t, zoneAllDirs(), 10, "a zone owns ten directories")
+}
+
+func TestDeleteZone_RemovesEveryTree(t *testing.T) {
+	if os.Getenv(`DOGMUD_BOOT_SMOKE`) == `` {
+		t.Skip("set DOGMUD_BOOT_SMOKE=1 to run the filesystem zone test")
+	}
+
+	// A test binary's CWD is its own package directory, and ReloadConfig reads
+	// _datafiles/config.yaml relative to CWD. Without this chdir the lazily
+	// validated zero-value config falls back to the built-in default data root
+	// (world/default) and CreateZone tries to mkdir under a path that does not
+	// exist. Same workaround as internal/web/auth_test.go.
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("Getwd: %v", err)
+	}
+	repoRoot := filepath.Clean(filepath.Join(wd, "..", ".."))
+	if err := os.Chdir(repoRoot); err != nil {
+		t.Fatalf("Chdir(%q): %v", repoRoot, err)
+	}
+	t.Cleanup(func() { _ = os.Chdir(wd) })
+
+	if err := configs.ReloadConfig(); err != nil {
+		t.Fatalf("ReloadConfig: %v", err)
+	}
+
+	const zone = "Ziggurat Test Zone"
+
+	// Leave nothing behind if an assertion fails mid-test.
+	t.Cleanup(func() {
+		base := configs.GetFilePathsConfig().DataFiles.String()
+		for _, d := range zoneAllDirs() {
+			_ = os.RemoveAll(util.FilePath(base, "/", d, "/", ZoneNameSanitize(zone)))
+		}
+	})
+
+	roomId, err := CreateZone(zone)
+	assert.NoError(t, err)
+	assert.NotZero(t, roomId)
+
+	folder := ZoneNameSanitize(zone)
+	base := configs.GetFilePathsConfig().DataFiles.String()
+	roomsDir := util.FilePath(base, "/", "rooms", "/", folder)
+	_, statErr := os.Stat(roomsDir)
+	assert.NoError(t, statErr, "zone folder should exist after CreateZone")
+
+	// Root room only, no content -> deletable.
+	assert.Empty(t, ZoneDeletionBlockers(zone))
+	assert.NoError(t, DeleteZone(zone))
+
+	for _, d := range zoneAllDirs() {
+		dir := util.FilePath(base, "/", d, "/", folder)
+		if _, err := os.Stat(dir); !os.IsNotExist(err) {
+			t.Errorf("%s still exists after DeleteZone", dir)
+		}
+	}
+	assert.NotContains(t, GetAllZoneNames(), zone)
 }
