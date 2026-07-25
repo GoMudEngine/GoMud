@@ -77,6 +77,5 @@ idlemessages:
 - dewdrops on a sundew catch the light and sparkle briefly
 spawninfo:
 - mobid: 367
-  cooldown: 300 rounds
 x: -13
 y: 6

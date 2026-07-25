@@ -29,6 +29,5 @@ idlemessages:
 - Something in the kettle bubbles once, low and slow.
 spawninfo:
   - mobid: 9604
-    cooldown: 600 rounds
 x: -12
 y: -30

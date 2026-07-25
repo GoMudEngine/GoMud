@@ -30,7 +30,6 @@ nouns:
     everything else in the room is merely tidy.
 spawninfo:
   - mobid: 9594
-    cooldown: 600 rounds
 idlemessages:
 - A gem is turned slowly between two fingers, catching the lamplight.
 - The magnifying lens is swung down and back up again.

@@ -30,6 +30,5 @@ idlemessages:
 - The counter's surface is cool and bare beneath one hand.
 spawninfo:
   - mobid: 9599
-    cooldown: 600 rounds
 x: -10
 y: -30

@@ -41,7 +41,6 @@ idlemessages:
   floorboards.
 spawninfo:
   - mobid: 9611
-    cooldown: 600 rounds
 x: -6
 y: -85
 z: 1

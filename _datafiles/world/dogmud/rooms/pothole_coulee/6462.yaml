@@ -27,7 +27,6 @@ nouns:
     wire and stone into place.
 spawninfo:
   - mobid: 9607
-    cooldown: 600 rounds
 idlemessages:
 - A gull-cry carries up from somewhere out past the reeds.
 - The awning snaps once in a gust off the wash and goes still.

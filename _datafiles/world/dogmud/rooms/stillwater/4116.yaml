@@ -78,6 +78,5 @@ idlemessages:
 - Somewhere out on the water, an oar-stroke sounds — slow, patient, a fisherman returning.
 spawninfo:
 - mobid: 342
-  cooldown: 600 rounds
 x: -6
 y: 1

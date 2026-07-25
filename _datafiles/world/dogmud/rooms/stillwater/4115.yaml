@@ -79,6 +79,5 @@ idlemessages:
 - A faint splash a stone's-throw out marks a fish coming up after a bug.
 spawninfo:
 - mobid: 346
-  cooldown: 300 rounds
 x: -5
 y: 3

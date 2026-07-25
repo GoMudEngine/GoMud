@@ -65,6 +65,5 @@ idlemessages:
 - A wooden hoop is dropped onto a cask with a flat hollow ring.
 spawninfo:
 - mobid: 349
-  cooldown: 300 rounds
 x: -9
 y: 3

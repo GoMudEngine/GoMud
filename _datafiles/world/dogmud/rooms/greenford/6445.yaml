@@ -34,7 +34,6 @@ nouns:
     order that makes sense to exactly one person.
 spawninfo:
   - mobid: 9590
-    cooldown: 600 rounds
 idlemessages:
 - Sparks scatter from the anvil in a bright, short-lived shower.
 - The bellows wheeze and the coals brighten from orange to white.

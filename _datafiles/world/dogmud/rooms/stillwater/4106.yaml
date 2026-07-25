@@ -65,6 +65,5 @@ idlemessages:
 - A finished hook drops into the cold-bin with a small bright clink.
 spawninfo:
 - mobid: 337
-  cooldown: 600 rounds
 x: -9
 y: 1

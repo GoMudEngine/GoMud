@@ -134,6 +134,15 @@
   #inspector .exit { display: flex; align-items: center; gap: 6px; padding: 4px 0; border-bottom: 1px dotted var(--tooled); font-size: 12px; }
   #inspector .exit .grow { flex: 1 1 auto; }
   #inspector .exit .tag { color: var(--gold-dim); font-size: 10px; }
+  /* Spawns section (Task 6, admin web-building sub-project 4): a collapsed
+     row per spawn entry, expandable to a form; an Advanced drawer inside each
+     entry holds the rarer per-spawn override fields. */
+  #inspector .spawn-entry { border: 1px solid var(--tooled); border-radius: 4px; margin-bottom: 6px; overflow: hidden; }
+  #inspector .spawn-header { display: flex; align-items: center; gap: 4px; padding: 5px 7px; cursor: pointer; background: rgba(201,162,75,.08); }
+  #inspector .spawn-header .grow { flex: 1 1 auto; min-width: 0; font-size: 12px; }
+  #inspector .spawn-body { padding: 6px 7px; border-top: 1px dotted var(--tooled); }
+  #inspector .spawn-adv-head { cursor: pointer; font-size: 11px; margin: 10px 0 6px; color: var(--gold-dim); }
+  #inspector .spawn-hint { font-size: 10px; color: var(--gold-dim); margin-top: 2px; }
   #inspector button.mini { background: var(--panel); color: var(--parch); border: 1px solid var(--tooled); border-radius: 4px; padding: 2px 7px; font: inherit; font-size: 12px; cursor: pointer; }
   #inspector button.mini:hover { border-color: var(--gold); }
   #inspector button.rm { color: var(--danger); border-color: transparent; padding: 2px 6px; }
@@ -296,11 +305,24 @@
     var MP = window.Builder.MobsPanel;
     var ZP = window.Builder.ZonesPanel;
     // ---- item editor (Items mode) ----
-    if (ns === "Build.Items") { if (IP) { IP.render(obj); IP.afterListRefresh(); } return; }
+    // Build.Items/Build.Mobs are also captured unconditionally (regardless of
+    // mode) to feed the Rooms inspector's Spawns target-picker datalists —
+    // see the prefetch in loginSucceeded().
+    if (ns === "Build.Items") {
+      spawnItemRows = obj || [];
+      populateSpawnDatalist(spawnItemDatalistEl, spawnItemRows);
+      if (IP) { IP.render(obj); IP.afterListRefresh(); }
+      return;
+    }
     if (ns === "Build.Item") { if (IP) IP.renderForm(obj); return; }
     if (ns === "Build.Result" && window.Builder.mode === "items") { if (IP) IP.onResult(obj); return; }
     // ---- mob editor (Mobs mode) ----
-    if (ns === "Build.Mobs") { if (MP) MP.render(obj); return; }
+    if (ns === "Build.Mobs") {
+      spawnMobRows = obj || [];
+      populateSpawnDatalist(spawnMobDatalistEl, spawnMobRows);
+      if (MP) MP.render(obj);
+      return;
+    }
     if (ns === "Build.Mob") { if (MP) MP.renderForm(obj); return; }
     if (ns === "Build.Result" && window.Builder.mode === "mobs") { if (MP) MP.onResult(obj); return; }
     // Build.Rooms is the test-spawn room picker's per-zone room list
@@ -422,6 +444,11 @@
     setConn("● connected", "ok");
     // The login pushed a fogged Zone.Map; pull the full unfogged builder map.
     sendGMCP("Build.Map.Request", {});
+    // Prefetch the mob/item lists so the Rooms inspector's Spawns section has
+    // a populated id-search datalist without waiting on the admin to visit
+    // the Items/Mobs tabs first.
+    sendGMCP("Build.Item.List", {});
+    sendGMCP("Build.Mob.List", {});
   }
 
   function loginFailed(msg) {
@@ -556,6 +583,34 @@
 
   function textInput(val) { var i = ce("input", { type: "text" }); i.value = val || ""; i.addEventListener("input", function () { setDirty(true); }); return i; }
 
+  // ---- spawn target caches ------------------------------------------------
+  // The Spawns section (below) needs a mob/item id picker. Build.Mob.List /
+  // Build.Item.List are the same admin-gated verbs mobs.js/items.js already
+  // consume; loginSucceeded() prefetches both once so the datalists are ready
+  // before the admin ever opens the Items/Mobs tab. Wiring a full searchable
+  // picker component into the Rooms inspector was out of scope for this pass
+  // (see mobs.js's own carriedItems/buffIds "bare id input v1" note for the
+  // same tradeoff) — this is a plain id input backed by a name-search
+  // datalist, not a dedicated picker widget.
+  var spawnMobRows = [];
+  var spawnItemRows = [];
+  var spawnMobDatalistEl = null;
+  var spawnItemDatalistEl = null;
+  function populateSpawnDatalist(el, rows) {
+    if (!el) return;
+    el.innerHTML = "";
+    (rows || []).forEach(function (r) {
+      el.appendChild(ce("option", { value: r.id + " — " + (r.name || "") }));
+    });
+  }
+  // Parse the leading numeric id out of a target input's value — either a
+  // bare number the admin typed, or an "id — name" string picked from the
+  // datalist.
+  function parseSpawnTargetId(v) {
+    var m = /^\s*(\d+)/.exec(v || "");
+    return m ? parseInt(m[1], 10) : 0;
+  }
+
   function renderInspector(d) {
     current = d;
     insp.innerHTML = "";
@@ -632,6 +687,274 @@
     addIdle.addEventListener("click", function () { idleBox.appendChild(idleRow("")); setDirty(true); });
     insp.appendChild(addIdle);
 
+    // Spawns — mobs/items/gold this room spawns. rooms.SpawnInfo now carries
+    // explicit json tags, so the wire keys are plain camelCase (mobId,
+    // itemId, gold, container, respawnRate, message, name, forceHostile,
+    // maxWander, idleCommands, scriptTag, questFlags, buffIds, statPool,
+    // statPoolMod) — the same convention as every other buildRoomDetail
+    // field. instanceId/despawnedRound are runtime tracking the server
+    // preserves on save; the client never sends them.
+    var spawnsBox = ce("div", {});
+    var spawnMobDL = ce("datalist", { id: "spawn-mob-dl" });
+    var spawnItemDL = ce("datalist", { id: "spawn-item-dl" });
+    spawnMobDatalistEl = spawnMobDL;
+    spawnItemDatalistEl = spawnItemDL;
+    populateSpawnDatalist(spawnMobDL, spawnMobRows);
+    populateSpawnDatalist(spawnItemDL, spawnItemRows);
+
+    function spawnKindOf(s) {
+      if (s.itemId) return "item";
+      if (s.gold) return "gold";
+      return "mob"; // default, including a brand-new blank entry
+    }
+
+    function spawnSummary(kind, targetId, goldAmt, container, respawn) {
+      var head = kind === "gold" ? ("gold " + (goldAmt || 0))
+        : (kind === "item" ? ("item " + (targetId || "?")) : ("mob " + (targetId || "?")));
+      if (container) head += " → " + container;
+      head += " · every " + (respawn ? respawn : "15 real minutes (default)");
+      return head;
+    }
+
+    // startExpanded: true for a freshly-added blank entry, so the admin can
+    // start filling it in without an extra click; loaded entries start
+    // collapsed as a summary row.
+    function spawnRow(s, startExpanded) {
+      s = s || {};
+      var row = ce("div", { "class": "spawn-entry" });
+      var header = ce("div", { "class": "spawn-header" });
+      var caret = ce("span", { text: "▸ " });
+      var summary = ce("span", { "class": "grow" });
+      var up = ce("button", { "class": "mini", text: "↑", title: "move up", type: "button" });
+      var down = ce("button", { "class": "mini", text: "↓", title: "move down", type: "button" });
+      var rmBtn = ce("button", { "class": "mini rm", text: "✕", title: "remove spawn", type: "button" });
+      header.appendChild(caret); header.appendChild(summary);
+      header.appendChild(up); header.appendChild(down); header.appendChild(rmBtn);
+      row.appendChild(header);
+
+      var body = ce("div", { "class": "spawn-body" });
+      row.appendChild(body);
+      var expanded = !!startExpanded;
+      body.style.display = expanded ? "" : "none";
+      caret.textContent = expanded ? "▾ " : "▸ ";
+      header.addEventListener("click", function (e) {
+        if (e.target === up || e.target === down || e.target === rmBtn) return;
+        expanded = !expanded;
+        body.style.display = expanded ? "" : "none";
+        caret.textContent = expanded ? "▾ " : "▸ ";
+      });
+
+      // Kind selector — mob / item / gold. The server rejects an entry that
+      // sets more than one of mobId/itemId/gold, so the gather function below
+      // only ever reads the field for the currently-selected kind (the
+      // others are never included in the payload, contradiction included).
+      var kindSel = ce("select", {});
+      ["mob", "item", "gold"].forEach(function (k) { kindSel.appendChild(ce("option", { value: k, text: k })); });
+      kindSel.value = spawnKindOf(s);
+      body.appendChild(field("Kind", kindSel));
+
+      var targetInput = ce("input", { type: "text", placeholder: "id — type to search by name" });
+      targetInput.value = (s.mobId || s.itemId) ? String(s.mobId || s.itemId) : "";
+      var targetField = field("Target", targetInput);
+      body.appendChild(targetField);
+
+      var goldInput = ce("input", { type: "number", step: "1", placeholder: "gold amount" });
+      goldInput.value = s.gold || "";
+      var goldField = field("Gold amount", goldInput);
+      body.appendChild(goldField);
+
+      // Container: a <select> of this room's own container nouns
+      // (buildRoomDetail.containers, sorted, server-fed) when the room has
+      // any — the server rejects a container name that isn't in this room,
+      // so free text would let an author type something that can only ever
+      // fail. A room with no containers has nothing to offer, so fall back
+      // to a plain text input in that case.
+      var containerInput;
+      if (d.containers && d.containers.length) {
+        containerInput = ce("select", {});
+        containerInput.appendChild(ce("option", { value: "", text: "(floor)" }));
+        d.containers.forEach(function (c) {
+          var o = ce("option", { value: c, text: c });
+          if (c === s.container) o.selected = true;
+          containerInput.appendChild(o);
+        });
+      } else {
+        containerInput = ce("input", { type: "text", placeholder: "container noun (blank = floor)" });
+        containerInput.value = s.container || "";
+      }
+      var containerField = field("Container", containerInput);
+      body.appendChild(containerField);
+      // "input" covers the text-input fallback; "change" covers the <select>
+      // (older engines don't reliably fire "input" for <select>, matching
+      // how the Biome <select> above is wired with "change" only).
+      containerInput.addEventListener("input", function () { updateSummary(); setDirty(true); });
+      containerInput.addEventListener("change", function () { updateSummary(); setDirty(true); });
+
+      function applyKindVisibility() {
+        var k = kindSel.value;
+        targetField.style.display = (k === "gold") ? "none" : "";
+        goldField.style.display = (k === "gold") ? "" : "none";
+        targetInput.setAttribute("list", k === "item" ? "spawn-item-dl" : "spawn-mob-dl");
+        // A mob cannot spawn into a container (server rule).
+        containerField.style.display = (k === "mob") ? "none" : "";
+      }
+      applyKindVisibility();
+
+      var respawnInput = ce("input", { type: "text", placeholder: "e.g. 5 real minutes" });
+      respawnInput.value = s.respawnRate || "";
+      var respawnField = field("Respawn rate", respawnInput);
+      respawnField.appendChild(ce("div", { "class": "spawn-hint", text: "blank = 15 real minutes" }));
+      body.appendChild(respawnField);
+
+      var messageInput = ce("input", { type: "text", placeholder: "spawn message (optional)" });
+      messageInput.value = s.message || "";
+      body.appendChild(field("Message", messageInput));
+
+      function updateSummary() {
+        summary.textContent = spawnSummary(kindSel.value, parseSpawnTargetId(targetInput.value),
+          parseInt(goldInput.value, 10) || 0, containerInput.value.trim(), respawnInput.value.trim());
+      }
+      kindSel.addEventListener("change", function () {
+        // Switching kind clears the other kinds' values so a stale number
+        // left over from before the switch can never ride along in the
+        // gathered payload.
+        targetInput.value = "";
+        goldInput.value = "";
+        applyKindVisibility();
+        updateSummary();
+        setDirty(true);
+      });
+      [targetInput, goldInput, respawnInput, messageInput].forEach(function (el) {
+        el.addEventListener("input", function () { updateSummary(); setDirty(true); });
+      });
+      updateSummary();
+
+      // ---- Advanced (collapsed by default) ----
+      var advOpen = false;
+      var advHead = ce("h3", { "class": "spawn-adv-head", text: "▸ Advanced" });
+      var advBody = ce("div", {});
+      advBody.style.display = "none";
+      advHead.addEventListener("click", function () {
+        advOpen = !advOpen;
+        advBody.style.display = advOpen ? "" : "none";
+        advHead.textContent = (advOpen ? "▾ " : "▸ ") + "Advanced";
+      });
+      body.appendChild(advHead);
+      body.appendChild(advBody);
+
+      var nameInput = textInput(s.name); advBody.appendChild(field("Name override", nameInput));
+
+      var fhWrap = ce("div", { "class": "flags" });
+      var forceHostileCb = ce("input", { type: "checkbox" });
+      forceHostileCb.checked = !!s.forceHostile;
+      forceHostileCb.addEventListener("change", function () { setDirty(true); });
+      fhWrap.appendChild(ce("label", {}, [forceHostileCb, ce("span", { text: "Force hostile" })]));
+      advBody.appendChild(fhWrap);
+
+      var maxWanderInput = ce("input", { type: "number", step: "1" }); maxWanderInput.value = s.maxWander || "";
+      maxWanderInput.addEventListener("input", function () { setDirty(true); });
+      advBody.appendChild(field("Max wander override", maxWanderInput));
+
+      var scriptTagInput = textInput(s.scriptTag); advBody.appendChild(field("Script tag override", scriptTagInput));
+
+      var statPoolInput = ce("input", { type: "number", step: "1" }); statPoolInput.value = s.statPool || "";
+      statPoolInput.addEventListener("input", function () { setDirty(true); });
+      var statPoolModInput = ce("input", { type: "number", step: "1" }); statPoolModInput.value = s.statPoolMod || "";
+      statPoolModInput.addEventListener("input", function () { setDirty(true); });
+      advBody.appendChild(ce("div", { "class": "row" }, [
+        field("Stat pool override", statPoolInput), field("Stat pool mod", statPoolModInput)]));
+
+      function textListField(labelText, vals) {
+        var box = ce("div", {});
+        function addRow(v) {
+          var vv = ce("input", { type: "text" }); vv.value = v || "";
+          vv.addEventListener("input", function () { setDirty(true); });
+          var rm = ce("button", { "class": "mini rm", text: "✕", type: "button" });
+          var r = ce("div", { "class": "kv" }, [vv, rm]);
+          rm.addEventListener("click", function () { box.removeChild(r); setDirty(true); });
+          r._v = vv;
+          box.appendChild(r);
+        }
+        (vals || []).forEach(addRow);
+        advBody.appendChild(field(labelText, box));
+        var addBtn = ce("button", { "class": "mini", text: "+ add", type: "button" });
+        addBtn.addEventListener("click", function () { addRow(""); setDirty(true); });
+        advBody.appendChild(addBtn);
+        return function () {
+          return Array.prototype.map.call(box.children, function (r) { return r._v.value; })
+            .filter(function (v) { return v.trim(); });
+        };
+      }
+      var gatherIdle = textListField("Idle commands override", s.idleCommands);
+      var gatherQuestFlags = textListField("Quest flags applied to mob", s.questFlags);
+
+      var buffBox = ce("div", {});
+      function buffRow(v) {
+        var vv = ce("input", { type: "number", step: "1", placeholder: "buff id" });
+        vv.value = (v || v === 0) ? v : "";
+        vv.addEventListener("input", function () { setDirty(true); });
+        var rm = ce("button", { "class": "mini rm", text: "✕", type: "button" });
+        var r = ce("div", { "class": "kv" }, [vv, rm]);
+        rm.addEventListener("click", function () { buffBox.removeChild(r); setDirty(true); });
+        r._v = vv;
+        buffBox.appendChild(r);
+      }
+      (s.buffIds || []).forEach(buffRow);
+      advBody.appendChild(field("Buff ids always active", buffBox));
+      var addBuff = ce("button", { "class": "mini", text: "+ buff id", type: "button" });
+      addBuff.addEventListener("click", function () { buffRow(0); setDirty(true); });
+      advBody.appendChild(addBuff);
+
+      // ---- reorder / remove ----
+      up.addEventListener("click", function () {
+        var prev = row.previousElementSibling;
+        if (prev) { spawnsBox.insertBefore(row, prev); setDirty(true); }
+      });
+      down.addEventListener("click", function () {
+        var next = row.nextElementSibling;
+        if (next) { spawnsBox.insertBefore(next, row); setDirty(true); }
+      });
+      rmBtn.addEventListener("click", function () { spawnsBox.removeChild(row); setDirty(true); });
+
+      row._gather = function () {
+        var k = kindSel.value;
+        var out = {
+          container: (k === "mob") ? "" : containerInput.value.trim(),
+          respawnRate: respawnInput.value.trim(),
+          message: messageInput.value,
+          name: nameInput.value,
+          forceHostile: forceHostileCb.checked,
+          maxWander: parseInt(maxWanderInput.value, 10) || 0,
+          scriptTag: scriptTagInput.value,
+          statPool: parseInt(statPoolInput.value, 10) || 0,
+          statPoolMod: parseInt(statPoolModInput.value, 10) || 0,
+          idleCommands: gatherIdle(),
+          questFlags: gatherQuestFlags(),
+          buffIds: Array.prototype.map.call(buffBox.children, function (r) { return parseInt(r._v.value, 10) || 0; })
+            .filter(function (n) { return n > 0; })
+        };
+        if (k === "mob") out.mobId = parseSpawnTargetId(targetInput.value);
+        else if (k === "item") out.itemId = parseSpawnTargetId(targetInput.value);
+        else out.gold = parseInt(goldInput.value, 10) || 0;
+        return out;
+      };
+
+      return row;
+    }
+
+    insp.appendChild(ce("h3", { text: "Spawns" }));
+    insp.appendChild(spawnMobDL);
+    insp.appendChild(spawnItemDL);
+    (d.spawns || []).forEach(function (s) { spawnsBox.appendChild(spawnRow(s, false)); });
+    insp.appendChild(spawnsBox);
+    var addSpawn = ce("button", { "class": "mini", text: "+ Add spawn" });
+    addSpawn.addEventListener("click", function () {
+      var row = spawnRow({}, true);
+      spawnsBox.appendChild(row);
+      setDirty(true);
+    });
+    insp.appendChild(addSpawn);
+
     // Exits
     renderExits(d);
 
@@ -658,11 +981,12 @@
       Array.prototype.forEach.call(idleBox.children, function (r) {
         var v = r._v.value.trim(); if (v) idle.push(v);
       });
+      var spawns = Array.prototype.map.call(spawnsBox.children, function (r) { return r._gather(); });
       return {
         roomId: d.roomId, title: title.value, description: desc.value,
         biome: biome.value, symbol: sym.value, legend: leg.value, music: music.value,
         bank: fBank.checked, storage: fStore.checked, pvp: fPvp.checked, characterRoom: fChar.checked,
-        nouns: nouns, idleMessages: idle
+        nouns: nouns, idleMessages: idle, spawns: spawns
       };
     };
     setDirty(false);

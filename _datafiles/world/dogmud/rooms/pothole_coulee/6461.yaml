@@ -27,7 +27,6 @@ nouns:
     wire waiting to be bound into something with a purpose.
 spawninfo:
   - mobid: 9606
-    cooldown: 600 rounds
 idlemessages:
 - A jar of shard-dust flares faint and dims again, unbidden.
 - The scratched wards underfoot seem to hum, just past hearing.

@@ -69,9 +69,19 @@ The engine loads YAML templates first, then overwrites with instance
 data from `_datafiles/world/dogmud/mobs.instances/` and
 `_datafiles/world/dogmud/rooms.instances/` if present. **Stale instance
 saves silently shadow template edits** — including new
-`schedule_id:`, `patrol_id:`, `maxwander:`, idle commands, room
-spawn lists, exits, etc. This has been a recurring source of
-"my change isn't taking effect" frustration.
+`schedule_id:`, `patrol_id:`, `maxwander:`, idle commands, exits,
+etc. This has been a recurring source of "my change isn't taking
+effect" frustration.
+
+**EXCEPTION — fields tagged `instance:"skip"` are NOT shadowed.**
+`SaveRoomInstance` skips them when writing, and
+`restoreSkipTaggedFields` (`internal/rooms/save_and_load.go`) copies
+them back from the template after the instance overlay is applied,
+so a stale save cannot override them. **Room spawn lists
+(`Room.SpawnInfo`) are in this category** and were wrongly listed
+above until 2026-07-25 — a spawn-list edit takes effect on the next
+room load with no wipe needed. Check the struct tag before assuming
+a field is shadowed.
 
 **SOP: nuke instance saves before every local smoke test.** Mirror
 the prod policy where these directories are not deployed. Run:

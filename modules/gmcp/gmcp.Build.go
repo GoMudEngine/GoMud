@@ -16,10 +16,13 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/gamelock"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mapper"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -73,6 +76,7 @@ type roomUpdateReq struct {
 	CharacterRoom bool              `json:"characterRoom"`
 	Nouns         map[string]string `json:"nouns"`
 	IdleMessages  []string          `json:"idleMessages"`
+	Spawns        []rooms.SpawnInfo `json:"spawns"`
 }
 
 type roomDeleteReq struct {
@@ -158,6 +162,15 @@ type buildRoomDetail struct {
 	Y             int               `json:"y"`
 	Z             int               `json:"z"`
 	Biomes        []string          `json:"biomes,omitempty"` // valid biome ids for the dropdown
+	// Spawns is the room's spawn list. SpawnInfo's two runtime-tracking fields
+	// are yaml:"-" and travel to the client harmlessly; they are NOT trusted on
+	// the way back in — buildRoomUpdate carries them over from the template.
+	Spawns []rooms.SpawnInfo `json:"spawns"`
+	// Containers are this room's container nouns, so the spawn editor can offer
+	// them as a choice. A spawn entry may only name a container that exists in
+	// the room, and the server enforces that — without the list the author would
+	// be typing a noun blind against a rule they cannot see.
+	Containers []string `json:"containers,omitempty"`
 }
 
 // ---- dependency seam ---------------------------------------------------------
@@ -175,6 +188,12 @@ type buildDeps struct {
 	delta          func(dir string) (x, y, z int)
 	isCompass      func(dir string) bool
 	isNonEuclidean func(plane int) bool
+	// Existence checks for spawn entries. Injected rather than calling the
+	// registries directly so this package's tests, which run with no world
+	// loaded, do not see every mob and item as non-existent.
+	mobExists  func(id int) bool
+	itemExists func(id int) bool
+	buffExists func(id int) bool
 }
 
 func realBuildDeps() buildDeps {
@@ -194,6 +213,9 @@ func realBuildDeps() buildDeps {
 		delta:          mapper.GetDelta,
 		isCompass:      mapper.IsCompassDirection,
 		isNonEuclidean: func(plane int) bool { return rooms.GetPlaneRegistry().IsNonEuclidean(plane) },
+		mobExists:      func(id int) bool { return mobs.GetMobSpec(mobs.MobId(id)) != nil },
+		itemExists:     func(id int) bool { return items.GetItemSpec(id) != nil },
+		buffExists:     func(id int) bool { return buffs.GetBuffSpec(id) != nil },
 	}
 }
 
@@ -573,6 +595,16 @@ func buildRoomUpdate(d buildDeps, req roomUpdateReq) BuildResult {
 	r.IsCharacterRoom = req.CharacterRoom
 	r.Nouns = req.Nouns
 	r.IdleMessages = req.IdleMessages
+
+	// Validate every entry BEFORE mutating the room, so a bad entry leaves the
+	// existing spawn list intact rather than half-applied.
+	for i, sp := range req.Spawns {
+		if err := validateSpawnEntry(d, sp, r.Containers); err != nil {
+			return buildErr("spawn %d: %s", i+1, err.Error())
+		}
+	}
+	r.SpawnInfo = preserveSpawnTracking(r.SpawnInfo, req.Spawns)
+
 	if err := d.save(*r); err != nil {
 		return buildErr("could not save room %d: %s", req.RoomId, err.Error())
 	}
@@ -677,6 +709,8 @@ func buildRoomGet(d buildDeps, roomId int) (buildRoomDetail, bool) {
 		Bank: r.IsBank, Storage: r.IsStorage, Pvp: r.Pvp, CharacterRoom: r.IsCharacterRoom,
 		Nouns: r.Nouns, IdleMessages: r.IdleMessages,
 		Plane: r.Plane, X: r.X, Y: r.Y, Z: r.Z,
+		Spawns:     r.SpawnInfo,
+		Containers: containerNames(r.Containers),
 	}
 	for name, e := range r.Exits {
 		ed := buildExitDetail{
@@ -955,4 +989,55 @@ func zoneOfRoom(roomId, uid int) string {
 		return r.Zone
 	}
 	return zoneForUser(uid)
+}
+
+// validateSpawnEntry runs the rooms-package spawn policy against this seam's
+// injected existence checks, so the rules are defined once in rooms but can be
+// exercised here without a loaded world.
+func validateSpawnEntry(d buildDeps, s rooms.SpawnInfo, containers map[string]rooms.Container) error {
+	set := map[string]struct{}{}
+	for name := range containers {
+		set[name] = struct{}{}
+	}
+	return rooms.ValidateSpawnEntry(s, rooms.SpawnValidators{
+		MobExists:  d.mobExists,
+		ItemExists: d.itemExists,
+		BuffExists: d.buffExists,
+		PeriodOK:   rooms.RealPeriodOK,
+		Containers: set,
+	})
+}
+
+// preserveSpawnTracking copies runtime tracking (InstanceId, DespawnedRound)
+// from the existing spawn list onto the incoming one, matching on the spawn
+// target.
+//
+// Those two fields are yaml:"-" and the web client has no meaningful hold on
+// them. Without this, saving a room from the editor would blank the tracking
+// for every currently-spawned mob, and the engine — no longer believing the
+// mob is out there — would spawn a duplicate.
+func preserveSpawnTracking(old, incoming []rooms.SpawnInfo) []rooms.SpawnInfo {
+	type key struct{ mob, item, gold int }
+	prev := map[key]rooms.SpawnInfo{}
+	for _, s := range old {
+		prev[key{s.MobId, s.ItemId, s.Gold}] = s
+	}
+	for i, s := range incoming {
+		if p, ok := prev[key{s.MobId, s.ItemId, s.Gold}]; ok {
+			incoming[i].InstanceId = p.InstanceId
+			incoming[i].DespawnedRound = p.DespawnedRound
+		}
+	}
+	return incoming
+}
+
+// containerNames lists a room's container nouns, sorted so the editor's
+// dropdown order is stable between fetches.
+func containerNames(cs map[string]rooms.Container) []string {
+	out := make([]string, 0, len(cs))
+	for name := range cs {
+		out = append(out, name)
+	}
+	sort.Strings(out)
+	return out
 }

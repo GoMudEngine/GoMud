@@ -32,6 +32,5 @@ idlemessages:
 - Something smells faintly of scorched wax, though nothing is burning.
 spawninfo:
   - mobid: 9602
-    cooldown: 600 rounds
 x: -12
 y: -31

@@ -63,6 +63,5 @@ idlemessages:
 - The lake exhales a longer cold breath that cuts briefly through your sleeves.
 spawninfo:
 - mobid: 350
-  cooldown: 300 rounds
 x: -6
 y: -1

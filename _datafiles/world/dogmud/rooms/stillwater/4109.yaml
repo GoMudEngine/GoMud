@@ -57,5 +57,4 @@ idlemessages:
 - A dropped slate clatters somewhere on the constabulary's roof and is silent.
 spawninfo:
 - mobid: 353
-  cooldown: 300 rounds
 x: -8

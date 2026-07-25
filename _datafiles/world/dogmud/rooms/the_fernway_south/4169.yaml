@@ -64,6 +64,5 @@ idlemessages:
 - a beetle scuttles across the bare earth of the lick
 spawninfo:
 - mobid: 361
-  cooldown: 600 rounds
 x: -3
 y: 24

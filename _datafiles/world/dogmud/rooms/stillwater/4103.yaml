@@ -109,8 +109,6 @@ idlemessages:
 - Hooves clop across the yard outside — a rider returning from the western lane.
 spawninfo:
 - mobid: 333
-  cooldown: 600 rounds
 - mobid: 334
-  cooldown: 300 rounds
 x: -9
 y: 2

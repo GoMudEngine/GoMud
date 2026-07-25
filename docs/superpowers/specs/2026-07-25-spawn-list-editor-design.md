@@ -23,7 +23,7 @@ Scope decisions (user-confirmed):
   to a room, so it is edited on the room already selected on the map.
 - **Full field parity**, with the ten unused per-spawn overrides behind a
   collapsible Advanced drawer — matching the item and mob editors.
-- **The 36 inert `cooldown:` lines are deleted, not converted.** Zero
+- **The 59 inert `cooldown:` lines are deleted, not converted.** Zero
   gameplay change. See §6.
 
 ## Background: what a spawn list actually is
@@ -36,7 +36,7 @@ across the live world (721 rooms carry one; 595 spawn entries total):
 | `mobid` | 582 | mob template to spawn |
 | `respawnrate` | 90 | e.g. `5 real minutes`; **unset means 15 real minutes** |
 | `message` | 75 | overrides the default spawn message |
-| `cooldown` | 36 | **NOT A FIELD — inert.** See §6 |
+| `cooldown` | 59 | **NOT A FIELD — inert.** See §6 |
 | `itemid` | 13 | item template to spawn |
 | `container` | 4 | routes the item/gold into a container instead of the floor |
 | `gold` | 0 | |
@@ -146,19 +146,28 @@ scan for and no blocker report.
   than duplicating the form.
 - **Respawn pacing as a tuning exercise.** See §6.
 
-## 6. Migration: the 36 inert `cooldown:` lines
+## 6. Migration: the 59 inert `cooldown:` lines
 
 `cooldown` is not a field on `SpawnInfo`. The real field is `respawnrate`.
 The boot smoke test already baselines it as a known silently-ignored key
 (`boot_smoke_test.go`, `"cooldown|rooms.SpawnInfo"`) with the note "authored
 values doing nothing."
 
-**Correction to that note:** it says 118×. The measured count is **36** lines
-across room templates and **0** in instance saves. Whoever writes the fix
-should not go looking for 118.
+**Correction to that note, twice over.** It says 118×. The first measurement
+here said **36** — also wrong. Spawn lists are authored at two indentation
+depths, flush (`- mobid:`, keys at 2 spaces) and indented (`  - mobid:`, keys
+at 4), and a depth-specific grep silently sees only one of them. The true
+count is **59** lines across room templates and **0** in instance saves.
 
-Distribution — all in early-game areas, not dungeons:
-`stillwater` 20, `the_fernway_south` 7, `stillwater_marsh` 7.
+The drift gate is what caught the shortfall: after the first pass it still
+reported `cooldown|rooms.SpawnInfo` as present. Any future key cleanup should
+match indentation-agnostically and let the gate confirm, rather than trusting
+a grep.
+
+Distribution of the first-found 36 — all early-game, not dungeons:
+`stillwater` 20, `the_fernway_south` 7, `stillwater_marsh` 7. The further 23
+sit in `greenford`, `hartcharn`, `new_plymouth_*`, `pothole_coulee` and
+`the_confluence`.
 
 Values are in **rounds** (600×19, 300×11, 1800×2, 1200×2, 900×1, 2400×1),
 whereas every live `respawnrate` in the world is in **real minutes** (2–15).
@@ -172,7 +181,7 @@ At `RoundSeconds: 4`, converting verbatim would mean:
 
 **Decision: delete the lines, do not convert.** These spawns have always run
 on the 15-minute default; the world has been balanced and playtested against
-that for months. Converting would quietly make 36 starter-area spawn points
+that for months. Converting would quietly make those starter-area spawn points
 1.3–11× slower as a side effect of a cleanup nobody asked to change gameplay.
 
 The authored values are recorded in this table so a deliberate respawn-pacing

@@ -27,7 +27,6 @@ nouns:
     flats. Some bolts are dyed the color of dust, others left plain.
 spawninfo:
   - mobid: 9605
-    cooldown: 600 rounds
 idlemessages:
 - The treadle knocks once, twice, and the shuttle snaps back across the loom.
 - Canvas walls shudder in a gust and settle again.

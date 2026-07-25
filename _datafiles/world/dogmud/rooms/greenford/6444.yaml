@@ -39,7 +39,6 @@ nouns:
     when a knuckle taps it.
 spawninfo:
   - mobid: 9589
-    cooldown: 600 rounds
 idlemessages:
 - The clerk turns a page of the ledger, smoothing the crease with a thumb.
 - A wax seal cracks softly as a folded paper is slotted into a pigeonhole.

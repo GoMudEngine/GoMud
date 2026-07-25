@@ -71,8 +71,6 @@ idlemessages:
 - Somewhere east, a hammer rings on iron — three measured strokes, then silence, then three more.
 spawninfo:
 - mobid: 336
-  cooldown: 600 rounds
 - mobid: 354
-  cooldown: 300 rounds
 x: -8
 y: 2

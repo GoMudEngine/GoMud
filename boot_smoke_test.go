@@ -206,8 +206,17 @@ func TestSmoke_AllDialogueFilesParse(t *testing.T) {
 //     live instance of that footgun.
 //   - `scriptag` on mobs.Mob: almost certainly a typo for `scripttag`.
 //   - `visible` / `sequential` / `expireMessage` on buffs.BuffSpec.
-//   - `cooldown` on rooms.SpawnInfo (118x) and `zone` on exit.RoomExit (136x):
-//     authored values doing nothing.
+//   - `zone` on exit.RoomExit (136x): authored values doing nothing.
+//
+// `cooldown` on rooms.SpawnInfo was cleared 2026-07-25: 59 authored lines
+// deleted rather than converted to `respawnrate`, since their values are in
+// rounds while every live respawnrate is in real minutes — converting would
+// have slowed those spawn points by 1.3-11x. See the spawn-list editor spec.
+//
+// Note for future cleanups: the first pass here found only 36, because it
+// anchored its grep at one indentation depth. Spawn lists are authored both
+// flush ("- mobid:") and indented ("  - mobid:"), so a depth-specific pattern
+// silently misses half the world. This gate is what caught the shortfall.
 //
 // To clear an entry: fix the content (or add the field to the struct), confirm
 // the count drops, and delete the line.
@@ -215,7 +224,6 @@ var knownSilentlyIgnoredKeys = map[string]bool{
 	"coord|rooms.Room":                       true,
 	"level|characters.Character":             true,
 	"zone|exit.RoomExit":                     true,
-	"cooldown|rooms.SpawnInfo":               true,
 	"triggers|quests.Quest":                  true,
 	"playermessage|questengine.QuestRewards": true,
 	"roommessage|questengine.QuestRewards":   true,
