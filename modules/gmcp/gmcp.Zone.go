@@ -139,6 +139,12 @@ type zoneDeps struct {
 	blockers  func(zone string) []rooms.ZoneBlocker
 	zoneNames func() []string
 	roomIds   func(zone string) []int
+	// rename + renameBlockers are Phase 2. renameBlockers is deliberately
+	// separate from blockers: the two policies differ. A delete is blocked by
+	// rooms, authored content and inbound exits; a rename is blocked only by
+	// players, because everything else is rewritten by the rename itself.
+	rename         func(oldName, newName string) error
+	renameBlockers func(zone string) []rooms.ZoneBlocker
 }
 
 func realZoneDeps() zoneDeps {
@@ -157,6 +163,8 @@ func realZoneDeps() zoneDeps {
 			}
 			return out
 		},
+		rename:         rooms.RenameZone,
+		renameBlockers: rooms.ZoneRenameBlockers,
 	}
 }
 
@@ -356,4 +364,29 @@ func sendZoneList(uid int) {
 
 func sendZoneDetail(uid int, d zoneDetail) {
 	sendGMCP(uid, `Build.Zone`, d)
+}
+
+type zoneRenameReq struct {
+	Zone    string `json:"zone"`
+	NewName string `json:"newName"`
+}
+
+// buildZoneRename refuses before it acts: unknown zone, then blockers, then
+// the rename itself. rooms.RenameZone re-validates the new name and re-checks
+// the blockers on its own — never trust the caller — so this layer's job is to
+// surface a refusal in a form the editor can render.
+func buildZoneRename(d zoneDeps, req zoneRenameReq) BuildResult {
+	if d.load(req.Zone) == nil {
+		return buildErr("zone %q not found", req.Zone)
+	}
+	if b := d.renameBlockers(req.Zone); len(b) > 0 {
+		return BuildResult{
+			Error:    "zone cannot be renamed right now — these must clear first",
+			ZoneRefs: b,
+		}
+	}
+	if err := d.rename(req.Zone, req.NewName); err != nil {
+		return buildErr("could not rename zone %q: %s", req.Zone, err.Error())
+	}
+	return BuildResult{Ok: true, Message: "zone renamed to " + req.NewName}
 }
