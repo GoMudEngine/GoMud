@@ -3,6 +3,7 @@ package rooms
 import (
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -78,4 +79,41 @@ func ValidateZoneRename(oldName, newName string, existing []string) error {
 		return fmt.Errorf("zone folder %q is already used by zone %q", ZoneNameSanitize(newName), clash)
 	}
 	return nil
+}
+
+// rewriteZoneField replaces the value of the top-level `zone:` key in a YAML
+// file, leaving every other byte alone.
+//
+// This is deliberately a text edit, not a load-and-re-marshal. Round-tripping
+// a room through yaml reflows every description and noun block (`>-` becomes
+// `|`, wrapping changes), producing an enormous diff for a one-word change.
+//
+// "Top-level" means column zero: a `zone:` inside a description block scalar,
+// or a nested `subzone:`, must survive untouched. Only the first match is
+// replaced — a YAML document cannot legally have two top-level `zone:` keys,
+// and stopping at the first avoids corrupting anything odd further down.
+//
+// A file with no top-level `zone:` is not an error: five of the ten zone trees
+// (behaviors, schedules, shops, and both .instances) are folder-only.
+func rewriteZoneField(path, newZone string) error {
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	content := string(raw)
+
+	eol := "\n"
+	if strings.Contains(content, "\r\n") {
+		eol = "\r\n"
+	}
+
+	lines := strings.Split(content, eol)
+	for i, line := range lines {
+		// Column zero only — no leading whitespace.
+		if strings.HasPrefix(line, "zone:") {
+			lines[i] = "zone: " + newZone
+			return os.WriteFile(path, []byte(strings.Join(lines, eol)), 0644)
+		}
+	}
+	return nil // folder-only tree; nothing to rewrite
 }

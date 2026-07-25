@@ -1,6 +1,8 @@
 package rooms
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -47,4 +49,52 @@ func TestValidateZoneRename(t *testing.T) {
 	// Renaming a zone to a different capitalisation of ITSELF is allowed —
 	// it collides only with its own folder, which is the one being moved.
 	assert.NoError(t, ValidateZoneRename("Stillwater", "StillWater", existing))
+}
+
+func TestRewriteZoneField_TouchesOnlyTheTopLevelKey(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "room.yaml")
+
+	// CRLF, a description mentioning "zone:" inside a block scalar, and a
+	// nested key that also ends in "zone:" — none of which may be rewritten.
+	original := "roomid: 5\r\n" +
+		"zone: Old Name\r\n" +
+		"title: A Room\r\n" +
+		"description: >-\r\n" +
+		"  A sign reads: zone: Old Name. The prose must survive verbatim.\r\n" +
+		"nouns:\r\n" +
+		"  subzone: something\r\n"
+	if err := os.WriteFile(path, []byte(original), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := rewriteZoneField(path, "New Name"); err != nil {
+		t.Fatalf("rewriteZoneField: %v", err)
+	}
+
+	got, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := string(got)
+
+	assert.Contains(t, s, "zone: New Name\r\n", "top-level zone must be rewritten")
+	assert.Contains(t, s, "A sign reads: zone: Old Name.", "prose must be untouched")
+	assert.Contains(t, s, "  subzone: something", "nested keys must be untouched")
+	assert.Contains(t, s, "\r\n", "CRLF line endings must be preserved")
+	assert.NotContains(t, s, "zone: Old Name\r\n", "old top-level value must be gone")
+}
+
+func TestRewriteZoneField_NoTopLevelZoneIsNotAnError(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "schedule.yaml")
+	original := "id: arn\r\nsegments: []\r\n"
+	if err := os.WriteFile(path, []byte(original), 0644); err != nil {
+		t.Fatal(err)
+	}
+	// behaviors/schedules/shops carry no zone: key. Rewriting must be a no-op,
+	// not a failure.
+	assert.NoError(t, rewriteZoneField(path, "New Name"))
+	got, _ := os.ReadFile(path)
+	assert.Equal(t, original, string(got))
 }
