@@ -367,6 +367,19 @@ func (g *GMCPModule) handleBuildOp(e events.Event) events.ListenerReturn {
 		}
 		sendBuildResult(uid, res)
 		sendZoneList(uid)
+	case `Build.Zone.Rename`:
+		var req zoneRenameReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Zone.Rename payload"))
+			break
+		}
+		res := buildZoneRename(realZoneDeps(), req)
+		if res.Ok {
+			// Every cached map keyed by the old zone name is now wrong.
+			mapper.ClearCache()
+		}
+		sendBuildResult(uid, res)
+		sendZoneList(uid)
 
 	case `Build.Map.Request`:
 		var req mapRequestReq

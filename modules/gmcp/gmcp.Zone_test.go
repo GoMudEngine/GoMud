@@ -1,6 +1,7 @@
 package gmcp
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -10,6 +11,7 @@ type fakeZoneWorld struct {
 	cfgs     map[string]*rooms.ZoneConfig
 	blockers map[string][]rooms.ZoneBlocker
 	deleted  []string
+	renamed  []string
 	saved    []rooms.ZoneConfig
 }
 
@@ -42,6 +44,11 @@ func (w *fakeZoneWorld) deps() zoneDeps {
 		blockers:  func(z string) []rooms.ZoneBlocker { return w.blockers[z] },
 		zoneNames: func() []string { return []string{"Testzone"} },
 		roomIds:   func(z string) []int { return []int{100} },
+		rename: func(oldName, newName string) error {
+			w.renamed = append(w.renamed, oldName+"->"+newName)
+			return nil
+		},
+		renameBlockers: func(z string) []rooms.ZoneBlocker { return nil },
 	}
 }
 
@@ -230,5 +237,61 @@ func TestBuildZoneList_DoesNotRescanEveryRoom(t *testing.T) {
 	}
 	if roomIdsCalls != 0 {
 		t.Errorf("buildZoneList called the full-room-scan dep %d times; it must not call it at all", roomIdsCalls)
+	}
+}
+
+func TestBuildZoneRename_RefusesWhenBlocked(t *testing.T) {
+	w := newFakeZoneWorld()
+	d := w.deps()
+	d.renameBlockers = func(z string) []rooms.ZoneBlocker {
+		return []rooms.ZoneBlocker{{Kind: "player", Id: "1 player(s) in room 100"}}
+	}
+	renameCalls := 0
+	d.rename = func(oldName, newName string) error { renameCalls++; return nil }
+
+	res := buildZoneRename(d, zoneRenameReq{Zone: "Testzone", NewName: "Quiet Water"})
+	if res.Ok {
+		t.Error("rename must be refused while a player is in the zone")
+	}
+	if len(res.ZoneRefs) != 1 {
+		t.Errorf("expected the blocker surfaced, got %d", len(res.ZoneRefs))
+	}
+	if renameCalls != 0 {
+		t.Error("d.rename must not be called when blocked")
+	}
+}
+
+func TestBuildZoneRename_RenamesQuietZone(t *testing.T) {
+	w := newFakeZoneWorld()
+	d := w.deps()
+	var gotOld, gotNew string
+	d.rename = func(oldName, newName string) error { gotOld, gotNew = oldName, newName; return nil }
+
+	res := buildZoneRename(d, zoneRenameReq{Zone: "Testzone", NewName: "Quiet Water"})
+	if !res.Ok {
+		t.Fatalf("quiet zone should rename, got %+v", res)
+	}
+	if gotOld != "Testzone" || gotNew != "Quiet Water" {
+		t.Errorf("rename called with (%q,%q)", gotOld, gotNew)
+	}
+}
+
+func TestBuildZoneRename_UnknownZone(t *testing.T) {
+	w := newFakeZoneWorld()
+	if res := buildZoneRename(w.deps(), zoneRenameReq{Zone: "Nowhere", NewName: "X Y"}); res.Ok {
+		t.Error("unknown zone must not report success")
+	}
+}
+
+func TestBuildZoneRename_SurfacesRenameError(t *testing.T) {
+	w := newFakeZoneWorld()
+	d := w.deps()
+	d.rename = func(oldName, newName string) error { return fmt.Errorf("target path already exists") }
+	res := buildZoneRename(d, zoneRenameReq{Zone: "Testzone", NewName: "Quiet Water"})
+	if res.Ok {
+		t.Error("a rename error must not report success")
+	}
+	if res.Error == "" {
+		t.Error("expected the error surfaced to the author")
 	}
 }
