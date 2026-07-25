@@ -166,6 +166,11 @@ type buildRoomDetail struct {
 	// are yaml:"-" and travel to the client harmlessly; they are NOT trusted on
 	// the way back in — buildRoomUpdate carries them over from the template.
 	Spawns []rooms.SpawnInfo `json:"spawns"`
+	// Containers are this room's container nouns, so the spawn editor can offer
+	// them as a choice. A spawn entry may only name a container that exists in
+	// the room, and the server enforces that — without the list the author would
+	// be typing a noun blind against a rule they cannot see.
+	Containers []string `json:"containers,omitempty"`
 }
 
 // ---- dependency seam ---------------------------------------------------------
@@ -704,7 +709,8 @@ func buildRoomGet(d buildDeps, roomId int) (buildRoomDetail, bool) {
 		Bank: r.IsBank, Storage: r.IsStorage, Pvp: r.Pvp, CharacterRoom: r.IsCharacterRoom,
 		Nouns: r.Nouns, IdleMessages: r.IdleMessages,
 		Plane: r.Plane, X: r.X, Y: r.Y, Z: r.Z,
-		Spawns: r.SpawnInfo,
+		Spawns:     r.SpawnInfo,
+		Containers: containerNames(r.Containers),
 	}
 	for name, e := range r.Exits {
 		ed := buildExitDetail{
@@ -1023,4 +1029,15 @@ func preserveSpawnTracking(old, incoming []rooms.SpawnInfo) []rooms.SpawnInfo {
 		}
 	}
 	return incoming
+}
+
+// containerNames lists a room's container nouns, sorted so the editor's
+// dropdown order is stable between fetches.
+func containerNames(cs map[string]rooms.Container) []string {
+	out := make([]string, 0, len(cs))
+	for name := range cs {
+		out = append(out, name)
+	}
+	sort.Strings(out)
+	return out
 }
