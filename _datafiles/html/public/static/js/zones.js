@@ -2,10 +2,11 @@
 /*
  * zones.js — the zone-config editor (admin web-building 4), a fourth mode of
  * the /build page. Consumes Build.Zones (list) + Build.Zone (detail) GMCP and
- * drives Build.Zone.Update/Delete. Zone CREATION stays on the existing
- * "+ Zone" flow in Rooms mode (Build.Zone.Create, wired in build.html's own
- * renderNewZoneForm) — this panel only edits an existing zone's config and
- * deletes empty ones. Renaming is Phase 2, so Name is shown read-only.
+ * drives Build.Zone.Create/Update/Delete. The "+ New Zone" button at the top
+ * of the list opens an in-panel create form (mirroring Rooms mode's own
+ * "+ Zone" flow, which is left in place — both hit the same
+ * Build.Zone.Create verb). This panel also edits an existing zone's config
+ * and deletes empty ones. Renaming is Phase 2, so Name is shown read-only.
  * Mirrors mobs.js's module shape, field helpers, and save/delete/refs flow.
  */
 (function () {
@@ -48,6 +49,12 @@
     fields: null,     // gather closures for the current form
     saving: false,
     deleting: false,
+    creating: false,      // a Build.Zone.Create is in flight
+    pendingCreateName: "", // remembered create-form name — Build.Result for
+                           // Zone.Create doesn't echo it, only roomId
+    lastEnums: null,      // enums from the most recently viewed zone detail —
+                           // fallback biome source if window.Builder.biomes
+                           // hasn't been populated yet (Zone.Map not seen)
     guardBlocked: false, // non-Cartesian-on-plane-0 — Save stays disabled regardless of dirty
   };
 
@@ -57,6 +64,9 @@
     var host = document.getElementById("zonelist");
     if (!host) return;
     host.innerHTML = "";
+    var newBtn = ce("button", { "class": "newitem", text: "+ New Zone" });
+    newBtn.addEventListener("click", function () { Panel.renderCreateForm(); });
+    host.appendChild(newBtn);
     this.listBody = ce("div", {});
     host.appendChild(this.listBody);
     this.drawRows();
@@ -85,6 +95,67 @@
     gmcp("Build.Zone.Get", { zone: zone });
   };
 
+  // ---- create ----
+  // Mirrors build.html's Rooms-mode renderNewZoneForm (same fields, same
+  // copy) but lives entirely in this panel so it can run its own onResult
+  // flow — build.html routes Build.Result to ZP.onResult whenever
+  // window.Builder.mode === "zones" BEFORE the Rooms-mode create handling
+  // ever sees it. Deliberately does NOT carry the edit form's non-Cartesian/
+  // plane-0 guard: buildZoneCreate always allocates a fresh plane, so a new
+  // zone can never land on plane 0.
+  Panel.renderCreateForm = function () {
+    if (this.dirty && !window.confirm("Discard unsaved changes to this zone?")) return;
+    this.detail = null; this.fields = null; this.dirty = false; this.selectedZone = "";
+    this.saving = false; this.deleting = false; this.guardBlocked = false;
+    this.drawRows();
+
+    var insp = document.getElementById("inspector");
+    insp.innerHTML = "";
+    insp.appendChild(ce("h2", { text: "New Zone" }));
+    insp.appendChild(ce("div", { "class": "tag", "style": "color:var(--gold-dim);font-size:11px;margin-bottom:6px;",
+      text: "Creates a zone on its own plane with one entrance room." }));
+
+    var name = ce("input", { type: "text", placeholder: "e.g. Sunken Crypt" });
+    insp.appendChild(field("Zone name", name));
+
+    // window.Builder.biomes is populated globally from the Zone.Map GMCP
+    // snapshot the server pushes right after login (before an author could
+    // ever reach this form) — but fall back to the biome enum cached off the
+    // most recently viewed zone detail in case that snapshot hasn't landed.
+    var biomeList = (window.Builder.biomes && window.Builder.biomes.length)
+      ? window.Builder.biomes
+      : ((this.lastEnums && this.lastEnums.biomes) || []);
+    var biome = ce("select", {});
+    biome.appendChild(ce("option", { value: "", text: "(default)" }));
+    biomeList.forEach(function (b) { biome.appendChild(ce("option", { value: b, text: b })); });
+    insp.appendChild(field("Default biome", biome));
+
+    var region = ce("input", { type: "text", placeholder: "e.g. Thornwall Region (optional)" });
+    insp.appendChild(field("Region", region));
+
+    var nc = ce("input", { type: "checkbox" });
+    insp.appendChild(ce("div", { "class": "flags", "style": "margin-top:8px;" }, [
+      ce("label", { "class": "chk" }, [nc, ce("span", { text: " Non-Cartesian (maze / toroidal — skips grid checks)" })])
+    ]));
+
+    var errEl = ce("div", { id: "zone-nz-err", "style": "color:var(--danger);font-size:12px;min-height:1em;margin-top:8px;" });
+    insp.appendChild(errEl);
+
+    var create = ce("button", { text: "Create zone" });
+    create.addEventListener("click", function () {
+      var n = name.value.trim();
+      if (n.length < 2) { errEl.textContent = "Zone name must be at least 2 characters."; return; }
+      errEl.textContent = "";
+      Panel.creating = true;
+      Panel.pendingCreateName = n;
+      gmcp("Build.Zone.Create", { name: n, biome: biome.value, region: region.value.trim(), nonCartesian: nc.checked });
+    });
+    var cancel = ce("button", { "class": "mini", text: "Cancel", "style": "width:100%;margin-top:6px;padding:6px;" });
+    cancel.addEventListener("click", function () { Panel.clear(); });
+    insp.appendChild(ce("div", { "class": "save-row" }, [create, cancel]));
+    name.focus();
+  };
+
   // ---- form ----
   Panel.renderDetail = function (detail) {
     this.detail = detail;
@@ -95,6 +166,7 @@
     this.fields = {};
     var F = this.fields;
     var enums = detail.enums || {};
+    this.lastEnums = enums;
 
     insp.appendChild(ce("h2", { text: "Zone: " + detail.name }));
 
@@ -316,8 +388,29 @@
         if (this.selectedZone) gmcp("Build.Zone.Get", { zone: this.selectedZone });
         return;
       }
+      if (this.creating) {
+        this.creating = false;
+        // Build.Result for Zone.Create only echoes { ok, roomId } — the zone
+        // name has to come from what we remembered submitting — so select by
+        // the name we sent, not anything off obj.
+        var createdName = this.pendingCreateName;
+        this.pendingCreateName = "";
+        toast("Zone created.", false);
+        this.clear();
+        gmcp("Build.Zone.List", {});
+        if (createdName) gmcp("Build.Zone.Get", { zone: createdName });
+        return;
+      }
     } else {
       this.saving = false; this.deleting = false;
+      if (this.creating) {
+        this.creating = false;
+        var errEl = document.getElementById("zone-nz-err");
+        if (errEl) errEl.textContent = (obj && obj.error) || "Zone error";
+        // Deliberately do NOT clear pendingCreateName or re-render the
+        // form here — the create form's inputs are untouched in the DOM so
+        // the author can fix the name/fields and resubmit without retyping.
+      }
       if (obj && obj.zoneRefs && obj.zoneRefs.length) this.showDeleteRefs(obj.zoneRefs);
       toast((obj && obj.error) || "Zone error", true);
     }
@@ -335,11 +428,11 @@
     if (!insp) return;
     insp.innerHTML = "";
     insp.appendChild(ce("h2", { text: "Zones" }));
-    insp.appendChild(ce("div", { "class": "empty", text: "Select a zone on the left to edit it." }));
+    insp.appendChild(ce("div", { "class": "empty", text: "Select a zone on the left to edit it, or + New Zone." }));
   }
   Panel.clear = function () {
     this.detail = null; this.fields = null; this.dirty = false; this.selectedZone = "";
-    this.saving = false; this.deleting = false; this.guardBlocked = false;
+    this.saving = false; this.deleting = false; this.creating = false; this.guardBlocked = false;
     clearZoneInspector();
   };
 
