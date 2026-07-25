@@ -68,8 +68,8 @@ Phase R review gate. NO mobs, items, dialogue, or quests (later phases).
 | 5232 | Lower Wash | cliffs | 52,-1,0 | NO | W→5231, E→5233, S→5234 |
 | 5233 | Gravel Bend | cliffs | 53,-1,0 | NO | W→5232, E→5236 |
 | 5234 | Squatter's Hollow | cliffs | 52,0,0 | NO | N→5232, E→5235 |
-| 5235 | Cracked Cistern | cliffs | 53,0,0 | NO | W→5234, N→5236 |
-| 5236 | Upper Wash | cliffs | 54,-1,0 | NO | W→5233, S→5235, E→5237 |
+| 5235 | Cracked Cistern | cliffs | 53,0,0 | NO | W→5234, **NE→5236** |
+| 5236 | Upper Wash | cliffs | 54,-1,0 | NO | W→5233, **SW→5235**, E→5237 |
 | 5237 | Tower Approach | cliffs | 55,-1,0 | NO | W→5236, E→5238 |
 | 5238 | Broken Gate | cliffs | 56,-1,0 | NO | W→5237, E→5239, N→5240 |
 | 5239 | Collapsed Barracks | fort | 57,-1,0 | NO | W→5238 |
@@ -80,7 +80,9 @@ Phase R review gate. NO mobs, items, dialogue, or quests (later phases).
 
 Exit-reciprocity check (every pair appears on both rooms): 5220↔5227,
 5227↔5228, 5227↔5229, 5229↔5230, 5230↔5231, 5231↔5232, 5232↔5233,
-5232↔5234, 5234↔5235, 5235↔5236, 5233↔5236, 5236↔5237, 5237↔5238,
+5232↔5234, 5234↔5235, 5235↔5236 (NE/SW — diagonal, the only non-cardinal
+edge; the all-cardinal loop is geometrically unclosable under these
+coords, so this one edge is diagonal by design), 5233↔5236, 5236↔5237, 5237↔5238,
 5238↔5239, 5238↔5240, 5240↔5241, 5241↔5242, 5242↔5243. (5236 has W,S,E =
 3 exits; 5232 has W,E,S = 3; 5238 has W,E,N = 3 — all ≤5, fine.)
 
