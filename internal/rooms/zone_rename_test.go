@@ -98,3 +98,24 @@ func TestRewriteZoneField_NoTopLevelZoneIsNotAnError(t *testing.T) {
 	got, _ := os.ReadFile(path)
 	assert.Equal(t, original, string(got))
 }
+
+func TestPlanZoneRename_SkipsAbsentTreesAndDetectsCollision(t *testing.T) {
+	base := t.TempDir()
+	// Only three of the ten trees exist for this zone.
+	for _, d := range []string{"rooms", "mobs", "shops"} {
+		if err := os.MkdirAll(filepath.Join(base, d, "old_zone"), 0755); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	mv, err := planZoneRename(base, "Old Zone", "New Zone")
+	assert.NoError(t, err)
+	assert.Len(t, mv, 3, "only existing trees are planned")
+
+	// A pre-existing target directory must abort the whole plan.
+	if err := os.MkdirAll(filepath.Join(base, "rooms", "new_zone"), 0755); err != nil {
+		t.Fatal(err)
+	}
+	_, err = planZoneRename(base, "Old Zone", "New Zone")
+	assert.Error(t, err, "an occupied target path must abort before anything moves")
+}

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // zoneRenameSources injects the world lookups the rename guard needs, so the
@@ -116,4 +118,56 @@ func rewriteZoneField(path, newZone string) error {
 		}
 	}
 	return nil // folder-only tree; nothing to rewrite
+}
+
+// zoneMove is one directory rename in a zone-rename manifest.
+type zoneMove struct {
+	From string
+	To   string
+}
+
+// planZoneRename builds the move manifest and verifies every target path is
+// free BEFORE anything is touched, so a doomed rename aborts having changed
+// nothing. Trees that do not exist for this zone are skipped, not created.
+func planZoneRename(base, oldName, newName string) ([]zoneMove, error) {
+	oldFolder := ZoneNameSanitize(oldName)
+	newFolder := ZoneNameSanitize(newName)
+
+	out := []zoneMove{}
+	for _, d := range zoneAllDirs() {
+		from := util.FilePath(base, "/", d, "/", oldFolder)
+		if _, err := os.Stat(from); err != nil {
+			continue // this tree does not exist for this zone
+		}
+		to := util.FilePath(base, "/", d, "/", newFolder)
+		if _, err := os.Stat(to); err == nil {
+			return nil, fmt.Errorf("target path already exists: %s", to)
+		}
+		out = append(out, zoneMove{From: from, To: to})
+	}
+	return out, nil
+}
+
+// applyZoneMoves renames each planned directory, returning the moves that
+// succeeded so a failure can be reversed.
+func applyZoneMoves(mv []zoneMove) (done []zoneMove, err error) {
+	for _, m := range mv {
+		if err = os.Rename(m.From, m.To); err != nil {
+			return done, fmt.Errorf("moving %s -> %s: %w", m.From, m.To, err)
+		}
+		done = append(done, m)
+	}
+	return done, nil
+}
+
+// reverseZoneMoves undoes completed moves, best effort. It reports what it
+// could NOT undo — a half-renamed zone must be loud, never silent.
+func reverseZoneMoves(done []zoneMove) []string {
+	stuck := []string{}
+	for i := len(done) - 1; i >= 0; i-- {
+		if err := os.Rename(done[i].To, done[i].From); err != nil {
+			stuck = append(stuck, done[i].To)
+		}
+	}
+	return stuck
 }
