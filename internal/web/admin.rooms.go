@@ -40,7 +40,6 @@ func roomsIndex(w http.ResponseWriter, r *http.Request) {
 		IsBank          bool
 		IsStorage       bool
 		IsCharacterRoom bool
-		IsSkillTraining bool
 		HasContainer    bool
 		IsPvp           bool
 	}
@@ -88,7 +87,6 @@ func roomsIndex(w http.ResponseWriter, r *http.Request) {
 				IsBank:          room.IsBank,
 				IsStorage:       room.IsStorage,
 				IsCharacterRoom: room.IsCharacterRoom,
-				IsSkillTraining: len(room.SkillTraining) > 0,
 				HasContainer:    hasContainer,
 				IsPvp:           room.IsPvp(),
 			})

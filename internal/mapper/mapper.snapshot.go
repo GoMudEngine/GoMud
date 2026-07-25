@@ -86,9 +86,6 @@ func (r *mapper) Snapshot(visited map[int]struct{}) []SnapshotRoom {
 			if room.IsStorage {
 				sr.Tags = append(sr.Tags, "storage")
 			}
-			if len(room.SkillTraining) > 0 {
-				sr.Tags = append(sr.Tags, "trainer")
-			}
 			if len(room.GetMobs(rooms.FindMerchant)) > 0 {
 				sr.Tags = append(sr.Tags, "shop")
 			}

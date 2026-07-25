@@ -230,40 +230,6 @@
     </div>
 
 
-    <div class="row">
-
-        <div class="card col-md">
-            <div class="card-body">
-                <h5 class="card-title">Training Available:</h5>
-                <p class="card-text">
-                    <!--  Start Card Content -->
-                    <div class="row">
-                        {{ range $i, $skillName := .allSkillNames }}
-                        <div class="input-group col-md-2">
-                            <div class="input-group-prepend col-md-6 pr-0">
-                                <span class="input-group-text col-md">{{ $skillName }}</span>
-                            </div>
-                            <select class="form-control col-md-3" name="skilltraining[{{ $skillName }}].min" id="skilltraining[{{ $skillName }}].min" aria-describedby="skilltraining[{{ $skillName }}].min-help"  rows="10">
-                                {{ $trainingRange := (index $room.SkillTraining $skillName) }}
-                                {{range $index, $levelNum := ( intRange 0 4) }}
-                                    <option value="{{ $levelNum }}" {{if eq $trainingRange.Min $levelNum}}SELECTED{{end}}>{{ $levelNum }} min</option>
-                                {{end}}
-                            </select>
-                            <select class="form-control col-md-3" name="skilltraining[{{ $skillName }}].max" id="skilltraining[{{ $skillName }}].max" aria-describedby="skilltraining[{{ $skillName }}].max-help"  rows="10">
-                                {{ $trainingRange := (index $room.SkillTraining $skillName) }}
-                                {{range $index, $levelNum := ( intRange 0 4) }}
-                                    <option value="{{ $levelNum }}" {{if eq $trainingRange.Max $levelNum}}SELECTED{{end}}>{{ $levelNum }} max</option>
-                                {{end}}
-                            </select>
-                        </div>
-                        {{ end }}
-                    </div>
-                    <!--  End Card Content -->
-                </p>
-            </div>
-        </div>
-
-    </div>
 
         
     <div class="row">

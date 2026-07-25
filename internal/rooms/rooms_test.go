@@ -1568,21 +1568,6 @@ func TestRoom_IdleMessages(t *testing.T) {
 	assert.Equal(t, uint8(0), r.LastIdleMessage)
 }
 
-// ─── Room.SkillTraining ─────────────────────────────────────────────────────
-
-func TestRoom_SkillTraining(t *testing.T) {
-	r := &Room{
-		SkillTraining: map[string]TrainingRange{
-			"weapon-combat": {Min: 0, Max: 10},
-			"spellcasting":  {Min: 5, Max: 25},
-		},
-	}
-	assert.Len(t, r.SkillTraining, 2)
-	tr := r.SkillTraining["weapon-combat"]
-	assert.Equal(t, 0, tr.Min)
-	assert.Equal(t, 10, tr.Max)
-}
-
 // ─── Room.Station ───────────────────────────────────────────────────────────
 
 func TestRoom_Station(t *testing.T) {

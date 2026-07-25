@@ -433,9 +433,6 @@ func (g *GMCPRoomModule) GetRoomNode(user *users.UserRecord, gmcpModule string) 
 		// end exits
 
 		// Set room details
-		if len(room.SkillTraining) > 0 {
-			payload.Details = append(payload.Details, `trainer`)
-		}
 		if room.IsBank {
 			payload.Details = append(payload.Details, `bank`)
 		}

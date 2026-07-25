@@ -1183,9 +1183,9 @@ RoomGridSVG.LEATHER = {
   emboss: 0.6, fray: 3.4, nickP: 0.08, crackStep: 24, crackJit: 9, vig: 0.5
 };
 
-// ── Service-room markers (bank / shop / trainer / storage) ────────────────────
-RoomGridSVG.SERVICE_GLYPHS = { bank: '$', shop: 'S', trainer: 'T', storage: '▢' };
-RoomGridSVG.SERVICE_ORDER  = ['bank', 'shop', 'trainer', 'storage'];
+// ── Service-room markers (bank / shop / storage) ──────────────────────────────
+RoomGridSVG.SERVICE_GLYPHS = { bank: '$', shop: 'S', storage: '▢' };
+RoomGridSVG.SERVICE_ORDER  = ['bank', 'shop', 'storage'];
 RoomGridSVG.prototype._serviceFor = function (tags) {
   if (!Array.isArray(tags) || !tags.length) return null;
   for (let i = 0; i < RoomGridSVG.SERVICE_ORDER.length; i++) {

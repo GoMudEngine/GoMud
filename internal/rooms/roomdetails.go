@@ -78,10 +78,6 @@ func GetDetails(r *Room, user *users.UserRecord, tinymap ...[]string) RoomTempla
 	// Start Room Alerts
 	//
 
-	if len(r.SkillTraining) > 0 {
-		details.RoomAlerts = append(details.RoomAlerts, `<ansi fg="yellow-bold">You can train here!</ansi> Type <ansi fg="command">train</ansi> to see what training is available.`)
-	}
-
 	if r.IsBank {
 		details.RoomAlerts = append(details.RoomAlerts, `          <ansi fg="yellow-bold">This is a bank!</ansi> Type <ansi fg="command">bank</ansi> to deposit/withdraw.`)
 	}

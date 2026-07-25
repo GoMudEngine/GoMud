@@ -101,7 +101,6 @@ type Room struct {
 	Corpses           []Corpse                          `yaml:"-"`                                         // Any corpses laying around from recent deaths
 	Gold              int                               `yaml:"gold,omitempty"`                            // How much gold is on the ground?
 	SpawnInfo         []SpawnInfo                       `yaml:"spawninfo,omitempty" instance:"skip"`       // key is creature ID, value is spawn chance
-	SkillTraining     map[string]TrainingRange          `yaml:"skilltraining,omitempty" instance:"skip"`   // list of skills that can be trained in this room
 	Signs             []Sign                            `yaml:"sign,omitempty"`                            // list of scribbles in the room
 	IdleMessages      []string                          `yaml:"idlemessages,omitempty" instance:"skip"`    // list of messages that can be displayed to players in the room
 	LastIdleMessage   uint8                             `yaml:"-"`                                         // index of the last idle message displayed
@@ -116,11 +115,6 @@ type Room struct {
 	visitors      map[VisitorType]map[int]uint64 // list of user IDs that have visited this room, and the last round they did
 	lastVisited   uint64                         // last round a visitor was in the room
 	tempDataStore map[string]any                 // Temporary data store for the room
-}
-
-type TrainingRange struct {
-	Min int
-	Max int
 }
 
 func NewRoom(zone string) *Room {
