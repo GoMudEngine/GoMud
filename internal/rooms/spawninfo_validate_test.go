@@ -3,6 +3,7 @@ package rooms
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/gametime"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -73,4 +74,56 @@ func TestValidateSpawnEntry_RespawnRateMustParse(t *testing.T) {
 	assert.NoError(t, ValidateSpawnEntry(SpawnInfo{MobId: 1, RespawnRate: "5 real minutes"}, v))
 	assert.NoError(t, ValidateSpawnEntry(SpawnInfo{MobId: 1, RespawnRate: ""}, v), "empty means the 15-minute default")
 	assert.Error(t, ValidateSpawnEntry(SpawnInfo{MobId: 1, RespawnRate: "banana"}, v))
+}
+
+// AddPeriod cannot be asked whether it understood a string: it never errors,
+// and it never leaves the round unchanged. Unrecognised units take a generic
+// failover that treats the quantity as ROUNDS, so "banana" yields one round —
+// about four seconds. A typo'd respawn rate is therefore not a loud failure
+// but a spawn that returns almost instantly, which is exactly what this
+// validator exists to catch.
+func TestRealPeriodOK(t *testing.T) {
+	for _, ok := range []string{
+		"", // empty is legal — it means the engine default
+		"5 real minutes", "10 real minutes", "2 real hours", "2 real days",
+		"600 rounds", // the failover path, and the idiom used across the world
+		"1 game day", "daily", "hourly", "2 sunrises", "sunset",
+	} {
+		if !RealPeriodOK(ok) {
+			t.Errorf("RealPeriodOK(%q) = false, want true", ok)
+		}
+	}
+	for _, bad := range []string{
+		"banana", "soon", "5 bananas", "every so often",
+		"0 real minutes", "-3 rounds", "later on today please",
+	} {
+		if RealPeriodOK(bad) {
+			t.Errorf("RealPeriodOK(%q) = true, want false", bad)
+		}
+	}
+}
+
+// Anti-drift guard. RealPeriodOK maintains its own copy of AddPeriod's unit
+// vocabulary because the parser cannot be interrogated. If AddPeriod ever
+// grows a real branch for a unit we treat as failover-only, or loses one we
+// accept, this test fails and the vocabulary must be re-checked against it.
+func TestRealPeriodOK_VocabularyMatchesParser(t *testing.T) {
+	gd := gametime.GetDate(1)
+	// A word with no branch takes the failover: exactly qty rounds.
+	if got, want := gd.AddPeriod("7 flurbles"), gd.RoundNumber+7; got != want {
+		t.Errorf("AddPeriod failover changed: got %d want %d — re-check periodUnitPrefixes", got, want)
+	}
+	// Every prefix we accept as a REAL unit must advance by more than the
+	// failover would, i.e. it must hit a genuine branch. "rou" is excluded:
+	// it IS the failover.
+	for _, u := range periodUnitPrefixes {
+		if u == "rou" {
+			continue
+		}
+		p := "2 real " + u + "s"
+		if got := gd.AddPeriod(p); got <= gd.RoundNumber+2 {
+			t.Errorf("AddPeriod(%q) = %d, only failover-far from %d — %q may no longer be a real unit",
+				p, got, gd.RoundNumber, u)
+		}
+	}
 }
