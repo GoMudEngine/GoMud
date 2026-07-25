@@ -6,7 +6,7 @@
  * of the list opens an in-panel create form (mirroring Rooms mode's own
  * "+ Zone" flow, which is left in place — both hit the same
  * Build.Zone.Create verb). This panel also edits an existing zone's config
- * and deletes empty ones. Renaming is Phase 2, so Name is shown read-only.
+ * and deletes empty ones, and renames one via the guarded Rename control.
  * Mirrors mobs.js's module shape, field helpers, and save/delete/refs flow.
  */
 (function () {
@@ -50,6 +50,9 @@
     saving: false,
     deleting: false,
     creating: false,      // a Build.Zone.Create is in flight
+    renaming: false,      // a Build.Zone.Rename is in flight
+    pendingRenameName: "", // remembered rename target — Build.Result for
+                           // Zone.Rename does not echo the new name either
     pendingCreateName: "", // remembered create-form name — Build.Result for
                            // Zone.Create doesn't echo it, only roomId
     lastEnums: null,      // enums from the most recently viewed zone detail —
@@ -252,11 +255,54 @@
 
     // ---- Identity ----
     insp.appendChild(sectionTitle("Identity"));
-    insp.appendChild(ce("div", {}, [
-      ce("label", { text: "Name" }),
-      ce("div", { style: "padding:5px 0;color:var(--parch);", text: detail.name }),
-      ce("div", { style: "font-size:10px;color:var(--gold-dim);margin-top:2px;", text: "renaming a zone is not yet supported" })
-    ]));
+
+    // Name is not part of the Save payload — renaming moves ten directories
+    // and rewrites the zone name inside every file that stores it, so it is
+    // its own guarded action rather than an editable field.
+    var nameRow = ce("div", {});
+    nameRow.appendChild(ce("label", { text: "Name" }));
+    var nameShown = ce("div", { style: "padding:5px 0;color:var(--parch);", text: detail.name });
+    nameRow.appendChild(nameShown);
+
+    var renameBox = ce("div", { style: "display:none;margin-top:4px;" });
+    var renameInput = ce("input", { type: "text" });
+    renameInput.value = detail.name;
+    renameBox.appendChild(renameInput);
+    renameBox.appendChild(ce("div", {
+      style: "font-size:10px;color:var(--gold-dim);margin-top:4px;line-height:1.4;",
+      text: "Moves every directory this zone owns and rewrites its name inside "
+        + "each file. Blocked while anyone is in the zone. Players' explored-map "
+        + "history for this zone is not carried over — it will look unexplored "
+        + "to them again. That is expected, not a bug."
+    }));
+    var renameErr = ce("div", { id: "zone-rn-err", style: "color:var(--danger);font-size:12px;min-height:1em;margin-top:4px;" });
+    renameBox.appendChild(renameErr);
+
+    var renameBtn = ce("button", { "class": "mini", text: "Rename…", style: "margin-top:4px;padding:4px 10px;" });
+    renameBtn.addEventListener("click", function () {
+      var showing = renameBox.style.display !== "none";
+      renameBox.style.display = showing ? "none" : "";
+      renameBtn.textContent = showing ? "Rename…" : "Cancel rename";
+      if (!showing) { renameInput.value = detail.name; renameErr.textContent = ""; renameInput.focus(); }
+    });
+
+    var confirmBtn = ce("button", { text: "Confirm rename", style: "margin-top:6px;" });
+    confirmBtn.addEventListener("click", function () {
+      var n = renameInput.value.trim();
+      if (n.length < 2) { renameErr.textContent = "Zone name must be at least 2 characters."; return; }
+      if (n === detail.name) { renameErr.textContent = "That is already the zone's name."; return; }
+      renameErr.textContent = "";
+      Panel.renaming = true;
+      // Build.Result does not echo the new name, so remember what we sent in
+      // order to reselect the zone afterwards — same as the create flow.
+      Panel.pendingRenameName = n;
+      gmcp("Build.Zone.Rename", { zone: detail.name, newName: n });
+    });
+    renameBox.appendChild(confirmBtn);
+
+    nameRow.appendChild(renameBtn);
+    nameRow.appendChild(renameBox);
+    insp.appendChild(nameRow);
     insp.appendChild(numField("Root room id", "roomId", detail.roomId));
     var biomeOpts = [{ v: "", t: "" }].concat(enums.biomes || []);
     insp.appendChild(selectField("Default biome", "defaultBiome", detail.defaultBiome, biomeOpts));
@@ -343,7 +389,7 @@
     var d = this.detail || {};
     function g(k, dflt) { return F[k] ? F[k]() : (d[k] !== undefined ? d[k] : dflt); }
     return {
-      name: d.name, // read-only in this panel; renaming is Phase 2
+      name: d.name, // not editable via Save — renaming is its own guarded action
       roomId: g("roomId", 0),
       defaultBiome: g("defaultBiome", ""),
       region: g("region", ""),
@@ -388,6 +434,18 @@
         if (this.selectedZone) gmcp("Build.Zone.Get", { zone: this.selectedZone });
         return;
       }
+      if (this.renaming) {
+        this.renaming = false;
+        var renamedTo = this.pendingRenameName;
+        this.pendingRenameName = "";
+        toast("Zone renamed.", false);
+        this.detail = null;
+        this.selectedZone = renamedTo;
+        this.clear();
+        gmcp("Build.Zone.List", {});
+        if (renamedTo) gmcp("Build.Zone.Get", { zone: renamedTo });
+        return;
+      }
       if (this.creating) {
         this.creating = false;
         // Build.Result for Zone.Create only echoes { ok, roomId } — the zone
@@ -403,6 +461,14 @@
       }
     } else {
       this.saving = false; this.deleting = false;
+      if (this.renaming) {
+        this.renaming = false;
+        this.pendingRenameName = "";
+        // Leave the rename box open and populated so the author can fix
+        // the name, or read who is standing in the zone, and retry.
+        var rnErr = document.getElementById("zone-rn-err");
+        if (rnErr) rnErr.textContent = (obj && obj.error) || "Rename failed";
+      }
       if (this.creating) {
         this.creating = false;
         var errEl = document.getElementById("zone-nz-err");
@@ -432,7 +498,7 @@
   }
   Panel.clear = function () {
     this.detail = null; this.fields = null; this.dirty = false; this.selectedZone = "";
-    this.saving = false; this.deleting = false; this.creating = false; this.guardBlocked = false;
+    this.saving = false; this.deleting = false; this.creating = false; this.renaming = false; this.guardBlocked = false;
     clearZoneInspector();
   };
 
