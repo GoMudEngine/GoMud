@@ -20,7 +20,6 @@ description: >-
   slope. The mine is pitch dark -- cast your glow before you descend -- and the
   beast is the worst thing in it. Take it, and the deep vein is yours.
 secret: false
-linear: true
 
 steps:
   - id: start

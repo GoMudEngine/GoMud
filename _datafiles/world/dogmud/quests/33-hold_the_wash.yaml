@@ -28,7 +28,6 @@ description: >-
   hollow is safe enough to hold. If the fight turns against you, flee --
   and if you fall, you will wake at the Mending Hut, not in a grave.
 secret: false
-linear: true
 
 steps:
   - id: start

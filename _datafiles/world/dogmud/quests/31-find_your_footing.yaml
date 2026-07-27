@@ -13,7 +13,6 @@ questid: 31
 name: Find Your Footing
 description: Walk the hub of Pothole Coulee, kit yourself out, and learn where everything lives.
 secret: false
-linear: true
 
 steps:
   - id: start

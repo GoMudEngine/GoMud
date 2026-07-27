@@ -22,7 +22,6 @@ description: >-
   from her stall, grind and steep them at the alchemy bench into a
   healing salve, then drink it down.
 secret: false
-linear: true
 
 steps:
   - id: start

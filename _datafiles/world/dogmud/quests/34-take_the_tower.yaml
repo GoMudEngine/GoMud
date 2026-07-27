@@ -26,7 +26,6 @@ description: >-
   captain holds the watch room at the top of it. Choose how Garve hones you,
   climb the tower, and put the captain down.
 secret: false
-linear: true
 
 flags:
   - key: boon

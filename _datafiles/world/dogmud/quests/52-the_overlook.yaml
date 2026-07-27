@@ -21,7 +21,6 @@ description: >-
   that moves below. He fights the way you have just learned to: at range, on
   the move. Bring him down.
 secret: false
-linear: true
 
 steps:
   - id: start

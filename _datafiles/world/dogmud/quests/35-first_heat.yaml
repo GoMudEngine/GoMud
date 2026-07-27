@@ -5,7 +5,6 @@ description: >-
   an iron ingot and a leather strip from his stall, work them at the
   forge into an iron dagger, and bring the finished blade back to him.
 secret: false
-linear: true
 
 steps:
   - id: start

@@ -19,7 +19,6 @@ description: >-
   read the thin places, and the first turning of the mind waits in the Star
   Chamber. Cast a spell you already carry at the practice mark there.
 secret: false
-linear: true
 
 steps:
   - id: start

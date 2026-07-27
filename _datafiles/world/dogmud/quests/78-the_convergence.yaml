@@ -4,7 +4,6 @@ description: >-
   Veyra Coil-Tongue has taken your measure and found you worth her time.
   The convergence crafts are open to you now, one commission at a time.
 secret: false
-linear: true
 
 flags:
   - key: commission

@@ -19,7 +19,6 @@ description: >-
   carved into them. He has a use for someone with a steady tongue: a quarrel on
   the mustering green that gentle words have only made worse.
 secret: false
-linear: true
 
 steps:
   - id: start

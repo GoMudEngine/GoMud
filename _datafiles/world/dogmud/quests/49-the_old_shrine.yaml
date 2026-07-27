@@ -23,7 +23,6 @@ description: >-
   chamber -- the reckoning-bone points at it, and Sere has waited a long time for
   a patient hand to bring it to light.
 secret: false
-linear: true
 
 steps:
   - id: start

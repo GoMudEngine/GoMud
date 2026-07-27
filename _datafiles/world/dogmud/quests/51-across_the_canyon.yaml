@@ -23,7 +23,6 @@ description: >-
   raiders use against trespassers: to put a shot into something a whole
   chamber away, before it can close the distance.
 secret: false
-linear: true
 
 steps:
   - id: start

@@ -26,7 +26,6 @@ description: >-
   yourself on the marsh: put a leech down, learn to throw the firebomb in
   a fight, and forage the good herbs while you are at it.
 secret: false
-linear: true
 
 steps:
   - id: start
