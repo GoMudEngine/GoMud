@@ -120,3 +120,38 @@ func TestValidate_NodeRefsResolve(t *testing.T) {
 	errs, _ := ValidateDialogueFile(df, permissiveValidators())
 	errsContaining(t, errs, "ghost")
 }
+
+func warnsContaining(t *testing.T, warns []string, want string) {
+	t.Helper()
+	for _, w := range warns {
+		if strings.Contains(w, want) {
+			return
+		}
+	}
+	t.Errorf("expected a warning containing %q, got %v", want, warns)
+}
+
+// expiryPeriod is almost never right (SOP) — it can brick quest chains.
+func TestValidate_WarnsOnExpiryPeriod(t *testing.T) {
+	df := DialogueFile{MobId: 1, Zone: "z", Memory: MemoryConfig{ExpiryPeriod: "2 real days"}}
+	_, warns := ValidateDialogueFile(df, permissiveValidators())
+	warnsContaining(t, warns, "expiryPeriod")
+}
+
+// "Undiscoverable triggers are broken triggers": every tree trigger must
+// appear somewhere a player can read — root text/hints or any node text/hints.
+func TestValidate_WarnsOnUndiscoverableTrigger(t *testing.T) {
+	df := DialogueFile{MobId: 1, Zone: "z", Tree: &Tree{
+		Root: TreeRoot{Text: "Ask me about the harvest.", Hints: "You could ask about the harvest."},
+		Nodes: []TreeNode{
+			{Id: "harvest", Triggers: []string{"harvest"}, Text: "It was thin this year."},
+			{Id: "secret", Triggers: []string{"smuggling"}, Text: "Keep your voice down."},
+		}}}
+	_, warns := ValidateDialogueFile(df, permissiveValidators())
+	warnsContaining(t, warns, "smuggling")
+	for _, w := range warns {
+		if strings.Contains(w, "\"harvest\"") {
+			t.Errorf("harvest IS discoverable (root text) — must not warn: %v", w)
+		}
+	}
+}

@@ -155,5 +155,36 @@ func ValidateDialogueFile(df DialogueFile, v DialogueValidators) (errs []string,
 		}
 	}
 
+	if df.Memory.ExpiryPeriod != "" {
+		warns = append(warns, fmt.Sprintf("memory.expiryPeriod is set (%q): the SOP is to leave it empty except for deliberately timed quests — expiring memory can brick quest chains", df.Memory.ExpiryPeriod))
+	}
+
+	// Discoverability: a trigger no hint, node text, or root ever mentions is
+	// a dead branch no player will find. Case-insensitive substring over all
+	// player-readable prose in the file.
+	if df.Tree != nil {
+		var prose strings.Builder
+		prose.WriteString(strings.ToLower(df.Tree.Root.Text))
+		prose.WriteString(" " + strings.ToLower(df.Tree.Root.Hints))
+		for _, rv := range df.Tree.Root.Variants {
+			prose.WriteString(" " + strings.ToLower(rv.Text) + " " + strings.ToLower(rv.Hints))
+		}
+		for _, n := range df.Tree.Nodes {
+			prose.WriteString(" " + strings.ToLower(n.Text) + " " + strings.ToLower(n.Hints))
+		}
+		haystack := prose.String()
+		for _, n := range df.Tree.Nodes {
+			for _, trig := range n.Triggers {
+				lt := strings.ToLower(trig)
+				if lt == "quest" || lt == "task" {
+					continue // universal ask-words, discoverable by convention
+				}
+				if !strings.Contains(haystack, lt) {
+					warns = append(warns, fmt.Sprintf("node %q: trigger %q appears in no hint, text, or root — undiscoverable triggers are broken triggers", n.Id, trig))
+				}
+			}
+		}
+	}
+
 	return errs, warns
 }
