@@ -1,5 +1,26 @@
 # DOGMud Patch Notes
 
+## 2026-07-27 — Words put in mouths (staff)
+
+The mob editor learns to open an NPC's **dialogue** — everything a townsperson
+can say now sits behind one button on their page. Their greetings, the phrases
+they listen for, and the whole branching tree of a conversation can be read
+and reworked in place: what they say, what a visitor might ask next, which
+answers hand over a task or a token or an item, and which are kept back until
+the right deed is done.
+
+The editor knows the house rules and refuses work that breaks them. A line
+that would grant a task without the guard that stops it being granted twice, a
+question no player could ever discover how to ask, a branch that must come
+first but was written last — each is named plainly and the save is declined
+until it is put right. Lesser sins are allowed through with a warning attached
+rather than silently kept.
+
+Because conversation is matched in the order it is written, the branches are
+shown as an ordered list and can be moved up and down — the order on the
+screen is the order that matters. And when a change is saved, the NPC speaks
+the new words immediately; there is no waiting for the world to be reborn.
+
 ## 2026-07-27 — The world says hello
 
 Walk into an inn, a workshop, an archive, and the keeper looks up. Across the

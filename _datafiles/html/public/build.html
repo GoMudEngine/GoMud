@@ -253,6 +253,7 @@
 <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/items.js"></script>
 <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/mobs.js"></script>
 <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/zones.js"></script>
+<script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/dialogue.js"></script>
 <script>
 "use strict";
 (function () {
@@ -310,6 +311,7 @@
     // see the prefetch in loginSucceeded().
     if (ns === "Build.Items") {
       spawnItemRows = obj || [];
+      window.Builder.itemRows = spawnItemRows; // dialogue panel's item picker datalist
       populateSpawnDatalist(spawnItemDatalistEl, spawnItemRows);
       if (IP) { IP.render(obj); IP.afterListRefresh(); }
       return;
@@ -323,7 +325,10 @@
       if (MP) MP.render(obj);
       return;
     }
-    if (ns === "Build.Mob") { if (MP) MP.renderForm(obj); return; }
+    var DP = window.Builder.DialoguePanel;
+    if (ns === "Build.Dialogue") { if (DP) DP.renderDetail(obj); return; }
+    if (ns === "Build.Result" && window.Builder.mode === "mobs" && DP && DP.active) { DP.onResult(obj); return; }
+    if (ns === "Build.Mob") { if (DP) DP.active = false; if (MP) MP.renderForm(obj); return; }
     if (ns === "Build.Result" && window.Builder.mode === "mobs") { if (MP) MP.onResult(obj); return; }
     // Build.Rooms is the test-spawn room picker's per-zone room list
     // (Build.Room.List), routed to the mob panel rather than the room
