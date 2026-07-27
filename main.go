@@ -261,24 +261,25 @@ func main() {
 	// Create the user index
 	isCopyover := flags.CopyoverFd() >= 0
 
-	if !isCopyover {
-		timeStart := time.Now()
-		idx := users.InitUserIndex()
-		if !idx.Exists() {
-			// Since it doesn't exist yet, that's a good indication we should do a quick format migration check
-			users.DoUserMigrations()
-		}
-		if idx.IsUpToDate() {
-			mudlog.Info("UserIndex", "info", "User index up to date.", "users", idx.GetMetaData().RecordCount, "time taken", time.Since(timeStart))
-		} else {
-			idx.Create()
-			idx.Rebuild()
-			mudlog.Info("UserIndex", "info", "User index recreated.", "users", idx.GetMetaData().RecordCount, "time taken", time.Since(timeStart))
-		}
+	syncStart := time.Now()
+	idx := users.InitUserIndex()
+	if !isCopyover && !idx.Exists() {
+		// Since it doesn't exist yet, that's a good indication we should do a quick format migration check
+		users.DoUserMigrations()
 	}
 
-	users.GetCharacterIndex().Rebuild()
-	mudlog.Info("CharacterIndex", "info", "Active character names indexed.", "characters", users.GetCharacterIndex().Len())
+	// Bring the user index in line with the user files, parsing only files
+	// that changed since they were last indexed. The character index is then
+	// rebuilt straight from the index records, so an unchanged user file is
+	// never opened at all.
+	changed, err := idx.SyncWithUserFiles()
+	if err != nil {
+		mudlog.Error("UserIndex", "error", "sync failed", "details", err)
+	}
+	mudlog.Info("UserIndex", "info", "User index synced.", "users", idx.GetMetaData().RecordCount, "changed", changed, "time taken", time.Since(syncStart))
+
+	users.GetCharacterIndex().RebuildFromIndex(idx)
+	mudlog.Info("CharacterIndex", "info", "Active character names indexed.", "characters", users.GetCharacterIndex().Len(), "time taken", time.Since(syncStart))
 
 	// Load the round count from the file
 	if !isCopyover {

@@ -1,6 +1,7 @@
 package users
 
 import (
+	"bytes"
 	"strings"
 	"sync"
 )
@@ -69,19 +70,49 @@ func (ci *CharacterIndex) Find(name string) (userId int, found bool) {
 	return
 }
 
-// Rebuild clears the index and repopulates it from every user record on disk
+// Rebuild clears the index and repopulates it from every user file on disk
 // plus all currently online users. Only active character names are added here;
 // the alt-characters module is responsible for adding alt names after this
 // runs.
 func (ci *CharacterIndex) Rebuild() {
+	ci.RebuildFromScan(ScanUserFiles())
+}
+
+// RebuildFromIndex repopulates the character index straight from the user
+// index records plus all currently online users, without opening a single
+// user file.
+func (ci *CharacterIndex) RebuildFromIndex(idx *UserIndex) {
 	newMap := make(map[string]int)
 
-	SearchOfflineUsers(func(u *UserRecord) bool {
-		if u.Character != nil && u.Character.Name != "" {
-			newMap[strings.ToLower(u.Character.Name)] = u.UserId
+	idx.ForEachRecord(func(rec IndexUserRecord) bool {
+		if name := string(bytes.TrimRight(rec.CharacterName[:], "\x00")); name != `` {
+			newMap[strings.ToLower(name)] = int(rec.UserID)
 		}
 		return true
 	})
+
+	for _, u := range GetAllActiveUsers() {
+		if u.Character != nil && u.Character.Name != "" {
+			newMap[strings.ToLower(u.Character.Name)] = u.UserId
+		}
+	}
+
+	ci.mu.Lock()
+	ci.byName = newMap
+	ci.mu.Unlock()
+}
+
+// RebuildFromScan is Rebuild fed by an existing user file scan, so startup
+// can share one scan between the user index and the character index instead
+// of fully parsing every user record a second time.
+func (ci *CharacterIndex) RebuildFromScan(scan []UserFileScan) {
+	newMap := make(map[string]int, len(scan))
+
+	for _, s := range scan {
+		if s.CharacterName != "" {
+			newMap[strings.ToLower(s.CharacterName)] = s.UserId
+		}
+	}
 
 	for _, u := range GetAllActiveUsers() {
 		if u.Character != nil && u.Character.Name != "" {
