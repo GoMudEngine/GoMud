@@ -262,6 +262,19 @@
     });
     insp.appendChild(dlgBtn);
 
+    // Shared id-picker datalists: items from the login-time Build.Items
+    // prefetch, buffs from the server enums.
+    var itemDl = ce("datalist", { id: "dl-mob-items" });
+    ((window.Builder && window.Builder.itemRows) || []).forEach(function (r) {
+      itemDl.appendChild(ce("option", { value: String(r.id), text: r.name || "" }));
+    });
+    insp.appendChild(itemDl);
+    var buffDl = ce("datalist", { id: "dl-mob-buffs" });
+    (enums.buffs || []).forEach(function (b) {
+      buffDl.appendChild(ce("option", { value: String(b.id), text: b.name || "" }));
+    });
+    insp.appendChild(buffDl);
+
     // ---- field builders bound to this render's F/markDirty closure ----
     function textField(label, key, val, hint) {
       var i = ce("input", { type: "text" }); i.value = val == null ? "" : val;
@@ -359,15 +372,17 @@
       return wrap;
     }
 
-    // Repeatable numeric-id rows (lootPool, carriedItems, buffIds,
-    // crafterRestockMaterials) — the "picker" is a bare id input in v1.
-    function idRowsField(label, key, vals, hint) {
+    // Repeatable id rows (lootPool, carriedItems, buffIds,
+    // crafterRestockMaterials) — id pickers backed by a datalist (dl), so
+    // authors see names instead of typing bare numbers (epic followup #3).
+    function idRowsField(label, key, vals, hint, dl) {
       var wrap = ce("div", {});
       wrap.appendChild(ce("label", { text: label }));
       var box = ce("div", {});
       var rows = [];
       function addRow(v) {
-        var i = ce("input", { type: "number", step: "1", placeholder: "item id" });
+        var i = ce("input", { type: "text", placeholder: "id" });
+        if (dl) i.setAttribute("list", dl);
         i.value = (v || v === 0) ? v : "";
         i.addEventListener("input", markDirty);
         i.addEventListener("blur", function () { if (i.value !== "") i.value = String(Math.round(parseFloat(i.value) || 0)); });
@@ -442,7 +457,7 @@
       var rows = [];
       function addRow(r) {
         r = r || { itemId: 0, quantityMax: 0, price: 0 };
-        var iid = ce("input", { type: "number", step: "1", placeholder: "item id" }); iid.value = r.itemId || "";
+        var iid = ce("input", { type: "text", placeholder: "item id", list: "dl-mob-items" }); iid.value = r.itemId || "";
         var qty = ce("input", { type: "number", step: "1", placeholder: "qty max" }); qty.value = r.quantityMax || "";
         var price = ce("input", { type: "number", step: "1", placeholder: "price" }); price.value = r.price || "";
         [iid, qty, price].forEach(function (el) { el.addEventListener("input", markDirty); });
@@ -507,7 +522,7 @@
       for (var i = 0; i < slots.length; i += 2) {
         var rowSlots = slots.slice(i, i + 2);
         var cols = rowSlots.map(function (s) {
-          var inp = ce("input", { type: "number", step: "1", placeholder: "item id" });
+          var inp = ce("input", { type: "text", placeholder: "item id", list: "dl-mob-items" });
           inp.value = equip[s] || "";
           inp.addEventListener("input", markDirty);
           rows.push({ slot: s, input: inp });
@@ -579,7 +594,7 @@
     // ---- Equipment ----
     insp.appendChild(sectionTitle("Equipment"));
     insp.appendChild(equipmentField(enums.wornSlots || [], detail.equipment || {}));
-    insp.appendChild(idRowsField("Carried items", "carriedItems", detail.carriedItems, "item ids the mob carries in inventory"));
+    insp.appendChild(idRowsField("Carried items", "carriedItems", detail.carriedItems, "item ids the mob carries in inventory", "dl-mob-items"));
 
     // ---- Flavor ----
     insp.appendChild(sectionTitle("Flavor"));
@@ -591,7 +606,7 @@
     // ---- Loot ----
     insp.appendChild(sectionTitle("Loot"));
     insp.appendChild(numField("Item drop chance %", "itemDropChance", detail.itemDropChance));
-    insp.appendChild(idRowsField("Loot pool", "lootPool", detail.lootPool));
+    insp.appendChild(idRowsField("Loot pool", "lootPool", detail.lootPool, "", "dl-mob-items"));
     insp.appendChild(numField("Gold", "gold", detail.gold));
 
     // ---- Advanced (collapsible) ----
@@ -646,7 +661,7 @@
     body.appendChild(H.checkField("Crafter", "crafter", detail.crafter));
     body.appendChild(H.selectField("Crafter skill", "crafterSkill", detail.crafterSkill, [""].concat(enums.crafterSkills || [])));
     body.appendChild(H.chipsField("Crafter recipe ids", "crafterRecipeIds", detail.crafterRecipeIds));
-    body.appendChild(H.idRowsField("Crafter restock materials", "crafterRestockMaterials", detail.crafterRestockMaterials));
+    body.appendChild(H.idRowsField("Crafter restock materials", "crafterRestockMaterials", detail.crafterRestockMaterials, "", "dl-mob-items"));
 
     // Aliveness
     body.appendChild(H.sectionTitle("Aliveness"));
@@ -663,7 +678,7 @@
     body.appendChild(H.sectionTitle("Hooks"));
     body.appendChild(H.textField("Script tag", "scriptTag", detail.scriptTag));
     body.appendChild(H.selectField("Behavior archetype", "behaviorArchetype", detail.behaviorArchetype, [""].concat(enums.behaviorArchetypes || [])));
-    body.appendChild(H.idRowsField("Buff ids", "buffIds", detail.buffIds));
+    body.appendChild(H.idRowsField("Buff ids", "buffIds", detail.buffIds, "", "dl-mob-buffs"));
     body.appendChild(H.chipsField("Quest flags", "questFlags", detail.questFlags));
     body.appendChild(H.chipsField("Spawn mutations", "spawnMutations", detail.spawnMutations));
     body.appendChild(H.numField("Mutation chance %", "mutationChance", detail.mutationChance));

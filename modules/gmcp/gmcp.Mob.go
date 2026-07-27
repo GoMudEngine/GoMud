@@ -23,6 +23,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
@@ -157,6 +158,7 @@ type mobEnums struct {
 	SubmissionPolicies []string          `json:"submissionPolicies"`
 	WornSlots          []string          `json:"wornSlots"`
 	Groups             []string          `json:"groups"` // observed values across existing mobs, as suggestions
+	Buffs              []idName          `json:"buffs"`  // id pickers (epic followup: no more bare-numeric buff ids)
 }
 
 type mobDetail struct {
@@ -741,6 +743,12 @@ func collectMobEnums() mobEnums {
 		WornSlots:          wornSlotNames(),
 		Species:            map[string]string{},
 	}
+	for _, id := range buffs.GetAllBuffIds() {
+		if spec := buffs.GetBuffSpec(id); spec != nil {
+			e.Buffs = append(e.Buffs, idName{Id: id, Name: spec.Name})
+		}
+	}
+	sort.Slice(e.Buffs, func(i, j int) bool { return e.Buffs[i].Id < e.Buffs[j].Id })
 	for _, s := range species.GetAllSpecies() {
 		e.Species[fmt.Sprintf("%d", s.SpeciesId)] = s.Name
 	}
