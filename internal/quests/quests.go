@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -327,7 +326,7 @@ func LoadDataFiles() {
 
 	start := time.Now()
 
-	dataPath := configs.GetFilePathsConfig().DataFiles.String() + `/quests`
+	dataPath := questsDataRoot()
 	tmpQuests, err := fileloader.LoadAllFlatFiles[int, *Quest](dataPath)
 	if err != nil {
 		panic(errors.Wrap(err, `filepath: `+dataPath))
