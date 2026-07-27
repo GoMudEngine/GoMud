@@ -56,15 +56,25 @@ type EvalContext struct {
 
 // NodeDef is the raw YAML definition of a node, parsed before
 // being compiled into a Node.
+//
+// Note is a durable per-node home for design rationale (5d editor):
+// marshal-based writers drop `#` comments, so rationale that should
+// survive an editor save lives here. Stripped from runtime params by
+// cleanParams (it's in knownFields).
+//
+// json tags mirror the yaml names — the 5d editor's wire contract.
+// encoding/json has no inline, so on the wire Params travels as an
+// explicit "params" object; the yaml marshal re-inlines it.
 type NodeDef struct {
-	Type     string         `yaml:"type"`
-	Event    string         `yaml:"event,omitempty"`
-	Children []NodeDef      `yaml:"children,omitempty"`
-	Check    string         `yaml:"check,omitempty"`
-	Do       string         `yaml:"do,omitempty"`
-	Mod      string         `yaml:"mod,omitempty"`
-	Child    *NodeDef       `yaml:"child,omitempty"`
-	Params   map[string]any `yaml:",inline"`
+	Type     string         `yaml:"type" json:"type"`
+	Event    string         `yaml:"event,omitempty" json:"event,omitempty"`
+	Children []NodeDef      `yaml:"children,omitempty" json:"children,omitempty"`
+	Check    string         `yaml:"check,omitempty" json:"check,omitempty"`
+	Do       string         `yaml:"do,omitempty" json:"do,omitempty"`
+	Mod      string         `yaml:"mod,omitempty" json:"mod,omitempty"`
+	Note     string         `yaml:"note,omitempty" json:"note,omitempty"`
+	Child    *NodeDef       `yaml:"child,omitempty" json:"child,omitempty"`
+	Params   map[string]any `yaml:",inline" json:"params,omitempty"`
 }
 
 // TreeDef is the top-level YAML structure for archetype + room +
@@ -78,17 +88,19 @@ type NodeDef struct {
 // DefaultGoals is chunk-4.3 archetype metadata: default goals seeded
 // onto fresh mobs whose template references this archetype. Consumed
 // by internal/goals/ via the SetArchetypeDefaultsLookup callback.
+// Notes is the file-level counterpart of NodeDef.Note (5d editor).
 type TreeDef struct {
-	Tree         NodeDef            `yaml:"tree"`
-	GoalWeights  map[string]float64 `yaml:"goal_weights,omitempty"`  // chunk 4.2
-	DefaultGoals []GoalDefault      `yaml:"default_goals,omitempty"` // chunk 4.3
+	Notes        string             `yaml:"notes,omitempty" json:"notes,omitempty"`
+	Tree         NodeDef            `yaml:"tree" json:"tree"`
+	GoalWeights  map[string]float64 `yaml:"goal_weights,omitempty" json:"goal_weights,omitempty"`   // chunk 4.2
+	DefaultGoals []GoalDefault      `yaml:"default_goals,omitempty" json:"default_goals,omitempty"` // chunk 4.3
 }
 
 // GoalDefault declares one default goal to seed on a fresh mob whose
 // template uses this archetype. Consumed by internal/goals/ via the
 // SetArchetypeDefaultsLookup callback. Chunk 4.3.
 type GoalDefault struct {
-	Type     string         `yaml:"type"`
-	Priority int            `yaml:"priority"`
-	Params   map[string]any `yaml:"params,omitempty"`
+	Type     string         `yaml:"type" json:"type"`
+	Priority int            `yaml:"priority" json:"priority"`
+	Params   map[string]any `yaml:"params,omitempty" json:"params,omitempty"`
 }

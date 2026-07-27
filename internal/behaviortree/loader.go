@@ -16,6 +16,7 @@ var knownFields = map[string]struct{}{
 	"check":    {},
 	"do":       {},
 	"mod":      {},
+	"note":     {},
 	"child":    {},
 }
 
