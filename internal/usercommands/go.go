@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/conversationadapter"
 	"github.com/GoMudEngine/GoMud/internal/conversations"
+	"github.com/GoMudEngine/GoMud/internal/dialogue"
 	"github.com/GoMudEngine/GoMud/internal/dice"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/exit"
@@ -691,6 +692,41 @@ func Go(rest string, user *users.UserRecord, room *rooms.Room, flags events.Even
 						m.Character.CancelBuffsWithFlag(buffs.Sleeping)
 						mobs.OnSleeperWoken(&m.Character)
 					}
+				}
+			}
+
+			// 5a: NPC greetings. The first unoccupied NPC with an authored
+			// greeting for its current mood welcomes the arriving player —
+			// once per mob instance per player per boot, at most one greeting
+			// per entry, and never for a hidden player: being hailed by name
+			// would silently defeat stealth. IsHidden() is checked fresh here
+			// rather than reusing move-time isSneaking, because a reveal
+			// during the move (spotted by a hidden-mob check) should restore
+			// the greeting. Runs before the conversation boost so the player
+			// is welcomed before NPCs start talking amongst themselves.
+			if !user.Character.IsHidden() {
+				for _, greeterInstId := range destRoom.GetMobs() {
+					gMob := mobs.GetInstance(greeterInstId)
+					if gMob == nil {
+						continue
+					}
+					if dialogue.HasGreeted(greeterInstId, user.UserId) {
+						continue
+					}
+					if !conversations.IsFullyIdle(conversationadapter.AdaptMob(gMob)) {
+						continue
+					}
+					df := dialogue.Load(int(gMob.MobId), gMob.Zone)
+					if df == nil || len(df.Greetings) == 0 {
+						continue
+					}
+					text, ok := dialogue.PickGreeting(df.Greetings, dialogue.GetMood(greeterInstId, df.DefaultMood))
+					if !ok {
+						continue
+					}
+					dialogue.MarkGreeted(greeterInstId, user.UserId)
+					gMob.Command(`say ` + text)
+					break // at most one greeting per entry (measured: 9 two-greeter rooms, none higher)
 				}
 			}
 
