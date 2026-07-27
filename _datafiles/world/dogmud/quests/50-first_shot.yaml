@@ -24,7 +24,6 @@ description: >-
   Ready your sling and put a stone into the straw butt at the end of the
   range.
 secret: false
-linear: true
 
 steps:
   - id: start

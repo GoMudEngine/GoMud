@@ -20,7 +20,6 @@ description: >-
   adept still casts. It is called the Unfolded. Orrin says it cannot be
   reasoned with and cannot be left -- it has to be out-cast.
 secret: false
-linear: true
 
 steps:
   - id: start

@@ -4,7 +4,6 @@ description: A cudgel, a training dummy, and Drillmaster Vorn's Drill Yard --
   learn the four pillars of combat there before you take your bruises
   somewhere they can kill you.
 secret: false
-linear: true
 
 steps:
   - id: start

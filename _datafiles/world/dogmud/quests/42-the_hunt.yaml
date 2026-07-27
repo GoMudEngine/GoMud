@@ -23,7 +23,6 @@ description: >-
   a pronghorn for its meat, rest rough in the field to keep your strength,
   and cook what you killed over his fire.
 secret: false
-linear: true
 
 steps:
   - id: start

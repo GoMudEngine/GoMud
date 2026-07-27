@@ -16,7 +16,6 @@ description: >-
   way of the folk waits with her -- mostly the way of asking, of listening,
   and of knowing where to look a thing up.
 secret: false
-linear: true
 
 steps:
   - id: start

@@ -22,7 +22,6 @@ description: >-
   pack has to be broken at its head. Track it to the den, fight through
   the hounds, and put the alpha down.
 secret: false
-linear: true
 
 steps:
   - id: start

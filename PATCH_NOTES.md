@@ -1,5 +1,25 @@
 # DOGMud Patch Notes
 
+## 2026-07-27 — One ledger for the tasks (housekeeping)
+
+Every task in the world was, until today, read twice from the same page by
+two different clerks — one who paid out the rewards, one who watched for the
+deeds that advance them — each keeping their own ledger and each blind to
+half of what the other read. They agreed in practice, but nothing *made*
+them agree, and the seam between them was where mistakes liked to hide: a
+reward written in the wrong dialect of key was simply never paid, and no one
+was told.
+
+Now there is one ledger and one clerk. Every field of every task is read
+once, checked on reading, and shared. A whole class of silent mistake —
+words written in a task file that nothing would ever read — has gone from
+"caught months later, maybe" to "cannot be written at all"; the watchman that
+guards against such dead words now stands a much shorter wall, with nothing
+grandfathered behind it. Twenty-nine lines of dead instruction were swept
+out of the task files while the floor was up. Nothing changes for players;
+every task reads, advances, and pays exactly as before — that exact sameness
+was proven file by file before the old ledgers were burned.
+
 ## 2026-07-27 — Words put in mouths (staff)
 
 The mob editor learns to open an NPC's **dialogue** — everything a townsperson

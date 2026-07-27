@@ -21,7 +21,6 @@ description: >-
   He will teach you to cast with a fight on you -- to hold a thought steady
   while the world tries to knock it loose.
 secret: false
-linear: true
 
 steps:
   - id: start

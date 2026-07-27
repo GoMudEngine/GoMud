@@ -7,7 +7,6 @@ description: >-
   hedgerow bandit on the road, and a Reach-touched thing out in the
   Empty Reach beyond.
 secret: false
-linear: true
 
 steps:
   - id: start

@@ -17,7 +17,6 @@ description: >-
   the ground there is a book if you can read it. Pick up the trail of a
   steppe hare and track it, and forage the steppe for what it offers.
 secret: false
-linear: true
 
 steps:
   - id: start

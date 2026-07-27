@@ -5,7 +5,6 @@ description: >-
   south approach to the ford. She has asked you to put down the marsh
   adder that lairs there.
 secret: false
-linear: true
 
 steps:
   - id: start

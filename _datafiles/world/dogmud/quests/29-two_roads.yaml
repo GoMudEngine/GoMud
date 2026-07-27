@@ -25,7 +25,6 @@ description: >-
   The pool has opened you. Two roads lead on from Pothole Coulee -- learn the
   town with Crier Toke, or leave through Warden Esk's arch. Choose one.
 secret: false
-linear: true
 
 steps:
   - id: start

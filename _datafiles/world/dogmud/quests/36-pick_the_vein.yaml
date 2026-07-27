@@ -32,7 +32,6 @@ description: >-
   He has asked you to clear them out and bring back proof the vein
   can be worked.
 secret: false
-linear: true
 
 steps:
   - id: start

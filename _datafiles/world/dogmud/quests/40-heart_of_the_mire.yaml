@@ -24,7 +24,6 @@ description: >-
   says something old has gathered at the heart of it. Brew your kit, fill
   your bandolier, and go put it down.
 secret: false
-linear: true
 
 steps:
   - id: start
