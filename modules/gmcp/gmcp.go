@@ -485,6 +485,7 @@ func (g *GMCPModule) HandleIAC(connectionId uint64, iacCmd []byte) bool {
 			`Build.Exit.Add`, `Build.Exit.Remove`, `Build.Room.Get`, `Build.Room.List`, `Build.Map.Request`,
 			`Build.Zone.Create`, `Build.Zone.List`, `Build.Zone.Get`, `Build.Zone.Update`, `Build.Zone.Delete`, `Build.Zone.Rename`,
 			`Build.Dialogue.Get`, `Build.Dialogue.Update`, `Build.Dialogue.Create`, `Build.Dialogue.Delete`,
+			`Build.Quest.List`, `Build.Quest.Get`, `Build.Quest.Update`, `Build.Quest.Create`, `Build.Quest.Delete`,
 			`Build.Item.List`, `Build.Item.Get`, `Build.Item.Create`, `Build.Item.Update`, `Build.Item.Delete`,
 			`Build.Mob.List`, `Build.Mob.Get`, `Build.Mob.Create`, `Build.Mob.Update`, `Build.Mob.Delete`, `Build.Mob.Spawn`:
 			events.AddToQueue(GMCPBuildOp{
