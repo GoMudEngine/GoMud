@@ -38,18 +38,19 @@ const (
 
 // BuildResult is echoed to the client after every mutation (as Build.Result).
 type BuildResult struct {
-	Ok        bool                `json:"ok"`
-	Error     string              `json:"error,omitempty"`
-	RoomId    int                 `json:"roomId,omitempty"`    // e.g. the newly created room, or the affected room
-	ItemId    int                 `json:"itemId,omitempty"`    // e.g. the created/updated item
-	Refs      []itemRef           `json:"refs,omitempty"`      // Build.Item.Delete: what still references a blocked item
-	MobId     int                 `json:"mobId,omitempty"`     // e.g. the created/updated/spawned mob
-	MobRefs   []mobRefEntry       `json:"mobRefs,omitempty"`   // Build.Mob.Delete: what still references a blocked mob
-	ZoneRefs  []rooms.ZoneBlocker `json:"zoneRefs,omitempty"`  // Build.Zone.Delete: what blocks a delete
-	Message   string              `json:"message,omitempty"`   // e.g. Build.Mob.Spawn's "<name> spawned in room <id>"
-	Warnings  []string            `json:"warnings,omitempty"`  // non-blocking validation notes (Build.Dialogue.Update first)
-	QuestId   int                 `json:"questId,omitempty"`   // e.g. the created/updated quest
-	QuestRefs []questRefEntry     `json:"questRefs,omitempty"` // Build.Quest.Delete: what still references a blocked quest
+	Ok           bool                `json:"ok"`
+	Error        string              `json:"error,omitempty"`
+	RoomId       int                 `json:"roomId,omitempty"`       // e.g. the newly created room, or the affected room
+	ItemId       int                 `json:"itemId,omitempty"`       // e.g. the created/updated item
+	Refs         []itemRef           `json:"refs,omitempty"`         // Build.Item.Delete: what still references a blocked item
+	MobId        int                 `json:"mobId,omitempty"`        // e.g. the created/updated/spawned mob
+	MobRefs      []mobRefEntry       `json:"mobRefs,omitempty"`      // Build.Mob.Delete: what still references a blocked mob
+	ZoneRefs     []rooms.ZoneBlocker `json:"zoneRefs,omitempty"`     // Build.Zone.Delete: what blocks a delete
+	Message      string              `json:"message,omitempty"`      // e.g. Build.Mob.Spawn's "<name> spawned in room <id>"
+	Warnings     []string            `json:"warnings,omitempty"`     // non-blocking validation notes (Build.Dialogue.Update first)
+	QuestId      int                 `json:"questId,omitempty"`      // e.g. the created/updated quest
+	QuestRefs    []questRefEntry     `json:"questRefs,omitempty"`    // Build.Quest.Delete: what still references a blocked quest
+	BehaviorRefs []string            `json:"behaviorRefs,omitempty"` // Build.Behavior.Delete: what still references a blocked archetype
 }
 
 func buildErr(format string, args ...any) BuildResult {
@@ -471,6 +472,50 @@ func (g *GMCPModule) handleBuildOp(e events.Event) events.ListenerReturn {
 		sendBuildResult(uid, res)
 		if res.Ok {
 			sendGMCP(uid, `Build.Quests`, buildQuestList(realQuestDeps()))
+		}
+
+	case `Build.Behavior.List`:
+		sendGMCP(uid, `Build.Behaviors`, buildBehaviorList(realBehaviorDeps()))
+	case `Build.Behavior.Get`:
+		var req behaviorGetReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Behavior.Get payload"))
+			break
+		}
+		detail, _ := buildBehaviorGet(realBehaviorDeps(), req)
+		sendGMCP(uid, `Build.Behavior`, detail)
+	case `Build.Behavior.Update`:
+		var req behaviorUpdateReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Behavior.Update payload"))
+			break
+		}
+		sendBuildResult(uid, buildBehaviorUpdate(realBehaviorDeps(), req))
+	case `Build.Behavior.Create`:
+		var req behaviorCreateReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Behavior.Create payload"))
+			break
+		}
+		res := buildBehaviorCreate(realBehaviorDeps(), req)
+		sendBuildResult(uid, res)
+		if res.Ok {
+			sendGMCP(uid, `Build.Behaviors`, buildBehaviorList(realBehaviorDeps()))
+			getReq := behaviorGetReq{Kind: req.Kind, Name: req.Name, MobId: req.MobId, RoomId: req.RoomId, Zone: req.Zone}
+			if detail, ok := buildBehaviorGet(realBehaviorDeps(), getReq); ok {
+				sendGMCP(uid, `Build.Behavior`, detail)
+			}
+		}
+	case `Build.Behavior.Delete`:
+		var req behaviorGetReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Behavior.Delete payload"))
+			break
+		}
+		res := buildBehaviorDelete(realBehaviorDeps(), req)
+		sendBuildResult(uid, res)
+		if res.Ok {
+			sendGMCP(uid, `Build.Behaviors`, buildBehaviorList(realBehaviorDeps()))
 		}
 
 	case `Build.Zone.Rename`:
