@@ -41,6 +41,10 @@ func init() {
 		archetypeGoalWeights:  make(map[string]map[string]float64),
 		archetypeDefaultGoals: make(map[string][]GoalDefault),
 	}
+	// A mob rename/re-zone moves its behavior file (the path embeds both) —
+	// registered here because mobs cannot import behaviortree.
+	mobs.OnMobFileRename = MoveMobBehaviorFile
+
 	// Register the attack rejection callback so FireAttackRejected can fire btree events
 	mobs.AttackRejectedTryMobBehavior = func(mobInstanceId int, ctx mobs.EventContext) bool {
 		return TryMobBehavior(mobInstanceId, EventContext{
@@ -167,6 +171,34 @@ func (e *Engine) LoadArchetype(name string, path string) error {
 	delete(e.noArchetype, name)
 	e.mu.Unlock()
 	return nil
+}
+
+// EvictArchetype removes an archetype from every cache and sets the
+// negative entry — the delete-side of the 5d editor's hot-reload contract.
+func (e *Engine) EvictArchetype(name string) {
+	e.mu.Lock()
+	delete(e.archetypes, name)
+	delete(e.archetypeGoalWeights, name)
+	delete(e.archetypeDefaultGoals, name)
+	e.noArchetype[name] = true
+	e.mu.Unlock()
+}
+
+// EvictTree removes a per-mob tree from the cache and sets the negative —
+// after a delete, "no tree" is the truth (archetype fallback).
+func (e *Engine) EvictTree(mobId int) {
+	e.mu.Lock()
+	delete(e.trees, mobId)
+	e.noTree[mobId] = true
+	e.mu.Unlock()
+}
+
+// EvictRoomTree removes a room tree from the cache and sets the negative.
+func (e *Engine) EvictRoomTree(roomId int) {
+	e.mu.Lock()
+	delete(e.roomTrees, roomId)
+	e.noRoomTree[roomId] = true
+	e.mu.Unlock()
 }
 
 // GetArchetypeGoalWeights returns the cached goal_weights map for the

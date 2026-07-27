@@ -678,6 +678,20 @@
     body.appendChild(H.sectionTitle("Hooks"));
     body.appendChild(H.textField("Script tag", "scriptTag", detail.scriptTag));
     body.appendChild(H.selectField("Behavior archetype", "behaviorArchetype", detail.behaviorArchetype, [""].concat(enums.behaviorArchetypes || [])));
+    // 5d: jump into the behavior editor for this mob's AI.
+    var btArchBtn = ce("button", { "class": "mini", text: "Edit archetype tree…" });
+    btArchBtn.addEventListener("click", function () {
+      var arch = Panel.fields && Panel.fields.behaviorArchetype ? Panel.fields.behaviorArchetype() : detail.behaviorArchetype;
+      if (!arch) { toast("This mob has no behavior archetype set.", true); return; }
+      if (window.Builder.setMode) window.Builder.setMode("behaviors");
+      gmcp("Build.Behavior.Get", { kind: "archetype", name: arch });
+    });
+    var btMobBtn = ce("button", { "class": "mini", text: "Mob tree…", style: "margin-left:6px;" });
+    btMobBtn.addEventListener("click", function () {
+      if (window.Builder.setMode) window.Builder.setMode("behaviors");
+      gmcp("Build.Behavior.Get", { kind: "mob", mobId: detail.mobId });
+    });
+    body.appendChild(ce("div", { style: "margin:4px 0 8px;" }, [btArchBtn, btMobBtn]));
     body.appendChild(H.idRowsField("Buff ids", "buffIds", detail.buffIds, "", "dl-mob-buffs"));
     body.appendChild(H.chipsField("Quest flags", "questFlags", detail.questFlags));
     body.appendChild(H.chipsField("Spawn mutations", "spawnMutations", detail.spawnMutations));

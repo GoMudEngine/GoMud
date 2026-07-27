@@ -1,6 +1,7 @@
 package behaviortree
 
 import (
+	"sort"
 	"time"
 )
 
@@ -203,4 +204,14 @@ func (n *ActionNode) Evaluate(ctx *EvalContext) Result {
 		}
 	}
 	return n.Fn(n.Params, ctx)
+}
+
+// ActionNames returns every registered name sorted — the 5d editor enums.
+func ActionNames() []string {
+	out := make([]string, 0, len(actionRegistry))
+	for k := range actionRegistry {
+		out = append(out, k)
+	}
+	sort.Strings(out)
+	return out
 }
