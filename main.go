@@ -262,23 +262,33 @@ func main() {
 	isCopyover := flags.CopyoverFd() >= 0
 
 	if !isCopyover {
-		timeStart := time.Now()
 		idx := users.InitUserIndex()
 		if !idx.Exists() {
 			// Since it doesn't exist yet, that's a good indication we should do a quick format migration check
 			users.DoUserMigrations()
 		}
+	}
+
+	// One lightweight scan of the user files (userid, username, character
+	// name) feeds both the user index and the character index, instead of
+	// each index fully parsing every user record on its own.
+	scanStart := time.Now()
+	userScan := users.ScanUserFiles()
+
+	if !isCopyover {
+		idx := users.GetUserIndex()
 		if idx.IsUpToDate() {
-			mudlog.Info("UserIndex", "info", "User index up to date.", "users", idx.GetMetaData().RecordCount, "time taken", time.Since(timeStart))
+			mudlog.Info("UserIndex", "info", "User index up to date.", "users", idx.GetMetaData().RecordCount, "time taken", time.Since(scanStart))
 		} else {
-			idx.Create()
-			idx.Rebuild()
-			mudlog.Info("UserIndex", "info", "User index recreated.", "users", idx.GetMetaData().RecordCount, "time taken", time.Since(timeStart))
+			if err := idx.RebuildFromScan(userScan); err != nil {
+				mudlog.Error("UserIndex", "error", "rebuild failed", "details", err)
+			}
+			mudlog.Info("UserIndex", "info", "User index recreated.", "users", idx.GetMetaData().RecordCount, "time taken", time.Since(scanStart))
 		}
 	}
 
-	users.GetCharacterIndex().Rebuild()
-	mudlog.Info("CharacterIndex", "info", "Active character names indexed.", "characters", users.GetCharacterIndex().Len())
+	users.GetCharacterIndex().RebuildFromScan(userScan)
+	mudlog.Info("CharacterIndex", "info", "Active character names indexed.", "characters", users.GetCharacterIndex().Len(), "time taken", time.Since(scanStart))
 
 	// Load the round count from the file
 	if !isCopyover {
