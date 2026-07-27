@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/configs"
 	"gopkg.in/yaml.v2"
 )
 
@@ -196,4 +197,100 @@ func RawFileHasHandComments(path string) bool {
 		}
 	}
 	return false
+}
+
+// behaviorsRoot is the top-level behaviors/ directory.
+func behaviorsRoot() string {
+	return filepath.Join(configs.GetFilePathsConfig().DataFiles.String(), "behaviors")
+}
+
+// LoadTreeDef parses a tree file WITHOUT compiling it — the editor's Get
+// path (the compile happens on save; a broken file should still open so it
+// can be fixed).
+func LoadTreeDef(path string) (TreeDef, error) {
+	var d TreeDef
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return d, err
+	}
+	if err := yaml.Unmarshal(data, &d); err != nil {
+		return d, fmt.Errorf("parse error: %w", err)
+	}
+	return d, nil
+}
+
+// TreeFileRow describes one on-disk behavior file for the editor's list.
+type TreeFileRow struct {
+	Kind   string // archetype | mob | room
+	Name   string // archetype name (archetype kind)
+	MobId  int    // mob kind
+	RoomId int    // room kind
+	Zone   string // mob/room kinds
+	Path   string
+}
+
+// ListTreeFiles walks the behaviors tree and returns every archetype,
+// per-mob, and room tree file.
+func ListTreeFiles() []TreeFileRow {
+	rows := []TreeFileRow{}
+	root := behaviorsRoot()
+
+	// archetypes/<name>.yaml
+	if entries, err := os.ReadDir(filepath.Join(root, "archetypes")); err == nil {
+		for _, e := range entries {
+			if e.IsDir() || filepath.Ext(e.Name()) != ".yaml" {
+				continue
+			}
+			name := strings.TrimSuffix(e.Name(), ".yaml")
+			rows = append(rows, TreeFileRow{Kind: "archetype", Name: name,
+				Path: filepath.Join(root, "archetypes", e.Name())})
+		}
+	}
+
+	zoneDirs, err := os.ReadDir(root)
+	if err != nil {
+		return rows
+	}
+	for _, zd := range zoneDirs {
+		if !zd.IsDir() || zd.Name() == "archetypes" || zd.Name() == "rooms" {
+			continue
+		}
+		// <zone>/<mobId>-<name>.yaml
+		if files, err := os.ReadDir(filepath.Join(root, zd.Name())); err == nil {
+			for _, f := range files {
+				if f.IsDir() || filepath.Ext(f.Name()) != ".yaml" {
+					continue
+				}
+				var mobId int
+				if _, err := fmt.Sscanf(f.Name(), "%d-", &mobId); err != nil || mobId <= 0 {
+					continue
+				}
+				rows = append(rows, TreeFileRow{Kind: "mob", MobId: mobId, Zone: zd.Name(),
+					Path: filepath.Join(root, zd.Name(), f.Name())})
+			}
+		}
+	}
+
+	// rooms/<zone>/<roomId>.yaml
+	if roomZones, err := os.ReadDir(filepath.Join(root, "rooms")); err == nil {
+		for _, zd := range roomZones {
+			if !zd.IsDir() {
+				continue
+			}
+			if files, err := os.ReadDir(filepath.Join(root, "rooms", zd.Name())); err == nil {
+				for _, f := range files {
+					if f.IsDir() || filepath.Ext(f.Name()) != ".yaml" {
+						continue
+					}
+					var roomId int
+					if _, err := fmt.Sscanf(f.Name(), "%d.yaml", &roomId); err != nil || roomId <= 0 {
+						continue
+					}
+					rows = append(rows, TreeFileRow{Kind: "room", RoomId: roomId, Zone: zd.Name(),
+						Path: filepath.Join(root, "rooms", zd.Name(), f.Name())})
+				}
+			}
+		}
+	}
+	return rows
 }

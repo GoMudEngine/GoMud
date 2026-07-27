@@ -116,3 +116,8 @@ Screenshot *.png
 
 # Moderation living state (petition queue + ban lists) — persist on prod, never commit
 _datafiles/world/dogmud/moderation/
+
+
+# Test-run artifacts: some package tests write relative _datafiles/ paths
+# before chdir'ing (e.g. behaviortree crate persistence) — never commit them.
+internal/**/_datafiles/

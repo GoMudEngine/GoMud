@@ -1,5 +1,7 @@
 package behaviortree
 
+import "sort"
+
 // ConditionFunc is the signature for all registered condition checks.
 type ConditionFunc func(params map[string]any, ctx *EvalContext) Result
 
@@ -68,4 +70,14 @@ type ConditionNode struct {
 
 func (n *ConditionNode) Evaluate(ctx *EvalContext) Result {
 	return n.Fn(n.Params, ctx)
+}
+
+// ConditionNames returns every registered name sorted — the 5d editor enums.
+func ConditionNames() []string {
+	out := make([]string, 0, len(conditionRegistry))
+	for k := range conditionRegistry {
+		out = append(out, k)
+	}
+	sort.Strings(out)
+	return out
 }

@@ -250,3 +250,34 @@ func TestArchetypeReferences_FindsTemplatesAndShiftTables(t *testing.T) {
 		t.Fatalf("unreferenced archetype should be deletable, got %v", refs)
 	}
 }
+
+func TestListTreeFiles_FindsAllThreeKinds(t *testing.T) {
+	overrideBTDataFilesDir(t)
+	e := GetEngine()
+	t.Cleanup(func() { e.EvictArchetype("lister_probe"); e.EvictTree(424244); e.EvictRoomTree(535354) })
+
+	if _, err := SaveArchetype("lister_probe", validProbeTree()); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := SaveMobTree(424244, "Probe Zone", "Lister Probe", validProbeTree()); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := SaveRoomTree(535354, "Probe Zone", validProbeTree()); err != nil {
+		t.Fatal(err)
+	}
+
+	kinds := map[string]bool{}
+	for _, r := range ListTreeFiles() {
+		switch {
+		case r.Kind == "archetype" && r.Name == "lister_probe":
+			kinds["archetype"] = true
+		case r.Kind == "mob" && r.MobId == 424244 && r.Zone == "probe_zone":
+			kinds["mob"] = true
+		case r.Kind == "room" && r.RoomId == 535354:
+			kinds["room"] = true
+		}
+	}
+	if len(kinds) != 3 {
+		t.Fatalf("lister missed kinds: %v", kinds)
+	}
+}
