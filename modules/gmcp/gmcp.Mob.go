@@ -26,6 +26,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
+	"github.com/GoMudEngine/GoMud/internal/dialogue"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/llm"
@@ -161,6 +162,8 @@ type mobEnums struct {
 type mobDetail struct {
 	mobUpdateReq
 	Enums mobEnums `json:"enums"`
+	// HasDialogue drives the mob form's Dialogue button label (5b).
+	HasDialogue bool `json:"hasDialogue"`
 }
 
 // mobListRow is one row of Build.Mobs.
@@ -279,7 +282,11 @@ func buildMobGet(d mobDeps, mobId int) (mobDetail, bool) {
 	if m == nil {
 		return mobDetail{}, false
 	}
-	return mobDetail{mobUpdateReq: mobToReq(m), Enums: collectMobEnums()}, true
+	// dialogue.Load is NOT side-effect-free: for a dialogueless mob it sets
+	// the nil sentinel. That is correct — CreateNewDialogueFile clears it —
+	// but do not "optimize" this call thinking it is a pure read.
+	hasDlg := dialogue.Load(mobId, m.Zone) != nil
+	return mobDetail{mobUpdateReq: mobToReq(m), Enums: collectMobEnums(), HasDialogue: hasDlg}, true
 }
 
 // reqToMob starts from a copy of the loaded template so anything the form

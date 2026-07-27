@@ -17,6 +17,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/buffs"
+	"github.com/GoMudEngine/GoMud/internal/dialogue"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/gamelock"
@@ -390,6 +391,42 @@ func (g *GMCPModule) handleBuildOp(e events.Event) events.ListenerReturn {
 		}
 		sendBuildResult(uid, res)
 		sendZoneList(uid)
+	case `Build.Dialogue.Get`:
+		var req dialogueGetReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Dialogue.Get payload"))
+			break
+		}
+		detail, _ := buildDialogueGet(realDialogueDeps(), req.MobId, req.Zone)
+		sendGMCP(uid, `Build.Dialogue`, detail)
+	case `Build.Dialogue.Update`:
+		var df dialogue.DialogueFile
+		if json.Unmarshal(evt.Payload, &df) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Dialogue.Update payload"))
+			break
+		}
+		sendBuildResult(uid, buildDialogueUpdate(realDialogueDeps(), df))
+	case `Build.Dialogue.Create`:
+		var req dialogueGetReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Dialogue.Create payload"))
+			break
+		}
+		res := buildDialogueCreate(realDialogueDeps(), req.MobId, req.Zone)
+		sendBuildResult(uid, res)
+		if res.Ok {
+			if detail, ok := buildDialogueGet(realDialogueDeps(), req.MobId, req.Zone); ok {
+				sendGMCP(uid, `Build.Dialogue`, detail)
+			}
+		}
+	case `Build.Dialogue.Delete`:
+		var req dialogueGetReq
+		if json.Unmarshal(evt.Payload, &req) != nil {
+			sendBuildResult(uid, buildErr("bad Build.Dialogue.Delete payload"))
+			break
+		}
+		sendBuildResult(uid, buildDialogueDelete(realDialogueDeps(), req.MobId, req.Zone))
+
 	case `Build.Zone.Rename`:
 		var req zoneRenameReq
 		if json.Unmarshal(evt.Payload, &req) != nil {
