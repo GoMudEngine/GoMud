@@ -1,98 +1,98 @@
 # Quest Editor (Admin Web-Building 5c) — Design
 
+> **Revised 2026-07-27** after the 5c-pre unification landed (`d305ab221`).
+> The original draft spent its hardest sections working around quest YAML's
+> dual parse; that machinery is gone. See
+> `2026-07-27-quest-unification-5c-pre-design.md` for what changed underneath.
+
 **Goal:** a fifth `/build` mode — Quests — giving admins full-parity authoring
 of quest files: identity, steps, rewards, flag declarations, and the complete
 trigger DSL, plus create/delete with a reference guard. Saves are validated
-against the same rules the boot loader enforces (and more), and go live
-without a reboot.
+against the boot loader's own rules (and more), and go live without a reboot.
 
-## The architectural fact that shapes everything: dual parsing
+## Foundation (already true, courtesy of 5c-pre)
 
-Every quest YAML is parsed **twice by two different parsers**:
-
-1. **`internal/quests`** (yaml.v2, mostly TAG-LESS fields) — drives the
-   player-facing quest log and **pays rewards**
-   (`internal/hooks/Quest_HandleQuestUpdate.go` reads
-   `quests.GetQuest(...).Rewards`). Tag-less binding means the rewards block
-   only loads from **no-underscore keys**: `questid`, `gold`, `itemid`,
-   `buffid`, `skillinfo`, `spellid`, `playermessage`, `roommessage`,
-   `roomid`. Tagged exceptions take snake_case: `stat_info`, `recipe_info`,
-   `item_info`, `rep_faction`, `rep_amount`.
-2. **`internal/questengine`** (`QuestDef` in `types.go`, fully snake_case
-   tagged) — owns steps' `map_target`, `secret`, and the entire `triggers:`
-   DSL. Its `QuestRewards` struct is **vestigial** (nothing reads it;
-   verified), as are `chain_quest` (no reader — real chaining is the rewards
-   `questid`) and `linear` (no reader; 4 files set it to no effect).
-
-**Consequence for the writer:** the canonical emitted form is
-questengine-shaped YAML for everything EXCEPT the rewards block, which must
-use the quests-package no-underscore keys. A writer that naively marshals
-`QuestDef` would emit `item_id:` and silently un-pay every reward it touches
-— the exact silent-no-op class the reward-key gotcha memo warns about.
-
-**Decision:** re-tag `questengine.QuestRewards` to the no-underscore keys so
-both parsers agree on one canonical form forever (nothing reads the engine
-copy, so this changes no behavior; it kills the divergent-vocabulary class).
-Drop the dead `chain_quest` and `linear` fields from `QuestDef` (compiler
-sweep confirms no readers) and strip `linear:` from the 4 files in the
-canonicalization pass.
+- `quests.Quest` is THE definition — one explicitly-tagged parse, trigger DSL
+  included. The editor writer just marshals it; the silent-unpaid-reward
+  class is structurally dead.
+- **Marshal is a proven fixed point** over all 79 live files
+  (`internal/quests/roundtrip_test.go`), with section-survival and
+  rewards-identity guards. The writer inherits this as its safety net.
+- `(*Quest).Validate()` (events vocabulary incl. `command_issued`, non-empty
+  actions, duplicate/empty step ids, flag declarations, own-quest grant
+  tokens) runs on **every** fileloader parse — a file the writer emits cannot
+  boot-break the server for those rule classes.
+- questengine holds no state of its own beyond the trigger index built from
+  `quests.GetAllQuests()`; rebuilding it is one cheap call
+  (`questengine.LoadDataFiles()`, ~60ms for all 79).
+- Dead fields (`linear`, `chain_quest`) no longer exist; 29 dead `linear:`
+  lines are already stripped from content.
 
 ## Server side
 
-### Authoring struct and writer — `internal/questengine/save.go`
+### Writer — `internal/quests/save.go`
 
-`QuestDef` is the fuller shape, so the writer lives in questengine:
+The mob/dialogue-editor writer pattern, minus all format gymnastics:
 
-- `SaveQuestDef(q QuestDef) error` — validate, marshal, write to
-  `quests/<id>-<ConvertForFilename(name)>.yaml` (rename moves the file, mob
-  editor's old-path-first pattern), then **swap BOTH caches**: the
-  questengine engine's trigger index and the `internal/quests` package cache
-  (a small exported re-load hook in `internal/quests`, fed by re-parsing the
-  file just written — never by converting structs in memory, so the two
-  parsers stay the only source of truth).
+- `SaveQuest(q Quest) error` — run `q.Validate()`, marshal, write to
+  `quests/<id>-<ConvertForFilename(name)>.yaml` (a rename moves the file:
+  old-path-computed-first, mob editor's pattern), then swap the package
+  cache entry and re-register the quest's flags.
 - `CreateNewQuestFile(name string) (int, error)` — next free id from the
-  loaded cache max (id_inventory convention), skeleton with one `start` and
-  one `end` step and zero triggers; boot-safe by construction.
-- `DeleteQuestDef(questId int) error` — refuses while referenced (guard
-  below), removes file + both cache entries.
+  loaded cache max; skeleton with one `start` and one `end` step, zero
+  triggers; boot-safe by construction (must pass `Validate()`).
+- `DeleteQuest(questId int) error` — removes file + cache entry + flag
+  registrations. Reference guard lives at the gmcp layer (below), which
+  refuses before calling this.
 
-### Validation — extend the loader's own rules
+**Engine re-index:** `internal/quests` cannot call questengine (import
+direction). The gmcp handler calls `questengine.LoadDataFiles()` after every
+successful Save/Create/Delete — a full cheap rebuild, no new plumbing, and
+the index can never drift from the cache. Edits are live immediately: the
+next `Notify` walks the new index, and the quest log / dialogue-editor token
+enums read `quests.GetAllQuests()` fresh.
 
-Save-time validation calls the existing `validateQuestDef` (events
-vocabulary incl. `command_issued`, non-empty actions, duplicate/empty step
-ids, flag declarations, own-quest grant tokens) and extends it with
-registry-backed checks, **injected** per the 5b pattern so gmcp handler
-tests run without a world:
+**One-time churn caveat:** authored files are not in canonical marshal form
+(key order, indentation). The FIRST editor save of an old quest produces a
+one-time formatting diff; every save after that is minimal (fixed point).
+Same trade the room/mob/dialogue editors made — accepted, not fought.
 
-- cross-quest tokens in `has`/`missing`/`quest_granted`/rewards `questid`
-  resolve to real quest steps
-- `mob`/`item`/`room`/`buff` ids exist (triggers, conditions, actions,
-  `map_target`, `npc_say`, `spawn_*`, `teleport`, `apply_buff`)
-- `teach_spell`/rewards `spellid` is a real spell; skills, stats, recipe
-  ids, faction slugs valid
-- `set_flag`/`has_flag`/`missing_flag` keys+values declared (the boot
-  panic, moved to save time)
-- warnings (save succeeds, listed): a step no trigger grants and no
-  dialogue file grants; `map_target` room in a different zone than the
-  trigger rooms (likely typo); an `npc_say` mob that has no dialogue file.
+### Validation — `Validate()` plus injected registry checks
+
+`(*Quest).Validate()` covers the structural rules. The gmcp layer adds
+registry-backed checks via an injected `questValidators` struct (5b pattern —
+handler tests run with no world loaded):
+
+- cross-quest tokens in `has`/`missing`/`quest_granted`-token/rewards
+  `questid` resolve to real quest steps
+- `mob`/`item`/`room`/`buff` ids exist (trigger filters, conditions,
+  `map_target`, `npc_say` speakers, `spawn_*`, `teleport`, `apply_buff`)
+- `teach_spell`/rewards `spellid` is a real spell; skill names, stat names,
+  recipe ids, faction slugs valid
+- `set_flag`/`has_flag`/`missing_flag` keys+values declared — this is
+  `ValidateAllFlags`' boot PANIC moved to save time, so a bad save is
+  refused instead of taking the next boot down
+- warnings (save succeeds, amber list via `BuildResult.Warnings`): a step no
+  trigger and no dialogue file grants; an `npc_say` mob with no dialogue
+  file; `map_target` pointing at a room no trigger references (likely typo).
 
 ### Reference guard for delete
 
 Refuse deletion while anything references the quest, reporting each
 reference verbatim: dialogue files (`grantsQuest`, `questRequired`,
-`questExcluded`, `questFlagRequired/Excluded`, `setsQuestFlag` — via the 5b
-dialogue loader), other quests' triggers/conditions/rewards, and
-achievements YAML if it names quest tokens.
+`questExcluded`, `questFlagRequired/Excluded`, `setsQuestFlag` — walked via
+the 5b dialogue loader), other quests' triggers/conditions/rewards
+`questid`, and achievements YAML if it names quest tokens.
 
 ### GMCP — `Build.Quest.*` behind a `questDeps` seam
 
-`List` (id, name, secret, repeatable, step/trigger counts), `Get` (full
-QuestDef + rewards + enums), `Update`, `Create`, `Delete`. Enums payload:
-event/condition/action vocabularies with one-line descriptions, quest
-tokens, flag keys, moods of reward-relevant registries (items via the
-existing login-time prefetch, mobs, buffs, spells, skills, stats, recipes,
-factions). Routed through `GMCPBuildOp` on MainWorker behind `requireAdmin`,
-like every other Build verb. `BuildResult.Warnings` reused from 5b.
+`List` (id, name, secret, repeatable, step/trigger counts; hides id ≥
+1000000), `Get` (full Quest + enums), `Update`, `Create`, `Delete`. Enums
+payload: event/condition/action vocabularies with one-line descriptions,
+quest tokens (per-step, with quest names — same shape the dialogue editor
+uses), flag keys, and pickers for mobs, buffs, spells, skills, stats,
+recipes, factions (items ride the existing login-time `Build.Items`
+prefetch). Routed through `GMCPBuildOp` on MainWorker behind `requireAdmin`.
 
 ## Client side — `quests.js`, fifth mode
 
@@ -106,13 +106,12 @@ Inspector sections:
    row: id, description, hint, map target (zone→room picker, mirroring the
    mob editor's test-spawn picker; -1 = "quest giver" sentinel surfaced as
    a checkbox).
-3. **Rewards** — the 13 canonical fields with pickers/datalists; the panel
-   never shows raw yaml keys, so the no-underscore/snake_case split becomes
-   invisible to authors.
+3. **Rewards** — the canonical fields with pickers/datalists; the panel
+   never shows raw yaml keys.
 4. **Flags** — key / allowed values / description rows; the editor reminds
    that dialogue `setsQuestFlag` must match these.
-5. **Triggers** — ordered collapsible rows (5b's whole-row toggle shell).
-   Each: event select that shows only that event's filter fields
+5. **Triggers** — ordered collapsible rows (5b's whole-row toggle shell with
+   ▸/▾). Each: event select that shows only that event's filter fields
    (room/mob/item/skill/command/topic/noun/verb/quest_token), a conditions
    drawer (has/missing tokens with the token datalist, in_room, has_item,
    flags, gold, masterwork), and an **ordered actions list** — one sub-form
@@ -124,29 +123,21 @@ Wiring in `build.html`: Quests tab, mode routing, `Build.Result` dispatch,
 script tag. Same browser-cache caveat as every static-js change (hard
 refresh after deploy).
 
-## Canonicalization sweep + round-trip proof
-
-The 5b proof pattern over all 79 quest files: marshal must be a **fixed
-point** (second marshal byte-identical) and section-count guards
-(steps/triggers/actions/flags preserved), plus a rewards-equivalence check
-against the `internal/quests` parse so the writer can never silently un-pay
-a reward. The sweep strips the 4 dead `linear:` lines. Any file the writer
-would reorder/canonicalize is committed as churn ONCE here, so future saves
-diff cleanly.
-
 ## Testing & gates
 
-TDD throughout: fake `questDeps` for handlers, injected validators,
-writer cache-contract test, round-trip fixed-point over the live tree,
-refusal test per validation rule. Full suite + vet + panic-mode boot with
-instance wipe before handoff. Editing tooling ⇒ no adversarial content
-playtest owed; the user browser gate covers: edit a step hint and see it
-live in the quest log, add a trigger and fire it in-game, trip a refusal
-(unknown token / undeclared flag / snake_case never visible), delete guard
-naming a dialogue reference, create + immediately grant a new quest.
+TDD throughout: fake `questDeps` for handlers, injected validators, writer
+cache-contract test (save swaps cache + re-registers flags; delete removes
+both), refusal test per validation rule. The existing equivalence harness
+and round-trip fixed-point tests must stay green untouched. Full suite +
+vet + panic-mode boot with instance wipe before handoff. Editing tooling ⇒
+no adversarial content playtest owed; the user browser gate covers: edit a
+step hint and see it live in the quest log, add a trigger and fire it
+in-game without a reboot, trip a refusal (unknown token / undeclared flag),
+delete guard naming a dialogue reference, create + immediately grant a new
+quest.
 
 ## Out of scope
 
 The pinned general admin help page (after the epic); trigger *simulation*
 (dry-running a trigger against a fake player); editing achievements;
-`1000000-generic_quest.yaml` (template file — the list hides id ≥ 1000000).
+`1000000-generic_quest.yaml` (template file — hidden from the list).
