@@ -79,7 +79,6 @@ func seedTestQuests() *Engine {
 		QuestId:     3,
 		Name:        "The Scholar's Collection",
 		Description: "Collect items for the scholar.",
-		Linear:      false,
 		Steps: []QuestStep{
 			{Id: "3-start", Description: "Speak to the scholar"},
 			{Id: "3-totem", Description: "Deliver the totem"},
@@ -407,7 +406,6 @@ func seedCommandIssuedQuest() *Engine {
 	q := &QuestDef{
 		QuestId: 200,
 		Name:    "Command Issued Test Quest",
-		Linear:  false,
 		Steps: []QuestStep{
 			{Id: "200-start", Description: "Begin"},
 			{Id: "200-look", Description: "Look at the guide"},

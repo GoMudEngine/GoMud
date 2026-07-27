@@ -7,17 +7,27 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/configs"
 )
 
+// indexedTrigger pairs a definition trigger with the engine-assigned identity
+// the evaluator needs (visit tracking, tracing). Replaces the old pattern of
+// mutating unexported fields ON the definition struct at register time —
+// definitions are immutable shared data owned by internal/quests.
+type indexedTrigger struct {
+	def     *TriggerDef
+	questId int
+	trigId  string
+}
+
 // Engine holds quest definitions and a trigger index for fast lookup by event type.
 type Engine struct {
 	quests       map[int]*QuestDef
-	triggerIndex map[string][]*TriggerDef
+	triggerIndex map[string][]*indexedTrigger
 }
 
 // NewEngine creates an empty quest engine.
 func NewEngine() *Engine {
 	return &Engine{
 		quests:       make(map[int]*QuestDef),
-		triggerIndex: make(map[string][]*TriggerDef),
+		triggerIndex: make(map[string][]*indexedTrigger),
 	}
 }
 
@@ -26,9 +36,11 @@ func (e *Engine) RegisterQuest(q *QuestDef) {
 	e.quests[q.QuestId] = q
 	for i := range q.Triggers {
 		t := &q.Triggers[i]
-		t.questId = q.QuestId
-		t.trigId = fmt.Sprintf("q%d-t%d", q.QuestId, i)
-		e.triggerIndex[t.Event] = append(e.triggerIndex[t.Event], t)
+		e.triggerIndex[t.Event] = append(e.triggerIndex[t.Event], &indexedTrigger{
+			def:     t,
+			questId: q.QuestId,
+			trigId:  fmt.Sprintf("q%d-t%d", q.QuestId, i),
+		})
 	}
 }
 
@@ -86,7 +98,7 @@ func (e *Engine) evaluate(eventType string, details EventDetails, player PlayerS
 	triggers := e.triggerIndex[eventType]
 	for _, t := range triggers {
 		// Field matching
-		if !matchTriggerFields(t, details) {
+		if !matchTriggerFields(t.def, details) {
 			continue
 		}
 
@@ -96,7 +108,7 @@ func (e *Engine) evaluate(eventType string, details EventDetails, player PlayerS
 		}
 
 		// Condition evaluation
-		if !EvalConditions(t.Conditions, player) {
+		if !EvalConditions(t.def.Conditions, player) {
 			continue
 		}
 
@@ -110,7 +122,7 @@ func (e *Engine) evaluate(eventType string, details EventDetails, player PlayerS
 
 		// Check for item consumption on item_give events
 		if eventType == "item_give" {
-			for _, a := range t.Actions {
+			for _, a := range t.def.Actions {
 				if a.ConsumeItem > 0 {
 					result.ConsumeItem = true
 					break
@@ -169,10 +181,10 @@ func matchTriggerFields(t *TriggerDef, d EventDetails) bool {
 
 // executeActions runs all actions for a trigger with panic recovery per action.
 // It tracks granted tokens via the guard and returns the list of tokens granted.
-func (e *Engine) executeActions(t *TriggerDef, ctx ActionContext, guard *EvalGuard, userId int) []string {
+func (e *Engine) executeActions(t *indexedTrigger, ctx ActionContext, guard *EvalGuard, userId int) []string {
 	var granted []string
 
-	for i, a := range t.Actions {
+	for i, a := range t.def.Actions {
 		func() {
 			defer func() {
 				if r := recover(); r != nil {

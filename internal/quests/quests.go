@@ -28,56 +28,138 @@ type QuestFlagDef struct {
 	Description string   `yaml:"description,omitempty"`
 }
 
-// QuestReward — LOADER GOTCHA: the quest loader uses gopkg.in/yaml.v2, which
-// binds a TAG-LESS field to its lowercased name with NO underscore handling.
-// So the tag-less fields below load ONLY from no-underscore yaml keys in a
-// quest's `rewards:` block: use `itemid`, `skillinfo`, `buffid`,
-// `playermessage`, `roommessage`, `roomid`, `spellid`, `questid`. snake_case
-// keys (item_id, skill_info, player_message, ...) silently DO NOT load into
-// these fields. Older quests follow the no-underscore convention; a few newer
-// quests mistakenly used snake_case in their rewards block and those reward
-// fields silently no-op (latent cleanup, tracked separately). Tagged
-// exceptions DO take their snake_case key: stat_info, rep_faction, rep_amount.
+// QuestReward — every key is EXPLICITLY tagged with the key that has always
+// bound it. The no-underscore keys are historical yaml.v2 tag-less binding
+// (lowercased field name, no underscore handling), now pinned by tag; the
+// snake_case five were tagged all along. This vocabulary is canonical — the
+// 5c editor writer marshals exactly this. Keys are proven stable by the
+// equivalence harness in unification_equivalence_test.go.
 type QuestReward struct {
-	QuestId       string // new questId to give ( {id}-{step} format ); yaml key: questid
-	Gold          int    // zero or more gold to give; yaml key: gold
-	ItemId        int    // itemId to give; yaml key: itemid
-	BuffId        int    // buffId to apply; yaml key: buffid
-	SkillInfo     string // skill(s) to give, "skill:level[,skill:level]"; yaml key: skillinfo
-	StatInfo      string `yaml:"stat_info,omitempty"`   // stat(s) to increase, "stat:amount[,...]"; yaml key: stat_info
-	RecipeInfo    string `yaml:"recipe_info,omitempty"` // recipe(s) to grant, comma-separated recipe IDs; yaml key: recipe_info
-	ItemInfo      string `yaml:"item_info,omitempty"`   // item stockpile to grant, "itemid[:qty][,itemid[:qty]]"; yaml key: item_info
-	SpellId       string // spell to teach on completion; yaml key: spellid
-	PlayerMessage string // string to display to player; yaml key: playermessage
-	RoomMessage   string // string to display to room; yaml key: roommessage
-	RoomId        int    // roomId to move player to; yaml key: roomid
-	RepFaction    string `yaml:"rep_faction"` // faction slug bumped on completion
-	RepAmount     int    `yaml:"rep_amount"`  // rep delta applied on completion
+	QuestId       string `yaml:"questid,omitempty"`     // new questId to give ( {id}-{step} format )
+	Gold          int    `yaml:"gold,omitempty"`        // zero or more gold to give
+	ItemId        int    `yaml:"itemid,omitempty"`      // itemId to give
+	BuffId        int    `yaml:"buffid,omitempty"`      // buffId to apply
+	SkillInfo     string `yaml:"skillinfo,omitempty"`   // skill(s) to give, "skill:level[,skill:level]"
+	StatInfo      string `yaml:"stat_info,omitempty"`   // stat(s) to increase, "stat:amount[,...]"
+	RecipeInfo    string `yaml:"recipe_info,omitempty"` // recipe(s) to grant, comma-separated recipe IDs
+	ItemInfo      string `yaml:"item_info,omitempty"`   // item stockpile to grant, "itemid[:qty][,itemid[:qty]]"
+	SpellId       string `yaml:"spellid,omitempty"`     // spell to teach on completion
+	PlayerMessage string `yaml:"playermessage,omitempty"`
+	RoomMessage   string `yaml:"roommessage,omitempty"`
+	RoomId        int    `yaml:"roomid,omitempty"` // roomId to move player to
+	RepFaction    string `yaml:"rep_faction,omitempty"`
+	RepAmount     int    `yaml:"rep_amount,omitempty"`
 }
 
+// Quest is THE quest definition — the single parse of quest YAML (5c-pre
+// unification). internal/questengine consumes these via GetAllQuests();
+// nothing else parses the files.
 type Quest struct {
-	QuestId        int
-	Name           string
-	Description    string
-	Secret         bool        // Secret quests are useful for marking some progress without making it known to the player
-	Steps          []QuestStep // String identifiers for each step required to complete the quest
-	Rewards        QuestReward
+	QuestId        int            `yaml:"questid"`
+	Name           string         `yaml:"name"`
+	Description    string         `yaml:"description,omitempty"`
+	Secret         bool           `yaml:"secret,omitempty"` // marks progress without making it known to the player
+	Steps          []QuestStep    `yaml:"steps"`
+	Rewards        QuestReward    `yaml:"rewards,omitempty"`
+	Triggers       []TriggerDef   `yaml:"triggers,omitempty"`
 	Flags          []QuestFlagDef `yaml:"flags,omitempty"`
-	Repeatable     bool           `yaml:"repeatable,omitempty"`      // if true, completing the quest clears its progress so it can be taken again (after CooldownRounds)
-	CooldownRounds int            `yaml:"cooldown_rounds,omitempty"` // rounds that must pass after completion before a repeatable quest can be re-taken
+	Repeatable     bool           `yaml:"repeatable,omitempty"`      // completing clears progress so it can be re-taken (after CooldownRounds)
+	CooldownRounds int            `yaml:"cooldown_rounds,omitempty"` // rounds after completion before a repeatable quest can be re-taken
 }
 
 type QuestStep struct {
-	Id          string // A way to identify this step of the quest such as "start"
-	Description string // A description of the step
-	Hint        string // A hint to accomplish this step (optional)
+	Id          string `yaml:"id"` // identifies this step, e.g. "start"
+	Description string `yaml:"description,omitempty"`
+	Hint        string `yaml:"hint,omitempty"`
+	MapTarget   int    `yaml:"map_target,omitempty"` // room the minimap marker points at during this step (0 = infer/none, -1 = quest giver)
 }
 
 func (r *Quest) Id() int {
 	return r.QuestId
 }
 
+// Validate implements fileloader.Loadable — it runs on EVERY parse, so a
+// broken quest file fails the boot (and, later, an editor save) instead of
+// loading half-formed. Body moved from questengine's old validateQuestDef in
+// the 5c-pre unification; the checks are unchanged.
 func (r *Quest) Validate() error {
+	if r.QuestId < 1 {
+		return fmt.Errorf("quest id must be > 0")
+	}
+	if r.Name == "" {
+		return fmt.Errorf("quest %d: name cannot be empty", r.QuestId)
+	}
+	if len(r.Steps) == 0 {
+		return fmt.Errorf("quest %d (%s): must have at least one step", r.QuestId, r.Name)
+	}
+
+	validEvents := map[string]bool{
+		"room_enter": true, "item_give": true, "skill_use": true,
+		"mob_death": true, "command": true, "item_gain": true,
+		"dialogue": true, "quest_granted": true, "room_interact": true,
+		"command_issued": true,
+	}
+
+	for i, t := range r.Triggers {
+		if t.Event == "" {
+			return fmt.Errorf("quest %d (%s): trigger %d has no event", r.QuestId, r.Name, i)
+		}
+		if !validEvents[t.Event] {
+			return fmt.Errorf("quest %d (%s): trigger %d has invalid event %q", r.QuestId, r.Name, i, t.Event)
+		}
+		if len(t.Actions) == 0 {
+			return fmt.Errorf("quest %d (%s): trigger %d has no actions", r.QuestId, r.Name, i)
+		}
+	}
+
+	// Check for duplicate step IDs
+	seen := make(map[string]bool)
+	for _, s := range r.Steps {
+		if s.Id == "" {
+			return fmt.Errorf("quest %d (%s): step has empty id", r.QuestId, r.Name)
+		}
+		if seen[s.Id] {
+			return fmt.Errorf("quest %d (%s): duplicate step id %q", r.QuestId, r.Name, s.Id)
+		}
+		seen[s.Id] = true
+	}
+
+	// Validate flag declarations
+	flagKeys := make(map[string]bool)
+	for _, f := range r.Flags {
+		if f.Key == "" {
+			return fmt.Errorf("quest %d (%s): flag has empty key", r.QuestId, r.Name)
+		}
+		if len(f.Values) == 0 {
+			return fmt.Errorf("quest %d (%s): flag %q has no allowed values", r.QuestId, r.Name, f.Key)
+		}
+		fullKey := fmt.Sprintf("%d-%s", r.QuestId, f.Key)
+		if flagKeys[fullKey] {
+			return fmt.Errorf("quest %d (%s): duplicate flag key %q", r.QuestId, r.Name, f.Key)
+		}
+		flagKeys[fullKey] = true
+	}
+
+	// Validate grant tokens reference valid steps (only for this quest's own tokens)
+	for i, t := range r.Triggers {
+		for _, a := range t.Actions {
+			if a.Grant != "" {
+				parts := strings.SplitN(a.Grant, "-", 2)
+				if len(parts) == 2 {
+					// Only validate if the grant is for THIS quest
+					questIdStr := fmt.Sprintf("%d", r.QuestId)
+					if parts[0] == questIdStr {
+						stepId := parts[1]
+						if !seen[stepId] {
+							return fmt.Errorf("quest %d (%s): trigger %d grants unknown step %q",
+								r.QuestId, r.Name, i, a.Grant)
+						}
+					}
+				}
+			}
+		}
+	}
+
 	return nil
 }
 
