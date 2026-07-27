@@ -1,5 +1,25 @@
 # DOGMud Patch Notes
 
+## 2026-07-27 — The world says hello
+
+Walk into an inn, a workshop, an archive, and the keeper looks up. Across the
+towns and roads, folk now **greet you when you arrive** — the innkeeper waving
+you in out of the weather, the woodworker telling you to mind the shavings,
+each in their own words and their own temper. A grump greets you grumpily. You
+will be welcomed once, when you are new to them, not hailed like a stranger
+every time you cross the same doorway.
+
+They have the sense not to do it badly, too. No one greets you mid-swordfight
+or from the depths of sleep, no one interrupts their own conversation to do
+it, and if you slip into the room unseen — you remain unseen. A greeting names
+you, after all, and some visitors would rather not be named.
+
+The truth of it: these welcomes were written long ago, hundreds of them,
+sitting quietly in the town records while everyone made do with stiffer
+introductions. A lantern has been carried down into that cellar, and the same
+lantern now hangs there permanently — anything else written but unheard will
+be found the day it is written, not years later.
+
 ## 2026-07-25 — Peopling a room (staff)
 
 The room inspector gains a **Spawns** panel, and with it the last piece of the
