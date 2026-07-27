@@ -45,6 +45,7 @@ type BuildResult struct {
 	MobRefs  []mobRefEntry       `json:"mobRefs,omitempty"`  // Build.Mob.Delete: what still references a blocked mob
 	ZoneRefs []rooms.ZoneBlocker `json:"zoneRefs,omitempty"` // Build.Zone.Delete: what blocks a delete
 	Message  string              `json:"message,omitempty"`  // e.g. Build.Mob.Spawn's "<name> spawned in room <id>"
+	Warnings []string            `json:"warnings,omitempty"` // non-blocking validation notes (Build.Dialogue.Update first)
 }
 
 func buildErr(format string, args ...any) BuildResult {
