@@ -228,3 +228,25 @@ func TestMoveMobBehaviorFile_FollowsRename(t *testing.T) {
 	// No behavior file: a silent no-op (most mobs have none).
 	MoveMobBehaviorFile(999999, "Probe Zone", "Nobody", "New Zone", "Nobody Two")
 }
+
+func TestArchetypeReferences_FindsTemplatesAndShiftTables(t *testing.T) {
+	// tank_taunter: in the TO whitelist AND pulled by clusters.
+	refs := ArchetypeReferences("tank_taunter")
+	foundWhitelist, foundCluster := false, false
+	for _, r := range refs {
+		if strings.Contains(r, "TO whitelist") {
+			foundWhitelist = true
+		}
+		if strings.Contains(r, "pulls toward") {
+			foundCluster = true
+		}
+	}
+	if !foundWhitelist || !foundCluster {
+		t.Fatalf("tank_taunter should be referenced by whitelist+clusters, got %v", refs)
+	}
+
+	// A name nothing references.
+	if refs := ArchetypeReferences("no_such_archetype_xyz"); len(refs) != 0 {
+		t.Fatalf("unreferenced archetype should be deletable, got %v", refs)
+	}
+}
