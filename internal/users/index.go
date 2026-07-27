@@ -104,6 +104,7 @@ func (idx *UserIndex) loadRecords() {
 
 	f, err := os.Open(idx.Filename)
 	if err != nil {
+		mudlog.Error("UserIndex", "error", "failed to open index file", "path", idx.Filename, "details", err)
 		return
 	}
 	defer f.Close()
@@ -111,9 +112,11 @@ func (idx *UserIndex) loadRecords() {
 	dataSize := idx.metaData.RecordCount * idx.metaData.RecordSize
 	buf := make([]byte, dataSize)
 	if _, err := f.Seek(int64(idx.metaData.MetaDataSize), io.SeekStart); err != nil {
+		mudlog.Error("UserIndex", "error", "failed to seek past index header", "path", idx.Filename, "details", err)
 		return
 	}
 	if _, err := io.ReadFull(f, buf); err != nil {
+		mudlog.Error("UserIndex", "error", "index file is truncated or corrupt, a rebuild will recreate it", "path", idx.Filename, "details", err)
 		return
 	}
 
@@ -209,8 +212,16 @@ func computeDirChecksum(basePath string) (uint64, error) {
 }
 
 // IsUpToDate returns true if the index file exists, has the current version,
-// and its stored FNV-64 checksum matches the current state of the user directory.
+// actually loaded every record its header claims, and its stored FNV-64
+// checksum matches the current state of the user directory.
 func (idx *UserIndex) IsUpToDate() bool {
+	basePath := util.FilePath(string(configs.GetFilePathsConfig().DataFiles), `/`, `users`)
+	return idx.isUpToDateForDir(basePath)
+}
+
+// isUpToDateForDir is IsUpToDate parameterized by the directory to compare
+// against, so tests can point it at a synthetic users directory.
+func (idx *UserIndex) isUpToDateForDir(basePath string) bool {
 	if !idx.Exists() {
 		return false
 	}
@@ -218,7 +229,14 @@ func (idx *UserIndex) IsUpToDate() bool {
 		return false
 	}
 
-	basePath := util.FilePath(string(configs.GetFilePathsConfig().DataFiles), `/`, `users`)
+	// A truncated or unreadable records section leaves fewer records in
+	// memory than the header claims. Such an index must never be trusted:
+	// with empty maps, GetUniqueUserId would start handing out userids that
+	// already belong to existing user files.
+	if uint64(len(idx.records)) != idx.metaData.RecordCount {
+		return false
+	}
+
 	current, err := computeDirChecksum(basePath)
 	if err != nil {
 		return false
@@ -226,68 +244,70 @@ func (idx *UserIndex) IsUpToDate() bool {
 	return idx.metaData.Checksum == current
 }
 
-// Rebuild recreates the index from all offline user records.
-// It calls Create() internally so it is self-contained.
-// After building, it computes and persists a directory checksum so that
-// IsUpToDate can detect stale indexes on the next startup.
+// Rebuild recreates the index from the user files on disk. It runs a
+// lightweight scan (userid and username only) instead of fully loading every
+// user record, then writes the whole index in one atomic pass (temp file +
+// rename) with a single sync, instead of appending and syncing once per
+// user. The directory checksum is folded into that same write so IsUpToDate
+// can detect stale indexes on the next startup.
 func (idx *UserIndex) Rebuild() error {
-	if err := idx.Create(); err != nil {
-		return fmt.Errorf("index create failed: %w", err)
-	}
+	return idx.RebuildFromScan(ScanUserFiles())
+}
 
-	var firstErr error
-	SearchOfflineUsers(func(u *UserRecord) bool {
-		if err := idx.AddUser(u.UserId, u.Username); err != nil {
-			mudlog.Error("UserIndex.Rebuild", "error", err.Error(), "userId", u.UserId, "username", u.Username)
-			if firstErr == nil {
-				firstErr = err
-			}
-		}
-		return true
-	})
-
-	if firstErr != nil {
-		return firstErr
-	}
-
+// RebuildFromScan is Rebuild fed by an existing scan, so startup can share
+// one scan between the user index and the character index.
+func (idx *UserIndex) RebuildFromScan(scan []UserFileScan) error {
 	basePath := util.FilePath(string(configs.GetFilePathsConfig().DataFiles), `/`, `users`)
 	checksum, err := computeDirChecksum(basePath)
 	if err != nil {
 		return fmt.Errorf("checksum compute failed: %w", err)
 	}
-	if err := idx.writeChecksum(checksum); err != nil {
-		return fmt.Errorf("checksum write failed: %w", err)
-	}
-
-	return nil
+	return idx.applyScan(scan, checksum)
 }
 
-// writeChecksum persists a new checksum value into the index header on disk
-// and updates the in-memory metadata.
-func (idx *UserIndex) writeChecksum(checksum uint64) error {
+// applyScan replaces the in-memory records and lookup maps with the scan
+// results, then writes the complete index to disk once.
+func (idx *UserIndex) applyScan(scan []UserFileScan, checksum uint64) error {
+
+	records := make([]IndexUserRecord, 0, len(scan))
+	for _, s := range scan {
+		rec := IndexUserRecord{UserID: int64(s.UserId)}
+		copy(rec.Username[:], strings.ToLower(s.Username))
+		records = append(records, rec)
+	}
+
 	idx.mu.Lock()
 	defer idx.mu.Unlock()
 
-	idx.metaData.Checksum = checksum
-
-	headerBytes, err := idx.metaData.Format()
-	if err != nil {
-		return err
+	idx.metaData = IndexMetaData{
+		MetaDataSize: FixedHeaderTotalLength,
+		IndexVersion: IndexVersion,
+		RecordCount:  uint64(len(records)),
+		RecordSize:   IndexRecordSizeV1,
+		Checksum:     checksum,
 	}
 
-	f, err := os.OpenFile(idx.Filename, os.O_RDWR, 0644)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
+	idx.records = records
+	idx.byUsername = make(map[string]int64, len(records))
+	idx.byUserId = make(map[int64]string, len(records))
+	idx.highestUserId = 0
 
-	if _, err := f.Seek(0, io.SeekStart); err != nil {
-		return err
+	for _, rec := range records {
+		username := string(bytes.TrimRight(rec.Username[:], "\x00"))
+		idx.byUsername[username] = rec.UserID
+		idx.byUserId[rec.UserID] = username
+		if int(rec.UserID) > idx.highestUserId {
+			idx.highestUserId = int(rec.UserID)
+		}
 	}
-	if _, err := f.Write(headerBytes); err != nil {
-		return err
+
+	// The in-memory state is updated even if the disk write fails - the
+	// running process must trust what was just scanned, not a stale file.
+	if err := idx.writeCompleteIndex(records); err != nil {
+		return fmt.Errorf("index write failed: %w", err)
 	}
-	return f.Sync()
+
+	return nil
 }
 
 func (idx *UserIndex) GetMetaData() IndexMetaData {
@@ -360,6 +380,7 @@ func (idx *UserIndex) getMetaDataFromFile() IndexMetaData {
 	headerContent := strings.TrimSpace(string(header[:FixedHeaderTotalLength-1]))
 	n, _ := fmt.Sscanf(headerContent, "VERSION=%d,RECORDCOUNT=%d,RECORDSIZE=%d,CHECKSUM=%d", &meta.IndexVersion, &meta.RecordCount, &meta.RecordSize, &meta.Checksum)
 	if n < 3 {
+		mudlog.Error("UserIndex", "error", "index header is unparseable, a rebuild will recreate it", "path", idx.Filename)
 		return IndexMetaData{}
 	}
 

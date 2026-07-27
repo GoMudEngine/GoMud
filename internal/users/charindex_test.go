@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sync"
 	"testing"
+
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 )
 
 func freshCharacterIndex() *CharacterIndex {
@@ -116,8 +118,12 @@ func TestCharacterIndex_MultipleUsersMultipleNames(t *testing.T) {
 }
 
 func TestCharacterIndex_Rebuild(t *testing.T) {
+	// The scan warns about the missing users directory in a test env, so the
+	// logger must be initialized.
+	mudlog.SetupLogger(nil, "", "", false)
+
 	// Swap in a fresh singleton so Rebuild exercises the real code path
-	// without touching disk (SearchOfflineUsers finds nothing in a test env).
+	// without touching disk (ScanUserFiles finds nothing in a test env).
 	orig := characterIndex
 	defer func() { characterIndex = orig }()
 
@@ -127,7 +133,7 @@ func TestCharacterIndex_Rebuild(t *testing.T) {
 	// Pre-populate with stale data that Rebuild should clear.
 	ci.Add("stale", 99)
 
-	// Rebuild will call SearchOfflineUsers (returns nothing in test env) and
+	// Rebuild will call ScanUserFiles (returns nothing in test env) and
 	// GetAllActiveUsers (returns nothing since userManager is empty). The stale
 	// entry must be gone.
 	ci.Rebuild()
