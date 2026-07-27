@@ -276,8 +276,8 @@
 
   function collapsible(box, summaryFn, buildBody, ordered) {
     var body = ce("div", { style: "display:none;padding:4px 0 8px 10px;" });
-    var sum = ce("span", { style: "cursor:pointer;", text: summaryFn() });
-    var head = ce("div", { "class": "irow" });
+    var sum = ce("span", { text: "▸ " + summaryFn() });
+    var head = ce("div", { "class": "irow", style: "cursor:pointer;" });
     head.appendChild(sum);
     if (ordered) {
       var up = ce("button", { "class": "mini", text: "↑", title: "move up" });
@@ -291,14 +291,18 @@
     var wrap = ce("div", {}, [head, body]);
     wrap._isRow = true;
     rm.addEventListener("click", function (ev) { ev.stopPropagation(); wrap.parentNode.removeChild(wrap); markDirty(); });
-    sum.addEventListener("click", function () {
+    // The whole header row toggles (the buttons stopPropagation) — a narrow
+    // text-only click target made rows look impossible to re-collapse.
+    head.addEventListener("click", function () {
       var open = body.style.display !== "none";
       body.style.display = open ? "none" : "";
-      sum.textContent = summaryFn();
+      sum.textContent = (open ? "▸ " : "▾ ") + summaryFn();
     });
     var built = buildBody(body);
     wrap._gather = built.gather;
-    wrap._refreshSummary = function () { sum.textContent = summaryFn(); };
+    wrap._refreshSummary = function () {
+      sum.textContent = (body.style.display !== "none" ? "▾ " : "▸ ") + summaryFn();
+    };
     box.appendChild(wrap);
     return wrap;
   }
@@ -320,7 +324,12 @@
       Panel.close();
     });
     head.appendChild(closeBtn);
+    var helpBtn = ce("button", { "class": "mini", text: "Help ↗", style: "margin-left:8px;" });
+    helpBtn.addEventListener("click", function () { window.open("/build-help-dialogue", "_blank"); });
+    head.appendChild(helpBtn);
     insp.appendChild(head);
+    insp.appendChild(ce("div", { style: "font-size:11px;color:var(--gold-dim);margin:2px 0 8px;",
+      text: "Players reach this with: talk <npc> (root text + hints) and ask <npc> <topic> (tree nodes, then patterns). Greetings fire on arrival by themselves. Saves are live immediately — talk to the NPC in-game to test." }));
 
     // datalists shared by every picker in the panel
     var tokenDL = ce("datalist", { id: "dlg-token-dl" });
@@ -360,6 +369,8 @@
 
     // ---- identity & mood ----
     insp.appendChild(sectionTitle("Identity & mood"));
+    insp.appendChild(ce("div", { style: "font-size:11px;color:var(--gold-dim);margin:2px 0 6px;",
+      text: "The NPC holds ONE current mood at a time, starting at the default below. Greetings and patterns that list moods only fire while the NPC is in one of them; a fired line's Mood change shifts it. Most NPCs never need any of this — leave mood lists empty (= any mood) unless the NPC should answer differently when angered or pleased. See Help ↗ for a worked example." }));
     var mood = moodSelect(f.defaultMood);
     insp.appendChild(field("Default mood", mood));
     var expiry = ce("input", { type: "text" });
@@ -404,7 +415,7 @@
         var resp = lines(p.responses);
         body.appendChild(field("Responses", resp.el));
         var mc = moodSelect(p.moodChange);
-        body.appendChild(field("Mood change", mc));
+        body.appendChild(field("Mood change", mc, "optional — shifts the NPC's mood after this fires (empty = no change)"));
         var gd = gateDrawer(p);
         body.appendChild(gd.el);
         return { gather: function () {
@@ -475,7 +486,7 @@
         var h = textArea(n.hints);
         body.appendChild(field("Hints (narrator voice)", h));
         var mc = moodSelect(n.moodChange);
-        body.appendChild(field("Mood change", mc));
+        body.appendChild(field("Mood change", mc, "optional — shifts the NPC's mood after this fires (empty = no change)"));
         var gd = gateDrawer(n);
         body.appendChild(gd.el);
         return { gather: function () {

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DOGMud — Dialogue Editor Guide</title>
+<style>
+  :root {
+    --leather:   #2b1d12;
+    --leather2:  #3a2818;
+    --tooled:    #5c4326;
+    --gold:      #c9a24b;
+    --gold-dim:  #8a7038;
+    --parch:     #e7d9b8;
+    --panel:     #241811;
+    --danger:    #b5533a;
+    --ok:        #6f9a4a;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--leather);
+    color: var(--parch);
+    font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  main { max-width: 860px; margin: 0 auto; padding: 24px 20px 80px; }
+  h1 { color: var(--gold); font-size: 26px; border-bottom: 1px solid var(--tooled); padding-bottom: 8px; }
+  h2 { color: var(--gold); font-size: 20px; margin-top: 36px; border-bottom: 1px solid var(--leather2); padding-bottom: 4px; }
+  h3 { color: var(--gold-dim); font-size: 16px; margin-top: 24px; }
+  code, kbd {
+    background: var(--panel); border: 1px solid var(--tooled); border-radius: 3px;
+    padding: 1px 5px; font-family: Consolas, Menlo, monospace; font-size: 13px; color: var(--gold);
+  }
+  pre {
+    background: var(--panel); border: 1px solid var(--tooled); border-radius: 5px;
+    padding: 12px 14px; overflow-x: auto; font-size: 13px; line-height: 1.45;
+  }
+  pre code { background: none; border: none; padding: 0; color: var(--parch); }
+  table { border-collapse: collapse; margin: 12px 0; width: 100%; }
+  th, td { border: 1px solid var(--tooled); padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--leather2); color: var(--gold); }
+  .rule { color: var(--danger); font-weight: bold; }
+  .warn { color: #c90; font-weight: bold; }
+  .aside {
+    border-left: 3px solid var(--gold-dim); background: var(--leather2);
+    padding: 8px 14px; margin: 14px 0; font-size: 14px;
+  }
+  .say { color: var(--ok); }
+  .hint { color: #b89ab8; }
+  a { color: var(--gold); }
+</style>
+</head>
+<body>
+<main>
+
+<h1>Dialogue Editor — Admin Guide</h1>
+
+<p>This page explains how NPC dialogue actually works in the game, what every
+section of the dialogue editor does, and walks one small quest-giver from
+empty file to working conversation. The editor refuses saves that break the
+house rules and warns about the rest — every refusal it can raise is listed
+at the bottom.</p>
+
+<p><b>Edits are live the moment you save.</b> No reboot: walk to the NPC
+in-game and <code>talk</code> to it to test what you just wrote.</p>
+
+<h2>1. How players reach dialogue</h2>
+
+<p>There are exactly three ways a player hears an NPC's dialogue:</p>
+
+<table>
+<tr><th>Surface</th><th>What fires</th></tr>
+<tr>
+  <td><code>talk &lt;npc&gt;</code></td>
+  <td>The tree's <b>root text</b> (or the first matching quest-gated
+  <b>root variant</b>), plus its hints. An NPC with no tree falls back to a
+  catch-all pattern; with neither, it just nods.</td>
+</tr>
+<tr>
+  <td><code>ask &lt;npc&gt; &lt;topic&gt;</code></td>
+  <td>The real driver of conversation. <b>Tree nodes are checked first</b>
+  (the topic is matched against node triggers, in file order), then
+  <b>patterns</b> (topic matched against keywords). No match: the NPC shakes
+  their head.</td>
+</tr>
+<tr>
+  <td>Walking into the room</td>
+  <td>A <b>greeting</b> fires by itself — once per player per NPC per boot,
+  at most one greeter per entry, skipped if the NPC is busy or the player is
+  sneaking.</td>
+</tr>
+</table>
+
+<div class="aside">
+Other commands — <code>say</code>, <code>whisper</code>, emotes — do
+<b>not</b> reach this system. If a player types
+<code>ask &lt;npc&gt; quest</code> and nothing quest-shaped matches, the
+engine answers for the NPC: <i>"I have no task for you right now."</i> That
+is why every quest-granting node must carry <code>quest</code> and
+<code>task</code> in its triggers — it makes <code>ask &lt;npc&gt; quest</code>
+the universal "do you have work for me?" gesture.
+</div>
+
+<h2>2. The three sections of a dialogue file</h2>
+
+<h3>Greetings — ambience, not conversation</h3>
+<p>Short one-liners the NPC says when a player arrives. Write several and the
+engine picks one that matches the NPC's current mood (a greeting with an
+empty mood list matches any mood). Greetings never carry quest logic — they
+are flavor only.</p>
+
+<h3>Patterns — a keyword FAQ</h3>
+<p>Each pattern is a bag of <b>keywords</b> and a pool of <b>responses</b>
+(one is picked at random). If the player's <code>ask</code> topic contains a
+keyword, the pattern fires. Patterns have no memory and no ordering between
+question and answer — they are the NPC's standing answers about the town,
+their trade, the weather. A pattern with a single <b>empty-string keyword</b>
+is the catch-all: it answers anything that matched nothing else.</p>
+
+<h3>The tree — actual conversation, and all quest logic</h3>
+<p>The tree is what makes a <i>conversation</i> rather than an FAQ:</p>
+<ul>
+<li><b>Root</b> — what the NPC says to <code>talk</code>. Its <b>hints</b>
+    are the narrator telling the player what they could ask next.</li>
+<li><b>Root variants</b> — quest-gated replacements for the root, so the
+    opener changes as the player's quest state changes. First match wins.</li>
+<li><b>Nodes</b> — the branches. A node fires when the <code>ask</code> topic
+    contains one of its <b>triggers</b> — checked <b>in the order the nodes
+    are listed</b>, which is why the editor shows them as an ordered list
+    with ↑/↓ controls.</li>
+</ul>
+
+<p>Two fields chain nodes into an arc: a node with <b>Requires</b> only fires
+after one of the named nodes has fired for that player, and <b>Unlocks</b>
+marks named nodes as reachable. Combined with hints, this yields the shape:
+root text points at a topic → the node for that topic points at the next
+topic → the last node grants the quest.</p>
+
+<h2>3. Moods, in one paragraph</h2>
+
+<p>Every NPC <i>instance</i> carries one current mood —
+<code>friendly</code>, <code>neutral</code>, <code>hostile</code>,
+<code>afraid</code>, or <code>grateful</code> — starting at the file's
+<b>default mood</b>. A greeting or pattern that lists moods only fires while
+the NPC is in one of them. A fired line's <b>Mood change</b> shifts the mood.
+That is the whole system. <b>Most NPCs never need it</b>: leave every mood
+list empty (= any mood) and ignore Mood change unless the NPC should answer
+differently after being pleased or provoked — e.g. a bribe pattern that sets
+mood to <code>friendly</code>, unlocking friendlier answers to the same
+questions.</p>
+
+<h2>4. Worked example — a small quest-giver</h2>
+
+<p>Miller Hobb has lost his donkey. Quest 41's start token is
+<code>41-start</code>, its end token <code>41-end</code>. Built in the
+editor:</p>
+
+<p><b>Default mood:</b> <code>neutral</code>. <b>Memory expiry:</b> empty
+(always, unless the quest is deliberately timed).</p>
+
+<p><b>Greetings:</b> <i>"Mind the flour dust."</i> and
+<i>"You've the look of someone who's seen a donkey."</i></p>
+
+<p><b>Patterns:</b> keywords <code>mill</code>, <code>flour</code> →
+<i>"I grind for three villages, when the wheel turns."</i> — standing flavor,
+no quest logic.</p>
+
+<p><b>Root text:</b> <i>"I can't talk long — my donkey's gone and the grain
+won't haul itself."</i><br>
+<b>Root hints:</b> <i>"You could ask about the donkey."</i></p>
+
+<p><b>Nodes, in this order:</b></p>
+
+<pre><code>NODE 1  id: offer-quest
+  triggers:  donkey, help, quest, task        &larr; quest+task are REQUIRED
+  text:   "Stubborn thing bolted toward the fen. Bring her back
+           and I'll owe you real coin."
+  hints:  "You could agree to find the donkey."
+  quest gating:
+    grantsQuest:   41-start
+    questExcluded: 41-start, 41-end           &larr; BOTH tokens, always
+
+NODE 2  id: fen-lore
+  triggers:  fen, marsh
+  text:   "The fen swallows carts whole. Keep to the reed line."</code></pre>
+
+<p>Why this order matters: node matching is substring-based and walks the
+list top-down. If <code>fen-lore</code> came first and a player asked about
+the "fen donkey", the lore line would shadow the quest offer. <span
+class="rule">Quest-granting nodes always come first</span> — the editor
+refuses the save otherwise.</p>
+
+<p><b>Root variant</b> (shown while the quest is active):
+text <i>"Any sign of her? The fen's no place for a donkey overnight."</i>,
+gated <code>questRequired: 41-start</code>,
+<code>questExcluded: 41-end</code>.</p>
+
+<p>What the player sees in-game:</p>
+
+<pre><code>&gt; talk hobb
+<span class="say">Miller Hobb says, "I can't talk long — my donkey's gone and the
+grain won't haul itself."</span>
+<span class="hint">  [You could ask about the donkey.]</span>
+&gt; ask hobb donkey
+<span class="say">Miller Hobb says, "Stubborn thing bolted toward the fen. Bring her
+back and I'll owe you real coin."</span>
+<span class="hint">  [You could agree to find the donkey.]</span></code></pre>
+
+<p>The quest engine takes over from the grant: steps, completion, and rewards
+live in the quest YAML, not here. Dialogue's job ends at granting the token
+and reacting to quest state through gates.</p>
+
+<h2>5. Quest gating fields (the drawer)</h2>
+
+<table>
+<tr><th>Field</th><th>Effect</th></tr>
+<tr><td><code>grantsQuest</code></td><td>Gives the player this quest token when the node/pattern fires.</td></tr>
+<tr><td><code>questRequired</code></td><td>Only fires if the player holds ALL listed tokens.</td></tr>
+<tr><td><code>questExcluded</code></td><td>Never fires if the player holds ANY listed token.</td></tr>
+<tr><td><code>questFlagRequired / questFlagExcluded</code></td><td>Gate on quest flags — which branch of an opposed quest the player took.</td></tr>
+<tr><td><code>setsQuestFlag</code></td><td>Records a branch choice (key + value must be declared in the quest YAML).</td></tr>
+<tr><td><code>requiresItem / givesItem</code></td><td>Gate on, or hand over, a physical item.</td></tr>
+<tr><td><code>givesGold / bumpsRep / masterworkRequired</code></td><td>Coin, reputation nudges, crafting-fame gate.</td></tr>
+</table>
+
+<div class="aside">
+Prefer <code>questRequired</code> over node <code>Requires</code> for
+anything quest-critical: node memory can expire, quest tokens cannot. A
+grant node gated only by <code>Requires</code> draws a warning for exactly
+this reason.
+</div>
+
+<h2>6. What the editor refuses, and what it only warns about</h2>
+
+<h3 class="rule">Refused (the save does not happen)</h3>
+<ul>
+<li><code>grantsQuest</code> without BOTH the granted token and its
+    <code>-end</code> token in <code>questExcluded</code> — without the end
+    token, a player who finished the quest gets it re-offered forever.</li>
+<li>A quest-granting node missing <code>quest</code> and <code>task</code>
+    triggers — breaks the universal <code>ask &lt;npc&gt; quest</code>
+    gesture.</li>
+<li>A quest-granting node listed after a non-granting node — ordering is
+    matching priority; lore must never shadow a grant.</li>
+<li>Semicolons in NPC text or hints — <code>;</code> is the command
+    separator and breaks the mob's <code>say</code>.</li>
+<li>Unknown quest tokens, undeclared quest flags, nonexistent item ids,
+    and <code>Requires</code>/<code>Unlocks</code> pointing at node ids that
+    don't exist.</li>
+</ul>
+
+<h3 class="warn">Warned (the save happens, the warning stays on screen)</h3>
+<ul>
+<li>An <b>undiscoverable trigger</b> — a trigger word that appears in no
+    hint, no NPC text, and no root. If the player can't learn the word,
+    the branch does not exist. (<code>quest</code>/<code>task</code> are
+    exempt — they're the universal gesture.)</li>
+<li><b>Memory expiry set</b> — per-player dialogue memory that expires can
+    strand mid-arc players. Only deliberate timed-quest designs want it.</li>
+<li>A grant node gated by <code>Requires</code> instead of
+    <code>questRequired</code>.</li>
+</ul>
+
+<h2>7. Voice rules</h2>
+<ul>
+<li>NPC <b>text</b> is spoken by the NPC — always first person
+    ("I", "my mill").</li>
+<li><b>Hints</b> are the narrator addressing the player — "You could ask
+    about the marriage", never "Ask her why she left" with a dangling
+    "she".</li>
+<li>No raw numbers in player-facing lines; keep lines under ~80 characters
+    per sentence so MUD clients wrap them cleanly.</li>
+</ul>
+
+</main>
+</body>
+</html>
