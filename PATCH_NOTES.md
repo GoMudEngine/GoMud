@@ -1,5 +1,28 @@
 # DOGMud Patch Notes
 
+## 2026-07-27 — The taskmaster's desk (staff)
+
+The builder gains its fifth room: **quests**. Everything a task is made of
+can now be worked at one desk — its name and the words in the log, the steps
+a player walks and where the map's marker points during each, the rewards
+paid at the end, the branch-markers it declares, and the whole machinery of
+triggers: what the world watches for, what must be true, and the ordered
+list of consequences when it fires, from a single line spoken to a full
+timed scene with its own aftermath.
+
+The desk knows the registries. Every creature, item, room, buff, spell,
+skill, recipe, and faction a task names is checked against what actually
+exists, and a reference to nothing is refused with its exact location named.
+A branch-marker nobody declared — until now a mistake that took the whole
+world down at its next waking — is simply handed back. Lesser troubles pass
+with a note attached: a step nothing grants, a speaker with no voice of
+their own.
+
+Tasks cannot be torn up while anything still leans on them: if an NPC's
+conversation or another task still points at one, the delete names each
+holdout and declines. And as with the rest of the desk's work, a saved task
+is live the moment it is saved — the world needs no rebirth to honour it.
+
 ## 2026-07-27 — One ledger for the tasks (housekeeping)
 
 Every task in the world was, until today, read twice from the same page by
