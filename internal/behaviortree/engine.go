@@ -169,6 +169,34 @@ func (e *Engine) LoadArchetype(name string, path string) error {
 	return nil
 }
 
+// EvictArchetype removes an archetype from every cache and sets the
+// negative entry — the delete-side of the 5d editor's hot-reload contract.
+func (e *Engine) EvictArchetype(name string) {
+	e.mu.Lock()
+	delete(e.archetypes, name)
+	delete(e.archetypeGoalWeights, name)
+	delete(e.archetypeDefaultGoals, name)
+	e.noArchetype[name] = true
+	e.mu.Unlock()
+}
+
+// EvictTree removes a per-mob tree from the cache and sets the negative —
+// after a delete, "no tree" is the truth (archetype fallback).
+func (e *Engine) EvictTree(mobId int) {
+	e.mu.Lock()
+	delete(e.trees, mobId)
+	e.noTree[mobId] = true
+	e.mu.Unlock()
+}
+
+// EvictRoomTree removes a room tree from the cache and sets the negative.
+func (e *Engine) EvictRoomTree(roomId int) {
+	e.mu.Lock()
+	delete(e.roomTrees, roomId)
+	e.noRoomTree[roomId] = true
+	e.mu.Unlock()
+}
+
 // GetArchetypeGoalWeights returns the cached goal_weights map for the
 // named archetype, or an empty map if the archetype is unknown or
 // declared no weights. Safe to call from any goroutine; returns a
