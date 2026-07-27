@@ -1,48 +1,44 @@
 questid: 2
 name: The Warren Compact
-description: The tunnel shaman has asked you to prove your good
-  intent by bringing a healing salve to the warren.
-secret: false
-
+description: The tunnel shaman has asked you to prove your good intent by bringing
+  a healing salve to the warren.
 steps:
-  - id: start
-    map_target: -1  # -1: flexible-source fetch (salve buyable from Yenna or craftable) + return to giver; no single forward destination
-    description: "The Tunnel Shaman has asked you to bring a healing
-      salve as proof of good intent. Obtain one and bring it to the
-      shaman in the Low Junction."
-    hint: "Bring a healing salve to the Tunnel Shaman. From the
-      Labyrinth entrance, go down 1 to the Low Junction. Salves can
-      be bought from Alchemist Yenna in Sanctum Basin or crafted
-      with the healing-salve recipe."
-  - id: end
-    description: "You have earned a fragile peace with the warren."
-
+- id: start
+  description: The Tunnel Shaman has asked you to bring a healing salve as proof of
+    good intent. Obtain one and bring it to the shaman in the Low Junction.
+  hint: Bring a healing salve to the Tunnel Shaman. From the Labyrinth entrance, go
+    down 1 to the Low Junction. Salves can be bought from Alchemist Yenna in Sanctum
+    Basin or crafted with the healing-salve recipe.
+  map_target: -1
+- id: end
+  description: You have earned a fragile peace with the warren.
 rewards:
-  playermessage: "The chieftain inclines its heavy head -- the
-    closest thing to a bow its mutated frame allows. You are not
-    welcome here. But you are tolerated. That is more than any
-    surface-dweller has been given in living memory."
-  roommessage: "A low, guttural exchange passes between the shaman
-    and the chieftain. Something has shifted."
   gold: 15
-  skillinfo: "rhetoric:1"
-
+  skillinfo: rhetoric:1
+  playermessage: The chieftain inclines its heavy head -- the closest thing to a bow
+    its mutated frame allows. You are not welcome here. But you are tolerated. That
+    is more than any surface-dweller has been given in living memory.
+  roommessage: A low, guttural exchange passes between the shaman and the chieftain.
+    Something has shifted.
 triggers:
-  # Item delivery via give command
-  - event: item_give
-    mob: 74
-    item: 30036
-    conditions:
-      has: [2-start]
-      missing: [2-end]
-    actions:
-      - grant: 2-end
-      - bump_rep: {faction: warren, delta: 50}
-      - npc_say:
-          mob: 74
-          lines:
-            - {delay: 1, text: "These are good. Strong. Our sick
-                will benefit."}
-            - {delay: 3, text: "You have done what I asked. The
-                Eldest will hear of this. Go deeper -- the warriors
-                will not stop you now."}
+- event: item_give
+  mob: 74
+  item: 30036
+  conditions:
+    has:
+    - 2-start
+    missing:
+    - 2-end
+  actions:
+  - grant: 2-end
+  - bump_rep:
+      faction: warren
+      delta: 50
+  - npc_say:
+      mob: 74
+      lines:
+      - text: These are good. Strong. Our sick will benefit.
+        delay: 1
+      - text: You have done what I asked. The Eldest will hear of this. Go deeper
+          -- the warriors will not stop you now.
+        delay: 3

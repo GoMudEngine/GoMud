@@ -1,7 +1,12 @@
 itemid: 1
+value: 5
+hands: 0
 name: Note
-not_salable: true
 namesimple: paper
 description: The scribbling on the note has been worn away and can no longer be read.
+  a small red stain mars the edge of the paper.
 type: readable
 subtype: blobcontent
+damage:
+  diceroll: 0@0d0
+not_salable: true

@@ -1,37 +1,121 @@
 mobid: 13
 zone: Endless Trashheap
 itemdropchance: 100
-hostile: false
-maxwander: -1
-idlecommands:
-  - 'portal home;go portal;wander;wander;wander;wander;wander;wander;wander;suicide'
-  - 'portal loot;go portal;get all'
-  - 'portal loot;go portal;get all'
-  - 'portal loot;go portal;get all'
-  - 'portal loot;go portal;get all'
-  - 'portal loot;go portal;get all'
-  - 'wander loot;get all'
-  - 'wander loot;get all'
-  - 'wander loot;get all'
-  - 'wander loot;get all'
-  - 'wander loot;get all'
-  - 'wander loot;get all'
-  - 'wander loot;get all'
-  - 'wander loot;get all'
-  - 'wander loot;get all'
-  - 'wander loot;get all'
-  - 'wear random'
-  - 'wear random'
-  - 'wear random'
-  - 'wear random'
-  - 'alchemy random'
-combatcommands:
-  - 'portal home;go portal;drop all;wander'
 activitylevel: 90
+groups: []
+idlecommands:
+- portal home;go portal;wander;wander;wander;wander;wander;wander;wander;suicide
+- portal loot;go portal;get all
+- portal loot;go portal;get all
+- portal loot;go portal;get all
+- portal loot;go portal;get all
+- portal loot;go portal;get all
+- wander loot;get all
+- wander loot;get all
+- wander loot;get all
+- wander loot;get all
+- wander loot;get all
+- wander loot;get all
+- wander loot;get all
+- wander loot;get all
+- wander loot;get all
+- wander loot;get all
+- wear random
+- wear random
+- wear random
+- wear random
+- alchemy random
+angrycommands: []
+combatcommands:
+- portal home;go portal;drop all;wander
 character:
   name: Loot Goblin
-  description: 'The Loot Goblin is a creature of legend among treasure hunters and adventurers, a skittish and elusive being whose obsession with objects both precious and mundane is unparalleled. Clad in mismatched patches of clothing and armor, this diminutive figure scurries through dungeons and across battlefields, its bulging sack jingling with a cacophony of pilfered trinkets and rarities. Its eyes, wide and gleaming with avarice, never stop darting around, always seeking the next addition to its hoard.'
+  description: The Loot Goblin is a creature of legend among treasure hunters and
+    adventurers, a skittish and elusive being whose obsession with objects both precious
+    and mundane is unparalleled. Clad in mismatched patches of clothing and armor,
+    this diminutive figure scurries through dungeons and across battlefields, its
+    bulging sack jingling with a cacophony of pilfered trinkets and rarities. Its
+    eyes, wide and gleaming with avarice, never stop darting around, always seeking
+    the next addition to its hoard.
+  roomid: 0
+  zone: Nowhere
   speciesid: 5
-  level: 20
+  stats:
+    strength:
+      base: 60
+    dexterity:
+      base: 80
+    perception:
+      base: 50
+    vitality:
+      base: 50
+    willpower:
+      base: 70
+    charisma:
+      base: 30
+  health: 0
+  stamina: 0
+  conviction: 0
+  actionpoints: 0
   gold: 0
-  
+  bank: 0
+  spellbook:
+    chrysalis-glow: 1
+    conviction-spike: 1
+    identify: 1
+  knownrecipes:
+    cloth-pants: 1
+    copper-ring: 1
+    grilled-meat: 1
+    healing-salve: 1
+    honed-edge: 1
+    iron-dagger: 1
+    linen-tunic: 1
+    stamina-tonic: 1
+    trail-rations: 1
+  equipment:
+    weapon: {}
+    offhand: {}
+    extraarm1: {}
+    extraarm2: {}
+    extraarm3: {}
+    extraarm4: {}
+    head: {}
+    neck: {}
+    shoulders: {}
+    body: {}
+    back: {}
+    belt: {}
+    wrist1: {}
+    wrist2: {}
+    extrawrist1: {}
+    extrawrist2: {}
+    extrawrist3: {}
+    extrawrist4: {}
+    gloves: {}
+    ring: {}
+    ring2: {}
+    legs: {}
+    feet: {}
+    tail: {}
+    componentbag: {}
+  skills:
+    alchemy: 1
+    bartering: 1
+    blacksmithing: 1
+    cooking: 1
+    enchanting: 1
+    jewelcrafting: 1
+    manifestation: 1
+    ranged-combat: 1
+    rhetoric: 1
+    salvage: 1
+    search: 1
+    skullduggery: 1
+    spellcasting: 1
+    tailoring: 1
+    unarmed-combat: 1
+    weapon-combat: 1
+  created: 2026-07-27T14:40:30.9108838-07:00
+maxwander: -1
+scripttag: ""
