@@ -3,6 +3,7 @@ package gmcp
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/dialogue"
 	"github.com/GoMudEngine/GoMud/internal/quests"
 )
 
@@ -158,5 +159,17 @@ func TestBuildQuestDelete_GuardAndClean(t *testing.T) {
 	res := buildQuestDelete(w.deps(), 90004)
 	if !res.Ok || len(w.deleted) != 1 || w.reindexed != 1 {
 		t.Fatalf("clean delete should remove + reindex: %+v deleted=%v reindexed=%d", res, w.deleted, w.reindexed)
+	}
+}
+
+// A dialogue file with no tree (Tree is a POINTER, nil for pattern-only
+// NPCs — most of the 302 live files) must walk without panicking. Caught by
+// the 5c E2E: the fake deps in the tests above bypass the real walker.
+func TestWalkDialogueGates_NilTree(t *testing.T) {
+	df := &dialogue.DialogueFile{MobId: 9, Patterns: []dialogue.Pattern{{GrantsQuest: "10-start"}}}
+	seen := 0
+	walkDialogueGates(df, func(where string, g dialogueGate) { seen++ })
+	if seen != 1 {
+		t.Fatalf("expected 1 gate visit for the pattern, got %d", seen)
 	}
 }

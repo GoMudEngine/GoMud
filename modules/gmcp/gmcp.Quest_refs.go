@@ -71,10 +71,15 @@ func (g dialogueGate) refs(questId int) []string {
 }
 
 // walkDialogueGates visits every gate-carrying element of a dialogue file.
+// DialogueFile.Tree is a POINTER — nil for pattern-only NPCs, which is most
+// of the live tree — so the tree sections are guarded.
 func walkDialogueGates(df *dialogue.DialogueFile, fn func(where string, g dialogueGate)) {
 	for i, p := range df.Patterns {
 		fn(fmt.Sprintf("pattern %d", i), dialogueGate{p.GrantsQuest, p.QuestRequired, p.QuestExcluded,
 			p.QuestFlagRequired, p.QuestFlagExcluded, p.SetsQuestFlag})
+	}
+	if df.Tree == nil {
+		return
 	}
 	for _, n := range df.Tree.Nodes {
 		fn(fmt.Sprintf("node %q", n.Id), dialogueGate{n.GrantsQuest, n.QuestRequired, n.QuestExcluded,
