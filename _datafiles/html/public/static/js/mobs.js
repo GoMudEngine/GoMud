@@ -252,6 +252,13 @@
 
     insp.appendChild(ce("h2", { text: "Mob #" + detail.mobId }));
     insp.appendChild(this.buildTestSpawnRow(detail, enums));
+    // 5b: the dialogue editor opens in a dedicated panel for this mob.
+    var dlgBtn = ce("button", { "class": "mini", text: detail.hasDialogue ? "Dialogue…" : "Add dialogue…" });
+    dlgBtn.addEventListener("click", function () {
+      if (Panel.dirty && !window.confirm("Discard unsaved mob changes?")) return;
+      if (window.Builder.DialoguePanel) window.Builder.DialoguePanel.open(detail.mobId, detail.zone);
+    });
+    insp.appendChild(dlgBtn);
 
     // ---- field builders bound to this render's F/markDirty closure ----
     function textField(label, key, val, hint) {
