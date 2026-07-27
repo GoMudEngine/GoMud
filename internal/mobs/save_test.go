@@ -3,6 +3,7 @@ package mobs
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -306,5 +307,32 @@ func TestSaveMobSpec_RelocatesToUnzonedOnZoneCleared(t *testing.T) {
 	}
 	if mobs[99906].Zone != "" {
 		t.Errorf("template cache not updated: %q", mobs[99906].Zone)
+	}
+}
+
+// The boot path interns every template description into an `h:<hash>` token
+// (characters.CacheDescription). A token must never reach disk: the next boot
+// would intern the token string itself and the prose would be unrecoverable.
+// The gmcp editor resolves tokens before saving; this validator check is the
+// backstop for any future caller that forgets.
+func TestValidateMobSpec_RefusesInternedDescriptionToken(t *testing.T) {
+	pointMobDataFilesAt(t, t.TempDir())
+	m := &Mob{MobId: 91000, Zone: "testzone"}
+	m.Character.Name = "Token Guard"
+	m.Character.SpeciesId = 1
+	m.Character.Description = "A guard whose prose was interned."
+	m.Character.CacheDescription()
+
+	err := ValidateMobSpec(m)
+	if err == nil {
+		t.Fatal("an interned h:<hash> description must be refused")
+	}
+	if !strings.Contains(err.Error(), "interned") {
+		t.Fatalf("refusal should name the token problem, got: %v", err)
+	}
+
+	m.Character.Description = "A guard with an honest description."
+	if err := ValidateMobSpec(m); err != nil {
+		t.Fatalf("plain prose must pass, got: %v", err)
 	}
 }

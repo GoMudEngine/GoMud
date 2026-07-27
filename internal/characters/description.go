@@ -87,6 +87,20 @@ func (c *Character) GetHealthAppearance() string {
 	return fmt.Sprintf(`<ansi fg="username">%s</ansi> is in <ansi fg="%s">perfect health.</ansi>`, c.Name, className)
 }
 
+// ResolveDescriptionToken resolves an interned `h:<hash>` description token
+// (see CacheDescription) back to its original prose. Non-token strings pass
+// through unchanged with ok=true; an unknown token returns ("", false).
+// Editors and any path that persists a description must go through this —
+// writing the raw token to a template YAML destroys the prose on the next
+// boot, when the token string itself gets interned.
+func ResolveDescriptionToken(desc string) (string, bool) {
+	if !strings.HasPrefix(desc, `h:`) {
+		return desc, true
+	}
+	full, ok := descriptionCache[strings.TrimPrefix(desc, `h:`)]
+	return full, ok
+}
+
 // CacheDescription should only be used for mobs, not players.
 // Hashes the description and stores it centrally.
 // This saves a lot of memory because many descriptions are duplicates.

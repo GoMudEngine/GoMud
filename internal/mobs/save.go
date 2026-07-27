@@ -68,6 +68,22 @@ func AllPatrolIds() []string {
 	return out
 }
 
+// isInternedDescriptionToken reports whether desc is a CacheDescription
+// product (`h:` + 64 hex chars) rather than authored prose. Deliberately
+// narrow so prose that happens to start with "h:" is never refused.
+func isInternedDescriptionToken(desc string) bool {
+	rest, ok := strings.CutPrefix(desc, `h:`)
+	if !ok || len(rest) != 64 {
+		return false
+	}
+	for _, r := range rest {
+		if (r < '0' || r > '9') && (r < 'a' || r > 'f') {
+			return false
+		}
+	}
+	return true
+}
+
 var validArchetypes = map[string]bool{"": true, "fighting": true, "casting": true}
 
 var validAIProfiles = map[string]bool{
@@ -86,6 +102,14 @@ var validSubmissionPolicies = map[string]bool{
 func ValidateMobSpec(m *Mob) error {
 	if strings.TrimSpace(m.Character.Name) == "" {
 		return fmt.Errorf("name is required")
+	}
+	// The boot path interns every template description into an `h:<sha256>`
+	// token (characters.CacheDescription). Persisting a token destroys the
+	// prose: the next boot interns the token string itself and the original
+	// text is unrecoverable. Callers must resolve tokens back to prose
+	// (characters.ResolveDescriptionToken) before saving.
+	if isInternedDescriptionToken(m.Character.Description) {
+		return fmt.Errorf("description is an interned h:<hash> token, not prose — resolve it before saving")
 	}
 	// Zone is intentionally NOT required: a mob template can be authored with
 	// no home zone (a summon-only kind, or a new-mob stub not yet placed

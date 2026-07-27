@@ -231,9 +231,17 @@ func buildMobList(d mobDeps) []mobListRow {
 }
 
 func mobToReq(m *mobs.Mob) mobUpdateReq {
+	// Templates carry an interned `h:<hash>` description after boot
+	// (characters.CacheDescription); the editor gets the prose. An
+	// unresolvable token falls through as-is — buildMobUpdate refuses it on
+	// the way back, so it can't reach a YAML file.
+	desc, ok := characters.ResolveDescriptionToken(m.Character.Description)
+	if !ok {
+		desc = m.Character.Description
+	}
 	req := mobUpdateReq{
 		MobId: int(m.MobId), Zone: m.Zone,
-		Name: m.Character.Name, Description: m.Character.Description, Adjectives: m.Character.Adjectives,
+		Name: m.Character.Name, Description: desc, Adjectives: m.Character.Adjectives,
 		SpeciesId: m.Character.SpeciesId, Gold: m.Character.Gold,
 		StatPool: m.StatPool, Archetype: m.Archetype, AutoAggro: m.AutoAggro, AIProfile: m.AIProfile,
 		SpecialMoveChance: m.SpecialMoveChance, MovePreferences: m.MovePreferences,
@@ -395,6 +403,14 @@ func buildMobUpdate(d mobDeps, req mobUpdateReq) BuildResult {
 	}
 	if req.Name == "" {
 		return buildErr("name is required")
+	}
+	// A stale client can echo the interned `h:<hash>` description token back
+	// unedited. Resolve it to the prose; refuse an unresolvable token —
+	// persisting one would destroy the description on the next boot.
+	if resolved, ok := characters.ResolveDescriptionToken(req.Description); ok {
+		req.Description = resolved
+	} else {
+		return buildErr("description is an unresolvable interned token (%.20s…) — reload the builder page and retype the description", req.Description)
 	}
 	// Empty zone is legal (a summon-only / not-yet-placed template) and is
 	// NOT run through zoneExists — only a non-empty, UNKNOWN zone is rejected.

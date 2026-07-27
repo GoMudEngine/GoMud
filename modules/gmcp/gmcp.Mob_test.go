@@ -531,3 +531,59 @@ func TestBuildMobUpdate_GuardsCrafterSkill(t *testing.T) {
 		t.Errorf("empty crafter skill should be allowed: %+v", res)
 	}
 }
+
+// The mob load path interns every template description into a shared cache and
+// replaces Character.Description with an `h:<hash>` token
+// (characters.CacheDescription, called for every template at boot). The editor
+// must never show that token to an admin — and must never let one be written
+// back into a template YAML, where the prose would be unrecoverable after the
+// next boot re-interned the token string itself.
+func TestBuildMobGet_ResolvesInternedDescription(t *testing.T) {
+	w := newFakeMobWorld()
+	base := &mobs.Mob{MobId: 90050, Zone: "Testzone"}
+	base.Character.Name = "Ferryman"
+	base.Character.Description = "A weathered ferryman poling the shallows."
+	base.Character.CacheDescription()
+	if base.Character.Description == "A weathered ferryman poling the shallows." {
+		t.Fatal("precondition: CacheDescription should have replaced the prose with a token")
+	}
+	w.specs[90050] = base
+
+	detail, ok := buildMobGet(w.deps(), 90050)
+	if !ok {
+		t.Fatal("get should succeed")
+	}
+	if detail.Description != "A weathered ferryman poling the shallows." {
+		t.Errorf("editor must receive the prose, not the interned token; got %q", detail.Description)
+	}
+}
+
+func TestBuildMobUpdate_ResolvesOrRefusesHashTokenDescription(t *testing.T) {
+	w := newFakeMobWorld()
+	base := &mobs.Mob{MobId: 90051, Zone: "Testzone"}
+	base.Character.Name = "Ferryman"
+	base.Character.Description = "A weathered ferryman poling the shallows."
+	base.Character.CacheDescription()
+	token := base.Character.Description
+	w.specs[90051] = base
+
+	// A stale client echoing the interned token back unedited: resolve it.
+	req := mobUpdateReq{MobId: 90051, Zone: "Testzone", Name: "Ferryman", Description: token}
+	res := buildMobUpdate(w.deps(), req)
+	if !res.Ok {
+		t.Fatalf("resolvable token should save, got %+v", res)
+	}
+	if got := w.saved[len(w.saved)-1].Character.Description; got != "A weathered ferryman poling the shallows." {
+		t.Errorf("saved template must hold the prose, got %q", got)
+	}
+
+	// An unresolvable token must be refused, never persisted.
+	req.Description = "h:0000000000000000000000000000000000000000000000000000000000000000"
+	savedBefore := len(w.saved)
+	if res := buildMobUpdate(w.deps(), req); res.Ok {
+		t.Fatal("unresolvable token must be refused")
+	}
+	if len(w.saved) != savedBefore {
+		t.Fatal("refused save must not persist anything")
+	}
+}
