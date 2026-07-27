@@ -413,7 +413,13 @@
   // Send a client->server GMCP frame as BINARY so the 0xFF IAC byte survives
   // (a text frame would UTF-8-mangle it). Mirrors webclient-pure.html.
   function sendGMCP(pkg, obj) {
-    if (!socket || socket.readyState !== WebSocket.OPEN) return false;
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+      // A dead socket (server restart with the tab open) used to swallow
+      // every action SILENTLY — a save click produced no toast, no error,
+      // and no server-side trace. Fail loudly instead.
+      toast("Not connected — the server restarted or the link dropped. Reload the page.", true);
+      return false;
+    }
     var body = pkg + " " + JSON.stringify(obj);
     var bodyBytes = new TextEncoder().encode(body);
     var frame = new Uint8Array(bodyBytes.length + 5);
