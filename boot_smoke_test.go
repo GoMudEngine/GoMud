@@ -143,7 +143,7 @@ func TestSmoke_AllDialogueFilesParse(t *testing.T) {
 		t.Fatalf("dialogue directory not found at %s: %v", root, err)
 	}
 
-	var checked, failed int
+	var checked, failed, greetingFiles int
 
 	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -169,6 +169,30 @@ func TestSmoke_AllDialogueFilesParse(t *testing.T) {
 			return nil
 		}
 
+		// Lenient decode succeeded — now catch what it silently DROPPED.
+		// Unknown keys are not an error under lenient decoding, which is how
+		// 186 files' greetings: blocks went unread for months: the drift gate
+		// never sees dialogue (lazy-loaded), and this test only checked that
+		// unmarshal didn't error. Strict-probe the same bytes and fail on any
+		// unknown key not in the baseline. (unknownKeyRe is the drift gate's
+		// own pattern, defined below — reused, not duplicated.)
+		var strictProbe dialogue.DialogueFile
+		if strictErr := yaml.UnmarshalStrict(raw, &strictProbe); strictErr != nil {
+			for _, m := range unknownKeyRe.FindAllStringSubmatch(strictErr.Error(), -1) {
+				key := m[1] + "|" + m[2]
+				if !knownIgnoredDialogueKeys[key] {
+					t.Errorf("%s: authored key %q maps to no field on dialogue types — "+
+						"the value is silently dropped. Add the field, fix the key, or "+
+						"(if deliberate) baseline it in knownIgnoredDialogueKeys.", path, key)
+					failed++
+				}
+			}
+		}
+
+		if len(df.Greetings) > 0 {
+			greetingFiles++
+		}
+
 		checked++
 		return nil
 	})
@@ -179,8 +203,21 @@ func TestSmoke_AllDialogueFilesParse(t *testing.T) {
 	if checked == 0 {
 		t.Fatal("parsed 0 dialogue files — wrong path?")
 	}
-	t.Logf("dialogue files parsed cleanly: %d (failed: %d)", checked, failed)
+	// Measured 2026-07-25 by strict-unmarshal probe: 186 of 302 files author
+	// a greetings block. If this number DROPS without content changes, the
+	// Greetings field has stopped matching the authored YAML shape.
+	if greetingFiles < 186 {
+		t.Errorf("files with a non-empty greetings block: got %d, want >= 186", greetingFiles)
+	}
+	t.Logf("dialogue files parsed cleanly: %d (failed: %d, with greetings: %d)", checked, failed, greetingFiles)
 }
+
+// knownIgnoredDialogueKeys is the accepted baseline of dialogue YAML keys
+// ("field|type", matching the drift gate's key shape) that map to no field.
+// It starts EMPTY: the one historical entry (greetings, 186 files) was
+// resolved by implementing the field, which is the preferred way to clear an
+// entry.
+var knownIgnoredDialogueKeys = map[string]bool{}
 
 // knownSilentlyIgnoredKeys is the accepted baseline of YAML keys that appear in
 // content files but map to no field on their target type, so the lenient
