@@ -1,5 +1,29 @@
 # DOGMud Patch Notes
 
+## 2026-07-27 — The puppeteer's bench (staff)
+
+The builder's last room opens: **behaviors**. The trees that decide how every
+creature fights, flees, forages, and calls for help — the shared archetypes a
+whole species leans on, the one-off trees that make a particular warden
+herself, and the scripts a room itself runs — can all now be read and
+reworked at one bench, as what they are: nested decisions in strict order,
+where being first genuinely means being tried first.
+
+The bench refuses nonsense the old way of working could not even see. A
+branch listening for a happening the world never announces — until today a
+silent, permanent no — is handed back with the real vocabulary attached. The
+wagon on the Thornwall road had carried exactly that flaw since it was
+built: its dying instruction listened for a word from the wrong language,
+and its cargo never once spilled to the victors. It listens correctly now.
+
+Shared archetypes cannot be torn up while creatures still wear them, or
+while the mutation currents still pull toward them — every holdout is named.
+And a long-silent trap is sprung: renaming a creature used to quietly orphan
+its personal tree, the creature slumping back to its archetype with no one
+told. The tree now follows the name. As everywhere on this bench, a saved
+tree is obeyed immediately — the very next decision that creature makes is
+made by the new tree, no rebirth required.
+
 ## 2026-07-27 — The taskmaster's desk (staff)
 
 The builder gains its fifth room: **quests**. Everything a task is made of
