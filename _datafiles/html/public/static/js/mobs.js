@@ -607,7 +607,7 @@
     save.addEventListener("click", function () { Panel.save(); });
     var del = ce("button", { "class": "mini rm", text: "Delete mob", "style": "width:100%;margin-top:6px;padding:6px;" });
     del.addEventListener("click", function () { Panel.del(); });
-    insp.appendChild(ce("div", { "class": "save-row" }, [save, del]));
+    insp.appendChild(ce("div", { "class": "save-row", style: "display:flex;align-items:center;" }, [save, ce("span", { style: "flex:1 1 auto;" }), del]));
     insp.appendChild(ce("div", { id: "mob-refs", "style": "color:var(--danger);font-size:11px;margin-top:6px;" }));
 
     this.setDirty(false);

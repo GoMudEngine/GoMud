@@ -512,7 +512,7 @@
       Panel.deleting = true;
       gmcp("Build.Dialogue.Delete", { mobId: Panel.mobId, zone: Panel.zone });
     });
-    insp.appendChild(ce("div", { "class": "save-row", style: "margin-top:12px;" }, [save, del]));
+    insp.appendChild(ce("div", { "class": "save-row", style: "margin-top:12px;display:flex;align-items:center;" }, [save, ce("span", { style: "flex:1 1 auto;" }), del]));
 
     function gatherFile() {
       var greets = [];
