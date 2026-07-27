@@ -16,7 +16,7 @@ tree:
 
         # On death: distribute cargo to hostile mobs in the room
         - type: sequence
-          event: mob_death
+          event: mob_die
           children:
             - type: action
               do: distribute_cargo_to_hostiles
