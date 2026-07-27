@@ -102,8 +102,13 @@ func AttemptConversation(initiatorMobId int, initatorInstanceId int, initiatorNa
 		MobInstanceId1: initatorInstanceId,
 		MobInstanceId2: participantInstanceId,
 		StartRound:     util.GetRoundCount(),
-		Position:       0,
-		ActionList:     dataFile[chosenIndex].Conversation,
+		// LastRound must start at the current round - the cleanup in
+		// getConversation treats rounds since LastRound as staleness, and a
+		// zero value makes a brand-new conversation look ancient and
+		// eligible for deletion before its first action fires.
+		LastRound:  util.GetRoundCount(),
+		Position:   0,
+		ActionList: dataFile[chosenIndex].Conversation,
 	}
 
 	return conversationUniqueId

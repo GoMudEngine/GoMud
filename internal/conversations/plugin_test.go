@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func TestMain(m *testing.M) {
@@ -117,5 +118,32 @@ func TestReadPluginConversationFile_KeyFormat(t *testing.T) {
 	}
 	if _, ok := readPluginConversationFile("frostfang", 43); ok {
 		t.Fatalf("did not expect a file for mob 43")
+	}
+}
+
+// TestAttemptConversation_FreshConversationNotStale guards against a fresh
+// conversation being eligible for the random cleanup in getConversation. A
+// zero LastRound made new conversations look ancient (the round counter
+// starts above one million), so any lookup that won the 2% maintenance roll
+// deleted a conversation that was just created.
+func TestAttemptConversation_FreshConversationNotStale(t *testing.T) {
+	resetPluginState()
+	defer resetPluginState()
+
+	RegisterFS(newFakeFS(map[string][]byte{
+		`conversations/testzone/9001.yaml`: []byte(sampleConversation),
+	}))
+
+	convId := AttemptConversation(9001, 1, "goblin", 2, "rat", "TestZone")
+	if convId == 0 {
+		t.Fatalf("expected a non-zero conversation id from plugin file")
+	}
+
+	c := conversations[convId]
+	if c == nil {
+		t.Fatalf("expected conversation to be stored")
+	}
+	if c.LastRound != util.GetRoundCount() {
+		t.Fatalf("expected fresh conversation LastRound to equal the current round %d, got %d", util.GetRoundCount(), c.LastRound)
 	}
 }
