@@ -164,6 +164,8 @@
     var self = this;
     var wrap = ce("div", { style: "border:1px solid var(--tooled);border-radius:5px;padding:8px;margin-bottom:12px;" });
     wrap.appendChild(ce("h3", { text: "Test spawn", style: "margin-top:0;" }));
+    wrap.appendChild(ce("div", { style: "font-size:10px;color:var(--gold-dim);margin:2px 0 6px;",
+      text: "Admin test tool only — drops a disposable copy wherever you pick. Where this mob REALLY spawns is authored on rooms: Rooms tab → the room → Spawns." }));
 
     var zoneSel = ce("select", {});
     (enums.zones || []).forEach(function (z) {
