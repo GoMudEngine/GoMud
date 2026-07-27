@@ -1,6 +1,7 @@
 package mobs
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -334,5 +335,43 @@ func TestValidateMobSpec_RefusesInternedDescriptionToken(t *testing.T) {
 	m.Character.Description = "A guard with an honest description."
 	if err := ValidateMobSpec(m); err != nil {
 		t.Fatalf("plain prose must pass, got: %v", err)
+	}
+}
+
+// A mob rename/re-zone moves more than the mob file: behavior trees live at
+// behaviors/<zone>/<mobId>-<name>.yaml, so the writer must announce the
+// change via the OnMobFileRename seam (behaviortree registers the mover —
+// mobs cannot import behaviortree). Before this hook, renaming a mob
+// silently orphaned its tree and the mob fell back to its archetype.
+func TestSaveMobSpec_FiresRenameHook(t *testing.T) {
+	dir := t.TempDir()
+	pointMobDataFilesAt(t, dir)
+	m := seedMob(t, 99907, "Hook Probe")
+	if err := SaveMobSpec(m); err != nil {
+		t.Fatal(err)
+	}
+
+	var got []string
+	prev := OnMobFileRename
+	OnMobFileRename = func(mobId int, oldZone, oldName, newZone, newName string) {
+		got = append(got, fmt.Sprintf("%d|%s|%s|%s|%s", mobId, oldZone, oldName, newZone, newName))
+	}
+	t.Cleanup(func() { OnMobFileRename = prev })
+
+	// A plain save (no rename) must NOT fire.
+	if err := SaveMobSpec(m); err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != 0 {
+		t.Fatalf("plain save must not fire the rename hook: %v", got)
+	}
+
+	renamed := m
+	renamed.Character.Name = "Hook Probe Renamed"
+	if err := SaveMobSpec(renamed); err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != 1 || got[0] != "99907|Testzone|Hook Probe|Testzone|Hook Probe Renamed" {
+		t.Fatalf("rename hook fired wrong: %v", got)
 	}
 }

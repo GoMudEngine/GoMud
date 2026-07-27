@@ -41,6 +41,10 @@ func init() {
 		archetypeGoalWeights:  make(map[string]map[string]float64),
 		archetypeDefaultGoals: make(map[string][]GoalDefault),
 	}
+	// A mob rename/re-zone moves its behavior file (the path embeds both) —
+	// registered here because mobs cannot import behaviortree.
+	mobs.OnMobFileRename = MoveMobBehaviorFile
+
 	// Register the attack rejection callback so FireAttackRejected can fire btree events
 	mobs.AttackRejectedTryMobBehavior = func(mobInstanceId int, ctx mobs.EventContext) bool {
 		return TryMobBehavior(mobInstanceId, EventContext{

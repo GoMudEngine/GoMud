@@ -162,6 +162,25 @@ func DeleteRoomTree(roomId int, zone string) error {
 	return nil
 }
 
+// MoveMobBehaviorFile relocates a per-mob tree when its mob is renamed or
+// re-zoned (the path embeds both), then reloads the cache from the new
+// path. Registered on mobs.OnMobFileRename at init. Silently a no-op when
+// the mob has no behavior file — which is most mobs.
+func MoveMobBehaviorFile(mobId int, oldZone, oldName, newZone, newName string) {
+	oldPath := GetBehaviorPath(mobId, oldZone, oldName)
+	if _, err := os.Stat(oldPath); err != nil {
+		return
+	}
+	newPath := GetBehaviorPath(mobId, newZone, newName)
+	if err := os.MkdirAll(filepath.Dir(newPath), 0o755); err != nil {
+		return
+	}
+	if err := os.Rename(oldPath, newPath); err != nil {
+		return
+	}
+	_ = GetEngine().LoadTree(mobId, newPath)
+}
+
 // RawFileHasHandComments reports whether the on-disk file carries full-line
 // `#` comments — the 5d editor's marshal drops them, so the panel warns
 // before the first save. Marshal output never contains them, so this is

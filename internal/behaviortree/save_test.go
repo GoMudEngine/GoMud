@@ -200,3 +200,31 @@ func TestRawFileHasHandComments(t *testing.T) {
 		t.Fatal("clean marshal output must not flag")
 	}
 }
+
+func TestMoveMobBehaviorFile_FollowsRename(t *testing.T) {
+	overrideBTDataFilesDir(t)
+	e := GetEngine()
+	const mobId = 424243
+	t.Cleanup(func() { e.EvictTree(mobId) })
+
+	if _, err := SaveMobTree(mobId, "Probe Zone", "Old Name", validProbeTree()); err != nil {
+		t.Fatal(err)
+	}
+	oldPath := GetBehaviorPath(mobId, "Probe Zone", "Old Name")
+
+	MoveMobBehaviorFile(mobId, "Probe Zone", "Old Name", "New Zone", "New Name")
+
+	if _, err := os.Stat(oldPath); !os.IsNotExist(err) {
+		t.Fatal("old behavior file should be gone")
+	}
+	newPath := GetBehaviorPath(mobId, "New Zone", "New Name")
+	if _, err := os.Stat(newPath); err != nil {
+		t.Fatalf("behavior file should have followed the rename: %v", err)
+	}
+	if e.GetTree(mobId) == nil {
+		t.Fatal("tree cache should be reloaded from the new path")
+	}
+
+	// No behavior file: a silent no-op (most mobs have none).
+	MoveMobBehaviorFile(999999, "Probe Zone", "Nobody", "New Zone", "Nobody Two")
+}

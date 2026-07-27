@@ -218,6 +218,12 @@ func equippedItemIds(w characters.Worn) []int {
 // NEW name must already be in the cache at write time. So the name-cache
 // write happens first and is rolled back (via restoreCache) on any later
 // failure, rather than reordered.
+// OnMobFileRename is called after a successful SaveMobSpec whose name or
+// zone changed, so sibling per-mob files keyed by name/zone can follow.
+// behaviortree registers the behavior-file mover here at init (mobs cannot
+// import behaviortree — same seam direction as AttackRejectedTryMobBehavior).
+var OnMobFileRename func(mobId int, oldZone, oldName, newZone, newName string)
+
 func SaveMobSpec(m Mob) error {
 	CanonicalizeMobName(&m)
 	if err := ValidateMobSpec(&m); err != nil {
@@ -272,6 +278,11 @@ func SaveMobSpec(m Mob) error {
 	mobsMu.Lock()
 	mobs[int(m.MobId)] = &cp
 	mobsMu.Unlock()
+
+	if existed && OnMobFileRename != nil &&
+		(old.Character.Name != m.Character.Name || old.Zone != m.Zone) {
+		OnMobFileRename(int(m.MobId), old.Zone, old.Character.Name, m.Zone, m.Character.Name)
+	}
 	return nil
 }
 
