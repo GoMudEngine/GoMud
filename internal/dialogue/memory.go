@@ -11,6 +11,7 @@ type PlayerMemory struct {
 	LastVisitRound  uint64
 	UnlockedNodes   map[string]bool
 	CurrentRootSeen bool
+	Greeted         bool // this mob instance has greeted this player (5a; in-process, so once per boot)
 	RecentTopics    []string
 }
 
