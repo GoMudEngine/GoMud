@@ -23,10 +23,11 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/spells"
 )
 
-// genericQuestIdFloor hides template quests (1000000-generic_quest.yaml) from
-// the editor list; they still load, round-trip, and are guarded like any
-// other quest.
-const genericQuestIdFloor = 1000000
+// The reserved template range (1000000-generic_quest.yaml) is hidden from
+// the editor list; templates still load, round-trip, and are guarded like
+// any other quest. The floor itself lives in the quests package, shared
+// with id allocation.
+const genericQuestIdFloor = quests.ReservedTemplateIdFloor
 
 type questDeps struct {
 	load       func(id int) *quests.Quest

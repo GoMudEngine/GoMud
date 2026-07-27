@@ -67,15 +67,22 @@ func SaveQuest(q Quest) error {
 	return nil
 }
 
-// CreateNewQuestFile allocates the next free id past the cache max and
-// persists a minimal boot-safe skeleton (start + end steps, no triggers).
+// ReservedTemplateIdFloor marks the template-quest id range
+// (1000000-generic_quest.yaml). Id allocation stays below it and the editor
+// list hides it.
+const ReservedTemplateIdFloor = 1000000
+
+// CreateNewQuestFile allocates the next free id past the cache max —
+// ignoring the reserved template range, or every created quest would land
+// above 1000000 and be invisible to the editor list — and persists a minimal
+// boot-safe skeleton (start + end steps, no triggers).
 func CreateNewQuestFile(name string) (int, error) {
 	if name == "" {
 		name = "New Quest"
 	}
 	id := 0
 	for qid := range quests {
-		if qid > id {
+		if qid > id && qid < ReservedTemplateIdFloor {
 			id = qid
 		}
 	}
