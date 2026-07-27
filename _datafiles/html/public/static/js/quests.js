@@ -699,7 +699,7 @@
     // ---- steps ----
     insp.appendChild(sectionTitle("Steps"));
     insp.appendChild(ce("div", { style: "font-size:11px;color:var(--gold-dim);margin:2px 0 6px;",
-      text: "Step order is the progression order. Map target: where the minimap marker points during the step — 0 infers from triggers, the quest-giver box means \"point at the giver\"." }));
+      text: "Step order is the progression order. Map target: where the minimap marker points during the step. 0 = infer it from a room_enter trigger gated on this step; a room id = point there; the no-marker box = deliberately draw NO marker for this step (action steps with no travel destination)." }));
     var stepBox = ce("div", {});
     insp.appendChild(stepBox);
     function stepRow(s) {
@@ -711,14 +711,15 @@
         body.appendChild(field("Description (quest log, after this step is granted)", sd));
         var hint = textArea(s.hint);
         body.appendChild(field("Hint (the quest log's nudge)", hint));
-        var giver = boolInput(s.map_target === -1);
+        var noMarker = boolInput(s.map_target === -1);
         var mt = numInput(s.map_target > 0 ? s.map_target : 0);
         var assist = roomAssist(mt);
-        body.appendChild(field("Map target: quest giver", giver));
-        body.appendChild(field("Map target room (0 = infer)", ce("span", {}, [mt, assist])));
+        body.appendChild(field("No marker for this step", noMarker,
+          "writes map_target: -1 — suppresses the marker AND trigger inference; for action steps (craft, kill, command) with no travel destination"));
+        body.appendChild(field("Map target room (0 = infer from triggers)", ce("span", {}, [mt, assist])));
         return { gather: function () {
           return { id: id.value.trim(), description: sd.value, hint: hint.value,
-            map_target: giver.checked ? -1 : toInt(mt.value) };
+            map_target: noMarker.checked ? -1 : toInt(mt.value) };
         } };
       }, true);
     }

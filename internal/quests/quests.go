@@ -70,7 +70,7 @@ type QuestStep struct {
 	Id          string `yaml:"id" json:"id"` // identifies this step, e.g. "start"
 	Description string `yaml:"description,omitempty" json:"description,omitempty"`
 	Hint        string `yaml:"hint,omitempty" json:"hint,omitempty"`
-	MapTarget   int    `yaml:"map_target,omitempty" json:"map_target,omitempty"` // room the minimap marker points at during this step (0 = infer/none, -1 = quest giver)
+	MapTarget   int    `yaml:"map_target,omitempty" json:"map_target,omitempty"` // room the minimap marker points at during this step (0 = infer from room_enter triggers, -1 = deliberate NO marker; see questengine.ResolveQuestTarget)
 }
 
 func (r *Quest) Id() int {

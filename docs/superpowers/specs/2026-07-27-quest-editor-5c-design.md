@@ -104,8 +104,9 @@ Inspector sections:
 1. **Identity** — name, description, secret, repeatable + cooldown rounds.
 2. **Steps** — ordered list (↑/↓; order is the progression order), each
    row: id, description, hint, map target (zone→room picker, mirroring the
-   mob editor's test-spawn picker; -1 = "quest giver" sentinel surfaced as
-   a checkbox).
+   mob editor's test-spawn picker; -1 = deliberate NO-marker sentinel —
+   suppresses trigger inference, per questengine.ResolveQuestTarget —
+   surfaced as a checkbox. An earlier draft mislabeled -1 "quest giver").
 3. **Rewards** — the canonical fields with pickers/datalists; the panel
    never shows raw yaml keys.
 4. **Flags** — key / allowed values / description rows; the editor reminds
