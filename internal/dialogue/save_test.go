@@ -4,10 +4,13 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	yaml "gopkg.in/yaml.v2"
 )
 
 // overrideDataFilesDir points configs.DataFiles at a temp dir for the
@@ -124,4 +127,67 @@ func TestWriter_CreateRefusesWhenFileExists(t *testing.T) {
 	if err := CreateNewDialogueFile(mobId, zone); err == nil {
 		t.Error("second create must refuse — the file exists")
 	}
+}
+
+// The writer must be lossless over the entire live corpus before it ever
+// touches a real file. Marshal-level round trip: bytes -> struct -> marshal
+// -> struct -> DeepEqual. Any failure here is a struct-shape gap (the
+// greetings incident class), not a test to weaken.
+func TestWriter_RoundTripsEveryLiveFile(t *testing.T) {
+	root := filepath.Join("..", "..", "_datafiles", "world", "dogmud", "dialogue")
+	checked := 0
+	_ = filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if err != nil || info.IsDir() || !strings.HasSuffix(path, ".yaml") {
+			return nil
+		}
+		raw, _ := os.ReadFile(path)
+		var orig DialogueFile
+		if yaml.Unmarshal(raw, &orig) != nil {
+			return nil // the parse sweep owns malformed files
+		}
+		out, err := yaml.Marshal(&orig)
+		if err != nil {
+			t.Errorf("%s: marshal: %v", path, err)
+			return nil
+		}
+		var back DialogueFile
+		if err := yaml.Unmarshal(out, &back); err != nil {
+			t.Errorf("%s: re-unmarshal: %v", path, err)
+			return nil
+		}
+		// DeepEqual is the WRONG criterion here: a root-only tree unmarshals
+		// with Nodes == nil, marshals as `nodes: []`, and reparses as an
+		// EMPTY slice — semantically identical, DeepEqual-different. The
+		// meaningful invariant for a canonicalizing writer is that its
+		// canonical form is a FIXED POINT: re-reading and re-marshalling its
+		// own output is byte-stable (no churn on every open+save). Gross
+		// content loss is guarded separately by the section counts.
+		out2, err := yaml.Marshal(&back)
+		if err != nil {
+			t.Errorf("%s: re-marshal: %v", path, err)
+			return nil
+		}
+		if string(out) != string(out2) {
+			t.Errorf("%s: marshal is not a fixed point — writer output would churn on every save", path)
+		}
+		if len(back.Patterns) != len(orig.Patterns) || len(back.Greetings) != len(orig.Greetings) {
+			t.Errorf("%s: section counts changed through round trip", path)
+		}
+		if (orig.Tree == nil) != (back.Tree == nil) {
+			t.Errorf("%s: tree presence changed through round trip", path)
+		} else if orig.Tree != nil {
+			if len(back.Tree.Nodes) != len(orig.Tree.Nodes) || len(back.Tree.Root.Variants) != len(orig.Tree.Root.Variants) {
+				t.Errorf("%s: tree node/variant counts changed through round trip", path)
+			}
+			if !reflect.DeepEqual(orig.Tree.Root.Text, back.Tree.Root.Text) {
+				t.Errorf("%s: root text changed through round trip", path)
+			}
+		}
+		checked++
+		return nil
+	})
+	if checked < 300 {
+		t.Errorf("round-tripped only %d files — wrong path?", checked)
+	}
+	t.Logf("round-tripped %d live dialogue files losslessly", checked)
 }
