@@ -2,8 +2,9 @@ mobid: 9517
 zone: Greenford
 defaultMood: friendly
 greetings:
-  - text: "The Archive. I know where everything is -- say what
-      you want and I will tell you if we have it."
+  - text: "Wipe your boots. Paper remembers water and so do I. The
+      reading-stands are free -- browse quietly, and put things back
+      where your hands found them."
     moods: ["friendly"]
 patterns:
   - keywords: ["hello", "hi", "greet", "hey"]

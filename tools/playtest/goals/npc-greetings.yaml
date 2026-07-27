@@ -1,0 +1,68 @@
+name: NPC greetings (5a) — arrival welcomes, adversarial content pass
+summary: >
+  186 NPCs now greet an arriving player once per boot (per mob instance).
+  Drive the real player flow as a critical, confused newcomer: read every
+  greeting line, confirm the frequency and suppression rules, and report
+  every line that reads oddly out of context. This is the content gate for
+  a change that alters what 186 NPCs do in front of players.
+goals:
+  - id: first-entry-greets
+    do: >
+      As a fresh character, walk into rooms with known greeters and stand
+      still. Good stops: the Golden Bough inn in Amber Valley (Hesper Vane,
+      mob 9397), the Amber Valley general store (Goss Harrow, 9398), the
+      woodworker (Corwin Ashlade, 9399), and the Greenford Archive (Tess,
+      9517).
+    verify: >
+      On FIRST entry each NPC says its greeting aloud (a normal `say` line,
+      attributed to the NPC). The line reads as a welcome — not a non
+      sequitur, not narration. Report verbatim any greeting that reads
+      oddly on arrival.
+
+  - id: once-per-boot
+    do: >
+      Leave and re-enter the same room several times, with a few rounds
+      between. Then `talk` to the NPC.
+    verify: >
+      No repeat greeting on re-entry — one welcome per NPC per boot. The
+      tree root (self-introduction) still serves normally on `talk`, and
+      the pair (greeting then root) reads coherent, not repetitive. Tess in
+      the Greenford Archive is the specific NPC to check for greeting/root
+      repetition — her greeting was rewritten for this.
+
+  - id: two-greeter-room
+    do: >
+      Find a room that spawns two greeting-capable NPCs (9 exist — town
+      commons and shared shopfronts are the likely spots; try Amber Valley
+      and Stillwater centers) and enter it fresh.
+    verify: >
+      Exactly ONE NPC greets on entry, not both. No greeting pile-up.
+
+  - id: sneak-suppression
+    do: >
+      `sneak`, then enter a room with an ungreeted greeter. Wait several
+      rounds. Then unhide and re-enter.
+    verify: >
+      While hidden: NO greeting fires — being hailed by name would defeat
+      stealth. This is the one suppression with a mechanical consequence;
+      report any greeting received while hidden as a FAIL. (After
+      unhiding, a greeting on the next entry is acceptable.)
+
+  - id: occupied-npcs
+    do: >
+      If any greeter can be found asleep (night schedule) or in combat,
+      enter its room. Otherwise mark this observational.
+    verify: >
+      No greeting from a sleeping or fighting NPC. A greeting from an NPC
+      mid-craftwork IS acceptable and intended (the prose is written for
+      it).
+
+  - id: adversarial-read
+    do: >
+      Throughout the session, read every greeting encountered as a confused
+      brand-new player would, in full.
+    verify: >
+      Report EVERY line that is confusing, out of place, mood-mismatched
+      (a grumpy line from a friendly NPC or vice versa), refers to things
+      not present, or collides awkwardly with an idle message or a
+      conversation already in progress. Blunt list, verbatim quotes.

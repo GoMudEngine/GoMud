@@ -294,6 +294,14 @@ func isInConversation(m MobConversant) bool {
 	return partnerId > 0
 }
 
+// IsFullyIdle reports whether a mob is unoccupied by the engine's standing
+// definition — not in combat, not asleep, not mid-conversation, not walking a
+// patrol. Exported for the arrival-greeting hook (5a), which must not invent
+// a second idleness definition that would drift from this one.
+func IsFullyIdle(m MobConversant) bool {
+	return isFullyIdle(m)
+}
+
 // isFullyIdle: not in combat, not asleep, not in conversation, not on
 // patrol mid-walk.
 func isFullyIdle(m MobConversant) bool {

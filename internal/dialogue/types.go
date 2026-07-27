@@ -118,10 +118,19 @@ type MemoryConfig struct {
 }
 
 // DialogueFile is the top-level structure of a mob's dialogue YAML.
+// Greeting is one ambient line an NPC offers when a player arrives in its
+// room. Authored in 186 dialogue files since long before the engine read
+// them — the struct is shaped to the existing YAML, not the other way round.
+type Greeting struct {
+	Text  string   `yaml:"text"`
+	Moods []string `yaml:"moods,omitempty"`
+}
+
 type DialogueFile struct {
 	MobId       int          `yaml:"mobid"`
 	Zone        string       `yaml:"zone"`
 	DefaultMood string       `yaml:"defaultMood"`
+	Greetings   []Greeting   `yaml:"greetings,omitempty"`
 	Patterns    []Pattern    `yaml:"patterns"`
 	Tree        *Tree        `yaml:"tree,omitempty"`
 	Memory      MemoryConfig `yaml:"memory"`

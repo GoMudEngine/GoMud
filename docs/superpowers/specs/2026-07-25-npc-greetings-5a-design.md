@@ -152,9 +152,17 @@ No greeting when:
 |-----------|-----|
 | NPC asleep (`buffs.Sleeping`) | a sleeping innkeeper cannot welcome anyone |
 | NPC in combat | it is busy, and the line would read absurdly |
-| NPC mid-schedule-activity | scheduled NPCs are deliberately occupied |
+| NPC not fully idle (`conversations.IsFullyIdle`: mid-conversation, patrol mid-walk) | the engine's standing occupied-check, reused rather than duplicated |
 | player entered **hidden** | a sneaking thief must not be hailed by name — this would otherwise silently defeat stealth |
 | NPC has no greeting for its mood | §4 |
+
+**Refinement (2026-07-27, implementation):** the original table said
+"mid-schedule-activity" suppresses. The shipped rule is the conversations
+package's `IsFullyIdle` — combat, sleep, mid-conversation, patrol mid-walk —
+which deliberately does NOT suppress schedule work: the greeting prose is
+written to be delivered mid-task ("mind the shavings — pull up that stool"),
+so a crafting shopkeeper should greet. Schedule *sleep* remains suppressed via
+the Sleeping buff, which schedule sleep segments apply.
 
 The hidden-player case is the one with a mechanical consequence rather than a
 cosmetic one, and it must be covered by a test.
