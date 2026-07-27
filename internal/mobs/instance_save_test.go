@@ -403,3 +403,13 @@ func TestHasPersistableState(t *testing.T) {
 	trainMob.Character.Stats.Strength.Training = 5
 	assert.True(t, hasPersistableState(trainMob), "training must remain persistable")
 }
+
+// A zoneless mob template (summon-only / not-yet-placed; templates route to
+// mobs/unzoned/) must land its INSTANCE saves under mobs.instances/unzoned/,
+// not at the mobs.instances/ root — the cosmetic asymmetry noted in the
+// admin web-building epic.
+func TestInstancePath_EmptyZoneRoutesToUnzoned(t *testing.T) {
+	p := instancePath(42, "", "Stray Summon", 100)
+	assert.Contains(t, filepath.ToSlash(p), "mobs.instances/unzoned/",
+		"empty-zone instance saves must mirror the template unzoned/ routing")
+}

@@ -50,7 +50,13 @@ func instanceFilename(mobId MobId, mobName string, homeRoomId int) string {
 }
 
 // instancePath returns the full filesystem path for a mob instance save.
+// An empty zone routes to the fixed "unzoned" folder, mirroring
+// Mob.Filepath()'s template routing — without this, zoneless mobs' instance
+// saves piled up at the mobs.instances/ root.
 func instancePath(mobId MobId, zone string, mobName string, homeRoomId int) string {
+	if zone == "" {
+		zone = "unzoned"
+	}
 	zonePath := ZoneNameSanitize(zone)
 	filename := instanceFilename(mobId, mobName, homeRoomId)
 	return util.FilePath(
