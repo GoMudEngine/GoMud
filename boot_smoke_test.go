@@ -224,12 +224,17 @@ var knownIgnoredDialogueKeys = map[string]bool{}
 // decoder discards them.
 //
 // This exists as a DRIFT GATE, not an approval. Flipping the loaders to strict
-// decoding outright would fail the boot with 3,213 violations, the vast bulk of
-// them benign: `coord` (2,459) is authored room data the engine abandoned in
-// favour of crawled exit-delta positions, `level` (612) is legacy from the
-// level/XP system being removed, and most quest entries are an artifact of quest
-// YAML being parsed by two type systems (the legacy `quests` package and the
-// newer `questengine`), each seeing the other's fields as unknown.
+// decoding outright would fail the boot with thousands of violations, the vast
+// bulk benign: `coord` is authored room data the engine abandoned in favour of
+// crawled exit-delta positions, `level` is legacy from the level/XP system
+// being removed.
+//
+// Quest YAML used to contribute 17 entries here — an artifact of being parsed
+// by two type systems (the legacy `quests` package and `questengine`), each
+// seeing the other's fields as unknown. The 5c-pre unification (2026-07-27,
+// docs/superpowers/specs/2026-07-27-quest-unification-5c-pre-design.md) gave
+// quest files ONE explicitly-tagged parse, and those entries are gone; a novel
+// quest key now means a real tag mistake or content typo, never re-baseline it.
 //
 // Baselining the distinct field/type pairs means a NEW mistyped or unsupported
 // key — the `hostile:` failure mode, where an authored value silently does
@@ -238,9 +243,6 @@ var knownIgnoredDialogueKeys = map[string]bool{}
 //
 // Several entries below are genuine content bugs worth fixing, listed in the
 // audit doc rather than silently accepted:
-//   - `item_id` on quests.QuestReward: CLAUDE.md documents that reward keys are
-//     no-underscore (`itemid`); the snake_case form silently no-ops. This is a
-//     live instance of that footgun.
 //   - `scriptag` on mobs.Mob: almost certainly a typo for `scripttag`.
 //   - `visible` / `sequential` / `expireMessage` on buffs.BuffSpec.
 //   - `zone` on exit.RoomExit (136x): authored values doing nothing.
@@ -258,34 +260,17 @@ var knownIgnoredDialogueKeys = map[string]bool{}
 // To clear an entry: fix the content (or add the field to the struct), confirm
 // the count drops, and delete the line.
 var knownSilentlyIgnoredKeys = map[string]bool{
-	"coord|rooms.Room":                       true,
-	"level|characters.Character":             true,
-	"zone|exit.RoomExit":                     true,
-	"triggers|quests.Quest":                  true,
-	"playermessage|questengine.QuestRewards": true,
-	"roommessage|questengine.QuestRewards":   true,
-	"linear|quests.Quest":                    true,
-	"itemid|questengine.QuestRewards":        true,
-	"skillinfo|questengine.QuestRewards":     true,
-	"map_target|quests.QuestStep":            true,
-	"items|mobs.Mob":                         true,
-	"rep_faction|questengine.QuestRewards":   true,
-	"rep_amount|questengine.QuestRewards":    true,
-	"repeatable|questengine.QuestDef":        true,
-	"cooldown_rounds|questengine.QuestDef":   true,
-	"tactics|characters.Character":           true,
-	"recipe_info|questengine.QuestRewards":   true,
-	"long|rooms.Container":                   true,
-	"item_info|questengine.QuestRewards":     true,
-	"triggers|quests.QuestStep":              true,
-	"triggers|questengine.QuestStep":         true,
-	"spellid|questengine.QuestRewards":       true,
-	"scriptag|mobs.Mob":                      true,
-	"allow_recall|rooms.Room":                true,
-	"visible|buffs.BuffSpec":                 true,
-	"sequential|buffs.BuffSpec":              true,
-	"expireMessage|buffs.BuffSpec":           true,
-	"buffid|questengine.QuestRewards":        true,
+	"coord|rooms.Room":             true,
+	"level|characters.Character":   true,
+	"zone|exit.RoomExit":           true,
+	"items|mobs.Mob":               true,
+	"tactics|characters.Character": true,
+	"long|rooms.Container":         true,
+	"scriptag|mobs.Mob":            true,
+	"allow_recall|rooms.Room":      true,
+	"visible|buffs.BuffSpec":       true,
+	"sequential|buffs.BuffSpec":    true,
+	"expireMessage|buffs.BuffSpec": true,
 }
 
 var unknownKeyRe = regexp.MustCompile(`field ([A-Za-z_0-9]+) not found in type ([A-Za-z_.]+)`)
