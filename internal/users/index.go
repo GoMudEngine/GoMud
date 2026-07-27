@@ -8,6 +8,8 @@ import (
 	"hash/fnv"
 	"io"
 	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -25,9 +27,10 @@ var (
 )
 
 const (
-	IndexVersion           = 2
+	IndexVersion           = 3
 	IndexLineTerminatorV1  = byte(10) // "\n"
 	IndexRecordSizeV1      = 89
+	IndexRecordSizeV3      = 185 // username[80] + userid(8) + charname[80] + mtime(8) + size(8) + newline
 	FixedHeaderTotalLength = 100 // 99 bytes header content + 1 byte newline
 )
 
@@ -40,10 +43,16 @@ type IndexMetaData struct {
 	Checksum     uint64 // FNV-64 fingerprint of user directory contents; 0 when IndexChecksumEnabled is false
 }
 
-// IndexUserRecord represents one fixed-width record.
+// IndexUserRecord represents one fixed-width record. Alongside the lookup
+// fields it stores the active character name plus the mtime and size the
+// user file had when it was indexed, so startup can tell unchanged files
+// apart from changed ones without opening them.
 type IndexUserRecord struct {
-	UserID   int64
-	Username [80]byte
+	UserID        int64
+	Username      [80]byte
+	CharacterName [80]byte
+	FileModTime   int64 // UnixNano mtime of the user file when last indexed
+	FileSize      int64 // size in bytes of the user file when last indexed
 }
 
 // UserIndex is the central struct that holds the index filename and methods
@@ -102,6 +111,14 @@ func (idx *UserIndex) loadRecords() {
 		return
 	}
 
+	// An index in an older record format is not readable - leave the maps
+	// empty so SyncWithUserFiles falls back to a full rebuild.
+	if idx.metaData.IndexVersion != IndexVersion || idx.metaData.RecordSize != IndexRecordSizeV3 {
+		mudlog.Info("UserIndex", "info", "index format is outdated, a rebuild will recreate it", "path", idx.Filename, "version", idx.metaData.IndexVersion)
+		idx.records = nil
+		return
+	}
+
 	f, err := os.Open(idx.Filename)
 	if err != nil {
 		mudlog.Error("UserIndex", "error", "failed to open index file", "path", idx.Filename, "details", err)
@@ -127,6 +144,9 @@ func (idx *UserIndex) loadRecords() {
 		rec := &idx.records[i]
 		copy(rec.Username[:], buf[offset:offset+80])
 		rec.UserID = int64(binary.LittleEndian.Uint64(buf[offset+80 : offset+88]))
+		copy(rec.CharacterName[:], buf[offset+88:offset+168])
+		rec.FileModTime = int64(binary.LittleEndian.Uint64(buf[offset+168 : offset+176]))
+		rec.FileSize = int64(binary.LittleEndian.Uint64(buf[offset+176 : offset+184]))
 
 		username := string(bytes.TrimRight(rec.Username[:], "\x00"))
 		idx.byUsername[username] = rec.UserID
@@ -155,7 +175,7 @@ func (idx *UserIndex) Create() error {
 		MetaDataSize: FixedHeaderTotalLength,
 		IndexVersion: IndexVersion,
 		RecordCount:  0,
-		RecordSize:   IndexRecordSizeV1,
+		RecordSize:   IndexRecordSizeV3,
 	}
 	idx.highestUserId = 0
 	idx.records = nil
@@ -265,16 +285,31 @@ func (idx *UserIndex) RebuildFromScan(scan []UserFileScan) error {
 	return idx.applyScan(scan, checksum)
 }
 
+// scanRecord converts one scan result into a fixed-width index record.
+func scanRecord(s UserFileScan) IndexUserRecord {
+	rec := IndexUserRecord{
+		UserID:      int64(s.UserId),
+		FileModTime: s.FileModTime,
+		FileSize:    s.FileSize,
+	}
+	copy(rec.Username[:], strings.ToLower(s.Username))
+	copy(rec.CharacterName[:], s.CharacterName)
+	return rec
+}
+
 // applyScan replaces the in-memory records and lookup maps with the scan
 // results, then writes the complete index to disk once.
 func (idx *UserIndex) applyScan(scan []UserFileScan, checksum uint64) error {
-
 	records := make([]IndexUserRecord, 0, len(scan))
 	for _, s := range scan {
-		rec := IndexUserRecord{UserID: int64(s.UserId)}
-		copy(rec.Username[:], strings.ToLower(s.Username))
-		records = append(records, rec)
+		records = append(records, scanRecord(s))
 	}
+	return idx.applyRecords(records, checksum)
+}
+
+// applyRecords replaces the in-memory records and lookup maps, then writes
+// the complete index to disk once.
+func (idx *UserIndex) applyRecords(records []IndexUserRecord, checksum uint64) error {
 
 	idx.mu.Lock()
 	defer idx.mu.Unlock()
@@ -283,7 +318,7 @@ func (idx *UserIndex) applyScan(scan []UserFileScan, checksum uint64) error {
 		MetaDataSize: FixedHeaderTotalLength,
 		IndexVersion: IndexVersion,
 		RecordCount:  uint64(len(records)),
-		RecordSize:   IndexRecordSizeV1,
+		RecordSize:   IndexRecordSizeV3,
 		Checksum:     checksum,
 	}
 
@@ -409,10 +444,11 @@ func (idx *UserIndex) AddUser(userId int, username string) error {
 		return fmt.Errorf("error seeking to file end: %w", err)
 	}
 
-	var recBuf [IndexRecordSizeV1]byte
-	copy(recBuf[:80], newRecord.Username[:])
-	binary.LittleEndian.PutUint64(recBuf[80:88], uint64(newRecord.UserID))
-	recBuf[88] = IndexLineTerminatorV1
+	// The character name, mtime, and size are left zeroed here - the user
+	// file usually doesn't exist yet when a user is first registered. The
+	// zero mtime never matches the real file, so the next startup sync
+	// re-parses that one file and completes the record.
+	recBuf := encodeIndexRecord(newRecord)
 	if _, err := f.Write(recBuf[:]); err != nil {
 		return fmt.Errorf("error writing record: %w", err)
 	}
@@ -496,6 +532,126 @@ func (m IndexMetaData) Format() ([]byte, error) {
 	return []byte(padded + string(IndexLineTerminatorV1)), nil
 }
 
+// SyncWithUserFiles brings the index in line with the user files on disk,
+// parsing only files that are new or changed since they were last indexed
+// and dropping records whose files are gone. Unchanged files are never
+// opened. Returns how many records had to be parsed or dropped; when that
+// is zero the index file is not rewritten at all.
+func (idx *UserIndex) SyncWithUserFiles() (int, error) {
+	basePath := util.FilePath(string(configs.GetFilePathsConfig().DataFiles), `/`, `users`)
+	return idx.syncWithDir(basePath)
+}
+
+// syncWithDir is SyncWithUserFiles parameterized by the directory to sync
+// against, so tests can point it at a synthetic users directory.
+func (idx *UserIndex) syncWithDir(basePath string) (int, error) {
+
+	// An index that is missing, in an older format, or that did not load
+	// every record its header claims cannot be trusted for incremental
+	// work - fall back to a full scan of every user file.
+	idx.mu.RLock()
+	trustworthy := idx.metaData.IndexVersion == IndexVersion &&
+		idx.metaData.RecordSize == IndexRecordSizeV3 &&
+		uint64(len(idx.records)) == idx.metaData.RecordCount
+	oldRecords := idx.records
+	idx.mu.RUnlock()
+
+	if !idx.Exists() {
+		trustworthy = false
+	}
+
+	if !trustworthy {
+		scan := scanUserFilesInDir(basePath)
+		checksum, err := computeDirChecksum(basePath)
+		if err != nil {
+			return 0, fmt.Errorf("checksum compute failed: %w", err)
+		}
+		return len(scan), idx.applyScan(scan, checksum)
+	}
+
+	entries, err := os.ReadDir(basePath)
+	if err != nil {
+		return 0, fmt.Errorf("users directory unreadable: %w", err)
+	}
+
+	onDisk := make(map[string]os.FileInfo, len(entries))
+	for _, e := range entries {
+		if e.IsDir() {
+			continue
+		}
+		name := e.Name()
+		if !strings.HasSuffix(name, `.yaml`) || strings.HasSuffix(name, `.alts.yaml`) {
+			continue
+		}
+		info, err := e.Info()
+		if err != nil {
+			return 0, fmt.Errorf("stat failed for %s: %w", name, err)
+		}
+		onDisk[name] = info
+	}
+
+	// Records are matched to files by the <userid>.yaml naming convention.
+	// A user file in the old username.yaml naming never matches a record,
+	// so it is re-parsed every startup - run the format migration to avoid
+	// that cost.
+	changed := 0
+	kept := make([]IndexUserRecord, 0, len(oldRecords))
+	reparse := []string{}
+	claimed := make(map[string]bool, len(oldRecords))
+
+	for _, rec := range oldRecords {
+		fileName := strconv.FormatInt(rec.UserID, 10) + `.yaml`
+		info, ok := onDisk[fileName]
+		if !ok {
+			changed++
+			continue
+		}
+		claimed[fileName] = true
+		if info.ModTime().UnixNano() == rec.FileModTime && info.Size() == rec.FileSize {
+			kept = append(kept, rec)
+			continue
+		}
+		reparse = append(reparse, fileName)
+		changed++
+	}
+
+	for name := range onDisk {
+		if !claimed[name] {
+			reparse = append(reparse, name)
+			changed++
+		}
+	}
+
+	if changed == 0 {
+		return 0, nil
+	}
+
+	for _, name := range reparse {
+		if s, ok := scanUserFile(filepath.Join(basePath, name), onDisk[name]); ok {
+			kept = append(kept, scanRecord(s))
+		}
+	}
+
+	checksum, err := computeDirChecksum(basePath)
+	if err != nil {
+		return 0, fmt.Errorf("checksum compute failed: %w", err)
+	}
+
+	return changed, idx.applyRecords(kept, checksum)
+}
+
+// encodeIndexRecord serializes one record into its fixed-width on-disk form.
+func encodeIndexRecord(rec IndexUserRecord) [IndexRecordSizeV3]byte {
+	var recBuf [IndexRecordSizeV3]byte
+	copy(recBuf[:80], rec.Username[:])
+	binary.LittleEndian.PutUint64(recBuf[80:88], uint64(rec.UserID))
+	copy(recBuf[88:168], rec.CharacterName[:])
+	binary.LittleEndian.PutUint64(recBuf[168:176], uint64(rec.FileModTime))
+	binary.LittleEndian.PutUint64(recBuf[176:184], uint64(rec.FileSize))
+	recBuf[184] = IndexLineTerminatorV1
+	return recBuf
+}
+
 // writeCompleteIndex writes metadata and all records atomically via temp file + rename.
 func (idx *UserIndex) writeCompleteIndex(records []IndexUserRecord) error {
 	tmpFile := idx.Filename + ".tmp"
@@ -510,14 +666,11 @@ func (idx *UserIndex) writeCompleteIndex(records []IndexUserRecord) error {
 			return err
 		}
 
-		buf := make([]byte, 0, len(headerBytes)+len(records)*IndexRecordSizeV1)
+		buf := make([]byte, 0, len(headerBytes)+len(records)*IndexRecordSizeV3)
 		buf = append(buf, headerBytes...)
 
-		var recBuf [IndexRecordSizeV1]byte
 		for _, rec := range records {
-			copy(recBuf[:80], rec.Username[:])
-			binary.LittleEndian.PutUint64(recBuf[80:88], uint64(rec.UserID))
-			recBuf[88] = IndexLineTerminatorV1
+			recBuf := encodeIndexRecord(rec)
 			buf = append(buf, recBuf[:]...)
 		}
 

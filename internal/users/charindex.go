@@ -1,6 +1,7 @@
 package users
 
 import (
+	"bytes"
 	"strings"
 	"sync"
 )
@@ -75,6 +76,30 @@ func (ci *CharacterIndex) Find(name string) (userId int, found bool) {
 // runs.
 func (ci *CharacterIndex) Rebuild() {
 	ci.RebuildFromScan(ScanUserFiles())
+}
+
+// RebuildFromIndex repopulates the character index straight from the user
+// index records plus all currently online users, without opening a single
+// user file.
+func (ci *CharacterIndex) RebuildFromIndex(idx *UserIndex) {
+	newMap := make(map[string]int)
+
+	idx.ForEachRecord(func(rec IndexUserRecord) bool {
+		if name := string(bytes.TrimRight(rec.CharacterName[:], "\x00")); name != `` {
+			newMap[strings.ToLower(name)] = int(rec.UserID)
+		}
+		return true
+	})
+
+	for _, u := range GetAllActiveUsers() {
+		if u.Character != nil && u.Character.Name != "" {
+			newMap[strings.ToLower(u.Character.Name)] = u.UserId
+		}
+	}
+
+	ci.mu.Lock()
+	ci.byName = newMap
+	ci.mu.Unlock()
 }
 
 // RebuildFromScan is Rebuild fed by an existing user file scan, so startup
