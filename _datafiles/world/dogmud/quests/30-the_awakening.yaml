@@ -16,7 +16,6 @@ questid: 30
 name: The Awakening
 description: Undergo the Awakening Rite at the pool in Pothole Coulee.
 secret: false
-linear: true
 
 steps:
   - id: start

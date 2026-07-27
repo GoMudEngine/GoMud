@@ -5,7 +5,6 @@ description: >-
   Learn the first handful of things every soul needs before it steps into
   the world -- one at a time, at your own pace.
 secret: false
-linear: true
 
 steps:
   - id: start
