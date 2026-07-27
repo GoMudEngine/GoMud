@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/fileloader"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/util"
@@ -23,9 +22,9 @@ var (
 )
 
 type QuestFlagDef struct {
-	Key         string   `yaml:"key"`
-	Values      []string `yaml:"values"`
-	Description string   `yaml:"description,omitempty"`
+	Key         string   `yaml:"key" json:"key"`
+	Values      []string `yaml:"values" json:"values"`
+	Description string   `yaml:"description,omitempty" json:"description,omitempty"`
 }
 
 // QuestReward — every key is EXPLICITLY tagged with the key that has always
@@ -35,43 +34,43 @@ type QuestFlagDef struct {
 // 5c editor writer marshals exactly this. Keys are proven stable by the
 // equivalence harness in unification_equivalence_test.go.
 type QuestReward struct {
-	QuestId       string `yaml:"questid,omitempty"`     // new questId to give ( {id}-{step} format )
-	Gold          int    `yaml:"gold,omitempty"`        // zero or more gold to give
-	ItemId        int    `yaml:"itemid,omitempty"`      // itemId to give
-	BuffId        int    `yaml:"buffid,omitempty"`      // buffId to apply
-	SkillInfo     string `yaml:"skillinfo,omitempty"`   // skill(s) to give, "skill:level[,skill:level]"
-	StatInfo      string `yaml:"stat_info,omitempty"`   // stat(s) to increase, "stat:amount[,...]"
-	RecipeInfo    string `yaml:"recipe_info,omitempty"` // recipe(s) to grant, comma-separated recipe IDs
-	ItemInfo      string `yaml:"item_info,omitempty"`   // item stockpile to grant, "itemid[:qty][,itemid[:qty]]"
-	SpellId       string `yaml:"spellid,omitempty"`     // spell to teach on completion
-	PlayerMessage string `yaml:"playermessage,omitempty"`
-	RoomMessage   string `yaml:"roommessage,omitempty"`
-	RoomId        int    `yaml:"roomid,omitempty"` // roomId to move player to
-	RepFaction    string `yaml:"rep_faction,omitempty"`
-	RepAmount     int    `yaml:"rep_amount,omitempty"`
+	QuestId       string `yaml:"questid,omitempty" json:"questid,omitempty"`         // new questId to give ( {id}-{step} format )
+	Gold          int    `yaml:"gold,omitempty" json:"gold,omitempty"`               // zero or more gold to give
+	ItemId        int    `yaml:"itemid,omitempty" json:"itemid,omitempty"`           // itemId to give
+	BuffId        int    `yaml:"buffid,omitempty" json:"buffid,omitempty"`           // buffId to apply
+	SkillInfo     string `yaml:"skillinfo,omitempty" json:"skillinfo,omitempty"`     // skill(s) to give, "skill:level[,skill:level]"
+	StatInfo      string `yaml:"stat_info,omitempty" json:"stat_info,omitempty"`     // stat(s) to increase, "stat:amount[,...]"
+	RecipeInfo    string `yaml:"recipe_info,omitempty" json:"recipe_info,omitempty"` // recipe(s) to grant, comma-separated recipe IDs
+	ItemInfo      string `yaml:"item_info,omitempty" json:"item_info,omitempty"`     // item stockpile to grant, "itemid[:qty][,itemid[:qty]]"
+	SpellId       string `yaml:"spellid,omitempty" json:"spellid,omitempty"`         // spell to teach on completion
+	PlayerMessage string `yaml:"playermessage,omitempty" json:"playermessage,omitempty"`
+	RoomMessage   string `yaml:"roommessage,omitempty" json:"roommessage,omitempty"`
+	RoomId        int    `yaml:"roomid,omitempty" json:"roomid,omitempty"` // roomId to move player to
+	RepFaction    string `yaml:"rep_faction,omitempty" json:"rep_faction,omitempty"`
+	RepAmount     int    `yaml:"rep_amount,omitempty" json:"rep_amount,omitempty"`
 }
 
 // Quest is THE quest definition — the single parse of quest YAML (5c-pre
 // unification). internal/questengine consumes these via GetAllQuests();
 // nothing else parses the files.
 type Quest struct {
-	QuestId        int            `yaml:"questid"`
-	Name           string         `yaml:"name"`
-	Description    string         `yaml:"description,omitempty"`
-	Secret         bool           `yaml:"secret,omitempty"` // marks progress without making it known to the player
-	Steps          []QuestStep    `yaml:"steps"`
-	Rewards        QuestReward    `yaml:"rewards,omitempty"`
-	Triggers       []TriggerDef   `yaml:"triggers,omitempty"`
-	Flags          []QuestFlagDef `yaml:"flags,omitempty"`
-	Repeatable     bool           `yaml:"repeatable,omitempty"`      // completing clears progress so it can be re-taken (after CooldownRounds)
-	CooldownRounds int            `yaml:"cooldown_rounds,omitempty"` // rounds after completion before a repeatable quest can be re-taken
+	QuestId        int            `yaml:"questid" json:"questid"`
+	Name           string         `yaml:"name" json:"name"`
+	Description    string         `yaml:"description,omitempty" json:"description,omitempty"`
+	Secret         bool           `yaml:"secret,omitempty" json:"secret,omitempty"` // marks progress without making it known to the player
+	Steps          []QuestStep    `yaml:"steps" json:"steps"`
+	Rewards        QuestReward    `yaml:"rewards,omitempty" json:"rewards,omitempty"`
+	Triggers       []TriggerDef   `yaml:"triggers,omitempty" json:"triggers,omitempty"`
+	Flags          []QuestFlagDef `yaml:"flags,omitempty" json:"flags,omitempty"`
+	Repeatable     bool           `yaml:"repeatable,omitempty" json:"repeatable,omitempty"`           // completing clears progress so it can be re-taken (after CooldownRounds)
+	CooldownRounds int            `yaml:"cooldown_rounds,omitempty" json:"cooldown_rounds,omitempty"` // rounds after completion before a repeatable quest can be re-taken
 }
 
 type QuestStep struct {
-	Id          string `yaml:"id"` // identifies this step, e.g. "start"
-	Description string `yaml:"description,omitempty"`
-	Hint        string `yaml:"hint,omitempty"`
-	MapTarget   int    `yaml:"map_target,omitempty"` // room the minimap marker points at during this step (0 = infer/none, -1 = quest giver)
+	Id          string `yaml:"id" json:"id"` // identifies this step, e.g. "start"
+	Description string `yaml:"description,omitempty" json:"description,omitempty"`
+	Hint        string `yaml:"hint,omitempty" json:"hint,omitempty"`
+	MapTarget   int    `yaml:"map_target,omitempty" json:"map_target,omitempty"` // room the minimap marker points at during this step (0 = infer/none, -1 = quest giver)
 }
 
 func (r *Quest) Id() int {
@@ -252,6 +251,13 @@ func TokenToParts(questToken string) (questId int, questStep string) {
 	return questId, questStep
 }
 
+// GetQuestById returns the quest definition for a bare numeric id (no token
+// parsing, no step check). The editor's load path — GetQuest requires a
+// valid step suffix, which not every quest's tokens share.
+func GetQuestById(questId int) *Quest {
+	return quests[questId]
+}
+
 func GetQuest(questToken string) *Quest {
 
 	questId, questStep := TokenToParts(questToken)
@@ -327,7 +333,7 @@ func LoadDataFiles() {
 
 	start := time.Now()
 
-	dataPath := configs.GetFilePathsConfig().DataFiles.String() + `/quests`
+	dataPath := questsDataRoot()
 	tmpQuests, err := fileloader.LoadAllFlatFiles[int, *Quest](dataPath)
 	if err != nil {
 		panic(errors.Wrap(err, `filepath: `+dataPath))

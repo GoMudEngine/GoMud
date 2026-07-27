@@ -82,14 +82,14 @@
   #gutter::after { content: "⋮"; display: block; text-align: center; color: var(--leather2); font-size: 11px; margin-top: 40vh; }
   #itemlist .filters, #moblist .filters { display: flex; gap: 6px; margin-bottom: 8px; position: sticky; top: 0; background: var(--leather2); padding-bottom: 6px; }
   #itemlist .filters input, #itemlist .filters select, #moblist .filters input, #moblist .filters select { flex: 1 1 auto; min-width: 0; padding: 5px 7px; font: inherit; font-size: 12px; background: var(--ink); color: var(--parch); border: 1px solid var(--tooled); border-radius: 4px; }
-  #itemlist .newitem, #moblist .newitem, #zonelist .newitem { width: 100%; margin-bottom: 8px; padding: 7px; background: var(--gold); color: var(--ink); font-weight: bold; border: none; border-radius: 4px; cursor: pointer; }
-  #itemlist .irow, #moblist .irow, #zonelist .irow { padding: 5px 7px; border-bottom: 1px dotted var(--tooled); cursor: pointer; font-size: 12px; }
-  #itemlist .irow:hover, #moblist .irow:hover, #zonelist .irow:hover { background: rgba(201,162,75,.12); }
-  #itemlist .irow.sel, #moblist .irow.sel, #zonelist .irow.sel { background: rgba(201,162,75,.22); }
+  #itemlist .newitem, #moblist .newitem, #zonelist .newitem, #questlist .newitem { width: 100%; margin-bottom: 8px; padding: 7px; background: var(--gold); color: var(--ink); font-weight: bold; border: none; border-radius: 4px; cursor: pointer; }
+  #itemlist .irow, #moblist .irow, #zonelist .irow, #questlist .irow { padding: 5px 7px; border-bottom: 1px dotted var(--tooled); cursor: pointer; font-size: 12px; }
+  #itemlist .irow:hover, #moblist .irow:hover, #zonelist .irow:hover, #questlist .irow:hover { background: rgba(201,162,75,.12); }
+  #itemlist .irow.sel, #moblist .irow.sel, #zonelist .irow.sel, #questlist .irow.sel { background: rgba(201,162,75,.22); }
   #itemlist .irow .iid, #moblist .irow .iid { color: var(--gold); font-family: monospace; }
   #itemlist .irow .ity { color: var(--gold-dim); font-size: 10px; }
-  #moblist .irow .mzone, #zonelist .irow .mzone { color: var(--gold-dim); font-size: 10px; }
-  #moblist .irow .mbadge, #zonelist .irow .mbadge { display: inline-block; font-size: 9px; padding: 1px 5px; margin-left: 4px; border-radius: 8px; border: 1px solid var(--tooled); color: var(--gold-dim); }
+  #moblist .irow .mzone, #zonelist .irow .mzone, #questlist .irow .mzone { color: var(--gold-dim); font-size: 10px; }
+  #moblist .irow .mbadge, #zonelist .irow .mbadge, #questlist .irow .mbadge { display: inline-block; font-size: 9px; padding: 1px 5px; margin-left: 4px; border-radius: 8px; border: 1px solid var(--tooled); color: var(--gold-dim); }
   #conn { font-size: 12px; color: var(--gold-dim); }
   #conn.ok    { color: var(--ok); }
   #conn.bad   { color: var(--danger); }
@@ -192,6 +192,7 @@
       <button id="tb-mode-items" class="mode-btn">Items</button>
       <button id="tb-mode-mobs" class="mode-btn">Mobs</button>
       <button id="tb-mode-zones" class="mode-btn">Zones</button>
+      <button id="tb-mode-quests" class="mode-btn">Quests</button>
     </span>
     <span id="room-tools">
       <span class="tb-field">
@@ -221,6 +222,7 @@
     <div id="itemlist" style="display:none;"></div>
     <div id="moblist" style="display:none;flex:0 0 320px;overflow-y:auto;background:var(--leather2);border-right:2px solid var(--tooled);"></div>
     <div id="zonelist" style="display:none;flex:0 0 320px;overflow-y:auto;background:var(--leather2);border-right:2px solid var(--tooled);"></div>
+    <div id="questlist" style="display:none;flex:0 0 320px;overflow-y:auto;background:var(--leather2);border-right:2px solid var(--tooled);padding:8px;"></div>
     <div id="gutter" title="Drag to resize"></div>
     <aside id="inspector">
       <h2>Inspector</h2>
@@ -253,6 +255,7 @@
 <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/items.js"></script>
 <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/mobs.js"></script>
 <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/zones.js"></script>
+<script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/quests.js"></script>
 <script src="{{ .CONFIG.FilePaths.WebCDNLocation }}/static/js/dialogue.js"></script>
 <script>
 "use strict";
@@ -305,6 +308,7 @@
     var IP = window.Builder.ItemsPanel;
     var MP = window.Builder.MobsPanel;
     var ZP = window.Builder.ZonesPanel;
+    var QP = window.Builder.QuestsPanel;
     // ---- item editor (Items mode) ----
     // Build.Items/Build.Mobs are also captured unconditionally (regardless of
     // mode) to feed the Rooms inspector's Spawns target-picker datalists —
@@ -322,7 +326,8 @@
     if (ns === "Build.Mobs") {
       spawnMobRows = obj || [];
       populateSpawnDatalist(spawnMobDatalistEl, spawnMobRows);
-      if (MP) MP.render(obj);
+      if (QP) QP.onMobList(obj); // quest editor's mob pickers, any mode
+      if (window.Builder.mode !== "quests" && MP) MP.render(obj);
       return;
     }
     var DP = window.Builder.DialoguePanel;
@@ -335,9 +340,18 @@
     // inspector.
     if (ns === "Build.Rooms" && window.Builder.mode === "mobs") { if (MP) MP.onRoomList(obj); return; }
     // ---- zone editor (Zones mode) ----
-    if (ns === "Build.Zones") { if (ZP) ZP.renderList(obj); return; }
+    if (ns === "Build.Zones") {
+      if (QP) QP.onZoneList(obj); // quest editor's map-target zone selects, any mode
+      if (window.Builder.mode !== "quests" && ZP) ZP.renderList(obj);
+      return;
+    }
     if (ns === "Build.Zone")  { if (ZP) ZP.renderDetail(obj); return; }
     if (ns === "Build.Result" && window.Builder.mode === "zones") { if (ZP) ZP.onResult(obj); return; }
+    // ---- quest editor (Quests mode) ----
+    if (ns === "Build.Quests") { if (QP) QP.render(obj); return; }
+    if (ns === "Build.Quest") { if (QP) QP.renderDetail(obj); return; }
+    if (ns === "Build.Result" && window.Builder.mode === "quests") { if (QP) QP.onResult(obj); return; }
+    if (ns === "Build.Rooms" && window.Builder.mode === "quests") { if (QP) QP.onRoomList(obj); return; }
     // ---- room editor (Rooms mode) ----
     if (ns === "Build.Result") {
       if (obj && obj.ok) {
@@ -1171,10 +1185,11 @@
   function activeListEl() {
     if (window.Builder.mode === "mobs") return document.getElementById("moblist");
     if (window.Builder.mode === "zones") return document.getElementById("zonelist");
+    if (window.Builder.mode === "quests") return document.getElementById("questlist");
     return document.getElementById("itemlist");
   }
   function applyLayout() {
-    var isListMode = window.Builder.mode === "items" || window.Builder.mode === "mobs" || window.Builder.mode === "zones";
+    var isListMode = window.Builder.mode === "items" || window.Builder.mode === "mobs" || window.Builder.mode === "zones" || window.Builder.mode === "quests";
     var insp = document.getElementById("inspector");
     var itemlistEl = document.getElementById("itemlist");
     var moblistEl = document.getElementById("moblist");
@@ -1188,13 +1203,15 @@
       itemlistEl.style.flex = ""; itemlistEl.style.width = "";
       moblistEl.style.flex = ""; moblistEl.style.width = "";
       zonelistEl.style.flex = ""; zonelistEl.style.width = "";
+      var ql = document.getElementById("questlist");
+      ql.style.flex = ""; ql.style.width = "";
     }
   }
   (function wireGutter() {
     var g = document.getElementById("gutter");
     var dragging = false, startX = 0, startW = 0, grow = 1, target = "insp";
     g.addEventListener("pointerdown", function (e) {
-      var isListMode = window.Builder.mode === "items" || window.Builder.mode === "mobs" || window.Builder.mode === "zones";
+      var isListMode = window.Builder.mode === "items" || window.Builder.mode === "mobs" || window.Builder.mode === "zones" || window.Builder.mode === "quests";
       target = isListMode ? "list" : "insp";
       grow = isListMode ? 1 : -1; // items/mobs: drag right widens the list; rooms: drag left widens the inspector
       startX = e.clientX; startW = isListMode ? listW : inspW;
@@ -1219,11 +1236,13 @@
     var isItems = mode === "items";
     var isMobs = mode === "mobs";
     var isZones = mode === "zones";
+    var isQuests = mode === "quests";
     var isRooms = mode === "rooms";
     document.getElementById("canvas").style.display = isRooms ? "" : "none";
     document.getElementById("itemlist").style.display = isItems ? "" : "none";
     document.getElementById("moblist").style.display = isMobs ? "" : "none";
     document.getElementById("zonelist").style.display = isZones ? "" : "none";
+    document.getElementById("questlist").style.display = isQuests ? "" : "none";
     document.getElementById("room-tools").style.display = isRooms ? "" : "none";
     applyLayout();
     var sb = document.getElementById("tb-save"); if (sb) sb.style.display = isRooms ? "" : "none";
@@ -1231,6 +1250,7 @@
     document.getElementById("tb-mode-items").classList.toggle("active", isItems);
     document.getElementById("tb-mode-mobs").classList.toggle("active", isMobs);
     document.getElementById("tb-mode-zones").classList.toggle("active", isZones);
+    document.getElementById("tb-mode-quests").classList.toggle("active", isQuests);
     if (isItems) {
       window.Builder.ItemsPanel.clear();
       sendGMCP("Build.Item.List", {});
@@ -1240,6 +1260,10 @@
     } else if (isZones) {
       if (window.Builder.ZonesPanel) window.Builder.ZonesPanel.clear();
       sendGMCP("Build.Zone.List", {});
+    } else if (isQuests) {
+      sendGMCP("Build.Quest.List", {});
+      sendGMCP("Build.Mob.List", {});  // mob pickers
+      sendGMCP("Build.Zone.List", {}); // map-target zone selects
     } else {
       clearInspector();
     }
@@ -1248,6 +1272,7 @@
   document.getElementById("tb-mode-items").addEventListener("click", function () { setMode("items"); });
   document.getElementById("tb-mode-mobs").addEventListener("click", function () { setMode("mobs"); });
   document.getElementById("tb-mode-zones").addEventListener("click", function () { setMode("zones"); });
+  document.getElementById("tb-mode-quests").addEventListener("click", function () { setMode("quests"); });
   applyLayout(); // sync initial (rooms) layout
 
   // ---- canvas + toolbar wiring -------------------------------------------
