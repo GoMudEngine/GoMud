@@ -1,5 +1,16 @@
 # DOGMud Patch Notes
 
+## 2026-07-28 — A much shorter held breath
+
+The live restart's pause was running close to a minute, and nearly all of
+it turned out to be one over-eager bookkeeper: a boot-time check that no
+creature shares a name with a player was re-reading every player's save
+file from scratch for every single creature in the world — tens of
+thousands of needless readings. It now reads the ledger once and checks
+every name against it in an instant. Server restarts of every kind — the
+seamless live restart especially — should now pause for seconds, not the
+better part of a minute.
+
 ## 2026-07-28 — A calmer held breath (web client)
 
 The first live restart on production worked — but the web client narrated
