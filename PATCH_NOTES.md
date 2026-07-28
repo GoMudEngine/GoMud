@@ -1,5 +1,17 @@
 # DOGMud Patch Notes
 
+## 2026-07-27 — The workshop manual (staff)
+
+The builder's rooms are all furnished, so the workshop finally gets its
+manual: one guide covering every bench — what each is for, what to try
+first, the rules that hold everywhere (what a red refusal means against an
+amber note, why the first save of an old page rewrites it, why hand-written
+margin comments do not survive and where such thoughts should live instead)
+— and, most usefully, a map of how the benches feed one another, ending
+with one small piece of content built end to end across all of them. A Help
+button now sits in the workshop's own toolbar, and the old single-bench
+pamphlet folds into the manual where it belongs.
+
 ## 2026-07-27 — The puppeteer's bench (staff)
 
 The builder's last room opens: **behaviors**. The trees that decide how every
