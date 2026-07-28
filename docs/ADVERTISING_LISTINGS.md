@@ -17,7 +17,7 @@ validated, so crawler-based sites will pick up player counts automatically.
 
 | Site | URL | Notes |
 |------|-----|-------|
-| Grapevine | https://grapevine.haus/register/new | MUD listing + cross-game chat network. Polls your game so the listing shows live online status. **Bonus: their public MSSP checker at https://grapevine.haus/mssp — run it once after registering to confirm the crawler sees us.** |
+| Grapevine | https://grapevine.haus/register/new | MUD listing + cross-game chat network; polls games for live status. **⚠ Effectively unmaintained (repo dormant since 2021) and its registration verification email appears broken (tried 2026-07-28, never arrived).** If wanted: retry with a different email provider, else contact the maintainer via https://grapevine.haus/contact or a GitHub issue (oestrich/grapevine). Its public MSSP checker (https://grapevine.haus/mssp) works WITHOUT an account. Not worth blocking the announcement on. |
 | The MUD Connector (TMC) | https://www.mudconnect.com | The old standby directory. Wants the long description + feature list. |
 | MudStats | https://mudstats.com | Submit host+port; it crawls MSSP on its own from there. Minimal copy needed. |
 | Top Mud Sites | https://www.topmudsites.com | Vote-ranked directory; medium description. |
