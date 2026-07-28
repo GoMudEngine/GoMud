@@ -205,6 +205,9 @@ func GetLoginPromptHandler() connections.InputHandler {
 			PromptTemplate: "login/username.prompt",
 			MaskInput:      false,
 			Validator:      ValidateNewEntry,
+			// Plaintext MSSP: crawlers may send "mssp-request" instead of a
+			// name — answer with the status block and close.
+			Intercept: MSSPTextRequestIntercept,
 		},
 		//////////////////////////////////////////////////
 		// If NOT a new user signup (Just a login)

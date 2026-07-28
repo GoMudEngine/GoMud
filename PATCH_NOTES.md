@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-07-28 — Answering the census-taker (staff)
+
+Some MUD directory crawlers don't speak the telnet status option — they
+simply type "mssp-request" at the login prompt and listen. Until now the
+server treated that as someone's name and asked it for a password. It now
+recognizes the request, answers with the standard plain-text status block
+(the same live counts the telnet option serves), and politely closes the
+line. Both dialects of the status protocol are now spoken.
+
 ## 2026-07-28 — A much shorter held breath
 
 The live restart's pause was running close to a minute, and nearly all of
