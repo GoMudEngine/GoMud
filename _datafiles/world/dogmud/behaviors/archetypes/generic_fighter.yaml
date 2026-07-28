@@ -1,93 +1,58 @@
-# generic_fighter archetype
-#
-# Melee mob with the same control toolkit as tank_taunter but no
-# signature taunt / self-buffs. Good default for competent non-tank
-# fighter companions.
-#
-# Decision order per mob_combat_round:
-#   1. Interrupt — bash/trip a casting target
-#   2. Bonus-damage kick — target prone (stomp) or clinched (knee)
-#   3-5. Knockdown cascade: bash -> grapple (single-enemy only) -> trip
-#   fall through to legacy attack
-#
-# On packmate_hurt (a same-room routine-matched packmate was attacked):
-#   engage the attacker. The existing attack action reads
-#   ctx.Event.UserId and sets Aggro; the normal combat loop picks up
-#   the fight on the next round.
-
 tree:
   type: selector
   children:
-    # NEW: panic-flee at critical HP (absorbs the inline tactic
-    # `health_below:25 → flee` from chunk 2.6 migration).
+  - type: sequence
+    event: mob_hurt
+    children:
+    - type: condition
+      check: mob_health_below
+      percent: 25
+    - type: action
+      do: flee
+  - type: action
+    event: packmate_hurt
+    do: attack
+  - type: action
+    event: heard_callforhelp
+    do: go_to_caller_room
+  - type: selector
+    event: mob_combat_round
+    children:
+    - type: action
+      do: try_special_move
     - type: sequence
-      event: mob_hurt
       children:
-        - type: condition
-          check: mob_health_below
-          percent: 25
-        - type: action
-          do: flee
-
-    # ── packmate_hurt: engage the attacker ───────────────────────
-    - type: action
-      event: packmate_hurt
-      do: attack
-
-    # ── heard_callforhelp: a routine-matched packmate in an adjacent
-    #    room called for help. Navigate toward the caller; engagement
-    #    happens automatically once in their room (combat loop picks up).
-    - type: action
-      event: heard_callforhelp
-      do: go_to_caller_room
-
-    # ── mob_combat_round: original combat cascade (unchanged) ────
-    - type: selector
-      event: mob_combat_round
+      - type: condition
+        check: target_is_casting
+      - type: action
+        do: command_best_of
+        cmds: bash,trip
+    - type: sequence
       children:
-        - type: action
-          do: try_special_move
-
-        - type: sequence
-          children:
-            - type: condition
-              check: target_is_casting
-            - type: action
-              do: command_best_of
-              cmds: [bash, trip]
-
-        - type: sequence
-          children:
-            - type: condition
-              check: target_not_standing
-            - type: action
-              do: command_best_of
-              cmds: [kick]
-
-        - type: action
-          do: command_best_of
-          cmds: [bash]
-
-        - type: sequence
-          children:
-            - type: decorator
-              mod: invert
-              child:
-                type: condition
-                check: multiple_enemies
-            - type: action
-              do: command_best_of
-              cmds: [grapple]
-
-        - type: action
-          do: command_best_of
-          cmds: [trip]
-
-    # chunk 4.4: strategic goal pursuit (after reflex/combat, before idle end)
+      - type: condition
+        check: target_not_standing
+      - type: action
+        do: command_best_of
+        cmds: kick
     - type: action
-      event: mob_idle
-      do: try_goal_planner
-
+      do: command_best_of
+      cmds: bash
+    - type: sequence
+      children:
+      - type: decorator
+        mod: invert
+        child:
+          type: condition
+          check: multiple_enemies
+      - type: action
+        do: command_best_of
+        cmds: grapple
+    - type: action
+      do: command_best_of
+      cmds: trip
+  - type: action
+    event: mob_idle
+    do: try_goal_planner
 default_goals:
-  - type: survival
-    priority: 80
+- type: survival
+  priority: 80
