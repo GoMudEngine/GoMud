@@ -2061,6 +2061,7 @@
         // live restart. We stash it, auto-reconnect when the socket drops, and
         // send it on the new connection so the server re-attaches our session.
         let pendingReconnectToken = null;
+        let reconnectAttempts = 0;
 
         function reconnect() {
             // Close current socket if open, then trigger a fresh connect
@@ -2104,6 +2105,7 @@
                     pendingReconnectToken = null;
                     socket.send(t);
                 }
+                reconnectAttempts = 0;
 
                 textInput.focus();
             };
@@ -2238,21 +2240,44 @@
                 } catch (e) { /* never let trigger matching break terminal output */ }
             };
 
-            socket.onerror = function(error) {
-                term.writeln("Error: " + error.message);
+            socket.onerror = function() {
+                // A WebSocket error event carries no detail (its .message is
+                // always undefined) and is always followed by onclose — stay
+                // quiet here and let onclose report.
             };
 
             socket.onclose = function(event) {
                 // Copyover: the server dropped us for a live restart and we hold a
-                // reconnect token — auto-reconnect after a beat (give the new
-                // process time to bind the listener) instead of waiting on a click.
+                // reconnect token — auto-reconnect (give the new process time to
+                // reload the world) instead of waiting on a click. Announce once,
+                // then keep a quiet dot heartbeat per retry; the world reload can
+                // take a minute on the production host.
                 if (pendingReconnectToken) {
-                    term.writeln("Server rebooting — reconnecting…");
-                    // Re-enable the button (disabled while connected) so the
-                    // programmatic click actually fires the connect handler.
-                    connectButton.disabled = false;
+                    reconnectAttempts++;
+                    if (reconnectAttempts === 1) {
+                        term.writeln("");
+                        term.writeln("Server is restarting — you will be reconnected automatically…");
+                    } else {
+                        term.write(".");
+                    }
+                    var sessConn = document.getElementById('sess-conn');
+                    if (sessConn) { sessConn.textContent = '↻ Reconnecting…'; sessConn.style.color = '#b0a060'; }
+                    if (reconnectAttempts <= 90) { // ~3 minutes at 2s per attempt
+                        // Keep the button hidden (reconnection is automatic) but
+                        // enabled, so the programmatic click fires the handler.
+                        connectButton.disabled = false;
+                        connectButton.style.display = 'none';
+                        setTimeout(function() { connectButton.click(); }, 2000);
+                        return;
+                    }
+                    // Give up: restore the normal disconnected UI.
+                    pendingReconnectToken = null;
+                    reconnectAttempts = 0;
+                    term.writeln("");
+                    term.writeln("Could not reconnect — the server may still be restarting. Click Connect to try again.");
                     connectButton.style.display = 'block';
-                    setTimeout(function() { connectButton.click(); }, 750);
+                    connectButton.disabled = false;
+                    if (sessConn) { sessConn.textContent = '○ Disconnected'; sessConn.style.color = '#a06060'; }
                     return;
                 }
                 if (event.wasClean) {
