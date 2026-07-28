@@ -337,6 +337,8 @@
     var newMob = ce("button", { "class": "newitem", text: "+ New mob tree (specialize an archetype)" });
     newMob.addEventListener("click", function () { promptNewMobTree(); });
     section("Per-mob trees (override the mob's archetype)", newMob);
+    host.appendChild(ce("div", { style: "font-size:10px;color:var(--gold-dim);margin:2px 0 6px;",
+      text: "A per-mob tree is a private COPY of an archetype, forked for one mob to customize. To simply assign a mob to a shared archetype, use the mob form's Behavior archetype dropdown instead." }));
     (this.data.mobTrees || []).forEach(function (m) {
       if (q && String(m.mobId).indexOf(q) === -1 && (m.mobName || "").toLowerCase().indexOf(q) === -1) return;
       var row = ce("div", { "class": "irow" + (Panel.isSel("mob", m.mobId) ? " sel" : "") });
