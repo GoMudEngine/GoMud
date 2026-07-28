@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"runtime"
 	"strings"
 )
@@ -115,31 +114,47 @@ func Save(w io.Writer) error {
 	return nil
 }
 
-// Execute serializes all registered contributors into a pipe, launches the
-// new process image with the pipe fd passed via --copyover-fd, then exits.
-// extraArgs are forwarded as-is to the child process.
+// Execute serializes all registered contributors into an anonymous temp file,
+// then replaces the current process image in place (execve) with the same
+// binary, passing the state fd via --copyover-fd. extraArgs are forwarded
+// as-is to the new image.
+//
+// Exec-in-place (rather than spawn-child-then-exit) is load-bearing: under
+// Docker the server is PID 1 of its pid-namespace, and PID 1 exiting makes the
+// kernel SIGKILL every other process in the namespace — a spawned child died
+// mid-restore and the container stopped (verified 2026-07-28). execve keeps
+// the same PID, so the container (or systemd unit) never sees an exit.
+//
+// A file rather than a pipe is also load-bearing: the state is fully written
+// BEFORE the new image exists to read it, and a pipe buffers only ~64KB — a
+// larger snapshot would block the write forever. The file is unlinked
+// immediately after creation, so no path is ever left behind; the open fd
+// keeps the data alive across the exec and it is reclaimed when closed.
+//
+// On success this function never returns.
 // Returns an error on platforms where copyover is not supported.
 func Execute(binaryPath string, extraArgs []string) error {
 	if runtime.GOOS == "windows" {
 		return errors.New("copyover is not supported on this platform")
 	}
 
-	readFd, writeFd, err := os.Pipe()
+	stateFile, err := os.CreateTemp("", "copyover-state-*")
 	if err != nil {
-		return fmt.Errorf("copyover: os.Pipe: %w", err)
+		return fmt.Errorf("copyover: create state file: %w", err)
 	}
+	os.Remove(stateFile.Name())
 
-	if err := Save(writeFd); err != nil {
-		readFd.Close()
-		writeFd.Close()
+	if err := Save(stateFile); err != nil {
+		stateFile.Close()
 		return err
 	}
+	if _, err := stateFile.Seek(0, io.SeekStart); err != nil {
+		stateFile.Close()
+		return fmt.Errorf("copyover: rewind state file: %w", err)
+	}
 
-	writeFd.Close()
-
-	// ExtraFiles are passed to the child as fd 3, 4, 5, ... in order.
-	// readFd becomes fd 3 in the child process.
-	args := make([]string, 0, len(extraArgs)+1)
+	args := make([]string, 0, len(extraArgs)+2)
+	args = append(args, binaryPath)
 	for _, a := range extraArgs {
 		// Strip any existing --copyover-fd flag so it is not duplicated.
 		if strings.HasPrefix(a, "--copyover-fd") || strings.HasPrefix(a, "-copyover-fd") {
@@ -147,22 +162,15 @@ func Execute(binaryPath string, extraArgs []string) error {
 		}
 		args = append(args, a)
 	}
-	args = append(args, "--copyover-fd=3")
+	args = append(args, fmt.Sprintf("--copyover-fd=%d", stateFile.Fd()))
 
-	cmd := exec.Command(binaryPath, args...)
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.ExtraFiles = []*os.File{readFd}
-	cmd.SysProcAttr = newSysProcAttr()
-
-	if err := cmd.Start(); err != nil {
-		readFd.Close()
-		return fmt.Errorf("copyover: start child process: %w", err)
+	// Never returns on success; the connection fds (CLOEXEC already cleared by
+	// the connections contributor) and the state fd survive into the new image
+	// with their numbers intact.
+	if err := execInPlace(binaryPath, args, stateFile); err != nil {
+		stateFile.Close()
+		return fmt.Errorf("copyover: exec: %w", err)
 	}
-
-	readFd.Close()
-	os.Exit(0)
 	return nil
 }
 
