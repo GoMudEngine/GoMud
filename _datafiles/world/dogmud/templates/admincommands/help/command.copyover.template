@@ -1,13 +1,39 @@
 <ansi fg="black-bold">.:</ansi> <ansi fg="magenta">Help for </ansi><ansi fg="command">copyover</ansi>
 
-The <ansi fg="command">copyover</ansi> command live-restarts the server without
-disconnecting players — used to deploy updates. Telnet players keep their
-connection straight through the reboot; web clients briefly reconnect
-automatically. The living economy (shops, foraging, caravans) is flushed first,
-so nothing rewinds.
+The <ansi fg="command">copyover</ansi> command live-restarts the server in place. The world
+pauses for a few seconds, then resumes: telnet players keep their connection
+straight through it ("Copyover complete."), web clients reconnect
+automatically without seeing the login prompt, and the living economy
+(shops, foraging, caravans) is flushed to disk first so nothing rewinds.
 
 <ansi fg="yellow">Usage: </ansi>
 
   <ansi fg="command">copyover</ansi>
 
-(Unix servers only. On Windows this command does nothing.)
+(Sending SIGUSR1 to the server process does the same thing. Unix only;
+on Windows this command does nothing.)
+
+<ansi fg="yellow">What it IS useful for:</ansi>
+
+  - Restarting the world without kicking anyone: clearing stuck runtime
+    state, misbehaving mob instances, or long-uptime cruft.
+  - On a bare-metal install (binary run directly on the host), swapping in
+    a freshly built binary or edited data files seamlessly — copyover
+    re-executes whatever is on disk at the binary's path.
+
+<ansi fg="yellow">What it is NOT useful for:</ansi>
+
+  - Deploying new code on the production (Docker) host. The binary and all
+    world data are baked into the container image — copyover re-executes
+    that same baked binary forever. New code needs the full deploy
+    (rebuild + container recreate), which is itself a cold restart; a
+    copyover after it is redundant.
+  - Updating what players' BROWSERS run. A web tab keeps the client script
+    it loaded with the page; copyover deliberately keeps that page alive.
+    Changes to the web client only reach a player when they reload the
+    page, no matter how many copyovers happen.
+  - Fixing anything stored in save files — those are re-read as-is.
+
+If the restart fails mid-restore, the process exits and it behaves like a
+normal crash/cold restart: players drop and the server must be started the
+usual way. Nothing is lost — all state is saved to disk before the attempt.
