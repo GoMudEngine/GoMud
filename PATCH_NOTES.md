@@ -1,5 +1,15 @@
 # DOGMud Patch Notes
 
+## 2026-07-28 — A calmer held breath (web client)
+
+The first live restart on production worked — but the web client narrated
+it badly, stammering the same reconnect line and a meaningless error over
+and over while the world reloaded. It now says it once — the server is
+restarting, you will be reconnected automatically — and waits with a
+quiet pulse of dots until the world returns, the connection badge showing
+the reconnect underway. Only if the server stays gone for minutes does it
+give up and hand the connect button back.
+
 ## 2026-07-28 — The world holds its breath (hot restart)
 
 The server can now truly restart without hanging up on anyone. When the
