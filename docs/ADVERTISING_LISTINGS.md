@@ -34,8 +34,8 @@ validated, so crawler-based sites will pick up player counts automatically.
 ## Long description (~180 words — TMC, Top Mud Sites)
 
 > Delusions of Grandeur is set on Gaius, a world of walled towns, trade
-> roads, and wild country where belief has teeth: a symbiotic organism in
-> every living thing makes conviction physically real. Magic is faith made
+> roads, and wild country where belief changes the world: a symbiotic
+> organism in every living thing makes conviction physically real. Magic is faith made
 > manifest, and the way you actually play — blade, spellcraft, or sheer
 > force of voice — slowly drifts your body into mutations that fit it.
 >
