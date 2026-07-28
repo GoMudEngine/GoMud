@@ -194,6 +194,7 @@
       <button id="tb-mode-zones" class="mode-btn">Zones</button>
       <button id="tb-mode-quests" class="mode-btn">Quests</button>
       <button id="tb-mode-behaviors" class="mode-btn">Behaviors</button>
+      <button id="tb-help" class="mode-btn" title="Open the admin guide">Help ↗</button>
     </span>
     <span id="room-tools">
       <span class="tb-field">
@@ -1297,6 +1298,7 @@
   document.getElementById("tb-mode-zones").addEventListener("click", function () { setMode("zones"); });
   document.getElementById("tb-mode-quests").addEventListener("click", function () { setMode("quests"); });
   document.getElementById("tb-mode-behaviors").addEventListener("click", function () { setMode("behaviors"); });
+  document.getElementById("tb-help").addEventListener("click", function () { window.open("/build-help", "_blank"); });
   applyLayout(); // sync initial (rooms) layout
 
   // ---- canvas + toolbar wiring -------------------------------------------

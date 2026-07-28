@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DOGMud — World Builder Guide</title>
+<style>
+  :root {
+    --leather:   #2b1d12;
+    --leather2:  #3a2818;
+    --tooled:    #5c4326;
+    --gold:      #c9a24b;
+    --gold-dim:  #8a7038;
+    --parch:     #e7d9b8;
+    --panel:     #241811;
+    --danger:    #b5533a;
+    --ok:        #6f9a4a;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--leather);
+    color: var(--parch);
+    font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  main { max-width: 880px; margin: 0 auto; padding: 24px 20px 80px; }
+  h1 { color: var(--gold); font-size: 26px; border-bottom: 1px solid var(--tooled); padding-bottom: 8px; }
+  h2 { color: var(--gold); font-size: 21px; margin-top: 44px; border-bottom: 1px solid var(--leather2); padding-bottom: 4px; }
+  h3 { color: var(--gold-dim); font-size: 16px; margin-top: 24px; }
+  code, kbd {
+    background: var(--panel); border: 1px solid var(--tooled); border-radius: 3px;
+    padding: 1px 5px; font-family: Consolas, Menlo, monospace; font-size: 13px; color: var(--gold);
+  }
+  pre {
+    background: var(--panel); border: 1px solid var(--tooled); border-radius: 5px;
+    padding: 12px 14px; overflow-x: auto; font-size: 13px; line-height: 1.45;
+  }
+  pre code { background: none; border: none; padding: 0; color: var(--parch); }
+  table { border-collapse: collapse; margin: 12px 0; width: 100%; }
+  th, td { border: 1px solid var(--tooled); padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--leather2); color: var(--gold); }
+  .rule { color: var(--danger); font-weight: bold; }
+  .warn { color: #c90; font-weight: bold; }
+  .aside {
+    border-left: 3px solid var(--gold-dim); background: var(--leather2);
+    padding: 8px 14px; margin: 14px 0; font-size: 14px;
+  }
+  .try {
+    border: 1px solid var(--ok); border-radius: 5px; background: var(--panel);
+    padding: 10px 14px; margin: 14px 0; font-size: 14px;
+  }
+  .try b:first-child { color: var(--ok); }
+  .say { color: var(--ok); }
+  a { color: var(--gold); }
+  nav { background: var(--leather2); border: 1px solid var(--tooled); border-radius: 6px; padding: 10px 16px; margin: 16px 0; }
+  nav a { margin-right: 14px; white-space: nowrap; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>The World Builder — Admin Guide</h1>
+
+<nav>
+  <a href="#basics">Basics</a>
+  <a href="#rooms">Rooms</a>
+  <a href="#items">Items</a>
+  <a href="#mobs">Mobs</a>
+  <a href="#dialogue">Dialogue</a>
+  <a href="#zones">Zones</a>
+  <a href="#quests">Quests</a>
+  <a href="#behaviors">Behaviors</a>
+  <a href="#intersections">Where the tabs meet</a>
+</nav>
+
+<p><code>/build</code> is the full content workshop: six tabs (plus the
+dialogue panel inside Mobs) that together cover everything a zone is made
+of. This guide explains each tab in depth, with things worth trying, and —
+because no piece of content lives alone — how the tabs feed each other.</p>
+
+<h2 id="basics">Basics that apply everywhere</h2>
+
+<ul>
+<li><b>Saves are live immediately.</b> Every editor hot-swaps its cache on
+    save: the very next round, room load, <code>talk</code>, or combat swing
+    uses your edit. No reboot, ever. Test in-game the moment you save.</li>
+<li><b>Refusals vs warnings.</b> Red text above a form is a <span
+    class="rule">refusal</span> — the save did NOT happen, and the message
+    names the exact field/node/trigger at fault. Amber text is a <span
+    class="warn">warning</span> — the save DID happen, and the note stays on
+    screen until fixed. Nothing is ever silently dropped.</li>
+<li><b>First-save churn.</b> Hand-authored YAML isn't in the editors'
+    canonical form. The FIRST save of an old file rewrites it (key order,
+    wrapping); every save after is a minimal diff. One-time, expected.</li>
+<li><b>Comments do not survive saves.</b> A marshal cannot keep <code>#</code>
+    comments. Editors with comment-rich content (Behaviors especially) show
+    a banner when a file still has them — move anything worth keeping into
+    the <code>note</code>/<code>notes</code> fields those editors provide.</li>
+<li><b>After a server restart, reload the page.</b> A tab that outlives a
+    restart has a dead connection; any action will toast
+    "Not connected — reload the page." After a deploy that touched the
+    builder itself, hard-refresh (<kbd>Ctrl-F5</kbd>) — browsers cache the
+    scripts.</li>
+<li><b>Deletes are guarded.</b> Anything still referenced elsewhere refuses
+    to die and lists every holdout verbatim: a mob spawned by rooms, a quest
+    granted by dialogue, an archetype worn by mobs. Fix the references
+    first; the list is your worksheet.</li>
+</ul>
+
+<h2 id="rooms">Rooms</h2>
+
+<p>The map canvas IS the editor: click a room to inspect it, click a ghost
+cell (dimmed outline next to an existing room) to create one there. The
+toolbar's zone/plane/floor selectors move you around the world; the admin
+map is unfogged — you see every room, visited or not.</p>
+
+<h3>What's on the room form</h3>
+<ul>
+<li><b>Title + description</b> — what players read. Descriptions hard-wrap
+    around 78 columns for MUD clients; write prose, not instructions (the
+    quest log and hints carry instructions).</li>
+<li><b>Biome, symbol, legend, music</b> — map rendering and ambience.</li>
+<li><b>Flags</b> — bank, storage, pvp, character room.</li>
+<li><b>Nouns</b> — the look-targets. Keys are space-separated
+    (<code>notice board</code>, never <code>notice-board</code>); players
+    reach them with <code>look notice board</code>.</li>
+<li><b>Idle messages</b> — ambient lines the room emits.</li>
+<li><b>Exits</b> — compass directions (n/s/e/w/up/down) plus named portals.
+    Compass exits must stay Cartesian-consistent: reciprocal, and matching
+    the grid. The editor refuses placements that would collide.</li>
+<li><b>Spawns</b> — what lives here. Each entry is exclusively a mob, an
+    item, or gold; respawn timing is written in real time
+    (<code>15 real minutes</code>); items/gold can route into one of the
+    room's containers, picked from a dropdown of containers the room
+    actually has. Reorder and per-spawn overrides live in the Advanced
+    drawer.</li>
+</ul>
+
+<div class="try"><b>Try:</b> pick a quiet room and give it life without
+touching a file: add a noun (<code>old plaque</code> → a paragraph of
+lore), an idle message, and a spawn entry for a critter with
+<code>30 real minutes</code> respawn. Walk there in-game — all three are
+live.</div>
+
+<div class="aside">The room's spawn list is the ONLY place spawn locations
+exist. Mob templates do not know where they spawn — see
+<a href="#intersections">Where the tabs meet</a>.</div>
+
+<h2 id="items">Items</h2>
+
+<p>The item list is searchable by id or name; the form covers the full item
+schema: type/subtype (weapon classes, armor slots, caster weapons),
+damage/mitigation numbers, weight, value, component and crafting fields
+(<code>component_tag</code>, salvage returns), and the Advanced drawer for
+the rare fields.</p>
+
+<h3>Things worth knowing</h3>
+<ul>
+<li>Multi-word names are authored with <b>spaces</b>
+    (<code>lake iron nodule</code>) — the parser matches whole phrases;
+    hyphens make items unfindable.</li>
+<li>Mitigation is per-channel: <code>physical_mitigation</code> /
+    <code>magical_mitigation</code> / <code>conviction_mitigation</code>,
+    integer percentages.</li>
+<li>Items with <code>is_component: true</code> auto-route into component
+    bags on pickup; <code>component_tag</code> is what recipes and salvage
+    returns match on.</li>
+<li>Deleting an item is guarded by everything that references it: shop
+    stock, loot pools, spawn lists, equipment, quest rewards, dialogue
+    givesItem.</li>
+</ul>
+
+<div class="try"><b>Try:</b> clone a niche reward. Create an item, give it a
+flavorful two-line description, modest stats, and set its value; then open
+the Quests tab and hand it out as a quest reward — the reward field's item
+picker will already know it.</div>
+
+<h2 id="mobs">Mobs</h2>
+
+<p>Everything a creature or NPC is: identity, stats, commerce, AI hooks. The
+zone filter narrows the list; badges mark non-combatants, schedules, and
+shops.</p>
+
+<h3>The form, top to bottom</h3>
+<ul>
+<li><b>Test spawn</b> — an admin tool ONLY: drops a disposable copy in a
+    room you pick, so you can fight/talk to your edits immediately. It says
+    nothing about where the mob really spawns (that's rooms).</li>
+<li><b>Dialogue…</b> — opens the <a href="#dialogue">dialogue panel</a> for
+    this mob. Reads "Add dialogue…" for a mute mob.</li>
+<li><b>Identity</b> — name (renames move the file AND the mob's behavior
+    tree), description, species, adjectives, groups.</li>
+<li><b>Stats &amp; combat</b> — stat pool + per-stat training,
+    archetype (<code>fighting</code>/<code>casting</code> stat split),
+    auto-aggro, AI profile, activity/wander.</li>
+<li><b>Inventory &amp; commerce</b> — equipment by slot, carried items,
+    loot pool, drop chance, shop stock, crafter fields. Every id input is a
+    picker with names.</li>
+<li><b>Aliveness</b> — schedule (daily routine), patrol route,
+    relationships, known facts.</li>
+<li><b>Advanced</b> — behavior archetype (with jumps into the
+    <a href="#behaviors">Behaviors tab</a>), buffs (e.g. spawn hidden),
+    quest flags, mutations, overrides, non-combatant and immunity flags.</li>
+</ul>
+
+<div class="try"><b>Try:</b> make a shopkeeper from nothing: + New Mob in a
+zone → name and describe them → <code>non_combatant</code> on → add shop
+stock rows → give them a schedule if the zone has one → Save → test-spawn
+them next to you and <code>list</code>. Then open Dialogue… and give them a
+greeting and a "wares" pattern so they feel staffed, not stocked.</div>
+
+<h2 id="dialogue">Dialogue (inside the Mobs tab)</h2>
+
+<p>Everything an NPC can say. Opened per-mob from the mob form. Three
+layers, from ambience to conversation:</p>
+
+<table>
+<tr><th>Layer</th><th>Fires on</th><th>Use for</th></tr>
+<tr><td><b>Greetings</b></td><td>a player entering the room (once per
+    player per NPC per boot; skipped for sneakers and busy NPCs)</td>
+    <td>flavor one-liners, mood-matched</td></tr>
+<tr><td><b>Patterns</b></td><td><code>ask &lt;npc&gt; &lt;topic&gt;</code>
+    keyword match</td><td>the NPC's standing FAQ — town, trade, rumors.
+    An empty-string keyword is the catch-all.</td></tr>
+<tr><td><b>Tree</b></td><td><code>talk</code> (root) and
+    <code>ask</code> (nodes, matched IN ORDER)</td><td>real conversation
+    and ALL quest logic: gated root variants, quest-granting nodes,
+    requires/unlocks chains.</td></tr>
+</table>
+
+<h3>House rules the editor enforces</h3>
+<ul>
+<li><span class="rule">Refused:</span> a <code>grantsQuest</code> without
+    BOTH its own token and the quest's <code>-end</code> token in
+    <code>questExcluded</code> (else completed players get re-offered);
+    grant nodes missing <code>quest</code>/<code>task</code> triggers;
+    grant nodes listed after lore nodes (order is matching priority);
+    semicolons in spoken text; unknown tokens/flags/items.</li>
+<li><span class="warn">Warned:</span> undiscoverable trigger words (if no
+    hint or text ever shows the word, the branch does not exist);
+    memory expiry set (bricks quest chains — timed quests only).</li>
+<li>NPC text is first person. Hints are the narrator: "You could ask about
+    the marriage," never "Ask her why she left."</li>
+</ul>
+
+<div class="try"><b>Try:</b> the smallest quest-giver: a root that mentions
+a problem, a hint pointing at it, ONE node with triggers
+<code>problem, help, quest, task</code> that grants the quest — with both
+exclusions — and a root variant for while it's active. Then
+<code>talk</code>/<code>ask</code> it live; edits apply mid-conversation.</div>
+
+<h2 id="zones">Zones</h2>
+
+<p>The container level: create zones, edit zone config, rename, delete.</p>
+
+<ul>
+<li><b>Create</b> — allocates the folder tree and a starter room on a fresh
+    plane. <code>non_cartesian</code> zones (mazes, toroidal spaces) must
+    live on their own plane, never plane 0 — one non-Euclidean room on the
+    overworld plane silently disables map enforcement for EVERYTHING, so the
+    editor refuses the combination outright.</li>
+<li><b>Config</b> — biome, region, instanced-zone settings (entry room,
+    cost, duration).</li>
+<li><b>Rename</b> — the heavyweight: moves ten directories, rewrites
+    <code>zone:</code> across every content tree, rekeys caches. Refuses
+    while players are inside. Players re-explore renamed zones (fog resets
+    by design).</li>
+<li><b>Delete</b> — refuses unless the zone is empty: rooms beyond the
+    root, any authored content, or inbound exits from other zones all
+    block it, each listed.</li>
+</ul>
+
+<div class="try"><b>Try:</b> a sandbox zone for experiments: + New Zone
+("Test Yard"), build three rooms in it, spawn things, break things — then
+delete the rooms and the zone when done. Nothing you do there can leak into
+the live world unless you link an exit to it.</div>
+
+<h2 id="quests">Quests</h2>
+
+<p>The full quest machine: identity, steps, rewards, flag declarations, and
+the trigger DSL. This is the deepest tab; think of it as three layers.</p>
+
+<h3>Steps — the player-visible skeleton</h3>
+<p>Ordered stages, each with a quest-log description and hint. The <b>map
+target</b> controls the minimap marker during that step: a room id points
+there; <code>0</code> infers the destination from a
+<code>room_enter</code> trigger gated on the step; the <b>"no marker"</b>
+box (writes <code>-1</code>) deliberately draws nothing — for action steps
+(craft this, kill those) with no travel destination.</p>
+
+<h3>Rewards — paid on completion</h3>
+<p>Gold, an item, a buff, a spell, skill/stat raises, recipes, an item
+stockpile, messages, a teleport, faction rep, and a chain token that grants
+the next quest. All picker-backed.</p>
+
+<h3>Triggers — the machinery</h3>
+<p>Each trigger = an <b>event</b> (what the world watches for), optional
+<b>filters</b> (which mob/item/room/command), <b>conditions</b> (which
+players it fires for), and an ORDERED <b>action list</b>. The event select
+explains each event inline; the two easily-confused ones:
+<code>command</code> fires when an instrumented command SUCCEEDS,
+<code>command_issued</code> fires on the keystroke, success or not.</p>
+
+<p>Actions cover the vocabulary: grant tokens, consume/give items, gold in
+both directions, scripted NPC lines with per-line delays, spawns, exit
+locks, teach/train/learn, buffs, teleports, flags, faction rep, bounties —
+and <code>sequence</code>, a timed scene with its own on-complete actions
+and an optional movement lock.</p>
+
+<h3>What the editor enforces</h3>
+<ul>
+<li><span class="rule">Refused:</span> tokens that resolve to no quest
+    step; undeclared flag keys/values (this used to PANIC the next boot —
+    now it's a polite red message); ids that don't exist — mobs, items,
+    rooms, buffs, spells, skills, recipes, factions — each named with its
+    exact location ("trigger 3 action 2 spawn_mob: mob 999 does not
+    exist").</li>
+<li><span class="warn">Warned:</span> a step that no trigger, reward chain,
+    or dialogue file grants (players cannot reach it); an
+    <code>npc_say</code> speaker with no dialogue file; a map target no
+    trigger references.</li>
+</ul>
+
+<div class="try"><b>Try:</b> a delivery quest end to end: + New Quest →
+describe it → step <code>start</code> (map target: the recipient's room) and
+step <code>end</code> → an <code>item_give</code> trigger filtered to the
+recipient mob + the parcel item, with <code>consume_item</code>,
+an <code>npc_say</code> thank-you, and <code>grant</code> of the end token →
+rewards: gold + a player message. Grant yourself the start token with
+<code>questtoken</code> and run the delivery.</div>
+
+<h2 id="behaviors">Behaviors</h2>
+
+<div class="aside"><b>Read this first: the editor shows a TREE, not a
+list.</b> Indentation is nesting — a row's children sit inside it under the
+dotted rail — and sibling order is EVALUATION order (a selector tries
+children top-down until one succeeds; a sequence runs them top-down and
+stops at the first failure). The ↑/↓ arrows are therefore game-mechanics
+controls, not cosmetics.</div>
+
+<p>Three tree families share the tab:</p>
+
+<table>
+<tr><th>Family</th><th>Scope</th><th>When to use</th></tr>
+<tr><td><b>Archetypes</b></td><td>shared — one file, worn by many mobs via
+    the mob form's Behavior archetype dropdown</td><td>species-wide AI:
+    fighters, casters, foragers, shopkeeps. Editing one changes every
+    wearer at once.</td></tr>
+<tr><td><b>Per-mob trees</b></td><td>one mob — a private COPY forked from
+    an archetype</td><td>bosses and named characters who need bespoke
+    moves. The copy overrides the archetype entirely; delete it and the mob
+    falls back.</td></tr>
+<tr><td><b>Room trees</b></td><td>one room</td><td>scripted spaces: command
+    interception, entry/exit reactions, ambient machinery.</td></tr>
+</table>
+
+<p><b>Forking vs assigning:</b> "+ New mob tree" forks a private copy for
+one mob. To simply put a mob ON an archetype, use the mob form's dropdown —
+no copy involved.</p>
+
+<h3>Node anatomy</h3>
+<ul>
+<li><b>Type</b>: <code>selector</code> / <code>sequence</code> (branch
+    nodes with ordered children), <code>condition</code> (a
+    <code>check</code>), <code>action</code> (a <code>do</code>),
+    <code>decorator</code> (cooldown / repeat / invert / random / delay
+    wrapping exactly one child).</li>
+<li><b>Event gate</b>: the node (and its subtree) only runs for that event.
+    The 15-event vocabulary is enforced — an unknown event is refused at
+    save, because at runtime it would be a silently dead node. (The caravan
+    wagon's death-scatter was dead for months for exactly this reason.)</li>
+<li><b>Params</b>: checks and actions take free-form parameters as
+    key/value rows — e.g. <code>mob_health_below</code> takes
+    <code>percent</code>. The reference for each name is
+    <code>docs/schemas/behavior.md</code>.</li>
+<li><b>Note</b>: per-node rationale that SURVIVES saves — use it where you
+    would have written a <code>#</code> comment.</li>
+</ul>
+
+<div class="try"><b>Try:</b> feel the evaluation order: open
+<code>generic_fighter</code>, expand the <code>mob_combat_round</code>
+selector, and move its interrupt-bash sequence below the kick sequence —
+save, fight a thug, and watch its priorities change. Move it back. Then
+fork a per-mob tree for one boss and give only THAT boss a
+<code>random 25%</code> decorator around a taunt.</div>
+
+<h2 id="intersections">Where the tabs meet</h2>
+
+<p>No content stands alone. The builder's guards understand these seams —
+this is the map of them.</p>
+
+<table>
+<tr><th>Seam</th><th>How it works</th></tr>
+<tr><td><b>Rooms → Mobs/Items</b></td><td>Placement lives on rooms: a
+    room's Spawns list names mob and item ids. A mob template never knows
+    its spawn rooms — to move a mob, edit rooms. Deleting a mob or item is
+    blocked by every spawn list that names it.</td></tr>
+<tr><td><b>Mobs → Dialogue</b></td><td>A dialogue file belongs to one mob
+    (its Dialogue… button). Deleting the file makes the NPC mute — the
+    delete warns; nothing else breaks.</td></tr>
+<tr><td><b>Dialogue ↔ Quests</b></td><td>The load-bearing seam. Dialogue
+    grants quest tokens (<code>grantsQuest</code>) and gates lines on quest
+    state; quests declare the flags dialogue sets. The dialogue editor's
+    token pickers list real quest steps; the quest editor warns when a step
+    is granted by nothing; quest deletion is blocked by every dialogue gate
+    that names it. Convention: dialogue owns quest OFFERS (talking to
+    people), quest triggers own world events (giving, killing,
+    arriving).</td></tr>
+<tr><td><b>Quests → everything</b></td><td>Trigger filters and actions name
+    mobs, items, rooms, buffs, spells, recipes, factions — all validated
+    against the live registries at save.</td></tr>
+<tr><td><b>Mobs ↔ Behaviors</b></td><td>The mob form's Behavior archetype
+    dropdown assigns a shared tree; the Behaviors tab edits the trees
+    themselves and forks per-mob copies. Archetype deletion is blocked by
+    every wearer AND by the mutation shift system (mutated mobs drift
+    between archetypes — a missing target would strand them). Renaming a
+    mob moves its per-mob tree automatically.</td></tr>
+<tr><td><b>Zones → everything</b></td><td>Zone rename rewrites the
+    <code>zone:</code> field across rooms, mobs, spawns, behaviors, and
+    dialogue paths in one guarded operation. Zone deletion is blocked by
+    any surviving content or inbound exit.</td></tr>
+</table>
+
+<h3>A complete build, end to end</h3>
+<p>The full loop, touching every tab once — a hermit with a small quest:</p>
+<ol>
+<li><b>Rooms:</b> pick or build the hermit's clearing; add a
+    <code>mossy shrine</code> noun for atmosphere.</li>
+<li><b>Items:</b> create the <code>river pearl</code> he wants.</li>
+<li><b>Mobs:</b> create the hermit — non-combatant, described, modest
+    stats; archetype <code>noncombat_questgiver</code>.</li>
+<li><b>Rooms again:</b> spawn the hermit in his clearing; spawn river
+    pearls somewhere findable (a container, a forage room).</li>
+<li><b>Quests:</b> the fetch quest — steps with map targets, an
+    <code>item_give</code> trigger (hermit + pearl) that consumes, thanks,
+    and grants the end token; a small reward.</li>
+<li><b>Dialogue:</b> his voice — greetings, a pattern about the shrine,
+    and the quest-granting node (with both exclusions and
+    quest/task triggers), plus an active-quest root variant.</li>
+<li><b>Behaviors:</b> nothing! <code>noncombat_questgiver</code> already
+    covers him — which is the archetype system working. If he needed a
+    quirk (fleeing chatter when hurt), you'd fork a per-mob tree.</li>
+<li>Walk it as a player: find the hint, find the pearl, make the delivery.
+    Every piece went live the moment you saved it.</li>
+</ol>
+
+<div class="aside">In-game admin commands still exist (<code>build</code>,
+<code>questtoken</code>, <code>cartcheck</code>) and the builder rides the
+same engine seams — you can mix freely. <code>questtoken</code> in
+particular is the fastest way to put yourself at any quest step while
+testing.</div>
+
+</main>
+</body>
+</html>

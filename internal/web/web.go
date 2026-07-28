@@ -380,10 +380,14 @@ func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn)) {
 	// itself is static/template-only; all world mutations happen later over
 	// the page's own Build.* GMCP session, which runs on MainWorker.
 	http.HandleFunc("GET /build", doBasicAuth(serveBuildPage))
-	// Admin guide for the dialogue editor (5b) — same gate as /build; the
-	// extension-less path resolves to build-help-dialogue.html via
-	// serveTemplate's ".html" fallback.
-	http.HandleFunc("GET /build-help-dialogue", doBasicAuth(serveBuildPage))
+	// The consolidated admin guide for every builder tab — same gate as
+	// /build; the extension-less path resolves to build-help.html via
+	// serveTemplate's ".html" fallback. The old per-tool dialogue guide
+	// URL redirects into its section.
+	http.HandleFunc("GET /build-help", doBasicAuth(serveBuildPage))
+	http.HandleFunc("GET /build-help-dialogue", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/build-help#dialogue", http.StatusMovedPermanently)
+	})
 
 	//
 	// Https server start up

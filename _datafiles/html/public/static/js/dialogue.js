@@ -325,7 +325,7 @@
     });
     head.appendChild(closeBtn);
     var helpBtn = ce("button", { "class": "mini", text: "Help ↗", style: "margin-left:8px;" });
-    helpBtn.addEventListener("click", function () { window.open("/build-help-dialogue", "_blank"); });
+    helpBtn.addEventListener("click", function () { window.open("/build-help#dialogue", "_blank"); });
     head.appendChild(helpBtn);
     insp.appendChild(head);
     insp.appendChild(ce("div", { style: "font-size:11px;color:var(--gold-dim);margin:2px 0 8px;",
