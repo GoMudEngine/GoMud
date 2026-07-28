@@ -15,6 +15,14 @@ validated, so crawler-based sites will pick up player counts automatically.
 
 ## The sites
 
+**Status 2026-07-28: ✅ TMC registered · ✅ MudStats registered · ✗ Top Mud
+Sites (stopped accepting new votes — skipped) · ✗ r/MUD (owner's account has
+negative karma there from a prior attempt — do NOT post from it; if ever,
+an organic post from a PLAYER's established account is the only viable
+route) · ✗ Grapevine (their registration mailer is dead).** Remaining
+low-effort channels if wanted: MUD community Discords (announcements
+channels), MUD Coders Guild.
+
 | Site | URL | Notes |
 |------|-----|-------|
 | Grapevine | https://grapevine.haus/register/new | MUD listing + cross-game chat network; polls games for live status. **⚠ Effectively unmaintained (repo dormant since 2021) and its registration verification email appears broken (tried 2026-07-28, never arrived).** If wanted: retry with a different email provider, else contact the maintainer via https://grapevine.haus/contact or a GitHub issue (oestrich/grapevine). Its public MSSP checker (https://grapevine.haus/mssp) works WITHOUT an account. Not worth blocking the announcement on. |
