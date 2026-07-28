@@ -3,7 +3,7 @@
 **Play now:** [www.dogmud.org](https://www.dogmud.org) (in your browser) ·
 telnet `dogmud.org 33333` · **Free. Open beta. No monetization.**
 
-On the colony world of **Gaius**, belief has teeth. A symbiotic organism
+On the colony world of **Gaius**, belief matters. A symbiotic organism
 called **the Chrysalis** lives in every person, and it makes conviction
 physically real: magic is faith made manifest, and the way you live slowly
 reshapes what you are. The survivors of an old catastrophe have forgotten
