@@ -33,15 +33,23 @@ All methods ultimately call `triggerCopyover()` in `copyover.go` (package
 
 `Execute` (in `internal/copyover/copyover.go`) performs the following steps:
 
-1. Opens an `os.Pipe()` — a `(readFd, writeFd)` pair.
-2. Calls `copyover.Save(writeFd)`, which iterates every registered
+1. Creates an anonymous temp file (created then immediately unlinked — the
+   open fd keeps the data alive; no path is ever left behind).
+2. Calls `copyover.Save(file)`, which iterates every registered
    `Contributor` and calls `CopyoverSave` on each one. Each contributor writes
-   a named section into the pipe using `Encoder.WriteSection`.
-3. Closes `writeFd` (signals EOF to the reader).
-4. Launches the same binary again via `exec.Command`, passing the read end of
-   the pipe as `ExtraFiles[0]` — the OS assigns it file descriptor 3 in the
-   child — and appends `--copyover-fd=3` to the argument list.
-5. Calls `os.Exit(0)`, terminating the parent.
+   a named section using `Encoder.WriteSection`.
+3. Seeks the file back to the start and clears its `FD_CLOEXEC` flag.
+4. Replaces the current process image **in place** via `syscall.Exec`
+   (execve) with the same binary, appending `--copyover-fd=<fd>` to the
+   argument list. The PID does not change.
+
+Exec-in-place is load-bearing: under Docker the server is PID 1 of its
+pid-namespace, and PID 1 exiting makes the kernel kill every process in the
+namespace — the old spawn-child-then-`os.Exit(0)` model died mid-restore and
+stopped the container (verified 2026-07-28). A file rather than a pipe is
+also load-bearing: the state is fully written before the new image exists to
+read it, and a pipe buffers only ~64KB — a larger snapshot would deadlock
+the write.
 
 #### Wire format
 
@@ -67,11 +75,11 @@ disconnect notice instead.
 
 ### State restoration (`copyover.Restore`)
 
-When the child process starts, `main()` checks `flags.CopyoverFd()`. If the
-flag is >= 0, this is a copyover restart. After registering all contributors,
-`main` calls `copyover.Restore(fd)`, which:
+When the new process image starts, `main()` checks `flags.CopyoverFd()`. If
+the flag is >= 0, this is a copyover restart. After registering all
+contributors, `main` calls `copyover.Restore(fd)`, which:
 
-1. Reads all sections from the pipe into an in-memory map (keyed by name).
+1. Reads all sections from the state fd into an in-memory map (keyed by name).
 2. Iterates every registered `Contributor` and calls `CopyoverRestore` on
    each, passing a `Decoder` that looks up sections by name.
 

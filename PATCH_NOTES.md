@@ -1,5 +1,45 @@
 # DOGMud Patch Notes
 
+## 2026-07-28 — The world holds its breath (hot restart)
+
+The server can now truly restart without hanging up on anyone. When the
+keepers swap in a new build, a telnet session simply pauses — a held
+breath, then "Copyover complete." — and you are exactly where you stood,
+same connection, nothing dropped. Web sessions are handed a one-time token
+and slip back in without seeing the login prompt. This was built some weeks
+ago but had never survived an honest trial: tested end to end today under
+the same harness production runs in, it turned out the old restart quietly
+killed the whole server instead of rebooting it. It does not anymore — the
+process now sheds its old skin in place rather than birthing a successor
+and dying in front of it.
+
+## 2026-07-28 — The golems collect their due
+
+Bound companions have always been meant to lean on their summoner's
+conviction for as long as they stay fielded — and companions bound since
+mid-July do. But servants raised before the binding-cost was introduced
+slipped through carrying no cost at all, sustained for free forever. On
+your next login, every old companion settles its account: the conviction
+it would demand if bound today is reserved, reduced as always by your
+manifestation skill and mutations. If your will cannot carry everything
+you once bound for nothing, dismiss what you can no longer afford.
+
+## 2026-07-28 — Seeing through the fog
+
+Fog and overcast skies were swallowing their own words — whole stretches
+of the description dipped to ink-on-ink and vanished on dark terminals.
+The grey palette now stays legible from its faintest wisp to its brightest
+haze. The same cure reaches everything painted in that grey: the (hidden)
+and (asleep) marks beside names, and the dim shimmer of grey portals.
+
+## 2026-07-28 — The ledger of names (staff)
+
+The user index is rebuilt at boot with a single light pass that reads only
+what it needs, written to disk in one atomic stroke. A corrupted save file
+no longer silently cuts off every account behind it in the ledger — it is
+skipped with a warning naming it, and duplicates or misfiled records are
+called out rather than quietly obeyed.
+
 ## 2026-07-27 — The workshop manual (staff)
 
 The builder's rooms are all furnished, so the workshop finally gets its
