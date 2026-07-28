@@ -38,10 +38,11 @@ experience just passed a full feel-test — so the hill is shorter than it looks
 
 ## 1. Build items (from your list)
 
-- ⬜ **Admin web-building** — replicate in-game admin building via the web/mapper
-  UI: create rooms from the mapper, add items / NPCs / behavior trees / dialogue,
-  edit exits, etc. Highest-value *build* item — massively raises content velocity
-  and lets non-coders contribute. Biggest scope here; worth its own spec.
+- ✅ **Admin web-building** — **EPIC COMPLETE + DEPLOYED 2026-07-27.** Six `/build`
+  editors (rooms/coords, items, mobs, zone + spawn lists, dialogue, quests,
+  behavior trees), NPC greetings revival, quest-parse unification, and the
+  consolidated `/build-help` admin manual. All browser/smoke gates cleared.
+  Detail: memory topic `project_admin_web_building_epic` + PATCH_NOTES 07-23..27.
 - 🟡 **Weather / seasons polish** — the systems exist (`modules/weather/`); finish
   and polish. **Sub-project A DONE 2026-07-22** (merged to master `8d2dd32cb`,
   spec+plan `2026-07-22-weather-ux-polish-*`): six threads — charset-safe
@@ -148,9 +149,17 @@ experience just passed a full feel-test — so the hill is shorter than it looks
   admin command + SIGUSR1, main.go wiring (register/restore/resume/skip-steps + websocket relog),
   web-client relog JS, + a DOGMud living-economy flush (shops/forage/caravan/opinions) so nothing
   rewinds. **Compiles to a no-op on Windows; both-platform build + suite + boot-smoke green here.**
-  ⚠ **The actual hot-reboot is UNTESTED — validate on the Linux droplet** (checklist below): connect
-  a telnet + web client, run `copyover`, confirm telnet survives + web auto-relogs + no economy
-  rewind. A failed `copyover.Restore` exits(1) (players drop) → treat as a normal cold restart.
+  **✅ LIVE-TESTED + FIXED 2026-07-28:** the first honest trial (compose image in Docker, held
+  telnet session, SIGUSR1) showed the original port was **fatally broken on the prod shape** —
+  the server is PID 1 of the container's pid-namespace, so the spawn-child-then-exit model made
+  the kernel kill the child mid-restore and the container stopped. Rewritten to **exec-in-place**
+  (`syscall.Exec`, same PID) with state in an anonymous temp file (also removes a latent ~64KB
+  pipe-buffer write deadlock). Re-test PASSED: "Copyover complete." on the held session,
+  container stayed Up, post-copyover commands worked on the original socket, ~16s restart window
+  (world-data reload). Upstream #638 index-scan port rode along; #639 deferred until user count
+  warrants. **Remaining: one confirmation run on the droplet after the next deploy** (telnet
+  survives + web auto-relogs + no economy rewind). A failed `copyover.Restore` exits(1) →
+  behaves as a normal cold restart.
 
 ---
 
@@ -217,8 +226,9 @@ fights** got a first-pass fix (2026-07-13, master `9a6606a3d`) — needs live pl
   + per-action affinity gain halved (PerSkillUse/PerCombatEvent 1.0→0.5). Linear
   scaling had compressed r3→r9 into ~3×, letting Extra Arms emerge in fight #1;
   quadratic spreads it (r3~18, r8 bridge~128, r9 apex~162) so high tiers need
-  sustained dedicated drift. **PROVISIONAL — verify in playtest that Extra Arms now
-  takes many fights and entry mutations still feel timely.**
+  sustained dedicated drift. **Validated by the 2026-07-13 feel-RETEST** (veteran
+  rover2, ~280 rounds: one well-paced Center mutation, no apex, no flood). Residual:
+  a dedicated long-run apex-pacing playtest (tracked with the 6e playtest findings).
 - ✅ **Early acquisition cadence dialed back** (master `cdd953a1d`) — `MutationBaseProgress`
   15→30, taking the 6e ~8x down to ~4x of the pre-6e rate (first mutation ~15 rounds, not
   ~7.5). Faster than original but not overboard. PROVISIONAL — re-verify in playtest.
