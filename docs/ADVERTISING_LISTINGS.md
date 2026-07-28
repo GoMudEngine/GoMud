@@ -23,6 +23,20 @@ validated, so crawler-based sites will pick up player counts automatically.
 | Top Mud Sites | https://www.topmudsites.com | Vote-ranked directory; medium description. |
 | r/MUD | https://reddit.com/r/MUD | See the cautions below — a previous post was removed. |
 
+## Logo / banner assets
+
+Generated 2026-07-28 (chrysalis + three moons emblem, matches the web
+client's leather aesthetic), in
+`_datafiles/html/public/static/images/branding/`:
+
+- `emblem_1024.png` — master square emblem (downscale to any size a site asks for)
+- `logo_256.png` / `logo_100.png` — ready-made small squares
+- `banner_468x60.png` — classic listing banner (emblem + title + dogmud.org)
+
+Once deployed they are also web-served, e.g.
+`https://www.dogmud.org/static/images/branding/banner_468x60.png` for sites
+that want a hosted image URL.
+
 ## Short blurb (~45 words — Grapevine, MudStats)
 
 > On the colony world of Gaius, conviction reshapes flesh. No levels, no
