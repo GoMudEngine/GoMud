@@ -62,6 +62,12 @@ func respawnCompanions(user *users.UserRecord) {
 	}
 	user.Character.Companions = cleaned
 
+	// Companions saved before the Conviction economy (2026-07-13) loaded with
+	// no reservation and sustained for free — stamp them now.
+	if backfillCompanionReserves(user.Character) {
+		user.Character.RecalculateStats()
+	}
+
 	for i := range user.Character.Companions {
 		comp := &user.Character.Companions[i]
 		if comp.MobId == 0 {
