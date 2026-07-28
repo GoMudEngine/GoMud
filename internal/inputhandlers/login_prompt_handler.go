@@ -47,6 +47,12 @@ type ValidationFunc func(input string, results map[string]string) (string, error
 // It takes the accumulated results so far.
 type ConditionFunc func(results map[string]string) bool
 
+// InterceptFunc runs on submitted input BEFORE validation. Returning true
+// means the input was fully consumed outside the prompt flow (e.g. a protocol
+// probe like the plaintext mssp-request, which answers and closes the
+// connection) — the sequence stops and its state is discarded.
+type InterceptFunc func(input string, clientInput *connections.ClientInput) bool
+
 // DataFunc generates dynamic data for a prompt step based on prior results.
 type DataFunc func(results map[string]string) map[string]any
 
@@ -59,6 +65,7 @@ type PromptStep struct {
 	MaskTemplate   string         // Template for the mask character (optional)
 	Validator      ValidationFunc // Function to validate the input, if returns false, repeat prompt
 	Condition      ConditionFunc  // Do this step unless Condition Function returns false
+	Intercept      InterceptFunc  // Optional pre-validation hook that may consume the input (optional)
 	FailureCount   int            // Can be added if needed, managed within PromptHandlerState
 }
 
@@ -275,6 +282,12 @@ func CreatePromptHandler(steps []*PromptStep, onComplete CompletionFunc) connect
 		submittedInput := strings.TrimSpace(string(clientInput.Buffer))
 		clientInput.Buffer = clientInput.Buffer[:0] // Clear buffer for next input
 		state.maskTemplate = ""                     // Clear cached mask template
+
+		// Pre-validation intercept (protocol probes like mssp-request).
+		if currentStep.Intercept != nil && currentStep.Intercept(submittedInput, clientInput) {
+			delete(sharedState, promptHandlerStateKey)
+			return false // Input consumed; the interceptor closed the connection.
+		}
 
 		// Validation
 

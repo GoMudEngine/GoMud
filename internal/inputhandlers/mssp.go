@@ -2,10 +2,13 @@ package inputhandlers
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/species"
 	"github.com/GoMudEngine/GoMud/internal/term"
@@ -110,6 +113,53 @@ func buildMSSPFields(in MSSPInputs) []term.MSSPField {
 	add("PAY FOR PERKS", "0")
 
 	return fields
+}
+
+// buildMSSPTextReply renders the field list as the plaintext MSSP block some
+// crawlers (e.g. Grapevine's checker) request by sending "mssp-request" at
+// the login prompt instead of negotiating the telnet option:
+//
+//	MSSP-REPLY-START
+//	NAME<TAB>value
+//	...
+//	MSSP-REPLY-END
+//
+// Multi-value fields tab-join their values (consumers split the whole line on
+// tabs as [name, values...]). Returns nil for an empty field list (disabled).
+func buildMSSPTextReply(fields []term.MSSPField) []byte {
+	if len(fields) == 0 {
+		return nil
+	}
+	var sb strings.Builder
+	sb.WriteString("MSSP-REPLY-START\r\n")
+	for _, f := range fields {
+		sb.WriteString(f.Name)
+		for _, v := range f.Values {
+			sb.WriteByte('\t')
+			sb.WriteString(v)
+		}
+		sb.WriteString("\r\n")
+	}
+	sb.WriteString("MSSP-REPLY-END\r\n")
+	return []byte(sb.String())
+}
+
+// MSSPTextRequestIntercept is the login-prompt hook for the plaintext MSSP
+// variant: when the submitted "username" is mssp-request and MSSP is enabled,
+// it writes the text block and closes the connection. Returns true when the
+// input was consumed (the prompt sequence must stop).
+func MSSPTextRequestIntercept(input string, clientInput *connections.ClientInput) bool {
+	if !strings.EqualFold(strings.TrimSpace(input), "mssp-request") {
+		return false
+	}
+	reply := buildMSSPTextReply(gatherMSSPFields())
+	if reply == nil {
+		return false // MSSP disabled — fall through to normal (failing) login
+	}
+	connections.SendTo(reply, clientInput.ConnectionId)
+	mudlog.Info("MSSP", "info", "plaintext mssp-request served", "connectionId", clientInput.ConnectionId)
+	connections.Remove(clientInput.ConnectionId)
+	return true
 }
 
 // gatherMSSPFields reads live server state + config into a snapshot and builds
