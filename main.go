@@ -1612,12 +1612,19 @@ func loadAllDataFiles(isReload bool) {
 	mutations.ValidateGraph()
 	species.ValidateBodyPartTags(mutations.HasSpec)
 
-	mobs.AuditMobNameCollisions(func(name string) (int, bool) {
-		if userId, _ := users.CharacterNameSearch(name); userId > 0 {
-			return userId, true
-		}
-		return 0, false
-	})
+	// One minimal-decode scan builds the whole character-name index; the old
+	// per-mob CharacterNameSearch closure re-scanned (and fully decoded) every
+	// user file for EVERY mob template — O(mobs x users), ~21-47s of silent
+	// boot time that also ran on every copyover.
+	{
+		timeStart := time.Now()
+		characterNames := users.CharacterNameIndex()
+		mobs.AuditMobNameCollisions(func(name string) (int, bool) {
+			userId, ok := characterNames[strings.ToLower(name)]
+			return userId, ok
+		})
+		mudlog.Info("AuditMobNameCollisions", "characterCount", len(characterNames), "Time Taken", time.Since(timeStart))
+	}
 
 	// Faction definitions: load eagerly so consumer code (combat
 	// hooks, quest engine, btree) can query factions by id without
