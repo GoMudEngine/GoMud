@@ -102,22 +102,6 @@ func (idx *UserIndex) Create() error {
 	return nil
 }
 
-// Writes a new index header then processes all user records to write a new index
-func (idx *UserIndex) Rebuild() error {
-
-	// Example: Append each offline user record. The function SearchOfflineUsers
-	// and the type UserRecord are assumed to be defined elsewhere.
-	SearchOfflineUsers(func(u *UserRecord) bool {
-		// Use the AppendUserRecord method to add the record.
-		if err := idx.AddUser(u.UserId, u.Username); err != nil {
-			// Handle error somehow?
-		}
-		return true
-	})
-
-	return nil
-}
-
 func (idx *UserIndex) GetMetaData() IndexMetaData {
 	return idx.metaData
 }
