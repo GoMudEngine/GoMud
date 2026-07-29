@@ -222,6 +222,93 @@ func TestActGrantMutation_WritesMutationKeyWhenPoolNonEmpty(t *testing.T) {
 	}
 }
 
+// captureGainedMutations registers a transient listener that captures
+// mutations.Gained events. Same cleanup contract as captureInputs.
+func captureGainedMutations(t *testing.T) (*[]mutations.Gained, *sync.Mutex, func()) {
+	t.Helper()
+	var mu sync.Mutex
+	captured := []mutations.Gained{}
+	id := events.RegisterListener(mutations.Gained{}, func(e events.Event) events.ListenerReturn {
+		if g, ok := e.(mutations.Gained); ok {
+			mu.Lock()
+			captured = append(captured, g)
+			mu.Unlock()
+		}
+		return events.Continue
+	})
+	return &captured, &mu, func() {
+		events.UnregisterListener(mutations.Gained{}, id)
+	}
+}
+
+// TestActGrantMutation_EmitsGainedEvent verifies actGrantMutation queues a
+// mutations.Gained event (UserId, MutationId, Rank=1, IsNew=true) instead of
+// sending any player-facing text itself — Task 3 moved reveal text to the
+// hooks listener that consumes this event.
+func TestActGrantMutation_EmitsGainedEvent(t *testing.T) {
+	fn := LookupAction("grant_mutation")
+	if fn == nil {
+		t.Fatal("grant_mutation not registered")
+	}
+
+	cleanUser := seedTestUser(t, 1, "alice", "Aliceia", 1)
+	defer cleanUser()
+
+	cleanMuts := mutations.SeedMutationsForTest(map[string]*mutations.MutationSpec{
+		"test-mut-1": {
+			MutationId: "test-mut-1",
+			Name:       "Test Mutation",
+			Rarity:     1,
+			Pros:       []mutations.MutationEffect{{Type: "stat_flat", Target: "strength", Value: 1}},
+		},
+	})
+	defer cleanMuts()
+
+	user := requireUser(t, 1)
+	user.Character.Mutations = map[string]int{}
+
+	// Drain any events left queued-but-unprocessed by earlier tests in this
+	// file (e.g. TestActGrantMutation_WritesMutationKeyWhenPoolNonEmpty also
+	// grants and queues a Gained event but never calls ProcessEvents) before
+	// installing the capture listener, so a stray event from another test
+	// isn't misattributed to this one.
+	events.ProcessEvents()
+
+	captured, mu, cleanup := captureGainedMutations(t)
+	defer cleanup()
+
+	ctx := &EvalContext{Event: EventContext{UserId: 1}}
+	if result := fn(nil, ctx); result != Success {
+		t.Fatalf("expected Success on non-empty pool, got %v", result)
+	}
+
+	events.ProcessEvents()
+
+	if _, ok := user.Character.Mutations["test-mut-1"]; !ok {
+		t.Fatalf("expected test-mut-1 in user.Character.Mutations, got %v",
+			user.Character.Mutations)
+	}
+
+	mu.Lock()
+	defer mu.Unlock()
+	if len(*captured) != 1 {
+		t.Fatalf("expected exactly 1 mutations.Gained event, got %d: %+v", len(*captured), *captured)
+	}
+	got := (*captured)[0]
+	if got.UserId != 1 {
+		t.Errorf("expected UserId=1, got %d", got.UserId)
+	}
+	if got.MutationId != "test-mut-1" {
+		t.Errorf("expected MutationId=test-mut-1, got %q", got.MutationId)
+	}
+	if got.Rank != 1 {
+		t.Errorf("expected Rank=1, got %d", got.Rank)
+	}
+	if !got.IsNew {
+		t.Error("expected IsNew=true, got false")
+	}
+}
+
 // ─── give_gold ───────────────────────────────────────────────────────
 
 func TestActGiveGold_IncreasesGoldAndNotifies(t *testing.T) {

@@ -289,16 +289,12 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 								mutId := mutations.RollDeepening(user.Character.Mutations)
 								if mutId != "" {
 									user.Character.Mutations[mutId]++
-									newLevel := user.Character.Mutations[mutId]
-									if spec := mutations.GetMutation(mutId); spec != nil {
-										levelTag := fmt.Sprintf("Level %d", newLevel)
-										if newLevel >= int(mb.MutationMaxLevel) {
-											levelTag = "fully matured"
-										}
-										user.SendText(messaging.CategoryMutation, fmt.Sprintf(
-											`<ansi fg="magenta">The Chrysalis deepens its hold. Your <ansi fg="yellow">%s</ansi> grows stronger (%s).</ansi>`,
-											spec.Name, levelTag))
-									}
+									events.AddToQueue(mutations.Gained{
+										UserId:     user.UserId,
+										MutationId: mutId,
+										Rank:       user.Character.Mutations[mutId],
+										IsNew:      false,
+									})
 								}
 							} else if canAcquire {
 								// Pass the user's species so body-part requirements gate the pool.
@@ -311,13 +307,14 @@ func UserRoundTick(e events.Event) events.ListenerReturn {
 										user.Character.Mutations = make(map[string]int)
 									}
 									user.Character.Mutations[mutId] = 1
+									events.AddToQueue(mutations.Gained{
+										UserId:     user.UserId,
+										MutationId: mutId,
+										Rank:       1,
+										IsNew:      true,
+									})
 									spec := mutations.GetMutation(mutId)
 									if spec != nil {
-										user.SendText(messaging.CategoryMutation, fmt.Sprintf(
-											`<ansi fg="magenta">Something stirs beneath your skin. A mutation emerges: <ansi fg="yellow">%s</ansi>.</ansi>`,
-											spec.Name))
-										user.SendText(messaging.CategoryMutation, fmt.Sprintf(`<ansi fg="magenta">%s</ansi>`, spec.Description))
-
 										// Emit world event for gossip system
 										sig := worldevents.Regional
 										if spec.Rarity >= 8 {

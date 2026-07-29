@@ -7,6 +7,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
+	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/itemvoices"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
@@ -205,12 +206,12 @@ func tickMutationItems(user *users.UserRecord, worn []items.Item, now uint64) {
 		if granted == "" {
 			continue
 		}
-		name := granted
-		if ms := mutations.GetMutation(granted); ms != nil {
-			name = ms.Name
-		}
-		user.SendText(messaging.CategoryMutation, fmt.Sprintf(
-			`<ansi fg="magenta">Something stirs beneath your skin... <ansi fg="yellow">%s</ansi> takes root.</ansi>`, name))
+		events.AddToQueue(mutations.Gained{
+			UserId:     user.UserId,
+			MutationId: granted,
+			Rank:       1,
+			IsNew:      true,
+		})
 	}
 }
 

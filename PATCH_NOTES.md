@@ -1,5 +1,20 @@
 # DOGMud Patch Notes
 
+## 2026-07-29 — The Chrysalis shows its work
+
+A mutation emerging is one of the biggest moments a character has, and it
+used to be a single line of text — or, from some sources, nothing at all.
+No longer. When the change comes, terminal players see a full ceremony: a
+chrysalis splitting open across the screen, the mutation's name, and what
+it means for the body it now inhabits. When an existing change deepens its
+hold, a quieter line marks it. In the browser, a small emblem slides into
+the corner — every one of the sixty-two mutations now has its own
+hand-of-the-artificer brass medallion — and clicking it opens the full
+reveal card. Two changes that used to happen in complete silence (the
+mutation granted by certain rites and by certain quests) now announce
+themselves properly. Bloom users: what the wafer does to you remains as
+vague as it ever was. That is on purpose.
+
 ## 2026-07-28 — Answering the census-taker (staff)
 
 Some MUD directory crawlers don't speak the telnet status option — they

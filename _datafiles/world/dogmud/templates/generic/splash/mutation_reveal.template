@@ -1,0 +1,18 @@
+ <ansi fg="239">┌─────────────────────────────────────────────────────────────────────────┐</ansi>
+
+                  <ansi fg="60">˙    ·         ✦         ·    ˙</ansi>
+                        <ansi fg="97">░▒▓▒░   ░▒▓▒░</ansi>
+                      <ansi fg="133">░▒▓██▓▒░ ░▒▓██▓▒░</ansi>
+                     <ansi fg="170">▒▓████▓▒░ ░▒▓████▓▒</ansi>
+                     <ansi fg="207">▓█████▓▒</ansi><ansi fg="229">░ ░</ansi><ansi fg="207">▒▓█████▓</ansi>
+                     <ansi fg="170">▒▓████▓▒</ansi><ansi fg="229">░ ░</ansi><ansi fg="170">▒▓████▓▒</ansi>
+                      <ansi fg="133">░▒▓██▓▒░ ░▒▓██▓▒░</ansi>
+                        <ansi fg="97">░▒▓▒░   ░▒▓▒░</ansi>
+                  <ansi fg="60">·    ˙         ·         ˙    ·</ansi>
+
+              <ansi fg="253">The chrysalis splits. Something new is true.</ansi>
+
+     <ansi fg="229">{{ .name }}</ansi>
+<ansi fg="133">{{ splitstring .description 73 }}</ansi>
+
+ <ansi fg="239">└─────────────────────────────────────────────────────────────────────────┘</ansi>

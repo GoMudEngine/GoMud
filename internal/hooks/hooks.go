@@ -4,6 +4,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/caravan"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/forager"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/splash"
 )
 
@@ -15,6 +16,9 @@ func RegisterListeners() {
 
 	// Splash scenes (terminal + screen-reader delivery; web goes via gmcp module)
 	events.RegisterListener(splash.Splash{}, Splash_Deliver)
+
+	// Mutation reveal (terminal ceremony/flourish; web card via gmcp module)
+	events.RegisterListener(mutations.Gained{}, MutationGained_Reveal)
 
 	// RoomChange Listeners
 	events.RegisterListener(events.RoomChange{}, LocationMusicChange)
