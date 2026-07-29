@@ -1,0 +1,78 @@
+name: Mutation reveal — chrysalis splash ceremony, unified announce, GMCP card push
+summary: >
+  Adversarially verify the new mutation-reveal experience end to end as a
+  confused human would: the Awakening Rite's first mutation (previously
+  SILENT), the combat-drift acquisition splash ceremony, the deepen
+  flourish, and the Char.Mutation GMCP push. Read every line of output
+  critically and report every usability defect bluntly.
+goals:
+  - id: rite-reveal
+    do: >
+      Create a brand-new character and play the newcomer flow to the
+      Awakening Rite (the ceremony that grants your first mutation).
+      Read every line of output during and after the rite.
+    verify: >
+      When the rite grants the mutation you MUST see a reveal: either the
+      full-width chrysalis splash scene (a framed ASCII cocoon panel, the
+      line "The chrysalis splits. Something new is true.", the mutation's
+      Title-Case name, and its flavor description) or, if splashes are
+      disabled, a magenta two-line announcement naming the mutation.
+      FAIL if the mutation lands silently (check `mutations` command to
+      confirm you actually have one). FAIL if the name renders as a
+      lowercase file-id (e.g. "chameleon-skin") instead of a display name.
+      FAIL if any line of the splash exceeds the 80-col frame or renders
+      garbled. Also verify a Char.Mutation GMCP message arrived with keys
+      id/name/rank/isNew/description/art, art path
+      /static/images/mutations/<id>.png, isNew true.
+
+  - id: drift-reveal
+    do: >
+      Enter sustained combat (the training dummy or newbie-zone wildlife)
+      and keep fighting across many rounds until the Chrysalis acts again
+      (combat drives mutation progress; expect on the order of 15-40
+      rounds for an early character — keep going, heal/rest as needed,
+      and re-engage if a target dies).
+    verify: >
+      On acquisition of a NEW mutation: same reveal checks as rite-reveal
+      (splash scene, name, description, GMCP push with isNew true). The
+      old single-line "Something stirs beneath your skin. A mutation
+      emerges: X." must NOT appear TOGETHER WITH the splash (that would
+      be a double-announce defect). Confirm `mutations` lists the new
+      mutation. Note in the report how the reveal reads mid-combat-spam:
+      is the ceremony legible between combat rounds, or lost in noise?
+
+  - id: deepen-flourish
+    do: >
+      Continue combat further. If a deepening occurs (an already-owned
+      mutation grows stronger rather than a new one appearing), read the
+      announcement. If no deepening occurs before session budget runs
+      out, mark BLOCKED (deepening requires owning a deepenable mutation
+      and winning a weighted coin flip — not guaranteed in one session).
+    verify: >
+      A deepening must show the one-line flourish "The Chrysalis deepens
+      its hold. Your <Name> grows stronger (Level N / fully matured)."
+      with NO splash scene. A Char.Mutation GMCP message must arrive with
+      isNew false and rank > 1. FAIL if a deepening triggers the full
+      splash ceremony or lands silently.
+
+  - id: bloom-stays-vague
+    do: >
+      OBSERVATIONAL, only if trivially reachable: if you can obtain and
+      eat a Bloom wafer without derailing the session, do so. Otherwise
+      mark BLOCKED without spending significant time.
+    verify: >
+      A Bloom-driven mutation change must say ONLY "Something under your
+      skin shifts and settles differently." — no mutation name, no splash,
+      no Char.Mutation GMCP push. Naming it would break the designed
+      mystery (spec decision 2026-07-29).
+
+  - id: general-adversarial
+    do: >
+      Throughout the whole session, stay hostile to the experience: note
+      any double-rendered text, mis-ordered lines, prompt weirdness around
+      the splash, screen-reader-unfriendly output, or anything a confused
+      newcomer would misread.
+    verify: >
+      Report every usability problem found, however small, with the exact
+      output lines quoted. An empty defect list must mean you genuinely
+      found nothing, not that you didn't look.
