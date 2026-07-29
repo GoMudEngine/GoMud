@@ -157,7 +157,7 @@ experience just passed a full feel-test — so the hill is shorter than it looks
   pipe-buffer write deadlock). Re-test PASSED: "Copyover complete." on the held session,
   container stayed Up, post-copyover commands worked on the original socket, ~16s restart window
   (world-data reload). Upstream #638 index-scan port rode along; #639 deferred until user count
-  warrants. **Remaining: one confirmation run on the droplet after the next deploy** (telnet
+  warrants. **Confirmed on the droplet 2026-07-28 (copyover <3s)** — was: one confirmation run after the next deploy (telnet
   survives + web auto-relogs + no economy rewind). A failed `copyover.Restore` exits(1) →
   behaves as a normal cold restart.
 
@@ -310,7 +310,16 @@ fights** got a first-pass fix (2026-07-13, master `9a6606a3d`) — needs live pl
 ### 5d. Presentation / delight polish
 Not gating, but directly serves the "coherent, memorable first hour" advertising
 goal — cheap wins that make the world feel crafted.
-- ⬜ **Mutation-acquisition art + reveal popup** — reuse the eq-icon generation
+- ✅ **Mutation-acquisition art + reveal popup** — **DONE 2026-07-29** (spec+plan
+  `2026-07-29-mutation-art-reveal-*`; merged `acc5cec67`). 62 brass-alchemical
+  emblems + generic fallback (style user-locked, generated on the panel tint —
+  no chroma-key; manifest `tools/mutation_art/manifest.yaml`); `mutations.Gained`
+  event from all grant sites (rite + quest grants were silent — fixed; Bloom
+  stays vague by design); terminal chrysalis splash ceremony + deepen flourish;
+  `Char.Mutation` GMCP → web toast→card. Adversarially playtested on two fresh
+  characters (report `2026-07-29-local-bug-finder-mutation-reveal.md`); web
+  gate user-verified. Original sketch kept below for reference:
+  reuse the eq-icon generation
   pipeline (`image-gen-mcp` low-quality → `tools/strip_icon_bg.py`) to make small
   per-mutation illustrations, and show a richer reveal on acquisition. Two
   independent pieces: **(A) art batch** (no engine risk; lock a shared house style,
