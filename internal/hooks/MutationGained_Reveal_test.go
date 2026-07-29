@@ -32,3 +32,10 @@ func TestRevealCaption(t *testing.T) {
 	assert.Contains(t, got, "Your skin drinks the colors around it.")
 	assert.NotContains(t, got, "<ansi")
 }
+
+func TestFlattenDescription(t *testing.T) {
+	in := "Your breathing reorganizes into a lattice of insectile spiracles --\ntireless,\nand indifferent to bad air.\n"
+	got := flattenDescription(in)
+	assert.NotContains(t, got, "\n")
+	assert.Contains(t, got, "spiracles -- tireless, and indifferent")
+}

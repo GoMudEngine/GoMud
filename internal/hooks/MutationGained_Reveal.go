@@ -2,6 +2,7 @@ package hooks
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/events"
@@ -27,6 +28,13 @@ func deepenFlourishText(name string, rank int, maxLevel int) string {
 // screen-reader users, and part of the degraded no-splash path.
 func revealCaption(name, description string) string {
 	return fmt.Sprintf(`Something stirs beneath your skin. A mutation emerges: %s. %s`, name, description)
+}
+
+// flattenDescription collapses the YAML description's authored hard-wraps
+// into one paragraph so the splash template's splitstring is the only
+// wrapping applied.
+func flattenDescription(s string) string {
+	return strings.Join(strings.Fields(s), " ")
 }
 
 // MutationGained_Reveal renders the terminal side of a mutation reveal:
@@ -65,12 +73,12 @@ func MutationGained_Reveal(e events.Event) events.ListenerReturn {
 
 	events.AddToQueue(splash.Splash{
 		SceneId: `mutation_reveal`,
-		Caption: revealCaption(spec.Name, spec.Description),
+		Caption: revealCaption(spec.Name, flattenDescription(spec.Description)),
 		Target:  splash.TargetUser,
 		UserId:  evt.UserId,
 		Data: map[string]any{
 			`name`:        spec.Name,
-			`description`: spec.Description,
+			`description`: flattenDescription(spec.Description),
 		},
 	})
 	return events.Continue
