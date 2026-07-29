@@ -69,11 +69,14 @@ type Gained struct {
     IsNew      bool // false = rank-up/deepen
 }
 func (Gained) Type() string { return "MutationGained" }
-// plus a one-line emit helper, e.g. mutations.AnnounceGained(userId, id, rank, isNew)
 ```
 
-`internal/mutations` gains an `events` import (verified: nothing under
-`events` reaches back into `mutations` — no cycle).
+**Cycle correction (found during planning):** `events` → `skills` →
+`mutations`, so `mutations` must NOT import `events`. The `Gained` struct
+lives in `internal/mutations` with only its `Type()` method (satisfies
+`events.Event` structurally, zero new imports); call sites emit with
+`events.AddToQueue(mutations.Gained{...})` directly — they all already
+import `events`. No emit helper.
 
 **Emitting sites** (each replaces its ad-hoc announce text):
 
