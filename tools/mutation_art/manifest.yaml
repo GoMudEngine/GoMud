@@ -1,7 +1,9 @@
 # Mutation emblem art manifest — regeneration-reproducible.
 # prompt = style_prefix + " " + subject + " " + style_suffix
-# style_prefix is locked by the Task 8 style-lock user gate — placeholder until then.
-style_prefix: "STYLE_PREFIX_PENDING_TASK_8"
+# style_prefix locked 2026-07-29 (Task 8 user gate): brass alchemical.
+style_prefix: >-
+  Weathered brass and verdigris alchemical emblem, embossed antique
+  metal relief in a circular medallion,
 style_suffix: >-
   centered composition, no text, no letters, flat solid background
   exact hex #201913, single emblem only
