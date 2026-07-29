@@ -344,6 +344,12 @@ func (b *GameBridge) GiveMutation() {
 	}
 	if _, exists := b.user.Character.Mutations[mutId]; !exists {
 		b.user.Character.Mutations[mutId] = 1
+		events.AddToQueue(mutations.Gained{
+			UserId:     b.user.UserId,
+			MutationId: mutId,
+			Rank:       1,
+			IsNew:      true,
+		})
 	}
 }
 

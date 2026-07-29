@@ -29,7 +29,7 @@ type GamePlay struct {
 
 	PinnacleItemsEnabled ConfigBool `yaml:"PinnacleItemsEnabled"` // Master toggle: sentient/ambient/hunger/mutation item ticks
 	ItemProcsEnabled     ConfigBool `yaml:"ItemProcsEnabled"`     // Toggle: item proc firing (on_hit/on_block/etc.)
-	SplashesEnabled      ConfigBool `yaml:"SplashesEnabled"`      // Master toggle for scene splashes (celestial/season/severe-weather)
+	SplashesEnabled      ConfigBool `yaml:"SplashesEnabled"`      // Master toggle for scene splashes (celestial/season/severe-weather/mutation reveal)
 
 	// Moderation
 	PetitionCooldownRounds ConfigInt `yaml:"PetitionCooldownRounds"` // Min rounds between a player's petitions (anti-spam, default 50)

@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
 
@@ -58,7 +59,14 @@ func actGrantMutation(params map[string]any, ctx *EvalContext) Result {
 	if user == nil {
 		return Failure
 	}
-	user.Character.GrantRandomMutation()
+	if mutId := user.Character.GrantRandomMutation(); mutId != "" {
+		events.AddToQueue(mutations.Gained{
+			UserId:     user.UserId,
+			MutationId: mutId,
+			Rank:       1,
+			IsNew:      true,
+		})
+	}
 	return Success
 }
 
