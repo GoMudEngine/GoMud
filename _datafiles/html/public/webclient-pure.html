@@ -708,6 +708,10 @@
                 renderAutomation();
                 rebuildTickTimers();
             },
+            "Char.Mutation": function() {
+                var m = (GMCPStructs["Char"] || {}).Mutation;
+                if (m && m.name) { mutationRevealEnqueue(m); }
+            },
             // Commands.State carries the cooldowns map and mode — drain + death-clear here.
             "Commands": function() {
                 drainQueue();
@@ -1885,6 +1889,47 @@
 
             console.log("GMCP (unhandled):", objNamespace, objBody);
         }
+
+        // ── Mutation reveal: FIFO toast queue → ceremonial card ────────────
+        var mutRevealQueue = [];
+        var mutRevealCurrent = null;
+        var mutRevealFadeTimer = null;
+        var MUT_TOAST_FADE_MS = 20000;
+
+        function mutationRevealEnqueue(m) {
+            mutRevealQueue.push(m);
+            if (!mutRevealCurrent) { mutationRevealShowNext(); }
+        }
+        function mutationRevealShowNext() {
+            if (mutRevealFadeTimer) { clearTimeout(mutRevealFadeTimer); mutRevealFadeTimer = null; }
+            mutRevealCurrent = mutRevealQueue.shift() || null;
+            var toast = document.getElementById('mut-toast');
+            if (!mutRevealCurrent) { toast.classList.remove('show'); return; }
+            document.getElementById('mut-toast-art').src = mutRevealCurrent.art || '/static/images/mutations/_generic.png';
+            document.getElementById('mut-toast-name').textContent = mutRevealCurrent.name || '';
+            document.getElementById('mut-toast-sub').textContent = mutRevealCurrent.isNew
+                ? 'A mutation emerges — click to view'
+                : 'Deepens its hold — click to view';
+            toast.classList.add('show');
+            mutRevealFadeTimer = setTimeout(function () {
+                // Unclicked toast fades; move on to any queued reveal.
+                mutationRevealShowNext();
+            }, MUT_TOAST_FADE_MS);
+        }
+        function mutationRevealExpand() {
+            if (!mutRevealCurrent) { return; }
+            if (mutRevealFadeTimer) { clearTimeout(mutRevealFadeTimer); mutRevealFadeTimer = null; }
+            document.getElementById('mut-toast').classList.remove('show');
+            document.getElementById('mut-card-art').src = mutRevealCurrent.art || '/static/images/mutations/_generic.png';
+            document.getElementById('mut-card-name').textContent = mutRevealCurrent.name || '';
+            document.getElementById('mut-card-desc').textContent = mutRevealCurrent.description || '';
+            document.getElementById('mut-card-overlay').classList.add('show');
+        }
+        function mutationRevealDismiss() {
+            document.getElementById('mut-card-overlay').classList.remove('show');
+            mutationRevealShowNext();
+        }
+
         function updateStatusPanel() {
             var container = document.getElementById('status-conditions');
             if (!container) return;
@@ -2880,6 +2925,41 @@
             background: #16201c;
             color: #8fb3a6;
         }
+
+        /* ── Mutation reveal (toast → ceremonial card) ─────────────────── */
+        #mut-toast {
+            position: fixed; top: 14px; right: 14px; z-index: 60;
+            display: none; align-items: center; gap: 10px; max-width: 260px;
+            background: linear-gradient(160deg, #2b2118, var(--panel-bg, #201913));
+            border: 1px solid var(--panel-border, #3a2a18); border-radius: 8px;
+            padding: 10px 14px; cursor: pointer;
+            box-shadow: 0 4px 18px rgba(0,0,0,.6);
+        }
+        #mut-toast.show { display: flex; }
+        #mut-toast img, #mut-card img {
+            border-radius: 50%; border: 1px solid var(--ink-gold, #c9a86a);
+            background: var(--panel-bg, #201913); object-fit: cover;
+        }
+        #mut-toast img { width: 44px; height: 44px; }
+        #mut-toast .mt-name { color: #f0e2c8; font-family: Georgia, serif; font-size: 13px; }
+        #mut-toast .mt-sub  { color: #8d7c64; font-size: 10px; }
+        #mut-card-overlay {
+            position: fixed; inset: 0; z-index: 70; display: none;
+            background: rgba(10,7,5,.55); align-items: center; justify-content: center;
+            cursor: pointer;
+        }
+        #mut-card-overlay.show { display: flex; }
+        #mut-card {
+            background: linear-gradient(160deg, #2b2118, var(--panel-bg, #201913));
+            border: 2px solid var(--ink-gold, #c9a86a); border-radius: 10px;
+            padding: 22px 34px; text-align: center; max-width: 340px;
+            box-shadow: 0 8px 40px rgba(0,0,0,.7);
+        }
+        #mut-card img { width: 128px; height: 128px; margin: 0 auto 12px; display: block; }
+        #mut-card .mc-kicker { color: #d9b36a; font-size: 11px; letter-spacing: .25em; text-transform: uppercase; }
+        #mut-card .mc-name   { color: #f0e2c8; font-size: 20px; font-family: Georgia, serif; margin: 6px 0 8px; }
+        #mut-card .mc-desc   { color: #a3937c; font-size: 12px; }
+        #mut-card .mc-hint   { color: #6e5f4b; font-size: 10px; margin-top: 12px; }
     </style>
 
     <!-- Automation modal overlay — hidden; JS drives visibility -->
@@ -2897,6 +2977,24 @@
           <button class="auto-modal-save">Save</button>
         </div>
       </div>
+    </div>
+
+    <!-- Mutation reveal: FIFO toast + ceremonial card overlay — hidden; JS drives visibility -->
+    <div id="mut-toast" onclick="mutationRevealExpand()">
+        <img id="mut-toast-art" src="" alt="" onerror="this.onerror=null;this.src='/static/images/mutations/_generic.png'">
+        <div>
+            <div class="mt-name" id="mut-toast-name"></div>
+            <div class="mt-sub" id="mut-toast-sub"></div>
+        </div>
+    </div>
+    <div id="mut-card-overlay" onclick="mutationRevealDismiss()">
+        <div id="mut-card">
+            <img id="mut-card-art" src="" alt="" onerror="this.onerror=null;this.src='/static/images/mutations/_generic.png'">
+            <div class="mc-kicker">The Chrysalis acts</div>
+            <div class="mc-name" id="mut-card-name"></div>
+            <div class="mc-desc" id="mut-card-desc"></div>
+            <div class="mc-hint">click anywhere to continue</div>
+        </div>
     </div>
 
     <script>
