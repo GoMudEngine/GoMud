@@ -274,18 +274,28 @@ func firstHop(path []pathStep) (nextRoomId int, exitName string, found bool) {
 	return path[0].roomId, path[0].exitName, true
 }
 
-// NextStep returns the next room to head toward on the shortest in-zone path
-// from fromRoomId to toRoomId, and the compass exit name to take. found is
-// false when from == to, when the target is unreachable, or when the target is
-// in another zone (the per-zone mapper cannot route across zones — callers then
-// draw no arrow). Thin wrapper over the cached GetPath used by `pathto`.
+// NextStep returns the next room to head toward on the way from fromRoomId to
+// toRoomId, and the compass exit name to take. found is false when from == to
+// or the target is genuinely unreachable.
+//
+// Same-zone journeys use the cached per-zone GetPath (as `pathto` does).
+// Cross-zone journeys fall back to zone-level routing: head for the border of
+// the neighbouring zone that leads toward the target. GetPath alone cannot do
+// this — it resolves its mapper from the START room's zone, so it fails
+// outright on a target elsewhere, which used to leave cross-zone quest markers
+// with no arrow at all. See mapper.crosszone.go.
 func NextStep(fromRoomId, toRoomId int) (nextRoomId int, exitName string, found bool) {
 	if fromRoomId == toRoomId {
 		return 0, "", false
 	}
-	path, err := GetPath(fromRoomId, toRoomId)
-	if err != nil {
-		return 0, "", false
+	if path, err := GetPath(fromRoomId, toRoomId); err == nil {
+		return firstHop(path)
 	}
-	return firstHop(path)
+
+	fromRoom := rooms.LoadRoom(fromRoomId)
+	toRoom := rooms.LoadRoom(toRoomId)
+	if fromRoom == nil || toRoom == nil || fromRoom.Zone == toRoom.Zone {
+		return 0, "", false // same zone and still unreachable: nothing to add
+	}
+	return crossZoneHop(fromRoomId, fromRoom.Zone, toRoom.Zone)
 }

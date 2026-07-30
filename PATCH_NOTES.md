@@ -1,5 +1,15 @@
 # DOGMud Patch Notes
 
+## 2026-07-30 — The map will point you out of town
+
+Some errands cross a district or a county line, and until now the map simply
+gave up at the boundary: no destination, no arrow, nothing to follow, at exactly
+the moment you were trying to work out which way was out. The map now routes
+across zones. It will not draw the far room until you reach that map, but it
+will keep pointing you at the way out, boundary after boundary, until you get
+there. The New Plymouth errands that wander between the docks, the merchant
+quarter, the noble terraces and the old quarter are the ones that gain most.
+
 ## 2026-07-30 — The map follows the people, not the furniture
 
 Townsfolk keep hours. The tavern keeper serves until late and then sleeps in

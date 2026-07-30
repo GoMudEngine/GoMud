@@ -1165,6 +1165,11 @@ func PreCacheMaps() {
 	// consistency pass consults it.
 	rooms.RebuildPlaneRegistry()
 
+	// Warm the cross-zone routing graph here rather than lazily. Every room is
+	// already loaded by this point, so it is nearly free now; deferring it
+	// would stall whichever player first focuses a cross-zone quest.
+	ensureZoneGraph()
+
 	ValidateZoneConsistency()
 }
 
