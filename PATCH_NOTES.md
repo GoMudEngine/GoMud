@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-07-30 — The quest arrow keeps up with you
+
+The arrow showing your next step was worked out from where you were standing
+when it was drawn, and then never worked out again until the quest itself
+changed. Take one step and it was already describing the journey you had just
+made — after a single move it was pointing at the room you had walked into,
+which is to say, at your own feet. It is now recalculated every time you change
+rooms, and it will never again draw an arrow to where you already are.
+
 ## 2026-07-30 — The quest panel stops promising a marker it cannot draw
 
 The map only ever holds the district you are standing in, so when an errand

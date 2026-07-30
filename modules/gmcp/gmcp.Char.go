@@ -63,6 +63,13 @@ func init() {
 	events.RegisterListener(events.CharacterStatsChanged{}, g.statsChangeHandler)
 	events.RegisterListener(events.CharacterChanged{}, g.charChangeHandler)
 	events.RegisterListener(events.BuffsTriggered{}, g.buffTriggeredHandler)
+	// Char.Quests carries the quest marker's next_room / next_dir, and BOTH are
+	// computed from where the player is standing at send time. Without this the
+	// payload only ever refreshed when a quest changed, so the next-step arrow
+	// froze the moment the player walked: after one step it still named the room
+	// they had just entered, and the client drew a zero-length arrow on their own
+	// node. Re-push on every room change so the arrow tracks them.
+	events.RegisterListener(events.RoomChange{}, g.roomChangeHandler)
 	// Re-push the full Char payload once on the round following spawn so the
 	// initial login push lands reliably even if the first GMCP frame raced the
 	// connection setup (otherwise the status panel header + conditions stay
@@ -94,6 +101,34 @@ func (g *GMCPCharModule) questProgressHandler(e events.Event) events.ListenerRet
 	}
 
 	if evt.UserId == 0 {
+		return events.Continue
+	}
+
+	events.AddToQueue(GMCPCharUpdate{
+		UserId:     evt.UserId,
+		Identifier: `Char.Quests`,
+	})
+
+	return events.Continue
+}
+
+// roomChangeHandler re-pushes Char.Quests when a player moves.
+//
+// The quest marker's next_room and next_dir are derived from the player's
+// CURRENT room (mapper.NextStep in the Char.Quests build), so they are stale
+// the instant the player takes a step. Only Char.Quests is re-sent — not the
+// whole Char node — because movement already pushes Room.Info and Zone.Map, and
+// a full Char push on every step would be pointless traffic.
+func (g *GMCPCharModule) roomChangeHandler(e events.Event) events.ListenerReturn {
+
+	evt, typeOk := e.(events.RoomChange)
+	if !typeOk {
+		mudlog.Error("Event", "Expected Type", "RoomChange", "Actual Type", e.Type())
+		return events.Cancel
+	}
+
+	// Mobs moving are not our concern; only players carry a quest panel.
+	if evt.MobInstanceId > 0 || evt.UserId == 0 {
 		return events.Continue
 	}
 

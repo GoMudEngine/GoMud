@@ -499,6 +499,12 @@ class RoomGridSVG {
       if (!qm || this.currentCenterId == null || !qm.nextRoom) { return; }
       const fromE = this.rooms.get(this.currentCenterId);
       if (!fromE) { return; }
+      // Never point at the room the player is already standing in. A marker can
+      // name the current room if it went stale (the server recomputes next_room
+      // from the player's position, so any lag between moving and the refresh
+      // lands here), and the arrow would then be a zero-length line drawn on
+      // their own node — which reads as "the marker is pointing at me".
+      if (String(qm.nextRoom) === String(this.currentCenterId)) { return; }
       const sp = this.spacing;
       const from = { x: fromE.room.x * sp, y: fromE.room.y * sp };
       let to = null;
