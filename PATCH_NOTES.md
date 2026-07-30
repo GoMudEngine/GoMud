@@ -1,36 +1,37 @@
 # DOGMud Patch Notes
 
-## 2026-07-30 — The map will point you out of town
+## 2026-07-30 — The map knows where you are going
 
-Some errands cross a district or a county line, and until now the map simply
-gave up at the boundary: no destination, no arrow, nothing to follow, at exactly
-the moment you were trying to work out which way was out. The map now routes
-across zones. It will not draw the far room until you reach that map, but it
-will keep pointing you at the way out, boundary after boundary, until you get
-there. The New Plymouth errands that wander between the docks, the merchant
-quarter, the noble terraces and the old quarter are the ones that gain most.
+A quest that tells you to see someone should show you where they are. This is
+three changes that add up to that.
 
-## 2026-07-30 — The map follows the people, not the furniture
+**More steps point somewhere.** Thirteen quest steps that used to leave the map
+blank now mark a destination: the smugglers' stash beneath the Drowning Post,
+the barracks you carry the ledger to, the ruined barn holding the peddler's
+freight, the forager's camp, the healer's cottage, the tunnel shaman's junction,
+and more. One step was pointing the wrong way outright — after you put a shot
+across the canyon, the map sent you north toward a scout that had already left
+that chamber and was charging you. It now marks the ground you are meant to
+hold.
 
-Townsfolk keep hours. The tavern keeper serves until late and then sleeps in
-the room above; the guard captain walks his ward at midday; the archivist is
-not at her desk at dawn. Until now the quest map marked the room where such a
-person is *usually* found, which meant that for part of every day it pointed at
-an empty chair. Quest destinations that are a person now follow that person —
-if Marek has gone up to bed, the map says so. Thirty-five steps across
-twenty-two quests were converted. Where the one you want cannot be told apart
-from others of its kind, the map still declines to guess rather than send you
-to the wrong one.
+**The map follows people, not furniture.** Townsfolk keep hours. The tavern
+keeper serves until late and then sleeps in the room above; the guard captain
+walks his ward at midday; the archivist is not at her desk at dawn. Until now
+the map marked the room where such a person is *usually* found, which meant
+that for part of every day it pointed at an empty chair. Destinations that are
+a person now follow that person — if Marek has gone up to bed, the map says so.
+Thirty-five steps across twenty-two quests were converted. Where the one you
+want cannot be told apart from others of its kind, the map still declines to
+guess rather than send you to the wrong one.
 
-## 2026-07-30 — The map points the way more often
-
-Thirteen quest steps that used to leave the map blank now mark where you are
-meant to go: the smugglers' stash beneath the Drowning Post, the guard barracks
-you carry the ledger to, the ruined barn holding the peddler's freight, the
-forager's camp, the healer's cottage, the tunnel shaman's junction, and several
-more. One step was pointing the wrong way outright — after you put a shot across
-the canyon, the map sent you north toward a scout that had already left that
-chamber and was charging you. It now marks the ground you are meant to hold.
+**It no longer gives up at the border.** Some errands cross a district or a
+county line, and the map used to go blank at the boundary — no destination, no
+arrow, nothing to follow, at exactly the moment you were working out which way
+was out. It now routes across zones. It will not draw the far room until you
+reach that map, but it will keep pointing you toward the way out, boundary
+after boundary, until you arrive. The New Plymouth errands that wander between
+the docks, the merchant quarter, the noble terraces and the old quarter gain
+the most.
 
 ## 2026-07-30 — Telling your companions apart
 
@@ -43,12 +44,13 @@ leave the server. Companions are now tracked by an identity the panel keeps to
 itself and shown by the name you actually gave them. Dismiss one and its row
 goes with it.
 
-## 2026-07-30 — Directions to the barracks, and an honest ledger (staff)
+## 2026-07-30 — An honest ledger, and written directions (staff)
 
 Marek's protection notice needed carrying to Guard Captain Velk, and the quest
 log told you only that he was "at the barracks" — leaving roughly fifteen rooms
-of city to search. It now gives the route, the way the watch captain's other
-errand always did.
+of city to search. The log now spells out the route in words, the way the watch
+captain's other errand always did. (Separate from the map marker above; this is
+the written hint.)
 
 Behind the scenes, the combat analytics sheet had been quietly lying: every
 position hit-rate row read zero, because the recorder wrote down the fighter's
