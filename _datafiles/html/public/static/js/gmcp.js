@@ -398,6 +398,16 @@ class RoomGridSVG {
           x: entry.room.x * this.spacing,
           y: entry.room.y * this.spacing
       };
+
+      // The arrow is drawn FROM the current room, so it must be (re)drawn once
+      // that room is known. Crossing a zone boundary calls reset(), which nulls
+      // currentCenterId; setZoneSnapshot then rebuilds the map and calls
+      // _drawQuestArrow() while the centre is still null, so it bailed out —
+      // and centerOnRoom, which runs afterwards, never redrew it. The result
+      // was the quest arrow vanishing on exactly the step that crosses into a
+      // new zone, and staying gone until the next in-zone move.
+      this._drawQuestArrow();
+
       this._applyZoom();
   }
 

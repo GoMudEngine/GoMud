@@ -1,5 +1,13 @@
 # DOGMud Patch Notes
 
+## 2026-07-30 — The quest arrow survives crossing a border
+
+Walking from one region into the next drew a fresh map, and in the moment of
+redrawing it the client forgot which room you were standing in — so the arrow
+showing your next step had nothing to point away from, and quietly vanished. It
+came back only when you moved again. It now waits until it knows where you are
+and draws itself then.
+
 ## 2026-07-30 — The quest arrow keeps up with you
 
 The arrow showing your next step was worked out from where you were standing
