@@ -219,6 +219,9 @@ class RoomGridSVG {
       this.drawnWrapStubs = new Set();
       this.drawnVerticalTicks = new Set();
       this.currentCenterId = null;
+      // Centre requested before the room existed on the map (zone crossing:
+      // Room.Info arrives before Zone.Map). Applied by setZoneSnapshot.
+      this._pendingCenterId = null;
       this._zone = null;
       this._z = null;
       this._party = {}; // keyed by roomId (number or string)
@@ -372,7 +375,20 @@ class RoomGridSVG {
    */
   centerOnRoom(id) {
       const entry = this.rooms.get(id);
-      if (!entry) return;
+      if (!entry) {
+          // The room is not on the map YET. This is the normal case when
+          // crossing a zone boundary: Room.Info arrives before Zone.Map, so we
+          // are asked to centre on a room the new snapshot has not delivered.
+          // Remember the request — setZoneSnapshot applies it once the room
+          // exists. Without this the centre stayed null for the whole of that
+          // room's visit (reset() clears it), which left the current room
+          // un-highlighted and killed the quest arrow, since it is drawn FROM
+          // the centre. The next in-zone move papered over it, which is why the
+          // arrow only ever went missing on the step that crossed a border.
+          this._pendingCenterId = id;
+          return;
+      }
+      this._pendingCenterId = null;
 
       // Set the new center FIRST so _fog() computes distances from the new room
       // when we rebuild the previous room's token below.
@@ -458,6 +474,14 @@ class RoomGridSVG {
       // skips ones already drawn), then the quest next-step arrow on top.
       // Tokens were already (re)built in Pass 1 — don't rebuild them again.
       floor.forEach(r => this._drawEdgesForRoom(r.num));
+
+      // Apply a centre request that arrived before this snapshot did (see
+      // centerOnRoom). Must run before the arrow is drawn — the arrow starts at
+      // the centre room, so with the centre still null it would draw nothing.
+      if (this._pendingCenterId != null && this.rooms.get(this._pendingCenterId)) {
+          this.centerOnRoom(this._pendingCenterId);
+      }
+
       this._drawQuestArrow();
       this._applyZoom();
   }

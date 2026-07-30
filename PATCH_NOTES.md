@@ -1,5 +1,13 @@
 # DOGMud Patch Notes
 
+## 2026-07-30 — The map keeps track of where you are at a border
+
+Crossing between regions, the map was told which room you had entered a moment
+before it had finished drawing that region — so it quietly forgot where you were
+standing. Your room went unmarked and the arrow to your next step had no
+starting point, so it did not appear at all until you moved again. It now holds
+on to where you are and picks it up once the new map is ready.
+
 ## 2026-07-30 — The map remembers the road behind you
 
 Step across the line between two regions and the map used to forget everything
