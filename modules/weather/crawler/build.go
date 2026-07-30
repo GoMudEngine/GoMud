@@ -119,6 +119,18 @@ func buildNodes(r WorldReader, zones map[string]bool) map[string]sim.ZoneNode {
 // buildEdges accumulates undirected, weighted adjacency from every cross-zone
 // exit. Intra-zone exits and exits whose target resolves to no included zone
 // are skipped.
+//
+// SEE ALSO — internal/mapper/mapper.crosszone.go builds a SECOND zone graph
+// from the same crawl, for routing a player's next step across a zone
+// boundary. It cannot use sim.Edge: this one is undirected and canonicalised
+// and keeps only a crossing COUNT, whereas routing needs the border room, the
+// exit direction and the destination room. It also cannot import this package
+// (internal/ never imports modules/).
+//
+// So the crawl is duplicated on purpose, not by accident. If the two are ever
+// unified, the shared crawl belongs in internal/ (modules may import internal,
+// not the reverse) and would have to preserve this package's WorldReader seam
+// or accept losing it.
 func buildEdges(r WorldReader, zones map[string]bool, roomZone map[int]string, opts Options) []sim.Edge {
 	weights := map[[2]string]int{}
 	for zone := range zones {

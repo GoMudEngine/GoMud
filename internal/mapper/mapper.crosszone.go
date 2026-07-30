@@ -22,6 +22,28 @@ import (
 // neighbouring zone to head for, then reuse the existing in-zone GetPath to
 // walk to that border room. The player gets a correct arrow the whole way, one
 // zone at a time, and the hot path stays on the cached per-zone mapper.
+//
+// SEE ALSO — modules/weather/crawler/build.go (buildEdges) builds a SECOND
+// zone-adjacency graph by the same crawl, for weather-front movement. The two
+// are not interchangeable and this is not an oversight:
+//
+//   - Its sim.Edge is {A, B, Weight}: undirected, canonicalised (a <= b), and
+//     it discards the border room, exit direction and destination room — the
+//     only fields a next-hop needs. It answers "do these zones touch", not
+//     "which way do I walk".
+//   - internal/ never imports modules/ anywhere in this codebase, and
+//     cross-zone routing has to live here because it feeds NextStep -> the
+//     GMCP quest payload.
+//   - sim.Graph is deliberately "pure data, carries no engine types", built
+//     through weather's own WorldReader seam and cached to versioned JSON.
+//
+// The genuinely duplicated part is the crawl itself (walk rooms, inspect
+// exits, detect zone changes). If that is ever unified, this is the file that
+// should consume the shared crawl. Note one behavioural difference: weather
+// can exclude secret exits (Options.IncludeSecretExits); this graph counts
+// them, which matches GetPath and the in-zone mapper (neither filters secret
+// exits — the mapper only renders them with SecretSymbol). Changing that here
+// alone would make cross-zone routing disagree with in-zone routing.
 
 // zoneLink is one ordinary exit that leaves a zone.
 //
