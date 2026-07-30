@@ -23,27 +23,76 @@ import (
 // walk to that border room. The player gets a correct arrow the whole way, one
 // zone at a time, and the hot path stays on the cached per-zone mapper.
 //
-// SEE ALSO — modules/weather/crawler/build.go (buildEdges) builds a SECOND
-// zone-adjacency graph by the same crawl, for weather-front movement. The two
-// are not interchangeable and this is not an oversight:
+// ---------------------------------------------------------------------------
+// YES, THIS IS THE SECOND ZONE-ADJACENCY CRAWL IN THE CODEBASE. ON PURPOSE.
+// ---------------------------------------------------------------------------
 //
-//   - Its sim.Edge is {A, B, Weight}: undirected, canonicalised (a <= b), and
-//     it discards the border room, exit direction and destination room — the
-//     only fields a next-hop needs. It answers "do these zones touch", not
-//     "which way do I walk".
-//   - internal/ never imports modules/ anywhere in this codebase, and
-//     cross-zone routing has to live here because it feeds NextStep -> the
-//     GMCP quest payload.
-//   - sim.Graph is deliberately "pure data, carries no engine types", built
-//     through weather's own WorldReader seam and cached to versioned JSON.
+// modules/weather/crawler/build.go (buildEdges) already walks every room
+// looking for cross-zone exits, to build the graph weather fronts drift along.
+// This file does the same walk again. That duplication was reviewed on
+// 2026-07-30, unification was designed out loud, and it was REJECTED. The
+// reasons are recorded here so nobody has to rediscover them — and so nobody
+// "tidies up" the duplication without knowing what it would cost.
 //
-// The genuinely duplicated part is the crawl itself (walk rooms, inspect
-// exits, detect zone changes). If that is ever unified, this is the file that
-// should consume the shared crawl. Note one behavioural difference: weather
-// can exclude secret exits (Options.IncludeSecretExits); this graph counts
-// them, which matches GetPath and the in-zone mapper (neither filters secret
-// exits — the mapper only renders them with SecretSymbol). Changing that here
-// alone would make cross-zone routing disagree with in-zone routing.
+// 1. THE WEATHER GRAPH CANNOT ANSWER THE ROUTING QUESTION.
+//    sim.Edge is {A, B string, Weight int} — undirected, canonicalised so
+//    A <= B, and weighted by how many exits cross the border. It records THAT
+//    two zones touch. Routing needs to know WHICH WAY TO WALK: the border room
+//    in the current zone, the exit name to take, and the room it lands in.
+//    buildEdges has all three in hand (`room`, `exitName`, `ex.ToRoom`) and
+//    deliberately throws them away, because a weather front does not walk.
+//    Reusing it would mean re-deriving the discarded fields — i.e. this crawl.
+//
+// 2. THE IMPORT DIRECTION FORBIDS IT.
+//    internal/ imports modules/ in exactly zero places, and cross-zone routing
+//    has to live in internal/mapper because it feeds NextStep, which feeds the
+//    GMCP quest payload. A router in internal/ cannot read a graph in modules/.
+//
+// 3. THE WEATHER PACKAGES ARE DELIBERATELY ENGINE-FREE, AND A TEST ENFORCES IT.
+//    modules/weather is vendored from a standalone weather-module repo and is
+//    periodically re-synced (see the 2026-06-19 v0.2.0 sync). Both sim/ and
+//    crawler/ carry arch tests — TestCrawlerPackageStaysPure parses every file
+//    in the package and FAILS on any internal/* import. The WorldReader
+//    interface exists precisely so the crawl can run outside a GoMud checkout
+//    against an in-memory fake. Merging the crawls would break that invariant,
+//    fail that test, and turn every future upstream sync into a conflict
+//    against code we had rewritten locally.
+//
+//    (The "share only the traversal helper" middle ground dies on the same
+//    rock: a shared traversal in internal/ is exactly the import crawler/ is
+//    forbidden to make.)
+//
+// WHY THE USUAL COST OF DUPLICATION IS LOW HERE:
+//   - Drift risk is small. crawler/ is vendored, so it changes only on a
+//     deliberate sync, not when someone edits DOGMud.
+//   - Boot cost is small. Weather's crawl sits behind a versioned on-disk
+//     cache; ours runs inside PreCacheMaps, where every room is already loaded.
+//   - The one cost that was real — a reader finding one crawl and assuming it
+//     is the only one — is what this comment block exists to pay off.
+//
+// KNOWN BEHAVIOURAL DIFFERENCES (both intentional):
+//   - Secret exits: weather can exclude them (Options.IncludeSecretExits);
+//     this graph always counts them. That matches GetPath and the in-zone
+//     mapper, neither of which filters secret exits (the mapper only RENDERS
+//     them, as SecretSymbol). Filtering here alone would make cross-zone
+//     routing disagree with in-zone routing, which is worse than either rule
+//     applied consistently.
+//   - Zone exclusion: weather skips instance_*/ephemeral_* zones; this graph
+//     does not. Currently moot — those zones have zero authored cross-zone
+//     exits (they are entered by teleport), so they contribute no links either
+//     way. If an instanced zone ever gains a real exit, revisit.
+//
+// WHAT WOULD CHANGE THIS DECISION:
+//   - crawler/context.md anticipates "directional edge metadata for prevailing
+//     wind". If weather ever needs direction and border rooms, the two graphs
+//     genuinely converge and unification becomes worth re-costing.
+//   - If internal/ ever gains a sanctioned way to consume module data.
+//   - If the weather module stops being vendored and becomes DOGMud-native,
+//     the arch-test constraint goes away.
+//
+// Cheap anti-divergence option if it is ever wanted, which needs NO change to
+// the vendored module: a test asserting both graphs agree on the set of
+// adjacent zone pairs.
 
 // zoneLink is one ordinary exit that leaves a zone.
 //

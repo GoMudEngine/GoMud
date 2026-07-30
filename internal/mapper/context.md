@@ -550,3 +550,49 @@ Visual source of truth: `docs/superpowers/specs/2026-06-06-mapper-leather-mockup
 
 Connection-type styling and party markers are **web-only** — the ASCII
 `map` command does not reflect these.
+## Cross-Zone Routing (`mapper.crosszone.go`)
+
+`GetPath` is per-zone by construction — it resolves its mapper from
+`mapperZoneCache[zone]` keyed off the **start** room, so it fails outright on a
+target in another zone. Before 2026-07-30 that made every cross-zone quest
+marker inert: no destination dot (the room isn't in the current zone's
+snapshot) and no next-step arrow. Six quests were affected; quest 67 crosses
+four New Plymouth districts, so its guidance went dark exactly when a player
+was trying to find the right one.
+
+`NextStep` now falls back to `crossZoneHop` when `GetPath` fails and the two
+rooms are in different zones. The approach is deliberately **not** a global
+room-level pathfinder:
+
+1. A coarse zone graph (`zoneGraph`) records, per zone, one outbound link per
+   neighbouring zone: `zoneLink{toZone, exitRoom, exitName, destRoom}`.
+2. `nextZoneHop` BFSes zone-to-zone and returns the **first** leg — the border
+   out of the player's current zone, even when the target is several zones off.
+3. `crossZoneHop` then reuses the in-zone `GetPath` to walk to that border room
+   (or returns the crossing exit itself if the player is already standing on
+   it).
+
+The hot path therefore stays on the cached per-zone mapper. The graph is built
+once and warmed in `PreCacheMaps` (every room is already loaded there);
+`InvalidateZoneGraph()` is exported for zone rename/delete/re-zone.
+
+Real-world shape at boot: **39 zones with outbound links, 82 links.**
+
+**Limitation:** one border is kept per zone pair. If that crossing is
+unreachable from where the player stands, the arrow is dropped rather than a
+second crossing tried — degrading to the old behaviour rather than misleading.
+
+**The web marker still needs the room to be in the current zone's snapshot**, so
+cross-zone journeys get the *arrow* but not the destination dot until the player
+reaches that zone. The arrow is the part that guides.
+
+### Why there are two zone-adjacency crawls
+
+`modules/weather/crawler/build.go` builds its own zone graph for weather
+fronts. Unification was designed and **rejected** on 2026-07-30 — `sim.Edge` is
+undirected and discards the border room/exit that routing needs; `internal/`
+never imports `modules/`; and the weather packages are vendored from a
+standalone repo with arch tests (`TestCrawlerPackageStaysPure`) that forbid
+engine imports. The full reasoning, the known behavioural differences, and the
+triggers that would reopen the decision are in the header comment of
+`mapper.crosszone.go`. Read that before attempting to merge them.

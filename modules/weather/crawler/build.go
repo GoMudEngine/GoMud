@@ -120,17 +120,11 @@ func buildNodes(r WorldReader, zones map[string]bool) map[string]sim.ZoneNode {
 // exit. Intra-zone exits and exits whose target resolves to no included zone
 // are skipped.
 //
-// SEE ALSO — internal/mapper/mapper.crosszone.go builds a SECOND zone graph
-// from the same crawl, for routing a player's next step across a zone
-// boundary. It cannot use sim.Edge: this one is undirected and canonicalised
-// and keeps only a crossing COUNT, whereas routing needs the border room, the
-// exit direction and the destination room. It also cannot import this package
-// (internal/ never imports modules/).
-//
-// So the crawl is duplicated on purpose, not by accident. If the two are ever
-// unified, the shared crawl belongs in internal/ (modules may import internal,
-// not the reverse) and would have to preserve this package's WorldReader seam
-// or accept losing it.
+// NOTE (DOGMud): internal/mapper/mapper.crosszone.go deliberately runs a second
+// cross-zone crawl for player routing — it needs the border room and exit
+// direction, which sim.Edge discards, and it cannot import this package
+// (TestCrawlerPackageStaysPure). Full rationale lives there; kept short here to
+// minimise conflicts when this module is re-synced from upstream.
 func buildEdges(r WorldReader, zones map[string]bool, roomZone map[int]string, opts Options) []sim.Edge {
 	weights := map[[2]string]int{}
 	for zone := range zones {
