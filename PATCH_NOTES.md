@@ -1,5 +1,12 @@
 # DOGMud Patch Notes
 
+## 2026-07-30 — A tidier front door
+
+The login screen's title art sat hard against the left edge of the screen,
+off-balance under its own starfield. It is now centred, and the line that
+closes the welcome reads "... The Chrysalis awaits ..." — a pause on
+either side of it, the way it was always meant to be said.
+
 ## 2026-07-29 — The Chrysalis shows its work
 
 A mutation emerging is one of the biggest moments a character has, and it
