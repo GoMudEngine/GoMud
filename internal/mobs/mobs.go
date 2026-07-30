@@ -643,17 +643,14 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 		// and random-roll paths have resolved.
 		mob.Character.ApplyIntrinsicMutations(sp)
 
-		mob.Character.Equipment.Weapon.Validate()
-		mob.Character.Equipment.Offhand.Validate()
-		mob.Character.Equipment.Head.Validate()
-		mob.Character.Equipment.Neck.Validate()
-		mob.Character.Equipment.Body.Validate()
-		mob.Character.Equipment.Belt.Validate()
-		mob.Character.Equipment.Gloves.Validate()
-		mob.Character.Equipment.Ring.Validate()
-		mob.Character.Equipment.Legs.Validate()
-		mob.Character.Equipment.Feet.Validate()
-
+		// Worn-slot item validation deliberately lives in Character.Validate
+		// below (validateEquipmentItems), which walks Equipment.AllSlots() and
+		// is guarded by a reflection completeness test. There used to be a
+		// hand-listed block of 10 .Validate() calls here; it was redundant with
+		// that pass and actively misleading — reading it suggested the other 16
+		// slots (Shoulders, Back, Wrist1/2, Ring2, ExtraArm1-4, ExtraWrist1-4,
+		// Tail, ComponentBag) were being skipped and left with nil UUIDs. They
+		// never were. Don't reintroduce a partial list here.
 		mob.Validate()
 		mob.Character.Validate(true)
 

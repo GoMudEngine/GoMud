@@ -1621,14 +1621,17 @@
         }
 
         // Build a single vitals row DOM element
-        function createVitalsRow(name, hp, sp, cp, isSelf, isRemote, hpRes, spRes, cpRes) {
+        // `key` is row IDENTITY, `label` is what the player reads. They differ for
+        // companions: the server keys Party.Vitals as "Name#instanceId" so two
+        // same-named pets stay distinct, but the player must never see the "#7".
+        function createVitalsRow(key, label, hp, sp, cp, isSelf, isRemote, hpRes, spRes, cpRes) {
             var row = document.createElement('div');
             row.className = 'vitals-row' + (isRemote ? ' remote' : '');
-            row.dataset.name = name;
+            row.dataset.name = key;
 
             var nameEl = document.createElement('div');
             nameEl.className = 'vitals-name' + (isSelf ? ' self' : '');
-            nameEl.textContent = name;
+            nameEl.textContent = label;
             row.appendChild(nameEl);
 
             var composite = document.createElement('div');
@@ -1753,8 +1756,13 @@
                         mRemote = true;
                     }
 
+                    // mName is the Party.Vitals key. For a companion that key is
+                    // "Name#instanceId"; the clean name lives in the payload's
+                    // .name field. Show the clean one, key rows on the unique one.
                     members.push({
-                        name: mName, hp: mHp, sp: mSp,
+                        key: mName,
+                        name: (mVitals && mVitals.name) ? mVitals.name : mName,
+                        hp: mHp, sp: mSp,
                         cp: mCp, isSelf: isSelf,
                         isRemote: mRemote,
                         hpRes: isSelf ? selfHpRes : 0,
@@ -1765,18 +1773,23 @@
             } else {
                 // Solo — self first
                 members.push({
+                    key: selfName,
                     name: selfName, hp: selfHp, sp: selfSp,
                     cp: selfCp, isSelf: true, isRemote: false,
                     hpRes: selfHpRes, spRes: selfSpRes, cpRes: selfCpRes
                 });
 
-                // Append any companion entries from Party.Vitals
+                // Append any companion entries from Party.Vitals.
+                // cName is the unique server key ("Name#instanceId"); cVitals.name
+                // is the clean display name. Keying rows on the display name here
+                // is what made two same-named companions collapse into one row.
                 for (var cName in vitals) {
                     if (cName === selfName) continue;
                     var cVitals = vitals[cName];
                     var displayName = cVitals.name || cName;
                     if (displayName === selfName) continue;
                     members.push({
+                        key: cName,
                         name: displayName,
                         hp: Math.max(0, Math.min(100, cVitals.health || 0)),
                         sp: Math.max(0, Math.min(100, cVitals.stamina || 0)),
@@ -1796,23 +1809,29 @@
                 existingByName[existingRows[i].dataset.name] = existingRows[i];
             }
 
-            // Track which names are still valid
+            // Track which row KEYS are still valid (not display names — two
+            // companions can share a display name but never a key).
             var activeNames = {};
             for (var i = 0; i < members.length; i++) {
                 var m = members[i];
-                activeNames[m.name] = true;
-                var existing = existingByName[m.name];
+                var mKey = m.key || m.name;
+                activeNames[mKey] = true;
+                var existing = existingByName[mKey];
                 if (existing) {
                     updateVitalsRow(existing, m.hp, m.sp, m.cp, m.isRemote, m.hpRes, m.spRes, m.cpRes);
-                    // Update name class
+                    // Update name class + label (label can change if the server
+                    // renames a companion between pushes)
                     var nameEl = existing.querySelector('.vitals-name');
                     if (nameEl) {
                         nameEl.className = 'vitals-name' +
                             (m.isSelf ? ' self' : '');
+                        if (nameEl.textContent !== m.name) {
+                            nameEl.textContent = m.name;
+                        }
                     }
                 } else {
                     var newRow = createVitalsRow(
-                        m.name, m.hp, m.sp, m.cp,
+                        mKey, m.name, m.hp, m.sp, m.cp,
                         m.isSelf, m.isRemote,
                         m.hpRes, m.spRes, m.cpRes);
                     container.appendChild(newRow);
@@ -1826,14 +1845,15 @@
                 }
             }
 
-            // Re-order rows to match members array
+            // Re-order rows to match members array (by key, not display name)
             var currentRows = container.querySelectorAll('.vitals-row');
             for (var i = 0; i < members.length; i++) {
-                var expectedName = members[i].name;
+                var expectedName = members[i].key || members[i].name;
                 if (currentRows[i] &&
                     currentRows[i].dataset.name !== expectedName) {
                     var correctRow = container.querySelector(
-                        '.vitals-row[data-name="' + expectedName + '"]');
+                        '.vitals-row[data-name="' +
+                        expectedName.replace(/(["\\])/g, '\\$1') + '"]');
                     if (correctRow) {
                         container.insertBefore(correctRow, currentRows[i]);
                         currentRows =

@@ -1,5 +1,16 @@
 # DOGMud Patch Notes
 
+## 2026-07-30 — Telling your companions apart
+
+Summon two of the same creature — two earth elementals, say — and the vitals
+panel could not keep them straight. Both got a row, but the panel had no way to
+tell which was which, so dismissing one left its ghost behind: a second row that
+never updated and never went away. Worse, adventurers in a party saw one of them
+labelled "Earth Elemental#7" — a bookkeeping number that was never meant to
+leave the server. Companions are now tracked by an identity the panel keeps to
+itself and shown by the name you actually gave them. Dismiss one and its row
+goes with it.
+
 ## 2026-07-30 — Directions to the barracks, and an honest ledger (staff)
 
 Marek's protection notice needed carrying to Guard Captain Velk, and the quest
