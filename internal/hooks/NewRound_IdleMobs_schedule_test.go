@@ -3,6 +3,7 @@ package hooks
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
@@ -282,5 +283,57 @@ func TestApplySchedulePlan_StampsEmptyOnNonPatrolSegment(t *testing.T) {
 		if s, ok := got.(string); ok && s != "" {
 			t.Errorf("expected empty active_patrol_id on non-patrol segment, got %q", s)
 		}
+	}
+}
+
+// TestScheduleTick_SuppressSleepIdle_WhenWokenMidSleepWindow covers the
+// 2026-07-30 report: a blacksmith roused by a shout kept emoting "turns over
+// with a soft snore" while standing at her counter selling swords.
+//
+// The idle pool is only swapped on a segment CHANGE, so once inside a sleeping
+// segment the mob keeps drawing sleep flavour for the whole window — including
+// the stretch a player has woken them for (ScheduleWakeGraceRounds holds them
+// up). Genuinely sleeping mobs never reach the idle emitter, so this is only
+// ever visible while awake.
+func TestScheduleTick_SuppressSleepIdle_WhenWokenMidSleepWindow(t *testing.T) {
+	registerSleepyScheduleForTest(t)
+
+	mob := &mobs.Mob{ScheduleId: "sleepy_test"}
+	mob.Character.RoomId = 1234
+	mob.Character.Buffs = buffs.New() // awake: no Sleeping flag
+
+	plan := scheduleTickPlan(mob, 23 /* inside the sleep window */)
+	if !plan.HasSchedule {
+		t.Fatalf("expected HasSchedule=true")
+	}
+	if !plan.SuppressSleepIdle {
+		t.Errorf("awake inside a sleep window must suppress the sleep idle pool, got %+v", plan)
+	}
+}
+
+// The mirror case: outside a sleep window the pool must be left alone, or a mob
+// would fall silent for most of the day.
+func TestScheduleTick_SuppressSleepIdle_NotSetOutsideSleepWindow(t *testing.T) {
+	registerSleepyScheduleForTest(t)
+
+	mob := &mobs.Mob{ScheduleId: "sleepy_test"}
+	mob.Character.RoomId = 1234
+	mob.Character.Buffs = buffs.New()
+
+	plan := scheduleTickPlan(mob, 10 /* awake window */)
+	if plan.SuppressSleepIdle {
+		t.Errorf("awake window must keep its idle pool, got %+v", plan)
+	}
+}
+
+// applySchedulePlan must actually clear the pool, not merely flag it.
+func TestApplySchedulePlan_ClearsIdleCommandsWhenWokenMidSleepWindow(t *testing.T) {
+	mob := &mobs.Mob{ScheduleId: "sleepy_test"}
+	mob.IdleCommands = []string{"emote snores."}
+
+	applySchedulePlan(mob, schedulePlan{HasSchedule: true, SuppressSleepIdle: true})
+
+	if len(mob.IdleCommands) != 0 {
+		t.Errorf("expected the sleep idle pool to be cleared, still have %v", mob.IdleCommands)
 	}
 }

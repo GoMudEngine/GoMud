@@ -46,9 +46,12 @@ func RefuseIfAsleep(c *characters.Character, name string, user *users.UserRecord
 		return false
 	}
 	if user != nil {
+		// Suggest shout WITH words. Bare `shout` wakes them but prints the
+		// rather silly `You shout, ""`, and "try shout" was read as an
+		// instruction to type exactly that.
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="mobname">%s</ansi> is fast asleep. `+
-				`You could make some noise -- try <ansi fg="command">shout</ansi>.`, name))
+				`You could make some noise -- try <ansi fg="command">shout wake up</ansi>.`, name))
 	}
 	return true
 }

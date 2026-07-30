@@ -34,6 +34,22 @@ type schedulePlan struct {
 	// does not). Triggers explicit CancelBuffsWithFlag(Sleeping).
 	WantsWake bool
 
+	// SuppressSleepIdle: the current segment is activity: sleeping but the mob
+	// is AWAKE — a player roused them (shout, damage, a failed steal) and the
+	// ScheduleWakeGraceRounds cooldown is holding them up.
+	//
+	// The idle pool is only swapped on a segment change, so without this the
+	// mob keeps drawing sleep flavour for the rest of the sleep window: a woken
+	// blacksmith stands at her counter selling swords while emoting "turns over
+	// with a soft snore". Reported 2026-07-30 — the player reasonably read that
+	// emote as her falling asleep again, and then as a bug that `list` still
+	// worked. `list` was right; the emote was lying.
+	//
+	// Genuinely sleeping mobs never reach the idle emitter at all
+	// (MobIdle_HandleIdleMobs skips on the Sleeping flag), so this only ever
+	// affects the awake-inside-a-sleep-window case.
+	SuppressSleepIdle bool
+
 	// Chunk 3.4: current segment patrol context. Empty for non-patrol
 	// segments. applySchedulePlan stamps `active_patrol_id` MiscData
 	// so the patrol executor (NewRound_IdleMobs_patrol.go) can consume
@@ -96,6 +112,12 @@ func scheduleTickPlan(mob *mobs.Mob, hour24 int) schedulePlan {
 		}
 	}
 
+	// Awake inside a sleep window (a player roused them and the grace is
+	// holding) — the sleep-flavoured idle pool must not keep firing.
+	if seg.Activity == "sleeping" && !mob.Character.HasBuffFlag(buffs.Sleeping) {
+		plan.SuppressSleepIdle = true
+	}
+
 	// Skip pathing for patrol segments — the patrol executor (T8/T9)
 	// handles all movement. TargetRoom is 0 for patrol segments; without
 	// this guard we'd compute WantsPath=true with TargetRoom=0 and the
@@ -145,6 +167,12 @@ func applySchedulePlan(mob *mobs.Mob, plan schedulePlan) {
 		mob.Character.SetMiscData("schedule_path_fail_count", 0) // reset on transition
 		mob.Path.Clear()
 		mob.IdleCommands = plan.NewIdleCommands
+	}
+	// Woken mid-sleep-window: drop the sleep flavour so an awake NPC stops
+	// emoting that they are asleep. Restored on the next segment change, and
+	// harmless once they doze off again (sleepers never reach the idle emitter).
+	if plan.SuppressSleepIdle && len(mob.IdleCommands) > 0 {
+		mob.IdleCommands = nil
 	}
 	if plan.WantsHomeFallback {
 		mudlog.Warn("schedule", "msg", plan.FailureMessage)

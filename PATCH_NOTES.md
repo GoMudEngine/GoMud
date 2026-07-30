@@ -1,5 +1,12 @@
 # DOGMud Patch Notes
 
+## 2026-07-30 — Woken townsfolk stop pretending to snore
+
+Rouse a shopkeeper in the small hours and she would serve you perfectly well
+while still murmuring that she was asleep on her cot — she had been handed the
+night's supply of sleeping noises and went on using them until dawn. Anyone
+woken now drops the sleep-talk until they actually settle again.
+
 ## 2026-07-30 — The map keeps track of where you are at a border
 
 Crossing between regions, the map was told which room you had entered a moment
