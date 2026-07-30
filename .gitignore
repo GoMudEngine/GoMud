@@ -2,6 +2,10 @@
 private-notes.txt
 _datafiles/**/users/*
 _datafiles/**/plugin-data/*
+# ...but keep the folder itself. ValidateWorldFiles requires every subfolder of
+# the example world to exist, and git cannot track an empty directory — so a
+# fresh clone had no plugin-data/ and died at boot before loading any content.
+!_datafiles/**/plugin-data/.gitkeep
 **/config-overrides.yaml
 **/.roundcount
 **/rooms.instances
