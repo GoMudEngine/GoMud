@@ -633,6 +633,26 @@ func (c *Character) GetVisitedRooms(zone string) []int {
 	return c.VisitedRooms[zone]
 }
 
+// GetAllVisitedRooms returns every room the character has visited, in any zone.
+//
+// The map is drawn per-zone, but a zone boundary is an engine concept, not a
+// player-facing one: having walked a room, you should keep seeing it when you
+// step over a line you cannot perceive. Callers are expected to intersect this
+// with the current mapper (mapper.HasRoom), which bounds the result to that
+// zone plus the ring of neighbouring rooms its crawl reached — so this does not
+// leak distant geography into a snapshot.
+func (c *Character) GetAllVisitedRooms() []int {
+	total := 0
+	for _, ids := range c.VisitedRooms {
+		total += len(ids)
+	}
+	out := make([]int, 0, total)
+	for _, ids := range c.VisitedRooms {
+		out = append(out, ids...)
+	}
+	return out
+}
+
 // AttemptRecovery tries to recover from a condition using a stat-based chance
 // Formula: min(90, 25 + 20 * ln(statValue/25))
 func (c *Character) SetSetting(settingName string, settingValue string) {

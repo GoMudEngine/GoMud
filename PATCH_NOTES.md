@@ -1,5 +1,13 @@
 # DOGMud Patch Notes
 
+## 2026-07-30 — The map remembers the road behind you
+
+Step across the line between two regions and the map used to forget everything
+you had walked to get there — including the room you had just that moment left.
+The boundary is a mapmaker's line, not something you can see from the road, and
+the map now treats it that way: cross over, and the ground you already know
+stays drawn behind you.
+
 ## 2026-07-30 — The quest arrow survives crossing a border
 
 Walking from one region into the next drew a fresh map, and in the moment of

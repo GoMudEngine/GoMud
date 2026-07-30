@@ -77,9 +77,18 @@ func (g *GMCPZoneModule) buildAndSend(e events.Event) events.ListenerReturn {
 		return events.Continue
 	}
 
+	// Every visited room, not just this zone's — a zone boundary is an engine
+	// concept the player cannot see, and blanking the map on crossing one reads
+	// as amnesia. HasRoom bounds this to rooms THIS zone's crawl reached, which
+	// is the zone itself plus the ring of neighbours just over its edges; the
+	// crawl already spans boundaries (it is how the builder finds foreign rooms
+	// to dim), and those neighbours carry positions in this zone's frame, so
+	// they place correctly with no coordinate translation.
 	visited := map[int]struct{}{}
-	for _, id := range user.Character.GetVisitedRooms(room.Zone) {
-		visited[id] = struct{}{}
+	for _, id := range user.Character.GetAllVisitedRooms() {
+		if m.HasRoom(id) {
+			visited[id] = struct{}{}
+		}
 	}
 	// Always include the current room even before the move-handler marks it.
 	visited[room.RoomId] = struct{}{}
