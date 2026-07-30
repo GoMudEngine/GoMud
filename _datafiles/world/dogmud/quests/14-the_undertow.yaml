@@ -31,7 +31,8 @@ steps:
     hint: "Torvan Cresk has the key to the strongbox. Fight him, take the
       key, and open the strongbox."
   - id: evidence
-    map_target: 473  # Guard Barracks — Capt. Velk (mob 94); single named destination
+    map_target: 473  # fallback when Guard Captain Velk is not spawned
+    map_target_mob: 94  # follow Guard Captain Velk (schedule thornwall_guard_captain) — a fixed room is wrong for part of the day
     description: "You have obtained a bribe ledger from the strongbox -- it
       names corrupt city officials taking payments to look the other way.
       Guard Captain Velk needs to see this."

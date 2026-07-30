@@ -19,7 +19,8 @@ steps:
     description: "Crier Toke wants you to learn the town before the town has to learn you. Start at the Chrysalis School Hall."
     hint: "From Hub Square go north past the Awakening Pool and climb the basalt stair -- keep north to the school hall. Type map if you lose your way."
   - id: school
-    map_target: 5207
+    map_target: 5207  # fallback when Trader Onna is not spawned
+    map_target_mob: 9104  # follow Trader Onna (schedule pothole_onna) — a fixed room is wrong for part of the day
     description: "You found the school hall. Next, kit yourself out at Coulee Provisions -- buy a cotton shirt from Trader Onna."
     hint: "Coulee Provisions is south of Hub Square -- go south to Market Row, then east. Type list to see Onna's wares, then buy cotton shirt. You start with coin to spare."
   - id: shop
@@ -30,7 +31,8 @@ steps:
     description: "You are dressed for the coulee. Now put your head into The Drowned Lantern, the town's inn."
     hint: "The Drowned Lantern is off Market Row -- from Coulee Provisions go west twice. Walking in is enough."
   - id: lantern
-    map_target: 5203
+    map_target: 5203  # fallback when Crier Toke is not spawned
+    map_target_mob: 9106  # follow Crier Toke (schedule pothole_toke) — a fixed room is wrong for part of the day
     description: "You have seen the school, kitted out at the shop, and found the inn. Report back to Crier Toke in Hub Square."
     hint: "Toke is at the notice post in Hub Square. Type ask toke footing to finish."
   - id: end

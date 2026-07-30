@@ -17,7 +17,8 @@ steps:
       In the Grand Temple sanctuary, examine the processional reliefs to
       take a rubbing, then bring it to Dross in the temple courtyard.
   - id: rubbing
-    map_target: 5916
+    map_target: 5916  # fallback when Scholar Dross is not spawned
+    map_target_mob: 9360  # follow Scholar Dross (schedule np_temple_dross) — a fixed room is wrong for part of the day
     description: >-
       You took the cipher rubbing from the reliefs. Dross can read part of
       it, but the key to the full sequence is in the Noble Quarter gallery.
@@ -25,7 +26,8 @@ steps:
       Take the rubbing to Dross, then go to the Noble Quarter art gallery
       and find the key to the cipher.
   - id: gallery
-    map_target: 6007
+    map_target: 6007  # fallback when Keeper Lysha is not spawned
+    map_target_mob: 9371  # follow Keeper Lysha (schedule np_noble_lysha) — a fixed room is wrong for part of the day
     description: >-
       Dross sent you to the gallery. The guide, Ferrol, steers visitors to
       the bloodline portraits and away from the older paintings -- and away
@@ -34,7 +36,8 @@ steps:
       In the gallery, get past Ferrol's tour to Keeper Lysha. Ask her about
       the third panel from the left.
   - id: reading
-    map_target: 5916
+    map_target: 5916  # fallback when Scholar Dross is not spawned
+    map_target_mob: 9360  # follow Scholar Dross (schedule np_temple_dross) — a fixed room is wrong for part of the day
     description: >-
       Keeper Lysha read the third panel against your rubbing: the
       eight-pointed structure stands at a site inland of the present docks.

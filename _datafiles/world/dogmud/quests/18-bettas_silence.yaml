@@ -12,7 +12,8 @@ flags:
 
 steps:
   - id: start
-    map_target: 4038  # Road Fork — Bloodline Agent (mob 287) home; it wanders (maxwander 6), so this anchors the search rather than pinning it
+    map_target: 4038  # fallback when Bloodline Agent is not spawned
+    map_target_mob: 287  # follow Bloodline Agent (maxwander 6) — a fixed room is wrong for part of the day
     description: "Betta has asked you to keep quiet about the
       girl who slept in her barn."
     hint: "A bloodline agent is patrolling the north road,

@@ -15,7 +15,8 @@ flags:
 
 steps:
   - id: start
-    map_target: 5523
+    map_target: 5523  # fallback when Marn the Draper is not spawned
+    map_target_mob: 9305  # follow Marn the Draper (schedule np_docks_marn) — a fixed room is wrong for part of the day
     description: >-
       Trace the Bloom to its source. It starts with a clean little
       draper's shop on the docks.
@@ -23,7 +24,8 @@ steps:
       Find the draper Teels mentioned -- Marn, down the dock streets --
       and get into his back room.
   - id: front
-    map_target: 5808
+    map_target: 5808  # fallback when Falk the Auctioneer is not spawned
+    map_target_mob: 9345  # follow Falk the Auctioneer (schedule np_merchant_falk) — a fixed room is wrong for part of the day
     description: >-
       You got past Marn's front. The supply comes up from an address in
       the Old Quarter -- 215 Lintel Street -- routed through people who
@@ -32,7 +34,8 @@ steps:
       Ask the auctioneer Falk in the Merchant Quarter about the Lintel
       Street address.
   - id: lintel
-    map_target: 6013
+    map_target: 6013  # fallback when Wenna the Servant is not spawned
+    map_target_mob: 9369  # follow Wenna the Servant (schedule np_noble_wenna) — a fixed room is wrong for part of the day
     description: >-
       Falk knows the Lintel Street address as a quiet property held
       through nominal owners.
@@ -40,7 +43,8 @@ steps:
       The deliveries pass through the Noble Quarter. Ask the servant
       Wenna about the unmarked crates she has seen.
   - id: delivery
-    map_target: 6029
+    map_target: 6029  # fallback when Deren is not spawned
+    map_target_mob: 9379  # follow Deren (schedule np_oldquarter_deren) — a fixed room is wrong for part of the day
     description: >-
       Wenna confirmed the delivery house -- unmarked goods at odd hours,
       under the bloodline office's eye.
@@ -48,7 +52,8 @@ steps:
       Go down into the Old Quarter to 215 Lintel Street, and confront
       Deren about the source to his face.
   - id: source
-    map_target: 6031
+    map_target: 6031  # fallback when Quill the Lamplighter is not spawned
+    map_target_mob: 9380  # follow Quill the Lamplighter (schedule np_oldquarter_quill) — a fixed room is wrong for part of the day
     description: >-
       You found 215 Lintel Street -- the production room, the apparatus,
       and Deren, exposed but untouchable, the bloodline office at his

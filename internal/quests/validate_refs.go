@@ -239,6 +239,19 @@ func ValidateQuestRefs(q Quest, v QuestValidators) (errs []string, warns []strin
 				c.warnf("step %d (%s): map_target room %d is referenced by no trigger — double-check it is the intended destination", i, s.Id, s.MapTarget)
 			}
 		}
+		if s.MapTargetMob > 0 {
+			c.checkMob(fmt.Sprintf("step %d (%s) map_target_mob", i, s.Id), s.MapTargetMob)
+			// -1 is the hard "no marker" switch, so pairing it with a mob target
+			// is contradictory — the mob would never be consulted.
+			if s.MapTarget == -1 {
+				c.warnf("step %d (%s): map_target_mob %d is dead config — map_target -1 suppresses it", i, s.Id, s.MapTargetMob)
+			}
+			// The mob target is skipped whenever the NPC is dead or unspawned.
+			// Without a static fallback the marker simply vanishes then.
+			if s.MapTarget == 0 {
+				c.warnf("step %d (%s): map_target_mob %d has no map_target fallback — the marker disappears whenever that NPC is not spawned", i, s.Id, s.MapTargetMob)
+			}
+		}
 	}
 
 	// Triggers: filters + conditions + actions.

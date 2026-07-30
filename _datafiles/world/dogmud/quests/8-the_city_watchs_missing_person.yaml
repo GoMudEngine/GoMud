@@ -15,7 +15,8 @@ steps:
       2 into the Residential Ward. Look for Elara there. Try speaking with her -- she
       may respond to calm, reassuring words."
   - id: found
-    map_target: 473
+    map_target: 473  # fallback when Guard Captain Velk is not spawned
+    map_target_mob: 94  # follow Guard Captain Velk (schedule thornwall_guard_captain) — a fixed room is wrong for part of the day
     description: "You have found Elara hiding in the residential ward. She is running
       from an arranged marriage and does not want to be returned. You must decide what
       to tell the guard captain."

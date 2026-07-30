@@ -18,13 +18,15 @@ steps:
     hint: "Examine the filed-survey in the university Archive, then return
       to Brennan."
   - id: survey
-    map_target: 6305
+    map_target: 6305  # fallback when Brennan the Surveyor is not spawned
+    map_target_mob: 9516  # follow Brennan the Surveyor (schedule gf_brennan) — a fixed room is wrong for part of the day
     description: "You found Reth's filed survey: a mineral deposit entry,
       conspicuously empty -- a man who saw something out there and chose
       not to write it down."
     hint: "Return to Brennan with what you found."
   - id: intro
-    map_target: 6315
+    map_target: 6315  # fallback when Reth is not spawned
+    map_target_mob: 9524  # follow Reth (schedule gf_reth) — a fixed room is wrong for part of the day
     description: "Brennan, convinced, has given you his introduction to
       Reth, who lives retired in the quiet end of the residential streets."
     hint: "Seek out Reth in the residential streets."

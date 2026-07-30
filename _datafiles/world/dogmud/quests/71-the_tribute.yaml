@@ -10,7 +10,8 @@ secret: false
 
 steps:
   - id: start
-    map_target: 5817
+    map_target: 5817  # fallback when Clerk Vell is not spawned
+    map_target_mob: 9349  # follow Clerk Vell (schedule np_merchant_vell) — a fixed room is wrong for part of the day
     description: >-
       Dame Ostry is squeezed by Clerk Vell's audit and a held surety
       deposit. She asked you to find out what the tribute pays for and
@@ -19,7 +20,8 @@ steps:
       Ask Clerk Vell at the Civic Permit Office about the tribute and the
       audit on Ostry's shop.
   - id: vell
-    map_target: 5820
+    map_target: 5820  # fallback when Horst is not spawned
+    map_target_mob: 9344  # follow Horst (schedule np_merchant_horst) — a fixed room is wrong for part of the day
     description: >-
       Vell says the rate is set by charter and is not negotiable. The
       charter derives from the founding -- and you may know more about the
@@ -37,7 +39,8 @@ steps:
       Examine the papers in the Gilt Threshold parlor for evidence of where
       the tribute goes.
   - id: ledger
-    map_target: 5810
+    map_target: 5810  # fallback when Dame Ostry is not spawned
+    map_target_mob: 9347  # follow Dame Ostry (schedule np_merchant_ostry) — a fixed room is wrong for part of the day
     description: >-
       You lifted a page of the tribute ledger -- vendor sums all routed to
       one unnamed account, with a note to hold filings until permits clear.

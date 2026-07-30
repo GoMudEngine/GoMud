@@ -15,7 +15,8 @@ flags:
 
 steps:
   - id: start
-    map_target: 5620
+    map_target: 5620  # fallback when Ysolde is not spawned
+    map_target_mob: 9323  # follow Ysolde (schedule np_common_ysolde) — a fixed room is wrong for part of the day
     description: >-
       Teels, a Bloom addict on the Lower Wharf, begged you for help.
       They pressed a spent wax wrapper into your hands -- the copper-flower

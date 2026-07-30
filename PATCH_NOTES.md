@@ -1,5 +1,17 @@
 # DOGMud Patch Notes
 
+## 2026-07-30 — The map follows the people, not the furniture
+
+Townsfolk keep hours. The tavern keeper serves until late and then sleeps in
+the room above; the guard captain walks his ward at midday; the archivist is
+not at her desk at dawn. Until now the quest map marked the room where such a
+person is *usually* found, which meant that for part of every day it pointed at
+an empty chair. Quest destinations that are a person now follow that person —
+if Marek has gone up to bed, the map says so. Thirty-five steps across
+twenty-two quests were converted. Where the one you want cannot be told apart
+from others of its kind, the map still declines to guess rather than send you
+to the wrong one.
+
 ## 2026-07-30 — The map points the way more often
 
 Thirteen quest steps that used to leave the map blank now mark where you are

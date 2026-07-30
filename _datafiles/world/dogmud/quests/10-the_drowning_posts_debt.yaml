@@ -7,14 +7,16 @@ secret: false
 
 steps:
   - id: start
-    map_target: 473
+    map_target: 473  # fallback when Guard Captain Velk is not spawned
+    map_target_mob: 94  # follow Guard Captain Velk (schedule thornwall_guard_captain) — a fixed room is wrong for part of the day
     description: "Tavern keeper Marek at the Drowning Post gave you a protection
       notice as evidence of the racket squeezing his business. Take it to Guard
       Captain Velk at the barracks."
     hint: "Bring the protection notice to Guard Captain Velk at the city
       barracks. From the Drowning Post, go north 2, then west 2, then north 1."
   - id: report
-    map_target: 472
+    map_target: 472  # fallback when Tavern Keeper Marek is not spawned
+    map_target_mob: 96  # follow Tavern Keeper Marek (schedule thornwall_tavern_keeper) — a fixed room is wrong for part of the day
     description: "Guard Captain Velk has seen the evidence and will act on it.
       Return to Marek with the good news."
     hint: "Go back to the Drowning Post tavern and tell Marek the guard

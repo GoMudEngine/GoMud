@@ -15,7 +15,8 @@ flags:
 
 steps:
   - id: start
-    map_target: 5719
+    map_target: 5719  # fallback when Toby the Cooper's Lad is not spawned
+    map_target_mob: 9338  # follow Toby the Cooper's Lad (schedule np_crafting_toby) — a fixed room is wrong for part of the day
     description: >-
       Orin asked you to visit the shuttered cooperage and find Toby -- to
       see whether anyone still tends the place, and bring back proof.

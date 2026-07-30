@@ -15,7 +15,8 @@ steps:
     hint: "Visit the Records Office north of Market Square. Search the shelves
       for the tithe ledger."
   - id: deliver
-    map_target: 468  # Temple Priest Olen at the temple
+    map_target: 468  # fallback when Temple Priest Olen is not spawned
+    map_target_mob: 95  # follow Temple Priest Olen (schedule thornwall_temple_priest) — a fixed room is wrong for part of the day
     description: "You have the tithe ledger. Take it to Temple Priest Olen — the
       contents damn both the merchants and the temple."
     hint: "Return to Temple Priest Olen with the tithe ledger."

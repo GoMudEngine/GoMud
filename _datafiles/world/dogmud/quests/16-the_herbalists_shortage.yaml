@@ -17,7 +17,8 @@ steps:
       of Ashwick. Look for signs of who has been taking
       the herbs."
   - id: forager
-    map_target: 4027
+    map_target: 4027  # fallback when Delia is not spawned
+    map_target_mob: 259  # follow Delia (schedule ashwick_delia) — a fixed room is wrong for part of the day
     description: "You found a forager living in the woods
       who has been harvesting Delia's herbs. They have
       agreed to work with Delia if you vouch for them.

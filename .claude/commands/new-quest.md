@@ -110,12 +110,24 @@ plan to verify correctness.
 After all files are written:
 
 1. Run `go build ./...` to verify no compilation errors
-2. List all instance saves that need deletion:
+2. **Check every step has a map destination.** For each step in the new quest,
+   confirm exactly one of: `map_target_mob` + a `map_target` fallback (go see a
+   named NPC), `map_target: <roomid>` (go to a place/fixture), or
+   `map_target: -1` (done in place, or a player-choice branch). A step that
+   sends the player somewhere with no marker leaves a lost player nothing to
+   follow. Rules and rationale: `/sketch-quest`, "MAP DESTINATION".
+   - `map_target_mob` is for **unique named NPCs only** — a generic mob with
+     several live instances is ambiguous, so the marker silently vanishes.
+     If a step's target is a generic mob, that is a sign the step should name a
+     unique NPC instead.
+   - Run `go test ./internal/questengine/ -run TestQuestMapTargets` — it fails
+     if any `map_target` names a room that does not exist.
+3. List all instance saves that need deletion:
    ```
    _datafiles/world/dogmud/rooms.instances/{zone}/
    _datafiles/world/dogmud/mobs.instances/{zone}/
    ```
-3. Delete stale instance saves (after confirmation from the user)
+4. Delete stale instance saves (after confirmation from the user)
 
 Remind the user:
 

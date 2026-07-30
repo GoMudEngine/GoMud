@@ -28,7 +28,8 @@ steps:
       least one, then walk back to Constable Drunn at the constabulary and
       ask him about the quest to report."
   - id: hunter
-    map_target: 4110
+    map_target: 4110  # fallback when Constable Drunn is not spawned
+    map_target_mob: 335  # follow Constable Drunn (maxwander 2) — a fixed room is wrong for part of the day
     description: "You have killed a drowned hunter. The shallows are
       meaningfully safer."
     hint: "Walk back to Constable Drunn at the constabulary and ask him about

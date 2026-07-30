@@ -157,6 +157,59 @@ For each step, specify:
   `player_give` handler, or automatic (e.g. entering a room)
 - Quest token: `{questid}-{stepid}`
 - Player-facing description and hint
+- **Map destination** — see below. Every step gets one, even if the answer
+  is "deliberately none".
+
+---
+
+**MAP DESTINATION (do not skip this)**
+
+If a step sends the player somewhere, the minimap must point the way. A step
+with no destination decision is a step where a lost player has nothing to
+follow. Pick exactly one:
+
+| Situation | What to write |
+|---|---|
+| Go see a **named NPC** (deliver, report, ask) | `map_target_mob: <mobid>` **plus** `map_target: <their usual room>` |
+| Go to a **place or fixture** (a room, a chest, a carving, an item's spawn room) | `map_target: <roomid>` |
+| Done wherever the player stands (type a command, cast during any fight) | `map_target: -1` |
+| Player chooses between two+ destinations | `map_target: -1`, and say why in a comment |
+
+**Why `map_target_mob` for NPCs:** most named NPCs carry a `schedule_id` and
+move during the day. A fixed room is therefore *wrong for part of every day* —
+a tavern keeper who serves until 22:00 and then sleeps upstairs will have the
+marker pointing at an empty common room all night. `map_target_mob` resolves to
+wherever that NPC currently is. Always pair it with a `map_target` fallback for
+when the NPC is dead or not yet spawned; the validator warns if you don't.
+
+**⚠ Do NOT build quest objectives around generic mobs.**
+`map_target_mob` needs to name *one* creature. If the template has several live
+instances — "a marsh adder", "a bandit scout", "a dock rat" — the engine cannot
+know which one you meant, so it declines and the marker silently falls back or
+disappears. That is a symptom of a deeper authoring problem: a quest step whose
+target is an interchangeable generic mob is also a step the player cannot be
+guided to, cannot reliably find, and cannot tell they have finished.
+
+So when a quest needs a specific creature or contact:
+- Give it a **unique name** ("Torvan Cresk", not "a smuggler") and a **single
+  spawn room**, and target it with `map_target_mob`.
+- If it genuinely must be a generic mob (clear N of a roaming type), do **not**
+  use `map_target_mob`. Point `map_target` at the sub-area's entrance or anchor
+  room so the player is at least sent to the right region, and say so in a
+  comment.
+- Never point `map_target_mob` at a **hunt target**. Live-tracking a monster
+  turns a hunt into a guided kill — that is a gameplay change, not guidance.
+
+**Cross-zone targets currently render NOTHING.** The marker needs the room to be
+on the player's current-zone map, and the next-step arrow is computed from the
+start room's zone. If a step's destination is in a different zone from where the
+player will be standing, expect no marker and no arrow until cross-zone stitching
+lands. Prefer keeping a step's destination inside one zone; if you cannot, put
+walking directions in the `hint` text as the fallback.
+
+The engine's resolution order is: `map_target: -1` (hard off) → `map_target_mob`
+→ `map_target` → inference from a `room_enter` trigger gated on this step's
+token → no marker. See `internal/questengine/map_target.go`.
 
 Format:
 ```

@@ -14,7 +14,8 @@ steps:
     hint: "Deliver the maintenance report to Records Clerk Pell in Thornwall City.
       From Watchers Crossing, head north along the road to reach the city."
   - id: report
-    map_target: 421
+    map_target: 421  # fallback when Toll Collector Harn is not spawned
+    map_target_mob: 86  # follow Toll Collector Harn (schedule watchers_harn) — a fixed room is wrong for part of the day
     description: "Clerk Pell has filed Harn's maintenance report with the magistrate.
       Return to Harn at Watchers Crossing and tell him the report has been delivered."
     hint: "Return to Toll Collector Harn at Watchers Crossing and tell him the report

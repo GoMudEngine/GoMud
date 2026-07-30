@@ -10,7 +10,8 @@ secret: false
 
 steps:
   - id: start
-    map_target: 6189  # the Archive — examine the first construction record
+    map_target: 6189  # fallback when Brother Cael is not spawned
+    map_target_mob: 9465  # follow Brother Cael (schedule cf_cael) — a fixed room is wrong for part of the day
     description: "Brother Cael has set you to examine three of the temple's
       construction records that disagree with its founding story."
     hint: "Examine the building-ledger in the Archive, the consecration-record
@@ -31,7 +32,8 @@ steps:
     hint: "Now examine the mason's survey in the older east corridor, by the
       descent stair. Then return to Cael in the Archive."
   - id: survey
-    map_target: 6189
+    map_target: 6189  # fallback when Brother Cael is not spawned
+    map_target_mob: 9465  # follow Brother Cael (schedule cf_cael) — a fixed room is wrong for part of the day
     description: "The mason's survey is plainest of all: the lower courses are
       older work, cut by hands the temple's records do not name. Three records,
       one conclusion -- the temple was raised on something older."

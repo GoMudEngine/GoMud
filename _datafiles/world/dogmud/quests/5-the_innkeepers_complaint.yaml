@@ -11,7 +11,8 @@ steps:
     description: "Innkeeper Tolva at the Crossing Inn has asked you to investigate the bridge toll. She believes it is unauthorized and wants proof. Find the crossing ledger at the tollhouse."
     hint: "Get the crossing ledger from the Tollhouse. From the Crossing Inn, the Tollhouse is nearby — check the rooms around the crossing."
   - id: deliver
-    map_target: 423  # Innkeeper Tolva at the Crossing Inn
+    map_target: 423  # fallback when Innkeeper Tolva is not spawned
+    map_target_mob: 84  # follow Innkeeper Tolva (schedule watchers_tolva) — a fixed room is wrong for part of the day
     description: "You have the crossing ledger. Bring it back to Innkeeper Tolva at the Crossing Inn."
     hint: "Return to Innkeeper Tolva at the Crossing Inn with the crossing ledger."
   - id: end

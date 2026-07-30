@@ -19,7 +19,8 @@ steps:
       Go west and deeper to the Buried Lintel. Examine the symbol carved
       on its underside to take a rubbing. Mind the canal -- it is not empty.
   - id: witness
-    map_target: 5706
+    map_target: 5706  # fallback when Orin the Bookseller is not spawned
+    map_target_mob: 9332  # follow Orin the Bookseller (schedule np_crafting_orin) — a fixed room is wrong for part of the day
     description: >-
       You stood beneath the Buried Lintel and took a rubbing of the
       eight-pointed symbol -- the original the gallery's oldest painting

@@ -28,7 +28,8 @@ secret: false
 
 steps:
   - id: start
-    map_target: 5203
+    map_target: 5203  # fallback when Crier Toke is not spawned
+    map_target_mob: 9106  # follow Crier Toke (schedule pothole_toke) — a fixed room is wrong for part of the day
     description: >-
       Freshly Opened, you stand at a fork. Crier Toke waits in Hub Square, just
       south of the pool, ready to teach you the town. Warden Esk keeps the arch

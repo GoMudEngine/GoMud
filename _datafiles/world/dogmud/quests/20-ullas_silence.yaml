@@ -65,7 +65,8 @@ steps:
       system can reach. Search the bone shoals in the lake caves for
       what Elgar found."
   - id: bone_shoals_cache
-    map_target: 4106
+    map_target: 4106  # fallback when Smith Brindle is not spawned
+    map_target_mob: 337  # follow Smith Brindle (schedule brindle) — a fixed room is wrong for part of the day
     description: "Elgar's cache lay where he hid it before going
       deeper: an oilskin pouch with a folded note to Brindle the
       smith, a small Stillwater Black Pearl, and a curl of waxed
@@ -87,7 +88,8 @@ steps:
       parlor. Look first at Elgar's grave at the cemetery -- there is
       something buried there for whoever knows to look."
   - id: kingfisher_found
-    map_target: 4136  # Healer's Cottage — Vella Thorne (mob 355) delivery target
+    map_target: 4136  # fallback when Vella Thorne is not spawned
+    map_target_mob: 355  # follow Vella Thorne (schedule vella) — a fixed room is wrong for part of the day
     description: "Beneath Elgar's empty marker, Vella buried a small
       wooden box with a single carved kingfisher and a note in her
       own hand reading 'He was your brother.' The kingfisher is
