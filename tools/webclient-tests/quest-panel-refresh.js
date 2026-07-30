@@ -95,9 +95,12 @@ for (const name of [
 ]) {
   if (!(name in global)) global[name] = noop;
 }
-// The map renderer: record marker calls instead of drawing.
+// The map renderer: record marker calls instead of drawing. `rooms` mirrors
+// RoomGridSVG's Map of the rooms currently ON the map — Zone.Map only carries
+// the zone you are standing in, so a cross-zone target is legitimately absent.
 const markerCalls = [];
-global.gr = { setQuestMarker: (m) => markerCalls.push(m) };
+const mapRooms = new Map();
+global.gr = { setQuestMarker: (m) => markerCalls.push(m), rooms: mapRooms };
 
 // eslint-disable-next-line no-eval
 (0, eval)([
@@ -162,6 +165,26 @@ console.log('SCENARIO 3 — full "Char" push with NO quests clears the panel and
 reset();
 handleGMCP('Char', { Info: { Name: 'Meirok' }, Quests: [] });
 check('empty state shown', panelText().includes('No active quests'), JSON.stringify(panelText().slice(0, 120)));
+
+console.log('SCENARIO 4 — SAME-zone target: the destination really is on the map');
+reset();
+mapRooms.clear();
+mapRooms.set(301, { room: { RoomId: 301 } }); // target is in this zone's snapshot
+handleGMCP('Char.Quests', QUESTS);
+console.log('   label: ' + JSON.stringify((panelText().match(/qonmap">([^<]*)/) || [])[1] || '(none)'));
+check('claims "marked on map"', panelText().includes('marked on map'), panelText().slice(0, 200));
+
+console.log('SCENARIO 5 — CROSS-zone target: room 301 is NOT on the Watchers Crossing map');
+reset();
+mapRooms.clear();
+mapRooms.set(420, { room: { RoomId: 420 } }); // only local rooms are on the map
+handleGMCP('Char.Quests', QUESTS);
+console.log('   label: ' + JSON.stringify((panelText().match(/qonmap">([^<]*)/) || [])[1] || '(none)'));
+check('does NOT claim a marker that cannot be drawn',
+  !panelText().includes('marked on map'),
+  'panel promises a dot for an off-map room: ' + panelText().slice(0, 220));
+check('shows the next-step direction instead', panelText().includes('head north'),
+  panelText().slice(0, 220));
 
 console.log(fails === 0 ? '\nALL CHECKS PASSED' : '\n' + fails + ' CHECK(S) FAILED');
 process.exit(fails ? 1 : 0);

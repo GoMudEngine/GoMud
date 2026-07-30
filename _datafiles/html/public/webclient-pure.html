@@ -881,7 +881,24 @@
                       + '<span class="qbar"><i style="width:' + pct + '%"></i></span>'
                       + '</div>';
                 if (focused && q.hint) {
-                    var mark = q.target_room ? ' <span class="qonmap">◆ marked on map</span>' : '';
+                    // Only claim "marked on map" when the destination is actually
+                    // ON the current map. Zone.Map only carries rooms of the zone
+                    // you are standing in, so a cross-zone target has no node to
+                    // mark and the dot can never be drawn — the panel used to
+                    // promise one anyway, purely because target_room was non-zero,
+                    // which sent players hunting for a marker that did not exist.
+                    // Cross-zone routing still gives a next-step direction, so say
+                    // that instead: it is true, and more use than a dot would be.
+                    var onMap = false;
+                    if (q.target_room && gr && gr.rooms) {
+                        onMap = !!(gr.rooms.get(q.target_room) || gr.rooms.get(String(q.target_room)));
+                    }
+                    var mark = '';
+                    if (onMap) {
+                        mark = ' <span class="qonmap">◆ marked on map</span>';
+                    } else if (q.next_dir) {
+                        mark = ' <span class="qonmap">→ head ' + escapeHTML(q.next_dir) + '</span>';
+                    }
                     html += '<div class="qhint">' + escapeHTML(q.hint) + mark + '</div>';
                 }
             });

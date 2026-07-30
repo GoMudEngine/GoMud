@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-07-30 — The quest panel stops promising a marker it cannot draw
+
+The map only ever holds the district you are standing in, so when an errand
+points somewhere further afield there is no room on it to mark. The quest panel
+said "marked on map" regardless, and sent people hunting for a dot that was
+never going to appear. It now says that only when the destination really is on
+the map in front of you. When it is not, it tells you which way to set off
+instead.
+
 ## 2026-07-30 — The quest panel remembers what you were already doing
 
 Log in with quests already underway and the browser's quest list claimed you had
