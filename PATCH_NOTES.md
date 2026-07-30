@@ -1,5 +1,16 @@
 # DOGMud Patch Notes
 
+## 2026-07-30 — A fresh copy of the server can start (staff)
+
+Four folders the server insists on — player saves, the shop economy, NPC goal
+state and plugin storage — hold nothing we want to keep in version control, so
+their contents were excluded. Git cannot record an empty folder, though, which
+meant a brand-new copy of the repository arrived without them and the server
+refused to start, before a single room was read. The long-lived machines all
+had the folders already, so nothing in service was affected and nobody would
+have noticed until the next time someone set up a new one. The folders are now
+kept; their contents are still excluded.
+
 ## 2026-07-30 — Woken townsfolk stop pretending to snore
 
 Rouse a shopkeeper in the small hours and she would serve you perfectly well
