@@ -1,5 +1,19 @@
 # DOGMud Patch Notes
 
+## 2026-07-30 — Directions to the barracks, and an honest ledger (staff)
+
+Marek's protection notice needed carrying to Guard Captain Velk, and the quest
+log told you only that he was "at the barracks" — leaving roughly fifteen rooms
+of city to search. It now gives the route, the way the watch captain's other
+errand always did.
+
+Behind the scenes, the combat analytics sheet had been quietly lying: every
+position hit-rate row read zero, because the recorder wrote down the fighter's
+exact stance ("Mount", "Guard") while the tally sheet only had columns for four
+broad categories. The two never matched, so nothing was ever counted. Stances
+are now filed under the right column, and a test refuses to let a newly-added
+stance go uncounted again.
+
 ## 2026-07-30 — A tidier front door
 
 The login screen's title art sat hard against the left edge of the screen,

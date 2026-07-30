@@ -12,7 +12,7 @@ steps:
       notice as evidence of the racket squeezing his business. Take it to Guard
       Captain Velk at the barracks."
     hint: "Bring the protection notice to Guard Captain Velk at the city
-      barracks."
+      barracks. From the Drowning Post, go north 2, then west 2, then north 1."
   - id: report
     map_target: 472
     description: "Guard Captain Velk has seen the evidence and will act on it.

@@ -9,6 +9,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/state/position"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
@@ -154,15 +155,43 @@ func appendEvent(evt CombatEvent) {
 }
 
 // positionFields populates position and grapple controller fields from a character.
+// The position is the granular FSM state name (e.g. "Mount", "Guard") so JSON
+// dumps stay informative; computeSummary buckets it via positionBucket.
 func positionFields(char *characters.Character) (string, bool) {
 	if char == nil {
-		return "standing", false
+		return position.Standing.String(), false
 	}
-	pos := "standing"
+	pos := position.Standing.String()
 	if char.Position != nil {
 		pos = char.Position.State().String()
 	}
 	return pos, char.IsController()
+}
+
+// positionBucket collapses a granular position.State name onto one of the four
+// summary buckets ("standing", "prone", "clinched", "grounded"). Returns "" for
+// an unrecognized name so the caller can skip it rather than mis-attribute it.
+//
+// The 14 granular states outnumber the buckets, so this mapping is required —
+// a direct posMap lookup on State().String() silently matches nothing and
+// reports every position hit rate as 0.0%. TestPositionBucketCoversEveryState
+// fails if a new State is added without a bucket here.
+func positionBucket(pos string) string {
+	switch pos {
+	case position.Standing.String():
+		return "standing"
+	case position.Prone.String(), position.Supine.String():
+		return "prone"
+	case position.Clinch.String(), position.BackStanding.String():
+		return "clinched"
+	case position.Mount.String(), position.SideControl.String(),
+		position.KneeOnBelly.String(), position.NorthSouth.String(),
+		position.Crucifix.String(), position.BackGround.String(),
+		position.HalfGuard.String(), position.Guard.String(),
+		position.Turtle.String():
+		return "grounded"
+	}
+	return ""
 }
 
 // RecordAttack records a standard auto-attack event (legacy: one event per round).
@@ -516,8 +545,8 @@ func computeSummary(events []CombatEvent) AnalyticsSummary {
 			s.MvMEvents++
 		}
 
-		// Position hit rates
-		if p, ok := posMap[e.TargetPosition]; ok {
+		// Position hit rates (granular state -> one of four summary buckets)
+		if p, ok := posMap[positionBucket(e.TargetPosition)]; ok {
 			p.total++
 			if e.Hit {
 				p.hits++
