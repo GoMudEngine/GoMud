@@ -147,6 +147,13 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		//
 		m := target.(*actions.MobActor).Mob
 
+		// MUST be before the transfer below: give.go hands the item over before
+		// any handler fires and cannot take it back (see CLAUDE.md). A sleeping
+		// Guard Captain Velk was accepting quest items and advancing quests.
+		if actions.RefuseMobIfAsleep(m, user) {
+			return true, nil
+		}
+
 		user.Character.CancelBuffsWithFlag(buffs.Hidden)
 
 		// Swap the item location

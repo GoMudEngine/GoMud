@@ -132,6 +132,20 @@ func teleportActor(actor actions.Actor, toRoomId int) bool {
 
 // getMiscDataInt retrieves an integer stored in MiscData, handling both int
 // and float64 (the latter can occur after YAML round-trips).
+// getMiscDataInt reads an integer out of MiscData.
+//
+// It MUST handle every numeric shape a value can arrive in, because MiscData is
+// an any-typed bag written from several places and round-tripped through YAML:
+//   - int      — written directly by most callers
+//   - uint64   — written by anything storing util.GetRoundCount()
+//   - float64  — what YAML/JSON gives back after a save/load cycle
+//
+// Missing uint64 here was a silent, long-lived bug: OnSleeperWoken stamps
+// "schedule_wake_round" with util.GetRoundCount() (a uint64), this returned 0
+// for it, and so the ScheduleWakeGraceRounds cooldown in the schedule executor
+// never applied. Every wake of a scheduled NPC — shout, damage, a failed steal,
+// a light entering the room — was undone on the very next tick, because
+// WantsSleep saw lastWoken == 0 and put them straight back to sleep.
 func getMiscDataInt(char *characters.Character, key string) int {
 	val := char.GetMiscData(key)
 	if val == nil {
@@ -140,6 +154,12 @@ func getMiscDataInt(char *characters.Character, key string) int {
 	switch v := val.(type) {
 	case int:
 		return v
+	case int64:
+		return int(v)
+	case uint64:
+		return int(v)
+	case uint:
+		return int(v)
 	case float64:
 		return int(v)
 	}

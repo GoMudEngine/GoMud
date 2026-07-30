@@ -104,6 +104,13 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	mob := target.(*actions.MobActor).Mob
 	mobId := mob.InstanceId
 
+	// A sleeping NPC cannot hold a conversation — and must not grant a quest.
+	// Before this guard, `ask marek quest` while he slept produced his full
+	// offer speech and handed over the quest item.
+	if actions.RefuseMobIfAsleep(mob, user) {
+		return true, nil
+	}
+
 	args = args[1:]
 
 	if !mob.Character.IsCharmed() {

@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strconv"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
 	"github.com/GoMudEngine/GoMud/internal/buffs"
 	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/colorpatterns"
@@ -26,10 +27,21 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 
 	listedSomething := false
 
+	// Shut for the night — see buy.go.
+	if asleep := actions.ShopClosedForSleep(room); asleep != nil {
+		actions.RefuseMobIfAsleep(asleep, user)
+		return true, nil
+	}
+
 	for _, mobId := range room.GetMobs(rooms.FindMerchant) {
 
 		mob := mobs.GetInstance(mobId)
 		if mob == nil {
+			continue
+		}
+		// A sleeping keeper alongside an awake one: skip the sleeper's stock
+		// rather than advertising goods nobody is there to sell.
+		if actions.TargetAsleep(&mob.Character) {
 			continue
 		}
 
@@ -75,6 +87,15 @@ func List(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	}
 
 	if !listedSomething {
+		// The keeper of THIS shop has gone to the back room / upstairs to
+		// sleep. "Visit a merchant" would read as though the player came to
+		// the wrong place, when they simply came at the wrong hour.
+		if away := actions.MerchantAwayAsleep(room); away != nil {
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(
+				`<ansi fg="mobname">%s</ansi> has closed up for the night and gone to bed. `+
+					`Come back in the morning -- or make some noise nearby.`, away.Character.Name))
+			return true, nil
+		}
 		user.SendText(messaging.CategorySystem, "Visit a merchant to list and buy objects.")
 		return true, nil
 	}

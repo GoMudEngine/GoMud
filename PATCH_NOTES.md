@@ -1,5 +1,28 @@
 # DOGMud Patch Notes
 
+## 2026-07-30 — Let sleeping shopkeepers lie
+
+You could hold a full conversation with a sleeping tavern keeper. He would take
+your order, hand you a quest and its paperwork, all without opening his eyes.
+The guard captain would accept evidence in his sleep. Shops traded at three in
+the morning with the keeper snoring in the corner — which is most shops, since
+most townsfolk bed down in the room where they work.
+
+Sleeping people are now asleep. Ask, give, buy, sell and list all decline while
+their target is out cold, and tell you so. You are not stuck until dawn: noise
+wakes people, as it always has. Shout, and whoever you needed will sit up and
+deal with you.
+
+That last part turned out not to work at all. Waking a townsperson on a daily
+routine woke them for a single moment before their schedule tucked them
+straight back in — a cooldown meant to give them a waking hour had never once
+applied. It does now, so a sleeper you rouse stays roused, whether you woke
+them by shouting, by robbing them badly, or by hitting them.
+
+And a shopkeeper who has gone through to the back room for the night now says
+so when you ask what is for sale, instead of the shop claiming no merchant
+works there.
+
 ## 2026-07-30 — The map knows where you are going
 
 A quest that tells you to see someone should show you where they are. This is

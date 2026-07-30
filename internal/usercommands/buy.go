@@ -16,6 +16,14 @@ func Buy(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		return List(rest, user, room, flags)
 	}
 
+	// A shop whose every keeper is asleep is shut. 113 of 132 schedules put the
+	// NPC to sleep IN their own workplace, so without this a player could trade
+	// at 3am with the keeper snoring in the corner.
+	if asleep := actions.ShopClosedForSleep(room); asleep != nil {
+		actions.RefuseMobIfAsleep(asleep, user)
+		return true, nil
+	}
+
 	actor := &actions.UserActor{User: user, Room: room}
 	actions.Buy(actor, actions.BuyOptions{Request: rest})
 	return true, nil

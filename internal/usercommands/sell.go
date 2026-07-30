@@ -19,6 +19,12 @@ func Sell(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		return true, nil
 	}
 
+	// Shut for the night — see buy.go.
+	if asleep := actions.ShopClosedForSleep(room); asleep != nil {
+		actions.RefuseMobIfAsleep(asleep, user)
+		return true, nil
+	}
+
 	// ── Parse optional leading quantity ───────────────────────────────────
 	// Supported forms:
 	//   sell 5 iron-ore        → quantity=5, itemName="iron-ore"
