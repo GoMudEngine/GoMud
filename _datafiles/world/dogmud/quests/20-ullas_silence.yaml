@@ -87,7 +87,7 @@ steps:
       parlor. Look first at Elgar's grave at the cemetery -- there is
       something buried there for whoever knows to look."
   - id: kingfisher_found
-    map_target: -1  # -1: bundled objectives, rooms [4136, 4140]; Phase 2 split review
+    map_target: 4136  # Healer's Cottage — Vella Thorne (mob 355) delivery target
     description: "Beneath Elgar's empty marker, Vella buried a small
       wooden box with a single carved kingfisher and a note in her
       own hand reading 'He was your brother.' The kingfisher is

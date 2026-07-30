@@ -1,0 +1,95 @@
+name: Quest map guidance (Phase 2 map_target pass)
+description: >-
+  Adversarially verify the 2026-07-30 quest map_target pass. Thirteen quest
+  steps that previously showed NO minimap destination now point somewhere.
+  Your job is to find out whether the guidance a real player receives is
+  correct, useful, and consistent with what the quest text tells them.
+
+mandate: |
+  Be CRITICAL and ADVERSARIAL. You are not here to confirm the work is fine —
+  you are here to find where it misleads a player. Read every line of output.
+  Report every usability problem bluntly, even small ones.
+
+  IMPORTANT — what you can and cannot see:
+  You are on the AI port, which is TEXT ONLY. You CANNOT see the graphical
+  minimap or its destination marker. Do NOT claim the marker "looked right" or
+  "rendered" — you have no way to know. What you CAN verify is everything the
+  marker is derived from, and that is what this session is for:
+    * `hint` — the focused quest's current hint text
+    * `quests` / the quest log — step descriptions
+    * whether the place the text sends you to actually EXISTS and is REACHABLE
+    * whether the NPC/item named is actually THERE when you arrive
+    * how many rooms it took, and whether you got lost
+
+setup:
+  - Create a FRESH character (do not reuse an admin or veteran save; an admin
+    role flip silently grants keystones and distorts everything).
+  - Play as a confused newcomer would. Do not use admin commands to teleport.
+
+goals:
+  - id: undertow
+    quest: 14 (The Undertow) — the biggest change in this pass
+    steps: |
+      Start the quest from Marek at the Drowning Post tavern.
+      1. Step `start` now points at room 492 (Stash Room). Follow ONLY the
+         in-game text. Can you find the stash room? How many rooms did it take?
+         Did the hint ("check any stash rooms or crates") actually lead you
+         there, or did you wander?
+      2. Get the tally stick. Confirm the step advances.
+      3. Reach the Operations Room and deal with Torvan.
+      4. Step `evidence` now points at room 473 (Guard Barracks). Read the
+         hint. Does it name Guard Captain Velk? Walk there. Is Velk present?
+      5. Hand over the ledger and confirm the quest closes.
+    report: Anywhere the text and the actual world disagreed.
+
+  - id: across_the_canyon
+    quest: 51 (Across the Canyon) — a WRONG marker was corrected here
+    steps: |
+      This step previously pointed players NORTH to room 5356 after they fired,
+      but the scout has already LEFT 5356 and charges south into 5354. It now
+      points at 5354 ("hold this ground").
+      1. Take the quest from Scout Bryn (room 5353, Canyon Mouth).
+      2. Go north to the Echoing Narrows (5354). Type `shoot scout north`.
+      3. Read the text after the shot carefully. Does it tell you to HOLD, or
+         to advance? Does anything still imply you should move north?
+      4. Finish the fight and report to Bryn.
+    report: Any remaining text that contradicts "hold the ground".
+
+  - id: deliveries
+    quest: 2 (Warren Compact), 16 (Herbalist's Shortage), 20 (Ulla's Silence)
+    steps: |
+      These are single-destination deliveries that previously had no marker.
+      For EACH, start the quest, read the hint, and walk to the destination
+      using only in-game text:
+        * quest 2  -> Tunnel Shaman, Low Junction (room 301)
+        * quest 16 -> The Forager, Forager's Camp (room 4031)
+        * quest 20 -> Vella Thorne, Healer's Cottage (room 4136) after the
+                      cemetery step
+      Confirm the NPC is actually in that room and accepts the hand-in.
+    report: Any NPC missing from where the quest implies they are.
+
+  - id: bettas_silence
+    quest: 18 (Betta's Silence) — a WANDERING target
+    steps: |
+      Step `start` now points at room 4038 (Road Fork), the Bloodline Agent's
+      home room — but that mob has maxwander 6, so it roams.
+      1. Take the quest and go to Road Fork.
+      2. Was the agent there? If not, how far away did you find it, and how
+         long did the search take?
+    report: |
+      This is the riskiest change in the pass. Say plainly whether pointing at
+      the home room HELPED you or SENT YOU TO AN EMPTY ROOM. If it misled you,
+      say so — we will revert it.
+
+  - id: unchanged_control
+    quest: 33 (Hold the Wash), 19 (Lake Cave's Bounty)
+    steps: |
+      Both got a marker on a MID-quest step (33 `scout` -> 5235 Cracked
+      Cistern; 19 `shrimp` -> 4128 Pool Chamber). Play each far enough to
+      reach that step, then judge: is that room a sensible next destination,
+      or does it pull you away from where the remaining enemies actually are?
+
+wrap_up: |
+  Finish with a blunt list of every defect found, ordered worst first. For each,
+  say what a confused new player would have done. If a change made things WORSE
+  than no guidance, call it out explicitly — reverting is cheap and expected.

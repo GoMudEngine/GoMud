@@ -12,7 +12,7 @@ flags:
 
 steps:
   - id: start
-    map_target: -1  # -1: return-to-giver / in-place (start room 4049); Phase 2 split review
+    map_target: 4038  # Road Fork — Bloodline Agent (mob 287) home; it wanders (maxwander 6), so this anchors the search rather than pinning it
     description: "Betta has asked you to keep quiet about the
       girl who slept in her barn."
     hint: "A bloodline agent is patrolling the north road,

@@ -1,5 +1,15 @@
 # DOGMud Patch Notes
 
+## 2026-07-30 — The map points the way more often
+
+Thirteen quest steps that used to leave the map blank now mark where you are
+meant to go: the smugglers' stash beneath the Drowning Post, the guard barracks
+you carry the ledger to, the ruined barn holding the peddler's freight, the
+forager's camp, the healer's cottage, the tunnel shaman's junction, and several
+more. One step was pointing the wrong way outright — after you put a shot across
+the canyon, the map sent you north toward a scout that had already left that
+chamber and was charging you. It now marks the ground you are meant to hold.
+
 ## 2026-07-30 — Telling your companions apart
 
 Summon two of the same creature — two earth elementals, say — and the vitals

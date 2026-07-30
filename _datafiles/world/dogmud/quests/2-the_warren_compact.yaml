@@ -9,7 +9,7 @@ steps:
   hint: Bring a healing salve to the Tunnel Shaman. From the Labyrinth entrance, go
     down 1 to the Low Junction. Salves can be bought from Alchemist Yenna in Sanctum
     Basin or crafted with the healing-salve recipe.
-  map_target: -1
+  map_target: 301  # Low Junction — Tunnel Shaman (mob 74) delivery target
 - id: end
   description: You have earned a fragile peace with the warren.
 rewards:

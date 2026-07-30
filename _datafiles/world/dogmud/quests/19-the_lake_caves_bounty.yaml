@@ -14,14 +14,14 @@ flags:
 
 steps:
   - id: start
-    map_target: -1  # -1: no single resolved destination (near [4110]); Phase 2 review
+    map_target: 4121  # Cave Mouth — sole entrance to the cave system (down -> 4127)
     description: "Constable Drunn has posted a bounty on the lake-cave creatures.
       Clear the shallows of shrimp swarms, deal with at least one drowned
       hunter, then come back to the constabulary for further instructions."
     hint: "Take a light source -- your chrysalis-glow spell or a lantern. The
       caves are dark. The cave mouth is east of the fishing docks."
   - id: shrimp
-    map_target: -1  # -1: no single resolved destination; Phase 2 review
+    map_target: 4128  # Pool Chamber — first room a Drowned Hunter (mob 331) can hold
     description: "You have cleared a swarm of skitter-shrimp from the cave
       shallows. The fishing nets will hold longer."
     hint: "A drowned hunter still lurks deeper in the cave system. Clear at

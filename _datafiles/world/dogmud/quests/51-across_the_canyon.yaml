@@ -26,7 +26,7 @@ secret: false
 
 steps:
   - id: start
-    map_target: -1  # -1: bundled objectives, rooms [5354, 5356]; Phase 2 split review
+    map_target: 5354  # Echoing Narrows — the shoot trigger is scoped to this room
     description: >-
       Bryn wants you to take the canyon scout posted on the sounding floor --
       and to do it the hard way, with a shot from the chamber below before it
@@ -38,7 +38,7 @@ steps:
       the exit. It will charge in -- stand and finish it. Then report to Scout
       Bryn -- type ask bryn done.
   - id: shoot
-    map_target: 5356
+    map_target: 5354  # Echoing Narrows — hold this ground; the scout charges to you (was 5356, where it no longer is)
     description: >-
       Your shot crossed the gap and bit. The scout is coming -- put it down.
     hint: >-

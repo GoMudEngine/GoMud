@@ -7,7 +7,7 @@ secret: false
 
 steps:
   - id: start
-    map_target: -1  # -1: bundled objectives, rooms [4027, 4031]; Phase 2 split review
+    map_target: 4031  # Forager's Camp — The Forager (mob 262)
     description: "Delia, the herbalist in Ashwick, cannot
       restock her supplies. Someone has been taking the
       wild herbs from the forest before she can harvest
