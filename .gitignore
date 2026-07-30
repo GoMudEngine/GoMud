@@ -1,16 +1,24 @@
 .vscode
 private-notes.txt
+# NOTE ON THE .gitkeep NEGATIONS BELOW
+# ValidateWorldFiles (internal/util/util.go) requires every subfolder of the
+# example world _datafiles/world/default to also exist under the live world,
+# and returns a HARD error at boot when one does not. Git cannot track an empty
+# directory, so any folder whose contents we ignore vanishes from a fresh clone
+# and the server dies before loading a single room. Each such folder therefore
+# ignores its CONTENTS (trailing /*) and re-includes a tracked .gitkeep.
+# Excluding the directory itself would not work: git does not descend into an
+# excluded directory, so a negation for a child of it is never even considered.
 _datafiles/**/users/*
+!_datafiles/**/users/.gitkeep
 _datafiles/**/plugin-data/*
-# ...but keep the folder itself. ValidateWorldFiles requires every subfolder of
-# the example world to exist, and git cannot track an empty directory — so a
-# fresh clone had no plugin-data/ and died at boot before loading any content.
 !_datafiles/**/plugin-data/.gitkeep
 **/config-overrides.yaml
 **/.roundcount
 **/rooms.instances
 **/mobs.instances
-_datafiles/**/shops
+_datafiles/**/shops/*
+!_datafiles/**/shops/.gitkeep
 _datafiles/**/warehouses
 # Runtime living-economy state — server-maintained delivery/stock/bounty ledgers
 _datafiles/**/caravans/
@@ -28,7 +36,8 @@ _datafiles/**/opinions/
 # Runtime NPC fact awareness state — not committed
 _datafiles/**/facts.awareness/
 # Runtime NPC goal state — not committed
-_datafiles/**/goals/
+_datafiles/**/goals/*
+!_datafiles/**/goals/.gitkeep
 .worktrees/
 tools/testing/reports/*.md
 vendor/
