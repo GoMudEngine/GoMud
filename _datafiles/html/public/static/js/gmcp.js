@@ -434,6 +434,14 @@ class RoomGridSVG {
   setZoneSnapshot(zone, snapshotRooms, currentZ, party) {
       currentZ = currentZ || 0;
 
+      // Remember where we were centred BEFORE any reset() below wipes it.
+      // On a zone change the client has already handled Room.Info, which does
+      // addRoom() then centerOnRoom() — so the centre is correct and points at
+      // the NEW room. reset() then nulls it, and nothing put it back, leaving
+      // the room un-highlighted and the quest arrow undrawable (it starts at
+      // the centre) for the whole of that room's visit.
+      const priorCenterId = this.currentCenterId;
+
       // Build party lookup
       this._party = {};
       if (Array.isArray(party)) {
@@ -475,11 +483,19 @@ class RoomGridSVG {
       // Tokens were already (re)built in Pass 1 — don't rebuild them again.
       floor.forEach(r => this._drawEdgesForRoom(r.num));
 
-      // Apply a centre request that arrived before this snapshot did (see
-      // centerOnRoom). Must run before the arrow is drawn — the arrow starts at
-      // the centre room, so with the centre still null it would draw nothing.
-      if (this._pendingCenterId != null && this.rooms.get(this._pendingCenterId)) {
-          this.centerOnRoom(this._pendingCenterId);
+      // Re-establish the centre, which reset() may have cleared. Two sources,
+      // covering both orders the server can deliver in:
+      //   _pendingCenterId — Room.Info asked for a room this map did not have
+      //                      yet (see centerOnRoom).
+      //   priorCenterId    — Room.Info already centred us correctly and reset()
+      //                      then threw it away. This is the common case on a
+      //                      zone crossing, because Room.Info arrives first and
+      //                      calls addRoom() before centerOnRoom().
+      // Must run before the arrow is drawn: the arrow starts at the centre, so
+      // a null centre draws nothing at all.
+      const wantCenterId = this._pendingCenterId != null ? this._pendingCenterId : priorCenterId;
+      if (wantCenterId != null && this.currentCenterId !== wantCenterId && this.rooms.get(wantCenterId)) {
+          this.centerOnRoom(wantCenterId);
       }
 
       this._drawQuestArrow();

@@ -107,10 +107,15 @@ g.centerOnRoom(420);
 g.setQuestMarker({ targetRoom: 301, nextRoom: 409, nextDir: 'west', name: 'The Warren Compact' });
 check('in the old zone the centre is set', g.currentCenterId === 420, 'centre=' + g.currentCenterId);
 
-// --- Move west: Room.Info arrives FIRST, naming a room not yet on the map ---
+// --- Move west. Room.Info arrives FIRST and does addRoom() THEN centerOnRoom()
+//     (webclient-pure.html, the "Room" handler) — so centring SUCCEEDS here.
+//     Modelling this wrongly is what made the first attempt at this fix a no-op:
+//     it only restored a centre that had failed to apply, and this one had not. ---
+g.addRoom({ RoomId: 409, x: 1, y: 5, z: 0, symbol: '.', biome: 'road', name: 'r409', Exits: [] });
 g.centerOnRoom(409);
-check('centre request for an unknown room is remembered, not dropped',
-  g._pendingCenterId === 409, '_pendingCenterId=' + g._pendingCenterId);
+check('Room.Info centres successfully before the snapshot arrives',
+  g.currentCenterId === 409 && g._pendingCenterId === null,
+  'centre=' + g.currentCenterId + ' pending=' + g._pendingCenterId);
 
 // --- Then Zone.Map for the new zone arrives (this reset()s the world) ---
 g.setZoneSnapshot('Dustwalk Road', [
