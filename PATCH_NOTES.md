@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-07-30 — The quest panel remembers what you were already doing
+
+Log in with quests already underway and the browser's quest list claimed you had
+none, and the map marked no destination — even though typing `quests` listed
+them all. The list and the map only ever woke up when a quest changed: take a
+new one, or finish a step, and they would appear. Everything you were already
+carrying stayed invisible. They now fill in the moment you connect, along with
+the destination marker and the arrow toward it.
+
 ## 2026-07-30 — Let sleeping shopkeepers lie
 
 You could hold a full conversation with a sleeping tavern keeper. He would take

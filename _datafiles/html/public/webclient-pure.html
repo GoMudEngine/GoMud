@@ -650,6 +650,23 @@
                     renderInventory();
                 }
 
+                // Same for quests. handleGMCP dispatches to the FIRST matching
+                // handler and returns, so a full "Char" push lands here and the
+                // "Char.Quests" handler never runs — the server only names that
+                // package when a quest is granted or advances (events.Quest).
+                // Without this, the Quests panel and the map's destination marker
+                // stayed empty for every quest a player already had on login,
+                // refresh or reconnect, while `quests` in the feed listed them
+                // all. Delegate rather than duplicate so the marker logic (and
+                // its `gr` scope) has exactly one home.
+                //
+                // Unlike Automation below, Quests DOES ride in the full payload:
+                // GetCharNode sets all = (gmcpModule == "Char"), which builds
+                // every sub-payload including Quests.
+                if ( obj.Quests ) {
+                    GMCPUpdateHandlers['Char.Quests']();
+                }
+
                 // NOTE: do NOT refresh the automation panel or tick timers here.
                 // Automation (macros/aliases/ticks/triggers) is a separate module
                 // pushed as "Char.Automation"; it never arrives in the full "Char"
