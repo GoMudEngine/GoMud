@@ -430,3 +430,29 @@ func (p *MyPlugin) renderDashboard(r *http.Request) (string, map[string]any, boo
 ```
 
 This web system provides a robust foundation for both player-facing web interfaces and comprehensive administrative tools, with strong security, plugin extensibility, and real-time game integration capabilities.
+## Files
+
+| File | Purpose |
+|------|---------|
+| `web.go` | Server setup, routing, static files |
+| `auth.go` | Admin authentication |
+| `template_func.go` | Template helper functions |
+| `stats.go` | Public stats endpoints |
+| `build.go` | The admin world-building tool backend |
+| `admin.go` | Admin routing and shared handlers |
+| `admin.rooms.go` | Room editor |
+| `admin.mobs.go` | Mob editor |
+| `admin.items.go` | Item editor |
+| `admin.species.go` | Species editor |
+| `admin.mutators.go` | Mutator editor |
+| `admin.progression.go` | Progression tuning views |
+| `admin.combatstats.go` | Combat statistics dashboard |
+| `admin.economyhealth.go` | The economy health dashboard (`internal/economy/health`) |
+
+Plugin-supplied pages (achievements, leaderboards, help) are **not** here —
+modules register their own via `WebConfig.WebPage`, and this package serves
+them through the plugin registry's `fs.ReadFileFS` implementation.
+
+Note: filesystem-touching tests in this package chdir to the repo root and call
+`configs.ReloadConfig()` — Go test binaries run with the CWD set to their own
+package directory. `auth_test.go` is the precedent.

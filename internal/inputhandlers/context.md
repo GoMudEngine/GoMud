@@ -254,3 +254,23 @@ func validateEmail(input string, results map[string]string) (string, error) {
 - **Protocol Compatibility**: Testing with various terminal emulators
 - **Load Testing**: Performance testing under high connection loads
 - **Security Testing**: Security vulnerability testing and validation
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `login.go` | The login/create flow, including `FinalizeLoginOrCreate` |
+| `login_prompt_handler.go` | Login prompt state machine |
+| `cleanser.go` | Input sanitising |
+| `echo.go` | Echo control (password entry) |
+| `inputhistory.go` | Per-connection command history |
+| `term_iac.go` | Telnet IAC negotiation |
+| `term_ansi.go` | ANSI sequence handling |
+| `mssp.go` | MSSP crawler responses |
+| `signals.go` | Connection signal handling |
+| `systemcommands.go` | Out-of-band system commands |
+
+**Account and IP ban rejection happens in `FinalizeLoginOrCreate`**
+(`login.go`), reading `internal/moderation`. Any new path that creates a
+session must perform the same check — the moderation package only stores and
+answers, it does not enforce.

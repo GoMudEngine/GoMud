@@ -927,3 +927,25 @@ Added in the legacy tactics-engine sunset migration:
   target_casting → trip interrupt.
 
 Spec: `docs/superpowers/specs/2026-05-12-mob-aliveness-2.6-sunset-tactics-engine-design.md`
+
+## Files
+
+| Group | Files |
+|-------|-------|
+| Core | `engine.go`, `types.go`, `state.go`, `structural.go`, `decorators.go`, `helpers.go`, `params.go`, `references.go` |
+| Loading & validation | `loader.go`, `validate.go`, `save.go`, `test_export.go` |
+| Events | `events.go` |
+| Actions — generic | `actions.go`, `actions_mob.go`, `actions_state.go`, `actions_room.go`, `actions_party.go`, `actions_goal.go` |
+| Actions — combat | `actions_combat.go`, `action_cast_best_in_category.go`, `actions_archer.go` |
+| Actions — economy | `actions_forager.go`, `actions_forager_verbs.go`, `actions_forager_storage.go`, `actions_wagon.go`, `actions_ferry.go`, `caravan_reset.go` |
+| Actions — other | `actions_dialogue.go`, `actions_quest.go`, `actions_progression.go`, `actions_mutation.go`, `actions_scout.go`, `actions_skullduggery.go` |
+| Conditions | `conditions.go`, `conditions_combat.go`, `conditions_mob.go`, `conditions_player.go`, `conditions_party.go`, `conditions_position.go`, `conditions_room.go`, `conditions_state.go`, `conditions_scout.go`, `conditions_forager.go`, `conditions_skullduggery.go`, `conditions_submission.go` |
+| Misc | `archetype_shift.go`, `room_state.go` |
+
+The `actions_*` / `conditions_*` split is the whole architecture: a tree is
+authored data, and extending the engine means adding a named action or
+condition to one of these files, not writing tree logic.
+
+**Behaviour-tree combat events fire before the legacy AI**, and `mob_die`
+handlers must use instant actions (`send_room_text`, not `respond`) because the
+mob is already gone by the time a queued action would run.

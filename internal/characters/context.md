@@ -910,3 +910,28 @@ implementation-detail rationale.
 - `internal/state/position`: Position state machine (chunks 4a + 4b)
 - `internal/state/presence`: Presence state machine (chunk 5)
 - `internal/state/perception`: Perception state machine (chunk 6)
+
+## Files
+
+44 non-test files. Grouped by what they own:
+
+| Group | Files |
+|-------|-------|
+| Core | `character.go`, `validate.go`, `migrations.go`, `overrides.go`, `description.go`, `formattedname.go` |
+| Stats & progression | `progression.go`, `skills.go`, `effective_stats.go`, `statmods`-adjacent helpers, `mobmastery.go`, `kdstats.go` |
+| Resources & conditions | `resources.go`, `conditions.go`, `cooldowns.go`, `buffs.go`, `sight.go` |
+| Inventory & gear | `inventory.go`, `inventory_handle.go`, `worn.go`, `hand_slots.go`, `anatomy.go`, `masterwork.go`, `migrate_enchantments.go` |
+| Combat | `combat.go`, `combat_state_compat.go`, `combat_tokens.go`, `position_predicates.go`, `taunt_hold.go`, `submission_policy.go`, `die.go`, `respawn_home.go` |
+| Casting | `cast_helpers.go`, `spells.go` |
+| Mutation | `intrinsic.go`, `bloom.go`, `bloom_mutation.go`, `chrysifier.go`, `mutation_scour.go` |
+| Social & economy | `companions.go`, `charminfo.go`, `shop.go`, `quests.go`, `alts.go` |
+| Justice | `arrest_policy.go` |
+
+## Gotcha: the position-migration table below is history, not API
+
+The `CombatPosition` mapping table further down lists `IsGrapplePosition()`,
+`IsGroundPosition()` and `GetPositionColor()` in its **left** column. Those are
+the retired API; they do not exist. The live predicates are in
+`position_predicates.go` — `IsGrappling()`, `IsStandingGrapple()`,
+`IsGroundGrapple()`, `IsOnFloor()`, `IsBackGround()`, and the rest. Likewise
+there is no `IsBlinded()`; use `HasAnyBlindSource()` (`sight.go`).
