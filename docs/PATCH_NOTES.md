@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-07-31 — The documentation folder is filed by subject (staff)
+
+Twenty loose files sat at the top of `docs/`. Four front-door documents stay
+there — this log, the world design document, the road to 1.0, and the folder
+index — and the rest are filed by subject: `guides/`, `audits/`,
+`worldbuilding/`, `balance/`, `architecture/`. Older records keep their original
+paths on purpose; they describe what was true when they were written. Nothing
+the server reads was touched.
+
 ## 2026-07-31 — Old friends talk like old friends again
 
 When two townspeople are written as friends, each of them records what kind of
