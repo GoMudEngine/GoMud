@@ -15,30 +15,32 @@ type recordingCtx struct {
 	textsSent []string
 }
 
-func (c *recordingCtx) GrantQuest(token string)             { c.granted = append(c.granted, token) }
-func (c *recordingCtx) GiveItem(itemId int)                 { c.gaveItem = append(c.gaveItem, itemId) }
-func (c *recordingCtx) GiveGold(amount int)                 { c.gaveGold = append(c.gaveGold, amount) }
-func (c *recordingCtx) SetQuestFlag(key, value string)      { c.flagsSet = append(c.flagsSet, key+"="+value) }
+func (c *recordingCtx) GrantQuest(token string) { c.granted = append(c.granted, token) }
+func (c *recordingCtx) GiveItem(itemId int)     { c.gaveItem = append(c.gaveItem, itemId) }
+func (c *recordingCtx) GiveGold(amount int)     { c.gaveGold = append(c.gaveGold, amount) }
+func (c *recordingCtx) SetQuestFlag(key, value string) {
+	c.flagsSet = append(c.flagsSet, key+"="+value)
+}
 func (c *recordingCtx) SendText(_ messaging.Category, t string) { c.textsSent = append(c.textsSent, t) }
 
-func (c *recordingCtx) ConsumeItem(int)                {}
-func (c *recordingCtx) ChargeGold(int)                 {}
-func (c *recordingCtx) RoomText(string)                {}
-func (c *recordingCtx) SpawnMob(SpawnDef)              {}
-func (c *recordingCtx) SpawnItem(SpawnDef)             {}
-func (c *recordingCtx) TeachSpell(string)              {}
-func (c *recordingCtx) TrainSkill(string, int)         {}
-func (c *recordingCtx) IncreaseStat(string, int)       {}
-func (c *recordingCtx) LearnRecipe(string)             {}
-func (c *recordingCtx) ApplyBuff(BuffDef)              {}
-func (c *recordingCtx) Teleport(int)                   {}
-func (c *recordingCtx) LockExits(ExitLock)             {}
-func (c *recordingCtx) UnlockExits(ExitLock)           {}
-func (c *recordingCtx) QueueNpcSay(NpcSayDef)          {}
-func (c *recordingCtx) QueueSequence(SequenceDef)      {}
-func (c *recordingCtx) GiveMutation()                  {}
-func (c *recordingCtx) BumpRep(string, int)            {}
-func (c *recordingCtx) GetUserId() int                 { return 1 }
+func (c *recordingCtx) ConsumeItem(int)           {}
+func (c *recordingCtx) ChargeGold(int)            {}
+func (c *recordingCtx) RoomText(string)           {}
+func (c *recordingCtx) SpawnMob(SpawnDef)         {}
+func (c *recordingCtx) SpawnItem(SpawnDef)        {}
+func (c *recordingCtx) TeachSpell(string)         {}
+func (c *recordingCtx) TrainSkill(string, int)    {}
+func (c *recordingCtx) IncreaseStat(string, int)  {}
+func (c *recordingCtx) LearnRecipe(string)        {}
+func (c *recordingCtx) ApplyBuff(BuffDef)         {}
+func (c *recordingCtx) Teleport(int)              {}
+func (c *recordingCtx) LockExits(ExitLock)        {}
+func (c *recordingCtx) UnlockExits(ExitLock)      {}
+func (c *recordingCtx) QueueNpcSay(NpcSayDef)     {}
+func (c *recordingCtx) QueueSequence(SequenceDef) {}
+func (c *recordingCtx) GiveMutation()             {}
+func (c *recordingCtx) BumpRep(string, int)       {}
+func (c *recordingCtx) GetUserId() int            { return 1 }
 
 // badBountyAction returns an action that ExecuteAction rejects: declare_bounty
 // with an unknown issuer type.
@@ -93,7 +95,7 @@ func TestExecuteActions_AbortsAfterPanic(t *testing.T) {
 	trig := &indexedTrigger{
 		def: &TriggerDef{
 			Actions: []ActionDef{
-				{GiveItem: 1},   // panics via panickingCtx
+				{GiveItem: 1}, // panics via panickingCtx
 				{Grant: "10-end"},
 			},
 		},
