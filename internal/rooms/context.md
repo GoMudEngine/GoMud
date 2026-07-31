@@ -166,6 +166,43 @@ When writing hidden noun descriptions:
 - **Memory cleanup**: Automatic removal of unused rooms and data
 - **Cache management**: File path caching and lookup optimization
 
+## Files
+
+| File | Purpose |
+|------|---------|
+| `rooms.go` | The `Room` type and its core behaviour |
+| `roommanager.go` | The room registry, load/unload, and lookup |
+| `save_and_load.go` | Room YAML + instance-save persistence, `restoreSkipTaggedFields` |
+| `roomdetails.go` | Assembled per-look detail payload |
+| `zoneconfig.go` | Per-zone `zone-config.yaml` (including `non_cartesian`) |
+| `zone_lifecycle.go` | Zone create/delete lifecycle |
+| `zone_rename.go` | Zone renaming and the reference rewrites it implies |
+| `zone_activity.go` | Per-zone activity/occupancy tracking |
+| `planes.go` / `instance_planes.go` | Plane coordinate handling |
+| `placement.go` | Coordinate placement helpers |
+| `adjacency.go` | Room adjacency queries |
+| `biomes.go` | Biome definitions and lookup |
+| `exit`-adjacent: `sign.go` | Room signs |
+| `container.go` | Room containers |
+| `corpse.go` / `corpse_roundrobin.go` | Corpses and fair-share corpse looting |
+| `spawninfo.go` / `spawninfo_validate.go` | Room spawn lists and their validation |
+| `instances.go` / `ephemeral.go` | Instanced and ephemeral rooms |
+| `cubegen.go` | Generated cube/maze room structures |
+| `memory.go` | Memory reporting for the admin report |
+| `test_helpers.go` | Test fixtures |
+
+### Instance saves vs. `instance:"skip"`
+
+Room instance data in `rooms.instances/` **overlays** the YAML template on
+load, so a stale instance save shadows template edits. The exception is fields
+tagged `instance:"skip"`: `SaveRoomInstance` does not write them, and
+`restoreSkipTaggedFields` (`save_and_load.go`) copies them back from the
+template after the overlay is applied.
+
+**`Room.SpawnInfo` is in that skip category** — a spawn-list edit takes effect
+on the next room load with no wipe needed. Check the struct tag before assuming
+a field is shadowed.
+
 ## Dependencies
 - `internal/characters`: Character and mob management
 - `internal/items`: Item system integration

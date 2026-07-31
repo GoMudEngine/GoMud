@@ -188,19 +188,22 @@ MutationProgress float64         `yaml:"mutationprogress,omitempty"` // combat p
 
 ---
 
-## All Mutations (37 total)
+## The mutation set
 
-### Passive Mutations (32)
-Fast Reflexes, Tough Skin, Dense Muscles, Clawed Hands, Keen Eyes,
-Iron Constitution, Hollow Bones, Adrenaline Surge, Magical Resistance,
-Pheromone Glands, Thick Hide, Heightened Senses, Rapid Metabolism,
-Cold-Blooded, Elongated Limbs, Psychic Resistance, Regenerative Tissue,
-Night Vision, Infrared Vision, Bioluminescence, Photosynthetic Skin,
-Sixth Sense, Tremorsense, Skilled, Talented, Hasted, Large, Small,
-Camo Skin, Pacifism Aura, Extra Arms, Extra Legs.
+**62 mutations ship** as of 2026-07-31. This document deliberately does **not**
+enumerate them — the list went stale twice (it claimed 37 long after the
+cluster expansion landed). The authoritative sources are:
 
-### Active Ability Mutations (5)
-Blinding Flash, Toxic Bite, Sonic Shout, Healing Gel, Blinding Spit.
+- `_datafiles/world/dogmud/mutations/*.yaml` — one file per mutation. The boot
+  log line `mutations.LoadMutationFiles() loadedCount=…` reports the live count.
+- `graph.go` — the cluster graph: nine identity clusters (Colossus, Ironhide,
+  Ravener, Stalker, Ethereal, Manifester, Zealot, Weaver, Trickster), each
+  crowned by a single apex transformation.
+- `opposition.go` — which mutations exclude which.
+
+Broad shape: most are passive stat/flag modifiers; a minority grant an active
+ability. Drift moves a character outward from generalist gifts toward the
+cluster their play pattern matches.
 
 ---
 
@@ -222,9 +225,22 @@ No Go code changes are required for existing effect types.
 
 | File | Purpose |
 |------|---------|
-| `mutations.go` | Structs, registry, loader, conflict/load system, all effect helpers |
-| `mutations_test.go` | Unit tests for helpers, weighted pool, acquisition |
-| `context.md` | This file — package overview for Claude Code |
+| `mutations.go` | Structs, registry, loader, conflict/load system, effect helpers |
+| `graph.go` | The cluster graph — clusters, keystones, apex nodes, drift edges |
+| `opposition.go` | Mutually exclusive mutations |
+| `affinity.go` | Play-pattern signals that steer drift toward a cluster |
+| `describe.go` | Player-facing description assembly |
+| `reveal.go` | The emergence/reveal moment and its splash |
+| `aura.go` | Aura-type effects |
+| `flight.go` | Flight movement effects |
+| `ironhide.go` | Ironhide cluster specifics |
+| `manifester.go` | Manifester cluster specifics |
+| `chrysifier.go` | Chrysifier crafting integration |
+| `test_helpers.go` | Seeding helpers for tests |
+
+**Do not evaluate drift or pacing on an admin character.** A `role:` of admin
+fires `SeedForCluster("admin")` during migration, which grants 11 keystones
+outright and freezes drift (`internal/migration/grant.go`).
 
 ---
 
