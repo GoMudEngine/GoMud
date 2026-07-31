@@ -91,6 +91,44 @@ behaviour is unchanged for it — only the default a new caller inherits.
 Now sorted by quest id. Callers print and diff these results; the order was
 shuffling between runs for no reason.
 
+### 🔴 `relationships` — the auto-mirror swallowed the other side's subtype
+
+Found by chasing three `relationships: duplicate edge skipped` warnings in a
+boot log, which looked like harmless content noise and were not.
+
+Every authored edge is auto-mirrored, and the mirror is deliberately written
+**without** a subtype (subtypes are per-side). But when both mobs author the
+relationship with their own subtype — which is how all three affected pairs are
+written — the mirror created by whichever loaded first made the second
+declaration look like a duplicate. It was skipped, and its subtype was lost, so
+the conversation layer fell back to generic exchanges in that direction instead
+of the subtype sub-pool.
+
+| Pair | Subtype both sides declared |
+|------|-----------------------------|
+| 9381 Gritta ↔ 9332 Orin | `lore_source` |
+| 9381 Gritta ↔ 9320 Coll | `lore_source` |
+| 9324 Garrick ↔ 9374 Doryn | `old_comrade` |
+
+`fillEdgeSubtype` now lets an explicit declaration supply a subtype the mirror
+left empty. It will not overwrite one already set, so a genuine duplicate (same
+side, same edge, twice) still warns and still lets the first win. Verified by
+boot log: the three warnings are gone.
+
+### 🟡 Test residue was tracked in git despite an explicit ignore rule
+
+Nine files under `internal/hooks/_datafiles/` and
+`internal/usercommands/_datafiles/` were committed before `.gitignore` rule 147
+(`internal/**/_datafiles/`) existed, so the rule was inert for them — ignore
+rules do not untrack.
+
+Confirmed residue rather than fixtures: the paths contain
+`world/default/world/dogmud` double-nesting and a `100-.yaml` with an empty
+name, both signatures of a test writing a relative path from the wrong CWD, and
+`helpfile_completeness_test.go` already validates for `world/dogmud`
+specifically "to avoid false positives" — i.e. it guards against exactly these.
+Untracked; both packages' tests still pass.
+
 ### 🟡 `hooks.calcSpellDamageForCharacter` — redundant nil check
 
 `caster != nil` re-tested inside a branch that already requires it. Removed.
@@ -168,6 +206,27 @@ A second `tautological condition` at `NewRound_DoCombat.go:309` (`mobRoom !=
 nil`) is genuine redundancy but sits in the combat hot path where the
 provably-non-nil claim depends on flow the analyzer can see and a reader
 cannot. Left alone.
+
+### 🟠 Windows Defender blocks freshly-built Go test binaries (environment)
+
+Adding the first test file to `internal/relationships` meant Go built a test
+binary for that package for the first time, and Defender quarantined it as a
+trojan. Every other package's test binary built fine in the same session.
+
+This is the well-known Go-toolchain heuristic false positive: test binaries are
+unsigned, statically linked, written into `%TEMP%\go-build*`, and executed
+immediately — the shape of a dropper. Redirecting `GOTMPDIR` did not help; the
+detection follows the binary.
+
+Not fixed here: excluding a directory from antivirus is a security setting and
+the user's call, not something to change on their behalf. If it is to be done,
+the narrow form is an exclusion for `go env GOCACHE` and `GOTMPDIR`, never a
+blanket disable. Check the detection name first — an `!ml` suffix confirms the
+ML/heuristic class.
+
+Consequence for this branch: `mirror_subtype_test.go` exists and is correct but
+has **never been executed**. The relationships fix was verified by boot log
+instead (three warnings → zero). Run that test once the environment allows.
 
 ### 🟡 Upstream `context.md` boilerplate
 
