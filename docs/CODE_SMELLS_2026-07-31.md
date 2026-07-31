@@ -109,6 +109,32 @@ to write by accident.
 Callers that print or diff results need determinism. Either sort inside
 `AllQuests` or document the requirement at every call site.
 
+### 🟠 `internal/hooks` is 116 files with one registration function
+
+`RegisterListeners()` in `hooks.go` wires every listener in a package of 116
+non-test files. It works, but it means the only way to discover what the engine
+reacts to is to read one long function, and any merge touching two hooks
+conflicts there. Grouping registration per subsystem (combat, quests, economy,
+NPC life) into a few `registerXxxListeners()` calls would cut conflicts and make
+the surface readable. No behaviour change.
+
+### 🟡 `util.Save` defaults to the unsafe path
+
+`Save(path, data, doSafe ...bool)` writes directly unless the caller opts in,
+while `SafeSave` does the temp-file-and-rename dance. The safe behaviour should
+arguably be the default, with an explicit opt-out for the few hot paths that
+need it — the current shape means a new caller gets the risky version by
+omission.
+
+### 🟡 Detector note: deprecation tables read as fabricated APIs
+
+The ghost-symbol scan used in this audit flags `internal/characters/context.md`
+for `IsGrapplePosition()` / `IsGroundPosition()` / `GetPositionColor()`. Those
+are **correct** — they appear in a migration table mapping the retired
+`CombatPosition` API to its replacements, and the file explicitly states that
+no `IsBlinded()` predicate ships. Any future automated check needs to skip
+old→new mapping tables, or it will "fix" accurate history.
+
 ### 🟡 Upstream `context.md` boilerplate is being deleted wholesale
 
 The upstream-generated docs pad every package with "Future Enhancements,"
