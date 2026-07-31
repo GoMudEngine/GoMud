@@ -22,7 +22,7 @@ You are planning a new quest for the DOGMud MUD. This is a design document — o
 ### Step 1 — Load context
 
 Read these files before generating anything:
-1. `world.md` — lore, zones, NPCs, tone
+1. `docs/world.md` — lore, zones, NPCs, tone
 2. `docs/schemas/dialogue.md` — dialogue field reference, quest gating fields
 
 Then read 2 existing quest YAMLs as structural examples. Glob:

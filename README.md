@@ -10,7 +10,7 @@ reshapes what you are. The survivors of an old catastrophe have forgotten
 where they came from — but under the oldest hills, something that fell from
 the sky a very long time ago is still waiting to be understood.
 
-![The DOGMud web client — antique map, stat sheet, comms, and trigger automation](Screenshot_frontend_play_example.png)
+![The DOGMud web client — antique map, stat sheet, comms, and trigger automation](docs/images/Screenshot_frontend_play_example.png)
 
 *The browser client in play: a hand-drawn zone map with quest markers, the
 descriptive stat sheet (no raw numbers — your character is "remarkable,"
@@ -110,10 +110,12 @@ anonymize → color → wrap → deliver). Autonomous LLM playtest agents
 ("bug-finder," "feel-tester") play the game to surface issues before
 players do.
 
-- [world.md](world.md) — the world-design document (lore, factions,
-  zones, species)
-- [PATCH_NOTES.md](PATCH_NOTES.md) — dated shipping log of everything
+- [docs/world.md](docs/world.md) — the world-design document (lore,
+  factions, zones, species)
+- [docs/PATCH_NOTES.md](docs/PATCH_NOTES.md) — dated shipping log of
+  everything
 - [docs/](docs/) — schemas, guides, and system specs
+- [novel/](novel/) — *What the Moons Keep*, a novel set on Gaius
 
 ### Running your own copy
 

@@ -9,7 +9,7 @@ You are generating a new room data file for the DOGMud MUD. Follow these steps e
 ### Step 1 — Load context
 
 Read these files before generating anything:
-1. `world.md` — lore, tone, world facts, geography (Gaius, Sanctum Basin layout, etc.)
+1. `docs/world.md` — lore, tone, world facts, geography (Gaius, Sanctum Basin layout, etc.)
 2. `docs/schemas/room.md` — complete field reference, filename formula, gotchas
 
 Then read 2 existing room files as few-shot examples:
