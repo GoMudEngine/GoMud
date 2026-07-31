@@ -75,3 +75,24 @@ This is the DOGMud-native copy of the weather module. Data loads at runtime from
 `os.DirFS` over the engine's datafiles path rather than an embedded FS.
 `sendLine` isolates the DOGMud-specific two-argument `SendText(category, text)`
 call (DOGMud's fork signature).
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `weather.go` | Module registration and wiring |
+| `weather_config.go` | Module config |
+| `weather_tick.go` | Per-round simulation step |
+| `weather_events.go` | Event listeners and emissions |
+| `weather_api.go` | The query surface other systems use |
+| `weather_commands.go` | Player and admin commands |
+| `weather_splash.go` | Weather splash presentation |
+
+Sub-packages: `sim` (the simulation core), `crawler` (its own zone graph),
+`engine` (room mutator application), `content` (authored weather data),
+`seasons` (calendar → climate).
+
+**Vendored from a standalone repository.** Architecture tests such as
+`TestCrawlerPackageStaysPure` forbid engine imports; the duplicate zone-adjacency
+crawl is deliberate, and the reasoning is in the header of
+`internal/mapper/mapper.crosszone.go`.

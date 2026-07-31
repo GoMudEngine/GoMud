@@ -1152,3 +1152,22 @@ Mobs with `patrol_id:` set follow waypoint patrols authored in
 - Spawn override: `applyScheduleSpawnOverride` falls back to
   the patrol's first waypoint when a patrol segment has no
   `target_room`.
+## Files
+
+| File | Purpose |
+|------|---------|
+| `mobs.go` | The `Mob` type, spawn, registry |
+| `save.go` / `instance_save.go` | Template and instance persistence |
+| `memory.go` | Memory reporting |
+| `mobs_path.go` | Pathing state (`pathto`) |
+| `schedule.go` / `schedule_loader.go` | Daily NPC schedules |
+| `patrol.go` / `patrol_loader.go` | Patrol routes |
+| `sleeper.go` | Sleep state for scheduled NPCs |
+| `packmates.go` / `pack_roaming.go` / `pack_scaling.go` | Pack behaviour |
+| `combat_memory.go` | What a mob remembers about a fight |
+| `attack_rejection.go` | Non-combatant and attack-refusal rules |
+| `crafter.go` | `TickMobCraft` and mob crafting |
+| `test_helpers.go` | Test fixtures |
+
+**Spawning shallow-copies the template** (`mob := *m`), so pointer, map and
+slice fields are shared with it. Deep-copy anything a mob instance must own.

@@ -932,3 +932,15 @@ If quest 14 needs to know which branch the player took in quest 11, it reads
 `"11-branch"` directly. There is no need to copy the flag into a new key.
 Document the dependency in both quest YAMLs with a comment so future
 maintainers know the quests are coupled.
+## Files
+
+| File | Purpose |
+|------|---------|
+| `quests.go` | Every quest definition type — the single owner of the quest file parse |
+| `triggers.go` | Trigger and action definition shapes |
+| `save.go` | Quest file persistence |
+| `validate_refs.go` | Cross-reference validation (flags, tokens, ids) |
+
+**This package owns the data; `internal/questengine` owns the evaluation.**
+Since the 5c-pre unification, `questengine` only aliases these types. Change a
+YAML field here; change what a trigger *does* there.

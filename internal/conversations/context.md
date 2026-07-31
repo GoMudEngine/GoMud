@@ -233,3 +233,18 @@ conditions (e.g., a thief overhears merchant complaints). Deferred.
 
 **Dynamic topics:** Conversations referencing world events or quest state.
 Deferred.
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `conversation.go` | Exchange selection, pacing, gating |
+| `loader.go` | The conversation script library |
+| `state.go` | In-flight exchange state and cooldowns |
+
+Scripts are **role-agnostic**: speaker "A" is the initiator role and "B" the
+partner, and the engine randomises which physical NPC plays A. Never bake a mob
+name into a pair override.
+
+This package must not import `internal/mobs` — it talks to the
+`MobConversant` interface, bridged by `internal/conversationadapter`.

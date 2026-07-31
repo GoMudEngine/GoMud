@@ -663,3 +663,23 @@ This comprehensive users system provides robust user account management
 with authentication, connection tracking, data persistence, messaging,
 and seamless integration with all game systems while maintaining high
 performance through efficient indexing and caching.
+## Files
+
+| File | Purpose |
+|------|---------|
+| `users.go` | Registry, connect/disconnect, lookup |
+| `userrecord.go` | The `UserRecord` type |
+| `userrecord.prompt.go` | Prompt rendering and tokens |
+| `storage.go` / `storage_migrate.go` | Save file read/write and layout migration |
+| `index.go` / `index_rebuild.go` / `character_index.go` | Name/character indexes |
+| `migration.go` | Per-user migrations |
+| `validate_actor_name.go` | Name validation |
+| `inbox.go` | Player mudmail |
+| `onlineinfo.go` | Who-list / online presence data |
+| `userlog.go` | Per-user log |
+| `copyover.go` | Copyover contributor |
+| `memory.go` | Memory reporting |
+
+Saves live at `_datafiles/world/dogmud/users/<id>.yaml`. That directory has its
+contents gitignored but ships a tracked `.gitkeep` — without it a fresh clone
+fails `ValidateWorldFiles` and the server dies before loading a room.

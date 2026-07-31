@@ -218,3 +218,16 @@ copyover.
   `Save`/`Restore` helpers in tests to verify your contributor round-trips
   correctly without spawning a subprocess. See `internal/copyover/copyover_test.go`
   for examples.
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `copyover.go` | `Contributor` interface, `Encoder`/`Decoder`, orchestration |
+| `tokens.go` | Handover tokens |
+| `sysproc_unix.go` / `sysproc_windows.go` | Platform exec/attribute handling |
+
+A package that needs state to survive a hot restart implements `Contributor`
+(`CopyoverName`, `CopyoverSave`, `CopyoverRestore`) and registers it —
+`internal/util` and `internal/gametime` do exactly this for the round counters,
+which is what stops every timer in the world jumping on restart.

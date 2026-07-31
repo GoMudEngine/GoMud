@@ -248,3 +248,16 @@ reason, `EquipBestFloorItem` lives in `internal/hooks/` rather
 than here — it needs `*rooms.Room` (which transitively imports
 `mobs`), and that would close the cycle. Callers pass
 `&mob.Character, mob.BehaviorArchetype`.
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `types.go` | Value/score shapes |
+| `score.go` | Scoring an item |
+| `delta.go` | Comparing two items |
+| `profiles.go` | Per-archetype weighting profiles |
+| `equip_eligibility.go` | Whether an actor can use an item at all |
+
+Used by mob AI to decide whether looted gear is an upgrade, and by the
+appraisal display.

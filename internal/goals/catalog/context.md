@@ -174,3 +174,15 @@ false`. The matching planner lives in `internal/planners/upgrade_gear.go`.
   to in-world events (ally death, theft witnessed, faction kill).
 - **Satisfaction sweep (4.6)**: periodic background pass that removes
   satisfied/expired goals from disk.
+
+## Files
+
+`catalog.go` is the registry and `helpers.go` the shared logic; every other
+file defines **one goal type**: `befriend.go`, `befriend_faction.go`,
+`craft_item.go`, `hunt_bounty_target.go`, `mastery_equip.go`,
+`mastery_skill.go`, `protection_mob.go`, `protection_faction.go`,
+`revenge_mob.go`, `revenge_faction.go`, `survival.go`, `upgrade_gear.go`,
+`visit_zone.go`, `wealth_gold.go`, `wealth_item.go`.
+
+The filenames deliberately mirror `internal/planners` one-for-one: catalog
+defines *what* a goal is, planners define *how* to pursue it.

@@ -274,3 +274,20 @@ command (mob-aliveness chunk 6.4). Two rows are reported: `cache`
   `GoalTypeMeta` and checked symmetrically by `isConflict`, but the
   4.3 spec (§7) defers the full design; no cross-type conflicts are
   declared in the shipped 4.3 catalog.
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `types.go` | Goal shapes |
+| `registry.go` | Goal type registration |
+| `lookup.go` | Lookup by type/owner |
+| `select.go` | Scoring and selection of the active goal |
+| `store.go` / `persistence.go` | Per-mob goal state and its runtime files |
+| `prune.go` | Dropping goals that no longer apply |
+| `validation.go` | Goal validation |
+| `memory.go` | Memory reporting |
+
+Goal state is runtime-generated under `_datafiles/**/goals/` — gitignored
+contents with a tracked `.gitkeep`, because `ValidateWorldFiles` hard-errors on
+a missing folder.

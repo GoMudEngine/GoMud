@@ -106,3 +106,20 @@ flags). Everything else — `rooms`, `users`, `mobs`, `combat`,
   sight gate reads (shipped dormant in chunk 6; this chunk is the
   consumer).
 - `_datafiles/world/dogmud/ansi-aliases.yaml` — color aliases.
+
+## Files
+
+The package is the pipeline, one stage per file:
+
+| File | Stage |
+|------|-------|
+| `messaging.go` | Entry points and the `Category` vocabulary |
+| `pipeline.go` | Stage ordering — compose → normalize → anonymize → color → wrap → deliver |
+| `normalize.go` | Grammar and article normalisation |
+| `anonymize.go` | Replacing names the observer should not see |
+| `wrap.go` | 80-column wrapping (uses visible width, not byte length) |
+| `predicates.go` | Who should receive a message |
+| `verbosity.go` | Per-player verbosity filtering |
+
+Adding a transformation means adding a stage here, not special-casing at a call
+site — that centralisation is the point of the package.
