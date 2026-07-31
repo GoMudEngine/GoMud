@@ -450,6 +450,48 @@ unfamiliar code, instruct it to prefer codegraph MCP tools over Read/Grep
 for symbol verification — saves their context window and reduces
 back-and-forth.
 
+## Package `context.md` Convention
+
+Every package under `internal/` and `modules/` carries a `context.md` — a
+developer/agent-facing description of what the package is and how to use it
+correctly. **Any work that creates a new package MUST ship one; any work that
+reshapes an existing package's API, data model, or file list MUST update it.**
+(This rule previously lived only in `docs/roadmaps/MOB_ALIVENESS_ROADMAP.md`,
+which is why coverage drifted — 37 packages had none and several documented
+functions that did not exist.)
+
+**Verify before you document.** Every symbol you name must exist. Check it with
+`codegraph_search` / `codegraph_node`, or extract the real surface with:
+
+```powershell
+Select-String -Path internal\<pkg>\*.go -Pattern '^(func|type|const|var)\s'
+```
+
+A `context.md` that describes an invented API is worse than no file at all — an
+agent will code against it and the mistake surfaces at compile time or, worse,
+at runtime.
+
+**Structure** (adapt, don't pad):
+
+- `## Purpose` — what it does and why it exists, 2–4 sentences. Say what it
+  deliberately does *not* do.
+- `## Files` — one line per file.
+- Core types with real field names, in a `go` block.
+- `## Public API` — verified signatures, grouped by job.
+- `## Gotchas` — the things that bite. Nil-return contracts, panics,
+  comparison hazards, ordering requirements, deliberate-looking-wrong code.
+- `## Dependencies` and `## Consumers`.
+
+**Do not write** "Future Enhancements," "Security Considerations,"
+"Performance Characteristics," "Administrative Features," or "Scalability"
+sections unless the package genuinely has something specific to say. The
+upstream-generated files are full of that filler and it is being removed, not
+copied.
+
+Good exemplars (verified 2026-07-31): `internal/term/context.md` (small,
+declarative), `internal/mutators/context.md` (medium, lifecycle-heavy),
+`internal/mapper/context.md` (large, multi-subsystem).
+
 ## Data File Naming Convention
 Before creating any new data file, verify the expected filename from the loader's `Filepath()` method:
 - **Zone folder names must use underscores, not hyphens.** The engine derives the expected path by calling `ConvertForFilename()` on the zone's display name (e.g., `"Sanctum Basin"` → folder `sanctum_basin/`). A mismatch causes a startup panic: `filesystem path "..." did not end in Filepath() "..."`. This applies to both `rooms/` and `mobs/` subdirectories.

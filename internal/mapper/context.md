@@ -1,309 +1,141 @@
 # Mapping System Context
 
-## Overview
+## Purpose
 
-The `internal/mapper` package provides a comprehensive mapping and pathfinding system for the GoMud game engine. It generates ASCII-based maps, calculates optimal paths between locations, handles different terrain types, and provides navigation assistance with support for secrets, locks, and dynamic room layouts.
+`internal/mapper` turns the room graph into geometry. It crawls exits outward
+from a root room, assigns each reachable room an (x, y, z) coordinate, and
+serves three consumers from that one structure: the ASCII `map` command,
+A\* pathfinding, and the web client's leather map snapshot.
 
-## Key Components
+One `mapper` exists per zone, cached and keyed by room id. Everything below —
+consistency checking, fog-of-war snapshots, cross-zone routing — is built on
+the same crawl.
 
-### Core Files
-- **mapper.go**: Main mapping functionality and map generation
-- **mapper.config.go**: Configuration structures and settings
-- **mapper.map.go**: Map data structures and management
-- **mapper.node.go**: Node structures for pathfinding algorithms
-- **mapper.path.go**: Pathfinding algorithms and route calculation
-- **mapper.path_test.go**: Unit tests for pathfinding functionality
-- **mapper_test.go**: Comprehensive mapping system tests
+## Files
 
-### Key Structures
+- **mapper.go** — direction/delta tables, the `mapper` type, the crawl, the
+  per-zone cache, and the render entry points.
+- **mapper.node.go** — `mapNode` and `nodeExit`, the crawl's internal graph.
+- **mapper.map.go** — `mapRender` and legend assembly.
+- **mapper.config.go** — `Config` (render options) and `SymbolOverride`.
+- **mapper.path.go** — A\* pathfinding, the path cache, and `GetPath`/`NextStep`.
+- **mapper.consistency.go** — the Cartesian consistency engine (see below).
+- **mapper.snapshot.go** — the fog-of-war snapshot for the web map.
+- **mapper.crosszone.go** — the coarse zone graph and cross-zone hop routing.
 
-#### MapConfig
+## Coordinates: authored first, crawl second
+
+`(*mapper).discover()` picks one of two placement strategies:
+
+- **`placeByAuthoredCoords()`** when `authoredLayoutClean()` passes — rooms
+  carry authored x/y/z/plane, and those are used directly.
+- **`startByCrawl()`** otherwise — coordinates are derived by walking exits and
+  accumulating deltas from the root room.
+
+This is why the world must stay Cartesian-consistent: under the crawl path, two
+rooms whose exit deltas lead to the same cell genuinely collide, and the map
+silently loses one of them.
+
+## Public API
+
+### Direction helpers
+
 ```go
-type MapConfig struct {
-    Width       int
-    Height      int
-    ShowSecrets bool
-    ShowLocked  bool
-    CenterRoom  int
-}
+func GetDelta(exitName string) (x, y, z int)
+func GetReciprocalExit(exitDirection string) string
+func IsValidExitDirection(exitName string) bool
+func IsCompassDirection(exitName string) bool
+func IsValidDirection(directionName string) bool
+func GetDirectionDeltaNames() []string
+func AdjustExitName(exitName string) (newExitName, newExitDirection string, err error)
 ```
-Configuration for map generation including dimensions, visibility options, and center point.
 
-#### MapNode
+### Mapper lifecycle
+
 ```go
-type MapNode struct {
-    RoomId    int
-    X, Y, Z   int
-    Symbol    rune
-    Exits     map[string]*MapNode
-    Visited   bool
-}
-```
-Represents a room node in the mapping system with position, visual representation, and connections.
+func NewMapper(rootRoomId int) *mapper
+func GetMapper(roomId int, forceRefresh ...bool) *mapper
+func GetMapperIfExists(roomId int) *mapper
+func AddMapper(m *mapper, lookupRoomId int)
+func PreCacheMaps()
+func ClearCache()
 
-#### PathResult
+func (r *mapper) Start()
+func (r *mapper) RootRoomId() int
+func (r *mapper) CrawledRoomIds() []int
+func (m *mapper) GetCopy() *mapper
+func (m *mapper) OverrideRoomIds(replacements map[int]int)
+```
+
+`PreCacheMaps` builds every zone's mapper at boot, then warms the cross-zone
+graph and runs `ValidateZoneConsistency`. `GetCopy`/`OverrideRoomIds` exist for
+ephemeral instance rooms, which reuse a template zone's geometry under
+different room ids.
+
+### Lookup
+
 ```go
-type PathResult struct {
-    Path      []int
-    Distance  int
-    Found     bool
-    Error     error
-}
+func (r *mapper) HasRoom(roomId int) bool
+func (r *mapper) GetRoomId(x, y, z int) (roomId int, err error)
+func (r *mapper) GetCoordinates(roomId int) (x, y, z int, err error)
+func (r *mapper) FindRoomsInDistance(centerRoomId int, xyRadius int, zRadiusOpt ...int) []int
+func (r *mapper) FindAdjacentRoom(centerRoomId int, direction string, limitDistance ...int) (roomId, distance int)
 ```
-Result structure for pathfinding operations containing route information and success status.
 
-### Constants
-- **defaultMapSymbol**: `'•'` - Default symbol for rooms
-- **SecretSymbol**: `'?'` - Symbol for secret or unknown areas
-- **LockedSymbol**: `'⚷'` - Symbol for locked rooms or passages
+### Rendering
 
-### Global State
-- **compassDirections**: Map of valid directional movement commands
-- **posDeltas**: Position delta calculations for different directions with connection symbols
+```go
+func (r *mapper) GetLimitedMap(centerRoomId int, c Config) mapRender
+func (r *mapper) GetFullMap(centerRoomId int, c Config) mapRender
+func (m *mapRender) GetLegend(overrides map[rune]string) map[rune]string
+func (c *Config) OverrideSymbol(roomId int, symbol rune, legend string)
+```
 
-## Core Functions
-
-### Map Generation
-- **GenerateMap(userId int, centerRoomId int, config MapConfig) ([]string, error)**: Creates ASCII map
-  - Generates visual representation of game world around specified center room
-  - Supports configurable map dimensions and visibility options
-  - Handles room symbols, connections, and terrain representation
-  - Integrates with user preferences for personalized mapping
+`GetLimitedMap` is the player-facing one — the visible radius scales with
+Perception. `GetFullMap` is unbounded and used by admin tooling.
 
 ### Pathfinding
-- **FindPath(startRoomId, endRoomId int, userId int) PathResult**: Calculates optimal route
-  - Uses advanced pathfinding algorithms (A*, Dijkstra's algorithm variants)
-  - Considers room accessibility, locks, and user permissions
-  - Handles multi-level navigation with up/down movement
-  - Returns complete path with distance calculations
 
-- **FindNearestRoom(startRoomId int, targetType string, userId int) PathResult**: Locates nearest room of specific type
-  - Searches for rooms matching specific criteria (shops, guilds, etc.)
-  - Uses breadth-first search for optimal distance calculation
-  - Considers user accessibility and room availability
-  - Returns path to closest matching room
+```go
+func GetPath(startRoomId int, endRoomId ...int) ([]pathStep, error)
+func NextStep(fromRoomId, toRoomId int) (nextRoomId int, exitName string, found bool)
 
-### Navigation Assistance
-- **GetDirections(path []int) []string**: Converts room path to movement commands
-  - Translates room ID sequence into directional commands
-  - Handles complex routing with multiple direction changes
-  - Provides step-by-step navigation instructions
-  - Optimizes route descriptions for clarity
+func (p pathStep) ExitName() string
+func (p pathStep) RoomId() int
+func (p pathStep) Waypoint() bool
+```
 
-### Map Analysis
-- **AnalyzeConnectivity(roomId int, maxDepth int) ConnectivityResult**: Analyzes room connections
-  - Examines reachability from specified starting point
-  - Identifies isolated areas and connection bottlenecks
-  - Provides statistics on world connectivity
-  - Supports depth-limited analysis for performance
+A\* over the crawled graph (`heuristic` + a `priorityQueue` of `nodeRecord`),
+with results memoised in a path cache keyed by start/end. `GetPath` is
+**per-zone by construction** — it resolves its mapper from the cache using the
+*start* room, so a target in another zone fails outright. `NextStep` is the
+wrapper that falls back to `crossZoneHop` in that case; see Cross-Zone Routing
+below.
 
-## Mapping Features
+## Gotchas
 
-### Visual Representation
-- **ASCII Art Maps**: Text-based visual maps using Unicode characters
-- **Room Symbols**: Customizable symbols for different room types
-- **Connection Lines**: Visual representation of exits and passages
-- **Multi-Level Support**: Handling of vertical movement (up/down)
-- **Terrain Indication**: Different symbols for various terrain types
-
-### Dynamic Elements
-- **Secret Areas**: Conditional display of secret rooms and passages
-- **Locked Content**: Visual indication of locked or inaccessible areas
-- **User Permissions**: Personalized maps based on user access levels
-- **Real-Time Updates**: Maps reflect current world state and accessibility
-
-### Pathfinding Algorithms
-- **Optimal Routing**: Shortest path calculation using advanced algorithms
-- **Cost Considerations**: Weighted pathfinding considering movement costs
-- **Accessibility**: Routing respects locks, permissions, and requirements
-- **Multi-Criteria**: Pathfinding with multiple optimization criteria
-
-### Navigation Tools
-- **Step-by-Step Directions**: Clear movement instructions for complex routes
-- **Landmark Recognition**: Integration with notable locations and landmarks
-- **Alternative Routes**: Multiple path options for flexibility
-- **Distance Estimation**: Accurate distance and travel time calculations
+- **Never compare `positionDelta` values with `==`.** Use `samePos`, which
+  compares only x/y/z — the struct also carries an `arrow` display field that
+  will produce false mismatches.
+- **`crawledRooms` is the authoritative node set, not `RoomGrid`.** `RoomGrid`
+  is a 3D slice, so when two rooms land on one cell only the last writer
+  survives; a collision is invisible there and visible in `crawledRooms`.
+- **`ClearCache` is a package-level name that also exists in several other
+  packages.** Confirm which one you are calling.
+- **A mapper is per-zone even though the crawl can cross zone boundaries.**
+  Findings and renders are filtered back to the owning zone afterwards
+  (`FilterFindingsToZone`); the crawl itself does not stop at the border.
 
 ## Dependencies
 
-### Internal Dependencies
-- `internal/mudlog`: For logging mapping operations and errors
-- `internal/rooms`: For accessing room data and world structure
-- `internal/users`: For user preferences and permission checking
+`rooms`, `exit`, `configs`, `mudlog`, `util`, `gametime` (for biome/light
+context during render), plus `container/heap` for the A\* queue.
 
-### External Dependencies
-- Standard library: `errors`, `fmt`, `math`, `strconv`, `strings`, `time`, `unicode`
+## Consumers
 
-## Usage Patterns
-
-### Basic Map Generation
-```go
-// Generate map centered on player's current room
-config := MapConfig{
-    Width:       21,
-    Height:      15,
-    ShowSecrets: false,
-    ShowLocked:  true,
-    CenterRoom:  playerRoomId,
-}
-
-mapLines, err := mapper.GenerateMap(userId, centerRoomId, config)
-if err != nil {
-    // Handle mapping error
-}
-
-// Display map to user
-for _, line := range mapLines {
-    sendToUser(line)
-}
-```
-
-### Pathfinding Usage
-```go
-// Find path to specific destination
-pathResult := mapper.FindPath(startRoom, destinationRoom, userId)
-if pathResult.Found {
-    directions := mapper.GetDirections(pathResult.Path)
-    for _, direction := range directions {
-        sendToUser(direction)
-    }
-} else {
-    sendToUser("No path found to destination")
-}
-```
-
-### Navigation Assistance
-```go
-// Find nearest shop
-shopResult := mapper.FindNearestRoom(playerRoom, "shop", userId)
-if shopResult.Found {
-    directions := mapper.GetDirections(shopResult.Path)
-    sendToUser(fmt.Sprintf("Nearest shop is %d rooms away:", shopResult.Distance))
-    for _, direction := range directions {
-        sendToUser(direction)
-    }
-}
-```
-
-## Integration Points
-
-### Room System
-- **World Data**: Direct integration with room data structures
-- **Exit Information**: Uses room exit data for pathfinding and mapping
-- **Room Properties**: Incorporates room types, terrain, and special properties
-- **Dynamic Updates**: Responds to changes in world structure
-
-### User System
-- **Permissions**: Respects user access levels and permissions
-- **Preferences**: Incorporates user mapping preferences and settings
-- **Exploration**: Tracks user exploration and visited areas
-- **Accessibility**: Considers user-specific accessibility requirements
-
-### Command System
-- **Map Commands**: Integration with user commands for map display
-- **Navigation Commands**: Pathfinding integration with movement commands
-- **Administrative Tools**: Mapping tools for world builders and administrators
-- **Help Integration**: Context-sensitive mapping assistance
-
-### Game Mechanics
-- **Movement**: Integration with character movement and travel systems
-- **Exploration**: Support for exploration mechanics and discovery
-- **Quests**: Pathfinding assistance for quest objectives
-- **Transportation**: Integration with teleportation and fast travel systems
-
-## Performance Considerations
-
-### Algorithm Optimization
-- **Efficient Pathfinding**: Optimized algorithms for large world maps
-- **Caching**: Intelligent caching of pathfinding results
-- **Pruning**: Search space pruning for improved performance
-- **Heuristics**: Advanced heuristics for faster path calculation
-
-### Memory Management
-- **Node Pooling**: Efficient memory management for pathfinding nodes
-- **Map Caching**: Cached map generation for frequently accessed areas
-- **Garbage Collection**: Minimal allocation during pathfinding operations
-- **Resource Limits**: Configurable limits to prevent resource exhaustion
-
-### Scalability
-- **Large Worlds**: Efficient handling of massive game worlds
-- **Concurrent Access**: Thread-safe operations for multiple simultaneous users
-- **Distributed Processing**: Support for distributed pathfinding calculations
-- **Load Balancing**: Balanced processing of mapping requests
-
-## Advanced Features
-
-### Multi-Level Mapping
-- **3D Navigation**: Full three-dimensional pathfinding and mapping
-- **Level Transitions**: Handling of stairs, elevators, and teleporters
-- **Cross-Level Routing**: Pathfinding across multiple world levels
-- **Vertical Visualization**: Visual representation of multi-level structures
-
-### Dynamic World Support
-- **Changing Topology**: Adaptation to dynamic world changes
-- **Temporary Obstacles**: Handling of temporary barriers and blockages
-- **Conditional Passages**: Support for time-based or condition-based access
-- **Real-Time Updates**: Live updates as world structure changes
-
-### Specialized Pathfinding
-- **Weighted Routing**: Pathfinding with movement cost considerations
-- **Constraint-Based**: Routing with specific constraints and requirements
-- **Multi-Objective**: Optimization for multiple criteria simultaneously
-- **Probabilistic**: Pathfinding with uncertainty and probability factors
-
-## Future Enhancements
-
-### Enhanced Visualization
-- **Graphical Maps**: Support for graphical map generation
-- **Interactive Maps**: Web-based interactive mapping interfaces
-- **3D Visualization**: Three-dimensional world visualization
-- **Augmented Reality**: AR integration for immersive navigation
-
-### Advanced Navigation
-- **AI-Assisted Routing**: Machine learning for optimal path selection
-- **Predictive Navigation**: Anticipatory pathfinding based on user patterns
-- **Social Navigation**: Pathfinding considering other player locations
-- **Dynamic Optimization**: Real-time route optimization during travel
-
-### World Analysis Tools
-- **Connectivity Analysis**: Advanced world connectivity and flow analysis
-- **Bottleneck Detection**: Identification of world design bottlenecks
-- **Balance Assessment**: Analysis of world balance and accessibility
-- **Usage Analytics**: Player movement pattern analysis and optimization
-
-### Integration Enhancements
-- **External Maps**: Integration with external mapping services
-- **Mobile Apps**: Mobile application integration for offline maps
-- **Voice Navigation**: Voice-guided navigation assistance
-- **Accessibility Tools**: Enhanced accessibility for users with disabilities
-
-## Security and Validation
-
-### Access Control
-- **Permission Validation**: Strict validation of user access permissions
-- **Information Security**: Protection of sensitive world information
-- **Exploration Limits**: Enforcement of exploration boundaries and limits
-- **Anti-Cheating**: Prevention of mapping-based cheating and exploitation
-
-### Data Integrity
-- **World Validation**: Validation of world data consistency and integrity
-- **Path Verification**: Verification of calculated paths and routes
-- **Error Detection**: Detection and handling of world data errors
-- **Recovery Mechanisms**: Automatic recovery from mapping errors
-
-## Administrative Tools
-
-### World Building Support
-- **Design Validation**: Tools for validating world design and connectivity
-- **Balance Analysis**: Analysis tools for world balance and flow
-- **Visualization Tools**: Advanced visualization for world designers
-- **Import/Export**: Tools for importing and exporting world map data
-
-### Monitoring and Analytics
-- **Usage Tracking**: Monitoring of mapping system usage and performance
-- **Performance Metrics**: Analysis of pathfinding performance and efficiency
-- **Error Reporting**: Comprehensive error reporting and analysis
-- **Optimization Recommendations**: Automated suggestions for world optimization
+`internal/usercommands` (`map`, `pathto`, `cartcheck`), `internal/mobs`
+(schedule and patrol movement), `internal/questengine` (map markers),
+`internal/rooms`, and `modules/gmcp` (the `Zone.Map` payload).
 
 ## Cartesian Consistency Engine
 
