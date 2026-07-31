@@ -267,35 +267,6 @@ if question.Response == `quit` || question.Response == `` {
 }
 ```
 
-## Advanced Features
-
-### Template Integration
-The login prompt handler supports template-based prompts with dynamic content:
-
-```go
-// Dynamic prompt generation
-promptData := map[string]interface{}{
-    "username": user.Username,
-    "options":  availableOptions,
-}
-promptText := templates.Process("prompts/character-select", promptData)
-```
-
-### State Persistence
-```go
-// Store data across prompt steps
-cmdPrompt.Remember(`mob-name`, mobName)
-cmdPrompt.Remember(`mob-level`, strconv.Itoa(level))
-
-// Retrieve stored data
-if savedName, ok := cmdPrompt.Recall(`mob-name`); ok {
-    // Use previously entered name
-}
-```
-
-### Complex Workflows
-The system supports sophisticated multi-branch workflows like character creation, item editing, and administrative tasks that may require dozens of steps with conditional logic.
-
 ## Testing and Examples
 
 The prompt system includes comprehensive test coverage in `prompt_test.go` demonstrating:
