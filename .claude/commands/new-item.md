@@ -9,7 +9,7 @@ You are generating a new item data file for the DOGMud MUD. Follow these steps e
 ### Step 1 — Load context
 
 Read these files before generating anything:
-1. `world.md` — lore, tone, world aesthetics (no anachronistic materials or references)
+1. `docs/world.md` — lore, tone, world aesthetics (no anachronistic materials or references)
 2. `docs/schemas/item.md` — complete field reference, ID ranges, folder layout, filename formula
 
 Then glob 2–3 existing items as examples:

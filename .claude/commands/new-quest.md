@@ -34,7 +34,7 @@ Read the plan markdown file. Extract:
 ### Step 3 — Load context
 
 Read:
-1. `world.md` — lore, tone, world context
+1. `docs/world.md` — lore, tone, world context
 2. `docs/schemas/dialogue.md` — dialogue field reference
 3. All existing files that will be modified (read each one before editing)
 4. Relevant schema docs for any items/mobs being created:

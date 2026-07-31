@@ -40,7 +40,7 @@ its budget on thinking, not file-spelunking. When in doubt for a non-trivial
 task, default up (sonnet), not down.
 
 ## Git Workflow
-Follow the branch strategy in `github_guide.md`:
+Follow the branch strategy in `docs/github_guide.md`:
 - `master` is the main integration branch + production. `origin` = pruuk/DOGMud
 - NEVER push to upstream (GoMudEngine/GoMud); cherry-pick from upstream only
 - `development` is legacy from when the project still pulled from upstream — no longer used as the integration branch
@@ -50,7 +50,7 @@ Follow the branch strategy in `github_guide.md`:
 
 ## Pre-Push SOP
 Before pushing to prod (origin/master):
-1. Update `PATCH_NOTES.md` with dated entries describing the work.
+1. Update `docs/PATCH_NOTES.md` with dated entries describing the work.
 2. Set `Logging.LogToFile: false` in `_datafiles/config.yaml` (prod
    droplet has limited disk space).
 3. **Boot the server locally and confirm it starts cleanly past
@@ -255,8 +255,8 @@ party markers are web-only — the ASCII `map` command is unaffected.
 
 ## Project Context
 - DOGMud (Delusions of Grandeur) is a MUD built on the GoMud engine
-- World design document: `world.md`
-- Development roadmap: `DEVELOPMENT_PLAN.md`
+- World design document: `docs/world.md`
+- Development roadmap: `docs/roadmaps/DEVELOPMENT_PLAN.md`
 - Remote origin: https://github.com/pruuk/DOGMud
 - Remote upstream: https://github.com/GoMudEngine/GoMud
 
@@ -654,7 +654,7 @@ shield = full, heal = ÷2, DoT = ÷3.
   Searches both backpack and equipped items. Shows numbered list when ambiguous.
 
 ## Content Generation Commands
-Use slash commands to generate new data files. Claude automatically loads world.md,
+Use slash commands to generate new data files. Claude automatically loads docs/world.md,
 the relevant schema, and existing examples before generating.
 
 - `/new-mob "description"` — generate a mob YAML (+ optional JS stub)

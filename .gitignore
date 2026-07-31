@@ -124,8 +124,19 @@ tools/mud_bridge_log.txt
 _archive/prod-users/
 _archive/prod-users.tgz
 
-# Stray screenshots dropped in the repo root (see memory)
+# Stray screenshots / scratch logs dropped in the repo root. No image or .txt
+# file is tracked at the top level any more (they live under docs/images/,
+# docs/upstream/ or _archive/), so ignoring the whole root pattern is safe and
+# keeps `git status` clean when a screenshot or a redirected boot log lands here.
 Screenshot *.png
+/*.png
+/*.jpg
+/*.jpeg
+/*.txt
+
+# Compiled binaries + coverage output. `make cover` and the release workflow
+# both create bin/ from scratch; nothing in it belongs in the repo.
+/bin/
 
 # Moderation living state (petition queue + ban lists) — persist on prod, never commit
 _datafiles/world/dogmud/moderation/

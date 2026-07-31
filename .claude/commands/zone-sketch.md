@@ -15,7 +15,7 @@ You are planning a new zone for the DOGMud MUD. This is a design document — ou
 ### Step 1 — Load context
 
 Read these files before generating anything:
-1. `world.md` — lore, geography, tone, existing zones and their relationships
+1. `docs/world.md` — lore, geography, tone, existing zones and their relationships
 2. `docs/schemas/room.md` — room field reference (biome, exits, etc.)
 3. List archetypes available: glob `_datafiles/world/dogmud/behaviors/archetypes/*.yaml`. Note the 13 archetype filenames — these are the values you'll suggest for `behavior_archetype` on each mob in Step 4 below.
 
@@ -140,7 +140,7 @@ afterward.
 
 **TONE NOTES**
 
-2–3 sentences on the zone's emotional register, what players should feel while traveling through it, and how it fits into the world of Gaius. Ground this in world.md lore.
+2–3 sentences on the zone's emotional register, what players should feel while traveling through it, and how it fits into the world of Gaius. Ground this in docs/world.md lore.
 
 ---
 

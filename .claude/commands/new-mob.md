@@ -9,7 +9,7 @@ You are generating a new mob data file for the DOGMud MUD. Follow these steps ex
 ### Step 1 — Load context
 
 Read these files before generating anything:
-1. `world.md` — lore, tone, world facts (Gaius, Chrysalis, the three moons, etc.)
+1. `docs/world.md` — lore, tone, world facts (Gaius, Chrysalis, the three moons, etc.)
 2. `docs/schemas/mob.md` — complete field reference, filename formula, gotchas
 3. List archetypes: glob `_datafiles/world/dogmud/behaviors/archetypes/*.yaml`. The 13 filenames here are the valid values for `behavior_archetype` in Step 4 below.
 
