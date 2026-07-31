@@ -45,7 +45,8 @@ func calcSpellDamageForCharacter(spellData *spells.SpellData, caster *characters
 		}
 
 		// #22 crash-site: inside the buried hull, belief-driven power is suppressed.
-		if caster != nil && caster.HasBuffFlag(buffs.Dampened) {
+		// (caster is already non-nil — the enclosing branch requires it.)
+		if caster.HasBuffFlag(buffs.Dampened) {
 			factor := float64(configs.GetBalanceConfig().CrashSiteSuppressionFactor)
 			rawDmg *= factor
 			if rawDmg < 1 {

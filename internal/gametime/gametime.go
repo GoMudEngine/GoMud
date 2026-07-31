@@ -11,6 +11,15 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
+// secondsPerRealDay is the length of a real-world day, used when a period
+// string asks for real time ("2 irl days") rather than game time.
+//
+// This was hard-coded as 84600 from the upstream import until 2026-07-31 — a
+// digit transposition of 86400 that made every `irl` period run 0.9% short
+// (about 13 minutes per day). Correcting it shifts the expiry of any in-flight
+// real-time period slightly later; nothing else depends on the old value.
+const secondsPerRealDay = 86400
+
 var (
 	dayResetOffset int = 0
 
@@ -314,7 +323,7 @@ func (g GameDate) AddPeriod(periodStr string) uint64 {
 
 		if parts[1] == `real` || parts[1] == `irl` { // e.g. - 2 irl days
 			realTime = true
-			roundsPerRealDay = 84600 / int(c.RoundSeconds)
+			roundsPerRealDay = secondsPerRealDay / int(c.RoundSeconds)
 			roundsPerRealHour = 3600 / int(c.RoundSeconds)
 			roundsPerRealMinute = 60 / int(c.RoundSeconds)
 
@@ -323,7 +332,7 @@ func (g GameDate) AddPeriod(periodStr string) uint64 {
 			timeStr = parts[2]
 		} else if parts[2] == `real` || parts[2] == `irl` { // e.g. - 2 days irl
 			realTime = true
-			roundsPerRealDay = 84600 / int(c.RoundSeconds)
+			roundsPerRealDay = secondsPerRealDay / int(c.RoundSeconds)
 			roundsPerRealHour = 3600 / int(c.RoundSeconds)
 			roundsPerRealMinute = 60 / int(c.RoundSeconds)
 
@@ -465,6 +474,33 @@ func (g GameDate) AddPeriod(periodStr string) uint64 {
 
 	//}
 
+}
+
+// PeriodLength returns how many rounds a period string spans, as a duration
+// rather than an absolute round.
+//
+// AddPeriod answers "which round does this period end on, counting from this
+// date", which is the right shape for scheduling but awkward when all you want
+// is a length. Callers used to fake it by picking an arbitrary origin round,
+// calling AddPeriod, and subtracting the origin back out. This does that once,
+// correctly, instead of at each call site.
+//
+// An empty or unparseable period is zero rounds.
+//
+// Note that game-time periods are not constant-length — months and years vary
+// with the calendar config — so the result is measured from the CURRENT date.
+// For a length anchored elsewhere, use AddPeriod on that date directly.
+func PeriodLength(periodStr string) uint64 {
+	if periodStr == `` {
+		return 0
+	}
+
+	now := GetDate()
+	end := now.AddPeriod(periodStr)
+	if end <= now.RoundNumber {
+		return 0
+	}
+	return end - now.RoundNumber
 }
 
 func GetLastPeriod(periodName string, roundNumber uint64) uint64 {

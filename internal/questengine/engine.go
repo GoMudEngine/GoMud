@@ -2,6 +2,7 @@ package questengine
 
 import (
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
@@ -49,13 +50,18 @@ func (e *Engine) GetQuest(questId int) *QuestDef {
 	return e.quests[questId]
 }
 
-// AllQuests returns every registered quest (unordered). For audits and gates
-// that need to walk the whole quest set, e.g. the marker-decision smoke gate.
+// AllQuests returns every registered quest, ordered by quest id. For audits and
+// gates that need to walk the whole quest set, e.g. the marker-decision smoke
+// gate.
+//
+// The order is guaranteed because callers print and diff these results; map
+// iteration order made audit output shuffle between runs for no reason.
 func (e *Engine) AllQuests() []*QuestDef {
 	out := make([]*QuestDef, 0, len(e.quests))
 	for _, q := range e.quests {
 		out = append(out, q)
 	}
+	sort.Slice(out, func(i, j int) bool { return out[i].QuestId < out[j].QuestId })
 	return out
 }
 
@@ -179,37 +185,55 @@ func matchTriggerFields(t *TriggerDef, d EventDetails) bool {
 	return true
 }
 
-// executeActions runs all actions for a trigger with panic recovery per action.
-// It tracks granted tokens via the guard and returns the list of tokens granted.
+// executeActions runs a trigger's actions in order, with panic recovery per
+// action, and returns the tokens granted.
+//
+// A trigger's actions are applied as a unit: if one fails or panics, the
+// remaining actions are ABANDONED. Previously each action was isolated and the
+// loop carried on, which let a quest step give the player the item but never
+// set the flag — a state no content author designed and one that is invisible
+// apart from a log line. There is still no rollback of what already ran, so a
+// failure leaves a partial effect; aborting simply stops it compounding.
+//
+// A duplicate grant is not a failure. It is skipped and the loop continues.
 func (e *Engine) executeActions(t *indexedTrigger, ctx ActionContext, guard *EvalGuard, userId int) []string {
 	var granted []string
 
 	for i, a := range t.def.Actions {
-		func() {
+		// ok reports whether the loop may proceed to the next action.
+		ok := func() (ok bool) {
 			defer func() {
 				if r := recover(); r != nil {
-					LogError("panic in action %d of trigger %s: %v", i, t.trigId, r)
+					LogError("panic in action %d of trigger %s: %v (abandoning %d remaining action(s))",
+						i, t.trigId, r, len(t.def.Actions)-i-1)
+					ok = false
 				}
 			}()
 
-			// For grant actions, check the guard first
+			// For grant actions, check the guard first. A duplicate grant is a
+			// no-op, not an error — keep going.
 			if a.Grant != "" {
 				if !guard.MarkGranted(a.Grant) {
 					LogVerboseF(userId, "skipping duplicate grant %s", a.Grant)
-					return
+					return true
 				}
 			}
 
-			err := ExecuteAction(a, ctx)
-			if err != nil {
-				LogError("action %d of trigger %s failed: %v", i, t.trigId, err)
-				return
+			if err := ExecuteAction(a, ctx); err != nil {
+				LogError("action %d of trigger %s failed: %v (abandoning %d remaining action(s))",
+					i, t.trigId, err, len(t.def.Actions)-i-1)
+				return false
 			}
 
 			if a.Grant != "" {
 				granted = append(granted, a.Grant)
 			}
+			return true
 		}()
+
+		if !ok {
+			break
+		}
 	}
 
 	return granted

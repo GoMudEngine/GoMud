@@ -121,13 +121,17 @@ Paths use forward slashes unconditionally; `embed.FS` does, even on Windows.
 - **Names are sanitised, not rejected.** `New` and `Requires` regex-replace
   anything outside `[a-zA-Z0-9_]` with `_`, so `my-plugin` and `my_plugin`
   collapse to the same name. Watch for accidental collisions.
-- **`GetExportedFunction` searches every plugin and returns the first match.**
-  Exported ids are a flat global namespace across all modules; there is no
-  per-plugin qualification.
-- **`Requires` records a dependency but this package does not enforce it.**
-  Recording is not checking — do not assume load ordering from it.
-- **Plugin writes default to `os.TempDir()`** until `Load(dataFilesPath)` sets
-  the write folder. Anything persisted before `Load` lands in temp.
+- **Exported ids are a flat global namespace.** `GetExportedFunction` searches
+  every plugin and returns the first match, so `ExportFunction` **panics on a
+  duplicate id**, naming both plugins. Qualify your ids
+  (`"weather.GetFront"`, not `"GetFront"`).
+- **`Requires` IS enforced, at `Load`.** Every recorded dependency is checked
+  against the registry; an unmet one logs a `mudlog.Error` and the plugin is
+  dropped from the registry. Note the match is exact-string on **both** name and
+  version, so requiring `"1.0"` fails against a plugin declaring `"1.0.0"` —
+  the source carries a `// Later improve version matching.` TODO.
+- **Plugin writes before `Load(dataFilesPath)` land in `os.TempDir()`** and
+  will never be read back. `WriteBytes` warns loudly when this happens.
 
 ## Dependencies
 

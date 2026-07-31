@@ -682,20 +682,28 @@ func SafeSave(path string, data []byte) error {
 	return nil
 }
 
-// Basic save wrapper
+// Save writes data to path.
+//
+// It is SAFE BY DEFAULT: with no third argument it routes through SafeSave,
+// which writes a temp file and renames it, so an interrupted write cannot
+// truncate the existing file. Pass false to opt out and write directly, which
+// is faster but can leave a half-written file behind if the process dies
+// mid-write.
+//
+// The default was the other way round until 2026-07-31 — a new caller got the
+// risky path by omission, which is the wrong way for a default to fail.
 func Save(path string, data []byte, doSafe ...bool) error {
 
 	path = filepath.FromSlash(path)
 
-	if len(doSafe) > 0 && doSafe[0] {
-		return SafeSave(path, data)
+	if len(doSafe) > 0 && !doSafe[0] {
+		if err := os.WriteFile(path, data, 0777); err != nil {
+			return err
+		}
+		return nil
 	}
 
-	if err := os.WriteFile(path, data, 0777); err != nil {
-		return err
-	}
-
-	return nil
+	return SafeSave(path, data)
 }
 
 func FilePath(pathParts ...string) string {

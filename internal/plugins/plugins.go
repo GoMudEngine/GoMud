@@ -31,7 +31,17 @@ var (
 	registrationOpen = true
 	registry         = pluginRegistry{}
 	txtCleanRegex    = regexp.MustCompile(`[^a-zA-Z0-9\._]+`)
+
+	// writeFolderPath is repointed at the real plugin-data directory by Load().
+	// Until then it is the OS temp dir, so anything a plugin persists before
+	// Load runs is written somewhere it will never be read back from —
+	// writeFolderReady exists so that mistake is logged rather than silent.
 	writeFolderPath  = os.TempDir()
+	writeFolderReady = false
+
+	// exportedFunctionOwners maps an exported function id to the plugin that
+	// claimed it, so a collision is caught at registration. Ids are global.
+	exportedFunctionOwners = map[string]string{}
 )
 
 const (
@@ -226,11 +236,27 @@ func (p *Plugin) Requires(modname string, modversion string) {
 	p.dependencies = append(p.dependencies, dependency{modname, modversion})
 }
 
+// ExportFunction publishes f under stringId so other modules can reach it via
+// GetExportedFunction.
+//
+// Exported ids are a FLAT GLOBAL NAMESPACE across every plugin —
+// GetExportedFunction walks the whole registry and returns the first match — so
+// two modules exporting the same id would silently resolve to whichever
+// registered first. That is a mis-wire that produces no error and no log, and
+// changes behaviour with registration order, so it is rejected at registration
+// instead. Qualify your ids (e.g. "weather.GetFront", not "GetFront").
 func (p *Plugin) ExportFunction(stringId string, f any) {
 
 	if reflect.TypeOf(f).Kind() != reflect.Func {
 		panic("Non function passed to ExportFunction")
 	}
+
+	if owner, taken := exportedFunctionOwners[stringId]; taken {
+		panic(fmt.Sprintf(
+			"plugin %q exports function id %q, which plugin %q already exports; ids are global, so qualify them",
+			p.name, stringId, owner))
+	}
+	exportedFunctionOwners[stringId] = p.name
 
 	if p.exportedFunctions == nil {
 		p.exportedFunctions = map[string]any{}
@@ -314,6 +340,11 @@ func (p *Plugin) AttachFileSystem(f embed.FS) error {
 
 func (p *Plugin) WriteBytes(identifier string, bytes []byte) error {
 
+	if !writeFolderReady {
+		mudlog.Warn(`plugin.WriteBytes`, `name`, p.name, `identifier`, identifier,
+			`error`, `write before plugins.Load(); persisting to the OS temp dir, where it will not be read back`)
+	}
+
 	// Fix up identifier
 	fileName := strings.ToLower(txtCleanRegex.ReplaceAllString(identifier, "-")) + `.plugin.dat`
 
@@ -387,6 +418,7 @@ func (p *Plugin) ReadIntoStruct(identifier string, out any) error {
 func Load(dataFilesPath string) {
 
 	writeFolderPath = util.FilePath(dataFilesPath, `/`, `plugin-data`)
+	writeFolderReady = true
 
 	registrationOpen = false
 

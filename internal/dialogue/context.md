@@ -111,11 +111,29 @@ Keyed by `mobInstanceId<<32 | uint32(userId)` in a package-level map. **This is
 in-process only** — never written to disk, so every restart resets who has been
 greeted and which nodes are unlocked.
 
+The map is swept so it cannot grow for the life of the process:
+
+```go
+func SweepMemories() int              // drops entries idle > memorySweepIdleRounds
+func ForgetMobInstance(mobId int) int // drops every player's memory of one instance
+```
+
+`hooks.SweepDialogueMemory` runs the sweep every 500 turns. Call
+`ForgetMobInstance` when a mob despawns — instance ids are reused, and a new
+mob must not inherit a stranger's conversation history.
+
 ## Gotchas
 
-- **A `nil` `*PlayerState` silently disables all gating.** It is accepted for
-  backward compatibility, and every quest requirement, exclusion, flag check
-  and masterwork gate is skipped. Never pass nil from production paths.
+- **A `nil` `*PlayerState` disables all gating.** Accepted for backward
+  compatibility with mob-to-mob and other non-user contexts; every requirement,
+  exclusion, flag check and masterwork gate is skipped. Never pass nil from a
+  production path — `buildPlayerState` always returns a populated one.
+- **Every callback field is optional and individually nil-checked.** A missing
+  *interrogative* callback fails the gate **closed** (no `HasQuest` means a
+  `questRequired` node is hidden, because absent information is not proof the
+  player qualifies). `questExcluded` is the deliberate exception: without
+  `HasQuest` we cannot confirm the excluding token, so the node stays visible
+  rather than silently vanishing.
 - **`TreeAdvance` substring-matches triggers in file order.** Put quest **grant
   nodes first** under `tree.nodes`, or an earlier generic node will swallow the
   trigger word.

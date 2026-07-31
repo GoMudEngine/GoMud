@@ -62,6 +62,12 @@ Accepted forms:
 `GetLastPeriod(periodName string, roundNumber uint64) uint64` is the inverse:
 the most recent round at which the named period boundary occurred.
 
+`PeriodLength(periodStr string) uint64` returns a period as a **duration** in
+rounds rather than an absolute round. Use it when you want a length — it exists
+so callers stop faking one by calling `AddPeriod` from an arbitrary origin and
+subtracting the origin back out. Game-time months and years vary with the
+calendar, so the result is measured from the current date.
+
 Anything with an authored duration in YAML — mutator decay and respawn, shop
 restock, schedule segments — routes through these two functions, which is why
 they accept sloppy input rather than erroring. A malformed quantity silently
@@ -129,9 +135,9 @@ helper embedded in other packages' YAML.
   as a crash — check config before hunting a phase bug.
 - **`AddPeriod` returns an absolute round, not a duration.** Compare it against
   `util.GetRoundCount()`, never against a length.
-- **Real-world conversion uses `84600` seconds per day**, not 86400 — an
-  upstream typo now baked into every persisted `irl` period. Changing it would
-  shift existing timers.
+- **Real-world conversion used `84600` seconds per day until 2026-07-31** — an
+  upstream digit transposition that made every `irl` period run 0.9% short. It
+  is now the named constant `secondsPerRealDay = 86400`.
 - **Nothing here is cached.** `GetDate()` recomputes from scratch on every call.
   Cheap individually; still worth hoisting out of a per-actor loop.
 - **There is no `GetTimeConfig`** — timing lives in

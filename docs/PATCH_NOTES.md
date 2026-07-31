@@ -1,5 +1,27 @@
 # DOGMud Patch Notes
 
+## 2026-07-31 — Quest steps finish what they start
+
+A quest step is a short list of instructions — take the token, hand over the
+coin, remember the choice. If one of those instructions went wrong the rest were
+carried out anyway, so a player could be given the reward while the choice that
+earned it was never written down, and nothing said so out loud. The instructions
+in a step are now treated as one piece of work: if part of it fails the rest is
+abandoned and the failure is recorded plainly.
+
+## 2026-07-31 — Timers counted in real days were running short (staff)
+
+Anything measured in real-world days rather than game days was using a day that
+was fourteen minutes short, so those waits ended a little early — by about
+thirteen minutes for every day of waiting. A day is now a day.
+
+## 2026-07-31 — Townsfolk stop remembering people who are gone (staff)
+
+Every conversation a person had with a townsperson was kept in memory for as
+long as the server stayed up, including conversations with townsfolk who had
+long since gone. Old, untouched conversations are now cleared out periodically.
+Nothing a player would notice; the server simply stops carrying it.
+
 ## 2026-07-31 — The project's front page is tidy (staff)
 
 Anyone opening the repository met a wall of loose files: three long roadmaps, a

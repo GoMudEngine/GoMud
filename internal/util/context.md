@@ -193,8 +193,10 @@ server reloads.
   this package causes.
 - **`FindMatchIn` returns two values.** Ignoring the second disables fuzzy
   matching.
-- **`Save` takes an optional `doSafe`.** The default is *not* the safe path —
-  call `SafeSave` explicitly when the data matters.
+- **`Save` is safe by default** as of 2026-07-31: with no third argument it
+  routes through `SafeSave`. Pass `false` to opt out and write directly. The
+  default was the other way round, so a new caller inherited the risky path by
+  omission.
 - **Keep the import list tiny.** This package sits beneath nearly everything;
   importing a game package from here creates a cycle that is painful to unpick.
 

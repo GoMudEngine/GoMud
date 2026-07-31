@@ -60,6 +60,7 @@ func RegisterListeners() {
 	events.RegisterListener(events.NewTurn{}, AutoSave)
 	events.RegisterListener(events.NewTurn{}, PruneBuffs)
 	events.RegisterListener(events.NewTurn{}, ActionPoints)
+	events.RegisterListener(events.NewTurn{}, SweepDialogueMemory)
 
 	// ItemOwnership
 	events.RegisterListener(events.ItemOwnership{}, CheckItemQuests)

@@ -104,17 +104,19 @@ This is the seam that keeps the evaluator testable: tests supply a fake
 - **Zero and empty trigger fields are wildcards.** `matchTriggerFields` skips
   any filter where the value is `0` or `""`. A trigger with `mob: 0` matches
   *every* mob, not "no mob". Omitting a field widens the trigger.
-- **Every action runs under its own `recover()`.** A panicking or erroring
-  action is logged and **skipped**, and the remaining actions still run. A
-  quest can therefore half-apply — the player gets the item but not the flag —
-  with nothing but a log line. Treat action errors as real bugs.
+- **A trigger's actions are applied as a unit.** Each runs under its own
+  `recover()`, but a failure or panic **abandons the remaining actions of that
+  trigger** (logged with how many were dropped). There is no rollback of what
+  already ran, so a failure still leaves a partial effect — aborting only stops
+  it compounding. Treat action errors as real bugs. A duplicate grant is a skip,
+  not a failure, and does not abort.
 - **Grant dedupe is per evaluation chain, not per player.** `MarkGranted` lives
   on the guard, which is created fresh in `Notify`. It stops a token being
   granted twice in one cascade; it does not stop re-granting across events.
   Re-grant prevention is a content concern — see the quest-token `questExcluded`
   SOP in `CLAUDE.md`.
-- **`AllQuests` iterates a map and is unordered.** Sort if you need
-  determinism; audits and gates that print results must.
+- **`AllQuests` is sorted by quest id.** It iterates a map internally but sorts
+  before returning, so audit and gate output is stable between runs.
 - **`command_issued` and `command` are different events** — the first fires when
   a command is typed, the second only when it succeeded.
 - **Ephemeral (instance) rooms match their TEMPLATE room id** in `room:`

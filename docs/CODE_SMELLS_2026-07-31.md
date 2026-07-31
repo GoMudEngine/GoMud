@@ -1,144 +1,178 @@
 # Code Smells & Refinement Candidates — context.md audit sweep
 
 Recorded while auditing and rewriting every `internal/` and `modules/`
-`context.md` on 2026-07-31. **Nothing here has been acted on.** Each entry is
-something noticed while reading the real source to document it; this file is
-the review queue, not a changelog.
+`context.md` on 2026-07-31, then worked through the same day.
 
 Severity key: 🔴 correctness risk · 🟠 maintenance hazard · 🟡 tidy-up
+Status key: ✅ fixed · ✏️ entry was wrong, corrected · ⏸️ deliberately not done
 
 ---
 
-## Findings
+## ✅ Fixed
 
-### 🟠 `gametime.AddPeriod` — real-day constant is `84600`, not `86400`
+### 🔴 `dialogue` — four of ten `PlayerState` callbacks were called unguarded
 
-`internal/gametime/gametime.go` (~line 317) computes
-`roundsPerRealDay = 84600 / RoundSeconds`. A real day is 86400 seconds; this is
-an upstream typo that makes every `x irl days` period **0.9% short**.
+`checkQuestGate`/`applyQuestEffects` nil-checked `GiveItem`, `SetQuestFlag`,
+`BumpRep`, `GiveGold`, `HasOwnMasterwork` and `GetQuestFlag`, but invoked
+`HasQuest`, `HasItem`, `RemoveItem` and `GiveQuest` directly — so a
+partially-populated state panicked on those four and only those.
 
-Not safe to silently fix: authored `irl` periods and any persisted timer
-derived from one would shift. Needs a decision — correct it and accept the
-one-time shift, or leave it and add a comment saying it is deliberate.
+All ten are now guarded consistently. A missing *interrogative* callback fails
+the gate **closed** (we cannot confirm the player holds a token, so we must not
+conclude they do); the exception is `questExcluded`, where the same reasoning
+runs the other way and the node stays available rather than silently vanishing.
 
-### 🟠 `plugins` — exported-function ids are a flat global namespace
+Scope note: the original entry framed nil-`ps` as the danger. Both production
+callers (`talk.go`, `ask.go`) build a fully-populated state via
+`buildPlayerState`, so nil was only reachable from tests — the unguarded fields
+were the real defect. Tests: `playerstate_guards_test.go`.
 
-`pluginRegistry.GetExportedFunction` walks every plugin and returns the first
-match for a string id. Two modules exporting the same id silently resolve to
-whichever registered first, with no warning. A duplicate check at registration
-time would turn a silent mis-wire into a boot error.
+### 🟠 `questengine` — per-action `recover()` let a quest half-apply
 
-### 🟡 `plugins` — `Requires()` records dependencies but nothing enforces them
+Each action ran in its own `recover()` and the loop continued past a failure, so
+a step could give the item but never set the flag — a state no author designed,
+visible only as a log line.
 
-`(*Plugin).Requires(name, version)` appends to `p.dependencies` and that slice
-is never read for ordering or validation. Either enforce it at load or drop the
-API so it stops implying a guarantee.
+A trigger's actions are now applied as a unit: a failed or panicking action
+abandons the remaining actions of that trigger and logs how many were dropped.
+There is still no rollback of what already ran; aborting stops it compounding.
+A duplicate grant is still a skip, not a failure. Tests:
+`action_abort_test.go`.
 
-### 🟡 `plugins` — plugin writes land in `os.TempDir()` until `Load()` runs
+### 🟠 `gametime.AddPeriod` — real-day constant was `84600`, not `86400`
 
-`writeFolderPath` defaults to `os.TempDir()` and is only repointed by
-`Load(dataFilesPath)`. Anything persisted before `Load` is written to temp and
-lost. Worth either failing loudly on a pre-`Load` write or setting the path at
-package init.
+A digit transposition from the upstream import made every `x irl days` period
+run 0.9% short (~13 minutes per day). Replaced both literals with a named
+`secondsPerRealDay = 86400` carrying the history. In-flight real-time periods
+now expire slightly later; nothing else depended on the old value.
 
-### 🟡 `mapper` — `ClearCache` is one of several identically-named symbols
+### 🟠 `dialogue` — `memoryCache` was unbounded and never evicted
 
-`mapper.ClearCache` collides by name with `ClearCache` in other packages. Not a
-bug, but it makes grep-based navigation unreliable and has already caused
-confusion (noted in the project's codegraph guidance). A rename to
-`ClearMapperCache` would be a cheap readability win.
+One entry per (mob instance × player) that had ever spoken, removed only by an
+explicit `ResetMemory`, so it grew for the life of the process and held entries
+for mob instances that despawned days earlier.
 
-### 🔴 `dialogue` — a `nil` `*PlayerState` silently disables every quest gate
-
-`checkQuestGate` treats a nil `PlayerState` as "no checks apply," so a caller
-that forgets to pass one gets an NPC that hands out every quest, ignores every
-exclusion, and skips masterwork/item/flag requirements — with no error. The
-comment calls it backward compatibility. Consider either requiring a non-nil
-state on the production paths or splitting the permissive behaviour into an
-explicit `NoGating()` sentinel so the intent is visible at the call site.
-
-### 🟠 `dialogue` — `memoryCache` is unbounded and never evicted
-
-`memory.go` holds `map[uint64]*PlayerMemory` keyed by
-`mobInstanceId<<32 | userId`, with entries created on demand and only ever
-removed by an explicit `ResetMemory`. Every mob instance a player has ever
-spoken to accumulates for the life of the process. Small per entry, but it
-grows monotonically with uptime and player count and nothing sweeps it when a
-mob instance despawns. A despawn hook or a periodic sweep keyed on
-`LastVisitRound` would bound it.
+Added `SweepMemories()` (drops entries idle beyond `memorySweepIdleRounds`) and
+`ForgetMobInstance(id)` (for despawn), wired into the existing turn maintenance
+as `hooks.SweepDialogueMemory` on a 500-turn interval. Tests:
+`memory_sweep_test.go`, including one that a large user id cannot bleed into
+the mob-instance half of the packed key.
 
 ### 🟠 `dialogue.IsExpired` — magic baseline round to derive a duration
 
-```go
-baseline := gametime.GetDate(1000000)
-expiryRound := baseline.AddPeriod(expiryPeriod)
-delta := expiryRound - 1000000
-```
+It computed a *length* by calling `AddPeriod` from an arbitrary origin
+(`1000000`) and subtracting the origin back out. Added
+`gametime.PeriodLength(periodStr) uint64`, which does that once and correctly,
+and `IsExpired` now calls it.
 
-This computes a *duration* by asking for an absolute round from an arbitrary
-fixed origin and subtracting it back out. It works, but it is a workaround for
-`AddPeriod` only returning absolute rounds. A `gametime.PeriodLength(periodStr)
-uint64` helper would remove the magic number here and probably at other call
-sites.
+### 🟠 `plugins` — exported-function ids are a flat global namespace
+
+`GetExportedFunction` walks the registry and returns the first match, so two
+modules exporting the same id resolved by registration order with no warning.
+`ExportFunction` now panics on a duplicate id, naming both plugins — consistent
+with the existing panic on a non-func argument, and a registration-time failure
+rather than a runtime mystery.
+
+### 🟡 `plugins` — writes before `Load()` land in `os.TempDir()`
+
+`writeFolderPath` defaults to the OS temp dir until `Load` repoints it, so
+anything persisted earlier is written where it will never be read back. Added
+`writeFolderReady`; `WriteBytes` now warns loudly instead of failing silently.
+
+### 🟡 `util.Save` defaulted to the unsafe write path
+
+`Save(path, data, doSafe ...bool)` wrote directly unless the caller opted in.
+Flipped: safe is now the default, `false` is an explicit opt-out. There is
+exactly one call site (`configs.go:354`) and it already passed explicitly, so
+behaviour is unchanged for it — only the default a new caller inherits.
+
+### 🟡 `questengine.AllQuests` returned map iteration order
+
+Now sorted by quest id. Callers print and diff these results; the order was
+shuffling between runs for no reason.
+
+### 🟡 `hooks.calcSpellDamageForCharacter` — redundant nil check
+
+`caster != nil` re-tested inside a branch that already requires it. Removed.
+
+---
+
+## ✏️ Entries that were wrong
+
+### `plugins.Requires()` — it **is** enforced
+
+The original entry claimed nothing read the recorded dependencies. It was
+written from the registration side only. `Load()` (`plugins.go:400-422`) checks
+every dependency against the registry and drops the plugin with a
+`mudlog.Error` if unmet.
+
+The real sharp edge is narrower: the match is exact-string on both name and
+version (`regCheckPlugin.version == dep.version`), so requiring `"1.0"` fails
+against a plugin declaring `"1.0.0"`. The source already carries a
+`// Later improve version matching.` TODO. Left alone.
+
+### `mapper.ClearCache` — the name is fine
+
+Flagged as colliding with identically-named symbols elsewhere. Six packages
+define `ClearCache()` (`factions`, `crimes`, `opinions`, `goals`, `shops`,
+`mapper`) and that is idiomatic Go — the package name is the namespace. The
+difficulty is grep-based navigation, which `codegraph_node` already solves.
+Renaming one of six would make things less consistent, not more. Not doing it.
+
+### `characters/context.md` deprecation table
+
+The ghost-symbol scan flagged `IsGrapplePosition()` / `IsGroundPosition()` /
+`GetPositionColor()`. Those are correct: they appear in a migration table
+mapping the retired `CombatPosition` API to its replacements, and the file
+explicitly states no `IsBlinded()` predicate ships. Any future automated check
+must skip old→new mapping tables or it will "fix" accurate history.
+
+---
+
+## ⏸️ Deliberately not done
 
 ### 🟡 `dialogue` — ten gating fields duplicated across three structs
 
-`Pattern`, `TreeNode`, and `QuestGreeting` each declare the same ten
-quest-gating fields. `validate.go` already has a `gateFields` type that
-acknowledges the duplication. Extracting an embedded `QuestGate` struct would
-remove ~30 duplicated field declarations — but it changes YAML nesting unless
-the embed is inlined, so it needs care.
-
-### 🟠 `questengine` — per-action `recover()` lets a quest half-apply
-
-`executeActions` wraps each action in its own `recover()` and continues to the
-next action on panic *or* error, logging only. A quest step can therefore give
-the item but never set the flag, leaving the player in a state the content
-author never designed. Consider aborting the remaining actions of a trigger
-once one fails, or marking the trigger's effects as a unit.
+`Pattern`, `TreeNode` and `QuestGreeting` each declare the same ten quest-gating
+fields; `validate.go` already has a `gateFields` type acknowledging it.
+Extracting an embedded `QuestGate` would remove ~30 declarations **but changes
+YAML nesting** unless the embed is inlined, and these structs are the on-disk
+schema for 186 authored dialogue files. Worth doing deliberately, with a
+round-trip test over every dialogue file — not as a drive-by.
 
 ### 🟡 `questengine` — zero-valued trigger fields are wildcards
 
-`matchTriggerFields` skips any filter whose value is `0`/`""`. Authoring
-`mob: 0` therefore matches every mob rather than none. A distinct
-"unset" sentinel (or pointer fields) would make over-broad triggers impossible
-to write by accident.
+`matchTriggerFields` skips any filter that is `0`/`""`, so `mob: 0` matches
+every mob rather than none. Fixing it properly means pointer fields or an
+explicit unset sentinel, which changes the quest YAML schema and every trigger
+in 79 quest files. Documented as a gotcha instead; revisit with the schema.
 
-### 🟡 `questengine.AllQuests` returns map iteration order
+### 🟠 `internal/hooks` — 116 files behind one `RegisterListeners()`
 
-Callers that print or diff results need determinism. Either sort inside
-`AllQuests` or document the requirement at every call site.
+Splitting registration per subsystem would cut merge conflicts and make the
+surface readable. It touches the single most load-bearing function in the
+engine and deserves its own change with a boot test, not a tail-end commit in a
+docs sweep.
 
-### 🟠 `internal/hooks` is 116 files with one registration function
+### 🟡 Codebase-wide lint backlog
 
-`RegisterListeners()` in `hooks.go` wires every listener in a package of 116
-non-test files. It works, but it means the only way to discover what the engine
-reacts to is to read one long function, and any merge touching two hooks
-conflicts there. Grouping registration per subsystem (combat, quests, economy,
-NPC life) into a few `registerXxxListeners()` calls would cut conflicts and make
-the surface readable. No behaviour change.
+The LSP surfaced a large set of pre-existing findings across `usercommands`,
+`actions` and `hooks`: unused parameters, `simplifyrange`, `QF1003` tagged
+switches, `S1003` `strings.Contains`, `S1039` unnecessary `Sprintf`,
+`minmax`/`stringscutprefix` modernizations, and two unused symbols
+(`logFollowConnectionIds`, `getShadowTargetUserId`). This is the existing
+"lint modernization sweep" backlog item and wants one mechanical pass with
+`golangci-lint --fix`, reviewed as a unit.
 
-### 🟡 `util.Save` defaults to the unsafe path
+A second `tautological condition` at `NewRound_DoCombat.go:309` (`mobRoom !=
+nil`) is genuine redundancy but sits in the combat hot path where the
+provably-non-nil claim depends on flow the analyzer can see and a reader
+cannot. Left alone.
 
-`Save(path, data, doSafe ...bool)` writes directly unless the caller opts in,
-while `SafeSave` does the temp-file-and-rename dance. The safe behaviour should
-arguably be the default, with an explicit opt-out for the few hot paths that
-need it — the current shape means a new caller gets the risky version by
-omission.
+### 🟡 Upstream `context.md` boilerplate
 
-### 🟡 Detector note: deprecation tables read as fabricated APIs
-
-The ghost-symbol scan used in this audit flags `internal/characters/context.md`
-for `IsGrapplePosition()` / `IsGroundPosition()` / `GetPositionColor()`. Those
-are **correct** — they appear in a migration table mapping the retired
-`CombatPosition` API to its replacements, and the file explicitly states that
-no `IsBlinded()` predicate ships. Any future automated check needs to skip
-old→new mapping tables, or it will "fix" accurate history.
-
-### 🟡 Upstream `context.md` boilerplate is being deleted wholesale
-
-The upstream-generated docs pad every package with "Future Enhancements,"
-"Security Considerations," "Scalability," and "Administrative Features"
-sections describing capabilities that do not exist (SIMD UUID generation,
-distributed pathfinding, AR navigation). These are being removed as each file
-is rewritten. Listed here so the deletions are not mistaken for lost content.
+Deleted during the audit — 541 lines of "Future Enhancements", "Security
+Considerations", "Scalability" and "Administrative Features" describing
+capabilities that do not exist (SIMD UUID generation, distributed pathfinding,
+AR navigation). Recorded here so the deletions are not mistaken for lost
+content.
