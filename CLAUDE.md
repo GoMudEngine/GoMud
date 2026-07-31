@@ -40,7 +40,7 @@ its budget on thinking, not file-spelunking. When in doubt for a non-trivial
 task, default up (sonnet), not down.
 
 ## Git Workflow
-Follow the branch strategy in `docs/github_guide.md`:
+Follow the branch strategy in `docs/guides/github_guide.md`:
 - `master` is the main integration branch + production. `origin` = pruuk/DOGMud
 - NEVER push to upstream (GoMudEngine/GoMud); cherry-pick from upstream only
 - `development` is legacy from when the project still pulled from upstream — no longer used as the integration branch
@@ -707,7 +707,7 @@ the relevant schema, and existing examples before generating.
 - `/new-quest <plan-file>` — generate all files from an approved `/sketch-quest` plan
 
 Schema reference: `docs/schemas/` (room, mob, item, spell, buff, dialogue)
-Full workflow: `docs/CONTENT_GENERATION_GUIDE.md`
+Full workflow: `docs/guides/CONTENT_GENERATION_GUIDE.md`
 
 After generating any file: restart server. If editing an existing zone, check
 `_datafiles/world/dogmud/rooms.instances/` for stale instance saves.

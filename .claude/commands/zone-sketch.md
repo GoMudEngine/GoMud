@@ -5,7 +5,7 @@ Plan a new zone for DOGMud: produce a room list, adjacency map, and zone metadat
 ## Instructions
 
 **This is a Phase 1 planning command.** Per the Zone-Building SOP in
-`docs/CONTENT_GENERATION_GUIDE.md` Section 2, zones are built in two
+`docs/guides/CONTENT_GENERATION_GUIDE.md` Section 2, zones are built in two
 phases: rooms+mobs+items+spawns first, then quests as a separate
 pass. Do NOT plan or sketch quests here. Quest planning happens in
 `/sketch-quest` after the smoke checklist passes.
@@ -164,7 +164,7 @@ After the planning document, remind the user:
 > 7. Restart the server.
 >
 > **Then run the smoke checklist** (full text from
-> `docs/CONTENT_GENERATION_GUIDE.md` Section 2, copied here for
+> `docs/guides/CONTENT_GENERATION_GUIDE.md` Section 2, copied here for
 > convenience):
 >
 > ```
@@ -176,9 +176,9 @@ After the planning document, remind the user:
 >     the mini-map). Restart server, check the map renders cleanly.
 > [ ] Cartesian consistency: ran `map` from each room (or from a few
 >     spread-out rooms) and confirmed no two rooms in the new zone
->     overlap. Cross-referenced `docs/coordinate_map.md` to confirm no
+>     overlap. Cross-referenced `docs/worldbuilding/coordinate_map.md` to confirm no
 >     new-zone room shares (X,Y,Z) with an adjacent existing zone's
->     rooms. Update `docs/coordinate_map.md` with the new zone's
+>     rooms. Update `docs/worldbuilding/coordinate_map.md` with the new zone's
 >     coordinates as part of this step.
 > [ ] Fought ≥1 mob of each combat archetype used in the zone. Confirm
 >     the archetype actually drives the behavior you expected (e.g., a

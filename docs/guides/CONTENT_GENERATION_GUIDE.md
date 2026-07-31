@@ -94,9 +94,9 @@ Run through this checklist for the new zone before opening
     the mini-map). Restart server, check the map renders cleanly.
 [ ] Cartesian consistency: ran `map` from each room (or from a few
     spread-out rooms) and confirmed no two rooms in the new zone
-    overlap. Cross-referenced `docs/coordinate_map.md` to confirm no
+    overlap. Cross-referenced `docs/worldbuilding/coordinate_map.md` to confirm no
     new-zone room shares (X,Y,Z) with an adjacent existing zone's
-    rooms. Update `docs/coordinate_map.md` with the new zone's
+    rooms. Update `docs/worldbuilding/coordinate_map.md` with the new zone's
     coordinates as part of this step.
 [ ] Fought ≥1 mob of each combat archetype used in the zone. Confirm
     the archetype actually drives the behavior you expected (e.g., a
