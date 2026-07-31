@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-07-31 — Old friends talk like old friends again
+
+When two townspeople are written as friends, each of them records what kind of
+friendship it is — a shared love of old books, years served together. Only one
+side of that was being kept: the second was mistaken for a repeat of the first
+and dropped. Three pairs in town were affected, and from one direction each of
+them had been falling back on ordinary small talk instead of the conversations
+written for them. Both sides are now kept.
+
 ## 2026-07-31 — Quest steps finish what they start
 
 A quest step is a short list of instructions — take the token, hand over the
