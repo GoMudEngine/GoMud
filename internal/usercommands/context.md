@@ -231,3 +231,37 @@ searchScore = dice.RollStat(Perception + SkillMultiplier(searchRank) * 25.0)
 - All three commands use the same unified search score calculation
 
 This package serves as the primary interface between players and the game world, providing a rich and comprehensive command system that supports all aspects of gameplay from basic interaction to advanced administrative functions.
+## Files: one command per file
+
+182 non-test files, and enumerating them would be noise — the filename **is**
+the index. `command.go` implements `command`; `admin.<name>.go` is an admin
+command; `skill.<name>.go` is a skill-gated one.
+
+What matters is the shape, not the list:
+
+- **Registration** is centralised. A command is not discovered from its
+  filename; it is registered with its handler, its downed-allowed flag, and its
+  admin-only flag. Modules register their own through
+  `plugins.AddUserCommand` instead.
+- **Handler signature:**
+  ```go
+  func Foo(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error)
+  ```
+  `rest` is everything after the verb — parse it, do not re-split the whole
+  line.
+- **User/mob parity.** Most commands have a `internal/mobcommands` twin. The
+  boot-time `CommandParity` check warns when a user command has no mob
+  equivalent and is not on the user-only allowlist. Adding one usually means
+  adding both, or explicitly allowlisting.
+- **Shared logic belongs in `internal/actions`**, behind `actions.Actor`, so
+  the user and mob paths cannot drift. A command file should be argument
+  parsing plus a call into `actions`.
+- **Target resolution** uses the existing fuzzy matchers, which already handle
+  multi-word input. Reach for `internal/parser` only when a command must
+  *split* input into multiple slots (item vs. container, mob vs. player).
+
+## Adding a command — the wiring checklist
+
+Enumerate every step; a partially-wired admin command is the classic failure:
+handler file, registration entry, help file, mob twin (or allowlist entry),
+and — if it is player-facing — an entry in the relevant help category.

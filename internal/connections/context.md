@@ -735,3 +735,16 @@ connections.Broadcast(announcement, johnConnectionId)
 - `internal/term` - Terminal control codes and telnet protocol handling
 
 This comprehensive connections system provides robust network connection management with support for multiple protocols, advanced input processing, heartbeat monitoring, and thread-safe operations for reliable MUD server networking.
+## Files
+
+| File | Purpose |
+|------|---------|
+| `connections.go` | The connection registry and lifecycle |
+| `connectiondetails.go` | Per-connection state |
+| `clientsettings.go` | Negotiated client capabilities |
+| `heartbeat.go` | Keepalive / zombie detection |
+| `copyover.go` | Handing sockets across a hot restart |
+| `fd_unix.go` / `fd_windows.go` | Platform file-descriptor handling |
+
+The `fd_*` split is what makes copyover possible: a hot restart passes live
+file descriptors to the new process so telnet sessions survive it.

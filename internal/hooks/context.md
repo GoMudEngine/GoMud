@@ -1,8 +1,23 @@
-# GoMud Hooks System Context
+# Hooks System Context
+
+> **Read this first.** Every fenced `go` block below is **illustrative
+> pseudo-code**, not a transcript of the source. Several use helper names that
+> do not exist in the codebase (`Character.GetCurrentQuestToken`,
+> `Character.ClearAggro`, `users.RemoveUser`, `Room.GetMobIds`); they are there
+> to show the *shape* of a handler, not its exact calls. Verify any symbol
+> against the source — or `codegraph_search` — before coding against it.
+>
+> The authoritative list of what this package listens to is
+> **`RegisterListeners()` in `hooks.go`**. The listener count below is also
+> historical: the package currently has 116 non-test files.
 
 ## Overview
 
-The GoMud hooks system provides comprehensive event-driven game logic through a collection of 39 specialized event listeners that handle everything from combat rounds to quest progression. It serves as the primary integration layer between the event system and game mechanics, implementing core gameplay features like combat resolution, mob AI, player lifecycle management, and system maintenance tasks.
+The hooks system provides event-driven game logic through a collection of
+specialized event listeners handling everything from combat rounds to quest
+progression. It is the primary integration layer between the event system and
+game mechanics — combat resolution, mob AI, player lifecycle, and system
+maintenance.
 
 ## Architecture
 
@@ -495,20 +510,41 @@ func HandleIdleMobs(e events.Event) events.ListenerReturn {
 
 ## Usage Examples
 
-### Custom Hook Registration
+> **These examples are illustrative, not compilable.** They use placeholder
+> event and helper names to show the *shape* of a listener. For a real
+> registration, read `RegisterListeners()` in `hooks.go` — that is the single
+> function where every listener in this package is wired up, and it is the
+> authoritative list of what the engine actually listens to.
+
+### Listener registration
+
+Listeners are not registered individually from scattered files. `hooks.go`
+exposes exactly one entry point:
+
 ```go
-// Register custom event listener
-func RegisterCustomHook() {
-    events.RegisterListener(events.CustomEvent{}, func(e events.Event) events.ListenerReturn {
-        evt := e.(events.CustomEvent)
-        
-        // Custom processing logic
-        processCustomEvent(evt)
-        
+func RegisterListeners()
+```
+
+`main.go` calls it once at start-up. Adding a hook means adding a listener
+registration inside that function and a handler file alongside it — there is no
+`RegisterCustomHook`, and modules register their own listeners through the
+plugin API instead (see `internal/plugins`).
+
+The handler shape is:
+
+```go
+func handleSomething(e events.Event) events.ListenerReturn {
+    evt, ok := e.(events.SomeEvent)
+    if !ok {
         return events.Continue
-    })
+    }
+    // ... work ...
+    return events.Continue
 }
 ```
+
+**Returning the wrong `ListenerReturn` swallows the event** for every listener
+behind you. `events.Continue` is almost always what you want.
 
 ### Event Processing Flow
 ```go
@@ -1253,3 +1289,22 @@ See `internal/state/combatphase/context.md` for the full veto chain.
 - `internal/state/position` - Position state machine (chunks 4a + 4b)
 - `internal/state/control` - ControlLevel state machine (chunk 4b-fixup-2)
 - `internal/state/presence` - Presence state machine (chunk 5)
+## Files: one handler per file
+
+116 non-test files. The filename **is** the index — each is named for the event
+it handles and the job it does, so `NewRound_IdleMobs.go` is the idle-mob step
+of the new-round event.
+
+Prefixes in use: `NewRound_*` (per-round work), `NewTurn_*` (per-turn work),
+`Input_*`, `Combat_*`, `Quest_*`, `RoomChange_*`, `Player*`/`Mob*` lifecycle.
+
+Do not go looking for a registration in these files. **`hooks.go` holds
+`RegisterListeners()`, and that one function wires every listener in the
+package** — it is the authoritative list of what the engine reacts to.
+
+Conventions:
+
+- Combat logic belongs in `handleCombatRound`, not scattered across handlers.
+- Behaviour-tree combat events fire **before** the legacy AI.
+- A handler returns `events.Continue` unless it genuinely means to stop the
+  event reaching later listeners.

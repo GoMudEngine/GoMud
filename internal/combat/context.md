@@ -1203,3 +1203,27 @@ start fighting back next round.
 
 Other future first-hit-crit triggers (surprise attack, backstab)
 can add parallel snapshot checks at the same start-of-round site.
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `combat.go` | Round resolution entry points |
+| `combat_helpers.go` | Shared helpers (encumbrance, swing counts) |
+| `damage_pipeline.go` | The unified three-channel damage + mitigation pipeline |
+| `calculations.go` | Core combat maths |
+| `avoidance.go` | Best-of-all defence resolution (dodge / parry / block) |
+| `attackresult.go` | The result value passed back to callers |
+| `criteffects.go` | Critical and fumble effects |
+| `descriptions.go` | `GetDamageDescription` / `GetHealDescription` — descriptive, never numeric |
+| `skill_moves.go` | Skill-driven combat moves |
+| `grapple.go` / `grapple_move.go` | The grappling state machine and transitions |
+| `submission.go` / `submission_outcome.go` | Submissions and their resolution |
+| `reach.go` | Weapon reach and its interaction with clinch |
+| `flee.go` / `flight.go` | Disengaging and flight movement |
+| `taunt_messages.go` | Rhetoric channel messaging |
+| `ai.go` | Combat-side AI helpers |
+| `analytics.go` | Combat statistics collection |
+
+All damage flows through `damage_pipeline.go`. Never emit a raw number to a
+player — use `descriptions.go`.

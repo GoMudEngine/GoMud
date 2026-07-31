@@ -275,3 +275,19 @@ The chunk-4.4 `plan:<type>:<key>` namespace is strictly separate.
 ## Spec Reference
 
 `docs/superpowers/specs/2026-05-27-mob-aliveness-4.5-reactive-goal-generation-design.md`
+
+## Files
+
+`seeders.go` is the registry and `state.go` the shared state; every other file
+is **one seeder** — a rule that turns an observed event into a goal or an
+opinion change. The names read as `<trigger>_to_<effect>`:
+
+`aggressive_action_to_revenge.go`, `friend_killed_to_revenge.go`,
+`witness_of_theft_to_revenge.go`, `combat_assist_to_opinion_boost.go`,
+`gift_to_opinion_boost.go`, `quest_completion_to_opinion_boost.go`,
+`craft_materials_to_wealth_item.go`,
+`mastery_milestone_to_priority_bump.go`, plus the faction helpers
+`faction_gate.go`, `faction_kill_counter.go`, `faction_rep_counter.go` and
+`witness_response.go`.
+
+That naming convention is the documentation — a new seeder should follow it.

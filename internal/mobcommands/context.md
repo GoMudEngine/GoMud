@@ -172,3 +172,24 @@ The `internal/mobcommands` package implements the AI command system for non-play
 - **Integrated design**: Seamless interaction with all game systems
 
 This package transforms static NPCs into dynamic, intelligent entities that create a living, breathing game world through sophisticated AI behaviors and decision-making systems.
+## Files: one command per file
+
+75 non-test files, one per mob command; the filename is the command. This
+package is the mob-side twin of `internal/usercommands`.
+
+Handler signature:
+
+```go
+func Foo(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error)
+```
+
+Note it takes a `*mobs.Mob` and has no `flags` parameter — that difference is
+why a command available to both players and mobs must be registered twice
+(`AddUserCommand` and `AddMobCommand` take different handler types).
+
+- **Parity is checked at boot.** `CommandParity` warns when a user command has
+  no mob equivalent and is not on the user-only allowlist. Adding a player
+  command usually means adding the twin here too.
+- **Shared logic belongs in `internal/actions`**, behind `actions.Actor`, so
+  the two paths cannot drift. A command file should be argument parsing plus a
+  call into `actions`.

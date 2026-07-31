@@ -250,9 +250,45 @@ then `usable = 20`, `usable_max = 100`, and `usable_pct = 20%`. A
 condition of "HP below 30%" would therefore be true in this state, even
 though raw HP (60%) is well above 30%.
 
-## Other GMCP Modules
+## Module index
 
-The remaining `gmcp.<Name>.go` files (`gmcp.Char.go`, `gmcp.Zone.go`,
-`gmcp.Room.go`, `gmcp.Party.go`, etc.) follow the same register-in-`init`
-/ emit-`GMCPOut` pattern. See each file's source for its specific payload
-schema and push triggers.
+Every `gmcp.<Name>.go` file follows the same shape: register in `init()`, emit
+via `GMCPOut`. `gmcp.go` holds the shared plumbing. Read the file for its exact
+payload schema and push triggers — this table is the map, not the schema.
+
+| File | Package | What it carries |
+|------|---------|-----------------|
+| `gmcp.go` | — | Module registration, `GMCPOut`, shared helpers |
+| `gmcp.Char.go` | `Char` | Vitals, stats, status — the core player feed |
+| `gmcp.Automation.go` | `Char.Automation` | Triggers, macros, aliases, the action queue |
+| `gmcp.Room.go` | `Room` | Current room: description, exits, occupants |
+| `gmcp.Zone.go` | `Zone` | The `Zone.Map` snapshot the web mapper draws, plus `party` |
+| `gmcp.Party.go` | `Party` | Party roster and member vitals |
+| `gmcp.Comm.go` | `Comm` | Channel messages |
+| `gmcp.Item.go` / `gmcp.Item_refs.go` | `Char.Items` | Inventory and equipment, plus item reference data |
+| `gmcp.Quest.go` / `gmcp.Quest_refs.go` | `Quest` | Quest tracker state and quest reference data |
+| `gmcp.Mob.go` | `Mob` | Mob presence and vitals for the room panel |
+| `gmcp.Mutation.go` | `Mutation` | Mutation roster and reveal events |
+| `gmcp.Dialogue.go` | `Dialogue` | NPC conversation state for the client |
+| `gmcp.Action.go` | `Action` | Clickable action affordances |
+| `gmcp.Commands.go` | `Commands` | Command state, modes, cooldowns |
+| `gmcp.Behavior.go` | `Behavior` | Behaviour-tree state (admin/builder tooling) |
+| `gmcp.Build.go` | `Build` | The admin web building tools' data feed |
+| `gmcp.Game.go` | `Game` | Game-level metadata |
+| `gmcp.World.go` | `World` | World-level state (weather, time) |
+| `gmcp.Mudlet.go` | `Client.GUI` | Mudlet-specific package download support |
+
+The `_refs` files exist because reference data (item and quest definitions) is
+large and static: it is pushed once rather than on every update, and the live
+payloads carry ids that index into it.
+
+## Gotchas
+
+- **The web client is the primary consumer of every one of these.** A payload
+  change is a client change; check `_datafiles/html/public/static/js/gmcp.js`
+  before altering a field name.
+- **`Zone.Map` is fog-of-war filtered** by `Character.VisitedRooms` before it is
+  sent — see `internal/mapper`'s `Snapshot`.
+- **Emit only on change where you can.** These push on room change and round
+  boundaries; adding an unconditional per-round emit to a large payload is a
+  bandwidth regression that will not show up in a local test.

@@ -894,3 +894,23 @@ in `internal/combat/combat_helpers.go` routes unarmed mob attacks through
 that subtype's message pool. Previously these subtypes were defined and
 used only for reach accounting or special-case weapon items; they are now
 actively selected at runtime for basic attacks on ~30 tagged species.
+## Files
+
+| File | Purpose |
+|------|---------|
+| `itemspec.go` | The authored `ItemSpec` |
+| `items.go` | The `Item` instance and its behaviour |
+| `save.go` | Persistence |
+| `validation.go` | Spec validation |
+| `newitemfile.go` | New-item scaffolding |
+| `stacking.go` | Display-only inventory stacking |
+| `aging.go` | Potion aging phases and effective aging speed |
+| `affixgen.go` | Affix/name generation |
+| `proc_accessors.go` | On-hit proc access |
+| `reach.go` | Weapon reach data |
+| `attack_messages.go` / `defensive_messages.go` | Combat message pools |
+| `memory.go` | Memory reporting |
+| `test_helpers.go` / `test_helpers_combat.go` | Test fixtures |
+
+Item ids at 40000+ live under `items/materials-40000/` — `Filepath()` routes by
+id range, so a materials item filed elsewhere will not load.

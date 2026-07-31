@@ -214,3 +214,10 @@ instance-keyed goal state would be the right path.
 `items`, `knowledge`, `messaging`, `mobs`, `rooms`, `users`, `util`.
 It does not import `internal/justice` or `internal/actions` (no import
 cycle from those directions).
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `bountyhunter.go` | Hunter selection and lifecycle |
+| `dispatch.go` | Dispatching a hunter against a target |

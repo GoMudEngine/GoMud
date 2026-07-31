@@ -157,22 +157,6 @@ donation := Donation{
 }
 ```
 
-## Future Enhancements
-
-### Potential Features
-- Clan wars and alliances
-- Clan-specific benefits and bonuses
-- Advanced permission systems
-- Clan housing or bases
-- Achievement and progression systems
-- Inter-clan communication systems
-
-### Administrative Features
-- Clan statistics and reporting
-- Automated upkeep collection
-- Clan activity monitoring
-- Leadership succession planning
-
 ## Design Considerations
 
 ### Scalability

@@ -471,3 +471,15 @@ Test files: `justice_test.go`, `enforce_test.go`, `bounty_test.go`,
 | `JusticeBountyExpiryRounds` | 5000 | TTL on auto-declared faction bounties |
 | `JusticeBountyMurderMult` | — | Fine/bounty multiplier for murder |
 | `JusticeBountyRepMultMax` | — | Max rep-based multiplier at rep -100 |
+
+## Files
+
+| File | Purpose |
+|------|---------|
+| `justice.go` | Crime recording and the justice entry points |
+| `enforce.go` | Guard response and enforcement |
+| `arrest.go` | Arrest flow |
+| `bounty.go` | Bounty accrual |
+
+Crime and reputation state is runtime-generated (`factions.crimes`,
+`factions.rep`) and gitignored — it is living state, not instance data.

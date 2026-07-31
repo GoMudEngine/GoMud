@@ -1,718 +1,209 @@
-# GoMud Util System Context
+# Util Context
 
-## Overview
+## Purpose
 
-The GoMud util system provides essential utility functions and infrastructure services including game timing management, string processing, file operations, cryptographic functions, memory monitoring, performance tracking, and cross-platform compatibility utilities. It serves as the foundational layer supporting all other game systems with thread-safe operations and comprehensive debugging tools.
+`internal/util` is the engine's foundation layer: the global round/turn
+counters and the MUD-wide lock, plus string, file, encoding, and memory
+helpers. Almost every other package imports it, so it imports almost nothing —
+keep it that way.
 
-## Architecture
+Three files, despite the size of the surface: **util.go** (everything except
+the two below), **memory.go** (memory reporting), **copyover.go** (round-count
+survival across a hot restart).
 
-The util system is built around several key categories:
+## The global clock
 
-### Core Components
-
-**Game Timing System:**
-- Turn and round counting with persistent state
-- High-level mutex synchronization for game data
-- Performance tracking and accumulator system
-- Time-based event coordination
-
-**String Processing:**
-- Text matching and fuzzy search algorithms
-- Color code processing and ANSI conversion
-- Filename sanitization and path utilities
-- Multi-language text processing (CJK support)
-
-**Cryptographic Services:**
-- Password hashing with SHA-256 and MD5 support
-- Secure random number generation
-- Base64 encoding/decoding utilities
-- Hash-based data integrity
-
-**Memory Management:**
-- Memory usage tracking and reporting
-- Performance monitoring and statistics
-- Resource cleanup and optimization
-- System health monitoring
-
-## Key Features
-
-### 1. **Game Timing and Synchronization**
-- **Turn/Round Counting**: Persistent game time tracking
-- **Thread Safety**: High-level mutex for game data synchronization
-- **Performance Tracking**: Accumulator system for timing analysis
-- **State Persistence**: Round count persistence across server restarts
-
-### 2. **Advanced String Processing**
-- **Fuzzy Matching**: Sophisticated text matching algorithms
-- **Color Processing**: ANSI color code handling and conversion
-- **Filename Sanitization**: Cross-platform safe filename generation
-- **Multi-language Support**: Unicode and CJK character handling
-
-### 3. **Comprehensive Utilities**
-- **File Operations**: Path utilities and file manipulation
-- **Random Generation**: Seeded random numbers and dice rolling
-- **Data Compression**: Gzip compression for data storage
-- **Network Utilities**: HTTP helpers and address management
-
-### 4. **System Monitoring**
-- **Memory Tracking**: Detailed memory usage reporting
-- **Performance Metrics**: Execution time tracking and analysis
-- **Resource Monitoring**: System resource usage statistics
-- **Debug Support**: Comprehensive logging and debugging utilities
-
-## Game Timing System
-
-### Turn and Round Management
 ```go
-var (
-    turnCount  uint64 = 0
-    roundCount uint64 = RoundCountMinimum // Start at 1314000 for stability
-)
-
-const (
-    RoundCountMinimum  = 1314000        // ~4 years offset for delta safety
-    RoundCountFilename = ".roundcount"  // Persistence file
-)
-
-// Thread-safe turn counting
-func IncrementTurnCount() uint64 {
-    turnCount++
-    return turnCount
-}
-
-func GetTurnCount() uint64 {
-    return turnCount
-}
-
-// Thread-safe round counting with persistence
-func IncrementRoundCount() uint64 {
-    roundCount++
-    return roundCount
-}
-
-func GetRoundCount() uint64 {
-    return roundCount
-}
-
-func SetRoundCount(newRoundCount uint64) {
-    roundCount = newRoundCount
-}
+func GetRoundCount() uint64
+func IncrementRoundCount() uint64
+func SetRoundCount(newRoundCount uint64)
+func GetTurnCount() uint64
+func IncrementTurnCount() uint64
+func SaveRoundCount(fpath string)
+func LoadRoundCount(fpath string) uint64
+func SetRoundCountForTest(r uint64)
+func ResetRoundCountForTest()
 ```
 
-### High-Level Synchronization
+`GetRoundCount()` is the single time source for the whole game. Schedules,
+mutator decay, ferry position, buff expiry, and shop restock are all functions
+of it. **Rounds and turns are not the same thing** — a round is the gameplay
+tick; turns are finer-grained.
+
+The `*ForTest` setters exist because so much behaviour is round-derived that
+tests must be able to place themselves in time. They are global — restore what
+you change.
+
+## The MUD lock
+
 ```go
-var mudLock = sync.RWMutex{}
-
-// Exclusive lock for game data modifications
-func LockMud() {
-    mudLock.Lock()
-}
-
-func UnlockMud() {
-    mudLock.Unlock()
-}
-
-// Shared lock for game data reading
-func RLockMud() {
-    mudLock.RLock()
-}
-
-func RUnlockMud() {
-    mudLock.RUnlock()
-}
+func LockMud()
+func UnlockMud()
+func RLockMud()
+func RUnlockMud()
 ```
 
-### Performance Tracking
+A process-wide RWMutex guarding world state. Take the read lock for inspection,
+the write lock for mutation, and hold neither longer than necessary — this is
+the engine's single biggest contention point.
+
+## String handling
+
 ```go
-type Accumulator struct {
-    Name    string    // Tracker name
-    Total   float64   // Total time accumulated
-    Lowest  float64   // Fastest execution time
-    Highest float64   // Slowest execution time
-    Count   float64   // Number of samples
-    Average float64   // Calculated average
-    Start   time.Time // Tracker creation time
-}
-
-var timeTrackers = map[string]*Accumulator{}
-
-// Track execution time for performance analysis
-func TrackTime(name string, timePassed float64) {
-    if _, ok := timeTrackers[name]; !ok {
-        timeTrackers[name] = &Accumulator{
-            Name:  name,
-            Start: time.Now(),
-        }
-    }
-    timeTrackers[name].Record(timePassed)
-}
-
-// Get all performance tracking data
-func GetTimeTrackers() []Accumulator {
-    result := []Accumulator{}
-    for _, t := range timeTrackers {
-        result = append(result, *t)
-    }
-    return result
-}
+func VisibleWidth(s string) int
+func SplitString(input string, lineWidth int) []string
+func SplitStringNL(input string, lineWidth int, nlPrefix ...string) string
+func SplitButRespectQuotes(s string) []string
+func BreakIntoParts(full string) []string
+func StripPrepositions(input string) string
+func StripANSI(str string) string
+func ConvertColorShortTags(input string) string
+func StripCharsForScreenReaders(s string) string
+func ConvertToAscii(s string) string
+func FormatNumber(n int) string
+func BoolYN(b bool) string
+func StringWildcardMatch(stringToSearch, patternToSearch string) bool
 ```
 
-## String Processing System
+**`VisibleWidth` is not `len`.** Colour tags and multi-byte runes mean the byte
+length of a MUD string bears no relation to how wide it prints. Every wrapping
+and alignment decision must use `VisibleWidth`, and `SplitString` already does.
 
-### Text Matching and Search
+`ConvertToAscii` (backed by the `unicodeToAscii` table) and
+`StripCharsForScreenReaders` serve the accessibility and
+limited-client paths — a client that has not converged on UTF-8 gets readable
+text rather than mojibake.
+
+## Matching
+
 ```go
-// Sophisticated fuzzy matching algorithm
-func FindMatchIn(searchFor string, searchIn ...string) (closeMatch string, exactMatch string) {
-    searchFor = strings.ToLower(strings.TrimSpace(searchFor))
-    
-    if searchFor == "" {
-        return "", ""
-    }
-    
-    var bestPartialMatch string
-    var bestPartialScore int
-    
-    for _, candidate := range searchIn {
-        candidateLower := strings.ToLower(candidate)
-        
-        // Exact match takes priority
-        if candidateLower == searchFor {
-            return candidate, candidate
-        }
-        
-        // Prefix matching
-        if strings.HasPrefix(candidateLower, searchFor) {
-            if bestPartialMatch == "" || len(candidate) < len(bestPartialMatch) {
-                bestPartialMatch = candidate
-            }
-        }
-        
-        // Substring matching with scoring
-        if strings.Contains(candidateLower, searchFor) {
-            score := calculateMatchScore(searchFor, candidateLower)
-            if score > bestPartialScore {
-                bestPartialScore = score
-                bestPartialMatch = candidate
-            }
-        }
-    }
-    
-    return bestPartialMatch, ""
-}
-
-// Strip common prepositions for better matching
-var strippablePrepositions = []string{
-    "onto", "into", "over", "to", "toward", "towards",
-    "from", "in", "under", "upon", "with", "the", "my",
-}
-
-func StripPrepositions(input string) string {
-    words := strings.Fields(strings.ToLower(input))
-    filtered := []string{}
-    
-    for _, word := range words {
-        isPreposition := false
-        for _, prep := range strippablePrepositions {
-            if word == prep {
-                isPreposition = true
-                break
-            }
-        }
-        if !isPreposition {
-            filtered = append(filtered, word)
-        }
-    }
-    
-    return strings.Join(filtered, " ")
-}
+func FindMatchIn(searchName string, items ...string) (match, closeMatch string)
+func GetMatchNumber(input string) (string, int)
+func ConvertForFilename(input string) string
 ```
 
-### Color Code Processing
+`FindMatchIn` returns **two** results: an exact match and a near match. Callers
+that only read the first silently lose fuzzy matching — this is the routine
+behind most "why doesn't `get lake iron nodule` work" questions, and it matches
+whole multi-word phrases already.
+
+`GetMatchNumber` parses the disambiguation forms (`2.sword`, `sword#2`).
+
+**`ConvertForFilename` is load-bearing.** Data-file names are derived from
+display names through it: lowercase, keep `a-z0-9`, drop apostrophes, every
+other character becomes `_`. A mismatch between a `name:` field and its
+filename is a startup panic. It must also be applied to *lookup input* so a
+space-form query matches the underscore filename form.
+
+## Dice (legacy)
+
 ```go
-var colorShortTagRegex = regexp.MustCompile(`\{(\d*)(?::)?(\d*)?\}`)
-
-// Convert short color tags to full ANSI codes
-func ConvertColorShortTags(input string) string {
-    return colorShortTagRegex.ReplaceAllStringFunc(input, func(match string) string {
-        // Extract color codes and convert to ANSI
-        return convertToAnsiColor(match)
-    })
-}
-
-// Strip all color codes for plain text output
-func StripColorCodes(input string) string {
-    // Remove ANSI escape sequences
-    ansiRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
-    stripped := ansiRegex.ReplaceAllString(input, "")
-    
-    // Remove custom color tags
-    stripped = colorShortTagRegex.ReplaceAllString(stripped, "")
-    
-    return stripped
-}
+func Rand(maxInt int) int
+func LogRoll(name string, rollResult, targetNumber int)
+func RollDice(dice, sides int) int
+func ParseDiceRoll(dRoll string) (attacks, dCount, dSides, bonus int, buffOnCrit []int)
+func FormatDiceRoll(attacks, dCount, dSides, bonus int, buffOnCrit []int) string
 ```
 
-### Filename Sanitization
-```go
-// Convert text to safe filename across all platforms
-func ConvertForFilename(input string) string {
-    // Remove/replace unsafe characters
-    unsafe := regexp.MustCompile(`[<>:"/\\|?*\x00-\x1f]`)
-    safe := unsafe.ReplaceAllString(input, "_")
-    
-    // Handle reserved names on Windows
-    reserved := []string{"CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", 
-                         "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", 
-                         "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", 
-                         "LPT7", "LPT8", "LPT9"}
-    
-    upper := strings.ToUpper(safe)
-    for _, name := range reserved {
-        if upper == name {
-            safe = "_" + safe
-            break
-        }
-    }
-    
-    // Trim spaces and dots
-    safe = strings.Trim(safe, " .")
-    
-    // Ensure not empty
-    if safe == "" {
-        safe = "unnamed"
-    }
-    
-    return safe
-}
+**`Rand` and `LogRoll` are NOT used for hit or attack checks.** All stat-based
+resolution goes through `internal/dice` (`RollStat`, `OpposedRollStat`). What
+remains here is authored `2d6+3` notation parsing and non-combat randomness.
 
-// Cross-platform file path construction
-func FilePath(parts ...string) string {
-    return filepath.Join(parts...)
-}
+## Files, hashing, encoding
+
+```go
+func FilePath(pathParts ...string) string
+func Save(path string, data []byte, doSafe ...bool) error
+func SafeSave(path string, data []byte) error
+func ValidateWorldFiles(exampleWorldPath, worldPath string) error
+
+func Hash(input string) string
+func Md5Bytes(input []byte) []byte
+func Compress(input []byte) []byte
+func Decompress(input []byte) []byte
+func Encode(blobdata []byte) string
+func Decode(base64str string) []byte
+func GetLockSequence(lockIdentifier string, difficulty int, seed string, rotation uint64) string
 ```
 
-## Cryptographic Services
+`SafeSave` writes via a temporary file and renames, so an interrupted save
+cannot truncate a player's character. Prefer it for anything that would hurt to
+lose.
 
-### Password Hashing
+**`ValidateWorldFiles` hard-errors at boot when the live world is missing any
+subfolder present in the example world.** This is why folders whose *contents*
+are gitignored must still ship a tracked `.gitkeep` — git cannot store an empty
+directory, and a fresh clone otherwise dies before loading a room.
+
+`GetLockSequence` derives a deterministic lockpicking sequence, so the same lock
+presents the same puzzle until its rotation changes.
+
+## Display helpers
+
 ```go
-// Secure password hashing with SHA-256
-func Hash(input string) string {
-    hasher := sha256.New()
-    hasher.Write([]byte(input))
-    return hex.EncodeToString(hasher.Sum(nil))
-}
-
-// Legacy MD5 support for compatibility
-func Md5Hash(input string) string {
-    hasher := md5.New()
-    hasher.Write([]byte(input))
-    return hex.EncodeToString(hasher.Sum(nil))
-}
-
-// Base64 encoding utilities
-func EncodeBase64(data []byte) string {
-    return base64.StdEncoding.EncodeToString(data)
-}
-
-func DecodeBase64(encoded string) ([]byte, error) {
-    return base64.StdEncoding.DecodeString(encoded)
-}
+func ProgressBar(complete float64, maxBarSize int, barParts ...string) (fullBar, emptyBar string)
+func HealthClass(health, maxHealth int) string
+func QuantizeTens(value, max int) int
 ```
 
-### Random Number Generation
+`HealthClass` and `QuantizeTens` are how numeric state becomes a descriptive
+band — the project never shows players raw values.
+
+## Instrumentation
+
 ```go
-// Seeded random number generation
-func Rand(max int) int {
-    if max <= 0 {
-        return 0
-    }
-    return rand.Intn(max)
-}
+func TrackTime(name string, timePassed float64)
+func GetTimeTrackers() []Accumulator
+type Accumulator struct{ /* … */ }
+func (t *Accumulator) Record(nextValue float64)
+func (t *Accumulator) Stats() (lowest, highest, average, count float64)
+func (t *Accumulator) Average() float64
 
-// Dice rolling simulation
-func RollDice(count, sides int) int {
-    if count <= 0 || sides <= 0 {
-        return 0
-    }
-    
-    total := 0
-    for i := 0; i < count; i++ {
-        total += rand.Intn(sides) + 1
-    }
-    return total
-}
-
-// Percentage chance evaluation
-func RollPercent(chance int) bool {
-    if chance <= 0 {
-        return false
-    }
-    if chance >= 100 {
-        return true
-    }
-    return rand.Intn(100) < chance
-}
-```
-
-## Memory Management System
-
-### Memory Tracking
-```go
 type MemReport func() map[string]MemoryResult
-
-type MemoryResult struct {
-    Memory uint64 // Memory usage in bytes
-    Count  int    // Number of items
-}
-
-var (
-    memoryTrackerNames []string
-    memoryTrackers     []MemReport
-)
-
-// Register memory tracking for a system
-func AddMemoryReporter(name string, reporter MemReport) {
-    memoryTrackerNames = append(memoryTrackerNames, name)
-    memoryTrackers = append(memoryTrackers, reporter)
-}
-
-// Get comprehensive memory report
-func GetMemoryReport() (names []string, trackedResults []map[string]MemoryResult) {
-    names = append([]string{}, memoryTrackerNames...)
-    trackedResults = []map[string]MemoryResult{}
-    
-    for _, reporter := range memoryTrackers {
-        trackedResults = append(trackedResults, reporter())
-    }
-    
-    return names, trackedResults
-}
-
-// Calculate memory usage of any data structure
-func MemoryUsage(v interface{}) uint64 {
-    return calculateMemoryUsage(reflect.ValueOf(v), make(map[uintptr]bool))
-}
-
-func calculateMemoryUsage(v reflect.Value, visited map[uintptr]bool) uint64 {
-    if !v.IsValid() {
-        return 0
-    }
-    
-    var size uint64
-    
-    switch v.Kind() {
-    case reflect.Ptr, reflect.Interface:
-        if v.IsNil() {
-            return 0
-        }
-        
-        ptr := v.Pointer()
-        if visited[ptr] {
-            return 0 // Avoid infinite loops
-        }
-        visited[ptr] = true
-        
-        size += 8 // Pointer size
-        size += calculateMemoryUsage(v.Elem(), visited)
-        
-    case reflect.Slice:
-        size += 24 // Slice header
-        for i := 0; i < v.Len(); i++ {
-            size += calculateMemoryUsage(v.Index(i), visited)
-        }
-        
-    case reflect.Map:
-        size += 8 // Map header
-        for _, key := range v.MapKeys() {
-            size += calculateMemoryUsage(key, visited)
-            size += calculateMemoryUsage(v.MapIndex(key), visited)
-        }
-        
-    case reflect.String:
-        size += uint64(v.Len())
-        
-    case reflect.Struct:
-        for i := 0; i < v.NumField(); i++ {
-            size += calculateMemoryUsage(v.Field(i), visited)
-        }
-        
-    default:
-        size += uint64(v.Type().Size())
-    }
-    
-    return size
-}
+func AddMemoryReporter(name string, reporter MemReport)
+func GetMemoryReport() (names []string, trackedResults []map[string]MemoryResult)
+func ServerGetMemoryUsage() map[string]MemoryResult
+func MemoryUsage(i interface{}) uint64
+func FormatBytes(bytes uint64) string
 ```
 
-### System Statistics
+`MemoryUsage` walks a value reflectively (`sizeOf`) — it is an approximation
+for the admin memory report, not an allocator statistic, and it is **not
+cheap**. Do not call it on a hot path.
+
+## Server identity
+
 ```go
-// Get comprehensive server statistics
-func ServerStats() string {
-    var m runtime.MemStats
-    runtime.ReadMemStats(&m)
-    
-    return fmt.Sprintf(
-        "Heap: %dMB  Largest Heap: %dMB\n"+
-        "Stack: %dMB\n"+
-        "Total Mem: %dMB\n"+
-        "GC Count: %d\n"+
-        "NumCPU: %d\n",
-        bToMb(m.HeapInuse),
-        bToMb(m.HeapSys),
-        bToMb(m.StackSys),
-        bToMb(m.Sys),
-        m.NumGC,
-        runtime.NumCPU(),
-    )
-}
-
-func bToMb(b uint64) uint64 {
-    return b / 1024 / 1024
-}
+func SetServerAddress(addr string)
+func GetServerAddress() string
+func SetServerStart(t time.Time)
+func GetServerStartUnix() int64
+func CopyoverContributor() copyover.Contributor
 ```
 
-## File and Data Operations
+The copyover contributor persists the round and turn counters across a hot
+restart, which is what stops every timed thing in the world jumping when the
+server reloads.
 
-### File Utilities
-```go
-// Check if file exists
-func FileExists(filename string) bool {
-    _, err := os.Stat(filename)
-    return err == nil
-}
+## Gotchas
 
-// Create directory if it doesn't exist
-func EnsureDirectory(path string) error {
-    return os.MkdirAll(path, 0755)
-}
-
-// Copy file contents
-func CopyFile(src, dst string) error {
-    sourceFile, err := os.Open(src)
-    if err != nil {
-        return err
-    }
-    defer sourceFile.Close()
-    
-    destFile, err := os.Create(dst)
-    if err != nil {
-        return err
-    }
-    defer destFile.Close()
-    
-    _, err = io.Copy(destFile, sourceFile)
-    return err
-}
-```
-
-### Data Compression
-```go
-// Compress data using gzip
-func CompressData(data []byte) ([]byte, error) {
-    var buf bytes.Buffer
-    writer := gzip.NewWriter(&buf)
-    
-    _, err := writer.Write(data)
-    if err != nil {
-        return nil, err
-    }
-    
-    err = writer.Close()
-    if err != nil {
-        return nil, err
-    }
-    
-    return buf.Bytes(), nil
-}
-
-// Decompress gzip data
-func DecompressData(data []byte) ([]byte, error) {
-    reader, err := gzip.NewReader(bytes.NewReader(data))
-    if err != nil {
-        return nil, err
-    }
-    defer reader.Close()
-    
-    return io.ReadAll(reader)
-}
-```
-
-## Text Processing and Internationalization
-
-### Multi-language Support
-```go
-// Regular expressions for different text types
-var (
-    // CJK character support (Chinese, Japanese, Korean)
-    wordRegex = regexp.MustCompile(`([\p{Han}\p{Hiragana}\p{Katakana}\p{Hangul}]|\w+|[\p{P}\p{S}\s]+)`)
-    punctuationRegex = regexp.MustCompile(`[\p{P}]+`)
-)
-
-// Count visual width accounting for CJK characters
-func VisualWidth(text string) int {
-    return runewidth.StringWidth(text)
-}
-
-// Word wrapping with CJK support
-func WordWrap(text string, width int) []string {
-    if width <= 0 {
-        return []string{text}
-    }
-    
-    words := wordRegex.FindAllString(text, -1)
-    lines := []string{}
-    currentLine := ""
-    currentWidth := 0
-    
-    for _, word := range words {
-        wordWidth := runewidth.StringWidth(word)
-        
-        if currentWidth+wordWidth > width && currentLine != "" {
-            lines = append(lines, currentLine)
-            currentLine = word
-            currentWidth = wordWidth
-        } else {
-            currentLine += word
-            currentWidth += wordWidth
-        }
-    }
-    
-    if currentLine != "" {
-        lines = append(lines, currentLine)
-    }
-    
-    return lines
-}
-```
-
-## Network and Server Utilities
-
-### Server Management
-```go
-var serverAddr string = "Unknown"
-
-// Set server address for identification
-func SetServerAddress(addr string) {
-    serverAddr = addr
-}
-
-func GetServerAddress() string {
-    return serverAddr
-}
-
-// HTTP utility functions
-func IsValidURL(url string) bool {
-    _, err := http.Get(url)
-    return err == nil
-}
-
-// Network address validation
-func ValidateIPAddress(ip string) bool {
-    return net.ParseIP(ip) != nil
-}
-```
-
-## Integration Patterns
-
-### Performance Monitoring Integration
-```go
-// Track function execution time
-func TrackExecutionTime(name string, fn func()) {
-    start := time.Now()
-    fn()
-    duration := time.Since(start)
-    TrackTime(name, duration.Seconds())
-}
-
-// Memory usage monitoring
-func MonitorMemoryUsage(system string, data interface{}) {
-    usage := MemoryUsage(data)
-    mudlog.Debug("Memory Usage", "system", system, "bytes", usage, "mb", usage/1024/1024)
-}
-```
-
-### Thread Safety Integration
-```go
-// Safe game data access pattern
-func SafeGameOperation(operation func()) {
-    LockMud()
-    defer UnlockMud()
-    operation()
-}
-
-// Safe game data reading pattern
-func SafeGameRead(reader func()) {
-    RLockMud()
-    defer RUnlockMud()
-    reader()
-}
-```
-
-## Usage Examples
-
-### Performance Tracking
-```go
-// Track command execution time
-start := time.Now()
-executePlayerCommand(user, command)
-duration := time.Since(start)
-util.TrackTime("player_commands", duration.Seconds())
-
-// Get performance report
-trackers := util.GetTimeTrackers()
-for _, tracker := range trackers {
-    fmt.Printf("%s: avg=%.3fs, min=%.3fs, max=%.3fs, count=%.0f\n",
-        tracker.Name, tracker.Average, tracker.Lowest, tracker.Highest, tracker.Count)
-}
-```
-
-### Text Processing
-```go
-// Fuzzy item search
-itemName := "rusty sword"
-items := []string{"Rusty Iron Sword", "Sharp Blade", "Old Rusty Dagger"}
-
-closeMatch, exactMatch := util.FindMatchIn(itemName, items...)
-if exactMatch != "" {
-    fmt.Printf("Found exact match: %s\n", exactMatch)
-} else if closeMatch != "" {
-    fmt.Printf("Found close match: %s\n", closeMatch)
-}
-
-// Filename sanitization
-playerName := "Player/Name<With>Bad:Characters"
-safeFilename := util.ConvertForFilename(playerName)
-// Result: "Player_Name_With_Bad_Characters"
-```
-
-### Memory Monitoring
-```go
-// Register memory reporter for a system
-util.AddMemoryReporter("Users", func() map[string]util.MemoryResult {
-    return map[string]util.MemoryResult{
-        "active_users": {util.MemoryUsage(activeUsers), len(activeUsers)},
-        "user_cache":   {util.MemoryUsage(userCache), len(userCache)},
-    }
-})
-
-// Get memory report
-names, results := util.GetMemoryReport()
-for i, name := range names {
-    fmt.Printf("System: %s\n", name)
-    for component, result := range results[i] {
-        fmt.Printf("  %s: %d bytes (%d items)\n", 
-            component, result.Memory, result.Count)
-    }
-}
-```
+- **Everything here is global.** Counters, trackers, the lock, the server
+  address. Tests that mutate them must restore them.
+- **`VisibleWidth`, not `len`.** Repeated because it is the most common bug
+  this package causes.
+- **`FindMatchIn` returns two values.** Ignoring the second disables fuzzy
+  matching.
+- **`Save` is safe by default** as of 2026-07-31: with no third argument it
+  routes through `SafeSave`. Pass `false` to opt out and write directly. The
+  default was the other way round, so a new caller inherited the risky path by
+  omission.
+- **Keep the import list tiny.** This package sits beneath nearly everything;
+  importing a game package from here creates a cycle that is painful to unpick.
 
 ## Dependencies
 
-- `crypto/sha256` - Secure password hashing
-- `crypto/md5` - Legacy hash support
-- `compress/gzip` - Data compression utilities
-- `github.com/mattn/go-runewidth` - CJK character width calculation
-- `internal/mudlog` - Logging system integration
-- `internal/term` - Terminal control and ANSI codes
+`configs`, `mudlog`, `copyover`, and the standard library. Nothing else.
 
-This comprehensive util system provides the essential foundation for all GoMud operations with thread-safe utilities, performance monitoring, advanced text processing, and robust system management capabilities.
+## Consumers
+
+Effectively every package in `internal/` and `modules/`.

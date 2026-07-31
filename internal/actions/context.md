@@ -697,3 +697,29 @@ Skullduggery actions (Sneak, Steal, Plant) share a single cooldown key
 - `internal/modules/follow` — Auto-follow (used by Shadow)
 
 ---
+
+## Files
+
+The package is one file per action, plus a small shared core. Naming is the
+map: `combat_*.go` is a combat special, `mutation_*.go` a mutation active, and
+the rest are ordinary verbs.
+
+| Group | Files |
+|-------|-------|
+| Actor abstraction | `actor.go`, `actor_user.go`, `actor_mob.go` |
+| Readiness gates | `action_readiness.go`, `command_readiness.go` |
+| Targeting | `target_resolution.go`, `target_helpers.go`, `melee_target.go`, `sleeping_target.go` |
+| Shared helpers | `combat_helpers.go`, `skill_helpers.go`, `mutation_helpers.go` |
+| Combat specials | `combat_attack.go`, `combat_bash.go`, `combat_drain.go`, `combat_fire.go`, `combat_gore.go`, `combat_grapple.go`, `combat_hamstring.go`, `combat_kick.go`, `combat_maul.go`, `combat_pounce.go`, `combat_rake.go`, `combat_rally.go`, `combat_reload.go`, `combat_taunt.go`, `combat_throttle.go`, `combat_trip.go`, `combat_warcry.go` |
+| Casting | `cast.go`, `cast_interrupt.go` |
+| Mutation actives | `mutation_cocoon.go`, `mutation_venom_coat.go` |
+| Stealth / perception | `sneak.go`, `shadow.go`, `search.go`, `scan.go`, `track.go`, `surprise_attack.go`, `steal.go` |
+| Items & economy | `get.go`, `drop.go`, `give.go`, `transfer.go`, `buy.go`, `sell.go`, `remove_equip.go` |
+| Trades | `craft.go`, `salvage.go`, `forage.go`, `plant.go`, `defuse.go` |
+| Movement & state | `go.go`, `sleep.go`, `consider.go` |
+| Social | `say.go`, `emote.go`, `emote_aliases.go` |
+| Divergences | `divergences.go` — deliberate departures from upstream behaviour |
+
+**The actor seam is the point of this package.** `actions.Actor` lets one
+implementation serve both players and mobs, which is what keeps user and mob
+commands in parity instead of drifting apart.

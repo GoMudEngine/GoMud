@@ -1,32 +1,49 @@
 package dialogue
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // checkQuestGate returns true if the player satisfies quest/item/flag conditions.
-// When ps is nil all checks pass (backward compat for mob-to-mob or non-user contexts).
+//
+// When ps is nil every check passes (backward compat for mob-to-mob and other
+// non-user contexts). Production callers always pass a fully-populated state
+// built by buildPlayerState.
+//
+// Every callback field is optional and must be nil-checked before use. Four of
+// them (HasQuest, HasItem, RemoveItem, GiveQuest) were previously invoked
+// unguarded, so a partially-populated state panicked on those and only those.
+//
+// A missing *interrogative* callback fails the gate closed: with no way to ask
+// whether the player holds a token or an item, we must not conclude that they
+// do. The exception is questExcluded, where the same reasoning runs the other
+// way — we cannot confirm the player holds the excluding token, so the node
+// stays available rather than silently vanishing.
 func checkQuestGate(questRequired, questExcluded []string, requiresItem int, flagRequired, flagExcluded map[string]string, masterworkRequired int, ps *PlayerState) bool {
 	if ps == nil {
 		return true
 	}
 
+	if len(questRequired) > 0 && ps.HasQuest == nil {
+		return false
+	}
 	for _, token := range questRequired {
 		if !ps.HasQuest(token) {
 			return false
 		}
 	}
 
-	for _, token := range questExcluded {
-		if ps.HasQuest(token) {
-			return false
-		}
+	if ps.HasQuest != nil && slices.ContainsFunc(questExcluded, ps.HasQuest) {
+		return false
 	}
 
-	if requiresItem > 0 && !ps.HasItem(requiresItem) {
-		return false
+	if requiresItem > 0 {
+		if ps.HasItem == nil || !ps.HasItem(requiresItem) {
+			return false
+		}
 	}
 
 	if masterworkRequired > 0 && ps.HasOwnMasterwork != nil && !ps.HasOwnMasterwork(masterworkRequired) {
@@ -55,10 +72,10 @@ func applyQuestEffects(grantsQuest string, requiresItem int, givesItem int, flag
 	if ps == nil {
 		return
 	}
-	if requiresItem > 0 {
+	if requiresItem > 0 && ps.RemoveItem != nil {
 		ps.RemoveItem(requiresItem)
 	}
-	if grantsQuest != "" {
+	if grantsQuest != "" && ps.GiveQuest != nil {
 		ps.GiveQuest(grantsQuest)
 	}
 	if givesItem > 0 && ps.GiveItem != nil {

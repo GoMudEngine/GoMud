@@ -597,3 +597,16 @@ events.ProcessEvents()
 ```
 
 This event system provides the foundation for GoMud's decoupled architecture, enabling flexible and efficient communication between all game systems while maintaining performance and reliability.
+## Files
+
+| File | Purpose |
+|------|---------|
+| `events.go` | The `Event` interface and dispatch |
+| `eventtypes.go` | Every concrete event type |
+| `listeners.go` | Listener registry and `ListenerReturn` |
+| `queue.go` | The heap-based priority queue |
+| `eventlogger.go` | Event logging |
+| `const.go` | Constants and flags |
+
+This is the synchronous engine bus. `internal/worldevents` is a separate,
+passive record of notable happenings — do not confuse the two.

@@ -796,3 +796,14 @@ the single release line for BOTH the timer-expiry and pay-fine paths —
 the duplicate-message bug). `ExecuteArrest` sends an additional
 arrest-context line at cell entry; `payfine` sends a payment line that does
 not mention the door.
+## Files
+
+| File | Purpose |
+|------|---------|
+| `buffspec.go` | The authored `BuffSpec` and its loader |
+| `buffs.go` | Applied-buff instances, flags, stat mods |
+| `tick.go` | Per-round buff processing and expiry |
+| `test_helpers.go` | Test fixtures |
+
+Buff files are named `{buffid}-{ConvertForFilename(name)}.yaml` — `name:
+Stunned` must be `2-stunned.yaml`, or loading panics at startup.

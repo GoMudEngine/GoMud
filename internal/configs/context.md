@@ -555,3 +555,47 @@ full resolution flow and policy matrix.
 |------|---------|--------|
 | `RangedShotScale` | 1.0 | Global multiplier on all ranged shot damage. Tune up/down to adjust ranged vs melee balance without touching individual weapon stats. |
 | `RangedShieldDefenseBonus` | 15 | Flat defense-score bonus added to a defender's ranged-defense roll when they have a shield equipped in their offhand. Shields are more useful against arrows/bolts than bare hands. |
+## Files
+
+Config is split one file per section, all assembled in `configs.go`.
+
+| File | Section |
+|------|---------|
+| `configs.go` | Assembly, load/save, `GetConfig`, overrides plumbing |
+| `config_types.go` | Shared config value types |
+| `overrides.go` | `CONFIG_PATH` override-file layering |
+| `discovery.go` | Reflection-based knob discovery |
+| `testing_support.go` | Test helpers |
+| `config.server.go` | Server identity and version |
+| `config.network.go` | Ports, timeouts, connection limits |
+| `config.filepaths.go` | Data file locations |
+| `config.logging.go` | Log level, file, rotation |
+| `config.timing.go` | Round length, rounds per day |
+| `config.gameplay.go` | Gameplay knobs (map enforcement, petitions, …) |
+| `config.balance.go` | Balance root |
+| `config.balance.combat.go` | Combat maths, mitigation caps, defence floor |
+| `config.balance.progression.go` | Stat/skill progression |
+| `config.balance.spells.go` | Spell scaling |
+| `config.balance.shops.go` | Shop pricing and restock |
+| `config.balance.mobs.go` | Mob scaling |
+| `config.balance.discovery.go` | Discovery/offset mechanics |
+| `config.balance.misc.go` | Everything else in Balance |
+| `config.roles.go` | Role definitions |
+| `config.modules.go` | Per-module config bags |
+| `config.integrations.go` | Discord and other integrations |
+| `config.llm.go` | Ollama/LLM settings |
+| `config.analytics.go` | Analytics |
+| `config.memory.go` | Memory reporting |
+| `config.textformats.go` | Text formatting |
+| `config.translation.go` | Translation |
+| `config.specialrooms.go` | Special room ids |
+| `config.lootgoblin.go` | Loot goblin |
+| `config.validation.go` | Cross-section validation |
+
+**`_datafiles/config.yaml` has `skip-worktree` set** in this repository. `git
+add` will refuse it with a misleading "sparse-checkout" message — unset the
+bit, stage your hunks, then set it again.
+
+**Override files are flat dot-separated keys** (`Network.TelnetPort: [33334]`)
+layered over `config.yaml` via `CONFIG_PATH`. That is how the pre-push boot
+test runs on alternate ports without touching the tracked config.

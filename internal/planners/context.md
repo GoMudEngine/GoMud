@@ -246,3 +246,17 @@ wiped in prod / smoke).
 - **Cross-zone pursuit**: planners that require a target in a different zone
   return `StatusFailure` rather than issuing cross-zone `pathto`. Zone-hop
   travel logic (chunked as chunk 3.7) is out of scope here.
+
+## Files
+
+`planners.go` is the registry; `helpers.go` and `state.go` are shared; every
+other file is **one planner**, named for the goal it plans toward:
+
+`befriend.go`, `befriend_faction.go`, `craft_item.go`, `hunt_bounty_target.go`,
+`mastery_equip.go`, `mastery_skill.go`, `protection_mob.go`,
+`protection_faction.go`, `revenge_mob.go`, `revenge_faction.go`,
+`shop_upgrade.go`, `skill_training_table.go`, `survival.go`, `upgrade_gear.go`,
+`visit_zone.go`, `wealth_gold.go`, `wealth_item.go`.
+
+Each mirrors a goal type in `internal/goals/catalog` — adding a goal usually
+means adding both a catalog entry and a planner here.

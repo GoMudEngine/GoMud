@@ -142,39 +142,6 @@ func main() {
 - **No Persistent State**: Utility functions don't retain data
 - **Clean Exit**: Proper resource cleanup before program termination
 
-## Future Enhancements
-
-### Extended Port Search
-- **Custom Limits**: Configurable number of ports to find
-- **Protocol Selection**: Support for UDP port testing
-- **Parallel Scanning**: Concurrent port availability testing
-- **Range Validation**: Enhanced port range validation
-
-### Additional Flags
-- **Configuration Validation**: Flag to validate configuration files
-- **Database Connection**: Flag to test database connectivity
-- **Service Health**: Flag to check service dependencies
-- **Debug Options**: Flags for debug mode activation
-
-### Enhanced Output
-- **JSON Format**: Machine-readable output options
-- **Quiet Mode**: Suppressed output for scripting
-- **Verbose Mode**: Detailed diagnostic information
-- **Export Options**: Save results to files
-
-## Security Considerations
-
-### Port Scanning
-- **Local Only**: Only tests local port availability
-- **No Remote Scanning**: Doesn't perform network reconnaissance
-- **Resource Limits**: Limited scope prevents resource exhaustion
-- **Clean Operation**: No persistent network connections
-
-### Information Disclosure
-- **Version Information**: Version display is intentional and safe
-- **Port Information**: Only reveals local port availability
-- **Error Messages**: Error messages don't expose sensitive information
-
 ## Deployment Integration
 
 ### Container Deployment
