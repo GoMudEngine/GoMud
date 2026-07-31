@@ -72,6 +72,6 @@ at compile time instead of relying on `main.go` remembering to wire a nil var.
 
 ## Related
 
-- `docs/TECH_DEBT_AUDIT_2026-07-20.md` §4.3 (the finding this documents).
+- `docs/audits/TECH_DEBT_AUDIT_2026-07-20.md` §4.3 (the finding this documents).
 - `CLAUDE.md` — "codegraph MCP" note on verifying struct/signature shapes before
   dispatching work that touches these seams.

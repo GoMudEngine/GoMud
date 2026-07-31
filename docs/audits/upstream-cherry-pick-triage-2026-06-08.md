@@ -4,7 +4,7 @@
 
 Review `upstream/master` (`256c981d`) for work worth bringing into
 `pruuk/DOGMud`, per [[project_upstream_rereview_webclient]]. Rule (from
-`github_guide.md`/CLAUDE.md): **never merge upstream wholesale, never push to
+`docs/guides/github_guide.md`/CLAUDE.md): **never merge upstream wholesale, never push to
 it** — selective only.
 
 - **Merge-base:** `d21fa121` (2025-11-04) — ~7 months back.

@@ -63,7 +63,7 @@ The 13 available archetypes (loaded in Step 1):
 | `noncombat_questgiver` | Stationary, dialogue-only NPC. |
 | `noncombat_shopkeeper` | Stationary shop NPC. |
 
-**Priority order** (from `docs/CONTENT_GENERATION_GUIDE.md` Section
+**Priority order** (from `docs/guides/CONTENT_GENERATION_GUIDE.md` Section
 2):
 
 1. **Reuse** an existing archetype if one fits the brief.
@@ -158,7 +158,7 @@ After writing:
 > If you want a dialogue YAML for this mob, run `/new-room` is not needed — just create `_datafiles/world/dogmud/dialogue/{zone_folder}/{mobid}.yaml` using `docs/schemas/dialogue.md` as reference.
 >
 > Once your zone has all its mobs and items in place, run the smoke
-> checklist (in `docs/CONTENT_GENERATION_GUIDE.md` Section 2) before
+> checklist (in `docs/guides/CONTENT_GENERATION_GUIDE.md` Section 2) before
 > starting `/sketch-quest` for any quests in this zone.
 
 ---

@@ -28,7 +28,7 @@ _datafiles/world/dogmud/mobs/{zone_folder}/scripts/{mobid}-{ConvertForFilename(n
 - `test/`
 
 **Workflow:** new mobs are usually built as part of a zone — see
-`docs/CONTENT_GENERATION_GUIDE.md` Section 2 for the full zone-build
+`docs/guides/CONTENT_GENERATION_GUIDE.md` Section 2 for the full zone-build
 SOP including the `behavior_archetype` priority order.
 
 ---
@@ -244,7 +244,7 @@ When authoring a new mob:
 3. **Custom legacy** (`aiprofile` + `combatcommands` + `tactic_preset`)
    ONLY for bosses or signature one-off NPCs.
 
-See `docs/CONTENT_GENERATION_GUIDE.md` "Building a Full Zone" for the
+See `docs/guides/CONTENT_GENERATION_GUIDE.md` "Building a Full Zone" for the
 full zone-build workflow including the smoke-test checklist.
 
 ### Pairing with stat distribution

@@ -5,7 +5,7 @@ Plan a new quest for DOGMud. Produces a quest design document for human review. 
 ## Instructions
 
 **Phase 2 only.** Per the Zone-Building SOP in
-`docs/CONTENT_GENERATION_GUIDE.md` Section 2, quests are built AFTER
+`docs/guides/CONTENT_GENERATION_GUIDE.md` Section 2, quests are built AFTER
 the zone smoke-test checklist passes. If the zone for this quest
 hasn't been smoke-tested:
 
