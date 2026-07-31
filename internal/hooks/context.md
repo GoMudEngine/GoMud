@@ -1289,3 +1289,22 @@ See `internal/state/combatphase/context.md` for the full veto chain.
 - `internal/state/position` - Position state machine (chunks 4a + 4b)
 - `internal/state/control` - ControlLevel state machine (chunk 4b-fixup-2)
 - `internal/state/presence` - Presence state machine (chunk 5)
+## Files: one handler per file
+
+116 non-test files. The filename **is** the index — each is named for the event
+it handles and the job it does, so `NewRound_IdleMobs.go` is the idle-mob step
+of the new-round event.
+
+Prefixes in use: `NewRound_*` (per-round work), `NewTurn_*` (per-turn work),
+`Input_*`, `Combat_*`, `Quest_*`, `RoomChange_*`, `Player*`/`Mob*` lifecycle.
+
+Do not go looking for a registration in these files. **`hooks.go` holds
+`RegisterListeners()`, and that one function wires every listener in the
+package** — it is the authoritative list of what the engine reacts to.
+
+Conventions:
+
+- Combat logic belongs in `handleCombatRound`, not scattered across handlers.
+- Behaviour-tree combat events fire **before** the legacy AI.
+- A handler returns `events.Continue` unless it genuinely means to stop the
+  event reaching later listeners.
