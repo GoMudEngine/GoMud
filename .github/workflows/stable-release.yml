@@ -36,7 +36,7 @@ jobs:
       binary_version: ${{ steps.meta.outputs.binary_version }}
     steps:
       # actions/checkout v6.0.3
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
 
@@ -91,7 +91,7 @@ jobs:
       contents: read
     steps:
       # actions/checkout v6.0.3
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
 
@@ -131,7 +131,7 @@ jobs:
       RELEASE_TARGET_ASSET: ${{ matrix.asset }}
     steps:
       # actions/checkout v6.0.3
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
 
@@ -169,7 +169,7 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       # actions/checkout v6.0.3
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
 
@@ -225,7 +225,7 @@ jobs:
       - name: Attest release assets
         # actions/attest-build-provenance v4.1.0
         # yamllint disable-line rule:line-length
-        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32
+        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373
         with:
           subject-path: ${{ steps.release-assets.outputs.attestation_paths }}
 
