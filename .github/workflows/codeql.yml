@@ -37,7 +37,7 @@ jobs:
       javascript_typescript: ${{ steps.detect.outputs.javascript_typescript }}
     steps:
       # actions/checkout v6.0.3
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           # Keep normal runs shallow; the detect step fetches older bases only
           # when a larger push range needs them.
@@ -126,14 +126,14 @@ jobs:
 
     steps:
       # actions/checkout v6.0.3
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
 
       - name: Initialize CodeQL
         # github/codeql-action v4.36.2
         # yamllint disable-line rule:line-length
-        uses: github/codeql-action/init@8aad20d150bbac5944a9f9d289da16a4b0d87c1e
+        uses: github/codeql-action/init@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81
         with:
           languages: go
           # Path filters live in CodeQL config, not workflow event filters.
@@ -142,12 +142,12 @@ jobs:
       - name: Autobuild
         # github/codeql-action v4.36.2
         # yamllint disable-line rule:line-length
-        uses: github/codeql-action/autobuild@8aad20d150bbac5944a9f9d289da16a4b0d87c1e
+        uses: github/codeql-action/autobuild@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81
 
       - name: Perform CodeQL Analysis
         # github/codeql-action v4.36.2
         # yamllint disable-line rule:line-length
-        uses: github/codeql-action/analyze@8aad20d150bbac5944a9f9d289da16a4b0d87c1e
+        uses: github/codeql-action/analyze@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81
         with:
           # Keep separate code scanning result categories for each language.
           category: "/language:go"
@@ -166,14 +166,14 @@ jobs:
 
     steps:
       # actions/checkout v6.0.3
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
 
       - name: Initialize CodeQL
         # github/codeql-action v4.36.2
         # yamllint disable-line rule:line-length
-        uses: github/codeql-action/init@8aad20d150bbac5944a9f9d289da16a4b0d87c1e
+        uses: github/codeql-action/init@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81
         with:
           languages: javascript-typescript
           # Path filters live in CodeQL config, not workflow event filters.
@@ -182,7 +182,7 @@ jobs:
       - name: Perform CodeQL Analysis
         # github/codeql-action v4.36.2
         # yamllint disable-line rule:line-length
-        uses: github/codeql-action/analyze@8aad20d150bbac5944a9f9d289da16a4b0d87c1e
+        uses: github/codeql-action/analyze@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81
         with:
           # Keep separate code scanning result categories for each language.
           category: "/language:javascript-typescript"
