@@ -886,7 +886,16 @@ func handleTelnetConnection(connDetails *connections.ConnectionDetails, wg *sync
 			}
 
 			if redrawPrompt {
+				// GetCommandPrompt walks shared game state (prompt tokens reach
+				// rooms.LoadRoom, which reads AND writes the room manager's
+				// plain maps). This runs on the connection goroutine, so it must
+				// be read-locked against MainWorker's tick.
+				// NOTE: the lock is deliberately released before SendTo — SendTo
+				// does a blocking network write, and holding a world lock across
+				// it would let one stalled client freeze the game loop.
+				util.RLockMud()
 				pTxt := userObject.GetCommandPrompt()
+				util.RUnlockMud()
 				if connections.IsWebsocket(clientInput.ConnectionId) {
 					connections.SendTo([]byte(pTxt), clientInput.ConnectionId)
 				} else {
@@ -1020,10 +1029,16 @@ func handleTelnetConnection(connDetails *connections.ConnectionDetails, wg *sync
 					sug.Clear()
 					userObject.SetUnsentText(string(clientInput.Buffer), ``)
 
+					// Read-locked for the same reason as the redraw above; the
+					// lock is released before the blocking SendTo.
+					util.RLockMud()
+					pTxt := userObject.GetCommandPrompt()
+					util.RUnlockMud()
+
 					if connections.IsWebsocket(clientInput.ConnectionId) {
-						connections.SendTo([]byte(userObject.GetCommandPrompt()), clientInput.ConnectionId)
+						connections.SendTo([]byte(pTxt), clientInput.ConnectionId)
 					} else {
-						connections.SendTo([]byte(templates.AnsiParse(userObject.GetCommandPrompt())), clientInput.ConnectionId)
+						connections.SendTo([]byte(templates.AnsiParse(pTxt)), clientInput.ConnectionId)
 					}
 
 				}
@@ -1179,7 +1194,10 @@ func resumeRestoredConnection(connDetails *connections.ConnectionDetails, userOb
 			}
 
 			if redrawPrompt {
+				// Read-locked against the world tick; released before SendTo.
+				util.RLockMud()
 				pTxt := userObject.GetCommandPrompt()
+				util.RUnlockMud()
 				connections.SendTo([]byte(templates.AnsiParse(pTxt)), clientInput.ConnectionId)
 			}
 
@@ -1198,7 +1216,11 @@ func resumeRestoredConnection(connDetails *connections.ConnectionDetails, userOb
 					clientInput.Buffer = append(clientInput.Buffer, []byte(suggested)...)
 					sug.Clear()
 					userObject.SetUnsentText(string(clientInput.Buffer), ``)
-					connections.SendTo([]byte(templates.AnsiParse(userObject.GetCommandPrompt())), clientInput.ConnectionId)
+					// Read-locked against the world tick; released before SendTo.
+					util.RLockMud()
+					pTxt := userObject.GetCommandPrompt()
+					util.RUnlockMud()
+					connections.SendTo([]byte(templates.AnsiParse(pTxt)), clientInput.ConnectionId)
 				}
 
 				wi := WorldInput{
