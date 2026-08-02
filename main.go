@@ -886,7 +886,16 @@ func handleTelnetConnection(connDetails *connections.ConnectionDetails, wg *sync
 			}
 
 			if redrawPrompt {
+				// GetCommandPrompt walks shared game state (prompt tokens reach
+				// rooms.LoadRoom, which reads AND writes the room manager's
+				// plain maps). This runs on the connection goroutine, so it must
+				// be read-locked against MainWorker's tick.
+				// NOTE: the lock is deliberately released before SendTo — SendTo
+				// does a blocking network write, and holding a world lock across
+				// it would let one stalled client freeze the game loop.
+				util.RLockMud()
 				pTxt := userObject.GetCommandPrompt()
+				util.RUnlockMud()
 				if connections.IsWebsocket(clientInput.ConnectionId) {
 					connections.SendTo([]byte(pTxt), clientInput.ConnectionId)
 				} else {
@@ -1020,10 +1029,16 @@ func handleTelnetConnection(connDetails *connections.ConnectionDetails, wg *sync
 					sug.Clear()
 					userObject.SetUnsentText(string(clientInput.Buffer), ``)
 
+					// Read-locked for the same reason as the redraw above; the
+					// lock is released before the blocking SendTo.
+					util.RLockMud()
+					pTxt := userObject.GetCommandPrompt()
+					util.RUnlockMud()
+
 					if connections.IsWebsocket(clientInput.ConnectionId) {
-						connections.SendTo([]byte(userObject.GetCommandPrompt()), clientInput.ConnectionId)
+						connections.SendTo([]byte(pTxt), clientInput.ConnectionId)
 					} else {
-						connections.SendTo([]byte(templates.AnsiParse(userObject.GetCommandPrompt())), clientInput.ConnectionId)
+						connections.SendTo([]byte(templates.AnsiParse(pTxt)), clientInput.ConnectionId)
 					}
 
 				}
@@ -1179,7 +1194,10 @@ func resumeRestoredConnection(connDetails *connections.ConnectionDetails, userOb
 			}
 
 			if redrawPrompt {
+				// Read-locked against the world tick; released before SendTo.
+				util.RLockMud()
 				pTxt := userObject.GetCommandPrompt()
+				util.RUnlockMud()
 				connections.SendTo([]byte(templates.AnsiParse(pTxt)), clientInput.ConnectionId)
 			}
 
@@ -1198,7 +1216,11 @@ func resumeRestoredConnection(connDetails *connections.ConnectionDetails, userOb
 					clientInput.Buffer = append(clientInput.Buffer, []byte(suggested)...)
 					sug.Clear()
 					userObject.SetUnsentText(string(clientInput.Buffer), ``)
-					connections.SendTo([]byte(templates.AnsiParse(userObject.GetCommandPrompt())), clientInput.ConnectionId)
+					// Read-locked against the world tick; released before SendTo.
+					util.RLockMud()
+					pTxt := userObject.GetCommandPrompt()
+					util.RUnlockMud()
+					connections.SendTo([]byte(templates.AnsiParse(pTxt)), clientInput.ConnectionId)
 				}
 
 				wi := WorldInput{
@@ -1220,6 +1242,32 @@ func HandleWebSocketConnection(conn *websocket.Conn) {
 
 	var userObject *users.UserRecord
 	connDetails := connections.Add(nil, conn)
+
+	defer func() {
+		// This goroutine processes untrusted network input through the whole
+		// login/handler chain; a panic here must kill the one connection, not
+		// the process. Mirrors the telnet handler's recovery.
+		if r := recover(); r != nil {
+			mudlog.Error("PANIC",
+				"where", "HandleWebSocketConnection",
+				"connectionID", connDetails.ConnectionId(),
+				"error", r,
+				"stack", string(debug.Stack()))
+		}
+
+		// Runs on every exit path. A connection that dies during login never
+		// leaves Login state, and Broadcast skips Login connections, so no
+		// later write failure will ever reap it — before this defer, every
+		// visitor who closed the tab mid-signup (or any bot that hit /ws and
+		// hung up) permanently consumed a slot against MaxHumanConnections.
+		//
+		// Often a second Remove() for the same id: the logged-in paths already
+		// tear down via SendLogoutConnectionId/zombie handling, and several
+		// early returns below call Remove directly. Remove() is idempotent —
+		// it only acts when the id is still in the registry map, and deletes
+		// the entry as it does so.
+		connections.Remove(connDetails.ConnectionId())
+	}()
 
 	// Setup shared state map for this connection's handlers
 	// Needs to be created BEFORE the first handler call

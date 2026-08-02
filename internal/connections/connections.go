@@ -148,16 +148,27 @@ func Remove(id ConnectionId) (err error) {
 	return errors.New("connection not found")
 }
 
+// writeTarget pairs a connection id with the connection it was resolved from,
+// so a write can happen after the registry lock has been released.
+type writeTarget struct {
+	id ConnectionId
+	cd *ConnectionDetails
+}
+
+// Broadcast writes to every logged-in connection.
+//
+// The registry lock is held ONLY long enough to snapshot the targets. Writes
+// happen with the lock released: cd.Write() can block for up to writeTimeout,
+// and holding the package lock across that would queue every other connection
+// operation — including the Remove() that reaps the stalled client — behind one
+// wedged socket, on the single game-loop goroutine.
 func Broadcast(colorizedText []byte, skipConnectionIds ...ConnectionId) []ConnectionId {
 
-	lock.Lock()
-
-	removeIds := []ConnectionId{}
-	sentToIds := []ConnectionId{}
-
+	lock.RLock()
+	targets := make([]writeTarget, 0, len(netConnections))
 	for id, cd := range netConnections {
 
-		if cd.state == Login {
+		if cd.State() == Login {
 			continue
 		}
 
@@ -174,20 +185,25 @@ func Broadcast(colorizedText []byte, skipConnectionIds ...ConnectionId) []Connec
 			}
 		}
 
-		// Write the message to the connection
-		var err error
+		targets = append(targets, writeTarget{id: id, cd: cd})
+	}
+	lock.RUnlock()
 
-		_, err = cd.Write(colorizedText)
+	removeIds := []ConnectionId{}
+	sentToIds := make([]ConnectionId, 0, len(targets))
 
-		if err != nil {
-			mudlog.Warn("Broadcast()", "connectionId", id, "remoteAddr", cd.RemoteAddr().String(), "error", err)
+	// Lock released. A target may be removed out from under us here; Write()
+	// returns an error (never panics) for a closed or detached socket.
+	for _, t := range targets {
+
+		if _, err := t.cd.Write(colorizedText); err != nil {
+			mudlog.Warn("Broadcast()", "connectionId", t.id, "remoteAddr", t.cd.remoteAddrString(), "error", err)
 			// Remove from the connections
-			removeIds = append(removeIds, id)
+			removeIds = append(removeIds, t.id)
 		}
 
-		sentToIds = append(sentToIds, id)
+		sentToIds = append(sentToIds, t.id)
 	}
-	lock.Unlock()
 
 	for _, id := range removeIds {
 		Remove(id)
@@ -196,35 +212,28 @@ func Broadcast(colorizedText []byte, skipConnectionIds ...ConnectionId) []Connec
 	return sentToIds
 }
 
+// SendTo writes to the named connections. As with Broadcast, the registry lock
+// is released before any write.
 func SendTo(b []byte, ids ...ConnectionId) {
-	lock.Lock()
+
+	lock.RLock()
+	targets := make([]writeTarget, 0, len(ids))
+	for _, id := range ids {
+		if cd, ok := netConnections[id]; ok {
+			targets = append(targets, writeTarget{id: id, cd: cd})
+		}
+	}
+	lock.RUnlock()
 
 	removeIds := []ConnectionId{}
 
-	sentCt := 0
-	// iterate through all provided id's and attempt to send
-
-	for _, id := range ids {
-
-		if cd, ok := netConnections[id]; ok {
-
-			if _, err := cd.Write(b); err != nil {
-				mudlog.Warn("SendTo()", "connectionId", id, "remoteAddr", cd.RemoteAddr().String(), "error", err)
-				// Remove from the connections
-				removeIds = append(removeIds, id)
-				continue
-			}
-
+	for _, t := range targets {
+		if _, err := t.cd.Write(b); err != nil {
+			mudlog.Warn("SendTo()", "connectionId", t.id, "remoteAddr", t.cd.remoteAddrString(), "error", err)
+			// Remove from the connections
+			removeIds = append(removeIds, t.id)
 		}
-
-		sentCt++
 	}
-
-	if sentCt < 1 {
-		//mudlog.Info("message sent to nobody", "message", strings.Replace(string(b), "\033", "ESC", -1))
-	}
-
-	lock.Unlock()
 
 	for _, id := range removeIds {
 		Remove(id)

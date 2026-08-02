@@ -1,6 +1,7 @@
 package users
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -139,7 +140,17 @@ func loadUserById(userId int) (*UserRecord, error) {
 		return nil, err
 	}
 
-	user.Character.Validate()
+	if user.Character == nil {
+		return nil, fmt.Errorf("user file %s parsed with no character data", userFilePath)
+	}
+
+	// Same defect class as the old LoadUser: a discarded Validate() error
+	// let a nil/broken Character survive the copyover restore and get
+	// registered into userManager, panicking later on first use instead of
+	// failing the restore cleanly here.
+	if err := user.Character.Validate(); err != nil {
+		return nil, fmt.Errorf("user file %s failed validation: %w", userFilePath, err)
+	}
 
 	return user, nil
 }

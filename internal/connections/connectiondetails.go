@@ -17,6 +17,23 @@ import (
 
 var ansiRegexp = regexp.MustCompile(`\x1b\[[0-9;]*m`)
 
+// writeTimeout bounds every socket write.
+//
+// Without a deadline, a write to a client whose TCP receive window is full
+// blocks for as long as the OS retransmission timeout allows — potentially
+// minutes. Message dispatch runs inside ProcessEvents on the single game-loop
+// goroutine, so an unbounded write couples one stalled client to the entire
+// game: every player freezes, and the stalled connection cannot even be kicked
+// while it is stuck. 5 seconds is far longer than any healthy client needs and
+// short enough that a wedged socket is dropped rather than tolerated.
+const writeTimeout = 5 * time.Second
+
+// ErrNoConnection is returned by Write when the ConnectionDetails has neither a
+// net.Conn nor a websocket.Conn. Callers snapshot *ConnectionDetails pointers
+// and write outside the registry lock, so a connection can be torn down between
+// snapshot and write; returning an error beats dereferencing a nil socket.
+var ErrNoConnection = errors.New("connection has no underlying socket")
+
 type ConnectState uint32
 
 const (
@@ -265,12 +282,25 @@ func (cd *ConnectionDetails) Write(p []byte) (n int, err error) {
 			return 0, nil
 		}
 
+		// Bound the write the same way heartbeat.writePing() bounds its control
+		// frame. Set inside wsLock, immediately before the write it applies to.
+		cd.wsConn.SetWriteDeadline(time.Now().Add(writeTimeout))
+
 		err := cd.wsConn.WriteMessage(websocket.TextMessage, p)
 		if err != nil {
 			return 0, err
 		}
 		return len(p), nil
 	}
+
+	// A connection removed between snapshot and write (see ErrNoConnection).
+	if cd.conn == nil {
+		return 0, ErrNoConnection
+	}
+
+	// Ignore the deadline error: a transport that does not support deadlines
+	// should still get the write attempt.
+	cd.conn.SetWriteDeadline(time.Now().Add(writeTimeout))
 
 	return cd.conn.Write(p)
 }
@@ -299,6 +329,9 @@ func (cd *ConnectionDetails) Close() {
 		cd.wsConn.Close()
 		return
 	}
+	if cd.conn == nil {
+		return
+	}
 	cd.conn.Close()
 }
 
@@ -307,6 +340,20 @@ func (cd *ConnectionDetails) RemoteAddr() net.Addr {
 		return cd.wsConn.RemoteAddr()
 	}
 	return cd.conn.RemoteAddr()
+}
+
+// remoteAddrString is the logging-safe form of RemoteAddr. Broadcast/SendTo log
+// the remote address on a failed write, and a failed write is exactly the case
+// where the socket may already be gone — RemoteAddr() would panic on a nil
+// conn there.
+func (cd *ConnectionDetails) remoteAddrString() string {
+	if cd.wsConn == nil && cd.conn == nil {
+		return `unknown`
+	}
+	if addr := cd.RemoteAddr(); addr != nil {
+		return addr.String()
+	}
+	return `unknown`
 }
 
 // get for uniqueId

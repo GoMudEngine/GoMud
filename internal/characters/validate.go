@@ -1,6 +1,7 @@
 package characters
 
 import (
+	"errors"
 	"math"
 	"time"
 
@@ -566,6 +567,10 @@ func (c *Character) validateMutationSlots() {
 
 // Returns whether a correction was in order
 func (c *Character) Validate(recalcPermaBuffs ...bool) error {
+
+	if c == nil {
+		return errors.New("cannot validate a nil character")
+	}
 
 	// ── Skill migrations must run before ensureAllSkills ────────────
 	c.validateSkillMigrations()

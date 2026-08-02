@@ -22,6 +22,11 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// wsMaxMessageBytes caps a single inbound websocket frame. gorilla defaults to
+// no limit, which lets a pre-login client force an arbitrarily large allocation.
+// 64 KiB is comfortably above any legitimate command or GMCP frame.
+const wsMaxMessageBytes int64 = 64 * 1024
+
 var (
 	httpServer  *http.Server
 	httpsServer *http.Server
@@ -285,6 +290,13 @@ func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn)) {
 			return
 		}
 		defer conn.Close()
+
+		// gorilla's default read limit is unlimited, and ReadMessage buffers an
+		// entire frame before returning — so an unauthenticated client could
+		// make the server allocate arbitrarily just by announcing a huge frame.
+		// Anything legitimate (a typed command, a GMCP frame) is orders of
+		// magnitude under this; exceeding it closes the connection.
+		conn.SetReadLimit(wsMaxMessageBytes)
 
 		webSocketHandler(conn)
 	})

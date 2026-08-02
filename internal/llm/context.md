@@ -40,6 +40,14 @@ start another, which bounds concurrent requests to one per NPC.
 
 ## Gotchas
 
+- **Both callbacks run on the async goroutine, under `util.LockMud()`.**
+  `AskAsync` takes the mud lock around `onResponse` *and* `onUnavailable` before
+  invoking them, because every real implementation touches shared game state
+  (`mobs.GetInstance`, `dialogue.Load` / `ShiftMood`, `mob.Command`) and the
+  `internal/dialogue` caches are unguarded maps that `MainWorker` writes. So:
+  call mob/room/dialogue functions directly from a callback, and **never** take
+  the mud lock inside one — `mudLock` is not reentrant and double-locking hangs
+  the whole server.
 - **Every failure path must degrade to authored dialogue.** A timeout, a
   refused connection, or a disabled config must produce the normal fallback
   line, never an error shown to a player.

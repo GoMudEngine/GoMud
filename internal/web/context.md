@@ -262,7 +262,12 @@ file_paths:
 
 ### Public Endpoints
 - `GET /` - Homepage and static content
-- `GET /ws` - WebSocket upgrade for game clients
+- `GET /ws` - WebSocket upgrade for game clients. Inbound frames are capped at
+  `wsMaxMessageBytes` (64 KiB) via `conn.SetReadLimit` right after the upgrade —
+  gorilla's default is unlimited and `ReadMessage` buffers a whole frame, so
+  without the cap an unauthenticated client can force an arbitrary allocation.
+  The handler passed in (`main.HandleWebSocketConnection`) owns removing the
+  connection from the `connections` registry on every exit path.
 - `GET /favicon.ico` - Favicon redirect
 - `GET /<path>` - Template-processed HTML pages
 
