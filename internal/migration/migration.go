@@ -83,6 +83,16 @@ func doAllMigrations(lastConfigVersion version.Version) error {
 		}
 	}
 
+	if lastConfigVersion.IsOlderThan(version.New(0, 16, 0)) {
+		// One-time exploit remediation: fyttyn's vitality of 411 was ground via a
+		// since-fixed exploit and was being compressed to an effective 280 by the
+		// stat soft cap. With the soft cap removed, freeze raw vitality at the
+		// value actually in play rather than handing back 131 unearned points.
+		if err := migrate_FreezeExploitedVitality(false); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
