@@ -1,6 +1,8 @@
 package configs
 
-// validateMisc sets defaults for miscellaneous balance fields.
+// validateMisc sets defaults for miscellaneous balance fields. A field left
+// unset (absent) in config.yaml falls back to the Go-code default applied
+// below.
 func (b *Balance) validateMisc() {
 	// ── REGEN RATES ──────────────────────────────────────────────────────────
 	clampPct := func(v *ConfigFloat, def ConfigFloat) {

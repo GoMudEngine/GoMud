@@ -372,23 +372,6 @@ func GetConfig() Config {
 	return configData
 }
 
-// SetConfigForTest overwrites the package-global config state. It exists
-// solely to let tests that must call ReloadConfig() (e.g. to exercise the
-// real _datafiles/config.yaml from a chdir'd repo root) restore whatever
-// config state existed beforehand, so the reload doesn't leak into other
-// tests sharing the same test binary/process. Pair it with a
-// `prev := configs.GetConfig()` snapshot taken before the mutating call,
-// restored via `t.Cleanup(func() { configs.SetConfigForTest(prev) })`.
-// Precedent: internal/web/auth_test.go and internal/dialogue/save_test.go
-// instead re-call ReloadConfig() in cleanup, which only restores "the real
-// config" — insufficient when a sibling test in the same package depends on
-// code defaults never having been overwritten by a load.
-func SetConfigForTest(c Config) {
-	configDataLock.Lock()
-	defer configDataLock.Unlock()
-	configData = c
-}
-
 func overridePath() string {
 	overridePath := os.Getenv(`CONFIG_PATH`)
 	if overridePath == `` {

@@ -33,8 +33,10 @@ func withRepoRoot(t *testing.T) {
 	}
 	t.Cleanup(func() { _ = os.Chdir(cwd) })
 
-	prevConfig := configs.GetConfig()
-	t.Cleanup(func() { configs.SetConfigForTest(prevConfig) })
+	// SetConfigForTest snapshots the current config and self-registers the
+	// restore; ReloadConfig() then mutates it to the real config.yaml for
+	// the duration of this test only.
+	configs.SetConfigForTest(t, configs.GetConfig())
 
 	if err := configs.ReloadConfig(); err != nil {
 		t.Fatalf("reload config: %v", err)

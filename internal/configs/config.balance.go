@@ -199,9 +199,9 @@ type Balance struct {
 	// ── RESOURCE MAXIMUMS ─────────────────────────────────────────────────────
 	HealthBase             ConfigInt `yaml:"HealthBase"`             // Flat HP before stat contribution (default 5)
 	HealthPerStrength      ConfigInt `yaml:"HealthPerStrength"`      // Strength multiplier toward HealthMax (default 1)
-	HealthPerVitality      ConfigInt `yaml:"HealthPerVitality"`      // Vitality multiplier toward HealthMax (default 4)
+	HealthPerVitality      ConfigInt `yaml:"HealthPerVitality"`      // Vitality multiplier toward HealthMax (default 3)
 	StaminaBase            ConfigInt `yaml:"StaminaBase"`            // Flat stamina before stat contribution (default 5)
-	StaminaPerStrength     ConfigInt `yaml:"StaminaPerStrength"`     // Strength multiplier toward StaminaMax (default 1)
+	StaminaPerStrength     ConfigInt `yaml:"StaminaPerStrength"`     // Strength multiplier toward StaminaMax (default 0)
 	StaminaPerWillpower    ConfigInt `yaml:"StaminaPerWillpower"`    // Willpower multiplier toward StaminaMax (default 1)
 	StaminaPerVitality     ConfigInt `yaml:"StaminaPerVitality"`     // Vitality multiplier toward StaminaMax (default 3)
 	ConvictionBase         ConfigInt `yaml:"ConvictionBase"`         // Flat conviction before stat contribution (default 5)
