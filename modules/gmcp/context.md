@@ -274,6 +274,7 @@ payload schema and push triggers — this table is the map, not the schema.
 | `gmcp.Commands.go` | `Commands` | Command state, modes, cooldowns |
 | `gmcp.Behavior.go` | `Behavior` | Behaviour-tree state (admin/builder tooling) |
 | `gmcp.Build.go` | `Build` | The admin web building tools' data feed |
+| `gmcp.CharOp.go` | — | `GMCPCharOp` + `handleCharOp`: inbound state-touching `Char.*` ops, deferred to MainWorker |
 | `gmcp.Game.go` | `Game` | Game-level metadata |
 | `gmcp.World.go` | `World` | World-level state (weather, time) |
 | `gmcp.Mudlet.go` | `Client.GUI` | Mudlet-specific package download support |
@@ -292,3 +293,11 @@ payloads carry ids that index into it.
 - **Emit only on change where you can.** These push on room change and round
   boundaries; adding an unconditional per-round emit to a large payload is a
   bandwidth regression that will not show up in a local test.
+- **`HandleIAC` runs on the per-connection goroutine, not MainWorker.** Any
+  inbound handler that reads or writes shared game state (`rooms.*`, `mobs.*`,
+  `u.Character`, the room manager) races the world tick and can trigger Go's
+  uncatchable `fatal error: concurrent map read and map write`. Do not do that
+  work inline: queue an event and handle it on MainWorker, as `GMCPBuildOp` /
+  `handleBuildOp` (`gmcp.Build.go`) and `GMCPCharOp` / `handleCharOp`
+  (`gmcp.CharOp.go`) both do. **Copy the payload** when you queue it — it
+  aliases the IAC read buffer, which is reused once `HandleIAC` returns.
