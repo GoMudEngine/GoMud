@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-08-02 — The rest of the build robots caught up (staff)
+
+The remaining automated build steps — the ones that package the game into a
+container, store the compiled programs, check the code for mistakes, and publish
+a release — were all several versions behind, some by years. They are now on
+current releases. The reason they drifted is that our dependency-update robot
+was only ever told to watch the Go libraries, never the build steps themselves;
+it now watches both, so this should not silently rot again.
+
 ## 2026-08-02 — Build robots moved off a retiring engine (staff)
 
 The service that builds and tests the game after every change warned that the

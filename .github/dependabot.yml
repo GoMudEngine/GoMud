@@ -5,7 +5,21 @@
 
 version: 2
 updates:
-  - package-ecosystem: "gomod" 
+  - package-ecosystem: "gomod"
     directory: "/"
     schedule:
       interval: "weekly"
+
+  # Without this entry nothing ever proposed action bumps, which is how the
+  # pins drifted far enough for GitHub's Node 20 deprecation to catch us
+  # (checkout was 3 majors behind, action-gh-release 2). "/" covers both
+  # .github/workflows/ and the composite actions in .github/actions/.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      actions-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
