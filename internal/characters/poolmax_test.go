@@ -11,6 +11,16 @@ import (
 // Go test binaries run with CWD set to their own package directory, so a
 // test that reads the real config must chdir to the repo root first.
 // Precedent: internal/web/auth_test.go.
+//
+// Unlike that precedent (and internal/dialogue/save_test.go), this package
+// also has tests (progression_test.go) that depend on the code-default
+// Balance values never being overwritten by a load of the real
+// _datafiles/config.yaml — which sets several progression fields
+// (BaseProgressionChance, SkillProgressionMultipliers, ...) to different
+// tuned values. configs.ReloadConfig() mutates package-global state that
+// persists for the rest of the test binary, so merely reloading "the real
+// config" again in cleanup (as the precedent does) is not enough; we must
+// snapshot and restore whatever config state existed before this test ran.
 func withRepoRoot(t *testing.T) {
 	t.Helper()
 	cwd, err := os.Getwd()
@@ -22,7 +32,13 @@ func withRepoRoot(t *testing.T) {
 		t.Fatalf("chdir to repo root: %v", err)
 	}
 	t.Cleanup(func() { _ = os.Chdir(cwd) })
-	configs.ReloadConfig()
+
+	prevConfig := configs.GetConfig()
+	t.Cleanup(func() { configs.SetConfigForTest(prevConfig) })
+
+	if err := configs.ReloadConfig(); err != nil {
+		t.Fatalf("reload config: %v", err)
+	}
 }
 
 // poolsFor builds a character with the six stats set and returns its
