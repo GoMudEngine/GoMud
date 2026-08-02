@@ -689,22 +689,25 @@ Balance:
 
   # ── RESOURCE MAXIMUMS ───────────────────────────────────────────────────────
   # Formulas:
-  #   HealthMax   = HealthBase + Str × HealthPerStrength + Vit × HealthPerVitality
-  #   StaminaMax  = StaminaBase + Str × StaminaPerStrength + Wil × StaminaPerWillpower + Vit × StaminaPerVitality
-  #   ConvictionMax = ConvictionBase + (Wil + Cha) × ConvictionPerWilCha
-  # Example at human baseline (all stats 100):
-  #   HealthMax   = 5 + 100×1 + 100×4 = 505 HP
-  #   StaminaMax  = 5 + 100×1 + 100×1 + 100×3 = 505 SP
-  #   ConvictionMax = 5 + (100+100)×2 = 405 CP
+  #   HealthMax     = HealthBase + Vit x HealthPerVitality + Str x HealthPerStrength
+  #   StaminaMax    = StaminaBase + Vit x StaminaPerVitality + Wil x StaminaPerWillpower
+  #   ConvictionMax = ConvictionBase + Cha x ConvictionPerCharisma + Wil x ConvictionPerWillpower
+  #
+  # Restored 2026-08-02 to the intended design: each pool has one primary
+  # stat (x3) and one secondary (x1). The previous values had drifted while
+  # being tuned against compressed output — HealthMax is a StatInfo, so
+  # Recalculate() was silently shrinking every pool by roughly 40%. Pools
+  # are larger now; this is accepted, and NPCs use the same formulas.
   HealthBase: 5                  # Flat HP before stat contribution
-  HealthPerStrength: 1           # + Str × this toward HealthMax
-  HealthPerVitality: 4           # + Vit × this toward HealthMax (primary)
+  HealthPerVitality: 3           # + Vit x this toward HealthMax (primary)
+  HealthPerStrength: 1           # + Str x this toward HealthMax (secondary)
   StaminaBase: 5                 # Flat stamina before stat contribution
-  StaminaPerStrength: 1          # + Str × this toward StaminaMax
-  StaminaPerWillpower: 1         # + Wil × this toward StaminaMax
-  StaminaPerVitality: 3          # + Vit × this toward StaminaMax (primary)
+  StaminaPerVitality: 3          # + Vit x this toward StaminaMax (primary)
+  StaminaPerWillpower: 1         # + Wil x this toward StaminaMax (secondary)
+  StaminaPerStrength: 0          # Strength does not contribute to stamina
   ConvictionBase: 5              # Flat conviction before stat contribution
-  ConvictionPerWilCha: 2         # + (Wil+Cha) × this toward ConvictionMax
+  ConvictionPerCharisma: 3       # + Cha x this toward ConvictionMax (primary)
+  ConvictionPerWillpower: 1      # + Wil x this toward ConvictionMax (secondary)
 
   # ── PROGRESSION ─────────────────────────────────────────────────────────────
   # Skills and stats improve via use-based progression. Every UsesPerRank

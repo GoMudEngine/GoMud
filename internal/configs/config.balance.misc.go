@@ -34,13 +34,13 @@ func (b *Balance) validateMisc() {
 		b.HealthPerStrength = 1
 	}
 	if b.HealthPerVitality < 0 {
-		b.HealthPerVitality = 4
+		b.HealthPerVitality = 3
 	}
 	if b.StaminaBase < 0 {
 		b.StaminaBase = 5
 	}
 	if b.StaminaPerStrength < 0 {
-		b.StaminaPerStrength = 1
+		b.StaminaPerStrength = 0
 	}
 	if b.StaminaPerWillpower < 0 {
 		b.StaminaPerWillpower = 1
@@ -51,8 +51,11 @@ func (b *Balance) validateMisc() {
 	if b.ConvictionBase < 0 {
 		b.ConvictionBase = 5
 	}
-	if b.ConvictionPerWilCha < 0 {
-		b.ConvictionPerWilCha = 2
+	if b.ConvictionPerCharisma < 0 {
+		b.ConvictionPerCharisma = 3
+	}
+	if b.ConvictionPerWillpower < 0 {
+		b.ConvictionPerWillpower = 1
 	}
 
 	// ── RESOURCE DEPLETION PENALTIES ─────────────────────────────────────────

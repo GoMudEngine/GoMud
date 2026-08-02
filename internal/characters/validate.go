@@ -94,7 +94,8 @@ func (c *Character) RecalculateStats() {
 		c.Stats.Vitality.ValueAdj*int(rb.StaminaPerVitality)
 
 	c.ConvictionMax.Mods = int(rb.ConvictionBase) +
-		(c.Stats.Willpower.ValueAdj+c.Stats.Charisma.ValueAdj)*int(rb.ConvictionPerWilCha)
+		c.Stats.Charisma.ValueAdj*int(rb.ConvictionPerCharisma) +
+		c.Stats.Willpower.ValueAdj*int(rb.ConvictionPerWillpower)
 
 	c.ActionPointsMax.Mods = 200 // hard coded for now
 

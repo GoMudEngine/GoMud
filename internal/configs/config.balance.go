@@ -197,15 +197,16 @@ type Balance struct {
 	UnarmedAttackStaminaCost ConfigInt   `yaml:"UnarmedAttackStaminaCost"` // Stamina per unarmed attack (default 4)
 
 	// ── RESOURCE MAXIMUMS ─────────────────────────────────────────────────────
-	HealthBase          ConfigInt `yaml:"HealthBase"`          // Flat HP before stat contribution (default 5)
-	HealthPerStrength   ConfigInt `yaml:"HealthPerStrength"`   // Strength multiplier toward HealthMax (default 1)
-	HealthPerVitality   ConfigInt `yaml:"HealthPerVitality"`   // Vitality multiplier toward HealthMax (default 4)
-	StaminaBase         ConfigInt `yaml:"StaminaBase"`         // Flat stamina before stat contribution (default 5)
-	StaminaPerStrength  ConfigInt `yaml:"StaminaPerStrength"`  // Strength multiplier toward StaminaMax (default 1)
-	StaminaPerWillpower ConfigInt `yaml:"StaminaPerWillpower"` // Willpower multiplier toward StaminaMax (default 1)
-	StaminaPerVitality  ConfigInt `yaml:"StaminaPerVitality"`  // Vitality multiplier toward StaminaMax (default 3)
-	ConvictionBase      ConfigInt `yaml:"ConvictionBase"`      // Flat conviction before stat contribution (default 5)
-	ConvictionPerWilCha ConfigInt `yaml:"ConvictionPerWilCha"` // (Wil+Cha) multiplier toward ConvictionMax (default 2)
+	HealthBase             ConfigInt `yaml:"HealthBase"`             // Flat HP before stat contribution (default 5)
+	HealthPerStrength      ConfigInt `yaml:"HealthPerStrength"`      // Strength multiplier toward HealthMax (default 1)
+	HealthPerVitality      ConfigInt `yaml:"HealthPerVitality"`      // Vitality multiplier toward HealthMax (default 4)
+	StaminaBase            ConfigInt `yaml:"StaminaBase"`            // Flat stamina before stat contribution (default 5)
+	StaminaPerStrength     ConfigInt `yaml:"StaminaPerStrength"`     // Strength multiplier toward StaminaMax (default 1)
+	StaminaPerWillpower    ConfigInt `yaml:"StaminaPerWillpower"`    // Willpower multiplier toward StaminaMax (default 1)
+	StaminaPerVitality     ConfigInt `yaml:"StaminaPerVitality"`     // Vitality multiplier toward StaminaMax (default 3)
+	ConvictionBase         ConfigInt `yaml:"ConvictionBase"`         // Flat conviction before stat contribution (default 5)
+	ConvictionPerCharisma  ConfigInt `yaml:"ConvictionPerCharisma"`  // Charisma multiplier toward ConvictionMax, primary (default 3)
+	ConvictionPerWillpower ConfigInt `yaml:"ConvictionPerWillpower"` // Willpower multiplier toward ConvictionMax, secondary (default 1)
 
 	// ── PROGRESSION ───────────────────────────────────────────────────────────
 	SkillSoftCap             ConfigInt   `yaml:"SkillSoftCap"`             // Virtual ranks where progression slows sharply (default 50)

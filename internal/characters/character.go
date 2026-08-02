@@ -333,7 +333,7 @@ func New() *Character {
 		Zone:       startingZone,
 		SpeciesId:  startingRace,
 		Health:     startingHealth,
-		HealthMax:  stats.StatInfo{Base: 1},
+		HealthMax:  stats.StatInfo{},
 		Skills:     initAllSkills(),
 		Gold:       250,
 		Bank:       100,
