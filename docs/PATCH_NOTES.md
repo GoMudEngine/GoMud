@@ -1,5 +1,26 @@
 # DOGMud Patch Notes
 
+## 2026-08-02 — Bigger health, stamina, and conviction pools
+
+A limit meant to slow down extreme stat growth had a side effect nobody
+intended: it was shrinking every character's health, stamina, and conviction
+pools by about 40%, for players and monsters alike, long before any stat came
+close to the limit itself. That limit is now removed — stats are used at
+their true value. Your pools are substantially bigger as a result (a typical
+character's health pool grows from around 320 to around 425).
+
+Two of the pool formulas were also corrected to match their intended design:
+
+- **Stamina** no longer depends on Strength. It now comes from **Vitality**
+  (primary) and **Willpower** (secondary).
+- **Conviction** is now driven mainly by **Charisma**, with **Willpower** as
+  a secondary source.
+
+Damage amounts were not changed, so with more health, stamina, and conviction
+to get through, fights may take a bit longer than before. Monsters use the
+same formulas as players, so the balance between you and what you fight has
+not changed — everyone simply has more to work with.
+
 ## 2026-08-02 — The rest of the build robots caught up (staff)
 
 The remaining automated build steps — the ones that package the game into a

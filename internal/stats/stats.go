@@ -1,11 +1,5 @@
 package stats
 
-import (
-	"math"
-
-	"github.com/GoMudEngine/GoMud/internal/configs"
-)
-
 type Statistics struct {
 	Strength   StatInfo `yaml:"strength,omitempty"`   // Muscular strength (damage)
 	Dexterity  StatInfo `yaml:"dexterity,omitempty"`  // Speed and agility (dodging)
@@ -20,7 +14,7 @@ type Statistics struct {
 type StatInfo struct {
 	Training int `yaml:"training,omitempty"` // How much it's been trained with Training Points spending
 	Value    int `yaml:"-"`                  // Final calculated value
-	ValueAdj int `yaml:"-"`                  // Final calculated value (Adjusted)
+	ValueAdj int `yaml:"-"`                  // Always equals Value now; see Recalculate
 	Racial   int `yaml:"-"`                  // Value provided by racial benefits
 	Base     int `yaml:"base,omitempty"`     // Base stat value
 	Mods     int `yaml:"-"`                  // How much it's modded by equipment, spells, etc.
@@ -37,22 +31,17 @@ func (si *StatInfo) SetMod(mod ...int) {
 	}
 }
 
+// Recalculate previously ran a soft-cap compression on ValueAdj above
+// StatSoftCap. Removed 2026-08-02: HealthMax/StaminaMax/ConvictionMax/
+// ActionPointsMax are StatInfo too and shared this method, so the
+// compression was silently shrinking every resource pool by ~40%
+// (e.g. a true 530 HP played as 322), and the curve actually amplified
+// rather than diminished for values 151-163. ValueAdj is kept, always
+// equal to Value, only so the ~189 existing call sites keep compiling;
+// collapsing it into Value is planned follow-up work. Do not reintroduce
+// compression here.
 func (si *StatInfo) Recalculate() {
-	b := configs.GetBalanceConfig()
 	si.Racial = si.Base
 	si.Value = si.Racial + si.Training + si.Mods
 	si.ValueAdj = si.Value
-	softCap := int(b.StatSoftCap)            // 150 — linear growth up to here
-	threshold := int(b.StatSoftCapThreshold) // 105 — below this, no adjustment
-	multiplier := float64(b.StatSoftCapMultiplier)
-
-	if si.ValueAdj >= threshold && si.ValueAdj <= softCap {
-		// Between threshold and soft cap: linear (no compression)
-		// Stats earned are stats kept
-	} else if si.ValueAdj > softCap {
-		// Beyond soft cap: diminishing returns on overage past the cap
-		// adjusted = softCap + (raw - softCap)^0.75 * multiplier
-		overage := float64(si.ValueAdj - softCap)
-		si.ValueAdj = softCap + int(math.Round(math.Pow(overage, 0.75)*multiplier))
-	}
 }

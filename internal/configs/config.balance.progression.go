@@ -7,8 +7,8 @@ func (b *Balance) validateProgression() {
 	if b.SkillSoftCap < 1 {
 		b.SkillSoftCap = 50
 	}
-	if b.StatSoftCap < 1 {
-		b.StatSoftCap = 150
+	if b.StatProgressionSoftCap < 1 {
+		b.StatProgressionSoftCap = 150
 	}
 	if b.BaseProgressionChance <= 0 || b.BaseProgressionChance > 1.0 {
 		b.BaseProgressionChance = 0.30
@@ -106,13 +106,5 @@ func (b *Balance) validateProgression() {
 	}
 	if b.MutationLevel4Multiplier <= 0 {
 		b.MutationLevel4Multiplier = 2.5
-	}
-
-	// ── STAT SOFT CAP ─────────────────────────────────────────────────────────
-	if b.StatSoftCapThreshold < 100 {
-		b.StatSoftCapThreshold = 105
-	}
-	if b.StatSoftCapMultiplier <= 0 {
-		b.StatSoftCapMultiplier = 2.0
 	}
 }

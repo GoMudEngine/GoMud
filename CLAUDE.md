@@ -263,7 +263,22 @@ party markers are web-only — the ASCII `map` command is unaffected.
 ## Stat & Progression System
 - All stats (Strength, Dexterity, Perception, Vitality, Willpower, Charisma) are centered at **100 = human baseline**
 - Stats improve via **use-based progression only** — `OnStatUse()` triggers probabilistic advancement. There is NO level-based or XP-based stat gain; levels and XP are being removed from the game entirely.
-- Soft cap: stats are linear up to `StatSoftCap` (default 150), then diminishing returns: `adjusted = softCap + (raw - softCap)^0.75 * multiplier` (default multiplier 2.0). `StatSoftCapThreshold` (105) is the floor below which no adjustment applies.
+- **There is no soft cap on stat values.** `ValueAdj == Value` always; stats are
+  used raw. Compression was removed 2026-08-02 — it was inherited from upstream,
+  hid ~10 points from three veteran characters, and (because `HealthMax`,
+  `StaminaMax`, `ConvictionMax` and `ActionPointsMax` are also `stats.StatInfo`
+  and call the same `Recalculate()`) was silently shrinking every resource pool
+  by roughly 40%. Do not reintroduce compression in `StatInfo.Recalculate()` —
+  anything added there hits the pools too.
+- `StatProgressionSoftCap` (default 150) is the *virtual rank* where progression
+  slows sharply, plus the anti-exploit floor in `CheckStatProgression`. It is not
+  a ceiling on stat values. This is the real brake on runaway stats: no
+  production character has organically exceeded 195 under it.
+- Resource pools: `HealthMax = 5 + Vit×3 + Str×1`, `StaminaMax = 5 + Vit×3 +
+  Wil×1`, `ConvictionMax = 5 + Cha×3 + Wil×1`. One primary stat (×3) and one
+  secondary (×1) each. Coefficients live in the balance config; note that a knob
+  left *absent* from `config.yaml` falls back to its Go default, and `0` is a
+  legal shipped value (`StaminaPerStrength: 0`).
 - Skills (10 total) cap softly at 50 (`skillSoftCap`). They progress via `OnSkillUse()` → `CheckSkillProgression()`, probabilistically, every ~25 uses.
 
 ## Dice & Rolling System

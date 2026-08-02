@@ -164,14 +164,14 @@ func (c *Character) CheckStatProgression(statName string, userId int, bonusMulti
 	// If the actual stat value exceeds the soft cap, use it as a floor for the virtual rank.
 	// This prevents characters with artificially high stats (e.g. admin accounts) from
 	// exploiting the low use-count portion of the progression curve.
-	if statVal := c.GetStatValue(statName); statVal > int(b.StatSoftCap) && statVal > virtualRank {
+	if statVal := c.GetStatValue(statName); statVal > int(b.StatProgressionSoftCap) && statVal > virtualRank {
 		virtualRank = statVal
 	}
 	// Phase 24.2: Apply mutation stat progression multiplier
 	mutStatMult := 1.0 + mutations.GetStatProgressionMultiplier(c.Mutations)
 	// Phase 39.1: Per-stat progression multiplier from config
 	statMult := b.GetStatProgressionMultiplier(statName)
-	chance := CalculateProgressionChance(virtualRank, int(b.StatSoftCap)) * bonusMultiplier * mutStatMult * statMult * float64(b.StatProgressionRate)
+	chance := CalculateProgressionChance(virtualRank, int(b.StatProgressionSoftCap)) * bonusMultiplier * mutStatMult * statMult * float64(b.StatProgressionRate)
 	if chance > 1.0 {
 		chance = 1.0
 	}
