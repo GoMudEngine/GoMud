@@ -713,7 +713,10 @@ Balance:
   # Example: skill with 50 uses (= rank 2), BaseProgressionChance 0.12:
   #   chance ≈ 0.12 × e^(-3.0 × 2/50) ≈ 10.6% per check
   SkillSoftCap: 50               # Virtual ranks where progression slows sharply
-  StatProgressionSoftCap: 150    # Virtual rank where stat progression slows sharply (NOT a cap on stat values)
+  # Also the anti-exploit floor: stats above this pin virtual rank to the raw
+  # stat value, so artificially high stats (e.g. admin accounts) can't exploit
+  # the cheap low-use-count portion of the curve. NOT a cap on stat values.
+  StatProgressionSoftCap: 150    # Virtual rank where stat progression slows sharply
   UsesPerRank: 25                # Skill/stat uses that equal one virtual rank
   BaseProgressionChance: 0.12    # Chance to progress per check at rank 0 (12%)
   StatProgressionRate: 2.25      # 6e: ~2.25x STAT progression (skills unaffected)
