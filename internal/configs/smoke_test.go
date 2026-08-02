@@ -51,8 +51,8 @@ func TestSmoke_BalanceConfigValid(t *testing.T) {
 	// Soft caps
 	assert.Greater(t, int(bal.SkillSoftCap), 0,
 		"SkillSoftCap must be positive")
-	assert.Greater(t, int(bal.StatSoftCap), 0,
-		"StatSoftCap must be positive")
+	assert.Greater(t, int(bal.StatProgressionSoftCap), 0,
+		"StatProgressionSoftCap must be positive")
 
 	// Mitigation caps — must be between 0 and 1
 	assert.Greater(t, float64(bal.PhysicalMitigationCap), 0.0,

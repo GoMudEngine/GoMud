@@ -209,14 +209,12 @@ type Balance struct {
 
 	// ── PROGRESSION ───────────────────────────────────────────────────────────
 	SkillSoftCap             ConfigInt   `yaml:"SkillSoftCap"`             // Virtual ranks where progression slows sharply (default 50)
-	StatSoftCap              ConfigInt   `yaml:"StatSoftCap"`              // Stat value where progression slows sharply (default 150)
+	StatProgressionSoftCap   ConfigInt   `yaml:"StatProgressionSoftCap"`   // Virtual rank where stat progression slows sharply (default 150). NOT a cap on stat values.
 	UsesPerRank              ConfigInt   `yaml:"UsesPerRank"`              // Skill/stat uses that equal one virtual rank (default 25)
 	BaseProgressionChance    ConfigFloat `yaml:"BaseProgressionChance"`    // Starting chance to progress at rank 0 (default 0.30)
 	StatProgressionRate      ConfigFloat `yaml:"StatProgressionRate"`      // Global multiplier on STAT progression chance; skills unaffected (default 1.0)
 	ProgressionDecayBelowCap ConfigFloat `yaml:"ProgressionDecayBelowCap"` // Exponential steepness below soft cap (default 3.0)
 	ProgressionDecayAboveCap ConfigFloat `yaml:"ProgressionDecayAboveCap"` // Exponential steepness above soft cap (default 2.0)
-	StatSoftCapThreshold     ConfigInt   `yaml:"StatSoftCapThreshold"`     // Raw stat value where adjusted formula kicks in (default 105)
-	StatSoftCapMultiplier    ConfigFloat `yaml:"StatSoftCapMultiplier"`    // Multiplier in: 100 + sqrt(raw-100) * this (default 2.0)
 	MobProgressionEnabled    ConfigBool  `yaml:"MobProgressionEnabled"`    // Enable mob stat/skill progression (default true)
 	MobProgressionRate       ConfigFloat `yaml:"MobProgressionRate"`       // Multiplier on progression chance vs players (default 0.5)
 	MobStatCap               ConfigInt   `yaml:"MobStatCap"`               // Hard cap on mob stats from progression (default 200)

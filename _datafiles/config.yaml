@@ -713,19 +713,12 @@ Balance:
   # Example: skill with 50 uses (= rank 2), BaseProgressionChance 0.12:
   #   chance ≈ 0.12 × e^(-3.0 × 2/50) ≈ 10.6% per check
   SkillSoftCap: 50               # Virtual ranks where progression slows sharply
-  StatSoftCap: 150               # Stat value where progression slows sharply
+  StatProgressionSoftCap: 150    # Virtual rank where stat progression slows sharply (NOT a cap on stat values)
   UsesPerRank: 25                # Skill/stat uses that equal one virtual rank
   BaseProgressionChance: 0.12    # Chance to progress per check at rank 0 (12%)
   StatProgressionRate: 2.25      # 6e: ~2.25x STAT progression (skills unaffected)
   ProgressionDecayBelowCap: 3.0  # Exponential steepness below soft cap (higher = faster decay)
   ProgressionDecayAboveCap: 2.0  # Exponential steepness above soft cap
-  #
-  # Stat soft cap: raw stat values above this are diminished.
-  # Formula: adjusted = SoftCap + (raw - SoftCap)^0.75 × Multiplier
-  # Example: raw stat 160, threshold 105, cap 150, multiplier 2.0:
-  #   adjusted = 150 + (160-150)^0.75 × 2.0 = 150 + 11.2 = 161.2
-  StatSoftCapThreshold: 105      # Raw stat below which no adjustment applies
-  StatSoftCapMultiplier: 2.0     # Scaling factor above the soft cap
 
   # ── PER-STAT PROGRESSION MULTIPLIERS ────────────────────────────────────────
   # Scales the progression chance for each stat independently.
