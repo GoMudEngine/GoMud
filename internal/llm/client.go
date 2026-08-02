@@ -15,8 +15,15 @@ import (
 )
 
 // AskAsync fires a goroutine that calls Ollama and delivers the response via onResponse.
-// onResponse is called under util.LockMud() — safe to call mob/room functions directly.
-// onUnavailable is called (without the mud lock) when the LLM is down, timed out, or busy.
+// BOTH callbacks are invoked under util.LockMud() — safe to call mob/room/dialogue
+// functions directly. onResponse delivers a model reply; onUnavailable fires when the
+// LLM is down, timed out, busy, or returned nothing, and is the YAML-fallback path.
+//
+// The lock matters: every real onUnavailable implementation touches shared state
+// (mobs.GetInstance, dialogue.Load/ShiftMood, mob.Command), and the internal/dialogue
+// caches are unguarded maps that MainWorker writes. Both callbacks run only on this
+// goroutine, which never holds the mud lock on entry, so there is no reentrancy on the
+// non-reentrant mudLock.
 func AskAsync(
 	profile *LLMProfile,
 	endpoint string,
@@ -41,7 +48,9 @@ func AskAsync(
 		// 1. If another request is already in-flight for this mob, fall back immediately.
 		if isPending(mobInstanceId) {
 			mudlog.Info(`llm`, `status`, fmt.Sprintf("mob %d already pending, falling back to YAML", mobInstanceId))
+			util.LockMud()
 			onUnavailable()
+			util.UnlockMud()
 			return
 		}
 
@@ -101,7 +110,9 @@ func AskAsync(
 		bodyBytes, err := json.Marshal(reqBody)
 		if err != nil {
 			mudlog.Error(`llm`, `error`, fmt.Sprintf("failed to marshal request: %v", err))
+			util.LockMud()
 			onUnavailable()
+			util.UnlockMud()
 			return
 		}
 
@@ -115,7 +126,9 @@ func AskAsync(
 		req, err := http.NewRequestWithContext(httpCtx, http.MethodPost, endpoint+"/api/chat", bytes.NewReader(bodyBytes))
 		if err != nil {
 			mudlog.Error(`llm`, `error`, fmt.Sprintf("failed to build request: %v", err))
+			util.LockMud()
 			onUnavailable()
+			util.UnlockMud()
 			return
 		}
 		req.Header.Set("Content-Type", "application/json")
@@ -124,14 +137,18 @@ func AskAsync(
 		resp, err := client.Do(req)
 		if err != nil {
 			mudlog.Info(`llm`, `status`, fmt.Sprintf("ollama unavailable for mob %d: %v", mobInstanceId, err))
+			util.LockMud()
 			onUnavailable()
+			util.UnlockMud()
 			return
 		}
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
 			mudlog.Info(`llm`, `status`, fmt.Sprintf("ollama returned status %d for mob %d", resp.StatusCode, mobInstanceId))
+			util.LockMud()
 			onUnavailable()
+			util.UnlockMud()
 			return
 		}
 
@@ -139,14 +156,18 @@ func AskAsync(
 		var ollamaResp ollamaResponse
 		if err := json.NewDecoder(resp.Body).Decode(&ollamaResp); err != nil {
 			mudlog.Error(`llm`, `error`, fmt.Sprintf("failed to decode ollama response: %v", err))
+			util.LockMud()
 			onUnavailable()
+			util.UnlockMud()
 			return
 		}
 
 		response := strings.TrimSpace(ollamaResp.Message.Content)
 		if response == "" {
 			mudlog.Info(`llm`, `status`, fmt.Sprintf("empty response from ollama for mob %d", mobInstanceId))
+			util.LockMud()
 			onUnavailable()
+			util.UnlockMud()
 			return
 		}
 
