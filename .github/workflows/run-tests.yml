@@ -23,7 +23,7 @@ jobs:
       # this can be enforcing without first clearing the backlog. Runs on PRs;
       # `make lint` is the local equivalent for the direct-to-master workflow.
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v8
+        uses: golangci/golangci-lint-action@v9
         with:
           version: v2.12.2
           only-new-issues: true
@@ -50,7 +50,7 @@ jobs:
           fi
       - name: Upload coverage artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report
           path: coverage.out
