@@ -341,74 +341,36 @@ func (ih *InputHistory) Get() []byte {
 ## Communication System
 
 ### Broadcasting and Messaging
-```go
-// Broadcast message to all connections (with exclusions)
-func Broadcast(colorizedText []byte, skipConnectionIds ...ConnectionId) []ConnectionId {
-    lock.Lock()
-    
-    removeIds := []ConnectionId{}
-    sentToIds := []ConnectionId{}
-    
-    for id, cd := range netConnections {
-        // Skip login state connections
-        if cd.state == Login {
-            continue
-        }
-        
-        // Skip excluded connections
-        skip := false
-        for _, skipId := range skipConnectionIds {
-            if skipId == id {
-                skip = true
-                break
-            }
-        }
-        if skip {
-            continue
-        }
-        
-        // Send message
-        if _, err := cd.Write(colorizedText); err != nil {
-            mudlog.Warn("Broadcast()", "connectionId", id, "error", err)
-            removeIds = append(removeIds, id)
-        } else {
-            sentToIds = append(sentToIds, id)
-        }
-    }
-    
-    lock.Unlock()
-    
-    // Cleanup failed connections
-    for _, id := range removeIds {
-        Remove(id)
-    }
-    
-    return sentToIds
-}
 
-// Send message to specific connections
-func SendTo(b []byte, ids ...ConnectionId) {
-    lock.Lock()
-    
-    removeIds := []ConnectionId{}
-    
-    for _, id := range ids {
-        if cd, ok := netConnections[id]; ok {
-            if _, err := cd.Write(b); err != nil {
-                mudlog.Warn("SendTo()", "connectionId", id, "error", err)
-                removeIds = append(removeIds, id)
-            }
-        }
-    }
-    
-    lock.Unlock()
-    
-    // Cleanup failed connections
-    for _, id := range removeIds {
-        Remove(id)
-    }
-}
+```go
+func Broadcast(colorizedText []byte, skipConnectionIds ...ConnectionId) []ConnectionId
+func SendTo(b []byte, ids ...ConnectionId)
 ```
+
+Both follow the same three-phase shape:
+
+1. **Snapshot under `lock.RLock()`** — resolve ids to `*ConnectionDetails` into
+   a local `[]writeTarget`. `Broadcast` additionally skips connections in
+   `Login` state and any id in `skipConnectionIds`.
+2. **Release the lock, then write.** No write ever happens with the package
+   lock held.
+3. **Reap failures** — ids whose `Write` returned an error are passed to
+   `Remove()` after the loop.
+
+`Broadcast` returns every id it attempted, including ones whose write failed
+(matching the pre-existing contract).
+
+**Why the lock is released before writing (do not "simplify" this back):**
+`cd.Write()` can block for up to `writeTimeout`. Message dispatch runs inside
+`ProcessEvents` on the single game-loop goroutine, so holding the package lock
+across a write queued *every* connection operation — including the `Remove()`
+that would reap the wedged client — behind one stalled socket, freezing the
+game for every player.
+
+**Consequence:** a connection can be removed between snapshot and write.
+`Write()` returns an error (never panics) for a nil or closed socket; the
+failed-write path logs via the nil-safe `cd.remoteAddrString()` rather than
+`cd.RemoteAddr().String()`, which would panic on a detached connection.
 
 ### Protocol-Specific I/O
 ```go
@@ -431,6 +393,9 @@ func (cd *ConnectionDetails) Write(p []byte) (n int, err error) {
             return 0, nil
         }
         
+        // Bounded, like heartbeat.writePing(). Set inside wsLock.
+        cd.wsConn.SetWriteDeadline(time.Now().Add(writeTimeout))
+        
         err := cd.wsConn.WriteMessage(websocket.TextMessage, p)
         if err != nil {
             return 0, err
@@ -438,6 +403,11 @@ func (cd *ConnectionDetails) Write(p []byte) (n int, err error) {
         return len(p), nil
     }
     
+    if cd.conn == nil {
+        return 0, ErrNoConnection // removed between snapshot and write
+    }
+    
+    cd.conn.SetWriteDeadline(time.Now().Add(writeTimeout))
     return cd.conn.Write(p)
 }
 
