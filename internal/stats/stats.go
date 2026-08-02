@@ -1,11 +1,5 @@
 package stats
 
-import (
-	"math"
-
-	"github.com/GoMudEngine/GoMud/internal/configs"
-)
-
 type Statistics struct {
 	Strength   StatInfo `yaml:"strength,omitempty"`   // Muscular strength (damage)
 	Dexterity  StatInfo `yaml:"dexterity,omitempty"`  // Speed and agility (dodging)
@@ -38,21 +32,7 @@ func (si *StatInfo) SetMod(mod ...int) {
 }
 
 func (si *StatInfo) Recalculate() {
-	b := configs.GetBalanceConfig()
 	si.Racial = si.Base
 	si.Value = si.Racial + si.Training + si.Mods
 	si.ValueAdj = si.Value
-	softCap := int(b.StatSoftCap)            // 150 — linear growth up to here
-	threshold := int(b.StatSoftCapThreshold) // 105 — below this, no adjustment
-	multiplier := float64(b.StatSoftCapMultiplier)
-
-	if si.ValueAdj >= threshold && si.ValueAdj <= softCap {
-		// Between threshold and soft cap: linear (no compression)
-		// Stats earned are stats kept
-	} else if si.ValueAdj > softCap {
-		// Beyond soft cap: diminishing returns on overage past the cap
-		// adjusted = softCap + (raw - softCap)^0.75 * multiplier
-		overage := float64(si.ValueAdj - softCap)
-		si.ValueAdj = softCap + int(math.Round(math.Pow(overage, 0.75)*multiplier))
-	}
 }
