@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-08-02 — Build robots moved off a retiring engine (staff)
+
+The service that builds and tests the game after every change warned that the
+version of its underlying runtime our build steps ask for is being retired. The
+two steps it named — fetching the source and installing Go — are now on current
+releases, along with the rest of the places those two steps are used. Nothing
+about the game changed; this keeps the automated build from breaking when the
+retirement finishes.
+
 ## 2026-07-31 — The documentation folder is filed by subject (staff)
 
 Twenty loose files sat at the top of `docs/`. Four front-door documents stay
