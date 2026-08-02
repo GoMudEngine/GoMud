@@ -461,6 +461,41 @@ func CreateUser(u *UserRecord) error {
 	return nil
 }
 
+// loadUserFromPath reads and parses a single user save file, validates it
+// (unless skipValidation is true), and re-saves it if validation passes.
+//
+// It does NOT fall through on a yaml.Unmarshal error — a partly-parsed
+// record must never be "repaired" with fresh defaults and written back over
+// the player's real save. shops/persistence.go and guilds/persistence.go
+// already log-and-skip on a bad parse; this matches that behaviour. See the
+// long comment on the historical bug in LoadUser's docs for context.
+func loadUserFromPath(userFilePath string, skipValidation bool) (*UserRecord, error) {
+
+	userFileTxt, err := os.ReadFile(userFilePath)
+	if err != nil {
+		return nil, err
+	}
+
+	loadedUser := &UserRecord{}
+	if err := yaml.Unmarshal([]byte(userFileTxt), loadedUser); err != nil {
+		mudlog.Error("LoadUser", "path", userFilePath, "error", err.Error())
+		return nil, fmt.Errorf("could not parse user file %s: %w", userFilePath, err)
+	}
+
+	if loadedUser.Character == nil {
+		return nil, fmt.Errorf("user file %s parsed with no character data", userFilePath)
+	}
+
+	if !skipValidation {
+		if err := loadedUser.Character.Validate(true); err != nil {
+			return nil, fmt.Errorf("user file %s failed validation: %w", userFilePath, err)
+		}
+		SaveUser(loadedUser)
+	}
+
+	return loadedUser, nil
+}
+
 func LoadUser(username string, skipValidation ...bool) (*UserRecord, error) {
 
 	idx := NewUserIndex()
@@ -472,20 +507,9 @@ func LoadUser(username string, skipValidation ...bool) (*UserRecord, error) {
 
 	userFilePath := util.FilePath(string(configs.GetFilePathsConfig().DataFiles), `/`, `users`, `/`, strconv.Itoa(int(userId))+`.yaml`)
 
-	userFileTxt, err := os.ReadFile(userFilePath)
+	loadedUser, err := loadUserFromPath(userFilePath, len(skipValidation) > 0 && skipValidation[0])
 	if err != nil {
 		return nil, err
-	}
-
-	loadedUser := &UserRecord{}
-	if err := yaml.Unmarshal([]byte(userFileTxt), loadedUser); err != nil {
-		mudlog.Error("LoadUser", "error", err.Error())
-	}
-
-	if len(skipValidation) == 0 || !skipValidation[0] {
-		if err := loadedUser.Character.Validate(true); err == nil {
-			SaveUser(loadedUser)
-		}
 	}
 
 	// Seed the Character's userId back-reference. UserRecord.UserId is
