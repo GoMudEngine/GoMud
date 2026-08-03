@@ -1,0 +1,31 @@
+# Pre-push adversarial sweep of the 2026-08-03 batch (51 commits).
+# Fresh character, bug-finder mandate: read every line, report anything
+# confusing, broken, or contradicting the help text.
+goals:
+  - >-
+    Shop economy after rarity tagging: find a merchant, `list`, and
+    sanity-check the display — stock counts and prices should look
+    reasonable (no absurd quantities or zero-stock walls on common
+    goods). Buy a few crafting ingredients and a bottle.
+  - >-
+    Crafting focus exclusivity: begin a multi-round craft at a station,
+    then deliberately try eat, drink, sleep, equip, steal, search, and
+    use MID-CRAFT — every one must refuse with the focused-work message
+    and the craft must keep running. Then walk a direction: movement
+    must interrupt the craft with its own message.
+  - >-
+    Recipe dispatch: try crafting by partial name (e.g. `craft salve`,
+    `craft tonic`). It must resolve to a recipe you know, or ask you to
+    be more specific if you know several matches — never claim you
+    don't know a recipe the recipes list shows as craftable.
+  - >-
+    Assess disclosure: kill a weak creature, then `assess` its corpse —
+    the output must include how much of your conviction raising each
+    listed form would set aside, in words (no raw numbers anywhere).
+  - >-
+    Help spot checks: `help` (index — no "Missing" entries), `help
+    bartering`, `help remove` (must describe TAKING OFF gear), `help
+    special`, `help companion` (must mention the conviction cost).
+  - >-
+    General adversarial pass: anything else that reads wrong, renders
+    oddly, or contradicts its own help text is a finding.
