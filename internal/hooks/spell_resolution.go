@@ -929,49 +929,52 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 	}
 }
 
-// physicalSpellDefenseScale converts a mitigation FRACTION (0.0–1.0, what
-// GetPhysicalMitigation returns) into points on the same scale the opposed
-// spell roll uses.
+// spellDefenseValue computes the defender's stat for the opposed roll that
+// decides whether a spell LANDS.
 //
-// 100 is chosen because that is the reference point everything else in this
-// function already lives on: the "mental" branch returns Willpower, and every
-// stat in DOGMud is centred at 100 = human baseline (see CLAUDE.md). So a
-// defender at the mitigation cap defends against a physical-defense spell about
-// as well as a baseline-Willpower defender does against a mental one. It is a
-// unit conversion, not a tuning constant — there is no arbitrary coefficient to
-// pick.
-const physicalSpellDefenseScale = 100.0
-
-// spellDefenseValue computes the defender's stat for the opposed roll.
+// DESIGN RULE — hit and mitigation are entirely decoupled.
+// Whether an attack (swing, spell, taunt, anything) connects is decided by
+// agility-type stats and defensive skill. Armor and mitigation NEVER enter a
+// to-hit roll; they only reduce damage after the hit has landed. The intended
+// feel: a quick, lightly armored foe is hard to hit but takes big damage when
+// you finally connect; a heavily armored foe is easy to hit but shrugs the
+// damage off. Anything that reads armor here would collapse both halves into
+// one dial and invert that design.
 //
-// The "physical" branch used to sum ItemSpec.DamageReduction across eight
-// equipment slots. That field is legacy: the damage pipeline replaced it with
-// physical_mitigation in Stage 34 and no longer reads it. In the shipped
-// dataset 75 items set physical_mitigation and 40 of those never set
-// damagereduction, so most modern armor contributed literally nothing to
-// whether a physical-defense spell landed — while contributing correctly to how
-// much it hurt (calcSpellDamageForCharacter already uses
-// GetPhysicalMitigation). Eleven shipped spells use
-// target_defense_type: physical.
+// History, so this does not drift back a third time: Stage 11.4 seeded the
+// "physical" branch with Vitality + an armor sum; 596e1f199 dropped the stat
+// term, leaving armor as the sole determinant; the value then went quietly to
+// ~0 because ItemSpec.DamageReduction became a legacy field most items stopped
+// setting; and 784543a3d "fixed" that by swapping in live
+// GetPhysicalMitigation() — reanimating the design error instead of removing
+// it. Armor belongs in calcSpellDamageForCharacter (which already applies
+// GetPhysicalMitigation to the damage), and nowhere near this roll.
+//
+// Both branches therefore return a stat, on the same 100 = human baseline
+// scale every DOGMud stat uses:
+//   - "physical" → Dexterity (dodging a hurled bolt is a reflex check)
+//   - "mental"   → Willpower (resisting a mind-affecting weave)
+//
+// The two accessors differ deliberately, and the asymmetry is not an oversight.
+// Physical uses GetEffectiveDexterity(), the engine-wide accessor for live
+// combat and skill rolls (see internal/characters/effective_stats.go), so a
+// toxified defender dodges a spell with the same impaired reflexes it dodges a
+// sword with — calcAttackScore, GetDefenseScore, AttemptGrapple and
+// rangedDefenseScore all read it. Mental uses Stats.Willpower.ValueAdj because
+// there is no GetEffectiveWillpower: toxicity penalises regen, Perception and
+// Dexterity only, so Willpower has no effective variant to call.
+//
+// The Minor Shield condition (characters.ConditionShield) is deliberately NOT
+// added. It is damage absorption, not evasion: its own docstring calls it a
+// "Magical armor barrier (+physical armor)", it is summed into
+// GetPhysicalMitigation()'s non-gear term, and it is expressed in mitigation
+// percentage points. Adding it here would let a defensive buff make a spell
+// harder to land on top of already reducing what it deals — exactly the
+// double-dip the rule above forbids.
 func spellDefenseValue(defenseType string, target *characters.Character) float64 {
 	switch defenseType {
 	case "physical":
-		// GetPhysicalMitigation returns a fraction and already folds in gear,
-		// the Minor Shield condition, species natural armor, mutations and
-		// physical_mitigation statmods — so the shield bonus must NOT be added
-		// again here the way the old DamageReduction sum did.
-		mitigation := target.GetPhysicalMitigation()
-		if mitigation < 0 {
-			mitigation = 0
-		}
-		// Clamp with the SAME cap the damage side enforces, so armor can never
-		// buy more deflection than it actually buys mitigation. Reuses an
-		// existing config knob (PhysicalMitigationCap) rather than inventing a
-		// second ceiling.
-		if capPct := combat.MitigationCap(combat.ChannelPhysical); mitigation > capPct {
-			mitigation = capPct
-		}
-		return mitigation * physicalSpellDefenseScale
+		return float64(target.GetEffectiveDexterity())
 
 	case "mental":
 		return float64(target.Stats.Willpower.ValueAdj)
