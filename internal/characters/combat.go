@@ -132,7 +132,21 @@ func (c *Character) CalculateUnarmedDamage() (baseDamage float64, variance float
 	return baseDamage, variance
 }
 
-// Returns an integer representing a % damage reduction
+// GetDefense sums the LEGACY ItemSpec.DamageReduction field across equipment.
+//
+// DO NOT wire this into any DOGMud display or calculation. That field was
+// superseded by physical_mitigation / magical_mitigation / conviction_mitigation
+// (see the damage pipeline in internal/combat), and 35 of the 77 items that set
+// a mitigation field never set damagereduction at all — so this returns near-zero
+// for modern gear and is actively misleading.
+//
+// It survives only because the upstream `default` world's status templates still
+// reference it by dynamic template dispatch, which no Go grep can see. DOGMud's
+// own status.template correctly renders GetPhysicalMitigation /
+// GetMagicalMitigation / GetConvictionMitigation instead. The dead dogmud
+// status-lite.template that used to call this was removed 2026-08-02.
+//
+// Returns an integer representing a % damage reduction.
 func (c *Character) GetDefense() int {
 
 	reduction := c.Equipment.Weapon.GetDefense() +
