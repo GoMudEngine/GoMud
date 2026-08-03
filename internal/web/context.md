@@ -275,6 +275,39 @@ claim any identity. List only the addresses your own proxy connects from.
 Assumes the proxy appends rather than overwrites (Caddy's `reverse_proxy`
 default).
 
+### Websocket admission control (`wsguard.go`)
+
+```go
+func wsCapacityExceeded() (exceeded bool, active int, max int)
+func wsOriginAllowed(r *http.Request) bool   // wired as upgrader.CheckOrigin
+```
+
+`/ws` applies three gates, in this order:
+
+1. **Connection cap.** Reuses `Network.MaxTelnetConnections` rather than adding
+   a websocket knob, because that is what the limit already means: the telnet
+   listener compares it against `connections.ActiveConnectionCount()`, which
+   counts *every* registered connection, websockets included. `/ws` previously
+   had no cap at all, so it both bypassed the limit and could starve telnet out
+   of the shared pool. Over-cap upgrades get `503` + `Retry-After` before the
+   upgrade, so the client sees a real status instead of an instantly-closed
+   socket. `max <= 0` means unlimited, matching the localhost admin port.
+2. **Origin check.** `CheckOrigin` used to `return true` unconditionally, so
+   any third-party page could open sockets from a visitor's browser. Now: no
+   `Origin` header → allow (non-browser clients omit it; browsers always send
+   it on a handshake, so absence is not a cross-origin signal); Origin hostname
+   == `r.Host` hostname → allow (same-origin, works behind Caddy since Host is
+   preserved); hostname in `FilePaths.WebDomain` / `Server.MSSP.Hostname` /
+   loopback / `Network.AllowedWebSocketOrigins` → allow; otherwise reject.
+   Comparison is hostname-only — a port match adds nothing, since an attacker
+   holding a port on an allowed hostname already controls that origin.
+3. **`SetReadLimit(wsMaxMessageBytes)`** after the upgrade (from the earlier
+   unbounded-frame fix). Leave it.
+
+`Network.AllowedWebSocketOrigins` defaults to empty, which is the restrictive
+setting. Each entry is a domain trusted to drive connections on a visitor's
+behalf — only add one when the client is genuinely served from another domain.
+
 ### Game State Protection
 ```go
 // All admin operations wrapped with mutex
@@ -498,6 +531,7 @@ This web system provides a robust foundation for both player-facing web interfac
 | `web.go` | Server setup, routing, static files |
 | `auth.go` | Admin authentication (cache, revalidation, failure throttle) |
 | `clientip.go` | Trusted-proxy resolution of the real client IP |
+| `wsguard.go` | Websocket admission control: connection cap + origin check |
 | `template_func.go` | Template helper functions |
 | `stats.go` | Public stats endpoints |
 | `build.go` | The admin world-building tool backend |

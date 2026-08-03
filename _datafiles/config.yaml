@@ -1265,6 +1265,27 @@ Network:
   #   Assumes the proxy APPENDS to X-Forwarded-For (Caddy's reverse_proxy
   #   default); a proxy configured to overwrite it defeats any XFF scheme.
   TrustedProxies: []
+  # - AllowedWebSocketOrigins -
+  #   Extra hostnames whose web pages may open a /ws websocket to this server.
+  #
+  #   By default the server accepts a websocket upgrade when the browser's
+  #   Origin matches the host the request was addressed to (the normal
+  #   same-origin case), or matches a hostname already configured elsewhere:
+  #   FilePaths.WebDomain, Server.MSSP.Hostname, or loopback. Everything else
+  #   is refused, so a third-party page cannot open sockets from a visitor's
+  #   browser and drive them against the game.
+  #
+  #   Requests with NO Origin header are allowed — non-browser clients (bots,
+  #   the playtest harness, curl) do not send one, and browsers always do, so
+  #   its absence is not a cross-origin signal.
+  #
+  #   Only set this if you serve the web client from a DIFFERENT domain than
+  #   the MUD. Accepts bare hostnames ("client.example") or full origins
+  #   ("https://client.example"); the port and scheme are ignored. Every entry
+  #   is a domain you are trusting to drive connections on a visitor's behalf.
+  #
+  #   Leave empty for the safe default (same-origin + configured hostnames).
+  AllowedWebSocketOrigins: []
   # - AIPort -
   #   Dedicated port for AI client connections. Set to 0 to disable.
   AIPort: 55555

@@ -31,10 +31,12 @@ var (
 	httpServer  *http.Server
 	httpsServer *http.Server
 
+	// CheckOrigin used to return true unconditionally, which let any
+	// third-party page open sockets from a visitor's browser and drive them
+	// against the server. See wsOriginAllowed for the rules; non-browser
+	// clients that send no Origin header are unaffected.
 	upgrader = websocket.Upgrader{
-		CheckOrigin: func(r *http.Request) bool {
-			return true
-		},
+		CheckOrigin: wsOriginAllowed,
 	}
 
 	httpRoot = ``
@@ -288,6 +290,19 @@ func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn, string)) 
 
 	// websocket upgrade
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+
+		// Enforce the same connection cap the telnet listener does. That check
+		// counts ALL connections including websockets, so leaving /ws
+		// unlimited let a web-client flood both bypass the cap and starve
+		// telnet out of the shared pool. Rejected before the upgrade so the
+		// client gets a real HTTP status rather than an immediately-closed
+		// socket.
+		if full, active, max := wsCapacityExceeded(); full {
+			mudlog.Warn("Web", "action", "websocket upgrade", "error", "server full", "active", active, "max", max)
+			w.Header().Set("Retry-After", "30")
+			http.Error(w, "Server is full. Try again later.", http.StatusServiceUnavailable)
+			return
+		}
 
 		// Resolve before the upgrade — once the connection is hijacked the
 		// request headers are no longer reachable.

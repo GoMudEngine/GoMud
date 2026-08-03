@@ -12,11 +12,16 @@ type Network struct {
 	HttpsPort            ConfigInt         `yaml:"HttpsPort"`            // Port used for web https requests
 	HttpsRedirect        ConfigBool        `yaml:"HttpsRedirect"`        // If true, http traffic will be redirected to https
 	TrustedProxies       ConfigSliceString `yaml:"TrustedProxies"`       // IPs/CIDRs whose X-Forwarded-For header may be believed. Loopback only by default.
-	AfkSeconds           ConfigInt         `yaml:"AfkSeconds"`           // How long until a player is marked as afk?
-	MaxIdleSeconds       ConfigInt         `yaml:"MaxIdleSeconds"`       // How many seconds a player can go without a command in game before being kicked.
-	TimeoutMods          ConfigBool        `yaml:"TimeoutMods"`          // Whether to kick admin/mods when idle too long.
-	ZombieSeconds        ConfigInt         `yaml:"ZombieSeconds"`        // How many seconds a player will be a zombie allowing them to reconnect.
-	LogoutRounds         ConfigInt         `yaml:"LogoutRounds"`         // How many rounds of uninterrupted meditation must be completed to log out.
+	// Extra hostnames permitted to open /ws. Same-origin and the hostnames
+	// already configured elsewhere (FilePaths.WebDomain, Server.MSSP.Hostname)
+	// are always allowed, so this is only needed when the client is served
+	// from a different domain than the MUD.
+	AllowedWebSocketOrigins ConfigSliceString `yaml:"AllowedWebSocketOrigins"`
+	AfkSeconds              ConfigInt         `yaml:"AfkSeconds"`     // How long until a player is marked as afk?
+	MaxIdleSeconds          ConfigInt         `yaml:"MaxIdleSeconds"` // How many seconds a player can go without a command in game before being kicked.
+	TimeoutMods             ConfigBool        `yaml:"TimeoutMods"`    // Whether to kick admin/mods when idle too long.
+	ZombieSeconds           ConfigInt         `yaml:"ZombieSeconds"`  // How many seconds a player will be a zombie allowing them to reconnect.
+	LogoutRounds            ConfigInt         `yaml:"LogoutRounds"`   // How many rounds of uninterrupted meditation must be completed to log out.
 }
 
 func (n *Network) Validate() {
