@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-08-03 — Crafting takes your full attention
+
+Crafting, salvaging, and spellcasting are focus-required work, and a
+number of commands were quietly slipping past that: you could eat,
+drink, sleep, swap equipment, forage, search, track, steal, pick
+locks, throw things, or trigger mutation abilities in the middle of a
+craft. All of these now politely refuse until you finish — or until
+something interrupts you. Moving still interrupts your work as before.
+
 ## 2026-08-03 — Crafting understands what you mean
 
 Typing a partial recipe name — <ansi fg="command">craft cloak</ansi> instead of the full
