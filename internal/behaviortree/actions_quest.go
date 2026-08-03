@@ -7,11 +7,16 @@ package behaviortree
 import (
 	"fmt"
 
+	"github.com/GoMudEngine/GoMud/internal/actions"
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
+	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/uuid"
 )
 
 func actGrantQuest(params map[string]any, ctx *EvalContext) Result {
@@ -117,10 +122,20 @@ func actGiveItem(params map[string]any, ctx *EvalContext) Result {
 	return Success
 }
 
-// actReturnItem gives a fresh copy of the triggering event's item back
-// to the player. Used in player_give handlers to reject/return items.
-// Unlike give_item, no item_id param is needed — the item comes from
-// ctx.Event.ItemId.
+// actReturnItem hands the triggering event's item back to the player.
+// Used in player_give handlers to reject/return items. Unlike give_item,
+// no item_id param is needed — the item comes from ctx.Event.
+//
+// This returns the ACTUAL item the mob was just handed, not a fresh copy.
+// give.go transfers the real, stateful item into the mob's inventory before
+// any handler fires, so minting a copy here both duplicated the item (the
+// original stayed on the mob and later dropped as corpse loot) and reset the
+// player's enchant tier / remaining uses / durability to template defaults.
+//
+// The exact instance is identified by ctx.Event.ItemUUID when the producer
+// supplied one, falling back to the most recently stored item matching
+// ctx.Event.ItemId. If the mob or the item cannot be resolved the action
+// fails and logs — it never falls back to fabricating an item.
 func actReturnItem(params map[string]any, ctx *EvalContext) Result {
 	user := users.GetByUserId(ctx.Event.UserId)
 	if user == nil {
@@ -130,12 +145,64 @@ func actReturnItem(params map[string]any, ctx *EvalContext) Result {
 	if itemId == 0 {
 		return Failure
 	}
-	item := items.New(itemId)
-	if !user.Character.StoreItem(item) {
+
+	mob := mobs.GetInstance(ctx.InstanceId)
+	if mob == nil {
+		mudlog.Warn("actReturnItem", "msg", "mob instance not found",
+			"instanceId", ctx.InstanceId, "itemId", itemId, "userId", user.UserId)
 		return Failure
 	}
+
+	item, found := findHeldItem(&mob.Character, itemId, ctx.Event.ItemUUID)
+	if !found {
+		mudlog.Warn("actReturnItem", "msg", "item not held by mob",
+			"instanceId", ctx.InstanceId, "itemId", itemId, "userId", user.UserId)
+		return Failure
+	}
+
+	// TransferItemBetweenChars removes from the mob first and restores it to
+	// the mob if the player cannot carry it, so no path can leave the item in
+	// both inventories or in neither.
+	if err := actions.TransferItemBetweenChars(item,
+		&mob.Character, 0, mob.InstanceId,
+		user.Character, user.UserId, 0,
+	); err != nil {
+		mudlog.Warn("actReturnItem", "msg", "transfer failed",
+			"instanceId", ctx.InstanceId, "itemId", itemId, "userId", user.UserId, "error", err)
+		return Failure
+	}
+
 	user.SendText(messaging.CategoryMobEmote, fmt.Sprintf("%s hands back the %s.\n", ctx.MobName, item.Name()))
 	return Success
+}
+
+// findHeldItem locates a specific carried item on a character. It prefers an
+// exact UUID match; when no usable UUID is supplied it falls back to the most
+// recently stored item with a matching template id (StoreItem appends, so the
+// last match is the one just handed over). Searches all three carry lists
+// because StoreItem may auto-route into the component bag or bandolier.
+func findHeldItem(c *characters.Character, itemId int, itemUUID uuid.UUID) (items.Item, bool) {
+	lists := [][]items.Item{c.Items, c.ComponentItems, c.PotionItems}
+
+	if !itemUUID.IsNil() {
+		for _, list := range lists {
+			for j := len(list) - 1; j >= 0; j-- {
+				if list[j].UUID == itemUUID {
+					return list[j], true
+				}
+			}
+		}
+		return items.Item{}, false
+	}
+
+	for _, list := range lists {
+		for j := len(list) - 1; j >= 0; j-- {
+			if list[j].ItemId == itemId {
+				return list[j], true
+			}
+		}
+	}
+	return items.Item{}, false
 }
 
 func actTakeItem(params map[string]any, ctx *EvalContext) Result {

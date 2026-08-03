@@ -148,7 +148,7 @@ tree:
 | Event | Trigger | Notable Context |
 |-------|---------|-----------------|
 | `player_ask` | Player uses `ask <mob> ...` (the `ask` command only — a plain `say` does NOT fire this) | `Text` = spoken text |
-| `player_give` | Player gives an item to the mob | `ItemId` = item given |
+| `player_give` | Player gives an item to the mob | `ItemId` = item given; `ItemUUID` = that exact instance |
 | `mob_idle` | Mob's periodic idle tick fires | No player context |
 | `mob_hurt` | Mob takes damage in combat | `UserId` = attacker |
 | `mob_die` | Mob's health reaches zero | `UserId` = killing player |
@@ -340,7 +340,7 @@ are subject to perception-scaled reaction delays (see below).
 |--------|--------|-------------|
 | `give_item` | `item_id` (int) | Gives one item copy to player. |
 | `give_item_multiple` | `item_id` (int), `count` (int, default 1) | Gives N copies to player. |
-| `return_item` | none | Returns the event's item to the player (for `player_give` rejection). Uses `ctx.Event.ItemId`. |
+| `return_item` | none | Returns the event's item to the player (for `player_give` rejection). Hands back the **real** item off the mob's inventory (found via `ctx.Event.ItemUUID`, else the newest `ctx.Event.ItemId` match) — never a fresh copy. Fails if the mob isn't holding it. |
 | `take_item` | `item_id` (int) | Removes first matching item from player. |
 | `give_gold` | `amount` (int) | Adds N gold to player. |
 | `take_gold` | `amount` (int) | Subtracts N gold (floor 0). |
