@@ -24,6 +24,11 @@ func Say(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		rest = drunkify(rest)
 	}
 
+	// Neutralise <ansi> markup before the text is interpolated into the room
+	// and self templates below. Escaped last, after drunkify, so no later
+	// transform can reassemble a tag. See util.EscapeAnsiTags.
+	rest = util.EscapeAnsiTags(rest)
+
 	actor := &actions.UserActor{User: user, Room: room}
 	result := actions.Say(actor, rest)
 

@@ -152,6 +152,9 @@ func cmdSetDescription(user *users.UserRecord, rest string, setTarget string) (b
 	if len(rest) > 1024 {
 		rest = rest[:1024]
 	}
+	// Rendered inside <ansi> markup for anyone who looks at this character.
+	// Escaped after truncation so the cap cannot slice a tag in half.
+	rest = util.EscapeAnsiTags(rest)
 	user.Character.Description = rest
 
 	user.SendText(messaging.CategorySystem, "Description set. Look at yourself to confirm.")

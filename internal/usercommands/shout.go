@@ -40,6 +40,12 @@ func Shout(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		rest = drunkify(rest)
 	}
 
+	// Neutralise <ansi> markup before interpolation. ToUpper above happens to
+	// break the parser's byte-exact lowercase match, but that is an accident of
+	// the current parser, not a defence — escape explicitly. Shout crosses room
+	// boundaries, so a forged tag here reaches players who never opted in.
+	rest = util.EscapeAnsiTags(rest)
+
 	if isSneaking {
 		msg := fmt.Sprintf(`someone shouts, "<ansi fg="yellow">%s</ansi>"`, rest)
 		room.SendTextCommunication(util.SplitStringNL(msg, 80), user.UserId)

@@ -557,35 +557,39 @@ func (cd *ConnectionDetails) InputDisabled(setTo ...bool) bool {
 }
 ```
 
-### Connection Properties
+### Connection Properties — addresses
+
 ```go
-// Check if connection is local
-func (cd *ConnectionDetails) IsLocal() bool {
-    var remoteAddrStr string
-    
-    if cd.wsConn == nil {
-        // Unix sockets are always local
-        if _, ok := cd.conn.(*net.UnixConn); ok {
-            return true
-        }
-        remoteAddrStr = cd.conn.RemoteAddr().String()
-    } else {
-        remoteAddrStr = cd.wsConn.RemoteAddr().String()
-    }
-    
-    host, _, err := net.SplitHostPort(remoteAddrStr)
-    if err != nil {
-        return false
-    }
-    
-    ip := net.ParseIP(host)
-    if ip == nil {
-        return false
-    }
-    
-    return ip.IsLoopback()
-}
+func (cd *ConnectionDetails) RemoteAddr() net.Addr  // the socket peer
+func (cd *ConnectionDetails) SetClientIP(ip string) // websocket upgrade path only
+func (cd *ConnectionDetails) ClientIP() string      // who this connection really is
+func (cd *ConnectionDetails) IsLocal() bool         // ClientIP() is loopback
 ```
+
+**Gotcha — use `ClientIP()`, not `RemoteAddr()`, for any policy decision**
+(bans, abuse logging, rate limits). `RemoteAddr()` is the TCP peer. For a
+websocket that is the peer of the *HTTP upgrade*, which behind a reverse proxy
+is the proxy. Production fronts the web client with Caddy, so every
+`/webclient` connection reported `127.0.0.1`, `IsLocal()` returned true, and
+the IP-ban check in `FinalizeLoginOrCreate` was skipped for every web-client
+player — a banned player only had to stop using telnet. Worse, the address
+staff saw logged was loopback, which is exempt for everyone, so banning it
+looked like it worked and did nothing.
+
+`ClientIP()` returns, in order: the value passed to `SetClientIP` if set;
+`127.0.0.1` for a unix socket; otherwise the host part of `RemoteAddr()`.
+`RemoteAddr()` is deliberately left reporting the true socket peer — that is
+what you want in logs when diagnosing the proxy itself.
+
+`SetClientIP` is called only from `HandleWebSocketConnection` in `main.go`,
+with the value from `web.ResolveClientIP`. **Telnet never sets it**, so telnet
+behaviour is unchanged: no proxy sits in front of it and `X-Forwarded-For` has
+no meaning there.
+
+See `internal/web/clientip.go` for the resolution rules — in short,
+`X-Forwarded-For` is believed only when the socket peer is listed in
+`Network.TrustedProxies` (loopback by default), and only its rightmost
+non-proxy hop is used.
 
 ## Shutdown and Cleanup
 

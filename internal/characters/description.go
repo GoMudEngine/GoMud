@@ -37,7 +37,13 @@ func (c *Character) GetDescription() string {
 		desc = strings.ReplaceAll(desc, "  ", " ")
 	}
 
-	return desc
+	// Descriptions are player-authored, persisted, and rendered by the
+	// character/description template for anyone who looks at you — the most
+	// durable cross-player ansi-injection vector after the guild MOTD. Escaping
+	// here (as well as on write in setdesc/set) neutralises descriptions saved
+	// before the fix; util.EscapeAnsiTags is idempotent so doing both is safe.
+	// No engine-supplied description contains <ansi> markup.
+	return util.EscapeAnsiTags(desc)
 }
 
 // GetMutationVisuals returns a space-joined string of all owned mutation visual

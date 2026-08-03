@@ -218,10 +218,95 @@ func (p *MyPlugin) WebRequest(r *http.Request) (string, map[string]any, bool) {
 
 ### Authentication Flow
 1. **Request Interception**: Admin routes protected by `doBasicAuth` middleware
-2. **Cache Check**: Authentication results cached for 30 minutes
-3. **Credential Validation**: Username/password verified against user database
-4. **Role Verification**: User must have admin or higher role
-5. **Access Granted**: Request proceeds to handler with mutex protection
+2. **Cache Check**: Grants cached for `authCacheTTL` (30 min), keyed on a
+   SHA-256 of the `Authorization` header — never the header itself, which is
+   base64(user:password)
+3. **Revalidation**: at most once per `authRevalidateEvery` (30 s) a cache hit
+   re-reads the user record and voids the grant if the stored password hash or
+   the role changed, or the account is gone
+4. **Throttle**: past the cache, a source that failed `authMaxFailures` (5)
+   times inside `authFailureWindow` (5 min) gets `429` + `Retry-After` for
+   `authLockoutDur` (1 min), *before* any bcrypt work
+5. **Credential Validation**: Username/password verified against user database
+6. **Role Verification**: User must have admin or higher role
+7. **Access Granted**: Request proceeds to handler with mutex protection
+
+**Gotcha — `authCache`/`authFailures` are guarded by `authMu`, not by the world
+lock.** Every `/admin/*` route happens to be wrapped in `RunWithMUDLocked`,
+which serialized these maps *by accident*. `GET /build` and `GET /build-help`
+deliberately are not (the build page must not hold the world lock), so an
+unauthenticated flood of `/build` used to race an admin authenticating anywhere
+in the admin UI and kill the process with `concurrent map read and map write`.
+Do not "fix" that by wrapping `/build` in `RunWithMUDLocked`.
+
+**Gotcha — the failure tracker is keyed by attacker-controlled connection
+data.** It is swept every write and hard-capped at `authTrackerMaxEntries`,
+evicting the least-recently-failed entry at capacity. Any future per-source map
+here needs the same treatment.
+
+### Real client IP behind a proxy (`clientip.go`)
+
+```go
+func ResolveClientIP(r *http.Request) string  // bare IP, no port
+```
+
+Production fronts the web client with Caddy, so `r.RemoteAddr` and a
+websocket's `RemoteAddr()` are the proxy (`127.0.0.1`) for every player. Use
+`ResolveClientIP` for anything that decides *who someone is*: it is what the
+`/ws` upgrade records on `ConnectionDetails.SetClientIP` (making IP bans work
+for web-client players) and what `doBasicAuth` throttles on (so one attacker
+does not lock out every admin sharing the proxy's address).
+
+**Security contract — do not loosen either half:**
+
+1. `X-Forwarded-For` is read **only** when the socket peer is in
+   `Network.TrustedProxies`. That list defaults to loopback and nothing else.
+   A remote attacker cannot forge their socket peer, so they cannot get their
+   header read at all. Believing the header unconditionally would be *worse*
+   than the original bug — anyone could send `X-Forwarded-For: 127.0.0.1` and
+   become loopback, which is exempt from ban checks for everyone.
+2. Within the header, the **rightmost** hop that is not itself a trusted proxy
+   wins. Proxies append, so a client's pre-seeded value ends up to the left and
+   is never reached. Taking the leftmost entry — the common mistake — hands the
+   attacker full control of the result.
+
+Widening `TrustedProxies` to a private range trusts every host in that range to
+claim any identity. List only the addresses your own proxy connects from.
+Assumes the proxy appends rather than overwrites (Caddy's `reverse_proxy`
+default).
+
+### Websocket admission control (`wsguard.go`)
+
+```go
+func wsCapacityExceeded() (exceeded bool, active int, max int)
+func wsOriginAllowed(r *http.Request) bool   // wired as upgrader.CheckOrigin
+```
+
+`/ws` applies three gates, in this order:
+
+1. **Connection cap.** Reuses `Network.MaxTelnetConnections` rather than adding
+   a websocket knob, because that is what the limit already means: the telnet
+   listener compares it against `connections.ActiveConnectionCount()`, which
+   counts *every* registered connection, websockets included. `/ws` previously
+   had no cap at all, so it both bypassed the limit and could starve telnet out
+   of the shared pool. Over-cap upgrades get `503` + `Retry-After` before the
+   upgrade, so the client sees a real status instead of an instantly-closed
+   socket. `max <= 0` means unlimited, matching the localhost admin port.
+2. **Origin check.** `CheckOrigin` used to `return true` unconditionally, so
+   any third-party page could open sockets from a visitor's browser. Now: no
+   `Origin` header → allow (non-browser clients omit it; browsers always send
+   it on a handshake, so absence is not a cross-origin signal); Origin hostname
+   == `r.Host` hostname → allow (same-origin, works behind Caddy since Host is
+   preserved); hostname in `FilePaths.WebDomain` / `Server.MSSP.Hostname` /
+   loopback / `Network.AllowedWebSocketOrigins` → allow; otherwise reject.
+   Comparison is hostname-only — a port match adds nothing, since an attacker
+   holding a port on an allowed hostname already controls that origin.
+3. **`SetReadLimit(wsMaxMessageBytes)`** after the upgrade (from the earlier
+   unbounded-frame fix). Leave it.
+
+`Network.AllowedWebSocketOrigins` defaults to empty, which is the restrictive
+setting. Each entry is a domain trusted to drive connections on a visitor's
+behalf — only add one when the client is genuinely served from another domain.
 
 ### Game State Protection
 ```go
@@ -296,6 +381,10 @@ file_paths:
 - Successful authentications cached for 30 minutes
 - Reduces database load for frequent admin operations
 - Automatic cache expiration and cleanup
+- A cache hit still re-reads the user record every 30 s. `/admin/static/*` runs
+  the middleware once per asset, so revalidation is rate-limited rather than
+  done per request — that interval is the trade-off knob if admin page loads
+  start feeling slow.
 
 ### Mutex Protection
 - All admin operations protected by game state mutex
@@ -440,7 +529,9 @@ This web system provides a robust foundation for both player-facing web interfac
 | File | Purpose |
 |------|---------|
 | `web.go` | Server setup, routing, static files |
-| `auth.go` | Admin authentication |
+| `auth.go` | Admin authentication (cache, revalidation, failure throttle) |
+| `clientip.go` | Trusted-proxy resolution of the real client IP |
+| `wsguard.go` | Websocket admission control: connection cap + origin check |
 | `template_func.go` | Template helper functions |
 | `stats.go` | Public stats endpoints |
 | `build.go` | The admin world-building tool backend |

@@ -721,6 +721,9 @@ func cmdPartyChat(user *users.UserRecord, currentParty *parties.Party, rest stri
 		return
 	}
 
+	// Neutralise <ansi> markup before interpolation.
+	rest = util.EscapeAnsiTags(rest)
+
 	for _, uId := range currentParty.GetMembers() {
 		if uId == user.UserId {
 			continue

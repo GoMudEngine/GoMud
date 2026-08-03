@@ -139,7 +139,10 @@ func Mail(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 		user.ClearPrompt()
 		return true, nil
 	}
-	msg.Message = question.Response
+	// The mail template renders the body INSIDE an open <ansi
+	// fg="mail-message"> tag, and mail is persisted to the recipient's user
+	// file — including for offline players. Escape before it is stored.
+	msg.Message = util.EscapeAnsiTags(question.Response)
 
 	// Gold (from on-hand purse).
 	question = cmdPrompt.Ask(`Attach how much gold?`, []string{})

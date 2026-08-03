@@ -77,7 +77,10 @@ func Talk(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 			func(response string) {
 				m := mobs.GetInstance(mobIdCopy)
 				if m != nil {
-					m.Command(`say ` + response)
+					// Untrusted LLM output — see the matching comment in
+					// ask.go. Authored dialogue below is left unescaped
+					// because its <ansi> markup is legitimate.
+					m.Command(`say ` + util.EscapeAnsiTags(response))
 					dialogue.UpdateMemory(mobIdCopy, userIdCopy, "", nil, "greet")
 				}
 			},

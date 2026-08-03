@@ -1238,10 +1238,17 @@ func resumeRestoredConnection(connDetails *connections.ConnectionDetails, userOb
 	}
 }
 
-func HandleWebSocketConnection(conn *websocket.Conn) {
+// HandleWebSocketConnection drives one upgraded websocket.
+//
+// clientIP is the proxy-resolved source address from web.ResolveClientIP. The
+// websocket's own RemoteAddr() is the TCP peer of the HTTP upgrade, which
+// behind a reverse proxy is the proxy itself — recording only that is what made
+// IP bans inert for every web-client player.
+func HandleWebSocketConnection(conn *websocket.Conn, clientIP string) {
 
 	var userObject *users.UserRecord
 	connDetails := connections.Add(nil, conn)
+	connDetails.SetClientIP(clientIP)
 
 	defer func() {
 		// This goroutine processes untrusted network input through the whole

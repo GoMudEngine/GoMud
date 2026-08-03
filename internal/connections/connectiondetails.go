@@ -156,29 +156,65 @@ type ConnectionDetails struct {
 	stripAnsi         bool
 	aiCommandCount    int
 	aiCommandRound    int64
+
+	// clientIP is the *real* source address when the socket peer is not the
+	// player — i.e. a websocket arriving through a reverse proxy. Empty for
+	// telnet, which has no proxy in front of it, and empty for a websocket
+	// whose peer was not a trusted proxy; in both cases ClientIP() falls back
+	// to the socket peer. See internal/web/clientip.go for how it is resolved
+	// and why X-Forwarded-For is only believed from a trusted peer.
+	clientIP string
+}
+
+// SetClientIP records the proxy-resolved source address. Only the websocket
+// upgrade path calls this; telnet connections leave it empty.
+func (cd *ConnectionDetails) SetClientIP(ip string) {
+	cd.clientIP = ip
+}
+
+// ClientIP is the address to attribute this connection to for bans, logging of
+// abuse, and any other "who is this really" decision.
+//
+// Prefer this over RemoteAddr() for policy. RemoteAddr() is the socket peer,
+// which for a proxied websocket is the reverse proxy — that is exactly why IP
+// bans used to be inert for every web-client player.
+func (cd *ConnectionDetails) ClientIP() string {
+	if cd.clientIP != `` {
+		return cd.clientIP
+	}
+
+	if cd.wsConn == nil {
+		if cd.conn == nil {
+			return ``
+		}
+		// Unix sockets have no meaningful host:port.
+		if _, ok := cd.conn.(*net.UnixConn); ok {
+			return `127.0.0.1`
+		}
+	}
+
+	addr := cd.RemoteAddr()
+	if addr == nil {
+		return ``
+	}
+
+	host, _, err := net.SplitHostPort(addr.String())
+	if err != nil {
+		return addr.String()
+	}
+	return host
 }
 
 func (cd *ConnectionDetails) IsLocal() bool {
 
-	remoteAddrStr := ``
-
-	if cd.wsConn == nil {
-		// Unix sockets are always local
+	// Unix sockets are always local.
+	if cd.wsConn == nil && cd.conn != nil {
 		if _, ok := cd.conn.(*net.UnixConn); ok {
 			return true
 		}
-		remoteAddrStr = cd.conn.RemoteAddr().String()
-	} else {
-		remoteAddrStr = cd.wsConn.RemoteAddr().String()
 	}
 
-	host, _, err := net.SplitHostPort(remoteAddrStr)
-	if err != nil {
-		// e.g. not “host:port” syntax
-		return false
-	}
-
-	ip := net.ParseIP(host)
+	ip := net.ParseIP(cd.ClientIP())
 	if ip == nil {
 		return false
 	}

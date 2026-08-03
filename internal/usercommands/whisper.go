@@ -48,6 +48,10 @@ func Whisper(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		return true, nil
 	}
 
+	// The body sits inside an open <ansi fg="black-bold">, so an unescaped
+	// </ansi> would let the sender repaint the rest of the line.
+	rest = util.EscapeAnsiTags(rest)
+
 	whisperMsg := fmt.Sprintf(`<ansi fg="white">***</ansi> <ansi fg="black-bold"><ansi fg="username">%s</ansi> whispers, "%s"</ansi> <ansi fg="white">***</ansi>`, user.Character.Name, rest)
 	toUser.SendText(messaging.CategoryWhisper, util.SplitStringNL(whisperMsg, 80))
 
