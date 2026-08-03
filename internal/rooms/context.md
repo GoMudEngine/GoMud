@@ -203,6 +203,27 @@ template after the overlay is applied.
 on the next room load with no wipe needed. Check the struct tag before assuming
 a field is shadowed.
 
+### `Room.DefusedExits` — persisting a disarm without shadowing
+
+`Room.Exits` is skip-tagged, which meant a player disarming an exit lock trap
+saw the trap return on the next restart (`Room.Containers` is *not*
+skip-tagged, so the container branch of the same `defuse` command persisted
+correctly — two branches of one command with opposite guarantees).
+
+`DefusedExits []string` is the narrow escape hatch: a list of exit **names**
+only, not skip-tagged, so it round-trips through the instance save.
+`(*Room).MarkExitTrapDefused(name)` clears the live trap and records the name;
+`(*Room).applyDefusedExits()` re-clears them in `LoadRoomInstance` **after**
+`restoreSkipTaggedFields` has rebuilt `Exits` from the template.
+
+This cannot reintroduce shadowing: every exit property — destination, lock
+difficulty, exit message, oneway/secret — is still sourced wholly from the
+template on each load. The instance file cannot add, remove or redirect an
+exit; its only power is to clear `Lock.TrapBuffIds` on an exit the template
+already defines, and a name that no longer matches an authored exit is a
+silent no-op. Do **not** "simplify" this by removing the `instance:"skip"` tag
+from `Exits`.
+
 ## Dependencies
 - `internal/characters`: Character and mob management
 - `internal/items`: Item system integration

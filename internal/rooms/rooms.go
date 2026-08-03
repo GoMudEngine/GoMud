@@ -93,6 +93,7 @@ type Room struct {
 	Plane             int                               `yaml:"plane,omitempty" instance:"skip"`           // coordinate-space id; 0 = overworld
 	Containers        map[string]Container              `yaml:"containers,omitempty"`                      // If this room has a chest, what is in it?
 	Exits             map[string]exit.RoomExit          `yaml:"exits" instance:"skip"`                     // Exits to other rooms
+	DefusedExits      []string                          `yaml:"defusedexits,omitempty,flow"`               // Exit names whose lock traps a player has disarmed. Instance-persisted; see MarkExitTrapDefused.
 	ExitsTemp         map[string]exit.TemporaryRoomExit `yaml:"-"`                                         // Temporary exits that will be removed after a certain time. Don't bother saving on sever shutting down.
 	Nouns             map[string]string                 `yaml:"nouns,omitempty" instance:"skip"`           // Interesting nouns to highlight in the room or reveal on succesful searches.
 	HiddenNouns       map[string]HiddenNoun             `yaml:"hidden_nouns,omitempty" instance:"skip"`    // Nouns invisible until discovered via search.
@@ -1109,6 +1110,64 @@ func (r *Room) SetExitLock(exitName string, locked bool) {
 		}
 	}
 
+}
+
+// MarkExitTrapDefused clears the lock trap on the named exit and records the
+// exit name so the disarm survives a restart or copyover.
+//
+// Why a separate name list instead of persisting the exit itself: Room.Exits
+// is tagged `instance:"skip"`, so SaveRoomInstance never writes it and
+// restoreSkipTaggedFields overwrites it from the template on every load. That
+// tag is load-bearing — it is what stops a stale instance save from shadowing
+// authored exit edits, a recurring source of "my change isn't taking effect"
+// bugs — so it must not be removed. DefusedExits is the minimum state that has
+// to outlive the process: a set of exit NAMES.
+//
+// This cannot reintroduce shadowing. Every property of every exit — the
+// destination room, lock difficulty, exit message, oneway/secret flags — still
+// comes wholly from the template on each load. The instance file cannot add,
+// remove or redirect an exit; its only power is to clear TrapBuffIds on an exit
+// the template already defines. A recorded name that no longer matches an
+// authored exit is a silent no-op.
+//
+// One accepted consequence: if a builder later re-arms a trap on an exit a
+// player already disarmed, the disarm keeps suppressing it. That is exactly how
+// the container branch of the same command already behaves (Room.Containers is
+// not skip-tagged and persists the cleared trap), and the standard
+// instance-save wipe resets it.
+func (r *Room) MarkExitTrapDefused(exitName string) {
+	exitInfo, ok := r.Exits[exitName]
+	if !ok {
+		return
+	}
+
+	exitInfo.Lock.TrapBuffIds = nil
+	r.Exits[exitName] = exitInfo
+
+	for _, existing := range r.DefusedExits {
+		if existing == exitName {
+			return
+		}
+	}
+	r.DefusedExits = append(r.DefusedExits, exitName)
+}
+
+// applyDefusedExits re-clears the lock traps recorded in DefusedExits. Called
+// after the instance overlay + restoreSkipTaggedFields have rebuilt Exits from
+// the template, which would otherwise resurrect every disarmed trap.
+func (r *Room) applyDefusedExits() {
+	for _, exitName := range r.DefusedExits {
+		exitInfo, ok := r.Exits[exitName]
+		if !ok {
+			// The authored exit was renamed or removed — nothing to clear.
+			continue
+		}
+		if exitInfo.Lock.TrapBuffIds == nil {
+			continue
+		}
+		exitInfo.Lock.TrapBuffIds = nil
+		r.Exits[exitName] = exitInfo
+	}
 }
 
 func (r *Room) GetExitInfo(exitName string) (exitInfo exit.RoomExit, ok bool) {

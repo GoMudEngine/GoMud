@@ -128,6 +128,12 @@ func LoadRoomInstance(roomId int) *Room {
 		if freshTemplate := LoadRoomTemplate(roomId); freshTemplate != nil {
 			restoreSkipTaggedFields(room, freshTemplate)
 		}
+		// Exits were just restored wholesale from the template, which
+		// resurrects any lock trap a player disarmed. DefusedExits is NOT
+		// skip-tagged, so it survived the overlay; re-apply it now. See
+		// Room.MarkExitTrapDefused for why the disarm is persisted as a name
+		// list rather than by un-skipping Exits.
+		room.applyDefusedExits()
 	}
 
 	return room
