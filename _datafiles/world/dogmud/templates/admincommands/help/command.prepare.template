@@ -1,6 +1,7 @@
 The <ansi fg="command">prepare</ansi> command can be used in the following ways:
 
 <ansi fg="command">prepare all</ansi> - Load every room into memory and spawn their mobs.
+(Any argument works the same way; bare <ansi fg="command">prepare</ansi> shows this help.)
 
 This is a general testing tool for:
   1. Load testing

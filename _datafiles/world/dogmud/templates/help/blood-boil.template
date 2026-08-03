@@ -15,7 +15,8 @@ cannot stop the damage once the blood begins to cook.
   <ansi fg="yellow">School:      </ansi> Vital
   <ansi fg="yellow">Base Folds:  </ansi> 6
   <ansi fg="yellow">Conv. Cost:  </ansi> 50
-  <ansi fg="yellow">Defense:     </ansi> Physical — target's armor and toughness resist
+  <ansi fg="yellow">Defense:     </ansi> Physical — quick reflexes can dodge it; armor only
+                 softens what lands
   <ansi fg="yellow">Effect:      </ansi> Damage over time — bleeds for several rounds
 
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>

@@ -18,7 +18,7 @@ for inspection, smoke-testing, and one-off seeding.
   the Add. key=value params parse as int -> float -> bool ->
   string (no quoting needed).
 
-<ansi fg="command">goal remove <mob-ident> <goal-id></ansi>
+<ansi fg="command">goal remove <mob-ident> <goal-id></ansi> (alias: <ansi fg="command">rm</ansi>)
   Delete a single goal by id (e.g. <ansi fg="cyan">g3</ansi>).
 
 <ansi fg="command">goal clear <mob-ident></ansi>

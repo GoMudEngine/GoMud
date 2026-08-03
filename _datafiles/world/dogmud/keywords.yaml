@@ -10,11 +10,14 @@ help:
       - combatverbosity
       - macros
       - password
+      - deletecharacter
+      - rename
       - save
       - set
       - setdesc
       - sethome
     character:
+      - achievements
       - bury
       - character
       - companion
@@ -29,7 +32,9 @@ help:
       - mutations
       - pet
       - pets
+      - rep
       - skills
+      - sleep
       - spells
       - status
       - suicide
@@ -37,7 +42,11 @@ help:
     communication:
       - broadcast
       - emote
+      - chat
+      - channels
+      - gc
       - inbox
+      - mail
       - reply
       - report
       - say
@@ -48,14 +57,10 @@ help:
       - appraise
       - bank
       - buy
-      - deposit
       - hire
       - list
       - offer
       - sell
-      - store
-      - unstore
-      - withdraw
     quests:
       - ask
       - quests
@@ -75,6 +80,7 @@ help:
       - gore
       - grapple
       - kick
+      - knee
       - pvp
       - maul
       - pounce
@@ -87,12 +93,15 @@ help:
       - stamina
       - stand
       - steal
-      - submit
+      - stomp
+      - surrender
       - target
       - taunt
       - throttle
       - throw
       - trip
+      - venom-coat
+      - cocoon
       - warcry
     crafting:
       - craft
@@ -119,6 +128,7 @@ help:
       - gearup
       - get
       - give
+      - loot
       - put
       - read
       - remove
@@ -133,8 +143,14 @@ help:
       - bug
       - go
       - instances
+      - fine
+      - guild
+      - bounty
       - motd
+      - newbie
       - oasis
+      - payfine
+      - petition
       - online
       - quit
       - scan
@@ -163,6 +179,15 @@ help:
       - cooking
       - jewelcrafting
       - enchanting
+      - weapon-combat
+      - unarmed-combat
+      - ranged-combat
+      - spellcasting
+      - rhetoric
+      - skullduggery
+      - salvage
+      - manifestation
+      - bartering
   admin:
     all:
       - ai-flag
@@ -186,7 +211,7 @@ help:
       - questtoken
       - redescribe
       - reload
-      - rename
+      - renameitem
       - room
       - server
       - setmotd
@@ -203,10 +228,13 @@ help:
 # Key is the target keyword, value is the list of aliases
 help-aliases:
   skullduggery:     [stealth, surprise attack, surprise]
-  combat:           [fighting, battle]
+  combat:           [fighting, battle, dual-wield, dual wield]
   cooldowns:        [cooldown]
   defense:          [dodge, parry, block, defenses]
   prone:            [knockdown, knocked-down, knocked down]
+  trip:             [tailsweep]
+  companion:        [companions]
+  surrender:        [submit, tap out, tapout]
   stamina:          [endurance, energy]
   bank:             [deposit, withdraw]
   mutations:        [mutation, chrysalis, mutate]
@@ -242,7 +270,7 @@ help-aliases:
   set-wimpy:        [wimpy]
   colors:           [color, ansi]
   killstats:        [kills, kd]
-  bartering:        [barter, haggle, trade]
+  bartering:        [barter, haggle]
   pets:             [pet]
   macros:           [macro]
   history:          ['log']
@@ -268,7 +296,6 @@ command-aliases:
   map:                ['m']
   conditions:         ['c', 'cond', 'conds']
   skills:             ['sk', 'skill', 'exp', 'xp', 'progression']
-  scribe:             ['scribble', 'write']
   equip:              ['wear', 'wield', 'hold']
   remove:             ['rem', 'unequip', 'unwear', 'unwield']
   attack:             ['a', 'k', 'kill', 'fight']

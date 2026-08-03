@@ -17,8 +17,8 @@ rather than their body.
 
 <ansi fg="yellow">Effects of Rank:</ansi>
 
-  - Higher rhetoric increases your conviction damage
-    multiplier (1.0x at rank 0, up to 3.0x at rank 50)
+  - Higher rhetoric sharply increases your conviction damage —
+    a master's words cut several times deeper than a novice's
   - Adds to your hit check when attacking with taunt
   - Adds to your defense when targeted by taunt
 

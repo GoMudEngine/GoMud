@@ -68,7 +68,6 @@ in-game prompt. The fight prompt (<ansi fg="command">fprompt</ansi>) appears dur
     <ansi fg="magenta">{tankbar}</ansi>      Tank's health bar
 
   <ansi fg="8">Other:</ansi>
-    <ansi fg="magenta">{tp}</ansi>    Unspent Training Points   <ansi fg="magenta">{sp}</ansi>    Unspent Stat Points
     <ansi fg="magenta">{i}</ansi>     Items carried count       <ansi fg="magenta">{I}</ansi>     Maximum carry capacity
     <ansi fg="magenta">{g}</ansi>     Gold on hand              <ansi fg="magenta">{h}</ansi>     Hidden/Invisible flag
     <ansi fg="magenta">{t}</ansi>     Day/Night symbol (<ansi fg="night">☾</ansi>/<ansi fg="day">☀️</ansi>)    <ansi fg="magenta">{T}</ansi>     Full time of day

@@ -6,6 +6,13 @@ Food that has been left too long may spoil and become inedible.
 If the food has gone bad, you will be unable to eat it and must
 discard it.
 
+You cannot eat while grappled — both hands are committed. Free
+yourself first. Eating also has to wait while you are focused on
+crafting, salvaging, or casting.
+
+If something else in your pack shares the food's name, <ansi fg="command">eat</ansi>
+reaches for the edible one.
+
 <ansi fg="yellow">Usage: </ansi>
 
   <ansi fg="command">eat sandwich</ansi>

@@ -29,6 +29,16 @@ For each companion you will see:
   <ansi fg="yellow">Auto-assist</ansi>  Whether the companion will fight with
                you automatically.
 
+<ansi fg="yellow">━━━ The Cost of Keeping Them ━━━</ansi>
+
+Every companion you field reserves part of your conviction pool for
+as long as it serves — the bond is held with your own will. That
+reserved conviction cannot be spent on spells or shouts until the
+companion is dismissed or dies. Mightier forms ask for more, and
+higher manifestation skill shrinks the price. <ansi fg="command">assess</ansi> tells you what
+a raise would cost before you commit; if you find yourself unable to
+cast, check how much of your pool your companions are holding.
+
 <ansi fg="yellow">━━━ Persistence ━━━</ansi>
 
 Companions persist across sessions. When you log out, your

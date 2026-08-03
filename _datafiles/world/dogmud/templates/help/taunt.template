@@ -36,9 +36,9 @@ damage. It attacks their will to fight rather than their body.
   only applies to hostile creatures — taunting another player will
   not redirect their attacks.
 
-When a target's conviction reaches zero, they enter a
-<ansi fg="red">downed</ansi> state — overwhelmed and unable to fight. Conviction
-recovers over time like health and stamina.
+As a target's conviction drains, their fighting spirit fades with it —
+their attacks and defenses weaken steadily, the same way exhaustion
+saps a fighter. Conviction recovers over time like health and stamina.
 
 Armor with <ansi fg="stat">conviction mitigation</ansi> reduces taunt damage.
 Items like willpower amulets or enchanted robes may provide

@@ -10,6 +10,6 @@ to potions but offers no armor protection.
   <ansi fg="yellow">Station:</ansi>     loom
   <ansi fg="yellow">Ingredients:</ansi> leather strip (x2), thread spool (x1),
                  bone needle (x1)
-  <ansi fg="yellow">Capacity:</ansi>    6 potions
+  <ansi fg="yellow">Capacity:</ansi>    12 potions
 
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help tailoring</ansi>, <ansi fg="command">help craft</ansi>

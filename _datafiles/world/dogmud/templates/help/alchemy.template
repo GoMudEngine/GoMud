@@ -7,27 +7,27 @@ matter more than brute force.
 
 <ansi fg="yellow">━━━ Requirements ━━━</ansi>
 
-  Station:   An <ansi fg="yellow">alchemy_bench</ansi> must be in the room with you.
+  Station:   An <ansi fg="yellow">alchemy bench</ansi> must be in the room with you.
              You'll find an alchemy bench in Pothole Coulee and most towns.
-  Materials: Herbs, plant matter, and empty vessels such as vials.
-             Find them on the ground in the Workshop or loot feral herbalists.
+  Materials: Herbs, reagents, and an empty bottle for most brews — a
+             glass vial or any other container with the bottle tag.
+             Forage for herbs in the wild or buy from herbalists.
 
-<ansi fg="yellow">━━━ Known Recipes ━━━</ansi>
+<ansi fg="yellow">━━━ Starter Recipes ━━━</ansi>
 
-  <ansi fg="yellow">Healing Poultice</ansi>    Skill 0   2x healers-root, 1x cloth-strip              2 rounds
-  <ansi fg="yellow">Stamina Draught</ansi>     Skill 0   2x bitter-thistle, 1x small-vial             2 rounds
-  <ansi fg="yellow">Conviction Draught</ansi>  Skill 3   1x healers-root, 1x bitter-thistle,        2 rounds
-                           1x small-vial
-  <ansi fg="yellow">Minor Antidote</ansi>      Skill 8   1x bitter-thistle, 1x dustwalk-herb,        3 rounds
-                           1x small-vial
-  <ansi fg="yellow">Clarity Tonic</ansi>       Skill 15  1x chrysalis-core, 1x bitter-thistle,         4 rounds
-                           1x small-vial
-  <ansi fg="yellow">Fire Resistance Draught</ansi> Skill 20 2x dustwalk-herb, 1x healers-root,       4 rounds
-                           1x small-vial
-  <ansi fg="yellow">Greater Healing Poultice</ansi> Skill 30 3x healers-root, 1x chrysalis-core,      5 rounds
-                           1x cloth-strip
-  <ansi fg="yellow">Berserker Elixir</ansi>     Skill 38  1x hive-fragment, 1x chrysalis-core,          6 rounds
-                           1x bitter-thistle, 1x small-vial
+  <ansi fg="yellow">Healing Salve</ansi>       Skill 0   2x healers-root, 1x bottle
+  <ansi fg="yellow">Stamina Tonic</ansi>       Skill 0   2x bitter-thistle, 1x bottle
+  <ansi fg="yellow">Conviction Draught</ansi>  Skill 3   1x healers-root, 1x bitter-thistle,
+                                1x bottle
+  <ansi fg="yellow">Minor Antidote</ansi>      Skill 8   1x bitter-thistle, 1x dustwalk-herb,
+                                1x bottle
+  <ansi fg="yellow">Clarity Tonic</ansi>       Skill 15  1x chrysalis-core, 1x bitter-thistle,
+                                1x beeswax, 1x bottle
+  <ansi fg="yellow">Fire Resist Draught</ansi> Skill 20  2x dustwalk-herb, 1x healers-root,
+                                1x oak-bark, 1x bottle
+
+Dozens more await discovery. <ansi fg="command">craft list</ansi> always shows the live recipe
+list with exact ingredients — trust it over any written table.
 
 <ansi fg="yellow">━━━ Using Consumables ━━━</ansi>
 

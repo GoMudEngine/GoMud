@@ -1,0 +1,25 @@
+The <ansi fg="command">server</ansi> command can be used in the following ways:
+
+<ansi fg="yellow">Usage: </ansi>
+
+  <ansi fg="command">server stats</ansi> (or <ansi fg="command">server info</ansi>)
+  Get stats on the server.
+
+  <ansi fg="command">server set</ansi>
+  Lists all server configuration settings.
+
+  <ansi fg="command">server set [name] [value]</ansi>
+  Sets a configuration setting (and saves it).
+
+  <ansi fg="command">server set day</ansi> / <ansi fg="command">server set night</ansi>
+  Force the game time to day or night.
+
+  <ansi fg="command">server config</ansi>
+  Initiates an interactive configuration editor.
+
+  <ansi fg="command">server reload-ansi</ansi>
+  Reloads aliases from the ansi alias file.
+
+  <ansi fg="command">server ansi-strip</ansi> / <ansi fg="command">server ansi-mono</ansi> / <ansi fg="command">server ansi-normal</ansi>
+  Debug toggles for ansi rendering: strip all color, monochrome,
+  or restore normal output.

@@ -15,7 +15,8 @@ for casters at any stage of their development.
   <ansi fg="yellow">School:      </ansi> Elemental
   <ansi fg="yellow">Base Folds:  </ansi> 4
   <ansi fg="yellow">Conv. Cost:  </ansi> 15
-  <ansi fg="yellow">Defense:     </ansi> Physical — armor and toughness absorb the impact
+  <ansi fg="yellow">Defense:     </ansi> Physical — quick reflexes can dodge it; armor only
+                 softens what lands
   <ansi fg="yellow">Effect:      </ansi> Direct damage to a single target
 
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>

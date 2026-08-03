@@ -15,7 +15,8 @@ wider reach and more sustainable conviction cost.
   <ansi fg="yellow">School:      </ansi> Vital
   <ansi fg="yellow">Base Folds:  </ansi> 20
   <ansi fg="yellow">Conv. Cost:  </ansi> 80
-  <ansi fg="yellow">Defense:     </ansi> Physical — constitution and armor blunt the wave
+  <ansi fg="yellow">Defense:     </ansi> Physical — quick reflexes can dodge it; armor only
+                 softens what lands
   <ansi fg="yellow">Effect:      </ansi> Moderate damage to all enemies in the room
 
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>

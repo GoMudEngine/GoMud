@@ -7,5 +7,20 @@ The <ansi fg="command">drink</ansi> command drinks an item you carry (if it is d
   <ansi fg="command">drink potion</ansi>
   This would drink your potion.
 
+<ansi fg="yellow">Good to know:</ansi>
+
+  - If you wear a potion bandolier, <ansi fg="command">drink</ansi> draws from it first
+    (oldest potion first), then from your backpack.
+  - Potions age: a brew grows stronger as it ferments toward its
+    peak, then declines. A spoiled potion will make you ill —
+    <ansi fg="command">look</ansi> at it first if it has been sitting a while.
+  - Potions carry toxicity. Drink too many too fast and the poison
+    builds up in you; see <ansi fg="command">help toxicity</ansi>.
+  - You cannot drink while grappled — both hands are committed.
+    Drinking also waits while you are focused on crafting,
+    salvaging, or casting.
+  - If something else shares the name, <ansi fg="command">drink</ansi> reaches for the
+    drinkable one.
+
 Find out more about referring to items by name by typing <ansi fg="command">help item-names</ansi>.
 

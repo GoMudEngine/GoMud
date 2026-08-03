@@ -22,7 +22,7 @@ usercommands.go is NOT the full command surface.
 
 ---
 
-## Batch 1 — DELETE: orphans and fossils (9 files)
+## ✅ Batch 1 — DELETE: orphans and fossils (DONE 08-03; +minor-shield.template, whose spell no longer exists — 10 total)
 
 Files documenting things that do not exist. Delete outright; where a live
 twin exists, the twin already covers the topic.
@@ -39,7 +39,7 @@ twin exists, the twin already covers the topic.
 | `protection.template` | Entire skill fabricated: `aid` is mob-only, `rank`/`pray` exist nowhere |
 | `dual-wield.template` | Describes removed leveled skill (random-weapon tiers); real mechanic is a continuous Weapon-Combat-scaled penalty already correctly documented in combat.template. Replace with a help-alias dual-wield → combat |
 
-## Batch 2 — REWRITE: player helpfiles stating wrong facts
+## ✅ Batch 2 — REWRITE: player helpfiles stating wrong facts (DONE 08-03)
 
 | File | Wrong → right |
 |---|---|
@@ -59,7 +59,7 @@ twin exists, the twin already covers the topic.
 | `blood-boil` / `conviction-spike` / `conviction-barrage` | "armor and toughness resist" → physical-defense spells are DODGED (opposed by Dexterity, spell_resolution.go:974); armor only reduces damage after a hit. Check the same wording in kinetic-shove/pyretic-surge/hemorrhagic-burst/veil-rend ("constitution" is also not a stat) |
 | `rhetoric.template` | Exposes raw 1.0x–3.0x multiplier numbers (style) and they may not match the current formula — verify then describe qualitatively |
 
-## Batch 3 — INDEX repair (keywords.yaml + small aliases)
+## ✅ Batch 3 — INDEX repair (DONE 08-03; in-game index render verified)
 
 - `help trade`/`barter`/`haggle` alias to nonexistent `bartering` file while
   trade.template sits unreachable → repoint alias at trade (and see
@@ -69,8 +69,10 @@ twin exists, the twin already covers the topic.
 - Ghost topics with no file: `deposit`, `store`, `unstore`, `withdraw`
   (alias to bank/storage), `submit` (automatic mechanic, not a command —
   drop or alias to surrender).
-- Module topics listed but fileless (render "Missing" in the live menu):
-  `leaderboard`, `auction`, `time`, `follow` — write minimal templates.
+- ~~Module topics fileless~~ CORRECTION: all four module templates exist
+  in module `files/datafiles/templates/help/` mounts — the coverage agent
+  missed module template overlays. auction.template had two errors of its
+  own (standalone `bid`, nonexistent "Auction skill"), fixed.
 - 9 of 16 skills absent from the menu's Skills section (weapon-combat,
   unarmed-combat, ranged-combat, spellcasting, rhetoric, skullduggery,
   bartering, salvage, manifestation) — 8 have templates, index them.
@@ -81,7 +83,7 @@ twin exists, the twin already covers the topic.
 - `tailsweep` (registered trip variant) → help-alias to trip.
 - `companions` → help-alias to companion.
 
-## Batch 4 — WRITE: missing content
+## ✅ Batch 4 — WRITE: missing content (DONE 08-03)
 
 - `bartering.template` — the only skill with no file at all.
 - Chunk-4 sections (the original queue item): eat/drink grapple-block note
@@ -94,7 +96,7 @@ twin exists, the twin already covers the topic.
   preference, aging/potency, busy/grapple refusals.
 - Minimal `leaderboard`/`auction`/`time`/`follow` templates (Batch 3 dep).
 
-## Batch 5 — ADMIN fixes
+## ✅ Batch 5 — ADMIN fixes (DONE 08-03)
 
 - ✅ `redescribe` template-path bug (loaded nonexistent `command.rename`) —
   fixed `006a01fd1`.

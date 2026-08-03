@@ -15,4 +15,7 @@
 {{ if .ComponentTag -}}
 <ansi fg="red-bold">Requires:    </ansi> <ansi fg="white-bold">{{ .ComponentTag }}</ansi> in your inventory to cast
 {{ end }}
+Position and Willpower affect whether your concentration holds while
+the folds complete — casting pinned or prone risks disruption.
+
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>
