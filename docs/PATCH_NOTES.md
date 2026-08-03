@@ -1,5 +1,12 @@
 # DOGMud Patch Notes
 
+## 2026-08-03 — Wear, eat, and drink pick the sensible item
+
+When two things in your pack share a name, <ansi fg="command">wear</ansi>, <ansi fg="command">equip</ansi>, <ansi fg="command">eat</ansi>, and
+<ansi fg="command">drink</ansi> now reach for the one the command makes sense on — wearing
+"stillwater" picks the pearl pendant, not the raw pearl beside it. If
+nothing suitable matches, you still get the old playful refusals.
+
 ## 2026-08-03 — Crafting takes your full attention
 
 Crafting, salvaging, and spellcasting are focus-required work, and a
