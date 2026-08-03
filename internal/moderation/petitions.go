@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/util"
 	"gopkg.in/yaml.v2"
 )
 
@@ -140,10 +141,16 @@ func loadPetitions() int {
 		petitions = nil
 		return 0
 	}
-	for _, p := range petitions {
+	for i, p := range petitions {
 		if p.Id >= nextPetitionId {
 			nextPetitionId = p.Id + 1
 		}
+		// Retroactive ANSI hygiene (2026-08-03): petitions filed before
+		// write-side escaping shipped can hold raw <ansi> payloads.
+		// Idempotent, so scrubbing every load is safe; the next save
+		// persists the clean form.
+		petitions[i].Message = util.EscapeAnsiTags(p.Message)
+		petitions[i].Note = util.EscapeAnsiTags(p.Note)
 	}
 	return len(petitions)
 }
