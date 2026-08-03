@@ -1,5 +1,15 @@
 # DOGMud Patch Notes
 
+## 2026-08-03 — Assess tells you the cost of a companion before you raise it
+
+A bound companion sets aside part of your conviction pool for as long
+as it serves — that has always been true, but nothing warned you before
+you summoned. The <ansi fg="command">assess</ansi> command now tells you, for each form a
+corpse could sustain, how much of your conviction raising it would set
+aside — and warns you when you could not spare that much right now. The
+armor line in the classic status layout now reads your real mitigation
+too, instead of a retired internal number.
+
 ## 2026-08-03 — NPCs no longer hand out quests they failed to hand out items for
 
 If an NPC's dialogue was supposed to give you both an item and a quest,
