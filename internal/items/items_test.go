@@ -433,20 +433,6 @@ func TestUncurse(t *testing.T) {
 	assert.False(t, item.IsCursed())
 }
 
-// ─── GetDefense ─────────────────────────────────────────────────────────────
-
-func TestGetDefense(t *testing.T) {
-	cleanup := seedRegistry()
-	defer cleanup()
-
-	item := Item{ItemId: 20001}           // chain mail
-	assert.Equal(t, 0, item.GetDefense()) // DamageReduction not set on chain mail
-
-	// Test with override spec
-	item2 := Item{ItemId: 1, Spec: &ItemSpec{DamageReduction: 15}}
-	assert.Equal(t, 15, item2.GetDefense())
-}
-
 // ─── CanBackstab ────────────────────────────────────────────────────────────
 
 func TestCanBackstab(t *testing.T) {

@@ -237,15 +237,15 @@ func TestMvM_AttackerStatGainEmitsRoomMessage(t *testing.T) {
 
 // TestMvP_ConditionShieldAppliedOnceNotDoubleDipped locks the deletion of
 // the inline ConditionShield reduction in handleMobVsPlayer (Gap 4). The
-// magnitude is already added inside the mitigation layer at
-// characters/combat.go:161 (legacy GetDefense path) and at :200 (new
-// GetPhysicalMitigation path). The deleted block was applying a *second*
-// reduction equal to half the magnitude on top of that.
+// magnitude is already added inside the mitigation layer
+// (GetPhysicalMitigation; the legacy GetDefense path was removed
+// 2026-08-03). The deleted block was applying a *second* reduction equal
+// to half the magnitude on top of that.
 //
 // Rather than try to drive a full attack with deterministic damage (combat
 // randomness makes that flaky), we directly assert the mitigation-layer
 // contract: GetPhysicalMitigation returns exactly magnitude/100 (one
-// application), and GetDefense includes magnitude exactly once.
+// application).
 //
 // If the deleted block were ever reintroduced, that would not change these
 // numbers — but it would introduce a second damage reduction in the MvP
@@ -265,8 +265,6 @@ func TestMvP_ConditionShieldAppliedOnceNotDoubleDipped(t *testing.T) {
 	// Without the shield: mitigation should be 0.
 	assert.Equal(t, 0.0, defUser.Character.GetPhysicalMitigation(),
 		"baseline: no shield, no equipment → 0 physical mitigation")
-	assert.Equal(t, 0, defUser.Character.GetDefense(),
-		"baseline: no shield, no equipment → 0 armor reduction")
 
 	// Apply Minor Shield with magnitude 30 (this is the integer-percent value
 	// the spell stores; ConditionShield magnitude maps 1:1 into the mitigation
@@ -280,15 +278,9 @@ func TestMvP_ConditionShieldAppliedOnceNotDoubleDipped(t *testing.T) {
 	assert.InDelta(t, want, got, 1e-9,
 		"shield magnitude must contribute exactly magnitude/100 to GetPhysicalMitigation (one application, not two)")
 
-	// And GetDefense picks up exactly the integer-magnitude.
-	gotAR := defUser.Character.GetDefense()
-	assert.Equal(t, int(magnitude), gotAR,
-		"shield magnitude must contribute exactly int(magnitude) to GetDefense (one application, not two)")
-
-	// Sanity: attacker buffs do not change either result. This rules out
+	// Sanity: attacker buffs do not change the result. This rules out
 	// regressions where unrelated buff state would leak into the mitigation
 	// numbers.
 	defUser.Character.Buffs = buffs.New()
 	assert.InDelta(t, want, defUser.Character.GetPhysicalMitigation(), 1e-9)
-	assert.Equal(t, int(magnitude), defUser.Character.GetDefense())
 }

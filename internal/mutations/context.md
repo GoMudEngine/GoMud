@@ -40,7 +40,7 @@ Legacy `pro`/`con` single-effect fields are automatically migrated into the
 |------|-----------|-------|
 | `stat_multiplier` | `character.RecalculateStats()` | Multiplies `ValueAdj` after `Recalculate()`; Target = stat name |
 | `stat_flat` | `character.RecalculateStats()` | Added to `Mods` before `Recalculate()`; Target = stat name |
-| `natural_armor` | `character.GetDefense()` | Flat addition to physical damage reduction |
+| `natural_armor` | `character.GetPhysicalMitigation()` | Flat addition to physical mitigation % (also scored in `combat.PowerScore`) |
 | `health_multiplier` | `character.RecalculateStats()` | Multiplies `HealthMax.Value` post-Recalculate; positive = more HP |
 | `stamina_regen_multiplier` | `character.StaminaPerRound()` | Multiplies regen; negative = slower recovery |
 | `natural_weapon` | `character.CalculateUnarmedDamage()` | Flat bonus to baseDamage |
