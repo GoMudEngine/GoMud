@@ -345,8 +345,8 @@ triggers:
             - {delay: 0, text: "Your instincts speak true -- that thing is
                 woven too tight for anyone to break. Remember the feeling
                 of a fight you cannot win. It will matter in a moment."}
-            - {delay: 5, text: "But this ring is safe, and straw cannot hurt
-                you. So fight anyway -- type attack effigy."}
+            - {delay: 5, text: "But this ring is safe -- its blows are too
+                soft to matter. So fight anyway -- type attack effigy."}
 
   - event: command_issued
     command: attack
