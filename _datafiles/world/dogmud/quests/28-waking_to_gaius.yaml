@@ -70,7 +70,11 @@ steps:
   - id: checked_cooldowns
     map_target: -1  # action step (command/skill) — no travel destination
     description: "You checked your cooldowns -- your big moves share one well."
-    hint: "Now fight -- type attack effigy."
+    hint: "Size up your foe before you swing -- type consider effigy."
+  - id: considered
+    map_target: -1  # action step (command/skill) — no travel destination
+    description: "You read the effigy true -- some fights cannot be won."
+    hint: "The ring is safe, so fight anyway -- type attack effigy."
   - id: attacked
     map_target: -1  # action step (command/skill) — no travel destination
     description: "You closed with the effigy. Your steady swings are free."
@@ -78,11 +82,11 @@ steps:
   - id: cast_spike
     map_target: -1  # action step (command/skill) — no travel destination
     description: "You loosed a spike of conviction. Belief is a weapon here."
-    hint: "Take its legs the body's way -- type trip."
+    hint: "When your spike lands, take its legs the body's way -- type trip."
   - id: tripped
     map_target: -1  # action step (command/skill) — no travel destination
     description: "You put the effigy down -- voice, belief, and body, all yours."
-    hint: "Not every fight is worth finishing -- type flee."
+    hint: "Your instincts told you -- this fight cannot be won. Type flee."
   - id: fled
     map_target: -1  # -1: no single resolved destination; Phase 2 review
     description: "You broke away. Running is how you live to win the next one."
@@ -273,8 +277,8 @@ triggers:
             - {delay: 0, text: "That's how you'll learn half of what matters
                 out there. The way north is open."}
 
-  # ── 6262 The Proving: warcry, conditions, cooldowns, attack, cast, trip,
-  #    flee ──
+  # ── 6262 The Proving: warcry, conditions, cooldowns, consider, attack,
+  #    cast, trip, flee ──
   - event: room_enter
     room: 6262
     conditions:
@@ -324,14 +328,31 @@ triggers:
       - npc_say:
           mob: 9491
           lines:
-            - {delay: 0, text: "Empty means you're rested. Now fight -- type
-                attack effigy."}
+            - {delay: 0, text: "Empty means you're rested. Before you swing,
+                size up your foe -- type consider effigy."}
+
+  - event: command_issued
+    command: consider
+    noun: effigy
+    conditions:
+      has: [28-checked_cooldowns]
+      missing: [28-considered]
+    actions:
+      - grant: 28-considered
+      - npc_say:
+          mob: 9491
+          lines:
+            - {delay: 0, text: "Your instincts speak true -- that thing is
+                woven too tight for anyone to break. Remember the feeling
+                of a fight you cannot win. It will matter in a moment."}
+            - {delay: 5, text: "But this ring is safe -- its blows are too
+                soft to matter. So fight anyway -- type attack effigy."}
 
   - event: command_issued
     command: attack
     noun: effigy
     conditions:
-      has: [28-checked_cooldowns]
+      has: [28-considered]
       missing: [28-attacked]
     actions:
       - grant: 28-attacked
@@ -352,8 +373,10 @@ triggers:
       - npc_say:
           mob: 9491
           lines:
-            - {delay: 0, text: "Belief spends from the same well. Now take
-                its legs the body's way. Type trip."}
+            - {delay: 0, text: "Belief spends from the same well, and it
+                takes a moment to gather -- watch it build."}
+            - {delay: 8, text: "When your spike lands, take its legs the
+                body's way -- type trip."}
 
   - event: command_issued
     command: trip
@@ -370,8 +393,9 @@ triggers:
             - {delay: 4, text: "Out here you grow by doing. Belief deepens
                 your Willpower, blades sharpen your Dexterity -- you earn
                 it, you never pick it."}
-            - {delay: 8, text: "Last, and most important -- not every fight
-                is worth finishing. Type flee to break away and live."}
+            - {delay: 8, text: "Now the last lesson, the one your instincts
+                already gave you -- this fight cannot be won. Type flee to
+                break away and live."}
 
   - event: command_issued
     command: flee

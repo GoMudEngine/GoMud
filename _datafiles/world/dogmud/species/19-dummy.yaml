@@ -2,6 +2,12 @@ speciesid: 19
 name: dummy
 description: A wooden target
 size: small
+# Training targets are constructs -- they must never acquire emergent
+# mutations. Caught in the 2026-08-03 Proving playtest: the tutorial
+# effigy drifted mid-grind, grew stat mutations, and started landing
+# chip hits, contradicting the harmless-target design (and Dewey's
+# "straw cannot hurt you" line).
+mutation_immune: true
 unarmedname: sticks
 selectable: false
 knowsfirstaid: false
