@@ -20,6 +20,13 @@ types you can actually raise. A master necromancer can pull
 forth a flesh golem from a suitable corpse where a novice
 could only coax out a simple skeleton.
 
+Assessment also tells you how much of your conviction each
+form would set aside while it serves. A bound companion
+reserves part of your conviction pool for as long as it is
+fielded; higher manifestation skill (and certain mutations)
+shrink that reservation. If you could not spare the
+conviction right now, the assessment says so.
+
 <ansi fg="yellow">━━━ Important Notes ━━━</ansi>
 
 Assessment is purely informational — you don't need to assess
