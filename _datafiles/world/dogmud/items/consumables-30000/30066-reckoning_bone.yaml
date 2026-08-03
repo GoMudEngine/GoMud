@@ -19,4 +19,5 @@ type: scroll
 subtype: readable
 not_salable: true
 value: 10
+rarity_tier: 40
 weight: 0.4

@@ -16,4 +16,5 @@ physical_mitigation: 5
 magical_mitigation: 5
 conviction_mitigation: 5
 value: 75
+rarity_tier: 30
 weight: 3.0

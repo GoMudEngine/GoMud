@@ -10,6 +10,7 @@ description: A rugged leather backpack with wide straps and reinforced
 type: back
 subtype: wearable
 value: 30
+rarity_tier: 40
 weight: 2.0
 weight_reduction: 0.35
 physical_mitigation: 0

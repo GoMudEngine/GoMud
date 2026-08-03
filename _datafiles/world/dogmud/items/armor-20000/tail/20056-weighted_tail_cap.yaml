@@ -8,5 +8,6 @@ description: A leather-wrapped iron weight that straps to the end of a
 type: tail
 subtype: wearable
 value: 20
+rarity_tier: 40
 weight: 2.0
 damage_multiplier: 15

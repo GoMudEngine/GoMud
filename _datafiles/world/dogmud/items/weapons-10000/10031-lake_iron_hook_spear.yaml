@@ -24,3 +24,4 @@ damage:
 damage_multiplier: 0.95
 parryrating: 10
 value: 60
+rarity_tier: 30

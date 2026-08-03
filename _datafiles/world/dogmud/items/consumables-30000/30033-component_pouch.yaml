@@ -10,6 +10,7 @@ description: A sturdy leather pouch with multiple compartments, each lined
 type: componentbag
 subtype: wearable
 value: 25
+rarity_tier: 40
 weight: 1.0
 bag_capacity: 60
 weight_reduction: 0.3

@@ -12,6 +12,7 @@ description: A rigid case of boiled leather and bone reinforcement,
 type: componentbag
 subtype: wearable
 value: 150
+rarity_tier: 30
 weight: 2.0
 bag_capacity: 225
 weight_reduction: 0.45

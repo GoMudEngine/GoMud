@@ -23,5 +23,6 @@ physical_mitigation: 0
 magical_mitigation: 12
 weight: 0.1
 value: 200
+rarity_tier: 30
 statmods:
   willpower: -2

@@ -7,6 +7,7 @@ description: A one-handed warhammer with a steel head and reinforced haft. The w
   of the hammerhead makes it slower but powerful.
 type: weapon
 value: 29
+rarity_tier: 40
 hands: 1
 subtype: bludgeoning
 weight: 12.0  # Heavy one-handed weapon

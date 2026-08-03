@@ -9,3 +9,4 @@ subtype: wearable
 physical_mitigation: 1
 escapemodifier: 1.0  # Stage 8.7: Light armor - easier to escape when grounded
 value: 1
+rarity_tier: 50

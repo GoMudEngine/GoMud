@@ -10,6 +10,7 @@ description: |
   larger hands. The flint edge is surprisingly sharp.
 type: weapon
 value: 5
+rarity_tier: 50
 hands: 1
 subtype: piercing
 weight: 5.0

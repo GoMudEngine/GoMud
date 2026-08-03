@@ -17,4 +17,5 @@ physical_mitigation: 8
 magical_mitigation: 4
 blockrating: 15
 value: 80
+rarity_tier: 30
 weight: 4.5

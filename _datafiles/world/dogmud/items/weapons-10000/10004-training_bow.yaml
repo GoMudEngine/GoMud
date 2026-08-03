@@ -5,6 +5,7 @@ description: A simple recurve bow made from laminated wood. It has a moderate dr
   suitable for target practice and light combat.
 type: weapon
 value: 5
+rarity_tier: 50
 hands: 2
 subtype: shooting
 weight: 3.0  # Lightweight bow

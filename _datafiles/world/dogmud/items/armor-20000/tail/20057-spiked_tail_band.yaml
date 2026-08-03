@@ -9,6 +9,7 @@ description: A leather band studded with short iron spikes, fitted around
 type: tail
 subtype: wearable
 value: 25
+rarity_tier: 40
 weight: 1.5
 statmods:
   knockdown: 10

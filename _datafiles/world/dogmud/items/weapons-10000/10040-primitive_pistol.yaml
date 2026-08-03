@@ -17,5 +17,6 @@ damage:
 damage_multiplier: 3.50
 parryrating: 0
 value: 120
+rarity_tier: 30
 vendor_categories:
 - blacksmithing

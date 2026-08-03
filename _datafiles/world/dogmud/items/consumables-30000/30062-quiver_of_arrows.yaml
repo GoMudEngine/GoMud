@@ -7,5 +7,6 @@ ammo_tag: arrows
 uses: 24
 weight: 1.5
 value: 60
+rarity_tier: 30
 vendor_categories:
 - blacksmithing

@@ -16,4 +16,5 @@ subtype: wearable
 magical_mitigation: 9
 conviction_mitigation: 5
 value: 85
+rarity_tier: 30
 weight: 1.5

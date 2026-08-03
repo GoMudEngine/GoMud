@@ -7,6 +7,7 @@ description: A finely honed longsword bearing the arena's crest on its crossguar
   balance is superb, and the edge gleams with deadly sharpness.
 type: weapon
 value: 5
+rarity_tier: 50
 hands: 1
 subtype: slashing
 weight: 7.0  # Quality sword, well-balanced

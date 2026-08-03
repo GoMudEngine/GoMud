@@ -6,5 +6,6 @@ namesimple: boots
 description: Boots well past their usefulness.
 type: feet
 value: 5
+rarity_tier: 50
 subtype: wearable
 physical_mitigation: 1

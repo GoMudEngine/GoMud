@@ -9,4 +9,5 @@ description: A heavy cloak of felted wool, clasped at the throat with a bone
 type: back
 subtype: wearable
 value: 7
+rarity_tier: 50
 physical_mitigation: 2

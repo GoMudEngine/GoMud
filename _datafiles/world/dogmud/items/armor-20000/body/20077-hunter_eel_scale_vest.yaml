@@ -20,6 +20,7 @@ physical_mitigation: 5
 magical_mitigation: 2
 weight: 3.0
 value: 85
+rarity_tier: 30
 statmods:
   dexterity: 3
   skullduggery: 7

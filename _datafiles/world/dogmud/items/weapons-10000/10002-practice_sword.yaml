@@ -7,6 +7,7 @@ description: A blunted training sword with a wrapped leather grip. The edge has 
   deliberately dulled, but it still packs a solid wallop.
 type: weapon
 value: 5
+rarity_tier: 50
 hands: 1
 subtype: slashing
 weight: 6.0  # Medium sword weight

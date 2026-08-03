@@ -12,6 +12,7 @@ subtype: wearable
 vendor_categories:
 - jewelcrafting
 value: 15
+rarity_tier: 40
 weight: 0.2
 statmods:
   charisma: 3
