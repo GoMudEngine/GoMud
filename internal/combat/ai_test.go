@@ -111,9 +111,9 @@ func TestCanUseBash(t *testing.T) {
 				c.Equipment.Offhand = items.Item{
 					ItemId: 1,
 					Spec: &items.ItemSpec{
-						Type:            items.Offhand,
+						Type:               items.Offhand,
 						PhysicalMitigation: 5,
-						BlockRating:     10,
+						BlockRating:        10,
 					},
 				}
 			}
@@ -358,9 +358,9 @@ func TestScoreBash(t *testing.T) {
 			m.Character.Equipment.Offhand = items.Item{
 				ItemId: 1,
 				Spec: &items.ItemSpec{
-					Type:            items.Offhand,
+					Type:               items.Offhand,
 					PhysicalMitigation: 5,
-					BlockRating:     10,
+					BlockRating:        10,
 				},
 			}
 		}
@@ -518,9 +518,9 @@ func TestCanUseBash_ShieldOrNaturalAndArms(t *testing.T) {
 	withShield.Equipment.Offhand = items.Item{
 		ItemId: 1,
 		Spec: &items.ItemSpec{
-			Type:            items.Offhand,
+			Type:               items.Offhand,
 			PhysicalMitigation: 5,
-			BlockRating:     10,
+			BlockRating:        10,
 		},
 	}
 	if !CanUseBash(withShield) {
@@ -554,9 +554,9 @@ func TestCanUseBash_ShieldOrNaturalAndArms(t *testing.T) {
 	shieldedNoArms.Equipment.Offhand = items.Item{
 		ItemId: 2,
 		Spec: &items.ItemSpec{
-			Type:            items.Offhand,
+			Type:               items.Offhand,
 			PhysicalMitigation: 5,
-			BlockRating:     10,
+			BlockRating:        10,
 		},
 	}
 	if CanUseBash(shieldedNoArms) {

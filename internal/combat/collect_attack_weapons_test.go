@@ -37,7 +37,7 @@ func makeSword() items.Item {
 
 func makeShield(id int) items.Item {
 	return items.Item{ItemId: id, Spec: &items.ItemSpec{
-		Type:            items.Offhand,
+		Type:               items.Offhand,
 		PhysicalMitigation: 5,
 	}}
 }

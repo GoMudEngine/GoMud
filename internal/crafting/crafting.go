@@ -145,9 +145,9 @@ func GetRecipeByOutputItemId(itemId int) *RecipeSpec {
 // FindRecipesByName does a case-insensitive, TIERED search across recipes and
 // returns every match from the highest-priority tier that has any:
 //
-//	1. exact recipe name
-//	2. exact declared alias
-//	3. substring of the recipe name
+//  1. exact recipe name
+//  2. exact declared alias
+//  3. substring of the recipe name
 //
 // Results are deterministically ordered — tightest name first (shortest name
 // containing the query), alphabetical on ties — so callers that take the first

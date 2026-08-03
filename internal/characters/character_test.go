@@ -2559,9 +2559,9 @@ func TestGetDefenseScore(t *testing.T) {
 		c.Stats.Dexterity.ValueAdj = 80
 		c.Skills[string(skills.WeaponCombat)] = 10
 		c.Equipment.Offhand = items.Item{ItemId: 1, Spec: &items.ItemSpec{
-			Type:            items.Offhand,
+			Type:               items.Offhand,
 			PhysicalMitigation: 5,
-			BlockRating:     15,
+			BlockRating:        15,
 		}}
 		score := c.GetDefenseScore(DefenseBlock)
 		assert.InDelta(t, 135.0, score, 1.0) // (120+80)/2 + 10*2 + 15 (SkillWeight=2.0)
