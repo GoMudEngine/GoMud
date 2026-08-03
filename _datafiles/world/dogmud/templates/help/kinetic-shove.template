@@ -15,7 +15,8 @@ combat opener or follow-up.
   <ansi fg="yellow">School:      </ansi> Elemental
   <ansi fg="yellow">Base Folds:  </ansi> 3
   <ansi fg="yellow">Conv. Cost:  </ansi> 30
-  <ansi fg="yellow">Defense:     </ansi> Physical — constitution and bracing resist the shove
+  <ansi fg="yellow">Defense:     </ansi> Physical — quick reflexes can dodge it; armor only
+                 softens what lands
   <ansi fg="yellow">Effect:      </ansi> Knockdown — sends the target to the ground
 
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>

@@ -6,12 +6,18 @@ same window.
 
 <ansi fg="yellow">Special moves that share this cooldown:</ansi>
 
-  <ansi fg="command">bash</ansi>      - A powerful melee strike that can stagger your opponent.
-  <ansi fg="command">kick</ansi>      - A fast kick aimed to disorient or knock back an enemy.
-  <ansi fg="command">trip</ansi>      - Attempts to knock an opponent off their feet.
-  <ansi fg="command">grapple</ansi>   - Grabs and restrains an opponent.
+  <ansi fg="command">bash</ansi>, <ansi fg="command">kick</ansi>, <ansi fg="command">trip</ansi>, <ansi fg="command">grapple</ansi>
+              - Melee control moves: stagger, disorient, knock down, restrain.
+  <ansi fg="command">taunt</ansi>, <ansi fg="command">warcry</ansi>, <ansi fg="command">rally</ansi>
+              - Shouts and rallying cries — the voice spends from the
+                same well of focus.
   <ansi fg="command">cast</ansi>      - Initiates spellcasting. Counts as a special move on
               initiation.
+  <ansi fg="command">reload</ansi>    - Working a ranged weapon's mechanism takes the same
+              burst of focus.
+  <ansi fg="command">gore</ansi>, <ansi fg="command">maul</ansi>, <ansi fg="command">rake</ansi>, <ansi fg="command">pounce</ansi>, <ansi fg="command">throttle</ansi>, <ansi fg="command">hamstring</ansi>, <ansi fg="command">drain</ansi>
+              - Natural-weapon moves for bodies shaped to use them.
+  Mutation abilities (<ansi fg="command">venom-coat</ansi>, <ansi fg="command">cocoon</ansi>) share it too.
 
 Submissions (chokes, joint locks) fire automatically when you
 have dominant control in a grapple — no command needed. See

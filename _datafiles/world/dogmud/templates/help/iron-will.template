@@ -19,7 +19,7 @@ it worthwhile for extended fights or dangerous zones.
 <ansi fg="yellow">Defense:     </ansi> <ansi fg="white-bold">None -- help spells always apply</ansi>
 <ansi fg="yellow">Duration:    </ansi> <ansi fg="white-bold">Long (scales with spellcasting skill)</ansi>
 <ansi fg="yellow">Effects:     </ansi> <ansi fg="white-bold">Willpower boost + magical and conviction mitigation</ansi>
-<ansi fg="yellow">Conv. Cost:  </ansi> <ansi fg="white-bold">6</ansi>
+<ansi fg="yellow">Conv. Cost:  </ansi> <ansi fg="white-bold">45</ansi>
 <ansi fg="yellow">School:      </ansi> <ansi fg="white-bold">Enhancement</ansi>
 
 <ansi fg="white-bold">Notes:</ansi>

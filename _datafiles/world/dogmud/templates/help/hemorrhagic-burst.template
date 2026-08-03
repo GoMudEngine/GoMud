@@ -15,7 +15,8 @@ fearsome against heavily protected foes.
   <ansi fg="yellow">School:      </ansi> Elemental
   <ansi fg="yellow">Base Folds:  </ansi> 16
   <ansi fg="yellow">Conv. Cost:  </ansi> 80
-  <ansi fg="yellow">Defense:     </ansi> Physical — armor and constitution resist the rupture
+  <ansi fg="yellow">Defense:     </ansi> Physical — quick reflexes can dodge it; armor only
+                 softens what lands
   <ansi fg="yellow">Effect:      </ansi> Heavy damage to all enemies in the room
 
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help cast</ansi>

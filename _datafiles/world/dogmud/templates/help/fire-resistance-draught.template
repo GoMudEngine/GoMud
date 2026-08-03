@@ -8,6 +8,6 @@ dustwalk herbs to shield the body against flame and heat.
   <ansi fg="yellow">Skill:</ansi>       alchemy (minimum 20)
   <ansi fg="yellow">Station:</ansi>     alchemy bench
   <ansi fg="yellow">Ingredients:</ansi> dustwalk herb (x2), healers root (x1),
-                 small vial (x1)
+                 oak bark (x1), bottle (x1)
 
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help alchemy</ansi>, <ansi fg="command">help craft</ansi>

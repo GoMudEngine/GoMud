@@ -16,9 +16,10 @@ by <ansi fg="yellow">Strength</ansi> — heavier work demands a stronger hand.
   <ansi fg="yellow">Iron Dagger</ansi>     Skill 0   1x iron-ingot, 1x leather-strip       3 rounds
   <ansi fg="yellow">Iron Buckler</ansi>    Skill 5   2x iron-ingot, 1x wooden-plank         4 rounds
   <ansi fg="yellow">Iron Short Sword</ansi>    Skill 8   2x iron-ingot, 1x leather-strip     3 rounds
-  <ansi fg="yellow">Steel Ingot</ansi>     Skill 10  3x iron-ingot, 1x coal-dust           4 rounds
+  <ansi fg="yellow">Steel Ingot</ansi>     Skill 4   3x iron-ingot, 1x coal-dust,          4 rounds
+                            1x pine-pitch
   <ansi fg="yellow">Reinforced Wooden Shield</ansi> Skill 12 1x iron-ingot, 2x wooden-plank  4 rounds
-  <ansi fg="yellow">Chain Links</ansi>     Skill 15  2x iron-ingot                         3 rounds (yields 3)
+  <ansi fg="yellow">Chain Links</ansi>     Skill 7   2x iron-ingot                         3 rounds (yields 3)
   <ansi fg="yellow">Steel Longsword</ansi>     Skill 20  2x steel-ingot, 1x leather-strip     5 rounds
   <ansi fg="yellow">Chainmail Vest</ansi>     Skill 25  3x chain-link, 1x iron-ingot        6 rounds
   <ansi fg="yellow">Steel Buckler</ansi>      Skill 30  2x steel-ingot, 1x wooden-plank      5 rounds
