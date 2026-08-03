@@ -163,5 +163,162 @@ func setupAuthTestUsers(t *testing.T, password string, roles map[string]string) 
 }
 
 func resetAuthStateForTest() {
-	authCache = map[string]time.Time{}
+	authMu.Lock()
+	defer authMu.Unlock()
+	authCache = map[string]authCacheEntry{}
+	authFailures = map[string]*authFailureRecord{}
+}
+
+// rewriteAuthTestUser overwrites an existing test user's YAML in place, which
+// is how a password change / role demotion / rotation looks to LoadUser.
+func rewriteAuthTestUser(t *testing.T, userID int, username, role, password string) {
+	t.Helper()
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.MinCost)
+	if err != nil {
+		t.Fatalf("GenerateFromPassword: %v", err)
+	}
+
+	u := users.NewUserRecord(userID, 0)
+	u.Username = username
+	u.Role = role
+	u.Password = string(hash)
+
+	data, err := yaml.Marshal(u)
+	if err != nil {
+		t.Fatalf("Marshal user %q: %v", username, err)
+	}
+
+	usersDir := filepath.Join(string(configs.GetFilePathsConfig().DataFiles), "users")
+	userPath := filepath.Join(usersDir, strconv.Itoa(userID)+".yaml")
+	if err := os.WriteFile(userPath, data, 0600); err != nil {
+		t.Fatalf("WriteFile(%q): %v", userPath, err)
+	}
+}
+
+// forceAuthRevalidation ages every cached grant so the next lookup re-reads the
+// user record. Without this the test would have to sleep for
+// authRevalidateEvery.
+func forceAuthRevalidation() {
+	authMu.Lock()
+	defer authMu.Unlock()
+	for k, e := range authCache {
+		e.nextRevalidate = time.Now().Add(-time.Second)
+		authCache[k] = e
+	}
+}
+
+func doAuthRequest(t *testing.T, username, password, remoteAddr string) (int, bool) {
+	t.Helper()
+
+	called := false
+	handler := doBasicAuth(func(w http.ResponseWriter, r *http.Request) {
+		called = true
+		w.WriteHeader(http.StatusOK)
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/build", nil)
+	req.SetBasicAuth(username, password)
+	if remoteAddr != "" {
+		req.RemoteAddr = remoteAddr
+	}
+	rec := httptest.NewRecorder()
+	handler(rec, req)
+
+	return rec.Code, called
+}
+
+// A cached grant must not outlive the credential it was issued against. The old
+// implementation keyed on the raw Authorization header and never looked at the
+// account again, so a rotated password kept working for the rest of the TTL.
+func TestAuthCacheInvalidatedByPasswordChange(t *testing.T) {
+	const password = "correct-password"
+	setupAuthTestUsers(t, password, map[string]string{"adminuser": users.RoleAdmin})
+	resetAuthStateForTest()
+
+	if code, called := doAuthRequest(t, "adminuser", password, "203.0.113.10:5000"); code != http.StatusOK || !called {
+		t.Fatalf("initial auth: status=%d called=%t, want 200/true", code, called)
+	}
+
+	// Served from cache without touching bcrypt.
+	if code, called := doAuthRequest(t, "adminuser", password, "203.0.113.10:5000"); code != http.StatusOK || !called {
+		t.Fatalf("cached auth: status=%d called=%t, want 200/true", code, called)
+	}
+
+	rewriteAuthTestUser(t, 1, "adminuser", users.RoleAdmin, "brand-new-password")
+	forceAuthRevalidation()
+
+	if code, called := doAuthRequest(t, "adminuser", password, "203.0.113.10:5000"); code != http.StatusUnauthorized || called {
+		t.Fatalf("after password change: status=%d called=%t, want 401/false", code, called)
+	}
+}
+
+// A demotion out of RoleAdmin must void an outstanding grant too.
+func TestAuthCacheInvalidatedByRoleDemotion(t *testing.T) {
+	const password = "correct-password"
+	setupAuthTestUsers(t, password, map[string]string{"adminuser": users.RoleAdmin})
+	resetAuthStateForTest()
+
+	if code, called := doAuthRequest(t, "adminuser", password, "203.0.113.11:5000"); code != http.StatusOK || !called {
+		t.Fatalf("initial auth: status=%d called=%t, want 200/true", code, called)
+	}
+
+	rewriteAuthTestUser(t, 1, "adminuser", users.RoleUser, password)
+	forceAuthRevalidation()
+
+	if code, called := doAuthRequest(t, "adminuser", password, "203.0.113.11:5000"); code != http.StatusUnauthorized || called {
+		t.Fatalf("after demotion: status=%d called=%t, want 401/false", code, called)
+	}
+}
+
+// bcrypt is deliberately expensive; unthrottled, doBasicAuth is a guessing
+// oracle and a CPU-exhaustion vector. After authMaxFailures the source must be
+// rejected with 429 before any bcrypt work happens.
+func TestFailedAuthIsThrottledPerSource(t *testing.T) {
+	const password = "correct-password"
+	setupAuthTestUsers(t, password, map[string]string{"adminuser": users.RoleAdmin})
+	resetAuthStateForTest()
+
+	const attacker = "198.51.100.7:6000"
+
+	for i := 0; i < authMaxFailures; i++ {
+		if code, _ := doAuthRequest(t, "adminuser", "wrong-password", attacker); code != http.StatusUnauthorized {
+			t.Fatalf("attempt %d: status=%d, want 401", i+1, code)
+		}
+	}
+
+	code, called := doAuthRequest(t, "adminuser", "wrong-password", attacker)
+	if code != http.StatusTooManyRequests || called {
+		t.Fatalf("post-lockout: status=%d called=%t, want 429/false", code, called)
+	}
+
+	// Even the correct password is refused while locked out...
+	if code, _ := doAuthRequest(t, "adminuser", password, attacker); code != http.StatusTooManyRequests {
+		t.Fatalf("locked-out correct password: status=%d, want 429", code)
+	}
+
+	// ...but a different source is unaffected.
+	if code, called := doAuthRequest(t, "adminuser", password, "198.51.100.8:6000"); code != http.StatusOK || !called {
+		t.Fatalf("other source: status=%d called=%t, want 200/true", code, called)
+	}
+}
+
+// The failure tracker is keyed by attacker-controlled connection data, so it
+// must be bounded rather than growing until the process dies.
+func TestAuthFailureTrackerIsBounded(t *testing.T) {
+	resetAuthStateForTest()
+	defer resetAuthStateForTest()
+
+	now := time.Now()
+	for i := 0; i < authTrackerMaxEntries+500; i++ {
+		noteAuthFailure("10.0."+strconv.Itoa(i/256)+"."+strconv.Itoa(i%256), now)
+	}
+
+	authMu.Lock()
+	got := len(authFailures)
+	authMu.Unlock()
+
+	if got > authTrackerMaxEntries {
+		t.Fatalf("failure tracker grew to %d entries, cap is %d", got, authTrackerMaxEntries)
+	}
 }
