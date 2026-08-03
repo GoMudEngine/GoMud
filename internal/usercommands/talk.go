@@ -13,6 +13,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/llm"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
+	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -163,15 +164,28 @@ func buildPlayerState(user *users.UserRecord) *dialogue.PlayerState {
 		},
 		GiveItem: func(itemId int) {
 			newItem := items.New(itemId)
-			if newItem.ItemId > 0 {
-				user.Character.StoreItem(newItem)
-				user.SendText(messaging.CategoryLoot, fmt.Sprintf(`You receive a <ansi fg="itemname">%s</ansi>.`, newItem.DisplayName()))
-				events.AddToQueue(events.ItemOwnership{
-					UserId: user.UserId,
-					Item:   newItem,
-					Gained: true,
-				})
+			if newItem.ItemId <= 0 {
+				return
 			}
+			// StoreItem refuses past twice carry capacity (the "crushed"
+			// encumbrance tier). Claiming delivery anyway — and worse,
+			// queueing ItemOwnership{Gained:true}, which fires item_gain
+			// quest triggers and auto-grants QuestTokens — advanced quest
+			// state on an item the player never received.
+			if !user.Character.StoreItem(newItem) {
+				user.SendText(messaging.CategorySystem, fmt.Sprintf(
+					`You are carrying too much to take the <ansi fg="itemname">%s</ansi>. `+
+						`Put something down, then ask again.`, newItem.DisplayName()))
+				mudlog.Warn("talk.GiveItem", "msg", "player could not carry dialogue item",
+					"userId", user.UserId, "itemId", itemId)
+				return
+			}
+			user.SendText(messaging.CategoryLoot, fmt.Sprintf(`You receive a <ansi fg="itemname">%s</ansi>.`, newItem.DisplayName()))
+			events.AddToQueue(events.ItemOwnership{
+				UserId: user.UserId,
+				Item:   newItem,
+				Gained: true,
+			})
 		},
 		GetQuestFlag: func(key string) string {
 			return user.Character.GetQuestFlag(key)

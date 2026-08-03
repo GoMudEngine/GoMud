@@ -153,7 +153,7 @@ to perform. Parameters are sibling fields on the same node.
 |--------|--------|-------------|
 | `give_item` | `item_id` (int) | Gives one item copy to the triggering player. |
 | `give_item_multiple` | `item_id` (int), `count` (int, default 1) | Gives N copies of an item. |
-| `return_item` | none | Returns the event's item to the player. For `player_give` rejection — no params needed, uses `ctx.Event.ItemId`. |
+| `return_item` | none | Returns the event's item to the player. For `player_give` rejection — no params needed. Hands back the **real** item from the mob's inventory (located via `ctx.Event.ItemUUID`, falling back to the newest `ctx.Event.ItemId` match), preserving enchant tier and remaining uses. Fails if the mob is not holding it; never mints a copy. |
 | `take_item` | `item_id` (int) | Removes first matching item from the player. |
 | `give_gold` | `amount` (int) | Gives gold to the player. |
 | `take_gold` | `amount` (int) | Takes gold from the player (floor 0). |

@@ -15,7 +15,11 @@ import (
 type ActionContext interface {
 	GrantQuest(token string)
 	ConsumeItem(itemId int)
-	GiveItem(itemId int)
+	// GiveItem returns an error when the item could not actually be placed in
+	// the player's inventory (unknown item, or the player is carrying too
+	// much). ExecuteAction propagates it so the trigger's remaining actions
+	// are abandoned rather than advancing a quest on an undelivered item.
+	GiveItem(itemId int) error
 	GiveGold(amount int)
 	ChargeGold(amount int)
 	SendText(cat messaging.Category, text string)
@@ -52,8 +56,7 @@ func ExecuteAction(a ActionDef, ctx ActionContext) error {
 	}
 	if a.GiveItem > 0 {
 		LogVerboseF(ctx.GetUserId(), "giving item %d", a.GiveItem)
-		ctx.GiveItem(a.GiveItem)
-		return nil
+		return ctx.GiveItem(a.GiveItem)
 	}
 	if a.GiveGold > 0 {
 		LogVerboseF(ctx.GetUserId(), "giving %d gold", a.GiveGold)

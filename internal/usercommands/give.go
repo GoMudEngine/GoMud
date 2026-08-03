@@ -255,6 +255,7 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 				EventType: "player_give",
 				UserId:    user.UserId,
 				ItemId:    giveItem.ItemId,
+				ItemUUID:  giveItem.UUID,
 				RoomId:    room.RoomId,
 			}) {
 				return true, nil

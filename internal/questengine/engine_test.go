@@ -57,9 +57,12 @@ func (c *fullMockActionContext) ConsumeItem(itemId int) {
 	delete(c.player.items, itemId)
 }
 
-func (c *fullMockActionContext) GiveItem(itemId int) {
-	c.mockActionContext.GiveItem(itemId)
+func (c *fullMockActionContext) GiveItem(itemId int) error {
+	if err := c.mockActionContext.GiveItem(itemId); err != nil {
+		return err
+	}
 	c.player.items[itemId] = true
+	return nil
 }
 
 func (m *fullMockActionContext) SetQuestFlag(key, value string) {

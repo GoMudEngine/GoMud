@@ -16,8 +16,11 @@ type recordingCtx struct {
 }
 
 func (c *recordingCtx) GrantQuest(token string) { c.granted = append(c.granted, token) }
-func (c *recordingCtx) GiveItem(itemId int)     { c.gaveItem = append(c.gaveItem, itemId) }
-func (c *recordingCtx) GiveGold(amount int)     { c.gaveGold = append(c.gaveGold, amount) }
+func (c *recordingCtx) GiveItem(itemId int) error {
+	c.gaveItem = append(c.gaveItem, itemId)
+	return nil
+}
+func (c *recordingCtx) GiveGold(amount int) { c.gaveGold = append(c.gaveGold, amount) }
 func (c *recordingCtx) SetQuestFlag(key, value string) {
 	c.flagsSet = append(c.flagsSet, key+"="+value)
 }
@@ -115,7 +118,7 @@ func TestExecuteActions_AbortsAfterPanic(t *testing.T) {
 
 type panickingCtx struct{ recordingCtx }
 
-func (c *panickingCtx) GiveItem(int) { panic("boom") }
+func (c *panickingCtx) GiveItem(int) error { panic("boom") }
 
 // The happy path must be unaffected: every action still runs in order.
 func TestExecuteActions_AllActionsRunWhenNoneFail(t *testing.T) {

@@ -1171,3 +1171,15 @@ Mobs with `patrol_id:` set follow waypoint patrols authored in
 
 **Spawning shallow-copies the template** (`mob := *m`), so pointer, map and
 slice fields are shared with it. Deep-copy anything a mob instance must own.
+
+`newMobByIdInternal` currently copies: `Character.Skills`, `Character.SpellBook`,
+`Character.Mutations`, `Character.Shop`, `Mob.Groups`, `Character.Items` /
+`ComponentItems` / `PotionItems`, plus fresh `PlayerDamage` / `Buffs` / state
+machines. Everything else on the template is either read-only at runtime or
+lazily allocated only when nil (e.g. `MiscData`, `Cooldowns`, `Settings`,
+`SkillUseCount`, `StatUseCount`, `ClusterAffinity`, `VisitedZones`,
+`tempDataStore`, `playersAttacked`) — a nil template field means the first
+per-instance write allocates on the instance, which is safe. Before adding a
+new per-instance write to a template-sourced field, check which of those two
+categories it is in. `internal/mobs/spawn_template_isolation_test.go` guards
+the copies.

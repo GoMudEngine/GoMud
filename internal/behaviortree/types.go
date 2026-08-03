@@ -1,6 +1,9 @@
 package behaviortree
 
-import "github.com/GoMudEngine/GoMud/internal/state"
+import (
+	"github.com/GoMudEngine/GoMud/internal/state"
+	"github.com/GoMudEngine/GoMud/internal/uuid"
+)
 
 // Result is the return value of a node evaluation.
 type Result int
@@ -13,11 +16,16 @@ const (
 
 // EventContext carries information about the triggering event.
 type EventContext struct {
-	EventType string         // "player_ask", "mob_idle", "player_give", etc.
-	UserId    int            // Triggering player (0 if none)
-	MobId     int            // Triggering mob instance (0 if none)
-	Text      string         // For ask/say events — the text spoken
-	ItemId    int            // For give/show events — the item
+	EventType string // "player_ask", "mob_idle", "player_give", etc.
+	UserId    int    // Triggering player (0 if none)
+	MobId     int    // Triggering mob instance (0 if none)
+	Text      string // For ask/say events — the text spoken
+	ItemId    int    // For give/show events — the item template id
+	// ItemUUID identifies the EXACT item instance the event refers to, so
+	// handlers (e.g. return_item) can operate on the real, stateful object
+	// rather than a fresh copy minted from ItemId. Zero when the producer
+	// could not supply one — consumers must fall back to an ItemId match.
+	ItemUUID  uuid.UUID
 	RoomId    int            // Room where event occurred
 	Extra     map[string]any // Extensible context
 	Command   string         // Command name for room command interception
