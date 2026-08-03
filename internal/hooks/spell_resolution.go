@@ -929,40 +929,49 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 	}
 }
 
+// physicalSpellDefenseScale converts a mitigation FRACTION (0.0–1.0, what
+// GetPhysicalMitigation returns) into points on the same scale the opposed
+// spell roll uses.
+//
+// 100 is chosen because that is the reference point everything else in this
+// function already lives on: the "mental" branch returns Willpower, and every
+// stat in DOGMud is centred at 100 = human baseline (see CLAUDE.md). So a
+// defender at the mitigation cap defends against a physical-defense spell about
+// as well as a baseline-Willpower defender does against a mental one. It is a
+// unit conversion, not a tuning constant — there is no arbitrary coefficient to
+// pick.
+const physicalSpellDefenseScale = 100.0
+
 // spellDefenseValue computes the defender's stat for the opposed roll.
+//
+// The "physical" branch used to sum ItemSpec.DamageReduction across eight
+// equipment slots. That field is legacy: the damage pipeline replaced it with
+// physical_mitigation in Stage 34 and no longer reads it. In the shipped
+// dataset 75 items set physical_mitigation and 40 of those never set
+// damagereduction, so most modern armor contributed literally nothing to
+// whether a physical-defense spell landed — while contributing correctly to how
+// much it hurt (calcSpellDamageForCharacter already uses
+// GetPhysicalMitigation). Eleven shipped spells use
+// target_defense_type: physical.
 func spellDefenseValue(defenseType string, target *characters.Character) float64 {
 	switch defenseType {
 	case "physical":
-		equip := target.Equipment
-		armor := 0
-		if equip.Head.ItemId > 0 {
-			armor += equip.Head.GetSpec().DamageReduction
+		// GetPhysicalMitigation returns a fraction and already folds in gear,
+		// the Minor Shield condition, species natural armor, mutations and
+		// physical_mitigation statmods — so the shield bonus must NOT be added
+		// again here the way the old DamageReduction sum did.
+		mitigation := target.GetPhysicalMitigation()
+		if mitigation < 0 {
+			mitigation = 0
 		}
-		if equip.Body.ItemId > 0 {
-			armor += equip.Body.GetSpec().DamageReduction
+		// Clamp with the SAME cap the damage side enforces, so armor can never
+		// buy more deflection than it actually buys mitigation. Reuses an
+		// existing config knob (PhysicalMitigationCap) rather than inventing a
+		// second ceiling.
+		if capPct := combat.MitigationCap(combat.ChannelPhysical); mitigation > capPct {
+			mitigation = capPct
 		}
-		if equip.Legs.ItemId > 0 {
-			armor += equip.Legs.GetSpec().DamageReduction
-		}
-		if equip.Feet.ItemId > 0 {
-			armor += equip.Feet.GetSpec().DamageReduction
-		}
-		if equip.Gloves.ItemId > 0 {
-			armor += equip.Gloves.GetSpec().DamageReduction
-		}
-		if equip.Neck.ItemId > 0 {
-			armor += equip.Neck.GetSpec().DamageReduction
-		}
-		if equip.Ring.ItemId > 0 {
-			armor += equip.Ring.GetSpec().DamageReduction
-		}
-		if equip.Offhand.ItemId > 0 {
-			armor += equip.Offhand.GetSpec().DamageReduction
-		}
-		defVal := float64(armor)
-		// Add Minor Shield bonus if active
-		defVal += target.GetConditionMagnitude(characters.ConditionShield)
-		return defVal
+		return mitigation * physicalSpellDefenseScale
 
 	case "mental":
 		return float64(target.Stats.Willpower.ValueAdj)
