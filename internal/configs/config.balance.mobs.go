@@ -148,7 +148,10 @@ func (b *Balance) validateMobs() {
 		b.CompanionSoftCapApex = 7
 	}
 	if b.CompanionReserveDefault < 1 {
-		b.CompanionReserveDefault = 350
+		// 2026-08-03: 350 → 280 alongside the -20% pass on every spell's
+		// summon_conviction_reserve, so charm (which uses this fallback)
+		// prices like the skeleton tier it always matched.
+		b.CompanionReserveDefault = 280
 	}
 	// CompanionCastingFloorPct intentionally defaults to 0.0 (costs self-limit).
 	if b.HomunculusCraftScale <= 0 {

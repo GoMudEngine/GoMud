@@ -25,5 +25,5 @@ wait_user_text: >-
   drops sharply as something tears through...
 summon_mob_id: 312
 summon_base_pool: 70
-summon_conviction_reserve: 350
+summon_conviction_reserve: 280
 summon_scaling_divisor: 500

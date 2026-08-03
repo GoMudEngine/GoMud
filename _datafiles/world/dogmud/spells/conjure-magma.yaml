@@ -27,5 +27,5 @@ wait_user_text: >-
   Something immense and blazing hot is forcing its way through...
 summon_mob_id: 314
 summon_base_pool: 130
-summon_conviction_reserve: 440
+summon_conviction_reserve: 352
 summon_scaling_divisor: 500

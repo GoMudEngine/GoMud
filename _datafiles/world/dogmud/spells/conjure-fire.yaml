@@ -25,5 +25,5 @@ wait_user_text: >-
   being dragged through against its will...
 summon_mob_id: 313
 summon_base_pool: 85
-summon_conviction_reserve: 440
+summon_conviction_reserve: 352
 summon_scaling_divisor: 500
