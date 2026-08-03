@@ -11,7 +11,7 @@ help:
       - macros
       - password
       - deletecharacter
-      - renameitem
+      - rename
       - save
       - set
       - setdesc
@@ -211,7 +211,7 @@ help:
       - questtoken
       - redescribe
       - reload
-      - rename
+      - renameitem
       - room
       - server
       - setmotd
