@@ -16,6 +16,10 @@ func Track(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	opts := actions.TrackOptions{TargetNoun: rest}
 	if rest == "stop" || rest == "clear" {
 		opts = actions.TrackOptions{CancelTracking: true}
+	} else if refuseWhileBusy(user, `track`) {
+		// Cancelling a track is always allowed — only STARTING one is a
+		// focus-required action.
+		return true, nil
 	}
 
 	actor := &actions.UserActor{User: user, Room: room}

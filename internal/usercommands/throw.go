@@ -41,6 +41,9 @@ func maybeInterruptOnThrow(mob *mobs.Mob, thrownItemId int, by state.ActorRef) b
 }
 
 func Throw(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+	if refuseWhileBusy(user, `throw anything`) {
+		return true, nil
+	}
 
 	if rest == "" {
 		user.SendText(messaging.CategorySystem, "Throw what? Specify a throwable item.")

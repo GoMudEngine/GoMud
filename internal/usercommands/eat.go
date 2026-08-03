@@ -13,6 +13,9 @@ import (
 )
 
 func Eat(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+	if refuseWhileBusy(user, `eat`) {
+		return true, nil
+	}
 
 	// Chunk 4e: can't eat while grappled — both hands committed.
 	if user.Character.Position != nil && user.Character.Position.IsGrappling() {

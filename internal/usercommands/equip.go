@@ -16,6 +16,9 @@ import (
 )
 
 func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+	if refuseWhileBusy(user, `change equipment`) {
+		return true, nil
+	}
 
 	if rest == "all" {
 		return Gearup(``, user, room, flags)

@@ -12,6 +12,9 @@ import (
 )
 
 func Use(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+	if refuseWhileBusy(user, `use that`) {
+		return true, nil
+	}
 
 	containerName := room.FindContainerByName(rest)
 	if containerName != `` {

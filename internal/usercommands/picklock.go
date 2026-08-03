@@ -23,6 +23,10 @@ func Picklock(rest string, user *users.UserRecord, room *rooms.Room, flags event
 		return false, nil
 	}
 
+	if refuseWhileBusy(user, `pick a lock`) {
+		return true, nil
+	}
+
 	lockpickItm := items.Item{}
 	for _, itm := range user.Character.GetAllBackpackItems() {
 		if itm.GetSpec().Type == items.Lockpicks {

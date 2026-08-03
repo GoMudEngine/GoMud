@@ -12,6 +12,9 @@ import (
 // all tier rolls, template rendering, cooldown gating, and skill
 // progression.
 func Search(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+	if refuseWhileBusy(user, `search`) {
+		return true, nil
+	}
 	actor := &actions.UserActor{User: user, Room: room}
 	_ = actions.Search(actor, actions.SearchOptions{})
 

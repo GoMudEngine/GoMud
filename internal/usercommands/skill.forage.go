@@ -12,6 +12,9 @@ import (
 // biome check, cooldown, score calculation, rendering, and item
 // store. This wrapper handles the quest-engine command notification.
 func Forage(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+	if refuseWhileBusy(user, `forage`) {
+		return true, nil
+	}
 	actor := &actions.UserActor{User: user, Room: room}
 	_ = actions.Forage(actor, actions.ForageOptions{})
 
