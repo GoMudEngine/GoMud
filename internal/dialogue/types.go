@@ -4,11 +4,18 @@ package dialogue
 // can gate options on player progress without importing characters/users.
 // When nil is passed the engine skips all quest/item checks (backward compat).
 type PlayerState struct {
-	HasQuest         func(token string) bool
-	HasItem          func(itemId int) bool
-	RemoveItem       func(itemId int) bool
-	GiveQuest        func(token string)
-	GiveItem         func(itemId int)
+	HasQuest   func(token string) bool
+	HasItem    func(itemId int) bool
+	RemoveItem func(itemId int) bool
+	GiveQuest  func(token string)
+	// GiveItem reports whether the item actually reached the player.
+	// false (e.g. over carry capacity) makes the engine abort the node's
+	// OTHER effects too — grantsQuest, requiresItem removal, flags, rep,
+	// gold — so a givesItem+grantsQuest node can never burn its quest
+	// token on an undelivered item (the soft-lock fixed 2026-08-03; the
+	// questengine bridge got the same treatment in Tier 2). The node
+	// stays re-triggerable once the player makes room.
+	GiveItem         func(itemId int) bool
 	GetQuestFlag     func(key string) string
 	SetQuestFlag     func(key, value string)
 	BumpRep          func(faction string, delta int)

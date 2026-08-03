@@ -68,18 +68,27 @@ func checkQuestGate(questRequired, questExcluded []string, requiresItem int, fla
 }
 
 // applyQuestEffects fires quest grants, item consumption, item giving, and flag sets after a node/pattern matches.
-func applyQuestEffects(grantsQuest string, requiresItem int, givesItem int, flagSet *QuestFlagSet, bumpsRep []RepBump, givesGold int, ps *PlayerState) {
+// applyQuestEffects fires a matched node's side effects. It returns false —
+// applying NOTHING else — when the node gives an item that could not be
+// delivered: granting the quest anyway would soft-lock the player (token
+// held, item missing, node then hidden by questExcluded), and removing
+// requiresItem first would eat their hand-in. Delivery is therefore
+// attempted before any other effect. A nil GiveItem callback keeps the
+// package's skip-checks contract and counts as delivered.
+func applyQuestEffects(grantsQuest string, requiresItem int, givesItem int, flagSet *QuestFlagSet, bumpsRep []RepBump, givesGold int, ps *PlayerState) bool {
 	if ps == nil {
-		return
+		return true
+	}
+	if givesItem > 0 && ps.GiveItem != nil {
+		if !ps.GiveItem(givesItem) {
+			return false
+		}
 	}
 	if requiresItem > 0 && ps.RemoveItem != nil {
 		ps.RemoveItem(requiresItem)
 	}
 	if grantsQuest != "" && ps.GiveQuest != nil {
 		ps.GiveQuest(grantsQuest)
-	}
-	if givesItem > 0 && ps.GiveItem != nil {
-		ps.GiveItem(givesItem)
 	}
 	if flagSet != nil && ps.SetQuestFlag != nil {
 		ps.SetQuestFlag(flagSet.Key, flagSet.Value)
@@ -94,6 +103,7 @@ func applyQuestEffects(grantsQuest string, requiresItem int, givesItem int, flag
 	if givesGold > 0 && ps.GiveGold != nil {
 		ps.GiveGold(givesGold)
 	}
+	return true
 }
 
 // Match checks patterns against topic text for the given mob instance.
@@ -228,9 +238,12 @@ func TreeAdvance(df *DialogueFile, mobInstanceId, userId int, topic string, ps *
 			continue
 		}
 
-		// Node matched — fire quest effects and update memory
-		applyQuestEffects(node.GrantsQuest, node.RequiresItem, node.GivesItem, node.SetsQuestFlag, node.BumpsRep, node.GivesGold, ps)
-		UpdateMemory(mobInstanceId, userId, node.Id, node.Unlocks, topic)
+		// Node matched — fire quest effects and update memory. A failed
+		// item delivery leaves memory untouched too, so the node is not
+		// consumed and re-fires once the player makes room.
+		if applyQuestEffects(node.GrantsQuest, node.RequiresItem, node.GivesItem, node.SetsQuestFlag, node.BumpsRep, node.GivesGold, ps) {
+			UpdateMemory(mobInstanceId, userId, node.Id, node.Unlocks, topic)
+		}
 
 		return node.Text, node.Hints, node.MoodChange, true
 	}

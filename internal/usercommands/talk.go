@@ -165,10 +165,15 @@ func buildPlayerState(user *users.UserRecord) *dialogue.PlayerState {
 				QuestToken: token,
 			})
 		},
-		GiveItem: func(itemId int) {
+		GiveItem: func(itemId int) bool {
 			newItem := items.New(itemId)
 			if newItem.ItemId <= 0 {
-				return
+				// Data bug (givesItem points at no item). Report failure so
+				// the engine also withholds grantsQuest — granting a quest
+				// whose item can never exist is the soft-lock, loudly.
+				mudlog.Error("talk.GiveItem", "msg", "dialogue givesItem references invalid item",
+					"userId", user.UserId, "itemId", itemId)
+				return false
 			}
 			// StoreItem refuses past twice carry capacity (the "crushed"
 			// encumbrance tier). Claiming delivery anyway — and worse,
@@ -181,7 +186,7 @@ func buildPlayerState(user *users.UserRecord) *dialogue.PlayerState {
 						`Put something down, then ask again.`, newItem.DisplayName()))
 				mudlog.Warn("talk.GiveItem", "msg", "player could not carry dialogue item",
 					"userId", user.UserId, "itemId", itemId)
-				return
+				return false
 			}
 			user.SendText(messaging.CategoryLoot, fmt.Sprintf(`You receive a <ansi fg="itemname">%s</ansi>.`, newItem.DisplayName()))
 			events.AddToQueue(events.ItemOwnership{
@@ -189,6 +194,7 @@ func buildPlayerState(user *users.UserRecord) *dialogue.PlayerState {
 				Item:   newItem,
 				Gained: true,
 			})
+			return true
 		},
 		GetQuestFlag: func(key string) string {
 			return user.Character.GetQuestFlag(key)
