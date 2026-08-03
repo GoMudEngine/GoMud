@@ -11,6 +11,7 @@ type Network struct {
 	HttpPort             ConfigInt         `yaml:"HttpPort"`             // Port used for web requests
 	HttpsPort            ConfigInt         `yaml:"HttpsPort"`            // Port used for web https requests
 	HttpsRedirect        ConfigBool        `yaml:"HttpsRedirect"`        // If true, http traffic will be redirected to https
+	TrustedProxies       ConfigSliceString `yaml:"TrustedProxies"`       // IPs/CIDRs whose X-Forwarded-For header may be believed. Loopback only by default.
 	AfkSeconds           ConfigInt         `yaml:"AfkSeconds"`           // How long until a player is marked as afk?
 	MaxIdleSeconds       ConfigInt         `yaml:"MaxIdleSeconds"`       // How many seconds a player can go without a command in game before being kicked.
 	TimeoutMods          ConfigBool        `yaml:"TimeoutMods"`          // Whether to kick admin/mods when idle too long.
@@ -50,6 +51,17 @@ func (n *Network) Validate() {
 
 	if n.HttpsPort < 0 {
 		n.HttpsPort = 0 // default
+	}
+
+	// TrustedProxies gates whether X-Forwarded-For is believed at all. The
+	// header is attacker-controlled unless the *immediate* TCP peer is a proxy
+	// we trust, so an over-broad value here turns a logging annoyance into a
+	// ban bypass. Loopback is the only safe default: a remote attacker cannot
+	// make their socket peer address be 127.0.0.1 (that needs a completed TCP
+	// handshake from the loopback interface), and it is what a same-host
+	// reverse proxy such as Caddy actually connects from.
+	if len(n.TrustedProxies) == 0 {
+		n.TrustedProxies = ConfigSliceString{`127.0.0.1/32`, `::1/128`}
 	}
 
 	if n.AfkSeconds < 0 {

@@ -244,6 +244,37 @@ data.** It is swept every write and hard-capped at `authTrackerMaxEntries`,
 evicting the least-recently-failed entry at capacity. Any future per-source map
 here needs the same treatment.
 
+### Real client IP behind a proxy (`clientip.go`)
+
+```go
+func ResolveClientIP(r *http.Request) string  // bare IP, no port
+```
+
+Production fronts the web client with Caddy, so `r.RemoteAddr` and a
+websocket's `RemoteAddr()` are the proxy (`127.0.0.1`) for every player. Use
+`ResolveClientIP` for anything that decides *who someone is*: it is what the
+`/ws` upgrade records on `ConnectionDetails.SetClientIP` (making IP bans work
+for web-client players) and what `doBasicAuth` throttles on (so one attacker
+does not lock out every admin sharing the proxy's address).
+
+**Security contract — do not loosen either half:**
+
+1. `X-Forwarded-For` is read **only** when the socket peer is in
+   `Network.TrustedProxies`. That list defaults to loopback and nothing else.
+   A remote attacker cannot forge their socket peer, so they cannot get their
+   header read at all. Believing the header unconditionally would be *worse*
+   than the original bug — anyone could send `X-Forwarded-For: 127.0.0.1` and
+   become loopback, which is exempt from ban checks for everyone.
+2. Within the header, the **rightmost** hop that is not itself a trusted proxy
+   wins. Proxies append, so a client's pre-seeded value ends up to the left and
+   is never reached. Taking the leftmost entry — the common mistake — hands the
+   attacker full control of the result.
+
+Widening `TrustedProxies` to a private range trusts every host in that range to
+claim any identity. List only the addresses your own proxy connects from.
+Assumes the proxy appends rather than overwrites (Caddy's `reverse_proxy`
+default).
+
 ### Game State Protection
 ```go
 // All admin operations wrapped with mutex
@@ -465,7 +496,8 @@ This web system provides a robust foundation for both player-facing web interfac
 | File | Purpose |
 |------|---------|
 | `web.go` | Server setup, routing, static files |
-| `auth.go` | Admin authentication |
+| `auth.go` | Admin authentication (cache, revalidation, failure throttle) |
+| `clientip.go` | Trusted-proxy resolution of the real client IP |
 | `template_func.go` | Template helper functions |
 | `stats.go` | Public stats endpoints |
 | `build.go` | The admin world-building tool backend |

@@ -1241,6 +1241,30 @@ Network:
   #   If true, will send all http traffic to https with a redirect
   #   Requires both Http and Https to be working.
   HttpsRedirect: false
+  # - TrustedProxies -
+  #   IPs or CIDRs that are allowed to tell the server who the real client is
+  #   via the X-Forwarded-For header. Everything else has that header ignored.
+  #
+  #   Why this exists: production puts Caddy in front of the web client, so the
+  #   TCP peer of every websocket is 127.0.0.1. Without this, every web-client
+  #   player looked like a loopback connection -- which is exempt from IP bans,
+  #   so bans did nothing for anyone using /webclient, and the address staff saw
+  #   logged was the proxy's, not the player's.
+  #
+  #   SECURITY: X-Forwarded-For is written by the client and is trivially
+  #   forged. It is believed ONLY when the machine holding the socket is listed
+  #   here, and within the header only the RIGHTMOST hop that is not itself a
+  #   listed proxy is used (proxies append, so anything a client pre-seeds ends
+  #   up to the left and is never reached). Widening this list to a whole
+  #   private range would let any host in that range claim to be any address,
+  #   including a banned one or a loopback one. Add ONLY the addresses your own
+  #   reverse proxy connects from.
+  #
+  #   Leave empty for the safe default of loopback only
+  #   (127.0.0.1/32 and ::1/128), which is correct for a same-host Caddy.
+  #   Assumes the proxy APPENDS to X-Forwarded-For (Caddy's reverse_proxy
+  #   default); a proxy configured to overwrite it defeats any XFF scheme.
+  TrustedProxies: []
   # - AIPort -
   #   Dedicated port for AI client connections. Set to 0 to disable.
   AIPort: 55555

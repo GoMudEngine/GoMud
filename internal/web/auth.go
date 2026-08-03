@@ -3,7 +3,6 @@ package web
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"net"
 	"net/http"
 	"strconv"
 	"sync"
@@ -90,12 +89,12 @@ func authCacheKey(authHeader string) string {
 	return hex.EncodeToString(sum[:])
 }
 
-// authSourceIP is the throttling key. It is the direct peer for now; see
-// clientIPFromRequest, which replaces this with the proxy-aware resolution so
-// that a reverse-proxied deployment does not collapse every admin onto one
-// bucket.
+// authSourceIP is the throttling key: the real client address, resolved
+// through the trusted-proxy rules. Behind a reverse proxy the socket peer is
+// the proxy for every request, so throttling on it would collapse every admin
+// and every attacker onto a single bucket.
 func authSourceIP(r *http.Request) string {
-	return clientIPFromRequest(r)
+	return ResolveClientIP(r)
 }
 
 // authThrottled reports whether this source is currently locked out. Called
@@ -332,17 +331,4 @@ func doBasicAuth(next http.HandlerFunc) http.HandlerFunc {
 		w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 	})
-}
-
-// clientIPFromRequest resolves the source address used for auth throttling.
-//
-// This is the direct socket peer. Defect 2 (trusted-proxy resolution) replaces
-// the body of this function so that a reverse-proxied deployment throttles on
-// the real client rather than collapsing every admin onto the proxy's address.
-func clientIPFromRequest(r *http.Request) string {
-	host, _, err := net.SplitHostPort(r.RemoteAddr)
-	if err != nil {
-		return r.RemoteAddr
-	}
-	return host
 }

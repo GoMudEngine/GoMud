@@ -319,9 +319,47 @@ Network:
   MaxTelnetConnections: 80
   MaxHumanConnections: 50
   MaxAIConnections: 10
+  # Which machines are allowed to tell the server the real client IP via the
+  # X-Forwarded-For header. Leave this alone unless your reverse proxy runs on
+  # a DIFFERENT host from the MUD. See "Reverse proxies and the real client
+  # IP" below before changing it.
+  TrustedProxies: []
 ```
 
 Save and exit nano: press `Ctrl+O`, then `Enter`, then `Ctrl+X`.
+
+### 6.x Reverse proxies and the real client IP
+
+Caddy terminates TLS and proxies to the MUD, so from the MUD's point of view
+every web-client player connects from `127.0.0.1`. Left uncorrected that makes
+**IP bans do nothing for anyone using `/webclient`** (loopback is exempt from
+ban checks, so a banned player just switches from telnet to the web client),
+and it makes every abuse log line show the proxy's address instead of the
+player's.
+
+The MUD corrects for this by reading the `X-Forwarded-For` header that Caddy
+adds — but **only from a machine listed in `Network.TrustedProxies`**.
+
+- **Same-host Caddy (the setup in this guide): leave `TrustedProxies: []`.**
+  The empty default means loopback only (`127.0.0.1/32`, `::1/128`), which is
+  exactly what a container-to-container or same-host proxy connects from.
+- **Proxy on a different host:** add that host's address, e.g.
+  `TrustedProxies: ["10.1.2.3/32"]`.
+
+**Do not widen this list casually.** `X-Forwarded-For` is written by the
+client and is trivially forged. Anything you list here is trusted to claim that
+a connection came from any address it likes — including a banned address, or a
+loopback address that skips ban checks entirely. Listing a whole private range
+(`10.0.0.0/8`) grants that power to every host in the range. List only the
+addresses your own proxy actually connects from.
+
+This also assumes the proxy **appends** to `X-Forwarded-For` rather than
+replacing it, which is Caddy's `reverse_proxy` default. If you override that
+directive to pass the client's own header through verbatim, the client controls
+the value and no configuration on the MUD side can recover the true address.
+
+Telnet is unaffected — nothing sits in front of it, and the header has no
+meaning on that path.
 
 **Important:** Replace `yourdomain.com` with your actual domain
 name (see Section 8).

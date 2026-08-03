@@ -4,7 +4,6 @@ import (
 	// ... other imports
 
 	"fmt"
-	"net"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/connections"
@@ -22,11 +21,15 @@ func FinalizeLoginOrCreate(results map[string]string, sharedState map[string]any
 
 	// IP ban: reject (and block re-registration) before any account work. Skip
 	// local/loopback connections so an admin can never lock themselves out.
+	//
+	// ClientIP(), not RemoteAddr(): for a websocket the socket peer is the TCP
+	// peer of the HTTP upgrade, which behind a reverse proxy is the proxy. That
+	// reported 127.0.0.1 for every /webclient player, so IsLocal() was true and
+	// this whole block was skipped — a banned player only had to switch from
+	// telnet to the web client. Telnet is unaffected: nothing sets clientIP on
+	// a telnet connection, so ClientIP() is still the socket peer there.
 	if connDetails := connections.Get(clientInput.ConnectionId); connDetails != nil && !connDetails.IsLocal() {
-		host, _, err := net.SplitHostPort(connDetails.RemoteAddr().String())
-		if err != nil {
-			host = connDetails.RemoteAddr().String()
-		}
+		host := connDetails.ClientIP()
 		if reason, banned := moderation.IsIPBanned(host); banned {
 			connections.SendTo([]byte("Your connection has been banned. Reason: "+reason), clientInput.ConnectionId)
 			connections.SendTo(term.CRLF, clientInput.ConnectionId)

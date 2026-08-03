@@ -262,7 +262,12 @@ func serveTemplate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn)) {
+// Listen starts the http/https servers.
+//
+// webSocketHandler receives the upgraded connection plus the resolved real
+// client IP. That second argument exists because the socket peer of a proxied
+// websocket is the reverse proxy, not the player — see ResolveClientIP.
+func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn, string)) {
 
 	networkConfig := configs.GetNetworkConfig()
 
@@ -284,6 +289,10 @@ func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn)) {
 	// websocket upgrade
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 
+		// Resolve before the upgrade — once the connection is hijacked the
+		// request headers are no longer reachable.
+		clientIP := ResolveClientIP(r)
+
 		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
 			mudlog.Error("Web", "action", "websocket upgrade", "error", err)
@@ -298,7 +307,7 @@ func Listen(wg *sync.WaitGroup, webSocketHandler func(*websocket.Conn)) {
 		// magnitude under this; exceeding it closes the connection.
 		conn.SetReadLimit(wsMaxMessageBytes)
 
-		webSocketHandler(conn)
+		webSocketHandler(conn, clientIP)
 	})
 
 	http.Handle("GET /admin/static/", RunWithMUDLocked(
