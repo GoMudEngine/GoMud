@@ -11,6 +11,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/exit"
 	"github.com/GoMudEngine/GoMud/internal/facts"
+	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
@@ -486,6 +487,62 @@ func TestSpellDefenseValue_PhysicalWithShield(t *testing.T) {
 	ch.AddCondition(characters.ConditionShield, 10, 25.0, "test")
 	val := spellDefenseValue("physical", ch)
 	assert.Equal(t, 25.0, val, "shield bonus should be added")
+}
+
+// TestSpellDefenseValue_PhysicalUsesModernMitigationFields pins the Stage 34
+// field migration. Armor that sets only physical_mitigation (35 of the 75
+// mitigating items shipped never set the legacy damagereduction) used to
+// contribute NOTHING to whether a physical-defense spell landed, because
+// spellDefenseValue summed ItemSpec.DamageReduction — a field the damage
+// pipeline stopped reading in Stage 34.
+func TestSpellDefenseValue_PhysicalUsesModernMitigationFields(t *testing.T) {
+	cleanup := items.SeedItemsForTest(map[int]*items.ItemSpec{
+		// Modern armor: physical_mitigation only, damagereduction absent.
+		8001: {ItemId: 8001, Type: items.Body, Name: "test plate", PhysicalMitigation: 30},
+		8002: {ItemId: 8002, Type: items.Head, Name: "test helm", PhysicalMitigation: 10},
+		// Legacy-only armor: the field spellDefenseValue used to read.
+		8003: {ItemId: 8003, Type: items.Legs, Name: "test greaves", DamageReduction: 40},
+	})
+	defer cleanup()
+
+	modern := &characters.Character{}
+	modern.Equipment.Body = items.Item{ItemId: 8001}
+	modern.Equipment.Head = items.Item{ItemId: 8002}
+
+	// 40 points of physical_mitigation -> 0.40 -> 40 defense points.
+	assert.Equal(t, 40.0, spellDefenseValue("physical", modern),
+		"physical_mitigation armor must count toward physical spell defense")
+
+	// The legacy field is dead everywhere else in the pipeline; it must not
+	// resurrect here either, or the same armor would be counted twice for
+	// items that set both.
+	legacyOnly := &characters.Character{}
+	legacyOnly.Equipment.Legs = items.Item{ItemId: 8003}
+	assert.Equal(t, 0.0, spellDefenseValue("physical", legacyOnly),
+		"legacy damagereduction must no longer feed physical spell defense")
+}
+
+// TestSpellDefenseValue_PhysicalCappedAndNotDoubleCounted verifies the two
+// hazards of routing through GetPhysicalMitigation: the shield condition is
+// already folded in there (so adding it again would double-count it), and the
+// result is clamped by the same PhysicalMitigationCap the damage side uses.
+func TestSpellDefenseValue_PhysicalCappedAndNotDoubleCounted(t *testing.T) {
+	cleanup := items.SeedItemsForTest(map[int]*items.ItemSpec{
+		8004: {ItemId: 8004, Type: items.Body, Name: "test carapace", PhysicalMitigation: 20},
+	})
+	defer cleanup()
+
+	ch := &characters.Character{}
+	ch.Equipment.Body = items.Item{ItemId: 8004}
+	ch.AddCondition(characters.ConditionShield, 10, 30.0, "test")
+	assert.Equal(t, 50.0, spellDefenseValue("physical", ch),
+		"gear + shield should sum once (20 + 30), not double-count the shield")
+
+	capPct := combat.MitigationCap(combat.ChannelPhysical)
+	over := &characters.Character{}
+	over.AddCondition(characters.ConditionShield, 10, 400.0, "test")
+	assert.Equal(t, capPct*100.0, spellDefenseValue("physical", over),
+		"physical spell defense must clamp at PhysicalMitigationCap")
 }
 
 // ─── CalcSpellDamageForCharacter ──────────────────────────────────────────────

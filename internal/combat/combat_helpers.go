@@ -56,9 +56,18 @@ type weaponSetup struct {
 }
 
 // swingDamageParams holds per-swing damage values after pipeline calculations.
+//
+// There is deliberately NO variance field here. The spread of a damage roll is
+// always derived from the mean actually being rolled, via dice.RollStat (which
+// applies StdDevFor(mean) = mean * RollSpread). Carrying a pre-computed
+// variance alongside two different means (dmgMean for a normal hit,
+// rawDmgForCrit for a crit) is what let the crit roll inherit the mitigated
+// mean's spread — roughly half the intended width against an armored target,
+// and staler still once the statmod/health/prone/mutation/warcry modifiers
+// below moved the means. See internal/dice/context.md and
+// combat.ExecuteSkillMove, which has always rolled this way.
 type swingDamageParams struct {
 	dmgMean       float64
-	dmgVariance   float64
 	rawDmgForCrit float64
 	critBuffs     []int
 	msgSeed       int
@@ -332,9 +341,6 @@ func buildDamageParams(sourceChar *characters.Character, targetChar *characters.
 	// Track pre-mitigation damage for crits
 	rawDmgForCrit := rawDmg
 
-	// Pipeline-proportional variance
-	dmgVariance := dmgMean * float64(configs.GetBalanceConfig().RollSpread)
-
 	// Add statmod damage bonus
 	dmgMean += float64(statModBonus)
 	rawDmgForCrit += float64(statModBonus)
@@ -381,7 +387,6 @@ func buildDamageParams(sourceChar *characters.Character, targetChar *characters.
 
 	return swingDamageParams{
 		dmgMean:       dmgMean,
-		dmgVariance:   dmgVariance,
 		rawDmgForCrit: rawDmgForCrit,
 		msgSeed:       msgSeed,
 	}
@@ -987,13 +992,17 @@ func calcHitDamage(result *AttackResult, isCrit bool, backstab bool, sdp swingDa
 	if isCrit || backstab {
 		result.Crit = true
 		result.BuffTarget = sdp.critBuffs
-		damageResult := dice.Roll(sdp.rawDmgForCrit, sdp.dmgVariance)
+		// Crits bypass mitigation, so they roll around the UNmitigated mean —
+		// and therefore must take their spread from that same mean. RollStat
+		// derives stdDev = mean * RollSpread internally, which is the only way
+		// to keep the two in step.
+		damageResult := dice.RollStat(sdp.rawDmgForCrit)
 		dmg := int(math.Round(math.Max(0, damageResult.Value)))
 		mudlog.Debug("CritDamage", "rawDmg", fmt.Sprintf("%.1f", sdp.rawDmgForCrit), "mitigatedDmg", fmt.Sprintf("%.1f", sdp.dmgMean))
 		return dmg, false // consume backstab
 	}
 	// Normal hit: use mitigated damage
-	damageResult := dice.Roll(sdp.dmgMean, sdp.dmgVariance)
+	damageResult := dice.RollStat(sdp.dmgMean)
 	return int(math.Round(math.Max(0, damageResult.Value))), backstab
 }
 
@@ -1243,6 +1252,29 @@ func applyPetDamage(result *AttackResult, sourceChar *characters.Character, targ
 		petAttacks, _, _, _, _ = sourceChar.Pet.GetDiceRoll()
 		petBaseDmg, petVar = dice.DiceToDistribution(petDmg.DiceCount, petDmg.SideCount, petDmg.BonusDamage)
 	}
+
+	// Pet bites and claws are physical damage, so they run through the target's
+	// physical mitigation exactly like melee (buildDamageParams), ranged
+	// (ExecuteSkillMove) and the mob-parity helpers. Before this, pet damage was
+	// the one physical source that ignored armor entirely — an armored boss took
+	// the same pet damage as an unarmored newbie.
+	//
+	// Both the mean AND the spread are mitigated. The pet's variance comes from
+	// its authored dice spec, not from a stat, so it is not stat-proportional
+	// (dice.Roll, not dice.RollStat, is correct here) — but scaling only the
+	// mean would leave the roll's spread at full width against armor. Scaling
+	// both by the same factor is exactly equivalent to mitigating the rolled
+	// value, and preserves the pet's authored coefficient of variation.
+	//
+	// Pets have no crit path: nothing here inspects a Z-score or sets
+	// result.Crit, so the "crits bypass mitigation" convention used by the melee
+	// (combat_helpers.go), spell (combat_shared_helpers.go) and taunt
+	// (combat_taunt.go) channels has nothing to attach to. Deliberately not
+	// adding one — a pet crit is a separate design decision, not a bug fix.
+	petMitigation := targetChar.GetPhysicalMitigation()
+	petMitigationCap := MitigationCap(ChannelPhysical)
+	petBaseDmg = ApplyMitigation(petBaseDmg, petMitigation, petMitigationCap)
+	petVar = ApplyMitigation(petVar, petMitigation, petMitigationCap)
 
 	// Pet damage is claws/bite/etc — natural-sharp band.
 	petCat := messaging.CategoryHitNaturalSharp

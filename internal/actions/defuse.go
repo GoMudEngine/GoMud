@@ -260,10 +260,12 @@ func clearDefuseTrap(actor Actor, room *rooms.Room, tgt defuseLockTarget) {
 			actor.GetUserId())
 
 	case lockTargetExit:
-		if exitInfo, ok := room.Exits[tgt.exitName]; ok {
-			exitInfo.Lock.TrapBuffIds = nil
-			room.Exits[tgt.exitName] = exitInfo
-		}
+		// MarkExitTrapDefused both clears the live trap and records the exit
+		// name so the disarm survives a restart/copyover. Room.Exits is
+		// instance:"skip", so writing the cleared exit alone would be undone by
+		// restoreSkipTaggedFields on the next load — the container branch above
+		// persists for free because Room.Containers is not skip-tagged.
+		room.MarkExitTrapDefused(tgt.exitName)
 		actor.SendText(messaging.CategorySystem, `<ansi fg="green">You carefully disarm the trap mechanism.</ansi>`)
 		room.SendTextVisual(messaging.CategoryMobEmote,
 			fmt.Sprintf(

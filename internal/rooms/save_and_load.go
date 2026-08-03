@@ -128,6 +128,12 @@ func LoadRoomInstance(roomId int) *Room {
 		if freshTemplate := LoadRoomTemplate(roomId); freshTemplate != nil {
 			restoreSkipTaggedFields(room, freshTemplate)
 		}
+		// Exits were just restored wholesale from the template, which
+		// resurrects any lock trap a player disarmed. DefusedExits is NOT
+		// skip-tagged, so it survived the overlay; re-apply it now. See
+		// Room.MarkExitTrapDefused for why the disarm is persisted as a name
+		// list rather than by un-skipping Exits.
+		room.applyDefusedExits()
 	}
 
 	return room
@@ -199,7 +205,12 @@ func SaveRoomTemplate(roomTpl Room) error {
 
 	// First write the empty version to its template file
 	roomFilePath := util.FilePath(configs.GetFilePathsConfig().DataFiles.String(), `/rooms/`, fmt.Sprintf("%s%d.yaml", zoneFolder, roomTpl.RoomId))
-	if err = os.WriteFile(roomFilePath, data, 0777); err != nil {
+	// Honour CarefulSaveFiles: write to <path>.new and rename, so a crash or
+	// power loss mid-write cannot truncate an authored room file. A truncated
+	// room YAML panics the server at startup (see the pre-push SOP), which is
+	// precisely what the flag exists to prevent — but rooms ignored it while
+	// items, mobs, users and alts all honoured it.
+	if err = util.Save(roomFilePath, data, bool(configs.GetFilePathsConfig().CarefulSaveFiles)); err != nil {
 		return err
 	}
 
@@ -364,7 +375,9 @@ func SaveRoomInstance(r Room) error {
 		return err
 	}
 
-	if err = os.WriteFile(instanceFilePath, data, 0777); err != nil {
+	// Honour CarefulSaveFiles — see SaveRoomTemplate. Instance files are
+	// re-read on every room load, so a torn one is just as fatal.
+	if err = util.Save(instanceFilePath, data, bool(configs.GetFilePathsConfig().CarefulSaveFiles)); err != nil {
 		return err
 	}
 
