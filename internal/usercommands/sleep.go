@@ -11,6 +11,9 @@ import (
 // Sleep is the player-facing sleep verb. Delegates to actions.Sleep
 // which applies the Sleeping buff (chunk 3.3, buff id 15).
 func Sleep(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+	if refuseWhileBusy(user, `sleep`) {
+		return true, nil
+	}
 	actions.Sleep(&actions.UserActor{User: user, Room: room}, actions.SleepOptions{})
 
 	// Quest engine: command notification — sleeping advances "rest in the

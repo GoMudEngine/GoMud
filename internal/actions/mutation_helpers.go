@@ -27,6 +27,7 @@ type MutationResult struct {
 // On OK=false, BlockReason is set to one of:
 //
 //	"no-character"   – actor.GetCharacter() returned nil
+//	"busy"           – actor's Activity machine is occupied (crafting etc.)
 //	"no-mutation"    – actor does not own the requested mutation
 //	"not-in-combat"  – combatRequired=true but actor is not in combat
 //	"on-cooldown"    – the shared special-move cooldown is still active
@@ -36,8 +37,9 @@ type preambleResult struct {
 	BlockReason string
 }
 
-// mutationPreamble runs the four shared gates for any mutation-active command:
+// mutationPreamble runs the shared gates for any mutation-active command:
 //
+//  0. Activity exclusivity — actor must not be Crafting/Salvaging/Casting
 //  1. Mutation ownership  — actor must have mutationKey in Mutations map
 //  2. Combat requirement  — if combatRequired, actor must be in combat
 //  3. Cooldown            — the shared "special-move" cooldown must be free
@@ -51,14 +53,26 @@ type preambleResult struct {
 // for no other reason (matches the pattern used in forage.go, salvage.go,
 // cast.go). Mob actors are silently gated (MobActor.SendText is a no-op).
 //
-// All six mutation-active commands (blinding-flash, blinding-spit,
-// healing-gel, pacifism-aura, sonic-shout, toxic-bite) share this preamble.
-// combatRequired is true for the five offensive mutations and false for
-// healing-gel.
+// Current callers: venom-coat and cocoon. (The six legacy actives this
+// comment used to name — blinding-flash, blinding-spit, healing-gel,
+// pacifism-aura, sonic-shout, toxic-bite — were RETIRED in the 0.14.0
+// Chrysalis migration and have no Trigger functions anymore.)
 func mutationPreamble(actor Actor, mutationKey string, combatRequired bool, staminaCost int) preambleResult {
 	char := actor.GetCharacter()
 	if char == nil {
 		return preambleResult{BlockReason: "no-character"}
+	}
+
+	// Gate 0: activity exclusivity (2026-08-03 crafting-focus audit) —
+	// firing an active mid-craft/mid-cast was the rally/warcry bug again
+	// through a different door. Applies to mobs too: a crafting shopkeep
+	// should not venom-coat between hammer strokes.
+	if char.IsActing() {
+		if actor.IsPlayer() {
+			actor.SendText(messaging.CategorySystem,
+				"You can't use that ability while focused on your work. Finish or be interrupted first.")
+		}
+		return preambleResult{BlockReason: "busy"}
 	}
 
 	// Gate 1: mutation ownership.

@@ -12,6 +12,9 @@ import (
 )
 
 func Gearup(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+	if refuseWhileBusy(user, `change equipment`) {
+		return true, nil
+	}
 
 	allBackpackItems := user.Character.GetAllBackpackItems()
 	wearableCount := 0

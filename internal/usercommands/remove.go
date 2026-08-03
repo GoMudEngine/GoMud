@@ -13,6 +13,9 @@ import (
 )
 
 func Remove(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+	if refuseWhileBusy(user, `change equipment`) {
+		return true, nil
+	}
 
 	actor := &actions.UserActor{User: user, Room: room}
 

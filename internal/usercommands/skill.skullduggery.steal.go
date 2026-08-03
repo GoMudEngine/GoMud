@@ -33,6 +33,10 @@ func Steal(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return false, nil
 	}
 
+	if refuseWhileBusy(user, `steal`) {
+		return true, nil
+	}
+
 	args := util.SplitButRespectQuotes(strings.ToLower(rest))
 
 	if len(args) == 0 {

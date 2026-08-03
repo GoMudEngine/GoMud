@@ -49,6 +49,9 @@ const phialOfSecondBirthItemId = 40181
 const phialRarityFloor = 5
 
 func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
+	if refuseWhileBusy(user, `drink`) {
+		return true, nil
+	}
 
 	// Chunk 4e: can't drink while grappled — both hands committed.
 	if user.Character.Position != nil && user.Character.Position.IsGrappling() {
