@@ -22,7 +22,9 @@ func Redescribe(rest string, user *users.UserRecord, room *rooms.Room, flags eve
 
 	if len(args) < 2 {
 		// send some sort of help info?
-		infoOutput, _ := templates.Process("admincommands/help/command.rename", nil, user.UserId)
+		// 2026-08-03 helpfile audit: this said "command.rename" — a template
+		// that has never existed — so redescribe's real helpfile never showed.
+		infoOutput, _ := templates.Process("admincommands/help/command.redescribe", nil, user.UserId)
 		user.SendText(messaging.CategorySystem, infoOutput)
 		return true, nil
 	}
