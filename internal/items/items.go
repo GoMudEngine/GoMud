@@ -584,16 +584,18 @@ func (i *Item) NameMatch(input string, allowContains bool) (partialMatch bool, f
 		return false, false
 	}
 
-	input = strings.ToLower(input)
-	simpleName := strings.ToLower(i.Name())
+	// Apostrophe-insensitive on both sides — "healers root" matches
+	// "Healer's Root" (see util.NormalizeForMatch).
+	input = util.NormalizeForMatch(input)
+	simpleName := util.NormalizeForMatch(i.Name())
 
 	// Also check against the display name which includes enchant adjectives.
 	// This lets "devouring staff" and "staff" disambiguate correctly.
-	displayName := strings.ToLower(i.NameSimple())
+	displayName := util.NormalizeForMatch(i.NameSimple())
 	// Build adjective-prefixed name for matching (e.g. "devouring staff")
 	adjName := ""
 	if len(i.Adjectives) > 0 {
-		adjName = strings.ToLower(strings.Join(i.Adjectives, " ") + " " + i.NameSimple())
+		adjName = util.NormalizeForMatch(strings.Join(i.Adjectives, " ") + " " + i.NameSimple())
 	}
 
 	// Check all name variants

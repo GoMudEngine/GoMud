@@ -390,10 +390,22 @@ func FindMatchIn(searchName string, items ...string) (match string, closeMatch s
 // Searches for a partial or full match of a string
 // If allowContains is true, the match can appear anywhere in the string.
 // Otherwise it must start with the searchFor string
+// NormalizeForMatch prepares a name for player-input comparison: lowercase
+// with apostrophes (straight and typographic) removed, so "healers root"
+// matches "Healer's Root". Mirrors ConvertForFilename's apostrophe-dropping
+// and the test-player-phrasing convention — players never have to type an
+// apostrophe (2026-08-03 prepush sweep finding).
+func NormalizeForMatch(s string) string {
+	s = strings.ToLower(s)
+	s = strings.ReplaceAll(s, `'`, ``)
+	s = strings.ReplaceAll(s, `’`, ``)
+	return s
+}
+
 func stringMatch(searchFor string, searchIn string, allowContains bool) (partialMatch bool, fullMatch bool) {
 
-	searchFor = strings.ToLower(searchFor)
-	searchIn = strings.ToLower(searchIn)
+	searchFor = NormalizeForMatch(searchFor)
+	searchIn = NormalizeForMatch(searchIn)
 
 	if allowContains {
 		if strings.Contains(searchIn, searchFor) {
