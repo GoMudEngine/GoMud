@@ -56,9 +56,18 @@ type weaponSetup struct {
 }
 
 // swingDamageParams holds per-swing damage values after pipeline calculations.
+//
+// There is deliberately NO variance field here. The spread of a damage roll is
+// always derived from the mean actually being rolled, via dice.RollStat (which
+// applies StdDevFor(mean) = mean * RollSpread). Carrying a pre-computed
+// variance alongside two different means (dmgMean for a normal hit,
+// rawDmgForCrit for a crit) is what let the crit roll inherit the mitigated
+// mean's spread — roughly half the intended width against an armored target,
+// and staler still once the statmod/health/prone/mutation/warcry modifiers
+// below moved the means. See internal/dice/context.md and
+// combat.ExecuteSkillMove, which has always rolled this way.
 type swingDamageParams struct {
 	dmgMean       float64
-	dmgVariance   float64
 	rawDmgForCrit float64
 	critBuffs     []int
 	msgSeed       int
@@ -332,9 +341,6 @@ func buildDamageParams(sourceChar *characters.Character, targetChar *characters.
 	// Track pre-mitigation damage for crits
 	rawDmgForCrit := rawDmg
 
-	// Pipeline-proportional variance
-	dmgVariance := dmgMean * float64(configs.GetBalanceConfig().RollSpread)
-
 	// Add statmod damage bonus
 	dmgMean += float64(statModBonus)
 	rawDmgForCrit += float64(statModBonus)
@@ -381,7 +387,6 @@ func buildDamageParams(sourceChar *characters.Character, targetChar *characters.
 
 	return swingDamageParams{
 		dmgMean:       dmgMean,
-		dmgVariance:   dmgVariance,
 		rawDmgForCrit: rawDmgForCrit,
 		msgSeed:       msgSeed,
 	}
@@ -987,13 +992,17 @@ func calcHitDamage(result *AttackResult, isCrit bool, backstab bool, sdp swingDa
 	if isCrit || backstab {
 		result.Crit = true
 		result.BuffTarget = sdp.critBuffs
-		damageResult := dice.Roll(sdp.rawDmgForCrit, sdp.dmgVariance)
+		// Crits bypass mitigation, so they roll around the UNmitigated mean —
+		// and therefore must take their spread from that same mean. RollStat
+		// derives stdDev = mean * RollSpread internally, which is the only way
+		// to keep the two in step.
+		damageResult := dice.RollStat(sdp.rawDmgForCrit)
 		dmg := int(math.Round(math.Max(0, damageResult.Value)))
 		mudlog.Debug("CritDamage", "rawDmg", fmt.Sprintf("%.1f", sdp.rawDmgForCrit), "mitigatedDmg", fmt.Sprintf("%.1f", sdp.dmgMean))
 		return dmg, false // consume backstab
 	}
 	// Normal hit: use mitigated damage
-	damageResult := dice.Roll(sdp.dmgMean, sdp.dmgVariance)
+	damageResult := dice.RollStat(sdp.dmgMean)
 	return int(math.Round(math.Max(0, damageResult.Value))), backstab
 }
 

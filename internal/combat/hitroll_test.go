@@ -345,7 +345,6 @@ func TestCalcHitDamage_CritUsesRawDamage(t *testing.T) {
 	result := &AttackResult{}
 	sdp := swingDamageParams{
 		dmgMean:       10.0,
-		dmgVariance:   0.001, // near-zero variance for predictability
 		rawDmgForCrit: 50.0,
 		critBuffs:     []int{1},
 	}
@@ -366,13 +365,77 @@ func TestCalcHitDamage_BackstabConsumed(t *testing.T) {
 	result := &AttackResult{}
 	sdp := swingDamageParams{
 		dmgMean:       10.0,
-		dmgVariance:   0.001,
 		rawDmgForCrit: 50.0,
 	}
 
 	_, backstab := calcHitDamage(result, false, true, sdp)
 	assert.False(t, backstab, "backstab should be consumed after use")
 	assert.True(t, result.Crit, "backstab should trigger crit")
+}
+
+// sampleStdDev returns the sample standard deviation of xs.
+func sampleStdDev(xs []float64) float64 {
+	n := float64(len(xs))
+	mean := 0.0
+	for _, x := range xs {
+		mean += x
+	}
+	mean /= n
+	ss := 0.0
+	for _, x := range xs {
+		ss += (x - mean) * (x - mean)
+	}
+	return math.Sqrt(ss / (n - 1))
+}
+
+// TestCalcHitDamage_CritSpreadTracksCritMean pins the invariant that a damage
+// roll's spread is derived from the mean it is actually rolled around
+// (stdDev = mean * RollSpread, per dice.StdDevFor).
+//
+// The regression this guards: buildDamageParams used to compute one variance
+// from the MITIGATED mean and hand it to both rolls. The crit branch rolls
+// around the UNmitigated mean, so against a mitigated target the crit spread
+// came out roughly half as wide as intended, and worse the more armor the
+// target wore. Here the target sits at 50% mitigation (crit mean 30 vs normal
+// mean 15), so the buggy behaviour produced identical spreads for both rolls
+// instead of a 2:1 ratio.
+func TestCalcHitDamage_CritSpreadTracksCritMean(t *testing.T) {
+	const (
+		samples    = 20000
+		critMean   = 30.0 // pre-mitigation
+		normalMean = 15.0 // same swing vs a 50%-mitigation target
+		tolerance  = 0.10 // 10%: ~20x the sampling error at n=20000
+	)
+
+	sdp := swingDamageParams{
+		dmgMean:       normalMean,
+		rawDmgForCrit: critMean,
+	}
+
+	critRolls := make([]float64, samples)
+	normalRolls := make([]float64, samples)
+	for i := 0; i < samples; i++ {
+		c, _ := calcHitDamage(&AttackResult{}, true, false, sdp)
+		critRolls[i] = float64(c)
+		n, _ := calcHitDamage(&AttackResult{}, false, false, sdp)
+		normalRolls[i] = float64(n)
+	}
+
+	critSD := sampleStdDev(critRolls)
+	normalSD := sampleStdDev(normalRolls)
+
+	wantCritSD := dice.StdDevFor(critMean)
+	wantNormalSD := dice.StdDevFor(normalMean)
+
+	assert.InEpsilon(t, wantCritSD, critSD, tolerance,
+		"crit spread must derive from the crit (unmitigated) mean, not the mitigated one")
+	assert.InEpsilon(t, wantNormalSD, normalSD, tolerance,
+		"normal-hit spread must derive from the mitigated mean")
+
+	// The ratio is the sharp end of the assertion: under the old shared-variance
+	// code both spreads were equal (ratio 1.0), not proportional to the means.
+	assert.InEpsilon(t, critMean/normalMean, critSD/normalSD, tolerance,
+		"crit/normal spread ratio must match the crit/normal mean ratio")
 }
 
 // ─── Swing count formula math ───────────────────────────────────────────────

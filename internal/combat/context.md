@@ -698,13 +698,17 @@ Example at STR=120, rank=10, weaponDmgMult=1.2:
 dmgMean = ApplyMitigation(rawDmg, mob.GetPhysicalMitigation(), 0.75)
   e.g., mob has 20% phys mitigation: dmgMean = 81.8 * 0.80 = 65.4
 
-dmgVariance = dmgMean * RollSpread = 65.4 * 0.15 = 9.8
-
 Further multiplied by:
   ResourceMultiplier(health)         // HP-based melee penalty
   ProneAttackMultiplier (if prone)   // 0.80x
   Mutation damage multiplier         // if any
 ```
+
+`swingDamageParams` carries NO variance field. Spread is derived at the
+point of roll, from the mean actually being rolled, by `dice.RollStat`
+(`stdDev = mean * RollSpread`). A stored variance cannot stay correct here:
+the struct holds two means (`dmgMean` post-mitigation, `rawDmgForCrit`
+pre-mitigation), and the modifiers above move both after the fact.
 
 **Step 3c: Per-swing loop** (e.g. 2 swings per pass):
 
@@ -775,12 +779,17 @@ hits/misses affect stance display text.
 **vi. If HIT** — `calcHitDamage()`
 ```
 Crit check: hitRoll.ZScore >= critThreshold (default 2.0)?
-  CRIT: damage = roll(rawDmgForCrit, variance)  // PRE-mitigation!
+  CRIT: damage = dice.RollStat(rawDmgForCrit)  // PRE-mitigation!
         Apply crit buffs to target.
 
 Normal hit:
-  damage = roll(dmgMean, variance)  // POST-mitigation
+  damage = dice.RollStat(dmgMean)  // POST-mitigation
   Round to nearest int, minimum 0.
+
+RollStat derives stdDev from the mean it is given, so each branch gets a
+spread proportional to its own mean. Do not reintroduce a shared,
+pre-computed variance — the crit branch then inherits the mitigated mean's
+(narrower) spread.
 ```
 
 **vii. Build Messages** — `buildAttackMessages()`
