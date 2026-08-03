@@ -83,6 +83,16 @@ func Craft(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 	result := actions.InitiateCraft(actor, rest)
 
 	switch {
+	case len(result.AmbiguousRecipes) > 0:
+		list := make([]string, 0, len(result.AmbiguousRecipes))
+		for _, n := range result.AmbiguousRecipes {
+			list = append(list, fmt.Sprintf(`<ansi fg="cyan-bold">%s</ansi>`, n))
+		}
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(
+			`You know more than one recipe like that: %s. Type more of the name to pick one.`,
+			strings.Join(list, `, `)))
+		return true, nil
+
 	case result.RecipeNotFound:
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(
 			`<ansi fg="red">No recipe found for "%s". Type <ansi fg="cyan-bold">craft list</ansi> to see available recipes.</ansi>`,

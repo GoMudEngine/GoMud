@@ -142,34 +142,71 @@ func GetRecipeByOutputItemId(itemId int) *RecipeSpec {
 	return recipeByOutputId[itemId]
 }
 
-// FindRecipeByName does a case-insensitive search across recipe names.
-// Prefers exact matches over substring matches.
-func FindRecipeByName(name string) *RecipeSpec {
-	lower := strings.ToLower(name)
-
-	// First pass: exact match
-	for _, r := range allRecipes {
-		if strings.ToLower(r.Name) == lower {
-			return r
-		}
+// FindRecipesByName does a case-insensitive, TIERED search across recipes and
+// returns every match from the highest-priority tier that has any:
+//
+//	1. exact recipe name
+//	2. exact declared alias
+//	3. substring of the recipe name
+//
+// Results are deterministically ordered — tightest name first (shortest name
+// containing the query), alphabetical on ties — so callers that take the first
+// element get the closest match every time. The old single-result search
+// returned the first hit of a MAP iteration, which made `craft cloak`
+// non-deterministic between cattail-down-cloak and wool-cloak (2026-08-03).
+func FindRecipesByName(name string) []*RecipeSpec {
+	lower := strings.ToLower(strings.TrimSpace(name))
+	if lower == "" {
+		return nil
 	}
 
-	// Alias pass: exact match against a recipe's declared aliases.
+	var exact, alias, sub []*RecipeSpec
 	for _, r := range allRecipes {
+		rn := strings.ToLower(r.Name)
+		if rn == lower {
+			exact = append(exact, r)
+			continue
+		}
+		aliased := false
 		for _, a := range r.Aliases {
 			if strings.ToLower(strings.TrimSpace(a)) == lower {
-				return r
+				alias = append(alias, r)
+				aliased = true
+				break
 			}
+		}
+		if aliased {
+			continue
+		}
+		if strings.Contains(rn, lower) {
+			sub = append(sub, r)
 		}
 	}
 
-	// Second pass: substring match
-	for _, r := range allRecipes {
-		if strings.Contains(strings.ToLower(r.Name), lower) {
-			return r
-		}
+	pick := exact
+	if len(pick) == 0 {
+		pick = alias
 	}
-	return nil
+	if len(pick) == 0 {
+		pick = sub
+	}
+	sort.Slice(pick, func(i, j int) bool {
+		if len(pick[i].Name) != len(pick[j].Name) {
+			return len(pick[i].Name) < len(pick[j].Name)
+		}
+		return pick[i].Name < pick[j].Name
+	})
+	return pick
+}
+
+// FindRecipeByName is the deterministic single-result wrapper over
+// FindRecipesByName: the tightest match, or nil.
+func FindRecipeByName(name string) *RecipeSpec {
+	matches := FindRecipesByName(name)
+	if len(matches) == 0 {
+		return nil
+	}
+	return matches[0]
 }
 
 // GetAllForSkill returns all recipes for a given skill, sorted by name.
@@ -438,6 +475,13 @@ func RegisterRecipeForTest(spec *RecipeSpec) {
 		allRecipes = map[string]*RecipeSpec{}
 	}
 	allRecipes[spec.RecipeId] = spec
+}
+
+// UnregisterRecipeForTest removes a test-injected recipe so fixtures don't
+// leak into other tests in the same binary.
+func UnregisterRecipeForTest(recipeId string) {
+	delete(allRecipes, recipeId)
+	recipeByOutputId = nil
 }
 
 // CalcSuccessChance returns the crafting success percentage clamped to

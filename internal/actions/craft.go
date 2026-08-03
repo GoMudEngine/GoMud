@@ -3,6 +3,7 @@ package actions
 import (
 	"strings"
 
+	"github.com/GoMudEngine/GoMud/internal/characters"
 	"github.com/GoMudEngine/GoMud/internal/crafting"
 	"github.com/GoMudEngine/GoMud/internal/items"
 	"github.com/GoMudEngine/GoMud/internal/mutations"
@@ -40,6 +41,10 @@ type CraftResult struct {
 	// AlreadyCrafting is true when the character already has an active
 	// CraftingState.
 	AlreadyCrafting bool
+	// AmbiguousRecipes holds the display names of multiple KNOWN recipes that
+	// all matched the query (e.g. `craft cloak` when the player knows both
+	// cloak recipes). Player-only: mob actors always take the tightest match.
+	AmbiguousRecipes []string
 
 	// Descriptive data filled in on all non-error paths (for messaging).
 	RecipeName           string
@@ -52,6 +57,39 @@ type CraftResult struct {
 	ForeignComponentName string // name of the offending component (ForeignComponent only)
 	OutputName           string // display name of the produced item (immediate-complete only)
 	SuccessMsg           string // recipe.SuccessMessage
+}
+
+// resolveCraftRecipe resolves a craft query with known-recipe preference:
+//
+//   - exactly one KNOWN match → that recipe
+//   - multiple KNOWN matches → nil + their names, tightest first (caller
+//     prompts the player to be more specific)
+//   - no known match but candidates exist → the tightest candidate (the
+//     known-recipe gate downstream yields the discovery message)
+//   - nothing matched → nil, nil
+func resolveCraftRecipe(char *characters.Character, name string) (*crafting.RecipeSpec, []string) {
+	candidates := crafting.FindRecipesByName(name)
+	if len(candidates) == 0 {
+		return nil, nil
+	}
+	var known []*crafting.RecipeSpec
+	for _, r := range candidates {
+		if char.HasRecipe(r.RecipeId) {
+			known = append(known, r)
+		}
+	}
+	switch {
+	case len(known) == 1:
+		return known[0], nil
+	case len(known) > 1:
+		names := make([]string, 0, len(known))
+		for _, r := range known {
+			names = append(names, r.Name)
+		}
+		return nil, names
+	default:
+		return candidates[0], nil
+	}
 }
 
 // InitiateCraft attempts to begin (or immediately complete) a crafting
@@ -74,9 +112,19 @@ func InitiateCraft(actor Actor, recipeName string) CraftResult {
 	}
 
 	// ── Recipe lookup ─────────────────────────────────────────────────────────
-	recipe := crafting.FindRecipeByName(recipeName)
-	if recipe == nil {
+	// Known-recipe preference: `craft cloak` resolves against the recipes the
+	// actor KNOWS before falling back to the tightest overall match (whose
+	// known-gate below then produces the keep-crafting-to-discover message).
+	recipe, ambiguous := resolveCraftRecipe(char, recipeName)
+	if recipe == nil && len(ambiguous) == 0 {
 		return CraftResult{RecipeNotFound: true}
+	}
+	if len(ambiguous) > 0 {
+		if actor.IsPlayer() {
+			return CraftResult{AmbiguousRecipes: ambiguous}
+		}
+		// Mobs can't answer a prompt — take the tightest known match.
+		recipe = crafting.FindRecipeByName(ambiguous[0])
 	}
 
 	res := CraftResult{
