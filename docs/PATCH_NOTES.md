@@ -1,5 +1,23 @@
 # DOGMud Patch Notes
 
+## 2026-08-03 — The Proving teaches sizing up a fight (and leaving one)
+
+The newcomer tutorial's practice ring now teaches two more survival
+habits, straight from new-player feedback:
+
+- Dewey now has you **consider** the straw effigy before you swing. Your
+  instincts will tell you plainly that this is a fight you cannot win —
+  and that read is the whole point of the lesson.
+- The **flee** lesson is no longer one easy-to-miss line in the noise of
+  combat. Dewey calls back to what your instincts told you, and if you
+  keep swinging at the unbreakable effigy anyway, he will keep reminding
+  you how to break away until you do.
+- The spellcasting step now tells you your spike takes a moment to
+  gather, and to trip the effigy once it lands — typing trip mid-cast
+  used to be quietly refused.
+- Training dummies (the effigy included) no longer mutate mid-fight. A
+  bundle of straw on a post should not be growing breathing-slits.
+
 ## 2026-08-02 — Armor protects, agility evades
 
 Armor no longer affects whether an attack or spell **hits** you. It only
