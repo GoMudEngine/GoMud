@@ -132,67 +132,13 @@ func (c *Character) CalculateUnarmedDamage() (baseDamage float64, variance float
 	return baseDamage, variance
 }
 
-// GetDefense sums the LEGACY ItemSpec.DamageReduction field across equipment.
-//
-// DO NOT wire this into any DOGMud display or calculation. That field was
-// superseded by physical_mitigation / magical_mitigation / conviction_mitigation
-// (see the damage pipeline in internal/combat), and 35 of the 77 items that set
-// a mitigation field never set damagereduction at all — so this returns near-zero
-// for modern gear and is actively misleading.
-//
-// It survives only because the upstream `default` world's status templates still
-// reference it by dynamic template dispatch, which no Go grep can see. DOGMud's
-// own status.template correctly renders GetPhysicalMitigation /
-// GetMagicalMitigation / GetConvictionMitigation instead. The dead dogmud
-// status-lite.template that used to call this was removed 2026-08-02.
-//
-// Returns an integer representing a % damage reduction.
-func (c *Character) GetDefense() int {
-
-	reduction := c.Equipment.Weapon.GetDefense() +
-		c.Equipment.Offhand.GetDefense() +
-		c.Equipment.ExtraArm1.GetDefense() +
-		c.Equipment.ExtraArm2.GetDefense() +
-		c.Equipment.Head.GetDefense() +
-		c.Equipment.Neck.GetDefense() +
-		c.Equipment.Body.GetDefense() +
-		c.Equipment.Belt.GetDefense() +
-		c.Equipment.Gloves.GetDefense() +
-		c.Equipment.Ring.GetDefense() +
-		c.Equipment.Legs.GetDefense() +
-		c.Equipment.Feet.GetDefense()
-
-	//reduction = int(float64(reduction) / 9)
-
-	// If wearing an offhand item like a shield, defense gets a 50% boost
-	// Holdables are not considered "shield" type items.
-	// Anything held in the offhand that provides a damage reduction is considered a shield.
-	if c.Equipment.Offhand.ItemId != 0 && c.Equipment.Offhand.GetSpec().Type != items.Weapon && c.Equipment.Offhand.GetSpec().DamageReduction > 0 {
-		reduction = int(float64(reduction) * 1.5)
-	}
-
-	// Add magical armor from Minor Shield (or any future ConditionShield source)
-	reduction += int(c.GetConditionMagnitude(ConditionShield))
-
-	// Stage 12.1: Add natural armor from mutations (Tough Skin etc.)
-	reduction += mutations.GetNaturalArmor(c.Mutations)
-
-	// Species natural armor (chitin, thick hide, etc.)
-	if speciesInfo := species.GetSpecies(c.SpeciesId); speciesInfo != nil {
-		reduction += speciesInfo.NaturalArmor
-	}
-
-	if reduction > 100 {
-		reduction = 100
-	}
-
-	return reduction
-}
-
 // GetPhysicalMitigation returns total physical mitigation as a fraction (0.0–1.0).
-// Sources: equipment physical_mitigation (falls back to DamageReduction for
-// unmigrated items), mutations, species natural armor, shield spells.
+// Sources: equipment physical_mitigation, mutations, species natural armor,
+// shield spells, and physical_mitigation buff statmods.
 // Incorporeal mutation scales gear-derived mitigation.
+// (The legacy Character.GetDefense / ItemSpec.DamageReduction summation was
+// removed 2026-08-03; the two default-world status templates that dynamically
+// dispatched .GetDefense were repointed at this method.)
 func (c *Character) GetPhysicalMitigation() float64 {
 	// Gear-derived: sum of equipment slot PhysicalMitigation.
 	gearMit := 0

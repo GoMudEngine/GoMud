@@ -271,7 +271,7 @@ type ItemSpec struct {
 	HungerRounds          int        `yaml:"hunger_rounds,omitempty"`           // rounds without a kill before the item feeds on the wielder (0 = never)
 	HungerDrainPct        float64    `yaml:"hunger_drain_pct,omitempty"`        // fraction of HealthMax drained per hungry round
 	TauntPull             bool       `yaml:"taunt_pull,omitempty"`              // sentient chatter on_taunt also pulls the bearer's target's aggro (Aegis)
-	DamageReduction       int        `yaml:"damagereduction,omitempty"`         // Legacy: % of damage it reduces when it blocks attacks
+	DamageReduction       int        `yaml:"damagereduction,omitempty"`         // Legacy for MITIGATION (superseded by the *_mitigation fields), but NOT dead: still classifies offhands as shields (HasAnyShield), feeds the item-value formula, and receives defense-bonus enchants. Removing it is a redesign, not a cleanup.
 	PhysicalMitigation    int        `yaml:"physical_mitigation,omitempty"`     // % physical damage reduction (Stage 34)
 	MagicalMitigation     int        `yaml:"magical_mitigation,omitempty"`      // % magical damage reduction (Stage 34)
 	ConvictionMitigation  int        `yaml:"conviction_mitigation,omitempty"`   // % conviction damage reduction (Stage 34)

@@ -461,12 +461,6 @@ func (i *Item) GetDamage() Damage {
 	return i.GetSpec().Damage
 }
 
-// Returns a random number up to the total possible reduction for this item.
-func (i *Item) GetDefense() int {
-	itemInfo := i.GetSpec()
-	return itemInfo.DamageReduction
-}
-
 func (i *Item) Equals(b Item) bool {
 	return i.ItemId == b.ItemId && i.UUID == b.UUID
 }
