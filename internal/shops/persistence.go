@@ -169,7 +169,11 @@ func SaveShop(zone string, mobId int, roomId int) error {
 		return fmt.Errorf("shops.SaveShop: marshal: %w", err)
 	}
 
-	if err := os.WriteFile(savePath, bytes, 0644); err != nil {
+	// Honour CarefulSaveFiles: write to <path>.new and rename, matching items,
+	// mobs, users, alts and (as of this change) rooms. Shop files are the
+	// living economy — stock levels, NPC gold, restock timers — and are not
+	// regenerable from templates once a merchant has traded.
+	if err := util.Save(savePath, bytes, bool(configs.GetFilePathsConfig().CarefulSaveFiles)); err != nil {
 		return fmt.Errorf("shops.SaveShop: write %s: %w", savePath, err)
 	}
 
