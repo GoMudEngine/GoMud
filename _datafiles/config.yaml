@@ -570,19 +570,19 @@ Balance:
   #     0.05 →   5 raw damage per swing (current — low, needs MobDamageMultiplier)
   #     0.15 →  15 raw damage per swing
   #     0.30 →  30 raw damage per swing (original default)
-  MeleeDamageScale: 0.43       # Down ~5% from 0.45; melee was slightly overtuned
+  MeleeDamageScale: 0.52       # 2026-08-03: +20% (from 0.43) — player melee up to offset the 08-02 mitigation/crit fixes
   #
   # MobDamageMultiplier: extra multiplier applied ONLY to NPC melee
   #   damage. Lets you keep player damage low while making NPCs threatening.
   #   Example: MeleeDamageScale 0.05, MobDamageMultiplier 4.0:
   #     Player Str 100 → 100 × 1.0 × 1.0 × 0.05 = 5 raw (unchanged)
   #     Mob Str 100    → 100 × 1.0 × 1.0 × 0.05 × 4.0 = 20 raw
-  MobDamageMultiplier: 2.0      # Reduced from 2.5; MeleeDamageScale bumped to 0.45 so mobs need less boost
+  MobDamageMultiplier: 0.83     # 2026-08-03: from 2.0 — nets mob melee to HALF its old value (0.52×0.83=0.43 vs old 0.43×2.0=0.86) after the 08-02 fixes made mobs hit much harder in practice
   #
   # SpellDamageScale: multiplier on ALL spell damage output (players + NPCs).
   #   1.0 = no scaling. Example at Wil 100, skill 0, spell mult 1.0:
   #     1.0 → 100 raw,  1.5 → 150 raw,  0.5 → 50 raw
-  SpellDamageScale: 1.56        # Tuned: +30% from 1.2 (magic damage up); AoE spell damage_multipliers cut 20% to offset, leaving AoE only ~4% stronger
+  SpellDamageScale: 3.12        # 2026-08-03: doubled (from 1.56) — spells went from unmissable to resistible in the 08-02 hit/mitigation decoupling, so per-hit damage doubles to keep DPS. NOTE: also doubles NPC caster spells (no mob-spell-only knob exists)
   #
   # RhetoricDamageScale: multiplier on taunt/conviction damage output.
   #   Taunt uses itemMult 0.5 as base. Example at Cha 100, skill 0:
