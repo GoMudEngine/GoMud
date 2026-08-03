@@ -1,5 +1,68 @@
 # DOGMud Patch Notes
 
+## 2026-08-02 — Armor protects, agility evades
+
+Armor no longer affects whether an attack or spell **hits** you. It only
+reduces the damage when something does hit. Dodging is handled by your
+agility and your defensive skills.
+
+The idea is simple: a quick, lightly armored fighter is hard to hit but takes
+heavy damage when caught. A heavily armored one is easier to hit but shrugs
+off much more of each blow.
+
+This corrects a long-standing mistake. A group of spells checked your armor
+to decide whether they landed, which made them almost impossible to miss with
+against most characters. Those spells are now genuinely avoidable if you are
+quick — and if you are slow, expect to be hit more often but to take less
+damage. Your armor is doing exactly as much work as before; it is just doing
+it in the right place.
+
+## 2026-08-02 — Stability, fairness, and security fixes
+
+A large round of repairs, most of which you should never notice — that is the
+point.
+
+**Cheating and unfairness**
+
+- Giving an item to a character who hands it back no longer creates a second
+  copy of that item. The item you get back is now the same one you handed
+  over, keeping its enchantment and remaining uses.
+- Creatures no longer inherit stray mutations from others of their kind. Some
+  creature types had been slowly accumulating mutations they were never meant
+  to have.
+- Merchants no longer share a single pool of stock between them, and a
+  restocked merchant starts fresh instead of inheriting an earlier one's empty
+  shelves.
+- Pets' attacks now respect armor like every other attack. Previously they
+  ignored it completely.
+- Critical hits land more naturally against armored opponents.
+
+**Quests**
+
+- If you are carrying too much to accept a quest item, the game now tells you
+  so and lets you try again after making room. Before, it would say you had
+  received the item when you had not, which could leave a quest impossible to
+  finish.
+
+**Stability**
+
+- Fixed several faults that could crash or freeze the server, including one
+  that could be triggered just by pressing Tab while moving between rooms.
+- A character whose save file was damaged is no longer quietly reset to a new
+  character. The game now refuses to load it and reports the problem instead.
+- One player with a poor connection can no longer stall the game for everyone
+  else.
+- Web connections that drop before login are now cleaned up properly.
+- Disarming a trap on a door now stays disarmed after a restart.
+- Room and shop files are now written safely, so a crash at the wrong moment
+  cannot corrupt them.
+
+**Security**
+
+- Chat text can no longer be used to imitate server or staff messages.
+- Bans now work correctly for players connecting through the web client.
+- Various hardening of the web and admin interfaces.
+
 ## 2026-08-02 — Bigger health, stamina, and conviction pools
 
 A limit meant to slow down extreme stat growth had a side effect nobody
