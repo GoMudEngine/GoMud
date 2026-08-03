@@ -52,8 +52,18 @@ func Equip(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		}
 	}
 
-	// Check whether the user has an item in their inventory that matches
-	matchItem, found := user.Character.FindInBackpack(rest)
+	// Check whether the user has an item in their inventory that matches.
+	// Equippable-first: prefer something that can actually be worn/wielded
+	// (`wear stillwater` → the pendant, not the raw pearl), falling back to
+	// the unfiltered match so the fashionable-flavor rejection still fires
+	// when the only match truly isn't equipment.
+	matchItem, found := user.Character.FindInBackpackWhere(rest, func(it items.Item) bool {
+		spec := it.GetSpec()
+		return spec.Type == items.Weapon || spec.Subtype == items.Wearable
+	})
+	if !found {
+		matchItem, found = user.Character.FindInBackpack(rest)
+	}
 
 	if !found {
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You don't have a "%s" to wear.`, rest))

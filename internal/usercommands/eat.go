@@ -23,8 +23,16 @@ func Eat(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 		return true, nil
 	}
 
-	// Check whether the user has an item in their inventory that matches
-	matchItem, found := user.Character.FindInBackpack(rest)
+	// Check whether the user has an item in their inventory that matches.
+	// Edible-first: skip same-noun inedibles, but fall back to the
+	// unfiltered match so the "can't eat that" rejection still fires when
+	// nothing edible matches.
+	matchItem, found := user.Character.FindInBackpackWhere(rest, func(it items.Item) bool {
+		return it.GetSpec().Subtype == items.Edible
+	})
+	if !found {
+		matchItem, found = user.Character.FindInBackpack(rest)
+	}
 
 	if !found {
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(`You don't have a "%s" to eat.`, rest))

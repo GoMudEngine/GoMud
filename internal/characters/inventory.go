@@ -315,6 +315,21 @@ func (c *Character) FindInComponents(itemName string) (items.Item, bool) {
 }
 
 func (c *Character) FindInBackpack(itemName string) (items.Item, bool) {
+	return c.FindInBackpackWhere(itemName, nil)
+}
+
+// FindInBackpackWhere resolves itemName against only the backpack items that
+// keep() accepts (nil keep = no filter), so a command can prefer targets it
+// can actually act on: `wear stillwater` lands on the wearable pendant, not
+// the raw pearl that happens to share the noun (2026-04-25 papercut).
+// Callers should fall back to the unfiltered FindInBackpack when the
+// filtered pass misses, so the classic flavor rejections still fire when the
+// only match genuinely is the wrong kind of item.
+//
+// A handle (UUID) reference is an explicit instance pick and bypasses the
+// filter. N.item / item#N disambiguation counts within the FILTERED set —
+// `eat 2.bread` means the second edible bread.
+func (c *Character) FindInBackpackWhere(itemName string, keep func(items.Item) bool) (items.Item, bool) {
 
 	if itemName == `` {
 		return items.Item{}, false
@@ -331,7 +346,17 @@ func (c *Character) FindInBackpack(itemName string) (items.Item, bool) {
 		return items.Item{}, false
 	}
 
-	closeMatchItem, matchItem := items.FindMatchIn(itemName, c.Items...)
+	pool := c.Items
+	if keep != nil {
+		pool = make([]items.Item, 0, len(c.Items))
+		for _, item := range c.Items {
+			if keep(item) {
+				pool = append(pool, item)
+			}
+		}
+	}
+
+	closeMatchItem, matchItem := items.FindMatchIn(itemName, pool...)
 
 	if matchItem.ItemId != 0 {
 		return matchItem, true

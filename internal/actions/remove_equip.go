@@ -25,7 +25,15 @@ type EquipItemResult struct {
 func EquipItem(actor Actor, itemName string) EquipItemResult {
 	char := actor.GetCharacter()
 
-	matchItem, found := char.FindInBackpack(itemName)
+	// Equippable-first, unfiltered fallback — mirrors usercommands/equip.go
+	// so mob equips and gearup get the same preference.
+	matchItem, found := char.FindInBackpackWhere(itemName, func(it items.Item) bool {
+		spec := it.GetSpec()
+		return spec.Type == items.Weapon || spec.Subtype == items.Wearable
+	})
+	if !found {
+		matchItem, found = char.FindInBackpack(itemName)
+	}
 	if !found {
 		return EquipItemResult{Found: false}
 	}

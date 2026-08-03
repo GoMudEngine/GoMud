@@ -59,13 +59,21 @@ func Drink(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
-	// Search bandolier first (oldest first), then backpack
+	// Search bandolier first (oldest first), then backpack. The backpack
+	// pass is drinkable-first — skip same-noun non-drinkables — with an
+	// unfiltered fallback so the "can't drink that" rejection still fires
+	// when nothing drinkable matches.
 	fromBandolier := false
 	matchItem, found := user.Character.FindInPotions(rest)
 	if found {
 		fromBandolier = true
 	} else {
-		matchItem, found = user.Character.FindInBackpack(rest)
+		matchItem, found = user.Character.FindInBackpackWhere(rest, func(it items.Item) bool {
+			return it.GetSpec().Subtype == items.Drinkable
+		})
+		if !found {
+			matchItem, found = user.Character.FindInBackpack(rest)
+		}
 	}
 
 	if !found {
