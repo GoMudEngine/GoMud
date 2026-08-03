@@ -465,15 +465,50 @@ func TestProcessFoldRound_NormalSpell_PositionCanBreak(t *testing.T) {
 func TestSpellDefenseValue_Physical(t *testing.T) {
 	ch := &characters.Character{}
 	ch.Stats.Dexterity.ValueAdj = 115
+	require.Zero(t, ch.Toxicity, "fixture must be untoxified for the baseline case")
 	val := spellDefenseValue("physical", ch)
 	assert.Equal(t, 115.0, val, "physical spell defense is a Dexterity check")
 }
 
+// TestSpellDefenseValue_PhysicalUsesEffectiveDexterity pins the accessor, not
+// just the stat. spellDefenseValue reads GetEffectiveDexterity(), the
+// engine-wide accessor for live combat and skill rolls, so transient
+// impairments apply to spell evasion exactly as they apply to dodging a sword.
+// Reading Stats.Dexterity.ValueAdj directly would leave a toxified defender
+// dodging spells at full reflexes while dodging melee at reduced ones.
+//
+// Toxicity is the only impairment GetEffectiveDexterity currently models: the
+// >=90% band multiplies Dexterity by 0.90 (see GetToxicityPenalties).
+func TestSpellDefenseValue_PhysicalUsesEffectiveDexterity(t *testing.T) {
+	ch := &characters.Character{}
+	ch.Stats.Dexterity.ValueAdj = 150
+
+	clean := spellDefenseValue("physical", ch)
+	require.Equal(t, 150.0, clean, "sanity: untoxified defender defends at full Dexterity")
+
+	// Drive toxicity into the top band (>=90% of max), which costs 10% Dexterity.
+	toxMax := ch.GetToxicityMax()
+	require.Greater(t, toxMax, 0.0, "sanity: toxicity max must be positive")
+	ch.Toxicity = toxMax * 0.95
+
+	poisoned := spellDefenseValue("physical", ch)
+	assert.Less(t, poisoned, clean,
+		"a toxified defender must be easier to land a physical-defense spell on")
+	assert.Equal(t, float64(int(150*0.90)), poisoned,
+		"physical spell defense must apply the same 10% toxicity Dexterity penalty melee does")
+	assert.Equal(t, float64(ch.GetEffectiveDexterity()), poisoned,
+		"physical spell defense must equal GetEffectiveDexterity exactly")
+}
+
 func TestSpellDefenseValue_Mental(t *testing.T) {
+	// Willpower has no "effective" variant — toxicity penalises regen,
+	// Perception and Dexterity only — so this branch stays on ValueAdj and the
+	// asymmetry with the physical branch is deliberate.
 	ch := &characters.Character{}
 	ch.Stats.Willpower.ValueAdj = 120
+	ch.Toxicity = ch.GetToxicityMax() // fully toxified
 	val := spellDefenseValue("mental", ch)
-	assert.Equal(t, 120.0, val)
+	assert.Equal(t, 120.0, val, "toxicity must not touch mental spell defense")
 }
 
 func TestSpellDefenseValue_Unknown(t *testing.T) {

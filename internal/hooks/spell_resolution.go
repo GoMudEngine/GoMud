@@ -950,10 +950,19 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 // it. Armor belongs in calcSpellDamageForCharacter (which already applies
 // GetPhysicalMitigation to the damage), and nowhere near this roll.
 //
-// Both branches therefore return a raw stat, on the same 100 = human baseline
+// Both branches therefore return a stat, on the same 100 = human baseline
 // scale every DOGMud stat uses:
 //   - "physical" → Dexterity (dodging a hurled bolt is a reflex check)
 //   - "mental"   → Willpower (resisting a mind-affecting weave)
+//
+// The two accessors differ deliberately, and the asymmetry is not an oversight.
+// Physical uses GetEffectiveDexterity(), the engine-wide accessor for live
+// combat and skill rolls (see internal/characters/effective_stats.go), so a
+// toxified defender dodges a spell with the same impaired reflexes it dodges a
+// sword with — calcAttackScore, GetDefenseScore, AttemptGrapple and
+// rangedDefenseScore all read it. Mental uses Stats.Willpower.ValueAdj because
+// there is no GetEffectiveWillpower: toxicity penalises regen, Perception and
+// Dexterity only, so Willpower has no effective variant to call.
 //
 // The Minor Shield condition (characters.ConditionShield) is deliberately NOT
 // added. It is damage absorption, not evasion: its own docstring calls it a
@@ -965,7 +974,7 @@ func applyPlayerEffect(user *users.UserRecord, target *users.UserRecord, room *r
 func spellDefenseValue(defenseType string, target *characters.Character) float64 {
 	switch defenseType {
 	case "physical":
-		return float64(target.Stats.Dexterity.ValueAdj)
+		return float64(target.GetEffectiveDexterity())
 
 	case "mental":
 		return float64(target.Stats.Willpower.ValueAdj)
