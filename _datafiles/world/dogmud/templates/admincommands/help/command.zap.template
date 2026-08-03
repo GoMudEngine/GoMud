@@ -1,4 +1,4 @@
 The <ansi fg="command">zap</ansi> command can be used in the following ways:
 
-<ansi fg="command">zap</ansi> - Brings your currently aggrod mob to 1hp/1mp.
-<ansi fg="command">zap [target]</ansi> - Brings the target to 1hp/1mp.
+<ansi fg="command">zap</ansi> - Drops your current combat target to the brink (1 Health, 1 Conviction).
+<ansi fg="command">zap [target]</ansi> - Drops the target to the brink (1 Health, 1 Conviction).
