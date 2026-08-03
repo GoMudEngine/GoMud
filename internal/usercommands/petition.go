@@ -51,6 +51,12 @@ func Petition(rest string, user *users.UserRecord, room *rooms.Room, flags event
 		return true, nil
 	}
 
+	// Escape before the petition is persisted, not just before the staff alert
+	// is rendered. petitions.yaml survives restarts and the `petitions` command
+	// re-renders the stored message every time an admin reviews the queue, so
+	// an unescaped record would replay the injection indefinitely.
+	rest = util.EscapeAnsiTags(rest)
+
 	p, err := moderation.Add(user.Username, user.Character.RoomId, user.Character.Zone, rest)
 	if err != nil {
 		user.SendText(messaging.CategorySystem, `<ansi fg="red">Your petition could not be filed. Please try again or find an admin.</ansi>`)

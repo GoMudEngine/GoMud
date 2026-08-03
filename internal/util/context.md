@@ -57,6 +57,7 @@ func SplitButRespectQuotes(s string) []string
 func BreakIntoParts(full string) []string
 func StripPrepositions(input string) string
 func StripANSI(str string) string
+func EscapeAnsiTags(s string) string
 func ConvertColorShortTags(input string) string
 func StripCharsForScreenReaders(s string) string
 func ConvertToAscii(s string) string
@@ -73,6 +74,20 @@ and alignment decision must use `VisibleWidth`, and `SplitString` already does.
 `StripCharsForScreenReaders` serve the accessibility and
 limited-client paths — a client that has not converged on UTF-8 gets readable
 text rather than mojibake.
+
+**`StripANSI` and `EscapeAnsiTags` are unrelated.** `StripANSI` removes raw
+terminal escape sequences (`\x1b[...m`) from already-rendered output.
+`EscapeAnsiTags` neutralises the *markup* `<ansi ...>` / `</ansi>` in untrusted
+text so it can be safely interpolated into a template that
+`templates.AnsiParse` will later render.
+
+**Apply `EscapeAnsiTags` to the player-supplied SUBSTRING, never to an assembled
+message.** Server-authored markup — dialogue YAML, emote aliases, merchant
+lines, template chrome — is legitimate and must keep working. It escapes only
+the two byte sequences the parser recognises (inserting a space after a `<` that
+begins `<ansi` or `</ansi`), leaves every other `<` alone so `<3` and `a < b`
+still read naturally, and is idempotent so persisted fields can be escaped both
+on write and on render.
 
 ## Matching
 

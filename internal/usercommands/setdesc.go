@@ -27,7 +27,10 @@ func SetDesc(rest string, user *users.UserRecord, room *rooms.Room, flags events
 		return true, nil
 	}
 
-	// Store raw text — wrapping happens at display time in the template
+	// Store escaped — wrapping happens at display time in the template, and
+	// the description is rendered inside <ansi> markup for anyone who looks
+	// at this character.
+	rest = util.EscapeAnsiTags(rest)
 	user.Character.Description = rest
 	user.SendText(messaging.CategorySystem, fmt.Sprintf(
 		"Your description has been set to:\n%s",

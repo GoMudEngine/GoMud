@@ -114,7 +114,10 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 	args = args[1:]
 
 	if !mob.Character.IsCharmed() {
-		room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(`<ansi fg="username">%s</ansi> asks <ansi fg="mobname">%s</ansi> about "%s"`, user.Character.Name, mob.Character.Name, strings.Join(args, ` `)), user.UserId)
+		// The topic is raw player input echoed to the whole room, and this
+		// path has no mute gate — escape before it reaches AnsiParse.
+		topic := util.EscapeAnsiTags(strings.Join(args, ` `))
+		room.SendTextVisual(messaging.CategoryMobEmote, fmt.Sprintf(`<ansi fg="username">%s</ansi> asks <ansi fg="mobname">%s</ansi> about "%s"`, user.Character.Name, mob.Character.Name, topic), user.UserId)
 	}
 
 	// players may type "ask <mob> to <do something>"
@@ -180,7 +183,13 @@ func Ask(rest string, user *users.UserRecord, room *rooms.Room, flags events.Eve
 			func(response string) {
 				m := mobs.GetInstance(mobIdCopy)
 				if m != nil {
-					m.Command(`say ` + response)
+					// LLM output is untrusted: the prompt carries the player's
+					// own text, so "reply with exactly </ansi><ansi fg=...>"
+					// would launder an injection through a named NPC to the
+					// whole room. Escaped here rather than in mobcommands.Say,
+					// which also carries authored dialogue YAML whose <ansi>
+					// markup is legitimate.
+					m.Command(`say ` + util.EscapeAnsiTags(response))
 					dialogue.UpdateMemory(mobIdCopy, userIdCopy, "", nil, restCopy)
 				}
 			},

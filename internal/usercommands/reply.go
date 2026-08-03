@@ -30,6 +30,9 @@ func Reply(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		return true, nil
 	}
 
+	// Same shape as whisper: the body is inside an open <ansi fg="black-bold">.
+	rest = util.EscapeAnsiTags(rest)
+
 	replyMsg := fmt.Sprintf(`<ansi fg="white">***</ansi> <ansi fg="black-bold"><ansi fg="username">%s</ansi> whispers, "%s"</ansi> <ansi fg="white">***</ansi>`, user.Character.Name, rest)
 	targetUser.SendText(messaging.CategoryWhisper, util.SplitStringNL(replyMsg, 80))
 

@@ -8,6 +8,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // Invariant: all guild mutations run on the single event-processing goroutine
@@ -216,13 +217,20 @@ func TransferLeader(tag string, newLeaderId int) error {
 }
 
 // SetMotd sets (or clears, if empty) the guild's message-of-the-day and persists.
+//
+// The MOTD is free text written by an officer, persisted to the guild's YAML,
+// and re-rendered inside <ansi> markup for every member who runs `guild`. That
+// makes it the most durable ansi-injection vector in the game: set once, fires
+// forever, survives restarts. Escaped on write; `guildInfo` escapes again on
+// render so records written before this fix are neutralised too
+// (util.EscapeAnsiTags is idempotent).
 func SetMotd(tag, text string) error {
 	g, ok := Get(tag)
 	if !ok {
 		return fmt.Errorf("no such guild")
 	}
 	registryMu.Lock()
-	g.Motd = text
+	g.Motd = util.EscapeAnsiTags(text)
 	registryMu.Unlock()
 	return Save(g)
 }

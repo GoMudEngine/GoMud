@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/moderation"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // Petitions is the admin review command for the petition queue.
@@ -73,15 +74,20 @@ func Petitions(rest string, user *users.UserRecord, room *rooms.Room, flags even
 		}
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="cyan-bold">Petition #%d</ansi> [%s]`, p.Id, p.Status))
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(`  From: <ansi fg="username">%s</ansi>  When: %s  Room: %d (%s)`, p.Reporter, p.Timestamp.Format("2006-01-02 15:04 MST"), p.RoomId, p.Zone))
-		user.SendText(messaging.CategorySystem, fmt.Sprintf(`  Message: %s`, p.Message))
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`  Message: %s`, util.EscapeAnsiTags(p.Message)))
 		if p.Status == moderation.StatusResolved {
-			user.SendText(messaging.CategorySystem, fmt.Sprintf(`  Resolved by <ansi fg="username">%s</ansi>: %s`, p.ResolvedBy, p.Note))
+			user.SendText(messaging.CategorySystem, fmt.Sprintf(`  Resolved by <ansi fg="username">%s</ansi>: %s`, p.ResolvedBy, util.EscapeAnsiTags(p.Note)))
 		}
 		return true, nil
 	}
 }
 
 func petitionSnippet(s string, max int) string {
+	// Petitions filed before `petition` started escaping on write are still on
+	// disk, so escape on render too (idempotent). Order matters: escaping
+	// first means the truncation below cannot leave a dangling half-tag that
+	// swallows the rest of the admin's line.
+	s = util.EscapeAnsiTags(s)
 	s = strings.ReplaceAll(s, "\n", " ")
 	r := []rune(s) // rune-slice so a cut never splits a multibyte character
 	if len(r) > max {

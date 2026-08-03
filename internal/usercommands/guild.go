@@ -95,7 +95,9 @@ func guildInfo(user *users.UserRecord) {
 	}
 	user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="yellow-bold">%s</ansi> <ansi fg="cyan">[%s]</ansi> — %d member(s)`, g.Name, g.Tag, len(g.Members)))
 	if g.Motd != "" {
-		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="cyan">"%s"</ansi>`, g.Motd))
+		// Escaped again on render (idempotent) so a MOTD persisted before
+		// guilds.SetMotd started escaping is neutralised too.
+		user.SendText(messaging.CategorySystem, fmt.Sprintf(`<ansi fg="cyan">"%s"</ansi>`, util.EscapeAnsiTags(g.Motd)))
 	}
 	// Roster: leader, then officers, then members.
 	for _, rank := range []guilds.GuildRank{guilds.RankLeader, guilds.RankOfficer, guilds.RankMember} {
@@ -454,6 +456,9 @@ func guildChatSend(user *users.UserRecord, msg string) {
 		user.SendText(messaging.CategorySystem, `Usage: <ansi fg="command">guild chat &lt;message&gt;</ansi>  (or <ansi fg="command">gc &lt;message&gt;</ansi>)`)
 		return
 	}
+	// Neutralise <ansi> markup before interpolation.
+	msg = util.EscapeAnsiTags(msg)
+
 	for _, uid := range guildChatRecipients(g, user.UserId) {
 		if u := users.GetByUserId(uid); u != nil {
 			line := fmt.Sprintf(`<ansi fg="cyan">(guild)</ansi> <ansi fg="username">%s</ansi>: <ansi fg="white">%s</ansi>`, user.Character.Name, msg)

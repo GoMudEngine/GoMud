@@ -8,6 +8,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/messaging"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 func Emote(rest string, user *users.UserRecord, room *rooms.Room, flags events.EventFlag) (bool, error) {
@@ -34,6 +35,11 @@ func Emote(rest string, user *users.UserRecord, room *rooms.Room, flags events.E
 		user.SendText(messaging.CategoryWarning, `You are <ansi fg="alert-5">MUTED</ansi>. You can only send <ansi fg="command">whisper</ansi>'s to Admins and Moderators.`)
 		return true, nil
 	}
+
+	// Neutralise <ansi> markup before interpolation. Only the free-form path
+	// is escaped — result.AliasText above comes from the server-side
+	// EmoteAliases table and its markup is legitimate.
+	rest = util.EscapeAnsiTags(rest)
 
 	if rest[0] == '@' && len(rest) > 1 {
 		rest = rest[1:]

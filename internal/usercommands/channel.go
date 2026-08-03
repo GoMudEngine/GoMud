@@ -10,6 +10,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/rooms"
 	"github.com/GoMudEngine/GoMud/internal/term"
 	"github.com/GoMudEngine/GoMud/internal/users"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
 
 // sendChannel formats and dispatches a global chat-channel message. It emits a
@@ -30,6 +31,10 @@ func sendChannel(user *users.UserRecord, channelName, rest string) (bool, error)
 		user.SendText(messaging.CategorySystem, fmt.Sprintf(`Usage: <ansi fg="command">%s</ansi> &lt;message&gt;`, ch.Name))
 		return true, nil
 	}
+
+	// Channels fan out server-wide, so this is the widest blast radius of any
+	// comms path — neutralise <ansi> markup before interpolation.
+	rest = util.EscapeAnsiTags(rest)
 
 	text := fmt.Sprintf(`<ansi fg="%s">%s</ansi> <ansi fg="username">%s</ansi>: %s`,
 		ch.Color, ch.Prefix, user.Character.Name, rest)
