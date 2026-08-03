@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-08-03 — Better gear is harder to find on shelves
+
+Every weapon, piece of armor, and consumable now carries a rarity
+tier, and merchants restock accordingly: everyday goods refill
+constantly, solid mid-tier gear takes hours to reappear, and the
+finest pieces return rarely. Finding an upgrade in stock should feel
+like luck now, not routine — and buying out a shop's good gear
+actually matters for a while.
+
 ## 2026-08-03 — The help system tells the truth again
 
 A full audit of every help page against the game as it actually works
