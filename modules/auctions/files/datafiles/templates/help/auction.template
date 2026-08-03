@@ -7,11 +7,11 @@ You'll need auctions enabled for it to work (on by default)
 
   <ansi fg="command">auction</ansi> - See the status of the current auction.
 
-  <ansi fg="command">auction (itemname)</ansi> - This starts a new auction, with the item of your choosing. (Auction skill required)
+  <ansi fg="command">auction (itemname)</ansi> - This starts a new auction, with the item of your choosing.
 
   <ansi fg="command">auction history</ansi> - See a list of past auctions.
 
-  <ansi fg="command">bid (amount)</ansi> - This bids on the current auction.
+  <ansi fg="command">auction bid (amount)</ansi> - This bids on the current auction.
 
 <ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help set</ansi>
 

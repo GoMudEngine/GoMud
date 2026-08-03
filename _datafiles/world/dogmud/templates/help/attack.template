@@ -62,6 +62,16 @@ The tighter the grapple, the worse long weapons fare:
 
 See <ansi fg="command">help grapple</ansi> and <ansi fg="command">help reach</ansi> for details.
 
+<ansi fg="yellow">━━━ Position in Grapples ━━━</ansi>
+
+Where you are in a grapple matters as much as what you swing.
+Attacking from a dominant position — mount, side control, back
+control — is markedly easier: your target is pinned and your blows
+land clean. Striking back from underneath is markedly harder; most
+of your effort goes into surviving the hold. If you're being
+controlled, escaping the position often beats trading blows.
+See <ansi fg="command">help grapple</ansi>.
+
 <ansi fg="yellow">━━━ Target Switching ━━━</ansi>
 
 When fighting multiple enemies, use <ansi fg="command">attack <target></ansi> to switch targets:

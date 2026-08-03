@@ -9,5 +9,19 @@ The <ansi fg="command">cast</ansi> command attempts to cast a learned spell.
 
   Spells can also be cast by using their shorthand/ID directly, such as: <ansi fg="command">illum</ansi>
 
-<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>
+<ansi fg="yellow">━━━ Combat and Concentration ━━━</ansi>
+
+Casting is an act of held concentration. Spells build over several
+rounds as you complete their folds, and taking hits can disrupt the
+work — a strong <ansi fg="yellow">Willpower</ansi> keeps your concentration together.
+
+Position matters: casting while grappled or knocked down is much
+harder to hold together. If you must cast in a fight, do it on your
+feet with room to breathe. Casting counts as a special move and
+shares the special-move cooldown.
+
+You cannot begin a cast while crafting or salvaging — finish your
+work first.
+
+<ansi fg="magenta-bold">See also:</ansi> <ansi fg="command">help spells</ansi>, <ansi fg="command">help grapple</ansi>, <ansi fg="command">help special</ansi>
 
