@@ -8,7 +8,6 @@ description: A sleeveless surcoat of thick canvas worn over light armor,
   a modest layer of padding across the torso.
 type: body
 subtype: wearable
-damagereduction: 3
 physical_mitigation: 3
 escapemodifier: 0.0
 value: 8

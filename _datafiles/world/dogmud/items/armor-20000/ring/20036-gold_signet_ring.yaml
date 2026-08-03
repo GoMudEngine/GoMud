@@ -8,7 +8,6 @@ description: A heavy ring of hammered gold, its flat face engraved with an
   the kind of piece that makes people listen when you speak.
 type: ring
 subtype: wearable
-damagereduction: 0
 magical_mitigation: 1
 conviction_mitigation: 1
 statmods:

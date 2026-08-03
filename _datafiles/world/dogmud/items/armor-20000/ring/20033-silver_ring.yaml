@@ -8,7 +8,6 @@ description: A slender silver band with a mirror-bright finish. Tiny gem dust
   that draws the eye and lends the wearer an air of refinement.
 type: ring
 subtype: wearable
-damagereduction: 0
 magical_mitigation: 1
 conviction_mitigation: 1
 statmods:

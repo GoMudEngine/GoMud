@@ -8,7 +8,6 @@ description: A raw gem hangs in a cradle of twisted silver wire, facets catching
   sharpening the senses of whoever wears it.
 type: neck
 subtype: wearable
-damagereduction: 1
 physical_mitigation: 1
 magical_mitigation: 3
 conviction_mitigation: 2

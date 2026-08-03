@@ -8,7 +8,6 @@ description: A vest of tightly woven iron chain links. It covers the torso well
   movements.
 type: body
 subtype: wearable
-damagereduction: 12
 physical_mitigation: 12
 escapemodifier: -0.05
 value: 25

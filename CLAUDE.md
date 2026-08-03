@@ -324,7 +324,10 @@ Then `ApplyMitigation(raw, mitigation%, cap)` and `dice.RollStat(final)` for var
 
 ### Item Mitigation Fields (replaces old single DamageReduction)
 Items use `physical_mitigation`, `magical_mitigation`, `conviction_mitigation` (integer percentages).
-Old `DamageReduction` field is kept for legacy compatibility but no longer used by the pipeline.
+The legacy `DamageReduction` field was fully removed 2026-08-03 (its three
+side-jobs migrated: shield classification keys on `physical_mitigation > 0 ||
+subtype wearable`, the item-value formula prices the three mitigation fields,
+and the dead upstream `Item.Enchant` that wrote it was deleted).
 
 ### Mitigation Caps
 Default 75% each: `PhysicalMitigationCap`, `MagicalMitigationCap`, `ConvictionMitigationCap`

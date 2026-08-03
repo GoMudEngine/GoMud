@@ -6,5 +6,4 @@ description: A plain cape that protects (poorly) from the elements.
 type: back
 value: 5
 subtype: wearable
-damagereduction: 1
 physical_mitigation: 1

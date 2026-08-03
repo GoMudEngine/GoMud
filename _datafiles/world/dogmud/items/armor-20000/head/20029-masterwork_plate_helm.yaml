@@ -8,6 +8,5 @@ description: A full-faced helm of thick steel plate, shaped by a master smith.
   narrowed vision.
 type: head
 subtype: wearable
-damagereduction: 5
 physical_mitigation: 5
 value: 30

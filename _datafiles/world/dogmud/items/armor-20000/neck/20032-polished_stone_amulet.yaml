@@ -8,7 +8,6 @@ description: Two polished stones are set in a copper frame, bound together with
   against the skin, lending the wearer a quiet sense of resolve.
 type: neck
 subtype: wearable
-damagereduction: 1
 physical_mitigation: 1
 magical_mitigation: 2
 conviction_mitigation: 2

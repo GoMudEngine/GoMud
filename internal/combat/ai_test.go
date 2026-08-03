@@ -112,7 +112,7 @@ func TestCanUseBash(t *testing.T) {
 					ItemId: 1,
 					Spec: &items.ItemSpec{
 						Type:            items.Offhand,
-						DamageReduction: 5,
+						PhysicalMitigation: 5,
 						BlockRating:     10,
 					},
 				}
@@ -359,7 +359,7 @@ func TestScoreBash(t *testing.T) {
 				ItemId: 1,
 				Spec: &items.ItemSpec{
 					Type:            items.Offhand,
-					DamageReduction: 5,
+					PhysicalMitigation: 5,
 					BlockRating:     10,
 				},
 			}
@@ -519,7 +519,7 @@ func TestCanUseBash_ShieldOrNaturalAndArms(t *testing.T) {
 		ItemId: 1,
 		Spec: &items.ItemSpec{
 			Type:            items.Offhand,
-			DamageReduction: 5,
+			PhysicalMitigation: 5,
 			BlockRating:     10,
 		},
 	}
@@ -555,7 +555,7 @@ func TestCanUseBash_ShieldOrNaturalAndArms(t *testing.T) {
 		ItemId: 2,
 		Spec: &items.ItemSpec{
 			Type:            items.Offhand,
-			DamageReduction: 5,
+			PhysicalMitigation: 5,
 			BlockRating:     10,
 		},
 	}

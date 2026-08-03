@@ -367,41 +367,10 @@ func (i *Item) UnEnchant() {
 	}
 }
 
-// enchantmentLevel is 0-100. If 0(zero) remove any enchantments.
-func (i *Item) Enchant(damageBonus int, defenseBonus int, statBonus map[string]int, cursed bool) {
-
-	var newSpec ItemSpec
-
-	if i.Spec == nil {
-		specCopy := *GetItemSpec(i.ItemId)
-		newSpec = specCopy
-	} else {
-		newSpec = *i.Spec
-	}
-
-	if newSpec.Damage.BaseDamage > 0 {
-		newSpec.Damage.BaseDamage += damageBonus
-	} else {
-		newSpec.Damage.BonusDamage += damageBonus
-	}
-	newSpec.DamageReduction += defenseBonus
-
-	// Permanently add new statmods
-	for statName, statBonusAmt := range statBonus {
-		newSpec.StatMods.Add(statName, statBonusAmt)
-	}
-
-	i.Enchantments++
-
-	newSpec.Cursed = cursed
-
-	if newSpec.Damage.BaseDamage == 0 {
-		newSpec.Damage.FormatDiceRoll()
-	}
-	newSpec.AutoCalculateValue()
-
-	i.Spec = &newSpec
-}
+// The legacy upstream Item.Enchant (damage/defense/stat bonus enchanting) was
+// removed 2026-08-03 with the DamageReduction field it wrote — the Chrysalis
+// enchantment system (internal/enchantments) is the only live enchant path.
+// UnEnchant above stays: it only clears Spec/Enchantments.
 
 func (i *Item) Uncurse() {
 	i.Uncursed = true

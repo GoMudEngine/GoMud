@@ -531,7 +531,7 @@ func TestSpellDefenseValue_PhysicalIgnoresMitigation(t *testing.T) {
 	cleanup := items.SeedItemsForTest(map[int]*items.ItemSpec{
 		8001: {ItemId: 8001, Type: items.Body, Name: "test plate", PhysicalMitigation: 30},
 		8002: {ItemId: 8002, Type: items.Head, Name: "test helm", PhysicalMitigation: 10},
-		8003: {ItemId: 8003, Type: items.Legs, Name: "test greaves", DamageReduction: 40},
+		8003: {ItemId: 8003, Type: items.Legs, Name: "test greaves", PhysicalMitigation: 40},
 	})
 	defer cleanup()
 

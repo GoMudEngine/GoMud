@@ -138,7 +138,6 @@ type ItemSpec struct {
 
     // Combat Properties
     Damage              Damage        // Weapon damage specification
-    DamageReduction     int           // Legacy armor field (use mitigation fields instead)
     DamageMultiplier    float64       // Weapon/spell damage scaling (0.15–2.5)
     PhysicalMitigation  int           // Physical damage reduction % (armor)
     MagicalMitigation   int           // Magical damage reduction % (enchanted gear)
@@ -267,34 +266,12 @@ func (i *Item) NameMatch(input string, allowContains bool) (partialMatch bool, f
 
 ## Enchantment and Modification System
 
-### Dynamic Item Enhancement
-```go
-// Enchant item with bonuses
-func (i *Item) Enchant(damageBonus int, defenseBonus int, statBonus map[string]int, cursed bool) {
-    var newSpec ItemSpec
-    
-    if i.Spec == nil {
-        specCopy := *GetItemSpec(i.ItemId)
-        newSpec = specCopy
-    } else {
-        newSpec = *i.Spec
-    }
-    
-    // Apply enhancements
-    newSpec.Damage.BonusDamage += damageBonus
-    newSpec.DamageReduction += defenseBonus
-    
-    for statName, statBonusAmt := range statBonus {
-        newSpec.StatMods.Add(statName, statBonusAmt)
-    }
-    
-    i.Enchantments++
-    newSpec.Cursed = cursed
-    newSpec.AutoCalculateValue()
-    
-    i.Spec = &newSpec
-}
+The legacy upstream `Item.Enchant` (flat damage/defense/stat bonuses) was
+removed 2026-08-03 with the `DamageReduction` field it wrote — the Chrysalis
+system in `internal/enchantments` is the only live enchant path. `UnEnchant`
+remains (clears `Spec` and `Enchantments`).
 
+```go
 // Curse management
 func (i *Item) IsCursed() bool {
     return i.GetSpec().Cursed && !i.Uncursed
