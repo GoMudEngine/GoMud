@@ -1,0 +1,29 @@
+# The Proving rework (2026-08-03): consider lesson + re-nagged flee beat.
+# Adversarial route-1 tutorial walk. Spawn a FRESH character (route 1,
+# "complete noob"), follow Dewey's prompts exactly, and read every line
+# as a confused first-time player would.
+goals:
+  - >-
+    Walk the whole newcomer tutorial (quest 28) end to end following
+    Dewey's prompts and the hint command. Report any prompt that is
+    unclear, double-rendered, out of order, or missing.
+  - >-
+    In The Proving, after the cooldowns lesson Dewey should prompt
+    "consider effigy". Verify the consider output gives a strongly
+    unfavorable instinct read, and that Dewey's follow-up explains the
+    effigy cannot be broken and then prompts attack. Report if the
+    consider step is skippable, confusing, or its tone contradicts the
+    later flee lesson.
+  - >-
+    THE KEY ADVERSARIAL CHECK: after typing trip, deliberately IGNORE
+    Dewey's flee instruction. Keep attacking the effigy for at least 12
+    more rounds as a player who missed the line would. Verify Dewey
+    repeats a flee reminder within a handful of rounds and keeps
+    reminding periodically (roughly every 6+ rounds), that the reminder
+    does not fire on top of his scripted post-trip lines, and that the
+    wording makes clear the effigy can never be killed. Then flee and
+    verify the lesson completes normally.
+  - >-
+    Confirm the handoff still works after the grind detour: flee carries
+    you onward, talk dewey completes the tutorial, and you arrive at the
+    Awakening Pool with quest 30 granted.

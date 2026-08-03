@@ -82,7 +82,7 @@ steps:
   - id: cast_spike
     map_target: -1  # action step (command/skill) — no travel destination
     description: "You loosed a spike of conviction. Belief is a weapon here."
-    hint: "Take its legs the body's way -- type trip."
+    hint: "When your spike lands, take its legs the body's way -- type trip."
   - id: tripped
     map_target: -1  # action step (command/skill) — no travel destination
     description: "You put the effigy down -- voice, belief, and body, all yours."
@@ -373,8 +373,10 @@ triggers:
       - npc_say:
           mob: 9491
           lines:
-            - {delay: 0, text: "Belief spends from the same well. Now take
-                its legs the body's way. Type trip."}
+            - {delay: 0, text: "Belief spends from the same well, and it
+                takes a moment to gather -- watch it build."}
+            - {delay: 8, text: "When your spike lands, take its legs the
+                body's way -- type trip."}
 
   - event: command_issued
     command: trip
