@@ -7,10 +7,42 @@
 # idle goal planner and simply drop the dismissive greeting emote -- Dewey's
 # actual teaching + arrival lines all live in the room behavior trees
 # (behaviors/rooms/newcomer_antechamber/), spoken by name via mob_say.
+#
+# The mob_idle flee re-nag: quest 28's flee prompt is one delayed line that
+# can scroll away under combat spam (Malia, 2026-08-02) -- a player who
+# misses it grinds the unkillable effigy forever. While a player mid-lesson
+# (has 28-tripped, missing 28-fled) shares Dewey's room, he repeats the
+# prompt every few rounds. ANDing the in-room has/missing conditions is safe
+# here ONLY because the antechamber is a solo ephemeral instance.
 
 tree:
   type: selector
   children:
+    - type: sequence
+      event: mob_idle
+      children:
+        - type: condition
+          check: player_in_room_has_quest
+          quest: "28-tripped"
+        - type: condition
+          check: player_in_room_missing_quest
+          quest: "28-fled"
+        # delay(3) holds the first nag until after quest 28's own delayed
+        # flee line (8s post-trip) so Dewey does not talk over himself;
+        # cooldown(6) paces the repeats.
+        - type: decorator
+          mod: delay
+          rounds: 3
+          child:
+            type: decorator
+            mod: cooldown
+            rounds: 6
+            child:
+              type: action
+              do: say
+              text: >-
+                No shame in stopping -- straw does not tire, and you cannot
+                break it. Type flee to break away and live.
     - type: action
       event: mob_idle
       do: try_goal_planner
