@@ -135,8 +135,12 @@ The `internal/usercommands` package implements the complete command system for p
 #### **Dialogue–Quest Integration** (`talk.go`, `ask.go`)
 - **PlayerState construction**: `buildPlayerState(user)` creates a
   `dialogue.PlayerState` with callbacks for `HasQuest`, `HasItem`,
-  `RemoveItem`, and `GiveQuest` — passed to all dialogue engine calls
-  so NPC dialogue can be gated on quest progress and inventory
+  `RemoveItem`, `GiveQuest`, `GiveItem`, etc. — passed to all dialogue
+  engine calls so NPC dialogue can be gated on quest progress and
+  inventory. `GiveItem` returns whether the item actually reached the
+  player (false when `StoreItem` refuses over carry capacity, or on an
+  invalid item id) — the dialogue engine then withholds the node's
+  other effects, including `grantsQuest` (2026-08-03 soft-lock fix)
 - **Quest context for LLM**: `buildQuestContext(user, mobId)` returns
   human-readable quest summaries injected into the LLM system prompt
   via `llm.ConversationContext.QuestContext`

@@ -87,7 +87,7 @@ func TestApplyQuestEffects_PopulatedStateFiresEverything(t *testing.T) {
 		HasItem:      func(int) bool { return true },
 		RemoveItem:   func(int) bool { removed = true; return true },
 		GiveQuest:    func(string) { granted = true },
-		GiveItem:     func(int) { given = true },
+		GiveItem:     func(int) bool { given = true; return true },
 		SetQuestFlag: func(string, string) { flagged = true },
 		BumpRep:      func(string, int) { bumped = true },
 		GiveGold:     func(int) { gold = true },

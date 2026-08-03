@@ -168,7 +168,7 @@ func TestDeliveryAskPathCompletes(t *testing.T) {
 				HasItem:      func(id int) bool { return hasItem && id == tc.itemId },
 				RemoveItem:   func(id int) bool { itemRemoved = true; hasItem = false; return true },
 				GiveQuest:    func(tok string) { granted = tok },
-				GiveItem:     func(id int) { gaveItem = id },
+				GiveItem:     func(id int) bool { gaveItem = id; return true },
 				GetQuestFlag: func(key string) string { return flags[key] },
 				SetQuestFlag: func(key, val string) { flags[key] = val },
 				BumpRep:      func(faction string, delta int) { bumps[faction] += delta },
