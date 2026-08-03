@@ -422,6 +422,39 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 			maps.Copy(spellCopy, mob.Character.SpellBook)
 			mob.Character.SpellBook = spellCopy
 		}
+		// Mutations is ALWAYS non-nil on a template (fileloader calls
+		// Validate(), which allocates it), and three spawn-time writes below
+		// land in it: SpawnMutations, the MutationChance roll, and
+		// ApplyIntrinsicMutations. Without this copy an intrinsic mutation
+		// compounded across respawns (spawn 1 wrote rank 1, spawn 2 read 1
+		// and wrote 2, ...) until every instance was pinned at max rank, and
+		// one lucky MutationChance roll granted that mutation to every future
+		// spawn of the template for the server's uptime.
+		if mob.Character.Mutations != nil {
+			mutCopy := make(map[string]int, len(mob.Character.Mutations))
+			maps.Copy(mutCopy, mob.Character.Mutations)
+			mob.Character.Mutations = mutCopy
+		}
+		// Shop is a slice whose ShopItem elements are mutated IN PLACE at
+		// runtime (Shop.Restock writes (*s)[i], Destock/StockItem adjust
+		// (*s)[i].Quantity). Sharing the backing array meant two instances of
+		// the same merchant template shared one stock counter and the
+		// template itself accumulated depletion + lastRestockRound stamps, so
+		// a fresh respawn inherited the previous instance's shelves.
+		if len(mob.Character.Shop) > 0 {
+			shopCopy := make(characters.Shop, len(mob.Character.Shop))
+			copy(shopCopy, mob.Character.Shop)
+			mob.Character.Shop = shopCopy
+		}
+		// Groups is appended to per-instance (bountyhunter tags a spawned
+		// hunter with its issuer faction). yaml decoding can leave cap > len,
+		// in which case that append writes into the template's backing array
+		// and a second hunter's tag overwrites the first's.
+		if len(mob.Groups) > 0 {
+			groupsCopy := make([]string, len(mob.Groups))
+			copy(groupsCopy, mob.Groups)
+			mob.Groups = groupsCopy
+		}
 
 		// Stage 38.4: Try to load a saved instance (progression data from disk).
 		// If found, apply saved training values instead of randomizing.
