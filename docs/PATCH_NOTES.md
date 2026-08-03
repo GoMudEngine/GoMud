@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-08-03 — NPCs no longer hand out quests they failed to hand out items for
+
+If an NPC's dialogue was supposed to give you both an item and a quest,
+and you were carrying too much to take the item, you used to get the
+quest anyway — with no way to ever get the item, since the NPC then
+treated the conversation as finished. Now the whole exchange simply
+waits: put something down, ask again, and you receive the item, the
+quest, and any other rewards together.
+
 ## 2026-08-03 — The Proving teaches sizing up a fight (and leaving one)
 
 The newcomer tutorial's practice ring now teaches two more survival
