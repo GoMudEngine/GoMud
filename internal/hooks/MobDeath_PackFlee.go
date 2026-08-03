@@ -1,7 +1,6 @@
 package hooks
 
 import (
-	"fmt"
 
 	"github.com/GoMudEngine/GoMud/internal/events"
 	"github.com/GoMudEngine/GoMud/internal/messaging"
@@ -97,12 +96,12 @@ func PackFlee(e events.Event) events.ListenerReturn {
 	}
 
 	if fleeCount > 0 {
-		speciesName := deadSpec.Character.Species()
-		if speciesName == "" {
-			speciesName = "creatures"
-		}
+		// Phrased without the species noun on purpose: the singular species
+		// name ("the remaining human scatter") can never agree with the
+		// plural verb, and the normalize pipeline has no verb-agreement
+		// stage to save it (chunk-4 flavor defect, closed 2026-08-03).
 		sendVisualRoomText(room, messaging.CategoryMobEmote,
-			fmt.Sprintf(`<ansi fg="yellow">Sensing the death of their packmate, the remaining %s scatter!</ansi>`, speciesName),
+			`<ansi fg="yellow">Sensing the death of their packmate, the others scatter!</ansi>`,
 		)
 	}
 

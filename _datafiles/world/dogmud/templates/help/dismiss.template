@@ -25,6 +25,13 @@ carefully, or ensure your companions are elsewhere first.
               to its natural behavior permanently — the charm
               cannot be reapplied to the same creature.
 
+<ansi fg="yellow">━━━ Gear Is Not Returned ━━━</ansi>
+
+Anything your companion is carrying or wearing goes with it. A
+summoned or raised companion dissolves along with every item you
+gave it, and a freed creature walks away still wearing your gear.
+Take back what you want to keep BEFORE you dismiss.
+
 <ansi fg="yellow">━━━ Alternative ━━━</ansi>
 
 If you simply want a companion to stop fighting alongside you
