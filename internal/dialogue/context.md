@@ -56,8 +56,18 @@ for all three:
 func checkQuestGate(questRequired, questExcluded []string, requiresItem int,
     flagRequired, flagExcluded map[string]string, masterworkRequired int, ps *PlayerState) bool
 func applyQuestEffects(grantsQuest string, requiresItem, givesItem int,
-    flagSet *QuestFlagSet, bumpsRep []RepBump, givesGold int, ps *PlayerState)
+    flagSet *QuestFlagSet, bumpsRep []RepBump, givesGold int, ps *PlayerState) bool
 ```
+
+`applyQuestEffects` attempts `GiveItem` **before every other effect** and
+returns false — applying nothing else — when delivery fails (2026-08-03
+soft-lock fix): no quest grant, no `requiresItem` removal, no flags/rep/
+gold, and `TreeAdvance` skips `UpdateMemory` so the node re-fires once
+the player makes room. `PlayerState.GiveItem` is `func(int) bool`; the
+production callback in `usercommands.buildPlayerState` returns
+`StoreItem`'s verdict and returns false (with an error log) for an
+invalid item id. A nil `GiveItem` counts as delivered (skip-checks
+contract).
 
 Moods: `friendly`, `neutral`, `hostile`, `afraid`, `grateful`. A pattern or
 greeting can restrict itself to a subset via `moods:`, and matching a node can
