@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-08-03 — Crafting understands what you mean
+
+Typing a partial recipe name — <ansi fg="command">craft cloak</ansi> instead of the full
+hyphenated name — now works the way you'd expect: it picks the recipe
+you actually know, asks which one you meant if you know several that
+match, and always resolves the same way instead of choosing at random.
+Recipes you haven't discovered yet still stay hidden behind the
+keep-crafting hint.
+
 ## 2026-08-03 — Enchanted armor is appraised by what it actually does
 
 A retired internal armor number has been removed for good. The one
