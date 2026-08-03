@@ -1253,6 +1253,29 @@ func applyPetDamage(result *AttackResult, sourceChar *characters.Character, targ
 		petBaseDmg, petVar = dice.DiceToDistribution(petDmg.DiceCount, petDmg.SideCount, petDmg.BonusDamage)
 	}
 
+	// Pet bites and claws are physical damage, so they run through the target's
+	// physical mitigation exactly like melee (buildDamageParams), ranged
+	// (ExecuteSkillMove) and the mob-parity helpers. Before this, pet damage was
+	// the one physical source that ignored armor entirely — an armored boss took
+	// the same pet damage as an unarmored newbie.
+	//
+	// Both the mean AND the spread are mitigated. The pet's variance comes from
+	// its authored dice spec, not from a stat, so it is not stat-proportional
+	// (dice.Roll, not dice.RollStat, is correct here) — but scaling only the
+	// mean would leave the roll's spread at full width against armor. Scaling
+	// both by the same factor is exactly equivalent to mitigating the rolled
+	// value, and preserves the pet's authored coefficient of variation.
+	//
+	// Pets have no crit path: nothing here inspects a Z-score or sets
+	// result.Crit, so the "crits bypass mitigation" convention used by the melee
+	// (combat_helpers.go), spell (combat_shared_helpers.go) and taunt
+	// (combat_taunt.go) channels has nothing to attach to. Deliberately not
+	// adding one — a pet crit is a separate design decision, not a bug fix.
+	petMitigation := targetChar.GetPhysicalMitigation()
+	petMitigationCap := MitigationCap(ChannelPhysical)
+	petBaseDmg = ApplyMitigation(petBaseDmg, petMitigation, petMitigationCap)
+	petVar = ApplyMitigation(petVar, petMitigation, petMitigationCap)
+
 	// Pet damage is claws/bite/etc — natural-sharp band.
 	petCat := messaging.CategoryHitNaturalSharp
 	for i := 0; i < petAttacks; i++ {
