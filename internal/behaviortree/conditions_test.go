@@ -251,6 +251,7 @@ func TestCondLookup_AllRegistered(t *testing.T) {
 		"mob_in_combat", "mob_health_below", "mob_at_home",
 		"time_of_day", "round_mod", "random_chance",
 		"state_equals", "players_in_room", "item_matches",
+		"player_in_room_missing_quest", "player_in_room_has_quest",
 	}
 	for _, name := range names {
 		if LookupCondition(name) == nil {

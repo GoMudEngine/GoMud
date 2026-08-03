@@ -146,6 +146,34 @@ func condPlayerInRoomMissingQuest(params map[string]any, ctx *EvalContext) Resul
 	return Failure
 }
 
+// condPlayerInRoomHasQuest succeeds when ANY player in the mob's room
+// holds the given quest token. Mirror of condPlayerInRoomMissingQuest,
+// for the same ambient/idle branches (mob_idle has no triggering
+// player). ANDing the has/missing variants can match different players
+// in a shared room — only pair them where the room is effectively
+// single-player (e.g. the solo ephemeral newcomer antechamber).
+// params: quest (string token)
+func condPlayerInRoomHasQuest(params map[string]any, ctx *EvalContext) Result {
+	quest := getStringParam(params, "quest")
+	if quest == "" {
+		return Failure
+	}
+	room := rooms.LoadRoom(ctx.RoomId)
+	if room == nil {
+		return Failure
+	}
+	for _, userId := range room.GetPlayers() {
+		user := users.GetByUserId(userId)
+		if user == nil {
+			continue
+		}
+		if user.Character.HasQuest(quest) {
+			return Success
+		}
+	}
+	return Failure
+}
+
 func condMultipleEnemies(params map[string]any, ctx *EvalContext) Result {
 	room := rooms.LoadRoom(ctx.RoomId)
 	if room == nil {

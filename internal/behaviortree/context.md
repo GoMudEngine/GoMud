@@ -220,6 +220,8 @@ Condition nodes use `type: condition` with `check: <name>`.
 | `round_mod` | `n` (int) | `round % n == 0`. |
 | `random_chance` | `percent` (int) | N% probability. |
 | `players_in_room` | none | At least one player in the room. |
+| `player_in_room_missing_quest` | `quest` (string) | ANY player in the room lacks the token. For ambient/idle branches (`mob_idle` has no triggering player, so `player_missing_quest` can't gate them). |
+| `player_in_room_has_quest` | `quest` (string) | ANY player in the room holds the token. Mirror of the above. ANDing has/missing variants can match *different* players in a shared room — only pair them where the room is effectively single-player (e.g. the solo ephemeral newcomer antechamber). |
 | `item_matches` | `item_id` (int) | Event ItemId matches. `player_give` only. |
 | `multiple_enemies` | none | More than one player + charmed mob in room. |
 
