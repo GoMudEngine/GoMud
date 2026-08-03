@@ -1,5 +1,18 @@
 # DOGMud Patch Notes
 
+## 2026-08-03 — The help system tells the truth again
+
+A full audit of every help page against the game as it actually works
+today. Ten pages describing skills, commands, and mechanics that no
+longer exist (or never did) are gone. Seventeen pages stating wrong
+facts are corrected — including recipes you couldn't craft as written,
+spell costs off by severalfold, and a page that described the reverse
+of its own command. The <ansi fg="command">help</ansi> menu now lists dozens of pages that were
+always there but impossible to find (guilds, achievements, petitions,
+sleep, and every skill), bartering finally has a page of its own, and
+the combat pages explain fighting from grapple positions, casting
+under pressure, and what your companions cost to keep.
+
 ## 2026-08-03 — Wear, eat, and drink pick the sensible item
 
 When two things in your pack share a name, <ansi fg="command">wear</ansi>, <ansi fg="command">equip</ansi>, <ansi fg="command">eat</ansi>, and
