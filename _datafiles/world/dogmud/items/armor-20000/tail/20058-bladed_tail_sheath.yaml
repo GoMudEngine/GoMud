@@ -9,6 +9,7 @@ description: A fitted sheath of hardened leather with a curved blade
 type: tail
 subtype: wearable
 value: 50
+rarity_tier: 40
 weight: 3.0
 damage_multiplier: 10
 statmods:

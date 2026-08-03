@@ -7,5 +7,6 @@ ammo_tag: shot
 uses: 30
 weight: 1.0
 value: 40
+rarity_tier: 40
 vendor_categories:
 - blacksmithing

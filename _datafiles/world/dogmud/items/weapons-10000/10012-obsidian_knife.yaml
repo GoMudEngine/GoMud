@@ -11,6 +11,7 @@ description: |
   glass edge catches light and fractures it into dark rainbows.
 type: weapon
 value: 5
+rarity_tier: 50
 hands: 1
 subtype: slashing
 weight: 2.0

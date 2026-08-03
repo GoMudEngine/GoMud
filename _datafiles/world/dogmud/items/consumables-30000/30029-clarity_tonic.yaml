@@ -11,3 +11,4 @@ uses: 1
 buffids:
   - 48
 value: 10
+rarity_tier: 40

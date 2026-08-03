@@ -9,6 +9,7 @@ magical_mitigation: 6
 physical_mitigation: 3
 weight: 1.0
 value: 85
+rarity_tier: 30
 description: >-
   A circlet of ever-flowing oasis water held in a perfect ring by
   some quiet planar will. It turns and ripples against the wearer's

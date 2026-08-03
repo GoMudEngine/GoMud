@@ -9,5 +9,6 @@ description: A simple tunic stitched from undyed linen panels. The seams are
 type: body
 subtype: wearable
 value: 4
+rarity_tier: 50
 physical_mitigation: 2
 escapemodifier: 1.0

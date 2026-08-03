@@ -10,6 +10,7 @@ type: object
 subtype: throwable
 uses: 1
 value: 18
+rarity_tier: 40
 weight: 0.2
 buffids:
   - 78

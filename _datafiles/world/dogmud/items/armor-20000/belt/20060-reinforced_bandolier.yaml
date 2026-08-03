@@ -10,6 +10,7 @@ description: A heavy-duty bandolier of layered leather and
 type: belt
 subtype: wearable
 value: 35
+rarity_tier: 40
 weight: 2.5
 physical_mitigation: 1
 is_bandolier: true

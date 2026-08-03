@@ -14,6 +14,7 @@ type: back
 subtype: wearable
 weight: 1.5
 value: 110
+rarity_tier: 30
 physical_mitigation: 2
 statmods:
   dexterity: 2

@@ -8,5 +8,6 @@ description: Loose-fitting trousers sewn from plain linen. They breathe well
 type: legs
 subtype: wearable
 value: 4
+rarity_tier: 50
 physical_mitigation: 2
 escapemodifier: 1.0

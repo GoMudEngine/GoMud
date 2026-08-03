@@ -24,6 +24,7 @@ speedmultiplier: 0.7
 parryrating: 14
 weight: 5.5
 value: 200
+rarity_tier: 30
 statmods:
   willpower: 8
   perception: 5

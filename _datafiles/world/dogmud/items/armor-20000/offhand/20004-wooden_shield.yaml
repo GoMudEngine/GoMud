@@ -9,3 +9,4 @@ subtype: wearable
 physical_mitigation: 5
 blockrating: 12  # Stage 7.1: Block defense bonus
 value: 2
+rarity_tier: 50

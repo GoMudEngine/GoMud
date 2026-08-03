@@ -10,3 +10,4 @@ type: head
 subtype: wearable
 physical_mitigation: 3
 value: 10
+rarity_tier: 40

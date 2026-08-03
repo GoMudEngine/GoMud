@@ -12,6 +12,7 @@ uses: 1
 buffids:
   - 72
 value: 60
+rarity_tier: 30
 weight: 0.5
 toxicity: 60
 aging:

@@ -6,5 +6,6 @@ namesimple: pants
 description: A pair of poorly held together pants.
 type: legs
 value: 5
+rarity_tier: 50
 subtype: wearable
 physical_mitigation: 1

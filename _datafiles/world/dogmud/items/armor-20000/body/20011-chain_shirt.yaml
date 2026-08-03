@@ -7,6 +7,7 @@ description: A shirt of interlocking iron rings that provides solid protection w
   sacrificing too much mobility. The links are tightly woven and well-maintained.
 type: body
 value: 30
+rarity_tier: 40
 subtype: wearable
 physical_mitigation: 10
 escapemodifier: 0.0  # Stage 8.7: Medium armor - neutral escape modifier

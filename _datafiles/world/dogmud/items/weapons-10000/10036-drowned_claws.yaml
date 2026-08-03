@@ -16,6 +16,7 @@ staminacost: 3
 grapplemodifier: 0.5
 weight: 0.8
 value: 70
+rarity_tier: 30
 description: >-
   Four curved talons of solidified oasis water, clear as glass and
   cold to the touch. They flex like living tendrils between strikes,

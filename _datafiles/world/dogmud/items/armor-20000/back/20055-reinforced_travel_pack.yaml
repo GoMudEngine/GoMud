@@ -11,6 +11,7 @@ description: A masterwork travel pack of layered leather and canvas,
 type: back
 subtype: wearable
 value: 75
+rarity_tier: 30
 weight: 3.0
 weight_reduction: 0.50
 physical_mitigation: 1

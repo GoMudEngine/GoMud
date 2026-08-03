@@ -13,4 +13,5 @@ uses: 1
 buffids:
   - 45
 value: 4
+rarity_tier: 50
 weight: 0.5

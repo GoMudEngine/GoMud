@@ -3,6 +3,7 @@ name: Graduation Cap
 description: A special hat signifying that you've completed the tutorial.
 type: head
 value: 11
+rarity_tier: 40
 subtype: wearable
 physical_mitigation: 1
 magical_mitigation: 1

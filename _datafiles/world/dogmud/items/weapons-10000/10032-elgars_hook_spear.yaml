@@ -24,6 +24,7 @@ damage:
 damage_multiplier: 1.10
 parryrating: 10
 value: 250
+rarity_tier: 20
 statmods:
   perception: 9
   weapon-combat: 4

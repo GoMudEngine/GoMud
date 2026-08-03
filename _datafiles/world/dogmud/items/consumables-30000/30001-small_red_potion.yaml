@@ -10,3 +10,4 @@ uses: 1
 buffids:
 - 5
 value: 2
+rarity_tier: 50

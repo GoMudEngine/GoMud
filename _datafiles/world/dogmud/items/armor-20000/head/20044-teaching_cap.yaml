@@ -3,6 +3,7 @@ name: Teaching Cap
 description: A special hat signifying that you're worthy to teach a subject.
 type: head
 value: 9
+rarity_tier: 50
 subtype: wearable
 magical_mitigation: 1
 conviction_mitigation: 2
