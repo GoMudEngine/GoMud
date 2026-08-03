@@ -51,7 +51,10 @@ func (m *mockActionContext) GrantQuest(token string) { m.granted = append(m.gran
 func (m *mockActionContext) ConsumeItem(itemId int) {
 	m.consumedItems = append(m.consumedItems, itemId)
 }
-func (m *mockActionContext) GiveItem(itemId int) { m.givenItems = append(m.givenItems, itemId) }
+func (m *mockActionContext) GiveItem(itemId int) error {
+	m.givenItems = append(m.givenItems, itemId)
+	return nil
+}
 func (m *mockActionContext) GiveGold(amount int) { m.givenGold += amount }
 func (m *mockActionContext) ChargeGold(amount int) {
 	if amount > m.gold {

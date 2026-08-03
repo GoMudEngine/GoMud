@@ -355,6 +355,33 @@ func DrainQueuedPatrolCompletedForTest(instanceId int) []PatrolCompleted {
 	return found
 }
 
+// DrainQueuedItemOwnershipForTest removes all ItemOwnership events from the
+// global queue for the given userId and returns them. Pass 0 to drain every
+// ItemOwnership event regardless of owner.
+//
+// FOR TEST USE ONLY. Mutates the queue.
+func DrainQueuedItemOwnershipForTest(userId int) []ItemOwnership {
+	qLock.Lock()
+	defer qLock.Unlock()
+	var found []ItemOwnership
+	remaining := make(priorityQueue, 0, len(globalQueue))
+	for _, pe := range globalQueue {
+		io, ok := pe.event.(ItemOwnership)
+		if !ok {
+			remaining = append(remaining, pe)
+			continue
+		}
+		if userId == 0 || io.UserId == userId {
+			found = append(found, io)
+			continue
+		}
+		remaining = append(remaining, pe)
+	}
+	globalQueue = remaining
+	heap.Init(&globalQueue)
+	return found
+}
+
 // Initialize the priority queue.
 func init() {
 	heap.Init(&globalQueue)
