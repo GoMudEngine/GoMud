@@ -1,5 +1,14 @@
 # DOGMud Patch Notes
 
+## 2026-08-03 — Enchanted armor is appraised by what it actually does
+
+A retired internal armor number has been removed for good. The one
+place players could feel it: when an enchanted piece of armor is
+re-appraised, its worth now comes from its real protective power —
+including magical and conviction protection, which previously counted
+for nothing. Shields still count as shields; nothing changes about how
+your gear protects you.
+
 ## 2026-08-03 — Combat rebalanced around the armor fixes
 
 The recent correctness fixes (armor applying properly everywhere,
