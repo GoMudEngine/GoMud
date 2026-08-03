@@ -8,7 +8,6 @@ description: A simple band of hammered copper, polished to a warm glow. Tiny
   the wearer moves their hand.
 type: ring
 subtype: wearable
-damagereduction: 0
 statmods:
   dexterity: 1
 value: 3

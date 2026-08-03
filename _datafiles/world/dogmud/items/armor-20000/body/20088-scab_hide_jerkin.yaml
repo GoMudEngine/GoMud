@@ -10,6 +10,5 @@ description: A rugged jerkin sewn from cured pack-hide, the grey fur turned
 type: body
 subtype: wearable
 value: 14
-damagereduction: 5
 physical_mitigation: 5
 escapemodifier: 0.5

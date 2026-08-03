@@ -2560,7 +2560,7 @@ func TestGetDefenseScore(t *testing.T) {
 		c.Skills[string(skills.WeaponCombat)] = 10
 		c.Equipment.Offhand = items.Item{ItemId: 1, Spec: &items.ItemSpec{
 			Type:            items.Offhand,
-			DamageReduction: 5,
+			PhysicalMitigation: 5,
 			BlockRating:     15,
 		}}
 		score := c.GetDefenseScore(DefenseBlock)

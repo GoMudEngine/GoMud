@@ -9,7 +9,6 @@ description: A round shield carved from a single slab of windstone crystal.
   translucent edges, casting prismatic patterns.
 type: offhand
 subtype: wearable
-damagereduction: 12
 physical_mitigation: 12
 magical_mitigation: 8
 conviction_mitigation: 5

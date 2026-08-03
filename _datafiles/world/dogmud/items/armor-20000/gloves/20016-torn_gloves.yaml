@@ -7,7 +7,6 @@ description: The gloves are in terrible shape.
 type: gloves
 value: 8
 subtype: wearable
-damagereduction: 2
 physical_mitigation: 2
 statmods:
   strength: 1

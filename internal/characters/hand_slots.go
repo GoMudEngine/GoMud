@@ -179,6 +179,11 @@ func (c *Character) BestBlockRating() int {
 }
 
 // HasAnyShield returns true if any arm slot holds a shield-type item.
+// An offhand counts as a shield when it is wearable or actually mitigates
+// (an offhand holdable that gains mitigation through enchanting shields you
+// — same semantics the legacy DamageReduction check carried; every authored
+// offhand is subtype wearable, so classification was verified unchanged in
+// the 2026-08-03 field migration).
 func (c *Character) HasAnyShield() bool {
 	slots := c.getWeaponAndArmItems()
 	for _, slot := range slots {
@@ -186,7 +191,7 @@ func (c *Character) HasAnyShield() bool {
 			continue
 		}
 		spec := slot.GetSpec()
-		if spec.Type == items.Offhand && (spec.DamageReduction > 0 || spec.Subtype == items.Wearable) {
+		if spec.Type == items.Offhand && (spec.PhysicalMitigation > 0 || spec.Subtype == items.Wearable) {
 			return true
 		}
 	}

@@ -8,7 +8,6 @@ description: Leggings of linked iron rings sewn onto a leather backing. They
   is noticeable after a long march.
 type: legs
 subtype: wearable
-damagereduction: 6
 physical_mitigation: 6
 escapemodifier: -0.5
 value: 14

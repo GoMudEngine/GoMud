@@ -8,7 +8,6 @@ description: A smooth polished stone hangs from a loop of copper wire, resting
   sharpen the wearer's awareness of their surroundings.
 type: neck
 subtype: wearable
-damagereduction: 0
 magical_mitigation: 1
 conviction_mitigation: 1
 statmods:

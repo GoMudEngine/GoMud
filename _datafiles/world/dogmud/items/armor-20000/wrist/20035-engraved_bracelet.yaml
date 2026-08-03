@@ -8,7 +8,6 @@ description: A wide silver band engraved with flowing geometric patterns and
   wearer's hands seem steadier and quicker for wearing it.
 type: wrist
 subtype: wearable
-damagereduction: 0
 magical_mitigation: 1
 statmods:
   dexterity: 3

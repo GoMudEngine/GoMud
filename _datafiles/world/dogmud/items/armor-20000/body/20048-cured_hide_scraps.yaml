@@ -9,7 +9,6 @@ description: Irregular pieces of cured animal hide lashed together with sinew
   force behind a blow.
 type: body
 subtype: wearable
-damagereduction: 2
 physical_mitigation: 2
 escapemodifier: 0.5
 value: 6

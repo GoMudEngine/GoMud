@@ -271,7 +271,6 @@ type ItemSpec struct {
 	HungerRounds          int        `yaml:"hunger_rounds,omitempty"`           // rounds without a kill before the item feeds on the wielder (0 = never)
 	HungerDrainPct        float64    `yaml:"hunger_drain_pct,omitempty"`        // fraction of HealthMax drained per hungry round
 	TauntPull             bool       `yaml:"taunt_pull,omitempty"`              // sentient chatter on_taunt also pulls the bearer's target's aggro (Aegis)
-	DamageReduction       int        `yaml:"damagereduction,omitempty"`         // Legacy for MITIGATION (superseded by the *_mitigation fields), but NOT dead: still classifies offhands as shields (HasAnyShield), feeds the item-value formula, and receives defense-bonus enchants. Removing it is a redesign, not a cleanup.
 	PhysicalMitigation    int        `yaml:"physical_mitigation,omitempty"`     // % physical damage reduction (Stage 34)
 	MagicalMitigation     int        `yaml:"magical_mitigation,omitempty"`      // % magical damage reduction (Stage 34)
 	ConvictionMitigation  int        `yaml:"conviction_mitigation,omitempty"`   // % conviction damage reduction (Stage 34)
@@ -515,8 +514,15 @@ func (i *ItemSpec) AutoCalculateValue() {
 		val += (i.Damage.DiceCount * i.Damage.DiceCount) * (i.Damage.SideCount * i.Damage.SideCount * 2)
 		val += i.Damage.BonusDamage * 25
 	}
-	// Armor based damage valuation
-	val += (i.DamageReduction * i.DamageReduction) * 17
+	// Armor valuation: priced by real mitigation per channel. Replaces the
+	// legacy DamageReduction² term (2026-08-03 migration) — every item that
+	// set damagereduction carried the identical physical_mitigation value, so
+	// legacy items reprice identically; magical/conviction armor is now
+	// finally worth something here too. Only affects enchant re-pricing and
+	// admin-created items; authored `value:` fields always win.
+	val += (i.PhysicalMitigation*i.PhysicalMitigation +
+		i.MagicalMitigation*i.MagicalMitigation +
+		i.ConvictionMitigation*i.ConvictionMitigation) * 17
 
 	// Get the value of any buff it applies
 	for _, buffId := range i.BuffIds {

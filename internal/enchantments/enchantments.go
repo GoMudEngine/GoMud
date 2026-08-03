@@ -143,7 +143,6 @@ func ApplyTier(item *items.Item, def *EnchantmentDef, tier int) {
 	// in the base. This preserves affix bonuses while preventing enchant stacking.
 	if baseSpec != nil {
 		newSpec.Damage = baseSpec.Damage
-		newSpec.DamageReduction = baseSpec.DamageReduction
 		newSpec.DamageMultiplier = baseSpec.DamageMultiplier
 		newSpec.PhysicalMitigation = baseSpec.PhysicalMitigation
 		newSpec.MagicalMitigation = baseSpec.MagicalMitigation
@@ -183,8 +182,6 @@ func ApplyTier(item *items.Item, def *EnchantmentDef, tier int) {
 		case "damage_multiplier_bonus":
 			// Int value interpreted as hundredths: 10 = +0.10
 			newSpec.DamageMultiplier += float64(scaledVal) / 100.0
-		case "dr_bonus":
-			newSpec.DamageReduction += scaledVal
 		case "physical_mitigation_bonus":
 			newSpec.PhysicalMitigation += scaledVal
 		case "magical_mitigation_bonus":

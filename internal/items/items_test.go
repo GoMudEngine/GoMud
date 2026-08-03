@@ -230,22 +230,17 @@ func TestIsEnchanted(t *testing.T) {
 	})
 }
 
-// ─── Enchant / UnEnchant ────────────────────────────────────────────────────
+// ─── UnEnchant ──────────────────────────────────────────────────────────────
+// (The legacy Item.Enchant was removed 2026-08-03 with the DamageReduction
+// field; the Chrysalis system in internal/enchantments is the live path.)
 
-func TestEnchantUnEnchant(t *testing.T) {
+func TestUnEnchant(t *testing.T) {
 	cleanup := seedRegistry()
 	defer cleanup()
 
-	item := Item{ItemId: 10001}
-
-	// Enchant sets Spec override and increments Enchantments
-	item.Enchant(5, 3, map[string]int{"strength": 2}, false)
+	item := Item{ItemId: 10001, Enchantments: 1, Spec: &ItemSpec{ItemId: 10001}}
 	assert.True(t, item.IsEnchanted())
-	assert.NotNil(t, item.Spec)
-	assert.Equal(t, uint8(1), item.Enchantments)
-	assert.Equal(t, 30, item.Spec.Damage.BaseDamage) // 25 + 5
 
-	// UnEnchant clears
 	item.UnEnchant()
 	assert.False(t, item.IsEnchanted())
 	assert.Nil(t, item.Spec)

@@ -8,6 +8,5 @@ description: A hood of interlocking iron rings that drapes over the head and
   for garrison soldiers.
 type: head
 subtype: wearable
-damagereduction: 3
 physical_mitigation: 3
 value: 10

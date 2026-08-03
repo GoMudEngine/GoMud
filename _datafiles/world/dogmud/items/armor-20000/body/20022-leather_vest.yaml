@@ -9,6 +9,5 @@ description: A fitted vest of cured leather, stitched with bone needles and
 type: body
 subtype: wearable
 value: 10
-damagereduction: 4
 physical_mitigation: 4
 escapemodifier: 0.5
