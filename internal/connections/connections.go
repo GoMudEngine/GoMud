@@ -116,7 +116,10 @@ func Kick(id ConnectionId, reason string) (err error) {
 		cd.Close()
 		// keep track of the number of disconnects
 		disconnectCounter++
-		// remove the connection from the map
+		// remove the connection from the map (2026-08-03: the comment was
+		// here but the delete was not — a kicked connection leaked its
+		// registry entry until something else happened to call Remove).
+		delete(netConnections, id)
 		mudlog.Info("connection kicked", "connectionId", id, "remoteAddr", cd.RemoteAddr().String(), `reason`, reason)
 
 		return nil

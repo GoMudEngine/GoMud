@@ -486,6 +486,14 @@ func loadUserFromPath(userFilePath string, skipValidation bool) (*UserRecord, er
 		return nil, fmt.Errorf("user file %s parsed with no character data", userFilePath)
 	}
 
+	// Retroactive ANSI hygiene (2026-08-03): mail stored before write-side
+	// escaping shipped can still hold raw <ansi> payloads. Escaping is
+	// idempotent, so scrubbing on every load is safe; the validation re-save
+	// below persists the clean form.
+	for i := range loadedUser.Inbox {
+		loadedUser.Inbox[i].Message = util.EscapeAnsiTags(loadedUser.Inbox[i].Message)
+	}
+
 	if !skipValidation {
 		if err := loadedUser.Character.Validate(true); err != nil {
 			return nil, fmt.Errorf("user file %s failed validation: %w", userFilePath, err)

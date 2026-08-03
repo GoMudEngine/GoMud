@@ -455,6 +455,16 @@ func newMobByIdInternal(mobId MobId, homeRoomId int, skipInstanceLoad bool, forc
 			copy(groupsCopy, mob.Groups)
 			mob.Groups = groupsCopy
 		}
+		// Adjectives is mutated per-instance at runtime (sleeping, hidden,
+		// etc. add and remove entries). Latent template-share today — no mob
+		// YAML authors adjectives:, so the template slice is nil and the
+		// first append allocates — but an authored list would make instances
+		// cross-contaminate through the shared backing array, like Groups.
+		if len(mob.Character.Adjectives) > 0 {
+			adjCopy := make([]string, len(mob.Character.Adjectives))
+			copy(adjCopy, mob.Character.Adjectives)
+			mob.Character.Adjectives = adjCopy
+		}
 
 		// Stage 38.4: Try to load a saved instance (progression data from disk).
 		// If found, apply saved training values instead of randomizing.

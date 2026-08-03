@@ -9,6 +9,7 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
+	"github.com/GoMudEngine/GoMud/internal/util"
 	"gopkg.in/yaml.v2"
 )
 
@@ -82,6 +83,15 @@ func LoadDataFiles() {
 		if uerr := yaml.Unmarshal(b, &g); uerr != nil {
 			mudlog.Error("guilds.LoadDataFiles", "file", e.Name(), "error", uerr.Error())
 			continue
+		}
+		// Retroactive ANSI hygiene (2026-08-03): guild files written before
+		// write-side escaping shipped can still hold raw <ansi> payloads in
+		// their player-authored fields. Escaping is idempotent, so scrubbing
+		// on every load is safe, and the next save persists the clean form.
+		g.Name = util.EscapeAnsiTags(g.Name)
+		g.Motd = util.EscapeAnsiTags(g.Motd)
+		for rank, title := range g.RankTitles {
+			g.RankTitles[rank] = util.EscapeAnsiTags(title)
 		}
 		indexGuild(&g)
 		n++

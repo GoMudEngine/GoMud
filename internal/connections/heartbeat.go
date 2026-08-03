@@ -30,6 +30,7 @@ type heartbeatManager struct {
 	cd       *ConnectionDetails
 	config   HeartbeatConfig
 	stopChan chan struct{}
+	stopOnce sync.Once
 	wg       sync.WaitGroup
 }
 
@@ -47,6 +48,10 @@ func (cd *ConnectionDetails) StartHeartbeat(config HeartbeatConfig) error {
 	}
 
 	hm := newHeartbeatManager(cd, config)
+	// 2026-08-03: this assignment was missing — Close()'s stop() call was
+	// dead and the ping loop only exited when its next ping write failed
+	// against the closed socket (up to a full PingPeriod later).
+	cd.heartbeat = hm
 	mudlog.Info("Heartbeat::Start", "connectionId", cd.connectionId)
 	// set up pong handler
 	cd.wsConn.SetReadDeadline(time.Now().Add(hm.config.PongWait))
@@ -102,7 +107,12 @@ func (hm *heartbeatManager) writePing() error {
 	return nil
 }
 
+// stop is idempotent — Close() can run more than once for the same
+// connection (e.g. Kick then a later Remove), and a double close of
+// stopChan would panic.
 func (hm *heartbeatManager) stop() {
-	close(hm.stopChan)
+	hm.stopOnce.Do(func() {
+		close(hm.stopChan)
+	})
 	hm.wg.Wait()
 }
