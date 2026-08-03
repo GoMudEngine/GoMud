@@ -29,7 +29,7 @@ wait_user_text: >-
   old grief...
 summon_mob_id: 303
 summon_base_pool: 90
-summon_conviction_reserve: 440
+summon_conviction_reserve: 352
 summon_scaling_divisor: 500
 summon_requires_corpse: true
 summon_min_corpse_pool: 200

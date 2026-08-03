@@ -28,7 +28,7 @@ wait_user_text: >-
   will...
 summon_mob_id: 300
 summon_base_pool: 60
-summon_conviction_reserve: 350
+summon_conviction_reserve: 280
 summon_scaling_divisor: 500
 summon_requires_corpse: true
 summon_min_corpse_pool: 30
