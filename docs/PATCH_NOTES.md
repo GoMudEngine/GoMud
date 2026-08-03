@@ -1,5 +1,11 @@
 # DOGMud Patch Notes
 
+## 2026-08-03 — Apostrophes are optional
+
+Typing <ansi fg="command">buy healers root</ansi> now finds the Healer's Root — every name
+match (shops, your pack, the ground) ignores apostrophes, so you never
+have to type one.
+
 ## 2026-08-03 — Better gear is harder to find on shelves
 
 Every weapon, piece of armor, and consumable now carries a rarity
