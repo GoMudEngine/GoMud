@@ -1,5 +1,12 @@
 # DOGMud Patch Notes
 
+## 2026-08-03 — Companions ask a little less of your conviction
+
+Summoned and raised companions now reserve about a fifth less of your
+conviction while they serve. This applies to every summoning spell and
+to charmed creatures. Companions you already have keep the price you
+paid when you bound them — release and re-summon to get the new rate.
+
 ## 2026-08-03 — Assess tells you the cost of a companion before you raise it
 
 A bound companion sets aside part of your conviction pool for as long
