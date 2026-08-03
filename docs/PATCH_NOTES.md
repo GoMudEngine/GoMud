@@ -1,5 +1,15 @@
 # DOGMud Patch Notes
 
+## 2026-08-03 — Combat rebalanced around the armor fixes
+
+The recent correctness fixes (armor applying properly everywhere,
+spells becoming avoidable) shifted real fight outcomes, so the numbers
+have been retuned around them: creatures hit noticeably softer than
+they did right after the fixes, your melee swings land a little harder,
+and spell damage is up sharply per hit to make up for spells now being
+dodgeable. Overall fights should feel close to how they did before the
+fixes — just fairer under the hood.
+
 ## 2026-08-03 — Companions ask a little less of your conviction
 
 Summoned and raised companions now reserve about a fifth less of your
