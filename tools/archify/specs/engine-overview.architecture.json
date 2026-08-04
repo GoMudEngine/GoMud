@@ -8,7 +8,7 @@
     "quality_profile": "showcase",
     "repository": {
       "url": "https://github.com/pruuk/DOGMud",
-      "revision": "c8ec51ee55c88f1b02d7ea3b7fd201476bfc9eb6"
+      "revision": "9b83f51df38db51be1fa3ce63934cd900c746c00"
     },
     "views": [
       {
@@ -33,7 +33,7 @@
         "id": "data-layer",
         "label": "Where the world is authored",
         "focus": ["world-yaml", "instances", "rooms", "mobs"],
-        "note": "Every room, mob, item and quest is hand-authored YAML. A saved instance is applied on top of the template at load."
+        "note": "Every room, mob, item and quest is hand-authored YAML. The template always loads; an instance save is layered on top only if one exists."
       },
       {
         "id": "modules",
@@ -123,7 +123,7 @@
       "type": "backend",
       "label": "Rooms",
       "sublabel": "internal/rooms",
-      "pos": [1070, 118],
+      "pos": [1070, 268],
       "size": [160, 64],
       "sources": [
         { "path": "internal/rooms/rooms.go", "label": "Room" },
@@ -135,7 +135,7 @@
       "type": "backend",
       "label": "Mobs",
       "sublabel": "internal/mobs",
-      "pos": [1070, 268],
+      "pos": [1070, 118],
       "size": [160, 64],
       "sources": [
         { "path": "internal/mobs/mobs.go", "label": "Mob" },
@@ -172,8 +172,8 @@
       "type": "database",
       "label": "Instance saves",
       "sublabel": "rooms.instances · mobs.instances",
-      "tag": "overlays the template",
-      "pos": [1300, 240],
+      "tag": "applied only if a save exists",
+      "pos": [1330, 330],
       "size": [180, 76],
       "sources": [
         { "path": "internal/rooms/save_and_load.go", "line": 101, "label": "LoadRoomInstance" },
@@ -186,7 +186,7 @@
       "label": "YAML world data",
       "sublabel": "_datafiles/world/dogmud",
       "tag": "read once at boot",
-      "pos": [1550, 240],
+      "pos": [1330, 150],
       "size": [180, 76],
       "sources": [
         { "path": "main.go", "line": 1585, "label": "loadAllDataFiles" },
@@ -217,9 +217,9 @@
     { "id": "tick-mobs", "from": "tick", "to": "mobs" },
     { "id": "tick-users", "from": "tick", "to": "users" },
     { "id": "tick-modules", "from": "tick", "to": "modules", "label": "events", "labelDy": 24 },
-    { "id": "templates", "from": "world-yaml", "to": "instances", "label": "templates" },
-    { "id": "overlay-rooms", "from": "instances", "to": "rooms", "label": "overlay" },
-    { "id": "overlay-mobs", "from": "instances", "to": "mobs" }
+    { "id": "template-mobs", "from": "world-yaml", "to": "mobs" },
+    { "id": "template-rooms", "from": "world-yaml", "to": "rooms", "label": "templates" },
+    { "id": "overlay-rooms", "from": "instances", "to": "rooms", "label": "overlay, if saved", "variant": "dashed" }
   ],
   "cards": [
     {
@@ -245,7 +245,7 @@
       "title": "World data",
       "items": [
         "Rooms, mobs, items, quests and dialogue are hand-authored YAML",
-        "A saved instance is applied on top of its template at load time",
+        "The template always loads; an instance save is layered on top only if one exists",
         "Player saves live in users/ and are not part of the instance overlay"
       ]
     }
