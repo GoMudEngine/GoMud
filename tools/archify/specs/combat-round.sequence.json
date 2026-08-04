@@ -42,13 +42,13 @@
     "viewBox": [1180, 1260]
   },
   "participants": [
-    { "id": "attacker", "type": "external", "label": "Attacker", "sublabel": "player or mob with a target" },
-    { "id": "round", "type": "backend", "label": "Round handler", "sublabel": "hooks.handleCombatRound" },
+    { "id": "attacker", "type": "external", "label": "Attacker", "sublabel": "player or mob" },
+    { "id": "round", "type": "backend", "label": "Round handler", "sublabel": "handleCombatRound" },
     { "id": "swings", "type": "backend", "label": "Swing budget", "sublabel": "combat.calcSwingCount" },
-    { "id": "dice", "type": "cloud", "label": "Dice", "sublabel": "dice.Roll · dice.StdDevFor" },
+    { "id": "dice", "type": "cloud", "label": "Dice", "sublabel": "dice.Roll · StdDevFor" },
     { "id": "defender", "type": "external", "label": "Defender", "sublabel": "the target character" },
     { "id": "defense", "type": "security", "label": "Opposed roll", "sublabel": "runBestOfAllDefense" },
-    { "id": "damage", "type": "backend", "label": "Damage", "sublabel": "CalcRawDamage · ApplyMitigation" },
+    { "id": "damage", "type": "backend", "label": "Damage", "sublabel": "CalcRawDamage" },
     { "id": "room", "type": "frontend", "label": "Room output", "sublabel": "AttackResult messages" }
   ],
   "segments": [

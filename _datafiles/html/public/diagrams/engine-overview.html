@@ -4501,8 +4501,8 @@
       <p class="subtitle">A Go MUD engine with a YAML-authored world</p>
     </div>
 
-    <script id="archify-guided-views-data" type="application/json">[{"id":"connection-path","label":"How a player connects","focus":["telnet-players","web-players","telnet-listener","web-server","conn-pipeline"],"note":"Telnet sockets and upgraded websockets become the same ConnectionDetails, then run the same input-handler chain."},{"id":"the-tick","label":"The world tick","focus":["conn-pipeline","tick","rooms","mobs"],"note":"A submitted line becomes an Input event. MainWorker drains the queue every millisecond and fires a turn every 50 ms."},{"id":"world-state","label":"Live world state","focus":["tick","rooms","mobs","users"],"note":"Rooms, mobs and characters are plain in-memory Go structs, mutated only under the single world lock the tick holds."},{"id":"data-layer","label":"Where the world is authored","focus":["world-yaml","instances","rooms","mobs"],"note":"Every room, mob, item and quest is hand-authored YAML. The template always loads; an instance save is layered on top only if one exists."},{"id":"modules","label":"Pluggable modules","focus":["tick","modules","conn-pipeline","web-server"],"note":"Modules are compiled in and attach purely through event listeners. GMCP is the one that feeds the browser client."}]</script>
-    <script id="archify-source-evidence-data" type="application/json">{"schemaVersion":1,"verified":true,"repository":{"url":"https://github.com/pruuk/DOGMud","revision":"005a068880eb9a292f20ccba77ad4e306dc63944","shortRevision":"005a068"},"referenceCount":24,"nodes":{"web-players":[{"path":"_datafiles/html/public/static/js/gmcp.js","label":"web client GMCP handling","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/_datafiles/html/public/static/js/gmcp.js"}],"telnet-listener":[{"path":"main.go","line":1500,"label":"TelnetListenOnPort","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/main.go#L1500"},{"path":"main.go","line":628,"label":"handleTelnetConnection","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/main.go#L628"},{"path":"_datafiles/config.yaml","line":1227,"label":"Network.TelnetPort","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/_datafiles/config.yaml#L1227"}],"web-server":[{"path":"internal/web/web.go","line":272,"label":"Listen","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/web/web.go#L272"},{"path":"main.go","line":1247,"label":"HandleWebSocketConnection","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/main.go#L1247"}],"conn-pipeline":[{"path":"internal/connections/connectiondetails.go","label":"ConnectionDetails.HandleInput","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/connections/connectiondetails.go"},{"path":"internal/connections/connections.go","label":"connection registry","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/connections/connections.go"},{"path":"internal/inputhandlers/login.go","label":"login / IAC / ANSI handlers","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/inputhandlers/login.go"}],"tick":[{"path":"world.go","line":732,"label":"MainWorker","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/world.go#L732"},{"path":"world.go","line":915,"label":"InputWorker","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/world.go#L915"},{"path":"internal/events/events.go","line":176,"label":"ProcessEvents","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/events/events.go#L176"}],"rooms":[{"path":"internal/rooms/rooms.go","label":"Room","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/rooms/rooms.go"},{"path":"internal/rooms/save_and_load.go","line":79,"label":"LoadRoom","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/rooms/save_and_load.go#L79"}],"mobs":[{"path":"internal/mobs/mobs.go","label":"Mob","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/mobs/mobs.go"},{"path":"internal/mobs/schedule.go","label":"daily schedules","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/mobs/schedule.go"}],"users":[{"path":"internal/users/users.go","label":"UserRecord","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/users/users.go"},{"path":"internal/characters/character.go","label":"Character","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/characters/character.go"}],"modules":[{"path":"modules/all-modules.go","label":"compiled-in module set","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/modules/all-modules.go"},{"path":"modules/gmcp/gmcp.go","label":"GMCP module","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/modules/gmcp/gmcp.go"}],"instances":[{"path":"internal/rooms/save_and_load.go","line":101,"label":"LoadRoomInstance","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/rooms/save_and_load.go#L101"},{"path":"internal/mobs/instance_save.go","label":"mob instance saves","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/mobs/instance_save.go"}],"world-yaml":[{"path":"main.go","line":1585,"label":"loadAllDataFiles","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/main.go#L1585"},{"path":"internal/rooms/save_and_load.go","line":163,"label":"LoadRoomTemplate","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/rooms/save_and_load.go#L163"}]}}</script>
+    <script id="archify-guided-views-data" type="application/json">[{"id":"connection-path","label":"In from a player, and back out","focus":["telnet-players","web-players","telnet-listener","web-server","conn-pipeline","tick"],"note":"Both transports become one ConnectionDetails on the way in. Output returns to that same object, which picks the socket or the websocket."},{"id":"the-tick","label":"The world tick","focus":["conn-pipeline","tick","rooms","mobs"],"note":"A submitted line becomes an Input event. MainWorker drains the queue every millisecond and fires a turn every 50 ms."},{"id":"world-state","label":"Live world state","focus":["tick","rooms","mobs","users"],"note":"Rooms, mobs and characters are plain in-memory Go structs, mutated only under the single world lock the tick holds."},{"id":"data-layer","label":"Where the world is authored","focus":["world-yaml","room-saves","mob-saves","rooms","mobs"],"note":"Every room and mob is hand-authored YAML. The template always loads. Two separate save layers overlay it, one for rooms, one for mobs."},{"id":"modules","label":"Pluggable modules","focus":["tick","modules","conn-pipeline","web-server"],"note":"Modules are compiled in and attach purely through event listeners. GMCP is the one that feeds the browser client."}]</script>
+    <script id="archify-source-evidence-data" type="application/json">{"schemaVersion":1,"verified":true,"repository":{"url":"https://github.com/pruuk/DOGMud","revision":"005a068880eb9a292f20ccba77ad4e306dc63944","shortRevision":"005a068"},"referenceCount":27,"nodes":{"web-players":[{"path":"_datafiles/html/public/static/js/gmcp.js","label":"web client GMCP handling","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/_datafiles/html/public/static/js/gmcp.js"}],"telnet-listener":[{"path":"main.go","line":1500,"label":"TelnetListenOnPort","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/main.go#L1500"},{"path":"main.go","line":628,"label":"handleTelnetConnection","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/main.go#L628"},{"path":"_datafiles/config.yaml","line":1227,"label":"Network.TelnetPort","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/_datafiles/config.yaml#L1227"}],"web-server":[{"path":"internal/web/web.go","line":272,"label":"Listen","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/web/web.go#L272"},{"path":"main.go","line":1247,"label":"HandleWebSocketConnection","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/main.go#L1247"}],"conn-pipeline":[{"path":"internal/connections/connectiondetails.go","line":229,"label":"HandleInput","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/connections/connectiondetails.go#L229"},{"path":"internal/connections/connections.go","line":220,"label":"SendTo","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/connections/connections.go#L220"},{"path":"internal/connections/connectiondetails.go","line":284,"label":"Write, socket or websocket","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/connections/connectiondetails.go#L284"}],"tick":[{"path":"world.go","line":732,"label":"MainWorker","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/world.go#L732"},{"path":"internal/events/events.go","line":176,"label":"ProcessEvents","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/events/events.go#L176"},{"path":"internal/hooks/Message_SendMessages.go","line":16,"label":"Message_SendMessage","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/hooks/Message_SendMessages.go#L16"}],"rooms":[{"path":"internal/rooms/rooms.go","label":"Room","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/rooms/rooms.go"},{"path":"internal/rooms/save_and_load.go","line":79,"label":"LoadRoom","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/rooms/save_and_load.go#L79"}],"mobs":[{"path":"internal/mobs/mobs.go","label":"Mob","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/mobs/mobs.go"},{"path":"internal/mobs/schedule.go","label":"daily schedules","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/mobs/schedule.go"}],"users":[{"path":"internal/users/users.go","label":"UserRecord","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/users/users.go"},{"path":"internal/users/userrecord.go","line":435,"label":"SendText queues a Message","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/users/userrecord.go#L435"},{"path":"internal/characters/character.go","label":"Character","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/characters/character.go"}],"modules":[{"path":"modules/all-modules.go","label":"compiled-in module set","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/modules/all-modules.go"},{"path":"modules/gmcp/gmcp.go","line":522,"label":"GMCP writes to the same connection","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/modules/gmcp/gmcp.go#L522"}],"mob-saves":[{"path":"internal/mobs/instance_save.go","line":170,"label":"LoadMobInstance","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/mobs/instance_save.go#L170"},{"path":"internal/mobs/instance_save.go","line":75,"label":"SaveMobInstance","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/mobs/instance_save.go#L75"}],"world-yaml":[{"path":"main.go","line":1585,"label":"loadAllDataFiles","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/main.go#L1585"},{"path":"internal/rooms/save_and_load.go","line":163,"label":"LoadRoomTemplate","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/rooms/save_and_load.go#L163"}],"room-saves":[{"path":"internal/rooms/save_and_load.go","line":101,"label":"LoadRoomInstance","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/rooms/save_and_load.go#L101"},{"path":"internal/rooms/save_and_load.go","line":315,"label":"SaveRoomInstance","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/rooms/save_and_load.go#L315"}]}}</script>
     <div class="guided-views no-print" id="guided-views" hidden aria-label="Guided diagram views">
       <button id="guided-view-prev" type="button" aria-label="Previous guided view" title="Previous guided view ([)">&#8592;</button>
       <div class="guided-view-copy">
@@ -4573,8 +4573,8 @@
         <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="0" x="220" y="88" width="1040" height="502" rx="12" class="c-region" stroke-width="1"/>
         <text x="228" y="106" class="t-cloud" font-size="9" font-weight="600">One Go process</text>
 
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="1" x="1300" y="120" width="240" height="306" rx="12" class="c-region" stroke-width="1"/>
-        <text x="1308" y="138" class="t-cloud" font-size="9" font-weight="600">On disk</text>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="region" data-composition-frame-id="1" x="1300" y="30" width="240" height="410" rx="12" class="c-region" stroke-width="1"/>
+        <text x="1308" y="48" class="t-cloud" font-size="9" font-weight="600">On disk</text>
 
         <!-- Connection paths (before components for correct z-order) -->
         <path data-edge-from="telnet-players" data-edge-to="telnet-listener" data-edge-label="telnet" data-edge-key="0" data-edge-id="telnet-in" data-composition-points="190,202;250,202" d="M 190 202 L 250 202" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
@@ -4582,14 +4582,17 @@
         <path data-edge-from="telnet-listener" data-edge-to="conn-pipeline" data-edge-key="2" data-edge-id="telnet-conn" data-composition-points="420,202;455,202;455,301;490,301" d="M 420 202 L 447 202 Q 455 202 455 210 L 455 293 Q 455 301 463 301 L 490 301" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
         <path data-edge-from="web-server" data-edge-to="conn-pipeline" data-edge-key="3" data-edge-id="web-conn" data-composition-points="420,412;455,412;455,315;490,315" d="M 420 412 L 447 412 Q 455 412 455 404 L 455 323 Q 455 315 463 315 L 490 315" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
         <path data-edge-from="conn-pipeline" data-edge-to="tick" data-edge-label="commands" data-edge-key="4" data-edge-id="commands-in" data-composition-points="670,301;694,301;694,317;776,317;776,300;800,300" d="M 670 301 L 686 301 Q 694 301 694 309 L 694 309 Q 694 317 702 317 L 768 317 Q 776 317 776 309 L 776 308 Q 776 300 784 300 L 800 300" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <path data-edge-from="tick" data-edge-to="conn-pipeline" data-edge-label="output" data-edge-key="5" data-edge-id="output-out" data-composition-points="800,314;776,314;776,331;694,331;694,315;670,315" d="M 800 314 L 784 314 Q 776 314 776 322 L 776 323 Q 776 331 768 331 L 702 331 Q 694 331 694 323 L 694 323 Q 694 315 686 315 L 670 315" class="a-dashed" stroke-width="1.5" marker-end="url(#arrowhead-dashed)"/>
-        <path data-edge-from="tick" data-edge-to="rooms" data-edge-key="6" data-edge-id="tick-rooms" data-composition-points="990,307;1014,307;1014,323;1046,323;1046,300;1070,300" d="M 990 307 L 1006 307 Q 1014 307 1014 315 L 1014 315 Q 1014 323 1022 323 L 1038 323 Q 1046 323 1046 315 L 1046 308 Q 1046 300 1054 300 L 1070 300" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="tick" data-edge-to="mobs" data-edge-key="7" data-edge-id="tick-mobs" data-composition-points="990,293;1030,293;1030,150;1070,150" d="M 990 293 L 1022 293 Q 1030 293 1030 285 L 1030 158 Q 1030 150 1038 150 L 1070 150" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="tick" data-edge-to="users" data-edge-key="8" data-edge-id="tick-users" data-composition-points="990,321;1030,321;1030,450;1070,450" d="M 990 321 L 1022 321 Q 1030 321 1030 329 L 1030 442 Q 1030 450 1038 450 L 1070 450" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="tick" data-edge-to="modules" data-edge-label="events" data-edge-key="9" data-edge-id="tick-modules" data-composition-points="895,349;895,500" d="M 895 349 L 895 500" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="world-yaml" data-edge-to="mobs" data-edge-key="10" data-edge-id="template-mobs" data-composition-points="1330,181;1280,181;1280,150;1230,150" d="M 1330 181 L 1288 181 Q 1280 181 1280 173 L 1280 158 Q 1280 150 1272 150 L 1230 150" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="world-yaml" data-edge-to="rooms" data-edge-label="templates" data-edge-key="11" data-edge-id="template-rooms" data-composition-points="1330,195;1280,195;1280,293;1230,293" d="M 1330 195 L 1288 195 Q 1280 195 1280 203 L 1280 285 Q 1280 293 1272 293 L 1230 293" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="instances" data-edge-to="rooms" data-edge-label="overlay, if saved" data-edge-key="12" data-edge-id="overlay-rooms" data-composition-points="1330,368;1280,368;1280,307;1230,307" d="M 1330 368 L 1288 368 Q 1280 368 1280 360 L 1280 315 Q 1280 307 1272 307 L 1230 307" class="a-dashed" stroke-width="1.5" marker-end="url(#arrowhead-dashed)"/>
+        <path data-edge-from="tick" data-edge-to="conn-pipeline" data-edge-label="queued Message events" data-edge-key="5" data-edge-id="output-out" data-composition-points="800,314;776,314;776,331;694,331;694,315;670,315" d="M 800 314 L 784 314 Q 776 314 776 322 L 776 323 Q 776 331 768 331 L 702 331 Q 694 331 694 323 L 694 323 Q 694 315 686 315 L 670 315" class="a-dashed" stroke-width="1.5" marker-end="url(#arrowhead-dashed)"/>
+        <path data-edge-from="conn-pipeline" data-edge-to="telnet-players" data-edge-label="raw socket write" data-edge-key="6" data-edge-id="out-telnet" data-composition-points="580,270;580,134;115,134;115,170" d="M 580 270 L 580 142 Q 580 134 572 134 L 123 134 Q 115 134 115 142 L 115 170" class="a-dashed" stroke-width="1.5" marker-end="url(#arrowhead-dashed)"/>
+        <path data-edge-from="conn-pipeline" data-edge-to="web-players" data-edge-label="websocket text frame" data-edge-key="7" data-edge-id="out-web" data-composition-points="580,346;580,505;115,505;115,444" d="M 580 346 L 580 497 Q 580 505 572 505 L 123 505 Q 115 505 115 497 L 115 444" class="a-dashed" stroke-width="1.5" marker-end="url(#arrowhead-dashed)"/>
+        <path data-edge-from="tick" data-edge-to="rooms" data-edge-key="8" data-edge-id="tick-rooms" data-composition-points="990,307;1014,307;1014,323;1046,323;1046,300;1070,300" d="M 990 307 L 1006 307 Q 1014 307 1014 315 L 1014 315 Q 1014 323 1022 323 L 1038 323 Q 1046 323 1046 315 L 1046 308 Q 1046 300 1054 300 L 1070 300" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="tick" data-edge-to="mobs" data-edge-key="9" data-edge-id="tick-mobs" data-composition-points="990,293;1030,293;1030,150;1070,150" d="M 990 293 L 1022 293 Q 1030 293 1030 285 L 1030 158 Q 1030 150 1038 150 L 1070 150" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="tick" data-edge-to="users" data-edge-key="10" data-edge-id="tick-users" data-composition-points="990,321;1030,321;1030,450;1070,450" d="M 990 321 L 1022 321 Q 1030 321 1030 329 L 1030 442 Q 1030 450 1038 450 L 1070 450" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="tick" data-edge-to="modules" data-edge-label="events" data-edge-key="11" data-edge-id="tick-modules" data-composition-points="895,349;895,500" d="M 895 349 L 895 500" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="world-yaml" data-edge-to="mobs" data-edge-key="12" data-edge-id="template-mobs" data-composition-points="1330,221;1280,221;1280,157;1230,157" d="M 1330 221 L 1288 221 Q 1280 221 1280 213 L 1280 165 Q 1280 157 1272 157 L 1230 157" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="world-yaml" data-edge-to="rooms" data-edge-label="templates" data-edge-key="13" data-edge-id="template-rooms" data-composition-points="1330,235;1280,235;1280,293;1230,293" d="M 1330 235 L 1288 235 Q 1280 235 1280 243 L 1280 285 Q 1280 293 1272 293 L 1230 293" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="mob-saves" data-edge-to="mobs" data-edge-label="overlay, if saved" data-edge-key="14" data-edge-id="overlay-mobs" data-composition-points="1330,95;1280,95;1280,143;1230,143" d="M 1330 95 L 1288 95 Q 1280 95 1280 103 L 1280 135 Q 1280 143 1272 143 L 1230 143" class="a-dashed" stroke-width="1.5" marker-end="url(#arrowhead-dashed)"/>
+        <path data-edge-from="room-saves" data-edge-to="rooms" data-edge-label="overlay, if saved" data-edge-key="15" data-edge-id="overlay-rooms" data-composition-points="1330,385;1280,385;1280,307;1230,307" d="M 1330 385 L 1288 385 Q 1280 385 1280 377 L 1280 315 Q 1280 307 1272 307 L 1230 307" class="a-dashed" stroke-width="1.5" marker-end="url(#arrowhead-dashed)"/>
 
         <!-- Components -->
         <g id="node-telnet-players" data-node-id="telnet-players" data-node-label="Telnet players" tabindex="0" role="button" aria-label="Focus Telnet players, MUD clients, screen readers, Architecture component" aria-pressed="false" data-node-kind="external" data-node-sublabel="MUD clients, screen readers" data-node-context="Architecture component">
@@ -4646,8 +4649,8 @@
         <text data-detail="fine" x="335" y="438" class="t-frontend" font-size="7" text-anchor="middle">web client + admin tools</text>
         </g>
 
-        <g id="node-conn-pipeline" data-node-id="conn-pipeline" data-node-label="Connection pipeline" tabindex="0" role="button" aria-label="Focus Connection pipeline, connections + inputhandlers, One Go process" aria-pressed="false" data-node-kind="backend" data-node-sublabel="connections + inputhandlers" data-node-tag="both transports converge here" data-node-context="One Go process">
-          <title>Connection pipeline · connections + inputhandlers · One Go process · both transports converge here</title>
+        <g id="node-conn-pipeline" data-node-id="conn-pipeline" data-node-label="Connection pipeline" tabindex="0" role="button" aria-label="Focus Connection pipeline, connections + inputhandlers, One Go process" aria-pressed="false" data-node-kind="backend" data-node-sublabel="connections + inputhandlers" data-node-tag="reads in, and writes back out" data-node-context="One Go process">
+          <title>Connection pipeline · connections + inputhandlers · One Go process · reads in, and writes back out</title>
           <rect x="490" y="270" width="180" height="76" rx="6" class="c-mask"/>
           <rect x="490" y="270" width="180" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(496 276) scale(0.6875)">
@@ -4655,7 +4658,7 @@
           </g>
           <text data-detail-anchor x="580" y="306" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Connection pipeline</text>
         <text data-detail="context" x="580" y="322" class="t-muted" font-size="9" text-anchor="middle">connections + inputhandlers</text>
-        <text data-detail="fine" x="580" y="338" class="t-backend" font-size="7" text-anchor="middle">both transports converge here</text>
+        <text data-detail="fine" x="580" y="338" class="t-backend" font-size="7" text-anchor="middle">reads in, and writes back out</text>
         </g>
 
         <g id="node-tick" data-node-id="tick" data-node-label="World tick loop" tabindex="0" role="button" aria-label="Focus World tick loop, MainWorker · 50 ms turns, One Go process" aria-pressed="false" data-node-kind="backend" data-node-sublabel="MainWorker · 50 ms turns" data-node-tag="80 turns = one 4 s round" data-node-context="One Go process">
@@ -4718,30 +4721,43 @@
         <text data-detail="fine" x="895" y="562" class="t-messagebus" font-size="7" text-anchor="middle">attach via event listeners</text>
         </g>
 
-        <g id="node-instances" data-node-id="instances" data-node-label="Instance saves" tabindex="0" role="button" aria-label="Focus Instance saves, rooms.instances · mobs.instances, On disk" aria-pressed="false" data-node-kind="database" data-node-sublabel="rooms.instances · mobs.instances" data-node-tag="applied only if a save exists" data-node-context="On disk">
-          <title>Instance saves · rooms.instances · mobs.instances · On disk · applied only if a save exists</title>
-          <rect x="1330" y="330" width="180" height="76" rx="6" class="c-mask"/>
-          <rect x="1330" y="330" width="180" height="76" rx="6" class="c-database" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(1336 336) scale(0.6875)">
+        <g id="node-mob-saves" data-node-id="mob-saves" data-node-label="Mob instance saves" tabindex="0" role="button" aria-label="Focus Mob instance saves, mobs.instances, On disk" aria-pressed="false" data-node-kind="database" data-node-sublabel="mobs.instances" data-node-tag="training, skills, gold, gear" data-node-context="On disk">
+          <title>Mob instance saves · mobs.instances · On disk · training, skills, gold, gear</title>
+          <rect x="1330" y="60" width="180" height="70" rx="6" class="c-mask"/>
+          <rect x="1330" y="60" width="180" height="70" rx="6" class="c-database" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(1336 66) scale(0.6875)">
             <ellipse cx="8" cy="4" rx="5" ry="2"/>
             <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
-          <text data-detail-anchor x="1420" y="366" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Instance saves</text>
-        <text data-detail="context" x="1420" y="382" class="t-muted" font-size="9" text-anchor="middle">rooms.instances · mobs.instances</text>
-        <text data-detail="fine" x="1420" y="398" class="t-database" font-size="7" text-anchor="middle">applied only if a save exists</text>
+          <text data-detail-anchor x="1420" y="93" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Mob instance saves</text>
+        <text data-detail="context" x="1420" y="109" class="t-muted" font-size="9" text-anchor="middle">mobs.instances</text>
+        <text data-detail="fine" x="1420" y="122" class="t-database" font-size="7" text-anchor="middle">training, skills, gold, gear</text>
         </g>
 
         <g id="node-world-yaml" data-node-id="world-yaml" data-node-label="YAML world data" tabindex="0" role="button" aria-label="Focus YAML world data, _datafiles/world/dogmud, On disk" aria-pressed="false" data-node-kind="database" data-node-sublabel="_datafiles/world/dogmud" data-node-tag="read once at boot" data-node-context="On disk">
           <title>YAML world data · _datafiles/world/dogmud · On disk · read once at boot</title>
-          <rect x="1330" y="150" width="180" height="76" rx="6" class="c-mask"/>
-          <rect x="1330" y="150" width="180" height="76" rx="6" class="c-database" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(1336 156) scale(0.6875)">
+          <rect x="1330" y="190" width="180" height="76" rx="6" class="c-mask"/>
+          <rect x="1330" y="190" width="180" height="76" rx="6" class="c-database" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(1336 196) scale(0.6875)">
             <ellipse cx="8" cy="4" rx="5" ry="2"/>
             <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
-          <text data-detail-anchor x="1420" y="186" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">YAML world data</text>
-        <text data-detail="context" x="1420" y="202" class="t-muted" font-size="9" text-anchor="middle">_datafiles/world/dogmud</text>
-        <text data-detail="fine" x="1420" y="218" class="t-database" font-size="7" text-anchor="middle">read once at boot</text>
+          <text data-detail-anchor x="1420" y="226" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">YAML world data</text>
+        <text data-detail="context" x="1420" y="242" class="t-muted" font-size="9" text-anchor="middle">_datafiles/world/dogmud</text>
+        <text data-detail="fine" x="1420" y="258" class="t-database" font-size="7" text-anchor="middle">read once at boot</text>
+        </g>
+
+        <g id="node-room-saves" data-node-id="room-saves" data-node-label="Room instance saves" tabindex="0" role="button" aria-label="Focus Room instance saves, rooms.instances, On disk" aria-pressed="false" data-node-kind="database" data-node-sublabel="rooms.instances" data-node-tag="floor items, gold, containers" data-node-context="On disk">
+          <title>Room instance saves · rooms.instances · On disk · floor items, gold, containers</title>
+          <rect x="1330" y="350" width="180" height="70" rx="6" class="c-mask"/>
+          <rect x="1330" y="350" width="180" height="70" rx="6" class="c-database" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(1336 356) scale(0.6875)">
+            <ellipse cx="8" cy="4" rx="5" ry="2"/>
+            <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
+          </g>
+          <text data-detail-anchor x="1420" y="383" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Room instance saves</text>
+        <text data-detail="context" x="1420" y="399" class="t-muted" font-size="9" text-anchor="middle">rooms.instances</text>
+        <text data-detail="fine" x="1420" y="412" class="t-database" font-size="7" text-anchor="middle">floor items, gold, containers</text>
         </g>
 
         <!-- Connection labels -->
@@ -4759,25 +4775,37 @@
           <rect x="669.8" y="289" width="48.4" height="14" rx="3" class="c-mask"/>
           <text x="694" y="299" class="t-backend" font-size="8" text-anchor="middle">commands</text>
         </g>
-        <g data-detail="context" data-edge-from="tick" data-edge-to="conn-pipeline" data-edge-label="output" data-edge-key="5" data-edge-id="output-out">
-          <rect x="756.6" y="336.5" width="38.8" height="14" rx="3" class="c-mask"/>
-          <text x="776" y="346.5" class="t-messagebus" font-size="8" text-anchor="middle">output</text>
+        <g data-detail="context" data-edge-from="tick" data-edge-to="conn-pipeline" data-edge-label="queued Message events" data-edge-key="5" data-edge-id="output-out">
+          <rect x="720.6" y="352.5" width="110.8" height="14" rx="3" class="c-mask"/>
+          <text x="776" y="362.5" class="t-messagebus" font-size="8" text-anchor="middle">queued Message events</text>
+        </g>
+        <g data-detail="context" data-edge-from="conn-pipeline" data-edge-to="telnet-players" data-edge-label="raw socket write" data-edge-key="6" data-edge-id="out-telnet">
+          <rect x="304.1" y="114" width="86.8" height="14" rx="3" class="c-mask"/>
+          <text x="347.5" y="124" class="t-messagebus" font-size="8" text-anchor="middle">raw socket write</text>
+        </g>
+        <g data-detail="context" data-edge-from="conn-pipeline" data-edge-to="web-players" data-edge-label="websocket text frame" data-edge-key="7" data-edge-id="out-web">
+          <rect x="294.5" y="485" width="106" height="14" rx="3" class="c-mask"/>
+          <text x="347.5" y="495" class="t-messagebus" font-size="8" text-anchor="middle">websocket text frame</text>
         </g>
 
 
 
-        <g data-detail="context" data-edge-from="tick" data-edge-to="modules" data-edge-label="events" data-edge-key="9" data-edge-id="tick-modules">
+        <g data-detail="context" data-edge-from="tick" data-edge-to="modules" data-edge-label="events" data-edge-key="11" data-edge-id="tick-modules">
           <rect x="875.6" y="353" width="38.8" height="14" rx="3" class="c-mask"/>
           <text x="895" y="363" class="t-muted" font-size="8" text-anchor="middle">events</text>
         </g>
 
-        <g data-detail="context" data-edge-from="world-yaml" data-edge-to="rooms" data-edge-label="templates" data-edge-key="11" data-edge-id="template-rooms">
-          <rect x="1253.4" y="224" width="53.199999999999996" height="14" rx="3" class="c-mask"/>
-          <text x="1280" y="234" class="t-muted" font-size="8" text-anchor="middle">templates</text>
+        <g data-detail="context" data-edge-from="world-yaml" data-edge-to="rooms" data-edge-label="templates" data-edge-key="13" data-edge-id="template-rooms">
+          <rect x="1253.4" y="244" width="53.199999999999996" height="14" rx="3" class="c-mask"/>
+          <text x="1280" y="254" class="t-muted" font-size="8" text-anchor="middle">templates</text>
         </g>
-        <g data-detail="context" data-edge-from="instances" data-edge-to="rooms" data-edge-label="overlay, if saved" data-edge-key="12" data-edge-id="overlay-rooms">
-          <rect x="1234.2" y="317.5" width="91.6" height="14" rx="3" class="c-mask"/>
-          <text x="1280" y="327.5" class="t-messagebus" font-size="8" text-anchor="middle">overlay, if saved</text>
+        <g data-detail="context" data-edge-from="mob-saves" data-edge-to="mobs" data-edge-label="overlay, if saved" data-edge-key="14" data-edge-id="overlay-mobs">
+          <rect x="1234.2" y="99" width="91.6" height="14" rx="3" class="c-mask"/>
+          <text x="1280" y="109" class="t-messagebus" font-size="8" text-anchor="middle">overlay, if saved</text>
+        </g>
+        <g data-detail="context" data-edge-from="room-saves" data-edge-to="rooms" data-edge-label="overlay, if saved" data-edge-key="15" data-edge-id="overlay-rooms">
+          <rect x="1234.2" y="326" width="91.6" height="14" rx="3" class="c-mask"/>
+          <text x="1280" y="336" class="t-messagebus" font-size="8" text-anchor="middle">overlay, if saved</text>
         </g>
 
         <!-- Legend -->
@@ -4990,12 +5018,15 @@
       <div class="card">
         <div class="card-header">
           <div class="card-dot cyan"></div>
-          <h3>Edge</h3>
+          <h3>Edge, in and out</h3>
         </div>
         <ul>
           <li>&bull; Telnet on :33333 and :44444, AI clients on a separate :55555</li>
           <li>&bull; HTTP on :8090 serves the web client and upgrades /ws</li>
-          <li>&bull; Either transport ends up as the same ConnectionDetails</li>
+          <li>&bull; Either transport ends up as the same ConnectionDetails, and internal/inputhandlers runs the login, IAC and ANSI chain on it</li>
+          <li>&bull; Game text does not travel back through the listener goroutine or the HTTP server</li>
+          <li>&bull; That goroutine still writes the splash, the login flow and the prompt redraw itself</li>
+          <li>&bull; ConnectionDetails.Write is the single split: a websocket text frame, or a raw socket write</li>
         </ul>
       </div>
 
@@ -5008,6 +5039,8 @@
           <li>&bull; MainWorker fires a turn every 50 ms; 80 turns make a 4 second round</li>
           <li>&bull; Every tick takes one global world lock, so game state stays single-writer</li>
           <li>&bull; Combat, mob AI, quests and achievements are all event listeners</li>
+          <li>&bull; Game text is queued as an events.Message rather than written where it is produced</li>
+          <li>&bull; Message_SendMessage drains those events inside the tick, parses ANSI, and calls connections.SendTo</li>
         </ul>
       </div>
 
@@ -5018,7 +5051,9 @@
         </div>
         <ul>
           <li>&bull; Rooms, mobs, items, quests and dialogue are hand-authored YAML</li>
-          <li>&bull; The template always loads; an instance save is layered on top only if one exists</li>
+          <li>&bull; The template always loads; a saved instance is layered on top only if one exists</li>
+          <li>&bull; There are two save layers, not one: rooms.instances/ unmarshals straight onto the room struct</li>
+          <li>&bull; mobs.instances/ copies a fixed record instead, so a mob save can only carry the fields that record declares</li>
           <li>&bull; Player saves live in users/ and are not part of the instance overlay</li>
         </ul>
       </div>
@@ -8613,7 +8648,7 @@
       var storyPulseGeneration = 0;
       var autoplayPending = false;
       var VIEW_INTERVAL_MS = 3200;
-      var STORY_FOLLOW_MIN_DWELL_MS = 5500;
+      var STORY_FOLLOW_MIN_DWELL_MS = 3575;
       var STORY_FOLLOW_DURATION_MS = 320;
       var chapterButtons = [];
       var handoffGeneration = 0;
@@ -11342,7 +11377,7 @@
       var journeyStartedAt = 0;
       var journeyElapsedMs = 0;
       var journeyOwnerToken = 0;
-      var JOURNEY_DWELL_MS = 5500;
+      var JOURNEY_DWELL_MS = 3575;
 
       function nodes() {
         return Array.prototype.slice.call(svg.querySelectorAll('[data-node-id]'));

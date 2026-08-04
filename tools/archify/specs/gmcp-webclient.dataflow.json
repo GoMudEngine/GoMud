@@ -94,7 +94,7 @@
       "id": "visited",
       "type": "database",
       "label": "VisitedRooms",
-      "sublabel": "zone to room ids, on the character save",
+      "sublabel": "zone to room ids",
       "stage": 1,
       "row": 0,
       "tag": "persistent"
@@ -112,7 +112,7 @@
       "id": "crawl",
       "type": "database",
       "label": "Crawled zone graph",
-      "sublabel": "every room and exit the crawl reached",
+      "sublabel": "every room and exit",
       "stage": 1,
       "row": 4,
       "tag": "unfiltered"
@@ -157,7 +157,7 @@
       "id": "grid",
       "type": "frontend",
       "label": "RoomGridSVG",
-      "sublabel": "static/js/gmcp.js setZoneSnapshot",
+      "sublabel": "gmcp.js setZoneSnapshot",
       "stage": 4,
       "row": 1,
       "tag": "browser"

@@ -69,49 +69,49 @@
       "id": "boot",
       "type": "external",
       "label": "Loader",
-      "sublabel": "rooms.LoadRoom · mobs.NewMobById"
+      "sublabel": "LoadRoom · NewMobById"
     },
     {
       "id": "template",
       "type": "database",
       "label": "Template YAML",
-      "sublabel": "world/dogmud/rooms/ · mobs/"
+      "sublabel": "rooms/ · mobs/"
     },
     {
       "id": "struct",
       "type": "backend",
       "label": "The struct",
-      "sublabel": "one Room or Mob value being built"
+      "sublabel": "one Room or Mob value"
     },
     {
       "id": "roomsave",
       "type": "database",
       "label": "Room save",
-      "sublabel": "rooms.instances/<zone>/<id>.yaml"
+      "sublabel": "rooms.instances/"
     },
     {
       "id": "mobsave",
       "type": "database",
       "label": "Mob save",
-      "sublabel": "mobs.instances/<zone>/<id>-<name>-room<n>.yaml"
+      "sublabel": "mobs.instances/"
     },
     {
       "id": "restore",
       "type": "security",
       "label": "Skip restore",
-      "sublabel": "rooms.restoreSkipTaggedFields"
+      "sublabel": "copies 23 fields back"
     },
     {
       "id": "live",
       "type": "frontend",
       "label": "Live object",
-      "sublabel": "in memory, what players touch"
+      "sublabel": "in memory, one per id"
     },
     {
       "id": "writer",
       "type": "backend",
       "label": "Save writer",
-      "sublabel": "SaveRoomInstance · SaveMobInstance"
+      "sublabel": "deny list, allow list"
     }
   ],
   "segments": [
@@ -336,6 +336,9 @@
       "title": "Three files, one struct",
       "items": [
         "The authored template under rooms/ or mobs/ is read first, every time",
+        "Templates: _datafiles/world/dogmud/rooms/<zone>/<id>.yaml and mobs/<zone>/<id>-<name>.yaml",
+        "Room saves: rooms.instances/<zone>/<id>.yaml",
+        "Mob saves: mobs.instances/<zone>/<id>-<name>-room<n>.yaml, so one template spawned in two rooms keeps two files",
         "A saved instance under rooms.instances/ or mobs.instances/ may not exist",
         "Most rooms in the world never acquire an instance file at all",
         "Once loaded, the in memory object outranks both files until the next restart"
@@ -366,6 +369,7 @@
       "dot": "amber",
       "title": "What actually gets written",
       "items": [
+        "SaveRoomInstance is the deny list, SaveMobInstance is the allow list",
         "Unexported fields, skip tagged fields, and fields equal to the template are dropped",
         "What remains is floor items, gold, containers, stash, signs, mutators, room data",
         "An instance file with nothing left in it is deleted instead of written",

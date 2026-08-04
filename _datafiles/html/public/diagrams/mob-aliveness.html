@@ -4731,8 +4731,8 @@
         <text data-detail="fine" x="1280" y="452" class="t-database" font-size="7" text-anchor="middle">role-agnostic A/B scripts</text>
         </g>
 
-        <g id="node-relationships" data-node-id="relationships" data-node-label="Relationship graph" tabindex="0" role="button" aria-label="Focus Relationship graph, edges authored on mob YAML, Authored YAML" aria-pressed="false" data-node-kind="database" data-node-sublabel="edges authored on mob YAML" data-node-tag="declare one side; the reverse edge is created for you" data-node-context="Authored YAML">
-          <title>Relationship graph · edges authored on mob YAML · Authored YAML · declare one side; the reverse edge is created for you</title>
+        <g id="node-relationships" data-node-id="relationships" data-node-label="Relationship graph" tabindex="0" role="button" aria-label="Focus Relationship graph, edges authored on mob YAML, Authored YAML" aria-pressed="false" data-node-kind="database" data-node-sublabel="edges authored on mob YAML" data-node-tag="declare one side, the reverse is automatic" data-node-context="Authored YAML">
+          <title>Relationship graph · edges authored on mob YAML · Authored YAML · declare one side, the reverse is automatic</title>
           <rect x="1180" y="530" width="200" height="80" rx="6" class="c-mask"/>
           <rect x="1180" y="530" width="200" height="80" rx="6" class="c-database" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(1186 536) scale(0.6875)">
@@ -4741,7 +4741,7 @@
           </g>
           <text data-detail-anchor x="1280" y="568" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Relationship graph</text>
         <text data-detail="context" x="1280" y="584" class="t-muted" font-size="9" text-anchor="middle">edges authored on mob YAML</text>
-        <text data-detail="fine" x="1280" y="602" class="t-database" font-size="7" text-anchor="middle">declare one side; the reverse edge is created for you</text>
+        <text data-detail="fine" x="1280" y="602" class="t-database" font-size="7" text-anchor="middle">declare one side, the reverse is automatic</text>
         </g>
 
         <!-- Connection labels -->
@@ -8599,7 +8599,7 @@
       var storyPulseGeneration = 0;
       var autoplayPending = false;
       var VIEW_INTERVAL_MS = 3200;
-      var STORY_FOLLOW_MIN_DWELL_MS = 5500;
+      var STORY_FOLLOW_MIN_DWELL_MS = 3575;
       var STORY_FOLLOW_DURATION_MS = 320;
       var chapterButtons = [];
       var handoffGeneration = 0;
@@ -11328,7 +11328,7 @@
       var journeyStartedAt = 0;
       var journeyElapsedMs = 0;
       var journeyOwnerToken = 0;
-      var JOURNEY_DWELL_MS = 5500;
+      var JOURNEY_DWELL_MS = 3575;
 
       function nodes() {
         return Array.prototype.slice.call(svg.querySelectorAll('[data-node-id]'));

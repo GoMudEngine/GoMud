@@ -14,9 +14,9 @@
     "views": [
       {
         "id": "connection-path",
-        "label": "How a player connects",
-        "focus": ["telnet-players", "web-players", "telnet-listener", "web-server", "conn-pipeline"],
-        "note": "Telnet sockets and upgraded websockets become the same ConnectionDetails, then run the same input-handler chain."
+        "label": "In from a player, and back out",
+        "focus": ["telnet-players", "web-players", "telnet-listener", "web-server", "conn-pipeline", "tick"],
+        "note": "Both transports become one ConnectionDetails on the way in. Output returns to that same object, which picks the socket or the websocket."
       },
       {
         "id": "the-tick",
@@ -33,8 +33,8 @@
       {
         "id": "data-layer",
         "label": "Where the world is authored",
-        "focus": ["world-yaml", "instances", "rooms", "mobs"],
-        "note": "Every room, mob, item and quest is hand-authored YAML. The template always loads; an instance save is layered on top only if one exists."
+        "focus": ["world-yaml", "room-saves", "mob-saves", "rooms", "mobs"],
+        "note": "Every room and mob is hand-authored YAML. The template always loads. Two separate save layers overlay it, one for rooms, one for mobs."
       },
       {
         "id": "modules",
@@ -96,13 +96,13 @@
       "type": "backend",
       "label": "Connection pipeline",
       "sublabel": "connections + inputhandlers",
-      "tag": "both transports converge here",
+      "tag": "reads in, and writes back out",
       "pos": [490, 270],
       "size": [180, 76],
       "sources": [
-        { "path": "internal/connections/connectiondetails.go", "label": "ConnectionDetails.HandleInput" },
-        { "path": "internal/connections/connections.go", "label": "connection registry" },
-        { "path": "internal/inputhandlers/login.go", "label": "login / IAC / ANSI handlers" }
+        { "path": "internal/connections/connectiondetails.go", "line": 229, "label": "HandleInput" },
+        { "path": "internal/connections/connections.go", "line": 220, "label": "SendTo" },
+        { "path": "internal/connections/connectiondetails.go", "line": 284, "label": "Write, socket or websocket" }
       ]
     },
     {
@@ -115,8 +115,8 @@
       "size": [190, 84],
       "sources": [
         { "path": "world.go", "line": 732, "label": "MainWorker" },
-        { "path": "world.go", "line": 915, "label": "InputWorker" },
-        { "path": "internal/events/events.go", "line": 176, "label": "ProcessEvents" }
+        { "path": "internal/events/events.go", "line": 176, "label": "ProcessEvents" },
+        { "path": "internal/hooks/Message_SendMessages.go", "line": 16, "label": "Message_SendMessage" }
       ]
     },
     {
@@ -152,6 +152,7 @@
       "size": [160, 64],
       "sources": [
         { "path": "internal/users/users.go", "label": "UserRecord" },
+        { "path": "internal/users/userrecord.go", "line": 435, "label": "SendText queues a Message" },
         { "path": "internal/characters/character.go", "label": "Character" }
       ]
     },
@@ -165,20 +166,20 @@
       "size": [190, 70],
       "sources": [
         { "path": "modules/all-modules.go", "label": "compiled-in module set" },
-        { "path": "modules/gmcp/gmcp.go", "label": "GMCP module" }
+        { "path": "modules/gmcp/gmcp.go", "line": 522, "label": "GMCP writes to the same connection" }
       ]
     },
     {
-      "id": "instances",
+      "id": "mob-saves",
       "type": "database",
-      "label": "Instance saves",
-      "sublabel": "rooms.instances · mobs.instances",
-      "tag": "applied only if a save exists",
-      "pos": [1330, 330],
-      "size": [180, 76],
+      "label": "Mob instance saves",
+      "sublabel": "mobs.instances",
+      "tag": "training, skills, gold, gear",
+      "pos": [1330, 60],
+      "size": [180, 70],
       "sources": [
-        { "path": "internal/rooms/save_and_load.go", "line": 101, "label": "LoadRoomInstance" },
-        { "path": "internal/mobs/instance_save.go", "label": "mob instance saves" }
+        { "path": "internal/mobs/instance_save.go", "line": 170, "label": "LoadMobInstance" },
+        { "path": "internal/mobs/instance_save.go", "line": 75, "label": "SaveMobInstance" }
       ]
     },
     {
@@ -187,11 +188,24 @@
       "label": "YAML world data",
       "sublabel": "_datafiles/world/dogmud",
       "tag": "read once at boot",
-      "pos": [1330, 150],
+      "pos": [1330, 190],
       "size": [180, 76],
       "sources": [
         { "path": "main.go", "line": 1585, "label": "loadAllDataFiles" },
         { "path": "internal/rooms/save_and_load.go", "line": 163, "label": "LoadRoomTemplate" }
+      ]
+    },
+    {
+      "id": "room-saves",
+      "type": "database",
+      "label": "Room instance saves",
+      "sublabel": "rooms.instances",
+      "tag": "floor items, gold, containers",
+      "pos": [1330, 350],
+      "size": [180, 70],
+      "sources": [
+        { "path": "internal/rooms/save_and_load.go", "line": 101, "label": "LoadRoomInstance" },
+        { "path": "internal/rooms/save_and_load.go", "line": 315, "label": "SaveRoomInstance" }
       ]
     }
   ],
@@ -204,7 +218,7 @@
     {
       "kind": "region",
       "label": "On disk",
-      "wraps": ["instances", "world-yaml"]
+      "wraps": ["mob-saves", "world-yaml", "room-saves"]
     }
   ],
   "connections": [
@@ -213,23 +227,47 @@
     { "id": "telnet-conn", "from": "telnet-listener", "to": "conn-pipeline" },
     { "id": "web-conn", "from": "web-server", "to": "conn-pipeline" },
     { "id": "commands-in", "from": "conn-pipeline", "to": "tick", "label": "commands", "variant": "emphasis" },
-    { "id": "output-out", "from": "tick", "to": "conn-pipeline", "label": "output", "variant": "dashed", "labelDy": 34 },
+    { "id": "output-out", "from": "tick", "to": "conn-pipeline", "label": "queued Message events", "variant": "dashed", "labelDy": 50 },
+    {
+      "id": "out-telnet",
+      "from": "conn-pipeline",
+      "to": "telnet-players",
+      "label": "raw socket write",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "top",
+      "via": [[580, 134], [115, 134]]
+    },
+    {
+      "id": "out-web",
+      "from": "conn-pipeline",
+      "to": "web-players",
+      "label": "websocket text frame",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "bottom",
+      "via": [[580, 505], [115, 505]]
+    },
     { "id": "tick-rooms", "from": "tick", "to": "rooms" },
     { "id": "tick-mobs", "from": "tick", "to": "mobs" },
     { "id": "tick-users", "from": "tick", "to": "users" },
     { "id": "tick-modules", "from": "tick", "to": "modules", "label": "events", "labelDy": 24 },
     { "id": "template-mobs", "from": "world-yaml", "to": "mobs" },
     { "id": "template-rooms", "from": "world-yaml", "to": "rooms", "label": "templates" },
-    { "id": "overlay-rooms", "from": "instances", "to": "rooms", "label": "overlay, if saved", "variant": "dashed" }
+    { "id": "overlay-mobs", "from": "mob-saves", "to": "mobs", "label": "overlay, if saved", "variant": "dashed" },
+    { "id": "overlay-rooms", "from": "room-saves", "to": "rooms", "label": "overlay, if saved", "variant": "dashed" }
   ],
   "cards": [
     {
       "dot": "cyan",
-      "title": "Edge",
+      "title": "Edge, in and out",
       "items": [
         "Telnet on :33333 and :44444, AI clients on a separate :55555",
         "HTTP on :8090 serves the web client and upgrades /ws",
-        "Either transport ends up as the same ConnectionDetails"
+        "Either transport ends up as the same ConnectionDetails, and internal/inputhandlers runs the login, IAC and ANSI chain on it",
+        "Game text does not travel back through the listener goroutine or the HTTP server",
+        "That goroutine still writes the splash, the login flow and the prompt redraw itself",
+        "ConnectionDetails.Write is the single split: a websocket text frame, or a raw socket write"
       ]
     },
     {
@@ -238,7 +276,9 @@
       "items": [
         "MainWorker fires a turn every 50 ms; 80 turns make a 4 second round",
         "Every tick takes one global world lock, so game state stays single-writer",
-        "Combat, mob AI, quests and achievements are all event listeners"
+        "Combat, mob AI, quests and achievements are all event listeners",
+        "Game text is queued as an events.Message rather than written where it is produced",
+        "Message_SendMessage drains those events inside the tick, parses ANSI, and calls connections.SendTo"
       ]
     },
     {
@@ -246,7 +286,9 @@
       "title": "World data",
       "items": [
         "Rooms, mobs, items, quests and dialogue are hand-authored YAML",
-        "The template always loads; an instance save is layered on top only if one exists",
+        "The template always loads; a saved instance is layered on top only if one exists",
+        "There are two save layers, not one: rooms.instances/ unmarshals straight onto the room struct",
+        "mobs.instances/ copies a fixed record instead, so a mob save can only carry the fields that record declares",
         "Player saves live in users/ and are not part of the instance overlay"
       ]
     }

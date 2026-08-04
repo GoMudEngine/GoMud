@@ -199,7 +199,7 @@
       "type": "database",
       "label": "Relationship graph",
       "sublabel": "edges authored on mob YAML",
-      "tag": "declare one side; the reverse edge is created for you",
+      "tag": "declare one side, the reverse is automatic",
       "pos": [1180, 530],
       "size": [200, 80],
       "sources": [
