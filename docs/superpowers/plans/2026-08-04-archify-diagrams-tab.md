@@ -79,6 +79,10 @@ It is **not** a live drift detector. Verified empirically: deleting a cited file
 
 **4. The citation is not visible in the rendered diagram.** It is embedded once as JSON metadata backing the Semantic Passport and Node Finder. Do not cite a path expecting readers to see it — cite it to make the authoring claim checkable.
 
+**5. `variant` is a CONNECTION property, not a component property.** Corrected after Task 2. The `components` item schema is `additionalProperties: false` and has no `variant` key — putting `"variant": "emphasis"` on a component is a schema violation, not emphasis. To make a node focal, give it a larger `size` than its peers and set `variant: "emphasis"` on the connections entering and leaving it. Task 2 does this; copy that approach.
+
+**6. Use `variant: "dashed"` for conditional or optional relationships.** A solid arrow reads as "always happens." If an edge only fires under a condition, dash it and say the condition in the label — a reader who will go on to read the source should not be able to catch the diagram overstating a relationship.
+
 ---
 
 ## Task 1: Verify the archify toolchain and resolve the open spec item
@@ -185,7 +189,7 @@ Create `tools/archify/specs/engine-overview.architecture.json`. Required top-lev
 | Telnet listener | `frontend` | real port numbers from config |
 | HTTP / WebSocket server | `frontend` | `internal/web` |
 | Input handlers | `backend` | `internal/inputhandlers` |
-| World tick loop | `backend` | the emphasis node — `variant: "emphasis"` |
+| World tick loop | `backend` | the focal node — see the emphasis note below |
 | Rooms | `backend` | |
 | Mobs | `backend` | |
 | Users / Characters | `backend` | |
