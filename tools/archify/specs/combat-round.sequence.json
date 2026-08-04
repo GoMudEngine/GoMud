@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Combat Round Resolution",
+    "subtitle": "One melee swing end to end: swing budget, attack roll, best-of-all defense, three-channel damage",
+    "output": "combat-round.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "swing-budget",
+        "label": "How many swings you get",
+        "focus": ["attacker", "round", "swings"],
+        "note": "calcSwingCount turns dexterity, weapon speed and skill into a number, then stamina and carried weight scale it down. Cap is 4 per weapon."
+      },
+      {
+        "id": "to-hit",
+        "label": "The attack roll",
+        "focus": ["round", "dice"],
+        "note": "The attack score is dexterity plus combat skill, scaled by stamina, position and light. No mitigation value is read here at all."
+      },
+      {
+        "id": "defense",
+        "label": "Best-of-all defense",
+        "focus": ["defense", "defender", "dice"],
+        "note": "Every defense the defender can pay stamina for is rolled against the same attack roll. The widest winning margin is the one that counts."
+      },
+      {
+        "id": "damage",
+        "label": "Three-channel damage",
+        "focus": ["round", "damage", "defender", "dice"],
+        "note": "Raw damage is one formula for all three channels. Mitigation is a percentage with a cap, and only then does variance get rolled."
+      },
+      {
+        "id": "message",
+        "label": "Why you never see a number",
+        "focus": ["damage", "room", "attacker"],
+        "note": "The final integer is converted to a phrase before it reaches any player. GetDamageDescription is the only thing the room ever sees."
+      }
+    ],
+    "viewBox": [1180, 1060]
+  },
+  "participants": [
+    { "id": "attacker", "type": "external", "label": "Attacker", "sublabel": "player or mob with a target" },
+    { "id": "round", "type": "backend", "label": "Round handler", "sublabel": "hooks.handleCombatRound" },
+    { "id": "swings", "type": "backend", "label": "Swing budget", "sublabel": "combat.calcSwingCount" },
+    { "id": "dice", "type": "cloud", "label": "Dice", "sublabel": "dice.Roll · dice.RollStat" },
+    { "id": "defender", "type": "external", "label": "Defender", "sublabel": "the target character" },
+    { "id": "defense", "type": "security", "label": "Defense", "sublabel": "runBestOfAllDefense" },
+    { "id": "damage", "type": "backend", "label": "Damage", "sublabel": "CalcRawDamage · ApplyMitigation" },
+    { "id": "room", "type": "frontend", "label": "Room output", "sublabel": "AttackResult messages" }
+  ],
+  "segments": [
+    { "from": 172, "to": 300, "label": "Swing budget" },
+    { "from": 312, "to": 400, "label": "Attack roll" },
+    { "from": 412, "to": 712, "label": "Best-of-all defense" },
+    { "from": 724, "to": 872, "label": "Three-channel damage" },
+    { "from": 884, "to": 964, "label": "Player-facing text" }
+  ],
+  "messages": [
+    {
+      "id": "engage",
+      "from": "attacker",
+      "to": "round",
+      "y": 196,
+      "label": "engaged with a target",
+      "variant": "emphasis",
+      "note": "Combat is driven by the world tick, not by a command. Every 4 second round, handleCombatRound runs once per engaged pair."
+    },
+    {
+      "id": "ask-swings",
+      "from": "round",
+      "to": "swings",
+      "y": 238,
+      "label": "how many swings for this weapon?"
+    },
+    {
+      "id": "swing-count",
+      "from": "swings",
+      "to": "round",
+      "y": 276,
+      "label": "1 to 4, after stamina and carried weight",
+      "variant": "return",
+      "note": "calcSwingCount: dexterity, weapon speed and skill set the base, then a stamina multiplier and an over-capacity weight penalty of up to 50 percent scale it down. Hard cap of 4 per weapon."
+    },
+    {
+      "id": "attack-score",
+      "from": "round",
+      "to": "dice",
+      "y": 330,
+      "label": "roll dexterity + combat skill",
+      "variant": "emphasis",
+      "note": "calcAttackScore reads dexterity, combat skill, stamina, position, light and flight. It never reads armor mitigation. Armor only reduces damage that has already landed."
+    },
+    {
+      "id": "attack-value",
+      "from": "dice",
+      "to": "round",
+      "y": 368,
+      "label": "one roll, shared by every defense",
+      "variant": "return",
+      "note": "The swing is rolled once. Each defense is then rolled against that single value, so the defenses compete with each other rather than with separate attacks."
+    },
+    {
+      "id": "resolve-swing",
+      "from": "round",
+      "to": "defense",
+      "y": 436,
+      "label": "resolve this swing",
+      "variant": "emphasis"
+    },
+    {
+      "id": "ask-defenses",
+      "from": "defense",
+      "to": "defender",
+      "y": 478,
+      "label": "which defenses can you pay for?"
+    },
+    {
+      "id": "defense-list",
+      "from": "defender",
+      "to": "defense",
+      "y": 516,
+      "label": "dodge, parry, block",
+      "variant": "return",
+      "note": "Each defense has a stamina cost. A defense the defender cannot afford is skipped for this swing, so a tired defender quietly loses options."
+    },
+    {
+      "id": "roll-defenses",
+      "from": "defense",
+      "to": "dice",
+      "y": 562,
+      "label": "roll all of them, not just the first",
+      "variant": "emphasis",
+      "note": "Dodge scales with dexterity and unarmed skill, parry with a weapon's parry rating, block with a shield's block rating. Those ratings are separate fields from mitigation."
+    },
+    {
+      "id": "best-margin",
+      "from": "dice",
+      "to": "defense",
+      "y": 600,
+      "label": "keep the widest winning margin",
+      "variant": "return"
+    },
+    {
+      "id": "floor-save",
+      "from": "defense",
+      "to": "defender",
+      "y": 644,
+      "label": "last-resort save, if the attack won",
+      "variant": "dashed",
+      "note": "MinDefenseChance, default 0.15, gives an outclassed defender a fixed chance to avoid a swing that already beat them. A matching MinAttackHitChance floor runs the other way."
+    },
+    {
+      "id": "outcome",
+      "from": "defense",
+      "to": "round",
+      "y": 686,
+      "label": "hit, miss, crit or fumble",
+      "variant": "return",
+      "note": "resolveDefenseOutcome orders the result: fumbles first, then crits, then the normal margin, then the two floors."
+    },
+    {
+      "id": "raw-damage",
+      "from": "round",
+      "to": "damage",
+      "y": 748,
+      "label": "stat x skill x weapon x channel scale",
+      "variant": "emphasis",
+      "note": "CalcRawDamage is one formula for all three channels: physical uses strength, magical uses willpower, conviction uses charisma. A configured per-channel scale and a global multiplier finish it."
+    },
+    {
+      "id": "mitigate",
+      "from": "damage",
+      "to": "defender",
+      "y": 790,
+      "label": "subtract mitigation, capped",
+      "note": "ApplyMitigation reduces raw damage by the defender's summed equipment percentage for that channel, clamped to the channel cap (default 75 percent). A critical hit skips mitigation entirely."
+    },
+    {
+      "id": "variance",
+      "from": "damage",
+      "to": "dice",
+      "y": 828,
+      "label": "roll variance around the mean"
+    },
+    {
+      "id": "final-damage",
+      "from": "dice",
+      "to": "damage",
+      "y": 866,
+      "label": "damage for this swing",
+      "variant": "return",
+      "note": "dice.RollStat derives its spread from the mean using the global RollSpread knob, so the shape of every roll in the engine moves with one number."
+    },
+    {
+      "id": "describe",
+      "from": "damage",
+      "to": "room",
+      "y": 910,
+      "label": "turn the number into a phrase",
+      "variant": "emphasis",
+      "note": "GetDamageDescription converts damage to a share of the target's maximum health and returns light wounds, serious wounds, critical injuries and so on."
+    },
+    {
+      "id": "narrate",
+      "from": "room",
+      "to": "attacker",
+      "y": 950,
+      "label": "\"causing serious wounds\"",
+      "variant": "return",
+      "note": "The raw integer never leaves the engine. Attacker, defender and every spectator in the room read the same descriptive band."
+    }
+  ],
+  "activations": [
+    { "participant": "round", "from": 190, "to": 916, "type": "backend" },
+    { "participant": "swings", "from": 232, "to": 282, "type": "backend" },
+    { "participant": "defense", "from": 430, "to": 692, "type": "security" },
+    { "participant": "damage", "from": 742, "to": 916, "type": "backend" },
+    { "participant": "room", "from": 904, "to": 956, "type": "frontend" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Swing budget",
+      "items": [
+        "Dexterity, weapon speed and combat skill set the base swing count",
+        "Low stamina and carrying too much weight both scale it down",
+        "Hard cap of 4 swings per weapon, minimum of 1"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Landing the hit",
+      "items": [
+        "The attack score is dexterity plus combat skill, with no mitigation term",
+        "One attack roll is contested by every defense the defender can afford",
+        "The defense that won by the widest margin is the one that gets narrated"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Damage and text",
+      "items": [
+        "One raw formula serves physical, magical and conviction damage",
+        "Mitigation is a percentage with a per-channel cap, default 75 percent",
+        "The final number is converted to a phrase before any player sees it"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Traced from source",
+      "items": [
+        "github.com/pruuk/DOGMud at 1cca187f4d87f3edacdc4c86eb3a3f3d8501a952",
+        "internal/combat/combat.go, combat_helpers.go, damage_pipeline.go",
+        "internal/hooks/NewRound_DoCombat_unified.go"
+      ]
+    }
+  ]
+}
