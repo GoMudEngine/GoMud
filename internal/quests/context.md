@@ -2,7 +2,11 @@
 
 ## Overview
 
-The GoMud quests system provides a comprehensive quest management framework with support for multi-step quest progression, diverse reward types, secret quests, and token-based progress tracking. It features step validation, automatic quest discovery, and flexible reward distribution including items, gold, experience, skills, and teleportation.
+The GoMud quests system provides a comprehensive quest management framework with support for multi-step quest progression, diverse reward types, secret quests, and token-based progress tracking. It features step validation, automatic quest discovery, and flexible reward distribution including items, gold, skills, stats, recipes, spells, and teleportation.
+
+DOGMud has no experience points or character levels: progression is
+use-based only (see CLAUDE.md). Quest rewards that used to grant XP were
+removed; skill and stat rewards take their place.
 
 ## Architecture
 
@@ -23,7 +27,7 @@ The quests system is built around several key components:
 - Support for single-step and multi-step quests
 
 **Reward System:**
-- Multiple reward types (gold, items, experience, skills, buffs)
+- Multiple reward types (gold, items, skills, stats, recipes, spells, buffs, faction reputation)
 - Player and room messaging for quest completion
 - Teleportation rewards for quest outcomes
 - Chained quest support through quest rewards
@@ -38,12 +42,15 @@ The quests system is built around several key components:
 
 ### 2. **Comprehensive Reward System**
 - **Gold Rewards**: Direct gold distribution
-- **Item Rewards**: Specific item distribution by ID
-- **Experience Rewards**: Character experience points
-- **Skill Rewards**: Skill level advancement in format `skillId:level`
+- **Item Rewards**: A single item by ID, or a multi-item stockpile grant
+- **Skill Rewards**: Floor-raise skill advancement, one or more skills at once
+- **Stat Rewards**: Additive, permanent stat increases, one or more stats at once
+- **Recipe Rewards**: Grants known crafting recipes
+- **Spell Rewards**: Teaches a spell
 - **Buff Rewards**: Temporary or permanent buff application
 - **Quest Rewards**: Chain to new quests for storylines
 - **Teleportation Rewards**: Move player to specific room
+- **Faction Reputation Rewards**: Adjust standing with a named faction
 - **Messaging Rewards**: Custom player and room messages
 
 ### 3. **Token-Based Progress Tracking**
@@ -57,21 +64,29 @@ The quests system is built around several key components:
 ### Quest Definition Structure
 ```go
 type Quest struct {
-    QuestId     int         // Unique quest identifier
-    Name        string      // Quest display name
-    Description string      // Quest description
-    Secret      bool        // Hidden from player quest lists
-    Steps       []QuestStep // Ordered quest progression steps
-    Rewards     QuestReward // Completion rewards
+    QuestId        int            // Unique quest identifier
+    Name           string         // Quest display name
+    Description    string         // Quest description
+    Secret         bool           // Hidden from player quest lists
+    Steps          []QuestStep    // Ordered quest progression steps
+    Rewards        QuestReward    // Completion rewards
+    Triggers       []TriggerDef   // Event-driven step/action rules (see triggers.go)
+    Flags          []QuestFlagDef // Declared flag keys + allowed values (see Quest Flags System below)
+    Repeatable     bool           // If true, completing the quest clears progress so it can be retaken
+    CooldownRounds int            // Rounds after completion before a repeatable quest can be retaken
 }
 ```
 
 ### Quest Step Structure
 ```go
 type QuestStep struct {
-    Id          string // Step identifier (e.g., "start", "middle", "end")
-    Description string // Step description for players
-    Hint        string // Optional hint for completing step
+    Id           string // Step identifier (e.g., "start", "middle", "end")
+    Description  string // Step description for players
+    Hint         string // Optional hint for completing step
+    MapTarget    int    // Room the minimap marker points at during this step
+                         // (0 = infer from room_enter triggers, -1 = deliberate no marker)
+    MapTargetMob int    // Points the minimap marker at a unique NPC's CURRENT room
+                         // instead of a fixed room (falls back to MapTarget if unresolved)
 }
 ```
 
@@ -80,15 +95,27 @@ type QuestStep struct {
 type QuestReward struct {
     QuestId       string // New quest to give (format: "{id}-{step}")
     Gold          int    // Gold amount to award
-    ItemId        int    // Item to give by ID
+    ItemId        int    // Single item to give by ID
     BuffId        int    // Buff to apply by ID
-    Experience    int    // Experience points to award
-    SkillInfo     string // Skill advancement (format: "skillId:level")
+    SkillInfo     string // Skill advancement, one or more: "skill:level[,skill:level]"
+    StatInfo      string // Stat increase, one or more: "stat:amount[,stat:amount]"
+    RecipeInfo    string // Recipe(s) to grant, comma-separated recipe IDs
+    ItemInfo      string // Item stockpile grant: "itemid[:qty][,itemid[:qty]]"
+    SpellId       string // Spell to teach on completion
     PlayerMessage string // Message displayed to player
     RoomMessage   string // Message displayed to room
     RoomId        int    // Room to teleport player to
+    RepFaction    string // Faction whose reputation should change
+    RepAmount     int    // Amount to bump RepFaction's reputation by
 }
 ```
+
+There is no experience/XP field. DOGMud removed character levels and XP
+entirely; skill and stat rewards (`SkillInfo`, `StatInfo`) are the
+progression-granting rewards. `SkillInfo` grants are floor-raises: a grant
+never downgrades a player already at or above the target level, so a
+veteran replaying a newbie quest keeps their rank. `StatInfo` grants are
+always additive.
 
 ## Quest Token System
 
@@ -171,6 +198,13 @@ func IsTokenAfter(currentToken string, nextToken string) bool {
 
 ### Quest Retrieval
 ```go
+// Get a quest definition by bare numeric id — no token parsing, no step
+// check. Used by the editor's load path, since not every quest's tokens
+// share a common valid step.
+func GetQuestById(questId int) *Quest {
+    return quests[questId]
+}
+
 // Get quest by token (validates step existence)
 func GetQuest(questToken string) *Quest {
     questId, questStep := TokenToParts(questToken)
@@ -248,9 +282,15 @@ func (r *Quest) Id() int {
     return r.QuestId
 }
 
-// Validate quest configuration
+// Validate implements fileloader.Loadable — it runs on EVERY parse (boot
+// and editor save), so a broken quest file fails to load instead of
+// loading half-formed. Checks: QuestId > 0, Name non-empty, at least one
+// step, every trigger has a known event and at least one action, no
+// duplicate step ids, every declared flag has a non-empty key and at
+// least one allowed value with no duplicate flag keys, and every
+// same-quest grant token in a trigger action names a real step.
 func (r *Quest) Validate() error {
-    return nil // Placeholder for validation logic
+    // ...
 }
 ```
 
@@ -259,18 +299,24 @@ func (r *Quest) Validate() error {
 // Load all quest files from data directory
 func LoadDataFiles() {
     start := time.Now()
-    
-    tmpQuests, err := fileloader.LoadAllFlatFiles[int, *Quest](
-        configs.GetFilePathsConfig().DataFiles.String() + "/quests"
-    )
+
+    dataPath := questsDataRoot() // DataFiles config path + "/quests"
+    tmpQuests, err := fileloader.LoadAllFlatFiles[int, *Quest](dataPath)
     if err != nil {
-        panic(err)
+        panic(errors.Wrap(err, `filepath: `+dataPath))
     }
-    
+
     quests = tmpQuests
-    
-    mudlog.Info("quests.LoadDataFiles()", 
-        "loadedCount", len(quests), 
+
+    // Rebuild the flag registry from the freshly loaded quests so
+    // ValidateFlag has an up to date view of every declared flag key.
+    flagRegistry = map[string][]string{}
+    for _, q := range quests {
+        RegisterFlags(q.QuestId, q.Flags)
+    }
+
+    mudlog.Info("quests.LoadDataFiles()",
+        "loadedCount", len(quests),
         "Time Taken", time.Since(start))
 }
 ```
@@ -288,7 +334,6 @@ quest := Quest{
     },
     Rewards: QuestReward{
         Gold:          50,
-        Experience:    100,
         PlayerMessage: "The guard thanks you for the message.",
         RoomMessage:   "The guard nods appreciatively.",
     },
@@ -312,7 +357,6 @@ quest := Quest{
     },
     Rewards: QuestReward{
         ItemId:        501, // Ancient Artifact
-        Experience:    500,
         QuestId:       "3001-start", // Chain to next quest
         PlayerMessage: "You have uncovered an ancient mystery!",
     },
@@ -344,15 +388,20 @@ quest := Quest{
 
 ### Skill Rewards
 ```go
-// Skill advancement reward format: "skillId:level"
+// Skill advancement reward format: "skill:level", comma-separated for
+// several skills in one reward.
 reward := QuestReward{
-    SkillInfo: "map:2", // Advance map skill to level 2
+    SkillInfo: "weapon-combat:1,unarmed-combat:1",
 }
 
-// Parsing skill reward:
-parts := strings.Split(reward.SkillInfo, ":")
-skillId := parts[0]    // "map"
-level, _ := strconv.Atoi(parts[1]) // 2
+// The real parser (internal/hooks/Quest_HandleQuestUpdate.go, not this
+// package) splits on "," then ":" per entry:
+for _, entry := range strings.Split(reward.SkillInfo, ",") {
+    details := strings.Split(strings.TrimSpace(entry), ":")
+    skillName := strings.ToLower(strings.TrimSpace(details[0]))
+    level, _ := strconv.Atoi(strings.TrimSpace(details[1]))
+    // grant is a floor-raise: only applied if level > character's current level
+}
 ```
 
 ### Chained Quests
@@ -386,32 +435,42 @@ reward := QuestReward{
 ## Integration Patterns
 
 ### Character System Integration
+`internal/characters` (see `internal/characters/quests.go`) is the actual
+consumer of quest tokens and flags — this package never touches
+`*characters.Character` directly:
 ```go
-// Quests integrate with character quest flags
-- character.QuestFlags[]           // Current quest progress tokens
-- character.HasQuestFlag()         // Check specific quest progress
-- character.AddQuestFlag()         // Add new quest progress
-- character.Experience            // Experience rewards
-- character.Gold                  // Gold rewards
+- character.QuestProgress               // map[int]string: questId -> current step id
+- character.HasQuest(token)             // true if progress is at or past token's step
+- character.GiveQuestToken(token) bool  // advances progress if token is a valid next step
+- character.ClearQuestToken(token)      // removes progress (used by repeatable quests)
+- character.QuestFlags                  // map[string]string: branch/choice flags, key "{questId}-{flagName}"
+- character.SetQuestFlag(key, value)    // set a flag (validated against the quest's declared values)
+- character.GetQuestFlag(key) string    // read a flag; "" if unset
+- character.HasQuestFlag(key) bool      // true if the flag key is set at all
+- character.ClearQuestFlag(key)
+- character.Gold                        // int: gold reward target
 ```
 
 ### Item System Integration
 ```go
-// Quest rewards can give items
+// Single item reward
 if reward.ItemId > 0 {
     item := items.New(reward.ItemId)
-    character.GiveItem(item)
+    character.StoreItem(item)
 }
+
+// Multi-item stockpile reward (ItemInfo): see parseItemGrants in
+// internal/hooks/Quest_HandleQuestUpdate.go for the real grant loop.
 ```
 
 ### Skill System Integration
 ```go
-// Quest rewards can advance skills
+// Quest rewards can advance skills — a floor-raise, never a downgrade
 if reward.SkillInfo != "" {
-    parts := strings.Split(reward.SkillInfo, ":")
-    skillId := parts[0]
-    level, _ := strconv.Atoi(parts[1])
-    character.SetSkillLevel(skillId, level)
+    // ... parse "skill:level[,skill:level]" per the Skill Rewards example above ...
+    if character.GetSkillLevel(skills.SkillTag(skillName)) < level {
+        character.TrainSkill(skillName, level)
+    }
 }
 ```
 
@@ -419,7 +478,7 @@ if reward.SkillInfo != "" {
 ```go
 // Quest rewards can apply buffs
 if reward.BuffId > 0 {
-    character.Buffs.AddBuff(reward.BuffId, false)
+    character.AddBuff(reward.BuffId, false) // isPermanent=false
 }
 ```
 
@@ -427,15 +486,13 @@ if reward.BuffId > 0 {
 
 ### Quest Progress Tracking
 ```go
-// Check if player can advance quest
-currentProgress := "1001-start"
+// GiveQuestToken checks quests.IsTokenAfter internally, so callers don't
+// need to call it themselves before advancing.
 nextStep := "1001-middle"
 
-if quests.IsTokenAfter(currentProgress, nextStep) {
-    // Player can advance to next step
-    character.RemoveQuestFlag(currentProgress)
-    character.AddQuestFlag(nextStep)
-    
+if character.GiveQuestToken(nextStep) {
+    // Progress advanced.
+
     // Check if quest is complete
     if nextStep == "1001-end" {
         quest := quests.GetQuest(nextStep)
@@ -471,57 +528,76 @@ if quest != nil {
 ```
 
 ### Reward Distribution
+The real distribution logic lives in
+`internal/hooks/Quest_HandleQuestUpdate.go`, not in this package (this
+package only defines the data shapes). Condensed and simplified from that
+file:
 ```go
 // Distribute quest completion rewards
-func distributeRewards(character *characters.Character, rewards QuestReward) {
+func distributeRewards(questUser *users.UserRecord, rewards QuestReward) {
+    character := questUser.Character
+
     // Gold reward
     if rewards.Gold > 0 {
         character.Gold += rewards.Gold
     }
-    
-    // Experience reward
-    if rewards.Experience > 0 {
-        character.Experience += rewards.Experience
-    }
-    
+
     // Item reward
     if rewards.ItemId > 0 {
         item := items.New(rewards.ItemId)
-        character.GiveItem(item)
+        character.StoreItem(item)
     }
-    
-    // Skill reward
-    if rewards.SkillInfo != "" {
-        parts := strings.Split(rewards.SkillInfo, ":")
-        if len(parts) == 2 {
-            skillId := parts[0]
-            level, _ := strconv.Atoi(parts[1])
-            character.SetSkillLevel(skillId, level)
+    // Item-stockpile reward (rewards.ItemInfo) grants N of each listed
+    // item — see parseItemGrants.
+
+    // Skill reward(s) — floor-raise, never downgrades
+    for _, grant := range parseSkillGrants(rewards.SkillInfo) {
+        if character.GetSkillLevel(skills.SkillTag(grant.skill)) < grant.level {
+            character.TrainSkill(grant.skill, grant.level)
         }
     }
-    
+
+    // Stat reward(s) — always additive
+    for _, grant := range parseStatGrants(rewards.StatInfo) {
+        character.IncreaseStat(grant.stat, grant.amount)
+    }
+
+    // Recipe reward(s)
+    for _, recipeId := range parseRecipeGrants(rewards.RecipeInfo) {
+        character.LearnRecipe(recipeId)
+    }
+
+    // Spell reward
+    if rewards.SpellId != "" {
+        character.LearnSpell(rewards.SpellId)
+    }
+
     // Buff reward
     if rewards.BuffId > 0 {
-        character.Buffs.AddBuff(rewards.BuffId, false)
+        character.AddBuff(rewards.BuffId, false)
     }
-    
+
     // Chained quest reward
     if rewards.QuestId != "" {
-        character.AddQuestFlag(rewards.QuestId)
+        character.GiveQuestToken(rewards.QuestId)
     }
-    
+
     // Teleportation reward
     if rewards.RoomId > 0 {
-        character.RoomId = rewards.RoomId
+        rooms.MoveToRoom(questUser.UserId, rewards.RoomId)
     }
-    
+
+    // Faction reputation reward
+    if rewards.RepFaction != "" && rewards.RepAmount != 0 {
+        factions.BumpRep(rewards.RepFaction, questUser.UserId, rewards.RepAmount)
+    }
+
     // Messages
     if rewards.PlayerMessage != "" {
-        user.SendText(rewards.PlayerMessage)
+        questUser.SendText(messaging.CategoryLoot, rewards.PlayerMessage)
     }
-    
     if rewards.RoomMessage != "" {
-        room.SendText(rewards.RoomMessage, user)
+        sendVisualRoomText(room, messaging.CategoryEmote, rewards.RoomMessage, questUser.UserId)
     }
 }
 ```
@@ -567,12 +643,23 @@ provides quest and inventory checks without importing `characters` or `users`
 ```go
 // internal/dialogue/types.go
 type PlayerState struct {
-    HasQuest   func(token string) bool   // checks character.HasQuest()
-    HasItem    func(itemId int) bool     // checks backpack for item
-    RemoveItem func(itemId int) bool     // removes item from backpack
-    GiveQuest  func(token string)        // fires events.Quest to advance quest
+    HasQuest         func(token string) bool   // checks character.HasQuest()
+    HasItem          func(itemId int) bool     // checks backpack for item
+    RemoveItem       func(itemId int) bool     // removes item from backpack
+    GiveQuest        func(token string)        // fires events.Quest to advance quest
+    GiveItem         func(itemId int) bool     // returns whether the item actually reached the player (false e.g. over carry capacity)
+    GetQuestFlag     func(key string) string
+    SetQuestFlag     func(key, value string)
+    BumpRep          func(faction string, delta int)
+    GiveGold         func(amount int)
+    HasOwnMasterwork func(skillMin int) bool
 }
 ```
+`GiveItem` returning false aborts the node's OTHER effects too
+(`grantsQuest`, `requiresItem` removal, flags, rep, gold) so a
+`givesItem` + `grantsQuest` node can never burn its quest token on an
+item that didn't actually arrive; the node stays re-triggerable once the
+player makes room.
 
 Call sites in `talk.go` and `ask.go` build a `PlayerState` from the user's
 character before calling dialogue engine functions.
@@ -657,7 +744,7 @@ branch, which choice, whose side they took).
 
 | Mechanism | Use for | Storage |
 |-----------|---------|---------|
-| Quest token (`{id}-{step}`) | Step progress, gating future steps | `character.QuestTokens` |
+| Quest token (`{id}-{step}`) | Step progress, gating future steps | `character.QuestProgress` |
 | Quest flag (`{id}-{name}`) | Branching choices, cross-quest state | `character.QuestFlags` |
 
 Use **tokens** when you want to gate an NPC interaction on whether a player

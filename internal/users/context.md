@@ -17,7 +17,7 @@ The users system is built around several key components:
 - Thread-safe user operations with proper cleanup
 
 **User Index System:**
-- High-performance binary index for user lookups
+- Fixed-width record index for user lookups
 - Fixed-width record format for fast seeking
 - Username-to-UserID mapping with collision handling
 - Automatic index rebuilding and maintenance
@@ -42,11 +42,10 @@ The users system is built around several key components:
 - **Connection Tracking**: Real-time user connection mapping
 - **Zombie Handling**: Graceful disconnection and cleanup
 
-### 2. **High-Performance Index System**
-- **Binary Index**: Fast username lookups with O(log n) performance
-- **Fixed Records**: 89-byte fixed-width records for efficient seeking
-- **Automatic Maintenance**: Index rebuilding and corruption recovery
-- **Version Management**: Versioned index format with migration support
+### 2. **Fixed-Width Index System**
+- **Fixed Records**: 89-byte fixed-width records seeked by offset (`RecordCount * RecordSize`); lookups are a linear scan, not a binary search
+- **Automatic Maintenance**: Index rebuilding and corruption recovery (`Rebuild()`/`rebuildFromDir` in `index_rebuild.go`)
+- **Version Management**: Versioned index format via `IndexMetaData`
 
 ### 3. **Rich User Data Model**
 - **Character Integration**: Full character system association
@@ -65,27 +64,36 @@ The users system is built around several key components:
 ### User Record Structure
 ```go
 type UserRecord struct {
-    UserId         int                   // Unique user identifier
-    Role           string                // Permission role (guest/user/admin)
-    Username       string                // Login username
-    Password       string                // Hashed password
-    Joined         time.Time             // Account creation date
-    Macros         map[string]string     // User-defined command macros
-    Aliases        map[string]string     // Command aliases and shortcuts
-    Character      *characters.Character // Associated character data
-    ItemStorage    Storage               // Personal item storage
-    ConfigOptions  map[string]any        // User configuration preferences
-    CombatVerbosity string              // Combat text level: ""/full, medium, light
-    Inbox          Inbox                 // Message inbox with attachments
-    Muted          bool                  // Communication restrictions
-    Deafened       bool                  // Communication filtering
-    ScreenReader   bool                  // Accessibility mode
-    EmailAddress   string                // Contact email (optional)
-    TipsComplete   map[string]bool       // Tutorial completion tracking
-    
-    // Runtime fields (not persisted)
-    EventLog       UserLog               // Session event logging
-    LastMusic      string                // Audio state tracking
+    UserId          int                   // Unique user identifier
+    Role            string                // Permission role (guest/user/admin)
+    Username        string                // Login username
+    Password        string                // Hashed password
+    Joined          time.Time             // Account creation date
+    LastRenameAt    time.Time             // Last time the rename command was used (cooldown gate)
+    Macros          map[string]string     // Up to 10 user-defined command macros
+    Aliases         map[string]string     // Command aliases and shortcuts
+    Ticks           []UserTick            // Client-run interval timers (web automation panel)
+    Triggers        []UserTrigger         // Client-run text-pattern automation (web automation panel)
+    Character       *characters.Character // Associated character data
+    ItemStorage     Storage               // Personal item storage (bank)
+    ConfigOptions   map[string]any        // User configuration preferences
+    Inbox           Inbox                 // Message inbox with attachments
+    Muted           bool                  // Cannot SEND custom communications to anyone but admin/mods
+    Deafened        bool                  // Cannot HEAR custom communications from anyone but admin/mods
+    IsAI            bool                  // Flagged as an AI account (playtest harness)
+    ScreenReader    bool                  // Accessibility mode
+    AsciiMode       bool                  // Convert UTF-8 decorative chars to ASCII for legacy clients
+    LineWidth       int                   // Column width for line wrapping; 0 = default 80
+    CombatVerbosity string                // Combat text level: ""/full, medium (hits only), light (round tally)
+    EmailAddress    string                // Contact email (optional)
+    TipsComplete    map[string]bool       // Tutorial completion tracking
+
+    // Runtime fields (not persisted, yaml:"-")
+    EventLog        UserLog               // Session event logging
+    LastMusic       string                // Audio state tracking
+    LastWhisperFrom int                   // UserId of last person who whispered to us
+
+    // Unexported (not marshalled)
     connectionId   uint64                // Current connection ID
     unsentText     string                // Buffered output
     suggestText    string                // Input suggestions
@@ -98,9 +106,14 @@ type UserRecord struct {
 }
 ```
 
+`UserTick` (`Id, Name, Commands, IntervalSec, Enabled`) and `UserTrigger`
+are both defined in `userrecord.go` alongside `UserRecord`; they back the
+web client's automation panel and are not otherwise covered here.
+
 ### Active Users Management
 ```go
 type ActiveUsers struct {
+    mu                sync.RWMutex                        // guards all five maps below
     Users             map[int]*UserRecord                 // userId -> UserRecord
     Usernames         map[string]int                      // username -> userId
     Connections       map[connections.ConnectionId]int    // connectionId -> userId
@@ -108,6 +121,11 @@ type ActiveUsers struct {
     ZombieConnections map[connections.ConnectionId]uint64 // connectionId -> zombie turn
 }
 ```
+
+There is a single package-level instance, `userManager`, created by
+`newUserManager()`. Every exported function in `users.go` (`GetByUserId`,
+`GetAllActiveUsers`, `LoginUser`, etc.) takes `userManager.mu` before
+touching these maps.
 
 ## User Index System
 
@@ -123,77 +141,79 @@ type IndexMetaData struct {
 type IndexUserRecord struct {
     UserID   int64     // 8 bytes - User identifier
     Username [80]byte  // 80 bytes - Fixed-width username
-                       // 1 byte - Line terminator
 }
 ```
+On disk each record is username bytes, then the little-endian `UserID`,
+then a single line-terminator byte (`IndexLineTerminatorV1`) written
+separately by the read/write code — the terminator is not a struct field.
 
 ### Index Operations
 ```go
 // Create new index from scratch
 func (idx *UserIndex) Create() error {
     idx.Delete() // Remove existing index
-    
+
     f, err := os.Create(idx.Filename)
     if err != nil {
         return err
     }
     defer f.Close()
-    
-    // Write header
+
+    // Reset metadata / write header
     idx.metaData = IndexMetaData{
         MetaDataSize: FixedHeaderTotalLength,
         IndexVersion: IndexVersion,
         RecordCount:  0,
         RecordSize:   IndexRecordSizeV1,
     }
-    
+
     headerBytes, err := idx.metaData.Format()
     if err != nil {
         return err
     }
-    
-    return f.Write(headerBytes)
+    if _, err := f.Write(headerBytes); err != nil {
+        return err
+    }
+    return nil
 }
 
-// Fast username lookup
-func (idx *UserIndex) GetByUsername(username string) (int, error) {
-    if !idx.Exists() {
-        return 0, ErrIndexMissing
+// Fast username lookup: a full sequential scan of the fixed-width
+// records (not a binary search despite the earlier upstream naming),
+// comparing only the first len(username) bytes of each record.
+func (idx *UserIndex) FindByUsername(username string) (int64, bool) {
+    if len(username) > 80 {
+        return 0, false
     }
-    
-    if len(username) > 79 {
-        return 0, ErrSearchNameTooLong
-    }
-    
+
     f, err := os.Open(idx.Filename)
     if err != nil {
-        return 0, err
+        return 0, false
     }
     defer f.Close()
-    
-    // Skip header
-    f.Seek(int64(idx.metaData.MetaDataSize), 0)
-    
-    // Binary search through fixed-width records
+
+    username = strings.ToLower(username)
+
     for i := uint64(0); i < idx.metaData.RecordCount; i++ {
-        var record IndexUserRecord
-        if err := binary.Read(f, binary.LittleEndian, &record); err != nil {
-            return 0, err
-        }
-        
-        // Read terminator
-        var terminator byte
-        binary.Read(f, binary.LittleEndian, &terminator)
-        
-        recordUsername := strings.TrimRight(string(record.Username[:]), "\x00")
-        if strings.EqualFold(recordUsername, username) {
-            return int(record.UserID), nil
-        }
+        offset := int64(idx.metaData.MetaDataSize) + int64(i*idx.metaData.RecordSize)
+        f.Seek(offset, io.SeekStart)
+
+        var recUsername [80]byte
+        io.ReadFull(f, recUsername[:])
+
+        var userId int64
+        binary.Read(f, binary.LittleEndian, &userId)
+
+        // ... reads and validates the terminator byte, then compares
+        // recUsername against username case-insensitively ...
+
+        // returns (userId, true) on match
     }
-    
-    return 0, ErrNotFound
+    return 0, false
 }
 ```
+`FindByUserId(userId int64) (string, bool)` does the mirror-image scan
+(compare `UserID`, return the stored username). Neither method returns an
+error; both use a `(value, found bool)` shape.
 
 ## User Management Operations
 
@@ -201,8 +221,6 @@ func (idx *UserIndex) GetByUsername(username string) (int, error) {
 ```go
 // Create new user record
 func NewUserRecord(userId int, connectionId uint64) *UserRecord {
-    c := configs.GetGamePlayConfig()
-    
     u := &UserRecord{
         connectionId:   connectionId,
         UserId:         userId,
@@ -217,23 +235,19 @@ func NewUserRecord(userId int, connectionId uint64) *UserRecord {
         tempDataStore:  make(map[string]any),
         EventLog:       UserLog{},
     }
-    
+
     return u
 }
 
-// Password validation with multiple formats
+// PasswordMatches tries three formats in order, migrating opportunistically:
+//   1. bcrypt (current format) — compared via bcrypt.CompareHashAndPassword
+//   2. legacy unsalted SHA256 (util.Hash) — on match, re-hashes with bcrypt
+//      in place so the next login uses the secure path
+//   3. plaintext fallback — only allowed when HasPlaintextPassword() is true
+//      (stored value is neither bcrypt nor a 64-char hex SHA256 digest),
+//      so default/legacy plaintext credentials can authenticate once
 func (u *UserRecord) PasswordMatches(input string) bool {
-    // Direct match (legacy)
-    if input == u.Password {
-        return true
-    }
-    
-    // Hashed match (current)
-    if u.Password == util.Hash(input) {
-        return true
-    }
-    
-    return false
+    // see internal/users/userrecord.go for the real three-step logic
 }
 ```
 
@@ -258,11 +272,15 @@ func GetConnectionIds(userIds []int) []connections.ConnectionId {
     return connectionIds
 }
 
-// Get all active users
+// Get all active users. Zombies are excluded — a zombie is still in
+// userManager.Users (it hasn't been logged out yet) but isZombie is
+// true, so it's filtered out of this list.
 func GetAllActiveUsers() []*UserRecord {
-    ret := []*UserRecord{}
-    for _, user := range userManager.Users {
-        ret = append(ret, user)
+    ret := make([]*UserRecord, 0, len(userManager.Users))
+    for _, userPtr := range userManager.Users {
+        if !userPtr.isZombie {
+            ret = append(ret, userPtr)
+        }
     }
     return ret
 }
@@ -270,13 +288,20 @@ func GetAllActiveUsers() []*UserRecord {
 
 ### Zombie Connection Handling
 ```go
-// Mark user as zombie (disconnected but not cleaned up)
+// Clear a user's zombie status (they've reconnected or been cleaned up).
+// The function to MARK a user as a zombie is SetZombieUser, not this one.
+// Takes userManager.mu for the map access, then calls into characters
+// (a different package) outside the lock.
 func RemoveZombieUser(userId int) {
-    if u := userManager.Users[userId]; u != nil {
-        u.Character.SetAdjective("zombie", false)
-    }
+    userManager.mu.Lock()
+    u := userManager.Users[userId]
     if connId, ok := userManager.UserConnections[userId]; ok {
         delete(userManager.ZombieConnections, connId)
+    }
+    userManager.mu.Unlock()
+
+    if u != nil {
+        u.Character.SetAdjective("zombie", false)
     }
 }
 
@@ -303,49 +328,33 @@ func GetExpiredZombies(expirationTurn uint64) []int {
 ## Storage Systems
 
 ### Item Storage
+Storage is the per-player bank inventory. It is slot-based, not a flat
+item list: stackable item types (components, food, potions, etc.)
+accumulate a `Count` on one `StorageSlot` so, e.g., 50 iron ore occupies a
+single slot. Non-stackable types always have `Count == 1`.
 ```go
+type StorageSlot struct {
+    Item  items.Item // one representative item for the stack
+    Count int        // >= 1
+}
+
 type Storage struct {
-    Items []items.Item // Personal item storage
+    Slots []StorageSlot // canonical field
+
+    // Legacy field, kept with omitempty for one release so old save
+    // files still deserialize; MigrateStorageSlots folds it into Slots
+    // on first load and clears it.
+    Items []items.Item
 }
 
-// Find item by name with fuzzy matching
-func (s *Storage) FindItem(itemName string) (items.Item, bool) {
-    if itemName == "" {
-        return items.Item{}, false
-    }
-    
-    closeMatchItem, matchItem := items.FindMatchIn(itemName, s.Items...)
-    
-    if matchItem.ItemId != 0 {
-        return matchItem, true
-    }
-    
-    if closeMatchItem.ItemId != 0 {
-        return closeMatchItem, true
-    }
-    
-    return items.Item{}, false
-}
-
-// Add item to storage
-func (s *Storage) AddItem(i items.Item) bool {
-    if i.ItemId < 1 {
-        return false
-    }
-    s.Items = append(s.Items, i)
-    return true
-}
-
-// Remove specific item instance
-func (s *Storage) RemoveItem(i items.Item) bool {
-    for j := len(s.Items) - 1; j >= 0; j-- {
-        if s.Items[j].Equals(i) {
-            s.Items = append(s.Items[:j], s.Items[j+1:]...)
-            return true
-        }
-    }
-    return false
-}
+func (s *Storage) SlotCount() int             // number of occupied slots (stacks)
+func (s *Storage) GetItems() []items.Item     // one Item value per logical unit (a Count-3 slot yields 3 values)
+func (s *Storage) GetSlots() []StorageSlot    // copy of the slot list; use when reasoning about stacks
+func (s *Storage) FindItem(itemName string) (items.Item, bool) // fuzzy match via items.FindMatchIn
+func (s *Storage) AddItem(i items.Item) bool  // increments an existing stack (via items.SameStack) or appends a new slot
+func (s *Storage) RemoveItem(i items.Item) bool // decrements/drops a stackable slot, or removes a non-stackable slot by UUID (items.Item.Equals)
+func (s *Storage) RemoveSlot(idx int) StorageSlot // removes and returns the whole slot at idx; panics if out of range
+func (s *Storage) MigrateStorageSlots() bool  // storage_migrate.go: folds legacy Items into Slots
 ```
 
 ### Inbox Messaging System
@@ -397,6 +406,16 @@ func (i *Inbox) CountUnread() int {
     }
     return ct
 }
+
+// Empty clears the inbox entirely.
+func (i *Inbox) Empty() {
+    (*i) = Inbox{}
+}
+
+// DateString formats msg.DateSent using the configured TextFormats.Time layout.
+func (m Message) DateString() string {
+    return m.DateSent.Format(string(configs.GetConfig().TextFormats.Time))
+}
 ```
 
 ## User Data Management
@@ -438,12 +457,13 @@ func (u *UserRecord) ClientSettings() connections.ClientSettings {
     return connections.GetClientSettings(u.connectionId)
 }
 
-// Configuration options stored in ConfigOptions map
-// Examples:
-// - "auto_attack": bool
-// - "brief_mode": bool
-// - "color_enabled": bool
-// - "sound_enabled": bool
+// Configuration options stored in ConfigOptions map (any type per key).
+// Real keys in use include:
+// - "wimpy": int             // health% threshold for auto-flee
+// - "prompt" / "fprompt": string // prompt template overrides
+// - "tinymap": bool          // compact map display (defaults true if unset)
+// - "shortadjectives": bool
+// - "auction": bool          // opt out of auction house broadcast messages
 ```
 
 ## Online User Information
@@ -453,15 +473,18 @@ func (u *UserRecord) ClientSettings() connections.ClientSettings {
 type OnlineInfo struct {
     Username      string // Login username
     CharacterName string // Character display name
-    Level         int    // Character level (deprecated in DOGMud — always 0)
-    Alignment     string // Character alignment
-    Profession    string // Character profession
+    Title         string // Skill/mutation-derived title (skills.GetTitle) — NOT a level or class name
     OnlineTime    int64  // Seconds online
     OnlineTimeStr string // Formatted time string
     IsAFK         bool   // Away from keyboard status
+    IsAI          bool   // True if the connection is an AI-flagged playtest session
     Role          string // User role (guest/user/admin)
 }
 ```
+There is no `Level`, `Alignment`, or `Profession` field. DOGMud has no
+character levels or classes; `Title` is derived from the character's
+mutations, skill ranks, and stats via `skills.GetTitle(...)`, called from
+`(*UserRecord).GetOnlineInfo()`.
 
 ## Integration Patterns
 
@@ -469,10 +492,12 @@ type OnlineInfo struct {
 ```go
 // Users have associated characters
 - user.Character                    // Full character data
-- user.Character.Name              // Character name
-- user.Character.Level             // Deprecated (always 0 in DOGMud)
-- user.Character.RoomId            // Current location
+- user.Character.Name               // Character name
+- user.Character.RoomId             // Current location
 ```
+`Character` has no `Level` field. DOGMud has no character levels;
+progression is use-based (see CLAUDE.md and `internal/characters/context.md`
+if present).
 
 ### Connection System Integration
 ```go
@@ -485,10 +510,14 @@ type OnlineInfo struct {
 ### Prompt System Integration
 ```go
 // Users can have active prompts
-- user.activePrompt               // Current prompt state
-- user.inputBlocked               // Input processing control
-- prompt.Ask()                    // Interactive prompts
+- user.StartPrompt(command, rest) (*prompt.Prompt, bool) // creates or reuses the active prompt
+- user.GetPrompt() *prompt.Prompt                        // read the active prompt
+- user.ClearPrompt()                                     // clear it
+- user.inputBlocked                                      // Input processing control (via BlockInput/UnblockInput)
 ```
+`prompt.Ask()` is not a package-level function: it is a method,
+`(*prompt.Prompt).Ask(question, responseOptions, defaultOption ...)`,
+called on the prompt returned by `StartPrompt`/`GetPrompt`.
 
 ### Event System Integration
 ```go
@@ -502,20 +531,14 @@ type OnlineInfo struct {
 
 ### User Authentication
 ```go
-// Authenticate user login
+// Authenticate user login (LoadUser looks the username up in the
+// UserIndex internally — there is no separate userIndex.GetByUsername step)
 username := "player1"
 password := "secretpass"
 
-// Look up user by username
-userId, err := userIndex.GetByUsername(username)
+user, err := LoadUser(username)
 if err != nil {
     return errors.New("user not found")
-}
-
-// Load user record
-user, err := LoadUser(userId)
-if err != nil {
-    return err
 }
 
 // Verify password
@@ -531,41 +554,42 @@ fmt.Printf("Welcome back, %s!\n", user.Username)
 ```go
 // Create new user
 connectionId := uint64(12345)
-userId := getNextUserId()
+userId := users.GetUniqueUserId()
 
 user := users.NewUserRecord(userId, connectionId)
 user.Username = "newplayer"
-user.Password = util.Hash("password123")
 user.Character.Name = "NewPlayer"
-
-// Save user
-if err := user.Save(); err != nil {
+if err := user.SetPassword("password123"); err != nil {
     return err
 }
 
-// Add to active users
-userManager.Users[userId] = user
-userManager.Usernames[user.Username] = userId
-userManager.Connections[connectionId] = userId
-userManager.UserConnections[userId] = connectionId
+// CreateUser assigns UserId/Role, saves the file, registers the user in
+// the UserIndex, and adds it to the active-users maps — no manual map
+// manipulation needed.
+if err := users.CreateUser(user); err != nil {
+    return err
+}
 ```
 
 ### Item Storage Operations
 ```go
-// Store item in user's personal storage
+// Store item in user's bank storage (AddItem stacks stackable types
+// automatically; see the slot-based Storage struct above)
 sword := items.New(101) // Create sword item
 if user.ItemStorage.AddItem(sword) {
-    user.SendText("Item stored successfully.")
+    user.SendText(messaging.CategorySystem, "Item stored successfully.")
 }
 
 // Retrieve item from storage
 storedItem, found := user.ItemStorage.FindItem("sword")
 if found {
-    user.Character.GiveItem(storedItem)
+    user.Character.StoreItem(storedItem)
     user.ItemStorage.RemoveItem(storedItem)
-    user.SendText("Item retrieved from storage.")
+    user.SendText(messaging.CategorySystem, "Item retrieved from storage.")
 }
 ```
+`Character` has no `GiveItem` method; the equivalent is `StoreItem`.
+`SendText` takes a `messaging.Category`, not just a string.
 
 ### Messaging System
 ```go
@@ -580,54 +604,59 @@ message := users.Message{
 }
 
 recipient.Inbox.Add(message)
-recipient.SendText("You have a new message!")
+recipient.SendText(messaging.CategorySystem, "You have a new message!")
 
 // Check unread messages
 unreadCount := recipient.Inbox.CountUnread()
 if unreadCount > 0 {
-    recipient.SendText(fmt.Sprintf("You have %d unread messages.", unreadCount))
+    recipient.SendText(messaging.CategorySystem, fmt.Sprintf("You have %d unread messages.", unreadCount))
 }
 ```
 
 ### Zombie Connection Cleanup
+The real cleanup path (`internal/hooks/NewTurn_CleanupZombies.go`) does not
+call `user.Save()` or a `RemoveUser` directly — it queues a `leaveworld`
+system event per expired userId, which the normal disconnect flow then
+handles:
 ```go
-// Handle disconnected users
-currentTurn := util.GetTurnCount()
-expirationTurn := currentTurn - 100 // 100 turns ago
+expTurns := uint64(et.SecondsToTurns(int(gp.ZombieSeconds)))
 
-expiredZombies := users.GetExpiredZombies(expirationTurn)
-for _, userId := range expiredZombies {
-    user := users.GetByUserId(userId)
-    if user != nil {
-        // Save user data
-        user.Save()
-        
-        // Remove from active users
-        users.RemoveUser(userId)
-        
-        fmt.Printf("Cleaned up zombie user: %s\n", user.Username)
-    }
+expZombies := users.GetExpiredZombies(evt.TurnNumber - expTurns)
+for _, userId := range expZombies {
+    events.AddToQueue(events.System{
+        Command:     `leaveworld`,
+        Data:        userId,
+        Description: `Zombie Expired`,
+    })
 }
 ```
+There is no `users.RemoveUser` function. Tearing down an account entirely
+(deleting its save file, index entry, and disconnecting it) is
+`users.RemoveUserAndDisconnect(userId int) error` — a different,
+much more destructive operation than zombie cleanup.
 
 ## Presence Machine Integration (chunk 5)
 
-The Presence machine lives on `Character`, not `UserRecord`, but the
-player-side connection lifecycle is wired primarily inside the users
-package:
+The Presence machine lives on `Character`, not `UserRecord`. Only the
+TCP-close side of the connection lifecycle is wired inside this package;
+login-complete and input-wake are wired elsewhere:
 
 - **`users.go` — TCP-close observer:** `LogOutUserByConnectionId` calls
   `u.Character.Presence.TransitionTo(presence.Disconnected, ...)` with
   `TriggerTCPClosed` when a connection is dropped. This fires the
   scheduler-cancel observer automatically.
-- **`users.go` — Login-complete:** `HandleJoin` (or its callee
-  `loginCharacterTo`) fires `Presence.TransitionTo(presence.Active, ...)`
-  with `TriggerEnteredRoom` when the character is placed in its starting
-  room, advancing from `Connecting` to `Active`.
-- **`userrecord.go` — Input wake:** `SetLastInputRound` calls
+- **Login-complete (NOT in this package):**
+  `internal/hooks/PlayerSpawn_HandleJoin.go` fires
+  `Presence.TransitionTo(presence.Active, ...)` with `TriggerEnteredRoom`
+  when the character is placed in its starting room.
+- **Input wake (NOT in this package):** `internal/usercommands` (both
+  `afk.go` and `usercommands.go`) fires
   `Presence.TransitionTo(presence.Active, ...)` with
-  `TriggerInputReceived` on every non-Disconnected state transition. This
-  replaces the old manual-AFK clear shim that read `ManualAFK` directly.
+  `TriggerInputReceived` when a command is dispatched.
+  `(*UserRecord).SetLastInputRound` in `userrecord.go` only updates the
+  `lastInputRound` counter; it does not touch Presence itself (see the
+  comment on that function for why the wake logic had to move to the
+  per-command entry point).
 
 ### OnlineInfo.IsAFK (compat shim)
 
@@ -655,14 +684,23 @@ Only `AFK` surfaces to players via the `(afk)` tag.
 - `internal/prompt` - Interactive prompt system for user input
 - `internal/util` - Utility functions for hashing, file operations, and validation
 - `internal/mudlog` - Logging system for user events and debugging
+- `internal/events` - Event queue (login/logout, web client commands)
+- `internal/messaging` - `SendText` categories and combat-verbosity parsing
+- `internal/mobs` - Charm tracking cleanup on login/zombie/removal
+- `internal/quests` - Quest step migration (`DoQuestStepMigration`)
+- `internal/skills` - Title derivation for `OnlineInfo.Title`
+- `internal/spells`, `internal/gametime`, `internal/term` - prompt token
+  rendering (`userrecord.prompt.go`)
+- `internal/audio` - Music/sound tracking (`PlayMusic`/`PlaySound`)
+- `internal/copyover` - Copyover contributor interface (`copyover.go`)
+- `internal/state`, `internal/state/presence`, `internal/state/position` -
+  Presence/position state machines (chunk 5 — lives on Character but
+  connection lifecycle wired here)
+- `internal/buffs`, `internal/state/awareness` - only pulled in by
+  `test_helpers.go` (`NewTestUser`), not by any production path
+- `golang.org/x/crypto/bcrypt` - Password hashing (current format)
 - `gopkg.in/yaml.v2` - YAML serialization for user data persistence
-- `internal/state/presence` - Presence state machine (chunk 5 — lives on
-  Character but connection lifecycle wired here)
 
-This comprehensive users system provides robust user account management
-with authentication, connection tracking, data persistence, messaging,
-and seamless integration with all game systems while maintaining high
-performance through efficient indexing and caching.
 ## Files
 
 | File | Purpose |
