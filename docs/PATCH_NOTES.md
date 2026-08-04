@@ -1,6 +1,20 @@
 # DOGMud Patch Notes
 
-## 2026-08-03 — Apostrophes are optional
+## 2026-08-04: A look under the hood
+
+There is a new **Architecture** tab on the website with six interactive
+diagrams of how the game actually works inside: the engine as a whole, the
+daily routines that keep townspeople busy, how a single combat swing is
+resolved, how authored world files become live rooms, how the browser map
+gets drawn, and how your character grows without experience points or levels.
+
+Each diagram opens full screen. You can zoom in for more detail, click any
+part to see what connects to it, search by name, and step through a guided
+tour that walks you round the whole thing. The tour reads best from the
+Present button.
+
+These are for the curious rather than for playing. Nothing in the game
+changed.
 
 Typing <ansi fg="command">buy healers root</ansi> now finds the Healer's Root — every name
 match (shops, your pack, the ground) ignores apostrophes, so you never

@@ -279,7 +279,26 @@ party markers are web-only — the ASCII `map` command is unaffected.
   secondary (×1) each. Coefficients live in the balance config; note that a knob
   left *absent* from `config.yaml` falls back to its Go default, and `0` is a
   legal shipped value (`StaminaPerStrength: 0`).
-- Skills (10 total) cap softly at 50 (`skillSoftCap`). They progress via `OnSkillUse()` → `CheckSkillProgression()`, probabilistically, every ~25 uses.
+- Skills (10 total) cap softly at 50 (`skillSoftCap`). They progress via
+  `OnSkillUse()` → `CheckSkillProgression()`, probabilistically.
+- **A progression roll happens on EVERY use, not every 25 uses.** Corrected
+  2026-08-04; the old "every ~25 uses" wording here was wrong.
+  `UsesPerRank` (25) is not a check cadence. It is the divisor that converts the
+  use counter into a **virtual rank** (`progression.go:92`, `:163`), and that
+  rank is what decays the odds. So it is "a roll every use, whose odds step down
+  every 25 uses", not "a roll every 25 uses".
+- Curve (`CalculateProgressionChance`, `internal/characters/progression.go:44-62`):
+  below the soft cap `base × exp(-decayBelow × rank/softCap)`, above it the
+  decay continues with `decayAbove` rather than reaching zero. Stat rolls also
+  multiply by `StatProgressionRate`. With shipped config a fresh stat is roughly
+  27% per use, falling to roughly 1.3% at virtual rank 150.
+- Shipped config again differs from the Go defaults: `BaseProgressionChance`
+  0.12 shipped against a 0.30 default, `StatProgressionRate` 2.25 against 1.0.
+  Read `config.yaml`, not the defaults.
+- `IncreaseStat` and `IncreaseSkill` contain **no bound check whatsoever** (there
+  is a `TestIncreaseSkill_NoCap` regression test). The only hard ceilings in
+  `CheckStatProgression` are `MobStatCap` / `MobSkillCap`, both gated on
+  `c.IsMob`. Players have none.
 
 ## Dice & Rolling System
 - **For all stat-based rolls use `dice.RollStat(mean)` or `dice.OpposedRollStat(atk, def)`** — no stdDev argument needed
