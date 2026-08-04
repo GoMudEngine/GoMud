@@ -1,5 +1,15 @@
 # DOGMud Patch Notes
 
+## 2026-08-04: The browser map keeps its secrets
+
+The map in the browser client was marking secret exits you had not found
+yet. The text map has always hidden those until you go through them, and
+now the browser map does the same. A secret exit you have already used
+still shows up as before.
+
+If you have been using the browser map to spot hidden passages, that will
+no longer work. Search for them the same way text players always have.
+
 ## 2026-08-04: How the game works inside
 
 There is a new **Architecture** tab on the website with six interactive
