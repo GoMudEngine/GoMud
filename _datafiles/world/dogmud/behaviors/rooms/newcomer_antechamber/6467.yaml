@@ -1,24 +1,40 @@
-# 6467 The Landing — the terminus. Two jobs, both interception (quest 28 drives
-# everything else):
-#   1. The `talk dewey` handoff. We INTERCEPT talk/say so the command never
+# 6467 The Landing — the terminus. Four jobs (quest 28 drives everything else):
+#   1. Prompt on ARRIVAL. The player reaches this room by fleeing, so a
+#      room_enter fires here (NewRound_DoCombat_helpers.go fires entry hooks for
+#      a flee, not just a walk). Without this the room is silent and the player
+#      is stranded: nothing on screen says what to do.
+#   2. Re-prompt if they sit here a while. A newcomer arrives straight out of a
+#      wall of combat text, so the first prompt is easy to lose in scrollback.
+#   3. The `talk dewey` handoff. We INTERCEPT talk/say/ask so the command never
 #      reaches Dewey's dialogue tree (which would print a generic hint on top of
 #      the farewell). The tree plays the paced transition, teleports the player
 #      to the Awakening Pool (5200), grants quest 30, and completes 28-end.
-#   2. Block a plain walk and redirect the player to the talk-handoff.
+#   4. Block a plain walk and redirect the player to the talk-handoff.
+#
+# `talk` is deliberately the canonical verb even though quest 28 never teaches
+# it: reaching the end of the tutorial should leave the player knowing that both
+# `talk` (start a conversation) and `ask` (dig into one) exist, and using it once
+# is what makes it stick. So the prompts NAME it. `say` and `ask` are accepted as
+# fallbacks purely so a player who reaches for the verb the tutorial DID teach is
+# never dead-ended: before 2026-08-04 `ask dewey quest` here fell through to the
+# generic "I have no task for you right now", which tells a stuck newcomer the
+# exact opposite of the truth.
+#
 # The `leaving` flag guards against a second talk re-firing the sequence during
 # the ~4.5s transition (28-end is granted at the end, so gating on it alone would
-# leave a window).
+# leave a window). Every branch below checks it so nothing talks over the
+# farewell.
 tree:
   type: selector
   children:
 
-    # ── the handoff (talk/say), intercepting so no dialogue hint fires ──
+    # ── the handoff (talk/say/ask), intercepting so no dialogue hint fires ──
     - type: sequence
       event: room_command
       children:
         - type: condition
           check: command_matches
-          commands: [talk, say]
+          commands: [talk, say, ask]
         - type: condition
           check: player_missing_quest
           quest: "28-end"
@@ -86,3 +102,69 @@ tree:
             <ansi fg="command">talk dewey</ansi> and I will carry you through.
         - type: action
           do: intercept
+
+    # ── arrival: name the command, because nothing else will ──
+    # Fires on the flee that brings the player here. The delays let the room
+    # description and the arrival text land first.
+    - type: sequence
+      event: room_enter
+      children:
+        - type: condition
+          check: player_missing_quest
+          quest: "28-end"
+        - type: condition
+          check: state_equals
+          key: leaving
+          value: ""
+        # Reset the nudge timer so the re-prompt is measured from arrival.
+        - type: action
+          do: set_state
+          key: nudge_rounds
+          value: 0
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          delay: 1.5
+          text: >-
+            There you are, safe across. Running worked, and now you know it
+            for yourself.
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          delay: 4.0
+          text: >-
+            One thing left, and it is a command you have not used yet -- type
+            <ansi fg="command">talk dewey</ansi>. Talk is how you start a
+            conversation. Ask is how you dig into one.
+
+    # ── re-prompt: the first line is easy to lose in the combat text ──
+    # room_idle fires once per round (4s) while a player is present. The counter
+    # increments every round and the say fires on the 7th, so roughly every 28
+    # seconds, measured from arrival.
+    - type: sequence
+      event: room_idle
+      children:
+        - type: condition
+          check: player_in_room_missing_quest
+          quest: "28-end"
+        - type: condition
+          check: state_equals
+          key: leaving
+          value: ""
+        - type: action
+          do: increment_state
+          key: nudge_rounds
+        - type: condition
+          check: state_greater_than
+          key: nudge_rounds
+          value: 6
+        - type: action
+          do: set_state
+          key: nudge_rounds
+          value: 0
+        - type: action
+          do: mob_say
+          mob_id: 9491
+          text: >-
+            Take your time. When you are ready, type
+            <ansi fg="command">talk dewey</ansi> and I will carry you through.

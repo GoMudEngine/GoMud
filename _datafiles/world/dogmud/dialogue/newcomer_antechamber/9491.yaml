@@ -48,6 +48,18 @@ patterns:
           steady. Over time the way you fight even pulls mutations toward you.
           You never pick what you become. You earn it."
 
+  # "quest" and "task" MUST live here. Without them `ask dewey quest` reaches
+  # only the catch-all, and deliverDialogue's quest-inquiry branch (ask.go) answers
+  # "I have no task for you right now" -- which is the opposite of the truth
+  # while the player is mid-tutorial. Found 2026-08-04 when a newcomer used it
+  # to get unstuck and was told there was nothing to do.
+  - keywords: ["quest", "task", "next", "objective", "stuck", "now", "todo"]
+    responses:
+      - "Your task is the one you're already walking -- the waking itself. Type
+          <ansi fg=\"command\">hint</ansi> any time and it'll name your next
+          step. And when you reach the landing at the end, type
+          <ansi fg=\"command\">talk dewey</ansi> and I'll carry you through."
+
   - keywords: ["ready", "go", "leave", "through", "step", "done"]
     responses:
       - "Then don't let me keep you. Step on through when you reach the
