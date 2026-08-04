@@ -4501,7 +4501,7 @@
       <p class="subtitle">How an authored YAML room or mob becomes a live world object: a deliberately incomplete save overlay, and the restore pass that puts authored intent back on top</p>
     </div>
 
-    <script id="archify-guided-views-data" type="application/json">[{"id":"template-load","label":"Authored YAML loads first","focus":["boot","template","struct"],"note":"Every load starts with the authored file. LoadRoomTemplate runs unconditionally, before anything asks whether a saved instance exists."},{"id":"instance-overlay","label":"Saved state overlays it","focus":["roomsave","mobsave","struct"],"note":"Two different overlays. Rooms unmarshal a saved file straight onto the same struct. Mobs copy a fixed list of progression fields."},{"id":"skip-restore","label":"What a save cannot override","focus":["template","restore","struct"],"note":"A clean template is reloaded and every field tagged instance:skip is copied back, so stale save data cannot survive on authored fields."},{"id":"runtime","label":"The live object","focus":["struct","live"],"note":"One object per room id for the life of the process. From here the in memory struct, not either file, is the source of truth."},{"id":"write-back","label":"What gets written back","focus":["live","writer","roomsave","mobsave"],"note":"The writer diffs against the template and drops every skip tagged field, so a save can only ever contain what a save is allowed to own."}]</script>
+    <script id="archify-guided-views-data" type="application/json">[{"id":"template-load","label":"Authored YAML loads first","focus":["boot","template","struct"],"note":"Every load starts with the authored file. LoadRoomTemplate runs unconditionally, before anything asks whether a saved instance exists."},{"id":"instance-overlay","label":"Saved state overlays it","focus":["roomsave","mobsave","struct"],"note":"Two different overlays. Rooms unmarshal a saved file straight onto the same struct. Mobs copy a fixed list of progression fields."},{"id":"skip-restore","label":"What a save cannot override","focus":["template","restore","struct"],"note":"A clean template is reloaded and the 23 fields tagged instance:skip are copied back, so stale save data cannot survive on any of them."},{"id":"runtime","label":"The live object","focus":["struct","live"],"note":"One object per room id for the life of the process. From here the in memory struct, not either file, is the source of truth."},{"id":"write-back","label":"What gets written back","focus":["live","writer","roomsave","mobsave"],"note":"The writer diffs against the template and drops every skip tagged field, so a save can only ever contain what a save is allowed to own."}]</script>
 
     <div class="guided-views no-print" id="guided-views" hidden aria-label="Guided diagram views">
       <button id="guided-view-prev" type="button" aria-label="Previous guided view" title="Previous guided view ([)">&#8592;</button>
@@ -4691,11 +4691,11 @@
         <text data-detail="fine" x="297" y="608" class="t-dim" font-size="7">restoreSkipTaggedFields reflects over the Room type and re-sets 23 exported fields from the clean template: RoomId, Zone, Title, Description, Exits, Nouns, HiddenNouns, SpawnInfo, IdleMessages, Biome, MapSymbol, MapLegend, X, Y, Z, Plane, Pvp, Station, MusicFile, IsBank, IsStorage, StorageCapacity, IsCharacterRoom. The yaml library cannot see the instance tag, so this pass exists to enforce it after the fact.</text>
         </g>
 
-        <g data-edge-from="boot" data-edge-to="struct" data-edge-label="re apply DefusedExits, which the restore just undid" data-edge-key="10" data-edge-id="defused">
+        <g data-edge-from="boot" data-edge-to="struct" data-edge-label="re apply DefusedExits, because the restore brought the armed traps back" data-edge-key="10" data-edge-id="defused">
           <path data-composition-edge-from="boot" data-composition-edge-to="struct" data-composition-edge-id="defused" data-composition-points="69,628;271,628" d="M 69 628 L 271 628" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g data-detail="context">
-          <rect x="31.400000000000006" y="608" width="277.2" height="16" rx="3" class="c-mask"/>
-          <text x="170" y="618" class="t-backend" font-size="9" text-anchor="middle">re apply DefusedExits, which the restore just undid</text>
+          <rect x="-20.599999999999994" y="608" width="381.2" height="16" rx="3" class="c-mask"/>
+          <text x="170" y="618" class="t-backend" font-size="9" text-anchor="middle">re apply DefusedExits, because the restore brought the armed traps back</text>
         </g>
         <text data-detail="fine" x="81" y="646" class="t-dim" font-size="7">Exits are skip tagged, so the pass above just resurrected any lock trap a player had disarmed. DefusedExits is deliberately not skip tagged, so it survived the overlay as a plain list of exit names, and applyDefusedExits puts the disarm back. A small hand made exception to a blanket rule.</text>
         </g>
@@ -4723,7 +4723,7 @@
           <rect x="713.8" y="762" width="100.4" height="16" rx="3" class="c-mask"/>
           <text x="764" y="772" class="t-backend" font-size="9" text-anchor="middle">save what changed</text>
         </g>
-        <text data-detail="fine" x="729" y="800" class="t-dim" font-size="7">On shutdown, on a periodic sweep, or when a template is rewritten by the web builder. Ephemeral rooms, which live above the ephemeral id floor, refuse to save at all.</text>
+        <text data-detail="fine" x="729" y="800" class="t-dim" font-size="7">On shutdown, on a periodic sweep, or when a template is rewritten by the web builder. Ephemeral rooms are refused before anything else happens: a room id at or above the ephemeral floor returns an error on the first line of SaveRoomInstance.</text>
         </g>
 
         <g data-edge-from="writer" data-edge-to="template" data-edge-label="load the template again, to diff against it" data-edge-key="14" data-edge-id="diff-template">
@@ -4753,11 +4753,11 @@
         <text data-detail="fine" x="513" y="914" class="t-dim" font-size="7">The mob side reaches the same guarantee from the opposite direction. The room writer is a deny list, a rule that removes fields from a struct that contains everything. The mob writer is an allow list, a separate record type that was only ever given the fields a mob is permitted to remember.</text>
         </g>
 
-        <g data-edge-from="writer" data-edge-to="boot" data-edge-label="a stale save cannot shadow an authored edit" data-edge-key="17" data-edge-id="closing">
+        <g data-edge-from="writer" data-edge-to="boot" data-edge-label="a stale save cannot shadow the skip-tagged fields" data-edge-key="17" data-edge-id="closing">
           <path data-composition-edge-from="writer" data-composition-edge-to="boot" data-composition-edge-id="closing" data-composition-points="811,934;69,934" d="M 811 934 L 69 934" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g data-detail="context">
-          <rect x="322.2" y="914" width="235.6" height="16" rx="3" class="c-mask"/>
-          <text x="440" y="924" class="t-muted" font-size="9" text-anchor="middle">a stale save cannot shadow an authored edit</text>
+          <rect x="306.6" y="914" width="266.8" height="16" rx="3" class="c-mask"/>
+          <text x="440" y="924" class="t-muted" font-size="9" text-anchor="middle">a stale save cannot shadow the skip-tagged fields</text>
         </g>
         <text data-detail="fine" x="81" y="952" class="t-dim" font-size="7">That is the whole point of the asymmetry. The overlay is powerful enough to remember a dropped sword and a spent shop, and narrow enough that rewriting a room description or adding an exit takes effect on the next load with no file to clear first.</text>
         </g>
@@ -4772,8 +4772,8 @@
           <text x="62" y="303" class="t-dim" font-size="9" font-weight="600">The overlay, only if a save exists</text>
         </g>
         <g data-graph-role="segment-label" data-segment-id="2">
-          <rect x="56" y="460" width="159.6" height="18" rx="3" class="c-mask"/>
-          <text x="62" y="473" class="t-dim" font-size="9" font-weight="600">Copying authored fields back</text>
+          <rect x="56" y="460" width="175.20000000000002" height="18" rx="3" class="c-mask"/>
+          <text x="62" y="473" class="t-dim" font-size="9" font-weight="600">Copying skip-tagged fields back</text>
         </g>
         <g data-graph-role="segment-label" data-segment-id="3">
           <rect x="56" y="636" width="92" height="18" rx="3" class="c-mask"/>
@@ -5137,7 +5137,7 @@
           <li>&bull; Unexported fields, skip tagged fields, and fields equal to the template are dropped</li>
           <li>&bull; What remains is floor items, gold, containers, stash, signs, mutators, room data</li>
           <li>&bull; An instance file with nothing left in it is deleted instead of written</li>
-          <li>&bull; Ephemeral rooms refuse to save, having no template to diff against</li>
+          <li>&bull; Ephemeral rooms refuse to save: their id sits at or above the ephemeral floor</li>
         </ul>
       </div>
 

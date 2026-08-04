@@ -112,7 +112,7 @@
       "id": "roll",
       "type": "decision",
       "label": "Stat roll",
-      "sublabel": "CheckStatProgression, one draw out of 10000",
+      "sublabel": "CheckStatProgression, one draw from a 10000 step range",
       "lane": "main",
       "col": 3,
       "step": "04",
@@ -131,7 +131,7 @@
     {
       "id": "abovecap",
       "type": "failure",
-      "label": "Above the soft cap",
+      "label": "Raw stat above cap",
       "sublabel": "rank pinned to the raw stat value",
       "lane": "branches",
       "col": 1,
@@ -221,7 +221,7 @@
       "id": "roll-misses",
       "from": "roll",
       "to": "nochange",
-      "label": "roll over threshold",
+      "label": "draw >= threshold: no change",
       "variant": "dashed",
       "labelDx": 60
     },
@@ -273,9 +273,9 @@
   "cards": [
     {
       "dot": "emerald",
-      "title": "The only way a stat moves",
+      "title": "The only way a stat grows through play",
       "items": [
-        "A stat rises only when it is used, so the loop above is the whole system",
+        "In normal play a stat rises only when it is used; quest StatInfo rewards are the one authored exception",
         "OnStatUse increments one counter and then immediately rolls for advancement",
         "The roll happens on every single use, not once every 25 uses",
         "On a hit, IncreaseStat adds one to that stat's Training field and revalidates",
@@ -311,7 +311,7 @@
         "OnSkillUse tracks the use, rolls, then fires OnStatUse for the skill's governing stat",
         "Same CalculateProgressionChance, with SkillSoftCap at 50 in place of 150",
         "Per skill multipliers normalise fast firing combat skills against rare utility skills",
-        "A critical success rolls again at double bonus, a critical failure at the normal one",
+        "A crit or a critical failure each grant an extra progression check; the crit's runs at double the normal chance",
         "IncreaseSkill has no cap either, so the soft cap only bends the odds here too"
       ]
     },

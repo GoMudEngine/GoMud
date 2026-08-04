@@ -4501,7 +4501,7 @@
       <p class="subtitle">One melee swing end to end: swing budget, one attack roll against every affordable defense, three-channel damage</p>
     </div>
 
-    <script id="archify-guided-views-data" type="application/json">[{"id":"swing-budget","label":"How many swings you get","focus":["attacker","round","swings"],"note":"calcSwingCount turns dexterity, weapon speed and skill into a number, then stamina and carried weight scale it down. Cap is 4."},{"id":"attack-roll","label":"One attack roll, rolled once","focus":["round","defense","dice"],"note":"The swing is rolled a single time. Its score is dexterity plus combat skill, scaled by stamina, position and light. No armor is read."},{"id":"defense-rolls","label":"One roll per affordable defense","focus":["defense","defender","dice"],"note":"Every affordable defense is rolled separately against that one attack value, using the attacker's spread. The widest margin wins."},{"id":"floors","label":"Two floors that can overturn it","focus":["defense","defender","attacker"],"note":"Two symmetric floors run after the margin, so an outclassed defender can still save and a beaten attacker can still land the swing."},{"id":"damage-and-text","label":"Damage, then the words for it","focus":["round","damage","defender","room"],"note":"One raw formula serves all three channels. Mitigation is a capped percentage, and the number becomes a phrase before a player sees it."}]</script>
+    <script id="archify-guided-views-data" type="application/json">[{"id":"swing-budget","label":"How many swings you get","focus":["attacker","round","swings"],"note":"calcSwingCount turns dexterity, weapon speed and skill into a number, then stamina and carried weight scale it down. Cap is 4."},{"id":"attack-roll","label":"One attack roll, rolled once","focus":["round","defense","dice"],"note":"The swing is rolled a single time. Its score is dexterity plus combat skill, scaled by stamina, position and light. No armor is read."},{"id":"defense-rolls","label":"One roll per affordable defense","focus":["defense","defender","dice"],"note":"Every affordable defense is rolled separately against that one attack value, using the attacker's spread. The widest margin wins."},{"id":"floors","label":"Two floors that can reverse the verdict","focus":["defense","defender","attacker"],"note":"Two symmetric floors run after the margin, so an outclassed defender can still save and a beaten attacker can still land the swing."},{"id":"damage-and-text","label":"Damage, then the words for it","focus":["round","damage","defender","room"],"note":"One raw formula serves all three channels. Mitigation is a capped percentage, and the number becomes a phrase before a player sees it."}]</script>
 
     <div class="guided-views no-print" id="guided-views" hidden aria-label="Guided diagram views">
       <button id="guided-view-prev" type="button" aria-label="Previous guided view" title="Previous guided view ([)">&#8592;</button>
@@ -4681,7 +4681,7 @@
           <rect x="443.2" y="528" width="209.6" height="16" rx="3" class="c-mask"/>
           <text x="548" y="538" class="t-messagebus" font-size="9" text-anchor="middle">skipped: cannot pay this one&#39;s stamina</text>
         </g>
-        <text data-detail="fine" x="513" y="566" class="t-dim" font-size="7">Each defense has a stamina cost. If the defender&#39;s current stamina is below it the loop simply continues, so that defense is never rolled at all. A tired defender does not defend worse, it quietly runs out of options.</text>
+        <text data-detail="fine" x="513" y="566" class="t-dim" font-size="7">Each defense has a stamina cost. If the defender&#39;s current stamina is below it the loop simply continues, so that defense is never rolled at all. Low stamina never lowers a defense&#39;s score. It removes the defense from the contest entirely, which costs the defender far more.</text>
         </g>
 
         <g data-edge-from="defense" data-edge-to="dice" data-edge-label="roll dodge vs A, attacker&#39;s spread" data-edge-key="9" data-edge-id="roll-dodge">
@@ -4718,11 +4718,11 @@
         <text data-detail="fine" x="405" y="724" class="t-dim" font-size="7">One number per defense. Positive means that defense beat the swing, negative means it lost and by how much. Position, darkness, rally, grapple and mutation modifiers have already been folded into each defense score before this point.</text>
         </g>
 
-        <g data-edge-from="defense" data-edge-to="defender" data-edge-label="widest margin wins; only it pays stamina" data-edge-key="13" data-edge-id="best-margin">
+        <g data-edge-from="defense" data-edge-to="defender" data-edge-label="widest margin picks the defense, win or lose; only that defense pays stamina" data-edge-key="13" data-edge-id="best-margin">
           <path data-composition-edge-from="defense" data-composition-edge-to="defender" data-composition-edge-id="best-margin" data-composition-points="595,744;501,744" d="M 595 744 L 501 744" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
         <g data-detail="context">
-          <rect x="438" y="724" width="220" height="16" rx="3" class="c-mask"/>
-          <text x="548" y="734" class="t-backend" font-size="9" text-anchor="middle">widest margin wins; only it pays stamina</text>
+          <rect x="344.4" y="724" width="407.2" height="16" rx="3" class="c-mask"/>
+          <text x="548" y="734" class="t-backend" font-size="9" text-anchor="middle">widest margin picks the defense, win or lose; only that defense pays stamina</text>
         </g>
         <text data-detail="fine" x="513" y="762" class="t-dim" font-size="7">The largest margin is kept even when every margin is negative, so the closest failure is the one that gets narrated. Stamina is deducted once, for the winning defense only, after all the rolls are done.</text>
         </g>
@@ -4754,11 +4754,11 @@
         <text data-detail="fine" x="189" y="896" class="t-dim" font-size="7">resolveDefenseOutcome orders the result: double fumble first, then fumbles, then crit versus crit, then a one-sided crit, then the normal margin. Each floor sits inside one branch of that last step, so only ever one can fire.</text>
         </g>
 
-        <g data-edge-from="round" data-edge-to="damage" data-edge-label="stat x skill x weapon x channel scale" data-edge-key="17" data-edge-id="raw-damage">
+        <g data-edge-from="round" data-edge-to="damage" data-edge-label="stat x skill x weapon x channel scale x global" data-edge-key="17" data-edge-id="raw-damage">
           <path data-composition-edge-from="round" data-composition-edge-to="damage" data-composition-edge-id="raw-damage" data-composition-points="177,938;703,938" d="M 177 938 L 703 938" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
         <g data-detail="context">
-          <rect x="337.8" y="918" width="204.4" height="16" rx="3" class="c-mask"/>
-          <text x="440" y="928" class="t-backend" font-size="9" text-anchor="middle">stat x skill x weapon x channel scale</text>
+          <rect x="314.4" y="918" width="251.20000000000002" height="16" rx="3" class="c-mask"/>
+          <text x="440" y="928" class="t-backend" font-size="9" text-anchor="middle">stat x skill x weapon x channel scale x global</text>
         </g>
         <text data-detail="fine" x="189" y="956" class="t-dim" font-size="7">CalcRawDamage is one formula for all three channels: physical uses strength, magical uses willpower, conviction uses charisma. A configured per-channel scale and a global multiplier finish it.</text>
         </g>
@@ -4769,7 +4769,7 @@
           <rect x="525.8" y="958" width="152.4" height="16" rx="3" class="c-mask"/>
           <text x="602" y="968" class="t-backend" font-size="9" text-anchor="middle">subtract mitigation, capped</text>
         </g>
-        <text data-detail="fine" x="513" y="996" class="t-dim" font-size="7">ApplyMitigation reduces raw damage by the defender&#39;s summed equipment percentage for that channel, clamped to the channel cap (default 75 percent). This is the only place armor is consulted in the entire round. A critical hit skips it entirely.</text>
+        <text data-detail="fine" x="513" y="996" class="t-dim" font-size="7">ApplyMitigation reduces raw damage by the defender&#39;s summed equipment percentage for that channel, clamped to the channel cap (default 75 percent). This is the only place armor is consulted in the entire round. A critical hit bypasses mitigation entirely: armor does not reduce crit damage at all.</text>
         </g>
 
         <g data-edge-from="damage" data-edge-to="dice" data-edge-label="roll variance around the mean" data-edge-key="19" data-edge-id="variance">

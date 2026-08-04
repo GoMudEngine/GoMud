@@ -4498,10 +4498,10 @@
         <div class="pulse-dot"></div>
         <h1>Mob Aliveness Stack</h1>
       </div>
-      <p class="subtitle">What an NPC does on a round when nobody is fighting it</p>
+      <p class="subtitle">What an NPC does on a round when it is not in combat</p>
     </div>
 
-    <script id="archify-guided-views-data" type="application/json">[{"id":"idle-gate","label":"What runs on an idle tick","focus":["sweep","combat-gate","schedule-exec","patrol-exec","conversation","btree"],"note":"One sweep, one mob at a time, in this order. The combat check comes first, and nothing below it runs while the mob is fighting."},{"id":"scheduled-day","label":"A townsperson's day","focus":["schedule-exec","schedule-yaml","path-walker","idle-pool"],"note":"A 24-hour segment list swaps the mob's idle emotes, steers it from room to room, and decides whether it may craft."},{"id":"patrol-loop","label":"Patrol routes","focus":["patrol-exec","patrol-yaml","path-walker"],"note":"A mob carries patrol_id for an always-on loop, or a schedule segment opts in with activity: patrol for part of the day."},{"id":"npc-talk","label":"NPCs talking to each other","focus":["conversation","conv-yaml","relationships"],"note":"Only authored relationship pairs talk, only while both are fully idle, one line per round, then a shared cooldown."},{"id":"interrupts","label":"What breaks the routine","focus":["combat-gate","sweep","patrol-exec"],"note":"Combat skips the whole idle body. The patrol waypoint index lives in MiscData, so the loop resumes at the same target."}]</script>
+    <script id="archify-guided-views-data" type="application/json">[{"id":"idle-gate","label":"What runs on an idle round","focus":["sweep","combat-gate","schedule-exec","patrol-exec","conversation","btree"],"note":"One sweep, one mob at a time, in this order. The combat check comes first, and nothing below it runs while the mob is fighting."},{"id":"scheduled-day","label":"A townsperson's day","focus":["schedule-exec","schedule-yaml","path-walker","idle-pool"],"note":"A 24-hour segment list swaps the mob's idle emotes, steers it from room to room, and decides whether it may craft."},{"id":"patrol-loop","label":"Patrol routes","focus":["patrol-exec","patrol-yaml","path-walker"],"note":"A mob carries patrol_id for an always-on loop, or a schedule segment opts in with activity: patrol for part of the day."},{"id":"npc-talk","label":"NPCs talking to each other","focus":["conversation","conv-yaml","relationships"],"note":"Only authored relationship pairs talk, only while both are fully idle, one line per round, then a shared cooldown."},{"id":"interrupts","label":"What breaks the routine","focus":["combat-gate","sweep","patrol-exec"],"note":"Combat skips the whole idle body. The patrol waypoint index lives in MiscData, so the loop resumes at the same target."}]</script>
     <script id="archify-source-evidence-data" type="application/json">{"schemaVersion":1,"verified":true,"repository":{"url":"https://github.com/pruuk/DOGMud","revision":"005a068880eb9a292f20ccba77ad4e306dc63944","shortRevision":"005a068"},"referenceCount":31,"nodes":{"sweep":[{"path":"internal/hooks/NewRound_IdleMobs.go","line":25,"label":"IdleMobs","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/hooks/NewRound_IdleMobs.go#L25"},{"path":"internal/hooks/hooks.go","line":53,"label":"NewRound listener registration","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/hooks/hooks.go#L53"}],"combat-gate":[{"path":"internal/hooks/NewRound_IdleMobs.go","line":63,"endLine":72,"label":"combat short-circuit","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/hooks/NewRound_IdleMobs.go#L63-L72"}],"schedule-exec":[{"path":"internal/hooks/NewRound_IdleMobs_schedule.go","line":63,"label":"scheduleTickPlan","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/hooks/NewRound_IdleMobs_schedule.go#L63"},{"path":"internal/hooks/NewRound_IdleMobs_schedule.go","line":155,"label":"applySchedulePlan","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/hooks/NewRound_IdleMobs_schedule.go#L155"},{"path":"internal/mobs/crafter.go","line":254,"label":"activity: craft gate","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/mobs/crafter.go#L254"}],"patrol-exec":[{"path":"internal/hooks/NewRound_IdleMobs_patrol.go","line":32,"label":"patrolTickPlan","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/hooks/NewRound_IdleMobs_patrol.go#L32"},{"path":"internal/hooks/NewRound_IdleMobs_patrol.go","line":100,"label":"applyPatrolPlan","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/hooks/NewRound_IdleMobs_patrol.go#L100"},{"path":"internal/hooks/NewRound_IdleMobs.go","line":89,"endLine":104,"label":"two patrol entry paths","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/hooks/NewRound_IdleMobs.go#L89-L104"}],"conversation":[{"path":"internal/conversations/state.go","line":92,"label":"TryStart","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/conversations/state.go#L92"},{"path":"internal/conversations/state.go","line":196,"label":"TickConversation","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/conversations/state.go#L196"},{"path":"internal/conversations/state.go","line":307,"label":"isFullyIdle","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/conversations/state.go#L307"}],"btree":[{"path":"internal/hooks/MobIdle_HandleIdleMobs.go","line":236,"label":"TryMobBehavior(mob_idle)","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/hooks/MobIdle_HandleIdleMobs.go#L236"},{"path":"internal/behaviortree/engine.go","line":15,"label":"trees / noTree caches","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/behaviortree/engine.go#L15"}],"path-walker":[{"path":"internal/hooks/NewRound_IdleMobs.go","line":131,"endLine":187,"label":"path step consumer","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/hooks/NewRound_IdleMobs.go#L131-L187"},{"path":"internal/mobcommands/pathto.go","line":68,"label":"Path.SetPath","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/mobcommands/pathto.go#L68"}],"idle-pool":[{"path":"internal/mobs/mobs.go","line":1065,"label":"GetIdleCommand","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/mobs/mobs.go#L1065"},{"path":"internal/hooks/MobIdle_HandleIdleMobs.go","line":287,"endLine":297,"label":"idle emote fallback","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/hooks/MobIdle_HandleIdleMobs.go#L287-L297"},{"path":"internal/hooks/NewRound_IdleMobs_schedule.go","line":169,"label":"segment swaps IdleCommands","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/hooks/NewRound_IdleMobs_schedule.go#L169"}],"schedule-yaml":[{"path":"_datafiles/world/dogmud/schedules/stillwater/ilsa.yaml","label":"an authored day","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/_datafiles/world/dogmud/schedules/stillwater/ilsa.yaml"},{"path":"internal/mobs/schedule_loader.go","line":209,"label":"24-hour coverage check","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/mobs/schedule_loader.go#L209"},{"path":"docs/schemas/schedule.md","label":"schema","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/docs/schemas/schedule.md"}],"patrol-yaml":[{"path":"_datafiles/world/dogmud/patrols/thornwall_city/thornwall_market_beat.yaml","label":"a market beat","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/_datafiles/world/dogmud/patrols/thornwall_city/thornwall_market_beat.yaml"},{"path":"internal/mobs/patrol_loader.go","line":41,"label":"LoadPatrols","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/mobs/patrol_loader.go#L41"},{"path":"docs/schemas/patrol.md","label":"schema","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/docs/schemas/patrol.md"}],"conv-yaml":[{"path":"_datafiles/world/dogmud/conversations/types/friend.yaml","label":"friend pool","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/_datafiles/world/dogmud/conversations/types/friend.yaml"},{"path":"internal/conversations/loader.go","line":41,"label":"Load","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/conversations/loader.go#L41"},{"path":"docs/schemas/conversation.md","label":"schema","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/docs/schemas/conversation.md"}],"relationships":[{"path":"internal/mobs/mobs.go","line":170,"label":"relationships: on the mob template","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/mobs/mobs.go#L170"},{"path":"internal/relationships/graph.go","line":41,"label":"LoadFromMobs","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/relationships/graph.go#L41"},{"path":"internal/relationships/relationships.go","line":66,"label":"AreRelated","href":"https://github.com/pruuk/DOGMud/blob/005a068880eb9a292f20ccba77ad4e306dc63944/internal/relationships/relationships.go#L66"}]}}</script>
     <div class="guided-views no-print" id="guided-views" hidden aria-label="Guided diagram views">
       <button id="guided-view-prev" type="button" aria-label="Previous guided view" title="Previous guided view ([)">&#8592;</button>
@@ -4546,7 +4546,7 @@
     <div class="diagram-container" data-detail-level="read">
       <svg viewBox="0 0 1450 732" role="img" aria-labelledby="archify-diagram-title archify-diagram-description" data-preset="blueprint" data-quality-profile="showcase">
         <title id="archify-diagram-title">Mob Aliveness Stack</title>
-        <desc id="archify-diagram-description">What an NPC does on a round when nobody is fighting it</desc>
+        <desc id="archify-diagram-description">What an NPC does on a round when it is not in combat</desc>
         <!-- Definitions -->
         <defs>
           <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
@@ -4607,8 +4607,8 @@
         <text data-detail="fine" x="155" y="396" class="t-backend" font-size="7" text-anchor="middle">one pass over every live mob instance</text>
         </g>
 
-        <g id="node-combat-gate" data-node-id="combat-gate" data-node-label="Combat gate" tabindex="0" role="button" aria-label="Focus Combat gate, IsInCombat() → skip this mob, Per-round sweep · internal/hooks" aria-pressed="false" data-node-kind="security" data-node-sublabel="IsInCombat() → skip this mob" data-node-tag="nothing below runs while fighting" data-node-context="Per-round sweep · internal/hooks">
-          <title>Combat gate · IsInCombat() → skip this mob · Per-round sweep · internal/hooks · nothing below runs while fighting</title>
+        <g id="node-combat-gate" data-node-id="combat-gate" data-node-label="Combat gate" tabindex="0" role="button" aria-label="Focus Combat gate, IsInCombat() → skip this mob, Per-round sweep · internal/hooks" aria-pressed="false" data-node-kind="security" data-node-sublabel="IsInCombat() → skip this mob" data-node-tag="a mob in combat skips all four executors" data-node-context="Per-round sweep · internal/hooks">
+          <title>Combat gate · IsInCombat() → skip this mob · Per-round sweep · internal/hooks · a mob in combat skips all four executors</title>
           <rect x="340" y="314" width="190" height="76" rx="6" class="c-mask"/>
           <rect x="340" y="314" width="190" height="76" rx="6" class="c-security" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="security" class="semantic-sigil s-security" transform="translate(346 320) scale(0.6875)">
@@ -4617,18 +4617,18 @@
           </g>
           <text data-detail-anchor x="435" y="350" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Combat gate</text>
         <text data-detail="context" x="435" y="366" class="t-muted" font-size="9" text-anchor="middle">IsInCombat() → skip this mob</text>
-        <text data-detail="fine" x="435" y="382" class="t-security" font-size="7" text-anchor="middle">nothing below runs while fighting</text>
+        <text data-detail="fine" x="435" y="382" class="t-security" font-size="7" text-anchor="middle">a mob in combat skips all four executors</text>
         </g>
 
-        <g id="node-schedule-exec" data-node-id="schedule-exec" data-node-label="Schedule executor" tabindex="0" role="button" aria-label="Focus Schedule executor, 1st on the tick · 24-hour segments, Per-round sweep · internal/hooks" aria-pressed="false" data-node-kind="backend" data-node-sublabel="1st on the tick · 24-hour segments" data-node-tag="swaps idle pool · steers · gates crafting" data-node-context="Per-round sweep · internal/hooks">
-          <title>Schedule executor · 1st on the tick · 24-hour segments · Per-round sweep · internal/hooks · swaps idle pool · steers · gates crafting</title>
+        <g id="node-schedule-exec" data-node-id="schedule-exec" data-node-label="Schedule executor" tabindex="0" role="button" aria-label="Focus Schedule executor, 1st in the sweep · 24-hour segments, Per-round sweep · internal/hooks" aria-pressed="false" data-node-kind="backend" data-node-sublabel="1st in the sweep · 24-hour segments" data-node-tag="swaps idle pool · steers · gates crafting" data-node-context="Per-round sweep · internal/hooks">
+          <title>Schedule executor · 1st in the sweep · 24-hour segments · Per-round sweep · internal/hooks · swaps idle pool · steers · gates crafting</title>
           <rect x="620" y="40" width="200" height="84" rx="6" class="c-mask"/>
           <rect x="620" y="40" width="200" height="84" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(626 46) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
           <text data-detail-anchor x="720" y="80" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Schedule executor</text>
-        <text data-detail="context" x="720" y="96" class="t-muted" font-size="9" text-anchor="middle">1st on the tick · 24-hour segments</text>
+        <text data-detail="context" x="720" y="96" class="t-muted" font-size="9" text-anchor="middle">1st in the sweep · 24-hour segments</text>
         <text data-detail="fine" x="720" y="116" class="t-backend" font-size="7" text-anchor="middle">swaps idle pool · steers · gates crafting</text>
         </g>
 
@@ -4668,15 +4668,15 @@
         <text data-detail="fine" x="720" y="636" class="t-backend" font-size="7" text-anchor="middle">runs in a separate MobIdle listener</text>
         </g>
 
-        <g id="node-path-walker" data-node-id="path-walker" data-node-label="pathto walker" tabindex="0" role="button" aria-label="Focus pathto walker, one room per tick, Per-round sweep · internal/hooks" aria-pressed="false" data-node-kind="backend" data-node-sublabel="one room per tick" data-node-tag="shared by schedules and patrols" data-node-context="Per-round sweep · internal/hooks">
-          <title>pathto walker · one room per tick · Per-round sweep · internal/hooks · shared by schedules and patrols</title>
+        <g id="node-path-walker" data-node-id="path-walker" data-node-label="pathto walker" tabindex="0" role="button" aria-label="Focus pathto walker, one room per round, Per-round sweep · internal/hooks" aria-pressed="false" data-node-kind="backend" data-node-sublabel="one room per round" data-node-tag="shared by schedules and patrols" data-node-context="Per-round sweep · internal/hooks">
+          <title>pathto walker · one room per round · Per-round sweep · internal/hooks · shared by schedules and patrols</title>
           <rect x="900" y="120" width="180" height="76" rx="6" class="c-mask"/>
           <rect x="900" y="120" width="180" height="76" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(906 126) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
           <text data-detail-anchor x="990" y="156" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">pathto walker</text>
-        <text data-detail="context" x="990" y="172" class="t-muted" font-size="9" text-anchor="middle">one room per tick</text>
+        <text data-detail="context" x="990" y="172" class="t-muted" font-size="9" text-anchor="middle">one room per round</text>
         <text data-detail="fine" x="990" y="188" class="t-backend" font-size="7" text-anchor="middle">shared by schedules and patrols</text>
         </g>
 
@@ -4731,8 +4731,8 @@
         <text data-detail="fine" x="1280" y="452" class="t-database" font-size="7" text-anchor="middle">role-agnostic A/B scripts</text>
         </g>
 
-        <g id="node-relationships" data-node-id="relationships" data-node-label="Relationship graph" tabindex="0" role="button" aria-label="Focus Relationship graph, edges authored on mob YAML, Authored YAML" aria-pressed="false" data-node-kind="database" data-node-sublabel="edges authored on mob YAML" data-node-tag="auto-mirrored into memory at boot" data-node-context="Authored YAML">
-          <title>Relationship graph · edges authored on mob YAML · Authored YAML · auto-mirrored into memory at boot</title>
+        <g id="node-relationships" data-node-id="relationships" data-node-label="Relationship graph" tabindex="0" role="button" aria-label="Focus Relationship graph, edges authored on mob YAML, Authored YAML" aria-pressed="false" data-node-kind="database" data-node-sublabel="edges authored on mob YAML" data-node-tag="declare one side; the reverse edge is created for you" data-node-context="Authored YAML">
+          <title>Relationship graph · edges authored on mob YAML · Authored YAML · declare one side; the reverse edge is created for you</title>
           <rect x="1180" y="530" width="200" height="80" rx="6" class="c-mask"/>
           <rect x="1180" y="530" width="200" height="80" rx="6" class="c-database" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(1186 536) scale(0.6875)">
@@ -4741,7 +4741,7 @@
           </g>
           <text data-detail-anchor x="1280" y="568" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Relationship graph</text>
         <text data-detail="context" x="1280" y="584" class="t-muted" font-size="9" text-anchor="middle">edges authored on mob YAML</text>
-        <text data-detail="fine" x="1280" y="602" class="t-database" font-size="7" text-anchor="middle">auto-mirrored into memory at boot</text>
+        <text data-detail="fine" x="1280" y="602" class="t-database" font-size="7" text-anchor="middle">declare one side; the reverse edge is created for you</text>
         </g>
 
         <!-- Connection labels -->
@@ -4980,7 +4980,7 @@
         </div>
         <ul>
           <li>&bull; IdleMobs runs once per round over every live mob instance</li>
-          <li>&bull; A mob in combat skips the entire idle body — no schedule, patrol or chat</li>
+          <li>&bull; A mob in combat skips the entire idle body: no schedule, patrol or chat</li>
           <li>&bull; A sleeping mob still reaches the MobIdle listener, and stops there</li>
         </ul>
       </div>
@@ -4993,7 +4993,7 @@
         <ul>
           <li>&bull; A schedule must cover all 24 hours, and swaps the idle-emote pool per segment</li>
           <li>&bull; Patrols loop strict, yo-yo or oneshot, with per-waypoint dwell rounds</li>
-          <li>&bull; Both move the mob through the same pathto walker, one room per tick</li>
+          <li>&bull; Both move the mob through the same pathto walker, one room per round</li>
         </ul>
       </div>
 

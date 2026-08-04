@@ -36,7 +36,7 @@
           "restore",
           "struct"
         ],
-        "note": "A clean template is reloaded and every field tagged instance:skip is copied back, so stale save data cannot survive on authored fields."
+        "note": "A clean template is reloaded and the 23 fields tagged instance:skip are copied back, so stale save data cannot survive on any of them."
       },
       {
         "id": "runtime",
@@ -128,7 +128,7 @@
     {
       "from": 482,
       "to": 646,
-      "label": "Copying authored fields back"
+      "label": "Copying skip-tagged fields back"
     },
     {
       "from": 658,
@@ -234,7 +234,7 @@
       "from": "boot",
       "to": "struct",
       "y": 628,
-      "label": "re apply DefusedExits, which the restore just undid",
+      "label": "re apply DefusedExits, because the restore brought the armed traps back",
       "note": "Exits are skip tagged, so the pass above just resurrected any lock trap a player had disarmed. DefusedExits is deliberately not skip tagged, so it survived the overlay as a plain list of exit names, and applyDefusedExits puts the disarm back. A small hand made exception to a blanket rule."
     },
     {
@@ -261,7 +261,7 @@
       "y": 782,
       "label": "save what changed",
       "variant": "emphasis",
-      "note": "On shutdown, on a periodic sweep, or when a template is rewritten by the web builder. Ephemeral rooms, which live above the ephemeral id floor, refuse to save at all."
+      "note": "On shutdown, on a periodic sweep, or when a template is rewritten by the web builder. Ephemeral rooms are refused before anything else happens: a room id at or above the ephemeral floor returns an error on the first line of SaveRoomInstance."
     },
     {
       "id": "diff-template",
@@ -293,7 +293,7 @@
       "from": "writer",
       "to": "boot",
       "y": 934,
-      "label": "a stale save cannot shadow an authored edit",
+      "label": "a stale save cannot shadow the skip-tagged fields",
       "variant": "return",
       "note": "That is the whole point of the asymmetry. The overlay is powerful enough to remember a dropped sword and a spent shop, and narrow enough that rewriting a room description or adding an exit takes effect on the next load with no file to clear first."
     }
@@ -369,7 +369,7 @@
         "Unexported fields, skip tagged fields, and fields equal to the template are dropped",
         "What remains is floor items, gold, containers, stash, signs, mutators, room data",
         "An instance file with nothing left in it is deleted instead of written",
-        "Ephemeral rooms refuse to save, having no template to diff against"
+        "Ephemeral rooms refuse to save: their id sits at or above the ephemeral floor"
       ]
     },
     {

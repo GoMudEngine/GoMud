@@ -3,7 +3,7 @@
   "diagram_type": "architecture",
   "meta": {
     "title": "Mob Aliveness Stack",
-    "subtitle": "What an NPC does on a round when nobody is fighting it",
+    "subtitle": "What an NPC does on a round when it is not in combat",
     "output": "mob-aliveness.html",
     "quality_profile": "showcase",
     "repository": {
@@ -14,7 +14,7 @@
     "views": [
       {
         "id": "idle-gate",
-        "label": "What runs on an idle tick",
+        "label": "What runs on an idle round",
         "focus": ["sweep", "combat-gate", "schedule-exec", "patrol-exec", "conversation", "btree"],
         "note": "One sweep, one mob at a time, in this order. The combat check comes first, and nothing below it runs while the mob is fighting."
       },
@@ -63,7 +63,7 @@
       "type": "security",
       "label": "Combat gate",
       "sublabel": "IsInCombat() → skip this mob",
-      "tag": "nothing below runs while fighting",
+      "tag": "a mob in combat skips all four executors",
       "pos": [340, 314],
       "size": [190, 76],
       "sources": [
@@ -74,7 +74,7 @@
       "id": "schedule-exec",
       "type": "backend",
       "label": "Schedule executor",
-      "sublabel": "1st on the tick · 24-hour segments",
+      "sublabel": "1st in the sweep · 24-hour segments",
       "tag": "swaps idle pool · steers · gates crafting",
       "pos": [620, 40],
       "size": [200, 84],
@@ -129,7 +129,7 @@
       "id": "path-walker",
       "type": "backend",
       "label": "pathto walker",
-      "sublabel": "one room per tick",
+      "sublabel": "one room per round",
       "tag": "shared by schedules and patrols",
       "pos": [900, 120],
       "size": [180, 76],
@@ -199,7 +199,7 @@
       "type": "database",
       "label": "Relationship graph",
       "sublabel": "edges authored on mob YAML",
-      "tag": "auto-mirrored into memory at boot",
+      "tag": "declare one side; the reverse edge is created for you",
       "pos": [1180, 530],
       "size": [200, 80],
       "sources": [
@@ -247,7 +247,7 @@
       "title": "The sweep",
       "items": [
         "IdleMobs runs once per round over every live mob instance",
-        "A mob in combat skips the entire idle body — no schedule, patrol or chat",
+        "A mob in combat skips the entire idle body: no schedule, patrol or chat",
         "A sleeping mob still reaches the MobIdle listener, and stops there"
       ]
     },
@@ -257,7 +257,7 @@
       "items": [
         "A schedule must cover all 24 hours, and swaps the idle-emote pool per segment",
         "Patrols loop strict, yo-yo or oneshot, with per-waypoint dwell rounds",
-        "Both move the mob through the same pathto walker, one room per tick"
+        "Both move the mob through the same pathto walker, one room per round"
       ]
     },
     {

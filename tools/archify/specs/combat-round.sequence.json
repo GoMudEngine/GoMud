@@ -28,7 +28,7 @@
       },
       {
         "id": "floors",
-        "label": "Two floors that can overturn it",
+        "label": "Two floors that can reverse the verdict",
         "focus": ["defense", "defender", "attacker"],
         "note": "Two symmetric floors run after the margin, so an outclassed defender can still save and a beaten attacker can still land the swing."
       },
@@ -135,7 +135,7 @@
       "y": 548,
       "label": "skipped: cannot pay this one's stamina",
       "variant": "dashed",
-      "note": "Each defense has a stamina cost. If the defender's current stamina is below it the loop simply continues, so that defense is never rolled at all. A tired defender does not defend worse, it quietly runs out of options."
+      "note": "Each defense has a stamina cost. If the defender's current stamina is below it the loop simply continues, so that defense is never rolled at all. Low stamina never lowers a defense's score. It removes the defense from the contest entirely, which costs the defender far more."
     },
     {
       "id": "roll-dodge",
@@ -176,7 +176,7 @@
       "from": "defense",
       "to": "defender",
       "y": 744,
-      "label": "widest margin wins; only it pays stamina",
+      "label": "widest margin picks the defense, win or lose; only that defense pays stamina",
       "variant": "emphasis",
       "note": "The largest margin is kept even when every margin is negative, so the closest failure is the one that gets narrated. Stamina is deducted once, for the winning defense only, after all the rolls are done."
     },
@@ -212,7 +212,7 @@
       "from": "round",
       "to": "damage",
       "y": 938,
-      "label": "stat x skill x weapon x channel scale",
+      "label": "stat x skill x weapon x channel scale x global",
       "variant": "emphasis",
       "note": "CalcRawDamage is one formula for all three channels: physical uses strength, magical uses willpower, conviction uses charisma. A configured per-channel scale and a global multiplier finish it."
     },
@@ -222,7 +222,7 @@
       "to": "defender",
       "y": 978,
       "label": "subtract mitigation, capped",
-      "note": "ApplyMitigation reduces raw damage by the defender's summed equipment percentage for that channel, clamped to the channel cap (default 75 percent). This is the only place armor is consulted in the entire round. A critical hit skips it entirely."
+      "note": "ApplyMitigation reduces raw damage by the defender's summed equipment percentage for that channel, clamped to the channel cap (default 75 percent). This is the only place armor is consulted in the entire round. A critical hit bypasses mitigation entirely: armor does not reduce crit damage at all."
     },
     {
       "id": "variance",
