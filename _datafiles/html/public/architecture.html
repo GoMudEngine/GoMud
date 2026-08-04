@@ -1,0 +1,105 @@
+{{template "header" .}}
+
+<style>
+  .diagrams-title {
+    color: var(--title-gold);
+    font-family: var(--font-serif);
+    margin-bottom: 0.25rem;
+  }
+  .diagrams-intro {
+    color: var(--text-tagline);
+    max-width: 62ch;
+    line-height: 1.55;
+    margin: 0 0 1.75rem;
+  }
+  .diagram-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.1rem;
+  }
+  .diagram-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 1.1rem 1.15rem 1rem;
+    background: var(--panel-bg-alt);
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: border-color 0.18s ease, transform 0.18s ease;
+  }
+  .diagram-card:hover,
+  .diagram-card:focus-visible {
+    border-color: var(--gold-rule);
+    transform: translateY(-2px);
+  }
+  .diagram-kind {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--antique-gold);
+  }
+  .diagram-card h3 {
+    margin: 0;
+    color: var(--title-gold);
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+  }
+  .diagram-what {
+    margin: 0;
+    line-height: 1.5;
+  }
+  .diagram-why {
+    margin: 0;
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.5;
+  }
+  .diagram-cta {
+    margin-top: auto;
+    padding-top: 0.5rem;
+    color: var(--ink-gold);
+    font-size: 0.9rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .diagram-card {
+      transition: none;
+    }
+    .diagram-card:hover,
+    .diagram-card:focus-visible {
+      transform: none;
+    }
+  }
+</style>
+
+<div class="overlay">
+  <h1 class="diagrams-title">Under the Hood</h1>
+  <p class="diagrams-intro">
+    {{ .CONFIG.Server.MudName }} runs on a Go MUD engine with a world authored
+    entirely in YAML &mdash; rooms, mobs, quests, dialogue, schedules and
+    patrols are all data, not code. These diagrams are hand-drawn against the
+    running source and checked for layout, not generated from it. Each one
+    opens full screen with search, click-to-focus, and a guided tour.
+  </p>
+
+  <div class="diagram-grid">
+
+    <a class="diagram-card" href="/architecture/engine-overview.html" target="_blank" rel="noopener">
+      <span class="diagram-kind">Architecture</span>
+      <h3>Engine Overview</h3>
+      <p class="diagram-what">
+        Every player connection, telnet or browser, funnels into one world tick
+        loop that drives rooms, mobs and characters over a YAML data layer.
+      </p>
+      <p class="diagram-why">
+        Start here &mdash; every other diagram is a close-up of one box on this one.
+      </p>
+      <span class="diagram-cta">View diagram &rarr;</span>
+    </a>
+
+  </div>
+</div>
+
+{{template "footer" .}}
