@@ -1,0 +1,331 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "Use-Based Progression",
+    "subtitle": "There is no experience bar and no level up. Using a stat rolls once for a chance to raise it, and a soft cap bends that chance instead of capping the number",
+    "output": "progression-loop.html",
+    "quality_profile": "showcase",
+    "visual_preset": "blueprint",
+    "views": [
+      {
+        "id": "use-it",
+        "label": "Growth starts with use",
+        "focus": [
+          "play",
+          "statuse"
+        ],
+        "note": "A swing, a dodge, a haggle. Whatever the action, the code path ends at OnStatUse, which increments one counter for that stat."
+      },
+      {
+        "id": "the-roll",
+        "label": "A roll, not a counter",
+        "focus": [
+          "statuse",
+          "rank",
+          "roll",
+          "nochange"
+        ],
+        "note": "Every use rolls, not every 25th. The counter only sets the odds. Most rolls miss and nothing happens, which is the ordinary result."
+      },
+      {
+        "id": "advance",
+        "label": "When a stat moves",
+        "focus": [
+          "roll",
+          "advance"
+        ],
+        "note": "A hit adds one to the stat's Training field and revalidates the character. IncreaseStat has no upper bound to check against."
+      },
+      {
+        "id": "the-brake",
+        "label": "What slows runaway stats",
+        "focus": [
+          "rank",
+          "abovecap",
+          "roll"
+        ],
+        "note": "The soft cap is a virtual rank, not a ceiling. Past it the chance keeps decaying, and a raw stat above it pins the rank."
+      },
+      {
+        "id": "skills",
+        "label": "Skills work the same way",
+        "focus": [
+          "skilluse",
+          "skillroll",
+          "skillup"
+        ],
+        "note": "Same curve, soft cap 50 instead of 150. A skill use also fires the skill's governing stat, so one action can move both."
+      }
+    ],
+    "viewBox": [
+      1440,
+      820
+    ]
+  },
+  "lanes": [
+    {
+      "id": "main",
+      "label": "The stat loop"
+    },
+    {
+      "id": "branches",
+      "label": "Outcomes and the brake"
+    },
+    {
+      "id": "terminal",
+      "label": "The skill loop"
+    }
+  ],
+  "states": [
+    {
+      "id": "play",
+      "type": "start",
+      "label": "In play",
+      "sublabel": "a swing, a dodge, a haggle",
+      "lane": "main",
+      "col": 0,
+      "step": "01",
+      "tag": "any action"
+    },
+    {
+      "id": "statuse",
+      "type": "active",
+      "label": "OnStatUse",
+      "sublabel": "TrackStatUse bumps one counter",
+      "lane": "main",
+      "col": 1,
+      "step": "02",
+      "tag": "every use"
+    },
+    {
+      "id": "rank",
+      "type": "neutral",
+      "label": "Virtual rank",
+      "sublabel": "use count divided by 25",
+      "lane": "main",
+      "col": 2,
+      "step": "03",
+      "tag": "sets the odds"
+    },
+    {
+      "id": "roll",
+      "type": "decision",
+      "label": "Stat roll",
+      "sublabel": "CheckStatProgression, one draw out of 10000",
+      "lane": "main",
+      "col": 3,
+      "step": "04",
+      "tag": "probabilistic"
+    },
+    {
+      "id": "advance",
+      "type": "success",
+      "label": "Stat plus one",
+      "sublabel": "Training plus one, then Validate",
+      "lane": "main",
+      "col": 4,
+      "step": "05",
+      "tag": "no ceiling"
+    },
+    {
+      "id": "abovecap",
+      "type": "failure",
+      "label": "Above the soft cap",
+      "sublabel": "rank pinned to the raw stat value",
+      "lane": "branches",
+      "col": 1,
+      "tag": "brake"
+    },
+    {
+      "id": "nochange",
+      "type": "neutral",
+      "label": "Nothing happens",
+      "sublabel": "the ordinary result of a use",
+      "lane": "branches",
+      "col": 2,
+      "tag": "most rolls"
+    },
+    {
+      "id": "skilluse",
+      "type": "active",
+      "label": "OnSkillUse",
+      "sublabel": "TrackSkillUse, then roll",
+      "lane": "terminal",
+      "col": 0,
+      "tag": "10 skills"
+    },
+    {
+      "id": "skillroll",
+      "type": "decision",
+      "label": "Skill roll",
+      "sublabel": "CheckSkillProgression, soft cap 50",
+      "lane": "terminal",
+      "col": 1,
+      "tag": "probabilistic"
+    },
+    {
+      "id": "skillup",
+      "type": "success",
+      "label": "Skill plus one",
+      "sublabel": "IncreaseSkill, banner on tier change",
+      "lane": "terminal",
+      "col": 2,
+      "tag": "no ceiling"
+    }
+  ],
+  "transitions": [
+    {
+      "id": "use-a-stat",
+      "from": "play",
+      "to": "statuse",
+      "variant": "emphasis",
+      "route": "straight"
+    },
+    {
+      "id": "count-it",
+      "from": "statuse",
+      "to": "rank",
+      "variant": "default",
+      "route": "straight"
+    },
+    {
+      "id": "set-the-odds",
+      "from": "rank",
+      "to": "roll",
+      "variant": "emphasis",
+      "route": "straight"
+    },
+    {
+      "id": "past-the-cap",
+      "from": "rank",
+      "to": "abovecap",
+      "variant": "dashed"
+    },
+    {
+      "id": "still-rolls",
+      "from": "abovecap",
+      "to": "roll",
+      "label": "still rolls, far rarer",
+      "variant": "dashed",
+      "labelDx": -18
+    },
+    {
+      "id": "roll-hits",
+      "from": "roll",
+      "to": "advance",
+      "variant": "dashed",
+      "route": "straight"
+    },
+    {
+      "id": "roll-misses",
+      "from": "roll",
+      "to": "nochange",
+      "label": "roll over threshold",
+      "variant": "dashed",
+      "labelDx": 60
+    },
+    {
+      "id": "keep-playing",
+      "from": "nochange",
+      "to": "play",
+      "label": "keep playing",
+      "variant": "default",
+      "route": "bottom-channel",
+      "fromSide": "right",
+      "channelX": 810,
+      "channelY": 545
+    },
+    {
+      "id": "back-into-play",
+      "from": "advance",
+      "to": "play",
+      "label": "stronger, and still uncapped",
+      "variant": "emphasis",
+      "route": "top-channel"
+    },
+    {
+      "id": "use-a-skill",
+      "from": "play",
+      "to": "skilluse",
+      "variant": "default"
+    },
+    {
+      "id": "skill-roll",
+      "from": "skilluse",
+      "to": "skillroll",
+      "variant": "default"
+    },
+    {
+      "id": "skill-hits",
+      "from": "skillroll",
+      "to": "skillup",
+      "variant": "dashed"
+    },
+    {
+      "id": "governing-stat",
+      "from": "skilluse",
+      "to": "statuse",
+      "label": "governing stat rolls too",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "The only way a stat moves",
+      "items": [
+        "A stat rises only when it is used, so the loop above is the whole system",
+        "OnStatUse increments one counter and then immediately rolls for advancement",
+        "The roll happens on every single use, not once every 25 uses",
+        "On a hit, IncreaseStat adds one to that stat's Training field and revalidates",
+        "There is no experience value, no level, and no point buy anywhere on this path"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "The curve, in real numbers",
+      "items": [
+        "Virtual rank is the stat's use count divided by UsesPerRank, which ships at 25",
+        "chance = BaseProgressionChance * exp(-3 * rank / softCap), base ships at 0.12",
+        "Stat rolls are then scaled by StatProgressionRate, which ships at 2.25",
+        "So a fresh stat sits near 27 percent per use, and near 1.3 percent at the soft cap",
+        "The draw is integer: threshold = chance * 10000, compared against util.Rand(10000)"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "The soft cap is a brake, not a wall",
+      "items": [
+        "StatProgressionSoftCap ships at 150 and is a virtual rank, never a limit on the value",
+        "Above it the curve keeps decaying by ProgressionDecayAboveCap rather than stopping",
+        "It also acts as an anti exploit floor: a raw stat above 150 pins the virtual rank to it",
+        "IncreaseStat has no bound to check, and stats.Recalculate copies Value to ValueAdj raw",
+        "The only real ceiling in this function is MobStatCap, and it applies to mobs alone"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Skills ride the same machinery",
+      "items": [
+        "OnSkillUse tracks the use, rolls, then fires OnStatUse for the skill's governing stat",
+        "Same CalculateProgressionChance, with SkillSoftCap at 50 in place of 150",
+        "Per skill multipliers normalise fast firing combat skills against rare utility skills",
+        "A critical success rolls again at double bonus, a critical failure at the normal one",
+        "IncreaseSkill has no cap either, so the soft cap only bends the odds here too"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Traced from source",
+      "items": [
+        "github.com/pruuk/DOGMud at 8847e15537f4b3289775aa3bb2d681302b46f3c8",
+        "internal/characters/progression.go lines 44 to 62, the exponential chance curve",
+        "internal/characters/progression.go lines 149 to 193, the stat roll and the soft cap floor",
+        "internal/characters/progression.go lines 68 to 144 and 214 to 266, the skill loop",
+        "internal/characters/skills.go lines 191 to 222, internal/stats/stats.go line 46",
+        "_datafiles/config.yaml lines 718 to 727, the shipped balance knobs"
+      ]
+    }
+  ]
+}
