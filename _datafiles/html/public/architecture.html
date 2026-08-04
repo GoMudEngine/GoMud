@@ -78,10 +78,16 @@
   <h1 class="diagrams-title">Under the Hood</h1>
   <p class="diagrams-intro">
     {{ .CONFIG.Server.MudName }} runs on a Go MUD engine with a world authored
-    entirely in YAML &mdash; rooms, mobs, quests, dialogue, schedules and
-    patrols are all data, not code. These diagrams are hand-drawn against the
-    running source and checked for layout, not generated from it. Each one
-    opens full screen with search, click-to-focus, and a guided tour.
+    entirely in YAML. Rooms, mobs, quests, dialogue, schedules and patrols are
+    all data rather than code, and so is the balance: 352 tunable knobs cover
+    damage scales, mitigation caps, regen rates, progression odds, shop pricing
+    and NPC pacing, so the game can be retuned without recompiling it.
+  </p>
+  <p class="diagrams-intro">
+    These diagrams are hand-drawn against the running source and checked for
+    layout, not generated from it. Each one opens full screen with search,
+    click-to-focus, and a guided tour. The tour reads best from the
+    <strong>Present</strong> button.
   </p>
 
   <div class="diagram-grid">
@@ -94,7 +100,7 @@
         loop that drives rooms, mobs and characters over a YAML data layer.
       </p>
       <p class="diagram-why">
-        Start here &mdash; every other diagram is a close-up of one box on this one.
+        Start here. Every other diagram is a close-up of one box on this one.
       </p>
       <span class="diagram-cta">View diagram &rarr;</span>
     </a>
@@ -104,8 +110,7 @@
       <h3>Mob Aliveness Stack</h3>
       <p class="diagram-what">
         Daily schedules, patrol routes, NPC-to-NPC conversations, behavior
-        trees and idle chatter &mdash; and how they arbitrate for one mob on
-        one tick.
+        trees and idle chatter, and how they arbitrate for one mob on one tick.
       </p>
       <p class="diagram-why">
         Most MUD NPCs stand still until spoken to. These ones keep a calendar.
@@ -123,7 +128,7 @@
         through the shared three-channel pipeline.
       </p>
       <p class="diagram-why">
-        Damage mitigation never touches the to-hit roll &mdash; armor only
+        Damage mitigation never touches the to-hit roll. Armor only
         reduces a hit that has already landed.
       </p>
       <span class="diagram-cta">View diagram &rarr;</span>

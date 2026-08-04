@@ -289,21 +289,69 @@ party markers are web-only — the ASCII `map` command is unaffected.
 - Z-score thresholds: `ZScore >= 2.0` = crit; `ZScore <= -2.0` = fumble/backfire (~2.3% each, unaffected by `RollSpread`)
 - `util.Rand` / `util.LogRoll` are NOT used for hit or attack checks; only `dice.*` functions
 
+## Balance Lives in config.yaml, Not in Code
+
+**Before hardcoding any balance number, check whether a knob already exists.**
+There are **352 balance knobs** across 14 `internal/configs/config.balance*.go`
+files (466 config fields in total), surfaced through a 1506 line
+`_datafiles/config.yaml`. Damage scales, mitigation caps, regen percentages,
+progression rates, resource penalty curves, shop pricing, toxicity, salvage
+odds, conversation and schedule pacing are all tunable without a rebuild.
+
+Three rules follow from this:
+
+1. **Retuning is a config edit, not a code change.** If you find yourself
+   editing a literal in `internal/` to change how something feels, stop and
+   look for the knob. If there genuinely is not one, adding a knob is usually
+   the better change than editing the literal.
+2. **Never quote a Go default as a live value.** Defaults are fallbacks applied
+   only when the key is absent from `config.yaml`. Several shipped values differ
+   sharply from their defaults (`SpellDamageScale` ships at 3.12 against a
+   default of 1.0). Read `config.yaml` for what the game actually does.
+3. **Absence is meaningful.** A knob left out of `config.yaml` falls back to its
+   Go default, and `0` is a legal shipped value (`StaminaPerStrength: 0`). Do
+   not assume a missing key means "unset" or "zero".
+
+This is also worth surfacing to readers of the public diagrams page: "the
+combat model is data, not code" is a genuinely interesting property to an
+engineering audience.
+
 ## Unified Damage & Mitigation Pipeline (Stage 34)
 All damage flows through a three-channel pipeline in `internal/combat/damage_pipeline.go`:
 
 ### Damage Formula
-All channels use the same unified formula:
+All channels use the same unified formula, which has **five** factors, not four:
 ```
-raw = stat × SkillMultiplier(rank) × itemMult × ChannelScale
+raw = stat × SkillMultiplier(rank) × itemMult × ChannelScale × GlobalDamageMultiplier
 ```
-The per-channel scale absorbs any normalization:
+`GlobalDamageMultiplier` is a master knob applied to every channel
+(`damage_pipeline.go:78`). It was missing from this table until 2026-08-04, so
+any figure computed from the old four-factor version was wrong by whatever the
+knob was set to.
 
-| Channel    | ChannelScale | Math at stat=100, rank=0, itemMult=1.0 |
-|------------|-------------|----------------------------------------|
-| Physical   | **0.30**    | 100 × 1.0 × 1.0 × 0.30 = **30**      |
-| Magical    | **1.00**    | 100 × 1.0 × 1.0 × 1.00 = **100**     |
-| Conviction | **1.00**    | 100 × 1.0 × 0.5 × 1.00 = **50**      |
+**ChannelScale is a config value, not a constant.** `DamageScale()` reads it per
+call from the balance config, so the scales below change whenever `config.yaml`
+changes. Two sets of numbers matter and they are not the same:
+
+| Channel    | Go default | Shipped in `config.yaml` (2026-08-04) | Knob |
+|------------|-----------|----------------------------------------|------|
+| Physical   | 0.30      | **0.52**                               | `MeleeDamageScale` |
+| Magical    | 1.00      | **3.12**                               | `SpellDamageScale` |
+| Conviction | 1.00      | **3.00**                               | `RhetoricDamageScale` |
+
+`GlobalDamageMultiplier`: Go default 1.0, **shipped 0.5**.
+
+Real math at stat=100, rank=0, itemMult=1.0, using the *shipped* values:
+
+| Channel    | Calculation                          | Raw    |
+|------------|--------------------------------------|--------|
+| Physical   | 100 × 1.0 × 1.0 × 0.52 × 0.5         | **26** |
+| Magical    | 100 × 1.0 × 1.0 × 3.12 × 0.5         | **156**|
+| Conviction | 100 × 1.0 × 0.5 × 3.00 × 0.5         | **75** |
+
+Do not quote the Go defaults as if they were live values. Read `config.yaml`.
+Note also that a knob left *absent* from `config.yaml` falls back to its Go
+default, so absence is meaningful.
 
 Then `ApplyMitigation(raw, mitigation%, cap)` and `dice.RollStat(final)` for variance.
 
