@@ -31,8 +31,8 @@ const (
 // the generated archify artifacts. Those artifacts survive that round trip only
 // because they contain no "{{" for the parser to latch onto. If a future
 // archify version, or an authored node label, ever introduces one, the file
-// stops being a 637 KB diagram and becomes an HTTP 500. Catch it here rather
-// than on the droplet.
+// stops being a diagram and becomes an HTTP 500. Catch it here rather than on
+// the droplet.
 func TestDiagramArtifactsHaveNoTemplateDelimiters(t *testing.T) {
 	dir := filepath.Join(diagramsRepoRoot(t), filepath.FromSlash(diagramsDirRel))
 

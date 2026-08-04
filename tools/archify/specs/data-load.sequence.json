@@ -11,52 +11,135 @@
       {
         "id": "template-load",
         "label": "Authored YAML loads first",
-        "focus": ["boot", "template", "struct"],
+        "focus": [
+          "boot",
+          "template",
+          "struct"
+        ],
         "note": "Every load starts with the authored file. LoadRoomTemplate runs unconditionally, before anything asks whether a saved instance exists."
       },
       {
         "id": "instance-overlay",
         "label": "Saved state overlays it",
-        "focus": ["roomsave", "mobsave", "struct"],
+        "focus": [
+          "roomsave",
+          "mobsave",
+          "struct"
+        ],
         "note": "Two different overlays. Rooms unmarshal a saved file straight onto the same struct. Mobs copy a fixed list of progression fields."
       },
       {
         "id": "skip-restore",
         "label": "What a save cannot override",
-        "focus": ["template", "restore", "struct"],
+        "focus": [
+          "template",
+          "restore",
+          "struct"
+        ],
         "note": "A clean template is reloaded and every field tagged instance:skip is copied back, so stale save data cannot survive on authored fields."
       },
       {
         "id": "runtime",
         "label": "The live object",
-        "focus": ["struct", "live"],
+        "focus": [
+          "struct",
+          "live"
+        ],
         "note": "One object per room id for the life of the process. From here the in memory struct, not either file, is the source of truth."
       },
       {
         "id": "write-back",
         "label": "What gets written back",
-        "focus": ["live", "writer", "roomsave", "mobsave"],
+        "focus": [
+          "live",
+          "writer",
+          "roomsave",
+          "mobsave"
+        ],
         "note": "The writer diffs against the template and drops every skip tagged field, so a save can only ever contain what a save is allowed to own."
       }
     ],
-    "viewBox": [1180, 1060]
+    "viewBox": [
+      1180,
+      1060
+    ]
   },
   "participants": [
-    { "id": "boot", "type": "external", "label": "Loader", "sublabel": "rooms.LoadRoom · mobs.NewMobById" },
-    { "id": "template", "type": "database", "label": "Template YAML", "sublabel": "world/dogmud/rooms/ · mobs/" },
-    { "id": "struct", "type": "backend", "label": "The struct", "sublabel": "one Room or Mob value being built" },
-    { "id": "roomsave", "type": "database", "label": "Room save", "sublabel": "rooms.instances/<zone>/<id>.yaml" },
-    { "id": "mobsave", "type": "database", "label": "Mob save", "sublabel": "mobs.instances/<zone>/<id>-<name>-room<n>.yaml" },
-    { "id": "restore", "type": "security", "label": "Skip restore", "sublabel": "rooms.restoreSkipTaggedFields" },
-    { "id": "live", "type": "frontend", "label": "Live object", "sublabel": "in memory, what players touch" },
-    { "id": "writer", "type": "backend", "label": "Save writer", "sublabel": "SaveRoomInstance · SaveMobInstance" }
+    {
+      "id": "boot",
+      "type": "external",
+      "label": "Loader",
+      "sublabel": "rooms.LoadRoom · mobs.NewMobById"
+    },
+    {
+      "id": "template",
+      "type": "database",
+      "label": "Template YAML",
+      "sublabel": "world/dogmud/rooms/ · mobs/"
+    },
+    {
+      "id": "struct",
+      "type": "backend",
+      "label": "The struct",
+      "sublabel": "one Room or Mob value being built"
+    },
+    {
+      "id": "roomsave",
+      "type": "database",
+      "label": "Room save",
+      "sublabel": "rooms.instances/<zone>/<id>.yaml"
+    },
+    {
+      "id": "mobsave",
+      "type": "database",
+      "label": "Mob save",
+      "sublabel": "mobs.instances/<zone>/<id>-<name>-room<n>.yaml"
+    },
+    {
+      "id": "restore",
+      "type": "security",
+      "label": "Skip restore",
+      "sublabel": "rooms.restoreSkipTaggedFields"
+    },
+    {
+      "id": "live",
+      "type": "frontend",
+      "label": "Live object",
+      "sublabel": "in memory, what players touch"
+    },
+    {
+      "id": "writer",
+      "type": "backend",
+      "label": "Save writer",
+      "sublabel": "SaveRoomInstance · SaveMobInstance"
+    }
   ],
   "segments": [
-    { "from": 172, "to": 300, "label": "Template first, always" },
-    { "from": 312, "to": 470, "label": "The overlay, only if a save exists" },
-    { "from": 482, "to": 646, "label": "Copying authored fields back" },
-    { "from": 658, "to": 742, "label": "The live object" },
-    { "from": 754, "to": 950, "label": "What gets written back" }
+    {
+      "from": 172,
+      "to": 300,
+      "label": "Template first, always"
+    },
+    {
+      "from": 312,
+      "to": 470,
+      "label": "The overlay, only if a save exists"
+    },
+    {
+      "from": 482,
+      "to": 646,
+      "label": "Copying authored fields back"
+    },
+    {
+      "from": 658,
+      "to": 742,
+      "label": "The live object"
+    },
+    {
+      "from": 754,
+      "to": 950,
+      "label": "What gets written back"
+    }
   ],
   "messages": [
     {
@@ -195,7 +278,7 @@
       "y": 858,
       "label": "write only fields that differ and are not skip tagged",
       "variant": "emphasis",
-      "note": "Three filters in order: unexported fields are skipped, fields tagged instance:\"skip\" are skipped, and fields that DeepEqual the template are skipped. What survives is items on the floor, gold, containers, stash, signs, mutators, defused exits and the long term data store. If nothing survives, the file is deleted rather than written empty."
+      "note": "Four filters in order: unexported fields, fields tagged yaml \"-\", fields tagged instance \"skip\", then fields that DeepEqual the template. What survives is items on the floor, gold, containers, stash, signs, mutators, defused exits and the long term data store. If nothing survives, the file is deleted rather than written empty."
     },
     {
       "id": "write-mob",
@@ -216,11 +299,36 @@
     }
   ],
   "activations": [
-    { "participant": "boot", "from": 190, "to": 940, "type": "external" },
-    { "participant": "struct", "from": 234, "to": 700, "type": "backend" },
-    { "participant": "restore", "from": 544, "to": 636, "type": "security" },
-    { "participant": "live", "from": 680, "to": 790, "type": "frontend" },
-    { "participant": "writer", "from": 776, "to": 940, "type": "backend" }
+    {
+      "participant": "boot",
+      "from": 190,
+      "to": 940,
+      "type": "external"
+    },
+    {
+      "participant": "struct",
+      "from": 234,
+      "to": 700,
+      "type": "backend"
+    },
+    {
+      "participant": "restore",
+      "from": 544,
+      "to": 636,
+      "type": "security"
+    },
+    {
+      "participant": "live",
+      "from": 680,
+      "to": 790,
+      "type": "frontend"
+    },
+    {
+      "participant": "writer",
+      "from": 776,
+      "to": 940,
+      "type": "backend"
+    }
   ],
   "cards": [
     {

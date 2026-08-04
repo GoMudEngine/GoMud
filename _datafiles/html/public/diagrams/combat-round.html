@@ -4751,7 +4751,7 @@
           <rect x="315" y="858" width="142" height="16" rx="3" class="c-mask"/>
           <text x="386" y="868" class="t-muted" font-size="9" text-anchor="middle">hit, miss, crit or fumble</text>
         </g>
-        <text data-detail="fine" x="189" y="896" class="t-dim" font-size="7">resolveDefenseOutcome orders the result: double fumble first, then fumbles, then crit versus crit, then a one-sided crit, then the normal margin, and only then the two floors.</text>
+        <text data-detail="fine" x="189" y="896" class="t-dim" font-size="7">resolveDefenseOutcome orders the result: double fumble first, then fumbles, then crit versus crit, then a one-sided crit, then the normal margin. Each floor sits inside one branch of that last step, so only ever one can fire.</text>
         </g>
 
         <g data-edge-from="round" data-edge-to="damage" data-edge-label="stat x skill x weapon x channel scale" data-edge-key="17" data-edge-id="raw-damage">

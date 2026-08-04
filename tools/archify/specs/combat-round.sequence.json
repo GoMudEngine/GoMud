@@ -205,7 +205,7 @@
       "y": 878,
       "label": "hit, miss, crit or fumble",
       "variant": "return",
-      "note": "resolveDefenseOutcome orders the result: double fumble first, then fumbles, then crit versus crit, then a one-sided crit, then the normal margin, and only then the two floors."
+      "note": "resolveDefenseOutcome orders the result: double fumble first, then fumbles, then crit versus crit, then a one-sided crit, then the normal margin. Each floor sits inside one branch of that last step, so only ever one can fire."
     },
     {
       "id": "raw-damage",

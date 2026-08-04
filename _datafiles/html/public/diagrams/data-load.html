@@ -4741,7 +4741,7 @@
           <rect x="458.2" y="838" width="287.6" height="16" rx="3" class="c-mask"/>
           <text x="602" y="848" class="t-backend" font-size="9" text-anchor="middle">write only fields that differ and are not skip tagged</text>
         </g>
-        <text data-detail="fine" x="405" y="876" class="t-dim" font-size="7">Three filters in order: unexported fields are skipped, fields tagged instance:&quot;skip&quot; are skipped, and fields that DeepEqual the template are skipped. What survives is items on the floor, gold, containers, stash, signs, mutators, defused exits and the long term data store. If nothing survives, the file is deleted rather than written empty.</text>
+        <text data-detail="fine" x="405" y="876" class="t-dim" font-size="7">Four filters in order: unexported fields, fields tagged yaml &quot;-&quot;, fields tagged instance &quot;skip&quot;, then fields that DeepEqual the template. What survives is items on the floor, gold, containers, stash, signs, mutators, defused exits and the long term data store. If nothing survives, the file is deleted rather than written empty.</text>
         </g>
 
         <g data-edge-from="writer" data-edge-to="mobsave" data-edge-label="write only the fields the record type declares" data-edge-key="16" data-edge-id="write-mob">

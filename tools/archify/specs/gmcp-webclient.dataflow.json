@@ -294,7 +294,7 @@
         "That stub carries a direction, the destination room id, and the door flags on it",
         "It also carries the destination zone name when the exit crosses a zone boundary",
         "A secret exit out of a visited room is flagged secret whether or not you found it",
-        "This matches the ASCII map, which has always drawn the same question mark stub"
+        "The ASCII map does NOT do this: it hides a secret exit until you have been through it"
       ]
     },
     {

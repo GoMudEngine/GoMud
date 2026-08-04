@@ -296,9 +296,10 @@ party markers are web-only — the ASCII `map` command is unaffected.
   0.12 shipped against a 0.30 default, `StatProgressionRate` 2.25 against 1.0.
   Read `config.yaml`, not the defaults.
 - `IncreaseStat` and `IncreaseSkill` contain **no bound check whatsoever** (there
-  is a `TestIncreaseSkill_NoCap` regression test). The only hard ceilings in
-  `CheckStatProgression` are `MobStatCap` / `MobSkillCap`, both gated on
-  `c.IsMob`. Players have none.
+  is a `TestIncreaseSkill_NoCap` regression test). The only hard ceilings are
+  `MobStatCap` in `CheckStatProgression` (`progression.go:157`) and
+  `MobSkillCap` in `CheckSkillProgression` (`progression.go:77`), one per
+  function, both gated on `c.IsMob`. Players have none.
 
 ## Dice & Rolling System
 - **For all stat-based rolls use `dice.RollStat(mean)` or `dice.OpposedRollStat(atk, def)`** — no stdDev argument needed
@@ -311,9 +312,13 @@ party markers are web-only — the ASCII `map` command is unaffected.
 ## Balance Lives in config.yaml, Not in Code
 
 **Before hardcoding any balance number, check whether a knob already exists.**
-There are **352 balance knobs** across 14 `internal/configs/config.balance*.go`
-files (466 config fields in total), surfaced through a 1506 line
-`_datafiles/config.yaml`. Damage scales, mitigation caps, regen percentages,
+There are **352 balance knobs**, all declared in the single file
+`internal/configs/config.balance.go` (466 `Config*`-typed fields across the
+whole config package), surfaced through a 1506 line `_datafiles/config.yaml`.
+The seven sibling `config.balance.*.go` files (`combat`, `discovery`, `misc`,
+`mobs`, `progression`, `shops`, `spells`) declare **no fields at all**; they
+hold only defaulting and validation logic, so look in `config.balance.go` for
+the knob and in the sibling for its default. Damage scales, mitigation caps, regen percentages,
 progression rates, resource penalty curves, shop pricing, toxicity, salvage
 odds, conversation and schedule pacing are all tunable without a rebuild.
 
