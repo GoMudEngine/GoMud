@@ -56,6 +56,20 @@ Task 1 ran the investigation and its findings are now binding on every later tas
 
 **1. Run everything from the repo root.** Relative input *and* output paths both resolve correctly for `validate`, `render` and `deliver`. No skill-directory fallback is needed.
 
+> ### ⚠️ CORRECTION FROM TASK 6 — repository evidence is `architecture`-ONLY
+>
+> Everything in points 2–4 below applies **only to `architecture` diagrams**. Verified by Task 6 while authoring the first `sequence` diagram:
+>
+> - `--repo-root` is rejected outright for non-architecture types: `--repo-root is currently supported for architecture diagrams only.` (exit 2).
+> - `meta.repository` is not in the `sequence` schema; `meta` is `additionalProperties: false`, so including it fails validation with `schema/additionalProperties`.
+> - `sequence` participants do not support `sources` either — the participant object allows only `id`, `type`, `label`, `sublabel`.
+>
+> **So for Tasks 8 (sequence), 9 (dataflow) and 10 (lifecycle): drop `--repo-root .`, drop `meta.repository`, and do not attempt `sources`.** Check each type's own schema before assuming a field exists.
+>
+> **Substitute for the lost citation:** Task 6 added a final `cards` entry titled "Traced from source" carrying the repo URL, the commit SHA it was traced at, and the real file paths. That is the closest honest equivalent the schema allows, and it keeps the claim checkable by a reader. **Do the same for diagrams 4, 5 and 6.**
+>
+> Only Task 2 and Task 5 (both `architecture`) actually use the `--repo-root` machinery.
+
 **2. `--repo-root .` is now on every `validate` and `deliver` command in this plan** (already edited in). It is worth using, but not for the reason the design spec guessed.
 
 **What it actually does:** components may carry a `sources` array of repo-relative file paths. The validator resolves each one with `git cat-file` against **a pinned 40-character commit SHA**, not the working tree. It additionally requires `meta.repository.url` to be a public `github.com/owner/repo` URL whose slug matches the local `origin` remote (`https://github.com/pruuk/DOGMud` — confirmed matching).
@@ -1233,5 +1247,6 @@ Point (3) is the one that matters most and the one automation cannot check. A va
 - **Never hand-edit a delivered artifact.** Validation freezes it. Edit the JSON specification and re-deliver.
 - **A non-zero exit from `deliver` is never success**, regardless of what got written to disk.
 - **Stop rather than force a diagram through.** If two consecutive repair rounds do not improve the objective error count, report the unresolved diagnostics truthfully. A diagram that barely passes is worse than one honestly reported as blocked.
+- **`grep -c '{{'` exits 1 when the count is 0** — which is the *success* case here. Do not chain it with `&&`, and do not read a non-zero exit as failure. Read the printed count. The authoritative guard is `go test ./internal/web/ -run TestDiagram`, not the grep.
 - **Leave `meta.animation` unset on every diagram.** Static is the default and is what this page wants; `"trace"` motion is for demos and presentations.
 - **Diagram accuracy outranks diagram beauty.** This page is aimed at people who will read the source. A pretty diagram that misstates the architecture is a liability.
