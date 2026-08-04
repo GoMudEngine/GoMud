@@ -1,5 +1,17 @@
 # DOGMud Patch Notes
 
+## 2026-08-04: Dewey sees you all the way out
+
+New players who finished the tutorial could arrive at the last room and find
+nothing telling them what to do. Dewey now speaks the moment you get there,
+names the command you need, and says it again every half minute or so in case
+the first time got lost in the fight you just ran from.
+
+Asking him about your task works properly too. <ansi fg="command">ask dewey
+quest</ansi> used to answer that he had nothing for you, even while he was
+guiding you through the waking. It now tells you where you are and what comes
+next, anywhere in the tutorial.
+
 ## 2026-08-04: The browser map keeps its secrets
 
 The map in the browser client was marking secret exits you had not found
