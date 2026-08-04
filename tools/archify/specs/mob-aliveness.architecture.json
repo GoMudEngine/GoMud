@@ -1,0 +1,273 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Mob Aliveness Stack",
+    "subtitle": "What an NPC does on a round when it is not in combat",
+    "output": "mob-aliveness.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/pruuk/DOGMud",
+      "revision": "005a068880eb9a292f20ccba77ad4e306dc63944"
+    },
+    "visual_preset": "blueprint",
+    "views": [
+      {
+        "id": "idle-gate",
+        "label": "What runs on an idle round",
+        "focus": ["sweep", "combat-gate", "schedule-exec", "patrol-exec", "conversation", "btree"],
+        "note": "One sweep, one mob at a time, in this order. The combat check comes first, and nothing below it runs while the mob is fighting."
+      },
+      {
+        "id": "scheduled-day",
+        "label": "A townsperson's day",
+        "focus": ["schedule-exec", "schedule-yaml", "path-walker", "idle-pool"],
+        "note": "A 24-hour segment list swaps the mob's idle emotes, steers it from room to room, and decides whether it may craft."
+      },
+      {
+        "id": "patrol-loop",
+        "label": "Patrol routes",
+        "focus": ["patrol-exec", "patrol-yaml", "path-walker"],
+        "note": "A mob carries patrol_id for an always-on loop, or a schedule segment opts in with activity: patrol for part of the day."
+      },
+      {
+        "id": "npc-talk",
+        "label": "NPCs talking to each other",
+        "focus": ["conversation", "conv-yaml", "relationships"],
+        "note": "Only authored relationship pairs talk, only while both are fully idle, one line per round, then a shared cooldown."
+      },
+      {
+        "id": "interrupts",
+        "label": "What breaks the routine",
+        "focus": ["combat-gate", "sweep", "patrol-exec"],
+        "note": "Combat skips the whole idle body. The patrol waypoint index lives in MiscData, so the loop resumes at the same target."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "sweep",
+      "type": "backend",
+      "label": "Idle mob sweep",
+      "sublabel": "hooks.IdleMobs · once per round",
+      "tag": "one pass over every live mob instance",
+      "pos": [40, 300],
+      "size": [230, 104],
+      "sources": [
+        { "path": "internal/hooks/NewRound_IdleMobs.go", "line": 25, "label": "IdleMobs" },
+        { "path": "internal/hooks/hooks.go", "line": 53, "label": "NewRound listener registration" }
+      ]
+    },
+    {
+      "id": "combat-gate",
+      "type": "security",
+      "label": "Combat gate",
+      "sublabel": "IsInCombat() → skip this mob",
+      "tag": "a mob in combat skips all four executors",
+      "pos": [340, 314],
+      "size": [190, 76],
+      "sources": [
+        { "path": "internal/hooks/NewRound_IdleMobs.go", "line": 63, "end_line": 72, "label": "combat short-circuit" }
+      ]
+    },
+    {
+      "id": "schedule-exec",
+      "type": "backend",
+      "label": "Schedule executor",
+      "sublabel": "1st in the sweep · 24-hour segments",
+      "tag": "swaps idle pool · steers · gates crafting",
+      "pos": [620, 40],
+      "size": [200, 84],
+      "sources": [
+        { "path": "internal/hooks/NewRound_IdleMobs_schedule.go", "line": 63, "label": "scheduleTickPlan" },
+        { "path": "internal/hooks/NewRound_IdleMobs_schedule.go", "line": 155, "label": "applySchedulePlan" },
+        { "path": "internal/mobs/crafter.go", "line": 254, "label": "activity: craft gate" }
+      ]
+    },
+    {
+      "id": "patrol-exec",
+      "type": "backend",
+      "label": "Patrol executor",
+      "sublabel": "2nd · strict, yo-yo, oneshot loops",
+      "tag": "patrol_id runs all day, on its own",
+      "pos": [620, 200],
+      "size": [200, 84],
+      "sources": [
+        { "path": "internal/hooks/NewRound_IdleMobs_patrol.go", "line": 32, "label": "patrolTickPlan" },
+        { "path": "internal/hooks/NewRound_IdleMobs_patrol.go", "line": 100, "label": "applyPatrolPlan" },
+        { "path": "internal/hooks/NewRound_IdleMobs.go", "line": 89, "end_line": 104, "label": "two patrol entry paths" }
+      ]
+    },
+    {
+      "id": "conversation",
+      "type": "backend",
+      "label": "Conversation engine",
+      "sublabel": "3rd · one spoken line per round",
+      "tag": "both NPCs must be fully idle",
+      "pos": [620, 380],
+      "size": [200, 84],
+      "sources": [
+        { "path": "internal/conversations/state.go", "line": 92, "label": "TryStart" },
+        { "path": "internal/conversations/state.go", "line": 196, "label": "TickConversation" },
+        { "path": "internal/conversations/state.go", "line": 307, "label": "isFullyIdle" }
+      ]
+    },
+    {
+      "id": "btree",
+      "type": "backend",
+      "label": "Behavior tree engine",
+      "sublabel": "4th · fired by the MobIdle event",
+      "tag": "runs in a separate MobIdle listener",
+      "pos": [620, 560],
+      "size": [200, 84],
+      "sources": [
+        { "path": "internal/hooks/MobIdle_HandleIdleMobs.go", "line": 236, "label": "TryMobBehavior(mob_idle)" },
+        { "path": "internal/behaviortree/engine.go", "line": 15, "label": "trees / noTree caches" }
+      ]
+    },
+    {
+      "id": "path-walker",
+      "type": "backend",
+      "label": "pathto walker",
+      "sublabel": "one room per round",
+      "tag": "shared by schedules and patrols",
+      "pos": [900, 120],
+      "size": [180, 76],
+      "sources": [
+        { "path": "internal/hooks/NewRound_IdleMobs.go", "line": 131, "end_line": 187, "label": "path step consumer" },
+        { "path": "internal/mobcommands/pathto.go", "line": 68, "label": "Path.SetPath" }
+      ]
+    },
+    {
+      "id": "idle-pool",
+      "type": "backend",
+      "label": "Idle command pool",
+      "sublabel": "last resort · GetIdleCommand",
+      "tag": "a schedule segment swaps this pool",
+      "pos": [900, 560],
+      "size": [180, 80],
+      "sources": [
+        { "path": "internal/mobs/mobs.go", "line": 1065, "label": "GetIdleCommand" },
+        { "path": "internal/hooks/MobIdle_HandleIdleMobs.go", "line": 287, "end_line": 297, "label": "idle emote fallback" },
+        { "path": "internal/hooks/NewRound_IdleMobs_schedule.go", "line": 169, "label": "segment swaps IdleCommands" }
+      ]
+    },
+    {
+      "id": "schedule-yaml",
+      "type": "database",
+      "label": "Schedule files",
+      "sublabel": "schedules/<zone>/<id>.yaml",
+      "tag": "must cover all 24 hours or boot panics",
+      "pos": [1180, 40],
+      "size": [200, 80],
+      "sources": [
+        { "path": "_datafiles/world/dogmud/schedules/stillwater/ilsa.yaml", "label": "an authored day" },
+        { "path": "internal/mobs/schedule_loader.go", "line": 209, "label": "24-hour coverage check" },
+        { "path": "docs/schemas/schedule.md", "label": "schema" }
+      ]
+    },
+    {
+      "id": "patrol-yaml",
+      "type": "database",
+      "label": "Patrol routes",
+      "sublabel": "patrols/<zone>/<id>.yaml",
+      "tag": "waypoints with per-stop dwell rounds",
+      "pos": [1180, 210],
+      "size": [200, 80],
+      "sources": [
+        { "path": "_datafiles/world/dogmud/patrols/thornwall_city/thornwall_market_beat.yaml", "label": "a market beat" },
+        { "path": "internal/mobs/patrol_loader.go", "line": 41, "label": "LoadPatrols" },
+        { "path": "docs/schemas/patrol.md", "label": "schema" }
+      ]
+    },
+    {
+      "id": "conv-yaml",
+      "type": "database",
+      "label": "Conversation library",
+      "sublabel": "types/ pools + pairs/ overrides",
+      "tag": "role-agnostic A/B scripts",
+      "pos": [1180, 380],
+      "size": [200, 80],
+      "sources": [
+        { "path": "_datafiles/world/dogmud/conversations/types/friend.yaml", "label": "friend pool" },
+        { "path": "internal/conversations/loader.go", "line": 41, "label": "Load" },
+        { "path": "docs/schemas/conversation.md", "label": "schema" }
+      ]
+    },
+    {
+      "id": "relationships",
+      "type": "database",
+      "label": "Relationship graph",
+      "sublabel": "edges authored on mob YAML",
+      "tag": "declare one side; the reverse edge is created for you",
+      "pos": [1180, 530],
+      "size": [200, 80],
+      "sources": [
+        { "path": "internal/mobs/mobs.go", "line": 170, "label": "relationships: on the mob template" },
+        { "path": "internal/relationships/graph.go", "line": 41, "label": "LoadFromMobs" },
+        { "path": "internal/relationships/relationships.go", "line": 66, "label": "AreRelated" }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Per-round sweep · internal/hooks",
+      "wraps": ["sweep", "combat-gate", "schedule-exec", "patrol-exec", "conversation", "path-walker"]
+    },
+    {
+      "kind": "region",
+      "label": "MobIdle event listener",
+      "wraps": ["btree", "idle-pool"]
+    },
+    {
+      "kind": "region",
+      "label": "Authored YAML",
+      "wraps": ["schedule-yaml", "patrol-yaml", "conv-yaml", "relationships"]
+    }
+  ],
+  "connections": [
+    { "id": "sweep-gate", "from": "sweep", "to": "combat-gate", "label": "every mob, every round", "variant": "emphasis", "labelDy": -46 },
+    { "id": "gate-schedule", "from": "combat-gate", "to": "schedule-exec", "variant": "emphasis" },
+    { "id": "gate-patrol", "from": "combat-gate", "to": "patrol-exec", "variant": "emphasis" },
+    { "id": "gate-conversation", "from": "combat-gate", "to": "conversation", "variant": "emphasis" },
+    { "id": "gate-btree", "from": "combat-gate", "to": "btree" },
+    { "id": "segment-patrol", "from": "schedule-exec", "to": "patrol-exec", "label": "activity: patrol", "variant": "dashed", "labelDy": 24 },
+    { "id": "schedule-path", "from": "schedule-exec", "to": "path-walker" },
+    { "id": "patrol-path", "from": "patrol-exec", "to": "path-walker", "label": "pathto waypoint" },
+    { "id": "btree-pool", "from": "btree", "to": "idle-pool", "label": "if nothing else acted", "variant": "dashed", "labelDy": 55 },
+    { "id": "schedule-data", "from": "schedule-yaml", "to": "schedule-exec" },
+    { "id": "patrol-data", "from": "patrol-yaml", "to": "patrol-exec" },
+    { "id": "conv-data", "from": "conv-yaml", "to": "conversation" },
+    { "id": "relationship-gate", "from": "relationships", "to": "conversation", "label": "related pairs only" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "The sweep",
+      "items": [
+        "IdleMobs runs once per round over every live mob instance",
+        "A mob in combat skips the entire idle body: no schedule, patrol or chat",
+        "A sleeping mob still reaches the MobIdle listener, and stops there"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Routines",
+      "items": [
+        "A schedule must cover all 24 hours, and swaps the idle-emote pool per segment",
+        "Patrols loop strict, yo-yo or oneshot, with per-waypoint dwell rounds",
+        "Both move the mob through the same pathto walker, one room per round"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Conversations",
+      "items": [
+        "Only NPC pairs with an authored relationship edge ever talk",
+        "Both must be fully idle: no combat, sleep, mid-walk, chat or cooldown",
+        "The engine randomises which NPC plays role A, so scripts stay role-agnostic"
+      ]
+    }
+  ]
+}

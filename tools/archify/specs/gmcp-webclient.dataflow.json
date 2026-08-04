@@ -1,0 +1,322 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "GMCP to Web Client",
+    "subtitle": "One step in the world rebuilds a map snapshot, filters it against the rooms this character has actually walked, and pushes it to the browser as a single GMCP payload",
+    "output": "gmcp-webclient.html",
+    "quality_profile": "showcase",
+    "visual_preset": "blueprint",
+    "views": [
+      {
+        "id": "move-triggers",
+        "label": "Every move sends a map",
+        "focus": [
+          "step",
+          "roomchange",
+          "zonemod"
+        ],
+        "note": "A move queues a RoomChange event. The Zone module answers it for that one user, and drops the event when a mob moved and no user id is set."
+      },
+      {
+        "id": "fog-of-war",
+        "label": "Fog is enforced on the server",
+        "focus": [
+          "visited",
+          "crawl",
+          "fog"
+        ],
+        "note": "Snapshot walks the crawled graph and skips every room that is not in the visited set, so an unwalked room never reaches the payload."
+      },
+      {
+        "id": "transport",
+        "label": "The GMCP payload",
+        "focus": [
+          "fog",
+          "party",
+          "push"
+        ],
+        "note": "One JSON push per move: zone name, current floor, party room ids, and the surviving rooms with their classified exits."
+      },
+      {
+        "id": "render",
+        "label": "Drawing the map",
+        "focus": [
+          "push",
+          "grid",
+          "surface"
+        ],
+        "note": "The browser handler calls setZoneSnapshot, which keeps only the current floor, places rooms by x and y, then draws the edges."
+      },
+      {
+        "id": "overlays",
+        "label": "Party markers and exit types",
+        "focus": [
+          "grid",
+          "surface"
+        ],
+        "note": "Exit flags choose the stroke: locked doors, secret dashes, one way arrows, arch gates, biome roads. A party room gets a small figure."
+      }
+    ],
+    "viewBox": [
+      1240,
+      720
+    ]
+  },
+  "stages": [
+    {
+      "label": "The move"
+    },
+    {
+      "label": "What the server knows"
+    },
+    {
+      "label": "The filter"
+    },
+    {
+      "label": "Transport"
+    },
+    {
+      "label": "The browser"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "step",
+      "type": "backend",
+      "label": "Player step",
+      "sublabel": "usercommands/go.go",
+      "stage": 0,
+      "row": 2,
+      "tag": "one command"
+    },
+    {
+      "id": "visited",
+      "type": "database",
+      "label": "VisitedRooms",
+      "sublabel": "zone to room ids, on the character save",
+      "stage": 1,
+      "row": 0,
+      "tag": "persistent"
+    },
+    {
+      "id": "roomchange",
+      "type": "messagebus",
+      "label": "RoomChange event",
+      "sublabel": "queued by rooms.MoveToRoom",
+      "stage": 1,
+      "row": 2,
+      "tag": "per move"
+    },
+    {
+      "id": "crawl",
+      "type": "database",
+      "label": "Crawled zone graph",
+      "sublabel": "every room and exit the crawl reached",
+      "stage": 1,
+      "row": 4,
+      "tag": "unfiltered"
+    },
+    {
+      "id": "zonemod",
+      "type": "backend",
+      "label": "Zone module",
+      "sublabel": "gmcp.Zone buildAndSend",
+      "stage": 2,
+      "row": 0,
+      "tag": "one user"
+    },
+    {
+      "id": "fog",
+      "type": "security",
+      "label": "Fog filter",
+      "sublabel": "mapper.Snapshot(visited)",
+      "stage": 2,
+      "row": 2,
+      "tag": "server side"
+    },
+    {
+      "id": "party",
+      "type": "backend",
+      "label": "Party positions",
+      "sublabel": "parties.Get, room ids only",
+      "stage": 2,
+      "row": 4,
+      "tag": "no names"
+    },
+    {
+      "id": "push",
+      "type": "messagebus",
+      "label": "Zone.Map push",
+      "sublabel": "GMCPOut, one JSON payload",
+      "stage": 3,
+      "row": 2,
+      "tag": "GMCP"
+    },
+    {
+      "id": "grid",
+      "type": "frontend",
+      "label": "RoomGridSVG",
+      "sublabel": "static/js/gmcp.js setZoneSnapshot",
+      "stage": 4,
+      "row": 1,
+      "tag": "browser"
+    },
+    {
+      "id": "surface",
+      "type": "frontend",
+      "label": "Tooled leather map",
+      "sublabel": "nested pannable SVG surface",
+      "stage": 4,
+      "row": 3,
+      "tag": "drawn"
+    }
+  ],
+  "flows": [
+    {
+      "id": "mark-visited",
+      "from": "step",
+      "to": "visited",
+      "label": "mark visited",
+      "classification": "template id only",
+      "variant": "default",
+      "fromSide": "top"
+    },
+    {
+      "id": "queue-change",
+      "from": "step",
+      "to": "roomchange",
+      "label": "room change",
+      "classification": "queued event",
+      "variant": "emphasis",
+      "route": "straight"
+    },
+    {
+      "id": "wake-module",
+      "from": "roomchange",
+      "to": "zonemod",
+      "label": "a user moved",
+      "classification": "not a mob move",
+      "variant": "emphasis",
+      "toSide": "bottom"
+    },
+    {
+      "id": "read-visited",
+      "from": "visited",
+      "to": "zonemod",
+      "label": "rooms walked",
+      "classification": "all zones",
+      "variant": "default",
+      "route": "straight"
+    },
+    {
+      "id": "hand-visited",
+      "from": "zonemod",
+      "to": "fog",
+      "label": "the visited set",
+      "classification": "plus current room",
+      "variant": "emphasis",
+      "route": "straight",
+      "labelDy": 93,
+      "labelDx": 20
+    },
+    {
+      "id": "read-graph",
+      "from": "crawl",
+      "to": "fog",
+      "label": "the whole graph",
+      "classification": "rooms and exits",
+      "variant": "default",
+      "toSide": "bottom"
+    },
+    {
+      "id": "survivors",
+      "from": "fog",
+      "to": "push",
+      "label": "visited rooms only",
+      "classification": "the rest are cut",
+      "variant": "security",
+      "route": "straight"
+    },
+    {
+      "id": "party-rooms",
+      "from": "party",
+      "to": "push",
+      "label": "party rooms",
+      "classification": "only if grouped",
+      "variant": "dashed",
+      "toSide": "bottom"
+    },
+    {
+      "id": "socket",
+      "from": "push",
+      "to": "grid",
+      "label": "Zone.Map payload",
+      "classification": "GMCP clients only",
+      "variant": "emphasis"
+    },
+    {
+      "id": "redraw",
+      "from": "grid",
+      "to": "surface",
+      "label": "place, then draw",
+      "classification": "current floor",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "One step, one snapshot",
+      "items": [
+        "A successful move records the room on the character and queues a RoomChange event",
+        "The Zone module answers that event, so the map is rebuilt from scratch on every step",
+        "A mob move raises the same event with no user id and is dropped before any work",
+        "The current room is force added to the visited set, because the mark and the event race"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "What the fog filter actually does",
+      "items": [
+        "Snapshot iterates the crawled graph and skips any room id absent from the visited set",
+        "Nothing about an unwalked room is built: no coordinates, no title, no biome, no tags",
+        "Ephemeral instance rooms are skipped as well, so a dungeon copy id cannot leak out",
+        "The filter runs before the payload exists, so the browser has nothing to filter",
+        "The dimming you see in the client is distance shading only, not a second fog check"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "The honest edge of the fog",
+      "items": [
+        "An exit from a room you HAVE walked is still sent when its far side is unwalked",
+        "That stub carries a direction, the destination room id, and the door flags on it",
+        "It also carries the destination zone name when the exit crosses a zone boundary",
+        "A secret exit you have not been through is not sent at all, exit or flag",
+        "That gate matches GetLimitedMap, so the browser map discloses no more than ASCII"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "What the browser is given",
+      "items": [
+        "Zone name, the current floor, party room ids, and the surviving rooms with exits",
+        "Party data is room ids only, self excluded, de duplicated, instance ids translated",
+        "Rooms on other floors you have walked are sent, and the client draws one floor at a time",
+        "Exit flags drive the stroke: locked, secret, one way, gate, vertical tick, biome road"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Traced from source",
+      "items": [
+        "github.com/pruuk/DOGMud at beab5a6cd00cba83aaff1f6666211f700297d60a",
+        "internal/mapper/mapper.snapshot.go lines 44 to 127, the fog filter and exit stubs",
+        "modules/gmcp/gmcp.Zone.go lines 43 to 133, the event handler and the payload",
+        "internal/usercommands/go.go line 320, internal/characters/character.go lines 609 and 644",
+        "_datafiles/html/public/webclient-pure.html line 702, static/js/gmcp.js lines 434 and 914"
+      ]
+    }
+  ]
+}

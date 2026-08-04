@@ -1,0 +1,385 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Template, Instance, Runtime",
+    "subtitle": "How an authored YAML room or mob becomes a live world object: a deliberately incomplete save overlay, and the restore pass that puts authored intent back on top",
+    "output": "data-load.html",
+    "quality_profile": "showcase",
+    "visual_preset": "blueprint",
+    "views": [
+      {
+        "id": "template-load",
+        "label": "Authored YAML loads first",
+        "focus": [
+          "boot",
+          "template",
+          "struct"
+        ],
+        "note": "Every load starts with the authored file. LoadRoomTemplate runs unconditionally, before anything asks whether a saved instance exists."
+      },
+      {
+        "id": "instance-overlay",
+        "label": "Saved state overlays it",
+        "focus": [
+          "roomsave",
+          "mobsave",
+          "struct"
+        ],
+        "note": "Two different overlays. Rooms unmarshal a saved file straight onto the same struct. Mobs copy a fixed list of progression fields."
+      },
+      {
+        "id": "skip-restore",
+        "label": "What a save cannot override",
+        "focus": [
+          "template",
+          "restore",
+          "struct"
+        ],
+        "note": "A clean template is reloaded and the 23 fields tagged instance:skip are copied back, so stale save data cannot survive on any of them."
+      },
+      {
+        "id": "runtime",
+        "label": "The live object",
+        "focus": [
+          "struct",
+          "live"
+        ],
+        "note": "One object per room id for the life of the process. From here the in memory struct, not either file, is the source of truth."
+      },
+      {
+        "id": "write-back",
+        "label": "What gets written back",
+        "focus": [
+          "live",
+          "writer",
+          "roomsave",
+          "mobsave"
+        ],
+        "note": "The writer diffs against the template and drops every skip tagged field, so a save can only ever contain what a save is allowed to own."
+      }
+    ],
+    "viewBox": [
+      1180,
+      1060
+    ]
+  },
+  "participants": [
+    {
+      "id": "boot",
+      "type": "external",
+      "label": "Loader",
+      "sublabel": "rooms.LoadRoom · mobs.NewMobById"
+    },
+    {
+      "id": "template",
+      "type": "database",
+      "label": "Template YAML",
+      "sublabel": "world/dogmud/rooms/ · mobs/"
+    },
+    {
+      "id": "struct",
+      "type": "backend",
+      "label": "The struct",
+      "sublabel": "one Room or Mob value being built"
+    },
+    {
+      "id": "roomsave",
+      "type": "database",
+      "label": "Room save",
+      "sublabel": "rooms.instances/<zone>/<id>.yaml"
+    },
+    {
+      "id": "mobsave",
+      "type": "database",
+      "label": "Mob save",
+      "sublabel": "mobs.instances/<zone>/<id>-<name>-room<n>.yaml"
+    },
+    {
+      "id": "restore",
+      "type": "security",
+      "label": "Skip restore",
+      "sublabel": "rooms.restoreSkipTaggedFields"
+    },
+    {
+      "id": "live",
+      "type": "frontend",
+      "label": "Live object",
+      "sublabel": "in memory, what players touch"
+    },
+    {
+      "id": "writer",
+      "type": "backend",
+      "label": "Save writer",
+      "sublabel": "SaveRoomInstance · SaveMobInstance"
+    }
+  ],
+  "segments": [
+    {
+      "from": 172,
+      "to": 300,
+      "label": "Template first, always"
+    },
+    {
+      "from": 312,
+      "to": 470,
+      "label": "The overlay, only if a save exists"
+    },
+    {
+      "from": 482,
+      "to": 646,
+      "label": "Copying skip-tagged fields back"
+    },
+    {
+      "from": 658,
+      "to": 742,
+      "label": "The live object"
+    },
+    {
+      "from": 754,
+      "to": 950,
+      "label": "What gets written back"
+    }
+  ],
+  "messages": [
+    {
+      "id": "ask-template",
+      "from": "boot",
+      "to": "template",
+      "y": 196,
+      "label": "read the authored file for this id",
+      "variant": "emphasis",
+      "note": "LoadRoomInstance opens by calling LoadRoomTemplate with no condition on it at all. There is no path where a saved file is read and the authored file is not. The world is authored in YAML first and everything else is a modifier on top of that."
+    },
+    {
+      "id": "unmarshal-template",
+      "from": "template",
+      "to": "struct",
+      "y": 240,
+      "label": "unmarshal into a fresh struct",
+      "variant": "return",
+      "note": "Title, description, exits, nouns, hidden nouns, biome, coordinates, spawn lists, idle messages, crafting station: the authored content of the room. For a mob the same step brings in stats, behaviors, shop stock, dialogue id, schedule id and patrol id."
+    },
+    {
+      "id": "template-only",
+      "from": "struct",
+      "to": "boot",
+      "y": 278,
+      "label": "template values only, nothing saved yet",
+      "variant": "return"
+    },
+    {
+      "id": "look-room-save",
+      "from": "boot",
+      "to": "roomsave",
+      "y": 336,
+      "label": "does a saved instance exist for this room?",
+      "variant": "dashed",
+      "note": "A plain os.ReadFile. Most rooms in the world have never been written to rooms.instances/ and never will be, so for most of the world the whole overlay layer is skipped and the diagram ends four steps early."
+    },
+    {
+      "id": "room-overlay",
+      "from": "roomsave",
+      "to": "struct",
+      "y": 376,
+      "label": "if present: unmarshal ON TOP of the same struct",
+      "variant": "dashed",
+      "note": "yaml.Unmarshal(bytes, room) reuses the struct that already holds the template. Every field named in the save replaces the template value silently, with no log line and no diff. This is exactly the mechanism behind the recurring complaint that a content edit was not taking effect."
+    },
+    {
+      "id": "look-mob-save",
+      "from": "boot",
+      "to": "mobsave",
+      "y": 416,
+      "label": "does a saved instance exist for this mob?",
+      "variant": "dashed",
+      "note": "Keyed by mob id, zone, name and home room, so the same template spawned in two rooms keeps two independent histories. Charmed companions and dispatched bounty hunters are excluded by design and never get a file."
+    },
+    {
+      "id": "mob-overlay",
+      "from": "mobsave",
+      "to": "struct",
+      "y": 454,
+      "label": "if present: copy training, skills, mutations, gold, gear",
+      "variant": "dashed",
+      "note": "The mob overlay is a different shape from the room overlay. It is not a raw unmarshal onto the struct, it is a small fixed record type, MobInstanceData, holding only progression and planner state. Anything absent from that record simply cannot be carried by a mob save."
+    },
+    {
+      "id": "reload-template",
+      "from": "boot",
+      "to": "template",
+      "y": 512,
+      "label": "read the authored file a second time",
+      "note": "The overlay has just finished, so the struct is a mixture of authored and saved values with no way to tell them apart. The only reliable source of authored truth is the file itself, read again from disk."
+    },
+    {
+      "id": "clean-copy",
+      "from": "template",
+      "to": "restore",
+      "y": 550,
+      "label": "a clean, unmodified copy",
+      "variant": "return"
+    },
+    {
+      "id": "restore-skip",
+      "from": "restore",
+      "to": "struct",
+      "y": 590,
+      "label": "copy back every field tagged instance:\"skip\"",
+      "variant": "security",
+      "note": "restoreSkipTaggedFields reflects over the Room type and re-sets 23 exported fields from the clean template: RoomId, Zone, Title, Description, Exits, Nouns, HiddenNouns, SpawnInfo, IdleMessages, Biome, MapSymbol, MapLegend, X, Y, Z, Plane, Pvp, Station, MusicFile, IsBank, IsStorage, StorageCapacity, IsCharacterRoom. The yaml library cannot see the instance tag, so this pass exists to enforce it after the fact."
+    },
+    {
+      "id": "defused",
+      "from": "boot",
+      "to": "struct",
+      "y": 628,
+      "label": "re apply DefusedExits, because the restore brought the armed traps back",
+      "note": "Exits are skip tagged, so the pass above just resurrected any lock trap a player had disarmed. DefusedExits is deliberately not skip tagged, so it survived the overlay as a plain list of exit names, and applyDefusedExits puts the disarm back. A small hand made exception to a blanket rule."
+    },
+    {
+      "id": "go-live",
+      "from": "struct",
+      "to": "live",
+      "y": 686,
+      "label": "enter the in memory cache",
+      "variant": "emphasis",
+      "note": "addRoomToMemory. Every later LoadRoom for this id returns this same pointer without touching either file, so from this moment the in memory object is the source of truth for instance state and the files are only its backing store."
+    },
+    {
+      "id": "in-play",
+      "from": "live",
+      "to": "boot",
+      "y": 724,
+      "label": "one object per room id for the process lifetime",
+      "variant": "return"
+    },
+    {
+      "id": "save-request",
+      "from": "live",
+      "to": "writer",
+      "y": 782,
+      "label": "save what changed",
+      "variant": "emphasis",
+      "note": "On shutdown, on a periodic sweep, or when a template is rewritten by the web builder. Ephemeral rooms are refused before anything else happens: a room id at or above the ephemeral floor returns an error on the first line of SaveRoomInstance."
+    },
+    {
+      "id": "diff-template",
+      "from": "writer",
+      "to": "template",
+      "y": 820,
+      "label": "load the template again, to diff against it",
+      "note": "SaveRoomInstance reads the authored file a third time in this story. It needs a reference copy so it can ask, field by field, whether the live value actually differs from what an author wrote."
+    },
+    {
+      "id": "write-room",
+      "from": "writer",
+      "to": "roomsave",
+      "y": 858,
+      "label": "write only fields that differ and are not skip tagged",
+      "variant": "emphasis",
+      "note": "Four filters in order: unexported fields, fields tagged yaml \"-\", fields tagged instance \"skip\", then fields that DeepEqual the template. What survives is items on the floor, gold, containers, stash, signs, mutators, defused exits and the long term data store. If nothing survives, the file is deleted rather than written empty."
+    },
+    {
+      "id": "write-mob",
+      "from": "writer",
+      "to": "mobsave",
+      "y": 896,
+      "label": "write only the fields the record type declares",
+      "note": "The mob side reaches the same guarantee from the opposite direction. The room writer is a deny list, a rule that removes fields from a struct that contains everything. The mob writer is an allow list, a separate record type that was only ever given the fields a mob is permitted to remember."
+    },
+    {
+      "id": "closing",
+      "from": "writer",
+      "to": "boot",
+      "y": 934,
+      "label": "a stale save cannot shadow the skip-tagged fields",
+      "variant": "return",
+      "note": "That is the whole point of the asymmetry. The overlay is powerful enough to remember a dropped sword and a spent shop, and narrow enough that rewriting a room description or adding an exit takes effect on the next load with no file to clear first."
+    }
+  ],
+  "activations": [
+    {
+      "participant": "boot",
+      "from": 190,
+      "to": 940,
+      "type": "external"
+    },
+    {
+      "participant": "struct",
+      "from": 234,
+      "to": 700,
+      "type": "backend"
+    },
+    {
+      "participant": "restore",
+      "from": 544,
+      "to": 636,
+      "type": "security"
+    },
+    {
+      "participant": "live",
+      "from": 680,
+      "to": 790,
+      "type": "frontend"
+    },
+    {
+      "participant": "writer",
+      "from": 776,
+      "to": 940,
+      "type": "backend"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Three files, one struct",
+      "items": [
+        "The authored template under rooms/ or mobs/ is read first, every time",
+        "A saved instance under rooms.instances/ or mobs.instances/ may not exist",
+        "Most rooms in the world never acquire an instance file at all",
+        "Once loaded, the in memory object outranks both files until the next restart"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Two overlays, two mechanisms",
+      "items": [
+        "A room save unmarshals directly onto the struct, so any field it names wins",
+        "A mob save is a fixed record: training, skills, mutations, gold, gear, plan state",
+        "The room overlay is limited by a tag; the mob overlay is limited by its type",
+        "Charmed companions and bounty hunters are excluded and never write a file"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "What a stale save cannot override",
+      "items": [
+        "23 Room fields carry instance:skip and are copied back from a clean template",
+        "Title, description, exits, nouns, biome, coordinates and spawn lists are among them",
+        "The yaml library cannot see the tag, so the restore pass enforces it afterwards",
+        "Spawn lists are in this group: a spawn edit needs no instance wipe to take effect",
+        "DefusedExits is deliberately excluded, and is re applied after the restore"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "What actually gets written",
+      "items": [
+        "Unexported fields, skip tagged fields, and fields equal to the template are dropped",
+        "What remains is floor items, gold, containers, stash, signs, mutators, room data",
+        "An instance file with nothing left in it is deleted instead of written",
+        "Ephemeral rooms refuse to save: their id sits at or above the ephemeral floor"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Traced from source",
+      "items": [
+        "github.com/pruuk/DOGMud at d383a6fffbf24b9ed455e47d503567d0ff35cf42",
+        "internal/rooms/save_and_load.go, internal/rooms/rooms.go",
+        "internal/mobs/instance_save.go, internal/mobs/mobs.go"
+      ]
+    }
+  ]
+}

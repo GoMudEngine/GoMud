@@ -1,0 +1,186 @@
+{{template "header" .}}
+
+<style>
+  .diagrams-title {
+    color: var(--title-gold);
+    font-family: var(--font-serif);
+    margin-bottom: 0.25rem;
+  }
+  .diagrams-intro {
+    color: var(--text-tagline);
+    max-width: 62ch;
+    line-height: 1.55;
+    margin: 0 0 1.75rem;
+  }
+  .diagram-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.1rem;
+  }
+  .diagram-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 1.1rem 1.15rem 1rem;
+    background: var(--panel-bg-alt);
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: border-color 0.18s ease, transform 0.18s ease;
+  }
+  .diagram-card:hover,
+  .diagram-card:focus-visible {
+    border-color: var(--gold-rule);
+    transform: translateY(-2px);
+  }
+  .diagram-kind {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--antique-gold);
+  }
+  .diagram-card h3 {
+    margin: 0;
+    color: var(--title-gold);
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+  }
+  .diagram-what {
+    margin: 0;
+    line-height: 1.5;
+  }
+  .diagram-why {
+    margin: 0;
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.5;
+  }
+  .diagram-cta {
+    margin-top: auto;
+    padding-top: 0.5rem;
+    color: var(--ink-gold);
+    font-size: 0.9rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .diagram-card {
+      transition: none;
+    }
+    .diagram-card:hover,
+    .diagram-card:focus-visible {
+      transform: none;
+    }
+  }
+</style>
+
+<div class="overlay">
+  <h1 class="diagrams-title">Under the Hood</h1>
+  <p class="diagrams-intro">
+    {{ .CONFIG.Server.MudName }} runs on a Go MUD engine with a world authored
+    entirely in YAML. Rooms, mobs, quests, dialogue, schedules and patrols are
+    all data rather than code, and so is the balance: 352 tunable knobs in one
+    config file cover damage scales, mitigation caps, regen rates, progression
+    odds, shop pricing and NPC pacing, so the game can be retuned without
+    recompiling it.
+  </p>
+  <p class="diagrams-intro">
+    These diagrams were drawn by hand against the running source rather than
+    generated from it, and checked automatically for label overlap. Each one
+    opens full screen with search, click-to-focus, and a guided tour. Once a
+    diagram is open, click <strong>Present</strong> to start the tour.
+  </p>
+
+  <div class="diagram-grid">
+
+    <a class="diagram-card" href="/diagrams/engine-overview.html" target="_blank" rel="noopener">
+      <span class="diagram-kind">Architecture</span>
+      <h3>Engine Overview</h3>
+      <p class="diagram-what">
+        Every player connection, telnet or browser, funnels into one world tick
+        loop that drives rooms, mobs and characters over a YAML data layer.
+      </p>
+      <p class="diagram-why">
+        Start here. Every other diagram is a close-up of one box on this one.
+      </p>
+      <span class="diagram-cta">View diagram &rarr;</span>
+    </a>
+
+    <a class="diagram-card" href="/diagrams/mob-aliveness.html" target="_blank" rel="noopener">
+      <span class="diagram-kind">Architecture</span>
+      <h3>Mob Aliveness Stack</h3>
+      <p class="diagram-what">
+        Daily schedules, patrol routes, NPC-to-NPC conversations, behavior
+        trees and idle chatter, and how they arbitrate for one mob on one round.
+      </p>
+      <p class="diagram-why">
+        Most MUD NPCs stand still until spoken to. The townspeople here follow a
+        daily routine instead.
+      </p>
+      <span class="diagram-cta">View diagram &rarr;</span>
+    </a>
+
+    <a class="diagram-card" href="/diagrams/combat-round.html" target="_blank" rel="noopener">
+      <span class="diagram-kind">Sequence</span>
+      <h3>Combat Round Resolution</h3>
+      <p class="diagram-what">
+        One swing end to end: how many swings you get, set by stamina and carried
+        weight; a single attack roll contested by every defense the defender has
+        stamina left for, with the widest margin winning; and damage through the
+        shared three-channel pipeline.
+      </p>
+      <p class="diagram-why">
+        Damage mitigation never touches the to-hit roll. Armor reduces a hit that
+        has already landed, and a critical hit ignores it.
+      </p>
+      <span class="diagram-cta">View diagram &rarr;</span>
+    </a>
+
+    <a class="diagram-card" href="/diagrams/data-load.html" target="_blank" rel="noopener">
+      <span class="diagram-kind">Sequence</span>
+      <h3>Template, Instance, Runtime</h3>
+      <p class="diagram-what">
+        Authored YAML loads first, a saved instance overlays it, and then a
+        restore pass copies certain fields back from the template so a stale
+        save can never override them.
+      </p>
+      <p class="diagram-why">
+        A deliberately incomplete overlay. On the fields tagged for it, authored
+        intent wins.
+      </p>
+      <span class="diagram-cta">View diagram &rarr;</span>
+    </a>
+
+    <a class="diagram-card" href="/diagrams/gmcp-webclient.html" target="_blank" rel="noopener">
+      <span class="diagram-kind">Data Flow</span>
+      <h3>GMCP to Web Client</h3>
+      <p class="diagram-what">
+        Every step you take rebuilds a map snapshot, ships it over GMCP, and
+        redraws the browser client's tooled leather map with exits, party
+        markers and fog.
+      </p>
+      <p class="diagram-why">
+        Fog of war is filtered on the server. Rooms you have not walked are never
+        sent, only a stub exit at the edge of what you know.
+      </p>
+      <span class="diagram-cta">View diagram &rarr;</span>
+    </a>
+
+    <a class="diagram-card" href="/diagrams/progression-loop.html" target="_blank" rel="noopener">
+      <span class="diagram-kind">Lifecycle</span>
+      <h3>Use-Based Progression</h3>
+      <p class="diagram-what">
+        No experience points and no levels. Using a stat rolls for a chance to
+        improve it, and a soft cap bends the curve rather than capping the
+        number.
+      </p>
+      <p class="diagram-why">
+        The thing worth noticing is what is missing from this diagram.
+      </p>
+      <span class="diagram-cta">View diagram &rarr;</span>
+    </a>
+
+  </div>
+</div>
+
+{{template "footer" .}}

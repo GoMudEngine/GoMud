@@ -1,0 +1,254 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "DOGMud Engine Overview",
+    "subtitle": "A Go MUD engine with a YAML-authored world",
+    "output": "engine-overview.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/pruuk/DOGMud",
+      "revision": "005a068880eb9a292f20ccba77ad4e306dc63944"
+    },
+    "visual_preset": "blueprint",
+    "views": [
+      {
+        "id": "connection-path",
+        "label": "How a player connects",
+        "focus": ["telnet-players", "web-players", "telnet-listener", "web-server", "conn-pipeline"],
+        "note": "Telnet sockets and upgraded websockets become the same ConnectionDetails, then run the same input-handler chain."
+      },
+      {
+        "id": "the-tick",
+        "label": "The world tick",
+        "focus": ["conn-pipeline", "tick", "rooms", "mobs"],
+        "note": "A submitted line becomes an Input event. MainWorker drains the queue every millisecond and fires a turn every 50 ms."
+      },
+      {
+        "id": "world-state",
+        "label": "Live world state",
+        "focus": ["tick", "rooms", "mobs", "users"],
+        "note": "Rooms, mobs and characters are plain in-memory Go structs, mutated only under the single world lock the tick holds."
+      },
+      {
+        "id": "data-layer",
+        "label": "Where the world is authored",
+        "focus": ["world-yaml", "instances", "rooms", "mobs"],
+        "note": "Every room, mob, item and quest is hand-authored YAML. The template always loads; an instance save is layered on top only if one exists."
+      },
+      {
+        "id": "modules",
+        "label": "Pluggable modules",
+        "focus": ["tick", "modules", "conn-pipeline", "web-server"],
+        "note": "Modules are compiled in and attach purely through event listeners. GMCP is the one that feeds the browser client."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "telnet-players",
+      "type": "external",
+      "label": "Telnet players",
+      "sublabel": "MUD clients, screen readers",
+      "pos": [40, 170],
+      "size": [150, 64]
+    },
+    {
+      "id": "web-players",
+      "type": "external",
+      "label": "Browser players",
+      "sublabel": "bundled web client",
+      "pos": [40, 380],
+      "size": [150, 64],
+      "sources": [
+        { "path": "_datafiles/html/public/static/js/gmcp.js", "label": "web client GMCP handling" }
+      ]
+    },
+    {
+      "id": "telnet-listener",
+      "type": "frontend",
+      "label": "Telnet listeners",
+      "sublabel": ":33333 · :44444 · AI :55555",
+      "tag": "goroutine per connection",
+      "pos": [250, 168],
+      "size": [170, 68],
+      "sources": [
+        { "path": "main.go", "line": 1500, "label": "TelnetListenOnPort" },
+        { "path": "main.go", "line": 628, "label": "handleTelnetConnection" },
+        { "path": "_datafiles/config.yaml", "line": 1227, "label": "Network.TelnetPort" }
+      ]
+    },
+    {
+      "id": "web-server",
+      "type": "frontend",
+      "label": "HTTP + WebSocket",
+      "sublabel": "internal/web · :8090 · /ws",
+      "tag": "web client + admin tools",
+      "pos": [250, 378],
+      "size": [170, 68],
+      "sources": [
+        { "path": "internal/web/web.go", "line": 272, "label": "Listen" },
+        { "path": "main.go", "line": 1247, "label": "HandleWebSocketConnection" }
+      ]
+    },
+    {
+      "id": "conn-pipeline",
+      "type": "backend",
+      "label": "Connection pipeline",
+      "sublabel": "connections + inputhandlers",
+      "tag": "both transports converge here",
+      "pos": [490, 270],
+      "size": [180, 76],
+      "sources": [
+        { "path": "internal/connections/connectiondetails.go", "label": "ConnectionDetails.HandleInput" },
+        { "path": "internal/connections/connections.go", "label": "connection registry" },
+        { "path": "internal/inputhandlers/login.go", "label": "login / IAC / ANSI handlers" }
+      ]
+    },
+    {
+      "id": "tick",
+      "type": "backend",
+      "label": "World tick loop",
+      "sublabel": "MainWorker · 50 ms turns",
+      "tag": "80 turns = one 4 s round",
+      "pos": [800, 265],
+      "size": [190, 84],
+      "sources": [
+        { "path": "world.go", "line": 732, "label": "MainWorker" },
+        { "path": "world.go", "line": 915, "label": "InputWorker" },
+        { "path": "internal/events/events.go", "line": 176, "label": "ProcessEvents" }
+      ]
+    },
+    {
+      "id": "rooms",
+      "type": "backend",
+      "label": "Rooms",
+      "sublabel": "internal/rooms",
+      "pos": [1070, 268],
+      "size": [160, 64],
+      "sources": [
+        { "path": "internal/rooms/rooms.go", "label": "Room" },
+        { "path": "internal/rooms/save_and_load.go", "line": 79, "label": "LoadRoom" }
+      ]
+    },
+    {
+      "id": "mobs",
+      "type": "backend",
+      "label": "Mobs",
+      "sublabel": "internal/mobs",
+      "pos": [1070, 118],
+      "size": [160, 64],
+      "sources": [
+        { "path": "internal/mobs/mobs.go", "label": "Mob" },
+        { "path": "internal/mobs/schedule.go", "label": "daily schedules" }
+      ]
+    },
+    {
+      "id": "users",
+      "type": "backend",
+      "label": "Users & characters",
+      "sublabel": "internal/users · characters",
+      "pos": [1070, 418],
+      "size": [160, 64],
+      "sources": [
+        { "path": "internal/users/users.go", "label": "UserRecord" },
+        { "path": "internal/characters/character.go", "label": "Character" }
+      ]
+    },
+    {
+      "id": "modules",
+      "type": "messagebus",
+      "label": "Modules",
+      "sublabel": "gmcp · weather · time · playtest",
+      "tag": "attach via event listeners",
+      "pos": [800, 500],
+      "size": [190, 70],
+      "sources": [
+        { "path": "modules/all-modules.go", "label": "compiled-in module set" },
+        { "path": "modules/gmcp/gmcp.go", "label": "GMCP module" }
+      ]
+    },
+    {
+      "id": "instances",
+      "type": "database",
+      "label": "Instance saves",
+      "sublabel": "rooms.instances · mobs.instances",
+      "tag": "applied only if a save exists",
+      "pos": [1330, 330],
+      "size": [180, 76],
+      "sources": [
+        { "path": "internal/rooms/save_and_load.go", "line": 101, "label": "LoadRoomInstance" },
+        { "path": "internal/mobs/instance_save.go", "label": "mob instance saves" }
+      ]
+    },
+    {
+      "id": "world-yaml",
+      "type": "database",
+      "label": "YAML world data",
+      "sublabel": "_datafiles/world/dogmud",
+      "tag": "read once at boot",
+      "pos": [1330, 150],
+      "size": [180, 76],
+      "sources": [
+        { "path": "main.go", "line": 1585, "label": "loadAllDataFiles" },
+        { "path": "internal/rooms/save_and_load.go", "line": 163, "label": "LoadRoomTemplate" }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "One Go process",
+      "wraps": ["telnet-listener", "web-server", "conn-pipeline", "tick", "rooms", "mobs", "users", "modules"]
+    },
+    {
+      "kind": "region",
+      "label": "On disk",
+      "wraps": ["instances", "world-yaml"]
+    }
+  ],
+  "connections": [
+    { "id": "telnet-in", "from": "telnet-players", "to": "telnet-listener", "label": "telnet", "variant": "emphasis" },
+    { "id": "web-in", "from": "web-players", "to": "web-server", "label": "HTTP · WebSocket", "variant": "emphasis", "labelDy": -26 },
+    { "id": "telnet-conn", "from": "telnet-listener", "to": "conn-pipeline" },
+    { "id": "web-conn", "from": "web-server", "to": "conn-pipeline" },
+    { "id": "commands-in", "from": "conn-pipeline", "to": "tick", "label": "commands", "variant": "emphasis" },
+    { "id": "output-out", "from": "tick", "to": "conn-pipeline", "label": "output", "variant": "dashed", "labelDy": 34 },
+    { "id": "tick-rooms", "from": "tick", "to": "rooms" },
+    { "id": "tick-mobs", "from": "tick", "to": "mobs" },
+    { "id": "tick-users", "from": "tick", "to": "users" },
+    { "id": "tick-modules", "from": "tick", "to": "modules", "label": "events", "labelDy": 24 },
+    { "id": "template-mobs", "from": "world-yaml", "to": "mobs" },
+    { "id": "template-rooms", "from": "world-yaml", "to": "rooms", "label": "templates" },
+    { "id": "overlay-rooms", "from": "instances", "to": "rooms", "label": "overlay, if saved", "variant": "dashed" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Edge",
+      "items": [
+        "Telnet on :33333 and :44444, AI clients on a separate :55555",
+        "HTTP on :8090 serves the web client and upgrades /ws",
+        "Either transport ends up as the same ConnectionDetails"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Game loop",
+      "items": [
+        "MainWorker fires a turn every 50 ms; 80 turns make a 4 second round",
+        "Every tick takes one global world lock, so game state stays single-writer",
+        "Combat, mob AI, quests and achievements are all event listeners"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "World data",
+      "items": [
+        "Rooms, mobs, items, quests and dialogue are hand-authored YAML",
+        "The template always loads; an instance save is layered on top only if one exists",
+        "Player saves live in users/ and are not part of the instance overlay"
+      ]
+    }
+  ]
+}

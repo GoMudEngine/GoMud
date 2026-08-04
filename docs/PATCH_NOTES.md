@@ -1,8 +1,34 @@
 # DOGMud Patch Notes
 
-## 2026-08-03 — Apostrophes are optional
+## 2026-08-04: The browser map keeps its secrets
 
-Typing <ansi fg="command">buy healers root</ansi> now finds the Healer's Root — every name
+The map in the browser client was marking secret exits you had not found
+yet. The text map has always hidden those until you go through them, and
+now the browser map does the same. A secret exit you have already used
+still shows up as before.
+
+If you have been using the browser map to spot hidden passages, that will
+no longer work. Search for them the same way text players always have.
+
+## 2026-08-04: How the game works inside
+
+There is a new **Architecture** tab on the website with six interactive
+diagrams of how the game actually works inside: the engine as a whole, the
+daily routines that keep townspeople busy, how a single combat swing is
+resolved, how authored world files become live rooms, how the browser map
+gets drawn, and how your character grows without experience points or levels.
+
+Each diagram opens full screen. You can zoom in for more detail, click any
+part to see what connects to it, search by name, and start a guided tour that
+steps through the whole diagram for you. To start the tour, open a diagram and
+click <ansi fg="command">Present</ansi>.
+
+These diagrams are for readers curious about how the game is built. They do
+not change how you play.
+
+## 2026-08-03: Apostrophes are optional
+
+Typing <ansi fg="command">buy healers root</ansi> now finds the Healer's Root. Every name
 match (shops, your pack, the ground) ignores apostrophes, so you never
 have to type one.
 

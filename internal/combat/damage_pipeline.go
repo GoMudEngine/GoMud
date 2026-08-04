@@ -60,14 +60,15 @@ func DamageScale(channel DamageChannel) float64 {
 }
 
 // CalcRawDamage computes raw damage before mitigation and variance.
-// All channels use the same unified formula:
+// All channels use the same unified formula, which has five factors:
 //
-//	raw = stat × SkillMultiplier(rank) × itemMult × ChannelScale
+//	raw = stat × SkillMultiplier(rank) × itemMult × ChannelScale × GlobalDamageMultiplier
 //
-// The per-channel scale absorbs any normalization:
-//   - Physical: 0.30 (stats ~100, so 100×1.0×1.0×0.30 = 30 raw per swing)
-//   - Magical:  1.00 (100×1.0×1.0×1.00 = 100 raw)
-//   - Conviction: 1.00 (100×1.0×0.5×1.00 = 50 raw for taunt)
+// GlobalDamageMultiplier is a master knob over every channel. Both it and the
+// per-channel scale are read from the balance config on each call, so neither
+// is a constant. The Go fallbacks are Physical 0.30, Magical 1.00,
+// Conviction 1.00 and global 1.00, but config.yaml routinely overrides all
+// four; read it rather than quoting the fallbacks as live values.
 func CalcRawDamage(stat int, skillRank int, itemMult float64, channel DamageChannel) float64 {
 	if itemMult <= 0 {
 		itemMult = 0.30 // fallback to unarmed-level multiplier
