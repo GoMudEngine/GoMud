@@ -318,7 +318,10 @@ whole config package), surfaced through a 1506 line `_datafiles/config.yaml`.
 The seven sibling `config.balance.*.go` files (`combat`, `discovery`, `misc`,
 `mobs`, `progression`, `shops`, `spells`) declare **no fields at all**; they
 hold only defaulting and validation logic, so look in `config.balance.go` for
-the knob and in the sibling for its default. Damage scales, mitigation caps, regen percentages,
+the field and in the sibling named for its subsystem (`config.balance.shops.go`
+for shop knobs, and so on) for its default. If you cannot tell which subsystem
+owns a knob, grep its name across `config.balance.*.go`.
+Damage scales, mitigation caps, regen percentages,
 progression rates, resource penalty curves, shop pricing, toxicity, salvage
 odds, conversation and schedule pacing are all tunable without a rebuild.
 
@@ -365,7 +368,10 @@ changes. Two sets of numbers matter and they are not the same:
 
 `GlobalDamageMultiplier`: Go default 1.0, **shipped 0.5**.
 
-Real math at stat=100, rank=0, itemMult=1.0, using the *shipped* values:
+Real math at stat=100, rank=0, using the *shipped* values. Note the third
+factor differs per row: Physical and Magical use `itemMult=1.0`, while
+Conviction has no item multiplier at all and the 0.5 in its row is the fixed
+taunt base.
 
 | Channel    | Calculation                          | Raw    |
 |------------|--------------------------------------|--------|
