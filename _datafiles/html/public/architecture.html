@@ -85,10 +85,10 @@
     recompiling it.
   </p>
   <p class="diagrams-intro">
-    These diagrams are hand-drawn against the running source and checked for
-    layout, not generated from it. Each one opens full screen with search,
-    click-to-focus, and a guided tour. The tour reads best from the
-    <strong>Present</strong> button.
+    These diagrams were drawn by hand against the running source rather than
+    generated from it, and checked automatically for label overlap. Each one
+    opens full screen with search, click-to-focus, and a guided tour. Once a
+    diagram is open, click <strong>Present</strong> to start the tour.
   </p>
 
   <div class="diagram-grid">
@@ -111,10 +111,11 @@
       <h3>Mob Aliveness Stack</h3>
       <p class="diagram-what">
         Daily schedules, patrol routes, NPC-to-NPC conversations, behavior
-        trees and idle chatter, and how they arbitrate for one mob on one tick.
+        trees and idle chatter, and how they arbitrate for one mob on one round.
       </p>
       <p class="diagram-why">
-        Most MUD NPCs stand still until spoken to. These ones keep a calendar.
+        Most MUD NPCs stand still until spoken to. The townspeople here follow a
+        daily routine instead.
       </p>
       <span class="diagram-cta">View diagram &rarr;</span>
     </a>
@@ -123,14 +124,14 @@
       <span class="diagram-kind">Sequence</span>
       <h3>Combat Round Resolution</h3>
       <p class="diagram-what">
-        One swing end to end: how many swings stamina and carried weight
-        allow, a single attack roll contested by every defense the
-        defender can pay for, the widest margin winning, and damage
-        through the shared three-channel pipeline.
+        One swing end to end: how many swings you get, set by stamina and carried
+        weight; a single attack roll contested by every defense the defender has
+        stamina left for, with the widest margin winning; and damage through the
+        shared three-channel pipeline.
       </p>
       <p class="diagram-why">
-        Damage mitigation never touches the to-hit roll. Armor only
-        reduces a hit that has already landed.
+        Damage mitigation never touches the to-hit roll. Armor reduces a hit that
+        has already landed, and a critical hit ignores it.
       </p>
       <span class="diagram-cta">View diagram &rarr;</span>
     </a>
@@ -144,8 +145,8 @@
         save can never override them.
       </p>
       <p class="diagram-why">
-        A deliberately incomplete overlay. Authored intent wins on the fields
-        that matter.
+        A deliberately incomplete overlay. On the fields tagged for it, authored
+        intent wins.
       </p>
       <span class="diagram-cta">View diagram &rarr;</span>
     </a>
@@ -159,8 +160,8 @@
         markers and fog.
       </p>
       <p class="diagram-why">
-        Fog of war is filtered on the server. Rooms you have not walked are
-        never sent, only a stub exit pointing into the dark.
+        Fog of war is filtered on the server. Rooms you have not walked are never
+        sent, only a stub exit at the edge of what you know.
       </p>
       <span class="diagram-cta">View diagram &rarr;</span>
     </a>
