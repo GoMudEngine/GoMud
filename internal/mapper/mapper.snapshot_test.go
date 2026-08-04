@@ -178,3 +178,83 @@ func TestSnapshotExitFlagsAndStubs(t *testing.T) {
 		t.Error("visited destinations (3,4) should NOT be stubs")
 	}
 }
+
+// TestSnapshotHidesUndiscoveredSecretExits guards fog parity with the ASCII map.
+//
+// GetLimitedMap skips a secret exit entirely unless the room behind it has been
+// visited. The web snapshot originally copied Secret through unconditionally,
+// so the browser map disclosed secret exits the ASCII map hides. That is a
+// gameplay advantage, not a cosmetic difference, and it was found only by an
+// adversarial review of the diagrams describing this code.
+//
+// Room 1 has two secret exits: north to a visited room, east to an unvisited
+// one. Only the north one may appear.
+func TestSnapshotHidesUndiscoveredSecretExits(t *testing.T) {
+	nodes := map[int]*mapNode{
+		1: node(1, 0, 0, 0, map[string]nodeExit{
+			"north": {RoomId: 2, Secret: true, Direction: d(0, -1, 0)},
+			"east":  {RoomId: 3, Secret: true, Direction: d(1, 0, 0)},
+		}),
+		2: node(2, 0, -1, 0, map[string]nodeExit{}),
+		3: node(3, 1, 0, 0, map[string]nodeExit{}),
+	}
+	m := mkMapper(nodes)
+	// Room 3 is deliberately absent from the visited set.
+	snap := m.Snapshot(map[int]struct{}{1: {}, 2: {}})
+
+	var r1 *SnapshotRoom
+	for i := range snap {
+		if snap[i].RoomId == 1 {
+			r1 = &snap[i]
+		}
+	}
+	if r1 == nil {
+		t.Fatal("room 1 missing from snapshot")
+	}
+
+	for _, e := range r1.Exits {
+		if e.ToRoomId == 3 {
+			t.Errorf("secret exit to unvisited room 3 was disclosed (secret=%v, stub=%v): "+
+				"the ASCII map hides these, so the web map must too", e.Secret, e.Stub)
+		}
+	}
+
+	var foundDiscovered bool
+	for _, e := range r1.Exits {
+		if e.ToRoomId == 2 {
+			foundDiscovered = true
+			if !e.Secret {
+				t.Errorf("secret exit to VISITED room 2 lost its Secret flag; "+
+					"the gate should hide undiscovered ones only, got %+v", e)
+			}
+		}
+	}
+	if !foundDiscovered {
+		t.Error("secret exit to visited room 2 was hidden; once you have been " +
+			"through it, it must still render")
+	}
+}
+
+// TestSnapshotKeepsNonSecretStubs guards against over-correcting the above:
+// an ordinary exit toward an unvisited room is still a legitimate fog stub.
+func TestSnapshotKeepsNonSecretStubs(t *testing.T) {
+	nodes := map[int]*mapNode{
+		1: node(1, 0, 0, 0, map[string]nodeExit{
+			"north": {RoomId: 2, Direction: d(0, -1, 0)},
+		}),
+		2: node(2, 0, -1, 0, map[string]nodeExit{}),
+	}
+	m := mkMapper(nodes)
+	snap := m.Snapshot(map[int]struct{}{1: {}})
+
+	if len(snap) != 1 {
+		t.Fatalf("expected 1 room, got %d", len(snap))
+	}
+	if len(snap[0].Exits) != 1 {
+		t.Fatalf("ordinary exit toward an unvisited room must still be emitted "+
+			"as a fog stub, got %d exits", len(snap[0].Exits))
+	}
+	if !snap[0].Exits[0].Stub {
+		t.Errorf("exit toward unvisited room 2 should be a stub, got %+v", snap[0].Exits[0])
+	}
+}

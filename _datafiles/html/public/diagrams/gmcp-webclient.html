@@ -5028,8 +5028,8 @@
           <li>&bull; An exit from a room you HAVE walked is still sent when its far side is unwalked</li>
           <li>&bull; That stub carries a direction, the destination room id, and the door flags on it</li>
           <li>&bull; It also carries the destination zone name when the exit crosses a zone boundary</li>
-          <li>&bull; A secret exit out of a visited room is flagged secret whether or not you found it</li>
-          <li>&bull; The ASCII map does NOT do this: it hides a secret exit until you have been through it</li>
+          <li>&bull; A secret exit you have not been through is not sent at all, exit or flag</li>
+          <li>&bull; That gate matches GetLimitedMap, so the browser map discloses no more than ASCII</li>
         </ul>
       </div>
 

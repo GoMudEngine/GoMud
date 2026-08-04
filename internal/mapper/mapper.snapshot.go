@@ -41,6 +41,9 @@ type SnapshotRoom struct {
 // are emitted with Stub=true (a fog-of-war hint toward the unexplored region),
 // and ToZone is set when the destination is in a different zone. The exit Kind
 // drives client rendering (normal/long/wrap/vertical).
+//
+// Undiscovered secret exits are omitted entirely, matching GetLimitedMap's
+// behaviour for the ASCII map. See the comment at the gate below.
 func (r *mapper) Snapshot(visited map[int]struct{}) []SnapshotRoom {
 	out := make([]SnapshotRoom, 0, len(visited))
 
@@ -95,6 +98,20 @@ func (r *mapper) Snapshot(visited map[int]struct{}) []SnapshotRoom {
 			// Don't render an exit stub toward an ephemeral/instance room.
 			if rooms.IsEphemeralRoomId(e.RoomId) {
 				continue
+			}
+			// A secret exit is not disclosed until the player has been through
+			// it. GetLimitedMap does exactly this for the ASCII map (see the
+			// exitInfo.Secret block there): it skips the exit entirely unless
+			// the room on the far side has been visited. Without the same gate
+			// the web map revealed secret exits the ASCII map hides, which is a
+			// real advantage rather than a cosmetic difference. Skipping the
+			// whole exit (rather than just clearing the Secret flag) is
+			// deliberate: emitting an unflagged stub would still tell the
+			// player a passage is there.
+			if e.Secret {
+				if _, seen := visited[e.RoomId]; !seen {
+					continue
+				}
 			}
 			se := SnapshotExit{
 				ToRoomId: e.RoomId,

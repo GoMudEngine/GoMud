@@ -293,8 +293,8 @@
         "An exit from a room you HAVE walked is still sent when its far side is unwalked",
         "That stub carries a direction, the destination room id, and the door flags on it",
         "It also carries the destination zone name when the exit crosses a zone boundary",
-        "A secret exit out of a visited room is flagged secret whether or not you found it",
-        "The ASCII map does NOT do this: it hides a secret exit until you have been through it"
+        "A secret exit you have not been through is not sent at all, exit or flag",
+        "That gate matches GetLimitedMap, so the browser map discloses no more than ASCII"
       ]
     },
     {
