@@ -8,8 +8,9 @@
     "quality_profile": "showcase",
     "repository": {
       "url": "https://github.com/pruuk/DOGMud",
-      "revision": "2b722371ed485a697c0720bda0b0688957590a8d"
+      "revision": "005a068880eb9a292f20ccba77ad4e306dc63944"
     },
+    "visual_preset": "blueprint",
     "views": [
       {
         "id": "idle-gate",
