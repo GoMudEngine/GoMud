@@ -1,0 +1,49 @@
+# The Landing handoff prompt (2026-08-04). A real newcomer finished the flee
+# lesson, arrived in 6467, and was stranded: nothing on screen told her what to
+# do, `talk` had never been taught by the tutorial, and `ask dewey quest` (the
+# verb the tutorial DOES teach) answered "I have no task for you right now".
+#
+# Adversarial route-1 tutorial walk. Spawn a FRESH character, follow Dewey's
+# prompts, and read every line as a confused first-time player would. The whole
+# point of this run is the LAST room, so do not rush the arrival.
+goals:
+  - >-
+    Walk the newcomer tutorial (quest 28) end to end following Dewey's
+    prompts and the hint command, through the flee lesson in The Proving.
+    Report any prompt that is unclear, double-rendered, out of order, or
+    missing. Getting to The Landing is setup for the checks below, but
+    report anything broken you pass through on the way.
+  - >-
+    THE KEY CHECK. The moment you flee into The Landing, STOP and do
+    nothing for at least 3 rounds. Read exactly what is on screen. Dewey
+    must speak on arrival and must NAME the command to use, which is
+    "talk dewey". Report FAIL if the room is silent, if his line is only
+    a farewell with no instruction, or if you would not know what to do
+    next from the arrival text alone.
+  - >-
+    Then keep waiting, still doing nothing, for at least 10 more rounds
+    (roughly 40 seconds). Dewey should REPEAT the prompt periodically,
+    about every 7 rounds. This exists because the first line is easy to
+    lose in the combat text you just fled. Report FAIL if he never
+    repeats, or if he repeats so often it reads as spam.
+  - >-
+    Now type "ask dewey quest" BEFORE using talk. This is the exact
+    command the stuck player used. It must give a useful answer that
+    points you at your next step. Report FAIL if it answers "I have no
+    task for you right now" or anything else implying there is nothing
+    left to do. Also try "ask dewey next" and "ask dewey stuck" and
+    report whether they help.
+  - >-
+    Try a plain movement command (north) in The Landing. Dewey should
+    block it and redirect you to the talk handoff rather than letting you
+    wander or leaving you with no feedback.
+  - >-
+    Finally confirm the handoff still completes: "talk dewey" plays the
+    farewell and transition, moves you to the Awakening Pool, completes
+    quest 28 and grants quest 30. Report the exact order and timing of
+    the messages, and whether any line lands after you have already
+    arrived, or reads as duplicated.
+  - >-
+    Judge the whole ending as a first-time player. Did you ever feel
+    stuck, and if so for how long. Was it clear that "talk" and "ask" are
+    different commands that both exist. Report bluntly.
