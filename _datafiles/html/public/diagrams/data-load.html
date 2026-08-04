@@ -25,7 +25,7 @@
           try { theme = localStorage.getItem('archify-theme'); } catch (_) {}
         }
         if (theme !== 'light' && theme !== 'dark') {
-          theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+          theme = 'dark';
         }
         document.documentElement.setAttribute('data-theme', theme);
       } catch (_) {}
@@ -5332,7 +5332,7 @@
         if (fromUrl) return fromUrl;
         var saved = readStored();
         if (saved === 'light' || saved === 'dark') return saved;
-        return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        return 'dark';
       }
 
       function apply(theme) {

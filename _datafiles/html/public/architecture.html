@@ -5,12 +5,19 @@
     color: var(--title-gold);
     font-family: var(--font-serif);
     margin-bottom: 0.25rem;
+    text-align: center;
   }
   .diagrams-intro {
     color: var(--text-tagline);
-    max-width: 62ch;
-    line-height: 1.55;
-    margin: 0 0 1.75rem;
+    max-width: 68ch;
+    line-height: 1.6;
+    /* auto side margins centre the block under the title; without them the
+       max-width pins it to the left and leaves a dead column on the right. */
+    margin: 0 auto 1.25rem;
+    text-align: left;
+  }
+  .diagrams-intro:last-of-type {
+    margin-bottom: 1.75rem;
   }
   .diagram-grid {
     display: grid;
