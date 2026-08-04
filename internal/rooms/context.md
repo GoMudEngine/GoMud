@@ -173,6 +173,7 @@ When writing hidden noun descriptions:
 | `rooms.go` | The `Room` type and its core behaviour |
 | `roommanager.go` | The room registry, load/unload, and lookup |
 | `save_and_load.go` | Room YAML + instance-save persistence, `restoreSkipTaggedFields` |
+| `prose_wrap.go` | Re-folds long prose into wrapped `>` block scalars on template save |
 | `roomdetails.go` | Assembled per-look detail payload |
 | `zoneconfig.go` | Per-zone `zone-config.yaml` (including `non_cartesian`) |
 | `zone_lifecycle.go` | Zone create/delete lifecycle |
@@ -190,6 +191,24 @@ When writing hidden noun descriptions:
 | `cubegen.go` | Generated cube/maze room structures |
 | `memory.go` | Memory reporting for the admin report |
 | `test_helpers.go` | Test fixtures |
+
+### Prose folding on template save
+
+`SaveRoomTemplate` marshals through `marshalRoomTemplate` (`prose_wrap.go`), not
+`yaml.Marshal` directly. Authored rooms wrap prose in folded (`>`) block
+scalars; loading one joins its lines with spaces, so the in-memory value is a
+single long line and yaml.v2 re-emits it as a literal (`|`) block holding one
+enormous line. `marshalRoomTemplate` re-folds `description`, `nouns`,
+`hidden_nouns` and `idlemessages` at 78 columns.
+
+The binding constraint is round-trip fidelity: `load(save(room))` must return
+the prose byte for byte. Only a folded scalar does that, and only with the right
+chomping (`>` when the value carries a trailing newline, `>-` when it does not).
+The code refuses to fold anything it cannot prove safe (interior newlines, runs
+of spaces, tabs, leading/trailing spaces, tokens wider than the line) and
+verifies the finished document by parsing it back, falling through to plain
+yaml.v2 output on any doubt. It deliberately does NOT switch the whole marshal
+to yaml.v3, which would re-indent every sequence in all 1386 room files.
 
 ### Instance saves vs. `instance:"skip"`
 

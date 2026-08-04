@@ -196,7 +196,12 @@ func SaveRoomTemplate(roomTpl Room) error {
 	// It is assumed that `roomTpl` contains empty room data
 	// That means no players/mobs/items/gold/etc that aren't intended to be included in the default/empty room template
 	//
-	data, err := yaml.Marshal(&roomTpl)
+	// marshalRoomTemplate is yaml.Marshal plus re-folding of long prose values
+	// (description/nouns/hidden_nouns/idlemessages) back into wrapped folded
+	// block scalars. Without it a builder save collapses authored prose into
+	// single enormous lines. See internal/rooms/prose_wrap.go for why folded
+	// scalars are the only style that round-trips the value unchanged.
+	data, err := marshalRoomTemplate(roomTpl)
 	if err != nil {
 		return err
 	}
