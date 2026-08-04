@@ -50,6 +50,37 @@ Node positions and sizes are laid out iteratively against validator diagnostics.
 
 ---
 
+## RESOLVED BY TASK 1 — read before authoring any diagram
+
+Task 1 ran the investigation and its findings are now binding on every later task.
+
+**1. Run everything from the repo root.** Relative input *and* output paths both resolve correctly for `validate`, `render` and `deliver`. No skill-directory fallback is needed.
+
+**2. `--repo-root .` is now on every `validate` and `deliver` command in this plan** (already edited in). It is worth using, but not for the reason the design spec guessed.
+
+**What it actually does:** components may carry a `sources` array of repo-relative file paths. The validator resolves each one with `git cat-file` against **a pinned 40-character commit SHA**, not the working tree. It additionally requires `meta.repository.url` to be a public `github.com/owner/repo` URL whose slug matches the local `origin` remote (`https://github.com/pruuk/DOGMud` — confirmed matching).
+
+**Therefore every diagram specification must also include:**
+
+```json
+"repository": {
+  "url": "https://github.com/pruuk/DOGMud",
+  "revision": "<full 40-char SHA of current HEAD at authoring time>"
+}
+```
+
+Get the SHA with `git rev-parse HEAD` immediately before validating.
+
+**3. What this buys, stated honestly.** It is a **typo and hallucination guard at authoring time**: cite a path that does not exist at that commit and `validate` fails with `repository-evidence/file-missing`. That is genuinely valuable when an agent is authoring node labels about code it just read.
+
+It is **not** a live drift detector. Verified empirically: deleting a cited file from the working tree without committing did **not** fail validation, because the check reads the git object at the pinned SHA. A diagram keeps validating clean forever against a file deleted in some later commit, until someone bumps `revision` forward.
+
+**Consequence for maintenance:** re-pin `revision` to current HEAD each time a diagram is re-validated or re-delivered. Pinned once and forgotten, the citation is an archaeological record rather than a check. This does not change the design spec's "Known limitations — drift" entry; it sharpens it.
+
+**4. The citation is not visible in the rendered diagram.** It is embedded once as JSON metadata backing the Semantic Passport and Node Finder. Do not cite a path expecting readers to see it — cite it to make the authoring claim checkable.
+
+---
+
 ## Task 1: Verify the archify toolchain and resolve the open spec item
 
 **Files:**
@@ -177,7 +208,7 @@ Keep one obvious main path (players → listener → input handlers → tick loo
 ```bash
 cd "$HOME/workspace/DOGMud"
 node "$HOME/.agents/skills/archify/bin/archify.mjs" validate architecture \
-  tools/archify/specs/engine-overview.architecture.json --quality showcase --json
+  tools/archify/specs/engine-overview.architecture.json --repo-root . --quality showcase --json
 ```
 
 Expected on success: a receipt reporting **all 9 artifact checks, 0 composition errors, 0 warnings.**
@@ -190,7 +221,7 @@ A receipt showing only 4 checks means `meta.quality_profile` is missing or missp
 node "$HOME/.agents/skills/archify/bin/archify.mjs" deliver architecture \
   tools/archify/specs/engine-overview.architecture.json \
   _datafiles/html/public/architecture/engine-overview.html \
-  --quality showcase --json
+  --repo-root . --quality showcase --json
 ```
 
 Expected: exit code 0 and a receipt with SHA-256 plus byte counts for both the specification and the artifact. **A non-zero exit is never success.** After this succeeds the artifact is frozen — never hand-edit it. To change anything, edit the JSON and re-deliver.
@@ -568,7 +599,7 @@ Be accurate about gating: conversations fire only when **both** NPCs are fully i
 ```bash
 cd "$HOME/workspace/DOGMud"
 node "$HOME/.agents/skills/archify/bin/archify.mjs" validate architecture \
-  tools/archify/specs/mob-aliveness.architecture.json --quality showcase --json
+  tools/archify/specs/mob-aliveness.architecture.json --repo-root . --quality showcase --json
 ```
 
 Expected: all 9 checks, 0 errors, 0 warnings. Change only the diagnosed subject per round; stop and report if two consecutive rounds do not improve the best error count.
@@ -579,7 +610,7 @@ Expected: all 9 checks, 0 errors, 0 warnings. Change only the diagnosed subject 
 node "$HOME/.agents/skills/archify/bin/archify.mjs" deliver architecture \
   tools/archify/specs/mob-aliveness.architecture.json \
   _datafiles/html/public/architecture/mob-aliveness.html \
-  --quality showcase --json
+  --repo-root . --quality showcase --json
 ```
 
 Expected: exit 0 with a SHA-256 receipt. Artifact is frozen after this.
@@ -685,7 +716,7 @@ Point 7 and chapter 5 matter: never showing raw numbers to players is a delibera
 ```bash
 cd "$HOME/workspace/DOGMud"
 node "$HOME/.agents/skills/archify/bin/archify.mjs" validate sequence \
-  tools/archify/specs/combat-round.sequence.json --quality showcase --json
+  tools/archify/specs/combat-round.sequence.json --repo-root . --quality showcase --json
 ```
 
 Expected: all 9 checks, 0 errors, 0 warnings.
@@ -696,7 +727,7 @@ Expected: all 9 checks, 0 errors, 0 warnings.
 node "$HOME/.agents/skills/archify/bin/archify.mjs" deliver sequence \
   tools/archify/specs/combat-round.sequence.json \
   _datafiles/html/public/architecture/combat-round.html \
-  --quality showcase --json
+  --repo-root . --quality showcase --json
 ```
 
 Expected: exit 0 with a SHA-256 receipt.
@@ -852,7 +883,7 @@ The story here is the round trip: an overlay that is deliberately *incomplete*, 
 ```bash
 cd "$HOME/workspace/DOGMud"
 node "$HOME/.agents/skills/archify/bin/archify.mjs" validate sequence \
-  tools/archify/specs/data-load.sequence.json --quality showcase --json
+  tools/archify/specs/data-load.sequence.json --repo-root . --quality showcase --json
 ```
 
 Expected: all 9 checks, 0 errors, 0 warnings.
@@ -863,7 +894,7 @@ Expected: all 9 checks, 0 errors, 0 warnings.
 node "$HOME/.agents/skills/archify/bin/archify.mjs" deliver sequence \
   tools/archify/specs/data-load.sequence.json \
   _datafiles/html/public/architecture/data-load.html \
-  --quality showcase --json
+  --repo-root . --quality showcase --json
 ```
 
 - [ ] **Step 5: Add the card to the index**
@@ -952,7 +983,7 @@ Chapter 2 carries the interesting claim and must be accurate: unvisited rooms ar
 ```bash
 cd "$HOME/workspace/DOGMud"
 node "$HOME/.agents/skills/archify/bin/archify.mjs" validate dataflow \
-  tools/archify/specs/gmcp-webclient.dataflow.json --quality showcase --json
+  tools/archify/specs/gmcp-webclient.dataflow.json --repo-root . --quality showcase --json
 ```
 
 Expected: all 9 checks, 0 errors, 0 warnings.
@@ -963,7 +994,7 @@ Expected: all 9 checks, 0 errors, 0 warnings.
 node "$HOME/.agents/skills/archify/bin/archify.mjs" deliver dataflow \
   tools/archify/specs/gmcp-webclient.dataflow.json \
   _datafiles/html/public/architecture/gmcp-webclient.html \
-  --quality showcase --json
+  --repo-root . --quality showcase --json
 ```
 
 - [ ] **Step 6: Add the card to the index**
@@ -1053,7 +1084,7 @@ Create `tools/archify/specs/progression-loop.lifecycle.json` with `diagram_type:
 ```bash
 cd "$HOME/workspace/DOGMud"
 node "$HOME/.agents/skills/archify/bin/archify.mjs" validate lifecycle \
-  tools/archify/specs/progression-loop.lifecycle.json --quality showcase --json
+  tools/archify/specs/progression-loop.lifecycle.json --repo-root . --quality showcase --json
 ```
 
 Expected: all 9 checks, 0 errors, 0 warnings.
@@ -1064,7 +1095,7 @@ Expected: all 9 checks, 0 errors, 0 warnings.
 node "$HOME/.agents/skills/archify/bin/archify.mjs" deliver lifecycle \
   tools/archify/specs/progression-loop.lifecycle.json \
   _datafiles/html/public/architecture/progression-loop.html \
-  --quality showcase --json
+  --repo-root . --quality showcase --json
 ```
 
 - [ ] **Step 6: Add the card to the index**
