@@ -47,7 +47,8 @@ verify against the code before acting on one.
 | [`roadmaps/`](roadmaps/) | Long-form roadmaps: development plan, combat-state, mob-aliveness |
 | [`superpowers/`](superpowers/) | Per-feature specs and implementation plans, live and completed |
 | [`archive/`](archive/) | Retired documents and old bug screenshots |
-| [`upstream/`](upstream/) | Artifacts inherited from the upstream GoMud engine |
+| [`upstream/`](upstream/) | Upstream-facing material in both directions: artifacts inherited from the GoMud engine, and briefs for changes we want to send out to third-party tools |
+| [`upstream/archify-sublabel-pr-brief.md`](upstream/archify-sublabel-pr-brief.md) | Ready-to-hand-off brief for a PR to `tt-a1i/archify`: four of its five renderers never measure `sublabel`/`tag` against the node box, so diagram text overflows while validation still passes |
 | [`images/`](images/) | Screenshots used by the top-level README |
 
 Per-package developer notes live beside the code, as `context.md` in each

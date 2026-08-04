@@ -16,6 +16,10 @@ detail to sublabel", which moves the text into the one field nothing measures.
 This script applies the renderers' own width heuristic to the fields they
 forgot. Run it after editing any spec and before delivering.
 
+The upstream fix for this is written up at
+docs/upstream/archify-sublabel-pr-brief.md, ready to hand to a clone of
+tt-a1i/archify. This script is the local workaround, not the proposed fix.
+
 The heuristic mirrors `textUnits(text) * 6.2` at font-size 10 in
 renderers/shared/utils.mjs, scaled to each field's real font size:
 
