@@ -198,7 +198,7 @@ func IsTokenAfter(currentToken string, nextToken string) bool {
 
 ### Quest Retrieval
 ```go
-// Get a quest definition by bare numeric id — no token parsing, no step
+// Get a quest definition by bare numeric id: no token parsing, no step
 // check. Used by the editor's load path, since not every quest's tokens
 // share a common valid step.
 func GetQuestById(questId int) *Quest {
@@ -282,7 +282,7 @@ func (r *Quest) Id() int {
     return r.QuestId
 }
 
-// Validate implements fileloader.Loadable — it runs on EVERY parse (boot
+// Validate implements fileloader.Loadable: it runs on EVERY parse (boot
 // and editor save), so a broken quest file fails to load instead of
 // loading half-formed. Checks: QuestId > 0, Name non-empty, at least one
 // step, every trigger has a known event and at least one action, no
@@ -339,7 +339,11 @@ quest := Quest{
     },
 }
 
-// Token progression: "" -> "1001-start" (completion)
+// Token progression: "" -> "1001-start". This is the quest-accepted step,
+// not completion: the real engine (internal/hooks/Quest_HandleQuestUpdate.go)
+// distributes Rewards only when a token's step is literally "end", so a
+// genuinely single-step, complete-on-accept quest needs its one step
+// named "end", not "start".
 ```
 
 ### Multi-Step Quests
@@ -436,7 +440,7 @@ reward := QuestReward{
 
 ### Character System Integration
 `internal/characters` (see `internal/characters/quests.go`) is the actual
-consumer of quest tokens and flags — this package never touches
+consumer of quest tokens and flags. This package never touches
 `*characters.Character` directly:
 ```go
 - character.QuestProgress               // map[int]string: questId -> current step id
@@ -465,7 +469,7 @@ if reward.ItemId > 0 {
 
 ### Skill System Integration
 ```go
-// Quest rewards can advance skills — a floor-raise, never a downgrade
+// Quest rewards can advance skills (a floor-raise, never a downgrade)
 if reward.SkillInfo != "" {
     // ... parse "skill:level[,skill:level]" per the Skill Rewards example above ...
     if character.GetSkillLevel(skills.SkillTag(skillName)) < level {
@@ -548,16 +552,16 @@ func distributeRewards(questUser *users.UserRecord, rewards QuestReward) {
         character.StoreItem(item)
     }
     // Item-stockpile reward (rewards.ItemInfo) grants N of each listed
-    // item — see parseItemGrants.
+    // item. See parseItemGrants.
 
-    // Skill reward(s) — floor-raise, never downgrades
+    // Skill reward(s): floor-raise, never downgrades
     for _, grant := range parseSkillGrants(rewards.SkillInfo) {
         if character.GetSkillLevel(skills.SkillTag(grant.skill)) < grant.level {
             character.TrainSkill(grant.skill, grant.level)
         }
     }
 
-    // Stat reward(s) — always additive
+    // Stat reward(s): always additive
     for _, grant := range parseStatGrants(rewards.StatInfo) {
         character.IncreaseStat(grant.stat, grant.amount)
     }
@@ -628,7 +632,7 @@ for _, quest := range allQuests {
 - `internal/util` - Utility functions for file operations and string conversion
 - `internal/mudlog` - Logging system for debugging and monitoring
 
-## Dialogue–Quest Integration (Phase 27)
+## Dialogue-Quest Integration (Phase 27)
 
 The dialogue system can gate conversation options on quest state and advance
 quests through NPC dialogue, connecting YAML-driven dialogue trees with the
@@ -681,7 +685,7 @@ Both `TreeNode` and `Pattern` structs support:
 variant has `questRequired`/`questExcluded` conditions and alternate `text`/
 `hints`. `Greet()` checks variants first; the first match wins.
 
-### Worked Example: Tolva (Mob 84) — Quest 5
+### Worked Example: Tolva (Mob 84), Quest 5
 
 ```yaml
 # Quest 5 steps: start → ledger → evidence → end
@@ -716,7 +720,7 @@ tree:
 
 When `grantsQuest` fires, it calls `events.AddToQueue(events.Quest{...})`
 which is processed by `Quest_HandleQuestUpdate.go`. That handler distributes
-all rewards (gold, items, buffs) defined in the quest YAML — no separate
+all rewards (gold, items, buffs) defined in the quest YAML. No separate
 reward mechanism is needed in the dialogue system.
 
 ### LLM Quest Context
@@ -740,7 +744,7 @@ progress. They complement the token system: tokens track *where* a player
 is in a quest (which step), while flags track *how* they got there (which
 branch, which choice, whose side they took).
 
-### Flags vs. Tokens — When to Use Each
+### Flags vs. Tokens: When to Use Each
 
 | Mechanism | Use for | Storage |
 |-----------|---------|---------|
@@ -749,7 +753,7 @@ branch, which choice, whose side they took).
 
 Use **tokens** when you want to gate an NPC interaction on whether a player
 has reached a certain quest stage. Use **flags** when you need to remember
-a *choice* the player made — especially when that choice affects a different
+a *choice* the player made, especially when that choice affects a different
 NPC or a later quest in the same chain.
 
 Flags never expire and are never consumed. They are permanent markers on the
@@ -760,7 +764,7 @@ character until explicitly cleared by a script.
 Every flag key that any dialogue file or quest condition references MUST be
 declared in the quest's YAML under a top-level `flags:` list. **Referencing
 an undeclared flag key causes a server panic at startup.** This is
-intentional — it catches typos in dialogue files before players ever see
+intentional: it catches typos in dialogue files before players ever see
 them in production.
 
 ```yaml
@@ -779,10 +783,21 @@ steps:
     description: "Return to your ally with proof."
 ```
 
-**Key naming convention:** `"{questId}-{flagName}"` — e.g., `"11-branch"`.
+**Key naming convention:** `"{questId}-{flagName}"`, e.g., `"11-branch"`.
 Always namespace the flag with the quest ID to prevent collisions between
-quests. The YAML `key:` field stores only the short name (`branch`); the
-full namespaced key is constructed at runtime as `"{questId}-{key}"`.
+quests.
+
+This split applies only within the quest YAML `flags:` block: the `key:`
+field there stores just the short name (`branch`), and `RegisterFlags`
+(`internal/quests/quests.go`) builds the full namespaced key at load time as
+`fmt.Sprintf("%d-%s", questId, f.Key)`. Every other place a flag key is
+written takes the full namespaced key directly, never the short name:
+`setsQuestFlag`, `questFlagRequired`, `questFlagExcluded` in dialogue YAML,
+the quest engine's `has_flag`/`missing_flag`/`set_flag` conditions and
+actions, `character.SetQuestFlag`/`GetQuestFlag`/`HasQuestFlag`, and the JS
+`user.GetQuestFlag`/`SetQuestFlag`/`HasQuestFlag` API. Writing the short
+name in any of those contexts either never matches a `questFlagRequired`
+gate or trips the undeclared-key startup panic (`quests.ValidateFlag`).
 
 **Values list:** All legal values must be listed. The engine validates that
 any `setsQuestFlag` value is in the declared list at startup.
@@ -851,12 +866,12 @@ steps:
 ```
 
 **Condition types:**
-- `has_flag: {key: value}` — true if flag equals value
-- `missing_flag: {key: value}` — true if flag does NOT equal value (or
+- `has_flag: {key: value}`: true if flag equals value
+- `missing_flag: {key: value}`: true if flag does NOT equal value (or
   is unset)
 
 **Action type (for use in reward blocks or triggered events):**
-- `set_flag: {key: "11-branch", value: "rhett"}` — programmatically set a
+- `set_flag: {key: "11-branch", value: "rhett"}`: programmatically set a
   flag (used in JS scripts when dialogue-layer flag setting isn't sufficient)
 
 ### Admin and Scripting Interface
@@ -876,10 +891,10 @@ questtoken flag 11-branch rhett  # manually set a flag (admin use only)
 // Read a flag
 var branch = user.GetQuestFlag("11-branch");
 if (branch === "rhett") {
-    user.SendText("Rhett's ally — I know your face.");
+    user.SendText("Rhett's ally, I know your face.");
 }
 
-// Set a flag (rare — prefer setsQuestFlag in dialogue YAML)
+// Set a flag (rare: prefer setsQuestFlag in dialogue YAML)
 user.SetQuestFlag("11-branch", "sylara");
 
 // Check existence (flag is unset if empty string)
@@ -892,7 +907,7 @@ Prefer `setsQuestFlag` in dialogue YAML over `SetQuestFlag` in scripts
 wherever possible. Script-side flag setting is best reserved for `onGive`
 handlers or combat hooks where dialogue YAML can't fire.
 
-### Worked Example: Quest 11 — The Schism at Veltara
+### Worked Example: Quest 11, The Schism at Veltara
 
 Quest 11 is a two-NPC branching quest. Sylara and Rhett both offer the
 quest; the player can only side with one. The flag `11-branch` records the
@@ -917,7 +932,7 @@ steps:
     description: "Return to your ally with the proof."
 rewards:
   gold: 200
-  playerMessage: "The schism is resolved — for better or worse."
+  playerMessage: "The schism is resolved, for better or worse."
 ```
 
 **Sylara's dialogue tree (abbreviated):**
@@ -931,7 +946,7 @@ tree:
       - questRequired: ["11-middle"]
         questFlagRequired: {"11-branch": "sylara"}
         text: "You serve the Circle still. Bring me the proof."
-      # Mid-quest: player sided with Rhett — show dismissal
+      # Mid-quest: player sided with Rhett, show dismissal
       - questRequired: ["11-middle"]
         questFlagRequired: {"11-branch": "rhett"}
         text: "You walk Rhett's path. We have nothing to discuss."
@@ -940,7 +955,7 @@ tree:
         text: "It is done. The Circle holds."
 
   nodes:
-    # DISMISSAL NODE — must appear FIRST so it blocks keyword matches
+    # DISMISSAL NODE: must appear FIRST so it blocks keyword matches
     # for players already committed to Rhett's branch
     - id: rhett_dismiss
       triggers: ["schism", "quest", "task", "help", "side", "sylara"]
@@ -948,7 +963,7 @@ tree:
       questFlagRequired: {"11-branch": "rhett"}
       text: "You have chosen Rhett. I have nothing for you."
 
-    # Quest offer — only shows before player has started
+    # Quest offer: only shows before player has started
     - id: offer_quest
       triggers: ["schism", "quest", "task", "help"]
       questExcluded: ["11-start", "11-middle", "11-end"]
@@ -958,7 +973,7 @@ tree:
         value: "sylara"
       text: "Then stand with me. The seal must be destroyed."
 
-    # Mid-quest check — only for Sylara's branch
+    # Mid-quest check: only for Sylara's branch
     - id: progress_check
       triggers: ["seal", "progress", "proof"]
       questRequired: ["11-middle"]
@@ -966,7 +981,7 @@ tree:
       questExcluded: ["11-end"]
       text: "The seal must be destroyed before Rhett can use it."
 
-    # Completion — only for Sylara's branch
+    # Completion: only for Sylara's branch
     - id: complete
       triggers: ["done", "finished", "proof", "seal"]
       questRequired: ["11-middle"]
@@ -998,15 +1013,18 @@ with `questFlagRequired` for both branches during the active quest phase.
 
 #### 3. `is_component` on quest items
 Items with `is_component: true` auto-route to the component bag on pickup.
-Quest items must NOT have `is_component: true` — they belong in the regular
+Quest items must NOT have `is_component: true`. They belong in the regular
 backpack where quest scripts and `requiresItem` checks can find them.
 
-#### 4. Flag key typos bypassing validation
-The startup panic for undeclared flag keys only fires if the quest YAML is
-loaded AND the dialogue YAML references a `questFlagRequired`/
-`questFlagExcluded`/`setsQuestFlag` key that the quest didn't declare.
-If you create a flag reference in dialogue before writing the quest YAML,
-the server will panic at start. Write the quest YAML `flags:` block first.
+#### 4. Referencing a flag before the quest declares it
+`ValidateAllFlags()` (`internal/questengine/loader.go`) runs at startup and
+scans every quest engine trigger and every dialogue file for
+`questFlagRequired`/`questFlagExcluded`/`setsQuestFlag`/`has_flag`/
+`missing_flag`/`set_flag` references. Any key or value not registered by a
+quest's `flags:` block panics the boot. If you write a flag reference in
+dialogue or a quest trigger before adding it to the owning quest's `flags:`
+block, the server will not start. Write the quest YAML `flags:` block
+first, then reference the key elsewhere.
 
 #### 5. Double-completion guard missing
 Nodes that fire `grantsQuest` for the final step should always include
@@ -1023,7 +1041,7 @@ maintainers know the quests are coupled.
 
 | File | Purpose |
 |------|---------|
-| `quests.go` | Every quest definition type — the single owner of the quest file parse |
+| `quests.go` | Every quest definition type: the single owner of the quest file parse |
 | `triggers.go` | Trigger and action definition shapes |
 | `save.go` | Quest file persistence |
 | `validate_refs.go` | Cross-reference validation (flags, tokens, ids) |

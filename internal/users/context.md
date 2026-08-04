@@ -2,7 +2,7 @@
 
 ## Overview
 
-The GoMud users system provides comprehensive user account management with support for authentication, character association, connection tracking, item storage, messaging, and configuration management. It features a sophisticated indexing system for fast user lookups, zombie connection handling, role-based permissions, and persistent user data storage with YAML serialization.
+The GoMud users system provides comprehensive user account management with support for authentication, character association, connection tracking, item storage, messaging, and configuration management. It features a sophisticated indexing system for user lookups, zombie connection handling, role-based permissions, and persistent user data storage with YAML serialization.
 
 ## Architecture
 
@@ -18,7 +18,6 @@ The users system is built around several key components:
 
 **User Index System:**
 - Fixed-width record index for user lookups
-- Fixed-width record format for fast seeking
 - Username-to-UserID mapping with collision handling
 - Automatic index rebuilding and maintenance
 
@@ -43,7 +42,7 @@ The users system is built around several key components:
 - **Zombie Handling**: Graceful disconnection and cleanup
 
 ### 2. **Fixed-Width Index System**
-- **Fixed Records**: 89-byte fixed-width records seeked by offset (`RecordCount * RecordSize`); lookups are a linear scan, not a binary search
+- **Fixed Records**: 89-byte fixed-width records seeked by offset (`MetaDataSize + i*RecordSize`); lookups are a linear scan, not a binary search
 - **Automatic Maintenance**: Index rebuilding and corruption recovery (`Rebuild()`/`rebuildFromDir` in `index_rebuild.go`)
 - **Version Management**: Versioned index format via `IndexMetaData`
 
@@ -129,8 +128,13 @@ type ActiveUsers struct {
 
 There is a single package-level instance, `userManager`, created by
 `newUserManager()`. Every exported function in `users.go` (`GetByUserId`,
-`GetAllActiveUsers`, `LoginUser`, etc.) takes `userManager.mu` before
-touching these maps.
+`GetAllActiveUsers`, `LoginUser`, etc.) takes `userManager.mu`, an
+`RLock` for read-only functions and a full `Lock` for anything that
+mutates one of the five maps, before touching them. This locking is
+per-call only: it makes each individual function call atomic, not a
+sequence of calls. A caller that reads with one call and then writes
+based on that read with a second call gets no atomicity guarantee across
+the gap between the two: another goroutine can change state in between.
 
 ## User Index System
 
@@ -150,7 +154,7 @@ type IndexUserRecord struct {
 ```
 On disk each record is username bytes, then the little-endian `UserID`,
 then a single line-terminator byte (`IndexLineTerminatorV1`) written
-separately by the read/write code — the terminator is not a struct field.
+separately by the read/write code. The terminator is not a struct field.
 
 ### Index Operations
 ```go
@@ -182,9 +186,14 @@ func (idx *UserIndex) Create() error {
     return nil
 }
 
-// Fast username lookup: a full sequential scan of the fixed-width
-// records (not a binary search despite the earlier upstream naming),
-// comparing only the first len(username) bytes of each record.
+// Username lookup: a full sequential scan of the fixed-width records (not
+// a binary search despite the earlier upstream naming). Each record is an
+// exact, case-insensitive match, not a prefix match: the first
+// len(username) bytes are compared byte-for-byte, then the record's next
+// byte must be a zero (the padding after the stored username), so a query
+// for "bob" does NOT match a stored "bobby": only equal-length,
+// equal-content usernames match. Case-insensitivity comes from both sides being
+// lowercased (the query here, the stored value in AddUser).
 func (idx *UserIndex) FindByUsername(username string) (int64, bool) {
     if len(username) > 80 {
         return 0, false
@@ -208,8 +217,8 @@ func (idx *UserIndex) FindByUsername(username string) (int64, bool) {
         var userId int64
         binary.Read(f, binary.LittleEndian, &userId)
 
-        // ... reads and validates the terminator byte, then compares
-        // recUsername against username case-insensitively ...
+        // ... reads and validates the terminator byte, then applies the
+        // exact-match check described above ...
 
         // returns (userId, true) on match
     }
@@ -244,13 +253,22 @@ func NewUserRecord(userId int, connectionId uint64) *UserRecord {
     return u
 }
 
-// PasswordMatches tries three formats in order, migrating opportunistically:
-//   1. bcrypt (current format) — compared via bcrypt.CompareHashAndPassword
-//   2. legacy unsalted SHA256 (util.Hash) — on match, re-hashes with bcrypt
+// PasswordMatches tries three formats in order:
+//   1. bcrypt (current format): compared via bcrypt.CompareHashAndPassword
+//   2. legacy unsalted SHA256 (util.Hash): on match, re-hashes with bcrypt
 //      in place so the next login uses the secure path
-//   3. plaintext fallback — only allowed when HasPlaintextPassword() is true
-//      (stored value is neither bcrypt nor a 64-char hex SHA256 digest),
-//      so default/legacy plaintext credentials can authenticate once
+//   3. plaintext fallback: only allowed when HasPlaintextPassword() is true
+//      (stored value is neither bcrypt nor a 64-char hex SHA256 digest)
+//
+// The plaintext branch does NOT migrate the password. u.Password is left
+// as plaintext on disk and PasswordMatches will keep accepting it on every
+// future login until something else changes it. The "forced" part of
+// "authenticate once, then change it" is enforced outside this function:
+// HasPlaintextPassword() gates the command dispatcher
+// (internal/usercommands/usercommands.go) and the post-login hook
+// (internal/hooks/PlayerSpawn_HandleJoin.go) so every command except
+// `password` is refused until the player runs `password` and the stored
+// value becomes a bcrypt hash.
 func (u *UserRecord) PasswordMatches(input string) bool {
     // see internal/users/userrecord.go for the real three-step logic
 }
@@ -284,7 +302,7 @@ func GetConnectionIds(userIds []int) []connections.ConnectionId {
     return connectionIds
 }
 
-// Get all active users. Zombies are excluded — a zombie is still in
+// Get all active users. Zombies are excluded: a zombie is still in
 // userManager.Users (it hasn't been logged out yet) but isZombie is
 // true, so it's filtered out of this list. Takes userManager.mu.RLock.
 func GetAllActiveUsers() []*UserRecord {
@@ -502,7 +520,7 @@ func (u *UserRecord) ClientSettings() connections.ClientSettings {
 type OnlineInfo struct {
     Username      string // Login username
     CharacterName string // Character display name
-    Title         string // Skill/mutation-derived title (skills.GetTitle) — NOT a level or class name
+    Title         string // Skill/mutation-derived title (skills.GetTitle), NOT a level or class name
     OnlineTime    int64  // Seconds online
     OnlineTimeStr string // Formatted time string
     IsAFK         bool   // Away from keyboard status
@@ -561,7 +579,7 @@ called on the prompt returned by `StartPrompt`/`GetPrompt`.
 ### User Authentication
 ```go
 // Authenticate user login (LoadUser looks the username up in the
-// UserIndex internally — there is no separate userIndex.GetByUsername step)
+// UserIndex internally: there is no separate userIndex.GetByUsername step)
 username := "player1"
 password := "secretpass"
 
@@ -593,7 +611,7 @@ if err := user.SetPassword("password123"); err != nil {
 }
 
 // CreateUser assigns UserId/Role, saves the file, registers the user in
-// the UserIndex, and adds it to the active-users maps — no manual map
+// the UserIndex, and adds it to the active-users maps: no manual map
 // manipulation needed.
 if err := users.CreateUser(user); err != nil {
     return err
@@ -644,7 +662,7 @@ if unreadCount > 0 {
 
 ### Zombie Connection Cleanup
 The real cleanup path (`internal/hooks/NewTurn_CleanupZombies.go`) does not
-call `user.Save()` or a `RemoveUser` directly — it queues a `leaveworld`
+call `user.Save()` or a `RemoveUser` directly. It queues a `leaveworld`
 system event per expired userId, which the normal disconnect flow then
 handles:
 ```go
@@ -661,8 +679,8 @@ for _, userId := range expZombies {
 ```
 There is no `users.RemoveUser` function. Tearing down an account entirely
 (deleting its save file, index entry, and disconnecting it) is
-`users.RemoveUserAndDisconnect(userId int) error` — a different,
-much more destructive operation than zombie cleanup.
+`users.RemoveUserAndDisconnect(userId int) error` (a different,
+much more destructive operation than zombie cleanup).
 
 ## Presence Machine Integration (chunk 5)
 
@@ -670,7 +688,7 @@ The Presence machine lives on `Character`, not `UserRecord`. Only the
 TCP-close side of the connection lifecycle is wired inside this package;
 login-complete and input-wake are wired elsewhere:
 
-- **`users.go` — TCP-close observer:** `LogOutUserByConnectionId` calls
+- **`users.go`, TCP-close observer:** `LogOutUserByConnectionId` calls
   `u.Character.Presence.TransitionTo(presence.Disconnected, ...)` with
   `TriggerTCPClosed` when a connection is dropped. This fires the
   scheduler-cancel observer automatically.
@@ -699,7 +717,7 @@ IsAFK: u.Character.Presence.State() == presence.AFK,
 replacing the old ad-hoc computation
 `ManualAFK || (roundNow - lastInputRound >= afkRounds)`. The `online`
 command display and any `(afk)` marker in room descriptions still work
-identically — the Presence machine is the only thing that changed.
+identically. The Presence machine is the only thing that changed.
 
 The `Idle` Presence state is intentionally invisible to the UI in v1.
 Only `AFK` surfaces to players via the `(afk)` tag.
@@ -723,7 +741,7 @@ Only `AFK` surfaces to players via the `(afk)` tag.
 - `internal/audio` - Music/sound tracking (`PlayMusic`/`PlaySound`)
 - `internal/copyover` - Copyover contributor interface (`copyover.go`)
 - `internal/state`, `internal/state/presence`, `internal/state/position` -
-  Presence/position state machines (chunk 5 — lives on Character but
+  Presence/position state machines (chunk 5, lives on Character but
   connection lifecycle wired here)
 - `internal/buffs`, `internal/state/awareness` - only pulled in by
   `test_helpers.go` (`NewTestUser`), not by any production path
@@ -748,5 +766,5 @@ Only `AFK` surfaces to players via the `(afk)` tag.
 | `memory.go` | Memory reporting |
 
 Saves live at `_datafiles/world/dogmud/users/<id>.yaml`. That directory has its
-contents gitignored but ships a tracked `.gitkeep` — without it a fresh clone
+contents gitignored but ships a tracked `.gitkeep`. Without it a fresh clone
 fails `ValidateWorldFiles` and the server dies before loading a room.

@@ -54,14 +54,31 @@ func TestDiagramArtifactsHaveNoTemplateDelimiters(t *testing.T) {
 		}
 
 		if idx := strings.Index(string(body), "{{"); idx >= 0 {
+			start := idx - 40
+			if start < 0 {
+				start = 0
+			}
+			end := idx + 2 + 40
+			if end > len(body) {
+				end = len(body)
+			}
+			context := strings.ReplaceAll(string(body[start:end]), "\n", "\\n")
 			t.Errorf("%s contains a Go template delimiter at byte %d: serveTemplate "+
-				"would fail to parse it and return HTTP 500. Re-author the offending "+
-				"label in the spec and re-deliver the artifact.", entry.Name(), idx)
+				"would fail to parse it and return HTTP 500. Context: %q. This file is "+
+				"a generated archify artifact, not hand-authored: find its source spec "+
+				"under tools/archify/specs/, fix the offending label there, and "+
+				"regenerate the artifact with `archify deliver` (see "+
+				"docs/superpowers/plans/2026-08-04-archify-diagrams-tab.md for the exact "+
+				"invocation) rather than editing the .html directly.",
+				entry.Name(), idx, context)
 		}
 	}
 
 	if checked == 0 {
-		t.Fatalf("no .html artifacts found under %s", diagramsDirRel)
+		t.Fatalf("no .html artifacts found under %s: the diagrams are generated "+
+			"archify artifacts and must be delivered into this directory from their "+
+			"source specs (tools/archify/specs/, via `archify deliver`) before this "+
+			"test can run.", diagramsDirRel)
 	}
 }
 
@@ -79,7 +96,9 @@ func TestDiagramIndexLinksResolve(t *testing.T) {
 
 	matches := diagramHrefPattern.FindAllStringSubmatch(string(body), -1)
 	if len(matches) == 0 {
-		t.Fatalf("%s links no diagrams", diagramsIndexRel)
+		t.Fatalf("%s matched no href=\"/diagrams/*.html\" links. Either the cards "+
+			"were removed, or the href formatting changed and diagramHrefPattern "+
+			"needs updating.", diagramsIndexRel)
 	}
 
 	for _, match := range matches {
