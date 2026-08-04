@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark" data-preset="classic">
+<html lang="en" data-theme="dark" data-preset="blueprint">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -4498,10 +4498,10 @@
         <div class="pulse-dot"></div>
         <h1>Combat Round Resolution</h1>
       </div>
-      <p class="subtitle">One melee swing end to end: swing budget, attack roll, best-of-all defense, three-channel damage</p>
+      <p class="subtitle">One melee swing end to end: swing budget, one attack roll against every affordable defense, three-channel damage</p>
     </div>
 
-    <script id="archify-guided-views-data" type="application/json">[{"id":"swing-budget","label":"How many swings you get","focus":["attacker","round","swings"],"note":"calcSwingCount turns dexterity, weapon speed and skill into a number, then stamina and carried weight scale it down. Cap is 4 per weapon."},{"id":"to-hit","label":"The attack roll","focus":["round","dice"],"note":"The attack score is dexterity plus combat skill, scaled by stamina, position and light. No mitigation value is read here at all."},{"id":"defense","label":"Best-of-all defense","focus":["defense","defender","dice"],"note":"Every defense the defender can pay stamina for is rolled against the same attack roll. The widest winning margin is the one that counts."},{"id":"damage","label":"Three-channel damage","focus":["round","damage","defender","dice"],"note":"Raw damage is one formula for all three channels. Mitigation is a percentage with a cap, and only then does variance get rolled."},{"id":"message","label":"Why you never see a number","focus":["damage","room","attacker"],"note":"The final integer is converted to a phrase before it reaches any player. GetDamageDescription is the only thing the room ever sees."}]</script>
+    <script id="archify-guided-views-data" type="application/json">[{"id":"swing-budget","label":"How many swings you get","focus":["attacker","round","swings"],"note":"calcSwingCount turns dexterity, weapon speed and skill into a number, then stamina and carried weight scale it down. Cap is 4."},{"id":"attack-roll","label":"One attack roll, rolled once","focus":["round","defense","dice"],"note":"The swing is rolled a single time. Its score is dexterity plus combat skill, scaled by stamina, position and light. No armor is read."},{"id":"defense-rolls","label":"One roll per affordable defense","focus":["defense","defender","dice"],"note":"Every affordable defense is rolled separately against that one attack value, using the attacker's spread. The widest margin wins."},{"id":"floors","label":"Two floors that can overturn it","focus":["defense","defender","attacker"],"note":"Two symmetric floors run after the margin, so an outclassed defender can still save and a beaten attacker can still land the swing."},{"id":"damage-and-text","label":"Damage, then the words for it","focus":["round","damage","defender","room"],"note":"One raw formula serves all three channels. Mitigation is a capped percentage, and the number becomes a phrase before a player sees it."}]</script>
 
     <div class="guided-views no-print" id="guided-views" hidden aria-label="Guided diagram views">
       <button id="guided-view-prev" type="button" aria-label="Previous guided view" title="Previous guided view ([)">&#8592;</button>
@@ -4544,9 +4544,9 @@
 
     <!-- Main Diagram -->
     <div class="diagram-container" data-detail-level="read">
-      <svg viewBox="0 0 1180 1060" role="img" aria-labelledby="archify-diagram-title archify-diagram-description" data-preset="classic" data-quality-profile="showcase">
+      <svg viewBox="0 0 1180 1260" role="img" aria-labelledby="archify-diagram-title archify-diagram-description" data-preset="blueprint" data-quality-profile="showcase">
         <title id="archify-diagram-title">Combat Round Resolution</title>
-        <desc id="archify-diagram-description">One melee swing end to end: swing budget, attack roll, best-of-all defense, three-channel damage</desc>
+        <desc id="archify-diagram-description">One melee swing end to end: swing budget, one attack roll against every affordable defense, three-channel damage</desc>
         <!-- Definitions -->
         <defs>
           <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
@@ -4572,35 +4572,37 @@
         <!-- Time Segments -->
         <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="0" x="48" y="172" width="1084" height="128" rx="10" class="c-lane" stroke-width="1"/>
 
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="1" x="48" y="312" width="1084" height="88" rx="10" class="c-lane" stroke-width="1"/>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="1" x="48" y="312" width="1084" height="124" rx="10" class="c-lane" stroke-width="1"/>
 
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="2" x="48" y="412" width="1084" height="300" rx="10" class="c-lane" stroke-width="1"/>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="2" x="48" y="448" width="1084" height="318" rx="10" class="c-lane" stroke-width="1"/>
 
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="3" x="48" y="724" width="1084" height="148" rx="10" class="c-lane" stroke-width="1"/>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="3" x="48" y="778" width="1084" height="124" rx="10" class="c-lane" stroke-width="1"/>
 
-        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="4" x="48" y="884" width="1084" height="80" rx="10" class="c-lane" stroke-width="1"/>
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="4" x="48" y="914" width="1084" height="160" rx="10" class="c-lane" stroke-width="1"/>
+
+        <rect data-graph-role="structural-frame" data-composition-frame-kind="segment" data-composition-frame-id="5" x="48" y="1086" width="1084" height="84" rx="10" class="c-lane" stroke-width="1"/>
 
         <!-- Lifelines -->
-        <path d="M 62 142 L 62 995" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 170 142 L 170 995" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 278 142 L 278 995" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 386 142 L 386 995" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 494 142 L 494 995" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 602 142 L 602 995" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 710 142 L 710 995" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
-        <path d="M 818 142 L 818 995" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 62 142 L 62 1195" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 170 142 L 170 1195" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 278 142 L 278 1195" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 386 142 L 386 1195" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 494 142 L 494 1195" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 602 142 L 602 1195" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 710 142 L 710 1195" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 818 142 L 818 1195" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
 
         <!-- Activations -->
-        <rect x="165" y="190" width="10" height="726" rx="3" class="c-mask"/>
-        <rect x="165" y="190" width="10" height="726" rx="3" class="c-backend" stroke-width="1"/>
+        <rect x="165" y="190" width="10" height="926" rx="3" class="c-mask"/>
+        <rect x="165" y="190" width="10" height="926" rx="3" class="c-backend" stroke-width="1"/>
         <rect x="273" y="232" width="10" height="50" rx="3" class="c-mask"/>
         <rect x="273" y="232" width="10" height="50" rx="3" class="c-backend" stroke-width="1"/>
-        <rect x="597" y="430" width="10" height="262" rx="3" class="c-mask"/>
-        <rect x="597" y="430" width="10" height="262" rx="3" class="c-security" stroke-width="1"/>
-        <rect x="705" y="742" width="10" height="174" rx="3" class="c-mask"/>
-        <rect x="705" y="742" width="10" height="174" rx="3" class="c-backend" stroke-width="1"/>
-        <rect x="813" y="904" width="10" height="52" rx="3" class="c-mask"/>
-        <rect x="813" y="904" width="10" height="52" rx="3" class="c-frontend" stroke-width="1"/>
+        <rect x="597" y="330" width="10" height="554" rx="3" class="c-mask"/>
+        <rect x="597" y="330" width="10" height="554" rx="3" class="c-security" stroke-width="1"/>
+        <rect x="705" y="932" width="10" height="184" rx="3" class="c-mask"/>
+        <rect x="705" y="932" width="10" height="184" rx="3" class="c-backend" stroke-width="1"/>
+        <rect x="813" y="1104" width="10" height="52" rx="3" class="c-mask"/>
+        <rect x="813" y="1104" width="10" height="52" rx="3" class="c-frontend" stroke-width="1"/>
 
         <!-- Messages -->
         <g data-edge-from="attacker" data-edge-to="round" data-edge-label="engaged with a target" data-edge-key="0" data-edge-id="engage">
@@ -4629,135 +4631,180 @@
         <text data-detail="fine" x="189" y="294" class="t-dim" font-size="7">calcSwingCount: dexterity, weapon speed and skill set the base, then a stamina multiplier and an over-capacity weight penalty of up to 50 percent scale it down. Hard cap of 4 per weapon.</text>
         </g>
 
-        <g data-edge-from="round" data-edge-to="dice" data-edge-label="roll dexterity + combat skill" data-edge-key="3" data-edge-id="attack-score">
-          <path data-composition-edge-from="round" data-composition-edge-to="dice" data-composition-edge-id="attack-score" data-composition-points="177,330;379,330" d="M 177 330 L 379 330" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-edge-from="round" data-edge-to="defense" data-edge-label="resolve this swing at attack score S" data-edge-key="3" data-edge-id="attack-score">
+          <path data-composition-edge-from="round" data-composition-edge-to="defense" data-composition-edge-id="attack-score" data-composition-points="177,336;595,336" d="M 177 336 L 595 336" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
         <g data-detail="context">
-          <rect x="196.6" y="310" width="162.8" height="16" rx="3" class="c-mask"/>
-          <text x="278" y="320" class="t-backend" font-size="9" text-anchor="middle">roll dexterity + combat skill</text>
+          <rect x="286.4" y="316" width="199.20000000000002" height="16" rx="3" class="c-mask"/>
+          <text x="386" y="326" class="t-backend" font-size="9" text-anchor="middle">resolve this swing at attack score S</text>
         </g>
-        <text data-detail="fine" x="189" y="348" class="t-dim" font-size="7">calcAttackScore reads dexterity, combat skill, stamina, position, light and flight. It never reads armor mitigation. Armor only reduces damage that has already landed.</text>
+        <text data-detail="fine" x="189" y="354" class="t-dim" font-size="7">calcAttackScore builds S from dexterity, combat skill, a dual-wield penalty, stamina, prone position, darkness and flight. It never reads a mitigation field. Armor changes how much a landed hit hurts, never whether it lands.</text>
         </g>
 
-        <g data-edge-from="dice" data-edge-to="round" data-edge-label="one roll, shared by every defense" data-edge-key="4" data-edge-id="attack-value">
-          <path data-composition-edge-from="dice" data-composition-edge-to="round" data-composition-edge-id="attack-value" data-composition-points="379,368;177,368" d="M 379 368 L 177 368" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <g data-edge-from="defense" data-edge-to="dice" data-edge-label="roll the swing ONCE, spread = StdDevFor(S)" data-edge-key="4" data-edge-id="roll-attack">
+          <path data-composition-edge-from="defense" data-composition-edge-to="dice" data-composition-edge-id="roll-attack" data-composition-points="595,376;393,376" d="M 595 376 L 393 376" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
         <g data-detail="context">
-          <rect x="186.2" y="348" width="183.6" height="16" rx="3" class="c-mask"/>
-          <text x="278" y="358" class="t-muted" font-size="9" text-anchor="middle">one roll, shared by every defense</text>
+          <rect x="378.8" y="356" width="230.4" height="16" rx="3" class="c-mask"/>
+          <text x="494" y="366" class="t-backend" font-size="9" text-anchor="middle">roll the swing ONCE, spread = StdDevFor(S)</text>
         </g>
-        <text data-detail="fine" x="189" y="386" class="t-dim" font-size="7">The swing is rolled once. Each defense is then rolled against that single value, so the defenses compete with each other rather than with separate attacks.</text>
+        <text data-detail="fine" x="405" y="394" class="t-dim" font-size="7">runBestOfAllDefense opens with atkStdDev := dice.StdDevFor(atkScore) and attackRoll := dice.Roll(atkScore, atkStdDev). This is the only attack roll in the whole exchange, no matter how many defenses follow.</text>
         </g>
 
-        <g data-edge-from="round" data-edge-to="defense" data-edge-label="resolve this swing" data-edge-key="5" data-edge-id="resolve-swing">
-          <path data-composition-edge-from="round" data-composition-edge-to="defense" data-composition-edge-id="resolve-swing" data-composition-points="177,436;595,436" d="M 177 436 L 595 436" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-edge-from="dice" data-edge-to="defense" data-edge-label="one value A, and the spread that made it" data-edge-key="5" data-edge-id="attack-value">
+          <path data-composition-edge-from="dice" data-composition-edge-to="defense" data-composition-edge-id="attack-value" data-composition-points="393,414;595,414" d="M 393 414 L 595 414" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g data-detail="context">
-          <rect x="333.2" y="416" width="105.60000000000001" height="16" rx="3" class="c-mask"/>
-          <text x="386" y="426" class="t-backend" font-size="9" text-anchor="middle">resolve this swing</text>
+          <rect x="384" y="394" width="220" height="16" rx="3" class="c-mask"/>
+          <text x="494" y="404" class="t-muted" font-size="9" text-anchor="middle">one value A, and the spread that made it</text>
         </g>
+        <text data-detail="fine" x="405" y="432" class="t-dim" font-size="7">Both halves are kept. A is the number every defense must beat, and the attacker&#39;s spread becomes the spread every defense rolls with, so the two sides of the contest share one shape of randomness.</text>
         </g>
 
-        <g data-edge-from="defense" data-edge-to="defender" data-edge-label="which defenses can you pay for?" data-edge-key="6" data-edge-id="ask-defenses">
-          <path data-composition-edge-from="defense" data-composition-edge-to="defender" data-composition-edge-id="ask-defenses" data-composition-points="595,478;501,478" d="M 595 478 L 501 478" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <g data-edge-from="defense" data-edge-to="defender" data-edge-label="which defenses do you have?" data-edge-key="6" data-edge-id="ask-defenses">
+          <path data-composition-edge-from="defense" data-composition-edge-to="defender" data-composition-edge-id="ask-defenses" data-composition-points="595,472;501,472" d="M 595 472 L 501 472" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
         <g data-detail="context">
-          <rect x="461.4" y="458" width="173.20000000000002" height="16" rx="3" class="c-mask"/>
-          <text x="548" y="468" class="t-backend" font-size="9" text-anchor="middle">which defenses can you pay for?</text>
+          <rect x="471.8" y="452" width="152.4" height="16" rx="3" class="c-mask"/>
+          <text x="548" y="462" class="t-backend" font-size="9" text-anchor="middle">which defenses do you have?</text>
         </g>
         </g>
 
         <g data-edge-from="defender" data-edge-to="defense" data-edge-label="dodge, parry, block" data-edge-key="7" data-edge-id="defense-list">
-          <path data-composition-edge-from="defender" data-composition-edge-to="defense" data-composition-edge-id="defense-list" data-composition-points="501,516;595,516" d="M 501 516 L 595 516" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+          <path data-composition-edge-from="defender" data-composition-edge-to="defense" data-composition-edge-id="defense-list" data-composition-points="501,510;595,510" d="M 501 510 L 595 510" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g data-detail="context">
-          <rect x="492.6" y="496" width="110.8" height="16" rx="3" class="c-mask"/>
-          <text x="548" y="506" class="t-muted" font-size="9" text-anchor="middle">dodge, parry, block</text>
+          <rect x="492.6" y="490" width="110.8" height="16" rx="3" class="c-mask"/>
+          <text x="548" y="500" class="t-muted" font-size="9" text-anchor="middle">dodge, parry, block</text>
         </g>
-        <text data-detail="fine" x="513" y="534" class="t-dim" font-size="7">Each defense has a stamina cost. A defense the defender cannot afford is skipped for this swing, so a tired defender quietly loses options.</text>
+        <text data-detail="fine" x="513" y="528" class="t-dim" font-size="7">Dodge scores dexterity plus unarmed-combat skill. Parry scores dexterity plus weapon-combat skill plus the best equipped weapon&#39;s ParryRating. Block scores the mean of strength and dexterity plus weapon-combat skill plus the best shield&#39;s BlockRating. Those ratings are ItemSpec fields entirely separate from physical_mitigation.</text>
         </g>
 
-        <g data-edge-from="defense" data-edge-to="dice" data-edge-label="roll all of them, not just the first" data-edge-key="8" data-edge-id="roll-defenses">
-          <path data-composition-edge-from="defense" data-composition-edge-to="dice" data-composition-edge-id="roll-defenses" data-composition-points="595,562;393,562" d="M 595 562 L 393 562" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-edge-from="defense" data-edge-to="defender" data-edge-label="skipped: cannot pay this one&#39;s stamina" data-edge-key="8" data-edge-id="skip-unaffordable">
+          <path data-composition-edge-from="defense" data-composition-edge-to="defender" data-composition-edge-id="skip-unaffordable" data-composition-points="595,548;501,548" d="M 595 548 L 501 548" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
         <g data-detail="context">
-          <rect x="394.4" y="542" width="199.20000000000002" height="16" rx="3" class="c-mask"/>
-          <text x="494" y="552" class="t-backend" font-size="9" text-anchor="middle">roll all of them, not just the first</text>
+          <rect x="443.2" y="528" width="209.6" height="16" rx="3" class="c-mask"/>
+          <text x="548" y="538" class="t-messagebus" font-size="9" text-anchor="middle">skipped: cannot pay this one&#39;s stamina</text>
         </g>
-        <text data-detail="fine" x="405" y="580" class="t-dim" font-size="7">Dodge scales with dexterity and unarmed skill, parry with a weapon&#39;s parry rating, block with a shield&#39;s block rating. Those ratings are separate fields from mitigation.</text>
+        <text data-detail="fine" x="513" y="566" class="t-dim" font-size="7">Each defense has a stamina cost. If the defender&#39;s current stamina is below it the loop simply continues, so that defense is never rolled at all. A tired defender does not defend worse, it quietly runs out of options.</text>
         </g>
 
-        <g data-edge-from="dice" data-edge-to="defense" data-edge-label="keep the widest winning margin" data-edge-key="9" data-edge-id="best-margin">
-          <path data-composition-edge-from="dice" data-composition-edge-to="defense" data-composition-edge-id="best-margin" data-composition-points="393,600;595,600" d="M 393 600 L 595 600" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <g data-edge-from="defense" data-edge-to="dice" data-edge-label="roll dodge vs A, attacker&#39;s spread" data-edge-key="9" data-edge-id="roll-dodge">
+          <path data-composition-edge-from="defense" data-composition-edge-to="dice" data-composition-edge-id="roll-dodge" data-composition-points="595,590;393,590" d="M 595 590 L 393 590" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
         <g data-detail="context">
-          <rect x="410" y="580" width="168" height="16" rx="3" class="c-mask"/>
-          <text x="494" y="590" class="t-muted" font-size="9" text-anchor="middle">keep the widest winning margin</text>
-        </g>
-        </g>
-
-        <g data-edge-from="defense" data-edge-to="defender" data-edge-label="last-resort save, if the attack won" data-edge-key="10" data-edge-id="floor-save">
-          <path data-composition-edge-from="defense" data-composition-edge-to="defender" data-composition-edge-id="floor-save" data-composition-points="595,644;501,644" d="M 595 644 L 501 644" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
-        <g data-detail="context">
-          <rect x="451" y="624" width="194" height="16" rx="3" class="c-mask"/>
-          <text x="548" y="634" class="t-messagebus" font-size="9" text-anchor="middle">last-resort save, if the attack won</text>
-        </g>
-        <text data-detail="fine" x="513" y="662" class="t-dim" font-size="7">MinDefenseChance, default 0.15, gives an outclassed defender a fixed chance to avoid a swing that already beat them. A matching MinAttackHitChance floor runs the other way.</text>
-        </g>
-
-        <g data-edge-from="defense" data-edge-to="round" data-edge-label="hit, miss, crit or fumble" data-edge-key="11" data-edge-id="outcome">
-          <path data-composition-edge-from="defense" data-composition-edge-to="round" data-composition-edge-id="outcome" data-composition-points="595,686;177,686" d="M 595 686 L 177 686" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="315" y="666" width="142" height="16" rx="3" class="c-mask"/>
-          <text x="386" y="676" class="t-muted" font-size="9" text-anchor="middle">hit, miss, crit or fumble</text>
-        </g>
-        <text data-detail="fine" x="189" y="704" class="t-dim" font-size="7">resolveDefenseOutcome orders the result: fumbles first, then crits, then the normal margin, then the two floors.</text>
-        </g>
-
-        <g data-edge-from="round" data-edge-to="damage" data-edge-label="stat x skill x weapon x channel scale" data-edge-key="12" data-edge-id="raw-damage">
-          <path data-composition-edge-from="round" data-composition-edge-to="damage" data-composition-edge-id="raw-damage" data-composition-points="177,748;703,748" d="M 177 748 L 703 748" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <g data-detail="context">
-          <rect x="337.8" y="728" width="204.4" height="16" rx="3" class="c-mask"/>
-          <text x="440" y="738" class="t-backend" font-size="9" text-anchor="middle">stat x skill x weapon x channel scale</text>
-        </g>
-        <text data-detail="fine" x="189" y="766" class="t-dim" font-size="7">CalcRawDamage is one formula for all three channels: physical uses strength, magical uses willpower, conviction uses charisma. A configured per-channel scale and a global multiplier finish it.</text>
-        </g>
-
-        <g data-edge-from="damage" data-edge-to="defender" data-edge-label="subtract mitigation, capped" data-edge-key="13" data-edge-id="mitigate">
-          <path data-composition-edge-from="damage" data-composition-edge-to="defender" data-composition-edge-id="mitigate" data-composition-points="703,790;501,790" d="M 703 790 L 501 790" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="525.8" y="770" width="152.4" height="16" rx="3" class="c-mask"/>
-          <text x="602" y="780" class="t-backend" font-size="9" text-anchor="middle">subtract mitigation, capped</text>
-        </g>
-        <text data-detail="fine" x="513" y="808" class="t-dim" font-size="7">ApplyMitigation reduces raw damage by the defender&#39;s summed equipment percentage for that channel, clamped to the channel cap (default 75 percent). A critical hit skips mitigation entirely.</text>
-        </g>
-
-        <g data-edge-from="damage" data-edge-to="dice" data-edge-label="roll variance around the mean" data-edge-key="14" data-edge-id="variance">
-          <path data-composition-edge-from="damage" data-composition-edge-to="dice" data-composition-edge-id="variance" data-composition-points="703,828;393,828" d="M 703 828 L 393 828" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <g data-detail="context">
-          <rect x="466.6" y="808" width="162.8" height="16" rx="3" class="c-mask"/>
-          <text x="548" y="818" class="t-backend" font-size="9" text-anchor="middle">roll variance around the mean</text>
+          <rect x="399.6" y="570" width="188.8" height="16" rx="3" class="c-mask"/>
+          <text x="494" y="580" class="t-security" font-size="9" text-anchor="middle">roll dodge vs A, attacker&#39;s spread</text>
         </g>
         </g>
 
-        <g data-edge-from="dice" data-edge-to="damage" data-edge-label="damage for this swing" data-edge-key="15" data-edge-id="final-damage">
-          <path data-composition-edge-from="dice" data-composition-edge-to="damage" data-composition-edge-id="final-damage" data-composition-points="393,866;703,866" d="M 393 866 L 703 866" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <g data-edge-from="defense" data-edge-to="dice" data-edge-label="roll parry vs A, attacker&#39;s spread" data-edge-key="10" data-edge-id="roll-parry">
+          <path data-composition-edge-from="defense" data-composition-edge-to="dice" data-composition-edge-id="roll-parry" data-composition-points="595,628;393,628" d="M 595 628 L 393 628" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
         <g data-detail="context">
-          <rect x="487.4" y="846" width="121.2" height="16" rx="3" class="c-mask"/>
-          <text x="548" y="856" class="t-muted" font-size="9" text-anchor="middle">damage for this swing</text>
+          <rect x="399.6" y="608" width="188.8" height="16" rx="3" class="c-mask"/>
+          <text x="494" y="618" class="t-security" font-size="9" text-anchor="middle">roll parry vs A, attacker&#39;s spread</text>
         </g>
-        <text data-detail="fine" x="405" y="884" class="t-dim" font-size="7">dice.RollStat derives its spread from the mean using the global RollSpread knob, so the shape of every roll in the engine moves with one number.</text>
+        <text data-detail="fine" x="405" y="646" class="t-dim" font-size="7">Every surviving defense gets its own independent dice.Roll(defenseScore, atkStdDev). They compete with each other over the same attack value rather than each facing a fresh swing, which is what stops a defender with three defenses from getting three separate chances at three different attacks.</text>
         </g>
 
-        <g data-edge-from="damage" data-edge-to="room" data-edge-label="turn the number into a phrase" data-edge-key="16" data-edge-id="describe">
-          <path data-composition-edge-from="damage" data-composition-edge-to="room" data-composition-edge-id="describe" data-composition-points="717,910;811,910" d="M 717 910 L 811 910" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-edge-from="defense" data-edge-to="dice" data-edge-label="roll block vs A, attacker&#39;s spread" data-edge-key="11" data-edge-id="roll-block">
+          <path data-composition-edge-from="defense" data-composition-edge-to="dice" data-composition-edge-id="roll-block" data-composition-points="595,666;393,666" d="M 595 666 L 393 666" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
         <g data-detail="context">
-          <rect x="682.6" y="890" width="162.8" height="16" rx="3" class="c-mask"/>
-          <text x="764" y="900" class="t-backend" font-size="9" text-anchor="middle">turn the number into a phrase</text>
+          <rect x="399.6" y="646" width="188.8" height="16" rx="3" class="c-mask"/>
+          <text x="494" y="656" class="t-security" font-size="9" text-anchor="middle">roll block vs A, attacker&#39;s spread</text>
         </g>
-        <text data-detail="fine" x="729" y="928" class="t-dim" font-size="7">GetDamageDescription converts damage to a share of the target&#39;s maximum health and returns light wounds, serious wounds, critical injuries and so on.</text>
         </g>
 
-        <g data-edge-from="room" data-edge-to="attacker" data-edge-label="&quot;causing serious wounds&quot;" data-edge-key="17" data-edge-id="narrate">
-          <path data-composition-edge-from="room" data-composition-edge-to="attacker" data-composition-edge-id="narrate" data-composition-points="811,950;69,950" d="M 811 950 L 69 950" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <g data-edge-from="dice" data-edge-to="defense" data-edge-label="a margin each: defenseRoll - A" data-edge-key="12" data-edge-id="margins">
+          <path data-composition-edge-from="dice" data-composition-edge-to="defense" data-composition-edge-id="margins" data-composition-points="393,706;595,706" d="M 393 706 L 595 706" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
         <g data-detail="context">
-          <rect x="371.6" y="930" width="136.8" height="16" rx="3" class="c-mask"/>
-          <text x="440" y="940" class="t-muted" font-size="9" text-anchor="middle">&quot;causing serious wounds&quot;</text>
+          <rect x="410" y="686" width="168" height="16" rx="3" class="c-mask"/>
+          <text x="494" y="696" class="t-muted" font-size="9" text-anchor="middle">a margin each: defenseRoll - A</text>
         </g>
-        <text data-detail="fine" x="81" y="968" class="t-dim" font-size="7">The raw integer never leaves the engine. Attacker, defender and every spectator in the room read the same descriptive band.</text>
+        <text data-detail="fine" x="405" y="724" class="t-dim" font-size="7">One number per defense. Positive means that defense beat the swing, negative means it lost and by how much. Position, darkness, rally, grapple and mutation modifiers have already been folded into each defense score before this point.</text>
+        </g>
+
+        <g data-edge-from="defense" data-edge-to="defender" data-edge-label="widest margin wins; only it pays stamina" data-edge-key="13" data-edge-id="best-margin">
+          <path data-composition-edge-from="defense" data-composition-edge-to="defender" data-composition-edge-id="best-margin" data-composition-points="595,744;501,744" d="M 595 744 L 501 744" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-detail="context">
+          <rect x="438" y="724" width="220" height="16" rx="3" class="c-mask"/>
+          <text x="548" y="734" class="t-backend" font-size="9" text-anchor="middle">widest margin wins; only it pays stamina</text>
+        </g>
+        <text data-detail="fine" x="513" y="762" class="t-dim" font-size="7">The largest margin is kept even when every margin is negative, so the closest failure is the one that gets narrated. Stamina is deducted once, for the winning defense only, after all the rolls are done.</text>
+        </g>
+
+        <g data-edge-from="defense" data-edge-to="defender" data-edge-label="MinDefenseChance: save anyway" data-edge-key="14" data-edge-id="floor-save">
+          <path data-composition-edge-from="defense" data-composition-edge-to="defender" data-composition-edge-id="floor-save" data-composition-points="595,802;501,802" d="M 595 802 L 501 802" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+        <g data-detail="context">
+          <rect x="466.6" y="782" width="162.8" height="16" rx="3" class="c-mask"/>
+          <text x="548" y="792" class="t-messagebus" font-size="9" text-anchor="middle">MinDefenseChance: save anyway</text>
+        </g>
+        <text data-detail="fine" x="513" y="820" class="t-dim" font-size="7">If the attack won the margin, resolveDefenseOutcome still gives the defender a flat MinDefenseChance roll, default 0.15. An outclassed defender is never a guaranteed target.</text>
+        </g>
+
+        <g data-edge-from="defense" data-edge-to="attacker" data-edge-label="MinAttackHitChance: land anyway" data-edge-key="15" data-edge-id="floor-hit">
+          <path data-composition-edge-from="defense" data-composition-edge-to="attacker" data-composition-edge-id="floor-hit" data-composition-points="595,840;69,840" d="M 595 840 L 69 840" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+        <g data-detail="context">
+          <rect x="245.39999999999998" y="820" width="173.20000000000002" height="16" rx="3" class="c-mask"/>
+          <text x="332" y="830" class="t-messagebus" font-size="9" text-anchor="middle">MinAttackHitChance: land anyway</text>
+        </g>
+        <text data-detail="fine" x="81" y="858" class="t-dim" font-size="7">The mirror image. If a defense won the margin, a flat MinAttackHitChance roll can still turn it into a hit. The two floors are symmetric, checked after the margin, and either can overturn the contest.</text>
+        </g>
+
+        <g data-edge-from="defense" data-edge-to="round" data-edge-label="hit, miss, crit or fumble" data-edge-key="16" data-edge-id="outcome">
+          <path data-composition-edge-from="defense" data-composition-edge-to="round" data-composition-edge-id="outcome" data-composition-points="595,878;177,878" d="M 595 878 L 177 878" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="315" y="858" width="142" height="16" rx="3" class="c-mask"/>
+          <text x="386" y="868" class="t-muted" font-size="9" text-anchor="middle">hit, miss, crit or fumble</text>
+        </g>
+        <text data-detail="fine" x="189" y="896" class="t-dim" font-size="7">resolveDefenseOutcome orders the result: double fumble first, then fumbles, then crit versus crit, then a one-sided crit, then the normal margin, and only then the two floors.</text>
+        </g>
+
+        <g data-edge-from="round" data-edge-to="damage" data-edge-label="stat x skill x weapon x channel scale" data-edge-key="17" data-edge-id="raw-damage">
+          <path data-composition-edge-from="round" data-composition-edge-to="damage" data-composition-edge-id="raw-damage" data-composition-points="177,938;703,938" d="M 177 938 L 703 938" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-detail="context">
+          <rect x="337.8" y="918" width="204.4" height="16" rx="3" class="c-mask"/>
+          <text x="440" y="928" class="t-backend" font-size="9" text-anchor="middle">stat x skill x weapon x channel scale</text>
+        </g>
+        <text data-detail="fine" x="189" y="956" class="t-dim" font-size="7">CalcRawDamage is one formula for all three channels: physical uses strength, magical uses willpower, conviction uses charisma. A configured per-channel scale and a global multiplier finish it.</text>
+        </g>
+
+        <g data-edge-from="damage" data-edge-to="defender" data-edge-label="subtract mitigation, capped" data-edge-key="18" data-edge-id="mitigate">
+          <path data-composition-edge-from="damage" data-composition-edge-to="defender" data-composition-edge-id="mitigate" data-composition-points="703,978;501,978" d="M 703 978 L 501 978" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="525.8" y="958" width="152.4" height="16" rx="3" class="c-mask"/>
+          <text x="602" y="968" class="t-backend" font-size="9" text-anchor="middle">subtract mitigation, capped</text>
+        </g>
+        <text data-detail="fine" x="513" y="996" class="t-dim" font-size="7">ApplyMitigation reduces raw damage by the defender&#39;s summed equipment percentage for that channel, clamped to the channel cap (default 75 percent). This is the only place armor is consulted in the entire round. A critical hit skips it entirely.</text>
+        </g>
+
+        <g data-edge-from="damage" data-edge-to="dice" data-edge-label="roll variance around the mean" data-edge-key="19" data-edge-id="variance">
+          <path data-composition-edge-from="damage" data-composition-edge-to="dice" data-composition-edge-id="variance" data-composition-points="703,1016;393,1016" d="M 703 1016 L 393 1016" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="466.6" y="996" width="162.8" height="16" rx="3" class="c-mask"/>
+          <text x="548" y="1006" class="t-backend" font-size="9" text-anchor="middle">roll variance around the mean</text>
+        </g>
+        </g>
+
+        <g data-edge-from="dice" data-edge-to="damage" data-edge-label="damage for this swing" data-edge-key="20" data-edge-id="final-damage">
+          <path data-composition-edge-from="dice" data-composition-edge-to="damage" data-composition-edge-id="final-damage" data-composition-points="393,1054;703,1054" d="M 393 1054 L 703 1054" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="487.4" y="1034" width="121.2" height="16" rx="3" class="c-mask"/>
+          <text x="548" y="1044" class="t-muted" font-size="9" text-anchor="middle">damage for this swing</text>
+        </g>
+        <text data-detail="fine" x="405" y="1072" class="t-dim" font-size="7">dice.RollStat derives its spread from the mean using the global RollSpread knob, so the shape of every roll in the engine moves with one number.</text>
+        </g>
+
+        <g data-edge-from="damage" data-edge-to="room" data-edge-label="turn the number into a phrase" data-edge-key="21" data-edge-id="describe">
+          <path data-composition-edge-from="damage" data-composition-edge-to="room" data-composition-edge-id="describe" data-composition-points="717,1110;811,1110" d="M 717 1110 L 811 1110" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <g data-detail="context">
+          <rect x="682.6" y="1090" width="162.8" height="16" rx="3" class="c-mask"/>
+          <text x="764" y="1100" class="t-backend" font-size="9" text-anchor="middle">turn the number into a phrase</text>
+        </g>
+        <text data-detail="fine" x="729" y="1128" class="t-dim" font-size="7">GetDamageDescription converts damage to a share of the target&#39;s maximum health and returns light wounds, serious wounds, critical injuries and so on.</text>
+        </g>
+
+        <g data-edge-from="room" data-edge-to="attacker" data-edge-label="&quot;causing serious wounds&quot;" data-edge-key="22" data-edge-id="narrate">
+          <path data-composition-edge-from="room" data-composition-edge-to="attacker" data-composition-edge-id="narrate" data-composition-points="811,1150;69,1150" d="M 811 1150 L 69 1150" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <g data-detail="context">
+          <rect x="371.6" y="1130" width="136.8" height="16" rx="3" class="c-mask"/>
+          <text x="440" y="1140" class="t-muted" font-size="9" text-anchor="middle">&quot;causing serious wounds&quot;</text>
+        </g>
+        <text data-detail="fine" x="81" y="1168" class="t-dim" font-size="7">The raw integer never leaves the engine. Attacker, defender and every spectator in the room read the same descriptive band.</text>
         </g>
 
         <!-- Segment Labels -->
@@ -4766,20 +4813,24 @@
           <text x="62" y="163" class="t-dim" font-size="9" font-weight="600">Swing budget</text>
         </g>
         <g data-graph-role="segment-label" data-segment-id="1">
-          <rect x="56" y="290" width="71.2" height="18" rx="3" class="c-mask"/>
-          <text x="62" y="303" class="t-dim" font-size="9" font-weight="600">Attack roll</text>
+          <rect x="56" y="290" width="92" height="18" rx="3" class="c-mask"/>
+          <text x="62" y="303" class="t-dim" font-size="9" font-weight="600">One attack roll</text>
         </g>
         <g data-graph-role="segment-label" data-segment-id="2">
-          <rect x="56" y="390" width="112.8" height="18" rx="3" class="c-mask"/>
-          <text x="62" y="403" class="t-dim" font-size="9" font-weight="600">Best-of-all defense</text>
+          <rect x="56" y="426" width="237.6" height="18" rx="3" class="c-mask"/>
+          <text x="62" y="439" class="t-dim" font-size="9" font-weight="600">Every affordable defense, rolled separately</text>
         </g>
         <g data-graph-role="segment-label" data-segment-id="3">
-          <rect x="56" y="702" width="118" height="18" rx="3" class="c-mask"/>
-          <text x="62" y="715" class="t-dim" font-size="9" font-weight="600">Three-channel damage</text>
+          <rect x="56" y="756" width="159.6" height="18" rx="3" class="c-mask"/>
+          <text x="62" y="769" class="t-dim" font-size="9" font-weight="600">Two floors, either direction</text>
         </g>
         <g data-graph-role="segment-label" data-segment-id="4">
-          <rect x="56" y="862" width="107.60000000000001" height="18" rx="3" class="c-mask"/>
-          <text x="62" y="875" class="t-dim" font-size="9" font-weight="600">Player-facing text</text>
+          <rect x="56" y="892" width="118" height="18" rx="3" class="c-mask"/>
+          <text x="62" y="905" class="t-dim" font-size="9" font-weight="600">Three-channel damage</text>
+        </g>
+        <g data-graph-role="segment-label" data-segment-id="5">
+          <rect x="56" y="1064" width="107.60000000000001" height="18" rx="3" class="c-mask"/>
+          <text x="62" y="1077" class="t-dim" font-size="9" font-weight="600">Player-facing text</text>
         </g>
 
         <!-- Participants -->
@@ -4817,15 +4868,15 @@
           <text data-detail="context" x="278" y="111" class="t-muted" font-size="7" text-anchor="middle">combat.calcSwingCount</text>
         </g>
 
-        <g id="node-dice" data-node-id="dice" data-node-label="Dice" tabindex="0" role="button" aria-label="Focus Dice, dice.Roll · dice.RollStat, Sequence participant" aria-pressed="false" data-node-kind="cloud" data-node-sublabel="dice.Roll · dice.RollStat" data-node-context="Sequence participant">
-          <title>Dice · dice.Roll · dice.RollStat · Sequence participant</title>
+        <g id="node-dice" data-node-id="dice" data-node-label="Dice" tabindex="0" role="button" aria-label="Focus Dice, dice.Roll · dice.StdDevFor, Sequence participant" aria-pressed="false" data-node-kind="cloud" data-node-sublabel="dice.Roll · dice.StdDevFor" data-node-context="Sequence participant">
+          <title>Dice · dice.Roll · dice.StdDevFor · Sequence participant</title>
           <rect x="343" y="72" width="86" height="54" rx="6" class="c-mask"/>
           <rect x="343" y="72" width="86" height="54" rx="6" class="c-cloud" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="cloud" class="semantic-sigil s-cloud" transform="translate(349 78) scale(0.6875)">
             <path d="M4.3 12.5h7.3a2.4 2.4 0 0 0 .2-4.8 4 4 0 0 0-7.5-1.3A3.1 3.1 0 0 0 4.3 12.5Z"/>
           </g>
           <text data-detail-anchor x="386" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Dice</text>
-          <text data-detail="context" x="386" y="111" class="t-muted" font-size="7" text-anchor="middle">dice.Roll · dice.RollStat</text>
+          <text data-detail="context" x="386" y="111" class="t-muted" font-size="7" text-anchor="middle">dice.Roll · dice.StdDevFor</text>
         </g>
 
         <g id="node-defender" data-node-id="defender" data-node-label="Defender" tabindex="0" role="button" aria-label="Focus Defender, the target character, Sequence participant" aria-pressed="false" data-node-kind="external" data-node-sublabel="the target character" data-node-context="Sequence participant">
@@ -4840,15 +4891,15 @@
           <text data-detail="context" x="494" y="111" class="t-muted" font-size="7" text-anchor="middle">the target character</text>
         </g>
 
-        <g id="node-defense" data-node-id="defense" data-node-label="Defense" tabindex="0" role="button" aria-label="Focus Defense, runBestOfAllDefense, Sequence participant" aria-pressed="false" data-node-kind="security" data-node-sublabel="runBestOfAllDefense" data-node-context="Sequence participant">
-          <title>Defense · runBestOfAllDefense · Sequence participant</title>
+        <g id="node-defense" data-node-id="defense" data-node-label="Opposed roll" tabindex="0" role="button" aria-label="Focus Opposed roll, runBestOfAllDefense, Sequence participant" aria-pressed="false" data-node-kind="security" data-node-sublabel="runBestOfAllDefense" data-node-context="Sequence participant">
+          <title>Opposed roll · runBestOfAllDefense · Sequence participant</title>
           <rect x="559" y="72" width="86" height="54" rx="6" class="c-mask"/>
           <rect x="559" y="72" width="86" height="54" rx="6" class="c-security" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="security" class="semantic-sigil s-security" transform="translate(565 78) scale(0.6875)">
             <path d="M8 2.2 13 4v3.5c0 3.1-1.8 5.4-5 6.5-3.2-1.1-5-3.4-5-6.5V4Z"/>
             <path d="m5.8 8 1.5 1.5 3-3"/>
           </g>
-          <text data-detail-anchor x="602" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Defense</text>
+          <text data-detail-anchor x="602" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Opposed roll</text>
           <text data-detail="context" x="602" y="111" class="t-muted" font-size="7" text-anchor="middle">runBestOfAllDefense</text>
         </g>
 
@@ -4879,22 +4930,26 @@
 
         <!-- Legend -->
         <g data-legend>
-          <text x="40" y="986" class="t-primary" font-size="10" font-weight="600">Legend</text>
-          <g data-legend-semantic-kind="emphasis" data-legend-x="40" data-legend-baseline="1006" data-legend-width="78">
-            <path d="M 40 1003 L 74 1003" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-            <text x="83" y="1006" class="t-muted" font-size="8">request</text>
+          <text x="40" y="1186" class="t-primary" font-size="10" font-weight="600">Legend</text>
+          <g data-legend-semantic-kind="emphasis" data-legend-x="40" data-legend-baseline="1206" data-legend-width="78">
+            <path d="M 40 1203 L 74 1203" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+            <text x="83" y="1206" class="t-muted" font-size="8">request</text>
           </g>
-          <g data-legend-semantic-kind="return" data-legend-x="140" data-legend-baseline="1006" data-legend-width="73">
-            <path d="M 140 1003 L 174 1003" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
-            <text x="183" y="1006" class="t-muted" font-size="8">return</text>
+          <g data-legend-semantic-kind="return" data-legend-x="140" data-legend-baseline="1206" data-legend-width="73">
+            <path d="M 140 1203 L 174 1203" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+            <text x="183" y="1206" class="t-muted" font-size="8">return</text>
           </g>
-          <g data-legend-semantic-kind="dashed" data-legend-x="235" data-legend-baseline="1006" data-legend-width="98">
-            <path d="M 235 1003 L 269 1003" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
-            <text x="278" y="1006" class="t-muted" font-size="8">async trace</text>
+          <g data-legend-semantic-kind="security" data-legend-x="235" data-legend-baseline="1206" data-legend-width="83">
+            <path d="M 235 1203 L 269 1203" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
+            <text x="278" y="1206" class="t-muted" font-size="8">security</text>
           </g>
-          <g data-legend-semantic-kind="default" data-legend-x="355" data-legend-baseline="1006" data-legend-width="118">
-            <path d="M 355 1003 L 389 1003" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-            <text x="398" y="1006" class="t-muted" font-size="8">default message</text>
+          <g data-legend-semantic-kind="dashed" data-legend-x="340" data-legend-baseline="1206" data-legend-width="98">
+            <path d="M 340 1203 L 374 1203" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+            <text x="383" y="1206" class="t-muted" font-size="8">async trace</text>
+          </g>
+          <g data-legend-semantic-kind="default" data-legend-x="460" data-legend-baseline="1206" data-legend-width="118">
+            <path d="M 460 1203 L 494 1203" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+            <text x="503" y="1206" class="t-muted" font-size="8">default message</text>
           </g>
         </g>
       </svg>
@@ -5095,12 +5150,27 @@
       <div class="card">
         <div class="card-header">
           <div class="card-dot emerald"></div>
-          <h3>Landing the hit</h3>
+          <h3>The opposed roll</h3>
         </div>
         <ul>
           <li>&bull; The attack score is dexterity plus combat skill, with no mitigation term</li>
-          <li>&bull; One attack roll is contested by every defense the defender can afford</li>
-          <li>&bull; The defense that won by the widest margin is the one that gets narrated</li>
+          <li>&bull; The swing is rolled once, and its spread is reused by every defense roll</li>
+          <li>&bull; Dodge, parry and block each roll separately and each produce a margin</li>
+          <li>&bull; The widest margin wins, even when every margin is a loss</li>
+          <li>&bull; Only the winning defense pays stamina, and it pays it after the rolls</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot violet"></div>
+          <h3>What drops out and what overturns</h3>
+        </div>
+        <ul>
+          <li>&bull; A defense the defender cannot pay for is skipped before it is ever rolled</li>
+          <li>&bull; MinDefenseChance, default 0.15, can save a defender the swing already beat</li>
+          <li>&bull; MinAttackHitChance runs the other way and lands a swing a defense stopped</li>
+          <li>&bull; Weapon ParryRating and shield BlockRating feed defense, not mitigation</li>
         </ul>
       </div>
 
@@ -5122,9 +5192,9 @@
           <h3>Traced from source</h3>
         </div>
         <ul>
-          <li>&bull; github.com/pruuk/DOGMud at 1cca187f4d87f3edacdc4c86eb3a3f3d8501a952</li>
-          <li>&bull; internal/combat/combat.go, combat_helpers.go, damage_pipeline.go</li>
-          <li>&bull; internal/hooks/NewRound_DoCombat_unified.go</li>
+          <li>&bull; github.com/pruuk/DOGMud at 80ffa24f9dca3010256241cd5418e25da47ebea7</li>
+          <li>&bull; internal/combat/combat_helpers.go, damage_pipeline.go, combat.go</li>
+          <li>&bull; internal/characters/combat.go, internal/hooks/NewRound_DoCombat_unified.go</li>
         </ul>
       </div>
     </div>
@@ -8718,7 +8788,7 @@
       var storyPulseGeneration = 0;
       var autoplayPending = false;
       var VIEW_INTERVAL_MS = 3200;
-      var STORY_FOLLOW_MIN_DWELL_MS = 1100;
+      var STORY_FOLLOW_MIN_DWELL_MS = 5500;
       var STORY_FOLLOW_DURATION_MS = 320;
       var chapterButtons = [];
       var handoffGeneration = 0;

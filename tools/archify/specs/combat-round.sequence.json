@@ -3,59 +3,61 @@
   "diagram_type": "sequence",
   "meta": {
     "title": "Combat Round Resolution",
-    "subtitle": "One melee swing end to end: swing budget, attack roll, best-of-all defense, three-channel damage",
+    "subtitle": "One melee swing end to end: swing budget, one attack roll against every affordable defense, three-channel damage",
     "output": "combat-round.html",
     "quality_profile": "showcase",
+    "visual_preset": "blueprint",
     "views": [
       {
         "id": "swing-budget",
         "label": "How many swings you get",
         "focus": ["attacker", "round", "swings"],
-        "note": "calcSwingCount turns dexterity, weapon speed and skill into a number, then stamina and carried weight scale it down. Cap is 4 per weapon."
+        "note": "calcSwingCount turns dexterity, weapon speed and skill into a number, then stamina and carried weight scale it down. Cap is 4."
       },
       {
-        "id": "to-hit",
-        "label": "The attack roll",
-        "focus": ["round", "dice"],
-        "note": "The attack score is dexterity plus combat skill, scaled by stamina, position and light. No mitigation value is read here at all."
+        "id": "attack-roll",
+        "label": "One attack roll, rolled once",
+        "focus": ["round", "defense", "dice"],
+        "note": "The swing is rolled a single time. Its score is dexterity plus combat skill, scaled by stamina, position and light. No armor is read."
       },
       {
-        "id": "defense",
-        "label": "Best-of-all defense",
+        "id": "defense-rolls",
+        "label": "One roll per affordable defense",
         "focus": ["defense", "defender", "dice"],
-        "note": "Every defense the defender can pay stamina for is rolled against the same attack roll. The widest winning margin is the one that counts."
+        "note": "Every affordable defense is rolled separately against that one attack value, using the attacker's spread. The widest margin wins."
       },
       {
-        "id": "damage",
-        "label": "Three-channel damage",
-        "focus": ["round", "damage", "defender", "dice"],
-        "note": "Raw damage is one formula for all three channels. Mitigation is a percentage with a cap, and only then does variance get rolled."
+        "id": "floors",
+        "label": "Two floors that can overturn it",
+        "focus": ["defense", "defender", "attacker"],
+        "note": "Two symmetric floors run after the margin, so an outclassed defender can still save and a beaten attacker can still land the swing."
       },
       {
-        "id": "message",
-        "label": "Why you never see a number",
-        "focus": ["damage", "room", "attacker"],
-        "note": "The final integer is converted to a phrase before it reaches any player. GetDamageDescription is the only thing the room ever sees."
+        "id": "damage-and-text",
+        "label": "Damage, then the words for it",
+        "focus": ["round", "damage", "defender", "room"],
+        "note": "One raw formula serves all three channels. Mitigation is a capped percentage, and the number becomes a phrase before a player sees it."
       }
     ],
-    "viewBox": [1180, 1060]
+    "viewBox": [1180, 1260]
   },
   "participants": [
     { "id": "attacker", "type": "external", "label": "Attacker", "sublabel": "player or mob with a target" },
     { "id": "round", "type": "backend", "label": "Round handler", "sublabel": "hooks.handleCombatRound" },
     { "id": "swings", "type": "backend", "label": "Swing budget", "sublabel": "combat.calcSwingCount" },
-    { "id": "dice", "type": "cloud", "label": "Dice", "sublabel": "dice.Roll · dice.RollStat" },
+    { "id": "dice", "type": "cloud", "label": "Dice", "sublabel": "dice.Roll · dice.StdDevFor" },
     { "id": "defender", "type": "external", "label": "Defender", "sublabel": "the target character" },
-    { "id": "defense", "type": "security", "label": "Defense", "sublabel": "runBestOfAllDefense" },
+    { "id": "defense", "type": "security", "label": "Opposed roll", "sublabel": "runBestOfAllDefense" },
     { "id": "damage", "type": "backend", "label": "Damage", "sublabel": "CalcRawDamage · ApplyMitigation" },
     { "id": "room", "type": "frontend", "label": "Room output", "sublabel": "AttackResult messages" }
   ],
   "segments": [
     { "from": 172, "to": 300, "label": "Swing budget" },
-    { "from": 312, "to": 400, "label": "Attack roll" },
-    { "from": 412, "to": 712, "label": "Best-of-all defense" },
-    { "from": 724, "to": 872, "label": "Three-channel damage" },
-    { "from": 884, "to": 964, "label": "Player-facing text" }
+    { "from": 312, "to": 436, "label": "One attack roll" },
+    { "from": 448, "to": 766, "label": "Every affordable defense, rolled separately" },
+    { "from": 778, "to": 902, "label": "Two floors, either direction" },
+    { "from": 914, "to": 1074, "label": "Three-channel damage" },
+    { "from": 1086, "to": 1170, "label": "Player-facing text" }
   ],
   "messages": [
     {
@@ -86,85 +88,130 @@
     {
       "id": "attack-score",
       "from": "round",
-      "to": "dice",
-      "y": 330,
-      "label": "roll dexterity + combat skill",
+      "to": "defense",
+      "y": 336,
+      "label": "resolve this swing at attack score S",
       "variant": "emphasis",
-      "note": "calcAttackScore reads dexterity, combat skill, stamina, position, light and flight. It never reads armor mitigation. Armor only reduces damage that has already landed."
+      "note": "calcAttackScore builds S from dexterity, combat skill, a dual-wield penalty, stamina, prone position, darkness and flight. It never reads a mitigation field. Armor changes how much a landed hit hurts, never whether it lands."
+    },
+    {
+      "id": "roll-attack",
+      "from": "defense",
+      "to": "dice",
+      "y": 376,
+      "label": "roll the swing ONCE, spread = StdDevFor(S)",
+      "variant": "emphasis",
+      "note": "runBestOfAllDefense opens with atkStdDev := dice.StdDevFor(atkScore) and attackRoll := dice.Roll(atkScore, atkStdDev). This is the only attack roll in the whole exchange, no matter how many defenses follow."
     },
     {
       "id": "attack-value",
       "from": "dice",
-      "to": "round",
-      "y": 368,
-      "label": "one roll, shared by every defense",
-      "variant": "return",
-      "note": "The swing is rolled once. Each defense is then rolled against that single value, so the defenses compete with each other rather than with separate attacks."
-    },
-    {
-      "id": "resolve-swing",
-      "from": "round",
       "to": "defense",
-      "y": 436,
-      "label": "resolve this swing",
-      "variant": "emphasis"
+      "y": 414,
+      "label": "one value A, and the spread that made it",
+      "variant": "return",
+      "note": "Both halves are kept. A is the number every defense must beat, and the attacker's spread becomes the spread every defense rolls with, so the two sides of the contest share one shape of randomness."
     },
     {
       "id": "ask-defenses",
       "from": "defense",
       "to": "defender",
-      "y": 478,
-      "label": "which defenses can you pay for?"
+      "y": 472,
+      "label": "which defenses do you have?"
     },
     {
       "id": "defense-list",
       "from": "defender",
       "to": "defense",
-      "y": 516,
+      "y": 510,
       "label": "dodge, parry, block",
       "variant": "return",
-      "note": "Each defense has a stamina cost. A defense the defender cannot afford is skipped for this swing, so a tired defender quietly loses options."
+      "note": "Dodge scores dexterity plus unarmed-combat skill. Parry scores dexterity plus weapon-combat skill plus the best equipped weapon's ParryRating. Block scores the mean of strength and dexterity plus weapon-combat skill plus the best shield's BlockRating. Those ratings are ItemSpec fields entirely separate from physical_mitigation."
     },
     {
-      "id": "roll-defenses",
+      "id": "skip-unaffordable",
+      "from": "defense",
+      "to": "defender",
+      "y": 548,
+      "label": "skipped: cannot pay this one's stamina",
+      "variant": "dashed",
+      "note": "Each defense has a stamina cost. If the defender's current stamina is below it the loop simply continues, so that defense is never rolled at all. A tired defender does not defend worse, it quietly runs out of options."
+    },
+    {
+      "id": "roll-dodge",
       "from": "defense",
       "to": "dice",
-      "y": 562,
-      "label": "roll all of them, not just the first",
-      "variant": "emphasis",
-      "note": "Dodge scales with dexterity and unarmed skill, parry with a weapon's parry rating, block with a shield's block rating. Those ratings are separate fields from mitigation."
+      "y": 590,
+      "label": "roll dodge vs A, attacker's spread",
+      "variant": "security"
+    },
+    {
+      "id": "roll-parry",
+      "from": "defense",
+      "to": "dice",
+      "y": 628,
+      "label": "roll parry vs A, attacker's spread",
+      "variant": "security",
+      "note": "Every surviving defense gets its own independent dice.Roll(defenseScore, atkStdDev). They compete with each other over the same attack value rather than each facing a fresh swing, which is what stops a defender with three defenses from getting three separate chances at three different attacks."
+    },
+    {
+      "id": "roll-block",
+      "from": "defense",
+      "to": "dice",
+      "y": 666,
+      "label": "roll block vs A, attacker's spread",
+      "variant": "security"
+    },
+    {
+      "id": "margins",
+      "from": "dice",
+      "to": "defense",
+      "y": 706,
+      "label": "a margin each: defenseRoll - A",
+      "variant": "return",
+      "note": "One number per defense. Positive means that defense beat the swing, negative means it lost and by how much. Position, darkness, rally, grapple and mutation modifiers have already been folded into each defense score before this point."
     },
     {
       "id": "best-margin",
-      "from": "dice",
-      "to": "defense",
-      "y": 600,
-      "label": "keep the widest winning margin",
-      "variant": "return"
+      "from": "defense",
+      "to": "defender",
+      "y": 744,
+      "label": "widest margin wins; only it pays stamina",
+      "variant": "emphasis",
+      "note": "The largest margin is kept even when every margin is negative, so the closest failure is the one that gets narrated. Stamina is deducted once, for the winning defense only, after all the rolls are done."
     },
     {
       "id": "floor-save",
       "from": "defense",
       "to": "defender",
-      "y": 644,
-      "label": "last-resort save, if the attack won",
+      "y": 802,
+      "label": "MinDefenseChance: save anyway",
       "variant": "dashed",
-      "note": "MinDefenseChance, default 0.15, gives an outclassed defender a fixed chance to avoid a swing that already beat them. A matching MinAttackHitChance floor runs the other way."
+      "note": "If the attack won the margin, resolveDefenseOutcome still gives the defender a flat MinDefenseChance roll, default 0.15. An outclassed defender is never a guaranteed target."
+    },
+    {
+      "id": "floor-hit",
+      "from": "defense",
+      "to": "attacker",
+      "y": 840,
+      "label": "MinAttackHitChance: land anyway",
+      "variant": "dashed",
+      "note": "The mirror image. If a defense won the margin, a flat MinAttackHitChance roll can still turn it into a hit. The two floors are symmetric, checked after the margin, and either can overturn the contest."
     },
     {
       "id": "outcome",
       "from": "defense",
       "to": "round",
-      "y": 686,
+      "y": 878,
       "label": "hit, miss, crit or fumble",
       "variant": "return",
-      "note": "resolveDefenseOutcome orders the result: fumbles first, then crits, then the normal margin, then the two floors."
+      "note": "resolveDefenseOutcome orders the result: double fumble first, then fumbles, then crit versus crit, then a one-sided crit, then the normal margin, and only then the two floors."
     },
     {
       "id": "raw-damage",
       "from": "round",
       "to": "damage",
-      "y": 748,
+      "y": 938,
       "label": "stat x skill x weapon x channel scale",
       "variant": "emphasis",
       "note": "CalcRawDamage is one formula for all three channels: physical uses strength, magical uses willpower, conviction uses charisma. A configured per-channel scale and a global multiplier finish it."
@@ -173,22 +220,22 @@
       "id": "mitigate",
       "from": "damage",
       "to": "defender",
-      "y": 790,
+      "y": 978,
       "label": "subtract mitigation, capped",
-      "note": "ApplyMitigation reduces raw damage by the defender's summed equipment percentage for that channel, clamped to the channel cap (default 75 percent). A critical hit skips mitigation entirely."
+      "note": "ApplyMitigation reduces raw damage by the defender's summed equipment percentage for that channel, clamped to the channel cap (default 75 percent). This is the only place armor is consulted in the entire round. A critical hit skips it entirely."
     },
     {
       "id": "variance",
       "from": "damage",
       "to": "dice",
-      "y": 828,
+      "y": 1016,
       "label": "roll variance around the mean"
     },
     {
       "id": "final-damage",
       "from": "dice",
       "to": "damage",
-      "y": 866,
+      "y": 1054,
       "label": "damage for this swing",
       "variant": "return",
       "note": "dice.RollStat derives its spread from the mean using the global RollSpread knob, so the shape of every roll in the engine moves with one number."
@@ -197,7 +244,7 @@
       "id": "describe",
       "from": "damage",
       "to": "room",
-      "y": 910,
+      "y": 1110,
       "label": "turn the number into a phrase",
       "variant": "emphasis",
       "note": "GetDamageDescription converts damage to a share of the target's maximum health and returns light wounds, serious wounds, critical injuries and so on."
@@ -206,18 +253,18 @@
       "id": "narrate",
       "from": "room",
       "to": "attacker",
-      "y": 950,
+      "y": 1150,
       "label": "\"causing serious wounds\"",
       "variant": "return",
       "note": "The raw integer never leaves the engine. Attacker, defender and every spectator in the room read the same descriptive band."
     }
   ],
   "activations": [
-    { "participant": "round", "from": 190, "to": 916, "type": "backend" },
+    { "participant": "round", "from": 190, "to": 1116, "type": "backend" },
     { "participant": "swings", "from": 232, "to": 282, "type": "backend" },
-    { "participant": "defense", "from": 430, "to": 692, "type": "security" },
-    { "participant": "damage", "from": 742, "to": 916, "type": "backend" },
-    { "participant": "room", "from": 904, "to": 956, "type": "frontend" }
+    { "participant": "defense", "from": 330, "to": 884, "type": "security" },
+    { "participant": "damage", "from": 932, "to": 1116, "type": "backend" },
+    { "participant": "room", "from": 1104, "to": 1156, "type": "frontend" }
   ],
   "cards": [
     {
@@ -231,11 +278,23 @@
     },
     {
       "dot": "emerald",
-      "title": "Landing the hit",
+      "title": "The opposed roll",
       "items": [
         "The attack score is dexterity plus combat skill, with no mitigation term",
-        "One attack roll is contested by every defense the defender can afford",
-        "The defense that won by the widest margin is the one that gets narrated"
+        "The swing is rolled once, and its spread is reused by every defense roll",
+        "Dodge, parry and block each roll separately and each produce a margin",
+        "The widest margin wins, even when every margin is a loss",
+        "Only the winning defense pays stamina, and it pays it after the rolls"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "What drops out and what overturns",
+      "items": [
+        "A defense the defender cannot pay for is skipped before it is ever rolled",
+        "MinDefenseChance, default 0.15, can save a defender the swing already beat",
+        "MinAttackHitChance runs the other way and lands a swing a defense stopped",
+        "Weapon ParryRating and shield BlockRating feed defense, not mitigation"
       ]
     },
     {
@@ -251,9 +310,9 @@
       "dot": "slate",
       "title": "Traced from source",
       "items": [
-        "github.com/pruuk/DOGMud at 1cca187f4d87f3edacdc4c86eb3a3f3d8501a952",
-        "internal/combat/combat.go, combat_helpers.go, damage_pipeline.go",
-        "internal/hooks/NewRound_DoCombat_unified.go"
+        "github.com/pruuk/DOGMud at 80ffa24f9dca3010256241cd5418e25da47ebea7",
+        "internal/combat/combat_helpers.go, damage_pipeline.go, combat.go",
+        "internal/characters/combat.go, internal/hooks/NewRound_DoCombat_unified.go"
       ]
     }
   ]
