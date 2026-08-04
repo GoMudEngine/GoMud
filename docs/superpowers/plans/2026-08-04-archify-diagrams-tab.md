@@ -4,7 +4,7 @@
 
 **Goal:** Ship a public "Under the Hood" page at `/architecture` presenting six hand-authored interactive technical diagrams of the DOGMud engine, aimed at a technical-peer audience.
 
-**Architecture:** Each diagram is a hand-authored JSON specification (committed to `tools/archify/specs/`) rendered by the archify CLI into a self-contained ~625 KB interactive HTML artifact (committed to `_datafiles/html/public/architecture/`). A templated index page links them as cards. No engine change is needed to host the artifacts — `internal/web/web.go` uses `text/template` and archify output contains no `{{` — so a Go test guards that property instead.
+**Architecture:** Each diagram is a hand-authored JSON specification (committed to `tools/archify/specs/`) rendered by the archify CLI into a self-contained ~625 KB interactive HTML artifact (committed to `_datafiles/html/public/diagrams/`). A templated index page links them as cards. No engine change is needed to host the artifacts — `internal/web/web.go` uses `text/template` and archify output contains no `{{` — so a Go test guards that property instead.
 
 **Tech Stack:** Go 1.x (`internal/web`), Go `text/template` HTML pages, vanilla CSS using the site's existing custom properties, and the `archify` Node CLI at `~/.agents/skills/archify` (Node v24, fully offline).
 
@@ -29,7 +29,7 @@ Phase A must be reviewed by the user before Phase B starts.
 |---|---|
 | `tools/archify/specs/*.json` | **Create.** Six authored diagram specifications. These are the source of truth; artifacts are regenerable from them. |
 | `_datafiles/html/public/architecture.html` | **Create.** Templated index page: intro copy + card grid + a scoped `<style>` block. |
-| `_datafiles/html/public/architecture/*.html` | **Create (generated).** Six frozen archify artifacts. Never hand-edited. |
+| `_datafiles/html/public/diagrams/*.html` | **Create (generated).** Six frozen archify artifacts. Never hand-edited. |
 | `internal/web/web.go:147` | **Modify.** One line added to the core nav slice. |
 | `internal/web/architecture_test.go` | **Create.** Two guard tests: no `{{` in artifacts, and every card link resolves. |
 | `docs/PATCH_NOTES.md` | **Modify.** Dated entry, per the Pre-Push SOP. |
@@ -153,7 +153,7 @@ The anchor diagram. Every other diagram zooms into one box on this one.
 
 **Files:**
 - Create: `tools/archify/specs/engine-overview.architecture.json`
-- Create (generated): `_datafiles/html/public/architecture/engine-overview.html`
+- Create (generated): `_datafiles/html/public/diagrams/engine-overview.html`
 
 - [ ] **Step 1: Establish ground truth with codegraph**
 
@@ -224,7 +224,7 @@ A receipt showing only 4 checks means `meta.quality_profile` is missing or missp
 ```bash
 node "$HOME/.agents/skills/archify/bin/archify.mjs" deliver architecture \
   tools/archify/specs/engine-overview.architecture.json \
-  _datafiles/html/public/architecture/engine-overview.html \
+  _datafiles/html/public/diagrams/engine-overview.html \
   --repo-root . --quality showcase --json
 ```
 
@@ -233,7 +233,7 @@ Expected: exit code 0 and a receipt with SHA-256 plus byte counts for both the s
 - [ ] **Step 5: Run the hosting guard manually**
 
 ```bash
-grep -c '{{' _datafiles/html/public/architecture/engine-overview.html
+grep -c '{{' _datafiles/html/public/diagrams/engine-overview.html
 ```
 
 Expected: `0`. Any other number means the artifact would 500 when served — see Task 4.
@@ -242,7 +242,7 @@ Expected: `0`. Any other number means the artifact would 500 when served — see
 
 ```bash
 git add tools/archify/specs/engine-overview.architecture.json \
-        _datafiles/html/public/architecture/engine-overview.html
+        _datafiles/html/public/diagrams/engine-overview.html
 git commit -m "feat(diagrams): engine overview architecture diagram
 
 Showcase validation clean (9/9 checks, 0 errors, 0 warnings).
@@ -349,7 +349,7 @@ Create `_datafiles/html/public/architecture.html` with exactly this content. Not
 
   <div class="diagram-grid">
 
-    <a class="diagram-card" href="/architecture/engine-overview.html" target="_blank" rel="noopener">
+    <a class="diagram-card" href="/diagrams/engine-overview.html" target="_blank" rel="noopener">
       <span class="diagram-kind">Architecture</span>
       <h3>Engine Overview</h3>
       <p class="diagram-what">
@@ -513,7 +513,7 @@ Expected: `PASS` for both tests, with `TestDiagramArtifactsHaveNoTemplateDelimit
 A test that cannot fail is not a guard. Verify it catches the real defect:
 
 ```bash
-printf '{{' >> _datafiles/html/public/architecture/engine-overview.html
+printf '{{' >> _datafiles/html/public/diagrams/engine-overview.html
 go test ./internal/web/ -run 'TestDiagramArtifactsHaveNoTemplateDelimiters' -v
 ```
 
@@ -522,7 +522,7 @@ Expected: **FAIL**, naming `engine-overview.html` and a byte offset.
 Now restore the artifact exactly — do not hand-edit it back:
 
 ```bash
-git checkout -- _datafiles/html/public/architecture/engine-overview.html
+git checkout -- _datafiles/html/public/diagrams/engine-overview.html
 go test ./internal/web/ -run 'TestDiagram' -v
 ```
 
@@ -553,7 +553,7 @@ The most distinctive system in the codebase, and the reason a peer audience stay
 
 **Files:**
 - Create: `tools/archify/specs/mob-aliveness.architecture.json`
-- Create (generated): `_datafiles/html/public/architecture/mob-aliveness.html`
+- Create (generated): `_datafiles/html/public/diagrams/mob-aliveness.html`
 - Modify: `_datafiles/html/public/architecture.html`
 
 - [ ] **Step 1: Establish ground truth with codegraph**
@@ -613,7 +613,7 @@ Expected: all 9 checks, 0 errors, 0 warnings. Change only the diagnosed subject 
 ```bash
 node "$HOME/.agents/skills/archify/bin/archify.mjs" deliver architecture \
   tools/archify/specs/mob-aliveness.architecture.json \
-  _datafiles/html/public/architecture/mob-aliveness.html \
+  _datafiles/html/public/diagrams/mob-aliveness.html \
   --repo-root . --quality showcase --json
 ```
 
@@ -624,7 +624,7 @@ Expected: exit 0 with a SHA-256 receipt. Artifact is frozen after this.
 In `_datafiles/html/public/architecture.html`, insert this immediately after the Engine Overview `</a>` and before `</div>`:
 
 ```html
-    <a class="diagram-card" href="/architecture/mob-aliveness.html" target="_blank" rel="noopener">
+    <a class="diagram-card" href="/diagrams/mob-aliveness.html" target="_blank" rel="noopener">
       <span class="diagram-kind">Architecture</span>
       <h3>Mob Aliveness Stack</h3>
       <p class="diagram-what">
@@ -642,7 +642,7 @@ In `_datafiles/html/public/architecture.html`, insert this immediately after the
 - [ ] **Step 6: Run the guard tests**
 
 ```bash
-grep -c '{{' _datafiles/html/public/architecture/mob-aliveness.html
+grep -c '{{' _datafiles/html/public/diagrams/mob-aliveness.html
 go test ./internal/web/ -run 'TestDiagram' -v
 ```
 
@@ -652,7 +652,7 @@ Expected: `0` from grep, `PASS` from both tests (now checking 2 artifacts and 2 
 
 ```bash
 git add tools/archify/specs/mob-aliveness.architecture.json \
-        _datafiles/html/public/architecture/mob-aliveness.html \
+        _datafiles/html/public/diagrams/mob-aliveness.html \
         _datafiles/html/public/architecture.html
 git commit -m "feat(diagrams): mob aliveness stack architecture diagram
 
@@ -665,7 +665,7 @@ Showcase validation clean (9/9 checks, 0 errors, 0 warnings)."
 
 **Files:**
 - Create: `tools/archify/specs/combat-round.sequence.json`
-- Create (generated): `_datafiles/html/public/architecture/combat-round.html`
+- Create (generated): `_datafiles/html/public/diagrams/combat-round.html`
 - Modify: `_datafiles/html/public/architecture.html`
 
 - [ ] **Step 1: Establish ground truth with codegraph**
@@ -730,7 +730,7 @@ Expected: all 9 checks, 0 errors, 0 warnings.
 ```bash
 node "$HOME/.agents/skills/archify/bin/archify.mjs" deliver sequence \
   tools/archify/specs/combat-round.sequence.json \
-  _datafiles/html/public/architecture/combat-round.html \
+  _datafiles/html/public/diagrams/combat-round.html \
   --repo-root . --quality showcase --json
 ```
 
@@ -741,7 +741,7 @@ Expected: exit 0 with a SHA-256 receipt.
 Insert before the closing `</div>` of `.diagram-grid` in `_datafiles/html/public/architecture.html`:
 
 ```html
-    <a class="diagram-card" href="/architecture/combat-round.html" target="_blank" rel="noopener">
+    <a class="diagram-card" href="/diagrams/combat-round.html" target="_blank" rel="noopener">
       <span class="diagram-kind">Sequence</span>
       <h3>Combat Round Resolution</h3>
       <p class="diagram-what">
@@ -759,10 +759,10 @@ Insert before the closing `</div>` of `.diagram-grid` in `_datafiles/html/public
 - [ ] **Step 7: Run the guard tests and commit**
 
 ```bash
-grep -c '{{' _datafiles/html/public/architecture/combat-round.html
+grep -c '{{' _datafiles/html/public/diagrams/combat-round.html
 go test ./internal/web/ -run 'TestDiagram' -v
 git add tools/archify/specs/combat-round.sequence.json \
-        _datafiles/html/public/architecture/combat-round.html \
+        _datafiles/html/public/diagrams/combat-round.html \
         _datafiles/html/public/architecture.html
 git commit -m "feat(diagrams): combat round resolution sequence diagram
 
@@ -846,7 +846,7 @@ Do **not** start the server — the user runs it. Ask the user to restart their 
 
 **Files:**
 - Create: `tools/archify/specs/data-load.sequence.json`
-- Create (generated): `_datafiles/html/public/architecture/data-load.html`
+- Create (generated): `_datafiles/html/public/diagrams/data-load.html`
 - Modify: `_datafiles/html/public/architecture.html`
 
 - [ ] **Step 1: Establish ground truth with codegraph**
@@ -858,6 +858,11 @@ codegraph_node "SaveRoomInstance" includeCode:true
 ```
 
 Confirm which fields carry `instance:"skip"` and the exact order of template load, instance overlay, and restore. CLAUDE.md notes room spawn lists were **wrongly** documented as shadowed until 2026-07-25 — check the struct tags, do not trust prose.
+
+**Inherited from Task 2 — this diagram owes two things the overview could not fit:**
+
+1. **Show the mob overlay, not just the room overlay.** Task 2's engine overview had room for only one overlay edge (`instances → rooms`) before the layout forced a route inversion, so `instances → mobs` was dropped and carried in text instead. This diagram is where `mobs.instances` gets drawn properly alongside `rooms.instances`.
+2. **The overlay is conditional and must look conditional.** `LoadRoomInstance` (`internal/rooms/save_and_load.go:101`) calls `LoadRoomTemplate` unconditionally first and applies a saved instance only if the file exists. Most rooms never touch the instance layer at all. Use `variant: "dashed"` for the overlay step and say the condition in the label.
 
 - [ ] **Step 2: Write the candidate specification**
 
@@ -897,7 +902,7 @@ Expected: all 9 checks, 0 errors, 0 warnings.
 ```bash
 node "$HOME/.agents/skills/archify/bin/archify.mjs" deliver sequence \
   tools/archify/specs/data-load.sequence.json \
-  _datafiles/html/public/architecture/data-load.html \
+  _datafiles/html/public/diagrams/data-load.html \
   --repo-root . --quality showcase --json
 ```
 
@@ -906,7 +911,7 @@ node "$HOME/.agents/skills/archify/bin/archify.mjs" deliver sequence \
 Insert before the closing `</div>` of `.diagram-grid`:
 
 ```html
-    <a class="diagram-card" href="/architecture/data-load.html" target="_blank" rel="noopener">
+    <a class="diagram-card" href="/diagrams/data-load.html" target="_blank" rel="noopener">
       <span class="diagram-kind">Sequence</span>
       <h3>Template, Instance, Runtime</h3>
       <p class="diagram-what">
@@ -925,10 +930,10 @@ Insert before the closing `</div>` of `.diagram-grid`:
 - [ ] **Step 6: Run the guard tests and commit**
 
 ```bash
-grep -c '{{' _datafiles/html/public/architecture/data-load.html
+grep -c '{{' _datafiles/html/public/diagrams/data-load.html
 go test ./internal/web/ -run 'TestDiagram' -v
 git add tools/archify/specs/data-load.sequence.json \
-        _datafiles/html/public/architecture/data-load.html \
+        _datafiles/html/public/diagrams/data-load.html \
         _datafiles/html/public/architecture.html
 git commit -m "feat(diagrams): template/instance/runtime sequence diagram
 
@@ -941,7 +946,7 @@ Showcase validation clean (9/9 checks, 0 errors, 0 warnings)."
 
 **Files:**
 - Create: `tools/archify/specs/gmcp-webclient.dataflow.json`
-- Create (generated): `_datafiles/html/public/architecture/gmcp-webclient.html`
+- Create (generated): `_datafiles/html/public/diagrams/gmcp-webclient.html`
 - Modify: `_datafiles/html/public/architecture.html`
 
 - [ ] **Step 1: Establish ground truth with codegraph**
@@ -997,7 +1002,7 @@ Expected: all 9 checks, 0 errors, 0 warnings.
 ```bash
 node "$HOME/.agents/skills/archify/bin/archify.mjs" deliver dataflow \
   tools/archify/specs/gmcp-webclient.dataflow.json \
-  _datafiles/html/public/architecture/gmcp-webclient.html \
+  _datafiles/html/public/diagrams/gmcp-webclient.html \
   --repo-root . --quality showcase --json
 ```
 
@@ -1006,7 +1011,7 @@ node "$HOME/.agents/skills/archify/bin/archify.mjs" deliver dataflow \
 Insert before the closing `</div>` of `.diagram-grid`:
 
 ```html
-    <a class="diagram-card" href="/architecture/gmcp-webclient.html" target="_blank" rel="noopener">
+    <a class="diagram-card" href="/diagrams/gmcp-webclient.html" target="_blank" rel="noopener">
       <span class="diagram-kind">Data Flow</span>
       <h3>GMCP to Web Client</h3>
       <p class="diagram-what">
@@ -1025,10 +1030,10 @@ Insert before the closing `</div>` of `.diagram-grid`:
 - [ ] **Step 7: Run the guard tests and commit**
 
 ```bash
-grep -c '{{' _datafiles/html/public/architecture/gmcp-webclient.html
+grep -c '{{' _datafiles/html/public/diagrams/gmcp-webclient.html
 go test ./internal/web/ -run 'TestDiagram' -v
 git add tools/archify/specs/gmcp-webclient.dataflow.json \
-        _datafiles/html/public/architecture/gmcp-webclient.html \
+        _datafiles/html/public/diagrams/gmcp-webclient.html \
         _datafiles/html/public/architecture.html
 git commit -m "feat(diagrams): GMCP to web client dataflow diagram
 
@@ -1041,7 +1046,7 @@ Showcase validation clean (9/9 checks, 0 errors, 0 warnings)."
 
 **Files:**
 - Create: `tools/archify/specs/progression-loop.lifecycle.json`
-- Create (generated): `_datafiles/html/public/architecture/progression-loop.html`
+- Create (generated): `_datafiles/html/public/diagrams/progression-loop.html`
 - Modify: `_datafiles/html/public/architecture.html`
 
 - [ ] **Step 1: Establish ground truth with codegraph**
@@ -1098,7 +1103,7 @@ Expected: all 9 checks, 0 errors, 0 warnings.
 ```bash
 node "$HOME/.agents/skills/archify/bin/archify.mjs" deliver lifecycle \
   tools/archify/specs/progression-loop.lifecycle.json \
-  _datafiles/html/public/architecture/progression-loop.html \
+  _datafiles/html/public/diagrams/progression-loop.html \
   --repo-root . --quality showcase --json
 ```
 
@@ -1107,7 +1112,7 @@ node "$HOME/.agents/skills/archify/bin/archify.mjs" deliver lifecycle \
 Insert before the closing `</div>` of `.diagram-grid`:
 
 ```html
-    <a class="diagram-card" href="/architecture/progression-loop.html" target="_blank" rel="noopener">
+    <a class="diagram-card" href="/diagrams/progression-loop.html" target="_blank" rel="noopener">
       <span class="diagram-kind">Lifecycle</span>
       <h3>Use-Based Progression</h3>
       <p class="diagram-what">
@@ -1125,10 +1130,10 @@ Insert before the closing `</div>` of `.diagram-grid`:
 - [ ] **Step 7: Run the guard tests and commit**
 
 ```bash
-grep -c '{{' _datafiles/html/public/architecture/progression-loop.html
+grep -c '{{' _datafiles/html/public/diagrams/progression-loop.html
 go test ./internal/web/ -run 'TestDiagram' -v
 git add tools/archify/specs/progression-loop.lifecycle.json \
-        _datafiles/html/public/architecture/progression-loop.html \
+        _datafiles/html/public/diagrams/progression-loop.html \
         _datafiles/html/public/architecture.html
 git commit -m "feat(diagrams): use-based progression lifecycle diagram
 
@@ -1183,9 +1188,9 @@ The gofmt check is not optional — the 2026-08-03 push failed CI on exactly thi
 - [ ] **Step 2: Confirm all six artifacts are present and clean**
 
 ```bash
-ls -la _datafiles/html/public/architecture/
-grep -c '{{' _datafiles/html/public/architecture/*.html
-du -sh _datafiles/html/public/architecture/
+ls -la _datafiles/html/public/diagrams/
+grep -c '{{' _datafiles/html/public/diagrams/*.html
+du -sh _datafiles/html/public/diagrams/
 ```
 
 Expected: six `.html` files, `0` from every grep, total size around 3.7 MB.

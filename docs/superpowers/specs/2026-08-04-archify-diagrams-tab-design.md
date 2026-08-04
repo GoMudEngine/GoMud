@@ -64,7 +64,7 @@ harness rather than the engine. Dropped in favour of the progression loop.
 ```
 _datafiles/html/public/
   architecture.html                 templated index page (site header/nav/footer)
-  architecture/
+  diagrams/                         NOTE: must not share a name with the index
     engine-overview.html            raw archify artifact, ~625 KB
     mob-aliveness.html
     combat-round.html
@@ -82,11 +82,21 @@ internal/web/
 ### How each URL serves
 
 `/architecture` — `serveTemplate` (`internal/web/web.go:64`) stats the path,
-misses, appends `.html`, finds `architecture.html`, globs `_header.html` and
-`_footer.html` into the template set, and executes with the standard
+finds nothing, appends `.html`, finds `architecture.html`, globs `_header.html`
+and `_footer.html` into the template set, and executes with the standard
 `templateData` map. Full site chrome.
 
-`/architecture/mob-aliveness.html` — goes through the **same** templating path.
+> **The artifact directory must NOT be named `architecture/`.** Corrected
+> 2026-08-04 after Task 3 hit this for real. `serveTemplate` stats the
+> extension-less path *before* appending `.html` (`web.go:78-85`); if a
+> directory of that name exists the stat succeeds, the `info.IsDir()` branch
+> takes over, and the handler looks for `architecture/index.html` — which does
+> not exist — and returns **404**. Verified live: `/architecture` → 404,
+> `/architecture.html` → 200. Hence `diagrams/`. The general rule: **an index
+> page's URL path may never equal a sibling directory's name**, unless that
+> directory actually contains the `index.html` you want served.
+
+`/diagrams/mob-aliveness.html` — goes through the **same** templating path.
 It serves byte-identical because:
 
 - `web.go:16` imports **`text/template`**, not `html/template`, so there is no
@@ -94,9 +104,12 @@ It serves byte-identical because:
 - Archify output contains **zero `{{` sequences** (verified across all five
   bundled example artifacts), so the file parses as a single literal text node.
 - The `_*.html` glob of the request directory (`web.go:230`) finds nothing in
-  `public/architecture/`.
+  `public/diagrams/`.
 
-**No engine change is required for hosting.**
+**No engine change is required for hosting.** Keeping the generated artifacts in
+their own directory also gives the guard test a clean invariant — *everything*
+under `public/diagrams/` is frozen generated output, with no templated-file
+exception that could rot as pages are added.
 
 ### Navigation
 
@@ -140,7 +153,7 @@ Structure, following `online.html`:
 
     <div class="diagram-grid">              CSS grid, auto-fit minmax(300px, 1fr)
       <a class="diagram-card"
-         href="/architecture/engine-overview.html"
+         href="/diagrams/engine-overview.html"
          target="_blank" rel="noopener">
         <span class="diagram-kind">ARCHITECTURE</span>
         <h3>Engine Overview</h3>
@@ -257,9 +270,9 @@ guess.
 
 **Automated —`internal/web/architecture_test.go`:**
 
-- Walks `_datafiles/html/public/architecture/*.html` and fails if any file
+- Walks `_datafiles/html/public/diagrams/*.html` and fails if any file
   contains `{{`. This is the guard for the templating seam.
-- Parses `architecture.html` for `href="/architecture/..."` targets and fails if
+- Parses `architecture.html` for `href="/diagrams/..."` targets and fails if
   a referenced file does not exist, catching typo'd card links.
 - Go test binaries run with CWD set to their package directory, so this test
   must chdir to the repository root first, following the existing pattern in
