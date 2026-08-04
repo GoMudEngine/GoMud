@@ -290,6 +290,18 @@ clean boot and a passing test prove nothing about whether a diagram is readable.
 
 ## Known limitations
 
+- **Occasional label overlap at some zoom levels. ACCEPTED, do not re-file.**
+  Reported at the Phase A review on 2026-08-04 and deliberately waived by the
+  user the same day: "We don't know what size screen or windowing any given
+  user is going to view these with. It's not a dog worth chasing."
+
+  The validator's `label_route_clearance` check passes at the authored scale, so
+  collisions only appear at viewport and zoom combinations it does not model.
+  Fixing it properly would mean reflowing every diagram against screen sizes we
+  cannot enumerate, for a cosmetic problem the reader can resolve by zooming.
+  If it is ever revisited, the cheap lever is fewer and shorter labels rather
+  than routing overrides.
+
 - **Drift.** These are hand-authored snapshots with no CI check tying them to
   the code they depict. They will go stale as the architecture moves, the same
   failure class as the helpfile drift found in the 2026-08-03 audit. Committed
