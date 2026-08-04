@@ -1012,7 +1012,7 @@ the server will panic at start. Write the quest YAML `flags:` block first.
 Nodes that fire `grantsQuest` for the final step should always include
 `questExcluded: ["{id}-end"]` to prevent re-triggering if the player talks
 to the NPC again after completion. This is the same guard used for all
-completion nodes (see CLAUDE.md "Double-completion guard").
+completion nodes (see CLAUDE.md "Quest Re-Grant Prevention SOP").
 
 #### 6. Cross-quest flag references
 If quest 14 needs to know which branch the player took in quest 11, it reads

@@ -95,6 +95,11 @@ type UserRecord struct {
 
     // Unexported (not marshalled)
     connectionId   uint64                // Current connection ID
+    sessionMu      sync.Mutex            // Guards unsentText, suggestText, tempDataStore and
+                                          // activePrompt: the only UserRecord state written from
+                                          // both the per-connection goroutine and the tick loop.
+                                          // tempDataStore is a map, so a concurrent read+write is
+                                          // a hard runtime panic, not a benign race.
     unsentText     string                // Buffered output
     suggestText    string                // Input suggestions
     connectionTime time.Time             // Connection timestamp
@@ -253,16 +258,23 @@ func (u *UserRecord) PasswordMatches(input string) bool {
 
 ### Connection Management
 ```go
-// Get connection ID for user
+// Get connection ID for user. Takes userManager.mu.RLock like every
+// other exported function in this file.
 func GetConnectionId(userId int) connections.ConnectionId {
+    userManager.mu.RLock()
+    defer userManager.mu.RUnlock()
+
     if user, ok := userManager.Users[userId]; ok {
         return user.connectionId
     }
     return 0
 }
 
-// Get multiple connection IDs
+// Get multiple connection IDs. Takes userManager.mu.RLock for the loop.
 func GetConnectionIds(userIds []int) []connections.ConnectionId {
+    userManager.mu.RLock()
+    defer userManager.mu.RUnlock()
+
     connectionIds := make([]connections.ConnectionId, 0, len(userIds))
     for _, userId := range userIds {
         if user, ok := userManager.Users[userId]; ok {
@@ -274,8 +286,11 @@ func GetConnectionIds(userIds []int) []connections.ConnectionId {
 
 // Get all active users. Zombies are excluded — a zombie is still in
 // userManager.Users (it hasn't been logged out yet) but isZombie is
-// true, so it's filtered out of this list.
+// true, so it's filtered out of this list. Takes userManager.mu.RLock.
 func GetAllActiveUsers() []*UserRecord {
+    userManager.mu.RLock()
+    defer userManager.mu.RUnlock()
+
     ret := make([]*UserRecord, 0, len(userManager.Users))
     for _, userPtr := range userManager.Users {
         if !userPtr.isZombie {
@@ -305,14 +320,21 @@ func RemoveZombieUser(userId int) {
     }
 }
 
-// Check if connection is zombie
+// Check if connection is zombie. Takes userManager.mu.RLock.
 func IsZombieConnection(connectionId connections.ConnectionId) bool {
+    userManager.mu.RLock()
+    defer userManager.mu.RUnlock()
+
     _, ok := userManager.ZombieConnections[connectionId]
     return ok
 }
 
-// Get expired zombie connections for cleanup
+// Get expired zombie connections for cleanup. Takes userManager.mu.RLock
+// for the whole scan.
 func GetExpiredZombies(expirationTurn uint64) []int {
+    userManager.mu.RLock()
+    defer userManager.mu.RUnlock()
+
     expiredUsers := make([]int, 0)
     
     for connectionId, zombieTurn := range userManager.ZombieConnections {
@@ -424,6 +446,9 @@ func (m Message) DateString() string {
 ```go
 // Set temporary session data
 func (u *UserRecord) SetTempData(key string, value any) {
+    u.sessionMu.Lock()
+    defer u.sessionMu.Unlock()
+
     if u.tempDataStore == nil {
         u.tempDataStore = make(map[string]any)
     }
@@ -436,8 +461,12 @@ func (u *UserRecord) SetTempData(key string, value any) {
     u.tempDataStore[key] = value
 }
 
-// Get temporary session data
+// Get temporary session data. Takes a full Lock rather than an RLock
+// because this "getter" lazily allocates tempDataStore on first use.
 func (u *UserRecord) GetTempData(key string) any {
+    u.sessionMu.Lock()
+    defer u.sessionMu.Unlock()
+
     if u.tempDataStore == nil {
         u.tempDataStore = make(map[string]any)
     }
@@ -705,10 +734,10 @@ Only `AFK` surfaces to players via the `(afk)` tag.
 
 | File | Purpose |
 |------|---------|
-| `users.go` | Registry, connect/disconnect, lookup |
+| `users.go` | Registry, connect/disconnect, lookup, save file read/write (`LoadUser`, `loadUserFromPath`, `SaveUser`, `SaveAllUsers`) |
 | `userrecord.go` | The `UserRecord` type |
 | `userrecord.prompt.go` | Prompt rendering and tokens |
-| `storage.go` / `storage_migrate.go` | Save file read/write and layout migration |
+| `storage.go` / `storage_migrate.go` | Bank inventory (`Storage`, `StorageSlot`) and its legacy `Items`-to-`Slots` shape migration |
 | `index.go` / `index_rebuild.go` / `character_index.go` | Name/character indexes |
 | `migration.go` | Per-user migrations |
 | `validate_actor_name.go` | Name validation |
