@@ -14,6 +14,18 @@ COPY . .
 RUN go generate
 RUN go build -o ${BIN}
 
+FROM golang:1.25.0-bookworm AS test
+
+ENV CGO_ENABLED=1
+WORKDIR /src
+
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN go generate ./...
+
+CMD ["go", "test", "-v", "-count=1", "-timeout", "300s", "-race", "./..."]
+
 FROM alpine:latest AS runner
 ARG BIN=go-mud-server
 ENV BIN=${BIN}
