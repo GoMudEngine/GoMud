@@ -34,7 +34,6 @@ jobs:
             core.setOutput('url', context.payload.release.html_url || '')
 
       - name: Send Discord Message
-        if: ${{ secrets.DISCORD_WEBHOOK_URL != '' }}
         uses: ./.github/actions/discord-webhook
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
