@@ -1,5 +1,15 @@
 # DOGMud Patch Notes
 
+## 2026-08-07: Reliable Linux test baseline
+
+Contributors can now run the ordinary Go package suite with the race detector
+inside an isolated Linux container. The command reports a fresh, authoritative
+result without requiring anyone to weaken Windows antivirus protections.
+
+Docker builds now filter local credentials, player saves, guild state, logs,
+and other runtime residue out of reusable image layers. The production server
+image remains unchanged.
+
 ## 2026-08-04: Dewey sees you all the way out
 
 New players who finished the tutorial could arrive at the last room and find
