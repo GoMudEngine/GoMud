@@ -841,7 +841,10 @@ live under `tools/playtest/.run/<run_id>/bridge/`.
 
 Overlay (DOGMud-specific): `tools/playtest/`
 - `engine-profile.yaml` — DOGMud commands/world/mechanics
-- `targets.yaml` — **prod** (and legacy) creds only; not used for local endpoint
+- `targets.yaml` — **prod** (and legacy) creds only; not used for local
+  endpoint. **Gitignored since 2026-08-08** — an audit found live prod
+  credentials committed to the public repo. Copy `targets.example.yaml` to
+  `targets.yaml` locally; never commit it, never paste its contents anywhere
 - `personalities/` (bug-finder, feature-tester, feel-tester)
 - `goals/` (session objectives; local needs `ephemeral:`), `profiles/`,
   `report-templates/`, `reports/` (gitignored)

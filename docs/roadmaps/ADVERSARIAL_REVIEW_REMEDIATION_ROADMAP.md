@@ -66,7 +66,7 @@ further decomposition
 | 1.2 | Replace phantom and probabilistic tests | M | 0.2 | 9, 24 | Not started |
 | 1.3 | Eliminate immediate static-analysis crash risks | S | 1.1 | 28 | Not started |
 | 1.4 | Decide and enforce the YAML compatibility boundary | M | 0.2 | 33 | Not started |
-| 1.5 | Remove tracked playtest credentials | S | — | Security follow-up | Not started |
+| 1.5 | Remove tracked playtest credentials | S | — | Security follow-up | **In progress — tree clean, ROTATION OUTSTANDING** |
 | 2.1 | Establish the living-state persistence contract | M | 0.2, 1.4 | Supporting | Not started |
 | 2.2 | Migrate mob instance persistence | M | 2.1 | 5 | Not started |
 | 2.3 | Migrate guild and moderation persistence | M | 2.1 | 7 | Not started |
@@ -338,6 +338,36 @@ is decomposed before Phase 2 rather than hidden inside a persistence chunk.
 production playtest credentials in plaintext. Docker context filtering can keep
 that file out of new image layers, but it cannot revoke exposed credentials or
 remove them from repository history.
+
+**Correction 2026-08-08:** the original finding named one file. There were
+**two**. `tools/_archive/testing-pre-harness/testing/targets.yaml` carried the
+identical `smoketester` and `aitester` credentials and was missed by both
+reviews. The repository is public, so both were world-readable.
+
+**Status: In progress 2026-08-08 (tree clean, rotation OUTSTANDING).**
+
+Done in the working tree:
+
+- `tools/playtest/targets.yaml` untracked via `git rm --cached`; the local copy
+  survives on disk so `/playtest prod` keeps working.
+- `tools/_archive/testing-pre-harness/testing/targets.yaml` deleted outright.
+  The pre-harness stack was retired 2026-06-08 and nothing consumes it.
+- `tools/playtest/targets.example.yaml` added as a credential-free template.
+- `.gitignore` now ignores `**/targets.yaml` with an explicit negation for the
+  example file.
+- `.claude/commands/playtest.md` and `CLAUDE.md` document the copy-from-example
+  setup step and the never-commit rule.
+
+**Still required, and not satisfiable by any repository change:**
+
+1. **Rotate the `aitester` password on `dogmud.org`.** It was public. Untracking
+   does not un-expose it; the blob remains reachable in history and in every
+   existing clone and fork.
+2. **Rotate the local `smoketester` password** if that account exists anywhere
+   reachable.
+3. Confirm `aitester` holds no admin role.
+4. Decide separately on history rewriting. It is disruptive, it does not
+   substitute for rotation, and it cannot reach forks or clones.
 
 **Outcome:** Tracked playtest configuration contains no credentials; local
 secrets come from an ignored override or environment-backed mechanism; affected

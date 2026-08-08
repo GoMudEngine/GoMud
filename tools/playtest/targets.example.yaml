@@ -1,0 +1,37 @@
+# Connection targets template for the DOGMud /playtest driver.
+#
+# SETUP: copy this file to `targets.yaml` in the same directory and fill in
+# real values. `targets.yaml` is gitignored and must NEVER be committed.
+#
+#     cp tools/playtest/targets.example.yaml tools/playtest/targets.yaml
+#
+# Only the `prod` entry is still consumed, by `/playtest prod`. Local runs
+# (0.3c and later) build a disposable ephemeral server via `playtestrun` and
+# do not read this file at all for endpoint or credentials.
+
+# Legacy: a long-lived local server. Superseded by ephemeral `playtestrun`
+# local runs. Kept only for the pre-0.3c flow.
+local:
+  host: localhost
+  port: 55555
+  user: REPLACE_ME
+  password: REPLACE_ME
+
+# Production. Used by `/playtest prod <personality>`.
+# This account should be a dedicated, least-privilege playtest character with
+# no admin role. Rotate its password if this file is ever committed or shared.
+prod:
+  host: dogmud.org
+  port: 55555
+  user: REPLACE_ME
+  password: REPLACE_ME
+
+# local-fresh: blank creds mean each agent CREATES its own character on first
+# run. Use for multi-agent scenarios so concurrent agents don't collide on one
+# shared account (and to exercise the new-player onboarding flow). No secret
+# lives here, so these values are safe as-is.
+local-fresh:
+  host: localhost
+  port: 55555
+  user: ""
+  password: ""

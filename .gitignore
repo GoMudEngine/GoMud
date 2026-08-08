@@ -110,6 +110,13 @@ tools/playtest/.d2.log
 tools/playtest/reports/*
 !tools/playtest/reports/.gitkeep
 
+# Playtest connection credentials — NEVER commit. Copy targets.example.yaml to
+# targets.yaml and fill in real values locally. Untracked 2026-08-08 after an
+# audit found live prod creds committed to a public repo.
+tools/playtest/targets.yaml
+**/targets.yaml
+!tools/playtest/targets.example.yaml
+
 # Local build/test artifacts + tool logs
 /*.exe
 __pycache__/

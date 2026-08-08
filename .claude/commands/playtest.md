@@ -42,7 +42,10 @@ report. Personalities: `bug-finder`, `feature-tester`, `feel-tester`.
 ### Prod
 
 - Read `tools/playtest/targets.yaml`; look up `prod` → `host`, `port`, and
-  optional `user`/`password`.
+  optional `user`/`password`. This file is **gitignored** and is not in a fresh
+  clone. If it is missing, tell the user to
+  `cp tools/playtest/targets.example.yaml tools/playtest/targets.yaml` and fill
+  it in. Never commit it and never echo its `password` values into output.
 - Read personality + engine-profile as above.
 - Goals file optional for free-form prod exploration.
 

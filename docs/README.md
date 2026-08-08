@@ -29,6 +29,7 @@ setting, or [`schemas/`](schemas/) if you want to author content.
 | [`guides/github_guide.md`](guides/github_guide.md) | Branch strategy and Git workflow |
 | [`guides/DEPLOYMENT_GUIDE.md`](guides/DEPLOYMENT_GUIDE.md) | Deploying to the production droplet |
 | [`guides/ADVERTISING_LISTINGS.md`](guides/ADVERTISING_LISTINGS.md) | Copy used for MUD-listing sites |
+| [`guides/TESTING_GUIDE.md`](guides/TESTING_GUIDE.md) | Reproducible race-enabled test baseline, local and CI |
 
 ## Audits & findings
 
@@ -38,6 +39,8 @@ verify against the code before acting on one.
 | Path | What's in it |
 |------|--------------|
 | [`audits/`](audits/) | Tech-debt and test-coverage audits, the code-smell review queue, upstream cherry-pick triage, playtest findings |
+| [`audits/META_REVIEW_AGENT_WORK_2026-08-08.md`](audits/META_REVIEW_AGENT_WORK_2026-08-08.md) | Adversarial meta-review grading the Cursor and Jules agent work after 2026-08-04 |
+| [`audits/ADVERSARIAL_REVIEW.md`](audits/ADVERSARIAL_REVIEW.md) | Jules' architectural teardown: global lock, autosave I/O, boot wiring, progression math |
 | [`perf/`](perf/) | Performance baselines and profiling notes |
 
 ## History
@@ -45,6 +48,7 @@ verify against the code before acting on one.
 | Path | What's in it |
 |------|--------------|
 | [`roadmaps/`](roadmaps/) | Long-form roadmaps: development plan, combat-state, mob-aliveness |
+| [`roadmaps/ADVERSARIAL_REVIEW_REMEDIATION_ROADMAP.md`](roadmaps/ADVERSARIAL_REVIEW_REMEDIATION_ROADMAP.md) | 37-finding remediation roadmap from the 2026-08-07 adversarial reviews. Note: its source doc `ADVERSARIAL_CODE_REVIEW_2026-08-07.md` is currently untracked in the repo root |
 | [`superpowers/`](superpowers/) | Per-feature specs and implementation plans, live and completed |
 | [`archive/`](archive/) | Retired documents and old bug screenshots |
 | [`upstream/`](upstream/) | Upstream-facing material in both directions: artifacts inherited from the GoMud engine, and briefs for changes we want to send out to third-party tools |
