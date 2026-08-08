@@ -1,6 +1,6 @@
 ---
 description: Run an AI playtest session by driving the mudagent adapter
-argument-hint: <local|prod> <personality> [goals-file]
+argument-hint: <local|prod> <personality> [goals-file]  (local also requires --checkout)
 ---
 
 # /playtest `<local|prod> <personality> [goals-file]`
@@ -9,22 +9,40 @@ The DOGMud Claude Code driver for the GoMud-Module-Playtest-Harness. It spawns
 `mudagent`, drives it through its line-in / JSON-line-out protocol, and writes a
 report. Personalities: `bug-finder`, `feature-tester`, `feel-tester`.
 
+**Local (0.3c+)** always uses ephemeral `playtestrun` (Docker checkout). It does
+**not** read `tools/playtest/targets.yaml` for host/port/user/password.
+**Prod** still uses `targets.yaml` (unchanged).
+
+## Local usage (required)
+
+```text
+/playtest local --checkout <absolute-path> <personality> <goals-file>
+```
+
+- `--checkout` is **required** (no cwd default). Loudly record commit + dirty
+  in the gameplay report header (also present on the session sidecar).
+- Goals file is **required**. It must contain a valid top-level `ephemeral:`
+  block (profile+start_room or creation_flow+rationale). See
+  `internal/playtestrun` and exemplars under `tools/playtest/goals/`.
+- Adversarial SOP default:
+  `/playtest local --checkout <abs> bug-finder 2026-08-03-prepush-sweep.yaml`
+
 ## 1. Load configuration
 
-- Read `tools/playtest/targets.yaml`; look up `<target>` → `host`, `port`, and
-  the optional `user`/`password`. These ship with working defaults — `local` is
-  `localhost:55555` with **blank credentials**, which means "create a character
-  on first run." Fill creds in to auto-log-in to an existing character.
-- Read `tools/playtest/personalities/<personality>.md` — your **role** (how to
-  play).
-- Read `tools/playtest/engine-profile.yaml` — command names, world orientation,
-  mechanics. **All engine-specific behavior comes from here** (it ships with
-  DOGMud defaults).
-- **The goals file is *what to test*** — if `[goals-file]` was given, read
-  `tools/playtest/goals/<goals-file>` (the ready-made ones live under
-  `tools/playtest/goals/`). It defines the objectives and `verify` conditions
-  you drive toward and report against. Without one, play free-form to the
-  personality (an exploratory run with no set objectives).
+### Local
+
+1. Resolve absolute `--checkout`.
+2. Read `tools/playtest/personalities/<personality>.md`.
+3. Read `tools/playtest/engine-profile.yaml`.
+4. Read the goals file (required). Confirm `ephemeral:` is present.
+5. **Do not** load `targets.yaml` for endpoint/creds.
+
+### Prod
+
+- Read `tools/playtest/targets.yaml`; look up `prod` → `host`, `port`, and
+  optional `user`/`password`.
+- Read personality + engine-profile as above.
+- Goals file optional for free-form prod exploration.
 
 ## 2. Resolve the harness binary
 
@@ -36,110 +54,112 @@ DOGMud repo root). If `$HARNESS/mudagent.exe` exists (Windows) use it; else if
 "playtest harness not found at $HARNESS — set GOMUD_HARNESS_DIR or clone
 GoMudEngine/GoMud-Module-Playtest-Harness next to the DOGMud repo."
 
-## 3. Start the adapter (background, file-bridged)
+## 3. Start the environment (local) or connect (prod)
 
-A slash command can't hold a live pipe across tool calls, so bridge `mudagent`'s
-stdio to files with `tail -f`. Run it **from the DOGMud repo root** — `go run`
-compiles the adapter on the fly, so there's no separate build step:
+### Local — `playtestrun run` (blocking watchdog)
+
+Start the ephemeral env **before** mudagent. From the DOGMud repo (or any
+shell), run in the background so the wall-clock supervisor stays alive:
+
+```powershell
+go run ./cmd/playtestrun run --checkout <abs> --goals <goals-path> --personality <name>
+```
+
+- Parse the **one JSON line** on stdout when ready. Required fields:
+  `endpoint`, `creds` (path or null), `run_id`, `checkout`, `commit`, `dirty`,
+  `deadline_at`, `sidecar`, `bridge_dir`.
+- **Ready-gate:** do **not** start mudagent unless status/ready JSON shows
+  `ready`. On `environment_failed` (non-zero exit / sidecar status), abort,
+  point at the environment-failed report path from the sidecar
+  (`environment_report` / playtestenv report), and do not invent gameplay
+  success.
+- Bridge paths are **run-scoped**:
+  `tools/playtest/.run/<run_id>/bridge/commands.txt` and `events.jsonl`
+  (create empty files under `bridge_dir` from the ready JSON).
+- Session sidecar: `tools/playtest/.run/<run_id>/session.json`.
+
+### Prod — legacy flat bridge
 
 ```sh
 mkdir -p tools/playtest/.run && : > tools/playtest/.run/commands.txt && : > tools/playtest/.run/events.jsonl
-# Include --user/--password ONLY if the target has them; blank credentials mean
-# the agent creates a character on first run (step 4).
 tail -n +1 -f tools/playtest/.run/commands.txt \
   | <mudagent-binary-or-go-run> --target <host>:<port> [--user <user> --password <password>] \
   > tools/playtest/.run/events.jsonl 2>&1 &
 ```
 
-Where `<mudagent-binary-or-go-run>` is the binary or `go run` invocation
-resolved in step 2. (If you prefer a prebuilt binary —
-`go build -o mudagent ./cmd/mudagent` inside `$HARNESS` — use `./mudagent` in
-place of `go run ./cmd/mudagent`.)
+### Local — start mudagent against ready JSON
 
-You issue a command by appending one line to `tools/playtest/.run/commands.txt`;
-you read results from new lines in `tools/playtest/.run/events.jsonl`. Each
-event is one JSON object: `{"type":"output","text":...}`,
-`{"type":"gmcp","package":...,"data":...}`,
-`{"type":"status","state":"connected|logged_in|disconnected"}`,
-`{"type":"error","message":...}`. (The adapter handles connect + GMCP
-negotiation. With `--user`/`--password` it also auto-logs-in to an existing
-account; without them — or if the account doesn't exist yet — *you* drive login
-and character creation via commands, see step 4.)
+```sh
+# BRIDGE = bridge_dir from ready JSON
+mkdir -p "$BRIDGE" && : > "$BRIDGE/commands.txt" && : > "$BRIDGE/events.jsonl"
+tail -n +1 -f "$BRIDGE/commands.txt" \
+  | <mudagent-binary-or-go-run> --target <endpoint.host>:<endpoint.port> \
+      [--user <user> --password <password>] \
+  > "$BRIDGE/events.jsonl" 2>&1 &
+```
+
+Creds:
+
+- If `ephemeral.creation_flow: true` → `creds` is null; drive `new` (step 4).
+- If `ephemeral.profile` is set → select the player whose `profile` field
+  matches in the creds JSON (or use `playtestrun` helper semantics). Never
+  paste passwords into reports — paths only.
 
 ## 4. Log in, or create a character
 
-Poll `tools/playtest/.run/events.jsonl` until
-`{"type":"status","state":"logged_in"}` (`Room.Info`/`Char.Info` confirms you're
-in the world). Getting there depends on whether your character exists:
+Poll `<bridge>/events.jsonl` until
+`{"type":"status","state":"logged_in"}`.
 
-- **It exists** (the target had `user`/`password`): the adapter logs in
-  automatically — just wait for `logged_in`.
-- **It doesn't exist yet** (blank creds, or you see the `username (or "new")`
-  prompt repeat / an "invalid login"): **create a character via the normal
-  new-player flow** — this is part of what a tester exercises, and a feel-tester
-  should grade it. Append responses one per line to
-  `tools/playtest/.run/commands.txt`, following the prompts. On stock GoMud the
-  sequence is: `new` → desired username → password → password again → email
-  (blank is fine) → screen reader? `n` → confirm `y`. You then enter the world.
-- **New characters begin as a pre-tutorial "ghost"** (see the engine profile's
-  `onboarding`). Take the tutorial or choose to start playing to become a full
-  character before attempting goals that need stats or items.
+- **Profile path:** adapter auto-login with matched username/password.
+- **Creation-flow:** drive `new` → username → password → confirm → enter world.
+  New characters may be pre-tutorial “ghosts” (see engine profile `onboarding`).
 
-If `disconnected`/`error` arrives first, abort and report.
+**Then ensure an ASCII charset (DOGMud).** `set charset` is a toggle — converge
+to ASCII (at most 2 sends) as before.
 
-**Then ensure an ASCII charset (DOGMud).** `set charset` is a *toggle* with no
-"get current state" query, and a session can start in either mode — so don't send
-it blindly. **Converge to ASCII:** send `set charset`, read the response line, and
-inspect it:
-- "Charset mode set to ASCII." → done (ASCII confirmed).
-- "Charset mode set to UTF-8." → you were in ASCII and just flipped to UTF-8;
-  send `set charset` once more to return to ASCII, and confirm the ASCII line.
-
-Stop once you've confirmed ASCII (at most 2 sends). Box-drawing/emoji in the
-prompt otherwise arrive as mojibake. Then run any `setup_commands` from the
-engine profile (currently none for DOGMud — charset is handled here).
+If `disconnected`/`error` arrives first, abort, stop the env (local), report.
 
 ## 5. Play (main loop)
 
-Repeat until an exit condition:
-1. Read new lines from `tools/playtest/.run/events.jsonl` — the `output` text,
-   `gmcp` state, and `beacon` events are your view of the world.
-2. Decide the next command from your **personality** + **goals** + **engine
-   profile** + current state.
-3. Append the command (one line) to `tools/playtest/.run/commands.txt`.
-4. **Pace on the round beacon:** wait for the next
-   `{"type":"beacon","event":"Round"}` event (the `playtest` module emits one
-   per round). It is a reliable per-round tick and carries
-   `{round, hp, hp_max, sp, sp_max, room_id}` — use it for pacing and goal
-   scoring. **DOGMud note:** the beacon also carries `cp`/`cp_max` (Conviction
-   pool) in addition to `hp`/`sp`, so goals can pace and verify against all
-   three resource pools. The beacon only fires when the playtest module is
-   enabled (`Modules.playtest.Enabled: true` + `Beacons: true` in the server
-   config). *Fallback:* if no beacons arrive (the `playtest`/`gmcp` modules are
-   absent), fall back to response quiescence (~1–2s with no new events).
-5. Pace yourself within a round too: the server caps AI input at
-   `AI.CommandsPerRound` (default 2) per round; a dropped command is reported
-   back as an `output` notice.
-6. Track findings and goal progress as you go (the beacon snapshot is good
-   evidence for `verify` conditions).
+Same as before: read events, decide from personality + goals + engine profile,
+append commands, pace on `Playtest.Round` beacons, respect
+`AICommandsPerRound`. Soft token/API budget exhaustion ⇒ stop play and mark
+the gameplay report **incomplete** (still run cleanup).
 
 ## 6. Exit conditions
 
-Stop when any holds: all goals met; ~30 minutes elapsed; stuck for 10+ commands
-with no progress; or a fatal `error`/`disconnected` status.
+Stop when any holds: all goals met; wall-clock / sidecar
+`incomplete_wallclock`; soft token stop; stuck 10+ commands; fatal
+error/disconnect.
 
 ## 7. Write the report
 
-Write the final report to
-`tools/playtest/reports/YYYY-MM-DD-<target>-<personality>[-<goals-or-session>].md`.
-The report should cover: session summary, findings list (severity + repro steps),
-goal outcomes (met/unmet with evidence from beacon snapshots), and
-recommendations.
+Gameplay report (Claude-owned) under
+`tools/playtest/reports/YYYY-MM-DD-<target>-<personality>[-<goals>].md`.
+Prefer templates in `tools/playtest/report-templates/` (`newbie-creation.md`,
+`bug-finder-sweep.md`).
+
+**Required header fields (local):** checkout, commit, dirty, run_id, binding
+summary, wall-clock elapsed vs budget, sidecar status, outcome. Never passwords.
+
+`incomplete_wallclock` or soft token/API stop ⇒ outcome **incomplete**, not
+success. Env failures use playtestenv `*-environment-failed.md`, not a fake
+gameplay pass.
 
 ## 8. Clean up
 
+### Local
+
+```powershell
+go run ./cmd/playtestrun stop --checkout <abs> --run <run_id>
+# playtestrun run watchdog also Stops on deadline; always ensure stop
+printf '%s\n' '{"control":"quit"}' >> <bridge>/commands.txt
+```
+
+### Prod
+
 ```sh
-printf '%s\n' '{"control":"quit"}' >> tools/playtest/.run/commands.txt   # closes the adapter
+printf '%s\n' '{"control":"quit"}' >> tools/playtest/.run/commands.txt
 sleep 1
 pkill -f 'tail -n +1 -f tools/playtest/.run/commands.txt' 2>/dev/null || true
 pkill -f 'cmd/mudagent' 2>/dev/null || true

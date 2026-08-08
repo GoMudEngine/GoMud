@@ -72,6 +72,31 @@ The Go version is aligned to `go.mod`, but the Docker base image is selected by
 a mutable version tag rather than a digest. This is a repeatable,
 version-aligned Linux environment, not a bit-for-bit hermetic build.
 
+## Single-agent ephemeral playtests (`playtestrun`, chunk 0.3c)
+
+Local `/playtest` always goes through `cmd/playtestrun`, which composes
+`playtestenv`, enforces a wall-clock budget (default 30m), writes
+`tools/playtest/.run/<run-id>/session.json`, and scopes the mudagent bridge
+under `.run/<run-id>/bridge/`. Goals files must include an `ephemeral:` block
+(profile+room or creation_flow+rationale). Exemplars:
+`newbie-naive.yaml`, `corpse-looting.yaml`, `2026-08-03-prepush-sweep.yaml`.
+
+```powershell
+go test ./cmd/playtestrun ./internal/playtestrun
+go run ./cmd/playtestrun run --checkout $PWD --goals tools/playtest/goals/newbie-naive.yaml --personality feel-tester
+go run ./cmd/playtestrun status --checkout $PWD --run <run-id>
+go run ./cmd/playtestrun stop --checkout $PWD --run <run-id>
+
+# Opt-in Docker (profile + creation-flow through playtestrun):
+$env:DOGMUD_PLAYTESTRUN_INTEGRATION = "1"
+go test -v -run "^TestDockerPlaytestrun$" -timeout 45m ./internal/playtestrun
+Remove-Item Env:\DOGMUD_PLAYTESTRUN_INTEGRATION
+```
+
+See `internal/playtestrun/context.md` (Human invocation) and
+`.claude/commands/playtest.md`. Local does **not** read `targets.yaml` for
+endpoint/creds. Dead-code cleanup of the pre-0.3c local path is deferred.
+
 ## Ephemeral playtest supervisor (`playtestenv`)
 
 Chunk 0.3a adds a local-only Go supervisor (`cmd/playtestenv` over
@@ -79,7 +104,9 @@ Chunk 0.3a adds a local-only Go supervisor (`cmd/playtestenv` over
 lease-bound Docker server on a Docker-assigned loopback AI port. It cannot
 target production or any remote host. Runtime admin/builder mutations live in a
 disposable volume and are discarded with the run; the checkout is never mounted
-or exported back into source.
+or exported back into source. Chunk 0.3c’s `playtestrun` is the preferred
+agent-facing entry for single-agent sessions; raw `playtestenv` remains for
+env-only ops and lower-level tests.
 
 ### Package unit tests
 

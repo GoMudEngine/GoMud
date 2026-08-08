@@ -13,12 +13,14 @@ double-rendered prompts, broken/mis-ordered lesson gates, dead-ends, awkward
 pacing, wrong NPC voice — are invisible to a boot test and to code reasoning.
 They only surface when something plays the content as a confused human would.
 
-Procedure: run the playtest harness (`/playtest local bug-finder`, or a
-route/feature-specific goals file) with an explicitly **critical, adversarial**
-mandate — spawn a fresh character, drive the real player flow end to end, read
-every line of in-game output, and report every usability problem bluntly. Fix
-what it finds, re-run if needed, and only then turn it over to the user. Do NOT
-claim content work "done" on the strength of a clean boot alone.
+Procedure: run the playtest harness with an explicitly **critical, adversarial**
+mandate — e.g. `/playtest local --checkout <abs>
+bug-finder 2026-08-03-prepush-sweep.yaml` (or a route/feature-specific goals
+file that already has `ephemeral:`). Spawn a fresh character, drive the real
+player flow end to end, read every line of in-game output, and report every
+usability problem bluntly. Fix what it finds, re-run if needed, and only then
+turn it over to the user. Do NOT claim content work "done" on the strength of
+a clean boot alone.
 
 ## Subagent Model Preference
 Pick the model that fits the task — don't reflexively pin everything to haiku.
@@ -809,34 +811,44 @@ After generating any file: restart server. If editing an existing zone, check
 `_datafiles/world/dogmud/rooms.instances/` for stale instance saves.
 
 ## AI Testing
-Run autonomous AI testers against the MUD server via the **GoMud playtest
-harness** (`mudagent` adapter + `/playtest` driver). The old `/test-mud` +
-`tools/mud_bridge.py` + `tools/ai_player.py` stack was retired 2026-06-08
-(archived under `tools/_archive/testing-pre-harness/`).
+Run autonomous AI testers via the **GoMud playtest harness** (`mudagent` +
+`/playtest` driver) against an ephemeral local env (`playtestrun` /
+`playtestenv`) or production. The old `/test-mud` + `tools/mud_bridge.py` +
+`tools/ai_player.py` stack was retired 2026-06-08 (archived under
+`tools/_archive/testing-pre-harness/`).
 
-- `/playtest local feature-tester shop-economy.yaml` — test specific features locally
-- `/playtest prod bug-finder` — exploratory bug hunting on production
-- `/playtest local feel-tester` — natural play session for UX feedback
+**Local (0.3c+)** always starts a disposable Docker checkout via `playtestrun`.
+It requires `--checkout` and a goals file with `ephemeral:`. It does **not**
+use `targets.yaml` for endpoint/creds. Example adversarial SOP:
 
-Usage: `/playtest <local|prod> <personality> [goals-file]`. The driver spawns
-the harness's `mudagent` (located via `GOMUD_HARNESS_DIR`, default
-`../gomud-playtest-harness`) and drives it over a JSON event protocol
-(`output`/`gmcp`/`status`/`beacon`).
+```text
+/playtest local --checkout <abs> bug-finder 2026-08-03-prepush-sweep.yaml
+```
+
+Other local examples (goals must already include `ephemeral:`):
+
+- `/playtest local --checkout <abs> feature-tester corpse-looting.yaml`
+- `/playtest local --checkout <abs> feel-tester newbie-naive.yaml`
+
+**Prod** is unchanged: `/playtest prod bug-finder` (uses `targets.yaml`; no
+`playtestrun`).
+
+Usage: `/playtest <local|prod> …`. See `.claude/commands/playtest.md` and
+`internal/playtestrun/context.md` (Human invocation). The driver spawns
+`mudagent` (`GOMUD_HARNESS_DIR`, default `../gomud-playtest-harness`) over
+`output`/`gmcp`/`status`/`beacon` JSON events. Local mudagent bridge files
+live under `tools/playtest/.run/<run_id>/bridge/`.
 
 Overlay (DOGMud-specific): `tools/playtest/`
-- `engine-profile.yaml` — DOGMud commands/world/mechanics (the one engine-specific file)
-- `targets.yaml` — local/prod server creds
+- `engine-profile.yaml` — DOGMud commands/world/mechanics
+- `targets.yaml` — **prod** (and legacy) creds only; not used for local endpoint
 - `personalities/` (bug-finder, feature-tester, feel-tester)
-- `goals/` (migrated session objectives), `reports/` (output, gitignored)
+- `goals/` (session objectives; local needs `ephemeral:`), `profiles/`,
+  `report-templates/`, `reports/` (gitignored)
 
 The vendored `playtest` server module (`modules/playtest/`) emits per-round
-`Playtest.Round` GMCP **beacons** (`hp/sp/cp + max`, room) for reliable pacing +
-structured verification, when enabled via `Modules.playtest.*`. Group/multi-agent
-scenarios (`ptorch`) are Phase 2 (not yet wired).
-
-Prerequisites: AI port enabled (`AIPort: 55555`); test character must be
-AI-flagged (or the agent creates one via the new-player flow). Edit player YAML
-directly for setup.
+`Playtest.Round` GMCP **beacons** (`hp/sp/cp + max`, room) when enabled via
+`Modules.playtest.*`. Multi-agent (`ptorch`) is 0.3d+.
 
 ## Mob Stat Archetypes
 Mobs have an optional `archetype` field that controls stat pool distribution:

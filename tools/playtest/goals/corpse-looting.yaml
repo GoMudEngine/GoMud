@@ -8,6 +8,12 @@
 # This goals file makes a tester drive the forms real players reach for, not
 # just the implementer's intended syntax.
 
+ephemeral:
+  profile: early
+  start_room: 444
+  budgets:
+    wall_clock: 30m
+
 session:
   name: corpse-looting
   max_rounds: 200

@@ -60,7 +60,7 @@ further decomposition
 | 0.2 | Establish a reproducible full-test baseline | S | — | Supporting | Done |
 | 0.3a | Build the ephemeral server supervisor | M | 0.2 | Supporting | Done |
 | 0.3b | Materialize synthetic player profiles | L | 0.3a | Supporting | Done |
-| 0.3c | Integrate single-agent ephemeral playtests | M | 0.3a, 0.3b | Supporting | Not started |
+| 0.3c | Integrate single-agent ephemeral playtests | M | 0.3a, 0.3b | Supporting | Done |
 | 0.3d | Integrate multi-agent ephemeral scenarios | L | 0.3c | Supporting | Not started |
 | 1.1 | Unify validation across PR, master, and release | M | 0.2 | 10, 25, 26 | Not started |
 | 1.2 | Replace phantom and probabilistic tests | M | 0.2 | 9, 24 | Not started |
@@ -234,6 +234,17 @@ report (partial findings + cleanup outcome), never a false success.
 playtests may trigger the command automatically. The command accepts no
 production or remote target. Design:
 `docs/superpowers/specs/2026-08-08-single-agent-ephemeral-playtests-design.md`.
+
+**Status (2026-08-08):** Done on
+`feature/stage-0.3c-single-agent-ephemeral-playtests`. Delivered
+`internal/playtestrun` + `cmd/playtestrun` (`run`/`status`/`stop`), goals
+`ephemeral:` binding, session sidecar, run-scoped bridge, `/playtest` local
+rewire, exemplars (`newbie-naive`, `corpse-looting`, `2026-08-03-prepush-sweep`),
+report templates, verbose Human invocation docs. Evidence:
+`go test ./internal/playtestrun ./cmd/playtestrun`; Docker
+`DOGMUD_PLAYTESTRUN_INTEGRATION=1 go test -run TestDockerPlaytestrun`
+(profile + creation-flow ready/stop) PASS. Pre-0.3c local-path dead-code
+cleanup deferred (spec Non-goals).
 
 #### Chunk 0.3d — Integrate multi-agent ephemeral scenarios
 
