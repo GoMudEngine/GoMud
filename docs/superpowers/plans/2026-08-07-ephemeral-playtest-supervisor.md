@@ -1399,7 +1399,7 @@ volume. Document Compose `>= 2.20.0`, writable disposable control overrides,
 and why the selected checkout's `VERSION` is pinned for ephemeral current-data
 boots.
 
-- [ ] **Step 3: Run formatting, static, focused, and full-suite verification**
+- [x] **Step 3: Run formatting, static, focused, and full-suite verification**
 
 Run:
 
@@ -1432,7 +1432,7 @@ docker --context $localContext image ls --filter "label=dogmud.playtest.managed=
 Expected: no test-owned run resources. Labelled decoys intentionally retained
 by a test must be removed by that test's exact `t.Cleanup`, not a broad command.
 
-- [ ] **Step 5: Verify an ordinary production runner still boots**
+- [x] **Step 5: Verify an ordinary production runner still boots**
 
 Build without targeting the supervisor:
 
@@ -1458,7 +1458,9 @@ try {
     $deadline = (Get-Date).AddSeconds(90)
     do {
         $bootLog = docker --context $localContext logs $smokeContainer 2>&1 | Out-String
-        if ($bootLog -match "panic:|PANIC|Error creating server") {
+        # Use -cmatch: PowerShell -match is case-insensitive and false-positives
+        # on MapConsistencyEnforce value=panic / mode="panic".
+        if ($bootLog -cmatch 'panic:|Error creating server') {
             throw "production smoke emitted a panic or listener error`n$bootLog"
         }
         if ($bootLog -match "Server Ready") { break }
@@ -1481,6 +1483,9 @@ try {
 Expected: clean boot and exact cleanup. Do not wipe shop, guild, moderation, or
 other host persistence; the image uses its own data.
 
+Evidence (2026-08-08): PASS on `desktop-linux` / `npipe:////./pipe/dockerDesktopLinuxEngine`;
+`Server Ready` observed; smoke image/container removed in `finally`.
+
 - [ ] **Step 6: Confirm Linux workflow evidence**
 
 Push only when the user requests it. After a PR or manual workflow exists,
@@ -1490,7 +1495,10 @@ run the same test on a documented native Linux environment and record command,
 OS, Docker/Compose versions, and exit output; do not substitute Windows Docker
 for the Linux-host requirement.
 
-- [ ] **Step 7: Run an adversarial implementation review**
+Deferred: no push/PR authorized in this session. Chunk 0.2 Linux-container
+full suite PASS is recorded separately and does not satisfy this step.
+
+- [x] **Step 7: Run an adversarial implementation review**
 
 Give the reviewer:
 
@@ -1506,6 +1514,18 @@ injection, label/manifest ambiguity, renew/reap races, cancellation, Windows
 locking/replacement, subprocess deadlock, secrets, source mutation, Docker
 residue, and claimed test coverage. Resolve every blocking/important finding or
 document why it is non-actionable with evidence.
+
+Review evidence (2026-08-08, inline after subagent dispatch limit):
+**Verdict: Approve with follow-ups.** No Blocking code findings.
+
+| Severity | Area | Finding |
+|----------|------|---------|
+| Important (process) | Linux evidence | Step 6 still open: Ubuntu workflow not run without push/PR |
+| Important (docs) | Prod smoke script | PowerShell `-match` + `PANIC` false-positived on `MapConsistencyEnforce=panic`; plan script corrected to `-cmatch 'panic:\|Error creating server'`. Bash workflow grep remains case-sensitive and OK |
+| Non-actionable | Fingerprint | Fixed in `0d499c39a`; compose.test suite PASS |
+| Non-actionable | Owned files | Branch commits match plan ownership; protected room/0.1 files remain unstaged |
+
+Covered without Blocking gaps: DOCKER_HOST/context endpoint npipe\|unix gate, scrubbed compose env, embedded compose policy, identity mismatch / abandoned recovery + WithoutCancel cleanup, flock+atomic write, WaitDelay tee, failure-report escaping (paths/summaries only), checkout not mounted, residue filters empty after verification.
 
 - [x] **Step 8: Update roadmap and commit docs**
 

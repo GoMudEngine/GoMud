@@ -187,12 +187,12 @@ builder mutations remain in a disposable volume that cannot be committed.
 **Status (2026-08-08):** Done / verification. Windows Docker integration
 (`TestDockerIntegration`) PASS; native
 `go test ./cmd/playtestenv ./internal/playtestenv` PASS; managed Docker residue
-filters empty after Task 8. Chunk 0.2
-`docker compose -f compose.test.yml run --build --rm test` FAIL on Linux host:
-`TestCheckoutFingerprintIsStableForCanonicalPath/windows_normalizes_slash_direction`
-(`filepath.ToSlash` is host-OS-dependent). Production-runner smoke and Linux
-workflow evidence deferred. Final adversarial implementation review is the
-remaining handoff gate (must cover the fingerprint finding).
+filters empty. Fingerprint host-independence fixed in `0d499c39a`; Chunk 0.2
+`docker compose -f compose.test.yml run --build --rm test` PASS. Production
+runner smoke PASS (`Server Ready`) on local npipe context. Linux GitHub
+`Playtest Environment Integration` workflow not yet run (no push/PR
+authorized). Adversarial implementation review: approve with follow-ups —
+no Blocking code findings; remaining gate is remote Linux workflow evidence.
 
 #### Chunk 0.3b — Materialize synthetic player profiles
 
