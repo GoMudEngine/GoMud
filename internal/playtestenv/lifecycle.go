@@ -41,6 +41,8 @@ type supervisorDeps struct {
 	acquireLock   lockAcquireFunc
 	lockWait      time.Duration
 	onEvent       func(string)
+	// diagnostics receives teed build/subprocess output (defaults to os.Stderr).
+	diagnostics io.Writer
 }
 
 // Supervisor orchestrates ephemeral local playtest server runs.
@@ -77,6 +79,9 @@ func newSupervisor(deps supervisorDeps) *Supervisor {
 	}
 	if deps.lockWait <= 0 {
 		deps.lockWait = DefaultLockWait
+	}
+	if deps.diagnostics == nil {
+		deps.diagnostics = os.Stderr
 	}
 	return &Supervisor{deps: deps}
 }
@@ -213,8 +218,9 @@ func (s *Supervisor) Start(ctx context.Context, opts StartOptions) (Result, erro
 	if err != nil {
 		return s.failStart(ctx, &res, m, runDir, "", dc, vars, composePath, StateBuilding, FailureManifest, err, true)
 	}
-	buildOut := io.MultiWriter(buildLog, io.Discard)
-	buildErr := io.MultiWriter(buildLog, io.Discard)
+	// Tee build output to the run artifact and terminal diagnostics concurrently.
+	buildOut := io.MultiWriter(buildLog, s.deps.diagnostics)
+	buildErr := io.MultiWriter(buildLog, s.deps.diagnostics)
 	buildSpec := composeBuildCommand(dc, vars, composePath, runDir, buildOut, buildErr)
 	s.event("compose build server")
 	buildRunErr := s.deps.runner.Run(ctx, buildSpec)

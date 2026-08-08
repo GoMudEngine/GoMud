@@ -1,12 +1,14 @@
 package playtestenv
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net"
+	"os"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -557,6 +559,77 @@ func TestStartBuildFailureCategory(t *testing.T) {
 	require.Equal(t, FailureBuild, res.Failure.Category)
 	require.Equal(t, "run-buildfail", res.RunID)
 	require.NotNil(t, res.Artifacts)
+}
+
+func TestStartBuildOutputTeesToDiagnosticsAndBuildLog(t *testing.T) {
+	checkout := t.TempDir()
+	canonical, err := canonicalizeCheckoutPath(checkout)
+	require.NoError(t, err)
+	writeMinimalCheckout(t, checkout, `const VERSION = "1.2.3"`)
+
+	runner := newLifecycleRunner(canonical)
+	scriptGitValidateAndBaseline(runner, canonical)
+	dc := dockerContext{name: "desktop-linux", env: []string{"PATH=/usr/bin"}}
+	containerID := "containerbuildtee01"
+	inspect := inspectJSON(true, "127.0.0.1", "54322")
+	const buildLine = "STEP 1/2: building image layers\n"
+
+	runner.on(" compose ", func(ctx context.Context, spec CommandSpec) error {
+		joined := strings.Join(spec.Args, " ")
+		switch {
+		case strings.Contains(joined, " build ") && strings.Contains(joined, " server"):
+			writeStdout(spec, buildLine)
+			if spec.Stderr != nil {
+				_, _ = io.WriteString(spec.Stderr, "build warning on stderr\n")
+			}
+			return nil
+		case strings.Contains(joined, " up ") && strings.Contains(joined, "--no-build"):
+			return nil
+		case strings.Contains(joined, " ps ") && strings.Contains(joined, "server"):
+			writeStdout(spec, containerID+"\n")
+			return nil
+		default:
+			return fmt.Errorf("unexpected compose: %s", joined)
+		}
+	})
+	runner.on(" inspect ", func(ctx context.Context, spec CommandSpec) error {
+		writeStdout(spec, inspect+"\n")
+		return nil
+	})
+	runner.on(" logs ", func(ctx context.Context, spec CommandSpec) error {
+		writeStdout(spec, "Server Ready\n")
+		return nil
+	})
+
+	var diag bytes.Buffer
+	fixedNow := time.Date(2026, 8, 8, 19, 0, 0, 0, time.UTC)
+	clock := newReadinessFakeClock(fixedNow)
+	s := newSupervisor(supervisorDeps{
+		runner:      runner,
+		now:         clock.Now,
+		genID:       func() (string, error) { return "run-buildtee", nil },
+		diagnostics: &diag,
+		dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+			c1, c2 := net.Pipe()
+			_ = c2.Close()
+			return c1, nil
+		},
+		after: clock.After,
+		resolveDocker: func(ctx context.Context, _ Runner) (dockerContext, error) {
+			return dc, nil
+		},
+	})
+
+	res, err := s.Start(context.Background(), StartOptions{Checkout: checkout})
+	require.NoError(t, err)
+	require.FileExists(t, res.Artifacts.BuildLog)
+
+	logBytes, err := os.ReadFile(res.Artifacts.BuildLog)
+	require.NoError(t, err)
+	require.Contains(t, string(logBytes), buildLine)
+	require.Contains(t, string(logBytes), "build warning on stderr\n")
+	require.Contains(t, diag.String(), buildLine, "build stdout must also reach terminal diagnostics")
+	require.Contains(t, diag.String(), "build warning on stderr\n", "build stderr must also reach terminal diagnostics")
 }
 
 // Ensure Result JSON keeps failure categories stable.
