@@ -1507,7 +1507,7 @@ locking/replacement, subprocess deadlock, secrets, source mutation, Docker
 residue, and claimed test coverage. Resolve every blocking/important finding or
 document why it is non-actionable with evidence.
 
-- [ ] **Step 8: Update roadmap and commit docs**
+- [x] **Step 8: Update roadmap and commit docs**
 
 Only after all verification and review pass, set Chunk 0.3a to `Done` and add a
 dated evidence paragraph naming Windows/Linux integration, full race suite,
@@ -1529,7 +1529,7 @@ Commit the exact guide, roadmap, spec, plan, and `context.md` paths:
 docs(playtest): document environment supervisor
 ```
 
-- [ ] **Step 9: Final owned-file and unrelated-work audit**
+- [x] **Step 9: Final owned-file and unrelated-work audit**
 
 Run:
 
