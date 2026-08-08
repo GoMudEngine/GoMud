@@ -145,10 +145,13 @@ needed; tests.
 **Files:** `internal/playtestrun/scenario.go`, `scenario_test.go`
 
 - [ ] Failing tests: happy party-formation shape; unknown scenario key; unknown
-      roster key; duplicate id; admin profile reject; legacy target/role/inline
-      goals reject; missing goals file; `on_actor_stop` default continue;
-      `requires.pvp` → error; roster size > MaxAIConnections → error;
-      `--force` bypass for size only; actor wall_clock parsed but ignored later.
+      roster key; duplicate id; empty roster; invalid roster `id` format;
+      admin profile reject; legacy target/role/inline goals reject; missing
+      goals file; `on_actor_stop` default continue; unknown `on_actor_stop` →
+      error; `requires.pvp` → error; `requires.foo` (non-pvp) parses OK;
+      roster size > MaxAIConnections → error; `--force` bypass for size only;
+      default `budgets.wall_clock` 45m when omitted; actor wall_clock parsed
+      but ignored by scenario supervisor later.
 - [ ] Implement `ParseScenario` with KnownFields; resolve goals paths; call
       `ParseGoalsEphemeral` per actor; reject admin.
 - [ ] Commit: `feat(playtest): parse multi-agent scenario YAML`
@@ -161,11 +164,19 @@ needed; tests.
 
 - [ ] Failing tests: missing checkout; binding error no Start; Start failure →
       environment_failed; ready JSON actors + blackboard_dir + bridges;
-      lease = wall_clock + ≥5m; wall-clock → incomplete_wallclock non-zero;
-      stop → stopped; CLI `scenario` / status / stop.
+      scenario sidecar fields per spec (`scenario_path`, `on_actor_stop`,
+      `actors[]` with per-actor paths/creds/username); default wall_clock 45m;
+      CLI `--wall-clock` overrides scenario file; lease = wall_clock + ≥5m;
+      wall-clock → `incomplete_wallclock` non-zero; SIGINT → `interrupted`;
+      stop → `stopped`; scenario-aware `status` output; abort path documents
+      driver-set `incomplete_abort` + peer `aborted_peer` (unit-test helper or
+      documented driver contract in tests).
 - [ ] Implement RunScenario: parse → Profiles in roster order with actor ids →
-      Start → mkdir bridges + blackboard → write ScenarioSidecar → ready JSON →
-      wait deadline/stop → Stop.
+      Start → mkdir `actors/<id>/bridge` + `blackboard/` → write scenario
+      sidecar → ready JSON → wait deadline/stop → Stop.
+- [ ] Add scenario sidecar types (`StatusIncompleteAbort`, per-actor status
+      enum) — extend or parallel `SessionSidecar` in `sidecar.go` /
+      `scenario_run.go`.
 - [ ] Wire CLI flags (`--scenario`, `--wall-clock`, `--force`).
 - [ ] Commit: `feat(playtest): add playtestrun scenario supervisor`
 
@@ -176,8 +187,8 @@ needed; tests.
 **Files:** scenarios + `goals/scenarios/...`
 
 - [ ] Migrate `party-formation.yaml` (mixed personalities/loadouts; no admin).
-- [ ] Migrate `parallel-coverage.yaml` and/or `feel-pothole-newbie-veteran.yaml`
-      as shared-env concurrency exemplars.
+- [ ] Migrate `parallel-coverage.yaml` **and**
+      `feel-pothole-newbie-veteran.yaml` as shared-env concurrency exemplars.
 - [ ] Leave `adversarial-contest.yaml` with a header comment: deferred PvP;
       ParseScenario/driver refuse if invoked with pvp require.
 - [ ] Prefer distinct templates/overlays across roster (diversity guidance).
@@ -192,8 +203,13 @@ needed; tests.
 `CLAUDE.md`, `TESTING_GUIDE.md`
 
 - [ ] Rewrite `/playtest-scenario`: checkout required; `playtestrun scenario`;
-      ready-gate; long-lived watchdog; N bridges; blackboard file I/O; no
-      ptorch; `on_actor_stop`; combined report checklist.
+      ready-gate; long-lived watchdog; N bridges; blackboard file I/O with
+      temp + atomic rename; no ptorch; `on_actor_stop`; combined report
+      checklist.
+- [ ] Driver: creation-flow RoleUser-only; `ForbiddenIdentity` pre-check on
+      `new` names before accept; mudagent spawn failure honors `on_actor_stop`.
+- [ ] Document when to use 0.3c `playtestrun run` vs `scenario` (non-shared
+      parallel stays multiple 0.3c runs) in TESTING_GUIDE / CLAUDE.md.
 - [ ] Rewrite multi-agent report format (0.3d headers; drop ptorch bb dump).
 - [ ] Verbose Human invocation for `scenario` + blackboard in context.md.
 - [ ] Commit: `docs(playtest): wire /playtest-scenario to playtestrun scenario`
@@ -202,6 +218,9 @@ needed; tests.
 
 ### Task 7: Docker + live smoke + roadmap + impl review
 
+- [ ] **Driver-contract smoke (no LLM):** `playtestrun scenario` → parse ready
+      JSON → verify per-actor `bridge_dir`, `blackboard_dir`, sidecar paths;
+      `playtestrun stop`. No mudagents required.
 - [ ] Opt-in Docker: `DOGMUD_PLAYTESTRUN_INTEGRATION=1` (or dedicated flag)
       two-actor mixed profiles ready+stop through `playtestrun scenario`.
 - [ ] **Pre-merge live smoke:** ~10m party-formation (or dedicated smoke
@@ -221,7 +240,9 @@ needed; tests.
 - **Tasks 1–4 — Sonnet/generalPurpose:** TDD core (identity, creds, parse, run).
 - **Task 5 — Sonnet:** scenario/goals migration (read existing scenarios first).
 - **Task 6 — Sonnet:** driver + docs.
-- **Task 7 — Sonnet:** Docker + live smoke + impl review.
+- **Task 7 — Sonnet:** Docker + live smoke.
+- **Task 7 — generalPurpose (review):** adversarial implementation review
+  (independent from implementer).
 
 ## Spec coverage checklist
 
@@ -232,10 +253,11 @@ needed; tests.
 - [x] Scenario wall-clock sole hard cut — Task 4
 - [x] Admin ban — Task 3
 - [x] Prod-identity helper shared — Task 1
-- [x] on_actor_stop continue/abort — Tasks 4, 6
+- [x] on_actor_stop continue/abort — Tasks 4, 6 (abort + driver docs)
 - [x] Driver rewrite off ptorch — Task 6
 - [x] PvP defer — Tasks 3, 5
 - [x] MaxAIConnections — Task 3
+- [x] Driver-contract smoke — Task 7
 - [x] Docker + live smoke — Task 7
 - [x] No hard per-actor token kill — constraints
 
