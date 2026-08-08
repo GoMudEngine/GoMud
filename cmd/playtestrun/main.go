@@ -1,5 +1,5 @@
-// Command playtestrun composes playtestenv for single-agent ephemeral
-// local playtests with a wall-clock watchdog and session sidecar.
+// Command playtestrun composes playtestenv for single-agent and multi-agent
+// ephemeral local playtests with a wall-clock watchdog and session sidecar.
 package main
 
 import (
@@ -38,12 +38,14 @@ func main() {
 
 func run(ctx context.Context, args []string, stdout, stderr io.Writer, env envSupervisor) int {
 	if len(args) == 0 {
-		fmt.Fprintln(stderr, "usage: playtestrun <run|status|stop> [flags]")
+		fmt.Fprintln(stderr, "usage: playtestrun <run|scenario|status|stop> [flags]")
 		return exitUsage
 	}
 	switch args[0] {
 	case "run":
 		return cmdRun(ctx, args[1:], stdout, stderr, env)
+	case "scenario":
+		return cmdScenario(ctx, args[1:], stdout, stderr, env)
 	case "status":
 		return cmdStatus(args[1:], stdout, stderr)
 	case "stop":
@@ -82,6 +84,45 @@ func cmdRun(ctx context.Context, args []string, stdout, stderr io.Writer, env en
 		GoalsPath:         *goals,
 		Personality:       *personality,
 		WallClockOverride: override,
+		Env:               env,
+		Stdout:            stdout,
+		Stderr:            stderr,
+	})
+	if err != nil {
+		fmt.Fprintln(stderr, err.Error())
+		return exitFail
+	}
+	return exitOK
+}
+
+func cmdScenario(ctx context.Context, args []string, stdout, stderr io.Writer, env envSupervisor) int {
+	fs := flag.NewFlagSet("scenario", flag.ContinueOnError)
+	fs.SetOutput(stderr)
+	checkout := fs.String("checkout", "", "absolute git checkout path (required)")
+	scenario := fs.String("scenario", "", "scenario YAML path (required)")
+	wallClock := fs.String("wall-clock", "", "optional scenario wall-clock override (e.g. 45m)")
+	force := fs.Bool("force", false, "bypass MaxAIConnections roster-size check only")
+	if err := fs.Parse(args); err != nil {
+		return exitUsage
+	}
+	if strings.TrimSpace(*checkout) == "" || strings.TrimSpace(*scenario) == "" {
+		fmt.Fprintln(stderr, "usage: playtestrun scenario --checkout PATH --scenario PATH [--wall-clock 45m] [--force]")
+		return exitUsage
+	}
+	var override time.Duration
+	if strings.TrimSpace(*wallClock) != "" {
+		d, err := time.ParseDuration(*wallClock)
+		if err != nil || d <= 0 {
+			fmt.Fprintf(stderr, "invalid --wall-clock %q\n", *wallClock)
+			return exitUsage
+		}
+		override = d
+	}
+	err := playtestrun.RunScenario(ctx, playtestrun.ScenarioParams{
+		Checkout:          *checkout,
+		ScenarioPath:      *scenario,
+		WallClockOverride: override,
+		Force:             *force,
 		Env:               env,
 		Stdout:            stdout,
 		Stderr:            stderr,

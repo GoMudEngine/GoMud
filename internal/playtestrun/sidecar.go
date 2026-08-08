@@ -18,6 +18,17 @@ const (
 	StatusInterrupted         = "interrupted"
 	StatusStopped             = "stopped"
 	StatusEnvironmentFailed   = "environment_failed"
+	StatusIncompleteAbort     = "incomplete_abort"
+)
+
+// Per-actor sidecar status values (scenario mode).
+const (
+	ActorStatusPending     = "pending"
+	ActorStatusReady       = "ready"
+	ActorStatusStopped     = "stopped"
+	ActorStatusFailed      = "failed"
+	ActorStatusIncomplete  = "incomplete"
+	ActorStatusAbortedPeer = "aborted_peer"
 )
 
 // SessionBudgets nests wall-clock for the approved sidecar schema.
@@ -27,13 +38,18 @@ type SessionBudgets struct {
 
 // SessionSidecar is the machine-readable session record under
 // tools/playtest/.run/<run_id>/session.json.
+// Single-agent runs populate GoalsPath/Personality/BridgeDir; scenario runs
+// populate ScenarioPath/OnActorStop/BlackboardDir/Actors.
 type SessionSidecar struct {
 	RunID             string                `json:"run_id"`
 	Checkout          string                `json:"checkout"`
 	Commit            string                `json:"commit"`
 	Dirty             bool                  `json:"dirty"`
-	GoalsPath         string                `json:"goals_path"`
+	GoalsPath         string                `json:"goals_path,omitempty"`
 	Personality       string                `json:"personality,omitempty"`
+	ScenarioPath      string                `json:"scenario_path,omitempty"`
+	OnActorStop       string                `json:"on_actor_stop,omitempty"`
+	BlackboardDir     string                `json:"blackboard_dir,omitempty"`
 	Endpoint          *playtestenv.Endpoint `json:"endpoint,omitempty"`
 	Creds             string                `json:"creds,omitempty"`
 	Profile           string                `json:"profile,omitempty"`
@@ -44,7 +60,21 @@ type SessionSidecar struct {
 	DeadlineAt        time.Time             `json:"deadline_at"`
 	Status            string                `json:"status"`
 	EnvironmentReport string                `json:"environment_report,omitempty"`
-	BridgeDir         string                `json:"bridge_dir"`
+	BridgeDir         string                `json:"bridge_dir,omitempty"`
+	Actors            []ActorSidecar        `json:"actors,omitempty"`
+}
+
+// ActorSidecar is one roster actor in a scenario session sidecar.
+type ActorSidecar struct {
+	ID           string  `json:"id"`
+	Personality  string  `json:"personality"`
+	GoalsPath    string  `json:"goals_path"`
+	BridgeDir    string  `json:"bridge_dir"`
+	Creds        *string `json:"creds"` // null for creation-flow
+	Username     string  `json:"username,omitempty"`
+	Profile      string  `json:"profile,omitempty"`
+	CreationFlow bool    `json:"creation_flow"`
+	Status       string  `json:"status"`
 }
 
 // RunDir returns <checkout>/tools/playtest/.run/<runID>.
@@ -57,9 +87,24 @@ func SidecarPath(checkout, runID string) string {
 	return filepath.Join(RunDir(checkout, runID), "session.json")
 }
 
-// BridgeDirPath returns the run-scoped mudagent bridge directory.
+// BridgeDirPath returns the single-agent mudagent bridge directory.
 func BridgeDirPath(checkout, runID string) string {
 	return filepath.Join(RunDir(checkout, runID), "bridge")
+}
+
+// ActorBridgeDirPath returns the per-actor mudagent bridge directory.
+func ActorBridgeDirPath(checkout, runID, actorID string) string {
+	return filepath.Join(RunDir(checkout, runID), "actors", actorID, "bridge")
+}
+
+// BlackboardDirPath returns the scenario file-blackboard directory.
+func BlackboardDirPath(checkout, runID string) string {
+	return filepath.Join(RunDir(checkout, runID), "blackboard")
+}
+
+// StopSignalPath returns the run-level stop signal path (scenario + shared).
+func StopSignalPath(checkout, runID string) string {
+	return filepath.Join(RunDir(checkout, runID), "stop")
 }
 
 // WriteSidecar atomically writes session.json and returns its path.
