@@ -53,17 +53,11 @@ func SanitizeTemplate(profileID string, u *users.UserRecord) error {
 	}
 	// Design-reference prod identities must never ship as template usernames
 	// or character names (archive is offline authoring only).
-	for _, banned := range forbiddenTemplateIdentities {
-		if strings.EqualFold(strings.TrimSpace(u.Username), banned) ||
-			strings.EqualFold(strings.TrimSpace(u.Character.Name), banned) {
-			return fmt.Errorf("playtestprofiles: template %q must not use prod identity %q", profileID, banned)
-		}
+	if err := ForbiddenIdentity(u.Username); err != nil {
+		return fmt.Errorf("playtestprofiles: template %q must not use prod identity: %w", profileID, err)
+	}
+	if err := ForbiddenIdentity(u.Character.Name); err != nil {
+		return fmt.Errorf("playtestprofiles: template %q must not use prod identity: %w", profileID, err)
 	}
 	return nil
-}
-
-// forbiddenTemplateIdentities are known production account/character names
-// used as design references; keep this list small and explicit.
-var forbiddenTemplateIdentities = []string{
-	"Meirok",
 }
