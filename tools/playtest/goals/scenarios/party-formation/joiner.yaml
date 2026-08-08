@@ -1,0 +1,25 @@
+# Party-formation joiner — signal ready, then party accept.
+name: party-formation-joiner
+summary: Join a party via party accept after leader invite.
+goals:
+  - id: signal-ready
+    do: >-
+      After spawning, signal 'joiner-ready' on the blackboard so the leader
+      can locate and invite you. Include your character name in the signal
+      data when possible.
+    verify: >-
+      Blackboard signal 'joiner-ready' was written successfully.
+  - id: accept-invite
+    do: >-
+      Wait until the blackboard shows 'leader-invited'. Then run
+      'party accept' to join the party. Signal 'joiner-accepted' on the
+      blackboard.
+    verify: >-
+      The system says you joined the party. No error. 'party list' shows
+      2 members including the leader.
+
+ephemeral:
+  profile: fresh
+  start_room: 462
+  budgets:
+    wall_clock: 15m

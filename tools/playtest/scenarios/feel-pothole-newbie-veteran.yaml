@@ -1,56 +1,26 @@
+# 0.3d shared-env concurrency + UX coverage for Pothole Coulee. Newbie uses
+# creation_flow; veteran uses a seeded mid profile at the Awakening Pool.
+
 name: feel-pothole-newbie-veteran
 mode: parallel
 summary: >-
-  Two feel-testers exercise the new Pothole Coulee newbie experience at once: a
+  Two feel-testers exercise the Pothole Coulee newbie experience at once: a
   brand-new MUD player judging onboarding clarity, and a completionist veteran
   who methodically works the spokes, repeatables, and the hike-out corridor.
   Concurrency + UX coverage; no interaction expected between them.
+on_actor_stop: continue
+budgets:
+  wall_clock: 45m
 requires:
-  # DOGMud: no permadeath (defeat -> respawn). max_connections = Network.MaxAIConnections (20).
   max_connections: 20
 roster:
   - id: newbie
-    role: feel-tester
-    target: local-fresh
-    onboarding: auto
-    goals:
-      - id: onboarding-clarity
-        do: >-
-          Play as someone who has NEVER played a MUD and has no idea what the
-          commands are. Create your character, then in the world figure out what
-          to do using ONLY what the game tells you. Do the Awakening rite at the
-          pool (Pothole Coulee), follow whatever guidance appears, attempt the
-          early hub quests (e.g. Find Your Footing), and venture into ONE spoke
-          of your choosing. At every step ask: did the game tell me what to do
-          next? Were the commands I needed discoverable (hints, NPC text, room
-          descriptions)? What confused me, felt ambiguous, or went unexplained?
-        verify: >-
-          Completed the Awakening rite (received a mutation / quest 30 reached
-          its end) and reached at least one spoke without a soft-lock. Produced a
-          clear onboarding-UX findings list distinguishing what was clear from
-          what was confusing, with the specific room/NPC/command for each.
+    personality: feel-tester
+    goals: goals/scenarios/feel-pothole-newbie-veteran/newbie.yaml
   - id: veteran
-    role: feel-tester
-    target: local-fresh
-    onboarding: auto
-    goals:
-      - id: completionist-sweep
-        do: >-
-          Play as an experienced MUD veteran who wants to do EVERYTHING and do it
-          right. Move efficiently: get through the rite, then methodically work
-          multiple spokes' questlines, complete or attempt several quests, try at
-          least one repeatable "practice" quest (offered by a spoke's capstone
-          trainer after you finish that spoke), and locate + walk the hike-out
-          corridor west out of the coulee toward Ironwind Steppe. Probe like a
-          completionist: read room nouns (look <noun>), test commands, check
-          shops, and try to find dead ends, undiscoverable content, or anything
-          broken.
-        verify: >-
-          Visited multiple spokes, completed/attempted several quests, found and
-          entered the hike-out corridor (reached the Coulee Rim or Ironwind), and
-          tried a repeatable quest. Produced a findings list covering completionist
-          concerns (discoverability gaps, dead ends, balance feel) plus any bugs.
-          No crashes/disconnects.
+    personality: feel-tester
+    goals: goals/scenarios/feel-pothole-newbie-veteran/veteran.yaml
+
 group_goals:
   - id: concurrency
     do: Both testers play simultaneously for the session.

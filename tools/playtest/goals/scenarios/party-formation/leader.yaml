@@ -1,0 +1,28 @@
+# Party-formation leader — invite after joiner-ready blackboard signal.
+name: party-formation-leader
+summary: Form a party as leader via party invite / party list / party say.
+goals:
+  - id: invite-joiner
+    do: >-
+      Move to the starting room if needed. Wait until the blackboard signals
+      'joiner-ready'. Then run 'party invite <joiner-name>' (use the joiner's
+      actual character name from the ready JSON / blackboard). Signal
+      'leader-invited' on the blackboard.
+    verify: >-
+      The system confirms the invite. No error message. Party list shows at
+      minimum yourself.
+  - id: confirm-party
+    do: >-
+      After blackboard shows 'joiner-accepted', run 'party list' to confirm
+      two members. Send a party chat: 'party say Greetings from the leader'.
+    verify: >-
+      'party list' shows 2 members including the joiner. The chat message
+      does not produce an error.
+
+ephemeral:
+  profile: early
+  start_room: 462
+  overlays:
+    set_gold: 200
+  budgets:
+    wall_clock: 15m

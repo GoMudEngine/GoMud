@@ -1,0 +1,29 @@
+# Pothole Coulee — completionist veteran feel (seeded mid kit).
+name: feel-pothole-veteran
+summary: Experienced player sweeps spokes, repeatables, and hike-out.
+goals:
+  - id: completionist-sweep
+    do: >-
+      Play as an experienced MUD veteran who wants to do EVERYTHING and do it
+      right. Move efficiently: get through the rite, then methodically work
+      multiple spokes' questlines, complete or attempt several quests, try at
+      least one repeatable "practice" quest (offered by a spoke's capstone
+      trainer after you finish that spoke), and locate + walk the hike-out
+      corridor west out of the coulee toward Ironwind Steppe. Probe like a
+      completionist: read room nouns (look <noun>), test commands, check
+      shops, and try to find dead ends, undiscoverable content, or anything
+      broken.
+    verify: >-
+      Visited multiple spokes, completed/attempted several quests, found and
+      entered the hike-out corridor (reached the Coulee Rim or Ironwind), and
+      tried a repeatable quest. Produced a findings list covering completionist
+      concerns (discoverability gaps, dead ends, balance feel) plus any bugs.
+      No crashes/disconnects.
+
+ephemeral:
+  profile: mid
+  start_room: 5200
+  overlays:
+    set_gold: 300
+  budgets:
+    wall_clock: 30m

@@ -4,54 +4,27 @@
 #   Decline: party decline
 #   List:   party list
 #   Chat:   party say <message>
+#
+# 0.3d: shared ephemeral env via `playtestrun scenario`. Per-actor goals +
+# loadouts live under goals/scenarios/party-formation/.
 
 name: party-formation
 mode: party
-summary: Two testers form a DOGMud party via 'party invite' / 'party accept' and verify shared membership via GMCP + party list.
+summary: >-
+  Two testers form a DOGMud party via 'party invite' / 'party accept' and
+  verify shared membership via GMCP + party list.
+on_actor_stop: continue
+budgets:
+  wall_clock: 45m
 requires:
-  # DOGMud: no permadeath; defeat -> respawn.
   max_connections: 20
 roster:
   - id: leader
-    role: feature-tester
-    target: local
-    onboarding: auto
-    goals:
-      - id: invite-joiner
-        do: >-
-          Move to the starting room (Sanctum Basin central square or wherever you
-          spawned). Wait until the blackboard signals 'joiner-ready'. Then run
-          'party invite joiner' (use the joiner's actual character name) to send
-          the party invitation. Signal 'leader-invited' on the blackboard.
-        verify: >-
-          The system confirms 'You invited <joiner-name> to your party.'
-          No error message. Party list shows at minimum yourself.
-      - id: confirm-party
-        do: >-
-          After blackboard shows 'joiner-accepted', run 'party list' to confirm
-          two members. Send a party chat: 'party say Greetings from the leader'.
-        verify: >-
-          'party list' shows 2 members including the joiner. The chat message
-          does not produce an error.
+    personality: feature-tester
+    goals: goals/scenarios/party-formation/leader.yaml
   - id: joiner
-    role: feature-tester
-    target: local
-    onboarding: auto
-    goals:
-      - id: signal-ready
-        do: >-
-          After spawning, signal 'joiner-ready' on the blackboard so the leader
-          can locate and invite you.
-        verify: >-
-          Blackboard signal 'joiner-ready' was emitted successfully.
-      - id: accept-invite
-        do: >-
-          Wait until the blackboard shows 'leader-invited'. Then run
-          'party accept' to join the party. Signal 'joiner-accepted' on the
-          blackboard.
-        verify: >-
-          The system says 'You joined the party!' No error. 'party list' shows
-          2 members including the leader.
+    personality: feel-tester
+    goals: goals/scenarios/party-formation/joiner.yaml
 
 group_goals:
   - id: party-formed
