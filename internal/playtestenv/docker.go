@@ -143,12 +143,20 @@ func dockerContextEndpoint(ctx context.Context, runner Runner, candidate string,
 }
 
 // validateLocalDockerEndpoint accepts only npipe:// on Windows and unix://
-// on every other platform, rejecting tcp://, ssh://, empty, and
-// platform-mismatched endpoints.
+// on Linux, rejecting tcp://, ssh://, empty, and platform-mismatched
+// endpoints. Approved support is explicitly Windows and Linux only: there
+// is no default/fallback local transport for any other GOOS (darwin,
+// freebsd, etc.), so an unsupported platform is rejected outright even when
+// the endpoint would otherwise look like a legitimate local socket.
 func validateLocalDockerEndpoint(endpoint, goos string) error {
-	wantPrefix := "unix://"
-	if goos == "windows" {
+	var wantPrefix string
+	switch goos {
+	case "windows":
 		wantPrefix = "npipe://"
+	case "linux":
+		wantPrefix = "unix://"
+	default:
+		return fmt.Errorf("%w: GOOS %q is not a supported platform (only windows and linux are supported)", ErrDockerContextNotLocal, goos)
 	}
 	if endpoint != "" && strings.HasPrefix(endpoint, wantPrefix) {
 		return nil

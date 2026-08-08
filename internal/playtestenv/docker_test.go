@@ -229,6 +229,36 @@ func TestDockerPreflightRejectsTCPSSHAndMalformedEndpoints(t *testing.T) {
 	}
 }
 
+// TestDockerPreflightRejectsUnsupportedPlatforms proves that a platform
+// outside the explicitly approved Windows/Linux support matrix is rejected
+// outright - even when the endpoint would otherwise look like a legitimate
+// local unix:// socket. Approved support is Windows and Linux only; there is
+// no default/fallback local transport for any other GOOS.
+func TestDockerPreflightRejectsUnsupportedPlatforms(t *testing.T) {
+	cases := []struct {
+		name string
+		goos string
+	}{
+		{"darwin with unix socket endpoint", "darwin"},
+		{"freebsd with unix socket endpoint", "freebsd"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			fr := newFakeDockerRunner()
+			fr.script("context", "show").returns("ctx\n", "", nil)
+			fr.script("--context", "ctx", "context", "inspect", "ctx", "--format", "{{json .Endpoints.docker.Host}}").
+				returns(`"unix:///var/run/docker.sock"`+"\n", "", nil)
+
+			_, err := resolveLocalDockerContext(context.Background(), fr, nil, tc.goos)
+
+			require.Error(t, err)
+			require.ErrorIs(t, err, ErrDockerContextNotLocal)
+			require.Len(t, fr.calls, 2, "must reject before any compose/docker version command")
+		})
+	}
+}
+
 // TestDockerPreflightComposeVersionFloor proves Compose >= 2.20.0 is
 // required, that a leading "v" is accepted, and that anything below the
 // floor is rejected.
