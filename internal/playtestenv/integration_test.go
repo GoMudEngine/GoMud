@@ -14,6 +14,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -568,7 +569,7 @@ func readCredsFile(t *testing.T, path string) integrationCredsFile {
 func aiLogin(t *testing.T, ep *Endpoint, username, password string) string {
 	t.Helper()
 	require.NotNil(t, ep)
-	addr := fmt.Sprintf("%s:%d", ep.Host, ep.Port)
+	addr := net.JoinHostPort(ep.Host, strconv.Itoa(ep.Port))
 	conn, err := net.DialTimeout("tcp", addr, 10*time.Second)
 	require.NoError(t, err)
 	defer conn.Close()
