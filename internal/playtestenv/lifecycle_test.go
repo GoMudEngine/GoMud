@@ -561,6 +561,123 @@ func TestStartBuildFailureCategory(t *testing.T) {
 	require.NotNil(t, res.Artifacts)
 }
 
+func TestStartFailurePersistsInspectEvidenceBeforeCleanup(t *testing.T) {
+	checkout := t.TempDir()
+	canonical, err := canonicalizeCheckoutPath(checkout)
+	require.NoError(t, err)
+	writeMinimalCheckout(t, checkout, `const VERSION = "1.2.3"`)
+
+	runner := newLifecycleRunner(canonical)
+	scriptGitValidateAndBaseline(runner, canonical)
+	dc := dockerContext{name: "desktop-linux", env: []string{"PATH=/usr/bin"}}
+	containerID := "containerevidence01"
+	// Keep the container Running so readiness can classify the log marker
+	// (Error creating server) rather than short-circuiting as container_exited.
+	inspectPayload := inspectJSON(true, "127.0.0.1", "54323")
+
+	runner.on(" compose ", func(ctx context.Context, spec CommandSpec) error {
+		joined := strings.Join(spec.Args, " ")
+		switch {
+		case strings.Contains(joined, " build ") && strings.Contains(joined, " server"):
+			return nil
+		case strings.Contains(joined, " up ") && strings.Contains(joined, "--no-build"):
+			return nil
+		case strings.Contains(joined, " ps ") && strings.Contains(joined, "server"):
+			writeStdout(spec, containerID+"\n")
+			return nil
+		case strings.Contains(joined, " down "):
+			return nil
+		default:
+			return fmt.Errorf("unexpected compose: %s", joined)
+		}
+	})
+	runner.on(" inspect ", func(ctx context.Context, spec CommandSpec) error {
+		writeStdout(spec, inspectPayload+"\n")
+		return nil
+	})
+	runner.on(" logs ", func(ctx context.Context, spec CommandSpec) error {
+		writeStdout(spec, "Error creating server\n")
+		return nil
+	})
+	runner.on(" image rm ", func(ctx context.Context, spec CommandSpec) error {
+		return nil
+	})
+
+	fixedNow := time.Date(2026, 8, 8, 20, 0, 0, 0, time.UTC)
+	clock := newReadinessFakeClock(fixedNow)
+	s := newSupervisor(supervisorDeps{
+		runner: runner,
+		now:    clock.Now,
+		genID:  func() (string, error) { return "run-inspect", nil },
+		dial:   (&fakeDialer{}).DialContext,
+		after:  clock.After,
+		resolveDocker: func(ctx context.Context, _ Runner) (dockerContext, error) {
+			return dc, nil
+		},
+	})
+
+	res, err := s.Start(context.Background(), StartOptions{Checkout: checkout, ReadinessTimeout: time.Second})
+	require.Error(t, err)
+	require.Equal(t, FailureListenerCreation, res.Failure.Category)
+	require.NotNil(t, res.Artifacts)
+	require.NotEmpty(t, res.Artifacts.Inspect)
+	require.FileExists(t, res.Artifacts.Inspect)
+	body, err := os.ReadFile(res.Artifacts.Inspect)
+	require.NoError(t, err)
+	require.Contains(t, string(body), `"Running":true`)
+	require.Contains(t, string(body), "55555/tcp")
+	require.FileExists(t, res.Artifacts.ServerLog)
+	reportBody, err := os.ReadFile(res.Report)
+	require.NoError(t, err)
+	require.Contains(t, string(reportBody), res.Artifacts.Inspect)
+}
+
+func TestStartIncompleteCleanupPreservesComposeAndControl(t *testing.T) {
+	checkout := t.TempDir()
+	canonical, err := canonicalizeCheckoutPath(checkout)
+	require.NoError(t, err)
+	writeMinimalCheckout(t, checkout, `const VERSION = "1.2.3"`)
+
+	runner := newLifecycleRunner(canonical)
+	scriptGitValidateAndBaseline(runner, canonical)
+	dc := dockerContext{name: "desktop-linux", env: []string{"PATH=/usr/bin"}}
+
+	runner.on(" compose ", func(ctx context.Context, spec CommandSpec) error {
+		joined := strings.Join(spec.Args, " ")
+		switch {
+		case strings.Contains(joined, " build ") && strings.Contains(joined, " server"):
+			return &ExitError{Name: "docker", Args: spec.Args, ExitCode: 1}
+		case strings.Contains(joined, " down "):
+			return errors.New("compose down refused")
+		default:
+			return fmt.Errorf("unexpected compose: %s", joined)
+		}
+	})
+	runner.on(" image rm ", func(ctx context.Context, spec CommandSpec) error {
+		return errors.New("image still in use")
+	})
+
+	s := newSupervisor(supervisorDeps{
+		runner: runner,
+		now:    func() time.Time { return time.Date(2026, 8, 8, 21, 0, 0, 0, time.UTC) },
+		genID:  func() (string, error) { return "run-leftover", nil },
+		dial:   (&fakeDialer{}).DialContext,
+		after:  time.After,
+		resolveDocker: func(ctx context.Context, _ Runner) (dockerContext, error) {
+			return dc, nil
+		},
+	})
+
+	res, err := s.Start(context.Background(), StartOptions{Checkout: checkout})
+	require.Error(t, err)
+	require.Equal(t, FailureBuild, res.Failure.Category)
+	require.NotNil(t, res.Cleanup)
+	require.False(t, res.Cleanup.Complete)
+	require.FileExists(t, res.Artifacts.Compose, "compose.resolved.yml must remain when leftovers exist")
+	require.DirExists(t, filepath.Join(filepath.Dir(res.Artifacts.Compose), "control"), "control/ must remain when leftovers exist")
+	require.FileExists(t, res.Artifacts.Config)
+}
+
 func TestStartBuildOutputTeesToDiagnosticsAndBuildLog(t *testing.T) {
 	checkout := t.TempDir()
 	canonical, err := canonicalizeCheckoutPath(checkout)

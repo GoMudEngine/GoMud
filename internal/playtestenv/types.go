@@ -90,6 +90,7 @@ type ArtifactPaths struct {
 	Manifest  string `json:"manifest"`
 	BuildLog  string `json:"build_log"`
 	ServerLog string `json:"server_log"`
+	Inspect   string `json:"inspect,omitempty"`
 	Compose   string `json:"compose"`
 	Config    string `json:"config"`
 	Report    string `json:"report,omitempty"`

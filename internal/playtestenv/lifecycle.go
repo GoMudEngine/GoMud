@@ -25,6 +25,7 @@ const (
 	serviceName     = "server"
 	buildLogName    = "build.log"
 	serverLogName   = "server.log"
+	inspectLogName  = "inspect.json"
 	controlDirName  = "control"
 	imageNamePrefix = "dogmud-playtest:"
 )
@@ -168,6 +169,7 @@ func (s *Supervisor) Start(ctx context.Context, opts StartOptions) (Result, erro
 		Manifest:  filepath.Join(runDir, manifestFileName),
 		BuildLog:  filepath.Join(runDir, buildLogName),
 		ServerLog: filepath.Join(runDir, serverLogName),
+		Inspect:   filepath.Join(runDir, inspectLogName),
 		Compose:   filepath.Join(runDir, composeResolvedFileName),
 		Config:    filepath.Join(controlDir, configOverridesFileName),
 	}
@@ -390,8 +392,12 @@ func (s *Supervisor) cleanupFailedRun(
 			result.Complete = false
 			result.Summary = "log capture failed: " + err.Error()
 		}
-		// Best-effort inspect; ignore errors.
-		_, _ = inspectContainer(ctx, s.deps.runner, dc, containerID)
+		if err := captureInspectEvidence(ctx, s.deps.runner, dc, containerID, m.Artifacts.Inspect); err != nil {
+			result.Complete = false
+			if result.Summary == "resources removed" {
+				result.Summary = "inspect capture failed: " + err.Error()
+			}
+		}
 	}
 
 	if composePath != "" {
@@ -421,10 +427,14 @@ func (s *Supervisor) cleanupFailedRun(
 		}
 	}
 
-	// Remove control/ and compose.resolved.yml after evidence capture.
-	_ = os.RemoveAll(filepath.Join(runDir, controlDirName))
-	if m.Artifacts.Compose != "" {
-		_ = os.Remove(m.Artifacts.Compose)
+	// Remove control/ and compose.resolved.yml only after complete resource
+	// cleanup so a later stop can resume using the same Compose file when
+	// leftovers remain.
+	if result.Complete {
+		_ = os.RemoveAll(filepath.Join(runDir, controlDirName))
+		if m.Artifacts.Compose != "" {
+			_ = os.Remove(m.Artifacts.Compose)
+		}
 	}
 
 	if result.Complete && result.Summary == "resources removed" {
@@ -443,6 +453,19 @@ func captureServerLogs(ctx context.Context, runner Runner, dc dockerContext, con
 	}
 	defer f.Close()
 	spec := dockerCommand(dc, []string{"logs", containerID}, "", f, f)
+	return runner.Run(ctx, spec)
+}
+
+func captureInspectEvidence(ctx context.Context, runner Runner, dc dockerContext, containerID, path string) error {
+	if path == "" || containerID == "" {
+		return nil
+	}
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	spec := dockerCommand(dc, []string{"inspect", containerID}, "", f, io.Discard)
 	return runner.Run(ctx, spec)
 }
 

@@ -66,6 +66,7 @@ func writeFailureReport(checkout string, m *Manifest, cleanup *CleanupResult, no
 	writeArtifactLine(&b, "Manifest", m.Artifacts.Manifest)
 	writeArtifactLine(&b, "Build log", m.Artifacts.BuildLog)
 	writeArtifactLine(&b, "Server log", m.Artifacts.ServerLog)
+	writeArtifactLine(&b, "Inspect", m.Artifacts.Inspect)
 	writeArtifactLine(&b, "Compose", m.Artifacts.Compose)
 	writeArtifactLine(&b, "Config", m.Artifacts.Config)
 
