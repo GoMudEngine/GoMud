@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"os"
@@ -186,12 +187,16 @@ func (s *Supervisor) Start(ctx context.Context, opts StartOptions) (Result, erro
 	}
 	s.event("local Docker preflight")
 
-	composePath, configPath, err := materializeRunFiles(runDir, controlDir, checkout.Version)
+	composePath, configPath, _, err := materializeRunFiles(runDir, controlDir, checkout.Version, opts.Profiles)
 	if err != nil {
 		return s.failStart(ctx, &res, m, runDir, "", dc, composeRunVars{}, "", StateValidating, FailureManifest, err, true)
 	}
 	m.Artifacts.Compose = composePath
 	m.Artifacts.Config = configPath
+	if len(opts.Profiles) > 0 {
+		// Host path the container will write after successful materialization.
+		m.Artifacts.Creds = filepath.Join(controlDir, credsFileName)
+	}
 	if err := writeManifest(m.Artifacts.Manifest, m); err != nil {
 		return s.failStart(ctx, &res, m, runDir, "", dc, composeRunVars{}, "", StateValidating, FailureManifest, err, true)
 	}
@@ -267,6 +272,12 @@ func (s *Supervisor) Start(ctx context.Context, opts StartOptions) (Result, erro
 	}
 
 	m.Endpoint = obs.Endpoint
+	if m.Artifacts.Creds != "" {
+		if _, err := os.Stat(m.Artifacts.Creds); err != nil {
+			return s.failStart(ctx, &res, m, runDir, containerID, dc, vars, composePath, StateStarting, FailureManifest,
+				fmt.Errorf("playtestenv: creds artifact missing after ready: %w", err), true)
+		}
+	}
 	if err := transitionManifest(m, StateReady, s.deps.now()); err != nil {
 		return s.failStart(ctx, &res, m, runDir, containerID, dc, vars, composePath, StateStarting, FailureManifest, err, true)
 	}

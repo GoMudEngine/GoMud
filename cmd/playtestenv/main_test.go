@@ -546,6 +546,48 @@ func TestRunJSONStdoutExactlyOneObjectNoSubprocessText(t *testing.T) {
 	}
 }
 
+func TestRunStartProfileFlags(t *testing.T) {
+	checkout := t.TempDir()
+	fake := &fakeSupervisor{
+		startRes: playtestenv.Result{
+			Operation: "start",
+			RunID:     "run-profiles",
+			State:     playtestenv.StateReady,
+		},
+	}
+	var stdout, stderr bytes.Buffer
+	code := run(context.Background(), []string{
+		"start",
+		"--checkout", checkout,
+		"--profile", "fresh:5200",
+		"--profile", "veteran:462",
+	}, &stdout, &stderr, fake)
+	if code != 0 {
+		t.Fatalf("exit=%d stderr=%q", code, stderr.String())
+	}
+	if len(fake.startOpts.Profiles) != 2 {
+		t.Fatalf("profiles=%v want 2", fake.startOpts.Profiles)
+	}
+	if fake.startOpts.Profiles[0].Profile != "fresh" || fake.startOpts.Profiles[0].StartRoom != 5200 {
+		t.Fatalf("profile[0]=%+v", fake.startOpts.Profiles[0])
+	}
+	if fake.startOpts.Profiles[1].Profile != "veteran" || fake.startOpts.Profiles[1].StartRoom != 462 {
+		t.Fatalf("profile[1]=%+v", fake.startOpts.Profiles[1])
+	}
+}
+
+func TestRunStartProfileFlagInvalid(t *testing.T) {
+	fake := &fakeSupervisor{}
+	var stdout, stderr bytes.Buffer
+	code := run(context.Background(), []string{"start", "--profile", "fresh"}, &stdout, &stderr, fake)
+	if code != exitUsage {
+		t.Fatalf("exit=%d want %d stderr=%q", code, exitUsage, stderr.String())
+	}
+	if fake.startCalled {
+		t.Fatal("Start must not be called for invalid --profile")
+	}
+}
+
 func assertSingleJSONObject(t *testing.T, raw []byte) {
 	t.Helper()
 	dec := json.NewDecoder(bytes.NewReader(bytes.TrimSpace(raw)))

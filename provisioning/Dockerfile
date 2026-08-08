@@ -34,5 +34,6 @@ WORKDIR /app
 EXPOSE ${PORT}
 COPY --from=builder /src/${BIN} .
 COPY --from=builder /src/_datafiles ./_datafiles
+COPY --from=builder /src/tools/playtest/profiles /app/playtest/profiles
 
 ENTRYPOINT ["/bin/sh", "-c", "./${BIN}"]
