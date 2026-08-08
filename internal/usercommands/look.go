@@ -611,8 +611,12 @@ func lookRoom(user *users.UserRecord, roomId int, secretLook bool) {
 	textOut, _ = templates.Process("descriptions/room", details, user.UserId)
 	user.SendText(messaging.CategoryRoomDescription, textOut)
 
-	// Append discovered hidden noun descriptions
-	if user != nil && room.HiddenNouns != nil {
+	// Append discovered hidden noun descriptions.
+	// No user nil check: command dispatch always supplies a live user, and
+	// user is already dereferenced above (mapper config, template calls).
+	// The old check here was unreachable and made the earlier dereferences
+	// look like bugs to static analysis.
+	if room.HiddenNouns != nil {
 		hiddenKeys := make([]string, 0, len(room.HiddenNouns))
 		for k := range room.HiddenNouns {
 			hiddenKeys = append(hiddenKeys, k)

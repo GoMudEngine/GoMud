@@ -39,15 +39,17 @@ func Give(rest string, user *users.UserRecord, room *rooms.Room, flags events.Ev
 	var giveItem items.Item = items.Item{}
 	var giveGoldAmount int = 0
 
-	if len(giveWhat) > 4 && giveWhat[len(giveWhat)-4:] == "gold" {
+	if amount, isGold, ok := parseGoldPhrase(giveWhat); isGold {
 
-		g, _ := strconv.ParseInt(giveWhat[0:len(giveWhat)-5], 10, 32)
-		giveGoldAmount = int(g)
-
-		if giveGoldAmount < 0 {
-			user.SendText(messaging.CategorySystem, "You can't give a negative amount of gold.")
+		if !ok {
+			// Either unparseable or negative. The old code accepted a
+			// negative here and rejected it with its own message; keep a
+			// single message now that one parser owns both cases.
+			user.SendText(messaging.CategorySystem, "That isn't an amount of gold you can give.")
 			return true, nil
 		}
+
+		giveGoldAmount = amount
 
 		if giveGoldAmount > user.Character.Gold {
 			user.SendText(messaging.CategorySystem, "You don't have that much gold to give.")
@@ -336,13 +338,33 @@ func splitGiveArgs(args []string, user *users.UserRecord, room *rooms.Room) (giv
 	return strings.Join(args[:len(args)-1], " "), args[len(args)-1]
 }
 
+// parseGoldPhrase is the single gold parser for both resolution and execution.
+// It reports whether `what` is a gold phrase ("50 gold", "50gold") and, if so,
+// the amount.
+//
+// Resolution and execution used to slice the amount differently (len-4 here
+// versus len-5 in Give), so the compact form resolved as 50 and transferred 5.
+// Both callers now go through this function; do not reintroduce a second
+// parse. `isGold` is true for any phrase ending in "gold" even when the amount
+// is unparseable or negative, so callers can reject it with a gold-specific
+// message instead of falling through to item lookup.
+func parseGoldPhrase(what string) (amount int, isGold bool, ok bool) {
+	if len(what) <= 4 || what[len(what)-4:] != "gold" {
+		return 0, false, false
+	}
+	amt, err := strconv.ParseInt(strings.TrimSpace(what[:len(what)-4]), 10, 32)
+	if err != nil || amt < 0 {
+		return 0, true, false
+	}
+	return int(amt), true, true
+}
+
 // giveObjectResolves reports whether the object phrase names something the
 // player can give: a valid (non-negative) gold amount, or an item in their
-// backpack. Mirrors the gold-detection used in Give.
+// backpack.
 func giveObjectResolves(what string, user *users.UserRecord) bool {
-	if len(what) > 4 && what[len(what)-4:] == "gold" {
-		amt, err := strconv.ParseInt(strings.TrimSpace(what[:len(what)-4]), 10, 32)
-		return err == nil && amt >= 0
+	if _, isGold, ok := parseGoldPhrase(what); isGold {
+		return ok
 	}
 	_, found := user.Character.FindInBackpack(what)
 	return found

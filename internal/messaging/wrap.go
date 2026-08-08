@@ -20,14 +20,18 @@ var ansiTagPattern = regexp.MustCompile(`<ansi[^>]*>|</ansi>`)
 // but the server stays up.
 //
 // A maxWidth of 0 (unset) returns the input unchanged.
-func WrapAnsi(text string, maxWidth int) string {
+func WrapAnsi(text string, maxWidth int) (wrapped string) {
 	if maxWidth <= 0 || text == "" {
 		return text
 	}
 	defer func() {
 		// Last-resort: if anything in the parser panics, the caller
-		// gets the original text back.
-		_ = recover()
+		// gets the original text back. This needs a NAMED result and an
+		// explicit assignment: a bare recover() on an unnamed return
+		// silently handed the caller "" and erased the message.
+		if r := recover(); r != nil {
+			wrapped = text
+		}
 	}()
 
 	// Walk the text token-by-token, tracking display column and the

@@ -13,6 +13,12 @@ import (
 func (c *Character) GetDefaultDiceRoll() (attacks int, dCount int, dSides int, bonus int, buffOnCrit []int) {
 	// default racial
 	speciesInfo := species.GetSpecies(c.SpeciesId)
+	if speciesInfo == nil {
+		// GetSpecies is a bare map lookup and returns nil for an unknown or
+		// unmigrated SpeciesId. Degrade to a bare profile (stat-derived dice
+		// only) rather than panicking mid-combat.
+		speciesInfo = &species.Species{}
+	}
 
 	attacks = speciesInfo.Damage.Attacks
 	dCount = speciesInfo.Damage.DiceCount
@@ -39,6 +45,11 @@ func (c *Character) GetDefaultDiceRoll() (attacks int, dCount int, dSides int, b
 // This provides meaningful progression for unarmed fighters.
 func (c *Character) GetDefaultDistributionDamage() (attacks int, baseDamage float64, variance float64, buffOnCrit []int) {
 	speciesInfo := species.GetSpecies(c.SpeciesId)
+	if speciesInfo == nil {
+		// See GetDefaultDiceRoll: nil for an unknown SpeciesId. The attacks
+		// clamp below turns the zero value into a valid single attack.
+		speciesInfo = &species.Species{}
+	}
 
 	attacks = speciesInfo.Damage.Attacks
 	if attacks < 1 {

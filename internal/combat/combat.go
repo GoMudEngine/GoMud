@@ -303,8 +303,14 @@ func GetWaitMessages(stepType items.Intensity, sourceChar *characters.Character,
 	// Stage 9.4: Track attack for stance calculation
 	sourceChar.IncrementAttackCount()
 
+	// GetSpecies returns nil for an unknown SpeciesId; default before use.
+	unarmedName := "fists"
+	if raceInfo := species.GetSpecies(sourceChar.SpeciesId); raceInfo != nil {
+		unarmedName = raceInfo.UnarmedName
+	}
+
 	tokenReplacements := map[items.TokenName]string{
-		items.TokenItemName:     species.GetSpecies(sourceChar.SpeciesId).UnarmedName,
+		items.TokenItemName:     unarmedName,
 		items.TokenSource:       sourceChar.Name,
 		items.TokenSourceType:   string(sourceType) + `name`,
 		items.TokenTarget:       targetChar.Name,

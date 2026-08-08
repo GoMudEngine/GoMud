@@ -6,7 +6,27 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/mobs"
 	"github.com/GoMudEngine/GoMud/internal/rooms"
+	"github.com/GoMudEngine/GoMud/internal/util"
 )
+
+// pickWanderExit chooses the exit a wandering mob should take.
+//
+// Finding 11: `wander loot` and `wander players` built a filtered candidate
+// list and then threw it away, calling room.GetRandomExit() unconditionally,
+// so both modes wandered at random and the filter did nothing at all.
+//
+// Filtered candidates win when present. An empty list means no adjacent room
+// qualified, which is the normal case, so fall back to an ordinary random
+// exit rather than standing still.
+func pickWanderExit(exitOptions []string, room *rooms.Room) (string, int) {
+	if len(exitOptions) > 0 {
+		picked := exitOptions[util.Rand(len(exitOptions))]
+		if ex, ok := room.Exits[picked]; ok {
+			return picked, ex.RoomId
+		}
+	}
+	return room.GetRandomExit()
+}
 
 func Wander(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 
@@ -70,7 +90,7 @@ func Wander(rest string, mob *mobs.Mob, room *rooms.Room) (bool, error) {
 		}
 	}
 
-	if exitName, roomId := room.GetRandomExit(); exitName != `` {
+	if exitName, roomId := pickWanderExit(exitOptions, room); exitName != `` {
 		if r := rooms.LoadRoom(roomId); r != nil {
 			if !restrictZone || r.Zone == mob.Character.Zone {
 

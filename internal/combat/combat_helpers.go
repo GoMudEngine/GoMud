@@ -256,10 +256,17 @@ func calcDualWieldPenalty(sourceChar *characters.Character, weapIdx, totalWeaps 
 // Note: swing count is now computed separately by calcSwingCount, not here.
 func buildWeaponSetup(sourceChar *characters.Character, targetChar *characters.Character, weapon items.Item, idx, total int) weaponSetup {
 	bal := configs.GetBalanceConfig()
+	// GetSpecies is a bare map lookup and returns nil for an unknown
+	// SpeciesId, so the name must be defaulted before any dereference.
+	// Matches the fallback used further down in this file.
 	raceInfo := species.GetSpecies(sourceChar.SpeciesId)
+	unarmedName := "fists"
+	if raceInfo != nil {
+		unarmedName = raceInfo.UnarmedName
+	}
 	ws := weaponSetup{
 		weapon:        weapon,
-		weaponName:    raceInfo.UnarmedName,
+		weaponName:    unarmedName,
 		weaponSubType: items.Unarmed,
 		weaponSpeed:   float64(bal.UnarmedSpeedMultiplier),
 		isOffhand:     idx > 0,
