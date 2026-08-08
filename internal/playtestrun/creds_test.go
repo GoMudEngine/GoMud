@@ -62,3 +62,42 @@ func TestSelectCredsPlayer_MissingFile(t *testing.T) {
 	_, _, err := SelectCredsPlayer(filepath.Join(t.TempDir(), "nope.json"), "fresh")
 	require.Error(t, err)
 }
+
+func TestSelectCredsByActorID_Matches(t *testing.T) {
+	path := writeCreds(t, playtestprofiles.CredsFile{
+		RunID: "r1",
+		Players: []playtestprofiles.PlayerCreds{
+			{Profile: "early", ActorID: "leader", Username: "pt_early_aaa", Password: "secret1", UserID: 1, RoomID: 10},
+			{Profile: "early", ActorID: "joiner", Username: "pt_early_bbb", Password: "secret2", UserID: 2, RoomID: 20},
+		},
+	})
+	user, pass, err := SelectCredsByActorID(path, "joiner")
+	require.NoError(t, err)
+	require.Equal(t, "pt_early_bbb", user)
+	require.Equal(t, "secret2", pass)
+}
+
+func TestSelectCredsByActorID_Missing(t *testing.T) {
+	path := writeCreds(t, playtestprofiles.CredsFile{
+		Players: []playtestprofiles.PlayerCreds{
+			{Profile: "early", ActorID: "leader", Username: "u", Password: "s3cret-leader", UserID: 1, RoomID: 1},
+		},
+	})
+	_, _, err := SelectCredsByActorID(path, "joiner")
+	require.Error(t, err)
+	require.NotContains(t, err.Error(), "s3cret-leader")
+}
+
+func TestSelectCredsPlayer_StillAmbiguousWithActorIDs(t *testing.T) {
+	// Profile-only helper remains single-agent: duplicate profiles still error
+	// even when actor_id disambiguates for SelectCredsByActorID.
+	path := writeCreds(t, playtestprofiles.CredsFile{
+		Players: []playtestprofiles.PlayerCreds{
+			{Profile: "early", ActorID: "leader", Username: "u1", Password: "s3cret-one", UserID: 1, RoomID: 1},
+			{Profile: "early", ActorID: "joiner", Username: "u2", Password: "s3cret-two", UserID: 2, RoomID: 2},
+		},
+	})
+	_, _, err := SelectCredsPlayer(path, "early")
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "ambiguous")
+}

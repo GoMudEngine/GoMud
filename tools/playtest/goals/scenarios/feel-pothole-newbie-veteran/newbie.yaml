@@ -1,0 +1,27 @@
+# Pothole Coulee — naive newbie feel (creation flow).
+name: feel-pothole-newbie
+summary: Brand-new player judges onboarding clarity in Pothole Coulee.
+goals:
+  - id: onboarding-clarity
+    do: >-
+      Play as someone who has NEVER played a MUD and has no idea what the
+      commands are. Create your character, then in the world figure out what
+      to do using ONLY what the game tells you. Do the Awakening rite at the
+      pool (Pothole Coulee), follow whatever guidance appears, attempt the
+      early hub quests (e.g. Find Your Footing), and venture into ONE spoke
+      of your choosing. At every step ask: did the game tell me what to do
+      next? Were the commands I needed discoverable (hints, NPC text, room
+      descriptions)? What confused me, felt ambiguous, or went unexplained?
+    verify: >-
+      Completed the Awakening rite (received a mutation / quest 30 reached
+      its end) and reached at least one spoke without a soft-lock. Produced a
+      clear onboarding-UX findings list distinguishing what was clear from
+      what was confusing, with the specific room/NPC/command for each.
+
+ephemeral:
+  creation_flow: true
+  creation_rationale: >
+    Brand-new character required: this actor grades whether the game itself
+    teaches a first-time player without a pre-seeded kit (RoleUser only).
+  budgets:
+    wall_clock: 30m

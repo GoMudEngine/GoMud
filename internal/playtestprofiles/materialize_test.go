@@ -71,6 +71,55 @@ func TestMaterializePersistsAndWritesCreds(t *testing.T) {
 	require.NotEmpty(t, matches)
 }
 
+func TestMaterializeStampsActorIDOnDuplicateProfiles(t *testing.T) {
+	tmp := t.TempDir()
+	dataFiles := filepath.Join(tmp, "world")
+	require.NoError(t, os.MkdirAll(filepath.Join(dataFiles, "users"), 0o755))
+	profilesDir := filepath.Join(tmp, "profiles")
+	require.NoError(t, os.MkdirAll(profilesDir, 0o755))
+	src, err := os.ReadFile(filepath.Join("testdata", "fresh.yaml"))
+	require.NoError(t, err)
+	require.NoError(t, os.WriteFile(filepath.Join(profilesDir, "early.yaml"), src, 0o644))
+
+	prev := configs.GetFilePathsConfig().DataFiles.String()
+	require.NoError(t, configs.AddOverlayOverrides(map[string]any{
+		"FilePaths.DataFiles":        dataFiles,
+		"Validation.PasswordSizeMin": 4,
+		"Validation.PasswordSizeMax": 16,
+		"Validation.NameSizeMin":     1,
+		"Validation.NameSizeMax":     80,
+		"Validation.NameRejectRegex": `^[a-zA-Z0-9_]+$`,
+	}))
+	t.Cleanup(func() {
+		_ = configs.AddOverlayOverrides(map[string]any{"FilePaths.DataFiles": prev})
+	})
+
+	credsPath := filepath.Join(tmp, "control", "creds.json")
+	m := &Manifest{Entries: []ManifestEntry{
+		{Profile: "early", StartRoom: 100, ActorID: "leader"},
+		{Profile: "early", StartRoom: 100, ActorID: "joiner"},
+	}}
+	creds, err := Materialize(m, MaterializeOptions{
+		ProfilesDir:  profilesDir,
+		World:        testWorld(),
+		CredsOutPath: credsPath,
+		RunID:        "scenario-run",
+	})
+	require.NoError(t, err)
+	require.Len(t, creds, 2)
+	require.Equal(t, "leader", creds[0].ActorID)
+	require.Equal(t, "joiner", creds[1].ActorID)
+	require.Equal(t, "early", creds[0].Profile)
+	require.Equal(t, "early", creds[1].Profile)
+
+	raw, err := os.ReadFile(credsPath)
+	require.NoError(t, err)
+	var file CredsFile
+	require.NoError(t, json.Unmarshal(raw, &file))
+	require.Equal(t, "leader", file.Players[0].ActorID)
+	require.Equal(t, "joiner", file.Players[1].ActorID)
+}
+
 func TestMaterializeFromConfigNoopWhenEmpty(t *testing.T) {
 	require.NoError(t, configs.AddOverlayOverrides(map[string]any{
 		"Playtest.ProfilesManifest": "",

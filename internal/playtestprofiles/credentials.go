@@ -38,6 +38,9 @@ func GenerateCredentials(u *users.UserRecord, profileID string) (username, passw
 				continue
 			}
 		}
+		if err := ForbiddenIdentity(candidate); err != nil {
+			continue
+		}
 		username = candidate
 		break
 	}

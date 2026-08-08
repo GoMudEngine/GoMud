@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -49,6 +50,9 @@ func Materialize(m *Manifest, opts MaterializeOptions) ([]PlayerCreds, error) {
 		if err := ApplyOverlays(u, entry.StartRoom, entry.Overlays, world); err != nil {
 			return nil, fmt.Errorf("playtestprofiles: entries[%d]: %w", i, err)
 		}
+		if err := ForbiddenIdentity(u.Character.Name); err != nil {
+			return nil, fmt.Errorf("playtestprofiles: entries[%d]: %w", i, err)
+		}
 		if err := u.Character.Validate(true); err != nil {
 			return nil, fmt.Errorf("playtestprofiles: entries[%d]: character validate: %w", i, err)
 		}
@@ -61,6 +65,7 @@ func Materialize(m *Manifest, opts MaterializeOptions) ([]PlayerCreds, error) {
 		}
 		out = append(out, PlayerCreds{
 			Profile:  entry.Profile,
+			ActorID:  strings.TrimSpace(entry.ActorID),
 			Username: username,
 			Password: password,
 			UserID:   u.UserId,

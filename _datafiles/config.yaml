@@ -1298,7 +1298,7 @@ Network:
   # - AICommandsPerRound -
   #   Maximum commands per game round for AI connections.
   #   Rounds are 4 seconds (configurable via Timing.RoundSeconds).
-  AICommandsPerRound: 2
+  AICommandsPerRound: 3
   # - AfkSeconds -
   #   If this many seconds pass without player input, they are flagged as afk
   #   Set to zero to never mark anyone as AFK

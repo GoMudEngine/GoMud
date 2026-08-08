@@ -47,7 +47,7 @@ func (n *Network) Validate() {
 	}
 
 	if n.AICommandsPerRound < 1 {
-		n.AICommandsPerRound = 2 // default
+		n.AICommandsPerRound = 3 // default
 	}
 
 	if n.HttpPort < 0 {

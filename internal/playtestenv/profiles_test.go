@@ -23,12 +23,13 @@ func TestMaterializeRunFilesWritesProfilesManifestAndOverrides(t *testing.T) {
 		{
 			Profile:   "veteran",
 			StartRoom: 462,
+			ActorID:   "leader",
 			Overlays: ProfileOverlays{
 				GrantSpells: map[string]int{"heal": 1},
 				SetGold:     &gold,
 			},
 		},
-		{Profile: "fresh", StartRoom: 5200},
+		{Profile: "fresh", StartRoom: 5200, ActorID: "joiner"},
 	}
 
 	composePath, configPath, profilesPath, err := materializeRunFiles(runDir, controlDir, version.New(0, 16, 0), profiles)
@@ -51,11 +52,13 @@ func TestMaterializeRunFilesWritesProfilesManifestAndOverrides(t *testing.T) {
 	require.NoError(t, yaml.Unmarshal(manifestBytes, &doc))
 	require.Len(t, doc.Entries, 2)
 	require.Equal(t, "veteran", doc.Entries[0].Profile)
+	require.Equal(t, "leader", doc.Entries[0].ActorID)
 	require.Equal(t, 462, doc.Entries[0].StartRoom)
 	require.Equal(t, 1, doc.Entries[0].Overlays.GrantSpells["heal"])
 	require.NotNil(t, doc.Entries[0].Overlays.SetGold)
 	require.Equal(t, 500, *doc.Entries[0].Overlays.SetGold)
 	require.Equal(t, "fresh", doc.Entries[1].Profile)
+	require.Equal(t, "joiner", doc.Entries[1].ActorID)
 
 	// Must never embed plaintext secrets in control YAML the supervisor writes.
 	require.NotContains(t, strings.ToLower(string(manifestBytes)), "password")

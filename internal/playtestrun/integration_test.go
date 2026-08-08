@@ -52,6 +52,81 @@ ephemeral:
 	})
 }
 
+// TestDockerPlaytestrunScenario exercises playtestrun.RunScenario (two-actor
+// mixed profiles) ready+stop through real Docker. Same opt-in env as
+// TestDockerPlaytestrun.
+func TestDockerPlaytestrunScenario(t *testing.T) {
+	if os.Getenv(integrationEnvPlaytestrun) != "1" && os.Getenv(integrationEnvPlaytestenv) != "1" {
+		t.Skip("set DOGMUD_PLAYTESTRUN_INTEGRATION=1 (or DOGMUD_PLAYTESTENV_INTEGRATION=1)")
+	}
+
+	checkout := repoRoot(t)
+	playtestRoot := filepath.Join(checkout, "tools", "playtest")
+	scenarioPath := filepath.Join(playtestRoot, "scenarios", "party-formation.yaml")
+
+	var stdout bytes.Buffer
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	done := make(chan error, 1)
+	go func() {
+		done <- RunScenario(ctx, ScenarioParams{
+			Checkout:          checkout,
+			ScenarioPath:      scenarioPath,
+			PlaytestRoot:      playtestRoot,
+			WallClockOverride: 25 * time.Minute,
+			Env:               playtestenv.New(),
+			Stdout:            &stdout,
+			StopPollInterval:  500 * time.Millisecond,
+		})
+	}()
+
+	var ready ScenarioReadyPayload
+	require.Eventually(t, func() bool {
+		if stdout.Len() == 0 {
+			return false
+		}
+		return json.Unmarshal(stdout.Bytes(), &ready) == nil && ready.RunID != ""
+	}, 20*time.Minute, 2*time.Second, "waiting for playtestrun scenario ready JSON")
+
+	require.NotNil(t, ready.Endpoint)
+	require.NotEmpty(t, ready.RunID)
+	require.Equal(t, BlackboardDirPath(checkout, ready.RunID), ready.BlackboardDir)
+	require.Equal(t, onActorStopContinue, ready.OnActorStop)
+	require.Len(t, ready.Actors, 2)
+
+	for _, actor := range ready.Actors {
+		require.DirExists(t, actor.BridgeDir)
+		require.Contains(t, actor.BridgeDir, filepath.Join("actors", actor.ID, "bridge"))
+		require.NotNil(t, actor.Creds)
+		require.FileExists(t, *actor.Creds)
+		require.NotEmpty(t, actor.Username)
+		user, _, err := SelectCredsByActorID(*actor.Creds, actor.ID)
+		require.NoError(t, err)
+		require.Equal(t, actor.Username, user)
+	}
+	require.DirExists(t, ready.BlackboardDir)
+
+	sc, err := ReadSidecar(checkout, ready.RunID)
+	require.NoError(t, err)
+	require.Equal(t, StatusReady, sc.Status)
+	require.NotEmpty(t, sc.ScenarioPath)
+	require.Len(t, sc.Actors, 2)
+
+	require.NoError(t, WriteStopSignal(checkout, ready.RunID))
+	select {
+	case err := <-done:
+		require.NoError(t, err)
+	case <-time.After(10 * time.Minute):
+		cancel()
+		t.Fatal("timed out waiting for playtestrun scenario stop after signal")
+	}
+
+	sc, err = ReadSidecar(checkout, ready.RunID)
+	require.NoError(t, err)
+	require.Equal(t, StatusStopped, sc.Status)
+}
+
 func runDockerSession(t *testing.T, checkout, goalsPath string, expectCreds bool) {
 	t.Helper()
 	var stdout bytes.Buffer

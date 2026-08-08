@@ -21,6 +21,7 @@ type Manifest struct {
 type ManifestEntry struct {
 	Profile   string   `yaml:"profile"`
 	StartRoom int      `yaml:"start_room"`
+	ActorID   string   `yaml:"actor_id,omitempty"`
 	Overlays  Overlays `yaml:"overlays,omitempty"`
 }
 
@@ -44,6 +45,7 @@ type CredsFile struct {
 // PlayerCreds is one materialized player's login material.
 type PlayerCreds struct {
 	Profile  string `json:"profile"`
+	ActorID  string `json:"actor_id,omitempty"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 	UserID   int    `json:"user_id"`

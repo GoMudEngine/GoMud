@@ -321,13 +321,24 @@ func fileExists(path string) bool {
 	return err == nil
 }
 
-// WriteStopSignal creates the bridge stop file (idempotent).
+// WriteStopSignal creates stop signal files (idempotent). Writes the run-level
+// stop (scenario + shared) and the single-agent bridge stop for compatibility.
 func WriteStopSignal(checkout, runID string) error {
+	runDir := RunDir(checkout, runID)
+	if err := os.MkdirAll(runDir, 0o755); err != nil {
+		return fmt.Errorf("playtestrun: mkdir run dir: %w", err)
+	}
+	if err := writeStopFile(StopSignalPath(checkout, runID)); err != nil {
+		return err
+	}
 	bridge := BridgeDirPath(checkout, runID)
 	if err := os.MkdirAll(bridge, 0o755); err != nil {
 		return fmt.Errorf("playtestrun: mkdir bridge: %w", err)
 	}
-	path := filepath.Join(bridge, "stop")
+	return writeStopFile(filepath.Join(bridge, "stop"))
+}
+
+func writeStopFile(path string) error {
 	if fileExists(path) {
 		return nil
 	}
@@ -335,4 +346,28 @@ func WriteStopSignal(checkout, runID string) error {
 		return fmt.Errorf("playtestrun: write stop signal: %w", err)
 	}
 	return nil
+}
+
+// MarkScenarioAbort is a driver-contract helper: set scenario status to
+// incomplete_abort and peer actors (except stoppedActorID) to aborted_peer.
+// Go wall-clock/stop paths do not call this; abort is driver-initiated.
+func MarkScenarioAbort(checkout, runID, stoppedActorID string) error {
+	sc, err := ReadSidecar(checkout, runID)
+	if err != nil {
+		return err
+	}
+	sc.Status = StatusIncompleteAbort
+	for i := range sc.Actors {
+		if sc.Actors[i].ID == stoppedActorID {
+			if sc.Actors[i].Status == ActorStatusReady || sc.Actors[i].Status == ActorStatusPending {
+				sc.Actors[i].Status = ActorStatusFailed
+			}
+			continue
+		}
+		if sc.Actors[i].Status != ActorStatusStopped && sc.Actors[i].Status != ActorStatusFailed {
+			sc.Actors[i].Status = ActorStatusAbortedPeer
+		}
+	}
+	_, err = WriteSidecar(checkout, sc)
+	return err
 }

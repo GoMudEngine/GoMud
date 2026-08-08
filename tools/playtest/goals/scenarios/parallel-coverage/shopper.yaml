@@ -1,0 +1,20 @@
+# Parallel coverage — shopper path (Thornwall buy/sell).
+name: parallel-coverage-shopper
+summary: Independently exercise Thornwall shop buy/sell.
+goals:
+  - id: shop-thornwall
+    do: >-
+      In Thornwall City, find a merchant, list wares, and buy then sell one
+      item.
+    verify: >-
+      A shop listing renders; gold decreases on buy and increases on sell
+      (check status/Char.Vitals gold and the item entering/leaving inventory);
+      no 'looks confused' or generic error.
+
+ephemeral:
+  profile: early
+  start_room: 462
+  overlays:
+    set_gold: 500
+  budgets:
+    wall_clock: 20m
