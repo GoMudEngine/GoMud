@@ -1,5 +1,17 @@
 # DOGMud Patch Notes
 
+## 2026-08-08: Ephemeral multi-agent playtests
+
+Local playtesting can now spin a disposable shared server and run several
+AI testers in the same world at once — invite to a party, talk on the party
+channel, and coordinate a fight — without touching the live game. Single-agent
+ephemeral runs and sanitized starter kits for those testers ship in the same
+bundle. AI connections may send up to three commands per game round (about
+four seconds); extras wait for the next round.
+
+Players on the live server see no change from this work. It is for contributors
+running the playtest harness.
+
 ## 2026-08-07: Reliable Linux test baseline
 
 Contributors can now run the ordinary Go package suite with the race detector
