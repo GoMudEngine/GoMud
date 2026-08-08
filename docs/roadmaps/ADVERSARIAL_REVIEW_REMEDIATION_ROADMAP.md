@@ -61,7 +61,7 @@ further decomposition
 | 0.3a | Build the ephemeral server supervisor | M | 0.2 | Supporting | Done |
 | 0.3b | Materialize synthetic player profiles | L | 0.3a | Supporting | Done |
 | 0.3c | Integrate single-agent ephemeral playtests | M | 0.3a, 0.3b | Supporting | Done |
-| 0.3d | Integrate multi-agent ephemeral scenarios | L | 0.3c | Supporting | Not started |
+| 0.3d | Integrate multi-agent ephemeral scenarios | L | 0.3c | Supporting | Done |
 | 1.1 | Unify validation across PR, master, and release | M | 0.2 | 10, 25, 26 | Not started |
 | 1.2 | Replace phantom and probabilistic tests | M | 0.2 | 9, 24 | Not started |
 | 1.3 | Eliminate immediate static-analysis crash risks | S | 1.1 | 28 | Not started |
@@ -257,6 +257,14 @@ an explicit `on_actor_stop` policy (default **continue**) preserves other
 actors' evidence and still guarantees environment cleanup. Non-interacting
 parallel work stays multiple 0.3c runs. Design:
 `docs/superpowers/specs/2026-08-08-multi-agent-ephemeral-scenarios-design.md`.
+
+**Status: Done (2026-08-08).** Evidence: `playtestrun scenario` +
+`ParseScenario` / `RunScenario`; prod-identity denylist + `ForbiddenIdentity`;
+`actor_id` creds; migrated party/parallel/pothole scenarios; `/playtest-scenario`
+rewritten off ptorch; Docker
+`TestDockerPlaytestrunScenario` PASS; live mudagent party-formation smoke
+PASS (invite+accept) via `tools/playtest/cmd/party-smoke` (report under
+`tools/playtest/reports/`, gitignored). PvP `adversarial-contest` deferred.
 
 **Boundary:** This extends the existing harness scenario protocol; it does not
 introduce a new autonomous model runner, require `ptorch`, or general

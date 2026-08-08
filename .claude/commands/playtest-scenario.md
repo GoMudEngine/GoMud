@@ -62,7 +62,9 @@ For each `actors[]` entry:
 1. Start mudagent against `endpoint` with that actor’s **`bridge_dir`**
    (under `.run/<run_id>/actors/<id>/bridge/`).
 2. **Profile actors:** login with username/password selected by **`actor_id`**
-   from `creds` (never profile-only when duplicates exist).
+   from `creds` (never profile-only when duplicates exist). In-game targeting
+   (e.g. `party invite`) uses **character names** from `who`/`look`, not the
+   `pt_*` login username.
 3. **Creation-flow:** drive `new` as RoleUser only. Before accepting a name,
    call the shared prod-identity gate mentally / via helper: names must not
    match checked-in stems or close variants (`ForbiddenIdentity`).

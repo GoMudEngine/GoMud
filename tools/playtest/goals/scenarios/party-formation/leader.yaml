@@ -5,9 +5,9 @@ goals:
   - id: invite-joiner
     do: >-
       Move to the starting room if needed. Wait until the blackboard signals
-      'joiner-ready'. Then run 'party invite <joiner-name>' (use the joiner's
-      actual character name from the ready JSON / blackboard). Signal
-      'leader-invited' on the blackboard.
+      'joiner-ready'. Then run 'party invite <joiner-name>' using the joiner's
+      in-game character name (from who/look — not the pt_* login username).
+      Signal 'leader-invited' on the blackboard.
     verify: >-
       The system confirms the invite. No error message. Party list shows at
       minimum yourself.
