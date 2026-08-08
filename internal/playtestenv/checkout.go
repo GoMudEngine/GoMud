@@ -209,13 +209,18 @@ func hasArchivePathComponent(canonical string) bool {
 }
 
 // checkoutFingerprint returns a stable, hex-encoded SHA-256 digest of
-// canonical, normalized deterministically: forward slashes always, and
-// lowercased on Windows (whose filesystem paths are case-insensitive) but
-// left case-sensitive on every other platform.
+// canonical, normalized deterministically for the target goos. Windows
+// paths are lowercased and backslash-normalized to forward slashes even
+// when this function runs on a non-Windows host (filepath.ToSlash is
+// host-OS-dependent and would leave '\' intact on Linux). Other platforms
+// keep case and use filepath.ToSlash.
 func checkoutFingerprint(canonical, goos string) string {
-	normalized := filepath.ToSlash(canonical)
+	normalized := canonical
 	if goos == "windows" {
+		normalized = strings.ReplaceAll(normalized, `\`, "/")
 		normalized = strings.ToLower(normalized)
+	} else {
+		normalized = filepath.ToSlash(normalized)
 	}
 	sum := sha256.Sum256([]byte(normalized))
 	return hex.EncodeToString(sum[:])

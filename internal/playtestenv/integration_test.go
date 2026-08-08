@@ -449,10 +449,10 @@ func startReady(t *testing.T, s *Supervisor, checkout string, opts StartOptions,
 		opts.Checkout = checkout
 	}
 	var (
-		mu            sync.Mutex
-		readyStarted  time.Time
-		readyElapsed  time.Duration
-		sawReadiness  bool
+		mu           sync.Mutex
+		readyStarted time.Time
+		readyElapsed time.Duration
+		sawReadiness bool
 	)
 	sup := newSupervisor(supervisorDeps{
 		onEvent: func(name string) {
