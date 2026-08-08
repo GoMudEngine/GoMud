@@ -302,6 +302,20 @@ func composeUpCommand(dc dockerContext, vars composeRunVars, composeFile, dir st
 	return composeCommand(dc, vars, composeFile, []string{"up", "-d"}, dir, stdout, stderr)
 }
 
+// composeBuildCommand builds `compose ... build server` for the run's
+// image. It performs no lifecycle action itself.
+func composeBuildCommand(dc dockerContext, vars composeRunVars, composeFile, dir string, stdout, stderr io.Writer) CommandSpec {
+	return composeCommand(dc, vars, composeFile, []string{"build", "server"}, dir, stdout, stderr)
+}
+
+// composeUpNoBuildServerCommand builds the narrow startup invocation
+// `compose ... up -d --no-build server` used after an explicit build step.
+// It leaves composeUpCommand's broader `up -d` helper unchanged for Task 3
+// callers/tests.
+func composeUpNoBuildServerCommand(dc dockerContext, vars composeRunVars, composeFile, dir string, stdout, stderr io.Writer) CommandSpec {
+	return composeCommand(dc, vars, composeFile, []string{"up", "-d", "--no-build", "server"}, dir, stdout, stderr)
+}
+
 // composeDownCommand builds the "down" invocation (removing containers,
 // networks, and the named data volume) a future lifecycle task can call to
 // tear down a run. It performs no lifecycle action itself.

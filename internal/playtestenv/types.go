@@ -31,6 +31,25 @@ type Endpoint struct {
 // FailureCategory classifies a non-secret startup or lifecycle failure.
 type FailureCategory string
 
+// Exact failure-category string values persisted in manifests, reports, and
+// machine-readable Result.Failure records.
+const (
+	FailureInvalidCheckout   FailureCategory = "invalid_checkout"
+	FailureDockerUnavailable FailureCategory = "docker_unavailable"
+	FailureBuild             FailureCategory = "build_failure"
+	FailureContainerExited   FailureCategory = "container_exited"
+	FailureBootPanic         FailureCategory = "boot_panic"
+	FailureListenerCreation  FailureCategory = "listener_creation_failure"
+	FailurePortPublication   FailureCategory = "port_publication_failure"
+	FailureNonLoopback       FailureCategory = "non_loopback_publication"
+	FailureReadinessTimeout  FailureCategory = "readiness_timeout"
+	FailureConnectionProbe   FailureCategory = "connection_probe_failure"
+	FailureManifest          FailureCategory = "manifest_failure"
+	FailureCleanup           FailureCategory = "cleanup_failure"
+	FailureLockBusy          FailureCategory = "lock_busy"
+	FailureAbandonedRun      FailureCategory = "abandoned_run"
+)
+
 // FailureRecord is the structured, non-secret evidence of a run failure.
 type FailureRecord struct {
 	Category  FailureCategory `json:"category"`
