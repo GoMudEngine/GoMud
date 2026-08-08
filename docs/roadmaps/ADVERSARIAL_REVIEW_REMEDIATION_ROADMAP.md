@@ -248,15 +248,19 @@ cleanup deferred (spec Non-goals).
 
 #### Chunk 0.3d — Integrate multi-agent ephemeral scenarios
 
-**Outcome:** Scenario rosters bind each actor to a profile and explicit start
-room, coordinate existing choreography, isolate credentials and artifacts, and
-produce one combined report while multiple independent scenario runs coexist.
-Per-actor budget exhaustion identifies the affected actor and follows an
-explicit scenario policy—abort or continue degraded—while preserving all other
-actors' evidence and guaranteeing environment cleanup.
+**Outcome:** Scenario rosters bind each actor to its own goals file and
+character loadout (`ephemeral:`), share one ephemeral server, coordinate via
+in-game channels plus a file blackboard, isolate per-actor bridges/creds, and
+produce one combined report. A scenario **wall-clock** is the hard cut;
+per-actor token/turn limits remain soft guidelines. When an actor stops early,
+an explicit `on_actor_stop` policy (default **continue**) preserves other
+actors' evidence and still guarantees environment cleanup. Non-interacting
+parallel work stays multiple 0.3c runs. Design:
+`docs/superpowers/specs/2026-08-08-multi-agent-ephemeral-scenarios-design.md`.
 
 **Boundary:** This extends the existing harness scenario protocol; it does not
-introduce a new autonomous model runner or general production-user cloning.
+introduce a new autonomous model runner, require `ptorch`, or general
+production-user cloning.
 
 ---
 
