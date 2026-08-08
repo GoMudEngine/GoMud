@@ -64,7 +64,7 @@ further decomposition
 | 0.3d | Integrate multi-agent ephemeral scenarios | L | 0.3c | Supporting | Done |
 | 1.1 | Unify validation across PR, master, and release | M | 0.2 | 10, 25, 26 | Not started |
 | 1.2 | Replace phantom and probabilistic tests | M | 0.2 | 9, 24 | Not started |
-| 1.3 | Eliminate immediate static-analysis crash risks | S | 1.1 | 28 | Not started |
+| 1.3 | Eliminate immediate static-analysis crash risks | S | 1.1 | 28 | **Done 2026-08-08** |
 | 1.4 | Decide and enforce the YAML compatibility boundary | M | 0.2 | 33 | Not started |
 | 1.5 | Remove tracked playtest credentials | S | — | Security follow-up | **In progress — tree clean, ROTATION OUTSTANDING** |
 | 2.1 | Establish the living-state persistence contract | M | 0.2, 1.4 | Supporting | Not started |
@@ -87,9 +87,9 @@ further decomposition
 | 4.4 | Remove hot-path GMCP DOM rebuilds | L | — | 19 | Not started |
 | 5.1 | Make combat entry transactional | M | 1.2 | 2 | Not started |
 | 5.2 | Unify harmful-target authorization | M | 5.1 | 3 | Not started |
-| 5.3 | Fix filtered wandering | S | 0.2 | 11 | Not started |
-| 5.4 | Fix gold-give parsing | S | 0.2 | 12 | Not started |
-| 5.5 | Repair the ANSI wrapper fallback contract | S | 0.2 | 32 | Not started |
+| 5.3 | Fix filtered wandering | S | 0.2 | 11 | **Done 2026-08-08** |
+| 5.4 | Fix gold-give parsing | S | 0.2 | 12 | **Done 2026-08-08** |
+| 5.5 | Repair the ANSI wrapper fallback contract | S | 0.2 | 32 | **Done 2026-08-08** |
 | 5.6 | Converge composition-heavy commands on the parser | M | 1.2 | 27 | Not started |
 | 5.7 | Decide post-soft-cap skill effectiveness | M | 0.2 | Design decision | Not started |
 | 5.8 | Decide opposed-roll variance ownership | L | 0.2 | Design decision | Not started |
@@ -922,8 +922,8 @@ only when all of its subchunks close.
 | 8 | 3.3 | Open | — | Unsynchronized room path cache |
 | 9 | 1.2 | Open | — | Phantom position tests |
 | 10 | 1.1 | Open | — | Release CI omits lint/coverage |
-| 11 | 5.3 | Open | — | Wander filter ignored |
-| 12 | 5.4 | Open | — | Gold-give parse mismatch |
+| 11 | 5.3 | **Done** | `e23df1071`; `pickWanderExit` + 5 tests | Wander filter ignored |
+| 12 | 5.4 | **Done** | `e23df1071`; `parseGoldPhrase` shared by both paths + 2 tests | Gold-give parse mismatch |
 | 13 | 2.6 | Open | — | Builder ignores save failures |
 | 14 | 2.5 | Open | — | Dialogue parse error cached as absence |
 | 15 | 2.4 | Open | — | Partial room overlay after YAML failure |
@@ -939,11 +939,11 @@ only when all of its subchunks close.
 | 25 | 1.1 | Open | — | Missing generated/JavaScript CI gates |
 | 26 | 1.1 | Open | — | Stale Makefile toolchain and world paths |
 | 27 | 5.6 | Open | — | Partial parser adoption |
-| 28 | 1.3 | Open | — | Plausible nil dereferences |
+| 28 | 1.3 | **Done** | `e23df1071`; 4 sites fixed (2 named, 2 found by the test) + 3 tests | Plausible nil dereferences |
 | 29 | 6.2 | Open | — | Dead progression hook |
 | 30 | 6.3 | Open | — | Deprecated live config and stale docs |
 | 31 | 6.4 | Open | — | Dead corpse lookup arrays |
-| 32 | 5.5 | Open | — | Broken ANSI panic fallback |
+| 32 | 5.5 | **Done** | `e23df1071`; named result + explicit recover assign | Broken ANSI panic fallback |
 | 33 | 1.4 | Open | — | Dual YAML major versions |
 | 34 | 3.5 | Open | `RunWithMUDLocked` wraps auth, render, and response writes | Admin routes retain global world lock |
 | 35 | 2.7 | Open | `SaveAllRooms` suppresses errors; autosave ignores outcomes | Autosave failures reported as success |
