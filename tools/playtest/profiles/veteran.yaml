@@ -2645,7 +2645,7 @@ character:
       tail:
         itemid: -1
       componentbag: {}
-  created: 2026-04-21 17:50:34.319479+00:00
+  created: 2026-04-21T17:50:34.319479Z
   timers:
     grapple-opportunity:
       roundstart: 3125450
