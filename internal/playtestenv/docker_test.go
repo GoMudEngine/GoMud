@@ -104,6 +104,70 @@ func TestDockerContextRejectsNilAmbientEnvironment(t *testing.T) {
 	require.Empty(t, fr.calls, "must not invoke docker with an unvalidated/absent ambient environment")
 }
 
+// TestCloneEnvPreservesNilVsNonNilEmpty proves cloneEnv distinguishes a nil
+// slice (exec.Cmd's "inherit the real host environment" sentinel) from a
+// non-nil empty slice (an explicit, deliberately empty environment), and
+// that it copies rather than aliases a nonempty input's backing array.
+func TestCloneEnvPreservesNilVsNonNilEmpty(t *testing.T) {
+	require.Nil(t, cloneEnv(nil))
+
+	got := cloneEnv([]string{})
+	require.NotNil(t, got, "cloneEnv(non-nil empty) must stay non-nil - append([]string(nil), empty...) would collapse it to nil")
+	require.Empty(t, got)
+
+	src := []string{"A=1", "B=2"}
+	cloned := cloneEnv(src)
+	require.Equal(t, src, cloned)
+	src[0] = "MUTATED"
+	require.Equal(t, []string{"A=1", "B=2"}, cloned, "cloneEnv must not alias the input's backing array")
+}
+
+// TestDockerContextPreservesNonNilEmptyEnvironment proves that resolving
+// against a non-nil, empty ambient environment produces a non-nil, empty
+// dockerContext.env and, in turn, a non-nil, empty CommandSpec.Env. exec.Cmd
+// treats a nil Env as "inherit the real host environment"; collapsing an
+// intentionally empty scrubbed environment to nil would silently reinstate
+// whatever DOCKER_* overrides exist in this test process's real
+// environment.
+func TestDockerContextPreservesNonNilEmptyEnvironment(t *testing.T) {
+	fr := newFakeDockerRunner()
+	scriptHappyPreflight(fr, true, "ctx", `"unix:///var/run/docker.sock"`, "2.20.0", "24.0.5")
+
+	dc, err := resolveLocalDockerContext(context.Background(), fr, []string{}, "linux")
+	require.NoError(t, err)
+	require.NotNil(t, dc.env, "a non-nil (even if empty) ambient environment must yield a non-nil dockerContext.env")
+	require.Empty(t, dc.env)
+
+	spec := dockerCommand(dc, []string{"ps"}, "", io.Discard, io.Discard)
+	require.NotNil(t, spec.Env, "CommandSpec.Env must not collapse to nil - nil means \"inherit the real host environment\" to exec.Cmd")
+	require.Empty(t, spec.Env)
+}
+
+// TestDockerContextScrubbingAllOverridesYieldsNonNilEmptyEnvironment proves
+// that when every entry of a nonempty ambient environment is an override
+// variable and all of them are scrubbed away, the resulting environment is
+// non-nil and empty - never nil, which would cause the eventual
+// Docker/Compose child to inherit the real, unsanitized host environment
+// instead of running with none.
+func TestDockerContextScrubbingAllOverridesYieldsNonNilEmptyEnvironment(t *testing.T) {
+	fr := newFakeDockerRunner()
+	scriptHappyPreflight(fr, false, "mycontext", `"unix:///var/run/docker.sock"`, "2.20.0", "24.0.5")
+
+	ambient := []string{
+		"DOCKER_CONTEXT=mycontext",
+		"DOCKER_TLS_VERIFY=1",
+		"DOCKER_CERT_PATH=/certs",
+	}
+	dc, err := resolveLocalDockerContext(context.Background(), fr, ambient, "linux")
+	require.NoError(t, err)
+	require.NotNil(t, dc.env, "scrubbing every ambient entry away must not collapse the environment to nil")
+	require.Empty(t, dc.env)
+
+	spec := dockerCommand(dc, []string{"ps"}, "", io.Discard, io.Discard)
+	require.NotNil(t, spec.Env, "CommandSpec.Env must remain non-nil even when scrubbed to empty, or the child inherits the real unsanitized host environment")
+	require.Empty(t, spec.Env)
+}
+
 // TestDockerContextRejectsDockerHostOverride proves a nonempty ambient
 // DOCKER_HOST is rejected before any Docker command is invoked.
 func TestDockerContextRejectsDockerHostOverride(t *testing.T) {

@@ -165,7 +165,7 @@ func resolveLocalDockerContext(ctx context.Context, runner Runner, ambientEnv []
 		return dockerContext{}, err
 	}
 
-	return dockerContext{name: candidate, env: append([]string(nil), scrubbedEnv...)}, nil
+	return dockerContext{name: candidate, env: cloneEnv(scrubbedEnv)}, nil
 }
 
 // dockerContextEndpoint runs `docker --context <candidate> context inspect
@@ -316,10 +316,27 @@ func dockerCommand(dc dockerContext, args []string, dir string, stdout, stderr i
 		Name:   "docker",
 		Args:   dockerArgsWithContext(dc.name, args),
 		Dir:    dir,
-		Env:    append([]string(nil), dc.env...),
+		Env:    cloneEnv(dc.env),
 		Stdout: stdout,
 		Stderr: stderr,
 	}
+}
+
+// cloneEnv copies an environment slice such as dc.env, preserving the
+// distinction between nil and a non-nil empty slice. This distinction
+// matters because exec.Cmd treats a nil Env as "inherit the real host
+// environment" but a non-nil empty Env as "run with no environment
+// variables at all" - so append([]string(nil), env...), which collapses a
+// non-nil empty env to nil, would silently reinstate the unsanitized host
+// environment (and any DOCKER_* overrides in it) whenever scrubbing (or an
+// already-empty ambient environment) legitimately produced zero entries.
+func cloneEnv(env []string) []string {
+	if env == nil {
+		return nil
+	}
+	cloned := make([]string, len(env))
+	copy(cloned, env)
+	return cloned
 }
 
 // scrubDockerOverrides returns a new slice containing every entry of env
