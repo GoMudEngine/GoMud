@@ -19,13 +19,19 @@ questions. Broad fixes remain unsafe while tests and CI are unreliable, and
 cleanup work is wasteful while behavior and persistence contracts are still
 changing.
 
-The roadmap therefore follows dependency order:
+The roadmap was originally written to follow dependency order:
 
 1. Restore a trustworthy release and verification baseline.
 2. Protect persistent state and concurrent runtime state.
 3. Harden externally reachable web surfaces.
 4. Correct player-visible behavior.
 5. Consolidate duplicated code and retire legacy debt.
+
+**That ordering was retired 2026-08-08.** It optimized for dependency purity
+rather than risk, and delivered zero finding closures across 61 commits. The
+phase numbers below are retained as a taxonomy so the finding index still
+resolves, but the work order is the wave list in **Execution order (triage
+2026-08-08)** immediately after the operating rules.
 
 ## Operating rules
 
@@ -40,6 +46,100 @@ The roadmap therefore follows dependency order:
   status.
 - Newly discovered defects join the narrowest relevant chunk or are added as a
   new chunk with explicit dependencies.
+
+## Execution order (triage 2026-08-08) — READ THIS FIRST
+
+The phase numbering below is a **taxonomy**, not a work order. Following it
+literally produced 61 commits and zero finding closures, because Phase 1 is CI
+plumbing and the two worst defects in the list sit in Phase 3.
+
+Work the **waves** below. Phase numbers stay as labels so the finding index
+still resolves.
+
+### What changed and why
+
+1. **Severity was not driving order.** Finding 8 causes
+   `fatal error: concurrent map writes`, which Go does **not** allow you to
+   recover from. It kills the whole server for every player. It is reachable
+   from tab-completion: `GetAutoComplete` (`world.go:321`) holds only
+   `RLockMud` and calls `rooms.LoadRoom` three times, and an uncached load
+   writes `roomIdToFileCache` with no synchronization. Two players
+   tab-completing into uncached rooms is enough. It was scheduled behind two
+   entire phases.
+2. **Several dependencies were invented.** Deleting unused slices (6.4) did not
+   need parser convergence (5.6). Fixing a nil dereference (1.3) did not need
+   CI lint parity (1.1); that was proven by shipping it. Adding one missing
+   authorization check (5.2) does not need transactional combat entry (5.1).
+3. **"Depends on 0.2" is now noise.** 0.2 is Done. Twenty chunks still list it,
+   which made everything look gated.
+4. **CI parity is a parallel track, not a gate.** Chunks 1.1/1.2 touch
+   `.github/`, `Makefile`, and test files only. Zero file overlap with Wave 1.
+   Sequencing them first bought nothing and blocked everything.
+5. **There was no cheap-fix lane**, so trivial deletions inherited heavy
+   dependencies and never shipped.
+
+### Wave 0 — Done 2026-08-08
+
+Findings 11, 12, 28, 32 (chunks 5.3, 5.4, 5.5, 1.3) plus the repository half of
+1.5. Finding 28 turned out to be four sites, not the two the review named.
+
+### Wave 1 — Stop the crashes and the unauthorized actions
+
+All small, all independently shippable. Nothing here blocks anything else.
+
+| Order | Finding | Chunk | Why now |
+|---:|---:|---|---|
+| 1 | **8** | 3.3 | Unrecoverable `fatal error`, kills the server, reachable from tab-completion |
+| 2 | **22** | 3.4 | Listener registration deadlock; a slow handler blocks all registration |
+| 3 | **3** | 5.2 | Harmful spells bypass `PlayerAttackImmune`; can break quests and tutorial NPCs. **Dependency on 5.1 dropped** |
+| 4 | **4** | 3.1 | Data race on the round counter; `atomic.Uint64` |
+| 5 | **21** | 3.2 | Duplicate LLM requests double-mutate dialogue state |
+| 6 | **17** | 4.1 | Stored XSS in an admin dashboard; `textContent` swap |
+| 7 | **20a** | 4.2 | Server timeouts only. Split from the Host-redirect half |
+| 8 | **29, 31** | 6.2, 6.4 | Trivial deletions. **Both invented dependencies dropped** |
+
+**Track B, in parallel:** chunks 1.1 (CI lint/coverage parity, generated-file
+and JS gates, Makefile toolchain and world paths — findings 10, 25, 26) and 1.2
+(findings 9, 24). Disjoint file set from Wave 1, so run them concurrently.
+
+### Wave 2 — Stop silent state loss
+
+Sequenced, because 2.1 defines the contract the rest consume. This is the
+largest genuine risk cluster after Wave 1: a torn write currently discards mob
+progression, resets a shop to template defaults, or resurrects an unbanned
+account.
+
+2.1 (contract) → 2.2 (finding 5) → 2.3 (finding 7) → 2.4 (findings 6, 15) →
+2.7 (finding 35) → 2.6 (finding 13) → 2.5 (findings 14, 16)
+
+### Wave 3 — Availability
+
+3.5 (finding 34, the global admin write lock) then 3.6a (finding 36, measure
+autosave pauses). 3.6b only if 3.6a's evidence demands it. Do not pre-commit to
+a persistence rearchitecture.
+
+### Wave 4 — Remaining UX and web surface
+
+4.3 (finding 18), 4.4 (finding 19), and the Host-redirect half of finding 20.
+
+### Wave 5 — Balance decisions (analysis only, no code)
+
+5.7 and 5.8. These are independent of everything above and can be picked up any
+time someone wants a design session rather than an implementation session.
+
+### Wave 6 — Debt
+
+5.1 (finding 2), 5.6 (finding 27), 6.1a–6.1d (finding 23), 1.4 (finding 33),
+6.3 (finding 30), 6.6a–6.6c (finding 37), then 6.5 (lint backlog) last so
+earlier waves delete part of it first.
+
+### Dependency corrections applied
+
+- Dropped `0.2` from every remaining chunk. It is Done; keeping it implied a gate.
+- 5.2 no longer depends on 5.1.
+- 6.4 no longer depends on 5.6.
+- 6.2 no longer depends on 1.3 (1.3 is Done regardless).
+- 1.3 never needed 1.1. Proven by shipping it 2026-08-08.
 
 ## Status and size
 
@@ -58,50 +158,50 @@ further decomposition
 |---|---|---:|---|---|---|
 | 0.1 | Restore web-terminal release asset | S | — | 1 | Invalidated |
 | 0.2 | Establish a reproducible full-test baseline | S | — | Supporting | Done |
-| 0.3a | Build the ephemeral server supervisor | M | 0.2 | Supporting | Done |
+| 0.3a | Build the ephemeral server supervisor | M | — | Supporting | Done |
 | 0.3b | Materialize synthetic player profiles | L | 0.3a | Supporting | Done |
 | 0.3c | Integrate single-agent ephemeral playtests | M | 0.3a, 0.3b | Supporting | Done |
 | 0.3d | Integrate multi-agent ephemeral scenarios | L | 0.3c | Supporting | Done |
-| 1.1 | Unify validation across PR, master, and release | M | 0.2 | 10, 25, 26 | Not started |
-| 1.2 | Replace phantom and probabilistic tests | M | 0.2 | 9, 24 | Not started |
-| 1.3 | Eliminate immediate static-analysis crash risks | S | 1.1 | 28 | **Done 2026-08-08** |
-| 1.4 | Decide and enforce the YAML compatibility boundary | M | 0.2 | 33 | Not started |
+| 1.1 | Unify validation across PR, master, and release | M | — | 10, 25, 26 | Not started |
+| 1.2 | Replace phantom and probabilistic tests | M | — | 9, 24 | Not started |
+| 1.3 | Eliminate immediate static-analysis crash risks | S | — | 28 | **Done 2026-08-08** |
+| 1.4 | Decide and enforce the YAML compatibility boundary | M | — | 33 | Not started |
 | 1.5 | Remove tracked playtest credentials | S | — | Security follow-up | **In progress — tree clean, ROTATION OUTSTANDING** |
-| 2.1 | Establish the living-state persistence contract | M | 0.2, 1.4 | Supporting | Not started |
+| 2.1 | Establish the living-state persistence contract | M | 1.4 | Supporting | Not started |
 | 2.2 | Migrate mob instance persistence | M | 2.1 | 5 | Not started |
 | 2.3 | Migrate guild and moderation persistence | M | 2.1 | 7 | Not started |
 | 2.4 | Separate corrupt shop and room state from absence | M | 2.1 | 6, 15 | Not started |
-| 2.5 | Make authored-content validation fail honestly | M | 0.2, 1.1, 1.4 | 14, 16 | Not started |
+| 2.5 | Make authored-content validation fail honestly | M | 1.1, 1.4 | 14, 16 | Not started |
 | 2.6 | Make builder operations transactional | M | 2.1 | 13 | Not started |
 | 2.7 | Make autosave outcomes observable | M | 2.1 | 35 | Not started |
-| 3.1 | Make global counters race-free | S | 0.2 | 4 | Not started |
-| 3.2 | Make LLM request admission atomic | S | 0.2 | 21 | Not started |
-| 3.3 | Synchronize the room path cache | M | 0.2 | 8 | Not started |
-| 3.4 | Release listener locks before callbacks | S | 0.2 | 22 | Not started |
-| 3.5 | Bound admin world-lock scope | M | 0.2 | 34 | Not started |
-| 3.6a | Measure autosave pauses and set a budget | M | 0.2, 2.7 | 36 (measure) | Not started |
+| 3.1 | Make global counters race-free | S | — | 4 | Not started |
+| 3.2 | Make LLM request admission atomic | S | — | 21 | Not started |
+| 3.3 | Synchronize the room path cache | M | — | 8 | Not started |
+| 3.4 | Release listener locks before callbacks | S | — | 22 | Not started |
+| 3.5 | Bound admin world-lock scope | M | — | 34 | Not started |
+| 3.6a | Measure autosave pauses and set a budget | M | 2.7 | 36 (measure) | Not started |
 | 3.6b | Remediate autosave pauses if required | XL | 3.6a | 36 (conditional) | Not started |
-| 4.1 | Remove admin stored-XSS surfaces | S | 0.2 | 17 | Not started |
-| 4.2 | Harden HTTP server boundaries | M | 0.2 | 20 | Not started |
+| 4.1 | Remove admin stored-XSS surfaces | S | — | 17 | Not started |
+| 4.2 | Harden HTTP server boundaries | M | — | 20 | Not started |
 | 4.3 | Restore keyboard accessibility | M | — | 18 | Not started |
 | 4.4 | Remove hot-path GMCP DOM rebuilds | L | — | 19 | Not started |
 | 5.1 | Make combat entry transactional | M | 1.2 | 2 | Not started |
-| 5.2 | Unify harmful-target authorization | M | 5.1 | 3 | Not started |
-| 5.3 | Fix filtered wandering | S | 0.2 | 11 | **Done 2026-08-08** |
-| 5.4 | Fix gold-give parsing | S | 0.2 | 12 | **Done 2026-08-08** |
-| 5.5 | Repair the ANSI wrapper fallback contract | S | 0.2 | 32 | **Done 2026-08-08** |
+| 5.2 | Unify harmful-target authorization | M | — | 3 | Not started |
+| 5.3 | Fix filtered wandering | S | — | 11 | **Done 2026-08-08** |
+| 5.4 | Fix gold-give parsing | S | — | 12 | **Done 2026-08-08** |
+| 5.5 | Repair the ANSI wrapper fallback contract | S | — | 32 | **Done 2026-08-08** |
 | 5.6 | Converge composition-heavy commands on the parser | M | 1.2 | 27 | Not started |
-| 5.7 | Decide post-soft-cap skill effectiveness | M | 0.2 | Design decision | Not started |
-| 5.8 | Decide opposed-roll variance ownership | L | 0.2 | Design decision | Not started |
+| 5.7 | Decide post-soft-cap skill effectiveness | M | — | Design decision | Not started |
+| 5.8 | Decide opposed-roll variance ownership | L | — | Design decision | Not started |
 | 6.1a | Consolidate action-layer duplication | M | 5.1, 5.2, 5.6 | 23 (actions) | Not started |
 | 6.1b | Consolidate position duplication | M | 1.2, 5.1 | 23 (position) | Not started |
 | 6.1c | Consolidate mob-command duplication | M | 5.1, 5.2 | 23 (mob commands) | Not started |
 | 6.1d | Consolidate duplicated test fixtures | S | 1.2, 6.1a–6.1c | 23 (tests) | Not started |
-| 6.2 | Remove the dead progression hook | S | 1.3 | 29 | Not started |
+| 6.2 | Remove the dead progression hook | S | — | 29 | Not started |
 | 6.3 | Retire stale cadence config and documentation | S | 1.4 | 30 | Not started |
-| 6.4 | Remove dead corpse lookup structures | S | 5.6 | 31 | Not started |
+| 6.4 | Remove dead corpse lookup structures | S | — | 31 | Not started |
 | 6.5 | Retire the remaining lint backlog | L | 6.1a–6.4, 6.6a–6.6c | Cross-cutting | Not started |
-| 6.6a | Inventory and define boot dependency seams | M | 0.2 | 37 (contract) | Not started |
+| 6.6a | Inventory and define boot dependency seams | M | — | 37 (contract) | Not started |
 | 6.6b | Freeze production boot registration | M | 6.6a | 37 (production) | Not started |
 | 6.6c | Isolate callback overrides in tests | M | 6.6a | 37 (tests) | Not started |
 
