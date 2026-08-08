@@ -79,6 +79,17 @@ type Manifest struct {
 	Cleanup             *CleanupResult       `json:"cleanup,omitempty"`
 }
 
+// lockAcquireFunc matches acquireRunLock's signature. reserveRunWithDeps
+// takes it as a parameter so failure-path tests can inject a deterministic
+// lock-acquisition failure without depending on real OS lock contention.
+type lockAcquireFunc func(ctx context.Context, path string, wait time.Duration) (*runLock, error)
+
+// manifestWriteFunc matches writeManifest's signature. reserveRunWithDeps
+// takes it as a parameter for the same reason as lockAcquireFunc: a
+// deterministic, cross-platform way to inject a manifest-persistence
+// failure in tests.
+type manifestWriteFunc func(path string, m *Manifest) error
+
 // reservation is the result of successfully reserving a new run: its unique
 // directory has been created, its advisory lock is held, and its initial
 // validating manifest has been durably persisted.
@@ -126,6 +137,35 @@ func reserveRun(
 	now func() time.Time,
 	genID func() (string, error),
 ) (*reservation, error) {
+	return reserveRunWithDeps(ctx, checkout, lease, lockWait, now, genID, acquireRunLock, writeManifest)
+}
+
+// reserveRunWithDeps is reserveRun with its lock-acquisition and
+// manifest-persistence steps injected as parameters. reserveRun calls it
+// with the real acquireRunLock and writeManifest; tests call it directly
+// with a failing fake to deterministically exercise the cleanup paths that
+// run when either step fails partway through a reservation, without relying
+// on real OS lock contention or platform-specific permission bits.
+//
+// If either step fails after runDir has already been created, runDir is
+// removed again before returning: Task 6's reaper deliberately never
+// touches a manifest-less run directory, so a leaked runDir here would
+// become permanent garbage. Any already-acquired lock is closed before
+// removal so the directory delete is never blocked by an open lock-file
+// handle (required for correctness on Windows). The original operation
+// error is preserved; if cleanup itself also fails, the returned error
+// retains both facts. Cleanup removes only the exact runDir just created -
+// never a wildcard or broader deletion.
+func reserveRunWithDeps(
+	ctx context.Context,
+	checkout string,
+	lease time.Duration,
+	lockWait time.Duration,
+	now func() time.Time,
+	genID func() (string, error),
+	acquireLock lockAcquireFunc,
+	persistManifest manifestWriteFunc,
+) (*reservation, error) {
 	runsRoot := filepath.Join(checkout, filepath.FromSlash(runsDirName))
 	if err := os.MkdirAll(runsRoot, 0o755); err != nil {
 		return nil, fmt.Errorf("playtestenv: create runs root: %w", err)
@@ -151,9 +191,9 @@ func reserveRun(
 			return nil, fmt.Errorf("playtestenv: create run directory: %w", err)
 		}
 
-		lock, err := acquireRunLock(ctx, filepath.Join(runDir, ".lock"), lockWait)
+		lock, err := acquireLock(ctx, filepath.Join(runDir, ".lock"), lockWait)
 		if err != nil {
-			return nil, fmt.Errorf("playtestenv: acquire run lock: %w", err)
+			return nil, cleanupFailedReservation(runDir, nil, fmt.Errorf("playtestenv: acquire run lock: %w", err))
 		}
 
 		createdAt := now()
@@ -173,9 +213,8 @@ func reserveRun(
 			},
 		}
 
-		if err := writeManifest(manifestPath, manifest); err != nil {
-			_ = lock.Close()
-			return nil, fmt.Errorf("playtestenv: write initial manifest: %w", err)
+		if err := persistManifest(manifestPath, manifest); err != nil {
+			return nil, cleanupFailedReservation(runDir, lock, fmt.Errorf("playtestenv: write initial manifest: %w", err))
 		}
 
 		return &reservation{
@@ -188,6 +227,23 @@ func reserveRun(
 	}
 
 	return nil, fmt.Errorf("playtestenv: exhausted run id generation attempts: %w", lastErr)
+}
+
+// cleanupFailedReservation removes a run directory that was created by a
+// reservation attempt which then failed before it could be returned to the
+// caller. It closes lock first, if non-nil, so directory removal is never
+// blocked by an open lock-file handle. It returns operationErr unchanged
+// when cleanup succeeds; if removal itself fails, it returns an error
+// wrapping both operationErr and the removal failure so neither fact is
+// silently dropped. It removes only the exact runDir passed in.
+func cleanupFailedReservation(runDir string, lock *runLock, operationErr error) error {
+	if lock != nil {
+		_ = lock.Close()
+	}
+	if removeErr := os.RemoveAll(runDir); removeErr != nil {
+		return fmt.Errorf("%w (cleanup of %s also failed: %w)", operationErr, runDir, removeErr)
+	}
+	return operationErr
 }
 
 // readManifest loads and decodes the manifest at path.

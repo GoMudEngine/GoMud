@@ -3,6 +3,7 @@ package playtestenv
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"testing"
@@ -97,6 +98,64 @@ func TestReserveRunRetriesGeneratedIDCollision(t *testing.T) {
 	data, err := os.ReadFile(sentinel)
 	require.NoError(t, err)
 	require.Equal(t, "pre-existing", string(data))
+}
+
+// TestReserveRunRemovesRunDirWhenLockAcquisitionFails proves that a run
+// directory created by reserveRun is removed again if acquiring that run's
+// advisory lock fails partway through reservation, rather than being left
+// behind as permanent, manifest-less garbage (which the reaper deliberately
+// never touches).
+func TestReserveRunRemovesRunDirWhenLockAcquisitionFails(t *testing.T) {
+	checkout := t.TempDir()
+	errSimulatedLock := errors.New("simulated lock acquisition failure")
+	failingAcquire := func(ctx context.Context, path string, wait time.Duration) (*runLock, error) {
+		return nil, errSimulatedLock
+	}
+
+	res, err := reserveRunWithDeps(
+		context.Background(), checkout, time.Hour, time.Second,
+		fixedClock(time.Now()), sequenceIDSource("lock-fails"),
+		failingAcquire, writeManifest,
+	)
+	require.Nil(t, res)
+	require.Error(t, err)
+	require.ErrorIs(t, err, errSimulatedLock)
+
+	runDir := filepath.Join(checkout, "tools", "playtest", ".run", "lock-fails")
+	_, statErr := os.Stat(runDir)
+	require.True(t, os.IsNotExist(statErr),
+		"runDir must be removed after a failed lock acquisition, got stat error: %v", statErr)
+}
+
+// TestReserveRunRemovesRunDirAndReleasesLockWhenManifestWriteFails proves
+// that a run directory is removed, and its already-acquired advisory lock
+// released first, when persisting the initial manifest fails partway
+// through reservation. This test uses the real acquireRunLock (not an
+// injected fake) so the lock file has a genuinely open OS handle at the
+// moment of failure: on Windows, removing a directory while one of its
+// files is still open fails with a sharing violation, so a successful
+// RemoveAll here proves the lock was closed before removal on both
+// platforms.
+func TestReserveRunRemovesRunDirAndReleasesLockWhenManifestWriteFails(t *testing.T) {
+	checkout := t.TempDir()
+	errSimulatedWrite := errors.New("simulated manifest write failure")
+	failingWrite := func(path string, m *Manifest) error {
+		return errSimulatedWrite
+	}
+
+	res, err := reserveRunWithDeps(
+		context.Background(), checkout, time.Hour, time.Second,
+		fixedClock(time.Now()), sequenceIDSource("write-fails"),
+		acquireRunLock, failingWrite,
+	)
+	require.Nil(t, res)
+	require.Error(t, err)
+	require.ErrorIs(t, err, errSimulatedWrite)
+
+	runDir := filepath.Join(checkout, "tools", "playtest", ".run", "write-fails")
+	_, statErr := os.Stat(runDir)
+	require.True(t, os.IsNotExist(statErr),
+		"runDir must be removed after a failed manifest write, got stat error: %v", statErr)
 }
 
 // TestProjectNameDerivationIsComposeSafe proves every derived Compose project
