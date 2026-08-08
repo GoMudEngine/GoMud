@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/configs"
 	"github.com/GoMudEngine/GoMud/internal/users"
@@ -64,6 +65,7 @@ func Materialize(m *Manifest, opts MaterializeOptions) ([]PlayerCreds, error) {
 		}
 		out = append(out, PlayerCreds{
 			Profile:  entry.Profile,
+			ActorID:  strings.TrimSpace(entry.ActorID),
 			Username: username,
 			Password: password,
 			UserID:   u.UserId,

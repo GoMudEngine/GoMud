@@ -104,6 +104,7 @@ type ArtifactPaths struct {
 type ProfileRequest struct {
 	Profile   string          `yaml:"profile" json:"profile"`
 	StartRoom int             `yaml:"start_room" json:"start_room"`
+	ActorID   string          `yaml:"actor_id,omitempty" json:"actor_id,omitempty"`
 	Overlays  ProfileOverlays `yaml:"overlays,omitempty" json:"overlays,omitempty"`
 }
 
