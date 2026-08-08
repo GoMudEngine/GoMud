@@ -41,11 +41,45 @@ Commit authorship is misleading at a glance. All non-Jules commits are committed
 as `Calabe Davis`, but 61 of them carry `Co-authored-by: Cursor
 <cursoragent@cursor.com>`.
 
+**"Cursor" is not a model.** It is an orchestration harness that dispatches work
+to several different underlying models. The Git trailer flattens all of them
+into one name, so commit metadata alone cannot tell you which model wrote which
+line. Grading "Cursor" as a single agent, as an earlier draft of this document
+did, is a category error.
+
 | Agent | Commits | Deliverables |
 |---|---:|---|
-| **Cursor** | 61 | `ADVERSARIAL_CODE_REVIEW_2026-08-07.md` (untracked), `docs/roadmaps/ADVERSARIAL_REVIEW_REMEDIATION_ROADMAP.md`, chunks 0.2 and 0.3a through 0.3d (the playtest harness, ~17.2k LOC), `docs/guides/TESTING_GUIDE.md` |
+| **Cursor harness** (multi-model) | 61 | `ADVERSARIAL_CODE_REVIEW_2026-08-07.md` (untracked), `docs/roadmaps/ADVERSARIAL_REVIEW_REMEDIATION_ROADMAP.md`, chunks 0.2 and 0.3a through 0.3d (the playtest harness, ~17.2k LOC), `docs/guides/TESTING_GUIDE.md` |
 | **Jules** (`google-labs-jules[bot]`) | 3 | `docs/audits/ADVERSARIAL_REVIEW.md` (313 lines), one line in `.github/workflows/discord-notify.yml` (since reverted) |
 | Human / merges | 11 | PR merges, the Jules revert, top-of-branch race fixes |
+
+### Recoverable per-model attribution
+
+The Git trailer records nothing, but the implementation plans under
+`docs/superpowers/plans/2026-08-0*.md` name a model per task. That gives partial
+attribution for the harness arc only:
+
+| Model | Task types it was assigned |
+|---|---|
+| **Claude Sonnet 5** (incl. Thinking High) | Dominant executor: template authoring, goals/scenario migration, driver and docs, Docker integration, live smoke, adversarial implementation review |
+| **Composer 2.5 Fast** | Mechanical work: CLI wiring, workflow wiring, Task 9 documentation |
+| **GPT-5.6 Sol Medium** | Filesystem containment (Task 3 of the supervisor plan) |
+| **Grok** | Named once as an inline-execution alternative for 0.3d Tasks 0 through 7 |
+
+Three important limits on this:
+
+1. It covers the **harness build only**. Authorship of the 33-finding review and
+   of the roadmap, which are the two highest-value artifacts of the window, is
+   recorded nowhere. I cannot attribute those to a model.
+2. It is a record of *assignment*, not of execution. Nothing verifies the
+   assigned model is the one that ran.
+3. Consequently, the per-dimension grades below are grades on **the harness's
+   output**, not on any individual model. Do not read "B+ on code quality" as a
+   statement about Sonnet 5, or "D on prioritization" as a statement about
+   Composer.
+
+If per-model grading matters going forward, the fix is cheap: have the harness
+write the executing model into a commit trailer.
 
 ---
 
@@ -265,16 +299,37 @@ dependency graph. It is also the one item on the list that a roadmap cannot fix,
 because the repository history retains the secret regardless of what the working
 tree says.
 
-In fairness, the file predates this window. It goes back to commit `5b11d735f`,
-the original `/test-mud` framework. Neither agent introduced it. But both agents
-had the repository open for a full work cycle, one of them explicitly found it,
-and it is still live.
+Worse, **the finding was incomplete.** There were two files, not one.
+`tools/_archive/testing-pre-harness/testing/targets.yaml` carried the identical
+`smoketester` and `aitester` credentials and is named in neither review nor in
+the roadmap chunk. Cursor's own Docker-context work explicitly excludes
+`tools/playtest/targets.yaml` from image layers, so it clearly understood the
+file was sensitive, and still neither untracked it nor swept for copies.
 
-**This should be the next action taken, ahead of everything else in the
-roadmap.** Rotate the `aitester` and `smoketester` passwords first; removing the
-file second.
+In fairness, both files predate this window. They go back to commit `5b11d735f`,
+the original `/test-mud` framework. Neither agent introduced them. But both
+agents had the repository open for a full work cycle, one of them explicitly
+found one of them, and both were still live at the start of this review.
 
-### D. Jules fabricated a code citation. Grade: D
+**Remediated 2026-08-08** on branch `fix/remove-tracked-playtest-credentials`
+(commit `21f076c29`):
+
+- `tools/playtest/targets.yaml` untracked; local copy retained on disk so
+  `/playtest prod` still works.
+- `tools/_archive/testing-pre-harness/testing/targets.yaml` deleted; the
+  pre-harness stack was retired 2026-06-08 and nothing consumes it.
+- `tools/playtest/targets.example.yaml` added as a credential-free template.
+- `.gitignore` ignores `**/targets.yaml`, negating the example.
+- `CLAUDE.md` and `.claude/commands/playtest.md` document the setup step and a
+  never-echo-the-password rule.
+- Roadmap chunk 1.5 moved to In progress with rotation flagged as the blocker.
+
+**Rotation is still outstanding and no repository change can substitute for
+it.** The blobs remain reachable in history, in every existing clone, and in
+every fork. Rotate `aitester` on `dogmud.org` and the local `smoketester`, and
+confirm `aitester` holds no admin role.
+
+### F. Jules fabricated a code citation, and the casing proves it. Grade: F
 
 Jules' section 3 presents this as a quotation from the codebase:
 
@@ -285,21 +340,64 @@ func TestBTreeStateEviction(t *testing.T) {
 	defer SetBTreeStateEvictor(origEvictor)
 ```
 
-`TestBTreeStateEviction` does not exist. Not in that file, not anywhere in the
-repository. The real test is `TestCheckPortalTimers_TtlExpiryEvictsBtreeState`
-at `instances_test.go:381`.
+The real code at `instances_test.go:381-384`:
 
-The mitigating fact matters and I want to state it plainly: the *pattern* is
-real. `instances_test.go` genuinely does back up and restore `bTreeStateEvictor`
-at lines 384, 424, and 502, so Jules' actual argument, that global callback
-pointers force brittle test scaffolding, is correct and well-evidenced. This is
-an invented identifier wrapped around a true claim, not a hallucinated finding.
+```go
+func TestCheckPortalTimers_TtlExpiryEvictsBtreeState(t *testing.T) {
+	// Snapshot/restore the package-level evictor.
+	origEvictor := btreeStateEvictor
+	defer SetBTreeStateEvictor(origEvictor)
+```
 
-It is still serious. A reader who greps for the cited symbol finds nothing and
-has no way to distinguish "the agent paraphrased" from "the agent invented the
-whole thing," which retroactively taints every other citation in the document.
-That is precisely why I verified all seven of Jules' other claims rather than
-sampling them.
+Two divergences, and the second is the damning one:
+
+1. `TestBTreeStateEviction` does not exist anywhere in the repository.
+2. Jules wrote the variable as `bTreeStateEvictor`. The actual identifier is
+   `btreeStateEvictor`, lowercase `t`, confirmed at `instances.go:227,229,247,254`.
+
+**A copy-paste preserves casing.** Getting the capitalization of a package-level
+variable wrong is only possible if the text was generated from memory of what
+the code probably looks like, then presented inside a fenced block with a
+file-path comment. That is not paraphrase. That is synthesized text formatted to
+read as a verbatim citation.
+
+The underlying argument is still correct: `instances_test.go` really does back
+up and restore that global at lines 384, 424, and 502, so global callback
+pointers really do force brittle test scaffolding. But a reader cannot tell
+that from the document, and cannot distinguish "paraphrased" from "invented the
+whole finding" without doing the verification themselves. It retroactively puts
+every other code block in the review in question, which is exactly why I checked
+all seven of Jules' remaining claims instead of sampling them.
+
+### D. Jules' impact claims are inflated, and one is simply false. Grade: D
+
+The findings are real. The consequences Jules attaches to them frequently are
+not, and nothing in the document is measured.
+
+- **Section 3's nil-panic claim is false.** Jules asserts that using a package
+  before `main.go` wires the pointers means "the application will crash with a
+  silent, untraceable `nil` pointer dereference." The seams are nil-guarded by
+  design: `instances.go:227` reads `if btreeStateEvictor != nil`,
+  `roommanager.go:376` reads `if companionTransport != nil`, and the setter's
+  own doc comment says "Safe to leave unregistered in tests that don't exercise
+  btree state." The roadmap independently reached the same conclusion. The
+  observation (mutable globals) survives; the stated impact does not.
+- **Two unmeasured "Critical" severities.** Sections 1 and 2 are both rated
+  Critical. Section 2 predicts autosave "guarantees major periodic performance
+  lag spikes" and will "rapidly degrade the server into an unplayable state,"
+  with no benchmark, no loaded-room count, and no tick-delay figure. The project
+  already has a production performance baseline showing copyover completing in
+  under one second. The roadmap correctly refused to accept the severity and
+  split the work into "measure first" (3.6a) and "remediate only if the budget
+  is exceeded" (3.6b). That was the right call and it is a correction of Jules.
+- **Section 5 is wrong on the merits**, as covered above.
+
+Scoring the document honestly: five sections, of which two are solid (section 1
+lock scope, section 4 progression and dice math), two are real observations
+carrying false or unevidenced impact claims (sections 2 and 3), and one is
+incorrect (section 5). The recommendations are generic ("Event-Driven
+Architecture", "Asynchronous File Writes") and would apply unchanged to most Go
+MUD codebases.
 
 ### F. Two of Jules' three commits misrepresent their contents. Grade: F
 
@@ -352,30 +450,45 @@ current tree is clean. But it cost two PRs and a revert.
 | **Cursor** | Doc hygiene (untracked source doc, no index entries) | **C-** |
 | **Cursor** | Handling of the competing review's section 5 | **C** |
 | **Cursor** | Prioritization and delivery (0 of 36 findings fixed) | **D** |
-| **Cursor** | Credential triage | **F** |
+| **Cursor** | Credential triage (found one file, missed the second, shipped neither) | **F** |
 | **Cursor** | **Overall** | **B-** |
-| **Jules** | Architectural insight (4 real misses caught) | **B+** |
-| **Jules** | Claim accuracy (6 of 7 verified) | **B** |
-| **Jules** | Citation integrity (fabricated symbol) | **D** |
+| **Jules** | Architectural insight (2 genuine catches the other review missed) | **B** |
+| **Jules** | Observation accuracy (structural claims verify) | **B** |
+| **Jules** | Impact/severity accuracy (one false, two unmeasured Criticals) | **D** |
+| **Jules** | Citation integrity (synthesized code block, wrong identifier casing) | **F** |
 | **Jules** | Code contribution (invalid, false rationale, reverted) | **F** |
 | **Jules** | Commit honesty (1 of 3 accurate, 1 empty) | **F** |
-| **Jules** | **Overall** | **C-** |
+| **Jules** | **Overall** | **D** |
 
-**Cursor: B-.** Excellent analysis, mature process, competent code, and almost
-no delivery against the problem it was pointed at. Trust its findings. Do not
-trust it to sequence its own work toward the highest-value item.
+**Cursor harness: B-.** Excellent analysis, mature process, competent code, and
+almost no delivery against the problem it was pointed at. Trust its findings.
+Do not trust it to sequence its own work toward the highest-value item. Note
+this grades the harness, not any single model in it.
 
-**Jules: C-.** Real insight that the more thorough reviewer missed, wrapped in
-process behavior that undermines its own credibility. Its four findings are
-worth keeping. Everything it *did* to the repository was reverted, and its
-citations require independent verification before use.
+**Jules: D.** Regraded down from an initial C-, which was too generous. The
+initial grade weighted "found two things the more thorough reviewer missed" as
+if it offset the rest. It does not.
+
+Net contribution to this repository after the revert: **one markdown file, which
+contains a fabricated code block.** Everything Jules changed in the codebase was
+invalid and was backed out. Of its three commits, one is honest, one describes
+work absent from its diff, and one is empty. Of its five findings, two are
+solid, two carry impact claims that are unevidenced or provably false, and one
+is wrong. And the fabricated citation is not a near-miss: the identifier casing
+mismatch shows the code block was generated rather than read, which means the
+document asserts verification it did not perform.
+
+The two real catches (the global admin write lock, the `SkillMultiplier`
+ceiling) are worth keeping and are now tracked as roadmap chunks 3.5 and 5.7.
+Keep the findings. Do not extend trust to the document.
 
 ---
 
 ## Recommended next actions
 
-1. **Rotate `aitester` and `smoketester` credentials now.** Then execute Chunk
-   1.5. Removing the file does not un-expose a secret that is in public history.
+1. **Rotate `aitester` and `smoketester` credentials now.** The repository side
+   of Chunk 1.5 is done (see above); rotation is the part only you can do, and
+   removing the file does not un-expose a secret that is in public history.
 2. **Ship the four one-line fixes.** Findings 11 (wander filter), 12 (gold
    parse), 32 (`WrapAnsi` named return), and 28 (two nil dereferences) are
    contained, independently verified above, and currently blocked behind a
