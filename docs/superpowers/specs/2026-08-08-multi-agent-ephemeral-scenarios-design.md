@@ -31,6 +31,7 @@ concurrency, coordinated group_goals).
 - Bulk migration of every single-agent goals file
 - Dead-code cleanup of the pre-0.3c local playtest path (still deferred)
 - Replacing mudagent or moving gameplay judgment into Go
+- AI admin characters in multi-agent scenarios (hard-banned, not deferred)
 
 ## Decisions (locked in brainstorm)
 
@@ -43,12 +44,16 @@ concurrency, coordinated group_goals).
 | Mudagents | **Concurrent** (one process + bridge per actor) |
 | Binding | Explicit per-actor `ephemeral:` via each actor’s **goals file**; migrate existing scenarios |
 | Goals / loadout | Each actor has its **own goals file** and character build (profile+room[+overlays] or creation_flow) |
+| Duplicate templates | **Allowed but mildly discouraged** — prefer mixed loadouts/personalities |
+| Admin in multi | **Hard ban:** no `profile: admin` (or admin-role actors) in multi-agent scenarios |
+| Prod identities | **Hard ban:** never use prod-user example names or close variants |
 | Blackboard | Run-scoped **file** blackboard for Claude↔group orchestration |
 | In-game coord | Prefer say/party/tell/etc. for character↔character when co-located |
 | Actor early stop | `on_actor_stop: continue\|abort`; **default continue** |
 | Per-actor budgets | Soft guidelines only; **scenario wall-clock** is the hard cut |
 | Go surface | Extend **`playtestrun scenario`** (not a new binary) |
 | Approach | Scenario supervisor in playtestrun (Approach 1) |
+| Pre-merge smoke | Short real mixed-party scenario (~10m), agent-driven, solid combined report |
 
 ## Architecture
 
@@ -150,18 +155,59 @@ ephemeral:
 | Any actor fails `ParseGoalsEphemeral` | Error |
 | Legacy `target:` / `onboarding:` without migrated bind | Error (fail closed for local ephemeral scenarios) |
 | Unknown `on_actor_stop` | Error |
+| Any roster actor with `profile: admin` (or admin role) | Error — **hard ban** in multi-agent scenarios |
 | Unknown keys under scenario root that Go parses | KnownFields / explicit allow-list — fail closed on unknown **Go-owned** keys; `group_goals` / `mode` / `summary` allowed as opaque Claude fields |
+
+### Roster diversity (guidance)
+
+Duplicate template ids in one roster are **allowed but mildly discouraged**.
+Uniform agents miss bugs that mixed loadouts and personalities catch. Prefer
+distinct `personality` values and meaningfully different `ephemeral` binds
+(overlays / rooms / creation vs profile) unless the scenario’s point is
+literally identical twins. Docs and exemplars should model mixed parties; Go
+does **not** reject duplicate templates (only warns in Human docs / review
+checklists).
+
+### Admin hard ban (multi-agent only)
+
+Multi-agent scenarios must not include the `admin` synthetic profile or any
+actor that would materialize with admin role. There is no supported use case
+for multiple AI admins (or even one AI admin) in coordinated multi-testing.
+Single-agent 0.3c `playtestrun run` may still use `admin` when explicitly
+bound. Fail closed before Docker if any roster goals file selects `admin`.
+
+### Prod-identity hard ban (shared with materialize / creation-flow)
+
+Playtest agents must **never** use account or character names from the
+`_archive/prod-users` design-reference set, nor **close variants** of those
+names (case-insensitive match; obvious mutations such as leading/trailing
+digits, underscores, `pt_` prefixes glued to a banned stem, or single-edit
+typos of a banned name — exact algorithm in plan/implementation, but the
+policy is fail-closed).
+
+Applies to:
+
+- Tracked profile templates (already partially covered by
+  `playtestprofiles` sanitizer — **expand** the denylist from the archive
+  name set, not only `Meirok`)
+- Generated `pt_*` usernames / stamped character names at materialize
+- **Creation-flow** names chosen by Claude or typed into mudagent during a
+  scenario (driver must refuse; Go should reject at materialize when it
+  controls the name, and document the driver check for `new`)
+
+This rule is intentional for 0.3d and is the standard we wish had been
+fully explicit in 0.3c; implementation may land the expanded denylist in
+`playtestprofiles` so single- and multi-agent paths share one gate.
 
 ### Materialize + creds
 
 - Profile-bound actors → one `playtestenv` `Profiles` list in **roster order**.
 - Creation-flow actors → no profile entry; that actor’s ready `creds` is null.
-- Duplicate template ids in one roster are allowed (e.g. two `early` actors).
-  Ready JSON / scenario sidecar MUST map each roster `id` to exactly one
-  username (and creds path). Implementation may stamp `actor_id` onto
-  `creds.json` players and/or keep an ordered sidecar map built at Start —
-  either way, `SelectCredsPlayer(profile)` alone is insufficient when two
-  actors share a template.
+- When duplicate templates appear, ready JSON / scenario sidecar MUST still
+  map each roster `id` to exactly one username (and creds path). Implementation
+  may stamp `actor_id` onto `creds.json` players and/or keep an ordered sidecar
+  map built at Start — `SelectCredsPlayer(profile)` alone is insufficient when
+  two actors share a template.
 - Never log or write passwords into markdown reports (paths only).
 
 ## Paths and IDs
@@ -241,15 +287,25 @@ invocation updates in `internal/playtestrun/context.md`.
 
 ## Testing
 
-- **Unit:** scenario parse matrix; duplicate ids; bad `on_actor_stop`; per-actor
-  goals ephemeral failure; ready JSON actor list; bridge/blackboard paths;
-  continue vs abort policy hooks (fakes).
-- **Opt-in Docker:** ≥2 profile actors through `playtestrun scenario` → ready →
-  stop; optional mixed creation-flow + profile if cheap.
+- **Unit:** scenario parse matrix; duplicate roster ids; bad `on_actor_stop`;
+  per-actor goals ephemeral failure; **reject `profile: admin`** in scenario
+  roster; prod-identity / close-variant rejection (shared helper); ready JSON
+  actor list; bridge/blackboard paths; continue vs abort policy hooks (fakes).
+- **Opt-in Docker:** ≥2 **non-admin** profile actors through
+  `playtestrun scenario` → ready → stop; optional mixed creation-flow + profile
+  if cheap.
 - Driver-contract smoke for ready JSON + run-scoped actor bridges (no full
   Claude session required).
-- No Done without Docker evidence + adversarial **implementation** review after
-  plan approval.
+- **Pre-merge live smoke (required before merging the 0.3d branch):** run a
+  short real scenario (~**10 minutes** of party play) with a **mixed** party
+  (different loadouts and personalities — not uniform clones). The
+  implementing agent (not a separate Claude `/playtest-scenario` session) may
+  drive the mudagents. Confirm invite/accept (or equivalent group_goals),
+  overlapping live sessions, and a **solid combined gameplay report** (required
+  header fields, per-actor outcomes, no passwords, incomplete-vs-success
+  honesty). Wall-clock for this smoke may be capped near 10–15m.
+- No Done without Docker evidence + this live smoke + adversarial
+  **implementation** review after plan approval.
 
 ## Process gates
 
@@ -263,4 +319,6 @@ invocation updates in `internal/playtestrun/context.md`.
 non-interacting parallel = multiple 0.3c; Hybrid Claude+N mudagents; concurrent
 agents; explicit per-actor ephemeral via own goals files; file blackboard +
 in-game channels; `on_actor_stop` default continue; `playtestrun scenario`;
-Approach 1.
+Approach 1. Spec amendments: duplicate templates discouraged; prod-identity
+ban (+ close variants); admin hard-ban in multi; pre-merge ~10m mixed-party
+live smoke.
