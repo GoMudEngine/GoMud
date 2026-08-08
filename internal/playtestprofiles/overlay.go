@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/GoMudEngine/GoMud/internal/items"
+	"github.com/GoMudEngine/GoMud/internal/quests"
 	"github.com/GoMudEngine/GoMud/internal/spells"
 	"github.com/GoMudEngine/GoMud/internal/users"
 )
@@ -14,9 +15,10 @@ type WorldChecks struct {
 	RoomExists func(roomID int) bool
 	SpellOK    func(spellID string) bool
 	ItemOK     func(itemID int) bool
+	FlagOK     func(key, value string) error
 }
 
-// DefaultWorldChecks uses the live rooms/spells/items registries.
+// DefaultWorldChecks uses the live rooms/spells/items/quest-flag registries.
 func DefaultWorldChecks() WorldChecks {
 	return WorldChecks{
 		RoomExists: func(roomID int) bool {
@@ -28,6 +30,7 @@ func DefaultWorldChecks() WorldChecks {
 		ItemOK: func(itemID int) bool {
 			return items.GetItemSpec(itemID) != nil
 		},
+		FlagOK: quests.ValidateFlag,
 	}
 }
 
@@ -91,6 +94,11 @@ func ApplyOverlays(u *users.UserRecord, startRoom int, o Overlays, world WorldCh
 		}
 	}
 	for k, v := range o.SetQuestFlags {
+		if world.FlagOK != nil {
+			if err := world.FlagOK(k, v); err != nil {
+				return fmt.Errorf("playtestprofiles: set_quest_flags: %w", err)
+			}
+		}
 		u.Character.SetQuestFlag(k, v)
 	}
 	if o.SetGold != nil {

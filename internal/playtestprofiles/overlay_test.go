@@ -1,6 +1,7 @@
 package playtestprofiles
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/GoMudEngine/GoMud/internal/characters"
@@ -13,6 +14,12 @@ func testWorld() WorldChecks {
 		RoomExists: func(id int) bool { return id == 100 || id == 462 },
 		SpellOK:    func(id string) bool { return id == "heal" || id == "identify" },
 		ItemOK:     func(id int) bool { return id == 1 || id == 2 },
+		FlagOK: func(key, value string) error {
+			if key == "11-branch" && (value == "rhett" || value == "sylara") {
+				return nil
+			}
+			return fmt.Errorf("undeclared quest flag %q", key)
+		},
 	}
 }
 

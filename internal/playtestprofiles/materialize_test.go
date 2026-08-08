@@ -80,6 +80,45 @@ func TestMaterializeFromConfigNoopWhenEmpty(t *testing.T) {
 	require.Nil(t, creds)
 }
 
+func TestMaterializeSecondEntryFailureReturnsError(t *testing.T) {
+	tmp := t.TempDir()
+	dataFiles := filepath.Join(tmp, "world")
+	require.NoError(t, os.MkdirAll(filepath.Join(dataFiles, "users"), 0o755))
+	profilesDir := filepath.Join(tmp, "profiles")
+	require.NoError(t, os.MkdirAll(profilesDir, 0o755))
+	src, err := os.ReadFile(filepath.Join("testdata", "fresh.yaml"))
+	require.NoError(t, err)
+	require.NoError(t, os.WriteFile(filepath.Join(profilesDir, "fresh.yaml"), src, 0o644))
+
+	prev := configs.GetFilePathsConfig().DataFiles.String()
+	require.NoError(t, configs.AddOverlayOverrides(map[string]any{
+		"FilePaths.DataFiles":        dataFiles,
+		"Validation.PasswordSizeMin": 4,
+		"Validation.PasswordSizeMax": 16,
+		"Validation.NameSizeMin":     1,
+		"Validation.NameSizeMax":     80,
+		"Validation.NameRejectRegex": `^[a-zA-Z0-9_]+$`,
+	}))
+	t.Cleanup(func() {
+		_ = configs.AddOverlayOverrides(map[string]any{"FilePaths.DataFiles": prev})
+	})
+
+	m := &Manifest{Entries: []ManifestEntry{
+		{Profile: "fresh", StartRoom: 100},
+		{Profile: "fresh", StartRoom: 99999}, // bad room via testWorld
+	}}
+	_, err = Materialize(m, MaterializeOptions{
+		ProfilesDir: profilesDir,
+		World:       testWorld(),
+	})
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "entries[1]")
+	// First entry may have been persisted; fail-closed for the run is enough.
+	matches, globErr := filepath.Glob(filepath.Join(dataFiles, "users", "*.yaml"))
+	require.NoError(t, globErr)
+	require.NotEmpty(t, matches)
+}
+
 func TestPersistOfflineUserPreservesAdminRole(t *testing.T) {
 	tmp := t.TempDir()
 	dataFiles := filepath.Join(tmp, "world")

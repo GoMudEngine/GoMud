@@ -154,8 +154,9 @@ run on copyover restore.
 
 1. Load template by id from `ProfilesDir` + sanitize  
 2. Apply overlays + `start_room`  
-3. Generate username (`pt-<profile>-<suffix>`) passing `ValidateName`; retry on
-   collision (bounded); fail if exhausted  
+3. Generate username (`pt_<profile>_<suffix>`, underscores — hyphens fail
+   `Validation.NameRejectRegex`) passing `ValidateName`; retry on collision
+   (bounded); fail if exhausted  
 4. Generate password within Validation password length bounds; `SetPassword`
    (bcrypt)  
 5. Set `IsAI=true`; preserve template `role`  
@@ -179,7 +180,7 @@ mode `0600` after all entries succeed:
   "players": [
     {
       "profile": "veteran",
-      "username": "pt-veteran-a1b2c3",
+      "username": "pt_veteran_a1b2c3",
       "password": "...",
       "user_id": 1,
       "room_id": 462

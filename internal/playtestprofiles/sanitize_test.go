@@ -32,6 +32,17 @@ func TestSanitizeTemplateRejectsInbox(t *testing.T) {
 	require.Contains(t, err.Error(), "inbox")
 }
 
+func TestSanitizeTemplateRejectsProdIdentity(t *testing.T) {
+	u := &users.UserRecord{
+		Role:      users.RoleUser,
+		Username:  "template-veteran",
+		Character: &characters.Character{Name: "Meirok"},
+	}
+	err := SanitizeTemplate("veteran", u)
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "prod identity")
+}
+
 func TestSanitizeTemplateRejectsAdminRoleOnNonAdmin(t *testing.T) {
 	u := &users.UserRecord{
 		Role:      users.RoleAdmin,

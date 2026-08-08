@@ -20,13 +20,16 @@ func GenerateCredentials(u *users.UserRecord, profileID string) (username, passw
 	if u == nil {
 		return "", "", fmt.Errorf("playtestprofiles: nil user")
 	}
-	base := "pt-" + sanitizeProfileToken(profileID)
+	// Underscores only: Validation.NameRejectRegex rejects hyphens
+	// (^[a-zA-Z0-9_]+$). Spec's pt-<profile>-<suffix> shape is preserved
+	// with underscores substituted for the separators.
+	base := "pt_" + sanitizeProfileToken(profileID)
 	for attempt := 0; attempt < usernameMaxAttempts; attempt++ {
 		suffix, genErr := randomHex(3)
 		if genErr != nil {
 			return "", "", genErr
 		}
-		candidate := base + "-" + suffix
+		candidate := base + "_" + suffix
 		if err := users.ValidateName(candidate); err != nil {
 			continue
 		}
@@ -59,7 +62,7 @@ func sanitizeProfileToken(profileID string) string {
 		case r >= 'a' && r <= 'z', r >= '0' && r <= '9':
 			b.WriteRune(r)
 		case r == '-' || r == '_':
-			b.WriteByte('-')
+			b.WriteByte('_')
 		}
 	}
 	out := b.String()

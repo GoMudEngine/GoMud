@@ -86,10 +86,34 @@ or exported back into source.
 From the repository root:
 
 ```powershell
-go test ./cmd/playtestenv ./internal/playtestenv
+go test ./cmd/playtestenv ./internal/playtestenv ./internal/playtestprofiles
 ```
 
-These exercise fake runners and lifecycle contracts without starting Docker.
+These exercise fake runners, lifecycle contracts, and profile materialization
+without starting Docker.
+
+### Synthetic profiles (chunk 0.3b)
+
+Tracked templates live in `tools/playtest/profiles/` (`fresh`, `early`, `mid`,
+`veteran`, `specialist-caster`, `admin`). The runner image copies them to
+`/app/playtest/profiles`.
+
+Request profiles on start (library API or CLI). Example CLI:
+
+```powershell
+go run ./cmd/playtestenv start --checkout . --profile fresh:5200 --json
+```
+
+When profiles are requested, the supervisor writes
+`tools/playtest/.run/<run-id>/control/profiles-manifest.yaml` and Playtest
+config overrides. After `ready`, `artifacts.creds` points at
+`.../control/creds.json` (mode 0600 where the OS allows). That file holds
+per-run usernames/passwords for AI-port login — **do not commit it** (`.run/`
+is gitignored) and never paste password bodies into failure reports.
+
+Empty/omitted `--profile` flags leave `ProfilesManifest` unset (creation-flow
+smoke: agent creates a character). Bad `start_room` / overlay refs fail the
+container before `Server Ready`.
 
 ### Chunk 0.2 full-suite baseline (still required)
 

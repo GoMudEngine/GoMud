@@ -34,7 +34,6 @@ func PersistOfflineUser(u *users.UserRecord) error {
 		if err := idx.Create(); err != nil {
 			return fmt.Errorf("playtestprofiles: index create: %w", err)
 		}
-		return nil
 	}
 	if err := idx.AddUser(u.UserId, u.Username); err != nil {
 		return fmt.Errorf("playtestprofiles: index add: %w", err)
