@@ -1,6 +1,7 @@
 package playtestenv
 
 import (
+	"bytes"
 	_ "embed"
 	"errors"
 	"fmt"
@@ -8,8 +9,10 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"time"
 
+	"github.com/natefinch/atomic"
 	"gopkg.in/yaml.v3"
 
 	"github.com/GoMudEngine/GoMud/internal/version"
@@ -58,6 +61,20 @@ func EmbeddedComposePolicy() []byte {
 // requireWritableControlDir proves controlDir is writable by creating and
 // immediately removing a uniquely-named probe file inside it. It never
 // leaves the probe file behind, whether the write succeeds or fails.
+//
+// The control directory - and therefore its /run/dogmud bind mount inside
+// the container (see compose.playtest.yml) - is deliberately never
+// read-only. internal/configs.SetVal, the live-admin config-write path a
+// running server uses for both migration completion and later
+// playtest-scoped config changes, persists via util.SafeSave: it writes
+// "<CONFIG_PATH>.new" and then os.Renames it over the original
+// config-overrides.yaml in the same directory. Both the temp-file create
+// and the rename require the directory itself to be writable, not just the
+// target file; a read-only bind would make every one of those legitimate,
+// in-container config writes fail. The bind stays scoped to exactly this
+// ignored per-run control directory - never the checkout source tree and
+// never the run manifest - so this writability requirement never exposes
+// anything beyond one run's own disposable control files.
 func requireWritableControlDir(controlDir string) error {
 	probe := filepath.Join(controlDir, ".playtestenv-write-probe")
 	if err := os.WriteFile(probe, []byte{}, 0o644); err != nil {
@@ -71,9 +88,15 @@ func requireWritableControlDir(controlDir string) error {
 // <controlDir>/compose.resolved.yml and returns its absolute path. It never
 // reads, merges, or otherwise derives from any Compose file already present
 // in the selected checkout.
+//
+// It writes via natefinch/atomic.WriteFile (write-to-temporary-file-plus-
+// atomic-rename, the same mechanism manifest.go's writeManifest uses), so a
+// process interrupted mid-write leaves either the complete new file or the
+// untouched prior one - never a truncated/corrupt file - and never a
+// leftover temporary file in the control directory either way.
 func writeResolvedComposeFile(controlDir string) (string, error) {
 	path := filepath.Join(controlDir, composeResolvedFileName)
-	if err := os.WriteFile(path, embeddedComposePolicy, 0o644); err != nil {
+	if err := atomic.WriteFile(path, bytes.NewReader(embeddedComposePolicy)); err != nil {
 		return "", fmt.Errorf("playtestenv: write resolved compose file: %w", err)
 	}
 	return path, nil
@@ -112,14 +135,16 @@ func buildConfigOverridesDoc(ver version.Version) configOverridesDoc {
 
 // writeConfigOverrides marshals buildConfigOverridesDoc(ver) as YAML and
 // writes it to <controlDir>/config-overrides.yaml, returning its absolute
-// path.
+// path. Like writeResolvedComposeFile, it writes via atomic.WriteFile so a
+// re-materialization (e.g. on run renewal) always either fully replaces the
+// prior file or leaves it untouched, and never leaks a temporary file.
 func writeConfigOverrides(controlDir string, ver version.Version) (string, error) {
 	data, err := yaml.Marshal(buildConfigOverridesDoc(ver))
 	if err != nil {
 		return "", fmt.Errorf("playtestenv: encode config overrides: %w", err)
 	}
 	path := filepath.Join(controlDir, configOverridesFileName)
-	if err := os.WriteFile(path, data, 0o644); err != nil {
+	if err := atomic.WriteFile(path, bytes.NewReader(data)); err != nil {
 		return "", fmt.Errorf("playtestenv: write config overrides: %w", err)
 	}
 	return path, nil
@@ -157,13 +182,65 @@ type composeRunVars struct {
 	ControlDir          string
 }
 
+// composeReservedEnvNames lists the six ${DOGMUD_*} interpolation keys this
+// package ever sets in a Compose invocation's environment. It is the single
+// source of truth for both composeInterpolationEnv (which supplies their
+// trusted values) and scrubComposeReservedEnv (which strips any ambient
+// collision before those trusted values are appended), so the two can never
+// drift out of sync.
+var composeReservedEnvNames = []string{
+	"DOGMUD_RUN_ID",
+	"DOGMUD_PROJECT",
+	"DOGMUD_CHECKOUT",
+	"DOGMUD_CHECKOUT_FINGERPRINT",
+	"DOGMUD_CREATED_AT",
+	"DOGMUD_CONTROL_DIR",
+}
+
+// isComposeReservedEnvName reports whether key matches one of
+// composeReservedEnvNames. The comparison is case-insensitive on every
+// platform: these six names are this package's own interpolation
+// convention, not OS-level environment-variable semantics (contrast
+// envNamesEqual in docker.go, which matches per-platform for genuine
+// ambient Docker variables), so a mixed-case ambient collision must be
+// scrubbed identically on Windows and POSIX alike.
+func isComposeReservedEnvName(key string) bool {
+	for _, reserved := range composeReservedEnvNames {
+		if strings.EqualFold(key, reserved) {
+			return true
+		}
+	}
+	return false
+}
+
+// scrubComposeReservedEnv returns a copy of env with every entry whose key
+// matches a reserved ${DOGMUD_*} interpolation name removed,
+// case-insensitively. It preserves the nil-vs-non-nil-empty distinction
+// documented on cloneEnv: scrubbing a nil environment yields nil, and
+// scrubbing a non-nil (even already-empty) environment always yields a
+// non-nil slice, so this scrub can never masquerade as "no Env override"
+// and reinstate the real host environment.
+func scrubComposeReservedEnv(env []string) []string {
+	if env == nil {
+		return nil
+	}
+	scrubbed := make([]string, 0, len(env))
+	for _, kv := range env {
+		if isComposeReservedEnvName(envKey(kv)) {
+			continue
+		}
+		scrubbed = append(scrubbed, kv)
+	}
+	return scrubbed
+}
+
 // composeInterpolationEnv renders v as a sorted slice of "KEY=VALUE"
 // entries for the six ${DOGMUD_*} placeholders the embedded Compose policy
 // references. Checkout and ControlDir are rendered with filepath.ToSlash so
 // Compose's YAML interpolation never sees a Windows backslash path (a
 // no-op on non-Windows platforms, where paths are already slash-separated).
 func composeInterpolationEnv(v composeRunVars) []string {
-	entries := map[string]string{
+	values := map[string]string{
 		"DOGMUD_RUN_ID":               v.RunID,
 		"DOGMUD_PROJECT":              v.Project,
 		"DOGMUD_CHECKOUT":             filepath.ToSlash(v.Checkout),
@@ -171,14 +248,11 @@ func composeInterpolationEnv(v composeRunVars) []string {
 		"DOGMUD_CREATED_AT":           v.CreatedAt.UTC().Format(time.RFC3339),
 		"DOGMUD_CONTROL_DIR":          filepath.ToSlash(v.ControlDir),
 	}
-	keys := make([]string, 0, len(entries))
-	for k := range entries {
-		keys = append(keys, k)
-	}
+	keys := append([]string(nil), composeReservedEnvNames...)
 	sort.Strings(keys)
 	out := make([]string, 0, len(keys))
 	for _, k := range keys {
-		out = append(out, k+"="+entries[k])
+		out = append(out, k+"="+values[k])
 	}
 	return out
 }
@@ -196,13 +270,16 @@ func composeArgs(checkout, composeFile, project string, extra []string) []string
 }
 
 // composeCommand builds one Compose CommandSpec via dockerCommand(dc, ...),
-// then replaces its Env with dc's already-validated scrubbed environment
-// plus composeInterpolationEnv(vars) - never a fresh, unscrubbed ambient
-// environment, and never any variable beyond the six ${DOGMUD_*}
-// placeholders the embedded policy references.
+// then replaces its Env with dc's already-validated scrubbed environment -
+// itself further scrubbed of any of the six reserved ${DOGMUD_*}
+// interpolation names, case-insensitively - plus composeInterpolationEnv(vars).
+// This guarantees exactly one value per logical ${DOGMUD_*} key reaches
+// Compose: never a fresh, unscrubbed ambient environment, never a
+// duplicate/shadowed entry from an ambient collision, and never any
+// variable beyond the six placeholders the embedded policy references.
 func composeCommand(dc dockerContext, vars composeRunVars, composeFile string, extra []string, dir string, stdout, stderr io.Writer) CommandSpec {
 	spec := dockerCommand(dc, composeArgs(vars.Checkout, composeFile, vars.Project, extra), dir, stdout, stderr)
-	spec.Env = append(cloneEnv(dc.env), composeInterpolationEnv(vars)...)
+	spec.Env = append(scrubComposeReservedEnv(dc.env), composeInterpolationEnv(vars)...)
 	return spec
 }
 

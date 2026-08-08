@@ -208,12 +208,6 @@ func hasArchivePathComponent(canonical string) bool {
 	return false
 }
 
-// checkoutFingerprintForHost is checkoutFingerprint using the current
-// process's real platform.
-func checkoutFingerprintForHost(canonical string) string {
-	return checkoutFingerprint(canonical, runtime.GOOS)
-}
-
 // checkoutFingerprint returns a stable, hex-encoded SHA-256 digest of
 // canonical, normalized deterministically: forward slashes always, and
 // lowercased on Windows (whose filesystem paths are case-insensitive) but
@@ -231,6 +225,14 @@ func checkoutFingerprint(canonical, goos string) string {
 // package-level constant declaration named VERSION whose value is a string
 // literal, and validates it with internal/version.Parse. It never uses a
 // regular expression or a hard-coded version.
+//
+// It also honors Go's implicit const-expression repetition: within one
+// parenthesized const block, a ConstSpec with no expression list of its own
+// inherits the nearest preceding non-empty expression list verbatim (Go
+// spec, "Constant declarations"). This is ordinarily seen with iota, but is
+// legal for any expression - so `OTHER = "1.2.3"` followed by a bare
+// `VERSION` (no `=`) on the next line is a valid string-literal VERSION
+// declaration and must resolve the same as `VERSION = "1.2.3"`.
 func parseCheckoutVersion(mainGoPath string) (version.Version, error) {
 	fset := token.NewFileSet()
 	file, err := parser.ParseFile(fset, mainGoPath, nil, 0)
@@ -243,19 +245,26 @@ func parseCheckoutVersion(mainGoPath string) (version.Version, error) {
 		if !ok || genDecl.Tok != token.CONST {
 			continue
 		}
+		var inheritedValues []ast.Expr
 		for _, spec := range genDecl.Specs {
 			valueSpec, ok := spec.(*ast.ValueSpec)
 			if !ok {
 				continue
 			}
+			values := valueSpec.Values
+			if len(values) > 0 {
+				inheritedValues = values
+			} else {
+				values = inheritedValues
+			}
 			for i, name := range valueSpec.Names {
 				if name.Name != "VERSION" {
 					continue
 				}
-				if i >= len(valueSpec.Values) {
+				if i >= len(values) {
 					continue
 				}
-				lit, ok := valueSpec.Values[i].(*ast.BasicLit)
+				lit, ok := values[i].(*ast.BasicLit)
 				if !ok || lit.Kind != token.STRING {
 					return version.Version{}, ErrCheckoutVersionMissing
 				}
@@ -421,12 +430,15 @@ func parseGitStatusZ(raw string) []GitEntry {
 // isExcludedBaselinePath reports whether p must never appear in a recorded
 // Git baseline: the tracked playtest target-credential file, any path
 // beneath a component equal to "_archive" (case-insensitively), a basename
-// starting with ".env", a basename containing "credential" or "secret"
-// (case-insensitively), a basename ending ".key", or a path beneath this
-// package's own ignored run-state or report directories.
+// starting with ".env", a basename containing "credential" or "secret", a
+// basename ending ".key", or a path beneath this package's own ignored
+// run-state or report directories. Every one of these checks is
+// case-insensitive: Git path text is untrusted, and a credential file
+// renamed with different casing (e.g. on a case-insensitive filesystem, or
+// simply by a careless `git mv`) must not silently bypass the filter.
 func isExcludedBaselinePath(p string) bool {
 	norm := filepath.ToSlash(p)
-	if norm == targetsYAMLExcludedPath {
+	if strings.EqualFold(norm, targetsYAMLExcludedPath) {
 		return true
 	}
 
@@ -438,21 +450,22 @@ func isExcludedBaselinePath(p string) bool {
 	}
 
 	base := segments[len(segments)-1]
-	if strings.HasPrefix(base, ".env") {
+	lowerBase := strings.ToLower(base)
+	if strings.HasPrefix(lowerBase, ".env") {
 		return true
 	}
-	lowerBase := strings.ToLower(base)
 	if strings.Contains(lowerBase, "credential") || strings.Contains(lowerBase, "secret") {
 		return true
 	}
-	if strings.HasSuffix(base, ".key") {
+	if strings.HasSuffix(lowerBase, ".key") {
 		return true
 	}
 
-	if len(segments) >= 3 && segments[0] == "tools" && segments[1] == "playtest" && strings.HasPrefix(segments[2], ".run") {
+	if len(segments) >= 3 && strings.EqualFold(segments[0], "tools") && strings.EqualFold(segments[1], "playtest") &&
+		strings.HasPrefix(strings.ToLower(segments[2]), ".run") {
 		return true
 	}
-	if strings.HasPrefix(norm, "tools/playtest/reports/") {
+	if strings.HasPrefix(strings.ToLower(norm), "tools/playtest/reports/") {
 		return true
 	}
 

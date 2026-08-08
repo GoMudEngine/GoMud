@@ -95,10 +95,21 @@ func TestEmbeddedComposePolicy(t *testing.T) {
 
 	bind, ok := volumesList[1].(map[string]any)
 	require.True(t, ok, "second volume entry must be the long-form control bind")
+	// The control bind must stay read-write (no "read_only: true"), by
+	// design: internal/configs.SetVal's live-admin config-write path
+	// (migration completion, and later playtest-scoped config changes)
+	// persists via util.SafeSave, which writes "<CONFIG_PATH>.new" and
+	// renames it over config-overrides.yaml in this same directory. A
+	// read-only bind would break that legitimate in-container write path.
+	// requireExactKeys already fails if a future edit adds "read_only", but
+	// this assertion documents *why* so a future reviewer does not
+	// reintroduce it believing it is a pure hardening improvement.
 	requireExactKeys(t, bind, "type", "source", "target")
 	require.Equal(t, "bind", bind["type"])
 	require.Equal(t, "${DOGMUD_CONTROL_DIR}", bind["source"])
 	require.Equal(t, "/run/dogmud", bind["target"])
+	_, hasReadOnly := bind["read_only"]
+	require.False(t, hasReadOnly, "control bind must remain writable - see comment above")
 
 	portsList, ok := server["ports"].([]any)
 	require.True(t, ok, "service ports must be a list")
@@ -188,6 +199,51 @@ func TestMaterializeControlFilesLeavesNoWriteProbeBehind(t *testing.T) {
 	require.ElementsMatch(t, []string{"compose.resolved.yml", "config-overrides.yaml"}, names, "the writability probe file must never be left behind")
 }
 
+// TestWriteResolvedComposeFileAndConfigOverridesLeaveNoTempResidue proves
+// both writers use atomic.WriteFile's write-to-temp-then-rename semantics:
+// no stray temporary file is left in the control directory, whether writing
+// for the first time or completely overwriting a prior (differently-sized)
+// version of each file.
+func TestWriteResolvedComposeFileAndConfigOverridesLeaveNoTempResidue(t *testing.T) {
+	controlDir := t.TempDir()
+
+	// Pre-seed both destinations with different-length content so a
+	// non-atomic (truncate-then-write) implementation could leave a
+	// corrupt short/garbled file if it were interrupted, and so this test
+	// actually proves "complete overwrite" rather than "empty directory
+	// write".
+	composePath := filepath.Join(controlDir, "compose.resolved.yml")
+	configPath := filepath.Join(controlDir, "config-overrides.yaml")
+	require.NoError(t, os.WriteFile(composePath, []byte("stale-compose-content-that-is-much-longer-than-the-real-file"), 0o644))
+	require.NoError(t, os.WriteFile(configPath, []byte("stale"), 0o644))
+
+	gotComposePath, err := writeResolvedComposeFile(controlDir)
+	require.NoError(t, err)
+	require.Equal(t, composePath, gotComposePath)
+
+	gotConfigPath, err := writeConfigOverrides(controlDir, version.New(9, 9, 9))
+	require.NoError(t, err)
+	require.Equal(t, configPath, gotConfigPath)
+
+	composeBytes, err := os.ReadFile(composePath)
+	require.NoError(t, err)
+	require.True(t, bytes.Equal(composeBytes, EmbeddedComposePolicy()), "stale content must be completely overwritten, not appended to or truncated in place")
+
+	configBytes, err := os.ReadFile(configPath)
+	require.NoError(t, err)
+	var overrides configOverridesDoc
+	require.NoError(t, yaml.Unmarshal(configBytes, &overrides))
+	require.Equal(t, "9.9.9", overrides.Server.CurrentVersion)
+
+	entries, err := os.ReadDir(controlDir)
+	require.NoError(t, err)
+	names := make([]string, 0, len(entries))
+	for _, e := range entries {
+		names = append(names, e.Name())
+	}
+	require.ElementsMatch(t, []string{"compose.resolved.yml", "config-overrides.yaml"}, names, "no atomic-write temp file may be left behind")
+}
+
 func TestWriteResolvedComposeFileIgnoresCheckoutComposeFile(t *testing.T) {
 	// Simulate a hostile/decoy Compose file sitting right next to where
 	// this package writes its own resolved Compose file. Production code
@@ -266,6 +322,79 @@ func TestComposeConfigCommandRendersDockerCommandArgvAndEnv(t *testing.T) {
 	require.Contains(t, spec.Env, "DOGMUD_CHECKOUT="+filepath.ToSlash(vars.Checkout))
 	require.Contains(t, spec.Env, "DOGMUD_CONTROL_DIR="+filepath.ToSlash(vars.ControlDir))
 	require.Len(t, spec.Env, 8, "env must be exactly dc.env plus the six DOGMUD_* interpolation vars")
+}
+
+// TestComposeCommandStripsAmbientReservedEnvBeforeAppendingTrustedValues
+// proves that any ambient dc.env entry colliding with one of the six
+// ${DOGMUD_*} interpolation names - whether canonical-case or mixed-case -
+// is scrubbed before this package's trusted values are appended, so
+// Compose interpolation never sees more than one value per logical key,
+// and never an attacker/ambient-controlled one.
+func TestComposeCommandStripsAmbientReservedEnvBeforeAppendingTrustedValues(t *testing.T) {
+	dc := dockerContext{name: "ctx", env: []string{
+		"PATH=/usr/bin",
+		"DOGMUD_RUN_ID=malicious-ambient-run-id",   // canonical-case collision
+		"dogmud_project=malicious-ambient-project", // lowercase collision
+		"Dogmud_Checkout=/evil/ambient/checkout",   // mixed-case collision
+		"DOGMUD_CHECKOUT_FINGERPRINT=evil-ambient-fingerprint",
+		"dogmud_created_at=1970-01-01T00:00:00Z",
+		"DOGMUD_CONTROL_DIR=/evil/ambient/control",
+		"OTHER_VAR=keep-me",
+	}}
+	vars := composeRunVars{
+		RunID:               "trusted-run",
+		Project:             "trusted-project",
+		Checkout:            "trusted-checkout",
+		CheckoutFingerprint: "trusted-fingerprint",
+		CreatedAt:           time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC),
+		ControlDir:          "trusted-control",
+	}
+
+	spec := composeConfigCommand(dc, vars, "compose.resolved.yml", "", nil, nil)
+
+	require.Contains(t, spec.Env, "PATH=/usr/bin", "ordinary ambient env must be preserved")
+	require.Contains(t, spec.Env, "OTHER_VAR=keep-me", "ordinary ambient env must be preserved")
+
+	countsByReservedKey := map[string]int{}
+	for _, kv := range spec.Env {
+		key, _, ok := splitEnvEntry(kv)
+		if !ok {
+			continue
+		}
+		upper := strings.ToUpper(key)
+		if isComposeReservedEnvName(upper) {
+			countsByReservedKey[upper]++
+		}
+	}
+	for _, reserved := range composeReservedEnvNames {
+		require.Equal(t, 1, countsByReservedKey[reserved], "exactly one entry for %s: ambient collisions must be scrubbed", reserved)
+	}
+
+	require.Contains(t, spec.Env, "DOGMUD_RUN_ID=trusted-run")
+	require.Contains(t, spec.Env, "DOGMUD_PROJECT=trusted-project")
+	require.Contains(t, spec.Env, "DOGMUD_CHECKOUT=trusted-checkout")
+	require.Contains(t, spec.Env, "DOGMUD_CHECKOUT_FINGERPRINT=trusted-fingerprint")
+	require.Contains(t, spec.Env, "DOGMUD_CREATED_AT=2026-01-01T00:00:00Z")
+	require.Contains(t, spec.Env, "DOGMUD_CONTROL_DIR=trusted-control")
+
+	require.NotContains(t, spec.Env, "DOGMUD_RUN_ID=malicious-ambient-run-id")
+	require.NotContains(t, spec.Env, "dogmud_project=malicious-ambient-project")
+	require.NotContains(t, spec.Env, "Dogmud_Checkout=/evil/ambient/checkout")
+	require.NotContains(t, spec.Env, "DOGMUD_CHECKOUT_FINGERPRINT=evil-ambient-fingerprint")
+	require.NotContains(t, spec.Env, "dogmud_created_at=1970-01-01T00:00:00Z")
+	require.NotContains(t, spec.Env, "DOGMUD_CONTROL_DIR=/evil/ambient/control")
+}
+
+// TestScrubComposeReservedEnvPreservesNilVsNonNilEmpty guards the same
+// nil-vs-non-nil-empty distinction cloneEnv documents: scrubbing must never
+// turn an already-empty (but non-nil) environment into nil, which would
+// risk later code reinstating an unscrubbed real environment.
+func TestScrubComposeReservedEnvPreservesNilVsNonNilEmpty(t *testing.T) {
+	require.Nil(t, scrubComposeReservedEnv(nil))
+
+	empty := scrubComposeReservedEnv([]string{})
+	require.NotNil(t, empty)
+	require.Empty(t, empty)
 }
 
 func TestComposeCommandEnvIsIndependentOfDockerContextEnv(t *testing.T) {

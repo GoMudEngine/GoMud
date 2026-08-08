@@ -392,6 +392,18 @@ func TestCheckoutVersionRequiresValidNonzeroStringLiteralVERSION(t *testing.T) {
 			wantValid:  true,
 			wantString: "2.5.0",
 		},
+		{
+			// Legal Go: within a parenthesized const block, a ConstSpec
+			// with no expression list inherits the nearest preceding
+			// non-empty expression list (and type, if any) verbatim. This
+			// is normally seen with iota, but is legal for any expression,
+			// including a bare string literal - VERSION here has no `=`
+			// of its own and must still resolve to OTHER's "1.2.3".
+			name:       "implicit const expression repetition inherits string VERSION",
+			mainGoBody: "const (\n\tOTHER = \"1.2.3\"\n\tVERSION\n)",
+			wantValid:  true,
+			wantString: "1.2.3",
+		},
 	}
 
 	for _, tc := range cases {
@@ -509,6 +521,36 @@ func TestGitBaselineExcludesCredentialsArchiveAndSupervisorArtifacts(t *testing.
 	require.Len(t, baseline.Entries, 2, "only the two legitimate entries must survive filtering")
 	paths := []string{baseline.Entries[0].Path, baseline.Entries[1].Path}
 	require.ElementsMatch(t, []string{"legitimate/tracked_file.go", "legitimate/new_file.go"}, paths)
+}
+
+// TestGitBaselineExcludesCredentialsCaseInsensitively targets the three
+// checks that must fold case but historically compared against the
+// original-case basename/path instead of a lowercased form: the exact
+// targets.yaml path match, the ".env" prefix check, and the ".key" suffix
+// check. It also proves a rename's OrigPath is excluded case-insensitively:
+// a case-variant credential path hidden behind a harmless-looking new name
+// must still drop the whole entry.
+func TestGitBaselineExcludesCredentialsCaseInsensitively(t *testing.T) {
+	dir := t.TempDir()
+	fr := newFakeDockerRunner()
+	fr.script(gitArgs(dir, []string{"rev-parse", "HEAD"})...).returns("abc123\n", "", nil)
+
+	tokens := []string{
+		"M  Tools/Playtest/Targets.YAML", // exact-path match must fold case
+		"?? config/.ENV.production",      // ".env" prefix match must fold case
+		"?? keys/ID_RSA.KEY",             // ".key" suffix match must fold case
+		"R  legit/renamed_to.txt",        // renamed TO a harmless-looking name...
+		"Tools/Playtest/Targets.yaml",    // ...FROM a case-variant credential path
+		"M  legitimate/tracked_file.go",
+	}
+	raw := strings.Join(tokens, "\x00") + "\x00"
+	fr.script(gitArgs(dir, []string{"status", "--short", "-z", "--untracked-files=all"})...).returns(raw, "", nil)
+
+	baseline, err := collectGitBaseline(context.Background(), fr, dir)
+
+	require.NoError(t, err)
+	require.Len(t, baseline.Entries, 1, "every case-variant credential path, including a rename's OrigPath, must still be excluded")
+	require.Equal(t, "legitimate/tracked_file.go", baseline.Entries[0].Path)
 }
 
 func TestGitBaselineNeverInvokesDiffOrReadsFiles(t *testing.T) {
