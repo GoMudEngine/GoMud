@@ -1,0 +1,49 @@
+# Embedded, trusted Compose policy for the ephemeral playtest supervisor.
+#
+# This file is compiled into the supervisor binary via go:embed
+# (internal/playtestenv/compose.go) and is never read from a selected
+# checkout. It intentionally has no container_name, no fixed image or
+# network name, no source/manifest bind, no privileged mode, no host
+# namespaces, and no Docker-socket mount. The only published port is the
+# dedicated AI listener, and Docker assigns its host port on loopback only.
+#
+# ${DOGMUD_*} values are supplied by internal/playtestenv/compose.go from
+# the validated run manifest, checkout, and control-directory paths only -
+# never from raw ambient environment or checkout content.
+services:
+  server:
+    image: "dogmud-playtest:${DOGMUD_RUN_ID}"
+    build:
+      context: "${DOGMUD_CHECKOUT}"
+      dockerfile: provisioning/Dockerfile
+      target: runner
+      labels: &run-labels
+        dogmud.playtest.managed: "true"
+        dogmud.playtest.run-id: "${DOGMUD_RUN_ID}"
+        dogmud.playtest.project: "${DOGMUD_PROJECT}"
+        dogmud.playtest.checkout: "${DOGMUD_CHECKOUT_FINGERPRINT}"
+        dogmud.playtest.schema: "1"
+        dogmud.playtest.created-at: "${DOGMUD_CREATED_AT}"
+    labels: *run-labels
+    restart: "no"
+    entrypoint: ["/app/go-mud-server"]
+    environment:
+      CONFIG_PATH: "/run/dogmud/config-overrides.yaml"
+      LOG_NOCOLOR: "1"
+    volumes:
+      - data:/app/_datafiles
+      - type: bind
+        source: "${DOGMUD_CONTROL_DIR}"
+        target: /run/dogmud
+    ports:
+      - target: 55555
+        host_ip: 127.0.0.1
+        protocol: tcp
+
+volumes:
+  data:
+    labels: *run-labels
+
+networks:
+  default:
+    labels: *run-labels
