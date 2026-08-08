@@ -1,11 +1,11 @@
 package playtestrun
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"sync"
 	"testing"
 	"time"
 
@@ -13,6 +13,34 @@ import (
 
 	"github.com/GoMudEngine/GoMud/internal/playtestenv"
 )
+
+// syncBuffer is a race-safe io.Writer for capturing ready JSON while Run /
+// RunScenario is still waiting on stop/deadline (integration tests only).
+type syncBuffer struct {
+	mu  sync.Mutex
+	buf []byte
+}
+
+func (b *syncBuffer) Write(p []byte) (int, error) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	b.buf = append(b.buf, p...)
+	return len(p), nil
+}
+
+func (b *syncBuffer) Bytes() []byte {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	out := make([]byte, len(b.buf))
+	copy(out, b.buf)
+	return out
+}
+
+func (b *syncBuffer) Len() int {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return len(b.buf)
+}
 
 const (
 	integrationEnvPlaytestrun = "DOGMUD_PLAYTESTRUN_INTEGRATION"
@@ -64,7 +92,7 @@ func TestDockerPlaytestrunScenario(t *testing.T) {
 	playtestRoot := filepath.Join(checkout, "tools", "playtest")
 	scenarioPath := filepath.Join(playtestRoot, "scenarios", "party-formation.yaml")
 
-	var stdout bytes.Buffer
+	var stdout syncBuffer
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -129,7 +157,7 @@ func TestDockerPlaytestrunScenario(t *testing.T) {
 
 func runDockerSession(t *testing.T, checkout, goalsPath string, expectCreds bool) {
 	t.Helper()
-	var stdout bytes.Buffer
+	var stdout syncBuffer
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 

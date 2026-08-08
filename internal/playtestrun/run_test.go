@@ -245,6 +245,11 @@ func TestRun_ReadyPathLeaseAndJSON(t *testing.T) {
 	require.Equal(t, "30m0s", sc.Budgets.WallClock)
 	require.Equal(t, BridgeDirPath(checkout, "run-ok"), sc.BridgeDir)
 
+	require.NoError(t, WriteStopSignal(checkout, "run-ok"))
+	require.NoError(t, <-done)
+	require.True(t, env.stopCalled)
+
+	// Parse stdout only after Run returns — concurrent Encode vs Unmarshal races.
 	var ready ReadyPayload
 	require.NoError(t, json.Unmarshal(stdout.Bytes(), &ready))
 	require.Equal(t, "run-ok", ready.RunID)
@@ -257,9 +262,6 @@ func TestRun_ReadyPathLeaseAndJSON(t *testing.T) {
 	require.Equal(t, BridgeDirPath(checkout, "run-ok"), ready.BridgeDir)
 	require.Contains(t, ready.BridgeDir, filepath.Join(".run", "run-ok", "bridge"))
 
-	require.NoError(t, WriteStopSignal(checkout, "run-ok"))
-	require.NoError(t, <-done)
-	require.True(t, env.stopCalled)
 	sc, err = ReadSidecar(checkout, "run-ok")
 	require.NoError(t, err)
 	require.Equal(t, StatusStopped, sc.Status)
@@ -460,7 +462,15 @@ func TestDriverContract_ReadyJSONFields(t *testing.T) {
 		})
 	}()
 	pumpClock(t, pumpCtx, clock)
-	require.Eventually(t, func() bool { return stdout.Len() > 0 }, 2*time.Second, 10*time.Millisecond)
+	// Wait on the sidecar, not stdout: reading bytes.Buffer while Run encodes
+	// ready JSON races under -race.
+	require.Eventually(t, func() bool {
+		sc, err := ReadSidecar(checkout, "run-drv")
+		return err == nil && sc.Status == StatusReady
+	}, 2*time.Second, 10*time.Millisecond)
+
+	require.NoError(t, WriteStopSignal(checkout, "run-drv"))
+	require.NoError(t, <-done)
 
 	var ready ReadyPayload
 	require.NoError(t, json.Unmarshal(stdout.Bytes(), &ready))
@@ -477,7 +487,4 @@ func TestDriverContract_ReadyJSONFields(t *testing.T) {
 	require.Equal(t, SidecarPath(checkout, "run-drv"), ready.Sidecar)
 	require.Equal(t, BridgeDirPath(checkout, "run-drv"), ready.BridgeDir)
 	require.Contains(t, ready.BridgeDir, filepath.Join(".run", "run-drv", "bridge"))
-
-	require.NoError(t, WriteStopSignal(checkout, "run-drv"))
-	require.NoError(t, <-done)
 }

@@ -163,6 +163,11 @@ func TestRunScenario_ReadyJSONActorsAndBlackboard(t *testing.T) {
 	require.DirExists(t, ActorBridgeDirPath(checkout, "sc-ok", "joiner"))
 	require.DirExists(t, BlackboardDirPath(checkout, "sc-ok"))
 
+	require.NoError(t, WriteStopSignal(checkout, "sc-ok"))
+	require.NoError(t, <-done)
+	require.True(t, env.stopCalled)
+
+	// Parse stdout only after RunScenario returns — avoids Encode/Unmarshal race.
 	var ready ScenarioReadyPayload
 	require.NoError(t, json.Unmarshal(stdout.Bytes(), &ready))
 	require.Equal(t, "sc-ok", ready.RunID)
@@ -172,10 +177,6 @@ func TestRunScenario_ReadyJSONActorsAndBlackboard(t *testing.T) {
 	require.Equal(t, ActorBridgeDirPath(checkout, "sc-ok", "leader"), ready.Actors[0].BridgeDir)
 	require.Equal(t, "feature-tester", ready.Actors[0].Personality)
 	require.NotNil(t, ready.Actors[0].Creds)
-
-	require.NoError(t, WriteStopSignal(checkout, "sc-ok"))
-	require.NoError(t, <-done)
-	require.True(t, env.stopCalled)
 	sc, err = ReadSidecar(checkout, "sc-ok")
 	require.NoError(t, err)
 	require.Equal(t, StatusStopped, sc.Status)
