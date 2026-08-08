@@ -85,17 +85,19 @@ func requireWritableControlDir(controlDir string) error {
 }
 
 // writeResolvedComposeFile writes the embedded Compose policy verbatim to
-// <controlDir>/compose.resolved.yml and returns its absolute path. It never
-// reads, merges, or otherwise derives from any Compose file already present
-// in the selected checkout.
+// <runDir>/compose.resolved.yml and returns its absolute path. The file
+// lives at the run root (sibling to control/), never inside the writable
+// control bind, matching the approved artifact layout. It never reads,
+// merges, or otherwise derives from any Compose file already present in
+// the selected checkout.
 //
 // It writes via natefinch/atomic.WriteFile (write-to-temporary-file-plus-
 // atomic-rename, the same mechanism manifest.go's writeManifest uses), so a
 // process interrupted mid-write leaves either the complete new file or the
 // untouched prior one - never a truncated/corrupt file - and never a
-// leftover temporary file in the control directory either way.
-func writeResolvedComposeFile(controlDir string) (string, error) {
-	path := filepath.Join(controlDir, composeResolvedFileName)
+// leftover temporary file in the run directory either way.
+func writeResolvedComposeFile(runDir string) (string, error) {
+	path := filepath.Join(runDir, composeResolvedFileName)
 	if err := atomic.WriteFile(path, bytes.NewReader(embeddedComposePolicy)); err != nil {
 		return "", fmt.Errorf("playtestenv: write resolved compose file: %w", err)
 	}
@@ -150,14 +152,16 @@ func writeConfigOverrides(controlDir string, ver version.Version) (string, error
 	return path, nil
 }
 
-// materializeControlFiles requires controlDir to already exist and be
-// writable, then writes both the resolved Compose policy and the nested
-// config overrides file into it, returning their absolute paths.
-func materializeControlFiles(controlDir string, ver version.Version) (composePath, configPath string, err error) {
+// materializeRunFiles requires controlDir to already exist and be writable,
+// then writes the resolved Compose policy to <runDir>/compose.resolved.yml
+// and the nested config overrides to <controlDir>/config-overrides.yaml,
+// returning their absolute paths. Only the config file lives inside the
+// writable control bind; compose.resolved.yml stays at the run root.
+func materializeRunFiles(runDir, controlDir string, ver version.Version) (composePath, configPath string, err error) {
 	if err := requireWritableControlDir(controlDir); err != nil {
 		return "", "", err
 	}
-	composePath, err = writeResolvedComposeFile(controlDir)
+	composePath, err = writeResolvedComposeFile(runDir)
 	if err != nil {
 		return "", "", err
 	}

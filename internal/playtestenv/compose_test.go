@@ -145,15 +145,19 @@ func TestEmbeddedComposePolicyReturnsIndependentCopies(t *testing.T) {
 	require.NotEqual(t, a[0], EmbeddedComposePolicy()[0], "mutating a returned copy must never affect the embedded source")
 }
 
-func TestMaterializeControlFilesWritesResolvedComposeAndConfigOverrides(t *testing.T) {
-	controlDir := t.TempDir()
+func TestMaterializeRunFilesWritesComposeAtRunRootAndConfigInControl(t *testing.T) {
+	runDir := t.TempDir()
+	controlDir := filepath.Join(runDir, "control")
+	require.NoError(t, os.Mkdir(controlDir, 0o755))
 	ver := version.New(0, 16, 0)
 
-	composePath, configPath, err := materializeControlFiles(controlDir, ver)
+	composePath, configPath, err := materializeRunFiles(runDir, controlDir, ver)
 	require.NoError(t, err)
 
-	require.Equal(t, filepath.Join(controlDir, "compose.resolved.yml"), composePath)
+	require.Equal(t, filepath.Join(runDir, "compose.resolved.yml"), composePath)
 	require.Equal(t, filepath.Join(controlDir, "config-overrides.yaml"), configPath)
+	require.NotEqual(t, filepath.Dir(composePath), filepath.Dir(configPath),
+		"compose.resolved.yml must live at the run root, not inside control/")
 
 	composeBytes, err := os.ReadFile(composePath)
 	require.NoError(t, err)
@@ -167,57 +171,73 @@ func TestMaterializeControlFilesWritesResolvedComposeAndConfigOverrides(t *testi
 	require.Equal(t, "0.16.0", overrides.Server.CurrentVersion)
 	require.Equal(t, 55555, overrides.Network.AIPort)
 	require.False(t, overrides.Logging.LogToFile)
+
+	_, err = os.Stat(filepath.Join(controlDir, "compose.resolved.yml"))
+	require.True(t, os.IsNotExist(err), "compose.resolved.yml must not appear inside control/")
 }
 
-func TestMaterializeControlFilesRequiresWritableControlDir(t *testing.T) {
-	parent := t.TempDir()
+func TestMaterializeRunFilesRequiresWritableControlDir(t *testing.T) {
+	runDir := t.TempDir()
 	// A control dir nested under a non-existent parent path can never be
 	// written to - the probe write must fail before either file is
 	// attempted.
-	missingControlDir := filepath.Join(parent, "does-not-exist", "control")
+	missingControlDir := filepath.Join(runDir, "does-not-exist", "control")
 
-	_, _, err := materializeControlFiles(missingControlDir, version.New(1, 0, 0))
+	_, _, err := materializeRunFiles(runDir, missingControlDir, version.New(1, 0, 0))
 	require.Error(t, err)
 	require.True(t, errors.Is(err, ErrControlDirNotWritable))
 
 	require.NoDirExists(t, missingControlDir)
-	_, statErr := os.Stat(filepath.Join(missingControlDir, "compose.resolved.yml"))
-	require.True(t, os.IsNotExist(statErr), "no compose file must be written when the control dir is not writable")
+	_, composeStat := os.Stat(filepath.Join(runDir, "compose.resolved.yml"))
+	require.True(t, os.IsNotExist(composeStat), "no compose file must be written when the control dir is not writable")
+	_, configStat := os.Stat(filepath.Join(missingControlDir, "config-overrides.yaml"))
+	require.True(t, os.IsNotExist(configStat), "no config file must be written when the control dir is not writable")
 }
 
-func TestMaterializeControlFilesLeavesNoWriteProbeBehind(t *testing.T) {
-	controlDir := t.TempDir()
-	_, _, err := materializeControlFiles(controlDir, version.New(2, 3, 4))
+func TestMaterializeRunFilesLeavesNoWriteProbeBehind(t *testing.T) {
+	runDir := t.TempDir()
+	controlDir := filepath.Join(runDir, "control")
+	require.NoError(t, os.Mkdir(controlDir, 0o755))
+	_, _, err := materializeRunFiles(runDir, controlDir, version.New(2, 3, 4))
 	require.NoError(t, err)
 
-	entries, err := os.ReadDir(controlDir)
+	runEntries, err := os.ReadDir(runDir)
 	require.NoError(t, err)
-	names := make([]string, 0, len(entries))
-	for _, e := range entries {
-		names = append(names, e.Name())
+	runNames := make([]string, 0, len(runEntries))
+	for _, e := range runEntries {
+		runNames = append(runNames, e.Name())
 	}
-	require.ElementsMatch(t, []string{"compose.resolved.yml", "config-overrides.yaml"}, names, "the writability probe file must never be left behind")
+	require.ElementsMatch(t, []string{"compose.resolved.yml", "control"}, runNames)
+
+	controlEntries, err := os.ReadDir(controlDir)
+	require.NoError(t, err)
+	controlNames := make([]string, 0, len(controlEntries))
+	for _, e := range controlEntries {
+		controlNames = append(controlNames, e.Name())
+	}
+	require.ElementsMatch(t, []string{"config-overrides.yaml"}, controlNames, "the writability probe file must never be left behind")
 }
 
 // TestWriteResolvedComposeFileAndConfigOverridesLeaveNoTempResidue proves
 // both writers use atomic.WriteFile's write-to-temp-then-rename semantics:
-// no stray temporary file is left in the control directory, whether writing
-// for the first time or completely overwriting a prior (differently-sized)
-// version of each file.
+// no stray temporary file is left, whether writing for the first time or
+// completely overwriting a prior (differently-sized) version of each file.
 func TestWriteResolvedComposeFileAndConfigOverridesLeaveNoTempResidue(t *testing.T) {
-	controlDir := t.TempDir()
+	runDir := t.TempDir()
+	controlDir := filepath.Join(runDir, "control")
+	require.NoError(t, os.Mkdir(controlDir, 0o755))
 
 	// Pre-seed both destinations with different-length content so a
 	// non-atomic (truncate-then-write) implementation could leave a
 	// corrupt short/garbled file if it were interrupted, and so this test
 	// actually proves "complete overwrite" rather than "empty directory
 	// write".
-	composePath := filepath.Join(controlDir, "compose.resolved.yml")
+	composePath := filepath.Join(runDir, "compose.resolved.yml")
 	configPath := filepath.Join(controlDir, "config-overrides.yaml")
 	require.NoError(t, os.WriteFile(composePath, []byte("stale-compose-content-that-is-much-longer-than-the-real-file"), 0o644))
 	require.NoError(t, os.WriteFile(configPath, []byte("stale"), 0o644))
 
-	gotComposePath, err := writeResolvedComposeFile(controlDir)
+	gotComposePath, err := writeResolvedComposeFile(runDir)
 	require.NoError(t, err)
 	require.Equal(t, composePath, gotComposePath)
 
@@ -235,13 +255,21 @@ func TestWriteResolvedComposeFileAndConfigOverridesLeaveNoTempResidue(t *testing
 	require.NoError(t, yaml.Unmarshal(configBytes, &overrides))
 	require.Equal(t, "9.9.9", overrides.Server.CurrentVersion)
 
-	entries, err := os.ReadDir(controlDir)
+	runEntries, err := os.ReadDir(runDir)
 	require.NoError(t, err)
-	names := make([]string, 0, len(entries))
-	for _, e := range entries {
-		names = append(names, e.Name())
+	runNames := make([]string, 0, len(runEntries))
+	for _, e := range runEntries {
+		runNames = append(runNames, e.Name())
 	}
-	require.ElementsMatch(t, []string{"compose.resolved.yml", "config-overrides.yaml"}, names, "no atomic-write temp file may be left behind")
+	require.ElementsMatch(t, []string{"compose.resolved.yml", "control"}, runNames, "no atomic-write temp file may be left at the run root")
+
+	controlEntries, err := os.ReadDir(controlDir)
+	require.NoError(t, err)
+	controlNames := make([]string, 0, len(controlEntries))
+	for _, e := range controlEntries {
+		controlNames = append(controlNames, e.Name())
+	}
+	require.ElementsMatch(t, []string{"config-overrides.yaml"}, controlNames, "no atomic-write temp file may be left in control/")
 }
 
 func TestWriteResolvedComposeFileIgnoresCheckoutComposeFile(t *testing.T) {
@@ -251,12 +279,12 @@ func TestWriteResolvedComposeFileIgnoresCheckoutComposeFile(t *testing.T) {
 	// function, so this proves the resolved file's content is always the
 	// embedded policy, never merged with or influenced by any file already
 	// on disk.
-	controlDir := t.TempDir()
-	decoyPath := filepath.Join(controlDir, "docker-compose.yml")
+	runDir := t.TempDir()
+	decoyPath := filepath.Join(runDir, "docker-compose.yml")
 	decoyContent := []byte("services:\n  evil:\n    image: attacker/backdoor:latest\n    privileged: true\n")
 	require.NoError(t, os.WriteFile(decoyPath, decoyContent, 0o644))
 
-	composePath, err := writeResolvedComposeFile(controlDir)
+	composePath, err := writeResolvedComposeFile(runDir)
 	require.NoError(t, err)
 
 	written, err := os.ReadFile(composePath)
@@ -276,7 +304,7 @@ func TestComposeInterpolationEnvNormalizesPathsToForwardSlashesAndSorts(t *testi
 		Checkout:            filepath.FromSlash("C:/checkouts/dogmud"),
 		CheckoutFingerprint: "deadbeef",
 		CreatedAt:           created,
-		ControlDir:          filepath.FromSlash("C:/checkouts/dogmud/tools/playtest/.run/run-abc123"),
+		ControlDir:          filepath.FromSlash("C:/checkouts/dogmud/tools/playtest/.run/run-abc123/control"),
 	}
 
 	env := composeInterpolationEnv(vars)
@@ -284,7 +312,7 @@ func TestComposeInterpolationEnvNormalizesPathsToForwardSlashesAndSorts(t *testi
 	require.Equal(t, []string{
 		"DOGMUD_CHECKOUT=C:/checkouts/dogmud",
 		"DOGMUD_CHECKOUT_FINGERPRINT=deadbeef",
-		"DOGMUD_CONTROL_DIR=C:/checkouts/dogmud/tools/playtest/.run/run-abc123",
+		"DOGMUD_CONTROL_DIR=C:/checkouts/dogmud/tools/playtest/.run/run-abc123/control",
 		"DOGMUD_CREATED_AT=2026-08-07T12:00:00Z",
 		"DOGMUD_PROJECT=dogmud-playtest-run-abc123",
 		"DOGMUD_RUN_ID=run-abc123",
@@ -299,9 +327,10 @@ func TestComposeConfigCommandRendersDockerCommandArgvAndEnv(t *testing.T) {
 		Checkout:            filepath.Join("checkouts", "dogmud"),
 		CheckoutFingerprint: "cafef00d",
 		CreatedAt:           time.Date(2026, 1, 2, 3, 4, 5, 0, time.UTC),
-		ControlDir:          filepath.Join("checkouts", "dogmud", "tools", "playtest", ".run", "run-xyz"),
+		ControlDir:          filepath.Join("checkouts", "dogmud", "tools", "playtest", ".run", "run-xyz", "control"),
 	}
-	composeFile := filepath.Join(vars.ControlDir, "compose.resolved.yml")
+	// Compose file lives at the run root, sibling to control/, never inside it.
+	composeFile := filepath.Join(filepath.Dir(vars.ControlDir), "compose.resolved.yml")
 
 	spec := composeConfigCommand(dc, vars, composeFile, "/some/dir", nil, nil)
 
@@ -494,10 +523,13 @@ func TestDockerComposePolicyRenders(t *testing.T) {
 	require.NoError(t, err, "requires a validated local Docker context")
 
 	repoRoot := repoRootForDockerTests(t)
-	controlDir := t.TempDir()
+	runDir := t.TempDir()
+	controlDir := filepath.Join(runDir, "control")
+	require.NoError(t, os.Mkdir(controlDir, 0o755))
 
-	composeFile, err := writeResolvedComposeFile(controlDir)
+	composeFile, err := writeResolvedComposeFile(runDir)
 	require.NoError(t, err)
+	require.Equal(t, filepath.Join(runDir, "compose.resolved.yml"), composeFile)
 
 	vars := composeRunVars{
 		RunID:               "policy-render-test",
