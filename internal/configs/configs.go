@@ -58,6 +58,8 @@ type Config struct {
 
 	Logging Logging `yaml:"Logging"`
 
+	Playtest Playtest `yaml:"Playtest"`
+
 	// End config subsections
 
 	seedInt int64 `yaml:"-"`
@@ -212,6 +214,7 @@ func (c *Config) Validate() {
 	c.Balance.Validate()
 	c.LLM.Validate()
 	c.Analytics.Validate()
+	c.Playtest.Validate()
 
 	// nothing to do with LootGoblinIncludeRecentRooms
 

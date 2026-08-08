@@ -1,0 +1,2652 @@
+role: user
+username: template-veteran
+character:
+  name: Veteran Pathfinder
+  description: A seasoned explorer shaped for synthetic playtests. Gear and skills
+    mirror a high-end reference kit with all personal identity removed.
+  roomid: 5455
+  zone: Kilnreach Works
+  speciesid: 1
+  stats:
+    strength:
+      training: 21
+      base: 115
+    dexterity:
+      training: 12
+      base: 98
+    perception:
+      training: 51
+      base: 101
+    vitality:
+      training: 13
+      base: 104
+    willpower:
+      training: 35
+      base: 113
+    charisma:
+      training: 30
+      base: 93
+  health: 610
+  stamina: 744
+  conviction: 513
+  actionpoints: 200
+  gold: 1403
+  bank: 587
+  storagefee_lastmonth: 159
+  spellbook:
+    blood-boil: 41
+    chrysalis-glow: 64
+    chrysalis-regeneration: 2
+    cleansing-wave: 1
+    communion-of-flesh: 55
+    conjure-air: 2
+    conjure-earth: 4
+    conjure-fire: 2
+    conjure-magma: 1
+    conjure-water: 22
+    conviction-armor: 1
+    conviction-spike: 56
+    conviction-surge: 127
+    conviction-ward: 628
+    empathic-shroud: 2
+    fold-anchor: 2
+    fold-recall: 56
+    hemorrhagic-wave: 1
+    identify: 96
+    iron-will: 3
+    kinetic-shove: 5
+    mend-wounds: 1
+    mind-fog: 1
+    mind-spike: 1
+    mutation-catalyst: 80
+    neural-stun: 1
+    psychic-anchor: 1
+    purge-affliction: 1
+    pyretic-surge: 90
+    raise-golem: 3
+    raise-skeleton: 23
+    raise-spectre: 2
+    raise-vampire: 6
+    raise-wraith: 3
+    raise-zombie: 38
+    sensory-overload: 1
+    sensory-veil: 1
+    skill-attunement: 239
+    sparks: 198
+    summon-hive-swarm: 1
+    summon-steppe-spirit: 2
+    veil-sight: 7
+    vital-surge: 11
+  knownrecipes:
+    artisans-satchel: 1
+    carapace-ward: 1
+    chrysalis-setting: 1
+    chrysalis-stride: 1
+    clarity-tonic: 1
+    cloth-pants: 1
+    conviction-draught: 1
+    copper-ring: 1
+    elixir-of-renewal: 1
+    engraved-bracelet: 1
+    flashbang: 1
+    grilled-meat: 1
+    healing-salve: 1
+    hearty-stew: 1
+    herbal-tea: 1
+    honed-edge: 1
+    iron-buckler: 1
+    iron-dagger: 1
+    iron-short-sword: 1
+    ironhide-brew: 1
+    lake-tonic-of-steady-hand: 1
+    linen-tunic: 1
+    mindshield-elixir: 1
+    mutagen-brew: 1
+    polished-stone-amulet: 1
+    preachers-tincture: 1
+    purging-draught: 1
+    reinforced-disarm-kit: 1
+    sealed-phial: 1
+    silver-ring: 1
+    simple-pendant: 1
+    spore-mantle: 1
+    stamina-tonic: 1
+    steel-buckler: 1
+    steel-ingot: 1
+    steel-lockpicks: 1
+    stillwater-lake-chowder: 1
+    stone-stomach: 1
+    swiftfoot-essence: 1
+    thornguard: 1
+    toxic-flask: 1
+    trail-rations: 1
+    venomgrip: 1
+    warriors-brew: 1
+    windrunner-draught: 1
+  items:
+  - itemid: 30021
+    uses: 1
+    crafted_round: 2098854
+    craft_skill: 26
+  - itemid: 30021
+    uses: 1
+    crafted_round: 2098856
+    craft_skill: 27
+  - itemid: 30021
+    uses: 1
+    crafted_round: 2098858
+    craft_skill: 28
+  - itemid: 30021
+    uses: 1
+    crafted_round: 2098860
+    craft_skill: 29
+  - itemid: 30021
+    uses: 1
+    crafted_round: 2098864
+    craft_skill: 30
+    maker_name: pruuk
+  - itemid: 30021
+    uses: 1
+    crafted_round: 2098867
+    craft_skill: 30
+    maker_name: pruuk
+  - itemid: 30027
+    uses: 1
+    crafted_round: 2122395
+    craft_skill: 44
+    maker_name: pruuk
+  - itemid: 30027
+    uses: 1
+    crafted_round: 2122398
+    craft_skill: 45
+    maker_name: pruuk
+  - itemid: 30027
+    uses: 1
+    crafted_round: 2122401
+    craft_skill: 45
+    maker_name: pruuk
+  - itemid: 10014
+    crafted_round: 3292653
+    craft_skill: 53
+    maker_name: meirok
+    overrides:
+      itemid: 10014
+      value: 55
+      damage_multiplier: 0.74
+      parryrating: 6
+      staminacost: 5
+      speedmultiplier: 1
+      weight: 3
+      grapplemodifier: 0.8
+      hands: 1
+      name: iron short sword
+      namesimple: sword
+      description: A broad-bladed short sword of hammered iron. The compact blade
+        is quick to draw and easy to wield in tight spaces.
+      type: weapon
+      subtype: slashing
+      damage:
+        attacks: 1
+        basedamage: 5
+        variance: 2
+      vendor_categories:
+      - blacksmithing
+    adjectives:
+    - keen
+    enchanttype: honed-edge
+    reservepool: health
+  - itemid: 10029
+    overrides:
+      itemid: 10029
+      value: 80
+      damage_multiplier: 0.9500000000000003
+      spell_damage_multiplier: 1.7500000000000002
+      parryrating: 4
+      speedmultiplier: 0.9
+      weight: 3.5
+      hands: 1
+      name: Crystal Sceptre
+      namesimple: sceptre
+      description: A sceptre of pale blue crystal that tapers to a faceted point,
+        its interior riddled with fractures that scatter light in cold prismatic fans.
+        The handle is smooth as glass and never warms to the touch. Channeling spells
+        through it feels like pushing power through a prism — it sharpens and intensifies
+        the output at the cost of a slight chill that climbs the arm.
+      type: weapon
+      subtype: sceptre
+      damage:
+        attacks: 1
+        diceroll: 0d0
+      statmods:
+        charisma: 3
+        dexterity: 1
+        perception: 5
+        rhetoric: 1
+        spellcasting: 1
+        strength: 5
+        vitality: 2
+        willpower: 3
+      vendor_categories:
+      - blacksmithing
+    adjectives:
+    - Keen
+  - itemid: 20076
+    overrides:
+      itemid: 20076
+      value: 45
+      physical_mitigation: 3
+      magical_mitigation: 10
+      conviction_mitigation: 6
+      weight: 1
+      hands: 0
+      name: Storm Bracer
+      namesimple: bracer
+      description: A bracer of storm-fused crystal and compressed lightning, its surface
+        crackling with a faint static charge that raises arm hair through clothing.
+        The inner surface is smooth and cool. Conviction flows through the wearer's
+        arm differently with this on — words carry more weight, presence feels more
+        charged. The occasional spark is a minor inconvenience.
+      type: wrist
+      subtype: wearable
+      damage:
+        diceroll: 0@0d0
+      statmods:
+        charisma: 3
+        manifestation: 1
+        skullduggery: 2
+        spellcasting: 1
+        strength: 2
+        weapon-combat: 1
+        willpower: 1
+      vendor_categories:
+      - jewelcrafting
+    adjectives:
+    - Masterwork
+  - itemid: 10036
+    overrides:
+      itemid: 10036
+      value: 70
+      damage_multiplier: 0.8500000000000003
+      parryrating: 2
+      staminacost: 3
+      speedmultiplier: 1.2
+      weight: 0.8
+      grapplemodifier: 0.5
+      hands: 1
+      name: drowned claws
+      namesimple: claws
+      description: Four curved talons of solidified oasis water, clear as glass and
+        cold to the touch. They flex like living tendrils between strikes, then snap
+        rigid at the moment of impact. Water beads and runs along the edges without
+        ever dripping free.
+      type: weapon
+      subtype: claws
+      damage:
+        attacks: 1
+        basedamage: 4
+        variance: 2
+      statmods:
+        charisma: 2
+        dexterity: 2
+        manifestation: 1
+        rhetoric: 2
+        strength: 1
+        vitality: 3
+      vendor_categories:
+      - blacksmithing
+    adjectives:
+    - Masterwork
+  - itemid: 30038
+    uses: 1
+    crafted_round: 3399153
+    craft_skill: 58
+    bottle_multiplier: 1
+    maker_name: meirok
+  - itemid: 30038
+    uses: 1
+    crafted_round: 3399157
+    craft_skill: 59
+    bottle_multiplier: 1
+    maker_name: meirok
+  - itemid: 30038
+    uses: 1
+    crafted_round: 3399160
+    craft_skill: 59
+    bottle_multiplier: 1
+    maker_name: meirok
+  - itemid: 30038
+    uses: 1
+    crafted_round: 3399163
+    craft_skill: 59
+    bottle_multiplier: 1
+    maker_name: meirok
+  - itemid: 30038
+    uses: 1
+    crafted_round: 3399167
+    craft_skill: 59
+    bottle_multiplier: 1
+    maker_name: meirok
+  - itemid: 30038
+    uses: 1
+    crafted_round: 3399175
+    craft_skill: 59
+    bottle_multiplier: 1
+    maker_name: meirok
+  - itemid: 30038
+    uses: 1
+    crafted_round: 3399178
+    craft_skill: 59
+    bottle_multiplier: 1
+    maker_name: meirok
+  - itemid: 30038
+    uses: 1
+    crafted_round: 3399181
+    craft_skill: 59
+    bottle_multiplier: 1
+    maker_name: meirok
+  - itemid: 30037
+    uses: 1
+    crafted_round: 3399211
+    craft_skill: 59
+    bottle_multiplier: 1
+    maker_name: meirok
+  - itemid: 30037
+    uses: 1
+    crafted_round: 3399214
+    craft_skill: 59
+    bottle_multiplier: 1
+    maker_name: meirok
+  - itemid: 30037
+    uses: 1
+    crafted_round: 3399217
+    craft_skill: 59
+    bottle_multiplier: 1
+    maker_name: meirok
+  - itemid: 30037
+    uses: 1
+    crafted_round: 3399220
+    craft_skill: 59
+    bottle_multiplier: 1
+    maker_name: meirok
+  - itemid: 30037
+    uses: 1
+    crafted_round: 3399223
+    craft_skill: 59
+    bottle_multiplier: 1
+    maker_name: meirok
+  - itemid: 30037
+    uses: 1
+    crafted_round: 3399226
+    craft_skill: 59
+    bottle_multiplier: 1
+    maker_name: meirok
+  - itemid: 30036
+    uses: 1
+    crafted_round: 3433949
+    craft_skill: 59
+    bottle_multiplier: 1
+    maker_name: meirok
+  - itemid: 30036
+    uses: 1
+    crafted_round: 3433952
+    craft_skill: 59
+    bottle_multiplier: 1
+    maker_name: meirok
+  - itemid: 30062
+    uses: 24
+  - itemid: 10041
+    loaded: true
+  - itemid: 20011
+  - itemid: 20052
+  - itemid: 40151
+  - itemid: 40046
+  - itemid: 40004
+  - itemid: 40047
+  - itemid: 40151
+  - itemid: 40047
+  - itemid: 40005
+  componentitems:
+  - itemid: 40005
+  - itemid: 40005
+  - itemid: 40005
+  - itemid: 40005
+  - itemid: 40005
+  - itemid: 40005
+  - itemid: 40005
+  - itemid: 40005
+  - itemid: 40005
+  - itemid: 40005
+  - itemid: 40005
+  - itemid: 40007
+  - itemid: 40007
+  - itemid: 40047
+  - itemid: 40047
+  - itemid: 40047
+  - itemid: 40047
+  - itemid: 40007
+  - itemid: 40007
+  - itemid: 40068
+  - itemid: 40068
+  - itemid: 40068
+  - itemid: 40068
+  - itemid: 40068
+  - itemid: 40068
+  - itemid: 40068
+  - itemid: 40047
+  - itemid: 40049
+  - itemid: 40046
+  - itemid: 40046
+  - itemid: 40028
+  - itemid: 40028
+  - itemid: 40028
+  - itemid: 40028
+  - itemid: 40058
+  - itemid: 40058
+  - itemid: 40058
+  - itemid: 40059
+  - itemid: 40057
+  - itemid: 40058
+  - itemid: 40058
+  - itemid: 40058
+  - itemid: 40058
+  - itemid: 40059
+  - itemid: 40058
+  - itemid: 40058
+  - itemid: 40058
+  - itemid: 40028
+  - itemid: 40028
+  - itemid: 40028
+  - itemid: 40028
+  - itemid: 40028
+  - itemid: 40028
+  - itemid: 40028
+  - itemid: 40028
+  - itemid: 40007
+  - itemid: 40004
+  - itemid: 40121
+  - itemid: 40005
+  - itemid: 40122
+  - itemid: 40151
+  - itemid: 40047
+  - itemid: 40151
+  - itemid: 40005
+  - itemid: 40151
+  - itemid: 40005
+  - itemid: 40122
+  - itemid: 40047
+  - itemid: 40004
+  - itemid: 40005
+  - itemid: 40004
+  - itemid: 40151
+  - itemid: 40049
+  - itemid: 40151
+  - itemid: 40047
+  - itemid: 40004
+  - itemid: 40122
+  - itemid: 40005
+  - itemid: 40121
+  - itemid: 40122
+  - itemid: 40004
+  - itemid: 40151
+  - itemid: 40121
+  - itemid: 40121
+  - itemid: 40122
+  - itemid: 40122
+  - itemid: 40151
+  - itemid: 40047
+  - itemid: 40049
+  - itemid: 40005
+  - itemid: 40005
+  - itemid: 40049
+  - itemid: 40047
+  - itemid: 40047
+  - itemid: 40005
+  - itemid: 40047
+  - itemid: 40151
+  - itemid: 40005
+  - itemid: 40046
+  - itemid: 40005
+  - itemid: 40151
+  - itemid: 40049
+  - itemid: 40049
+  - itemid: 40121
+  - itemid: 40046
+  - itemid: 40151
+  - itemid: 40005
+  - itemid: 40121
+  - itemid: 40004
+  - itemid: 40005
+  - itemid: 40151
+  - itemid: 40047
+  - itemid: 40122
+  - itemid: 40151
+  - itemid: 40151
+  - itemid: 40005
+  - itemid: 40047
+  - itemid: 40004
+  - itemid: 40049
+  - itemid: 40151
+  - itemid: 40005
+  - itemid: 40151
+  - itemid: 40005
+  - itemid: 40004
+  - itemid: 40122
+  - itemid: 40151
+  - itemid: 40122
+  - itemid: 40151
+  - itemid: 40049
+  - itemid: 40047
+  - itemid: 40005
+  - itemid: 40005
+  - itemid: 40004
+  - itemid: 40049
+  - itemid: 40049
+  - itemid: 40122
+  - itemid: 40047
+  - itemid: 40122
+  - itemid: 40151
+  - itemid: 40151
+  - itemid: 40121
+  - itemid: 40151
+  - itemid: 40151
+  - itemid: 40122
+  - itemid: 40049
+  - itemid: 40121
+  - itemid: 40047
+  - itemid: 40005
+  - itemid: 40004
+  - itemid: 40049
+  - itemid: 40005
+  - itemid: 40047
+  - itemid: 40122
+  - itemid: 40121
+  - itemid: 40005
+  - itemid: 40047
+  - itemid: 40005
+  - itemid: 40004
+  - itemid: 40151
+  - itemid: 40049
+  - itemid: 40049
+  - itemid: 40122
+  - itemid: 40121
+  - itemid: 40049
+  - itemid: 40122
+  - itemid: 40151
+  - itemid: 40049
+  - itemid: 40049
+  - itemid: 40122
+  - itemid: 40122
+  - itemid: 40049
+  - itemid: 40005
+  - itemid: 40004
+  - itemid: 40049
+  - itemid: 40121
+  - itemid: 40049
+  - itemid: 40122
+  - itemid: 40122
+  - itemid: 40122
+  - itemid: 40151
+  - itemid: 40047
+  - itemid: 40047
+  - itemid: 40047
+  - itemid: 40049
+  - itemid: 40121
+  - itemid: 40151
+  - itemid: 40121
+  - itemid: 40004
+  - itemid: 40122
+  - itemid: 40049
+  - itemid: 40004
+  - itemid: 40004
+  - itemid: 40121
+  - itemid: 40121
+  - itemid: 40004
+  - itemid: 40151
+  - itemid: 40121
+  - itemid: 40005
+  - itemid: 40005
+  - itemid: 40151
+  - itemid: 40049
+  - itemid: 40151
+  - itemid: 40047
+  - itemid: 40151
+  - itemid: 40049
+  - itemid: 40121
+  - itemid: 40151
+  - itemid: 40005
+  - itemid: 40047
+  - itemid: 40005
+  - itemid: 40005
+  - itemid: 40049
+  - itemid: 40121
+  - itemid: 40005
+  - itemid: 40121
+  - itemid: 40004
+  - itemid: 40005
+  - itemid: 40121
+  - itemid: 40049
+  - itemid: 40049
+  - itemid: 40047
+  - itemid: 40122
+  - itemid: 40047
+  - itemid: 40047
+  - itemid: 40121
+  equipment:
+    weapon:
+      itemid: 10036
+      overrides:
+        itemid: 10036
+        value: 70
+        damage_multiplier: 0.7000000000000002
+        parryrating: 2
+        staminacost: 3
+        speedmultiplier: 1.2
+        weight: 0.8
+        grapplemodifier: 0.5
+        hands: 1
+        name: drowned claws
+        namesimple: claws
+        description: Four curved talons of solidified oasis water, clear as glass
+          and cold to the touch. They flex like living tendrils between strikes, then
+          snap rigid at the moment of impact. Water beads and runs along the edges
+          without ever dripping free.
+        type: weapon
+        subtype: claws
+        damage:
+          attacks: 1
+          basedamage: 4
+          variance: 2
+        statmods:
+          charisma: 1
+          dexterity: 4
+          manifestation: 3
+          perception: 4
+          rhetoric: 2
+          skullduggery: 2
+          unarmed-combat: 1
+          vitality: 1
+          weapon-combat: 1
+          willpower: 1
+        vendor_categories:
+        - blacksmithing
+      adjectives:
+      - Masterwork
+    offhand:
+      itemid: 10036
+      overrides:
+        itemid: 10036
+        value: 70
+        damage_multiplier: 0.7000000000000002
+        parryrating: 2
+        staminacost: 3
+        speedmultiplier: 1.2
+        weight: 0.8
+        grapplemodifier: 0.5
+        hands: 1
+        name: Drowned Claws
+        namesimple: claws
+        description: Four curved talons of solidified oasis water, clear as glass
+          and cold to the touch. They flex like living tendrils between strikes, then
+          snap rigid at the moment of impact. Water beads and runs along the edges
+          without ever dripping free.
+        type: weapon
+        subtype: claws
+        damage:
+          attacks: 1
+          basedamage: 4
+          variance: 2
+        statmods:
+          charisma: 3
+          perception: 2
+          skullduggery: 2
+          spellcasting: 1
+          strength: 3
+          unarmed-combat: 1
+          vitality: 2
+        vendor_categories:
+        - blacksmithing
+      adjectives:
+      - Masterwork
+    extraarm1:
+      itemid: 10036
+      overrides:
+        itemid: 10036
+        value: 70
+        damage_multiplier: 0.8500000000000003
+        parryrating: 2
+        staminacost: 3
+        speedmultiplier: 1.2
+        weight: 0.8
+        grapplemodifier: 0.5
+        hands: 1
+        name: drowned claws
+        namesimple: claws
+        description: Four curved talons of solidified oasis water, clear as glass
+          and cold to the touch. They flex like living tendrils between strikes, then
+          snap rigid at the moment of impact. Water beads and runs along the edges
+          without ever dripping free.
+        type: weapon
+        subtype: claws
+        damage:
+          attacks: 1
+          basedamage: 4
+          variance: 2
+        statmods:
+          charisma: 1
+          perception: 2
+          rhetoric: 1
+          skullduggery: 1
+          strength: 1
+          unarmed-combat: 1
+          weapon-combat: 1
+        vendor_categories:
+        - blacksmithing
+      adjectives:
+      - Masterwork
+    extraarm2:
+      itemid: -1
+    extraarm3:
+      itemid: -1
+    extraarm4:
+      itemid: -1
+    head:
+      itemid: 20073
+      overrides:
+        itemid: 20073
+        value: 85
+        physical_mitigation: 2
+        magical_mitigation: 12
+        conviction_mitigation: 5
+        weight: 1.5
+        hands: 0
+        name: ice crown
+        namesimple: crown
+        description: A circlet of translucent elemental ice that refuses to melt,
+          its spires carved into sharp geometric teeth. A faint cold mist drifts from
+          the surface. The air around the wearer's head grows noticeably cooler and
+          smells of deep winter. Those nearby can sometimes see their breath. Conviction
+          and spells both feel more precise with this on — something about the cold
+          clarifies intent.
+        type: head
+        subtype: wearable
+        damage:
+          diceroll: 0@0d0
+        statmods:
+          perception: 6
+          skullduggery: 5
+          spellcasting: 1
+          unarmed-combat: 2
+          vitality: 1
+        vendor_categories:
+        - jewelcrafting
+      adjectives:
+      - Masterwork
+    neck:
+      itemid: 20079
+      overrides:
+        itemid: 20079
+        value: 85
+        physical_mitigation: 4
+        magical_mitigation: 10
+        weight: 1
+        hands: 0
+        name: tidal torc
+        namesimple: torc
+        description: A circlet of ever-flowing oasis water held in a perfect ring
+          by some quiet planar will. It turns and ripples against the wearer's throat
+          without spilling, and the air around it carries the cool, mineral smell
+          of deep water.
+        type: neck
+        subtype: wearable
+        damage:
+          diceroll: 0@0d0
+        statmods:
+          charisma: 1
+          skullduggery: 2
+          spellcasting: 1
+          vitality: 1
+          weapon-combat: 1
+          willpower: 1
+        vendor_categories:
+        - jewelcrafting
+      adjectives:
+      - Masterwork
+    shoulders:
+      itemid: 20074
+      overrides:
+        itemid: 20074
+        value: 75
+        physical_mitigation: 11
+        magical_mitigation: 10
+        conviction_mitigation: 9
+        weight: 3
+        hands: 0
+        name: mist pauldrons
+        namesimple: pauldrons
+        description: Pauldrons of condensed elemental mist, solid enough to wear but
+          shifting at the edges into wisps of cold vapor. They absorb both physical
+          and magical force with equal efficiency — neither channel seems to penetrate
+          cleanly. A faint haze drifts from them in warm rooms. They make the wearer's
+          outline slightly indistinct from a distance.
+        type: shoulders
+        subtype: wearable
+        damage:
+          diceroll: 0@0d0
+        statmods:
+          dexterity: 1
+          manifestation: 1
+          perception: 1
+          strength: 1
+          unarmed-combat: 1
+        vendor_categories:
+        - blacksmithing
+      adjectives:
+      - Warding
+    body:
+      itemid: 20072
+      overrides:
+        itemid: 20072
+        value: 90
+        physical_mitigation: 14
+        magical_mitigation: 8
+        conviction_mitigation: 4
+        weight: 10
+        hands: 0
+        name: volcanic plate
+        namesimple: plate
+        description: A breastplate of fused basalt and cooled magma, its surface cross-hatched
+          with deep stress cracks that glow a dull orange from within. Impossibly
+          heavy for its size yet fitted by some elemental force to the wearer's frame.
+          The heat it radiates is uncomfortable but not harmful. Whatever smithed
+          this did not use conventional tools.
+        type: body
+        subtype: wearable
+        damage:
+          diceroll: 0@0d0
+        statmods:
+          dexterity: 1
+          manifestation: 1
+          perception: 2
+          rhetoric: 1
+          spellcasting: 2
+          weapon-combat: 1
+          willpower: 4
+        vendor_categories:
+        - blacksmithing
+      adjectives:
+      - Masterwork
+    back:
+      itemid: 20055
+      crafted_round: 2061516
+      craft_skill: 27
+      overrides:
+        itemid: 20055
+        value: 5
+        physical_mitigation: 1
+        magical_mitigation: 5
+        weight: 3
+        hands: 0
+        name: reinforced travel pack
+        namesimple: pack
+        description: A masterwork travel pack of layered leather and canvas, with
+          an internal frame of bent bone stays. The construction distributes heavy
+          loads across the hips and shoulders, letting even a laden traveler move
+          with surprising ease. Steel buckles and waxed stitching keep everything
+          secure through rough weather.
+        type: back
+        subtype: wearable
+        damage:
+          diceroll: 0@0d0
+        weight_reduction: 0.5
+      adjectives:
+      - shadowweave
+      enchanttier: 4
+      enchantuses: 6458
+      enchanttype: shadowweave
+      reservepool: conviction
+    belt:
+      itemid: 20060
+      crafted_round: 2103765
+      craft_skill: 61
+      maker_name: fyttyn
+    wrist1:
+      itemid: 20076
+      overrides:
+        itemid: 20076
+        value: 45
+        physical_mitigation: 2
+        magical_mitigation: 4
+        conviction_mitigation: 12
+        weight: 1
+        hands: 0
+        name: storm bracer
+        namesimple: bracer
+        description: A bracer of storm-fused crystal and compressed lightning, its
+          surface crackling with a faint static charge that raises arm hair through
+          clothing. The inner surface is smooth and cool. Conviction flows through
+          the wearer's arm differently with this on — words carry more weight, presence
+          feels more charged. The occasional spark is a minor inconvenience.
+        type: wrist
+        subtype: wearable
+        damage:
+          diceroll: 0@0d0
+        statmods:
+          charisma: 1
+          dexterity: 2
+          manifestation: 1
+          perception: 1
+          spellcasting: 1
+          strength: 3
+          unarmed-combat: 1
+        vendor_categories:
+        - jewelcrafting
+      adjectives:
+      - Masterwork
+    wrist2:
+      itemid: 20076
+      overrides:
+        itemid: 20076
+        value: 45
+        physical_mitigation: 2
+        magical_mitigation: 6
+        conviction_mitigation: 8
+        weight: 1
+        hands: 0
+        name: Storm Bracer
+        namesimple: bracer
+        description: A bracer of storm-fused crystal and compressed lightning, its
+          surface crackling with a faint static charge that raises arm hair through
+          clothing. The inner surface is smooth and cool. Conviction flows through
+          the wearer's arm differently with this on — words carry more weight, presence
+          feels more charged. The occasional spark is a minor inconvenience.
+        type: wrist
+        subtype: wearable
+        damage:
+          diceroll: 0@0d0
+        statmods:
+          dexterity: 2
+          perception: 6
+          spellcasting: 1
+          strength: 3
+          unarmed-combat: 1
+          vitality: 1
+          weapon-combat: 2
+          willpower: 1
+        vendor_categories:
+        - jewelcrafting
+      adjectives:
+      - Masterwork
+    extrawrist1:
+      itemid: 20076
+      overrides:
+        itemid: 20076
+        value: 45
+        physical_mitigation: 2
+        magical_mitigation: 5
+        conviction_mitigation: 10
+        weight: 1
+        hands: 0
+        name: storm bracer
+        namesimple: bracer
+        description: A bracer of storm-fused crystal and compressed lightning, its
+          surface crackling with a faint static charge that raises arm hair through
+          clothing. The inner surface is smooth and cool. Conviction flows through
+          the wearer's arm differently with this on — words carry more weight, presence
+          feels more charged. The occasional spark is a minor inconvenience.
+        type: wrist
+        subtype: wearable
+        damage:
+          diceroll: 0@0d0
+        statmods:
+          charisma: 2
+          manifestation: 3
+          rhetoric: 1
+          spellcasting: 2
+          unarmed-combat: 1
+          vitality: 4
+          willpower: 1
+        vendor_categories:
+        - jewelcrafting
+      adjectives:
+      - Masterwork
+    extrawrist2:
+      itemid: -1
+    extrawrist3:
+      itemid: -1
+    extrawrist4:
+      itemid: -1
+    gloves:
+      itemid: 20070
+      overrides:
+        itemid: 20070
+        value: 1061
+        physical_mitigation: 3
+        weight: 0.5
+        hands: 0
+        name: arena chain gloves
+        namesimple: gloves
+        description: Close-fitted gloves of interlocked iron rings over a thin leather
+          liner. Lightweight enough to grip a weapon without fumbling, tough enough
+          to take a blade across the knuckles without consequence.
+        type: gloves
+        subtype: wearable
+        damage:
+          diceroll: 0@0d0
+        statmods:
+          dexterity: 2
+          perception: 2
+          skullduggery: 4
+          spellcasting: 1
+          strength: 2
+          strength_statmod: 85
+        vendor_categories:
+        - blacksmithing
+      adjectives:
+      - Masterwork
+      - venom-slick
+      enchanttier: 1
+      enchantuses: 18
+      enchanttype: venomgrip
+      reservepool: stamina
+    ring:
+      itemid: 20075
+      overrides:
+        itemid: 20075
+        value: 40
+        physical_mitigation: 4
+        magical_mitigation: 4
+        conviction_mitigation: 3
+        weight: 0.5
+        hands: 0
+        name: stone ring
+        namesimple: ring
+        description: A thick band of smoothed granite worn featureless by elemental
+          pressure. It has no adornment, no inscription — just dense stone shaped
+          into a perfect circle. Wearing it feels like being slightly heavier, grounded,
+          resistant. The wearer's grip strengthens noticeably.
+        type: ring
+        subtype: wearable
+        damage:
+          diceroll: 0@0d0
+        statmods:
+          charisma: 3
+          manifestation: 1
+          perception: 1
+          skullduggery: 1
+          strength: 5
+          unarmed-combat: 1
+          vitality: 6
+          willpower: 1
+      adjectives:
+      - Masterwork
+    ring2:
+      itemid: 20075
+      overrides:
+        itemid: 20075
+        value: 40
+        physical_mitigation: 1
+        magical_mitigation: 4
+        conviction_mitigation: 6
+        weight: 0.5
+        hands: 0
+        name: stone ring
+        namesimple: ring
+        description: A thick band of smoothed granite worn featureless by elemental
+          pressure. It has no adornment, no inscription — just dense stone shaped
+          into a perfect circle. Wearing it feels like being slightly heavier, grounded,
+          resistant. The wearer's grip strengthens noticeably.
+        type: ring
+        subtype: wearable
+        damage:
+          diceroll: 0@0d0
+        statmods:
+          charisma: 3
+          dexterity: 1
+          perception: 1
+          rhetoric: 1
+          strength: 7
+          vitality: 7
+          weapon-combat: 2
+          willpower: 3
+        vendor_categories:
+        - jewelcrafting
+      adjectives:
+      - Empowered
+    legs:
+      itemid: 20071
+      overrides:
+        itemid: 20071
+        value: 25
+        physical_mitigation: 5
+        magical_mitigation: 2
+        conviction_mitigation: 3
+        weight: 1
+        hands: 0
+        name: arena iron greaves
+        namesimple: greaves
+        description: Solid iron plate formed to protect the shins and thighs, worn
+          smooth at the edges from long use in the pit. Heavier than chain, but hits
+          against the legs glance off where they would bite through lighter armor.
+        type: legs
+        subtype: wearable
+        damage:
+          diceroll: 0@0d0
+        statmods:
+          charisma: 1
+          manifestation: 1
+          rhetoric: 1
+          spellcasting: 1
+          strength: 1
+          unarmed-combat: 1
+          vitality: 2
+          willpower: 5
+      adjectives:
+      - Masterwork
+    feet:
+      itemid: 20064
+      overrides:
+        itemid: 20064
+        value: 60
+        physical_mitigation: 7
+        hands: 0
+        name: silkstep boots
+        namesimple: boots
+        description: Boots soled with layered chrysalis silk, compressed and cured
+          until the material is denser than leather but still utterly silent underfoot.
+          Stone, gravel, wood planks -- none of it carries the sound of these boots.
+        type: feet
+        subtype: wearable
+        damage:
+          diceroll: 0@0d0
+        statmods:
+          dexterity: 5
+      adjectives:
+      - rootwalker
+      enchanttier: 4
+      enchantuses: 6515
+      enchanttype: rootwalker
+      reservepool: health
+    tail:
+      itemid: -1
+    componentbag:
+      itemid: 30035
+  skills:
+    alchemy: 59
+    bartering: 69
+    blacksmithing: 53
+    cooking: 56
+    enchanting: 54
+    jewelcrafting: 51
+    manifestation: 48
+    ranged-combat: 1
+    rhetoric: 55
+    salvage: 59
+    search: 65
+    skullduggery: 50
+    spellcasting: 51
+    tailoring: 50
+    unarmed-combat: 57
+    weapon-combat: 69
+  mutations:
+    extra-arms: 1
+    rapid-metabolism: 1
+  mutationprogress: 5028.054489147486
+  settings:
+    home: newplymouth
+  questprogress:
+    1: end
+    2: end
+    3: end
+    4: investigate
+    10: end
+    11: end
+    12: end
+    14: end
+    15: end
+    17: end
+    30: end
+  questflags:
+    3-delivered: sac
+    11-branch: sylara
+    17-resolution: combat
+  lastquestid: 17
+  kd:
+    totalkills: 922
+    kills:
+      65: 1
+      69: 1
+      74: 1
+      78: 1
+      81: 1
+      82: 1
+      200: 4
+      201: 4
+      202: 3
+      203: 5
+      204: 5
+      205: 10
+      206: 7
+      207: 9
+      208: 4
+      209: 8
+      211: 21
+      221: 17
+      224: 152
+      225: 115
+      226: 142
+      227: 80
+      228: 26
+      229: 9
+      232: 16
+      233: 3
+      239: 2
+      244: 3
+      245: 1
+      246: 2
+      247: 2
+      249: 6
+      250: 6
+      254: 6
+      283: 2
+      284: 2
+      285: 1
+      286: 1
+      310: 11
+      311: 9
+      312: 13
+      313: 7
+      314: 7
+      318: 2
+      319: 2
+      321: 1
+      322: 1
+      324: 174
+      325: 1
+      327: 1
+      360: 1
+      361: 2
+      362: 1
+      363: 1
+      364: 1
+      365: 1
+      366: 1
+      367: 2
+      368: 1
+      369: 1
+      370: 1
+    totaldeaths: 15
+    totalpvpkills: 0
+    playerkills: {}
+    playerdeaths: {}
+    totalpvpdeaths: 0
+  miscdata:
+    first_spawn_done: '1'
+    fold-anchor-room: 468
+    migration-alchemy-potions-done: '1'
+    migration-alchemy-recipes-done: '1'
+    migration-chrysalis-aid-removed: '1'
+    migration-desc-unwrap-done: '1'
+    migration-fold-pair-done: '1'
+    migration-neck-to-back-done: '1'
+    migration-newbie-awakening-done: '1'
+    migration-quest-spells-done: '1'
+    migration-recipe-discipline-shuffle-2026-05-04: '1'
+    shadow-target-mob: 6
+  visitedrooms:
+    Greywater Flats:
+    - 5422
+    - 5423
+    - 5424
+    - 5425
+    - 5426
+    - 5427
+    - 5428
+    - 5429
+    - 5430
+    - 5431
+    - 5432
+    - 5433
+    Hartcharn:
+    - 5402
+    - 5403
+    - 5404
+    - 5405
+    - 5412
+    - 5417
+    - 5418
+    - 5419
+    Instance Planar Oasis:
+    - 1000000000
+    - 1000000310
+    - 1000000315
+    - 1000000319
+    - 1000000314
+    - 1000000318
+    - 1000000323
+    - 1000000348
+    - 1000000328
+    - 1000000333
+    - 1000000338
+    - 1000000343
+    - 1000000347
+    - 1000000327
+    - 1000000332
+    - 1000000331
+    - 1000000336
+    - 1000000341
+    - 1000000366
+    - 1000000320
+    - 1000000300
+    - 1000000304
+    - 1000000279
+    - 1000000284
+    - 1000000289
+    - 1000000294
+    - 1000000324
+    - 1000000349
+    - 1000000329
+    - 1000000354
+    - 1000000353
+    - 1000000358
+    - 1000000258
+    - 1000000263
+    - 1000000268
+    - 1000000267
+    - 1000000272
+    - 1000000297
+    - 1000000277
+    - 1000000282
+    - 1000000307
+    - 1000000312
+    - 1000000317
+    - 1000000342
+    - 1000000346
+    - 1000000371
+    - 1000000351
+    - 1000000350
+    - 1000000355
+    - 1000000255
+    - 1000000260
+    - 1000000285
+    - 1000000290
+    - 1000000295
+    - 1000000334
+    - 1000000359
+    - 1000000364
+    - 1000000264
+    - 1000000269
+    - 1000000274
+    - 1000000254
+    - 1000000259
+    - 1000000288
+    - 1000000293
+    - 1000000292
+    - 1000000322
+    - 1000000302
+    - 1000000357
+    Ironwind Steppe:
+    - 3000
+    - 3001
+    - 3003
+    - 3006
+    - 3010
+    - 3011
+    - 3030
+    - 3015
+    - 3019
+    - 3022
+    - 3027
+    - 3028
+    - 3029
+    - 3100
+    - 3101
+    - 3104
+    - 3107
+    - 3103
+    - 3102
+    - 3106
+    - 3109
+    - 3112
+    - 3114
+    - 3111
+    Kilnreach Works:
+    - 5450
+    - 5451
+    - 5452
+    - 5453
+    - 5454
+    - 5455
+    - 5456
+    - 5457
+    Kingsbarrow Vale:
+    - 5434
+    - 5435
+    - 5436
+    - 5437
+    - 5438
+    - 5439
+    - 5440
+    - 5441
+    - 5442
+    - 5443
+    Marches Spur Road:
+    - 4000
+    - 4001
+    - 4002
+    - 4004
+    - 4005
+    - 4006
+    - 4008
+    - 4009
+    - 4010
+    - 4011
+    - 4013
+    - 4014
+    New Plymouth Crafting:
+    - 5700
+    - 5702
+    New Plymouth Docks:
+    - 5500
+    - 5501
+    - 5502
+    - 5504
+    - 5505
+    - 5508
+    - 5509
+    - 5520
+    - 5506
+    - 5507
+    - 5510
+    - 5514
+    - 5517
+    - 5516
+    - 5511
+    - 5512
+    - 5513
+    - 5519
+    - 5522
+    - 5525
+    - 5527
+    - 5529
+    - 5528
+    - 5526
+    - 5523
+    - 5524
+    - 5503
+    New Plymouth Old Quarter:
+    - 6020
+    - 6021
+    - 6022
+    - 6023
+    - 6024
+    - 6025
+    - 6029
+    - 6026
+    - 6027
+    - 6028
+    - 6030
+    - 6032
+    - 6034
+    - 6035
+    - 6036
+    - 6037
+    - 6039
+    - 6038
+    - 6033
+    - 6031
+    New Plymouth Outskirts:
+    - 5466
+    - 5467
+    - 5468
+    - 5469
+    - 5470
+    - 5471
+    - 5481
+    - 5478
+    - 5479
+    - 5480
+    - 5476
+    - 5474
+    - 5472
+    North Road:
+    - 4038
+    - 4039
+    - 4040
+    - 4041
+    - 4042
+    - 4043
+    - 4044
+    - 4053
+    - 4054
+    - 4055
+    - 4056
+    - 4057
+    - 4058
+    - 4060
+    - 4061
+    - 4062
+    North Road North:
+    - 5372
+    - 5373
+    - 5374
+    - 5375
+    - 5377
+    - 5379
+    - 5381
+    - 5382
+    - 5383
+    - 5384
+    - 5385
+    - 5386
+    - 5387
+    - 5388
+    - 5389
+    Stillwater:
+    - 4124
+    - 4100
+    - 4101
+    - 4132
+    - 4135
+    - 4133
+    - 4102
+    - 4105
+    - 4109
+    - 4111
+    Stillwater Marsh:
+    - 4177
+    - 4183
+    - 4187
+    - 4191
+    - 4196
+    - 4192
+    - 4194
+    - 4195
+    - 4193
+    - 4189
+    - 4190
+    - 4186
+    The Empty Reach:
+    - 5390
+    - 5391
+    - 5392
+    - 5393
+    - 5394
+    - 5395
+    - 5396
+    - 5397
+    - 5398
+    - 5399
+    - 5400
+    - 5401
+    The Fernway:
+    - 4147
+    - 4148
+    - 4149
+    - 4150
+    - 4151
+    - 4152
+    - 4153
+    Thornwall City:
+    - 464
+    - 463
+    - 462
+    - 467
+    - 468
+    - 465
+    - 466
+    - 479
+    - 470
+    - 471
+    - 478
+    - 480
+    - 482
+    - 483
+    - 469
+    - 472
+    - 481
+    - 461
+    - 460
+    - 510
+    - 5000
+    - 5101
+    Thornwall Outskirts:
+    - 447
+    - 446
+    - 445
+    - 440
+    Watchers Crossing:
+    - 427
+    - 422
+    - 421
+    - 420
+    - 423
+    - 424
+    - 426
+    - 425
+  skillusecount:
+    alchemy: 225
+    bartering: 1508
+    blacksmithing: 103
+    cooking: 140
+    critical_failure: 127
+    critical_success: 2690
+    enchanting: 205
+    jewelcrafting: 103
+    manifestation: 811
+    rhetoric: 1314
+    salvage: 616
+    search: 1362
+    skullduggery: 1
+    spellcasting: 1745
+    tailoring: 95
+    unarmed-combat: 16166
+    weapon-combat: 11757
+  statusecount:
+    charisma: 3729
+    dexterity: 39063
+    perception: 2659
+    strength: 11495
+    willpower: 3489
+  companions:
+  - mobid: 305
+    source_type: raised
+    name: Rocky the flesh golem
+    base_name: flesh golem
+    nickname: Rocky
+    auto_assist: true
+    stat_training:
+      charisma: 203
+      dexterity: 113
+      perception: 81
+      strength: 117
+      vitality: 177
+      willpower: 113
+    skills:
+      alchemy: 1
+      bartering: 1
+      blacksmithing: 1
+      cooking: 1
+      enchanting: 1
+      jewelcrafting: 1
+      manifestation: 1
+      ranged-combat: 1
+      rhetoric: 10
+      salvage: 1
+      search: 1
+      skullduggery: 1
+      spellcasting: 2
+      tailoring: 1
+      unarmed-combat: 3
+      weapon-combat: 3
+    skill_use_count:
+      critical_failure: 4
+      critical_success: 48
+      rhetoric: 458
+      spellcasting: 2
+      unarmed-combat: 707
+      weapon-combat: 77
+    mutations:
+      iron-constitution: 1
+      psychic-resistance: 1
+    mutation_progress: 121.4999999999992
+    items:
+    - itemid: 10027
+      overrides:
+        itemid: 10027
+        value: 80
+        damage_multiplier: 1.05
+        parryrating: 8
+        speedmultiplier: 0.6
+        weight: 3
+        hands: 2
+        name: earthshaker warhammer
+        namesimple: warhammer
+        description: A colossal warhammer hewn from fused volcanic stone, its head
+          still veined with dull orange heat. The haft is a column of compressed basalt
+          that thrums with deep vibration. When it strikes, the ground remembers.
+          This is a weapon shaped by planar forces, not forged by hands.
+        type: weapon
+        subtype: bludgeoning
+        damage:
+          attacks: 1
+          diceroll: 0d0
+        statmods:
+          manifestation: 2
+          perception: 1
+          spellcasting: 1
+          strength: 1
+        vendor_categories:
+        - blacksmithing
+      adjectives:
+      - Masterwork
+    - itemid: 10028
+      overrides:
+        itemid: 10028
+        value: 65
+        damage_multiplier: 0.6500000000000001
+        parryrating: 5
+        speedmultiplier: 0.85
+        weight: 4.5
+        hands: 1
+        name: champion mace
+        namesimple: mace
+        description: A brutal mace of blackened iron, its flanged head dented and
+          scarred from a hundred pit fights. The leather grip is dark with old sweat
+          and blood. Nothing elegant about it — this is a weapon that wins fights
+          through weight and violence. The champion who carried it earned every dent.
+        type: weapon
+        subtype: bludgeoning
+        damage:
+          attacks: 1
+          diceroll: 0d0
+        statmods:
+          rhetoric: 2
+          skullduggery: 1
+          spellcasting: 1
+          unarmed-combat: 1
+          vitality: 2
+        vendor_categories:
+        - blacksmithing
+      adjectives:
+      - Masterwork
+    - itemid: 20069
+      overrides:
+        itemid: 20069
+        value: 60
+        physical_mitigation: 16
+        magical_mitigation: 5
+        conviction_mitigation: 1
+        blockrating: 22
+        weight: 6.5
+        hands: 0
+        name: arena tower shield
+        namesimple: shield
+        description: A full-length tower shield of banded iron over hardwood, wide
+          enough to shelter most of a man's body. The facing is dented and gouged
+          from arena use, the inside grip rewrapped with fresh leather. It is heavy,
+          slow to reposition, and extraordinarily difficult to get past.
+        type: offhand
+        subtype: wearable
+        damage:
+          diceroll: 0@0d0
+        statmods:
+          charisma: 1
+          dexterity: 3
+          rhetoric: 1
+          strength: 2
+          vitality: 1
+        vendor_categories:
+        - blacksmithing
+      adjectives:
+      - Empowered
+    - itemid: 10027
+      overrides:
+        itemid: 10027
+        value: 80
+        damage_multiplier: 1.1500000000000001
+        parryrating: 8
+        speedmultiplier: 0.6
+        weight: 3
+        hands: 2
+        name: earthshaker warhammer
+        namesimple: warhammer
+        description: A colossal warhammer hewn from fused volcanic stone, its head
+          still veined with dull orange heat. The haft is a column of compressed basalt
+          that thrums with deep vibration. When it strikes, the ground remembers.
+          This is a weapon shaped by planar forces, not forged by hands.
+        type: weapon
+        subtype: bludgeoning
+        damage:
+          attacks: 1
+          diceroll: 0d0
+        statmods:
+          charisma: 2
+          dexterity: 2
+          manifestation: 3
+          perception: 16
+          weapon-combat: 1
+          willpower: 1
+      adjectives:
+      - Empowered
+    equipment:
+      weapon:
+        itemid: 10036
+        overrides:
+          itemid: 10036
+          value: 70
+          damage_multiplier: 0.55
+          parryrating: 2
+          staminacost: 3
+          speedmultiplier: 1.2
+          weight: 0.8
+          grapplemodifier: 0.5
+          hands: 1
+          name: drowned claws
+          namesimple: claws
+          description: Four curved talons of solidified oasis water, clear as glass
+            and cold to the touch. They flex like living tendrils between strikes,
+            then snap rigid at the moment of impact. Water beads and runs along the
+            edges without ever dripping free.
+          type: weapon
+          subtype: claws
+          damage:
+            attacks: 1
+            basedamage: 4
+            variance: 2
+          statmods:
+            charisma: 7
+            manifestation: 1
+            perception: 4
+            rhetoric: 2
+            strength: 3
+            vitality: 4
+            weapon-combat: 1
+          vendor_categories:
+          - blacksmithing
+        adjectives:
+        - Empowered
+      offhand:
+        itemid: 20069
+        overrides:
+          itemid: 20069
+          value: 2029
+          physical_mitigation: 12
+          magical_mitigation: 4
+          blockrating: 22
+          weight: 6.5
+          hands: 0
+          name: arena tower shield
+          namesimple: shield
+          description: A full-length tower shield of banded iron over hardwood, wide
+            enough to shelter most of a man's body. The facing is dented and gouged
+            from arena use, the inside grip rewrapped with fresh leather. It is heavy,
+            slow to reposition, and extraordinarily difficult to get past.
+          type: offhand
+          subtype: wearable
+          damage:
+            diceroll: 0@0d0
+          statmods:
+            charisma: 7
+            dexterity: 1
+            perception: 3
+            return_damage: 165
+            spellcasting: 2
+            strength: 5
+            weapon-combat: 1
+          vendor_categories:
+          - blacksmithing
+        adjectives:
+        - Empowered
+        - thornguard
+        enchanttier: 4
+        enchantuses: 544
+        enchanttype: thornguard
+        reservepool: health
+      extraarm1:
+        itemid: -1
+      extraarm2:
+        itemid: -1
+      extraarm3:
+        itemid: -1
+      extraarm4:
+        itemid: -1
+      head:
+        itemid: 20073
+        overrides:
+          itemid: 20073
+          value: 85
+          physical_mitigation: 2
+          magical_mitigation: 13
+          conviction_mitigation: 6
+          weight: 1.5
+          hands: 0
+          name: Ice Crown
+          namesimple: crown
+          description: A circlet of translucent elemental ice that refuses to melt,
+            its spires carved into sharp geometric teeth. A faint cold mist drifts
+            from the surface. The air around the wearer's head grows noticeably cooler
+            and smells of deep winter. Those nearby can sometimes see their breath.
+            Conviction and spells both feel more precise with this on — something
+            about the cold clarifies intent.
+          type: head
+          subtype: wearable
+          damage:
+            diceroll: 0@0d0
+          statmods:
+            dexterity: 3
+            perception: 1
+            skullduggery: 1
+            unarmed-combat: 2
+            vitality: 3
+          vendor_categories:
+          - jewelcrafting
+        adjectives:
+        - Masterwork
+      neck:
+        itemid: 20037
+        overrides:
+          itemid: 20037
+          value: 1888
+          damagereduction: 2
+          physical_mitigation: 2
+          magical_mitigation: 5
+          conviction_mitigation: 8
+          hands: 0
+          name: masterwork gem pendant
+          namesimple: pendant
+          description: Two large gems are set in an elaborate gold wire frame, their
+            facets cut with exacting precision. The pendant rests heavily against
+            the chest, radiating a quiet warmth that steadies the mind and sharpens
+            the senses. It is clearly the work of a master jeweler.
+          type: neck
+          subtype: wearable
+          damage:
+            diceroll: 0@0d0
+          statmods:
+            perception: 2
+            willpower: 4
+            willpower_statmod: 159
+        adjectives:
+        - ironblood
+        enchanttier: 4
+        enchantuses: 5112
+        enchanttype: ironblood
+        reservepool: conviction
+      shoulders:
+        itemid: 20074
+        overrides:
+          itemid: 20074
+          value: 75
+          physical_mitigation: 8
+          magical_mitigation: 6
+          conviction_mitigation: 10
+          weight: 3
+          hands: 0
+          name: mist pauldrons
+          namesimple: pauldrons
+          description: Pauldrons of condensed elemental mist, solid enough to wear
+            but shifting at the edges into wisps of cold vapor. They absorb both physical
+            and magical force with equal efficiency — neither channel seems to penetrate
+            cleanly. A faint haze drifts from them in warm rooms. They make the wearer's
+            outline slightly indistinct from a distance.
+          type: shoulders
+          subtype: wearable
+          damage:
+            diceroll: 0@0d0
+          statmods:
+            charisma: 1
+            dexterity: 1
+            manifestation: 1
+            skullduggery: 1
+            spellcasting: 2
+            strength: 5
+            willpower: 1
+          vendor_categories:
+          - blacksmithing
+        adjectives:
+        - Masterwork
+      body:
+        itemid: 20072
+        overrides:
+          itemid: 20072
+          value: 90
+          physical_mitigation: 19
+          magical_mitigation: 11
+          conviction_mitigation: 1
+          weight: 10
+          hands: 0
+          name: volcanic plate
+          namesimple: plate
+          description: A breastplate of fused basalt and cooled magma, its surface
+            cross-hatched with deep stress cracks that glow a dull orange from within.
+            Impossibly heavy for its size yet fitted by some elemental force to the
+            wearer's frame. The heat it radiates is uncomfortable but not harmful.
+            Whatever smithed this did not use conventional tools.
+          type: body
+          subtype: wearable
+          damage:
+            diceroll: 0@0d0
+          statmods:
+            charisma: 2
+            dexterity: 1
+            manifestation: 1
+            perception: 3
+            spellcasting: 1
+            vitality: 1
+            willpower: 3
+          vendor_categories:
+          - blacksmithing
+        adjectives:
+        - Warding
+      back: {}
+      belt: {}
+      wrist1:
+        itemid: 20076
+        overrides:
+          itemid: 20076
+          value: 45
+          physical_mitigation: 5
+          magical_mitigation: 3
+          conviction_mitigation: 6
+          weight: 1
+          hands: 0
+          name: storm bracer
+          namesimple: bracer
+          description: A bracer of storm-fused crystal and compressed lightning, its
+            surface crackling with a faint static charge that raises arm hair through
+            clothing. The inner surface is smooth and cool. Conviction flows through
+            the wearer's arm differently with this on — words carry more weight, presence
+            feels more charged. The occasional spark is a minor inconvenience.
+          type: wrist
+          subtype: wearable
+          damage:
+            diceroll: 0@0d0
+          statmods:
+            dexterity: 2
+            perception: 3
+            skullduggery: 3
+            weapon-combat: 2
+            willpower: 2
+          vendor_categories:
+          - jewelcrafting
+        adjectives:
+        - Masterwork
+      wrist2:
+        itemid: 20076
+        overrides:
+          itemid: 20076
+          value: 45
+          physical_mitigation: 2
+          magical_mitigation: 9
+          conviction_mitigation: 10
+          weight: 1
+          hands: 0
+          name: storm bracer
+          namesimple: bracer
+          description: A bracer of storm-fused crystal and compressed lightning, its
+            surface crackling with a faint static charge that raises arm hair through
+            clothing. The inner surface is smooth and cool. Conviction flows through
+            the wearer's arm differently with this on — words carry more weight, presence
+            feels more charged. The occasional spark is a minor inconvenience.
+          type: wrist
+          subtype: wearable
+          damage:
+            diceroll: 0@0d0
+          statmods:
+            charisma: 4
+            manifestation: 2
+            perception: 2
+            rhetoric: 1
+            strength: 2
+            vitality: 1
+            willpower: 1
+          vendor_categories:
+          - jewelcrafting
+        adjectives:
+        - Warding
+      extrawrist1:
+        itemid: -1
+      extrawrist2:
+        itemid: -1
+      extrawrist3:
+        itemid: -1
+      extrawrist4:
+        itemid: -1
+      gloves:
+        itemid: 20070
+        overrides:
+          itemid: 20070
+          value: 20
+          physical_mitigation: 5
+          magical_mitigation: 2
+          conviction_mitigation: 1
+          weight: 0.5
+          hands: 0
+          name: arena chain gloves
+          namesimple: gloves
+          description: Close-fitted gloves of interlocked iron rings over a thin leather
+            liner. Lightweight enough to grip a weapon without fumbling, tough enough
+            to take a blade across the knuckles without consequence.
+          type: gloves
+          subtype: wearable
+          damage:
+            diceroll: 0@0d0
+          statmods:
+            charisma: 1
+            dexterity: 1
+            perception: 2
+            skullduggery: 1
+            weapon-combat: 1
+          vendor_categories:
+          - blacksmithing
+        adjectives:
+        - Masterwork
+      ring:
+        itemid: 20075
+        overrides:
+          itemid: 20075
+          value: 40
+          physical_mitigation: 7
+          magical_mitigation: 2
+          conviction_mitigation: 3
+          weight: 0.5
+          hands: 0
+          name: stone ring
+          namesimple: ring
+          description: A thick band of smoothed granite worn featureless by elemental
+            pressure. It has no adornment, no inscription — just dense stone shaped
+            into a perfect circle. Wearing it feels like being slightly heavier, grounded,
+            resistant. The wearer's grip strengthens noticeably.
+          type: ring
+          subtype: wearable
+          damage:
+            diceroll: 0@0d0
+          statmods:
+            perception: 1
+            skullduggery: 2
+            spellcasting: 1
+            strength: 9
+            vitality: 5
+            willpower: 3
+          vendor_categories:
+          - jewelcrafting
+        adjectives:
+        - Warding
+      ring2: {}
+      legs:
+        itemid: 20071
+        overrides:
+          itemid: 20071
+          value: 25
+          physical_mitigation: 6
+          magical_mitigation: 1
+          conviction_mitigation: 1
+          weight: 1
+          hands: 0
+          name: arena iron greaves
+          namesimple: greaves
+          description: Solid iron plate formed to protect the shins and thighs, worn
+            smooth at the edges from long use in the pit. Heavier than chain, but
+            hits against the legs glance off where they would bite through lighter
+            armor.
+          type: legs
+          subtype: wearable
+          damage:
+            diceroll: 0@0d0
+          statmods:
+            charisma: 1
+            dexterity: 2
+            spellcasting: 1
+            strength: 3
+          vendor_categories:
+          - blacksmithing
+        adjectives:
+        - Empowered
+      feet: {}
+      tail:
+        itemid: -1
+      componentbag: {}
+  - mobid: 305
+    source_type: raised
+    name: Fleshy the flesh golem
+    base_name: flesh golem
+    nickname: Fleshy
+    auto_assist: true
+    stat_training:
+      charisma: 174
+      dexterity: 128
+      perception: 70
+      strength: 157
+      vitality: 165
+      willpower: 113
+    skills:
+      alchemy: 1
+      bartering: 1
+      blacksmithing: 1
+      cooking: 1
+      enchanting: 1
+      jewelcrafting: 1
+      manifestation: 1
+      ranged-combat: 1
+      rhetoric: 10
+      salvage: 1
+      search: 1
+      skullduggery: 1
+      spellcasting: 1
+      tailoring: 1
+      unarmed-combat: 2
+      weapon-combat: 3
+    skill_use_count:
+      critical_failure: 8
+      critical_success: 24
+      rhetoric: 232
+      spellcasting: 2
+      unarmed-combat: 70
+      weapon-combat: 257
+    mutations:
+      iron-constitution: 3
+    mutation_progress: 235.80000000000322
+    items:
+    - itemid: 10030
+      overrides:
+        itemid: 10030
+        value: 70
+        damage_multiplier: 0.7500000000000002
+        parryrating: 5
+        speedmultiplier: 1.3
+        weight: 2
+        hands: 1
+        name: wind scimitar
+        namesimple: scimitar
+        description: A curved blade of compressed air made solid — semi-translucent,
+          its edge a constant rushing whisper. The steel-like material flexes slightly
+          under pressure and springs back instantly. It catches ambient wind and adds
+          it to each swing with unnerving efficiency. The guard is a swirl of frozen
+          gale-force current that bends lesser blades aside on contact.
+        type: weapon
+        subtype: slashing
+        damage:
+          attacks: 1
+          diceroll: 0d0
+        statmods:
+          charisma: 3
+          dexterity: 2
+          manifestation: 2
+          perception: 2
+          rhetoric: 1
+          spellcasting: 2
+          strength: 1
+          willpower: 1
+        vendor_categories:
+        - blacksmithing
+      adjectives:
+      - Masterwork
+    - itemid: 20070
+      overrides:
+        itemid: 20070
+        value: 20
+        physical_mitigation: 6
+        magical_mitigation: 5
+        conviction_mitigation: 3
+        weight: 0.5
+        hands: 0
+        name: arena chain gloves
+        namesimple: gloves
+        description: Close-fitted gloves of interlocked iron rings over a thin leather
+          liner. Lightweight enough to grip a weapon without fumbling, tough enough
+          to take a blade across the knuckles without consequence.
+        type: gloves
+        subtype: wearable
+        damage:
+          diceroll: 0@0d0
+        statmods:
+          dexterity: 6
+          skullduggery: 1
+          strength: 1
+          willpower: 1
+        vendor_categories:
+        - blacksmithing
+      adjectives:
+      - Warding
+    - itemid: 20069
+      overrides:
+        itemid: 20069
+        value: 60
+        physical_mitigation: 13
+        magical_mitigation: 5
+        conviction_mitigation: 2
+        blockrating: 22
+        weight: 6.5
+        hands: 0
+        name: arena tower shield
+        namesimple: shield
+        description: A full-length tower shield of banded iron over hardwood, wide
+          enough to shelter most of a man's body. The facing is dented and gouged
+          from arena use, the inside grip rewrapped with fresh leather. It is heavy,
+          slow to reposition, and extraordinarily difficult to get past.
+        type: offhand
+        subtype: wearable
+        damage:
+          diceroll: 0@0d0
+        statmods:
+          charisma: 3
+          dexterity: 2
+          vitality: 3
+          weapon-combat: 2
+          willpower: 1
+        vendor_categories:
+        - blacksmithing
+      adjectives:
+      - Empowered
+    - itemid: 20071
+      overrides:
+        itemid: 20071
+        value: 25
+        physical_mitigation: 7
+        conviction_mitigation: 3
+        weight: 1
+        hands: 0
+        name: arena iron greaves
+        namesimple: greaves
+        description: Solid iron plate formed to protect the shins and thighs, worn
+          smooth at the edges from long use in the pit. Heavier than chain, but hits
+          against the legs glance off where they would bite through lighter armor.
+        type: legs
+        subtype: wearable
+        damage:
+          diceroll: 0@0d0
+        statmods:
+          charisma: 2
+          perception: 1
+          unarmed-combat: 1
+          vitality: 2
+        vendor_categories:
+        - blacksmithing
+      adjectives:
+      - Warding
+    - itemid: 10030
+      overrides:
+        itemid: 10030
+        value: 70
+        damage_multiplier: 0.8500000000000003
+        parryrating: 5
+        speedmultiplier: 1.3
+        weight: 2
+        hands: 1
+        name: wind scimitar
+        namesimple: scimitar
+        description: A curved blade of compressed air made solid — semi-translucent,
+          its edge a constant rushing whisper. The steel-like material flexes slightly
+          under pressure and springs back instantly. It catches ambient wind and adds
+          it to each swing with unnerving efficiency. The guard is a swirl of frozen
+          gale-force current that bends lesser blades aside on contact.
+        type: weapon
+        subtype: slashing
+        damage:
+          attacks: 1
+          diceroll: 0d0
+        statmods:
+          dexterity: 2
+          rhetoric: 6
+        vendor_categories:
+        - blacksmithing
+      adjectives:
+      - Masterwork
+    - itemid: 10027
+      overrides:
+        itemid: 10027
+        value: 80
+        damage_multiplier: 1.1
+        parryrating: 8
+        speedmultiplier: 0.6
+        weight: 3
+        hands: 2
+        name: earthshaker warhammer
+        namesimple: warhammer
+        description: A colossal warhammer hewn from fused volcanic stone, its head
+          still veined with dull orange heat. The haft is a column of compressed basalt
+          that thrums with deep vibration. When it strikes, the ground remembers.
+          This is a weapon shaped by planar forces, not forged by hands.
+        type: weapon
+        subtype: bludgeoning
+        damage:
+          attacks: 1
+          diceroll: 0d0
+        statmods:
+          charisma: 1
+          rhetoric: 1
+          skullduggery: 1
+          spellcasting: 1
+          unarmed-combat: 1
+          willpower: 3
+        vendor_categories:
+        - blacksmithing
+      adjectives:
+      - Masterwork
+    equipment:
+      weapon:
+        itemid: 10030
+        overrides:
+          itemid: 10030
+          value: 70
+          damage_multiplier: 0.7500000000000002
+          parryrating: 5
+          speedmultiplier: 1.3
+          weight: 2
+          hands: 1
+          name: wind scimitar
+          namesimple: scimitar
+          description: A curved blade of compressed air made solid — semi-translucent,
+            its edge a constant rushing whisper. The steel-like material flexes slightly
+            under pressure and springs back instantly. It catches ambient wind and
+            adds it to each swing with unnerving efficiency. The guard is a swirl
+            of frozen gale-force current that bends lesser blades aside on contact.
+          type: weapon
+          subtype: slashing
+          damage:
+            attacks: 1
+            diceroll: 0d0
+          statmods:
+            charisma: 2
+            dexterity: 7
+            perception: 3
+            rhetoric: 1
+            skullduggery: 1
+            strength: 2
+            vitality: 3
+            weapon-combat: 1
+            willpower: 2
+          vendor_categories:
+          - blacksmithing
+        adjectives:
+        - Empowered
+      offhand:
+        itemid: 20069
+        overrides:
+          itemid: 20069
+          value: 60
+          physical_mitigation: 13
+          magical_mitigation: 5
+          conviction_mitigation: 8
+          blockrating: 22
+          weight: 6.5
+          hands: 0
+          name: arena tower shield
+          namesimple: shield
+          description: A full-length tower shield of banded iron over hardwood, wide
+            enough to shelter most of a man's body. The facing is dented and gouged
+            from arena use, the inside grip rewrapped with fresh leather. It is heavy,
+            slow to reposition, and extraordinarily difficult to get past.
+          type: offhand
+          subtype: wearable
+          damage:
+            diceroll: 0@0d0
+          statmods:
+            charisma: 1
+            dexterity: 1
+            perception: 2
+            vitality: 2
+          vendor_categories:
+          - blacksmithing
+        adjectives:
+        - Warding
+      extraarm1:
+        itemid: -1
+      extraarm2:
+        itemid: -1
+      extraarm3:
+        itemid: -1
+      extraarm4:
+        itemid: -1
+      head: {}
+      neck:
+        itemid: 20079
+        overrides:
+          itemid: 20079
+          value: 85
+          physical_mitigation: 3
+          magical_mitigation: 9
+          conviction_mitigation: 5
+          weight: 1
+          hands: 0
+          name: Tidal Torc
+          namesimple: torc
+          description: A circlet of ever-flowing oasis water held in a perfect ring
+            by some quiet planar will. It turns and ripples against the wearer's throat
+            without spilling, and the air around it carries the cool, mineral smell
+            of deep water.
+          type: neck
+          subtype: wearable
+          damage:
+            diceroll: 0@0d0
+          statmods:
+            charisma: 7
+            dexterity: 1
+            manifestation: 4
+            skullduggery: 1
+            strength: 2
+            willpower: 3
+          vendor_categories:
+          - jewelcrafting
+        adjectives:
+        - Masterwork
+      shoulders:
+        itemid: 20074
+        overrides:
+          itemid: 20074
+          value: 75
+          physical_mitigation: 8
+          magical_mitigation: 9
+          conviction_mitigation: 7
+          weight: 3
+          hands: 0
+          name: mist pauldrons
+          namesimple: pauldrons
+          description: Pauldrons of condensed elemental mist, solid enough to wear
+            but shifting at the edges into wisps of cold vapor. They absorb both physical
+            and magical force with equal efficiency — neither channel seems to penetrate
+            cleanly. A faint haze drifts from them in warm rooms. They make the wearer's
+            outline slightly indistinct from a distance.
+          type: shoulders
+          subtype: wearable
+          damage:
+            diceroll: 0@0d0
+          statmods:
+            charisma: 3
+            dexterity: 5
+            manifestation: 1
+            perception: 2
+            skullduggery: 1
+            strength: 1
+            willpower: 2
+          vendor_categories:
+          - blacksmithing
+        adjectives:
+        - Empowered
+      body:
+        itemid: 20072
+      back: {}
+      belt: {}
+      wrist1:
+        itemid: 20076
+        overrides:
+          itemid: 20076
+          value: 5
+          physical_mitigation: 5
+          magical_mitigation: 3
+          conviction_mitigation: 6
+          weight: 1
+          hands: 0
+          name: storm bracer
+          namesimple: bracer
+          description: A bracer of storm-fused crystal and compressed lightning, its
+            surface crackling with a faint static charge that raises arm hair through
+            clothing. The inner surface is smooth and cool. Conviction flows through
+            the wearer's arm differently with this on — words carry more weight, presence
+            feels more charged. The occasional spark is a minor inconvenience.
+          type: wrist
+          subtype: wearable
+          damage:
+            diceroll: 0@0d0
+        adjectives:
+        - Empowered
+        - chrysalis-braced
+        enchanttier: 4
+        enchantuses: 5526
+        enchanttype: chitin-brace
+        reservepool: health
+      wrist2: {}
+      extrawrist1:
+        itemid: -1
+      extrawrist2:
+        itemid: -1
+      extrawrist3:
+        itemid: -1
+      extrawrist4:
+        itemid: -1
+      gloves:
+        itemid: 20070
+        overrides:
+          itemid: 20070
+          value: 20
+          physical_mitigation: 3
+          magical_mitigation: 3
+          conviction_mitigation: 4
+          weight: 0.5
+          hands: 0
+          name: arena chain gloves
+          namesimple: gloves
+          description: Close-fitted gloves of interlocked iron rings over a thin leather
+            liner. Lightweight enough to grip a weapon without fumbling, tough enough
+            to take a blade across the knuckles without consequence.
+          type: gloves
+          subtype: wearable
+          damage:
+            diceroll: 0@0d0
+          statmods:
+            spellcasting: 1
+            strength: 2
+          vendor_categories:
+          - blacksmithing
+        adjectives:
+        - Warding
+      ring: {}
+      ring2: {}
+      legs:
+        itemid: 20071
+        overrides:
+          itemid: 20071
+          value: 25
+          physical_mitigation: 6
+          magical_mitigation: 3
+          conviction_mitigation: 1
+          weight: 1
+          hands: 0
+          name: arena iron greaves
+          namesimple: greaves
+          description: Solid iron plate formed to protect the shins and thighs, worn
+            smooth at the edges from long use in the pit. Heavier than chain, but
+            hits against the legs glance off where they would bite through lighter
+            armor.
+          type: legs
+          subtype: wearable
+          damage:
+            diceroll: 0@0d0
+          statmods:
+            charisma: 1
+            manifestation: 1
+            skullduggery: 1
+            willpower: 1
+          vendor_categories:
+          - blacksmithing
+        adjectives:
+        - Masterwork
+      feet: {}
+      tail:
+        itemid: -1
+      componentbag: {}
+  created: 2026-04-21T17:50:34.319479Z
+  timers:
+    grapple-opportunity:
+      roundstart: 3125450
+      period: 1 round

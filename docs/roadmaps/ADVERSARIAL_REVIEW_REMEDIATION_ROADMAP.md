@@ -59,7 +59,7 @@ further decomposition
 | 0.1 | Restore web-terminal release asset | S | — | 1 | Invalidated |
 | 0.2 | Establish a reproducible full-test baseline | S | — | Supporting | Done |
 | 0.3a | Build the ephemeral server supervisor | M | 0.2 | Supporting | Done |
-| 0.3b | Materialize synthetic player profiles | L | 0.3a | Supporting | Not started |
+| 0.3b | Materialize synthetic player profiles | L | 0.3a | Supporting | Done |
 | 0.3c | Integrate single-agent ephemeral playtests | M | 0.3a, 0.3b | Supporting | Not started |
 | 0.3d | Integrate multi-agent ephemeral scenarios | L | 0.3c | Supporting | Not started |
 | 1.1 | Unify validation across PR, master, and release | M | 0.2 | 10, 25, 26 | Not started |
@@ -204,19 +204,36 @@ credentials and deterministic supported gameplay state.
 **Boundary:** Production archives are design references only, never runtime
 inputs. Initial profile scope is identity, role, room, base/training stats,
 skills, quest tokens/flags, ordinary inventory, and validated equipment.
+Goal→profile binding and mudagent remain 0.3c.
+
+**Status (2026-08-08):** Done on
+`feature/stage-0.3b-synthetic-playtest-profiles-v2` — six templates,
+`internal/playtestprofiles` materializer, `main.go` boot hook, playtestenv
+manifest/overrides/`Artifacts.Creds`, runner `Dockerfile` COPY. Spec/plan:
+`docs/superpowers/specs/2026-08-08-synthetic-playtest-profiles-design.md`,
+`docs/superpowers/plans/2026-08-08-synthetic-playtest-profiles.md`.
+Evidence: package unit tests green; Windows Docker
+`TestDockerIntegration/profiles_*` PASS (fresh+creds+AI login,
+veteran+heal overlay, bad room fail, empty creation-flow). Adversarial
+implementation review: approve-with-follow-ups (prod-name denylist,
+quest-flag fail-closed, multi-entry failure test addressed; broader
+world-Validate CI coverage remains a follow-up).
 
 #### Chunk 0.3c — Integrate single-agent ephemeral playtests
 
 **Outcome:** One agent command selects or authors goals, binds an appropriate
-profile, starts the supervisor, drives the existing `mudagent` loop, writes a
-run-scoped report, and guarantees cleanup while allowing other work to continue.
-Each run has explicit token, turn, and wall-clock budgets. Token exhaustion
-produces a structured incomplete report with the partial transcript and cleanup
-outcome instead of hanging or being misreported as a gameplay success.
+profile (or explicit creation-flow), starts the ephemeral supervisor, drives
+the existing `mudagent` loop, writes a run-scoped gameplay report, and
+guarantees cleanup while allowing other work to continue. Each run has an
+explicit **wall-clock** budget (Go-enforced). Command spam is paced by
+in-engine `AICommandsPerRound`. Token/API limits remain soft driver guidance;
+exhaustion or wall-clock expiry produces a structured **incomplete** gameplay
+report (partial findings + cleanup outcome), never a false success.
 
 **Boundary:** Explicit user requests and existing SOP-required adversarial
 playtests may trigger the command automatically. The command accepts no
-production or remote target.
+production or remote target. Design:
+`docs/superpowers/specs/2026-08-08-single-agent-ephemeral-playtests-design.md`.
 
 #### Chunk 0.3d — Integrate multi-agent ephemeral scenarios
 

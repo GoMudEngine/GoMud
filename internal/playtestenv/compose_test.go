@@ -151,11 +151,12 @@ func TestMaterializeRunFilesWritesComposeAtRunRootAndConfigInControl(t *testing.
 	require.NoError(t, os.Mkdir(controlDir, 0o755))
 	ver := version.New(0, 16, 0)
 
-	composePath, configPath, err := materializeRunFiles(runDir, controlDir, ver)
+	composePath, configPath, profilesPath, err := materializeRunFiles(runDir, controlDir, ver, nil)
 	require.NoError(t, err)
 
 	require.Equal(t, filepath.Join(runDir, "compose.resolved.yml"), composePath)
 	require.Equal(t, filepath.Join(controlDir, "config-overrides.yaml"), configPath)
+	require.Empty(t, profilesPath)
 	require.NotEqual(t, filepath.Dir(composePath), filepath.Dir(configPath),
 		"compose.resolved.yml must live at the run root, not inside control/")
 
@@ -171,9 +172,12 @@ func TestMaterializeRunFilesWritesComposeAtRunRootAndConfigInControl(t *testing.
 	require.Equal(t, "0.16.0", overrides.Server.CurrentVersion)
 	require.Equal(t, 55555, overrides.Network.AIPort)
 	require.False(t, overrides.Logging.LogToFile)
+	require.Nil(t, overrides.Playtest)
 
 	_, err = os.Stat(filepath.Join(controlDir, "compose.resolved.yml"))
 	require.True(t, os.IsNotExist(err), "compose.resolved.yml must not appear inside control/")
+	_, err = os.Stat(filepath.Join(controlDir, profilesManifestFileName))
+	require.True(t, os.IsNotExist(err), "creation-flow must not write profiles-manifest.yaml")
 }
 
 func TestMaterializeRunFilesRequiresWritableControlDir(t *testing.T) {
@@ -183,7 +187,7 @@ func TestMaterializeRunFilesRequiresWritableControlDir(t *testing.T) {
 	// attempted.
 	missingControlDir := filepath.Join(runDir, "does-not-exist", "control")
 
-	_, _, err := materializeRunFiles(runDir, missingControlDir, version.New(1, 0, 0))
+	_, _, _, err := materializeRunFiles(runDir, missingControlDir, version.New(1, 0, 0), nil)
 	require.Error(t, err)
 	require.True(t, errors.Is(err, ErrControlDirNotWritable))
 
@@ -198,7 +202,7 @@ func TestMaterializeRunFilesLeavesNoWriteProbeBehind(t *testing.T) {
 	runDir := t.TempDir()
 	controlDir := filepath.Join(runDir, "control")
 	require.NoError(t, os.Mkdir(controlDir, 0o755))
-	_, _, err := materializeRunFiles(runDir, controlDir, version.New(2, 3, 4))
+	_, _, _, err := materializeRunFiles(runDir, controlDir, version.New(2, 3, 4), nil)
 	require.NoError(t, err)
 
 	runEntries, err := os.ReadDir(runDir)
@@ -241,7 +245,7 @@ func TestWriteResolvedComposeFileAndConfigOverridesLeaveNoTempResidue(t *testing
 	require.NoError(t, err)
 	require.Equal(t, composePath, gotComposePath)
 
-	gotConfigPath, err := writeConfigOverrides(controlDir, version.New(9, 9, 9))
+	gotConfigPath, err := writeConfigOverrides(controlDir, version.New(9, 9, 9), false)
 	require.NoError(t, err)
 	require.Equal(t, configPath, gotConfigPath)
 

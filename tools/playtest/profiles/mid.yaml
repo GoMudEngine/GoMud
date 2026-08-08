@@ -1,0 +1,47 @@
+role: user
+username: template-mid
+character:
+  name: Midroad Scout
+  description: >
+    A competent explorer with mixed skills, a few spells, and serviceable kit.
+  roomid: 462
+  zone: Thornwall City
+  speciesid: 1
+  stats:
+    strength:
+      base: 120
+    dexterity:
+      base: 118
+    perception:
+      base: 125
+    vitality:
+      base: 122
+    willpower:
+      base: 115
+    charisma:
+      base: 110
+  health: 500
+  stamina: 480
+  conviction: 450
+  gold: 500
+  skills:
+    weapon-combat: 18
+    unarmed-combat: 10
+    search: 15
+    skullduggery: 8
+    spellcasting: 12
+    rhetoric: 6
+  spellbook:
+    heal: 2
+    identify: 1
+    conviction-ward: 1
+  equipment:
+    weapon:
+      itemid: 10006
+    body:
+      itemid: 20008
+    feet:
+      itemid: 20003
+  items:
+    - itemid: 30036
+    - itemid: 30052

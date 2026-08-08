@@ -113,6 +113,8 @@ func cmdStart(ctx context.Context, args []string, stdout, stderr io.Writer, s en
 	checkout := fs.String("checkout", "", "checkout path (default: cwd)")
 	lease := fs.Duration("lease", defaultLease, "run lease duration")
 	asJSON := fs.Bool("json", false, "emit one JSON result object on stdout")
+	var profiles profileFlag
+	fs.Var(&profiles, "profile", "synthetic profile request as id:start_room (repeatable)")
 	if err := fs.Parse(args); err != nil {
 		fmt.Fprintln(stderr, err.Error())
 		return exitUsage
@@ -136,8 +138,41 @@ func cmdStart(ctx context.Context, args []string, stdout, stderr io.Writer, s en
 		Checkout:         path,
 		Lease:            *lease,
 		ReadinessTimeout: defaultReady,
+		Profiles:         profiles.requests,
 	})
 	return emitResult(stdout, stderr, *asJSON, res, err)
+}
+
+// profileFlag accumulates repeated --profile id:start_room values.
+type profileFlag struct {
+	requests []playtestenv.ProfileRequest
+}
+
+func (p *profileFlag) String() string {
+	if p == nil || len(p.requests) == 0 {
+		return ""
+	}
+	parts := make([]string, 0, len(p.requests))
+	for _, r := range p.requests {
+		parts = append(parts, fmt.Sprintf("%s:%d", r.Profile, r.StartRoom))
+	}
+	return strings.Join(parts, ",")
+}
+
+func (p *profileFlag) Set(v string) error {
+	id, roomStr, ok := strings.Cut(v, ":")
+	if !ok || strings.TrimSpace(id) == "" || strings.TrimSpace(roomStr) == "" {
+		return fmt.Errorf("--profile requires id:start_room, got %q", v)
+	}
+	var room int
+	if _, err := fmt.Sscanf(strings.TrimSpace(roomStr), "%d", &room); err != nil || room <= 0 {
+		return fmt.Errorf("--profile start_room must be a positive integer, got %q", roomStr)
+	}
+	p.requests = append(p.requests, playtestenv.ProfileRequest{
+		Profile:   strings.TrimSpace(id),
+		StartRoom: room,
+	})
+	return nil
 }
 
 func cmdStatus(ctx context.Context, args []string, stdout, stderr io.Writer, s envSupervisor) int {

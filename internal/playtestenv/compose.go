@@ -31,9 +31,18 @@ var embeddedComposePolicy []byte
 // the two files materialized into a run's control directory: the verbatim
 // embedded Compose policy, and this package's nested config-overrides.yaml
 // consumed by the containerized server via CONFIG_PATH.
+//
+// profilesManifestFileName / credsFileName live in the same writable control
+// bind (/run/dogmud). The supervisor writes the manifest; the server writes
+// creds.json after materialization.
 const (
-	composeResolvedFileName = "compose.resolved.yml"
-	configOverridesFileName = "config-overrides.yaml"
+	composeResolvedFileName  = "compose.resolved.yml"
+	configOverridesFileName  = "config-overrides.yaml"
+	profilesManifestFileName = "profiles-manifest.yaml"
+	credsFileName            = "creds.json"
+
+	containerProfilesDir      = "/app/playtest/profiles"
+	containerProfilesManifest = "/run/dogmud/profiles-manifest.yaml"
 )
 
 // controlAIPort is the single AI-listener port this package's Compose
@@ -119,29 +128,49 @@ type configOverridesDoc struct {
 	Logging struct {
 		LogToFile bool `yaml:"LogToFile"`
 	} `yaml:"Logging"`
+	Playtest *playtestOverrides `yaml:"Playtest,omitempty"`
+}
+
+// playtestOverrides gate synthetic profile materialization inside the
+// container. Omitted entirely for creation-flow runs (empty Profiles list).
+type playtestOverrides struct {
+	ProfilesDir      string `yaml:"ProfilesDir"`
+	ProfilesManifest string `yaml:"ProfilesManifest"`
+}
+
+// profilesManifestDoc is the YAML shape written to control/profiles-manifest.yaml.
+type profilesManifestDoc struct {
+	Entries []ProfileRequest `yaml:"entries"`
 }
 
 // buildConfigOverridesDoc derives the nested config-overrides.yaml document
-// from ver alone: Server.CurrentVersion is ver's parsed, canonical string
-// form (never the raw literal from the checkout's main.go); Network.AIPort
-// always matches the Compose policy's published port; Logging.LogToFile is
-// always false so a run never writes a log file into the ephemeral
-// container's filesystem.
-func buildConfigOverridesDoc(ver version.Version) configOverridesDoc {
+// from ver and whether profiles were requested: Server.CurrentVersion is
+// ver's parsed, canonical string form (never the raw literal from the
+// checkout's main.go); Network.AIPort always matches the Compose policy's
+// published port; Logging.LogToFile is always false so a run never writes a
+// log file into the ephemeral container's filesystem. Playtest overrides are
+// set only when withProfiles is true.
+func buildConfigOverridesDoc(ver version.Version, withProfiles bool) configOverridesDoc {
 	var doc configOverridesDoc
 	doc.Server.CurrentVersion = ver.String()
 	doc.Network.AIPort = controlAIPort
 	doc.Logging.LogToFile = false
+	if withProfiles {
+		doc.Playtest = &playtestOverrides{
+			ProfilesDir:      containerProfilesDir,
+			ProfilesManifest: containerProfilesManifest,
+		}
+	}
 	return doc
 }
 
-// writeConfigOverrides marshals buildConfigOverridesDoc(ver) as YAML and
-// writes it to <controlDir>/config-overrides.yaml, returning its absolute
-// path. Like writeResolvedComposeFile, it writes via atomic.WriteFile so a
+// writeConfigOverrides marshals buildConfigOverridesDoc and writes it to
+// <controlDir>/config-overrides.yaml, returning its absolute path. Like
+// writeResolvedComposeFile, it writes via atomic.WriteFile so a
 // re-materialization (e.g. on run renewal) always either fully replaces the
 // prior file or leaves it untouched, and never leaks a temporary file.
-func writeConfigOverrides(controlDir string, ver version.Version) (string, error) {
-	data, err := yaml.Marshal(buildConfigOverridesDoc(ver))
+func writeConfigOverrides(controlDir string, ver version.Version, withProfiles bool) (string, error) {
+	data, err := yaml.Marshal(buildConfigOverridesDoc(ver, withProfiles))
 	if err != nil {
 		return "", fmt.Errorf("playtestenv: encode config overrides: %w", err)
 	}
@@ -152,24 +181,57 @@ func writeConfigOverrides(controlDir string, ver version.Version) (string, error
 	return path, nil
 }
 
+// writeProfilesManifest marshals profiles into
+// <controlDir>/profiles-manifest.yaml. Call only when profiles is non-empty.
+func writeProfilesManifest(controlDir string, profiles []ProfileRequest) (string, error) {
+	if len(profiles) == 0 {
+		return "", fmt.Errorf("playtestenv: write profiles manifest requires at least one profile")
+	}
+	for i, p := range profiles {
+		if strings.TrimSpace(p.Profile) == "" {
+			return "", fmt.Errorf("playtestenv: profiles[%d]: profile id is required", i)
+		}
+		if p.StartRoom <= 0 {
+			return "", fmt.Errorf("playtestenv: profiles[%d]: start_room must be positive", i)
+		}
+	}
+	data, err := yaml.Marshal(profilesManifestDoc{Entries: profiles})
+	if err != nil {
+		return "", fmt.Errorf("playtestenv: encode profiles manifest: %w", err)
+	}
+	path := filepath.Join(controlDir, profilesManifestFileName)
+	if err := atomic.WriteFile(path, bytes.NewReader(data)); err != nil {
+		return "", fmt.Errorf("playtestenv: write profiles manifest: %w", err)
+	}
+	return path, nil
+}
+
 // materializeRunFiles requires controlDir to already exist and be writable,
 // then writes the resolved Compose policy to <runDir>/compose.resolved.yml
-// and the nested config overrides to <controlDir>/config-overrides.yaml,
-// returning their absolute paths. Only the config file lives inside the
-// writable control bind; compose.resolved.yml stays at the run root.
-func materializeRunFiles(runDir, controlDir string, ver version.Version) (composePath, configPath string, err error) {
+// and the nested config overrides to <controlDir>/config-overrides.yaml.
+// When profiles is non-empty it also writes profiles-manifest.yaml and sets
+// Playtest overrides. Only control files live inside the writable control
+// bind; compose.resolved.yml stays at the run root.
+func materializeRunFiles(runDir, controlDir string, ver version.Version, profiles []ProfileRequest) (composePath, configPath, profilesManifestPath string, err error) {
 	if err := requireWritableControlDir(controlDir); err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 	composePath, err = writeResolvedComposeFile(runDir)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
-	configPath, err = writeConfigOverrides(controlDir, ver)
+	withProfiles := len(profiles) > 0
+	configPath, err = writeConfigOverrides(controlDir, ver, withProfiles)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
-	return composePath, configPath, nil
+	if withProfiles {
+		profilesManifestPath, err = writeProfilesManifest(controlDir, profiles)
+		if err != nil {
+			return "", "", "", err
+		}
+	}
+	return composePath, configPath, profilesManifestPath, nil
 }
 
 // composeRunVars is the exact, validated set of values this package ever

@@ -68,6 +68,7 @@ import (
 	"github.com/GoMudEngine/GoMud/internal/mutations"
 	"github.com/GoMudEngine/GoMud/internal/mutators"
 	"github.com/GoMudEngine/GoMud/internal/pets"
+	"github.com/GoMudEngine/GoMud/internal/playtestprofiles"
 	"github.com/GoMudEngine/GoMud/internal/plugins"
 	"github.com/GoMudEngine/GoMud/internal/questengine"
 	"github.com/GoMudEngine/GoMud/internal/quests"
@@ -415,6 +416,15 @@ func main() {
 		idx.Create()
 		idx.Rebuild()
 		mudlog.Info("UserIndex", "info", "User index recreated.")
+
+		// Chunk 0.3b: materialize synthetic playtest profiles when a run
+		// manifest path is configured. Empty path is a no-op (production).
+		if creds, err := playtestprofiles.MaterializeFromConfig(); err != nil {
+			mudlog.Error("playtestprofiles.MaterializeFromConfig()", "error", err)
+			os.Exit(1)
+		} else if len(creds) > 0 {
+			mudlog.Info("playtestprofiles", "materialized", len(creds))
+		}
 
 		// Load the round count from the file
 		if util.LoadRoundCount(c.FilePaths.DataFiles.String()+`/`+util.RoundCountFilename) == util.RoundCountMinimum {

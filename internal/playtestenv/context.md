@@ -68,6 +68,7 @@ type ArtifactPaths struct {
     Inspect   string `json:"inspect,omitempty"`
     Compose   string `json:"compose"`
     Config    string `json:"config"`
+    Creds     string `json:"creds,omitempty"` // host path; body written by server
     Report    string `json:"report,omitempty"`
 }
 
@@ -179,6 +180,13 @@ type StartOptions struct {
     Checkout         string
     Lease            time.Duration
     ReadinessTimeout time.Duration
+    Profiles         []ProfileRequest // 0.3b: explicit synthetic profiles
+}
+
+type ProfileRequest struct {
+    Profile   string
+    StartRoom int
+    Overlays  ProfileOverlays
 }
 
 type RunOptions struct {
@@ -202,6 +210,18 @@ type RenewOptions struct {
 
 Defaults: `DefaultLease` (2h), `DefaultReadinessTimeout` (90s),
 `CleanupTimeout` (45s), `DefaultLockWait` (5s), `ReaperLockWait` (250ms).
+
+### Synthetic profiles (0.3b)
+
+When `StartOptions.Profiles` is non-empty, `Start` writes
+`control/profiles-manifest.yaml`, sets `Playtest.ProfilesDir` /
+`Playtest.ProfilesManifest` in `config-overrides.yaml`, and after ready
+surfaces `Artifacts.Creds` as the host path to `control/creds.json`
+(written by `internal/playtestprofiles`). Empty/omitted `Profiles` is
+creation-flow (no manifest override). Failure reports may list the Creds
+**path** only — never embed `creds.json` bodies. Runner image must
+`COPY tools/playtest/profiles` → `/app/playtest/profiles`. CLI:
+`playtestenv start --profile id:start_room` (repeatable).
 
 ### Errors and exit wrapping
 

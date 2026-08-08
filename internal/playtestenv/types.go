@@ -94,7 +94,28 @@ type ArtifactPaths struct {
 	Inspect   string `json:"inspect,omitempty"`
 	Compose   string `json:"compose"`
 	Config    string `json:"config"`
+	Creds     string `json:"creds,omitempty"`
 	Report    string `json:"report,omitempty"`
+}
+
+// ProfileRequest is one explicit synthetic-profile materialization request.
+// Overlay YAML keys match internal/playtestprofiles.Overlays; unknown keys are
+// rejected by the server materializer (KnownFields), not by this supervisor.
+type ProfileRequest struct {
+	Profile   string          `yaml:"profile" json:"profile"`
+	StartRoom int             `yaml:"start_room" json:"start_room"`
+	Overlays  ProfileOverlays `yaml:"overlays,omitempty" json:"overlays,omitempty"`
+}
+
+// ProfileOverlays are declarative grants/sets applied at materialize time.
+type ProfileOverlays struct {
+	GrantSpells    map[string]int    `yaml:"grant_spells,omitempty" json:"grant_spells,omitempty"`
+	GrantSkills    map[string]int    `yaml:"grant_skills,omitempty" json:"grant_skills,omitempty"`
+	GrantItems     []int             `yaml:"grant_items,omitempty" json:"grant_items,omitempty"`
+	Equip          map[string]int    `yaml:"equip,omitempty" json:"equip,omitempty"`
+	SetQuestTokens []string          `yaml:"set_quest_tokens,omitempty" json:"set_quest_tokens,omitempty"`
+	SetQuestFlags  map[string]string `yaml:"set_quest_flags,omitempty" json:"set_quest_flags,omitempty"`
+	SetGold        *int              `yaml:"set_gold,omitempty" json:"set_gold,omitempty"`
 }
 
 // GitEntry is one path/status record from a machine-readable Git status line.
@@ -116,6 +137,10 @@ type StartOptions struct {
 	Checkout         string
 	Lease            time.Duration
 	ReadinessTimeout time.Duration
+	// Profiles, when non-empty, writes control/profiles-manifest.yaml and
+	// sets Playtest config overrides so the container materializes those
+	// users before listeners. Empty/omitted means creation-flow (no-op).
+	Profiles []ProfileRequest
 }
 
 // RunOptions identifies an existing run for status, renew, or stop.

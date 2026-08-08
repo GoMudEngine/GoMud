@@ -1,0 +1,37 @@
+role: user
+username: template-early
+character:
+  name: Early Strider
+  description: >
+    Past the first lessons with a basic weapon and light armor.
+  roomid: 5200
+  zone: Crash Site
+  speciesid: 1
+  stats:
+    strength:
+      base: 105
+    dexterity:
+      base: 105
+    perception:
+      base: 102
+    vitality:
+      base: 108
+    willpower:
+      base: 100
+    charisma:
+      base: 100
+  health: 430
+  stamina: 425
+  conviction: 405
+  gold: 80
+  skills:
+    weapon-combat: 5
+    unarmed-combat: 2
+    search: 3
+  equipment:
+    weapon:
+      itemid: 10002
+    body:
+      itemid: 20008
+  items:
+    - itemid: 30036

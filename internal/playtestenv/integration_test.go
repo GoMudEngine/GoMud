@@ -1,12 +1,16 @@
 package playtestenv
 
 import (
+	"bufio"
 	"context"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -438,6 +442,171 @@ func TestDockerIntegration(t *testing.T) {
 		require.NotContains(t, inspect, "No such object")
 		require.Contains(t, inspect, decoyName)
 	})
+
+	t.Run("profiles_fresh_ready_creds_ai_login", func(t *testing.T) {
+		beginGitCase(t, checkout)
+		res, _ := startReady(t, s, checkout, StartOptions{
+			Checkout: checkout,
+			Profiles: []ProfileRequest{{Profile: "fresh", StartRoom: 5200}},
+		}, trackedIDs)
+		require.NotNil(t, res.Artifacts)
+		require.NotEmpty(t, res.Artifacts.Creds)
+		require.FileExists(t, res.Artifacts.Creds)
+
+		creds := readCredsFile(t, res.Artifacts.Creds)
+		require.Len(t, creds.Players, 1)
+		p := creds.Players[0]
+		require.Equal(t, "fresh", p.Profile)
+		require.Equal(t, 5200, p.RoomID)
+		require.NotEmpty(t, p.Username)
+		require.NotEmpty(t, p.Password)
+		require.Greater(t, p.UserID, 0)
+
+		userYAML := dockerExecOutput(t, res.RunID, "cat",
+			fmt.Sprintf("/app/_datafiles/world/dogmud/users/%d.yaml", p.UserID))
+		require.Contains(t, userYAML, "isai: true")
+		require.Contains(t, strings.ToLower(userYAML), "fresh recruit")
+		require.NotContains(t, userYAML, p.Password)
+
+		loginOut := aiLogin(t, res.Endpoint, p.Username, p.Password)
+		require.Contains(t, strings.ToLower(loginOut), "fresh recruit")
+		require.NoError(t, mustStop(t, s, checkout, res.RunID))
+	})
+
+	t.Run("profiles_veteran_spell_overlay", func(t *testing.T) {
+		beginGitCase(t, checkout)
+		res, _ := startReady(t, s, checkout, StartOptions{
+			Checkout: checkout,
+			Profiles: []ProfileRequest{{
+				Profile:   "veteran",
+				StartRoom: 5455,
+				Overlays: ProfileOverlays{
+					GrantSpells: map[string]int{"heal": 1},
+				},
+			}},
+		}, trackedIDs)
+		require.FileExists(t, res.Artifacts.Creds)
+		creds := readCredsFile(t, res.Artifacts.Creds)
+		require.Len(t, creds.Players, 1)
+		p := creds.Players[0]
+		require.Equal(t, "veteran", p.Profile)
+		require.Equal(t, 5455, p.RoomID)
+
+		userYAML := dockerExecOutput(t, res.RunID, "cat",
+			fmt.Sprintf("/app/_datafiles/world/dogmud/users/%d.yaml", p.UserID))
+		require.Contains(t, userYAML, "heal")
+		require.Contains(t, userYAML, "isai: true")
+		require.NoError(t, mustStop(t, s, checkout, res.RunID))
+	})
+
+	t.Run("profiles_bad_start_room_fails", func(t *testing.T) {
+		beginGitCase(t, checkout)
+		res, err := s.Start(ctx, StartOptions{
+			Checkout: checkout,
+			Lease:    time.Hour,
+			Profiles: []ProfileRequest{{Profile: "fresh", StartRoom: 999999001}},
+		})
+		registerPartialCleanup(t, s, checkout, res, trackedIDs)
+		require.Error(t, err)
+		require.NotEqual(t, StateReady, res.State)
+		require.NotNil(t, res.Failure)
+		if res.Artifacts != nil && res.Artifacts.ServerLog != "" {
+			if b, readErr := os.ReadFile(res.Artifacts.ServerLog); readErr == nil {
+				low := strings.ToLower(string(b))
+				require.True(t,
+					strings.Contains(low, "playtestprofiles") ||
+						strings.Contains(low, "start_room") ||
+						strings.Contains(low, "room") ||
+						strings.Contains(low, "materializ"),
+					"server log should mention materializer/room failure; excerpt:\n%s", truncate(string(b), 2000))
+			}
+		}
+		if res.Report != "" {
+			reportBody, readErr := os.ReadFile(res.Report)
+			require.NoError(t, readErr)
+			require.NotContains(t, strings.ToLower(string(reportBody)), `"password"`)
+		}
+		assertImageGone(t, res.RunID)
+	})
+
+	t.Run("profiles_empty_creation_flow_ok", func(t *testing.T) {
+		beginGitCase(t, checkout)
+		res, _ := startReady(t, s, checkout, StartOptions{Checkout: checkout}, trackedIDs)
+		require.NotNil(t, res.Artifacts)
+		require.Empty(t, res.Artifacts.Creds)
+		cfgBytes, err := os.ReadFile(res.Artifacts.Config)
+		require.NoError(t, err)
+		require.NotContains(t, string(cfgBytes), "ProfilesManifest")
+		_, err = os.Stat(filepath.Join(filepath.Dir(res.Artifacts.Config), profilesManifestFileName))
+		require.True(t, errors.Is(err, os.ErrNotExist))
+		require.NoError(t, mustStop(t, s, checkout, res.RunID))
+	})
+}
+
+type integrationCredsFile struct {
+	RunID   string `json:"run_id"`
+	Players []struct {
+		Profile  string `json:"profile"`
+		Username string `json:"username"`
+		Password string `json:"password"`
+		UserID   int    `json:"user_id"`
+		RoomID   int    `json:"room_id"`
+	} `json:"players"`
+}
+
+func readCredsFile(t *testing.T, path string) integrationCredsFile {
+	t.Helper()
+	raw, err := os.ReadFile(path)
+	require.NoError(t, err)
+	var creds integrationCredsFile
+	require.NoError(t, json.Unmarshal(raw, &creds))
+	return creds
+}
+
+// aiLogin performs a minimal telnet login on the published AI endpoint and
+// returns accumulated server text. It never logs the password.
+func aiLogin(t *testing.T, ep *Endpoint, username, password string) string {
+	t.Helper()
+	require.NotNil(t, ep)
+	addr := fmt.Sprintf("%s:%d", ep.Host, ep.Port)
+	conn, err := net.DialTimeout("tcp", addr, 10*time.Second)
+	require.NoError(t, err)
+	defer conn.Close()
+	require.NoError(t, conn.SetDeadline(time.Now().Add(45*time.Second)))
+
+	var buf strings.Builder
+	reader := bufio.NewReader(conn)
+	readUntil := func(needles ...string) {
+		t.Helper()
+		deadline := time.Now().Add(20 * time.Second)
+		for time.Now().Before(deadline) {
+			require.NoError(t, conn.SetReadDeadline(time.Now().Add(5*time.Second)))
+			b, err := reader.ReadByte()
+			if err != nil {
+				if ne, ok := err.(net.Error); ok && ne.Timeout() {
+					continue
+				}
+				require.NoError(t, err)
+			}
+			buf.WriteByte(b)
+			low := strings.ToLower(buf.String())
+			for _, n := range needles {
+				if strings.Contains(low, strings.ToLower(n)) {
+					return
+				}
+			}
+		}
+		t.Fatalf("timeout waiting for %v; got excerpt:\n%s", needles, truncate(buf.String(), 1500))
+	}
+
+	readUntil("new")
+	_, err = io.WriteString(conn, username+"\n")
+	require.NoError(t, err)
+	readUntil("password")
+	_, err = io.WriteString(conn, password+"\n")
+	require.NoError(t, err)
+	readUntil("fresh recruit", "veteran pathfinder", "you are", "exits")
+	return buf.String()
 }
 
 func startReady(t *testing.T, s *Supervisor, checkout string, opts StartOptions, tracked *sync.Map) (Result, time.Duration) {

@@ -69,6 +69,8 @@ func writeFailureReport(checkout string, m *Manifest, cleanup *CleanupResult, no
 	writeArtifactLine(&b, "Inspect", m.Artifacts.Inspect)
 	writeArtifactLine(&b, "Compose", m.Artifacts.Compose)
 	writeArtifactLine(&b, "Config", m.Artifacts.Config)
+	// Creds path only — never open or embed creds.json body (passwords).
+	writeArtifactLine(&b, "Creds", m.Artifacts.Creds)
 
 	b.WriteString("\n## Log availability\n\n")
 	b.WriteString(logAvailabilityLine("Build log", m.Artifacts.BuildLog))
