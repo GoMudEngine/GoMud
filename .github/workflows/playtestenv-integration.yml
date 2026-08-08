@@ -1,0 +1,59 @@
+name: Playtest Environment Integration
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "cmd/playtestenv/**"
+      - "internal/playtestenv/**"
+      - "provisioning/Dockerfile"
+      - "provisioning/Dockerfile.dockerignore"
+      - "_datafiles/config.yaml"
+      - "go.mod"
+      - "go.sum"
+      - ".github/workflows/playtestenv-integration.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  docker-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - name: Show Docker versions
+        run: docker version && docker compose version
+      - name: Run supervisor integration
+        env:
+          DOGMUD_PLAYTESTENV_INTEGRATION: "1"
+        run: go test -v -run "^TestDockerIntegration$" -timeout 30m ./internal/playtestenv
+      - name: Build and boot ordinary production runner
+        shell: bash
+        run: |
+          tag="dogmud-prod-smoke:${GITHUB_RUN_ID}"
+          name="dogmud-prod-smoke-${GITHUB_RUN_ID}"
+          cleanup() {
+            docker rm -f "$name" >/dev/null 2>&1 || true
+            docker image rm "$tag" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+          docker build -f provisioning/Dockerfile --target runner -t "$tag" .
+          docker run -d --name "$name" "$tag"
+          ready=0
+          for _ in $(seq 1 45); do
+            logs="$(docker logs "$name" 2>&1 || true)"
+            if printf '%s' "$logs" | grep -Eq 'panic:|PANIC|Error creating server'; then
+              printf '%s\n' "$logs"
+              exit 1
+            fi
+            if printf '%s' "$logs" | grep -q 'Server Ready'; then
+              ready=1
+              break
+            fi
+            sleep 2
+          done
+          test "$ready" -eq 1
