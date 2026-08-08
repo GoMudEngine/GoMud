@@ -222,15 +222,18 @@ world-Validate CI coverage remains a follow-up).
 #### Chunk 0.3c — Integrate single-agent ephemeral playtests
 
 **Outcome:** One agent command selects or authors goals, binds an appropriate
-profile, starts the supervisor, drives the existing `mudagent` loop, writes a
-run-scoped report, and guarantees cleanup while allowing other work to continue.
-Each run has explicit token, turn, and wall-clock budgets. Token exhaustion
-produces a structured incomplete report with the partial transcript and cleanup
-outcome instead of hanging or being misreported as a gameplay success.
+profile (or explicit creation-flow), starts the ephemeral supervisor, drives
+the existing `mudagent` loop, writes a run-scoped gameplay report, and
+guarantees cleanup while allowing other work to continue. Each run has an
+explicit **wall-clock** budget (Go-enforced). Command spam is paced by
+in-engine `AICommandsPerRound`. Token/API limits remain soft driver guidance;
+exhaustion or wall-clock expiry produces a structured **incomplete** gameplay
+report (partial findings + cleanup outcome), never a false success.
 
 **Boundary:** Explicit user requests and existing SOP-required adversarial
 playtests may trigger the command automatically. The command accepts no
-production or remote target.
+production or remote target. Design:
+`docs/superpowers/specs/2026-08-08-single-agent-ephemeral-playtests-design.md`.
 
 #### Chunk 0.3d — Integrate multi-agent ephemeral scenarios
 

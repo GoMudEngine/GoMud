@@ -22,7 +22,7 @@ It does **not** bind goals to profiles or run mudagent.
 Owned by **0.3c** or later — not this design:
 
 - Automatic goal→profile selection or “pick the right kit for this goals file”
-- mudagent loop, gameplay reports, token/turn/wall-clock budgets
+- mudagent loop, gameplay reports, wall-clock session budgets
 - LLM/API error handling
 - Production or remote targeting
 - Reading `_archive/prod-users` (or any archive) at runtime
@@ -255,8 +255,9 @@ Authoring + CI gate on every committed template:
 ## Handoff to 0.3c
 
 0.3c consumes: loopback AI endpoint, `creds.json`, and (later) goal-derived
-`Profiles` lists. 0.3c owns mudagent, budgets, and incomplete reports for
-API/token exhaustion. Chunk 1.5 (remove tracked playtest credentials) remains
+`Profiles` lists. 0.3c owns mudagent, wall-clock budgets, and incomplete
+reports (wall-clock expiry or soft token/API driver stops). Chunk 1.5
+(remove tracked playtest credentials) remains
 separate; run-local `creds.json` under gitignored `.run/` must never be
 committed.
 
