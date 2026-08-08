@@ -49,7 +49,7 @@ testify, Docker opt-in + live smoke.
 - `internal/playtestprofiles/identity.go` — `ForbiddenIdentity(name) error`
 - `tools/playtest/goals/scenarios/party-formation/{leader,joiner}.yaml`
 - `tools/playtest/goals/scenarios/parallel-coverage/{explorer,shopper}.yaml`
-  (and/or feel-pothole splits)
+- `tools/playtest/goals/scenarios/feel-pothole-newbie-veteran/{newbie,veteran}.yaml`
 - `tools/playtest/report-templates/multi-agent-combined.md` (optional if format
   doc is enough)
 
@@ -93,7 +93,8 @@ type ScenarioActor struct {
     Binding      EphemeralBinding
 }
 
-func ParseScenario(scenarioPath, playtestRoot string) (ScenarioFile, error)
+func ParseScenario(scenarioPath, playtestRoot string, opts ScenarioParseOpts) (ScenarioFile, error)
+// ScenarioParseOpts.Force bypasses MaxAIConnections size check only.
 func RunScenario(ctx context.Context, p ScenarioParams) error
 func ForbiddenIdentity(name string) error // playtestprofiles
 ```
@@ -236,13 +237,19 @@ needed; tests.
 
 ## Suggested subagents
 
+Prefer subagents when a stronger/non-quota model is available. **If only
+Grok/Composer (or parent-only) is available, execute Tasks 0–7 inline on the
+parent agent** — same TDD order and commit cadence; skip fan-out rather than
+blocking.
+
 - **Task 0 — shell:** branch hygiene.
 - **Tasks 1–4 — Sonnet/generalPurpose:** TDD core (identity, creds, parse, run).
 - **Task 5 — Sonnet:** scenario/goals migration (read existing scenarios first).
 - **Task 6 — Sonnet:** driver + docs.
 - **Task 7 — Sonnet:** Docker + live smoke.
 - **Task 7 — generalPurpose (review):** adversarial implementation review
-  (independent from implementer).
+  (independent from implementer when possible; otherwise parent self-review
+  against the spec checklist with fresh eyes).
 
 ## Spec coverage checklist
 
@@ -263,5 +270,6 @@ needed; tests.
 
 ## Plan process note
 
-After this plan is written: run adversarial **plan** review, amend if needed,
-then obtain **explicit user approval** before any implementation task.
+Adversarial **plan** review 2026-08-08: Request changes → amended; re-review
+**Approve** (parent-agent execution fallback noted). Obtain **explicit user
+approval to implement** before Task 0.
