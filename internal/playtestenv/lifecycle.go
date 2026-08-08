@@ -400,40 +400,17 @@ func (s *Supervisor) cleanupFailedRun(
 		}
 	}
 
-	if composePath != "" {
-		var stderr strings.Builder
-		down := composeDownCommand(dc, vars, composePath, runDir, io.Discard, &stderr)
-		if err := s.deps.runner.Run(ctx, down); err != nil {
-			result.Complete = false
-			result.Leftovers = append(result.Leftovers, ResourceRef{Kind: "compose-project", ID: vars.Project})
-			result.Summary = "compose down failed: " + err.Error()
-		}
-	}
-
-	img := m.Image
-	if img == "" {
-		img = imageNamePrefix + m.RunID
-	}
-	var rmErr strings.Builder
-	rmSpec := dockerCommand(dc, []string{"image", "rm", img}, "", io.Discard, &rmErr)
-	if err := s.deps.runner.Run(ctx, rmSpec); err != nil {
-		// Image may not exist yet (failure before/during build); only record when unexpected.
-		if !isBenignImageMissing(err, rmErr.String()) {
-			result.Complete = false
-			result.Leftovers = append(result.Leftovers, ResourceRef{Kind: "image", ID: img})
-			if result.Summary == "resources removed" {
-				result.Summary = "image rm failed: " + err.Error()
-			}
-		}
-	}
+	downCleanup := s.removeComposeAndImage(ctx, m, runDir, dc, vars, composePath)
+	mergeCleanup(result, downCleanup)
 
 	// Remove control/ and compose.resolved.yml only after complete resource
 	// cleanup so a later stop can resume using the same Compose file when
 	// leftovers remain.
 	if result.Complete {
-		_ = os.RemoveAll(filepath.Join(runDir, controlDirName))
-		if m.Artifacts.Compose != "" {
-			_ = os.Remove(m.Artifacts.Compose)
+		if err := removeControlArtifacts(runDir, m); err != nil {
+			result.Complete = false
+			result.Leftovers = append(result.Leftovers, ResourceRef{Kind: "host-path", ID: err.Error()})
+			result.Summary = "control artifact removal failed: " + err.Error()
 		}
 	}
 

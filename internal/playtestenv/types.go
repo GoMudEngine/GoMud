@@ -48,6 +48,7 @@ const (
 	FailureCleanup           FailureCategory = "cleanup_failure"
 	FailureLockBusy          FailureCategory = "lock_busy"
 	FailureAbandonedRun      FailureCategory = "abandoned_run"
+	FailureIdentityMismatch  FailureCategory = "identity_mismatch"
 )
 
 // FailureRecord is the structured, non-secret evidence of a run failure.

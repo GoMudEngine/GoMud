@@ -759,7 +759,7 @@ func TestFailureCategoryJSONValues(t *testing.T) {
 		FailureContainerExited, FailureBootPanic, FailureListenerCreation,
 		FailurePortPublication, FailureNonLoopback, FailureReadinessTimeout,
 		FailureConnectionProbe, FailureManifest, FailureCleanup,
-		FailureLockBusy, FailureAbandonedRun,
+		FailureLockBusy, FailureAbandonedRun, FailureIdentityMismatch,
 	} {
 		b, err := json.Marshal(wrap{C: cat})
 		require.NoError(t, err)
