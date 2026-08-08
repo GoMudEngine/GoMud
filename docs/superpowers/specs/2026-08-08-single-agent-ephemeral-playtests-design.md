@@ -10,7 +10,7 @@ review + user approval; **not** an implementation green light)
 
 Wire local single-agent playtests onto the ephemeral supervisor: a goals
 file binds a synthetic profile (or an explicit creation-flow), Go starts
-the disposable server and enforces wall-clock / turn budgets plus cleanup,
+the disposable server and enforces a wall-clock budget plus cleanup,
 Claude drives mudagent and writes the gameplay report, and incomplete
 budget stops are never misreported as gameplay success.
 
@@ -26,6 +26,9 @@ Owned by **0.3d** or later — not this design:
 
 - Multi-agent / `ptorch` scenario rosters and combined reports
 - Hard token-budget kill switch (tokens remain soft guidance for Claude)
+- A separate max-turns kill switch in `playtestrun` — command volume is
+  already paced by in-engine `Network.AICommandsPerRound` (shipped default
+  2/round); wall-clock is the unambiguous session backstop
 - Pinning `--ref` / requiring clean tree equal to a specific SHA
 - Bulk migration of every file under `tools/playtest/goals/`
 - Retiring or ephemeral-izing `prod` playtests
@@ -44,7 +47,7 @@ Owned by **0.3d** or later — not this design:
 | `local` meaning | **Always ephemeral** (playtestenv every time) |
 | Goals required | Ephemeral `local` **requires** a goals file (no free-form local) |
 | Goals migration | Schema + **few exemplars** only in 0.3c |
-| Budgets | Go hard-enforces **wall-clock** + **max turns**; token budget soft only |
+| Budgets | Go hard-enforces **wall-clock only** (default 30m); tokens soft; no turn counter (AI rate limit covers spam) |
 | Reports | Claude owns gameplay markdown; Go owns session sidecar; env failures stay on existing `environment-failed` path |
 | Report templates | Suggested templates for broad scenarios, **mined** from past goals + old harness / pre-harness reports |
 | Checkout | **`--checkout` required** (no silent cwd); sidecar + report header echo commit + dirty baseline |
@@ -67,8 +70,8 @@ Owned by **0.3d** or later — not this design:
         │               gameplay report.md (Claude; scenario template)
         │
         ▼
-  budget watchdog (wall-clock + turns) → playtestenv.Stop / reap
-  sidecar status: ready | incomplete_wallclock | incomplete_turns | stopped
+  wall-clock watchdog → playtestenv.Stop / reap
+  sidecar status: ready | incomplete_wallclock | stopped | environment_failed
 ```
 
 | Piece | Responsibility |
@@ -94,7 +97,6 @@ ephemeral:
     grant_spells: { heal: 1 }
   budgets:                  # optional overrides
     wall_clock: 30m
-    max_turns: 200
 ```
 
 ### Creation-flow path
@@ -107,7 +109,6 @@ ephemeral:
     teaches a first-time player without a pre-seeded kit.
   budgets:
     wall_clock: 30m
-    max_turns: 200
 ```
 
 When `creation_flow: true`, `profile` / `start_room` / `overlays` **must be
@@ -143,7 +144,7 @@ Proposed commands (exact flag names may refine in the plan):
 
 ```text
 playtestrun start  --checkout PATH --goals PATH [--personality NAME]
-                   [--wall-clock DURATION] [--max-turns N]
+                   [--wall-clock DURATION]
 playtestrun status --checkout PATH --session ID
 playtestrun stop   --checkout PATH --session ID
 ```
@@ -168,22 +169,22 @@ Minimum fields:
   summary), `goals_path`, `personality` (if provided)  
 - `endpoint` `{host,port}`, `creds` path or null  
 - `profile` or `creation_flow` + rationale excerpt  
-- `budgets` `{wall_clock, max_turns}`, `turns_used`, `started_at`  
-- `status`: `ready` | `incomplete_wallclock` | `incomplete_turns` |
-  `stopped` | `environment_failed`
+- `budgets` `{wall_clock}`, `started_at`, `deadline_at`  
+- `status`: `ready` | `incomplete_wallclock` | `stopped` |
+  `environment_failed`
 
 ### Budgets
 
 | Knob | Default | Enforcement |
 |------|---------|-------------|
-| Wall-clock | 30m | Go stops mudagent session ownership + `playtestenv.Stop` |
-| Max turns | 200 | Go when turn counter reaches N |
+| Wall-clock | 30m | Go → `playtestenv.Stop` / reap; sidecar `incomplete_wallclock` |
 | Tokens | n/a in Go | Soft note in `/playtest` / personality only |
+| Command spam | n/a in `playtestrun` | In-engine `AICommandsPerRound` (default 2) drops excess |
 
-**Turn counting:** Claude (or a minimal helper) updates a turn counter in
-the sidecar / adjacent file after each mudagent command. Missing updates
-do not count as success; wall-clock still fires. Go must not invent
-turn=0 “complete” when the driver dies early.
+**Rationale:** Wall-clock is the unambiguous operator backstop (“this run
+ends in 30 minutes, or sooner if goals finish”). A separate turn counter
+duplicated work already done by the AI port rate limiter and added
+cross-process bookkeeping without a clearer contract than elapsed time.
 
 ### Cleanup
 
@@ -201,10 +202,11 @@ For **`local`**:
 2. Invoke `playtestrun start` first; do not drive mudagent without sidecar
    `status=ready`.  
 3. Header-echo in the eventual gameplay report: checkout, commit, dirty,
-   session/run id, profile or creation rationale, budgets.  
+   session/run id, profile or creation rationale, wall-clock budget /
+   elapsed.  
 4. Login via `creds.json` when present; creation-flow when `creds` is null.  
-5. On finish / incomplete / abort → `playtestrun stop`, then write the
-   gameplay report.  
+5. On finish / wall-clock incomplete / abort → `playtestrun stop`, then
+   write the gameplay report.  
 
 For **`prod`**: unchanged long-lived target path (no `playtestrun`, no
 ephemeral). Still not an ephemeral/prod hybrid.
@@ -223,9 +225,9 @@ ephemeral). Still not an ephemeral/prod hybrid.
 
 - Required header block: checkout path, commit, dirty summary, session/run
   id, profile **or** creation-flow rationale, personality, goals file,
-  wall-clock/turns used vs budget, final sidecar status.  
+  wall-clock elapsed vs budget, final sidecar status.  
 - Never embed passwords; creds **path** only.  
-- If sidecar status is `incomplete_*`, report outcome must be
+- If sidecar status is `incomplete_wallclock`, report outcome must be
   **incomplete** (not success), with partial findings.
 
 ### Scenario report templates
@@ -272,7 +274,7 @@ This is not optional polish; it is part of the 0.3c deliverable.
 |---------|----------|
 | Missing checkout / goals / ephemeral binding | Exit before Docker; loud error |
 | Env / materialize fail | `environment-failed.md`; no gameplay success |
-| Wall-clock / max-turns | Sidecar `incomplete_*`; Stop/reap; incomplete gameplay report |
+| Wall-clock exceeded | Sidecar `incomplete_wallclock`; Stop/reap; incomplete gameplay report |
 | Driver crash mid-run | Lease expiry + stop/reap; may leave sidecar non-terminal until reaped — document operational recovery |
 | Secret leakage | Forbidden in all markdown reports (paths only) |
 
@@ -309,8 +311,9 @@ Single-agent budgets and report templates remain the baseline.
 
 ## Brainstorm record (2026-08-08)
 
-- Orchestration C (hybrid); goals binding A (explicit); budgets A
-  (wall-clock + turns); reports A + mined templates; `local` = always
-  ephemeral; creation-flow with explicit rationale; exemplar-only goals
-  migration; no free-form local; approach = thin `playtestrun`; explicit
-  `--checkout` + loud commit/dirty in artifacts.
+- Orchestration C (hybrid); goals binding A (explicit); budgets revised
+  to **wall-clock only** (drop max-turns; rely on `AICommandsPerRound`);
+  reports A + mined templates; `local` = always ephemeral; creation-flow
+  with explicit rationale; exemplar-only goals migration; no free-form
+  local; approach = thin `playtestrun`; explicit `--checkout` + loud
+  commit/dirty in artifacts.
