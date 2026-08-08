@@ -229,6 +229,9 @@ func TestStatusReportsMissingOrMismatchedResources(t *testing.T) {
 		runner.on(" inspect ", func(ctx context.Context, spec CommandSpec) error {
 			joined := strings.Join(spec.Args, " ")
 			if strings.Contains(joined, seed.Manifest.ContainerID) {
+				if spec.Stderr != nil {
+					_, _ = io.WriteString(spec.Stderr, "Error: No such object: "+seed.Manifest.ContainerID+"\n")
+				}
 				return &ExitError{Name: "docker", Args: spec.Args, ExitCode: 1}
 			}
 			writeStdout(spec, otherJSON+"\n")
@@ -410,6 +413,9 @@ func TestRenewHoldsLockAndRejectsExpiredStoppedOrAmbiguousRun(t *testing.T) {
 		runner := newLifecycleRunner(seed.Canonical)
 		s := newOpsSupervisor(t, seed, runner, nil)
 		runner.on(" inspect ", func(ctx context.Context, spec CommandSpec) error {
+			if spec.Stderr != nil {
+				_, _ = io.WriteString(spec.Stderr, "Error: No such object\n")
+			}
 			return &ExitError{Name: "docker", Args: spec.Args, ExitCode: 1}
 		})
 
@@ -621,16 +627,37 @@ func TestStopRecoversAbandonedPreterminalRun(t *testing.T) {
 				require.NoError(t, writeManifest(seed.Manifest.Artifacts.Manifest, seed.Manifest))
 			}
 			runner := newLifecycleRunner(seed.Canonical)
-			scriptMatchingResources(runner, seed.Manifest, false)
+			// Keep the abandoned container running so grace TERM (and force rm
+			// if needed) is exercised on the failed-run cleanup path.
+			labels := identityLabels(seed.Manifest)
+			clock := newReadinessFakeClock(seed.Now)
+			sawKill := false
+			runner.on(" inspect ", func(ctx context.Context, spec CommandSpec) error {
+				joined := strings.Join(spec.Args, " ")
+				if strings.Contains(joined, seed.Manifest.ContainerID) {
+					running := !sawKill
+					writeStdout(spec, labelledInspectJSON(running, "127.0.0.1", "54321", labels)+"\n")
+					return nil
+				}
+				writeStdout(spec, labelledInspectJSON(false, "", "", labels)+"\n")
+				return nil
+			})
 			runner.on(" logs ", func(ctx context.Context, spec CommandSpec) error {
 				writeStdout(spec, "abandoned log\n")
 				return nil
 			})
-			runner.on(" kill ", func(ctx context.Context, spec CommandSpec) error { return nil })
+			runner.on(" kill ", func(ctx context.Context, spec CommandSpec) error {
+				require.Contains(t, strings.Join(spec.Args, " "), "--signal=TERM")
+				sawKill = true
+				return nil
+			})
 			runner.on(" image rm ", func(ctx context.Context, spec CommandSpec) error { return nil })
-			runner.on(" rm --force ", func(ctx context.Context, spec CommandSpec) error { return nil })
+			runner.on(" rm --force ", func(ctx context.Context, spec CommandSpec) error {
+				t.Fatal("force rm should not be needed when container stops after TERM")
+				return nil
+			})
 			runner.on(" compose ", func(ctx context.Context, spec CommandSpec) error { return nil })
-			s := newOpsSupervisor(t, seed, runner, nil)
+			s := newOpsSupervisor(t, seed, runner, clock)
 
 			res, err := s.Stop(context.Background(), RunOptions{Checkout: seed.Checkout, RunID: seed.RunID})
 			require.NoError(t, err)
@@ -639,6 +666,7 @@ func TestStopRecoversAbandonedPreterminalRun(t *testing.T) {
 			require.Equal(t, FailureAbandonedRun, res.Failure.Category)
 			require.NotNil(t, res.Cleanup)
 			require.True(t, res.Cleanup.Complete)
+			require.True(t, sawKill, "abandoned running containers must receive SIGTERM before compose down")
 
 			m, err := readManifest(seed.Manifest.Artifacts.Manifest)
 			require.NoError(t, err)
@@ -720,6 +748,9 @@ func TestStopIsIdempotentForStoppedAndCleanedFailedRuns(t *testing.T) {
 		runner := newLifecycleRunner(seed.Canonical)
 		scriptGitValidateAndBaseline(runner, seed.Canonical)
 		runner.on(" inspect ", func(ctx context.Context, spec CommandSpec) error {
+			if spec.Stderr != nil {
+				_, _ = io.WriteString(spec.Stderr, "Error: No such object: "+seed.Manifest.ContainerID+"\n")
+			}
 			return &ExitError{Name: "docker", Args: spec.Args, ExitCode: 1}
 		})
 		s := newOpsSupervisor(t, seed, runner, nil)
@@ -739,6 +770,9 @@ func TestStopIsIdempotentForStoppedAndCleanedFailedRuns(t *testing.T) {
 		runner := newLifecycleRunner(seed.Canonical)
 		scriptGitValidateAndBaseline(runner, seed.Canonical)
 		runner.on(" inspect ", func(ctx context.Context, spec CommandSpec) error {
+			if spec.Stderr != nil {
+				_, _ = io.WriteString(spec.Stderr, "Error: No such object: "+seed.Manifest.ContainerID+"\n")
+			}
 			return &ExitError{Name: "docker", Args: spec.Args, ExitCode: 1}
 		})
 		s := newOpsSupervisor(t, seed, runner, nil)
@@ -751,6 +785,25 @@ func TestStopIsIdempotentForStoppedAndCleanedFailedRuns(t *testing.T) {
 		m, err := readManifest(seed.Manifest.Artifacts.Manifest)
 		require.NoError(t, err)
 		require.Equal(t, StateFailed, m.State)
+	})
+
+	t.Run("ambiguous inspect ExitError is not treated as missing", func(t *testing.T) {
+		seed := seedRun(t, "run-stop-idem-ambiguous", StateStopped, true)
+		runner := newLifecycleRunner(seed.Canonical)
+		scriptGitValidateAndBaseline(runner, seed.Canonical)
+		runner.on(" inspect ", func(ctx context.Context, spec CommandSpec) error {
+			// Daemon failure without a not-found message must not look like
+			// "no live resources" and falsely succeed as idempotent stop.
+			if spec.Stderr != nil {
+				_, _ = io.WriteString(spec.Stderr, "Cannot connect to the Docker daemon\n")
+			}
+			return &ExitError{Name: "docker", Args: spec.Args, ExitCode: 1}
+		})
+		s := newOpsSupervisor(t, seed, runner, nil)
+
+		_, err := s.Stop(context.Background(), RunOptions{Checkout: seed.Checkout, RunID: seed.RunID})
+		require.Error(t, err)
+		require.Contains(t, err.Error(), "docker inspect")
 	})
 }
 

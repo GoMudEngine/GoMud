@@ -400,6 +400,10 @@ func (s *Supervisor) cleanupFailedRun(
 		}
 	}
 
+	// Same grace path as ready-stop: TERM, poll, then force-remove if needed.
+	grace := s.gracefulStopContainer(ctx, dc, containerID)
+	mergeCleanup(result, grace)
+
 	downCleanup := s.removeComposeAndImage(ctx, m, runDir, dc, vars, composePath)
 	mergeCleanup(result, downCleanup)
 

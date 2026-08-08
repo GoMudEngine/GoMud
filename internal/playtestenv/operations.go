@@ -294,6 +294,13 @@ func (s *Supervisor) Stop(ctx context.Context, opts RunOptions) (Result, error) 
 func (s *Supervisor) stopAbandoned(callerCtx context.Context, res *Result, prep *preparedOp) (Result, error) {
 	m := prep.manifest
 	phase := m.State
+	// Cancel before any stop mutation leaves the run untouched.
+	if err := callerCtx.Err(); err != nil {
+		res.State = m.State
+		res.Failure = m.Failure
+		populateResultArtifacts(res, m)
+		return *res, err
+	}
 	if m.State != StateFailed {
 		if err := transitionManifest(m, StateFailed, s.deps.now()); err != nil {
 			res.Failure = &FailureRecord{Category: FailureManifest, Phase: phase, Summary: err.Error()}
@@ -308,14 +315,7 @@ func (s *Supervisor) stopAbandoned(callerCtx context.Context, res *Result, prep 
 	m.Failure = abandoned
 	_ = writeManifest(m.Artifacts.Manifest, m)
 
-	if err := callerCtx.Err(); err != nil {
-		// No destructive Docker mutation before cleanup context begins.
-		res.State = m.State
-		res.Failure = m.Failure
-		populateResultArtifacts(res, m)
-		return *res, err
-	}
-
+	// After mutation, finish cleanup even if the caller cancels.
 	cleanupBase := context.WithoutCancel(callerCtx)
 	cleanupCtx, cancel := context.WithTimeout(cleanupBase, CleanupTimeout)
 	defer cancel()
@@ -374,6 +374,12 @@ func (s *Supervisor) stopFailedResume(callerCtx context.Context, res *Result, pr
 
 func (s *Supervisor) stopReady(callerCtx context.Context, res *Result, prep *preparedOp) (Result, error) {
 	m := prep.manifest
+	// Cancel before any stop mutation leaves the run untouched.
+	if err := callerCtx.Err(); err != nil && m.State == StateReady {
+		res.State = m.State
+		populateResultArtifacts(res, m)
+		return *res, err
+	}
 	switch m.State {
 	case StateReady:
 		if err := transitionManifest(m, StateStopping, s.deps.now()); err != nil {
@@ -393,25 +399,15 @@ func (s *Supervisor) stopReady(callerCtx context.Context, res *Result, prep *pre
 		return *res, err
 	}
 
-	// Evidence capture uses the caller context; cancellation here skips Docker mutation.
-	if err := callerCtx.Err(); err != nil {
-		res.State = m.State
-		populateResultArtifacts(res, m)
-		return *res, err
-	}
-	if m.ContainerID != "" {
-		_ = captureServerLogs(callerCtx, s.deps.runner, prep.dc, m.ContainerID, m.Artifacts.ServerLog)
-		_ = captureInspectEvidence(callerCtx, s.deps.runner, prep.dc, m.ContainerID, m.Artifacts.Inspect)
-		if err := callerCtx.Err(); err != nil {
-			res.State = m.State
-			populateResultArtifacts(res, m)
-			return *res, err
-		}
-	}
-
+	// After mutation (or resume), finish evidence + cleanup even if the caller cancels.
 	cleanupBase := context.WithoutCancel(callerCtx)
 	cleanupCtx, cancel := context.WithTimeout(cleanupBase, CleanupTimeout)
 	defer cancel()
+
+	if m.ContainerID != "" {
+		_ = captureServerLogs(cleanupCtx, s.deps.runner, prep.dc, m.ContainerID, m.Artifacts.ServerLog)
+		_ = captureInspectEvidence(cleanupCtx, s.deps.runner, prep.dc, m.ContainerID, m.Artifacts.Inspect)
+	}
 
 	cleanup := s.cleanupReadyRun(cleanupCtx, m, prep.runDir, prep.dc)
 	m.Cleanup = cleanup
@@ -449,30 +445,56 @@ func (s *Supervisor) stopReady(callerCtx context.Context, res *Result, prep *pre
 	return *res, nil
 }
 
+// gracefulStopContainer sends SIGTERM to a running container, polls up to
+// ten seconds for exit, then force-removes it if still running. Missing or
+// already-stopped containers are treated as success.
+func (s *Supervisor) gracefulStopContainer(ctx context.Context, dc dockerContext, containerID string) *CleanupResult {
+	result := &CleanupResult{Complete: true, Summary: "resources removed"}
+	if containerID == "" || dc.name == "" {
+		return result
+	}
+	running, err := containerIsRunning(ctx, s.deps.runner, dc, containerID)
+	if err != nil {
+		msg := strings.ToLower(err.Error())
+		if isNotFoundDockerErr(msg) {
+			return result
+		}
+		result.Complete = false
+		result.Summary = "container status check failed: " + err.Error()
+		result.Leftovers = append(result.Leftovers, ResourceRef{Kind: "container", ID: containerID})
+		return result
+	}
+	if !running {
+		return result
+	}
+	killSpec := dockerCommand(dc, []string{"kill", "--signal=TERM", containerID}, "", io.Discard, io.Discard)
+	if err := s.deps.runner.Run(ctx, killSpec); err != nil {
+		result.Complete = false
+		result.Summary = "docker kill failed: " + err.Error()
+		result.Leftovers = append(result.Leftovers, ResourceRef{Kind: "container", ID: containerID})
+		return result
+	}
+	still, _ := waitForContainerStop(ctx, s.deps.runner, dc, containerID, s.deps.now, s.deps.after)
+	if !still {
+		return result
+	}
+	var rmErr strings.Builder
+	rmSpec := dockerCommand(dc, []string{"rm", "--force", containerID}, "", io.Discard, &rmErr)
+	if err := s.deps.runner.Run(ctx, rmSpec); err != nil {
+		result.Complete = false
+		result.Leftovers = append(result.Leftovers, ResourceRef{Kind: "container", ID: containerID})
+		result.Summary = "docker rm --force failed: " + err.Error()
+	}
+	return result
+}
+
 func (s *Supervisor) cleanupReadyRun(ctx context.Context, m *Manifest, runDir string, dc dockerContext) *CleanupResult {
 	result := &CleanupResult{Complete: true, Summary: "resources removed"}
 	vars := composeVarsFromManifest(m, runDir)
 	composePath := m.Artifacts.Compose
 
-	if m.ContainerID != "" {
-		running, _ := containerIsRunning(ctx, s.deps.runner, dc, m.ContainerID)
-		if running {
-			killSpec := dockerCommand(dc, []string{"kill", "--signal=TERM", m.ContainerID}, "", io.Discard, io.Discard)
-			if err := s.deps.runner.Run(ctx, killSpec); err != nil {
-				result.Complete = false
-				result.Summary = "docker kill failed: " + err.Error()
-				result.Leftovers = append(result.Leftovers, ResourceRef{Kind: "container", ID: m.ContainerID})
-			} else if still, _ := waitForContainerStop(ctx, s.deps.runner, dc, m.ContainerID, s.deps.now, s.deps.after); still {
-				var rmErr strings.Builder
-				rmSpec := dockerCommand(dc, []string{"rm", "--force", m.ContainerID}, "", io.Discard, &rmErr)
-				if err := s.deps.runner.Run(ctx, rmSpec); err != nil {
-					result.Complete = false
-					result.Leftovers = append(result.Leftovers, ResourceRef{Kind: "container", ID: m.ContainerID})
-					result.Summary = "docker rm --force failed: " + err.Error()
-				}
-			}
-		}
-	}
+	grace := s.gracefulStopContainer(ctx, dc, m.ContainerID)
+	mergeCleanup(result, grace)
 
 	downCleanup := s.removeComposeAndImage(ctx, m, runDir, dc, vars, composePath)
 	mergeCleanup(result, downCleanup)
@@ -668,11 +690,6 @@ func inspectLabelledResource(ctx context.Context, runner Runner, dc dockerContex
 	if err != nil {
 		msg := strings.ToLower(err.Error() + " " + stderr.String())
 		if isNotFoundDockerErr(msg) {
-			return lr, nil
-		}
-		// Treat exit errors from inspect of missing resources as not found when stderr says so.
-		var exitErr *ExitError
-		if errors.As(err, &exitErr) {
 			return lr, nil
 		}
 		return lr, fmt.Errorf("playtestenv: docker inspect %s: %w", id, err)
