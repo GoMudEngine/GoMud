@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"runtime"
 	"testing"
 	"time"
 
@@ -82,6 +83,70 @@ func execHelperEmitLargeConcurrentOutput() {
 	}()
 	<-done
 	<-done
+	os.Exit(0)
+}
+
+// TestExecRunnerWaitDelayPreventsHangOnOrphanedGrandchildPipes proves Run
+// sets a bounded WaitDelay so it cannot hang forever when its immediate
+// child exits but leaves behind a grandchild that inherited - and is still
+// holding open - the same stdout/stderr handles. Without a WaitDelay,
+// exec.Cmd.Wait blocks until every holder of those handles closes them,
+// even though the process exec.Cmd itself is tracking has already exited.
+func TestExecRunnerWaitDelayPreventsHangOnOrphanedGrandchildPipes(t *testing.T) {
+	if os.Getenv(dogmudExecHelperModeVar) == "spawn-grandchild" {
+		execHelperSpawnGrandchildHoldingPipes()
+		return
+	}
+
+	runner := execRunner{}
+	var stdout, stderr bytes.Buffer
+	spec := CommandSpec{
+		Name:   os.Args[0],
+		Args:   []string{"-test.run=^TestExecRunnerWaitDelayPreventsHangOnOrphanedGrandchildPipes$"},
+		Env:    append(append([]string{}, os.Environ()...), dogmudExecHelperModeVar+"=spawn-grandchild"),
+		Stdout: &stdout,
+		Stderr: &stderr,
+	}
+
+	done := make(chan error, 1)
+	start := time.Now()
+	go func() { done <- runner.Run(context.Background(), spec) }()
+
+	select {
+	case err := <-done:
+		elapsed := time.Since(start)
+		require.Less(t, elapsed, 15*time.Second,
+			"Run must return within its bounded WaitDelay even though a grandchild still holds stdout/stderr open")
+		require.Error(t, err, "an orphaned grandchild holding the pipes open must surface as an error, not a silent success")
+		require.True(t, errors.Is(err, exec.ErrWaitDelay), "expected exec.ErrWaitDelay in the error chain, got %v (%T)", err, err)
+	case <-time.After(20 * time.Second):
+		t.Fatal("execRunner.Run hung past its WaitDelay bound waiting on an orphaned grandchild's pipes")
+	}
+}
+
+// execHelperSpawnGrandchildHoldingPipes starts a grandchild sleep process
+// that inherits this process's (already-redirected) stdout/stderr, then
+// exits immediately without waiting for it. The grandchild keeps running
+// and holding those handles open even after this, the immediate child, has
+// terminated - the exact scenario execRunnerWaitDelay must recover from.
+//
+// The grandchild is a trivial external sleep command rather than another
+// copy of this test binary: re-executing the test binary itself would keep
+// its temp executable file locked on Windows for the sleep's duration,
+// causing `go test` to fail deleting it after the run even though every
+// test passed.
+func execHelperSpawnGrandchildHoldingPipes() {
+	var grandchild *exec.Cmd
+	if runtime.GOOS == "windows" {
+		grandchild = exec.Command("powershell", "-NoProfile", "-NonInteractive", "-Command", "Start-Sleep -Seconds 10")
+	} else {
+		grandchild = exec.Command("sleep", "10")
+	}
+	grandchild.Stdout = os.Stdout
+	grandchild.Stderr = os.Stderr
+	if err := grandchild.Start(); err != nil {
+		os.Exit(1)
+	}
 	os.Exit(0)
 }
 

@@ -7,7 +7,20 @@ import (
 	"io"
 	"os/exec"
 	"strings"
+	"time"
 )
+
+// execRunnerWaitDelay bounds how long Run waits, once the child process
+// itself has exited or been killed via context cancellation, for its
+// stdout/stderr copy goroutines to finish. Without a WaitDelay, a
+// grandchild process that inherited the child's stdout/stderr handles -
+// and is still running after the immediate child exits - can keep those
+// pipes open indefinitely: exec.Cmd.Wait would then block until every
+// holder of the handle closes it, even though the process this package is
+// actually tracking has already terminated. Once the delay elapses, the
+// standard library force-closes the pipes, the copy goroutines return, and
+// exec.ErrWaitDelay is folded into the returned error.
+const execRunnerWaitDelay = 3 * time.Second
 
 // CommandSpec fully describes one subprocess invocation. Values are always
 // argument slices, never a shell command line, so no argument is ever
@@ -71,6 +84,7 @@ type execRunner struct{}
 // environment itself; that is the caller's responsibility.
 func (execRunner) Run(ctx context.Context, spec CommandSpec) error {
 	cmd := exec.CommandContext(ctx, spec.Name, spec.Args...)
+	cmd.WaitDelay = execRunnerWaitDelay
 	cmd.Dir = spec.Dir
 	cmd.Env = spec.Env
 	cmd.Stdout = spec.Stdout
