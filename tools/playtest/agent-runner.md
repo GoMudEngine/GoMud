@@ -5,7 +5,8 @@ You are ONE tester in a multi-agent scenario. The conductor gave you: your
 (group goals + any per-agent goals + your choreography lines), the **blackboard
 path** (`bb`), and your private `mudagent` bridge files. Follow your personality
 (`tools/playtest/personalities/<role>.md`) and the engine profile
-(`tools/playtest/engine-profile.yaml`) throughout.
+(`tools/playtest/engine-profile.yaml`) throughout. If you are on a non-`fresh`
+synthetic profile, also read `tools/playtest/profiles/context.md`.
 
 Resolve the harness directory before issuing any `ptorch` commands:
 `HARNESS="${GOMUD_HARNESS_DIR:-../gomud-playtest-harness}"` (relative to the

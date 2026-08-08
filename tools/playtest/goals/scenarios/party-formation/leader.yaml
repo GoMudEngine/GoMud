@@ -1,28 +1,59 @@
-# Party-formation leader — invite after joiner-ready blackboard signal.
+# Party combat leader — shield-bash specialist (feature-tester).
+# Distinct from joiner: mid kit + shield + weapon-combat focus.
 name: party-formation-leader
-summary: Form a party as leader via party invite / party list / party say.
+summary: >
+  Form a party, coordinate in-game, shield-bash a hostile prone, then call
+  for the joiner's stomp.
+personality_notes: feature-tester — methodical, evidence-first, goal order.
+
 goals:
   - id: invite-joiner
     do: >-
-      Move to the starting room if needed. Wait until the blackboard signals
-      'joiner-ready'. Then run 'party invite <joiner-name>' using the joiner's
-      in-game character name (from who/look — not the pt_* login username).
-      Signal 'leader-invited' on the blackboard.
+      Start on Main Street Central (462) — do NOT enter the thug alley yet
+      (hostile thug will pull). Wait for blackboard 'joiner-ready' (character
+      name). Invite with 'party invite <character-name>' (who/look name, never
+      pt_* login). Signal 'leader-invited'.
     verify: >-
-      The system confirms the invite. No error message. Party list shows at
-      minimum yourself.
-  - id: confirm-party
+      System confirms 'You invited <name> to your party.' Party list shows you.
+
+  - id: party-comms-setup
     do: >-
-      After blackboard shows 'joiner-accepted', run 'party list' to confirm
-      two members. Send a party chat: 'party say Greetings from the leader'.
+      After 'joiner-accepted', 'party list' (2 members). Send
+      'party say Plan: you step east off Main Street so you don't auto-follow.
+      I south/west alone, bash prone, party-say. Then you west, south, west,
+      kick.'
     verify: >-
-      'party list' shows 2 members including the joiner. The chat message
-      does not produce an error.
+      Party list shows two members. Joiner sees the (party) line in-game.
+
+  - id: engage-thug
+    do: >-
+      After joiner peels east, south then west alone into Back Alley (474).
+      'bash thug' (shield; wait special-move cooldown ~4 rounds between tries;
+      trip fallback). On knockdown:
+      'party say They're down — west south west kick!'
+    verify: >-
+      Bash/trip knockdown line observed while thug still alive. Party say
+      callout after knockdown.
+
+  - id: finish-or-hold
+    do: >-
+      After joiner stomps (or after a short wait), keep fighting until the
+      thug dies or flee if either of you is near death. Prefer finishing
+      together.
+    verify: >-
+      Fight resolves without disconnect; party still intact or cleanly ended.
 
 ephemeral:
-  profile: early
+  profile: mid
   start_room: 462
   overlays:
-    set_gold: 200
+    # Keep mid identity but blunt damage so the thug survives for bash→stomp.
+    grant_skills:
+      weapon-combat: 6
+      unarmed-combat: 10
+    equip:
+      weapon: 10002
+      offhand: 20004
+    set_gold: 250
   budgets:
-    wall_clock: 15m
+    wall_clock: 25m

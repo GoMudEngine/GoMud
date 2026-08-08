@@ -35,7 +35,9 @@ report. Personalities: `bug-finder`, `feature-tester`, `feel-tester`.
 2. Read `tools/playtest/personalities/<personality>.md`.
 3. Read `tools/playtest/engine-profile.yaml`.
 4. Read the goals file (required). Confirm `ephemeral:` is present.
-5. **Do not** load `targets.yaml` for endpoint/creds.
+5. If `ephemeral.profile` is set and is **not** `fresh`, also read
+   `tools/playtest/profiles/context.md` (short MUD + rate-limit orientation).
+6. **Do not** load `targets.yaml` for endpoint/creds.
 
 ### Prod
 
@@ -121,10 +123,11 @@ If `disconnected`/`error` arrives first, abort, stop the env (local), report.
 
 ## 5. Play (main loop)
 
-Same as before: read events, decide from personality + goals + engine profile,
-append commands, pace on `Playtest.Round` beacons, respect
-`AICommandsPerRound`. Soft token/API budget exhaustion ⇒ stop play and mark
-the gameplay report **incomplete** (still run cleanup).
+Same as before: read events, decide from personality + goals + engine profile
+(+ `profiles/context.md` when profile ≠ `fresh`), append commands, pace on
+`Playtest.Round` beacons, respect `AICommandsPerRound` (shipped **3**/round).
+Soft token/API budget exhaustion ⇒ stop play and mark the gameplay report
+**incomplete** (still run cleanup).
 
 ## 6. Exit conditions
 

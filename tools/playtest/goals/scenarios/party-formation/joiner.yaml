@@ -1,25 +1,50 @@
-# Party-formation joiner — signal ready, then party accept.
+# Party combat joiner — unarmed stomp specialist (bug-finder edge).
+# Distinct from leader: early kit, unarmed-combat focus, no shield.
 name: party-formation-joiner
-summary: Join a party via party accept after leader invite.
+summary: >
+  Join the party, listen on party channel, and stomp a prone thug after the
+  leader's bash knockdown callout.
+personality_notes: bug-finder — watch for broken party/combat edge cases.
+
 goals:
   - id: signal-ready
     do: >-
-      After spawning, signal 'joiner-ready' on the blackboard so the leader
-      can locate and invite you. Include your character name in the signal
-      data when possible.
+      Spawn on Main Street Central (462). look/who. Signal 'joiner-ready'
+      with your character name (e.g. Early Strider). Stay here until partied —
+      do not wander into the west alley alone.
     verify: >-
-      Blackboard signal 'joiner-ready' was written successfully.
+      Blackboard 'joiner-ready.json' written with character_name.
+
   - id: accept-invite
     do: >-
-      Wait until the blackboard shows 'leader-invited'. Then run
-      'party accept' to join the party. Signal 'joiner-accepted' on the
-      blackboard.
+      Wait for 'leader-invited'. 'party accept'. Signal 'joiner-accepted'.
+      'party list' to confirm two members. Read the leader's party say plan.
     verify: >-
-      The system says you joined the party. No error. 'party list' shows
-      2 members including the leader.
+      'joined the party'. Party list shows leader + you. Party say visible.
+
+  - id: follow-to-alley
+    do: >-
+      Step east off Main Street (462→463) before the leader moves — party
+      auto-follow only pulls same-room members. Wait for party say
+      'They're down — west south west kick!'
+    verify: >-
+      You are east of 462 (not in the alley) until the callout.
+
+  - id: stomp-prone
+    do: >-
+      On callout: 'west', 'south', 'west', then immediately 'kick thug'
+      (kick becomes stomp when the target is prone — no separate stomp verb).
+      Confirm heel/boot/downed language. Then 'party say Stomp landed.'
+    verify: >-
+      First-person or room stomp-on-downed line for the thug.
 
 ephemeral:
-  profile: fresh
+  profile: early
   start_room: 462
+  overlays:
+    grant_skills:
+      unarmed-combat: 25
+      weapon-combat: 8
+    set_gold: 100
   budgets:
-    wall_clock: 15m
+    wall_clock: 25m

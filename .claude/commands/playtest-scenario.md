@@ -77,8 +77,11 @@ For each `actors[]` entry:
 
 ## 3. Play + coordinate
 
+- Before play: read each actor’s personality + `engine-profile.yaml`. For
+  profile actors whose `profile` is **not** `fresh`, also read
+  `tools/playtest/profiles/context.md` (MUD orientation + AI rate limit).
 - Drive each actor from its `personality` + `goals_path` (+ scenario
-  `group_goals`).
+  `group_goals`). Pace under `AICommandsPerRound` (shipped **3**/round).
 - Prefer **in-game** channels (say / party / tell) for character↔character.
 - **File blackboard** for driver-visible orchestration:
   - Dir: `blackboard_dir` from ready JSON
