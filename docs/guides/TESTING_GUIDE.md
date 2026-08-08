@@ -97,6 +97,28 @@ See `internal/playtestrun/context.md` (Human invocation) and
 `.claude/commands/playtest.md`. Local does **not** read `targets.yaml` for
 endpoint/creds. Dead-code cleanup of the pre-0.3c local path is deferred.
 
+## Multi-agent ephemeral scenarios (`playtestrun scenario`, chunk 0.3d)
+
+Use when agents need a **shared** disposable world (party, concurrent AI
+coverage, coordinated `group_goals`). Non-shared parallel work stays multiple
+0.3c `playtestrun run` invocations.
+
+```powershell
+go run ./cmd/playtestrun scenario `
+  --checkout $PWD `
+  --scenario tools/playtest/scenarios/party-formation.yaml `
+  --wall-clock 15m
+# ready JSON → N mudagents on actors[].bridge_dir → file blackboard → stop
+go run ./cmd/playtestrun stop --checkout $PWD --run <run-id>
+```
+
+Driver: `.claude/commands/playtest-scenario.md`. Report format:
+`tools/playtest/multi-agent-report-format.md`. Migrated scenarios:
+`party-formation`, `parallel-coverage`, `feel-pothole-newbie-veteran`.
+`adversarial-contest` is deferred (`requires.pvp` refused). No admin actors
+in multi-agent. Soft per-actor tokens; hard cut = scenario wall-clock
+(default 45m).
+
 ## Ephemeral playtest supervisor (`playtestenv`)
 
 Chunk 0.3a adds a local-only Go supervisor (`cmd/playtestenv` over

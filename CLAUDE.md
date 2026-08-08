@@ -848,7 +848,14 @@ Overlay (DOGMud-specific): `tools/playtest/`
 
 The vendored `playtest` server module (`modules/playtest/`) emits per-round
 `Playtest.Round` GMCP **beacons** (`hp/sp/cp + max`, room) when enabled via
-`Modules.playtest.*`. Multi-agent (`ptorch`) is 0.3d+.
+`Modules.playtest.*`.
+
+**Multi-agent (0.3d+):** shared ephemeral env via `playtestrun scenario` /
+`/playtest-scenario --checkout <abs> <scenario.yaml>`. Concurrent mudagents,
+per-actor bridges under `.run/<run_id>/actors/<id>/bridge/`, file blackboard
+(no ptorch). Use multiple single-agent `playtestrun run`s when agents do not
+need a shared world. See `internal/playtestrun/context.md` and
+`.claude/commands/playtest-scenario.md`.
 
 ## Mob Stat Archetypes
 Mobs have an optional `archetype` field that controls stat pool distribution:

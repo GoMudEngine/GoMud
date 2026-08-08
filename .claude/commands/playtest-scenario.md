@@ -1,123 +1,113 @@
 ---
-description: Run a multi-agent (party / adversarial / parallel / scenario) playtest
-argument-hint: <scenario-name>
+description: Run a multi-agent ephemeral scenario (shared env, N mudagents)
+argument-hint: --checkout <abs-path> <scenario-file>
 ---
 
-# /playtest-scenario `<scenario-name>`
+# /playtest-scenario `--checkout <abs>` `<scenario-file>`
 
-The DOGMud conductor for **multi-agent** runs. It reads a scenario file, spawns
-one independent agent per roster entry, coordinates them via the game + a small
-shared blackboard, and writes a combined report. Auto-discovered from the repo —
-no install. (Single-agent runs still use `/playtest`.)
+Conductor for **multi-agent** local playtests on **one shared ephemeral
+server** (chunk 0.3d). Go owns the env (`playtestrun scenario`); you drive N
+concurrent mudagents and write one combined gameplay report.
 
-> ⚠️ **Cost:** each roster agent is an independent LLM loop. **N agents cost
-> roughly N× a single `/playtest` run** in tokens and local processing. Start with
-> 2 agents, watch your usage rate, and keep rosters small. The server also caps AI
-> clients at `Network.MaxAIConnections` (default 20).
+Single-agent local runs still use `/playtest` → `playtestrun run`.
+Independent non-interacting work that does **not** need a shared world should
+be **multiple** `/playtest` / `playtestrun run` invocations — not a scenario.
 
-## 0. Resolve the harness
+> ⚠️ **Cost:** N agents ≈ N× a single `/playtest` in tokens. Start with 2.
+> Server AI pool: `Network.MaxAIConnections` (default 20).
 
-Resolve the harness directory:
-`HARNESS="${GOMUD_HARNESS_DIR:-../gomud-playtest-harness}"` (relative to the
-DOGMud repo root).
+## Preconditions
 
-If `$HARNESS` does **not** exist, STOP and tell the user:
-"playtest harness not found at $HARNESS — set GOMUD_HARNESS_DIR or clone
-GoMudEngine/GoMud-Module-Playtest-Harness next to the DOGMud repo."
+1. **`--checkout` required** — absolute path to a DOGMud git work tree. No
+   silent cwd. Do **not** use `targets.yaml` for endpoint/creds.
+2. Scenario file under `tools/playtest/scenarios/` (or absolute path).
+3. Harness for mudagent only:
+   `HARNESS="${GOMUD_HARNESS_DIR:-../gomud-playtest-harness}"`.
+   If missing, STOP and tell the user to set `GOMUD_HARNESS_DIR` or clone the
+   harness next to DOGMud.
+4. **No `ptorch`.** Blackboard is file I/O under the run’s `blackboard/` dir.
+5. **`requires.pvp` scenarios are refused** (deferred). Do not run
+   `adversarial-contest.yaml` until ephemeral PvP overrides exist.
+6. **No admin** actors in multi-agent (hard ban). Creation-flow actors are
+   RoleUser-only.
 
-Resolve the `ptorch` binary (try in order):
-- `$HARNESS/ptorch.exe` (Windows pre-built)
-- `$HARNESS/ptorch` (Linux/macOS pre-built)
-- `go run ./cmd/ptorch` compiled on the fly, **run from inside `$HARNESS`**
+## 1. Start the scenario supervisor (long-lived)
 
-Throughout this driver, every `ptorch` call runs **from inside `$HARNESS`** (via
-`(cd "$HARNESS" && ...)` subshell or the pre-built binary), and any path
-arguments that are relative to DOGMud (scenarios, blackboard) are passed as
-**absolute paths** (use `$(pwd)/...` from the DOGMud repo root).
+From the checkout root, start `playtestrun scenario` as a **blocking** process
+you keep alive for the wall-clock window (same pattern as 0.3c `run`). Do
+**not** treat start-and-exit as success.
 
-## 1. Load and check the scenario
-
-- The scenario file is `tools/playtest/scenarios/<scenario-name>.yaml`. Get its
-  machine-readable plan:
-  ```sh
-  SCENARIO="$(pwd)/tools/playtest/scenarios/<scenario-name>.yaml"
-  (cd "$HARNESS" && go run ./cmd/ptorch scenario plan "$SCENARIO")
-  # or: "$HARNESS/ptorch.exe" scenario plan "$SCENARIO"  (pre-built on Windows)
-  ```
-  This emits JSON: `name`, `mode`, `max_connections`, `roster` (id/role/target),
-  `group_goals`, `requires`, and `warnings`. If the command exits non-zero, the
-  file is invalid — show the error and stop.
-- **Surface every `warnings` entry to the user** (over-limit roster, cost). If
-  the roster exceeds `max_connections`, stop and tell the user to raise
-  `Network.MaxAIConnections` in `_datafiles/config.yaml` (or shrink the roster)
-  before continuing.
-- **Surface `requires` as preconditions to confirm** — the conductor does NOT
-  change server config. DOGMud-specific interpretation of `requires` keys:
-  - `max_connections`: roster cap; raise `Network.MaxAIConnections` (default 20)
-    in `_datafiles/config.yaml`.
-  - `pvp`: DOGMud uses `GamePlay.PVP` (`enabled`/`limited`/`disabled`; default
-    `disabled`). Tell the user to set the flag and restart before a PvP scenario
-    runs.
-  - `min_skill_ranks` / progression floor: **DOGMud has no levels.** Surface
-    `GamePlay.PVPMinimumSkillRanks` (default 15) instead; tell the user to lower
-    it or rank the test characters up first.
-  - `permadeath` / `perma_death_protection`: **N/A in DOGMud** — defeat causes
-    a respawn, not permanent loss. Note this to the user; permadeath-keyed
-    `requires` entries are irrelevant for DOGMud runs.
-
-## 2. Seed the blackboard
-
-```sh
-RUN="<scenario-name>-<date>"      # date passed in by you; do not invent timestamps in code
-BB="$(pwd)/tools/playtest/.run/$RUN/blackboard.json"
-mkdir -p "$(dirname "$BB")"
-(cd "$HARNESS" && go run ./cmd/ptorch bb init "$BB" --run "$RUN" --ids "<comma-separated roster ids>")
+```powershell
+$CHECKOUT = "<absolute checkout>"
+$SCENARIO = "$CHECKOUT\tools\playtest\scenarios\<name>.yaml"
+# Keep this process running; parse the first stdout JSON line as ready.
+go run ./cmd/playtestrun scenario `
+  --checkout $CHECKOUT `
+  --scenario $SCENARIO `
+  --wall-clock 15m   # optional override; default from scenario / 45m
 ```
 
-## 3. Spawn one agent per roster entry (background, independent)
+Ready JSON (one line) includes: `run_id`, `endpoint`, `checkout`, `commit`,
+`dirty`, `deadline_at`, `sidecar`, `blackboard_dir`, `on_actor_stop`,
+`actors[]` with `id`, `personality`, `goals_path`, `bridge_dir`, `creds|null`,
+`username`, `profile|null`, `creation_flow`, `status`.
 
-For each roster entry, dispatch a **background subagent** whose instructions are
-`tools/playtest/agent-runner.md`, parameterized with: that entry's `id`, `role`,
-`target`, the relevant `group_goals` + per-agent `goals` + any `choreography`
-lines naming it, the blackboard path `$BB`, a private bridge dir
-`tools/playtest/.run/$RUN/<id>/`, and the roster entry's `onboarding` value (from
-the plan JSON) so the agent knows whether to auto-advance past the ghost or drive
-the full new-player flow. Each agent connects, creates/logs in its character, and
-marks itself ready.
+**Ready-gate:** do not spawn mudagents until this line parses and actors are
+`ready`. Surface `commit` + `dirty` loudly.
 
-(Other agent runtimes can spawn OS processes instead — the scenario file +
-blackboard CLI are the engine-agnostic contract; subagents are just the reference.)
+## 2. Spawn concurrent mudagents
 
-## 4. Readiness barrier
+For each `actors[]` entry:
 
-Wait for all agents to be present, then start the run:
-```sh
-until (cd "$HARNESS" && go run ./cmd/ptorch bb allready "$BB"); do sleep 1; done   # exit 0 = all ready
-(cd "$HARNESS" && go run ./cmd/ptorch bb phase "$BB" --set running)
-```
+1. Start mudagent against `endpoint` with that actor’s **`bridge_dir`**
+   (under `.run/<run_id>/actors/<id>/bridge/`).
+2. **Profile actors:** login with username/password selected by **`actor_id`**
+   from `creds` (never profile-only when duplicates exist).
+3. **Creation-flow:** drive `new` as RoleUser only. Before accepting a name,
+   call the shared prod-identity gate mentally / via helper: names must not
+   match checked-in stems or close variants (`ForbiddenIdentity`).
+4. Soft per-actor token guidance only — do **not** hard-kill on tokens.
+5. If a mudagent fails to start after ready: honor `on_actor_stop`:
+   - `continue` (default) — mark that actor failed; keep peers + env
+   - `abort` — stop all mudagents, `playtestrun stop`, set sidecar via
+     driver contract (`incomplete_abort` / peer `aborted_peer`), report
+     incomplete
 
-## 5. Let agents run; wait for completion
+## 3. Play + coordinate
 
-Agents now play their assignments, interacting in-game and via signals. Wait for
-all background subagents to finish (each writes its per-agent report and appends
-its findings to the blackboard), then:
-```sh
-(cd "$HARNESS" && go run ./cmd/ptorch bb phase "$BB" --set done)
-```
+- Drive each actor from its `personality` + `goals_path` (+ scenario
+  `group_goals`).
+- Prefer **in-game** channels (say / party / tell) for character↔character.
+- **File blackboard** for driver-visible orchestration:
+  - Dir: `blackboard_dir` from ready JSON
+  - Signal file: `<signal-name>.json` where `signal-name` ∈ `[a-zA-Z0-9_-]+`
+  - Payload:
+    `{"signal":"<name>","actor_id":"<id>","ts":"<RFC3339>","data":{...}}`
+  - Write: temp file in the same dir, then **atomic rename** into place
+  - Read: poll for existence / JSON parse; ignore malformed with a log line
+  - **No `ptorch bb`**
 
-## 6. Aggregate the combined report
+## 4. Stop and report
 
-Read the final blackboard and each per-agent report:
-```sh
-(cd "$HARNESS" && go run ./cmd/ptorch bb dump "$BB")
-```
-Write the combined report per `tools/playtest/multi-agent-report-format.md` to
-`tools/playtest/reports/<date>-<scenario-name>.md`: scenario summary, group-goal
-results with cross-agent evidence, per-agent outcomes, and the merged/deduped
-findings (already deduped per agent+title on the blackboard).
+1. Always `playtestrun stop --checkout PATH --run <run_id>` (or let wall-clock
+   cut; sidecar becomes `incomplete_wallclock`).
+2. Quit stray mudagents.
+3. Write **one combined** report per
+   `tools/playtest/multi-agent-report-format.md` to
+   `tools/playtest/reports/<date>-<scenario>.md`.
+4. Checklist before handing off:
+   - [ ] Ready-gate observed (ready JSON + sidecar `ready`)
+   - [ ] Each actor had its own bridge + goals
+   - [ ] Login used `actor_id` (or creation-flow)
+   - [ ] Blackboard used file I/O only
+   - [ ] `on_actor_stop` honored if an actor failed early
+   - [ ] Combined report written; passwords never in markdown
+   - [ ] `playtestrun stop` (or wall-clock Stop) completed
 
-## 7. Clean up
+## When to use `run` vs `scenario`
 
-Quit any still-running `mudagent`s (each agent does this on finish; clean up
-strays as in `.claude/commands/playtest.md` step 8). Report the combined-report
-path to the user.
+| Need | Command |
+|------|---------|
+| One agent, disposable env | `playtestrun run` / `/playtest local …` |
+| N agents, **shared** world (party, concurrent AI, group_goals) | `playtestrun scenario` / `/playtest-scenario` |
+| N agents, **no** shared world | N× `playtestrun run` |
