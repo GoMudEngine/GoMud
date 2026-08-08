@@ -35,6 +35,11 @@ Owned by **0.3d** or later — not this design:
 - Replacing mudagent or moving command judgment into Go
 - Production or remote targeting of any kind
 - Reading `_archive/prod-users` (or any archive) at runtime
+- Dead-code cleanup / deletion of the pre-0.3c local playtest path
+  (old `targets.yaml`-based local wiring, unused bridge helpers, etc.).
+  0.3c **rewires** local onto `playtestrun` and stops using that path; it
+  deliberately leaves the old code in place until the new path is
+  stress-tested. Removal is a later slice.
 
 ## Decisions (locked in brainstorm + review)
 

@@ -74,6 +74,8 @@ testify, Docker opt-in integration.
 - `internal/playtestenv` env policy (compose only) except calling its
   public `Start`/`Stop`/`Status` APIs
 - Production `compose.yml`
+- Dead-code cleanup of the pre-0.3c local playtest path (leave unused
+  helpers until a later slice after stress-testing; see spec Non-goals)
 
 ## Core contracts
 
