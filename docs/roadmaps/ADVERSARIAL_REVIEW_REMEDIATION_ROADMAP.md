@@ -58,7 +58,10 @@ further decomposition
 |---|---|---:|---|---|---|
 | 0.1 | Restore web-terminal release asset | S | — | 1 | Invalidated |
 | 0.2 | Establish a reproducible full-test baseline | S | — | Supporting | Done |
-| 0.3 | Add ephemeral branch/worktree playtest environments | M | 0.2 | Supporting | Not started |
+| 0.3a | Build the ephemeral server supervisor | M | 0.2 | Supporting | Done |
+| 0.3b | Materialize synthetic player profiles | L | 0.3a | Supporting | Not started |
+| 0.3c | Integrate single-agent ephemeral playtests | M | 0.3a, 0.3b | Supporting | Not started |
+| 0.3d | Integrate multi-agent ephemeral scenarios | L | 0.3c | Supporting | Not started |
 | 1.1 | Unify validation across PR, master, and release | M | 0.2 | 10, 25, 26 | Not started |
 | 1.2 | Replace phantom and probabilistic tests | M | 0.2 | 9, 24 | Not started |
 | 1.3 | Eliminate immediate static-analysis crash risks | S | 1.1 | 28 | Not started |
@@ -150,24 +153,82 @@ propagated unchanged; the untargeted production image remained the Alpine
 runner with no test-stage `/src`; final adversarial implementation review
 reported no blocking or important findings.
 
-### Chunk 0.3 — Add ephemeral branch/worktree playtest environments
+### Chunk 0.3 — Ephemeral branch/worktree playtest arc
 
 **Problem:** Local playtests assume one host server at `localhost:55555`, while
 the existing Compose service uses fixed names and ports and does not publish the
 AI listener. This makes branch-specific isolation, parallel worktree playtests,
 reliable cleanup, and unattended report collection cumbersome.
 
-**Outcome:** One orchestration entry point can build the selected checkout,
-start a uniquely named disposable DOGMud server on a dynamically allocated
-loopback AI port, wait for a clean boot, run the existing playtest harness,
-export its report and server logs into that checkout, and remove the container
-and runtime volumes on success or failure. Independent worktrees can run
-concurrently without sharing ports, accounts, saves, or Compose project state.
+**Arc outcome:** One agent-facing command can build the selected checkout,
+prepare suitable synthetic players, start a disposable local DOGMud server,
+drive single- or multi-agent playtests, preserve reports and logs, and remove
+all run state. Independent worktrees can run concurrently without sharing
+ports, accounts, saves, or Compose project state.
 
-**Boundary:** This chunk reuses the existing harness personalities, goals,
-`mudagent` protocol, and playtest module. It does not redesign the harness,
-replace content's required adversarial playtest review, alter production
-Compose deployment, or expand Chunk 0.2's test-baseline implementation.
+**Arc boundary:** The entire arc is local-only. It never targets production,
+accepts a remote endpoint, consumes archived production users at runtime,
+exports in-game admin/build mutations back into source, or replaces content's
+required adversarial playtest review.
+
+#### Chunk 0.3a — Build the ephemeral server supervisor
+
+**Outcome:** A cross-platform Go supervisor plus dedicated Compose definition
+can build an explicit checkout, launch a uniquely labelled disposable server on
+a Docker-assigned loopback AI port, prove compound readiness, expose
+machine-readable lifecycle commands, preserve failure logs, and tear down or
+reap only that run's resources.
+
+**Boundary:** This chunk ends at a verified local AI endpoint. It does not
+create players, invoke `mudagent`, make gameplay decisions, or produce a
+gameplay report. The checkout is never mounted into the server; all admin and
+builder mutations remain in a disposable volume that cannot be committed.
+
+**Status (2026-08-08):** Done / verification. Windows Docker integration
+(`TestDockerIntegration`) PASS; native
+`go test ./cmd/playtestenv ./internal/playtestenv` PASS; managed Docker residue
+filters empty after Task 8. Chunk 0.2
+`docker compose -f compose.test.yml run --build --rm test` FAIL on Linux host:
+`TestCheckoutFingerprintIsStableForCanonicalPath/windows_normalizes_slash_direction`
+(`filepath.ToSlash` is host-OS-dependent). Production-runner smoke and Linux
+workflow evidence deferred. Final adversarial implementation review is the
+remaining handoff gate (must cover the fingerprint finding).
+
+#### Chunk 0.3b — Materialize synthetic player profiles
+
+**Outcome:** Goals can reference tracked, sanitized synthetic profiles and an
+explicit validated start room. DOGMud materializes run-scoped offline users
+after world loading and migrations but before listeners, with generated
+credentials and deterministic supported gameplay state.
+
+**Boundary:** Production archives are design references only, never runtime
+inputs. Initial profile scope is identity, role, room, base/training stats,
+skills, quest tokens/flags, ordinary inventory, and validated equipment.
+
+#### Chunk 0.3c — Integrate single-agent ephemeral playtests
+
+**Outcome:** One agent command selects or authors goals, binds an appropriate
+profile, starts the supervisor, drives the existing `mudagent` loop, writes a
+run-scoped report, and guarantees cleanup while allowing other work to continue.
+Each run has explicit token, turn, and wall-clock budgets. Token exhaustion
+produces a structured incomplete report with the partial transcript and cleanup
+outcome instead of hanging or being misreported as a gameplay success.
+
+**Boundary:** Explicit user requests and existing SOP-required adversarial
+playtests may trigger the command automatically. The command accepts no
+production or remote target.
+
+#### Chunk 0.3d — Integrate multi-agent ephemeral scenarios
+
+**Outcome:** Scenario rosters bind each actor to a profile and explicit start
+room, coordinate existing choreography, isolate credentials and artifacts, and
+produce one combined report while multiple independent scenario runs coexist.
+Per-actor budget exhaustion identifies the affected actor and follows an
+explicit scenario policy—abort or continue degraded—while preserving all other
+actors' evidence and guaranteeing environment cleanup.
+
+**Boundary:** This extends the existing harness scenario protocol; it does not
+introduce a new autonomous model runner or general production-user cloning.
 
 ---
 
