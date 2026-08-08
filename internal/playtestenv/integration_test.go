@@ -32,19 +32,18 @@ func TestDockerIntegration(t *testing.T) {
 	ctx := context.Background()
 
 	sweepExistingRuns(t, s, checkout)
-	forceRemoveManagedLeftovers(t)
-	require.Empty(t, listManagedIDs(t), "pre-existing dogmud.playtest.managed resources must be cleared before integration")
-	beforeGit := snapshotGit(t, checkout)
+	if leftovers := listManagedIDs(t); len(leftovers) > 0 {
+		t.Fatalf("dogmud.playtest.managed leftovers remain after Stop/Reap of this checkout's .run candidates; failing closed (no wild-delete). Remove only known test-owned identities, then re-run. leftovers=%v", leftovers)
+	}
 	trackedIDs := &sync.Map{}
 
 	t.Cleanup(func() {
 		sweepTracked(t, s, checkout, trackedIDs)
 		assertNoManagedLeftovers(t, trackedIDs)
-		afterGit := snapshotGit(t, checkout)
-		require.Equal(t, beforeGit, afterGit, "host Git status changed outside ignored run/report artifacts")
 	})
 
 	t.Run("lifecycle_status_logs_renew_stop", func(t *testing.T) {
+		beginGitCase(t, checkout)
 		res, readyFor := startReady(t, s, checkout, StartOptions{Checkout: checkout}, trackedIDs)
 		t.Logf("cold boot-to-ready after compose up window recorded via Start success; total Start elapsed=%s", readyFor)
 		require.LessOrEqual(t, readyFor, DefaultReadinessTimeout,
@@ -116,6 +115,7 @@ func TestDockerIntegration(t *testing.T) {
 	})
 
 	t.Run("concurrent_starts", func(t *testing.T) {
+		beginGitCase(t, checkout)
 		var (
 			wg   sync.WaitGroup
 			mu   sync.Mutex
@@ -161,6 +161,7 @@ func TestDockerIntegration(t *testing.T) {
 	})
 
 	t.Run("worktree_checkout_isolation", func(t *testing.T) {
+		beginGitCase(t, checkout)
 		markerA := "playtestenv-tracked-marker-" + integrationID()
 		markerB := "playtestenv-untracked-marker-" + integrationID()
 		probeName := "playtestenv-probe-" + integrationID() + ".txt"
@@ -223,6 +224,7 @@ func TestDockerIntegration(t *testing.T) {
 	})
 
 	t.Run("failure_invalid_dockerfile", func(t *testing.T) {
+		beginGitCase(t, checkout)
 		wt := addDetachedWorktree(t, checkout, "bd")
 		require.NoError(t, os.WriteFile(filepath.Join(wt, "provisioning", "Dockerfile"), []byte("FROM totally-invalid-base-image-playtestenv\n"), 0o644))
 		res, err := s.Start(ctx, StartOptions{Checkout: wt, Lease: time.Hour})
@@ -238,6 +240,7 @@ func TestDockerIntegration(t *testing.T) {
 	})
 
 	t.Run("failure_boot_panic_yaml", func(t *testing.T) {
+		beginGitCase(t, checkout)
 		wt := addDetachedWorktree(t, checkout, "bp")
 		mob := filepath.Join(wt, "_datafiles", "world", "dogmud", "mobs", "thornwall_city", "102-market_merchant.yaml")
 		raw, err := os.ReadFile(mob)
@@ -270,6 +273,7 @@ func TestDockerIntegration(t *testing.T) {
 	})
 
 	t.Run("failure_tiny_readiness_timeout", func(t *testing.T) {
+		beginGitCase(t, checkout)
 		res, err := s.Start(ctx, StartOptions{
 			Checkout:         checkout,
 			Lease:            time.Hour,
@@ -284,6 +288,7 @@ func TestDockerIntegration(t *testing.T) {
 	})
 
 	t.Run("failure_no_port_policy", func(t *testing.T) {
+		beginGitCase(t, checkout)
 		withTestComposePolicy(t, testComposePolicyNoPort(t))
 		res, err := s.Start(ctx, StartOptions{Checkout: checkout, Lease: time.Hour, ReadinessTimeout: 30 * time.Second})
 		registerPartialCleanup(t, s, checkout, res, trackedIDs)
@@ -294,6 +299,7 @@ func TestDockerIntegration(t *testing.T) {
 	})
 
 	t.Run("failure_non_loopback_policy", func(t *testing.T) {
+		beginGitCase(t, checkout)
 		withTestComposePolicy(t, testComposePolicyNonLoopback(t))
 		res, err := s.Start(ctx, StartOptions{Checkout: checkout, Lease: time.Hour, ReadinessTimeout: 45 * time.Second})
 		registerPartialCleanup(t, s, checkout, res, trackedIDs)
@@ -304,6 +310,7 @@ func TestDockerIntegration(t *testing.T) {
 	})
 
 	t.Run("reject_hostile_docker_host", func(t *testing.T) {
+		beginGitCase(t, checkout)
 		t.Setenv("DOCKER_HOST", "tcp://203.0.113.10:2375")
 		res, err := s.Start(ctx, StartOptions{Checkout: checkout, Lease: time.Hour})
 		registerPartialCleanup(t, s, checkout, res, trackedIDs)
@@ -325,6 +332,7 @@ func TestDockerIntegration(t *testing.T) {
 	})
 
 	t.Run("reject_remote_context_fixture", func(t *testing.T) {
+		beginGitCase(t, checkout)
 		name := integrationID()
 		createRemoteContextFixture(t, name, "tcp://203.0.113.11:2375")
 		t.Setenv("DOCKER_CONTEXT", name)
@@ -342,6 +350,7 @@ func TestDockerIntegration(t *testing.T) {
 	})
 
 	t.Run("honor_named_local_context", func(t *testing.T) {
+		beginGitCase(t, checkout)
 		endpoint := localDockerEndpoint(t)
 		name := integrationID()
 		createLocalContextFixture(t, name, endpoint)
@@ -358,6 +367,7 @@ func TestDockerIntegration(t *testing.T) {
 	})
 
 	t.Run("cancel_after_container_create", func(t *testing.T) {
+		beginGitCase(t, checkout)
 		ctx2, cancel := context.WithCancel(context.Background())
 		defer cancel()
 		sup := newSupervisor(supervisorDeps{
@@ -378,6 +388,7 @@ func TestDockerIntegration(t *testing.T) {
 	})
 
 	t.Run("graceful_stop_and_force_term_ignore", func(t *testing.T) {
+		beginGitCase(t, checkout)
 		res, _ := startReady(t, s, checkout, StartOptions{Checkout: checkout, Lease: time.Hour}, trackedIDs)
 		require.NoError(t, mustStop(t, s, checkout, res.RunID))
 		assertImageGone(t, res.RunID)
@@ -393,6 +404,7 @@ func TestDockerIntegration(t *testing.T) {
 	})
 
 	t.Run("expired_reap_and_decoy_untouched", func(t *testing.T) {
+		beginGitCase(t, checkout)
 		res, _ := startReady(t, s, checkout, StartOptions{Checkout: checkout, Lease: 2 * time.Second}, trackedIDs)
 		m := mustReadManifest(t, res.Manifest)
 		m.LeaseExpiresAt = time.Now().Add(-time.Minute)
@@ -555,29 +567,13 @@ func assertNoManagedLeftovers(t *testing.T, tracked *sync.Map) {
 	require.Empty(t, unexpected, "leftover dogmud-playtest resources: %v", unexpected)
 }
 
-func forceRemoveManagedLeftovers(t *testing.T) {
+func beginGitCase(t *testing.T, checkout string) {
 	t.Helper()
-	// Integration tests may delete only dogmud.playtest.managed resources.
-	for _, id := range strings.Fields(runCmdCombined(t, "docker", "ps", "-aq", "--filter", managedLabelFilter)) {
-		_ = exec.Command("docker", "rm", "-f", id).Run()
-	}
-	for _, id := range strings.Fields(runCmdCombined(t, "docker", "network", "ls", "-q", "--filter", managedLabelFilter)) {
-		_ = exec.Command("docker", "network", "rm", id).Run()
-	}
-	for _, id := range strings.Fields(runCmdCombined(t, "docker", "volume", "ls", "-q", "--filter", managedLabelFilter)) {
-		_ = exec.Command("docker", "volume", "rm", "-f", id).Run()
-	}
-	for _, id := range strings.Fields(runCmdCombined(t, "docker", "images", "-q", "--filter", managedLabelFilter)) {
-		_ = exec.Command("docker", "image", "rm", "-f", id).Run()
-	}
-	// Also drop any dangling dogmud-playtest: tags without the label filter match.
-	imgs := runCmdCombined(t, "docker", "images", "--format", "{{.Repository}}:{{.Tag}}")
-	for _, line := range strings.Split(imgs, "\n") {
-		line = strings.TrimSpace(line)
-		if strings.HasPrefix(line, imageNamePrefix) {
-			_ = exec.Command("docker", "image", "rm", "-f", line).Run()
-		}
-	}
+	before := snapshotGit(t, checkout)
+	t.Cleanup(func() {
+		after := snapshotGit(t, checkout)
+		require.Equal(t, before, after, "host Git status changed outside ignored run/report artifacts")
+	})
 }
 
 func listManagedIDs(t *testing.T) []string {
