@@ -86,6 +86,11 @@ go test ./cmd/playtestrun ./internal/playtestrun
 go run ./cmd/playtestrun run --checkout $PWD --goals tools/playtest/goals/newbie-naive.yaml --personality feel-tester
 go run ./cmd/playtestrun status --checkout $PWD --run <run-id>
 go run ./cmd/playtestrun stop --checkout $PWD --run <run-id>
+
+# Opt-in Docker (profile + creation-flow through playtestrun):
+$env:DOGMUD_PLAYTESTRUN_INTEGRATION = "1"
+go test -v -run "^TestDockerPlaytestrun$" -timeout 45m ./internal/playtestrun
+Remove-Item Env:\DOGMUD_PLAYTESTRUN_INTEGRATION
 ```
 
 See `internal/playtestrun/context.md` (Human invocation) and

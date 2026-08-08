@@ -342,3 +342,58 @@ func TestWriteStopSignal_Idempotent(t *testing.T) {
 	_, err := os.Stat(filepath.Join(BridgeDirPath(checkout, "r1"), "stop"))
 	require.NoError(t, err)
 }
+
+// TestDriverContract_ReadyJSONFields is the named driver-contract smoke:
+// ready JSON exposes endpoint/creds/run_id/checkout/commit/dirty/deadline/
+// sidecar and a run-scoped bridge path (no Claude session required).
+func TestDriverContract_ReadyJSONFields(t *testing.T) {
+	checkout := t.TempDir()
+	clock := newManualClock(time.Date(2026, 8, 8, 12, 0, 0, 0, time.UTC))
+	creds := filepath.Join(checkout, "control", "creds.json")
+	env := &fakeEnv{
+		startRes: playtestenv.Result{
+			RunID:    "run-drv",
+			Endpoint: &playtestenv.Endpoint{Host: "127.0.0.1", Port: 55555},
+			Artifacts: &playtestenv.ArtifactPaths{Creds: creds},
+		},
+	}
+	var stdout bytes.Buffer
+	dirty := false
+	done := make(chan error, 1)
+	pumpCtx, pumpCancel := context.WithCancel(context.Background())
+	defer pumpCancel()
+	go func() {
+		done <- Run(context.Background(), RunParams{
+			Checkout:         checkout,
+			GoalsPath:        goalsProfile(t),
+			Personality:      "bug-finder",
+			Env:              env,
+			Clock:            clock,
+			Stdout:           &stdout,
+			Commit:           "cafebabe",
+			Dirty:            &dirty,
+			StopPollInterval: time.Millisecond,
+		})
+	}()
+	pumpClock(t, pumpCtx, clock)
+	require.Eventually(t, func() bool { return stdout.Len() > 0 }, 2*time.Second, 10*time.Millisecond)
+
+	var ready ReadyPayload
+	require.NoError(t, json.Unmarshal(stdout.Bytes(), &ready))
+	require.NotNil(t, ready.Endpoint)
+	require.Equal(t, "127.0.0.1", ready.Endpoint.Host)
+	require.Equal(t, 55555, ready.Endpoint.Port)
+	require.NotNil(t, ready.Creds)
+	require.Equal(t, creds, *ready.Creds)
+	require.Equal(t, "run-drv", ready.RunID)
+	require.Equal(t, checkout, ready.Checkout)
+	require.Equal(t, "cafebabe", ready.Commit)
+	require.False(t, ready.Dirty)
+	require.False(t, ready.DeadlineAt.IsZero())
+	require.Equal(t, SidecarPath(checkout, "run-drv"), ready.Sidecar)
+	require.Equal(t, BridgeDirPath(checkout, "run-drv"), ready.BridgeDir)
+	require.Contains(t, ready.BridgeDir, filepath.Join(".run", "run-drv", "bridge"))
+
+	require.NoError(t, WriteStopSignal(checkout, "run-drv"))
+	require.NoError(t, <-done)
+}
