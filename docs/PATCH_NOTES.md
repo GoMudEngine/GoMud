@@ -1,5 +1,26 @@
 # DOGMud Patch Notes
 
+## 2026-08-08: Giving gold, wandering monsters, and vanished messages
+
+Giving gold now hands over the amount you actually typed. Written without a
+space, as in `give 50gold bob`, the game read the amount correctly when it
+checked whether you could afford it, then handed over a smaller amount. Both
+steps now read the same number. Typing the amount with a space always worked
+and is unchanged.
+
+Monsters that hunt for loot or for players now walk toward what they are
+looking for. They had been picking a direction at random and ignoring what
+they found, so the hunting behaviour did nothing at all.
+
+Two crashes are fixed. A character whose species record could not be found
+would bring the server down on its next swing. Separately, a rare failure while
+formatting a long line of text quietly replaced the whole message with nothing,
+so a description or combat line could simply disappear. Text now survives that
+failure intact.
+
+Also in this bundle: playtest connection details are no longer stored in the
+repository, and a template file shows contributors what to fill in locally.
+
 ## 2026-08-08: Ephemeral multi-agent playtests
 
 Local playtesting can now spin a disposable shared server and run several
