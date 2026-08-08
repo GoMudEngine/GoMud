@@ -1,0 +1,47 @@
+role: user
+username: template-caster
+character:
+  name: Fold Adept
+  description: >
+    A casting-focused synthetic playtester with staff, wards, and heal support.
+  roomid: 462
+  zone: Thornwall City
+  speciesid: 1
+  stats:
+    strength:
+      base: 100
+    dexterity:
+      base: 110
+    perception:
+      base: 120
+    vitality:
+      base: 115
+    willpower:
+      base: 145
+    charisma:
+      base: 125
+  health: 460
+  stamina: 450
+  conviction: 520
+  gold: 400
+  skills:
+    spellcasting: 28
+    weapon-combat: 8
+    rhetoric: 12
+    search: 10
+  spellbook:
+    heal: 3
+    identify: 1
+    conviction-ward: 2
+    chrysalis-cocoon: 1
+    mass-mend: 1
+    iron-will: 1
+  equipment:
+    weapon:
+      itemid: 10018
+    body:
+      itemid: 20008
+    feet:
+      itemid: 20003
+  items:
+    - itemid: 30036

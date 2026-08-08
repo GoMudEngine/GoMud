@@ -1,0 +1,39 @@
+role: admin
+username: template-admin
+character:
+  name: Staff Auditor
+  description: >
+    Synthetic admin profile for testing admin-only surfaces in ephemeral runs.
+  roomid: 462
+  zone: Thornwall City
+  speciesid: 1
+  stats:
+    strength:
+      base: 150
+    dexterity:
+      base: 150
+    perception:
+      base: 150
+    vitality:
+      base: 150
+    willpower:
+      base: 150
+    charisma:
+      base: 150
+  health: 800
+  stamina: 800
+  conviction: 800
+  gold: 1000
+  skills:
+    weapon-combat: 20
+    spellcasting: 20
+    search: 20
+    rhetoric: 20
+  spellbook:
+    heal: 2
+    identify: 1
+  equipment:
+    weapon:
+      itemid: 10002
+    body:
+      itemid: 20008

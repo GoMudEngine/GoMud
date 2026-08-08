@@ -1,0 +1,27 @@
+role: user
+username: template-fresh
+character:
+  name: Fresh Recruit
+  description: >
+    A brand-new arrival with nothing but the clothes they woke in. Used for
+    newbie-area playtests after character creation.
+  roomid: 5200
+  zone: Crash Site
+  speciesid: 1
+  stats:
+    strength:
+      base: 100
+    dexterity:
+      base: 100
+    perception:
+      base: 100
+    vitality:
+      base: 100
+    willpower:
+      base: 100
+    charisma:
+      base: 100
+  health: 405
+  stamina: 405
+  conviction: 405
+  gold: 0
