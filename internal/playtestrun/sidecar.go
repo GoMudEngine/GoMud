@@ -15,6 +15,7 @@ const (
 	StatusStarting            = "starting"
 	StatusReady               = "ready"
 	StatusIncompleteWallclock = "incomplete_wallclock"
+	StatusInterrupted         = "interrupted"
 	StatusStopped             = "stopped"
 	StatusEnvironmentFailed   = "environment_failed"
 )
@@ -27,23 +28,23 @@ type SessionBudgets struct {
 // SessionSidecar is the machine-readable session record under
 // tools/playtest/.run/<run_id>/session.json.
 type SessionSidecar struct {
-	RunID             string                  `json:"run_id"`
-	Checkout          string                  `json:"checkout"`
-	Commit            string                  `json:"commit"`
-	Dirty             bool                    `json:"dirty"`
-	GoalsPath         string                  `json:"goals_path"`
-	Personality       string                  `json:"personality,omitempty"`
-	Endpoint          *playtestenv.Endpoint   `json:"endpoint,omitempty"`
-	Creds             string                  `json:"creds,omitempty"`
-	Profile           string                  `json:"profile,omitempty"`
-	CreationFlow      bool                    `json:"creation_flow,omitempty"`
-	CreationRationale string                  `json:"creation_rationale,omitempty"`
-	Budgets           SessionBudgets          `json:"budgets"`
-	StartedAt         time.Time               `json:"started_at"`
-	DeadlineAt        time.Time               `json:"deadline_at"`
-	Status            string                  `json:"status"`
-	EnvironmentReport string                  `json:"environment_report,omitempty"`
-	BridgeDir         string                  `json:"bridge_dir"`
+	RunID             string                `json:"run_id"`
+	Checkout          string                `json:"checkout"`
+	Commit            string                `json:"commit"`
+	Dirty             bool                  `json:"dirty"`
+	GoalsPath         string                `json:"goals_path"`
+	Personality       string                `json:"personality,omitempty"`
+	Endpoint          *playtestenv.Endpoint `json:"endpoint,omitempty"`
+	Creds             string                `json:"creds,omitempty"`
+	Profile           string                `json:"profile,omitempty"`
+	CreationFlow      bool                  `json:"creation_flow,omitempty"`
+	CreationRationale string                `json:"creation_rationale,omitempty"`
+	Budgets           SessionBudgets        `json:"budgets"`
+	StartedAt         time.Time             `json:"started_at"`
+	DeadlineAt        time.Time             `json:"deadline_at"`
+	Status            string                `json:"status"`
+	EnvironmentReport string                `json:"environment_report,omitempty"`
+	BridgeDir         string                `json:"bridge_dir"`
 }
 
 // RunDir returns <checkout>/tools/playtest/.run/<runID>.

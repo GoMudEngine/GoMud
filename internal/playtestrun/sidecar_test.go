@@ -13,18 +13,18 @@ import (
 func TestSidecarWriteReadRoundTrip(t *testing.T) {
 	checkout := t.TempDir()
 	sc := SessionSidecar{
-		RunID:      "run-abc",
-		Checkout:   checkout,
-		Commit:     "deadbeef",
-		Dirty:      true,
-		GoalsPath:  "goals.yaml",
+		RunID:       "run-abc",
+		Checkout:    checkout,
+		Commit:      "deadbeef",
+		Dirty:       true,
+		GoalsPath:   "goals.yaml",
 		Personality: "bug-finder",
-		Profile:    "veteran",
-		Budgets:    SessionBudgets{WallClock: "30m"},
-		StartedAt:  time.Date(2026, 8, 8, 12, 0, 0, 0, time.UTC),
-		DeadlineAt: time.Date(2026, 8, 8, 12, 30, 0, 0, time.UTC),
-		Status:     StatusStarting,
-		BridgeDir:  filepath.Join(checkout, "tools", "playtest", ".run", "run-abc", "bridge"),
+		Profile:     "veteran",
+		Budgets:     SessionBudgets{WallClock: "30m"},
+		StartedAt:   time.Date(2026, 8, 8, 12, 0, 0, 0, time.UTC),
+		DeadlineAt:  time.Date(2026, 8, 8, 12, 30, 0, 0, time.UTC),
+		Status:      StatusStarting,
+		BridgeDir:   filepath.Join(checkout, "tools", "playtest", ".run", "run-abc", "bridge"),
 	}
 	path, err := WriteSidecar(checkout, sc)
 	require.NoError(t, err)

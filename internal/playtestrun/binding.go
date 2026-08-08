@@ -26,12 +26,12 @@ type EphemeralBinding struct {
 }
 
 type ephemeralYAML struct {
-	Profile           *string                     `yaml:"profile"`
-	StartRoom         *int                        `yaml:"start_room"`
+	Profile           *string                      `yaml:"profile"`
+	StartRoom         *int                         `yaml:"start_room"`
 	Overlays          *playtestenv.ProfileOverlays `yaml:"overlays"`
-	CreationFlow      bool                        `yaml:"creation_flow"`
-	CreationRationale string                      `yaml:"creation_rationale"`
-	Budgets           *ephemeralBudgetsYAML       `yaml:"budgets"`
+	CreationFlow      bool                         `yaml:"creation_flow"`
+	CreationRationale string                       `yaml:"creation_rationale"`
+	Budgets           *ephemeralBudgetsYAML        `yaml:"budgets"`
 }
 
 type ephemeralBudgetsYAML struct {

@@ -189,14 +189,21 @@ func TestRun_StartFailureEnvironmentFailed(t *testing.T) {
 	require.Equal(t, "bug-finder", sc.Personality)
 }
 
+func writeFreshCreds(t *testing.T, checkout string) string {
+	t.Helper()
+	path := filepath.Join(checkout, "creds.json")
+	require.NoError(t, os.WriteFile(path, []byte(`{"players":[{"profile":"fresh","username":"pt_fresh_aaa","password":"secret","user_id":1,"room_id":5200}]}`), 0o600))
+	return path
+}
+
 func TestRun_ReadyPathLeaseAndJSON(t *testing.T) {
 	checkout := t.TempDir()
 	clock := newManualClock(time.Date(2026, 8, 8, 12, 0, 0, 0, time.UTC))
-	credsPath := filepath.Join(checkout, "creds.json")
+	credsPath := writeFreshCreds(t, checkout)
 	env := &fakeEnv{
 		startRes: playtestenv.Result{
-			RunID:    "run-ok",
-			Endpoint: &playtestenv.Endpoint{Host: "127.0.0.1", Port: 55555},
+			RunID:     "run-ok",
+			Endpoint:  &playtestenv.Endpoint{Host: "127.0.0.1", Port: 55555},
 			Artifacts: &playtestenv.ArtifactPaths{Creds: credsPath},
 		},
 	}
@@ -261,7 +268,11 @@ func TestRun_ReadyPathLeaseAndJSON(t *testing.T) {
 func TestRun_WallClockOverridePrecedence(t *testing.T) {
 	checkout := t.TempDir()
 	clock := newManualClock(time.Date(2026, 8, 8, 12, 0, 0, 0, time.UTC))
-	env := &fakeEnv{startRes: playtestenv.Result{RunID: "run-wc"}}
+	credsPath := writeFreshCreds(t, checkout)
+	env := &fakeEnv{startRes: playtestenv.Result{
+		RunID:     "run-wc",
+		Artifacts: &playtestenv.ArtifactPaths{Creds: credsPath},
+	}}
 	dirty := false
 	done := make(chan error, 1)
 	pumpCtx, pumpCancel := context.WithCancel(context.Background())
@@ -296,7 +307,11 @@ func TestRun_IncompleteWallclockNonZero(t *testing.T) {
 	checkout := t.TempDir()
 	start := time.Date(2026, 8, 8, 12, 0, 0, 0, time.UTC)
 	clock := newManualClock(start)
-	env := &fakeEnv{startRes: playtestenv.Result{RunID: "run-late"}}
+	credsPath := writeFreshCreds(t, checkout)
+	env := &fakeEnv{startRes: playtestenv.Result{
+		RunID:     "run-late",
+		Artifacts: &playtestenv.ArtifactPaths{Creds: credsPath},
+	}}
 	dirty := false
 	done := make(chan error, 1)
 	go func() {
@@ -335,6 +350,75 @@ ephemeral:
 	require.Equal(t, StatusIncompleteWallclock, sc.Status)
 }
 
+func TestRun_MissingCredsPlayerEnvironmentFailed(t *testing.T) {
+	checkout := t.TempDir()
+	credsPath := filepath.Join(checkout, "creds.json")
+	require.NoError(t, os.WriteFile(credsPath, []byte(`{"players":[{"profile":"early","username":"u","password":"x","user_id":1,"room_id":1}]}`), 0o600))
+	env := &fakeEnv{
+		startRes: playtestenv.Result{
+			RunID:     "run-mismatch",
+			Endpoint:  &playtestenv.Endpoint{Host: "127.0.0.1", Port: 1},
+			Artifacts: &playtestenv.ArtifactPaths{Creds: credsPath},
+		},
+	}
+	dirty := false
+	err := Run(context.Background(), RunParams{
+		Checkout:    checkout,
+		GoalsPath:   goalsProfile(t), // profile fresh
+		Personality: "bug-finder",
+		Env:         env,
+		Commit:      "c",
+		Dirty:       &dirty,
+	})
+	require.Error(t, err)
+	require.True(t, env.stopCalled)
+	sc, readErr := ReadSidecar(checkout, "run-mismatch")
+	require.NoError(t, readErr)
+	require.Equal(t, StatusEnvironmentFailed, sc.Status)
+}
+
+func TestRun_CancelInterruptedNonZero(t *testing.T) {
+	checkout := t.TempDir()
+	credsPath := filepath.Join(checkout, "creds.json")
+	require.NoError(t, os.WriteFile(credsPath, []byte(`{"players":[{"profile":"fresh","username":"u","password":"x","user_id":1,"room_id":1}]}`), 0o600))
+	clock := newManualClock(time.Date(2026, 8, 8, 12, 0, 0, 0, time.UTC))
+	env := &fakeEnv{
+		startRes: playtestenv.Result{
+			RunID:     "run-int",
+			Endpoint:  &playtestenv.Endpoint{Host: "127.0.0.1", Port: 1},
+			Artifacts: &playtestenv.ArtifactPaths{Creds: credsPath},
+		},
+	}
+	dirty := false
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan error, 1)
+	pumpCtx, pumpCancel := context.WithCancel(context.Background())
+	defer pumpCancel()
+	go func() {
+		done <- Run(ctx, RunParams{
+			Checkout:         checkout,
+			GoalsPath:        goalsProfile(t),
+			Personality:      "bug-finder",
+			Env:              env,
+			Clock:            clock,
+			Commit:           "c",
+			Dirty:            &dirty,
+			StopPollInterval: time.Millisecond,
+		})
+	}()
+	pumpClock(t, pumpCtx, clock)
+	require.Eventually(t, func() bool {
+		sc, err := ReadSidecar(checkout, "run-int")
+		return err == nil && sc.Status == StatusReady
+	}, 2*time.Second, 10*time.Millisecond)
+	cancel()
+	err := <-done
+	require.Error(t, err)
+	sc, readErr := ReadSidecar(checkout, "run-int")
+	require.NoError(t, readErr)
+	require.Equal(t, StatusInterrupted, sc.Status)
+}
+
 func TestWriteStopSignal_Idempotent(t *testing.T) {
 	checkout := t.TempDir()
 	require.NoError(t, WriteStopSignal(checkout, "r1"))
@@ -349,11 +433,11 @@ func TestWriteStopSignal_Idempotent(t *testing.T) {
 func TestDriverContract_ReadyJSONFields(t *testing.T) {
 	checkout := t.TempDir()
 	clock := newManualClock(time.Date(2026, 8, 8, 12, 0, 0, 0, time.UTC))
-	creds := filepath.Join(checkout, "control", "creds.json")
+	creds := writeFreshCreds(t, checkout)
 	env := &fakeEnv{
 		startRes: playtestenv.Result{
-			RunID:    "run-drv",
-			Endpoint: &playtestenv.Endpoint{Host: "127.0.0.1", Port: 55555},
+			RunID:     "run-drv",
+			Endpoint:  &playtestenv.Endpoint{Host: "127.0.0.1", Port: 55555},
 			Artifacts: &playtestenv.ArtifactPaths{Creds: creds},
 		},
 	}

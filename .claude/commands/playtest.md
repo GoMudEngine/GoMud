@@ -25,8 +25,7 @@ report. Personalities: `bug-finder`, `feature-tester`, `feel-tester`.
   block (profile+start_room or creation_flow+rationale). See
   `internal/playtestrun` and exemplars under `tools/playtest/goals/`.
 - Adversarial SOP default:
-  `/playtest local bug-finder 2026-08-03-prepush-sweep.yaml`
-  (with `--checkout`).
+  `/playtest local --checkout <abs> bug-finder 2026-08-03-prepush-sweep.yaml`
 
 ## 1. Load configuration
 

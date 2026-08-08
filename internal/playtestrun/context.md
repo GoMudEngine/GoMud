@@ -117,9 +117,11 @@ SOP creation-flow).
 | Env failure MD | `tools/playtest/reports/*-environment-failed.md` (`playtestenv`) |
 | Gameplay MD | `tools/playtest/reports/…` (Claude `/playtest`) |
 
-Sidecar statuses: `starting` | `ready` | `incomplete_wallclock` | `stopped` |
-`environment_failed`. Nested `budgets.wall_clock`. Creds field is a **path**
-(or empty); never embed passwords in markdown.
+Sidecar statuses: `starting` | `ready` | `incomplete_wallclock` |
+`interrupted` | `stopped` | `environment_failed`. Nested `budgets.wall_clock`.
+Creds field is a **path** (or empty); never embed passwords in markdown.
+Profile runs validate `SelectCredsPlayer` before emitting ready JSON.
+SIGINT/cancel → `interrupted` + non-zero exit (not silent success).
 
 ### Worked examples
 

@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	leaseBuffer     = 5 * time.Minute
+	leaseBuffer      = 5 * time.Minute
 	stopPollInterval = 200 * time.Millisecond
 )
 
@@ -39,17 +39,17 @@ func (realClock) After(d time.Duration) <-chan time.Time { return time.After(d) 
 
 // RunParams configures a blocking playtestrun session.
 type RunParams struct {
-	Checkout            string
-	GoalsPath           string
-	Personality         string
-	WallClockOverride   time.Duration // 0 = use goals binding
-	Env                 envSupervisor
-	Clock               Clock
-	Stdout              io.Writer
-	Stderr              io.Writer
-	Commit              string // optional override (tests); empty ⇒ probe git
-	Dirty               *bool  // optional override (tests)
-	StopPollInterval    time.Duration
+	Checkout          string
+	GoalsPath         string
+	Personality       string
+	WallClockOverride time.Duration // 0 = use goals binding
+	Env               envSupervisor
+	Clock             Clock
+	Stdout            io.Writer
+	Stderr            io.Writer
+	Commit            string // optional override (tests); empty ⇒ probe git
+	Dirty             *bool  // optional override (tests)
+	StopPollInterval  time.Duration
 }
 
 // ReadyPayload is the one-line JSON printed when the session is ready.
@@ -132,9 +132,40 @@ func Run(ctx context.Context, p RunParams) error {
 
 	runID := startRes.RunID
 	bridge := BridgeDirPath(p.Checkout, runID)
+	credsPath := ""
+	if startRes.Artifacts != nil {
+		credsPath = startRes.Artifacts.Creds
+	}
+
+	failPostStart := func(cause error) error {
+		stopCtx := ctx
+		if stopCtx.Err() != nil {
+			stopCtx = context.Background()
+		}
+		_, _ = p.Env.Stop(stopCtx, playtestenv.RunOptions{Checkout: p.Checkout, RunID: runID})
+		_ = os.MkdirAll(bridge, 0o755)
+		sc := baseSidecar(p, binding, wallClock, runID, commit, dirty, bridge)
+		sc.Status = StatusEnvironmentFailed
+		sc.Endpoint = startRes.Endpoint
+		sc.Creds = credsPath
+		sc.EnvironmentReport = startRes.Report
+		_, _ = WriteSidecar(p.Checkout, sc)
+		return cause
+	}
+
 	if err := os.MkdirAll(bridge, 0o755); err != nil {
-		_, _ = p.Env.Stop(ctx, playtestenv.RunOptions{Checkout: p.Checkout, RunID: runID})
-		return fmt.Errorf("playtestrun: mkdir bridge: %w", err)
+		return failPostStart(fmt.Errorf("playtestrun: mkdir bridge: %w", err))
+	}
+
+	if !binding.CreationFlow {
+		if credsPath == "" {
+			return failPostStart(fmt.Errorf("playtestrun: profile run missing creds artifact"))
+		}
+		if _, _, err := SelectCredsPlayer(credsPath, binding.Profile); err != nil {
+			return failPostStart(fmt.Errorf("playtestrun: creds profile match: %w", err))
+		}
+	} else if credsPath != "" {
+		return failPostStart(fmt.Errorf("playtestrun: creation_flow must not produce creds"))
 	}
 
 	started := p.Clock.Now()
@@ -144,13 +175,10 @@ func Run(ctx context.Context, p RunParams) error {
 	sc.DeadlineAt = deadline
 	sc.Status = StatusReady
 	sc.Endpoint = startRes.Endpoint
-	if startRes.Artifacts != nil {
-		sc.Creds = startRes.Artifacts.Creds
-	}
+	sc.Creds = credsPath
 	sidecarPath, err := WriteSidecar(p.Checkout, sc)
 	if err != nil {
-		_, _ = p.Env.Stop(ctx, playtestenv.RunOptions{Checkout: p.Checkout, RunID: runID})
-		return err
+		return failPostStart(err)
 	}
 
 	ready := ReadyPayload{
@@ -163,13 +191,12 @@ func Run(ctx context.Context, p RunParams) error {
 		Sidecar:    sidecarPath,
 		BridgeDir:  bridge,
 	}
-	if sc.Creds != "" {
-		creds := sc.Creds
+	if credsPath != "" {
+		creds := credsPath
 		ready.Creds = &creds
 	}
 	if err := json.NewEncoder(p.Stdout).Encode(ready); err != nil {
-		_, _ = p.Env.Stop(ctx, playtestenv.RunOptions{Checkout: p.Checkout, RunID: runID})
-		return fmt.Errorf("playtestrun: write ready JSON: %w", err)
+		return failPostStart(fmt.Errorf("playtestrun: write ready JSON: %w", err))
 	}
 
 	stopPath := filepath.Join(bridge, "stop")
@@ -187,9 +214,13 @@ func Run(ctx context.Context, p RunParams) error {
 
 	finalStatus := StatusStopped
 	var retErr error
-	if reason == "deadline" {
+	switch reason {
+	case "deadline":
 		finalStatus = StatusIncompleteWallclock
 		retErr = fmt.Errorf("playtestrun: wall-clock budget exceeded (%s)", wallClock)
+	case "cancel":
+		finalStatus = StatusInterrupted
+		retErr = fmt.Errorf("playtestrun: interrupted: %w", waitErr)
 	}
 	_ = UpdateSidecarStatus(p.Checkout, runID, finalStatus)
 	if stopErr != nil && retErr == nil {
