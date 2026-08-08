@@ -9,3 +9,11 @@ goals:
     what the game itself tells you. Follow your curiosity. If you feel
     finished, or you genuinely cannot tell what to do next, say so and
     stop — being lost is itself a finding.
+
+ephemeral:
+  creation_flow: true
+  creation_rationale: >
+    Brand-new character required: this run grades whether the game itself
+    teaches a first-time player without a pre-seeded kit.
+  budgets:
+    wall_clock: 30m

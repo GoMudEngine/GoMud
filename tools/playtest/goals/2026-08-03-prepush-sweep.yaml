@@ -1,6 +1,18 @@
 # Pre-push adversarial sweep of the 2026-08-03 batch (51 commits).
 # Fresh character, bug-finder mandate: read every line, report anything
 # confusing, broken, or contradicting the help text.
+#
+# Default SOP exemplar for `/playtest local bug-finder …` after 0.3c
+# (local requires goals with ephemeral:).
+ephemeral:
+  creation_flow: true
+  creation_rationale: >
+    Fresh character required: adversarial bug-finder sweeps must exercise
+    the real new-player path and shop/craft discovery without a pre-seeded
+    kit that could mask onboarding or economy bugs.
+  budgets:
+    wall_clock: 30m
+
 goals:
   - >-
     Shop economy after rarity tagging: find a merchant, `list`, and
