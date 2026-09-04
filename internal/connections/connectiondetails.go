@@ -8,6 +8,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+	"unicode/utf8"
 
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/term"
@@ -296,14 +297,36 @@ func (cd *ConnectionDetails) Write(p []byte) (n int, err error) {
 			return 0, nil
 		}
 
-		err := cd.wsConn.WriteMessage(websocket.TextMessage, p)
+		// A text frame must be valid UTF-8 or the client closes the connection
+		// (1007), which is what the first-byte check above is guarding one case of.
+		// Anything else that splits a rune - a width-aware wrap that counts bytes,
+		// for instance - would drop the session mid-sentence, so replace the bad
+		// bytes and log rather than hand the client something it must reject.
+		payload, replaced := validUTF8Payload(p)
+		if replaced {
+			mudlog.Error("conn.Write", "error", "Invalid UTF-8 in websocket payload; replaced", "bytes", p)
+		}
+
+		err := cd.wsConn.WriteMessage(websocket.TextMessage, payload)
 		if err != nil {
 			return 0, err
 		}
+		// Report the caller's length: the write consumed all of p, whatever the
+		// replacement did to the byte count.
 		return len(p), nil
 	}
 
 	return cd.conn.Write(p)
+}
+
+// validUTF8Payload returns a websocket-safe copy of p, reporting whether any
+// invalid byte had to be replaced. A valid payload is returned untouched so the
+// common path allocates nothing.
+func validUTF8Payload(p []byte) (payload []byte, replaced bool) {
+	if utf8.Valid(p) {
+		return p, false
+	}
+	return []byte(strings.ToValidUTF8(string(p), string(utf8.RuneError))), true
 }
 
 func (cd *ConnectionDetails) Read(p []byte) (n int, err error) {
