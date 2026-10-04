@@ -167,7 +167,9 @@ func TelnetDONT(what IACByte) []IACByte {
 
 func TelnetParseScreenSizePayload(info []byte) (width int, height int, err error) {
 
-	if len(info) >= 3 {
+	// Width and height are two bytes each, so a report shorter than four
+	// bytes cannot be read. Any client can send one.
+	if len(info) >= 4 {
 
 		width = (int(info[0]) << 8) | int(info[1])
 		height = (int(info[2]) << 8) | int(info[3])
