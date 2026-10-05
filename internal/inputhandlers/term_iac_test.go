@@ -3,7 +3,9 @@ package inputhandlers
 import (
 	"testing"
 
+	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/term"
+	"github.com/stretchr/testify/assert"
 )
 
 // newEnvironPayload builds the bytes that appear between `IAC SB NEW-ENVIRON IS`
@@ -89,4 +91,18 @@ func TestNewEnvironResponseMatcher(t *testing.T) {
 	if !newEnvironIsMudlet(payload) {
 		t.Errorf("expected extracted payload to be detected as Mudlet, payload=%v", payload)
 	}
+}
+
+// TestTelnetIACHandlerShortScreenSizeReport sends a NAWS report cut short after
+// three bytes. It used to index past the payload and panic on the connection
+// goroutine, which has no recover, so the whole server exited.
+func TestTelnetIACHandlerShortScreenSizeReport(t *testing.T) {
+	clientInput := &connections.ClientInput{
+		ConnectionId: 1,
+		DataIn:       []byte{term.TELNET_IAC, term.TELNET_SB, term.TELNET_OPT_NAWS, 0, 80, 0},
+	}
+
+	assert.NotPanics(t, func() {
+		TelnetIACHandler(clientInput, map[string]any{})
+	})
 }
