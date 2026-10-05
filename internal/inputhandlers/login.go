@@ -34,14 +34,21 @@ func FinalizeLoginOrCreate(results map[string]string, sharedState map[string]any
 				userid := users.FindUserId(results["username"])
 				user := users.GetByUserId(userid)
 
-				existingConnectionId := user.ConnectionId()
+				// The session may have disappeared since the kick prompt (e.g. link-dead
+				// cleanup), in which case there's nothing to kick. This also covers
+				// FindUserId returning 0, since GetByUserId(0) returns nil.
+				if user != nil {
 
-				// Send a goodbye message to the currently connected user
-				tplTxt, _ := templates.Process("goodbye", nil)
-				connections.SendTo([]byte(templates.AnsiParse(tplTxt)), existingConnectionId)
+					existingConnectionId := user.ConnectionId()
 
-				users.SetLinkDeadUser(userid)
-				connections.Kick(existingConnectionId, fmt.Sprintf(`Duplicate login (ip: %s)`, connDetails.RemoteAddr()))
+					// Send a goodbye message to the currently connected user
+					tplTxt, _ := templates.Process("goodbye", nil)
+					connections.SendTo([]byte(templates.AnsiParse(tplTxt)), existingConnectionId)
+
+					users.SetLinkDeadUser(userid)
+					connections.Kick(existingConnectionId, fmt.Sprintf(`Duplicate login (ip: %s)`, connDetails.RemoteAddr()))
+
+				}
 
 			}
 
