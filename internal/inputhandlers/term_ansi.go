@@ -1,6 +1,8 @@
 package inputhandlers
 
 import (
+	"unicode/utf8"
+
 	"github.com/GoMudEngine/GoMud/internal/connections"
 	"github.com/GoMudEngine/GoMud/internal/mudlog"
 	"github.com/GoMudEngine/GoMud/internal/term"
@@ -12,6 +14,12 @@ func AnsiHandler(clientInput *connections.ClientInput, sharedState map[string]an
 	if !term.IsAnsiCommand(clientInput.DataIn) {
 		return true
 	}
+
+	serverEcho := !isLocalEchoConn(clientInput.ConnectionId)
+	masked := isMaskedPrompt(sharedState)
+	// Cursor editing (arrows / home / end / delete) is only meaningful for
+	// server-side-echo, non-masked input. Masked (password) fields stay linear.
+	cursorEditAllowed := serverEcho && !masked
 
 	// Multiple Ansi Commands's can be stacked into one send, so useful to split them out
 	ansiCmds := [][]byte{}
@@ -95,32 +103,21 @@ func AnsiHandler(clientInput *connections.ClientInput, sharedState map[string]an
 		if ok, _ := term.Matches(ansiCmds, term.AnsiMoveCursorUp); ok {
 			mudlog.Debug("Received", "type", "ANSI (MoveCursorUp)", "currentInput", string(clientInput.Buffer), "LastSubmitted", string(clientInput.LastSubmitted))
 
-			// For each character in the buffer, backspace it out
-			// Then add whatever was last submitted
+			// Replace the current input line with the previous history entry.
+			// Clear by display width (not byte count) so wide characters erase
+			// correctly, then feed the recalled entry back through CleanserInputHandler
+			// so it is re-inserted and echoed.
 			clientInput.DataIn = []byte{}
 
-			bsSequence := []byte{}
-			spaceSequence := []byte{}
-			for i := 0; i < len(clientInput.Buffer); i++ {
-				bsSequence = append(bsSequence, term.ASCII_BACKSPACE)
-				spaceSequence = append(spaceSequence, term.ASCII_SPACE)
-			}
-
-			mudlog.Debug("Received", "type", "ANSI (MoveCursorUp)", "bsSequence", len(bsSequence), "spaceSequence", len(spaceSequence))
-
-			connections.SendTo(bsSequence, clientInput.ConnectionId)
-			connections.SendTo(spaceSequence, clientInput.ConnectionId)
-			connections.SendTo(bsSequence, clientInput.ConnectionId)
+			clearInputLineDisplay(clientInput)
 
 			clientInput.History.Previous()
 			historicInput := clientInput.History.Get()
 			clientInput.DataIn = make([]byte, len(historicInput))
 			copy(clientInput.DataIn, historicInput)
 
-			//clientInput.DataIn = make([]byte, len(clientInput.LastSubmitted))
-			//copy(clientInput.DataIn, clientInput.LastSubmitted)
-
 			clientInput.Buffer = []byte{}
+			clientInput.Cursor = 0
 			clientInput.EnterPressed = false
 			nextHandler = true
 			continue
@@ -129,35 +126,88 @@ func AnsiHandler(clientInput *connections.ClientInput, sharedState map[string]an
 		if ok, _ := term.Matches(ansiCmds, term.AnsiMoveCursorDown); ok {
 			mudlog.Debug("Received", "type", "ANSI (MoveCursorDown)", "currentInput", string(clientInput.Buffer), "LastSubmitted", string(clientInput.LastSubmitted))
 
-			// For each character in the buffer, backspace it out
-			// Then add whatever was last submitted
+			// Replace the current input line with the next history entry.
 			clientInput.DataIn = []byte{}
 
-			bsSequence := []byte{}
-			spaceSequence := []byte{}
-			for i := 0; i < len(clientInput.Buffer); i++ {
-				bsSequence = append(bsSequence, term.ASCII_BACKSPACE)
-				spaceSequence = append(spaceSequence, term.ASCII_SPACE)
-			}
-
-			mudlog.Debug("Received", "type", "ANSI (MoveCursorUp)", "bsSequence", len(bsSequence), "spaceSequence", len(spaceSequence))
-
-			connections.SendTo(bsSequence, clientInput.ConnectionId)
-			connections.SendTo(spaceSequence, clientInput.ConnectionId)
-			connections.SendTo(bsSequence, clientInput.ConnectionId)
+			clearInputLineDisplay(clientInput)
 
 			clientInput.History.Next()
 			historicInput := clientInput.History.Get()
 			clientInput.DataIn = make([]byte, len(historicInput))
 			copy(clientInput.DataIn, historicInput)
 
-			//clientInput.DataIn = make([]byte, len(clientInput.LastSubmitted))
-			//copy(clientInput.DataIn, clientInput.LastSubmitted)
-
 			clientInput.Buffer = []byte{}
+			clientInput.Cursor = 0
 			clientInput.EnterPressed = false
 			nextHandler = true
 			continue
+		}
+
+		// --- Cursor-editing keys (Left / Right / Home / End / Delete) ---
+		// These move or edit at the logical cursor within the current input line.
+		// They are no-ops for masked prompts and for local-echo clients.
+		if cursorEditAllowed {
+
+			// Left arrow (ESC [ D, or ESC O D in application cursor mode)
+			if matchesKey(ansiCmds, term.AnsiMoveCursorBackward) || matchesKey(ansiCmds, term.AnsiKeyLeftApp) {
+				clientInput.DataIn = []byte{}
+				if clientInput.Cursor > 0 {
+					if r, size := utf8.DecodeLastRune(clientInput.Buffer[:clientInput.Cursor]); size > 0 {
+						clientInput.Cursor -= size
+						connections.SendTo(cursorBackwardN(runeDisplayWidth(r)), clientInput.ConnectionId)
+					}
+				}
+				nextHandler = true
+				continue
+			}
+
+			// Right arrow (ESC [ C, or ESC O C)
+			if matchesKey(ansiCmds, term.AnsiMoveCursorForward) || matchesKey(ansiCmds, term.AnsiKeyRightApp) {
+				clientInput.DataIn = []byte{}
+				if clientInput.Cursor < len(clientInput.Buffer) {
+					if r, size := utf8.DecodeRune(clientInput.Buffer[clientInput.Cursor:]); size > 0 {
+						clientInput.Cursor += size
+						connections.SendTo(cursorForwardN(runeDisplayWidth(r)), clientInput.ConnectionId)
+					}
+				}
+				nextHandler = true
+				continue
+			}
+
+			// Home: move cursor to the start of the input.
+			if isHomeKey(ansiCmds) {
+				clientInput.DataIn = []byte{}
+				connections.SendTo(cursorBackwardN(bufferDisplayWidth(clientInput.Buffer[:clientInput.Cursor])), clientInput.ConnectionId)
+				clientInput.Cursor = 0
+				nextHandler = true
+				continue
+			}
+
+			// End: move cursor to the end of the input.
+			if isEndKey(ansiCmds) {
+				clientInput.DataIn = []byte{}
+				connections.SendTo(cursorForwardN(bufferDisplayWidth(clientInput.Buffer[clientInput.Cursor:])), clientInput.ConnectionId)
+				clientInput.Cursor = len(clientInput.Buffer)
+				nextHandler = true
+				continue
+			}
+
+			// Delete (forward): remove the rune at the cursor, redraw the tail.
+			if ok, _ := term.Matches(ansiCmds, term.AnsiKeyDelete); ok {
+				clientInput.DataIn = []byte{}
+				if clientInput.Cursor < len(clientInput.Buffer) {
+					if _, size := utf8.DecodeRune(clientInput.Buffer[clientInput.Cursor:]); size > 0 {
+						clientInput.Buffer = append(clientInput.Buffer[:clientInput.Cursor], clientInput.Buffer[clientInput.Cursor+size:]...)
+						// Cursor position is unchanged; redraw from it to the end.
+						tail := clientInput.Buffer[clientInput.Cursor:]
+						connections.SendTo(tail, clientInput.ConnectionId)
+						connections.SendTo([]byte(term.AnsiEraseLineForward.String()), clientInput.ConnectionId)
+						connections.SendTo(cursorBackwardN(bufferDisplayWidth(tail)), clientInput.ConnectionId)
+					}
+				}
+				nextHandler = true
+				continue
+			}
 		}
 
 		isF1, _ := term.Matches(ansiCmds, term.AnsiF1)

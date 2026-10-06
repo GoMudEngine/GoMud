@@ -567,6 +567,9 @@ func resumeRestoredConnection(connDetails *connections.ConnectionDetails, userOb
 			}
 
 			if redrawPrompt {
+				// The prompt redraw below repositions the terminal cursor at the
+				// end of the input, so resync the logical cursor to match.
+				clientInput.Cursor = len(clientInput.Buffer)
 				pTxt := userObject.GetCommandPrompt()
 				connections.SendTo([]byte(templates.AnsiParse(pTxt)), clientInput.ConnectionId)
 			}
@@ -947,6 +950,9 @@ func handleTelnetConnection(connDetails *connections.ConnectionDetails, wg *sync
 			}
 
 			if redrawPrompt {
+				// The prompt redraw below repositions the terminal cursor at the
+				// end of the input, so resync the logical cursor to match.
+				clientInput.Cursor = len(clientInput.Buffer)
 				pTxt := userObject.GetCommandPrompt()
 				if connections.IsWebsocket(clientInput.ConnectionId) {
 					connections.SendTo([]byte(pTxt), clientInput.ConnectionId)
@@ -1629,6 +1635,9 @@ func handleSSHConnection(connDetails *connections.ConnectionDetails, reqs <-chan
 			}
 
 			if redrawPrompt {
+				// The prompt redraw below repositions the terminal cursor at the
+				// end of the input, so resync the logical cursor to match.
+				clientInput.Cursor = len(clientInput.Buffer)
 				pTxt := userObject.GetCommandPrompt()
 				connections.SendTo([]byte(templates.AnsiParse(pTxt)), clientInput.ConnectionId)
 			}

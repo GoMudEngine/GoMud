@@ -60,6 +60,7 @@ func TestCleanserInputHandler_UTF8Backspace(t *testing.T) {
 				ConnectionId: 1,
 				DataIn:       []byte{term.ASCII_BACKSPACE}, // Simulate backspace input
 				Buffer:       []byte(tt.initialBuffer),
+				Cursor:       len(tt.initialBuffer), // cursor at end, as it would be after typing
 				EnterPressed: false,
 			}
 			sharedState := make(map[string]any)
@@ -97,6 +98,7 @@ func TestCleanserInputHandler_NoBackspace(t *testing.T) {
 		ConnectionId: 1,
 		DataIn:       []byte("hello🚀"), // Multi-byte UTF-8 input
 		Buffer:       []byte("existing"),
+		Cursor:       len("existing"), // cursor at end
 		EnterPressed: false,
 	}
 	sharedState := make(map[string]any)

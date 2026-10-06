@@ -276,6 +276,7 @@ func CreatePromptHandler(steps []*PromptStep, onComplete CompletionFunc) connect
 		}
 		submittedInput := strings.TrimSpace(string(clientInput.Buffer))
 		clientInput.Buffer = clientInput.Buffer[:0] // Clear buffer for next input
+		clientInput.Cursor = 0                      // Reset cursor for next input
 		state.maskTemplate = ""                     // Clear cached mask template
 
 		// Validation
