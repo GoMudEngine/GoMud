@@ -1000,6 +1000,10 @@ type GMCPCharModule_Payload_Inventory_Item struct {
 	SubType string   `json:"subtype"`
 	Uses    int      `json:"uses"`
 	Details []string `json:"details"`
+	ItemId      int    `json:"itemid,omitempty"`
+	SimpleName  string `json:"simple_name,omitempty"`
+	DisplayName string `json:"display_name,omitempty"`
+	Description string `json:"description,omitempty"`
 }
 
 func newInventory_Item(itm items.Item) GMCPCharModule_Payload_Inventory_Item {
@@ -1013,12 +1017,16 @@ func newInventory_Item(itm items.Item) GMCPCharModule_Payload_Inventory_Item {
 
 	itmSpec := itm.GetSpec()
 	d := GMCPCharModule_Payload_Inventory_Item{
-		Id:      itm.ShorthandId(),
-		Name:    itm.Name(),
-		Type:    string(itmSpec.Type),
-		SubType: string(itmSpec.Subtype),
-		Uses:    itm.Uses,
-		Details: []string{},
+		Id:          itm.ShorthandId(),
+		ItemId:      itm.ItemId,
+		Name:        itm.Name(),
+		SimpleName:  itm.NameSimple(),
+		DisplayName: itm.DisplayName(),
+		Description: itmSpec.Description,
+		Type:        string(itmSpec.Type),
+		SubType:     string(itmSpec.Subtype),
+		Uses:        itm.Uses,
+		Details:     []string{},
 	}
 
 	if !itm.Uncursed && itmSpec.Cursed {
